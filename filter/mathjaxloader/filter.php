@@ -79,10 +79,8 @@ class filter_mathjaxloader extends moodle_text_filter {
      * @param context $context The current context.
      */
     public function setup($page, $context) {
-        // This only requires execution once per request.
-        static $jsinitialised = false;
 
-        if (empty($jsinitialised)) {
+        if ($page->requires->should_create_one_time_item_now('filter_mathjaxloader-scripts')) {
             $url = get_config('filter_mathjaxloader', 'httpsurl');
             $lang = $this->map_language_code(current_language());
             $url = new moodle_url($url, array('delayStartupUntil' => 'configured'));
@@ -102,8 +100,6 @@ class filter_mathjaxloader extends moodle_text_filter {
             $params = array('mathjaxconfig' => $config, 'lang' => $lang);
 
             $page->requires->yui_module('moodle-filter_mathjaxloader-loader', 'M.filter_mathjaxloader.configure', array($params));
-
-            $jsinitialised = true;
         }
     }
 

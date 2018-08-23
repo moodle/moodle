@@ -736,6 +736,43 @@ abstract class format_base {
     }
 
     /**
+     * Prepares values of course or section format options before storing them in DB
+     *
+     * If an option has invalid value it is not returned
+     *
+     * @param array $rawdata associative array of the proposed course/section format options
+     * @param int|null $sectionid null if it is course format option
+     * @return array array of options that have valid values
+     */
+    protected function validate_format_options(array $rawdata, int $sectionid = null) : array {
+        if (!$sectionid) {
+            $allformatoptions = $this->course_format_options(true);
+        } else {
+            $allformatoptions = $this->section_format_options(true);
+        }
+        $data = array_intersect_key($rawdata, $allformatoptions);
+        foreach ($data as $key => $value) {
+            $option = $allformatoptions[$key] + ['type' => PARAM_RAW, 'element_type' => null, 'element_attributes' => [[]]];
+            $data[$key] = clean_param($value, $option['type']);
+            if ($option['element_type'] === 'select' && !array_key_exists($data[$key], $option['element_attributes'][0])) {
+                // Value invalid for select element, skip.
+                unset($data[$key]);
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * Validates format options for the course
+     *
+     * @param array $data data to insert/update
+     * @return array array of options that have valid values
+     */
+    public function validate_course_format_options(array $data) : array {
+        return $this->validate_format_options($data);
+    }
+
+    /**
      * Updates format options for a course or section
      *
      * If $data does not contain property with the option name, the option will not be updated
@@ -747,6 +784,7 @@ abstract class format_base {
      */
     protected function update_format_options($data, $sectionid = null) {
         global $DB;
+        $data = $this->validate_format_options((array)$data, $sectionid);
         if (!$sectionid) {
             $allformatoptions = $this->course_format_options();
             $sectionid = 0;
@@ -772,7 +810,6 @@ abstract class format_base {
                       'sectionid' => $sectionid
                     ), '', 'name,id,value');
         $changed = $needrebuild = false;
-        $data = (array)$data;
         foreach ($defaultoptions as $key => $value) {
             if (isset($records[$key])) {
                 if (array_key_exists($key, $data) && $records[$key]->value !== $data[$key]) {

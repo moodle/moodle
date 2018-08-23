@@ -45,7 +45,7 @@ $PAGE->set_pagelayout('standard');
 $PAGE->set_url('/admin/tool/policy/index.php');
 $PAGE->set_popup_notification_allowed(false);
 
-if (!empty($USER->id)) {
+if (isloggedin() && !isguestuser()) {
     // Existing user.
     $haspermissionagreedocs = api::can_accept_policies($behalfid);
 } else {

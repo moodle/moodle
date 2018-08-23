@@ -25,7 +25,6 @@ defined('MOODLE_INTERNAL') || die();
 /** Include required files */
 require_once(__DIR__ . '/deprecatedlib.php');
 require_once($CFG->libdir.'/filelib.php');
-require_once($CFG->libdir.'/eventslib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
 
@@ -3819,6 +3818,7 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
 
     $post->subject = format_string($post->subject,true);
 
+    $canviewfullnames = has_capability('moodle/site:viewfullnames', $modcontext);
     $timeddiscussion = !empty($CFG->forum_enabletimedposts) && ($post->timestart || $post->timeend);
     $timedoutsidewindow = '';
     if ($timeddiscussion && ($post->timestart > time() || ($post->timeend != 0 && $post->timeend < time()))) {
@@ -3850,14 +3850,16 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
     $postuser = username_load_fields_from_object($postuser, $post, null, $postuserfields);
     $postuser->id = $post->userid;
     echo '<td class="author">';
-    echo '<span class="picture">';
+    echo '<div class="media">';
+    echo '<span class="pull-left">';
     echo $OUTPUT->user_picture($postuser, array('courseid'=>$forum->course));
     echo '</span>';
-    echo '<span class="name">';
     // User name
-    $fullname = fullname($postuser, has_capability('moodle/site:viewfullnames', $modcontext));
+    echo '<div class="media-body">';
+    $fullname = fullname($postuser, $canviewfullnames);
     echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->userid.'&amp;course='.$forum->course.'">'.$fullname.'</a>';
-    echo '</span>';
+    echo '</div>';
+    echo '</div>';
     echo "</td>\n";
 
     // Group picture
@@ -3922,7 +3924,7 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
     // In QA forums we check that the user can view participants.
     if ($forum->type !== 'qanda' || $canviewparticipants) {
         echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->usermodified.'&amp;course='.$forum->course.'">'.
-             fullname($usermodified).'</a><br />';
+             fullname($usermodified, $canviewfullnames).'</a><br />';
         $parenturl = (empty($post->lastpostid)) ? '' : '&amp;parent='.$post->lastpostid;
     }
 
@@ -5587,7 +5589,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
 
     if ($displayformat == 'header') {
         echo '<table cellspacing="0" class="forumheaderlist">';
-        echo '<thead>';
+        echo '<thead class="text-left">';
         echo '<tr>';
         echo '<th class="header topic" scope="col">'.get_string('discussion', 'forum').'</th>';
         echo '<th class="header author" scope="col">'.get_string('startedby', 'forum').'</th>';

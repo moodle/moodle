@@ -25,53 +25,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
+require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
 
 class assignsubmission_onlinetext_events_testcase extends advanced_testcase {
 
-    /** @var stdClass $user A user to submit an assignment. */
-    protected $user;
-
-    /** @var stdClass $course New course created to hold the assignment activity. */
-    protected $course;
-
-    /** @var stdClass $cm A context module object. */
-    protected $cm;
-
-    /** @var stdClass $context Context of the assignment activity. */
-    protected $context;
-
-    /** @var stdClass $assign The assignment object. */
-    protected $assign;
-
-    /** @var stdClass $submission Submission information. */
-    protected $submission;
-
-    /** @var stdClass $data General data for the assignment submission. */
-    protected $data;
-
-    /**
-     * Setup all the various parts of an assignment activity including creating an onlinetext submission.
-     */
-    protected function setUp() {
-        $this->user = $this->getDataGenerator()->create_user();
-        $this->course = $this->getDataGenerator()->create_course();
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
-        $params['course'] = $this->course->id;
-        $instance = $generator->create_instance($params);
-        $this->cm = get_coursemodule_from_instance('assign', $instance->id);
-        $this->context = context_module::instance($this->cm->id);
-        $this->assign = new testable_assign($this->context, $this->cm, $this->course);
-
-        $this->setUser($this->user->id);
-        $this->submission = $this->assign->get_user_submission($this->user->id, true);
-        $this->data = new stdClass();
-        $this->data->onlinetext_editor = array(
-            'itemid' => file_get_unused_draft_itemid(),
-            'text' => 'Submission text',
-            'format' => FORMAT_PLAIN
-        );
-    }
+    // Use the generator helper.
+    use mod_assign_test_generator;
 
     /**
      * Test that the assessable_uploaded event is fired when an online text submission is saved.
@@ -79,25 +38,42 @@ class assignsubmission_onlinetext_events_testcase extends advanced_testcase {
     public function test_assessable_uploaded() {
         $this->resetAfterTest();
 
-        $plugin = $this->assign->get_submission_plugin_by_type('onlinetext');
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $assign = $this->create_instance($course);
+        $context = $assign->get_context();
+        $cm = $assign->get_course_module();
+
+        $this->setUser($student->id);
+
+        $submission = $assign->get_user_submission($student->id, true);
+        $data = (object) [
+            'onlinetext_editor' => [
+                'itemid' => file_get_unused_draft_itemid(),
+                'text' => 'Submission text',
+                'format' => FORMAT_PLAIN,
+            ],
+        ];
+
         $sink = $this->redirectEvents();
-        $plugin->save($this->submission, $this->data);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
         $events = $sink->get_events();
 
         $this->assertCount(2, $events);
         $event = reset($events);
         $this->assertInstanceOf('\assignsubmission_onlinetext\event\assessable_uploaded', $event);
-        $this->assertEquals($this->context->id, $event->contextid);
-        $this->assertEquals($this->submission->id, $event->objectid);
+        $this->assertEquals($context->id, $event->contextid);
+        $this->assertEquals($submission->id, $event->objectid);
         $this->assertEquals(array(), $event->other['pathnamehashes']);
         $this->assertEquals(FORMAT_PLAIN, $event->other['format']);
         $this->assertEquals('Submission text', $event->other['content']);
         $expected = new stdClass();
         $expected->modulename = 'assign';
-        $expected->cmid = $this->cm->id;
-        $expected->itemid = $this->submission->id;
-        $expected->courseid = $this->course->id;
-        $expected->userid = $this->user->id;
+        $expected->cmid = $cm->id;
+        $expected->itemid = $submission->id;
+        $expected->courseid = $course->id;
+        $expected->userid = $student->id;
         $expected->content = 'Submission text';
         $this->assertEventLegacyData($expected, $event);
         $this->assertEventContextNotUsed($event);
@@ -109,20 +85,36 @@ class assignsubmission_onlinetext_events_testcase extends advanced_testcase {
     public function test_submission_created() {
         $this->resetAfterTest();
 
-        $plugin = $this->assign->get_submission_plugin_by_type('onlinetext');
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $assign = $this->create_instance($course);
+        $context = $assign->get_context();
+
+        $this->setUser($student->id);
+
+        $submission = $assign->get_user_submission($student->id, true);
+        $data = (object) [
+            'onlinetext_editor' => [
+                'itemid' => file_get_unused_draft_itemid(),
+                'text' => 'Submission text',
+                'format' => FORMAT_PLAIN,
+            ],
+        ];
+
         $sink = $this->redirectEvents();
-        $plugin->save($this->submission, $this->data);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
         $events = $sink->get_events();
 
         $this->assertCount(2, $events);
         $event = $events[1];
         $this->assertInstanceOf('\assignsubmission_onlinetext\event\submission_created', $event);
-        $this->assertEquals($this->context->id, $event->contextid);
-        $this->assertEquals($this->course->id, $event->courseid);
-        $this->assertEquals($this->submission->id, $event->other['submissionid']);
-        $this->assertEquals($this->submission->attemptnumber, $event->other['submissionattempt']);
-        $this->assertEquals($this->submission->status, $event->other['submissionstatus']);
-        $this->assertEquals($this->submission->userid, $event->relateduserid);
+        $this->assertEquals($context->id, $event->contextid);
+        $this->assertEquals($course->id, $event->courseid);
+        $this->assertEquals($submission->id, $event->other['submissionid']);
+        $this->assertEquals($submission->attemptnumber, $event->other['submissionattempt']);
+        $this->assertEquals($submission->status, $event->other['submissionstatus']);
+        $this->assertEquals($submission->userid, $event->relateduserid);
     }
 
     /**
@@ -132,22 +124,39 @@ class assignsubmission_onlinetext_events_testcase extends advanced_testcase {
     public function test_submission_updated() {
         $this->resetAfterTest();
 
-        $plugin = $this->assign->get_submission_plugin_by_type('onlinetext');
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $assign = $this->create_instance($course);
+        $context = $assign->get_context();
+
+        $this->setUser($student->id);
+
+        $submission = $assign->get_user_submission($student->id, true);
+        $data = (object) [
+            'onlinetext_editor' => [
+                'itemid' => file_get_unused_draft_itemid(),
+                'text' => 'Submission text',
+                'format' => FORMAT_PLAIN,
+            ],
+        ];
+
         $sink = $this->redirectEvents();
-        // Create a submission.
-        $plugin->save($this->submission, $this->data);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+        $sink->clear();
+
         // Update a submission.
-        $plugin->save($this->submission, $this->data);
+        $plugin->save($submission, $data);
         $events = $sink->get_events();
 
-        $this->assertCount(4, $events);
-        $event = $events[3];
+        $this->assertCount(2, $events);
+        $event = $events[1];
         $this->assertInstanceOf('\assignsubmission_onlinetext\event\submission_updated', $event);
-        $this->assertEquals($this->context->id, $event->contextid);
-        $this->assertEquals($this->course->id, $event->courseid);
-        $this->assertEquals($this->submission->id, $event->other['submissionid']);
-        $this->assertEquals($this->submission->attemptnumber, $event->other['submissionattempt']);
-        $this->assertEquals($this->submission->status, $event->other['submissionstatus']);
-        $this->assertEquals($this->submission->userid, $event->relateduserid);
+        $this->assertEquals($context->id, $event->contextid);
+        $this->assertEquals($course->id, $event->courseid);
+        $this->assertEquals($submission->id, $event->other['submissionid']);
+        $this->assertEquals($submission->attemptnumber, $event->other['submissionattempt']);
+        $this->assertEquals($submission->status, $event->other['submissionstatus']);
+        $this->assertEquals($submission->userid, $event->relateduserid);
     }
 }

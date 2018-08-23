@@ -19,5 +19,8 @@
         <label for="{{inputid}}">{{#str}}searchcourses{{/str}}</label>
         <input id="{{inputid}}" name="search" type="text" size="{{inputsize}}" value="{{value}}" class="form-control">
         <button class="btn btn-secondary" type="submit">{{#str}}go{{/str}}</button>
+        {{#helpicon}}
+            {{>core/help_icon}}
+        {{/helpicon}}
     </fieldset>
 </form>

@@ -764,6 +764,7 @@ $functions = array(
         'classpath' => 'group/externallib.php',
         'description' => 'Returns all groups in specified course.',
         'type' => 'read',
+        'ajax' => true,
         'capabilities' => 'moodle/course:managegroups'
     ),
     'core_group_get_course_user_groups' => array(
@@ -1353,6 +1354,7 @@ $functions = array(
         'description' => 'Set user preferences.',
         'type' => 'write',
         'capabilities' => 'moodle/site:config',
+        'ajax' => true
     ),
     'core_user_agree_site_policy' => array(
         'classname' => 'core_user_external',

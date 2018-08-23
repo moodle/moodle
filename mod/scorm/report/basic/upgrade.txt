@@ -1,0 +1,6 @@
+This files describes API changes in the mod scorm basic report
+
+=== 3.6 ===
+
+* The following renamed classes have been completely removed:
+  - scorm_basic_report (now: scormreport_basic\report)

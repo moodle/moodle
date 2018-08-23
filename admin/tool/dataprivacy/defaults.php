@@ -25,6 +25,8 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/dataprivacy/lib.php');
 
+require_login(null, false);
+
 $url = new \moodle_url('/admin/tool/dataprivacy/defaults.php');
 $title = get_string('setdefaults', 'tool_dataprivacy');
 

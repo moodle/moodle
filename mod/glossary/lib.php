@@ -1240,10 +1240,14 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             array('class' => 'glossary-hidden-note'));
     }
 
-    // Entry link.
-    $return .= '<a class="icon" title="' . get_string('entrylink', 'glossary', $altsuffix) . '" ' .
-               ' href="showentry.php?eid=' . $entry->id . '">' .
-               $OUTPUT->pix_icon('e/insert_edit_link', get_string('entrylink', 'glossary', $altsuffix)) . '</a>';
+    if ($entry->approved || has_capability('mod/glossary:approve', $context)) {
+        $output = true;
+        $return .= \html_writer::link(
+            new \moodle_url('/mod/glossary/showentry.php', ['eid' => $entry->id]),
+            $OUTPUT->pix_icon('fp/link', get_string('entrylink', 'glossary', $altsuffix), 'theme'),
+            ['title' => get_string('entrylink', 'glossary', $altsuffix), 'class' => 'icon']
+        );
+    }
 
     if (has_capability('mod/glossary:approve', $context) && !$glossary->defaultapproval && $entry->approved) {
         $output = true;
@@ -3816,10 +3820,10 @@ function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch
                                         $options = array()) {
     global $DB, $USER;
 
-    // Remove too little terms.
+    // Clean terms.
     $terms = explode(' ', $query);
     foreach ($terms as $key => $term) {
-        if (strlen(trim($term, '+-')) < 2) {
+        if (strlen(trim($term, '+-')) < 1) {
             unset($terms[$key]);
         }
     }

@@ -80,9 +80,16 @@ if (optional_param('add', false, PARAM_BOOL) and confirm_sesskey()) {
         }
 
         if (isset($admins[$newmain])) {
+            $logstringold = implode(', ', $admins);
+
             unset($admins[$newmain]);
             array_unshift($admins, $newmain);
+
+            $logstringnew = implode(', ', $admins);
+
             set_config('siteadmins', implode(',', $admins));
+            add_to_config_log('siteadmins', $logstringold, $logstringnew, null);
+
             redirect($PAGE->url);
         }
     }
@@ -95,8 +102,16 @@ if (optional_param('add', false, PARAM_BOOL) and confirm_sesskey()) {
             $admins[$admin] = $admin;
         }
     }
+
+    $logstringold = implode(', ', $admins);
+
     $admins[$confirmadd] = $confirmadd;
+
+    $logstringnew = implode(', ', $admins);
+
     set_config('siteadmins', implode(',', $admins));
+    add_to_config_log('siteadmins', $logstringold, $logstringnew, 'core');
+
     redirect($PAGE->url);
 
 } else if ($confirmdel and confirm_sesskey() and $confirmdel != $USER->id) {
@@ -107,8 +122,16 @@ if (optional_param('add', false, PARAM_BOOL) and confirm_sesskey()) {
             $admins[$admin] = $admin;
         }
     }
+
+    $logstringold = implode(', ', $admins);
+
     unset($admins[$confirmdel]);
+
+    $logstringnew = implode(', ', $admins);
+
     set_config('siteadmins', implode(',', $admins));
+    add_to_config_log('siteadmins', $logstringold, $logstringnew, 'core');
+
     redirect($PAGE->url);
 }
 

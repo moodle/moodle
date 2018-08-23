@@ -116,7 +116,7 @@ class repository_dropbox_api_testcase extends advanced_testcase {
             ],
             '409 http_code' => [
                 ['http_code' => 409],
-                'Some data here',
+                json_decode('{"error": "Some value", "error_summary": "Some data here"}'),
                 'coding_exception',
                 'Endpoint specific error: Some data here',
             ],

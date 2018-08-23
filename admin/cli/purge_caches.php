@@ -28,7 +28,16 @@ define('CLI_SCRIPT', true);
 require(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/clilib.php');
 
-list($options, $unrecognized) = cli_get_params(array('help' => false), array('h' => 'help'));
+$longoptions = [
+    'help' => false,
+    'muc' => false,
+    'theme' => false,
+    'lang' => false,
+    'js' => false,
+    'filter' => false,
+    'other' => false
+];
+list($options, $unrecognized) = cli_get_params($longoptions, ['h' => 'help']);
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
@@ -36,20 +45,32 @@ if ($unrecognized) {
 }
 
 if ($options['help']) {
-    $help =
-"Invalidates all Moodle internal caches
+    // The indentation of this string is "wrong" but this is to avoid a extra whitespace in console output.
+    $help = <<<EOF
+Invalidates Moodle internal caches
+
+Specific caches can be defined (alone or in combination) using arguments. If none are specified,
+all caches will be purged.
 
 Options:
 -h, --help            Print out this help
+    --muc             Purge all MUC caches (includes lang cache)
+    --theme           Purge theme cache
+    --lang            Purge language string cache
+    --js              Purge JavaScript cache
+    --filter          Purge text filter cache
+    --other           Purge all file caches and other miscellaneous caches (may include MUC
+                      if using cachestore_file).
 
 Example:
-\$sudo -u www-data /usr/bin/php admin/cli/purge_caches.php
-";
+\$ sudo -u www-data /usr/bin/php admin/cli/purge_caches.php
+
+EOF;
 
     echo $help;
     exit(0);
 }
 
-purge_all_caches();
+purge_caches(array_filter($options));
 
 exit(0);

@@ -96,11 +96,24 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
             return array();
         }
 
+        if (is_numeric($users)) {
+            $users = array($users);
+        }
+        if (is_numeric($groups)) {
+            $groups = array($groups);
+        }
+        if (is_numeric($courses)) {
+            $courses = array($courses);
+        }
+        if (is_numeric($categories)) {
+            $categories = array($categories);
+        }
+
         // Array of filter conditions. To be concatenated by the OR operator.
         $filters = [];
 
         // User filter.
-        if ((is_array($users) && !empty($users)) or is_numeric($users)) {
+        if (is_array($users) && !empty($users)) {
             // Events from a number of users.
             list($insqlusers, $inparamsusers) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED);
             $filters[] = "(e.userid $insqlusers AND e.courseid = 0 AND e.groupid = 0 AND e.categoryid = 0)";
@@ -112,7 +125,7 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
         // Boolean false (no users at all): We don't need to do anything.
 
         // Group filter.
-        if ((is_array($groups) && !empty($groups)) or is_numeric($groups)) {
+        if (is_array($groups) && !empty($groups)) {
             // Events from a number of groups.
             list($insqlgroups, $inparamsgroups) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
             $filters[] = "e.groupid $insqlgroups";
@@ -124,7 +137,7 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
         // Boolean false (no groups at all): We don't need to do anything.
 
         // Course filter.
-        if ((is_array($courses) && !empty($courses)) or is_numeric($courses)) {
+        if (is_array($courses) && !empty($courses)) {
             list($insqlcourses, $inparamscourses) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
             $filters[] = "(e.groupid = 0 AND e.courseid $insqlcourses)";
             $params = array_merge($params, $inparamscourses);
@@ -134,7 +147,7 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
         }
 
         // Category filter.
-        if ((is_array($categories) && !empty($categories)) or is_numeric($categories)) {
+        if (is_array($categories) && !empty($categories)) {
             list($insqlcategories, $inparamscategories) = $DB->get_in_or_equal($categories, SQL_PARAMS_NAMED);
             $filters[] = "(e.groupid = 0 AND e.courseid = 0 AND e.categoryid $insqlcategories)";
             $params = array_merge($params, $inparamscategories);
@@ -168,54 +181,81 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
         // Build SQL subquery and conditions for filtered events based on priorities.
         $subquerywhere = '';
         $subqueryconditions = [];
-
-        // Get the user's courses. Otherwise, get the default courses being shown by the calendar.
-        $usercourses = calendar_get_default_courses();
-
-        // Set calendar filters.
-        list($usercourses, $usergroups, $user) = calendar_set_filters($usercourses, true);
         $subqueryparams = [];
+        $allusercourses = [];
 
-        // Flag to indicate whether the query needs to exclude group overrides.
-        $viewgroupsonly = false;
+        if (is_array($users) && !empty($users)) {
+            $userrecords = $DB->get_records_sql("SELECT * FROM {user} WHERE id $insqlusers", $inparamsusers);
+            foreach ($userrecords as $userrecord) {
+                // Get the user's courses. Otherwise, get the default courses being shown by the calendar.
+                $usercourses = calendar_get_default_courses(null, 'id, category, groupmode, groupmodeforce',
+                        false, $userrecord->id);
 
-        if ($user) {
-            // Set filter condition for the user's events.
-            $subqueryconditions[] = "(ev.userid = :user AND ev.courseid = 0 AND ev.groupid = 0 AND ev.categoryid = 0)";
-            $subqueryparams['user'] = $user;
+                // Set calendar filters.
+                list($usercourses, $usergroups, $user) = calendar_set_filters($usercourses, true, $userrecord);
 
-            foreach ($usercourses as $courseid) {
-                if (has_capability('moodle/site:accessallgroups', \context_course::instance($courseid))) {
-                    $usergroupmembership = groups_get_all_groups($courseid, $user, 0, 'g.id');
-                    if (count($usergroupmembership) == 0) {
-                        $viewgroupsonly = true;
-                        break;
+                $allusercourses = array_merge($allusercourses, $usercourses);
+
+                // Flag to indicate whether the query needs to exclude group overrides.
+                $viewgroupsonly = false;
+
+                if ($user) {
+                    // Set filter condition for the user's events.
+                    // Even though $user is a single scalar, we still use get_in_or_equal() because we are inside a loop.
+                    list($inusers, $inuserparams) = $DB->get_in_or_equal($user, SQL_PARAMS_NAMED);
+                    $subqueryconditions[] = "(ev.userid $inusers AND ev.courseid = 0 AND ev.groupid = 0 AND ev.categoryid = 0)";
+                    $subqueryparams = array_merge($subqueryparams, $inuserparams);
+
+                    foreach ($usercourses as $courseid) {
+                        if (has_capability('moodle/site:accessallgroups', \context_course::instance($courseid), $userrecord)) {
+                            $usergroupmembership = groups_get_all_groups($courseid, $user, 0, 'g.id');
+                            if (count($usergroupmembership) == 0) {
+                                $viewgroupsonly = true;
+                                break;
+                            }
+                        }
                     }
                 }
-            }
-        }
 
-        // Set filter condition for the user's group events.
-        if ($usergroups === true || $viewgroupsonly) {
-            // Fetch group events, but not group overrides.
-            $subqueryconditions[] = "(ev.groupid != 0 AND ev.eventtype = 'group')";
-        } else if (!empty($usergroups)) {
-            // Fetch group events and group overrides.
-            list($inusergroups, $inusergroupparams) = $DB->get_in_or_equal($usergroups, SQL_PARAMS_NAMED);
-            $subqueryconditions[] = "(ev.groupid $inusergroups)";
-            $subqueryparams = array_merge($subqueryparams, $inusergroupparams);
+                // Set filter condition for the user's group events.
+                if ($usergroups === true || $viewgroupsonly) {
+                    // Fetch group events, but not group overrides.
+                    $subqueryconditions[] = "(ev.groupid != 0 AND ev.eventtype = 'group')";
+                } else if (!empty($usergroups)) {
+                    // Fetch group events and group overrides.
+                    list($inusergroups, $inusergroupparams) = $DB->get_in_or_equal($usergroups, SQL_PARAMS_NAMED);
+                    $subqueryconditions[] = "(ev.groupid $inusergroups)";
+                    $subqueryparams = array_merge($subqueryparams, $inusergroupparams);
+                }
+            }
+        } else if ($users === true) {
+            // Events from ALL users.
+            $subqueryconditions[] = "(ev.userid != 0 AND ev.courseid = 0 AND ev.groupid = 0 AND ev.categoryid = 0)";
+
+            if (is_array($groups)) {
+                // Events from a number of groups.
+                list($insqlgroups, $inparamsgroups) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
+                $subqueryconditions[] = "ev.groupid $insqlgroups";
+                $subqueryparams = array_merge($subqueryparams, $inparamsgroups);
+            } else if ($groups === true) {
+                // Events from ALL groups.
+                $subqueryconditions[] = "ev.groupid != 0";
+            }
+
+            if ($courses === true) {
+                // ALL course events. It's not needed to worry about users' access as $users = true.
+                $subqueryconditions[] = "(ev.groupid = 0 AND ev.courseid != 0 AND ev.categoryid = 0)";
+            }
         }
 
         // Get courses to be used for the subquery.
         $subquerycourses = [];
         if (is_array($courses)) {
             $subquerycourses = $courses;
-        } else if (is_numeric($courses)) {
-            $subquerycourses[] = $courses;
         }
         // Merge with user courses, if necessary.
-        if (!empty($usercourses)) {
-            $subquerycourses = array_merge($subquerycourses, $usercourses);
+        if (!empty($allusercourses)) {
+            $subquerycourses = array_merge($subquerycourses, $allusercourses);
             // Make sure we remove duplicate values.
             $subquerycourses = array_unique($subquerycourses);
         }

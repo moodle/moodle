@@ -1183,6 +1183,44 @@ function lesson_get_user_detailed_report_data(lesson $lesson, $userid, $attempt)
     return array($answerpages, $userstats);
 }
 
+/**
+ * Return user's deadline for all lessons in a course, hereby taking into account group and user overrides.
+ *
+ * @param int $courseid the course id.
+ * @return object An object with of all lessonsids and close unixdates in this course,
+ * taking into account the most lenient overrides, if existing and 0 if no close date is set.
+ */
+function lesson_get_user_deadline($courseid) {
+    global $DB, $USER;
+
+    // For teacher and manager/admins return lesson's deadline.
+    if (has_capability('moodle/course:update', context_course::instance($courseid))) {
+        $sql = "SELECT lesson.id, lesson.deadline AS userdeadline
+                  FROM {lesson} lesson
+                 WHERE lesson.course = :courseid";
+
+        $results = $DB->get_records_sql($sql, array('courseid' => $courseid));
+        return $results;
+    }
+
+    $sql = "SELECT a.id,
+                   COALESCE(v.userclose, v.groupclose, a.deadline, 0) AS userdeadline
+              FROM (
+                      SELECT lesson.id as lessonid,
+                             MAX(leo.deadline) AS userclose, MAX(qgo.deadline) AS groupclose
+                        FROM {lesson} lesson
+                   LEFT JOIN {lesson_overrides} leo on lesson.id = leo.lessonid AND leo.userid = :userid
+                   LEFT JOIN {groups_members} gm ON gm.userid = :useringroupid
+                   LEFT JOIN {lesson_overrides} qgo on lesson.id = qgo.lessonid AND qgo.groupid = gm.groupid
+                       WHERE lesson.course = :courseid
+                    GROUP BY lesson.id
+                   ) v
+              JOIN {lesson} a ON a.id = v.lessonid";
+
+    $results = $DB->get_records_sql($sql, array('userid' => $USER->id, 'useringroupid' => $USER->id, 'courseid' => $courseid));
+    return $results;
+
+}
 
 /**
  * Abstract class that page type's MUST inherit from.
@@ -4360,7 +4398,7 @@ abstract class lesson_page extends lesson_base {
             if (count($answers) > 1) {
                 $answer = array_shift($answers);
                 foreach ($answers as $a) {
-                    $DB->delete_record('lesson_answers', array('id' => $a->id));
+                    $DB->delete_records('lesson_answers', array('id' => $a->id));
                 }
             } else if (count($answers) == 1) {
                 $answer = array_shift($answers);

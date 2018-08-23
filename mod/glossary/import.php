@@ -141,8 +141,15 @@ if ($xml = glossary_read_imported_file($result)) {
             $glossary->assessed = 0;
             $glossary->availability = null;
 
-            // New glossary is to be inserted in section 0, it is always visible.
-            $glossary->section = 0;
+            // Check if we're creating the new glossary on the front page or inside a course.
+            if ($cm->course == SITEID) {
+                // On the front page, activities are in section 1.
+                $glossary->section = 1;
+            } else {
+                // Inside a course, add to the general section (0).
+                $glossary->section = 0;
+            }
+            // New glossary is always visible.
             $glossary->visible = 1;
             $glossary->visibleoncoursepage = 1;
 

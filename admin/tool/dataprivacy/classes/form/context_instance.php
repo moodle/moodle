@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use tool_dataprivacy\api;
 use tool_dataprivacy\data_registry;
+use tool_dataprivacy\purpose;
 
 /**
  * Context instance data form.
@@ -186,12 +187,12 @@ class context_instance extends \core\form\persistent {
     /**
      * Returns the purpose display text.
      *
-     * @param \tool_dataprivacy\purpose $effectivepurpose
+     * @param purpose $effectivepurpose
      * @param int $retentioncontextlevel
      * @param \context $context The context, just for displaying (filters) purposes.
      * @return string
      */
-    protected static function get_retention_display_text(\tool_dataprivacy\purpose $effectivepurpose, $retentioncontextlevel, \context $context) {
+    protected static function get_retention_display_text(purpose $effectivepurpose, $retentioncontextlevel, \context $context) {
         global $PAGE;
 
         $renderer = $PAGE->get_renderer('tool_dataprivacy');

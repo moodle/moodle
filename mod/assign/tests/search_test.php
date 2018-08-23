@@ -40,27 +40,20 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
 class mod_assign_search_testcase extends advanced_testcase {
 
     /**
-     * @var string Area id
-     */
-    protected $assignareaid = null;
-
-    public function setUp() {
-        $this->resetAfterTest(true);
-        set_config('enableglobalsearch', true);
-
-        $this->assignareaid = \core_search\manager::generate_areaid('mod_assign', 'activity');
-
-        // Set \core_search::instance to the mock_search_engine as we don't require the search engine to be working to test this.
-        $search = testable_core_search::instance();
-    }
-
-    /**
      * Test for assign file attachments.
      *
      * @return void
      */
     public function test_attach_files() {
         global $USER;
+
+        $this->resetAfterTest(true);
+        set_config('enableglobalsearch', true);
+
+        $assignareaid = \core_search\manager::generate_areaid('mod_assign', 'activity');
+
+        // Set \core_search::instance to the mock_search_engine as we don't require the search engine to be working to test this.
+        $search = testable_core_search::instance();
 
         $this->setAdminUser();
         // Setup test data.
@@ -96,7 +89,7 @@ class mod_assign_search_testcase extends advanced_testcase {
         $fs->create_file_from_string($filerecord, 'Test assign file 5');
 
         // Returns the instance as long as the area is supported.
-        $searcharea = \core_search\manager::get_search_area($this->assignareaid);
+        $searcharea = \core_search\manager::get_search_area($assignareaid);
         $this->assertInstanceOf('\mod_assign\search\activity', $searcharea);
 
         $recordset = $searcharea->get_recordset_by_timestamp(0);

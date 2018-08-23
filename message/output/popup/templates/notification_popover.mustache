@@ -45,7 +45,7 @@
     {{$togglelabel}}{{#str}} shownotificationwindownonew, message {{/str}}{{/togglelabel}}
     {{$togglecontent}}
         {{#pix}} i/notifications, core, {{#str}} togglenotificationmenu, message {{/str}} {{/pix}}
-        <div class="count-container hidden" data-region="count-container"></div>
+        <div class="count-container {{^unreadcount}}hidden{{/unreadcount}}" data-region="count-container">{{unreadcount}}</div>
     {{/togglecontent}}
 
     {{$containerlabel}}{{#str}} notificationwindow, message {{/str}}{{/containerlabel}}

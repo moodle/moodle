@@ -288,19 +288,35 @@ class category_bin extends base_bin {
         global $DB;
 
         // Grab the course category context.
-        $context = \context_coursecat::instance($this->_categoryid);
-
-        // Delete the files.
-        $fs = get_file_storage();
-        $files = $fs->get_area_files($context->id, 'tool_recyclebin', TOOL_RECYCLEBIN_COURSECAT_BIN_FILEAREA, $item->id);
-        foreach ($files as $file) {
-            $file->delete();
+        $context = \context_coursecat::instance($this->_categoryid, IGNORE_MISSING);
+        if (!empty($context)) {
+            // Delete the files.
+            $fs = get_file_storage();
+            $fs->delete_area_files($context->id, 'tool_recyclebin', TOOL_RECYCLEBIN_COURSECAT_BIN_FILEAREA, $item->id);
+        } else {
+            // Course category has been deleted. Find records using $item->id as this is unique for coursecat recylebin.
+            $files = $DB->get_recordset('files', [
+                'component' => 'tool_recyclebin',
+                'filearea' => TOOL_RECYCLEBIN_COURSECAT_BIN_FILEAREA,
+                'itemid' => $item->id,
+            ]);
+            $fs = get_file_storage();
+            foreach ($files as $filer) {
+                $file = $fs->get_file_instance($filer);
+                $file->delete();
+            }
+            $files->close();
         }
 
         // Delete the record.
         $DB->delete_records('tool_recyclebin_category', array(
             'id' => $item->id
         ));
+
+        // The coursecat might have been deleted, check we have a context before triggering event.
+        if (!$context) {
+            return;
+        }
 
         // Fire event.
         $event = \tool_recyclebin\event\category_bin_item_deleted::create(array(

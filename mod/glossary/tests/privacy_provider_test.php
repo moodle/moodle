@@ -84,7 +84,7 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->teacher = $teacher;
 
         $this->setUser($student->id);
-        $ge1 = $this->plugingenerator->create_content($glossary, ['concept' => 'first', 'approved' => 1]);
+        $ge1 = $this->plugingenerator->create_content($glossary, ['concept' => 'first', 'approved' => 1], ['one']);
 
         // Student create a comment on a glossary entry.
         $this->setUser($student);
@@ -164,10 +164,13 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
         $generator->enrol_user($student2->id, $this->course->id, 'student');
 
         $this->setUser($student2);
-        $ge3 = $this->plugingenerator->create_content($this->glossary, ['concept' => 'first', 'approved' => 1]);
+        $ge3 = $this->plugingenerator->create_content($this->glossary, ['concept' => 'first', 'approved' => 1], ['three']);
         $comment = $this->get_comment_object($context, $ge3->id);
         $comment->add('User 2 comment');
 
+        $this->plugingenerator->create_category($this->glossary, ['cat1'], [$ge3]);
+        $count = $DB->count_records('glossary_entries_categories', ['entryid' => $ge3->id]);
+        $this->assertEquals(1, $count);
         core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge3->id, $context, ['Pizza', 'Noodles']);
 
         // As a teacher, rate student 2 entry.
@@ -178,14 +181,17 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
         // Before deletion, we should have 2 entries.
         $count = $DB->count_records('glossary_entries', ['glossaryid' => $this->glossary->id]);
         $this->assertEquals(2, $count);
-
+        $aliascount = $DB->count_records('glossary_alias');
+        $this->assertEquals(2, $aliascount);
         // Delete data based on context.
         provider::delete_data_for_all_users_in_context($context);
 
-        // After deletion, the glossary entries for that glossary activity should have been deleted.
+        // After deletion, the glossary entries and aliases for that glossary activity should have been deleted.
         $count = $DB->count_records('glossary_entries', ['glossaryid' => $this->glossary->id]);
         $this->assertEquals(0, $count);
-
+        $this->assertEquals(0, $DB->count_records('glossary_alias'));
+        $count = $DB->count_records('glossary_entries_categories', ['entryid' => $ge3->id]);
+        $this->assertEquals(0, $count);
         $tagcount = $DB->count_records('tag_instance', ['component' => 'mod_glossary', 'itemtype' => 'glossary_entries',
             'itemid' => $ge3->id]);
         $this->assertEquals(0, $tagcount);
@@ -222,7 +228,7 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $this->setUser($student2);
         $ge3 = $this->plugingenerator->create_content($this->glossary, ['concept' => 'second user glossary entry',
-                'approved' => 1]);
+                'approved' => 1], ['three']);
 
         $comment = $this->get_comment_object($context1, $ge3->id);
         $comment->add('User 2 comment');
@@ -235,7 +241,8 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
         $tagcount = $DB->count_records('tag_instance', ['component' => 'mod_glossary', 'itemtype' => 'glossary_entries',
             'itemid' => $ge3->id]);
         $this->assertEquals(2, $tagcount);
-
+        $aliascount = $DB->count_records('glossary_alias', ['entryid' => $ge3->id]);
+        $this->assertEquals(1, $aliascount);
         // Create another student who will add an entry to the first glossary.
         $contextlist = new \core_privacy\local\request\approved_contextlist($student2, 'glossary',
             [$context1->id, $context2->id]);
@@ -252,6 +259,8 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
         $commentcount = $DB->count_records('comments', ['component' => 'mod_glossary', 'commentarea' => 'glossary_entry',
                 'itemid' => $ge3->id, 'userid' => $student2->id]);
         $this->assertEquals(0, $commentcount);
+        $aliascount = $DB->count_records('glossary_alias', ['entryid' => $ge3->id]);
+        $this->assertEquals(0, $aliascount);
 
         // Student's 1 entries, comments and tags should not be removed.
         $count = $DB->count_records('glossary_entries', ['glossaryid' => $this->glossary->id,

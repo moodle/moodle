@@ -81,7 +81,7 @@ switch($action) {
     case 'colladd':
         require_sesskey();
         $name = required_param('name', PARAM_NOTAGS);
-        $searchable = required_param('searchable', PARAM_BOOL);
+        $searchable = optional_param('searchable', false, PARAM_BOOL);
         core_tag_collection::create(array('name' => $name, 'searchable' => $searchable));
         redirect($manageurl);
         break;

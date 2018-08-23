@@ -84,7 +84,7 @@ abstract class column_base {
             $links = array();
             foreach ($sortable as $subsort => $details) {
                 $links[] = $this->make_sort_link($name . '-' . $subsort,
-                        $details['title'], '', !empty($details['reverse']));
+                        $details['title'], isset($details['tip']) ? $details['tip'] : '', !empty($details['reverse']));
             }
             echo '<div class="sorters">' . implode(' / ', $links) . '</div>';
         } else if ($sortable) {

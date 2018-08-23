@@ -286,8 +286,10 @@ form.popupform div {
     overflow: auto;
 }
 
+// Minimum height required for a menu in a table inside a scrollable div.
 .no-overflow > .generaltable {
     margin-bottom: 0;
+    min-height: 10em;
 }
 // Accessibility features
 
@@ -1349,7 +1351,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 /* Fixed for safari browser on iPhone4S with ios7@mixin */
 
 @media (max-height: 639px) {
-    .ios.safari .choosercontainer #chooseform .submitbuttons {
+    .ios .choosercontainer #chooseform .submitbuttons {
         padding: 45px 0;
     }
 }
@@ -2108,3 +2110,10 @@ $footer-link-color: $bg-inverse-link-color !default;
 .open.atto_menu > .dropdown-menu {
     display: block;
 }
+div.editor_atto_toolbar button .icon {
+    color: $gray-700;
+}
+.w-auto {
+    width: auto;
+}
+

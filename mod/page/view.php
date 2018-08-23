@@ -88,7 +88,9 @@ $formatoptions->context = $context;
 $content = format_text($content, $page->contentformat, $formatoptions);
 echo $OUTPUT->box($content, "generalbox center clearfix");
 
-$strlastmodified = get_string("lastmodified");
-echo "<div class=\"modified\">$strlastmodified: ".userdate($page->timemodified)."</div>";
+if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'])) {
+    $strlastmodified = get_string("lastmodified");
+    echo html_writer::div("$strlastmodified: " . userdate($page->timemodified), 'modified');
+}
 
 echo $OUTPUT->footer();

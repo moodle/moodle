@@ -76,4 +76,144 @@ class mod_lesson_locallib_testcase extends advanced_testcase {
             }
         }
     }
+
+    /**
+     * Test test_lesson_get_user_deadline().
+     */
+    public function test_lesson_get_user_deadline() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $basetimestamp = time(); // The timestamp we will base the enddates on.
+
+        // Create generator, course and lessons.
+        $student1 = $this->getDataGenerator()->create_user();
+        $student2 = $this->getDataGenerator()->create_user();
+        $student3 = $this->getDataGenerator()->create_user();
+        $teacher = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $lessongenerator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+
+        // Both lessons close in two hours.
+        $lesson1 = $lessongenerator->create_instance(array('course' => $course->id, 'deadline' => $basetimestamp + 7200));
+        $lesson2 = $lessongenerator->create_instance(array('course' => $course->id, 'deadline' => $basetimestamp + 7200));
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+
+        $student1id = $student1->id;
+        $student2id = $student2->id;
+        $student3id = $student3->id;
+        $teacherid = $teacher->id;
+
+        // Users enrolments.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($student1id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($student2id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($student3id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($teacherid, $course->id, $teacherrole->id, 'manual');
+
+        // Create groups.
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group1id = $group1->id;
+        $group2id = $group2->id;
+        $this->getDataGenerator()->create_group_member(array('userid' => $student1id, 'groupid' => $group1id));
+        $this->getDataGenerator()->create_group_member(array('userid' => $student2id, 'groupid' => $group2id));
+
+        // Group 1 gets an group override for lesson 1 to close in three hours.
+        $record1 = (object) [
+            'lessonid' => $lesson1->id,
+            'groupid' => $group1id,
+            'deadline' => $basetimestamp + 10800 // In three hours.
+        ];
+        $DB->insert_record('lesson_overrides', $record1);
+
+        // Let's test lesson 1 closes in three hours for user student 1 since member of group 1.
+        // lesson 2 closes in two hours.
+        $this->setUser($student1id);
+        $params = new stdClass();
+
+        $comparearray = array();
+        $object = new stdClass();
+        $object->id = $lesson1->id;
+        $object->userdeadline = $basetimestamp + 10800; // The overriden deadline for lesson 1.
+
+        $comparearray[$lesson1->id] = $object;
+
+        $object = new stdClass();
+        $object->id = $lesson2->id;
+        $object->userdeadline = $basetimestamp + 7200; // The unchanged deadline for lesson 2.
+
+        $comparearray[$lesson2->id] = $object;
+
+        $this->assertEquals($comparearray, lesson_get_user_deadline($course->id));
+
+        // Let's test lesson 1 closes in two hours (the original value) for user student 3 since member of no group.
+        $this->setUser($student3id);
+        $params = new stdClass();
+
+        $comparearray = array();
+        $object = new stdClass();
+        $object->id = $lesson1->id;
+        $object->userdeadline = $basetimestamp + 7200; // The original deadline for lesson 1.
+
+        $comparearray[$lesson1->id] = $object;
+
+        $object = new stdClass();
+        $object->id = $lesson2->id;
+        $object->userdeadline = $basetimestamp + 7200; // The original deadline for lesson 2.
+
+        $comparearray[$lesson2->id] = $object;
+
+        $this->assertEquals($comparearray, lesson_get_user_deadline($course->id));
+
+        // User 2 gets an user override for lesson 1 to close in four hours.
+        $record2 = (object) [
+            'lessonid' => $lesson1->id,
+            'userid' => $student2id,
+            'deadline' => $basetimestamp + 14400 // In four hours.
+        ];
+        $DB->insert_record('lesson_overrides', $record2);
+
+        // Let's test lesson 1 closes in four hours for user student 2 since personally overriden.
+        // lesson 2 closes in two hours.
+        $this->setUser($student2id);
+
+        $comparearray = array();
+        $object = new stdClass();
+        $object->id = $lesson1->id;
+        $object->userdeadline = $basetimestamp + 14400; // The overriden deadline for lesson 1.
+
+        $comparearray[$lesson1->id] = $object;
+
+        $object = new stdClass();
+        $object->id = $lesson2->id;
+        $object->userdeadline = $basetimestamp + 7200; // The unchanged deadline for lesson 2.
+
+        $comparearray[$lesson2->id] = $object;
+
+        $this->assertEquals($comparearray, lesson_get_user_deadline($course->id));
+
+        // Let's test a teacher sees the original times.
+        // lesson 1 and lesson 2 close in two hours.
+        $this->setUser($teacherid);
+
+        $comparearray = array();
+        $object = new stdClass();
+        $object->id = $lesson1->id;
+        $object->userdeadline = $basetimestamp + 7200; // The unchanged deadline for lesson 1.
+
+        $comparearray[$lesson1->id] = $object;
+
+        $object = new stdClass();
+        $object->id = $lesson2->id;
+        $object->userdeadline = $basetimestamp + 7200; // The unchanged deadline for lesson 2.
+
+        $comparearray[$lesson2->id] = $object;
+
+        $this->assertEquals($comparearray, lesson_get_user_deadline($course->id));
+    }
 }

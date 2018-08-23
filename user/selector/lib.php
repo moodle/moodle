@@ -105,14 +105,17 @@ abstract class user_selector_base {
             $this->accesscontext = context_system::instance();
         }
 
+        // Check if some legacy code tries to override $CFG->showuseridentity.
         if (isset($options['extrafields'])) {
-            $this->extrafields = $options['extrafields'];
-        } else if (!empty($CFG->showuseridentity) &&
-                has_capability('moodle/site:viewuseridentity', $this->accesscontext)) {
-            $this->extrafields = explode(',', $CFG->showuseridentity);
-        } else {
-            $this->extrafields = array();
+            debugging('The user_selector classes do not support custom list of extra identity fields any more. '.
+                'Instead, the user identity fields defined by the site administrator will be used to respect '.
+                'the configured privacy setting.', DEBUG_DEVELOPER);
+            unset($options['extrafields']);
         }
+
+        // Populate the list of additional user identifiers to display.
+        $this->extrafields = get_extra_user_fields($this->accesscontext);
+
         if (isset($options['exclude']) && is_array($options['exclude'])) {
             $this->exclude = $options['exclude'];
         }

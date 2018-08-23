@@ -302,15 +302,36 @@ class filter_manager {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class null_filter_manager {
+    /**
+     * As for the equivalent {@link filter_manager} method.
+     *
+     * @param string $text The text to filter
+     * @param context $context not used.
+     * @param array $options not used
+     * @param array $skipfilters not used
+     * @return string resulting text.
+     */
     public function filter_text($text, $context, array $options = array(),
             array $skipfilters = null) {
         return $text;
     }
 
+    /**
+     * As for the equivalent {@link filter_manager} method.
+     *
+     * @param string $string The text to filter
+     * @param context $context not used.
+     * @return string resulting string
+     */
     public function filter_string($string, $context) {
         return $string;
     }
 
+    /**
+     * As for the equivalent {@link filter_manager} method.
+     *
+     * @deprecated Since Moodle 3.0 MDL-50491.
+     */
     public function text_filtering_hash() {
         throw new coding_exception('filter_manager::text_filtering_hash() can not be used any more');
     }
@@ -429,9 +450,9 @@ abstract class moodle_text_filter {
     /**
      * Override this function to actually implement the filtering.
      *
-     * @param $text some HTML content.
+     * @param string $text some HTML content to process.
      * @param array $options options passed to the filters
-     * @return the HTML content after the filtering has been applied.
+     * @return string the HTML content after the filtering has been applied.
      */
     public abstract function filter($text, array $options = array());
 }
@@ -520,8 +541,6 @@ function filter_get_name($filter) {
  * sorted in alphabetical order of name.
  */
 function filter_get_all_installed() {
-    global $CFG;
-
     $filternames = array();
     foreach (core_component::get_plugin_list('filter') as $filter => $fulldir) {
         if (is_readable("$fulldir/filter.php")) {
@@ -692,16 +711,21 @@ function filter_is_enabled($filtername) {
  * @return array where the keys and values are both the filter name, like 'tex'.
  */
 function filter_get_globally_enabled() {
-    static $enabledfilters = null;
-    if (is_null($enabledfilters)) {
-        $filters = filter_get_global_states();
-        $enabledfilters = array();
-        foreach ($filters as $filter => $filerinfo) {
-            if ($filerinfo->active != TEXTFILTER_DISABLED) {
-                $enabledfilters[$filter] = $filter;
-            }
+    $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'core_filter', 'global_filters');
+    $enabledfilters = $cache->get('enabled');
+    if ($enabledfilters !== false) {
+        return $enabledfilters;
+    }
+
+    $filters = filter_get_global_states();
+    $enabledfilters = array();
+    foreach ($filters as $filter => $filerinfo) {
+        if ($filerinfo->active != TEXTFILTER_DISABLED) {
+            $enabledfilters[$filter] = $filter;
         }
     }
+
+    $cache->set('enabled', $enabledfilters);
     return $enabledfilters;
 }
 
@@ -1240,7 +1264,7 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
         // A list of open/close tags that we should not replace within
         // Extended to include <script>, <textarea>, <select> and <a> tags
         // Regular expression allows tags with or without attributes
-        $filterignoretagsopen  = array('<head>' , '<nolink>' , '<span class="nolink">',
+        $filterignoretagsopen  = array('<head>' , '<nolink>' , '<span(\s[^>]*?)?class="nolink"(\s[^>]*?)?>',
                 '<script(\s[^>]*?)?>', '<textarea(\s[^>]*?)?>',
                 '<select(\s[^>]*?)?>', '<a(\s[^>]*?)?>');
         $filterignoretagsclose = array('</head>', '</nolink>', '</span>',
@@ -1428,9 +1452,10 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
 }
 
 /**
- * @todo Document this function
- * @param array $linkarray
- * @return array
+ * Remove duplicate from a list of {@link filterobject}.
+ *
+ * @param filterobject[] $linkarray a list of filterobject.
+ * @return filterobject[] the same list, but with dupicates removed.
  */
 function filter_remove_duplicates($linkarray) {
 

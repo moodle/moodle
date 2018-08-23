@@ -396,6 +396,10 @@
     padding-bottom: 13rem;
 }
 
+.jumpmenu .form-inline {
+    display: block;
+}
+
 .path-course-view .completionprogress {
     margin-left: 25px;
 }
@@ -704,10 +708,6 @@ span.editinstructions {
 
     &.even {
         background-color: $table-bg-accent;
-    }
-
-    &:hover {
-        background-color: $table-bg-hover;
     }
 }
 

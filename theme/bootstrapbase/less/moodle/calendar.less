@@ -253,6 +253,11 @@
                 .side {
                     width: 22px;
                 }
+                .location {
+                    clear: both;
+                    word-break: break-all;
+                    overflow-wrap: break-word;
+                }
                 .description {
                     background-color: @white;
                     clear: both;
@@ -415,5 +420,9 @@
         > p {
             margin: 0;
         }
+    }
+
+    .location-content {
+        overflow-wrap: break-word;
     }
 }

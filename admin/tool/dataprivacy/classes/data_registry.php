@@ -147,8 +147,8 @@ class data_registry {
 
         if ($contextcourse = $context->get_course_context(false)) {
             // Below course level we look at module or block level roles + course-assigned roles.
-            $courseroles = get_roles_with_assignment_on_context($contextcourse);
-            $roles = $courseroles + get_roles_with_assignment_on_context($context);
+            $courseroles = get_roles_used_in_context($contextcourse, false);
+            $roles = $courseroles + get_roles_used_in_context($context, false);
         } else {
             // We list category + system for others (we don't work with user instances so no need to work about them).
             $roles = get_roles_used_in_context($context);
@@ -289,7 +289,8 @@ class data_registry {
      * @param int $forcedcategoryvalue Use this value as if this was this context level category.
      * @return int[]
      */
-    public static function get_effective_default_contextlevel_purpose_and_category($contextlevel, $forcedpurposevalue = false, $forcedcategoryvalue = false) {
+    public static function get_effective_default_contextlevel_purpose_and_category($contextlevel, $forcedpurposevalue = false,
+                                                                                   $forcedcategoryvalue = false) {
 
         list($purposeid, $categoryid) = self::get_defaults($contextlevel);
 

@@ -87,7 +87,6 @@ require_once($CFG->dirroot . '/mod/assign/feedbackplugin.php');
 require_once($CFG->dirroot . '/mod/assign/submissionplugin.php');
 require_once($CFG->dirroot . '/mod/assign/renderable.php');
 require_once($CFG->dirroot . '/mod/assign/gradingtable.php');
-require_once($CFG->libdir . '/eventslib.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
 
 use \mod_assign\output\grading_app;
@@ -1504,8 +1503,9 @@ class assign {
         } else if ($plugin->is_visible() && $plugin->is_configurable()) {
             $name = $plugin->get_subtype() . '_' . $plugin->get_type() . '_enabled';
             $label = $plugin->get_name();
-            $label .= ' ' . $this->get_renderer()->help_icon('enabled', $plugin->get_subtype() . '_' . $plugin->get_type());
             $pluginsenabled[] = $mform->createElement('checkbox', $name, '', $label);
+            $helpicon = $this->get_renderer()->help_icon('enabled', $plugin->get_subtype() . '_' . $plugin->get_type());
+            $pluginsenabled[] = $mform->createElement('static', '', '', $helpicon);
 
             $default = get_config($plugin->get_subtype() . '_' . $plugin->get_type(), 'default');
             if ($plugin->get_config('enabled') !== false) {
@@ -3316,11 +3316,12 @@ class assign {
     /**
      * Does this user have grade permission for this assignment?
      *
+     * @param int|stdClass $user The object or id of the user who will do the editing (default to current user).
      * @return bool
      */
-    public function can_grade() {
+    public function can_grade($user = null) {
         // Permissions check.
-        if (!has_capability('mod/assign:grade', $this->context)) {
+        if (!has_capability('mod/assign:grade', $this->context, $user)) {
             return false;
         }
 
@@ -4532,10 +4533,10 @@ class assign {
                                                       $this->show_intro(),
                                                       $this->get_course_module()->id,
                                                       $title, '', $postfix));
-        if ($userid == $USER->id) {
-            // We only show this if it their submission.
-            $o .= $this->plagiarism_print_disclosure();
-        }
+
+        // Show plagiarism disclosure for any user submitter.
+        $o .= $this->plagiarism_print_disclosure();
+
         $data = new stdClass();
         $data->userid = $userid;
         if (!$mform) {
@@ -5326,12 +5327,14 @@ class assign {
     public function get_assign_grading_summary_renderable($activitygroup = null) {
 
         $instance = $this->get_instance();
+        $cm = $this->get_course_module();
 
         $draft = ASSIGN_SUBMISSION_STATUS_DRAFT;
         $submitted = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $isvisible = $cm->visible;
 
         if ($activitygroup === null) {
-            $activitygroup = groups_get_activity_group($this->get_course_module());
+            $activitygroup = groups_get_activity_group($cm);
         }
 
         if ($instance->teamsubmission) {
@@ -5349,7 +5352,8 @@ class assign {
                                                   $this->count_submissions_need_grading($activitygroup),
                                                   $instance->teamsubmission,
                                                   $warnofungroupedusers,
-                                                  $this->can_grade());
+                                                  $this->can_grade(),
+                                                  $isvisible);
         } else {
             // The active group has already been updated in groups_print_activity_menu().
             $countparticipants = $this->count_participants($activitygroup);
@@ -5364,8 +5368,8 @@ class assign {
                                                   $this->count_submissions_need_grading($activitygroup),
                                                   $instance->teamsubmission,
                                                   false,
-                                                  $this->can_grade());
-
+                                                  $this->can_grade(),
+                                                  $isvisible);
         }
 
         return $summary;

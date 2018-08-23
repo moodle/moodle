@@ -28,7 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/mod/assign/lib.php');
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
-require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
+require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
+require_once($CFG->dirroot . '/comment/lib.php');
 
 /**
  * Events tests class.
@@ -38,18 +39,24 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assignsubmission_comments_events_testcase extends mod_assign_base_testcase {
+class assignsubmission_comments_events_testcase extends advanced_testcase {
+
+    // Use the generator helper.
+    use mod_assign_test_generator;
 
     /**
      * Test comment_created event.
      */
     public function test_comment_created() {
-        global $CFG;
-        require_once($CFG->dirroot . '/comment/lib.php');
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
 
-        $this->setUser($this->editingteachers[0]);
-        $assign = $this->create_instance();
-        $submission = $assign->get_user_submission($this->students[0]->id, true);
+        $assign = $this->create_instance($course);
+
+        $this->setUser($teacher);
+        $submission = $assign->get_user_submission($student->id, true);
 
         $context = $assign->get_context();
         $options = new stdClass();
@@ -69,6 +76,7 @@ class assignsubmission_comments_events_testcase extends mod_assign_base_testcase
         $events = $sink->get_events();
         $this->assertCount(1, $events);
         $event = reset($events);
+        $sink->close();
 
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\assignsubmission_comments\event\comment_created', $event);
@@ -82,12 +90,15 @@ class assignsubmission_comments_events_testcase extends mod_assign_base_testcase
      * Test comment_deleted event.
      */
     public function test_comment_deleted() {
-        global $CFG;
-        require_once($CFG->dirroot . '/comment/lib.php');
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
 
-        $this->setUser($this->editingteachers[0]);
-        $assign = $this->create_instance();
-        $submission = $assign->get_user_submission($this->students[0]->id, true);
+        $assign = $this->create_instance($course);
+
+        $this->setUser($teacher);
+        $submission = $assign->get_user_submission($student->id, true);
 
         $context = $assign->get_context();
         $options = new stdClass();

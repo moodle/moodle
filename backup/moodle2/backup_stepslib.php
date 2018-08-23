@@ -865,7 +865,7 @@ class backup_calendarevents_structure_step extends backup_structure_step {
                 'name', 'description', 'format', 'courseid', 'groupid', 'userid',
                 'repeatid', 'modulename', 'instance', 'type', 'eventtype', 'timestart',
                 'timeduration', 'timesort', 'visible', 'uuid', 'sequence', 'timemodified',
-                'priority'));
+                'priority', 'location'));
 
         // Build the tree
         $events->add_child($event);

@@ -115,7 +115,7 @@ class edit_xml_file extends XMLDBAction {
                 $o.= '    <input type="hidden" name ="path" value="' . s($structure->getPath()) .'" />';
                 $o.= '    <input type="hidden" name ="version" value="' . s($structure->getVersion()) .'" />';
                 $o.= '    <input type="hidden" name ="sesskey" value="' . sesskey() .'" />';
-                $o.= '    <table id="formelements" class="boxaligncenter">';
+                $o .= '    <table id="formelements">';
                 $o.= '      <tr valign="top"><td>Path:</td><td>' . s($structure->getPath()) . '</td></tr>';
                 $o.= '      <tr valign="top"><td>Version:</td><td>' . s($structure->getVersion()) . '</td></tr>';
                 $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td><textarea name="comment" rows="3" cols="80" id="comment">' . $structure->getComment() . '</textarea></td></tr>';
@@ -216,7 +216,7 @@ class edit_xml_file extends XMLDBAction {
                          }
                         $b .= '</td>';
                         // Print table row
-                        $o .= '<tr class="r' . $row . '"><td class="table cell">' . $t . $b . '</tr>';
+                        $o .= '<tr class="r' . $row . '"><td class="cell firstcol">' . $t . $b . '</tr>';
                         $row = ($row + 1) % 2;
                     }
                     $o .= '</table>';

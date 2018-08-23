@@ -24,7 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018051400;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2018052900;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2018050800;        // Requires this Moodle version
 $plugin->component = 'block_recent_activity'; // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 24*3600;           // Cron interval 1 day.

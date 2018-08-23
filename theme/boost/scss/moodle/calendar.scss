@@ -238,8 +238,15 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
             }
         }
 
-        .event .card-header img {
-            vertical-align: baseline;
+        .event {
+            .card-header img {
+                vertical-align: baseline;
+            }
+
+            .location {
+                word-break: break-all;
+                overflow-wrap: break-word;
+            }
         }
 
     }
@@ -425,5 +432,9 @@ table.calendartable caption {
         > p {
             margin: 0;
         }
+    }
+
+    .location-content {
+        overflow-wrap: break-word;
     }
 }

@@ -72,11 +72,9 @@ $string['message'] = 'Message';
 $string['messagepreferences'] = 'Message preferences';
 $string['messages'] = 'Messages';
 $string['messagingdatahasnotbeenmigrated'] = 'Your messages are temporarily unavailable due to upgrades in the messaging infrastructure. Please wait for them to be migrated.';
-$string['messagingdisabled'] = 'Messaging is disabled on this site, emails will be sent instead';
 $string['newonlymsg'] = 'Show only new';
 $string['newmessage'] = 'New message';
 $string['newmessagesearch'] = 'Select or search for a contact to send a new message.';
-$string['newsearch'] = 'New search';
 $string['noframesjs'] = 'Use more accessible interface';
 $string['nocontacts'] = 'No contacts';
 $string['nomessages'] = 'No messages';
@@ -181,23 +179,5 @@ $string['viewunreadmessageswith'] = 'View unread messages with {$a}';
 $string['writeamessage'] = 'Write a message...';
 $string['you'] = 'You:';
 
-// Deprecated since Moodle 3.2.
-$string['context'] = 'context';
-$string['discussion'] = 'Discussion';
-$string['emptysearchstring'] = 'You must search for something';
-$string['formorethan'] = 'For more than';
-$string['keywords'] = 'Keywords';
-$string['messagehistory'] = 'Message history';
-$string['newsearch'] = 'New search';
-$string['nosearchresults'] = 'There were no results from your search';
-$string['onlymycourses'] = 'Only in my courses';
-$string['pagerefreshes'] = 'This page refreshes automatically every {$a} seconds';
-$string['page-message-x'] = 'Any message pages';
-$string['recent'] = 'Recent';
-$string['savemysettings'] = 'Save my settings';
-$string['search'] = 'Search';
-$string['settingssaved'] = 'Your settings have been saved';
-$string['strftimedaydatetime'] = '%A, %d %B %Y, %I:%M %p';
-$string['timenosee'] = 'Minutes since I was last seen online';
-$string['timesent'] = 'Time sent';
-$string['userssearchresults'] = 'Users found: {$a}';
+// Deprecated since Moodle 3.6.
+$string['messagingdisabled'] = 'Messaging is disabled on this site, emails will be sent instead';

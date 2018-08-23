@@ -42,34 +42,6 @@ use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
 class behat_deprecated extends behat_base {
 
     /**
-     * Sets the specified value to the field.
-     *
-     * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to multiline$/
-     * @throws ElementNotFoundException Thrown by behat_base::find
-     * @param string $field
-     * @param PyStringNode $value
-     * @deprecated since Moodle 3.2 MDL-55406 - please do not use this step any more.
-     */
-    public function i_set_the_field_to_multiline($field, PyStringNode $value) {
-
-        $alternative = 'I set the field "' . $this->escape($field) . '"  to multiline:';
-        $this->deprecated_message($alternative);
-
-        $this->execute('behat_forms::i_set_the_field_to_multiline', array($field, $value));
-    }
-
-    /**
-     * Click on a given link in the moodle-actionmenu that is currently open.
-     * @Given /^I follow "(?P<link_string>(?:[^"]|\\")*)" in the open menu$/
-     * @param string $linkstring the text (or id, etc.) of the link to click.
-     * @deprecated since Moodle 3.2 MDL-55839 - please do not use this step any more.
-     */
-    public function i_follow_in_the_open_menu($linkstring) {
-        $alternative = 'I choose "' . $this->escape($linkstring) . '" from the open action menu';
-        $this->deprecated_message($alternative, true);
-    }
-
-    /**
      * Navigates to the course gradebook and selects a specified item from the grade navigation tabs.
      * @Given /^I go to "(?P<gradepath_string>(?:[^"]|\\")*)" in the course gradebook$/
      * @param string $gradepath

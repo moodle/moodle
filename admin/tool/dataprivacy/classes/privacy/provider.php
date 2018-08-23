@@ -51,7 +51,10 @@ class provider implements
         \core_privacy\local\metadata\provider,
 
         // This tool may provide access to and deletion of user data.
-        \core_privacy\local\request\plugin\provider {
+        \core_privacy\local\request\plugin\provider,
+
+        // This plugin has some sitewide user preferences to export.
+        \core_privacy\local\request\user_preference_provider {
     /**
      * Returns meta data about this system.
      *
@@ -70,6 +73,10 @@ class provider implements
             ],
             'privacy:metadata:request'
         );
+
+        $collection->add_user_preference(tool_helper::PREF_REQUEST_FILTERS,
+            'privacy:metadata:preference:tool_dataprivacy_request-filters');
+
         return $collection;
     }
 
@@ -161,5 +168,37 @@ class provider implements
      * @param   approved_contextlist $contextlist The approved contexts and user information to delete information for.
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
+    }
+
+    /**
+     * Export all user preferences for the plugin.
+     *
+     * @param   int $userid The userid of the user whose data is to be exported.
+     */
+    public static function export_user_preferences(int $userid) {
+        $preffilter = get_user_preferences(tool_helper::PREF_REQUEST_FILTERS, null, $userid);
+        if ($preffilter !== null) {
+            $filters = json_decode($preffilter);
+            $descriptions = [];
+            foreach ($filters as $filter) {
+                list($category, $value) = explode(':', $filter);
+                $option = new stdClass();
+                switch($category) {
+                    case tool_helper::FILTER_TYPE:
+                        $option->category = get_string('requesttype', 'tool_dataprivacy');
+                        $option->name = tool_helper::get_shortened_request_type_string($value);
+                        break;
+                    case tool_helper::FILTER_STATUS:
+                        $option->category = get_string('requeststatus', 'tool_dataprivacy');
+                        $option->name = tool_helper::get_request_status_string($value);
+                        break;
+                }
+                $descriptions[] = get_string('filteroption', 'tool_dataprivacy', $option);
+            }
+            // Export the filter preference as comma-separated values and text descriptions.
+            $values = implode(', ', $filters);
+            $descriptionstext = implode(', ', $descriptions);
+            writer::export_user_preference('tool_dataprivacy', tool_helper::PREF_REQUEST_FILTERS, $values, $descriptionstext);
+        }
     }
 }

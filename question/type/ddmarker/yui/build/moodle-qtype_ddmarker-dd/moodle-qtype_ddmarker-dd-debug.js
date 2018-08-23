@@ -310,7 +310,7 @@ var DDMARKER_QUESTION = function() {
  * This is the code for question rendering.
  */
 Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
-    touchscrolldisable: null,
+    passiveSupported: false,
     pendingid: '',
     initializer: function() {
         this.pendingid = 'qtype_ddmarker-' + Math.random().toString(36).slice(2); // Random string.
@@ -319,6 +319,7 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
         this.poll_for_image_load(null, false, 0, this.after_image_load);
         this.doc.bg_img().after('load', this.poll_for_image_load, this,
                                                 false, 0, this.after_image_load);
+        this.checkPassiveSupported();
     },
     after_image_load: function() {
         this.redraw_drags_and_drops();
@@ -346,28 +347,34 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
      * draggable items.
      */
     prevent_touchmove_from_scrolling: function(drag) {
-        var touchstart = (Y.UA.ie) ? 'MSPointerStart' : 'touchstart';
-        var touchend = (Y.UA.ie) ? 'MSPointerEnd' : 'touchend';
         var touchmove = (Y.UA.ie) ? 'MSPointerMove' : 'touchmove';
+        var eventHandler = function(event) {
+            event.preventDefault();
+        };
+        var dragId = drag.get('id');
+        var el = document.getElementById(dragId);
+        // Note do not dynamically add events within another event, as this causes issues on iOS11.3.
+        // See https://github.com/atlassian/react-beautiful-dnd/issues/413 and
+        // https://bugs.webkit.org/show_bug.cgi?id=184250 for fuller explanation.
+        el.addEventListener(touchmove, eventHandler, this.passiveSupported ? {passive: false, capture: true} : false);
+    },
 
-        // Disable scrolling when touching the draggable items.
-        drag.on(touchstart, function() {
-            if (this.touchscrolldisable) {
-                return; // Already disabled.
-            }
-            this.touchscrolldisable = Y.one('body').on(touchmove, function(e) {
-                e = e || window.event;
-                e.preventDefault();
+    /**
+     * Some older browsers do not support passing an options object to addEventListener.
+     * This is a check from https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener.
+     */
+    checkPassiveSupported: function() {
+        try {
+            var options = Object.defineProperty({}, 'passive', {
+                get: function() {
+                    this.passiveSupported = true;
+                }.bind(this)
             });
-        }, this);
-
-        // Allow scrolling after releasing the draggable items.
-        drag.on(touchend, function() {
-            if (this.touchscrolldisable) {
-                this.touchscrolldisable.detach();
-                this.touchscrolldisable = null;
-            }
-        }, this);
+            window.addEventListener('test', options, options);
+            window.removeEventListener('test', options, options);
+        } catch (err) {
+            this.passiveSupported = false;
+        }
     },
 
     draggable: function(drag) {

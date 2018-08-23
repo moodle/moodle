@@ -24,8 +24,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->libdir.'/eventslib.php');
-
 defined('MOODLE_INTERNAL') || die();
 
 // File areas for file submission assignment.
@@ -513,8 +511,16 @@ class assign_submission_file extends assign_submission_plugin {
      * @return bool
      */
     public function submission_is_empty(stdClass $data) {
-        $files = file_get_drafarea_files($data->files_filemanager);
-        return count($files->list) == 0;
+        global $USER;
+        $fs = get_file_storage();
+        // Get a count of all the draft files, excluding any directories.
+        $files = $fs->get_area_files(context_user::instance($USER->id)->id,
+                                     'user',
+                                     'draft',
+                                     $data->files_filemanager,
+                                     'id',
+                                     false);
+        return count($files) == 0;
     }
 
     /**

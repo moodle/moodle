@@ -48,6 +48,9 @@ class MoodleQuickForm_url extends HTML_QuickForm_text implements templatable {
     /** @var bool if true label will be hidden */
     var $_hiddenLabel=false;
 
+    /** @var string the unique id of the filepicker, if enabled.*/
+    protected $filepickeruniqueid;
+
     /**
      * Constructor
      *
@@ -122,6 +125,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text implements templatable {
 
         // Print out file picker.
         $str .= $this->getFilePickerHTML();
+        $str = '<div id="url-wrapper-' . $this->get_filepicker_unique_id() . '">' . $str . '</div>';
 
         return $str;
     }
@@ -130,7 +134,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text implements templatable {
         global $PAGE, $OUTPUT;
 
         $str = '';
-        $clientid = uniqid();
+        $clientid = $this->get_filepicker_unique_id();
 
         $args = new stdClass();
         $args->accepted_types = '*';
@@ -144,7 +148,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text implements templatable {
         if (count($options->repositories) > 0) {
             $straddlink = get_string('choosealink', 'repository');
             $str .= <<<EOD
-<button id="filepicker-button-js-{$clientid}" class="visibleifjs btn btn-secondary">
+<button type="button" id="filepicker-button-js-{$clientid}" class="visibleifjs btn btn-secondary">
 $straddlink
 </button>
 EOD;
@@ -186,6 +190,13 @@ EOD;
     public function export_for_template(renderer_base $output) {
         $context = $this->export_for_template_base($output);
         $context['filepickerhtml'] = !empty($this->_options['usefilepicker']) ? $this->getFilePickerHTML() : '';
+
+        // This will conditionally wrap the element in a div which can be accessed in the DOM using the unique id,
+        // and allows the filepicker callback to find its respective url field, if multiple URLs are used.
+        if ($this->_options['usefilepicker']) {
+            $context['filepickerclientid'] = $this->get_filepicker_unique_id();
+        }
+
         return $context;
     }
 
@@ -198,4 +209,15 @@ EOD;
         return true;
     }
 
+    /**
+     * Returns the unique id of the file picker associated with this url element, setting it in the process if not set.
+     *
+     * @return string the unique id of the file picker.
+     */
+    protected function get_filepicker_unique_id() : string {
+        if (empty($this->filepickeruniqueid)) {
+            $this->filepickeruniqueid = uniqid();
+        }
+        return $this->filepickeruniqueid;
+    }
 }

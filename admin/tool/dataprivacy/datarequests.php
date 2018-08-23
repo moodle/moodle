@@ -25,6 +25,8 @@
 require_once("../../../config.php");
 require_once('lib.php');
 
+require_login(null, false);
+
 $url = new moodle_url('/admin/tool/dataprivacy/datarequests.php');
 
 $title = get_string('datarequests', 'tool_dataprivacy');
@@ -34,9 +36,45 @@ $title = get_string('datarequests', 'tool_dataprivacy');
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
 
-$requests = tool_dataprivacy\api::get_data_requests();
-$requestlist = new tool_dataprivacy\output\data_requests_page($requests);
-$requestlistoutput = $PAGE->get_renderer('tool_dataprivacy');
-echo $requestlistoutput->render($requestlist);
+if (\tool_dataprivacy\api::is_site_dpo($USER->id)) {
+    $filtersapplied = optional_param_array('request-filters', [-1], PARAM_NOTAGS);
+    $filterscleared = optional_param('filters-cleared', 0, PARAM_INT);
+    if ($filtersapplied === [-1]) {
+        // If there are no filters submitted, check if there is a saved filters from the user preferences.
+        $filterprefs = get_user_preferences(\tool_dataprivacy\local\helper::PREF_REQUEST_FILTERS, null);
+        if ($filterprefs && empty($filterscleared)) {
+            $filtersapplied = json_decode($filterprefs);
+        } else {
+            $filtersapplied = [];
+        }
+    }
+    // Save the current applied filters to the user preferences.
+    set_user_preference(\tool_dataprivacy\local\helper::PREF_REQUEST_FILTERS, json_encode($filtersapplied));
+
+    $types = [];
+    $statuses = [];
+    foreach ($filtersapplied as $filter) {
+        list($category, $value) = explode(':', $filter);
+        switch($category) {
+            case \tool_dataprivacy\local\helper::FILTER_TYPE:
+                $types[] = $value;
+                break;
+            case \tool_dataprivacy\local\helper::FILTER_STATUS:
+                $statuses[] = $value;
+                break;
+        }
+    }
+
+    $table = new \tool_dataprivacy\output\data_requests_table(0, $statuses, $types, true);
+    $table->baseurl = $url;
+
+    $requestlist = new tool_dataprivacy\output\data_requests_page($table, $filtersapplied);
+    $requestlistoutput = $PAGE->get_renderer('tool_dataprivacy');
+    echo $requestlistoutput->render($requestlist);
+} else {
+    $dponamestring = implode (', ', tool_dataprivacy\api::get_dpo_role_names());
+    $message = get_string('privacyofficeronly', 'tool_dataprivacy', $dponamestring);
+    echo $OUTPUT->notification($message, 'error');
+}
 
 echo $OUTPUT->footer();

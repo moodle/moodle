@@ -35,6 +35,17 @@ use tool_dataprivacy\api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class helper {
+    /** The default number of results to be shown per page. */
+    const DEFAULT_PAGE_SIZE = 20;
+
+    /** Filter constant associated with the request type filter. */
+    const FILTER_TYPE = 1;
+
+    /** Filter constant associated with the request status filter. */
+    const FILTER_STATUS = 2;
+
+    /** The request filters preference key. */
+    const PREF_REQUEST_FILTERS = 'tool_dataprivacy_request-filters';
 
     /**
      * Retrieves the human-readable text value of a data request type.
@@ -45,16 +56,11 @@ class helper {
      * @throws moodle_exception
      */
     public static function get_request_type_string($requesttype) {
-        switch ($requesttype) {
-            case api::DATAREQUEST_TYPE_EXPORT:
-                return get_string('requesttypeexport', 'tool_dataprivacy');
-            case api::DATAREQUEST_TYPE_DELETE:
-                return get_string('requesttypedelete', 'tool_dataprivacy');
-            case api::DATAREQUEST_TYPE_OTHERS:
-                return get_string('requesttypeothers', 'tool_dataprivacy');
-            default:
-                throw new moodle_exception('errorinvalidrequesttype', 'tool_dataprivacy');
+        $types = self::get_request_types();
+        if (!isset($types[$requesttype])) {
+            throw new moodle_exception('errorinvalidrequesttype', 'tool_dataprivacy');
         }
+        return $types[$requesttype];
     }
 
     /**
@@ -66,16 +72,37 @@ class helper {
      * @throws moodle_exception
      */
     public static function get_shortened_request_type_string($requesttype) {
-        switch ($requesttype) {
-            case api::DATAREQUEST_TYPE_EXPORT:
-                return get_string('requesttypeexportshort', 'tool_dataprivacy');
-            case api::DATAREQUEST_TYPE_DELETE:
-                return get_string('requesttypedeleteshort', 'tool_dataprivacy');
-            case api::DATAREQUEST_TYPE_OTHERS:
-                return get_string('requesttypeothersshort', 'tool_dataprivacy');
-            default:
-                throw new moodle_exception('errorinvalidrequesttype', 'tool_dataprivacy');
+        $types = self::get_request_types_short();
+        if (!isset($types[$requesttype])) {
+            throw new moodle_exception('errorinvalidrequesttype', 'tool_dataprivacy');
         }
+        return $types[$requesttype];
+    }
+
+    /**
+     * Returns the key value-pairs of request type code and their string value.
+     *
+     * @return array
+     */
+    public static function get_request_types() {
+        return [
+            api::DATAREQUEST_TYPE_EXPORT => get_string('requesttypeexport', 'tool_dataprivacy'),
+            api::DATAREQUEST_TYPE_DELETE => get_string('requesttypedelete', 'tool_dataprivacy'),
+            api::DATAREQUEST_TYPE_OTHERS => get_string('requesttypeothers', 'tool_dataprivacy'),
+        ];
+    }
+
+    /**
+     * Returns the key value-pairs of request type code and their shortened string value.
+     *
+     * @return array
+     */
+    public static function get_request_types_short() {
+        return [
+            api::DATAREQUEST_TYPE_EXPORT => get_string('requesttypeexportshort', 'tool_dataprivacy'),
+            api::DATAREQUEST_TYPE_DELETE => get_string('requesttypedeleteshort', 'tool_dataprivacy'),
+            api::DATAREQUEST_TYPE_OTHERS => get_string('requesttypeothersshort', 'tool_dataprivacy'),
+        ];
     }
 
     /**
@@ -83,30 +110,32 @@ class helper {
      *
      * @param int $status The request status.
      * @return string
-     * @throws coding_exception
      * @throws moodle_exception
      */
     public static function get_request_status_string($status) {
-        switch ($status) {
-            case api::DATAREQUEST_STATUS_PENDING:
-                return get_string('statuspending', 'tool_dataprivacy');
-            case api::DATAREQUEST_STATUS_PREPROCESSING:
-                return get_string('statuspreprocessing', 'tool_dataprivacy');
-            case api::DATAREQUEST_STATUS_AWAITING_APPROVAL:
-                return get_string('statusawaitingapproval', 'tool_dataprivacy');
-            case api::DATAREQUEST_STATUS_APPROVED:
-                return get_string('statusapproved', 'tool_dataprivacy');
-            case api::DATAREQUEST_STATUS_PROCESSING:
-                return get_string('statusprocessing', 'tool_dataprivacy');
-            case api::DATAREQUEST_STATUS_COMPLETE:
-                return get_string('statuscomplete', 'tool_dataprivacy');
-            case api::DATAREQUEST_STATUS_CANCELLED:
-                return get_string('statuscancelled', 'tool_dataprivacy');
-            case api::DATAREQUEST_STATUS_REJECTED:
-                return get_string('statusrejected', 'tool_dataprivacy');
-            default:
-                throw new moodle_exception('errorinvalidrequeststatus', 'tool_dataprivacy');
+        $statuses = self::get_request_statuses();
+        if (!isset($statuses[$status])) {
+            throw new moodle_exception('errorinvalidrequeststatus', 'tool_dataprivacy');
         }
+        return $statuses[$status];
+    }
+
+    /**
+     * Returns the key value-pairs of request status code and string value.
+     *
+     * @return array
+     */
+    public static function get_request_statuses() {
+        return [
+            api::DATAREQUEST_STATUS_PENDING => get_string('statuspending', 'tool_dataprivacy'),
+            api::DATAREQUEST_STATUS_PREPROCESSING => get_string('statuspreprocessing', 'tool_dataprivacy'),
+            api::DATAREQUEST_STATUS_AWAITING_APPROVAL => get_string('statusawaitingapproval', 'tool_dataprivacy'),
+            api::DATAREQUEST_STATUS_APPROVED => get_string('statusapproved', 'tool_dataprivacy'),
+            api::DATAREQUEST_STATUS_PROCESSING => get_string('statusprocessing', 'tool_dataprivacy'),
+            api::DATAREQUEST_STATUS_COMPLETE => get_string('statuscomplete', 'tool_dataprivacy'),
+            api::DATAREQUEST_STATUS_CANCELLED => get_string('statuscancelled', 'tool_dataprivacy'),
+            api::DATAREQUEST_STATUS_REJECTED => get_string('statusrejected', 'tool_dataprivacy'),
+        ];
     }
 
     /**
@@ -132,7 +161,7 @@ class helper {
             'contextlevel' => CONTEXT_USER
         ];
 
-        // The final list of users that we will return;
+        // The final list of users that we will return.
         $finalresults = [];
 
         // Our prospective list of users.
@@ -145,5 +174,35 @@ class helper {
             }
         }
         return $finalresults;
+    }
+
+    /**
+     * Get options for the data requests filter.
+     *
+     * @return array
+     * @throws coding_exception
+     */
+    public static function get_request_filter_options() {
+        $filters = [
+            self::FILTER_TYPE => (object)[
+                'name' => get_string('requesttype', 'tool_dataprivacy'),
+                'options' => self::get_request_types_short()
+            ],
+            self::FILTER_STATUS => (object)[
+                'name' => get_string('requeststatus', 'tool_dataprivacy'),
+                'options' => self::get_request_statuses()
+            ],
+        ];
+        $options = [];
+        foreach ($filters as $category => $filtercategory) {
+            foreach ($filtercategory->options as $key => $name) {
+                $option = (object)[
+                    'category' => $filtercategory->name,
+                    'name' => $name
+                ];
+                $options["{$category}:{$key}"] = get_string('filteroption', 'tool_dataprivacy', $option);
+            }
+        }
+        return $options;
     }
 }

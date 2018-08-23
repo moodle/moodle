@@ -82,6 +82,7 @@ class my_data_requests_page implements renderable, templatable {
             $requestid = $request->get('id');
             $status = $request->get('status');
             $userid = $request->get('userid');
+            $type = $request->get('type');
 
             $usercontext = context_user::instance($userid, IGNORE_MISSING);
             if (!$usercontext) {
@@ -94,7 +95,8 @@ class my_data_requests_page implements renderable, templatable {
             $requestexporter = new data_request_exporter($request, ['context' => $outputcontext]);
             $item = $requestexporter->export($output);
 
-            if ($request->get('userid') != $USER->id) {
+            $self = $request->get('userid') == $USER->id;
+            if (!$self) {
                 // Append user name if it differs from $USER.
                 $a = (object)['typename' => $item->typename, 'user' => $item->foruser->fullname];
                 $item->typename = get_string('requesttypeuser', 'tool_dataprivacy', $a);
@@ -107,7 +109,12 @@ class my_data_requests_page implements renderable, templatable {
                     $item->statuslabelclass = 'label-success';
                     $item->statuslabel = get_string('statuscomplete', 'tool_dataprivacy');
                     $cancancel = false;
-                    $candownload = true;
+                    // Show download links only for export-type data requests.
+                    $candownload = $type == api::DATAREQUEST_TYPE_EXPORT;
+                    if ($usercontext) {
+                        $candownload = api::can_download_data_request_for_user(
+                                $request->get('userid'), $request->get('requestedby'));
+                    }
                     break;
                 case api::DATAREQUEST_STATUS_CANCELLED:
                 case api::DATAREQUEST_STATUS_REJECTED:
@@ -124,10 +131,7 @@ class my_data_requests_page implements renderable, templatable {
                 $actions[] = new action_menu_link_secondary($cancelurl, null, $canceltext, $canceldata);
             }
             if ($candownload && $usercontext) {
-                $downloadurl = moodle_url::make_pluginfile_url($usercontext->id, 'tool_dataprivacy', 'export', $requestid, '/',
-                        'export.zip', true);
-                $downloadtext = get_string('download', 'tool_dataprivacy');
-                $actions[] = new action_menu_link_secondary($downloadurl, null, $downloadtext);
+                $actions[] = api::get_download_link($usercontext, $requestid);
             }
             if (!empty($actions)) {
                 $actionsmenu = new action_menu($actions);

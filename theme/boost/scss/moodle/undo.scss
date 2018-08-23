@@ -126,13 +126,6 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
     overflow-y: auto;
 }
 
-// Extends bootstrapbase/less/bootstrap/type.less
-// to enable ol lists to use a larger number set.
-
-ol {
-    margin: 0 0 $line-height-base / 2 2.5em;
-}
-
 // Set menus in the fixed header to scroll vertically when they are longer than the page.
 .navbar.fixed-top .dropdown .dropdown-menu {
     max-height: calc(100vh - #{$navbar-height});
@@ -174,4 +167,21 @@ ol {
 // Fixes an issue on Safari when the .custom-select is inside a .card class.
 .custom-select {
     word-wrap: normal;
+}
+
+/* Add commented out carousel transistions back in.
+ *
+ * The Css prefixer used in Moodle breaks on @supports syntax, See MDL-61515.
+ */
+.carousel-item-next.carousel-item-left,
+.carousel-item-prev.carousel-item-right {
+    transform: translateX(0);
+}
+.carousel-item-next,
+.active.carousel-item-right {
+    transform: translateX(100%);
+}
+.carousel-item-prev,
+.active.carousel-item-left {
+    transform: translateX(-100%);
 }

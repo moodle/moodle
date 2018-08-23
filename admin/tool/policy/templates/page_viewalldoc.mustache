@@ -26,50 +26,78 @@
     -
 
     Context variables required for this template:
+    * returnurl - url to the previous page
     * policies - policy array
 
     Example context (json):
     {
+        "returnurl": "#",
         "policies": [
             {
                 "id": "2",
                 "name": "Terms &amp; conditions",
                 "summary": "Policy <u>summary</u>",
                 "content": "Policy <em>content</em>",
-                "policytypestr": "Site policy"
+                "policytypestr": "Site policy",
+                "policyaudiencestr": "All users"
             },
             {
                 "id": "5",
                 "name": "Privacy",
                 "summary": "We keep your information private",
                 "content": "Very private",
-                "policytypestr": "Privacy policy"
+                "policytypestr": "Privacy policy",
+                "policyaudiencestr": "Authenticated users"
             }
         ]
     }
 }}
 
-<a id="top"></a>
-<div id="policies_index" class="m-b-3">
-<ul>
-    {{#policies }}
-        <li><a href="#policy-{{id}}">{{{name}}} ({{{policytypestr}}})</a></li>
-    {{/policies }}
-</ul>
+{{#returnurl}}
+<div class="text-right m-b-1">
+    <a href="{{returnurl}}">{{# str }} backtoprevious, tool_policy {{/ str }}</a>
 </div>
+{{/returnurl}}
+
+<a id="top"></a>
+<div id="policies_index">
+<h1>{{# str }} listactivepolicies, tool_policy {{/ str }}</h1>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">{{# str }}policydocname, tool_policy {{/ str }}</th>
+        <th scope="col">{{# str }}policydoctype, tool_policy {{/ str }}</th>
+        <th scope="col">{{# str }}policydocaudience, tool_policy {{/ str }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#policies }}
+        <tr>
+            <td><a href="#policy-{{id}}">{{{name}}}</a></td>
+            <td>{{{ policytypestr }}}</td>
+            <td>{{{ policyaudiencestr }}}</td>
+        </tr>
+    {{/policies }}
+    </tbody>
+</table>
+</div>
+
+{{^policies }}
+    {{# str }} noactivepolicies, tool_policy {{/ str }}
+{{/policies }}
 
 {{#policies }}
         <hr>
     <div class="policy_version m-b-3">
         <div class="clearfix m-t-2">
-            <h1><a id="policy-{{id}}">{{{name}}}</a></h1>
+            <h2><a id="policy-{{id}}">{{{name}}}</a></h2>
         </div>
         <div class="policy_document_summary clearfix m-b-1">
-            <h2>{{# str }} policydocsummary, tool_policy {{/ str }}</h2>
+            <h3>{{# str }} policydocsummary, tool_policy {{/ str }}</h3>
             {{{summary}}}
         </div>
         <div class="policy_document_content m-t-2">
-            <h2>{{# str }} policydoccontent, tool_policy {{/ str }}</h2>
+            <h3>{{# str }} policydoccontent, tool_policy {{/ str }}</h3>
             {{{content}}}
         </div>
         <div class="pull-right">

@@ -26,72 +26,32 @@
     * none
 
     Context variables required for this template:
-    * requests - Array of data requests.
+    * newdatarequesturl string The URL pointing to the data request creation page.
+    * datarequests string The HTML of the data requests table.
 
     Example context (json):
     {
-        "requests": [
-            {
-                "id": 1,
-                "foruser" : {
-                    "fullname": "Oscar Olsen",
-                    "profileurl": "#"
+        "newdatarequesturl": "#",
+        "datarequests": "<table><tr><td>This is the table where the list of data requests will be rendered</td></tr></table>",
+        "filter": {
+            "action": "#",
+            "filteroptions": [
+                {
+                    "value": "1",
+                    "label": "Option 1"
                 },
-                "typenameshort" : "Export",
-                "comments": "I would like to download all of my daughter's personal data",
-                "statuslabelclass": "label-default",
-                "statuslabel": "Pending",
-                "timecreated" : 1517902435
-            },
-            {
-                "id": 2,
-                "foruser" : {
-                    "fullname": "Alexandre Denys",
-                    "profileurl": "#"
+                {
+                    "value": "2",
+                    "label": "Option 2",
+                    "selected": true
                 },
-                "typenameshort" : "Export",
-                "comments": "Please give me all of the information you have about me...",
-                "statuslabelclass": "label-warning",
-                "statuslabel": "Awaiting completion",
-                "timecreated" : 1517902435
-            },
-            {
-                "id": 3,
-                "foruser" : {
-                    "fullname": "Hirondino Moura",
-                    "profileurl": "#"
-                },
-                "typenameshort" : "Delete",
-                "comments": "Please delete all of my son's personal data.",
-                "statuslabelclass": "label-success",
-                "statuslabel": "Complete",
-                "timecreated" : 1517902435
-            },
-            {
-                "id": 4,
-                "foruser" : {
-                    "fullname": "Florian Krause",
-                    "profileurl": "#"
-                },
-                "typenameshort" : "Delete",
-                "comments": "I would like to request for my personal data to be deleted from your site. Thanks!",
-                "statuslabelclass": "label-danger",
-                "statuslabel": "Rejected",
-                "timecreated" : 1517902435
-            },
-            {
-                "id": 5,
-                "foruser" : {
-                    "fullname": "Nicklas Sørensen",
-                    "profileurl": "#"
-                },
-                "typenameshort" : "Export",
-                "comments": "Please let me download my data",
-                "statuslabelclass": "label-info",
-                "statuslabel": "Processing",
-                "timecreated" : 1517902435
-            }
-        ]
+                {
+                    "value": "3",
+                    "label": "Option 3",
+                    "selected": true
+                }
+            ]
+        }
     }
 }}
 
@@ -101,51 +61,19 @@
 
 <div data-region="datarequests">
     <div class="m-t-1 m-b-1">
-        <a href="{{newdatarequesturl}}" class="btn btn-primary" data-action="new-request">
-            {{#str}}newrequest, tool_dataprivacy{{/str}}
-        </a>
+        <div class="pull-right">
+            <a href="{{newdatarequesturl}}" class="btn btn-primary" data-action="new-request">
+                {{#str}}newrequest, tool_dataprivacy{{/str}}
+            </a>
+        </div>
+        {{#filter}}
+            {{>tool_dataprivacy/request_filter}}
+        {{/filter}}
     </div>
-    <table class="generaltable fullwidth">
-        <thead>
-            <tr>
-                <th scope="col">{{#str}}requesttype, tool_dataprivacy{{/str}}</th>
-                <th scope="col">{{#str}}user, tool_dataprivacy{{/str}}</th>
-                <th scope="col">{{#str}}daterequested, tool_dataprivacy{{/str}}</th>
-                <th scope="col">{{#str}}requeststatus, tool_dataprivacy{{/str}}</th>
-                <th scope="col" colspan="2">{{#str}}message, tool_dataprivacy{{/str}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#requests}}
-            <tr {{!
-              }} data-region="request-node"{{!
-              }} data-id="{{id}}"{{!
-              }} data-type="{{type}}"{{!
-              }} data-status="{{status}}"{{!
-              }}>
-                <td>{{typenameshort}}</td>
-                <td><a href="{{foruser.profileurl}}" title="{{#str}}viewprofile{{/str}}">{{foruser.fullname}}</a></td>
-                <td>{{#userdate}} {{timecreated}}, {{#str}} strftimedate {{/str}} {{/userdate}}</td>
-                <td>
-                    <span class="label {{statuslabelclass}}">{{statuslabel}}</span>
-                </td>
-                <td>{{#shortentext}}60, {{comments}}{{/shortentext}}</td>
-                <td>
-                    {{#actions}}
-                        {{> core/action_menu}}
-                    {{/actions}}
-                </td>
-            </tr>
-            {{/requests}}
-            {{^requests}}
-            <tr>
-                <td class="text-muted" colspan="6">
-                    {{#str}}nodatarequests, tool_dataprivacy{{/str}}
-                </td>
-            </tr>
-            {{/requests}}
-        </tbody>
-    </table>
+
+    <div class="m-t-1 m-b-1" data-region="data-requests-table">
+        {{{datarequests}}}
+    </div>
 </div>
 
 {{#js}}

@@ -44,6 +44,10 @@
         "canreview": true,
         "reviewurl": "#",
         "timecreated": 1517561224,
+        "requestedbyuser" : {
+            "fullname": "Martha Smith",
+            "profileurl": "#"
+        },
         "statuslabel": "Pending",
         "statuslabelclass": "label-default",
         "messagehtml": "<p>Hello,</p><p>I would like to download all of my personal data.</p><p>Thanks!</p>"
@@ -63,11 +67,15 @@
             <a href="mailto:{{foruser.email}}">{{foruser.email}}</a>
             <div class="clearfix m-t-1 m-b-1">
             <span class="pull-left m-r-1">
-                <strong>{{#str}}daterequesteddetail, tool_dataprivacy{{/str}}</strong> {{#userdate}} {{timecreated}}, {{#str}} strftimedate {{/str}} {{/userdate}}
+                <strong>{{#str}}daterequesteddetail, tool_dataprivacy{{/str}}</strong> {{#userdate}} {{timecreated}}, {{#str}} strftimedatetime {{/str}} {{/userdate}}
             </span>
                 <span class="pull-left m-r-1">
                 <strong>{{#str}}statusdetail, tool_dataprivacy{{/str}}</strong>
                 <span class="label {{statuslabelclass}}">{{statuslabel}}</span>
+            </span>
+            <span class="pull-left m-r-1">
+                <strong>{{#str}}requestbydetail, tool_dataprivacy{{/str}}</strong>
+                <span><a href="{{requestedbyuser.profileurl}}" title="{{#str}}viewprofile{{/str}}">{{requestedbyuser.fullname}}</a></span>
             </span>
             </div>
             {{#canreview}}

@@ -139,7 +139,7 @@ $string['privacy:metadata:evidence:actionuserid'] = 'The user performing the act
 $string['privacy:metadata:evidence:desca'] = 'The optional parameters of the translatable evidence description';
 $string['privacy:metadata:evidence:desccomponent'] = 'The component of the translatable evidence description';
 $string['privacy:metadata:evidence:descidentifier'] = 'An identifier of the translatable evidence description';
-$string['privacy:metadata:evidence:grade'] = 'The grade associted with the evidence';
+$string['privacy:metadata:evidence:grade'] = 'The grade associated with the evidence';
 $string['privacy:metadata:evidence:note'] = 'A non-localised note attached to the evidence';
 $string['privacy:metadata:evidence:url'] = 'A URL associated with the evidence';
 $string['privacy:metadata:plan:description'] = 'The description of the learning plan';
@@ -200,6 +200,3 @@ $string['usercompetencystatus_idle'] = 'Idle';
 $string['usercompetencystatus_inreview'] = 'In review';
 $string['usercompetencystatus_waitingforreview'] = 'Waiting for review';
 $string['userplans'] = 'Learning plans';
-
-// Deprecated since Moodle 3.2.
-$string['invalidpersistent'] = 'Invalid persistent';

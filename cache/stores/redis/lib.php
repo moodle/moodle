@@ -325,7 +325,7 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      * @return bool True if the key exists, false if it does not.
      */
     public function has($key) {
-        return $this->redis->hExists($this->hash, $key);
+        return !empty($this->redis->hExists($this->hash, $key));
     }
 
     /**

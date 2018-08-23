@@ -1451,10 +1451,12 @@ function wiki_print_edit_form_default_fields($format, $pageid, $version = -1, $u
 
     echo "</fieldset>";
 
-    echo '<input class="wiki_button" type="submit" name="editoption" value="' . get_string('save', 'wiki') . '"/>';
-    echo '<input class="wiki_button" type="submit" name="editoption" value="' . get_string('upload', 'wiki') . '"/>';
-    echo '<input class="wiki_button" type="submit" name="editoption" value="' . get_string('preview') . '"/>';
-    echo '<input class="wiki_button" type="submit" name="editoption" value="' . get_string('cancel') . '" />';
+    echo '<input class="wiki_button btn btn-secondary" type="submit" name="editoption" value="'
+        . get_string('save', 'wiki') . '" />';
+    echo '<input class="wiki_button btn btn-secondary" type="submit" name="editoption" value="'
+        . get_string('upload', 'wiki') . '" />';
+    echo '<input class="wiki_button btn btn-secondary" type="submit" name="editoption" value="' . get_string('preview') . '" />';
+    echo '<input class="wiki_button btn btn-secondary" type="submit" name="editoption" value="' . get_string('cancel') . '" />';
 }
 
 /**

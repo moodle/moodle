@@ -333,7 +333,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element implements temp
             return;
         }
 
-        $draftfiles = file_get_drafarea_files($value);
+        $draftfiles = file_get_all_files_in_draftarea($value);
         $wrongfiles = array();
 
         if (empty($draftfiles)) {
@@ -341,7 +341,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element implements temp
             return;
         }
 
-        foreach ($draftfiles->list as $file) {
+        foreach ($draftfiles as $file) {
             if (!$filetypesutil->is_allowed_file_type($file->filename, $whitelist)) {
                 $wrongfiles[] = $file->filename;
             }

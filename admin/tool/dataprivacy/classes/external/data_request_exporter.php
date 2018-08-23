@@ -102,6 +102,16 @@ class data_request_exporter extends persistent_exporter {
                 'optional' => true,
                 'default' => false
             ],
+            'approvedeny' => [
+                'type' => PARAM_BOOL,
+                'optional' => true,
+                'default' => false
+            ],
+            'canmarkcomplete' => [
+                'type' => PARAM_BOOL,
+                'optional' => true,
+                'default' => false
+            ],
         ];
     }
 
@@ -140,14 +150,19 @@ class data_request_exporter extends persistent_exporter {
 
         $values['messagehtml'] = text_to_html($this->persistent->get('comments'));
 
-        $values['typename'] = helper::get_request_type_string($this->persistent->get('type'));
-        $values['typenameshort'] = helper::get_shortened_request_type_string($this->persistent->get('type'));
+        $requesttype = $this->persistent->get('type');
+        $values['typename'] = helper::get_request_type_string($requesttype);
+        $values['typenameshort'] = helper::get_shortened_request_type_string($requesttype);
 
         $values['canreview'] = false;
+        $values['approvedeny'] = false;
         $values['statuslabel'] = helper::get_request_status_string($this->persistent->get('status'));
+
         switch ($this->persistent->get('status')) {
             case api::DATAREQUEST_STATUS_PENDING:
                 $values['statuslabelclass'] = 'label-default';
+                // Request can be manually completed for general enquiry requests.
+                $values['canmarkcomplete'] = $requesttype == api::DATAREQUEST_TYPE_OTHERS;
                 break;
             case api::DATAREQUEST_STATUS_PREPROCESSING:
                 $values['statuslabelclass'] = 'label-default';
@@ -156,6 +171,8 @@ class data_request_exporter extends persistent_exporter {
                 $values['statuslabelclass'] = 'label-info';
                 // DPO can review the request once it's ready.
                 $values['canreview'] = true;
+                // Whether the DPO can approve or deny the request.
+                $values['approvedeny'] = in_array($requesttype, [api::DATAREQUEST_TYPE_EXPORT, api::DATAREQUEST_TYPE_DELETE]);
                 break;
             case api::DATAREQUEST_STATUS_APPROVED:
                 $values['statuslabelclass'] = 'label-info';

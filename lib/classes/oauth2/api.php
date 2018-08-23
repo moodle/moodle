@@ -86,10 +86,24 @@ class api {
         $issuer = new issuer(0, $record);
         $issuer->create();
 
+        // The Facebook API version.
+        $apiversion = '2.12';
+        // The Graph API URL.
+        $graphurl = 'https://graph.facebook.com/v' . $apiversion;
+        // User information fields that we want to fetch.
+        $infofields = [
+            'id',
+            'first_name',
+            'last_name',
+            'link',
+            'picture.type(large)',
+            'name',
+            'email',
+        ];
         $endpoints = [
-            'authorization_endpoint' => 'https://www.facebook.com/v2.12/dialog/oauth',
-            'token_endpoint' => 'https://graph.facebook.com/v2.12/oauth/access_token',
-            'userinfo_endpoint' => 'https://graph.facebook.com/v2.12/me?fields=id,first_name,last_name,link,picture,name,email'
+            'authorization_endpoint' => sprintf('https://www.facebook.com/v%s/dialog/oauth', $apiversion),
+            'token_endpoint' => $graphurl . '/oauth/access_token',
+            'userinfo_endpoint' => $graphurl . '/me?fields=' . implode(',', $infofields)
         ];
 
         foreach ($endpoints as $name => $url) {
@@ -349,7 +363,7 @@ class api {
      * @param \core\oauth2\issuer $issuer The desired OAuth issuer
      */
     protected static function guess_image($issuer) {
-        if (empty($issuer->get('image'))) {
+        if (empty($issuer->get('image')) && !empty($issuer->get('baseurl'))) {
             $baseurl = parse_url($issuer->get('baseurl'));
             $imageurl = $baseurl['scheme'] . '://' . $baseurl['host'] . '/favicon.ico';
             $issuer->set('image', $imageurl);

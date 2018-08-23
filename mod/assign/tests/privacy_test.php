@@ -152,6 +152,7 @@ class mod_assign_privacy_testcase extends provider_testcase {
      * Test that a student with multiple submissions and grades is returned with the correct data.
      */
     public function test_export_user_data_student() {
+        global $DB;
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = \context_course::instance($course->id);
@@ -175,6 +176,14 @@ class mod_assign_privacy_testcase extends provider_testcase {
         $submission = $this->create_submission($assign, $user, $submissiontext);
 
         $this->setUser($teacher);
+
+        $overridedata = new \stdClass();
+        $overridedata->assignid = $assign->get_instance()->id;
+        $overridedata->userid = $user->id;
+        $overridedata->duedate = time();
+        $overridedata->allowsubmissionsfromdate = time();
+        $overridedata->cutoffdate = time();
+        $DB->insert_record('assign_overrides', $overridedata);
 
         $grade1 = '67.00';
         $teachercommenttext = 'Please try again.';
@@ -222,6 +231,15 @@ class mod_assign_privacy_testcase extends provider_testcase {
         // Check feedback.
         $this->assertContains($teachercommenttext, $writer->get_data(['attempt 1', 'Feedback comments'])->commenttext);
         $this->assertContains($teachercommenttext2, $writer->get_data(['attempt 2', 'Feedback comments'])->commenttext);
+
+        // Check override data was exported correctly.
+        $overrideexport = $writer->get_data(['Overrides']);
+        $this->assertEquals(\core_privacy\local\request\transform::datetime($overridedata->duedate),
+                $overrideexport->duedate);
+        $this->assertEquals(\core_privacy\local\request\transform::datetime($overridedata->cutoffdate),
+                $overrideexport->cutoffdate);
+        $this->assertEquals(\core_privacy\local\request\transform::datetime($overridedata->allowsubmissionsfromdate),
+                $overrideexport->allowsubmissionsfromdate);
     }
 
     /**

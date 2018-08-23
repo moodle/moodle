@@ -2230,5 +2230,76 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018050900.01);
     }
 
+    // Automatically generated Moodle v3.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2018062800.01) {
+        // Add foreign key fk_user to the comments table.
+        $table = new xmldb_table('comments');
+        $key = new xmldb_key('fk_user', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $dbman->add_key($table, $key);
+
+        upgrade_main_savepoint(true, 2018062800.01);
+    }
+
+    if ($oldversion < 2018062800.02) {
+        // Add composite index ix_concomitem to the table comments.
+        $table = new xmldb_table('comments');
+        $index = new xmldb_index('ix_concomitem', XMLDB_INDEX_NOTUNIQUE, array('contextid', 'commentarea', 'itemid'));
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2018062800.02);
+    }
+
+    if ($oldversion < 2018062800.03) {
+        // Define field location to be added to event.
+        $table = new xmldb_table('event');
+        $field = new xmldb_field('location', XMLDB_TYPE_TEXT, null, null, null, null, null, 'priority');
+
+        // Conditionally launch add field location.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018062800.03);
+    }
+
+    if ($oldversion < 2018072500.00) {
+        // Find all duplicate top level categories per context.
+        $duplicates = $DB->get_records_sql("SELECT qc1.*
+                                              FROM {question_categories} qc1
+                                              JOIN {question_categories} qc2
+                                                ON qc1.contextid = qc2.contextid AND qc1.id <> qc2.id
+                                             WHERE qc1.parent = 0 AND qc2.parent = 0
+                                          ORDER BY qc1.contextid, qc1.id");
+
+        // For each context, let the first top category to remain as top category and make the rest its children.
+        $currentcontextid = 0;
+        $chosentopid = 0;
+        foreach ($duplicates as $duplicate) {
+            if ($currentcontextid != $duplicate->contextid) {
+                $currentcontextid = $duplicate->contextid;
+                $chosentopid = $duplicate->id;
+            } else {
+                $DB->set_field('question_categories', 'parent', $chosentopid, ['id' => $duplicate->id]);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018072500.00);
+    }
+
+    if ($oldversion < 2018073000.00) {
+        // Main savepoint reached.
+        if (!file_exists($CFG->dirroot . '/admin/tool/assignmentupgrade/version.php')) {
+            unset_all_config_for_plugin('tool_assignmentupgrade');
+        }
+        upgrade_main_savepoint(true, 2018073000.00);
+    }
+
     return true;
 }

@@ -54,9 +54,12 @@
                     </a>
                 {{/canedit}}
             </div>
-            {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
-            <h3 class="name d-inline-block">{{name}}</h3>
-            <span class="date pull-xs-right m-r-1">{{{formattedtime}}}</span>
+            {{#icon}}<div class="d-inline-block mt-1 align-top">{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}</div>{{/icon}}
+            <div class="d-inline-block">
+                <h3 class="name d-inline-block">{{name}}</h3>
+                <span class="date pull-xs-right m-r-1">{{{formattedtime}}}</span>
+                <div class="location">{{#location}}{{{location}}}{{/location}}</div>
+            </div>
         </div>
         <div class="description card-block calendar_event_{{eventtype}}">
             <p>{{{description}}}</p>

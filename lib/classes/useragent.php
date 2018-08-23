@@ -910,7 +910,9 @@ class core_useragent {
      */
     public static function get_browser_version_classes() {
         $classes = array();
-        if (self::is_ie()) {
+        if (self::is_edge()) {
+            $classes[] = 'edge';
+        } else if (self::is_ie()) {
             $classes[] = 'ie';
             for ($i = 12; $i >= 6; $i--) {
                 if (self::check_ie_version($i)) {
@@ -923,12 +925,19 @@ class core_useragent {
             if (preg_match('/rv\:([1-2])\.([0-9])/', self::get_user_agent_string(), $matches)) {
                 $classes[] = "gecko{$matches[1]}{$matches[2]}";
             }
+        } else if (self::is_chrome()) {
+            $classes[] = 'chrome';
+            if (self::is_webkit_android()) {
+                $classes[] = 'android';
+            }
         } else if (self::is_webkit()) {
-            $classes[] = 'safari';
+            if (self::is_safari()) {
+                $classes[] = 'safari';
+            }
             if (self::is_safari_ios()) {
                 $classes[] = 'ios';
             } else if (self::is_webkit_android()) {
-                $classes[] = 'android';
+                $classes[] = 'android'; // Old pre-Chrome android browsers.
             }
         } else if (self::is_opera()) {
             $classes[] = 'opera';

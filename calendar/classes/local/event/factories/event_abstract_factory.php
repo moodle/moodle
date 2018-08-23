@@ -189,7 +189,8 @@ abstract class event_abstract_factory implements event_factory_interface {
                 (new \DateTimeImmutable())->setTimestamp($dbrow->timemodified)
             ),
             !empty($dbrow->visible),
-            $subscription
+            $subscription,
+            $dbrow->location
         );
 
         $isactionevent = !empty($dbrow->type) && $dbrow->type == CALENDAR_EVENT_TYPE_ACTION;

@@ -35,7 +35,6 @@ define('NO_DEBUG_DISPLAY', true);
 // @codingStandardsIgnoreLine This script does not require login.
 require("../../config.php");
 require_once("lib.php");
-require_once($CFG->libdir.'/eventslib.php');
 require_once($CFG->libdir.'/enrollib.php');
 require_once($CFG->libdir . '/filelib.php');
 

@@ -129,7 +129,7 @@ class core_medialib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for core_media_renderer get_players
+     * Test for get_players
      */
     public function test_get_players() {
         // All players are initially disabled (except link, which you can't).
@@ -158,7 +158,7 @@ class core_medialib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for core_media_renderer can_embed_url
+     * Test for can_embed_url
      */
     public function test_can_embed_url() {
         // All players are initially disabled, so mp4 cannot be rendered.
@@ -188,7 +188,7 @@ class core_medialib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for core_media_renderer embed_url.
+     * Test for embed_url.
      * Checks multiple format/fallback support.
      */
     public function test_embed_url_fallbacks() {
@@ -264,7 +264,7 @@ class core_medialib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for core_media_renderer embed_url.
+     * Test for embed_url.
      * Check SWF works including the special option required to enable it
      */
     public function test_embed_url_swf() {
@@ -302,7 +302,7 @@ class core_medialib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for core_media_renderer embed_url.
+     * Test for embed_url.
      * Checks the EMBED_OR_BLANK option.
      */
     public function test_embed_or_blank() {
@@ -325,7 +325,7 @@ class core_medialib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for core_media_renderer embed_url.
+     * Test for embed_url.
      * Checks that size is passed through correctly to player objects and tests
      * size support in html5video output.
      */
@@ -358,7 +358,7 @@ class core_medialib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for core_media_renderer embed_url.
+     * Test for embed_url.
      * Checks that name is passed through correctly to player objects and tests
      * name support in html5video output.
      */
@@ -379,7 +379,7 @@ class core_medialib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for core_media_renderer split_alternatives.
+     * Test for split_alternatives.
      */
     public function test_split_alternatives() {
         $mediamanager = core_media_manager::instance();
@@ -416,7 +416,7 @@ class core_medialib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for core_media_renderer embed_alternatives (with multiple urls)
+     * Test for embed_alternatives (with multiple urls)
      */
     public function test_embed_alternatives() {
         // Most aspects of this are same as single player so let's just try

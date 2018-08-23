@@ -51,8 +51,6 @@ $string['addcountertousername'] = 'Create user by adding number to username';
 $string['addcreator'] = 'Add course creator';
 $string['adddots'] = 'Add...';
 $string['added'] = 'Added {$a}';
-$string['addedrecip'] = 'Added {$a} new recipient';
-$string['addedrecips'] = 'Added {$a} new recipients';
 $string['addedtogroup'] = 'Added to group "{$a}"';
 $string['addedtogroupnot'] = 'Not added to group "{$a}"';
 $string['addedtogroupnotenrolled'] = 'Not added to group "{$a}", because not enrolled in course';
@@ -127,7 +125,6 @@ $string['allactions'] = 'All actions';
 $string['allactivities'] = 'All activities';
 $string['allcategories'] = 'All categories';
 $string['alldays'] = 'All days';
-$string['allfieldsrequired'] = 'All fields are required';
 $string['allfiles'] = 'All files';
 $string['allgroups'] = 'All groups';
 $string['allchanges'] = 'All changes';
@@ -173,7 +170,6 @@ $string['backto'] = 'Back to {$a}';
 $string['backtocourselisting'] = 'Back to course listing';
 $string['backtohome'] = 'Back to the site home';
 $string['backtopageyouwereon'] = 'Back to the page you were on';
-$string['backtoparticipants'] = 'Back to participants list';
 $string['backup'] = 'Backup';
 $string['backupactivehelp'] = 'Choose whether or not to do automated backups.';
 $string['backupcancelled'] = 'Backup cancelled';
@@ -266,7 +262,7 @@ $string['configuration'] = 'Configuration';
 $string['confirm'] = 'Confirm';
 $string['confirmdeletesection'] = 'Are you absolutely sure you want to completely delete "{$a}" and all the activities it contains?';
 $string['confirmed'] = 'Your registration has been confirmed';
-$string['confirmednot'] = 'Your registration has not yet been confirmed!';
+$string['confirmednot'] = 'Your registration has not yet been confirmed. Please check your mailbox for a confirmation email.';
 $string['confirmcheckfull'] = 'Are you absolutely sure you want to confirm {$a} ?';
 $string['confirmcoursemove'] = 'Are you sure you want to move this course ({$a->course}) into this category ({$a->category})?';
 $string['considereddigitalminor'] = 'You are considered to be a digital minor.';
@@ -347,7 +343,6 @@ $string['courseoverviewfilesext'] = 'Course summary files extensions';
 $string['courseoverviewfileslimit'] = 'Course summary files limit';
 $string['courseoverviewfiles_help'] = 'Course summary files, such as images, are displayed in the list of courses together with the summary.';
 $string['courseinfo'] = 'Course info';
-$string['coursemessage'] = 'Message course users';
 $string['coursenotaccessible'] = 'This course does not allow public access';
 $string['courselegacyfiles'] = 'Legacy course files';
 $string['courselegacyfiles_help'] = 'The course files area provides some backward compatibility with Moodle 1.9 and earlier.  All files in this area are always accessible to all participants in the course (whether you link to them or not) and there is no way to know where any of these files are being used in Moodle.
@@ -383,6 +378,13 @@ $string['coursesectiontitle'] = 'Course: {$a->course}, {$a->sectionname}: {$a->s
 $string['coursesettings'] = 'Course default settings';
 $string['coursesmovedout'] = 'Courses moved out from {$a}';
 $string['coursespending'] = 'Courses pending approval';
+$string['coursesearch'] = 'Search courses';
+$string['coursesearch_help'] = '<p>You can search for multiple words at once and can refine your search as follows:</p>
+<ul>
+<li>word - find any match of this word within the text.</li>
+<li>+word - only exact matching words will be found.</li>
+<li>-word - don\'t include results containing this word.</li>
+</ul>';
 $string['coursestart'] = 'Course start';
 $string['coursesummary'] = 'Course summary';
 $string['coursesummary_help'] = 'The course summary is displayed in the list of courses. A course search searches course summary text in addition to course names.';
@@ -430,7 +432,6 @@ $string['currentcourseadding'] = 'Current course, adding data to it';
 $string['currentcoursedeleting'] = 'Current course, deleting it first';
 $string['currentlanguage'] = 'Current language';
 $string['currentlocaltime'] = 'your current local time';
-$string['currentlyselectedusers'] = 'Currently selected users';
 $string['currentpicture'] = 'Current picture';
 $string['currentrelease'] = 'Current release information';
 $string['currentversion'] = 'Current version';
@@ -602,10 +603,13 @@ line at the top of your web browser window.
 
 If you need help, please contact the site administrator,
 {$a->admin}';
+$string['emailconfirmationresend'] = 'Resend confirmation email';
 $string['emailconfirmationsubject'] = '{$a}: account confirmation';
 $string['emailconfirmsent'] = '<p>An email should have been sent to your address at <b>{$a}</b></p>
    <p>It contains easy instructions to complete your registration.</p>
    <p>If you continue to have difficulty, contact the site administrator.</p>';
+$string['emailconfirmsentfailure'] = 'Confirmation email failed to send';
+$string['emailconfirmsentsuccess'] = 'Confirmation email sent successfully';
 $string['emaildigest'] = 'Email digest type';
 $string['emaildigest_help'] = 'This is the daily digest setting that forums will use by default.
 
@@ -622,7 +626,6 @@ $string['emaildisableclick'] = 'Click here to disable all email from being sent 
 $string['emaildisplay'] = 'Email display';
 $string['emaildisplay_help'] = 'Privileged users (such as teachers and managers) will always be able to see your email address.';
 $string['emaildisplaycourse'] = 'Allow only other course members to see my email address';
-$string['emaildisplayhidden'] = 'Email hidden';
 $string['emaildisplayno'] = 'Hide my email address from non-privileged users';
 $string['emaildisplayyes'] = 'Allow everyone to see my email address';
 $string['emailenable'] = 'This email address is enabled';
@@ -716,7 +719,6 @@ $string['emailresetconfirmsent'] = 'An email has been sent to your address at <b
 If you continue to have difficulty, contact the site administrator.';
 $string['emailtoprivatefiles'] = 'You can also e-mail files as attachments straight to your private files space. Simply attach your files to an e-mail and send it to {$a}';
 $string['emailtoprivatefilesdenied'] = 'Your administrator has disabled the option to upload your own private files.';
-$string['emailuserhasnone'] = 'There is no email address for the user.';
 $string['emailvia'] = '{$a->name} (via {$a->siteshortname})';
 $string['emptydragdropregion'] = 'empty region';
 $string['enable'] = 'Enable';
@@ -851,7 +853,6 @@ $string['formathtml'] = 'HTML format';
 $string['formatmarkdown'] = 'Markdown format';
 $string['formatplain'] = 'Plain text format';
 $string['formattext'] = 'Moodle auto-format';
-$string['formattexttype'] = 'Formatting';
 $string['forumpreferences'] = 'Forum preferences';
 $string['framesetinfo'] = 'This frameset document contains:';
 $string['from'] = 'From';
@@ -1017,9 +1018,9 @@ $string['idnumbergroup_help'] = 'The ID number of a group is only used when matc
 $string['idnumbergrouping'] = 'Grouping ID number';
 $string['idnumbergrouping_help'] = 'The ID number of a grouping is only used when matching the grouping against external systems and is not displayed anywhere on the site. If the grouping has an official code name it may be entered, otherwise the field can be left blank.';
 $string['idnumbermod'] = 'ID number';
-$string['idnumbermod_help'] = 'Setting an ID number provides a way of identifying the activity for grade calculation purposes. If the activity is not included in any grade calculation then the ID number field may be left blank.
+$string['idnumbermod_help'] = 'Setting an ID number provides a way of identifying the activity or resource for purposes such as grade calculation or custom reporting. Otherwise the field may be left blank.
 
-The ID number can also be set in the gradebook, though it can only be edited on the activity settings page.';
+For gradable activities, the ID number can also be set in the gradebook, though it can only be edited on the activity settings page.';
 $string['idnumbertaken'] = 'This ID number is already taken';
 $string['imagealt'] = 'Picture description';
 $string['import'] = 'Import';
@@ -1080,7 +1081,6 @@ $string['ip_address'] = 'IP address';
 $string['jump'] = 'Jump';
 $string['jumpto'] = 'Jump to...';
 $string['keep'] = 'Keep';
-$string['keepsearching'] = 'Keep searching';
 $string['langltr'] = 'Language direction left-to-right';
 $string['langrtl'] = 'Language direction right-to-left';
 $string['language'] = 'Language';
@@ -1180,9 +1180,7 @@ $string['maxsizeandattachmentsandareasize'] = 'Maximum size for new files: {$a->
 $string['memberincourse'] = 'People in the course';
 $string['messagebody'] = 'Message body';
 $string['messagedselectedusers'] = 'Selected users have been messaged and the recipient list has been reset.';
-$string['messagedselecteduserfailed'] = 'The message was not sent to user {$a->fullname}.';
 $string['messagedselectedusersfailed'] = 'Something went wrong while messaging selected users.  Some may have received the email.';
-$string['messagedselectedcountusersfailed'] = 'A problem occurred and {$a} messages have not been sent.';
 $string['messageprovider:availableupdate'] = 'Available update notifications';
 $string['messageprovider:backup'] = 'Backup notifications';
 $string['messageprovider:badgecreatornotice'] = 'Badge creator notifications';
@@ -1286,7 +1284,7 @@ $string['moveselectedcoursesto'] = 'Move selected courses to...';
 $string['movetoanotherfolder'] = 'Move to another folder';
 $string['moveup'] = 'Move up';
 $string['msnid'] = 'MSN ID';
-$string['mustconfirm'] = 'You need to confirm your login';
+$string['mustconfirm'] = 'You need to confirm your account';
 $string['mustchangepassword'] = 'The new password must be different than the current one';
 $string['mycourses'] = 'My courses';
 $string['myfiles'] = 'My private files';
@@ -1545,7 +1543,6 @@ $string['preferredtheme'] = 'Preferred theme';
 $string['preprocessingbackupfile'] = 'Preprocessing backup file';
 $string['prev'] = 'Prev';
 $string['preview'] = 'Preview';
-$string['previewhtml'] = 'HTML format preview';
 $string['previeworchoose'] = 'Preview or choose a theme';
 $string['previous'] = 'Previous';
 $string['previouslyselectedusers'] = 'Previously selected users not matching \'{$a}\'';
@@ -1562,7 +1559,7 @@ $string['privacy:metadata:events_queue'] = 'The queue of user events waiting to 
 $string['privacy:metadata:events_queue:eventdata'] = 'The data stored in the event.';
 $string['privacy:metadata:events_queue:stackdump'] = 'Any stacktrace associated with this event.';
 $string['privacy:metadata:events_queue:timecreated'] = 'The time that this event was created.';
-$string['privacy:metadata:events_queue:userid'] = 'The userid associated with this event.';
+$string['privacy:metadata:events_queue:userid'] = 'The user ID associated with this event';
 $string['privacy:metadata:log'] = 'A collection of past events';
 $string['privacy:metadata:log:action'] = 'A description of the action';
 $string['privacy:metadata:log:cmid'] = 'cmid';
@@ -1648,6 +1645,7 @@ $string['requestedcourses'] = 'Requested courses';
 $string['requestreason'] = 'Reason for course request';
 $string['required'] = 'Required';
 $string['requirespayment'] = 'This course requires payment for access';
+$string['resendemail'] = 'Resend email';
 $string['reset'] = 'Reset';
 $string['resetcomponent'] = 'Component';
 $string['resetcourse'] = 'Reset course';
@@ -1739,12 +1737,6 @@ $string['searchagain'] = 'Search again';
 $string['searchbyemail'] = 'Search by email address';
 $string['searchbyusername'] = 'Search by username';
 $string['searchcourses'] = 'Search courses';
-$string['searchhelp'] = '<p>You can search for multiple words at once and can refine your search as follows:</p>
-<ul>
-<li>word - find any match of this word within the text.</li>
-<li>+word - only exact matching words will be found.</li>
-<li>-word - don\'t include results containing this word.</li>
-</ul>';
 $string['searchoptions'] = 'Search options';
 $string['searchresults'] = 'Search results';
 $string['sec'] = 'sec';
@@ -1851,7 +1843,6 @@ $string['sitefilesused'] = 'Site files used in this course';
 $string['sitehome'] = 'Site home';
 $string['sitelegacyfiles'] = 'Legacy site files';
 $string['sitelogs'] = 'Site logs';
-$string['sitemessage'] = 'Message users';
 $string['sitenews'] = 'Site announcements';
 $string['sitepages'] = 'Site pages';
 $string['sitepartlist'] = 'You do not have the required permissions to view the participants list';
@@ -2082,7 +2073,6 @@ $string['uploadthisfile'] = 'Upload this file';
 $string['url'] = 'URL';
 $string['used'] = 'Used';
 $string['usedinnplaces'] = 'Used in {$a} places';
-$string['usemessageform'] = 'or use the form below to send a message to the selected students';
 $string['user'] = 'User';
 $string['useraccount'] = 'User account';
 $string['userconfirmed'] = 'Confirmed {$a}';
@@ -2200,10 +2190,6 @@ $string['yourwordforx'] = 'Your word for \'{$a}\'';
 $string['zippingbackup'] = 'Zipping backup';
 $string['deprecatedeventname'] = '{$a} (no longer in use)';
 
-// Deprecated since Moodle 3.2.
-$string['modchooserenable'] = 'Activity chooser on';
-$string['modchooserdisable'] = 'Activity chooser off';
-
 // Deprecated since Moodle 3.3.
 $string['deletecomment'] = 'Delete this comment';
 $string['sectionusedefaultname'] = 'Use default section name';
@@ -2212,3 +2198,19 @@ $string['sectionusedefaultname'] = 'Use default section name';
 $string['publish'] = 'Publish';
 $string['extendenrol'] = 'Extend enrolment (individual)';
 $string['groupextendenrol'] = 'Extend enrolment (common)';
+
+// Deprecated since Moodle 3.6.
+$string['addedrecip'] = 'Added {$a} new recipient';
+$string['addedrecips'] = 'Added {$a} new recipients';
+$string['allfieldsrequired'] = 'All fields are required';
+$string['backtoparticipants'] = 'Back to participants list';
+$string['currentlyselectedusers'] = 'Currently selected users';
+$string['coursemessage'] = 'Message course users';
+$string['emaildisplayhidden'] = 'Email hidden';
+$string['emailuserhasnone'] = 'There is no email address for the user.';
+$string['formattexttype'] = 'Formatting';
+$string['keepsearching'] = 'Keep searching';
+$string['messagedselectedcountusersfailed'] = 'A problem occurred and {$a} messages have not been sent.';
+$string['messagedselecteduserfailed'] = 'The message was not sent to user {$a->fullname}.';
+$string['previewhtml'] = 'HTML format preview';
+$string['sitemessage'] = 'Message users';

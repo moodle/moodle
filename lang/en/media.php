@@ -36,8 +36,3 @@ Where two players support the same format, enabling both increases compatibility
 $string['privacy:metadata'] = 'Media embedding does not store any personal data.';
 $string['supports'] = 'Supports';
 $string['videoextensions'] = 'Video: {$a}';
-
-// Deprecated since Moodle 3.2.
-$string['mediasettings'] = 'Media embedding';
-$string['legacyheading'] = 'Legacy media players';
-$string['legacyheading_desc'] = 'These players are not frequently used on the Web and require browser plugins that are less widely installed.';

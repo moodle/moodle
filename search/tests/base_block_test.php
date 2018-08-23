@@ -444,4 +444,22 @@ class base_block_testcase extends advanced_testcase {
                 'areaid' => $area->get_area_id(), 'itemid' => 0];
         return $engine->to_document($area, $docdata);
     }
+
+    /**
+     * Test document icon.
+     */
+    public function test_get_doc_icon() {
+        $baseblock = $this->getMockBuilder('\core_search\base_block')
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+
+        $document = $this->getMockBuilder('\core_search\document')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $result = $baseblock->get_doc_icon($document);
+
+        $this->assertEquals('e/anchor', $result->get_name());
+        $this->assertEquals('moodle', $result->get_component());
+    }
 }

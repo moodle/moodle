@@ -25,7 +25,6 @@ namespace tool_dataprivacy\output;
 defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
-use dml_exception;
 use moodle_exception;
 use moodle_url;
 use renderable;
@@ -34,7 +33,7 @@ use single_select;
 use stdClass;
 use templatable;
 use tool_dataprivacy\data_request;
-use tool_dataprivacy\output\expired_contexts_table;
+use tool_dataprivacy\local\helper;
 
 /**
  * Class containing data for a user's data requests.
@@ -43,9 +42,6 @@ use tool_dataprivacy\output\expired_contexts_table;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class data_deletion_page implements renderable, templatable {
-
-    /** The default number of results to be shown per page. */
-    const DEFAULT_PAGE_SIZE = 20;
 
     /** @var data_request[] $requests List of data requests. */
     protected $filter = null;
@@ -57,7 +53,7 @@ class data_deletion_page implements renderable, templatable {
      * Construct this renderable.
      *
      * @param \tool_dataprivacy\data_request[] $filter
-     * @param \tool_dataprivacy\expired_contexts_table $expiredcontextstable
+     * @param expired_contexts_table $expiredcontextstable
      */
     public function __construct($filter, expired_contexts_table $expiredcontextstable) {
         $this->filter = $filter;
@@ -70,7 +66,6 @@ class data_deletion_page implements renderable, templatable {
      * @param renderer_base $output
      * @return stdClass
      * @throws coding_exception
-     * @throws dml_exception
      * @throws moodle_exception
      */
     public function export_for_template(renderer_base $output) {
@@ -87,7 +82,7 @@ class data_deletion_page implements renderable, templatable {
         $data->filter = $filterselector->export_for_template($output);
 
         ob_start();
-        $this->expiredcontextstable->out(self::DEFAULT_PAGE_SIZE, true);
+        $this->expiredcontextstable->out(helper::DEFAULT_PAGE_SIZE, true);
         $expiredcontexts = ob_get_contents();
         ob_end_clean();
         $data->expiredcontexts = $expiredcontexts;

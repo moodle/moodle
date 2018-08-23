@@ -59,6 +59,11 @@ class document implements \renderable, \templatable {
     protected $contexturl = null;
 
     /**
+     * @var \core_search\document_icon Document icon instance.
+     */
+    protected $docicon = null;
+
+    /**
      * @var int|null The content field filearea.
      */
     protected $contentfilearea = null;
@@ -496,6 +501,24 @@ class document implements \renderable, \templatable {
         return $this->docurl;
     }
 
+    /**
+     * Sets document icon instance.
+     *
+     * @param \core_search\document_icon $docicon
+     */
+    public function set_doc_icon(document_icon $docicon) {
+        $this->docicon = $docicon;
+    }
+
+    /**
+     * Gets document icon instance.
+     *
+     * @return \core_search\document_icon
+     */
+    public function get_doc_icon() {
+        return $this->docicon;
+    }
+
     public function set_context_url(\moodle_url $url) {
         $this->contexturl = $url;
     }
@@ -592,7 +615,8 @@ class document implements \renderable, \templatable {
     public function export_for_template(\renderer_base $output) {
         list($componentname, $areaname) = \core_search\manager::extract_areaid_parts($this->get('areaid'));
 
-        $title = $this->is_set('title') ? $this->format_text($this->get('title')) : '';
+        $searcharea = \core_search\manager::get_search_area($this->data['areaid']);
+        $title = $this->is_set('title') ? $this->format_text($searcharea->get_document_display_title($this)) : '';
         $data = [
             'componentname' => $componentname,
             'areaname' => $areaname,
@@ -626,6 +650,10 @@ class document implements \renderable, \templatable {
         if ($this->is_set('userid')) {
             $data['userurl'] = new \moodle_url('/user/view.php', array('id' => $this->get('userid'), 'course' => $this->get('courseid')));
             $data['userfullname'] = format_string($this->get('userfullname'), true, array('context' => $this->get('contextid')));
+        }
+
+        if ($docicon = $this->get_doc_icon()) {
+            $data['icon'] = $output->image_url($docicon->get_name(), $docicon->get_component());
         }
 
         return $data;

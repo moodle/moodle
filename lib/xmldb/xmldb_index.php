@@ -291,14 +291,14 @@ class xmldb_index extends xmldb_object {
         // The fields
         $indexfields = $this->getFields();
         if (!empty($indexfields)) {
-            $result .= 'array(' . "'".  implode("', '", $indexfields) . "')";
+            $result .= "['".  implode("', '", $indexfields) . "']";
         } else {
             $result .= 'null';
         }
         // Hints
         $hints = $this->getHints();
         if (!empty($hints)) {
-            $result .= ', array(' . "'".  implode("', '", $hints) . "')";
+            $result .= ", ['".  implode("', '", $hints) . "']";
         }
 
         // Return result

@@ -971,6 +971,9 @@ class behat_general extends behat_base {
      * @param string $taskname Name of task e.g. 'mod_whatever\task\do_something'
      */
     public function i_run_the_scheduled_task($taskname) {
+        global $CFG;
+        require_once("{$CFG->libdir}/cronlib.php");
+
         $task = \core\task\manager::get_scheduled_task($taskname);
         if (!$task) {
             throw new DriverException('The "' . $taskname . '" scheduled task does not exist');
@@ -997,16 +1000,26 @@ class behat_general extends behat_base {
         }
 
         try {
+            // Prepare the renderer.
+            cron_prepare_core_renderer();
+
             // Discard task output as not appropriate for Behat output!
             ob_start();
             $task->execute();
             ob_end_clean();
 
+            // Restore the previous renderer.
+            cron_prepare_core_renderer(true);
+
             // Mark task complete.
             \core\task\manager::scheduled_task_complete($task);
         } catch (Exception $e) {
+            // Restore the previous renderer.
+            cron_prepare_core_renderer(true);
+
             // Mark task failed and throw exception.
             \core\task\manager::scheduled_task_failed($task);
+
             throw new DriverException('The "' . $taskname . '" scheduled task failed', 0, $e);
         }
     }
@@ -1025,24 +1038,35 @@ class behat_general extends behat_base {
      * @throws DriverException
      */
     public function i_run_all_adhoc_tasks() {
+        global $CFG, $DB;
+        require_once("{$CFG->libdir}/cronlib.php");
+
         // Do setup for cron task.
         cron_setup_user();
 
-        // Run tasks. Locking is handled by get_next_adhoc_task.
-        $now = time();
-        ob_start(); // Discard task output as not appropriate for Behat output!
-        while (($task = \core\task\manager::get_next_adhoc_task($now)) !== null) {
+        // Discard task output as not appropriate for Behat output!
+        ob_start();
 
-            try {
-                $task->execute();
+        // Run all tasks which have a scheduled runtime of before now.
+        $timenow = time();
 
-                // Mark task complete.
-                \core\task\manager::adhoc_task_complete($task);
-            } catch (Exception $e) {
-                // Mark task failed and throw exception.
-                \core\task\manager::adhoc_task_failed($task);
-                ob_end_clean();
-                throw new DriverException('An adhoc task failed', 0, $e);
+        while (!\core\task\manager::static_caches_cleared_since($timenow) &&
+                $task = \core\task\manager::get_next_adhoc_task($timenow)) {
+            // Clean the output buffer between tasks.
+            ob_clean();
+
+            // Run the task.
+            cron_run_inner_adhoc_task($task);
+
+            // Check whether the task record still exists.
+            // If a task was successful it will be removed.
+            // If it failed then it will still exist.
+            if ($DB->record_exists('task_adhoc', ['id' => $task->get_id()])) {
+                // End ouptut buffering and flush the current buffer.
+                // This should be from just the current task.
+                ob_end_flush();
+
+                throw new DriverException('An adhoc task failed', 0);
             }
         }
         ob_end_clean();
@@ -1721,5 +1745,20 @@ class behat_general extends behat_base {
 
         $value = ($shift == ' shift') ? [\WebDriver\Key::SHIFT . \WebDriver\Key::TAB] : [\WebDriver\Key::TAB];
         $this->getSession()->getDriver()->getWebDriverSession()->activeElement()->postValue(['value' => $value]);
+    }
+
+    /**
+     * Trigger click on node via javascript instead of actually clicking on it via pointer.
+     * This function resolves the issue of nested elements.
+     *
+     * @When /^I click on "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" skipping visibility check$/
+     * @param string $element
+     * @param string $selectortype
+     */
+    public function i_click_on_skipping_visibility_check($element, $selectortype) {
+
+        // Gets the node based on the requested selector type and locator.
+        $node = $this->get_selected_node($selectortype, $element);
+        $this->js_trigger_click($node);
     }
 }

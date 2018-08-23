@@ -23,7 +23,7 @@
  */
 
 require('../config.php');
-require($CFG->dirroot.'/cohort/lib.php');
+require_once($CFG->dirroot.'/cohort/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $contextid = optional_param('contextid', 0, PARAM_INT);

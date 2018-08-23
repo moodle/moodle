@@ -2,6 +2,15 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 3.6 ===
+* New method validate_format_options() cleans the values of the course/section format options before inserting them
+  in the database. Course format options can now be set in tool_uploadcourse and validation of user-submitted data is important.
+  Note that validate_format_options() is now always called when somebody creates or edits course or section and also
+  during restore and course upload. Default implementation validates against the definition of the form elements for
+  format options.
+* The final deprecation of xxx_delete_course callback means that this function will no longer be called.
+  Please use the observer for event \core\event\course_content_deleted instead.
+
 === 3.5 ===
 * Course formats should overwrite get_config_for_external function to return the course format settings viewable by the
   current user.

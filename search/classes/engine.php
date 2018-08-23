@@ -199,6 +199,7 @@ abstract class engine {
         $doc->set_data_from_engine($docdata);
         $doc->set_doc_url($searcharea->get_doc_url($doc));
         $doc->set_context_url($searcharea->get_context_url($doc));
+        $doc->set_doc_icon($searcharea->get_doc_icon($doc));
 
         // Uses the internal caches to get required data needed to render the document later.
         $course = $this->get_course($doc->get('courseid'));

@@ -99,7 +99,8 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertTrue($co->prepare());
         $this->assertFalse($DB->record_exists('course', array('shortname' => 'newcourse')));
         $co->proceed();
-        $this->assertTrue($DB->record_exists('course', array('shortname' => 'newcourse')));
+        $course = $DB->get_record('course', array('shortname' => 'newcourse'), '*', MUST_EXIST);
+        $this->assertEquals(0, course_get_format($course)->get_course()->coursedisplay);
 
         // Try to add a new course, that already exists.
         $coursecount = $DB->count_records('course', array());
@@ -118,6 +119,16 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertTrue($co->prepare());
         $co->proceed();
         $this->assertTrue($DB->record_exists('course', array('shortname' => 'c2')));
+
+        // Add a new course with non-default course format option.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $data = array('shortname' => 'c3', 'fullname' => 'C3', 'summary' => 'New c3', 'category' => 1,
+            'format' => 'weeks', 'coursedisplay' => 1);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $course = $DB->get_record('course', array('shortname' => 'c3'), '*', MUST_EXIST);
+        $this->assertEquals(1, course_get_format($course)->get_course()->coursedisplay);
     }
 
     public function test_create_with_sections() {
@@ -260,6 +271,16 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertTrue($co->prepare());
         $co->proceed();
         $this->assertEquals('Use this summary', $DB->get_field_select('course', 'summary', 'shortname = :s', array('s' => 'c1')));
+
+        // Update course format option.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'c1', 'coursedisplay' => 1);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $course = $DB->get_record('course', array('shortname' => 'c1'), '*', MUST_EXIST);
+        $this->assertEquals(1, course_get_format($course)->get_course()->coursedisplay);
     }
 
     public function test_data_saved() {

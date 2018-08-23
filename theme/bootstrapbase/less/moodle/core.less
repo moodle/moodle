@@ -118,6 +118,8 @@ a.dimmed_text:visited,
 }
 .unlist,
 .unlist li,
+.list-unstyled,
+.list-unstyled li,
 .inline-list,
 .inline-list li,
 .block .list,
@@ -374,8 +376,10 @@ form.popupform div {
 .pagelayout-report .no-overflow {
     overflow: visible;
 }
+// Minimum height required for a menu in a table inside a scrollable div.
 .no-overflow > .generaltable {
     margin-bottom: 0;
+    min-height: 10em;
 }
 // Accessibility features
 
@@ -1573,7 +1577,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 /* Fixed for safari browser on iPhone4S with ios7.*/
 @media (max-height: 639px) {
-    .ios.safari .choosercontainer #chooseform .submitbuttons {
+    .ios .choosercontainer #chooseform .submitbuttons {
         padding: 45px 0;
     }
 }
@@ -2100,12 +2104,6 @@ img#persona_signin {
                 color: @dropdownLinkColorHover;
                 background-color: @dropdownLinkBackgroundHover;
             }
-            &:first-child {
-                .border-top-radius(4px);
-            }
-            &:last-child {
-                .border-bottom-radius(4px);
-            }
         }
         a.hidden {
             display: none;
@@ -2120,6 +2118,12 @@ img#persona_signin {
         }
         > li {
             display: block;
+            &:first-child a {
+                .border-top-radius(4px);
+            }
+            &:last-child a {
+                .border-bottom-radius(4px);
+            }
         }
 
         /** bottom left of button **/

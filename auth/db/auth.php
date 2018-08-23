@@ -473,6 +473,12 @@ class auth_plugin_db extends auth_plugin_base {
                     set_user_preference('auth_forcepasswordchange', 1, $id);
                     set_user_preference('create_password',          1, $id);
                 }
+
+                // Save custom profile fields here.
+                require_once($CFG->dirroot . '/user/profile/lib.php');
+                $user->id = $id;
+                profile_save_data($user);
+
                 // Make sure user context is present.
                 context_user::instance($id);
             }
@@ -709,12 +715,12 @@ class auth_plugin_db extends auth_plugin_base {
         raise_memory_limit(MEMORY_HUGE);
 
         if (empty($this->config->table)) {
-            echo $OUTPUT->notification('External table not specified.', 'notifyproblem');
+            echo $OUTPUT->notification(get_string('auth_dbnoexttable', 'auth_db'), 'notifyproblem');
             return;
         }
 
         if (empty($this->config->fielduser)) {
-            echo $OUTPUT->notification('External user field not specified.', 'notifyproblem');
+            echo $OUTPUT->notification(get_string('auth_dbnouserfield', 'auth_db'), 'notifyproblem');
             return;
         }
 
@@ -735,7 +741,7 @@ class auth_plugin_db extends auth_plugin_base {
             error_reporting($CFG->debug);
             ob_end_flush();
 
-            echo $OUTPUT->notification('Cannot connect the database.', 'notifyproblem');
+            echo $OUTPUT->notification(get_string('auth_dbcannotconnect', 'auth_db'), 'notifyproblem');
             return;
         }
 
@@ -744,17 +750,17 @@ class auth_plugin_db extends auth_plugin_base {
                                 WHERE {$this->config->fielduser} <> 'random_unlikely_username'"); // Any unlikely name is ok here.
 
         if (!$rs) {
-            echo $OUTPUT->notification('Can not read external table.', 'notifyproblem');
+            echo $OUTPUT->notification(get_string('auth_dbcannotreadtable', 'auth_db'), 'notifyproblem');
 
         } else if ($rs->EOF) {
-            echo $OUTPUT->notification('External table is empty.', 'notifyproblem');
+            echo $OUTPUT->notification(get_string('auth_dbtableempty', 'auth_db'), 'notifyproblem');
             $rs->close();
 
         } else {
             $fields_obj = $rs->FetchObj();
             $columns = array_keys((array)$fields_obj);
 
-            echo $OUTPUT->notification('External table contains following columns:<br />'.implode(', ', $columns), 'notifysuccess');
+            echo $OUTPUT->notification(get_string('auth_dbcolumnlist', 'auth_db', implode(', ', $columns)), 'notifysuccess');
             $rs->close();
         }
 

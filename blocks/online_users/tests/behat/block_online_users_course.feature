@@ -39,3 +39,35 @@ Feature: The online users block allow you to see who is currently online
     And I should see "Student 1" in the "Online users" "block"
     And I should not see "Student 2" in the "Online users" "block"
     And I should see "2 online users" in the "Online users" "block"
+
+  @javascript
+  Scenario: Hide/show user's online status from/to other users in the online users block on course page
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add the "Online users" block
+    And I log out
+    When I log in as "student1"
+    And I am on "Course 1" course homepage
+    Then "Hide" "icon" should exist in the "#change-user-visibility" "css_element"
+    When I click on "#change-user-visibility" "css_element"
+    And I wait "1" seconds
+    Then "Show" "icon" should exist in the "#change-user-visibility" "css_element"
+    And I log out
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    Then I should see "1 online user" in the "Online users" "block"
+    And I should see "Teacher 1" in the "Online users" "block"
+    And I should not see "Student 1" in the "Online users" "block"
+    And I log out
+    When I log in as "student1"
+    And I am on "Course 1" course homepage
+    Then "Show" "icon" should exist in the "#change-user-visibility" "css_element"
+    When I click on "#change-user-visibility" "css_element"
+    And I wait "1" seconds
+    Then "Hide" "icon" should exist in the "#change-user-visibility" "css_element"
+    And I log out
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    Then I should see "2 online users" in the "Online users" "block"
+    And I should see "Teacher 1" in the "Online users" "block"
+    And I should see "Student 1" in the "Online users" "block"

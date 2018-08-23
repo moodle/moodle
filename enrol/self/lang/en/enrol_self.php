@@ -65,6 +65,8 @@ $string['expirymessageenrolledbody'] = 'Dear {$a->user},
 This is a notification that your enrolment in the course \'{$a->course}\' is due to expire on {$a->timeend}.
 
 If you need help, please contact {$a->enroller}.';
+$string['expirynotifyall'] = 'Teacher and enrolled user';
+$string['expirynotifyenroller'] = 'Teacher only';
 $string['groupkey'] = 'Use group enrolment keys';
 $string['groupkey_desc'] = 'Use group enrolment keys by default.';
 $string['groupkey_help'] = 'In addition to restricting access to the course to only those who know the key, use of group enrolment keys means users are automatically added to groups when they enrol in the course.

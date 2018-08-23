@@ -162,7 +162,7 @@ class view_table_php extends XMLDBAction {
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="table" value="' . s($tableparam) . '" />';
         $o.= '    <input type="hidden" name ="action" value="view_table_php" />';
-        $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
+        $o .= '    <table id="formelements" cellpadding="5">';
         $o.= '      <tr><td><label for="menucommand" accesskey="c">' . $this->str['selectaction'] .' </label>' . html_writer::select($popcommands, 'command', $commandparam, false) . '&nbsp;<label for="menufieldkeyindex" accesskey="f">' . $this->str['selectfieldkeyindex'] . ' </label>' .html_writer::select($popfields, 'fieldkeyindex', $origfieldkeyindexparam, false) . '</td></tr>';
         $o.= '      <tr><td colspan="2" align="center"><input type="submit" value="' .$this->str['view'] . '" /></td></tr>';
         $o.= '    </table>';

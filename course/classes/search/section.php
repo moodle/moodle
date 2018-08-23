@@ -85,6 +85,9 @@ class section extends \core_search\base {
      * @return \core_search\document
      */
     public function get_document($record, $options = array()) {
+        global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
+
         // Get the context, modinfo, and section.
         try {
             $context = \context_course::instance($record->course);
@@ -191,5 +194,15 @@ class section extends \core_search\base {
      */
     public function get_component_name() {
         return 'course';
+    }
+
+    /**
+     * Returns an icon instance for the document.
+     *
+     * @param \core_search\document $doc
+     * @return \core_search\document_icon
+     */
+    public function get_doc_icon(\core_search\document $doc) : \core_search\document_icon {
+        return new \core_search\document_icon('i/section');
     }
 }

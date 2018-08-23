@@ -76,9 +76,10 @@ if ($contextid) {
         $customdata['withincourseid'] = $coursecontext->instanceid;
     }
 
-    // Get available ordering options from search engine.
-    $customdata['orderoptions'] = $search->get_engine()->get_supported_orders($context);
 }
+// Get available ordering options from search engine.
+$customdata['orderoptions'] = $search->get_engine()->get_supported_orders($context);
+
 $mform = new \core_search\output\form\search(null, $customdata);
 
 $data = $mform->get_data();

@@ -361,6 +361,7 @@ function core_login_validate_forgot_password_data($data) {
         } else {
             if ($user = get_complete_user_data('email', $data['email'])) {
                 if (empty($user->confirmed)) {
+                    send_confirmation_email($user);
                     $errors['email'] = get_string('confirmednot');
                 }
             }
@@ -372,6 +373,7 @@ function core_login_validate_forgot_password_data($data) {
     } else {
         if ($user = get_complete_user_data('username', $data['username'])) {
             if (empty($user->confirmed)) {
+                send_confirmation_email($user);
                 $errors['email'] = get_string('confirmednot');
             }
         }

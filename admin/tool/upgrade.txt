@@ -1,6 +1,9 @@
 This files describes API changes in /admin/tool/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+
+The assignment upgrade tool has been removed. If you need to upgrade assignments from before Moodle 2.3, you will have to upgrade to any Moodle version from 2.3 to 3.5, upgrade the assignments and then upgrade to a later version.
 
 === 2.2 ===
 

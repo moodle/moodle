@@ -693,7 +693,15 @@ class tool_uploadcourse_course {
             return false;
         }
 
-        // TODO MDL-59259 allow to set course format options for the current course format.
+        // Add data for course format options.
+        if (isset($coursedata['format']) || $exists) {
+            if (isset($coursedata['format'])) {
+                $courseformat = course_get_format((object)['format' => $coursedata['format']]);
+            } else {
+                $courseformat = course_get_format($existingdata);
+            }
+            $coursedata += $courseformat->validate_course_format_options($this->rawdata);
+        }
 
         // Special case, 'numsections' is not a course format option any more but still should apply from defaults.
         if (!$exists || !array_key_exists('numsections', $coursedata)) {

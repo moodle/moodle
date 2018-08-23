@@ -119,7 +119,7 @@ class user_search_testcase extends advanced_testcase {
         $this->assertEquals(SITEID, $doc->get('courseid'));
         $this->assertFalse($doc->is_set('userid'));
         $this->assertEquals(\core_search\manager::NO_OWNER_ID, $doc->get('owneruserid'));
-        $this->assertEquals(content_to_text(fullname($user), false), $doc->get('title'));
+        $this->assertEquals(content_to_text(fullname($user), false), $searcharea->get_document_display_title($doc));
         $this->assertEquals(content_to_text($user->description, $user->descriptionformat), $doc->get('content'));
     }
 
@@ -214,5 +214,19 @@ class user_search_testcase extends advanced_testcase {
         $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($user1->id));
         $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($user2->id));
         $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($user3->id));
+    }
+
+    /**
+     * Test document icon.
+     */
+    public function test_get_doc_icon() {
+        $searcharea = \core_search\manager::get_search_area($this->userareaid);
+        $user = self::getDataGenerator()->create_user();
+        $doc = $searcharea->get_document($user);
+
+        $result = $searcharea->get_doc_icon($doc);
+
+        $this->assertEquals('i/user', $result->get_name());
+        $this->assertEquals('moodle', $result->get_component());
     }
 }

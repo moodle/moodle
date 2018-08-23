@@ -75,7 +75,8 @@ function wiki_print_editor_wiki($pageid, $content, $editor, $version = -1, $sect
 
     echo $OUTPUT->container_start();
     echo '<form method="post" id="mform1" action="' . $action . '">';
-    echo $OUTPUT->container(print_textarea(false, 20, 60, 0, 0, "newcontent", $content, 0, true), false, 'wiki_editor');
+    $textarea = $OUTPUT->print_textarea('newcontent', 'edit-newcontent', $content, 20, 60);
+    echo $OUTPUT->container($textarea, false, 'wiki_editor');
     echo $OUTPUT->container_start();
     wiki_print_edit_form_default_fields($editor, $pageid, $version, $upload, $deleteuploads);
     echo $OUTPUT->container_end();

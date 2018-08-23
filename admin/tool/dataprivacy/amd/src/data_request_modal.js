@@ -29,6 +29,7 @@ define(['jquery', 'core/notification', 'core/custom_interaction_events', 'core/m
         var SELECTORS = {
             APPROVE_BUTTON: '[data-action="approve"]',
             DENY_BUTTON: '[data-action="deny"]',
+            COMPLETE_BUTTON: '[data-action="complete"]'
         };
 
         /**
@@ -38,14 +39,6 @@ define(['jquery', 'core/notification', 'core/custom_interaction_events', 'core/m
          */
         var ModalDataRequest = function(root) {
             Modal.call(this, root);
-
-            if (!this.getFooter().find(SELECTORS.APPROVE_BUTTON).length) {
-                Notification.exception({message: 'No approve button found'});
-            }
-
-            if (!this.getFooter().find(SELECTORS.DENY_BUTTON).length) {
-                Notification.exception({message: 'No deny button found'});
-            }
         };
 
         ModalDataRequest.TYPE = 'tool_dataprivacy-data_request';
@@ -76,6 +69,16 @@ define(['jquery', 'core/notification', 'core/custom_interaction_events', 'core/m
                 this.getRoot().trigger(denyEvent, this);
 
                 if (!denyEvent.isDefaultPrevented()) {
+                    this.hide();
+                    data.originalEvent.preventDefault();
+                }
+            }.bind(this));
+
+            this.getModal().on(CustomEvents.events.activate, SELECTORS.COMPLETE_BUTTON, function(e, data) {
+                var completeEvent = $.Event(DataPrivacyEvents.complete);
+                this.getRoot().trigger(completeEvent, this);
+
+                if (!completeEvent.isDefaultPrevented()) {
                     this.hide();
                     data.originalEvent.preventDefault();
                 }

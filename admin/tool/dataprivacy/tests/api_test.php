@@ -29,6 +29,7 @@ use tool_dataprivacy\api;
 use tool_dataprivacy\data_registry;
 use tool_dataprivacy\expired_context;
 use tool_dataprivacy\data_request;
+use tool_dataprivacy\local\helper;
 use tool_dataprivacy\task\initiate_data_request_task;
 use tool_dataprivacy\task\process_data_request_task;
 
@@ -276,6 +277,57 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test for api::can_download_data_request_for_user()
+     */
+    public function test_can_download_data_request_for_user() {
+        $generator = $this->getDataGenerator();
+
+        // Three victims.
+        $victim1 = $generator->create_user();
+        $victim2 = $generator->create_user();
+        $victim3 = $generator->create_user();
+
+        // Assign a user as victim 1's parent.
+        $systemcontext = \context_system::instance();
+        $parentrole = $generator->create_role();
+        assign_capability('tool/dataprivacy:makedatarequestsforchildren', CAP_ALLOW, $parentrole, $systemcontext);
+        $parent = $generator->create_user();
+        role_assign($parentrole, $parent->id, \context_user::instance($victim1->id));
+
+        // Assign another user as data access wonder woman.
+        $wonderrole = $generator->create_role();
+        assign_capability('tool/dataprivacy:downloadallrequests', CAP_ALLOW, $wonderrole, $systemcontext);
+        $staff = $generator->create_user();
+        role_assign($wonderrole, $staff->id, $systemcontext);
+
+        // Finally, victim 3 has been naughty; stop them accessing their own data.
+        $naughtyrole = $generator->create_role();
+        assign_capability('tool/dataprivacy:downloadownrequest', CAP_PROHIBIT, $naughtyrole, $systemcontext);
+        role_assign($naughtyrole, $victim3->id, $systemcontext);
+
+        // Victims 1 and 2 can access their own data, regardless of who requested it.
+        $this->assertTrue(api::can_download_data_request_for_user($victim1->id, $victim1->id, $victim1->id));
+        $this->assertTrue(api::can_download_data_request_for_user($victim2->id, $staff->id, $victim2->id));
+
+        // Victim 3 cannot access his own data.
+        $this->assertFalse(api::can_download_data_request_for_user($victim3->id, $victim3->id, $victim3->id));
+
+        // Victims 1 and 2 cannot access another victim's data.
+        $this->assertFalse(api::can_download_data_request_for_user($victim2->id, $victim1->id, $victim1->id));
+        $this->assertFalse(api::can_download_data_request_for_user($victim1->id, $staff->id, $victim2->id));
+
+        // Staff can access everyone's data.
+        $this->assertTrue(api::can_download_data_request_for_user($victim1->id, $victim1->id, $staff->id));
+        $this->assertTrue(api::can_download_data_request_for_user($victim2->id, $staff->id, $staff->id));
+        $this->assertTrue(api::can_download_data_request_for_user($victim3->id, $staff->id, $staff->id));
+
+        // Parent can access victim 1's data only if they requested it.
+        $this->assertTrue(api::can_download_data_request_for_user($victim1->id, $parent->id, $parent->id));
+        $this->assertFalse(api::can_download_data_request_for_user($victim1->id, $staff->id, $parent->id));
+        $this->assertFalse(api::can_download_data_request_for_user($victim2->id, $parent->id, $parent->id));
+    }
+
+    /**
      * Test for api::create_data_request()
      */
     public function test_create_data_request() {
@@ -411,42 +463,140 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for api::get_data_requests()
+     * Data provider for \tool_dataprivacy_api_testcase::test_get_data_requests().
+     *
+     * @return array
      */
-    public function test_get_data_requests() {
+    public function get_data_requests_provider() {
+        $completeonly = [api::DATAREQUEST_STATUS_COMPLETE];
+        $completeandcancelled = [api::DATAREQUEST_STATUS_COMPLETE, api::DATAREQUEST_STATUS_CANCELLED];
+
+        return [
+            // Own data requests.
+            ['user', false, $completeonly],
+            // Non-DPO fetching all requets.
+            ['user', true, $completeonly],
+            // Admin fetching all completed and cancelled requests.
+            ['dpo', true, $completeandcancelled],
+            // Admin fetching all completed requests.
+            ['dpo', true, $completeonly],
+            // Guest fetching all requests.
+            ['guest', true, $completeonly],
+        ];
+    }
+
+    /**
+     * Test for api::get_data_requests()
+     *
+     * @dataProvider get_data_requests_provider
+     * @param string $usertype The type of the user logging in.
+     * @param boolean $fetchall Whether to fetch all records.
+     * @param int[] $statuses Status filters.
+     */
+    public function test_get_data_requests($usertype, $fetchall, $statuses) {
         $generator = new testing_data_generator();
         $user1 = $generator->create_user();
         $user2 = $generator->create_user();
-        $comment = 'sample comment';
+        $user3 = $generator->create_user();
+        $user4 = $generator->create_user();
+        $user5 = $generator->create_user();
+        $users = [$user1, $user2, $user3, $user4, $user5];
 
-        // Make a data request as user 1.
-        $this->setUser($user1);
-        $d1 = api::create_data_request($user1->id, api::DATAREQUEST_TYPE_EXPORT, $comment);
-        // Make a data request as user 2.
-        $this->setUser($user2);
-        $d2 = api::create_data_request($user2->id, api::DATAREQUEST_TYPE_EXPORT, $comment);
+        switch ($usertype) {
+            case 'user':
+                $loggeduser = $user1;
+                break;
+            case 'dpo':
+                $loggeduser = get_admin();
+                break;
+            case 'guest':
+                $loggeduser = guest_user();
+                break;
+        }
 
-        // Fetching data requests of specific users.
-        $requests = api::get_data_requests($user1->id);
-        $this->assertCount(1, $requests);
-        $datarequest = reset($requests);
-        $this->assertEquals($d1->to_record(), $datarequest->to_record());
+        $comment = 'Data %s request comment by user %d';
+        $exportstring = helper::get_shortened_request_type_string(api::DATAREQUEST_TYPE_EXPORT);
+        $deletionstring = helper::get_shortened_request_type_string(api::DATAREQUEST_TYPE_DELETE);
+        // Make a data requests for the users.
+        foreach ($users as $user) {
+            $this->setUser($user);
+            api::create_data_request($user->id, api::DATAREQUEST_TYPE_EXPORT, sprintf($comment, $exportstring, $user->id));
+            api::create_data_request($user->id, api::DATAREQUEST_TYPE_EXPORT, sprintf($comment, $deletionstring, $user->id));
+        }
 
-        $requests = api::get_data_requests($user2->id);
-        $this->assertCount(1, $requests);
-        $datarequest = reset($requests);
-        $this->assertEquals($d2->to_record(), $datarequest->to_record());
+        // Log in as the target user.
+        $this->setUser($loggeduser);
+        // Get records count based on the filters.
+        $userid = $loggeduser->id;
+        if ($fetchall) {
+            $userid = 0;
+        }
+        $count = api::get_data_requests_count($userid);
+        if (api::is_site_dpo($loggeduser->id)) {
+            // DPOs should see all the requests.
+            $this->assertEquals(count($users) * 2, $count);
+        } else {
+            if (empty($userid)) {
+                // There should be no data requests for this user available.
+                $this->assertEquals(0, $count);
+            } else {
+                // There should be only one (request with pending status).
+                $this->assertEquals(2, $count);
+            }
+        }
+        // Get data requests.
+        $requests = api::get_data_requests($userid);
+        // The number of requests should match the count.
+        $this->assertCount($count, $requests);
 
-        // Fetching data requests of all users.
-        // As guest.
-        $this->setGuestUser();
-        $requests = api::get_data_requests();
-        $this->assertEmpty($requests);
+        // Test filtering by status.
+        if ($count && !empty($statuses)) {
+            $filteredcount = api::get_data_requests_count($userid, $statuses);
+            // There should be none as they are all pending.
+            $this->assertEquals(0, $filteredcount);
+            $filteredrequests = api::get_data_requests($userid, $statuses);
+            $this->assertCount($filteredcount, $filteredrequests);
 
-        // As DPO (admin in this case, which is default if no site DPOs are set).
-        $this->setAdminUser();
-        $requests = api::get_data_requests();
-        $this->assertCount(2, $requests);
+            $statuscounts = [];
+            foreach ($statuses as $stat) {
+                $statuscounts[$stat] = 0;
+            }
+            $numstatus = count($statuses);
+            // Get all requests with status filter and update statuses, randomly.
+            foreach ($requests as $request) {
+                if (rand(0, 1)) {
+                    continue;
+                }
+
+                if ($numstatus > 1) {
+                    $index = rand(0, $numstatus - 1);
+                    $status = $statuses[$index];
+                } else {
+                    $status = reset($statuses);
+                }
+                $statuscounts[$status]++;
+                api::update_request_status($request->get('id'), $status);
+            }
+            $total = array_sum($statuscounts);
+            $filteredcount = api::get_data_requests_count($userid, $statuses);
+            $this->assertEquals($total, $filteredcount);
+            $filteredrequests = api::get_data_requests($userid, $statuses);
+            $this->assertCount($filteredcount, $filteredrequests);
+            // Confirm the filtered requests match the status filter(s).
+            foreach ($filteredrequests as $request) {
+                $this->assertContains($request->get('status'), $statuses);
+            }
+
+            if ($numstatus > 1) {
+                // Fetch by individual status to check the numbers match.
+                foreach ($statuses as $status) {
+                    $filteredcount = api::get_data_requests_count($userid, [$status]);
+                    $this->assertEquals($statuscounts[$status], $filteredcount);
+                    $filteredrequests = api::get_data_requests($userid, [$status]);
+                    $this->assertCount($filteredcount, $filteredrequests);
+                }
+            }
+        }
     }
 
     /**

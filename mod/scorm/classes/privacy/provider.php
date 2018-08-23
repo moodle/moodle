@@ -27,8 +27,9 @@ namespace mod_scorm\privacy;
 defined('MOODLE_INTERNAL') || die();
 
 use core_privacy\local\metadata\collection;
-use core_privacy\local\request\contextlist;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\helper;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 
@@ -122,10 +123,18 @@ class provider implements
             return;
         }
 
-        $userid = $contextlist->get_user()->id;
-        list($insql, $inparams) = $DB->get_in_or_equal($contexts, SQL_PARAMS_NAMED);
+        $user = $contextlist->get_user();
+        $userid = $user->id;
+        // Get SCORM data.
+        foreach ($contexts as $contextid) {
+            $context = \context::instance_by_id($contextid);
+            $data = helper::get_context_data($context, $user);
+            writer::with_context($context)->export_data([], $data);
+            helper::export_context_files($context, $user);
+        }
 
         // Get scoes_track data.
+        list($insql, $inparams) = $DB->get_in_or_equal($contexts, SQL_PARAMS_NAMED);
         $sql = "SELECT ss.id,
                        ss.attempt,
                        ss.element,
@@ -152,14 +161,17 @@ class provider implements
         }
         $scoestracks->close();
 
-        // The scoes_track data is organised in: {Course name}/{SCORM activity name}/attempt-X.json.
+        // The scoes_track data is organised in: {Course name}/{SCORM activity name}/{My attempts}/{Attempt X}/data.json
         // where X is the attempt number.
         array_walk($alldata, function($attemptsdata, $contextid) {
             $context = \context::instance_by_id($contextid);
             array_walk($attemptsdata, function($data, $attempt) use ($context) {
-                writer::with_context($context)->export_related_data(
-                    [],
-                    'attempt-'.$attempt,
+                $subcontext = [
+                    get_string('myattempts', 'scorm'),
+                    get_string('attempt', 'scorm'). " $attempt"
+                ];
+                writer::with_context($context)->export_data(
+                    $subcontext,
                     (object)['scoestrack' => $data]
                 );
             });
@@ -199,13 +211,15 @@ class provider implements
         }
         $aiccsessions->close();
 
-        // The aicc_session data is organised in: {Course name}/{SCORM activity name}/aiccsession.json.
+        // The aicc_session data is organised in: {Course name}/{SCORM activity name}/{My AICC sessions}/data.json
         // In this case, the attempt hasn't been included in the json file because it can be null.
         array_walk($alldata, function($data, $contextid) {
             $context = \context::instance_by_id($contextid);
-            writer::with_context($context)->export_related_data(
-                [],
-                'aiccsession',
+            $subcontext = [
+                get_string('myaiccsessions', 'scorm')
+            ];
+            writer::with_context($context)->export_data(
+                $subcontext,
                 (object)['sessions' => $data]
             );
         });

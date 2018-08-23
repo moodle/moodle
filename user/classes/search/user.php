@@ -92,8 +92,14 @@ class user extends \core_search\base {
 
         // Prepare associative array with data from DB.
         $doc = \core_search\document_factory::instance($record->id, $this->componentname, $this->areaname);
+        // Include all alternate names in title.
+        $array = [];
+        foreach (get_all_user_name_fields(false, null, null, null, true) as $field) {
+            $array[$field] = $record->$field;
+        }
+        $fullusername = join(' ', $array);
         // Assigning properties to our document.
-        $doc->set('title', content_to_text(fullname($record), false));
+        $doc->set('title', content_to_text($fullusername, false));
         $doc->set('contextid', $context->id);
         $doc->set('courseid', SITEID);
         $doc->set('itemid', $record->id);
@@ -108,6 +114,18 @@ class user extends \core_search\base {
         }
 
         return $doc;
+    }
+
+    /**
+     * Returns the user fullname to display as document title
+     *
+     * @param \core_search\document $doc
+     * @return string User fullname
+     */
+    public function get_document_display_title(\core_search\document $doc) {
+
+        $user = \core_user::get_user($doc->get('itemid'));
+        return fullname($user);
     }
 
     /**
@@ -185,6 +203,17 @@ class user extends \core_search\base {
      */
     public function get_component_name() {
         return 'user';
+    }
+
+    /**
+     * Returns an icon instance for the document.
+     *
+     * @param \core_search\document $doc
+     *
+     * @return \core_search\document_icon
+     */
+    public function get_doc_icon(\core_search\document $doc) : \core_search\document_icon {
+        return new \core_search\document_icon('i/user');
     }
 
 }

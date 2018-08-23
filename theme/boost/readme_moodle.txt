@@ -4,16 +4,18 @@ Twitter bootstrap
 -----------------
 
 Sass:
-This theme uses the original unmodified version 4.0.0 Twitter bootstrap sass files.
+This theme uses the version 4.0.0 Twitter bootstrap sass files.
 The bootstrap repository is available on:
 
 https://github.com/twitter/bootstrap.git
 
 To update to the latest release of twitter bootstrap:
-* re-apply /* rtl:begin:ignore */ on the top of _popover.scss before .popover rule and /* rtl:end:ignore */ before
-  .popover-arrow::after rule. See MDL-56763 commit (1a4faf9b).
+
 * remove all files from scss/bootstrap,
 * download the new scss files and store them in scss/bootstrap
+* re-apply /* rtl:begin:ignore */ on the top of _popover.scss before .popover rule and /* rtl:end:ignore */ before
+  .popover-arrow::after rule. See MDL-56763 commit (1a4faf9b).
+* comment out all uses of the @supports syntax in SCSS (see https://github.com/sabberworm/PHP-CSS-Parser/issues/127). In Bootstrap 4.0 The @supports rules are used for carousal transitions (nice sliding) and the .sticky-top helper class. The carousel bootstrap component will still be functional.
 * update ./thirdpartylibs.xml
 
 Javascript:

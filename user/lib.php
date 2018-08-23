@@ -122,6 +122,9 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
         \core\event\user_created::create_from_userid($newuserid)->trigger();
     }
 
+    // Purge the associated caches.
+    cache_helper::purge_by_event('createduser');
+
     return $newuserid;
 }
 
@@ -335,7 +338,7 @@ function user_get_user_details($user, $course = null, array $userfields = array(
             $userdetails['lastname'] = $user->lastname;
         }
     }
-    $userdetails['fullname'] = fullname($user);
+    $userdetails['fullname'] = fullname($user, $canviewfullnames);
 
     if (in_array('customfields', $userfields)) {
         $categories = profile_get_user_fields_with_data_by_category($user->id);
@@ -1151,6 +1154,33 @@ function user_can_view_profile($user, $course = null, $usercontext = null) {
 
     // Current user can always view their profile.
     if ($USER->id == $user->id) {
+        return true;
+    }
+
+    // Use callbacks so that (primarily) local plugins can prevent or allow profile access.
+    $forceallow = false;
+    $plugintypes = get_plugins_with_function('control_view_profile');
+    foreach ($plugintypes as $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $result = $pluginfunction($user, $course, $usercontext);
+            switch ($result) {
+                case core_user::VIEWPROFILE_DO_NOT_PREVENT:
+                    // If the plugin doesn't stop access, just continue to next plugin or use
+                    // default behaviour.
+                    break;
+                case core_user::VIEWPROFILE_FORCE_ALLOW:
+                    // Record that we are definitely going to allow it (unless another plugin
+                    // returns _PREVENT).
+                    $forceallow = true;
+                    break;
+                case core_user::VIEWPROFILE_PREVENT:
+                    // If any plugin returns PREVENT then we return false, regardless of what
+                    // other plugins said.
+                    return false;
+            }
+        }
+    }
+    if ($forceallow) {
         return true;
     }
 

@@ -23,19 +23,27 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/ajax', 'core/templates'], function($, Ajax, Templates) {
+define(['jquery', 'core/ajax', 'core/templates', 'core/str'], function($, Ajax, Templates, Str) {
+
+    /** @var {Number} Maximum number of users to show. */
+    var MAXUSERS = 100;
 
     return /** @alias module:enrol_manual/form-potential-user-selector */ {
 
         processResults: function(selector, results) {
             var users = [];
-            $.each(results, function(index, user) {
-                users.push({
-                    value: user.id,
-                    label: user._label
+            if ($.isArray(results)) {
+                $.each(results, function(index, user) {
+                    users.push({
+                        value: user.id,
+                        label: user._label
+                    });
                 });
-            });
-            return users;
+                return users;
+
+            } else {
+                return results;
+            }
         },
 
         transport: function(selector, query, success, failure) {
@@ -57,7 +65,7 @@ define(['jquery', 'core/ajax', 'core/templates'], function($, Ajax, Templates) {
                     search: query,
                     searchanywhere: true,
                     page: 0,
-                    perpage: 30
+                    perpage: MAXUSERS + 1
                 }
             }]);
 
@@ -65,30 +73,38 @@ define(['jquery', 'core/ajax', 'core/templates'], function($, Ajax, Templates) {
                 var promises = [],
                     i = 0;
 
-                // Render the label.
-                $.each(results, function(index, user) {
-                    var ctx = user,
-                        identity = [];
-                    $.each(['idnumber', 'email', 'phone1', 'phone2', 'department', 'institution'], function(i, k) {
-                        if (typeof user[k] !== 'undefined' && user[k] !== '') {
-                            ctx.hasidentity = true;
-                            identity.push(user[k]);
-                        }
-                    });
-                    ctx.identity = identity.join(', ');
-                    promises.push(Templates.render('enrol_manual/form-user-selector-suggestion', ctx));
-                });
-
-                // Apply the label to the results.
-                return $.when.apply($.when, promises).then(function() {
-                    var args = arguments;
+                if (results.length <= MAXUSERS) {
+                    // Render the label.
                     $.each(results, function(index, user) {
-                        user._label = args[i];
-                        i++;
+                        var ctx = user,
+                            identity = [];
+                        $.each(['idnumber', 'email', 'phone1', 'phone2', 'department', 'institution'], function(i, k) {
+                            if (typeof user[k] !== 'undefined' && user[k] !== '') {
+                                ctx.hasidentity = true;
+                                identity.push(user[k]);
+                            }
+                        });
+                        ctx.identity = identity.join(', ');
+                        promises.push(Templates.render('enrol_manual/form-user-selector-suggestion', ctx));
                     });
-                    success(results);
-                    return;
-                });
+
+                    // Apply the label to the results.
+                    return $.when.apply($.when, promises).then(function() {
+                        var args = arguments;
+                        $.each(results, function(index, user) {
+                            user._label = args[i];
+                            i++;
+                        });
+                        success(results);
+                        return;
+                    });
+
+                } else {
+                    return Str.get_string('toomanyuserstoshow', 'core', '>' + MAXUSERS).then(function(toomanyuserstoshow) {
+                        success(toomanyuserstoshow);
+                        return;
+                    });
+                }
 
             }).fail(failure);
         }

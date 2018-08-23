@@ -785,4 +785,198 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         $this->assertNull($min);
         $this->assertNull($max);
     }
+
+    /**
+     * Test choice_user_submit_response for a choice with specific options.
+     * Options:
+     * allowmultiple: false
+     * limitanswers: false
+     */
+    public function test_choice_user_submit_response_no_multiple_no_limits() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $user = $generator->create_user();
+        $user2 = $generator->create_user();
+
+        // User must be enrolled in the course for choice limits to be honoured properly.
+        $role = $DB->get_record('role', ['shortname' => 'student']);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $role->id);
+
+        // Create choice, with updates allowed and a two options both limited to 1 response each.
+        $choice = $generator->get_plugin_generator('mod_choice')->create_instance([
+            'course' => $course->id,
+            'allowupdate' => false,
+            'limitanswers' => false,
+            'allowmultiple' => false,
+            'option' => ['red', 'green'],
+        ]);
+        $cm = get_coursemodule_from_instance('choice', $choice->id);
+
+        // Get the choice, with options and limits included.
+        $choicewithoptions = choice_get_choice($choice->id);
+        $optionids = array_keys($choicewithoptions->option);
+
+        // Now, save an response which includes the first option.
+        $this->assertNull(choice_user_submit_response($optionids[0], $choicewithoptions, $user->id, $course, $cm));
+
+        // Confirm that saving again without changing the selected option will not throw a 'choice full' exception.
+        $this->assertNull(choice_user_submit_response($optionids[1], $choicewithoptions, $user->id, $course, $cm));
+
+        // Confirm that saving a response for student 2 including the first option is allowed.
+        $this->assertNull(choice_user_submit_response($optionids[0], $choicewithoptions, $user2->id, $course, $cm));
+
+        // Confirm that trying to save multiple options results in an exception.
+        $this->expectException('moodle_exception');
+        choice_user_submit_response([$optionids[1], $optionids[1]], $choicewithoptions, $user->id, $course, $cm);
+    }
+
+    /**
+     * Test choice_user_submit_response for a choice with specific options.
+     * Options:
+     * allowmultiple: true
+     * limitanswers: false
+     */
+    public function test_choice_user_submit_response_multiples_no_limits() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $user = $generator->create_user();
+        $user2 = $generator->create_user();
+
+        // User must be enrolled in the course for choice limits to be honoured properly.
+        $role = $DB->get_record('role', ['shortname' => 'student']);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $role->id);
+
+        // Create choice, with updates allowed and a two options both limited to 1 response each.
+        $choice = $generator->get_plugin_generator('mod_choice')->create_instance([
+            'course' => $course->id,
+            'allowupdate' => false,
+            'allowmultiple' => true,
+            'limitanswers' => false,
+            'option' => ['red', 'green'],
+        ]);
+        $cm = get_coursemodule_from_instance('choice', $choice->id);
+
+        // Get the choice, with options and limits included.
+        $choicewithoptions = choice_get_choice($choice->id);
+        $optionids = array_keys($choicewithoptions->option);
+
+        // Save a response which includes the first option only.
+        $this->assertNull(choice_user_submit_response([$optionids[0]], $choicewithoptions, $user->id, $course, $cm));
+
+        // Confirm that adding an option to the response is allowed.
+        $this->assertNull(choice_user_submit_response([$optionids[0], $optionids[1]], $choicewithoptions, $user->id, $course, $cm));
+
+        // Confirm that saving a response for student 2 including the first option is allowed.
+        $this->assertNull(choice_user_submit_response($optionids[0], $choicewithoptions, $user2->id, $course, $cm));
+
+        // Confirm that removing an option from the response is allowed.
+        $this->assertNull(choice_user_submit_response([$optionids[0]], $choicewithoptions, $user->id, $course, $cm));
+
+        // Confirm that removing all options from the response is not allowed via this method.
+        $this->expectException('moodle_exception');
+        choice_user_submit_response([], $choicewithoptions, $user->id, $course, $cm);
+    }
+
+    /**
+     * Test choice_user_submit_response for a choice with specific options.
+     * Options:
+     * allowmultiple: false
+     * limitanswers: true
+     */
+    public function test_choice_user_submit_response_no_multiples_limits() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $user = $generator->create_user();
+        $user2 = $generator->create_user();
+
+        // User must be enrolled in the course for choice limits to be honoured properly.
+        $role = $DB->get_record('role', ['shortname' => 'student']);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $role->id);
+
+        // Create choice, with updates allowed and a two options both limited to 1 response each.
+        $choice = $generator->get_plugin_generator('mod_choice')->create_instance([
+            'course' => $course->id,
+            'allowupdate' => false,
+            'allowmultiple' => false,
+            'limitanswers' => true,
+            'option' => ['red', 'green'],
+            'limit' => [1, 1]
+        ]);
+        $cm = get_coursemodule_from_instance('choice', $choice->id);
+
+        // Get the choice, with options and limits included.
+        $choicewithoptions = choice_get_choice($choice->id);
+        $optionids = array_keys($choicewithoptions->option);
+
+        // Save a response which includes the first option only.
+        $this->assertNull(choice_user_submit_response($optionids[0], $choicewithoptions, $user->id, $course, $cm));
+
+        // Confirm that changing the option in the response is allowed.
+        $this->assertNull(choice_user_submit_response($optionids[1], $choicewithoptions, $user->id, $course, $cm));
+
+        // Confirm that limits are respected by trying to save the same option as another user.
+        $this->expectException('moodle_exception');
+        choice_user_submit_response($optionids[1], $choicewithoptions, $user2->id, $course, $cm);
+    }
+
+    /**
+     * Test choice_user_submit_response for a choice with specific options.
+     * Options:
+     * allowmultiple: true
+     * limitanswers: true
+     */
+    public function test_choice_user_submit_response_multiples_limits() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $user = $generator->create_user();
+        $user2 = $generator->create_user();
+
+        // User must be enrolled in the course for choice limits to be honoured properly.
+        $role = $DB->get_record('role', ['shortname' => 'student']);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $role->id);
+
+        // Create choice, with updates allowed and a two options both limited to 1 response each.
+        $choice = $generator->get_plugin_generator('mod_choice')->create_instance([
+            'course' => $course->id,
+            'allowupdate' => false,
+            'allowmultiple' => true,
+            'limitanswers' => true,
+            'option' => ['red', 'green'],
+            'limit' => [1, 1]
+        ]);
+        $cm = get_coursemodule_from_instance('choice', $choice->id);
+
+        // Get the choice, with options and limits included.
+        $choicewithoptions = choice_get_choice($choice->id);
+        $optionids = array_keys($choicewithoptions->option);
+
+        // Now, save a response which includes the first option only.
+        $this->assertNull(choice_user_submit_response([$optionids[0]], $choicewithoptions, $user->id, $course, $cm));
+
+        // Confirm that changing the option in the response is allowed.
+        $this->assertNull(choice_user_submit_response([$optionids[1]], $choicewithoptions, $user->id, $course, $cm));
+
+        // Confirm that adding an option to the response is allowed.
+        $this->assertNull(choice_user_submit_response([$optionids[0], $optionids[1]], $choicewithoptions, $user->id, $course, $cm));
+
+        // Confirm that limits are respected by trying to save the same option as another user.
+        $this->expectException('moodle_exception');
+        choice_user_submit_response($optionids[1], $choicewithoptions, $user2->id, $course, $cm);
+    }
 }

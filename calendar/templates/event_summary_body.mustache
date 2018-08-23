@@ -23,6 +23,7 @@
     {
         "timestart": 1490320388,
         "description": "An random event description",
+        "location": "13th floor, building 42",
         "eventtype": "User",
         "source": "Ical imported",
         "groupname": "Group 1"
@@ -53,6 +54,12 @@
             <div class="description-content col-xs-11">{{{.}}}</div>
         </div>
         {{/description}}
+        {{#location}}
+        <div class="row m-t-1">
+            <div class="col-xs-1">{{#pix}} i/location, core, {{#str}} location {{/str}} {{/pix}}</div>
+            <div class="location-content col-xs-11">{{{.}}}</div>
+        </div>
+        {{/location}}
         {{#isactionevent}}
         <div class="row m-t-1">
             <div class="col-xs-1">{{#pix}} i/courseevent, core, {{#str}} course {{/str}} {{/pix}}</div>

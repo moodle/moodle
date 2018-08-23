@@ -1,6 +1,95 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+
+* A new token-based version of pluginfile.php has been added which can be used for out-of-session file serving by
+  setting the `$includetoken` parameter to true on the `moodle_url::make_pluginfile_url()`, and
+  `moodle_url::make_file_url()` functions.
+* The following picture functions have been updated to support use of the new token-based file serving:
+    - print_group_picture
+    - get_group_picture_url
+* The `user_picture` class has a new public `$includetoken` property which can be set to make use of the new token-based
+  file serving.
+* Custom AJAX handlers for the form autocomplete fields can now optionally return string in their processResults()
+  callback. If a string is returned, it is displayed instead of the list of suggested items. This can be used, for
+  example, to inform the user that there are too many items matching the current search criteria.
+* The form element 'htmleditor' has been deprecated. Please use the 'editor' element instead.
+* The print_textarea() function has been deprecated. Please use $OUTPUT->print_textarea() instead.
+* The following functions have been finally deprecated and can not be used any more:
+    - external_function_info()
+    - core_renderer::update_module_button()
+    - events_trigger()
+    - events_cron()
+    - events_dispatch()
+    - events_is_registered()
+    - events_load_def()
+    - events_pending_count()
+    - events_process_queued_handler()
+    - events_queue_handler()
+    - events_trigger_legacy()
+    - events_update_definition()
+    - get_file_url()
+    - course_get_cm_rename_action()
+    - course_scale_used()
+    - site_scale_used()
+    - clam_message_admins()
+    - get_clam_error_code()
+    - get_records_csv()
+    - put_records_csv()
+    - print_log()
+    - print_mnet_log()
+    - print_log_csv()
+    - print_log_xls()
+    - print_log_ods()
+    - build_logs_array()
+    - get_logs_usercourse()
+    - get_logs_userday()
+    - get_logs()
+    - prevent_form_autofill_password()
+    - prefixed_tablenode_transformations()
+    - core_media_renderer
+    - core_media
+* Following api's have been removed in behat_config_manager, please use behat_config_util instead.
+    - get_features_with_tags()
+    - get_components_steps_definitions()
+    - get_config_file_contents()
+    - merge_behat_config()
+    - get_behat_profile()
+    - profile_guided_allocate()
+    - merge_config()
+    - clean_path()
+    - get_behat_tests_path()
+* Following behat steps have been removed from core:
+    - I set the field "<field_string>" to multiline
+    - I follow "<link_string>"" in the open menu
+* Removed the lib/password_compat/lib/password.php file.
+* The eventslib.php file has been deleted and its functions have been moved to deprecatedlib.php. The affected functions are:
+  - events_get_cached()
+  - events_uninstall()
+  - events_cleanup()
+  - events_dequeue()
+  - events_get_handlers()
+* coursecat::get() now has optional $user parameter.
+* coursecat::is_uservisible() now has optional $user parameter.
+* Removed the lib/form/submitlink.php element which was deprecated in 3.2.
+* The user_selector classes do not support custom list of extra identity fields any more. They obey the configured user
+  policy and respect the privacy setting made by site administrators. The list of user identifiers should never be
+  hard-coded. Instead, the setting $CFG->showuseridentity should be always respected, which has always been the default
+  behaviour (MDL-59847).
+* The function message_send() in messagelib.php will now only take the object \core\message\message as a parameter.
+* The method message_sent::create_from_ids() parameter courseid is now required. A debugging
+  message was previously displayed, and the SITEID was used, when not provided.
+* The method \core\message\manager::send_message() now only takes the object \core\message\message as the first parameter.
+* Following functions have been deprecated, please use get_roles_used_in_context.
+    - get_roles_on_exact_context()
+    - get_roles_with_assignment_on_context()
+* New functions to support the merging of user draft areas from the interface; see MDL-45170 for details:
+  - file_copy_file_to_file_area()
+  - file_merge_draft_areas()
+  - file_replace_file_area_in_text()
+  - extract_draft_file_urls_from_text()
+
 === 3.5 ===
 
 * There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR

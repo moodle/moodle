@@ -1,6 +1,52 @@
 This files describes API changes in tagging, information provided
 here is intended especially for developers.
 
+=== 3.6 ===
+
+* The following functions have been finally deprecated and can not be used anymore:
+  * tag_type_set()
+  * tag_description_set()
+  * tag_get_tags()
+  * tag_get_tags_array()
+  * tag_get_tags_csv()
+  * tag_get_tags_ids()
+  * tag_get_id()
+  * tag_rename()
+  * tag_delete_instance()
+  * tag_add()
+  * tag_assign()
+  * tag_record_count()
+  * tag_record_tagged_with()
+  * tag_set_flag()
+  * tag_unset_flag()
+  * tag_print_cloud()
+  * tag_print_description_box()
+  * tag_print_management_box()
+  * tag_print_search_box()
+  * tag_print_search_results()
+  * tag_print_tagged_users_table()
+  * tag_print_user_box()
+  * tag_print_user_list()
+  * tag_display_name
+  * tag_normalize
+  * tag_get_related_tags_csv()
+  * tag_set()
+  * tag_set_add()
+  * tag_set_delete()
+  * tag_get()
+  * tag_get_related_tags()
+  * tag_delete
+  * tag_delete_instances()
+  * tag_cleanup()
+  * tag_bulk_delete_instances()
+  * tag_compute_correlations()
+  * tag_process_computed_correlation()
+  * tag_cron()
+  * tag_find_tags()
+  * tag_get_name()
+  * tag_get_correlated()
+  * tag_cloud_sort()
+
 === 3.1 ===
 
 * Each plugin must define the tag areas it uses in plugindir/db/tag.php

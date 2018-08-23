@@ -123,28 +123,34 @@ class manager {
     }
 
     /**
+     * Get fully qualified name of session handler class.
+     *
+     * @return string The name of the handler class
+     */
+    public static function get_handler_class() {
+        global $CFG, $DB;
+
+        if (PHPUNIT_TEST) {
+            return '\core\session\file';
+        } else if (!empty($CFG->session_handler_class)) {
+            return $CFG->session_handler_class;
+        } else if (!empty($CFG->dbsessions) and $DB->session_lock_supported()) {
+            return '\core\session\database';
+        }
+
+        return '\core\session\file';
+    }
+
+    /**
      * Create handler instance.
      */
     protected static function load_handler() {
-        global $CFG, $DB;
-
         if (self::$handler) {
             return;
         }
 
         // Find out which handler to use.
-        if (PHPUNIT_TEST) {
-            $class = '\core\session\file';
-
-        } else if (!empty($CFG->session_handler_class)) {
-            $class = $CFG->session_handler_class;
-
-        } else if (!empty($CFG->dbsessions) and $DB->session_lock_supported()) {
-            $class = '\core\session\database';
-
-        } else {
-            $class = '\core\session\file';
-        }
+        $class = self::get_handler_class();
         self::$handler = new $class();
     }
 
@@ -706,6 +712,7 @@ class manager {
      * @param \stdClass $user record
      */
     public static function set_user(\stdClass $user) {
+        global $ADMIN;
         $GLOBALS['USER'] = $user;
         unset($GLOBALS['USER']->description); // Conserve memory.
         unset($GLOBALS['USER']->password);    // Improve security.
@@ -716,6 +723,9 @@ class manager {
 
         // Relink session with global $USER just in case it got unlinked somehow.
         $_SESSION['USER'] =& $GLOBALS['USER'];
+
+        // Nullify the $ADMIN tree global. If we're changing users, then this is now stale and must be generated again if needed.
+        $ADMIN = null;
 
         // Init session key.
         sesskey();

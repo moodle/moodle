@@ -215,7 +215,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     /**
      * Returns coursecat object for requested category
      *
-     * If category is not visible to user it is treated as non existing
+     * If category is not visible to the given user, it is treated as non existing
      * unless $alwaysreturnhidden is set to true
      *
      * If id is 0, the pseudo object for root category is returned (convenient
@@ -229,10 +229,11 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      *     returned even if this category is not visible to the current user
      *     (category is hidden and user does not have
      *     'moodle/category:viewhiddencategories' capability). Use with care!
+     * @param int|stdClass $user The user id or object. By default (null) checks the visibility to the current user.
      * @return null|coursecat
      * @throws moodle_exception
      */
-    public static function get($id, $strictness = MUST_EXIST, $alwaysreturnhidden = false) {
+    public static function get($id, $strictness = MUST_EXIST, $alwaysreturnhidden = false, $user = null) {
         if (!$id) {
             if (!isset(self::$coursecat0)) {
                 $record = new stdClass();
@@ -254,7 +255,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
                 $coursecatrecordcache->set($id, $coursecat);
             }
         }
-        if ($coursecat && ($alwaysreturnhidden || $coursecat->is_uservisible())) {
+        if ($coursecat && ($alwaysreturnhidden || $coursecat->is_uservisible($user))) {
             return $coursecat;
         } else {
             if ($strictness == MUST_EXIST) {
@@ -583,17 +584,18 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     }
 
     /**
-     * Checks if this course category is visible to current user
+     * Checks if this course category is visible to a user.
      *
      * Please note that methods coursecat::get (without 3rd argumet),
      * coursecat::get_children(), etc. return only visible categories so it is
      * usually not needed to call this function outside of this class
      *
+     * @param int|stdClass $user The user id or object. By default (null) checks the visibility to the current user.
      * @return bool
      */
-    public function is_uservisible() {
+    public function is_uservisible($user = null) {
         return !$this->id || $this->visible ||
-                has_capability('moodle/category:viewhiddencategories', $this->get_context());
+                has_capability('moodle/category:viewhiddencategories', $this->get_context(), $user);
     }
 
     /**

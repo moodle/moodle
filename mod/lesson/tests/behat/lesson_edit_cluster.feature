@@ -71,16 +71,16 @@ Feature: In a lesson activity, teacher can edit a cluster page
     And I press "Save page"
 
   Scenario: Edit lesson cluster page
-    Given I click on "//th[normalize-space(.)='Cluster']/descendant::a[2]" "xpath_element"
+    Given I click on "//th[normalize-space(.)='Cluster']/descendant::a[3]" "xpath_element"
     When I set the following fields to these values:
       | Page title | Modified name |
       | Page contents | Modified contents |
     And I press "Save page"
     Then I should see "Modified name"
-    And I click on "//th[normalize-space(.)='Modified name']/descendant::a[2]" "xpath_element"
+    And I click on "//th[normalize-space(.)='Modified name']/descendant::a[3]" "xpath_element"
     And I should see "Unseen question within a cluster"
     And I press "Cancel"
-    And I click on "//th[normalize-space(.)='End of cluster']/descendant::a[2]" "xpath_element"
+    And I click on "//th[normalize-space(.)='End of cluster']/descendant::a[3]" "xpath_element"
     And I set the following fields to these values:
       | Page title | Modified end |
       | Page contents | Modified end contents |

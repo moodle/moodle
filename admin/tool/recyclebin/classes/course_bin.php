@@ -274,13 +274,25 @@ class course_bin extends base_bin {
         global $DB;
 
         // Grab the course context.
-        $context = \context_course::instance($this->_courseid);
+        $context = \context_course::instance($this->_courseid, IGNORE_MISSING);
 
-        // Delete the files.
-        $fs = get_file_storage();
-        $files = $fs->get_area_files($context->id, 'tool_recyclebin', TOOL_RECYCLEBIN_COURSE_BIN_FILEAREA, $item->id);
-        foreach ($files as $file) {
-            $file->delete();
+        if (!empty($context)) {
+            // Delete the files.
+            $fs = get_file_storage();
+            $fs->delete_area_files($context->id, 'tool_recyclebin', TOOL_RECYCLEBIN_COURSE_BIN_FILEAREA, $item->id);
+        } else {
+            // Course context has been deleted. Find records using $item->id as this is unique for course bin recyclebin.
+            $files = $DB->get_recordset('files', [
+                'component' => 'tool_recyclebin',
+                'filearea' => TOOL_RECYCLEBIN_COURSE_BIN_FILEAREA,
+                'itemid' => $item->id,
+            ]);
+            $fs = get_file_storage();
+            foreach ($files as $filer) {
+                $file = $fs->get_file_instance($filer);
+                $file->delete();
+            }
+            $files->close();
         }
 
         // Delete the record.

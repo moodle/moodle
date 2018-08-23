@@ -27,7 +27,6 @@ require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/lesson/locallib.php');
 require_once($CFG->dirroot.'/mod/lesson/pagetypes/essay.php');
 require_once($CFG->dirroot.'/mod/lesson/essay_form.php');
-require_once($CFG->libdir.'/eventslib.php');
 
 $id   = required_param('id', PARAM_INT);             // Course Module ID
 $mode = optional_param('mode', 'display', PARAM_ALPHA);

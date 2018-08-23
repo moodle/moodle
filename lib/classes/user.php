@@ -82,6 +82,13 @@ class core_user {
         'alternatename'
     ];
 
+    /** @var int Indicates that user profile view should be prevented */
+    const VIEWPROFILE_PREVENT = -1;
+    /** @var int Indicates that user profile view should not be prevented */
+    const VIEWPROFILE_DO_NOT_PREVENT = 0;
+    /** @var int Indicates that user profile view should be allowed even if Moodle would prevent it */
+    const VIEWPROFILE_FORCE_ALLOW = 1;
+
     /** @var stdClass keep record of noreply user */
     public static $noreplyuser = false;
 
