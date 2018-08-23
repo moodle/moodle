@@ -56,7 +56,8 @@ define(['jquery','format_buttons/slick'], function($, slick) {
     for(var i=0; i<tooltips.length; i++){
       var item = tooltips[i];
       item.addEventListener('click', function(){
-        $('#section' + this.dataset.section + ' .label-content-wrapper').prepend('<div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Section tooltip: </strong>'+this.dataset.info+'</div>');
+        var summary = $('.slider.sections .nav-item[data-section="'+this.dataset.section+'"] .section-description').html();
+        $('#section' + this.dataset.section + ' .label-content-wrapper').prepend('<div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Section tooltip: </strong>'+summary+'</div>');
       });
     }
   }
@@ -198,17 +199,28 @@ define(['jquery','format_buttons/slick'], function($, slick) {
 
   function initPrevNextBtns(currentSection){
     var active = $('#section'+currentSection+' .nav-item.active');
+    activeSlide = active.parent().parent();
 
-    var current = $('.label-active');
-    var prevBtn = $('.label-prev');
-    var nextBtn = $('.label-next');
+    $('.label-active').children().remove();
+    $('.label-prev').children().remove();
+    $('.label-next').children().remove();
 
-    current.children().remove();
-    prevBtn.children().remove();
-    nextBtn.children().remove();
-    active.children().clone().appendTo(".label-active");
-    active.prev().children().clone().appendTo(".label-prev");
-    active.next().children().clone().appendTo(".label-next");
+    if (window.innerWidth < 767){
+      active.children().clone().appendTo(".label-active");
+      active.prev().children().clone().appendTo(".label-prev");
+      active.next().children().clone().appendTo(".label-next");
+    } else {
+      activeSlide.prev().children().children().children().clone().appendTo(".label-prev");
+      activeSlide.next().children().children().children().clone().appendTo(".label-next");
+
+        // var prevBtn = document.querySelector('#section'+currentSection+' .label-prev');
+        // prevBtn.dataset.content = prevBtn.innerText;
+        //
+        // var inner = document.querySelector('#section'+currentSection+' .label-next div').innerHtml;
+        // console.log(inner);
+        // var nextBtn = document.querySelector('#section'+currentSection+' .label-next');
+        // nextBtn.dataset.content = inner;
+    }
   }
 
   function initPrevNextBtnsEvents(){
@@ -218,14 +230,24 @@ define(['jquery','format_buttons/slick'], function($, slick) {
       var item = prevBtn[i];
       item.addEventListener('click', function(){
         active = $('#section'+localStorage.getItem('lastSection')+' .nav-item.active');
-        active.prev().trigger('click');
+        activeSlide = active.parent().parent();
+        if (window.innerWidth < 767){
+          active.prev().trigger('click');
+        } else {
+          activeSlide.prev().children().children().children().trigger('click');
+        }
       });
     }
     for (var i=0; i<nextBtn.length;i++){
       var item = nextBtn[i];
       item.addEventListener('click', function(){
         active = $('#section'+localStorage.getItem('lastSection')+' .nav-item.active');
-        active.next().trigger('click');
+        activeSlide = active.parent().parent();
+        if (window.innerWidth < 767){
+          active.next().trigger('click');
+        } else {
+          activeSlide.next().children().children().children().trigger('click');
+        }
       });
     }
   }

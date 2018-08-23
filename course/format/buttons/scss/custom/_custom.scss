@@ -8,6 +8,7 @@ ul.buttons{
   .slider.sections{
     max-width:100%;
     &.slick-slider{
+      float: left;
       .slick-arrow{
         width:2rem;
         height:2rem;
@@ -43,13 +44,18 @@ ul.buttons{
             max-width: 100%;
           }
           .section-description{
-            min-height: 1.375rem;
+            height: 1.375rem;
             opacity:1;
             transition: all .3s ease-in-out;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
             max-width: 100%;
+            p{
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              overflow: hidden;
+            }
           }
         }
         .section-icon{
@@ -86,6 +92,10 @@ ul.buttons{
           .section-icon{
             opacity:1;
             background-color: #5bc0de;
+            transition: all .3s ease-in-out;
+          }
+          .section-tooltip{
+            opacity:1;
             transition: all .3s ease-in-out;
           }
         }
@@ -216,14 +226,23 @@ ul.buttons{
   }
 }
 .label-content-wrapper {
+  position: relative;
   box-sizing: border-box;
   border: 1px solid #ddd;
   margin: 24px 1px;
   padding: 1vh;
+  .alert{
+    position: absolute;
+    top:0;
+    left:0;
+    right:0;
+    box-shadow: 2px 2px 5px #000;
+  }
 }
 .label-content{
-  height:58vh;
-  overflow-y: scroll;
+  // height:58vh;
+  // overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
   img{
     box-sizing: border-box;
@@ -255,7 +274,7 @@ ul.buttons{
       }
     }
     .label-icon{
-      display: none!important;
+      display: none;
     }
   }
   .label-prev{
@@ -271,13 +290,7 @@ ul.buttons{
       width: 1rem;
       height:1rem;
       display:block;
-      position: absolute;
-      left: -1.5rem;
-      top:.5rem;
-      border-top: 1px solid transparent;
-      border-right: 1px solid transparent;
-      border-bottom: 1px solid #000;
-      border-left: 1px solid #000;
+      border:0;
       transform: rotate(45deg);
     }
   }
@@ -300,13 +313,7 @@ ul.buttons{
       width: 1rem;
       height:1rem;
       display:block;
-      position: absolute;
-      right: -1.5rem;
-      top:.5rem;
-      border-top: 1px solid transparent;
-      border-right: 1px solid transparent;
-      border-bottom: 1px solid #000;
-      border-left: 1px solid #000;
+      border:0;
       transform: rotate(225deg);
     }
   }

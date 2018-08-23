@@ -1,6 +1,7 @@
 html[dir='ltr']{
   .slider.sections{
     &.slick-slider{
+      float: left;
       .slick-arrow{
         &.slick-prev{
           left:-1.5rem;
@@ -53,6 +54,9 @@ html[dir='ltr']{
 html[dir='rtl']{
   .slider.sections{
     &.slick-slider{
+      .slick-slide{
+        // float: right;
+      }
       .slick-arrow{
         &.slick-prev{
           left:-1.5rem;
@@ -115,6 +119,9 @@ html[dir='rtl']{
     height:auto;
     overflow:visible;
   }
+  .section-content{
+    position: relative;
+  }
 }
 .slider.labels{
   // height: 60vh;
@@ -143,4 +150,10 @@ html[dir='rtl']{
       }
     }
   }
+}
+.label-content-controls{
+  position: absolute!important;
+  top:475px;
+  right:75%;
+  width:25%;
 }

@@ -257,7 +257,7 @@ class format_buttons_renderer extends format_topics_renderer
             $html .= html_writer::tag('span', '', ['class' => 'section-icon d-inline-flex p-3 justify-content-center align-items-center', 'style' => "background: url({$this->courserenderer->image_url('label-default', 'format_buttons')}) no-repeat; background-size: cover;"]);
             $html .= html_writer::start_tag('div',['class' => 'd-flex flex-column section-header']);
             $html .= html_writer::tag('span', get_section_name($course, $section), ['class' => ' section-title']);
-            $html .= html_writer::tag('p', "$thissection->summary", ['class' => 'section-description']);
+            $html .= html_writer::tag('span', $thissection->summary, ['class' => 'section-description']);
             $html .= html_writer::end_tag('div');
             $html .= html_writer::tag('span', 'i', ['class' => 'section-tooltip d-inline-flex p-1 justify-content-center align-items-center', 'title'=>'section tooltip', 'data-info'=>'Tooltip content', 'data-section' => $section]);
             $html .= html_writer::end_tag('div');
@@ -516,10 +516,10 @@ class format_buttons_renderer extends format_topics_renderer
                     $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'label-content-wrapper col-12 col-md-9 col-lg-9 col-xl-10']);
                     $htmlsection[$section] .=  $this->labels_content($course, $thissection);
                     $htmlsection[$section] .=  html_writer::end_tag('div');
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => ' label-content-controls d-flex d-md-none d-lg-none']);
-                    $htmlsection[$section] .=  html_writer::tag('button', '', ['class' => ' p-2 col-4 label-prev']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => ' label-content-controls d-flex']);
+                    $htmlsection[$section] .=  html_writer::tag('button', '', ['class' => ' p-2 col-4 label-prev', 'data-html' => 'true', 'data-content' => ' ']);
                     $htmlsection[$section] .=  html_writer::tag('div', '', ['class' => ' p-2 col-4 label-active']);
-                    $htmlsection[$section] .=  html_writer::tag('button', '', ['class' => ' p-2 col-4 label-next']);
+                    $htmlsection[$section] .=  html_writer::tag('button', '', ['class' => ' p-2 col-4 label-next', 'data-html' => 'true', 'data-content' => ' ']);
                     $htmlsection[$section] .=  html_writer::end_tag('div');
                     $htmlsection[$section] .=  html_writer::end_tag('div');
                     $htmlsection[$section] .=  html_writer::end_tag('div');
@@ -707,6 +707,25 @@ class format_buttons_renderer extends format_topics_renderer
         return $output;
     }
 
+    public function strip_tags_content($text, $tags = '', $invert = FALSE) {
+        preg_match_all('/<(.+?)[\s]*\/?[\s]*>/si', trim($tags), $tags);
+        $tags = array_unique($tags[1]);
+        if(is_array($tags) AND count($tags) > 0) {
+          if($invert == FALSE) {
+            return preg_replace('@<(?!(?:'. implode('|', $tags) .')\b)(\w+)\b.*?>.*?</\1>@si', '', $text);
+          }
+          else {
+            return preg_replace('@<('. implode('|', $tags) .')\b.*?>.*?</\1>@si', '', $text);
+          }
+        }
+        elseif($invert == FALSE) {
+          return preg_replace('@<(\w+)\b.*?>.*?</\1>@si', '', $text);
+        }
+        return $text;
+    }
+
+
+
     /**
      * Function to get all labels for section befor render
      * @param stdClass $course course object
@@ -737,8 +756,57 @@ class format_buttons_renderer extends format_topics_renderer
                     // get and parse label content into header, icon and the rest of the text
                     if ($modulehtml =  $mod->get_formatted_content(array('noclean' => true))) {
 
-                        $reg = '/<h\d>(.*)<\/h\d>.*?\s*(<pre>(.*)<\/pre>)?\s*(.*)<\/div>/sm'; // Regex for <h></h>, <pre></pre> and others. Last <div> is to close no-owerflow div
-                        $reg = '/\#name(.*?\s)\#icon(.*?\s.*?)\#content(.*?\s.*?)<\/div>/mix';
+
+                      // $labelBody = $modulehtml;
+                      // if (strpos($labelBody, '#name')){
+                      //     if(strpos($labelBody, '<br>')>=0&&strpos($labelBody, '<br>')<100){
+                      //         $content = explode('<br>', $labelBody, 2);
+                      //         $labelName = substr($content[0], strpos($content[0], '#name')+5);
+                      //         $labelBody = $content[1];
+                      //         // echo $labelName;
+                      //     }
+                      // }
+                      // echo $labelBody;
+                      // if (strpos($labelBody, '#icon')){
+                      //     echo strpos($labelBody, '#icon');
+                      //     if(strpos($labelBody, '<br>')>=0&&strpos($labelBody, '<br>')<100){
+                      //         $content = explode('<br>', $labelBody, 2);
+                      //         $labelIcon = substr($content[0], strpos($content[0], '#icon')+5);
+                      //         $labelBody = $content[1];
+                      //         echo $labelIcon;
+                      //     }
+                      //     // if(strpos($modulehtml, '\n')>=0&&strpos($modulehtml, '<\n>')<100) {
+                      //
+                      //     // }
+                      // }
+
+                        // $reg = '/<h\d>(.*)<\/h\d>.*?\s*(<pre>(.*)<\/pre>)?\s*(.*)<\/div>/sm'; // Regex for <h></h>, <pre></pre> and others. Last <div> is to close no-owerflow div
+                        // if (strpos($modulehtml, '#name')){
+                        //   if(strpos($modulehtml, '<br>')>=0&&strpos($modulehtml, '<br>')<100){
+                        //      $content = explode('<br>', $modulehtml, 2);
+                        //      $labelName = substr($content[0], strpos($content[0], '#name')+5);
+                        //      $labelBody = $content[1];
+                        //      // if (preg_match('/#name(.*?)<br>(.*)<\/div>/im', $modulehtml, $result1)){
+                        //      //   $labelName = $this->strip_tags_content($result1[1]);
+                        //      //   $labelBody = $result1[2];
+                        //      // }
+                        //   }
+                        // } else {
+                        //   $labelName = 'Label'; //default name
+                        //   $labelBody = $modulehtml;
+                        // }
+                        // if (preg_match('/.*?#icon(.*?)<br>(.*?)<\/div>/im', $labelBody, $result2)){
+                        //   $labelIcon = $this->strip_tags_content($result2[1]);
+                        //   $labelBody = $result2[2];
+                        // } else {
+                        //   $labelIcon = 'label-default'; //default icon
+                        // }
+                        // $content = [$modulehtml, $labelName, $labelIcon, $labelBody];
+
+
+
+                        // $reg = '/\#name(.*?\s)\#icon(.*?\s.*?)\#content(.*?\s.*?)<\/div>/mix';
+                        $reg = '/#name(.*?)<br>.*?#icon(.*?)<br>(.*?)<\/div>/im';
                         // $reg = '/#name(.*)%name.*?\s*#icon(.*)%icon?\s*(.*)<\/div>/im';
                         preg_match($reg, $modulehtml, $content);
                         // preg_split($reg, $modulehtml, $content);
@@ -764,10 +832,10 @@ class format_buttons_renderer extends format_topics_renderer
         foreach ($labels as $modnum => $content) {
 
             // here we fetch icon url or set default one
-            if (empty($content[2])) {
-                $liconStyle = 'background: url('.$this->courserenderer->image_url('label-default', 'format_buttons').') no-repeat; background-size: cover; padding:14px;';
-                $liconClass = '';
-            } else {
+            // if (empty($content[2])) {
+            //     $liconStyle = 'background: url('.$this->courserenderer->image_url('label-default', 'format_buttons').') no-repeat; background-size: cover; padding:14px;';
+            //     $liconClass = '';
+            // } else {
               if(preg_match('/fa-/im', $content[2]) === 1) {
                 // $licon = $this->render_fontawesome($content[2]);
                 $liconStyle = 'font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;';
@@ -776,7 +844,7 @@ class format_buttons_renderer extends format_topics_renderer
                 $liconStyle = 'background: url('.$this->courserenderer->image_url($content[2], 'format_buttons').') no-repeat; background-size: cover; padding:14px;';
                 $liconClass = '';
               }
-            }
+            // }
 
             // kadima render
             $output .=  html_writer::start_tag('li',['class' => 'nav-item label-item', 'data-label'=>$modnum]);
@@ -835,7 +903,6 @@ class format_buttons_renderer extends format_topics_renderer
      */
     public function course_format_buttons_design($course, $section) {
         $output = '';
-// section buttons
         $output .= '
         <div class="container-fluid buttons">
           <div class="sections-wrapper">
