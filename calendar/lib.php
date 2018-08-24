@@ -428,11 +428,20 @@ class calendar_event {
      * Pass in a object containing the event properties and this function will
      * insert it into the database and deal with any associated files
      *
+     * Capability checking should be performed if the user is directly manipulating the event
+     * and no other capability has been tested. However if the event is not being manipulated
+     * directly by the user and another capability has been checked for them to do this then
+     * capabilites should not be checked.
+     *
+     * For example if a user is editing an event in the calendar the check should be true,
+     * but if you are updating an event in an activities settings are changed then the calendar
+     * capabilites should not be checked.
+     *
      * @see self::create()
      * @see self::update()
      *
      * @param \stdClass $data object of event
-     * @param bool $checkcapability if moodle should check calendar managing capability or not
+     * @param bool $checkcapability If Moodle should check the user can manage the calendar events for this call or not.
      * @return bool event updated
      */
     public function update($data, $checkcapability=true) {
@@ -916,10 +925,19 @@ class calendar_event {
     }
 
     /**
-     * Creates a new event and returns an event object
+     * Creates a new event and returns an event object.
+     *
+     * Capability checking should be performed if the user is directly creating the event
+     * and no other capability has been tested. However if the event is not being created
+     * directly by the user and another capability has been checked for them to do this then
+     * capabilites should not be checked.
+     *
+     * For example if a user is creating an event in the calendar the check should be true,
+     * but if you are creating an event in an activity when it is created then the calendar
+     * capabilites should not be checked.
      *
      * @param \stdClass|array $properties An object containing event properties
-     * @param bool $checkcapability Check caps or not
+     * @param bool $checkcapability If Moodle should check the user can manage the calendar events for this call or not.
      * @throws \coding_exception
      *
      * @return calendar_event|bool The event object or false if it failed
