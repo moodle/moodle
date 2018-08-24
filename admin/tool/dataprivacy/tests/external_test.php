@@ -282,4 +282,106 @@ class tool_dataprivacy_external_testcase extends externallib_advanced_testcase {
         $this->expectException(dml_missing_record_exception::class);
         external::get_data_request($this->requestid + 1);
     }
+
+    /**
+     * Test for external::bulk_approve_data_requests().
+     */
+    public function test_bulk_approve_data_requests() {
+        $generator = new testing_data_generator();
+        $requester1 = $generator->create_user();
+        $comment1 = 'sample comment';
+        // Login as requester2.
+        $this->setUser($requester1->id);
+        // Create delete data request.
+        $datarequest1 = api::create_data_request($requester1->id, api::DATAREQUEST_TYPE_DELETE, $comment1);
+
+        $requestid1 = $datarequest1->get('id');
+        $requestid2 = $this->requestid;
+
+        $this->setAdminUser();
+        api::update_request_status($requestid1, api::DATAREQUEST_STATUS_AWAITING_APPROVAL);
+        api::update_request_status($requestid2, api::DATAREQUEST_STATUS_AWAITING_APPROVAL);
+        $result = external::bulk_approve_data_requests([$requestid1, $requestid2]);
+        $return = (object) external_api::clean_returnvalue(external::bulk_approve_data_requests_returns(), $result);
+        $this->assertTrue($return->result);
+        $this->assertEmpty($return->warnings);
+    }
+
+    /**
+     * Test for external::bulk_approve_data_requests() for a non-existent request ID.
+     */
+    public function test_bulk_approve_data_requests_non_existent() {
+        $generator = new testing_data_generator();
+        $requester1 = $generator->create_user();
+        $comment1 = 'sample comment';
+        // Login as requester2.
+        $this->setUser($requester1->id);
+        // Create delete data request.
+        $datarequest1 = api::create_data_request($requester1->id, api::DATAREQUEST_TYPE_DELETE, $comment1);
+
+        $requestid1 = $datarequest1->get('id');
+        $requestid2 = $this->requestid;
+
+        $this->setAdminUser();
+        api::update_request_status($requestid1, api::DATAREQUEST_STATUS_AWAITING_APPROVAL);
+        api::update_request_status($requestid2, api::DATAREQUEST_STATUS_AWAITING_APPROVAL);
+        $result = external::bulk_approve_data_requests([$requestid1 + 1, $requestid2]);
+        $return = (object) external_api::clean_returnvalue(external::bulk_approve_data_requests_returns(), $result);
+        $this->assertFalse($return->result);
+        $this->assertCount(1, $return->warnings);
+        $warning = reset($return->warnings);
+        $this->assertEquals('errorrequestnotfound', $warning['warningcode']);
+        $this->assertEquals($requestid1 + 1, $warning['item']);
+    }
+
+    /**
+     * Test for external::bulk_deny_data_requests().
+     */
+    public function test_bulk_deny_data_requests() {
+        $generator = new testing_data_generator();
+        $requester1 = $generator->create_user();
+        $comment1 = 'sample comment';
+        // Login as requester2.
+        $this->setUser($requester1->id);
+        // Create delete data request.
+        $datarequest1 = api::create_data_request($requester1->id, api::DATAREQUEST_TYPE_DELETE, $comment1);
+
+        $requestid1 = $datarequest1->get('id');
+        $requestid2 = $this->requestid;
+
+        $this->setAdminUser();
+        api::update_request_status($requestid1, api::DATAREQUEST_STATUS_AWAITING_APPROVAL);
+        api::update_request_status($requestid2, api::DATAREQUEST_STATUS_AWAITING_APPROVAL);
+        $result = external::bulk_deny_data_requests([$requestid1, $requestid2]);
+        $return = (object) external_api::clean_returnvalue(external::bulk_approve_data_requests_returns(), $result);
+        $this->assertTrue($return->result);
+        $this->assertEmpty($return->warnings);
+    }
+
+    /**
+     * Test for external::bulk_deny_data_requests() for a non-existent request ID.
+     */
+    public function test_bulk_deny_data_requests_non_existent() {
+        $generator = new testing_data_generator();
+        $requester1 = $generator->create_user();
+        $comment1 = 'sample comment';
+        // Login as requester2.
+        $this->setUser($requester1->id);
+        // Create delete data request.
+        $datarequest1 = api::create_data_request($requester1->id, api::DATAREQUEST_TYPE_DELETE, $comment1);
+
+        $requestid1 = $datarequest1->get('id');
+        $requestid2 = $this->requestid;
+
+        $this->setAdminUser();
+        api::update_request_status($requestid1, api::DATAREQUEST_STATUS_AWAITING_APPROVAL);
+        api::update_request_status($requestid2, api::DATAREQUEST_STATUS_AWAITING_APPROVAL);
+        $result = external::bulk_deny_data_requests([$requestid1 + 1, $requestid2]);
+        $return = (object) external_api::clean_returnvalue(external::bulk_approve_data_requests_returns(), $result);
+        $this->assertFalse($return->result);
+        $this->assertCount(1, $return->warnings);
+        $warning = reset($return->warnings);
+        $this->assertEquals('errorrequestnotfound', $warning['warningcode']);
+        $this->assertEquals($requestid1 + 1, $warning['item']);
+    }
 }
