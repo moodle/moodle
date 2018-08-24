@@ -257,6 +257,27 @@ class core_externallib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test for clean_returnvalue() for testing that returns the PHP type.
+     */
+    public function test_clean_returnvalue_return_php_type() {
+
+        $returndesc = new external_single_structure(
+            array(
+                'value' => new external_value(PARAM_RAW, 'Some text', VALUE_OPTIONAL, null, NULL_NOT_ALLOWED)
+            )
+        );
+
+        // Check return type on exception because the external values does not allow NULL values.
+        $testdata = array('value' => null);
+        try {
+            $cleanedvalue = external_api::clean_returnvalue($returndesc, $testdata);
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('invalid_response_exception', $e);
+            $this->assertContains('of PHP type "NULL"', $e->debuginfo);
+        }
+    }
+
+    /**
      * Test for clean_returnvalue().
      */
     public function test_clean_returnvalue() {
