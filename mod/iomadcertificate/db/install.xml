@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/certificate/db" VERSION="20140928" COMMENT="XMLDB file for Moodle mod/certificate"
+<XMLDB PATH="mod/iomadcertificate/db" VERSION="20140928" COMMENT="XMLDB file for Moodle mod/certificate"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
