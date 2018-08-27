@@ -2473,5 +2473,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018092800.00);
     }
 
+    if ($oldversion < 2018092800.01) {
+        // Move all the 'blocked' contacts to the new table 'message_users_blocked'.
+        $updatesql = "INSERT INTO {message_users_blocked} (userid, blockeduserid, timecreated)
+                           SELECT userid, contactid, null as timecreated
+                             FROM {message_contacts}
+                            WHERE blocked = :blocked";
+        $DB->execute($updatesql, ['blocked' => 1]);
+
+        // Removed the 'blocked' column from 'message_contacts'.
+        $table = new xmldb_table('message_contacts');
+        $field = new xmldb_field('blocked');
+        $dbman->drop_field($table, $field);
+
+        upgrade_main_savepoint(true, 2018092800.01);
+    }
+
     return true;
 }
