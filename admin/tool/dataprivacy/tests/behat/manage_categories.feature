@@ -29,6 +29,6 @@ Feature: Manage data categories
     Given I click on "Actions" "link" in the "Category 1" "table_row"
     And I choose "Delete" in the open action menu
     And I should see "Delete category"
-    And I should see "Are you sure you want to delete the category \"Category 1\"?"
+    And I should see "Are you sure you want to delete the category 'Category 1'?"
     When I press "Delete"
     Then I should not see "Category 1" in the "List of data categories" "table"
