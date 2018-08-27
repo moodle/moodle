@@ -174,6 +174,53 @@ class core_tag_taglib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test add_item_tag function correctly calculates the ordering for a new tag.
+     */
+    public function test_add_tag_ordering_calculation() {
+        global $DB;
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $book1 = $this->getDataGenerator()->create_module('book', array('course' => $course1->id));
+        $now = time();
+        $chapter1id = $DB->insert_record('book_chapters', (object) [
+            'bookid' => $book1->id,
+            'hidden' => 0,
+            'timecreated' => $now,
+            'timemodified' => $now,
+            'importsrc' => '',
+            'content' => '',
+            'contentformat' => FORMAT_HTML,
+        ]);
+
+        // Create a tag (ordering should start at 1).
+        $ti1 = core_tag_tag::add_item_tag('core', 'course', $course1->id,
+            context_course::instance($course1->id), 'A random tag for course 1');
+        $this->assertEquals(1, $DB->get_field('tag_instance', 'ordering', ['id' => $ti1]));
+
+        // Create another tag with a common component, itemtype and itemid (should increase the ordering by 1).
+        $ti2 = core_tag_tag::add_item_tag('core', 'course', $course1->id,
+            context_course::instance($course1->id), 'Another random tag for course 1');
+        $this->assertEquals(2, $DB->get_field('tag_instance', 'ordering', ['id' => $ti2]));
+
+        // Create a new tag with the same component and itemtype, but different itemid (should start counting from 1 again).
+        $ti3 = core_tag_tag::add_item_tag('core', 'course', $course2->id,
+            context_course::instance($course2->id), 'A random tag for course 2');
+        $this->assertEquals(1, $DB->get_field('tag_instance', 'ordering', ['id' => $ti3]));
+
+        // Create a new tag with a different itemtype (should start counting from 1 again).
+        $ti4 = core_tag_tag::add_item_tag('core', 'user', $user1->id,
+            context_user::instance($user1->id), 'A random tag for user 1');
+        $this->assertEquals(1, $DB->get_field('tag_instance', 'ordering', ['id' => $ti4]));
+
+        // Create a new tag with a different component (should start counting from 1 again).
+        $ti5 = core_tag_tag::add_item_tag('mod_book', 'book_chapters', $chapter1id,
+            context_module::instance($book1->cmid), 'A random tag for a book chapter');
+        $this->assertEquals(1, $DB->get_field('tag_instance', 'ordering', ['id' => $ti5]));
+    }
+
+    /**
      * Test the tag_assign function.
      * This function was deprecated in 3.1
      */
