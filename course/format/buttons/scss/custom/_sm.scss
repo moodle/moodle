@@ -87,6 +87,7 @@ html[dir='rtl']{
   width:25%;
   padding:15px;
   margin:0;
+  line-height:1rem;
   text-overflow: ellipsis;
   white-space: nowrap;
   .label-header{
@@ -171,7 +172,7 @@ html[dir='rtl']{
   .label-icon{
       display: block!important;
       position: absolute;
-      bottom:-.3rem;
+      bottom:1.75rem;
       right:0;
       opacity:1;
       color:#000;
@@ -183,12 +184,14 @@ html[dir='rtl']{
   .label-title{
     display: block!important;
     position: absolute;
-    bottom:-.5rem;
+    bottom:1.5rem;
     right:-6em;
     padding-left: 0.5rem;
     width:8rem;
     max-width: 8rem!important;
-    height:2rem;
+    height:3rem;
+    line-height: 1.5rem;
+    padding-top: .75rem;
     opacity:1;
     color:#000;
     background-color: #fff;
@@ -201,7 +204,7 @@ html[dir='rtl']{
   .label-icon{
       display: block!important;
       position: absolute;
-      bottom:-.3rem;
+      bottom:1.75rem;
       right:0;
       opacity:1;
       color:#000;
@@ -213,12 +216,14 @@ html[dir='rtl']{
   .label-title{
     display: block!important;
     position: absolute;
-    bottom:-.5rem;
+    bottom:1.5rem;
     right:-6rem;
     width:8rem;
     max-width: 8rem!important;
     padding-left: 0.5rem;
-    height:2rem;
+    height:3rem;
+    line-height: 1.5rem;
+    padding-top: .75rem;
     opacity:1;
     color:#000;
     background-color: #fff;

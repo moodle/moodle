@@ -237,6 +237,28 @@
 ul.buttons {
   padding: 0; }
 
+@keyframes fadeInFromNone {
+  0% {
+    display: none;
+    opacity: 0; }
+  1% {
+    display: block;
+    opacity: 0; }
+  100% {
+    display: block;
+    opacity: 1; } }
+
+@keyframes fadeOutToNone {
+  0% {
+    display: block;
+    opacity: 1; }
+  99% {
+    display: block;
+    opacity: 0; }
+  100% {
+    display: none;
+    opacity: 0; } }
+
 .sections-wrapper {
   display: flex;
   flex: 1; }
@@ -320,6 +342,8 @@ ul.buttons {
           .sections-wrapper .slider.sections.slick-slider .nav-item:hover .section-tooltip {
             opacity: 1;
             transition: all .3s ease-in-out; }
+            .sections-wrapper .slider.sections.slick-slider .nav-item:hover .section-tooltip:hover {
+              border-color: #7bc0de; }
         .sections-wrapper .slider.sections.slick-slider .nav-item.active {
           background-color: #fff;
           margin-top: 0;
@@ -490,6 +514,11 @@ ul.buttons {
       border: 0;
       transform: rotate(225deg); }
 
+.section-content {
+  animation: fadeInFromNone 0.1s ease-out; }
+  .section-content.d-none {
+    animation: fadeOutToNone 0.1s ease-out; }
+
 @media screen and (max-width: 575px) {
   html[dir='rtl'] .slider.sections.slick-slider .slick-slide {
     float: left; }
@@ -659,6 +688,7 @@ ul.buttons {
     width: 25%;
     padding: 15px;
     margin: 0;
+    line-height: 1rem;
     text-overflow: ellipsis;
     white-space: nowrap; }
     .label-content-controls .label-header div .label-title {
@@ -724,7 +754,7 @@ ul.buttons {
     .label-next:hover .label-icon {
       display: block !important;
       position: absolute;
-      bottom: -.3rem;
+      bottom: 1.75rem;
       right: 0;
       opacity: 1;
       color: #000;
@@ -734,12 +764,14 @@ ul.buttons {
     .label-next:hover .label-title {
       display: block !important;
       position: absolute;
-      bottom: -.5rem;
+      bottom: 1.5rem;
       right: -6em;
       padding-left: 0.5rem;
       width: 8rem;
       max-width: 8rem !important;
-      height: 2rem;
+      height: 3rem;
+      line-height: 1.5rem;
+      padding-top: .75rem;
       opacity: 1;
       color: #000;
       background-color: #fff;
@@ -750,7 +782,7 @@ ul.buttons {
     .label-prev:hover .label-icon {
       display: block !important;
       position: absolute;
-      bottom: -.3rem;
+      bottom: 1.75rem;
       right: 0;
       opacity: 1;
       color: #000;
@@ -760,12 +792,14 @@ ul.buttons {
     .label-prev:hover .label-title {
       display: block !important;
       position: absolute;
-      bottom: -.5rem;
+      bottom: 1.5rem;
       right: -6rem;
       width: 8rem;
       max-width: 8rem !important;
       padding-left: 0.5rem;
-      height: 2rem;
+      height: 3rem;
+      line-height: 1.5rem;
+      padding-top: .75rem;
       opacity: 1;
       color: #000;
       background-color: #fff;

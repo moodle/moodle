@@ -259,7 +259,11 @@ class format_buttons_renderer extends format_topics_renderer
             $html .= html_writer::tag('span', get_section_name($course, $section), ['class' => ' section-title']);
             $html .= html_writer::tag('span', $thissection->summary, ['class' => 'section-description']);
             $html .= html_writer::end_tag('div');
-            $html .= html_writer::tag('span', 'i', ['class' => 'section-tooltip d-inline-flex p-1 justify-content-center align-items-center', 'title'=>'section tooltip', 'data-info'=>'Tooltip content', 'data-section' => $section]);
+            if ($thissection->summary) {
+              $html .= html_writer::tag('span', 'i', ['class' => 'section-tooltip d-inline-flex p-1 justify-content-center align-items-center', 'title'=>'section tooltip', 'data-info'=>'Tooltip content', 'data-section' => $section]);
+            } else {
+              $html .= html_writer::tag('span', '', ['class' => 'd-inline-flex p-2 justify-content-center align-items-center']);
+            }
             $html .= html_writer::end_tag('div');
             // $html .= html_writer::end_tag('a');
             $html .= html_writer::end_tag('li');

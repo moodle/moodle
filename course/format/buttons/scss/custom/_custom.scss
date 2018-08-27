@@ -2,6 +2,17 @@
 ul.buttons{
   padding:0;
 }
+
+@keyframes fadeInFromNone {
+    0% { display: none; opacity: 0;}
+    1% { display: block; opacity: 0;}
+    100% {display: block; opacity: 1;}
+}
+@keyframes fadeOutToNone {
+    0% {display: block; opacity: 1;}
+    99% { display: block; opacity: 0;}
+    100% { display: none; opacity: 0;}
+}
 .sections-wrapper{
   display: flex;
   flex: 1;
@@ -97,6 +108,9 @@ ul.buttons{
           .section-tooltip{
             opacity:1;
             transition: all .3s ease-in-out;
+            &:hover{
+              border-color: #7bc0de;
+            }
           }
         }
         &.active {
@@ -316,5 +330,11 @@ ul.buttons{
       border:0;
       transform: rotate(225deg);
     }
+  }
+}
+.section-content{
+    animation: fadeInFromNone 0.1s ease-out;
+  &.d-none{
+    animation: fadeOutToNone 0.1s ease-out;
   }
 }
