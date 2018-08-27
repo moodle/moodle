@@ -2135,3 +2135,8 @@ div.editor_atto_toolbar button .icon {
     }
 }
 
+@each $size, $length in $spacers {
+    .line-height-#{$size} {
+        line-height: $length !important; /* stylelint-disable-line declaration-no-important */
+    }
+}

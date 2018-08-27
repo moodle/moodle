@@ -10438,6 +10438,30 @@ div.editor_atto_toolbar button .icon {
   100% {
     background-color: #f8f9fa; } }
 
+.line-height-0 {
+  line-height: 0 !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.line-height-1 {
+  line-height: 0.25rem !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.line-height-2 {
+  line-height: 0.5rem !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.line-height-3 {
+  line-height: 1rem !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.line-height-4 {
+  line-height: 1.5rem !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.line-height-5 {
+  line-height: 3rem !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
 .icon {
   font-size: 16px;
   width: 16px;
