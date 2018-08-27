@@ -15,25 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Settings for the overview block.
+ * This file keeps track of upgrades to the myoverview block
  *
- * @package    block_myoverview
- * @copyright  2017 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package block_myoverview
+ * @copyright 2018 Ryan Wyllie <ryan@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/blocks/myoverview/lib.php');
+/**
+ * Upgrade code for the myoverview block.
+ *
+ * @param int $oldversion
+ */
+function xmldb_block_myoverview_upgrade($oldversion) {
+    global $DB;
 
-if ($ADMIN->fulltree) {
+    if ($oldversion < 2018092700) {
+        $DB->delete_records('user_preferences', ['name' => 'block_myoverview_last_tab']);
+        upgrade_block_savepoint(true, 2018092700, 'myoverview');
+    }
 
-    $options = [
-        BLOCK_MYOVERVIEW_TIMELINE_VIEW => get_string('timeline', 'block_myoverview'),
-        BLOCK_MYOVERVIEW_COURSES_VIEW => get_string('courses')
-    ];
-
-    $settings->add(new admin_setting_configselect('block_myoverview/defaulttab',
-        get_string('defaulttab', 'block_myoverview'),
-        get_string('defaulttab_desc', 'block_myoverview'), 'timeline', $options));
+    return true;
 }

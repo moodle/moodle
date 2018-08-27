@@ -39,21 +39,6 @@ require_once($CFG->libdir . '/completionlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class main implements renderable, templatable {
-
-    /**
-     * @var string The tab to display.
-     */
-    public $tab;
-
-    /**
-     * Constructor.
-     *
-     * @param string $tab The tab to display.
-     */
-    public function __construct($tab) {
-        $this->tab = $tab;
-    }
-
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
@@ -88,15 +73,6 @@ class main implements renderable, templatable {
         $nocoursesurl = $output->image_url('courses', 'block_myoverview')->out();
         $noeventsurl = $output->image_url('activities', 'block_myoverview')->out();
 
-        // Now, set the tab we are going to be viewing.
-        $viewingtimeline = false;
-        $viewingcourses = false;
-        if ($this->tab == BLOCK_MYOVERVIEW_TIMELINE_VIEW) {
-            $viewingtimeline = true;
-        } else {
-            $viewingcourses = true;
-        }
-
         return [
             'midnight' => usergetmidnight(time()),
             'coursesview' => $coursesview->export_for_template($output),
@@ -104,8 +80,6 @@ class main implements renderable, templatable {
                 'nocourses' => $nocoursesurl,
                 'noevents' => $noeventsurl
             ],
-            'viewingtimeline' => $viewingtimeline,
-            'viewingcourses' => $viewingcourses
         ];
     }
 }

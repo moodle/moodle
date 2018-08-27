@@ -3036,7 +3036,7 @@ class global_navigation extends navigation_node {
         // Show a link to the course page if there are more courses the user is enrolled in.
         if ($showmorelinkinnav || $showmorelinkinflatnav) {
             // Adding hash to URL so the link is not highlighted in the navigation when clicked.
-            $url = new moodle_url('/my/?myoverviewtab=courses');
+            $url = new moodle_url('/my/');
             $parent = $this->rootnodes['mycourses'];
             $coursenode = $parent->add(get_string('morenavigationlinks'), $url, self::TYPE_CUSTOM, null, self::COURSE_INDEX_PAGE);
 

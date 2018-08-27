@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['defaulttab'] = 'Default tab';
-$string['defaulttab_desc'] = 'The tab that will be displayed when a user first views their course overview. When returning to their course overview, the user\'s active tab is remembered.';
 $string['future'] = 'Future';
 $string['inprogress'] = 'In progress';
 $string['morecourses'] = 'More courses';
@@ -44,4 +42,4 @@ $string['sortbydates'] = 'Sort by dates';
 $string['timeline'] = 'Timeline';
 $string['viewcourse'] = 'View course';
 $string['viewcoursename'] = 'View course {$a}';
-$string['privacy:metadata:overviewlasttab'] = 'This stores the last tab selected by the user on the overview block.';
+$string['privacy:metadata'] = 'The myoverview block does not store any personal data.';
