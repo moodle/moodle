@@ -29,7 +29,6 @@ use renderer_base;
 use templatable;
 use core_completion\progress;
 
-require_once($CFG->dirroot . '/blocks/myoverview/lib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
 /**
@@ -71,14 +70,12 @@ class main implements renderable, templatable {
 
         $coursesview = new courses_view($courses, $coursesprogress);
         $nocoursesurl = $output->image_url('courses', 'block_myoverview')->out();
-        $noeventsurl = $output->image_url('activities', 'block_myoverview')->out();
 
         return [
             'midnight' => usergetmidnight(time()),
             'coursesview' => $coursesview->export_for_template($output),
             'urls' => [
                 'nocourses' => $nocoursesurl,
-                'noevents' => $noeventsurl
             ],
         ];
     }

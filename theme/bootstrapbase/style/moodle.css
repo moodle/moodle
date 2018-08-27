@@ -16520,32 +16520,6 @@ body {
 .block_myoverview .row-fluid [class*="span"] {
   margin-left: 0;
 }
-.block_myoverview .event-list-item {
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-}
-.block_myoverview .event-list-item:last-of-type {
-  border-bottom: none;
-  padding-bottom: 0;
-  margin-bottom: 0;
-}
-.block_myoverview .event-list-item .event-icon {
-  vertical-align: middle;
-}
-.block_myoverview .event-list-item .event-icon::before {
-  content: '';
-  display: inline-block;
-  height: 100%;
-  vertical-align: middle;
-}
-.block_myoverview .event-list-item .event-name-container {
-  vertical-align: middle;
-  max-width: calc(100% - 50px);
-}
-.block_myoverview .event-list-item .event-name-container .event-name {
-  display: block;
-}
 .block_myoverview .empty-placeholder-image-sm {
   height: 50px;
 }

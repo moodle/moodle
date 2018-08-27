@@ -24,25 +24,6 @@
 }}
 <div id="courses-view-{{uniqid}}" data-region="courses-view">
     {{#hascourses}}
-    <div class="d-flex justify-content-center">
-        <ul class="nav nav-pills my-5">
-            <li class="nav-item">
-                <a class="nav-link active" href="#myoverview_courses_view_in_progress" data-toggle="tab">
-                    {{#str}} inprogress, block_myoverview {{/str}}
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#myoverview_courses_view_future" data-toggle="tab">
-                    {{#str}} future, block_myoverview {{/str}}
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#myoverview_courses_view_past" data-toggle="tab">
-                    {{#str}} past, block_myoverview {{/str}}
-                </a>
-            </li>
-        </ul>
-    </div>
     <div class="tab-content">
         <div class="tab-pane active fade show" id="myoverview_courses_view_in_progress">
             {{#inprogress}}

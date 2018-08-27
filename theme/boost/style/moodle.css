@@ -11375,25 +11375,6 @@ div.editor_atto_toolbar button .icon {
       width: 45px;
       font-size: 45px; }
 
-.block_myoverview .event-list-item .event-icon {
-  vertical-align: middle; }
-  .block_myoverview .event-list-item .event-icon::before {
-    content: '';
-    display: inline-block;
-    height: 100%;
-    vertical-align: middle; }
-
-.block_myoverview .event-list-item .event-name-container {
-  vertical-align: middle;
-  max-width: calc(100% - 50px); }
-  .block_myoverview .event-list-item .event-name-container .event-name {
-    display: block; }
-
-.block_myoverview .content-centred {
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto; }
-
 .block_myoverview .empty-placeholder-image-sm {
   height: 50px; }
 

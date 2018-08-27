@@ -158,34 +158,6 @@ $doughnut-fill-colour: $brand-warning;
 }
 
 .block_myoverview {
-    .event-list-item {
-        .event-icon {
-            vertical-align: middle;
-
-            &::before {
-                content: '';
-                display: inline-block;
-                height: 100%;
-                vertical-align: middle;
-            }
-        }
-
-        .event-name-container {
-            vertical-align: middle;
-            max-width: calc(100% - 50px);
-
-            .event-name {
-                display: block;
-            }
-        }
-    }
-
-    .content-centred {
-        max-width: 900px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
     .empty-placeholder-image-sm {
         height: 50px;
     }
