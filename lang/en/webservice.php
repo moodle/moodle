@@ -186,6 +186,7 @@ $string['service'] = 'Service';
 $string['servicehelpexplanation'] = 'A service is a set of functions. A service can be accessed by all users or just specified users.';
 $string['servicename'] = 'Service name';
 $string['servicenotavailable'] = 'Web service is not available (it doesn\'t exist or might be disabled)';
+$string['servicerequireslogin'] = 'Web service is not available (the session has been logged out or has expired)';
 $string['servicesbuiltin'] = 'Built-in services';
 $string['servicescustom'] = 'Custom services';
 $string['serviceusers'] = 'Authorised users';
