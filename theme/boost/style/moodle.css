@@ -10427,6 +10427,17 @@ div.editor_atto_toolbar button .icon {
 .w-auto {
   width: auto; }
 
+.bg-pulse-grey {
+  animation: bg-pulse-grey 2s infinite linear; }
+
+@keyframes bg-pulse-grey {
+  0% {
+    background-color: #f8f9fa; }
+  50% {
+    background-color: #e9ecef; }
+  100% {
+    background-color: #f8f9fa; } }
+
 .icon {
   font-size: 16px;
   width: 16px;

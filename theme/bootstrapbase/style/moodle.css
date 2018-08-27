@@ -4808,6 +4808,20 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
 [data-drag-type="move"] {
   cursor: move;
 }
+.bg-pulse-grey {
+  animation: bg-pulse-grey 2s infinite linear;
+}
+@keyframes bg-pulse-grey {
+  0% {
+    background-color: #eee;
+  }
+  50% {
+    background-color: #e1e1e1;
+  }
+  100% {
+    background-color: #eee;
+  }
+}
 /* admin.less */
 .formtable tbody th {
   font-weight: normal;
