@@ -10463,9 +10463,51 @@ div.editor_atto_toolbar button .icon {
 .icon-no-spacing a > .icon {
   margin: 0; }
 
+.icon-no-margin .icon {
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0; }
+
 .icon-large > .icon {
   width: 32px;
   height: 32px; }
+
+.icon-size-0 .icon {
+  height: 0 !important;
+  /* stylelint-disable-line declaration-no-important */
+  width: 0 !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.icon-size-1 .icon {
+  height: 4px !important;
+  /* stylelint-disable-line declaration-no-important */
+  width: 4px !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.icon-size-2 .icon {
+  height: 8px !important;
+  /* stylelint-disable-line declaration-no-important */
+  width: 8px !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.icon-size-3 .icon {
+  height: 16px !important;
+  /* stylelint-disable-line declaration-no-important */
+  width: 16px !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.icon-size-4 .icon {
+  height: 24px !important;
+  /* stylelint-disable-line declaration-no-important */
+  width: 24px !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.icon-size-5 .icon {
+  height: 48px !important;
+  /* stylelint-disable-line declaration-no-important */
+  width: 48px !important;
+  /* stylelint-disable-line declaration-no-important */ }
 
 .helplink .icon {
   margin-left: 0.5rem; }
