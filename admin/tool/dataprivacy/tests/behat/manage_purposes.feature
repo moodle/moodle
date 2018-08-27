@@ -51,6 +51,6 @@ Feature: Manage data storage purposes
     Given I click on "Actions" "link" in the "Purpose 1" "table_row"
     And I choose "Delete" in the open action menu
     And I should see "Delete purpose"
-    And I should see "Are you sure you want to delete the purpose \"Purpose 1\"?"
+    And I should see "Are you sure you want to delete the purpose 'Purpose 1'?"
     When I press "Delete"
     Then I should not see "Purpose 1" in the "List of data purposes" "table"
