@@ -1914,9 +1914,9 @@ class grade_report_grader extends grade_report {
         $firstlink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid'=>'firstname')), $strfirstname);
         $lastlink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid'=>'lastname')), $strlastname);
 
-        $arrows['studentname'] = $lastlink;
+        $arrows['studentname'] = $firstlink;
 
-        if ($this->sortitemid === 'lastname') {
+        if ($this->sortitemid === 'firstname') {
             if ($this->sortorder == 'ASC') {
                 $arrows['studentname'] .= $iconasc;
             } else {
@@ -1924,9 +1924,9 @@ class grade_report_grader extends grade_report {
             }
         }
 
-        $arrows['studentname'] .= ' ' . $firstlink;
+        $arrows['studentname'] .= ' ' . $lastlink;
 
-        if ($this->sortitemid === 'firstname') {
+        if ($this->sortitemid === 'lastname') {
             if ($this->sortorder == 'ASC') {
                 $arrows['studentname'] .= $iconasc;
             } else {
