@@ -286,7 +286,7 @@ class grade_report_overview extends grade_report {
                         'user' => $this->user->id)), $coursename);
                 } else {
                     $courselink = html_writer::link(new moodle_url('/grade/report/user/index.php', array('id' => $course->id,
-                        'userid' => $this->user->id)), $coursename);
+                        'userid' => $this->user->id, 'group' => $this->gpr->groupid)), $coursename);
                 }
 
                 $data = array($courselink, grade_format_gradevalue($finalgrade, $courseitem, true));
