@@ -10,6 +10,7 @@ $bg-inverse-link-color: #fff !default;
     overflow-y: visible;
     border: $card-border-width solid $card-border-color;
     padding: $card-spacer-x;
+    background-color: $body-bg;
 }
 
 .context-header-settings-menu,
