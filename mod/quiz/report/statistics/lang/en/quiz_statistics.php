@@ -100,6 +100,7 @@ $string['quizname'] = 'Quiz name';
 $string['quizoverallstatistics'] = 'Quiz overall statistics';
 $string['quizstructureanalysis'] = 'Quiz structure analysis';
 $string['random_guess_score'] = 'Random guess score';
+$string['rangebetween'] = '{$a->min} − {$a->max}';
 $string['recalculatenow'] = 'Recalculate now';
 $string['reportsettings'] = 'Statistics calculation settings';
 $string['response'] = 'Response';

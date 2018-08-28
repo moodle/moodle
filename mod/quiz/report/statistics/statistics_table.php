@@ -285,14 +285,16 @@ class quiz_statistics_table extends flexible_table {
      */
     protected function col_s($questionstat) {
         if ($this->is_random_question_summary($questionstat)) {
-            return '';
-        }
-
-        if (!isset($questionstat->s)) {
+            list($min, $max) = $questionstat->get_min_max_of('s');
+            $a = new stdClass();
+            $a->min = $min ?: 0;
+            $a->max = $max ?: 0;
+            return get_string('rangebetween', 'quiz_statistics', $a);
+        } else if (!isset($questionstat->s)) {
             return 0;
+        } else {
+            return $questionstat->s;
         }
-
-        return $questionstat->s;
     }
 
     /**
@@ -301,11 +303,22 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_facility($questionstat) {
-        if (is_null($questionstat->facility)) {
-            return '';
-        }
+        if ($this->is_random_question_summary($questionstat)) {
+            list($min, $max) = $questionstat->get_min_max_of('facility');
 
-        return number_format($questionstat->facility*100, 2) . '%';
+            if (is_null($min) && is_null($max)) {
+                return '';
+            } else {
+                $a = new stdClass();
+                $a->min = get_string('percents', 'moodle', number_format($min * 100, 2));
+                $a->max = get_string('percents', 'moodle', number_format($max * 100, 2));
+                return get_string('rangebetween', 'quiz_statistics', $a);
+            }
+        } else if (is_null($questionstat->facility)) {
+            return '';
+        } else {
+            return get_string('percents', 'moodle', number_format($questionstat->facility * 100, 2));
+        }
     }
 
     /**
@@ -314,11 +327,22 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_sd($questionstat) {
-        if (is_null($questionstat->sd) || $questionstat->maxmark == 0) {
-            return '';
-        }
+        if ($this->is_random_question_summary($questionstat)) {
+            list($min, $max) = $questionstat->get_min_max_of('sd');
 
-        return number_format($questionstat->sd*100 / $questionstat->maxmark, 2) . '%';
+            if (is_null($min) && is_null($max)) {
+                return '';
+            } else {
+                $a = new stdClass();
+                $a->min = get_string('percents', 'moodle', number_format($min * 100, 2));
+                $a->max = get_string('percents', 'moodle', number_format($max * 100, 2));
+                return get_string('rangebetween', 'quiz_statistics', $a);
+            }
+        } else if (is_null($questionstat->sd) || $questionstat->maxmark == 0) {
+            return '';
+        } else {
+            return get_string('percents', 'moodle', number_format($questionstat->sd * 100 / $questionstat->maxmark, 2));
+        }
     }
 
     /**
@@ -327,11 +351,23 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_random_guess_score($questionstat) {
-        if (is_null($questionstat->randomguessscore)) {
-            return '';
-        }
+        if ($this->is_random_question_summary($questionstat)) {
+            list($min, $max) = $questionstat->get_min_max_of('randomguessscore');
 
-        return number_format($questionstat->randomguessscore * 100, 2).'%';
+            if (is_null($min) && is_null($max)) {
+                return '';
+            } else {
+                $a = new stdClass();
+                $a->min = get_string('percents', 'moodle', number_format($min * 100, 2));
+                $a->max = get_string('percents', 'moodle', number_format($max * 100, 2));
+
+                return get_string('rangebetween', 'quiz_statistics', $a);
+            }
+        } else if (is_null($questionstat->randomguessscore)) {
+            return '';
+        } else {
+            return get_string('percents', 'moodle', number_format($questionstat->randomguessscore * 100, 2));
+        }
     }
 
     /**
@@ -343,10 +379,19 @@ class quiz_statistics_table extends flexible_table {
      */
     protected function col_intended_weight($questionstat) {
         if ($this->is_random_question_summary($questionstat)) {
-            return '';
-        }
+            list($min, $max) = $questionstat->get_min_max_of('maxmark');
 
-        return quiz_report_scale_summarks_as_percentage($questionstat->maxmark, $this->quiz);
+            if (is_null($min) && is_null($max)) {
+                return '';
+            } else {
+                $a = new stdClass();
+                $a->min = quiz_report_scale_summarks_as_percentage($min, $this->quiz);
+                $a->max = quiz_report_scale_summarks_as_percentage($max, $this->quiz);
+                return get_string('rangebetween', 'quiz_statistics', $a);
+            }
+        } else {
+            return quiz_report_scale_summarks_as_percentage($questionstat->maxmark, $this->quiz);
+        }
     }
 
     /**
@@ -358,11 +403,25 @@ class quiz_statistics_table extends flexible_table {
     protected function col_effective_weight($questionstat) {
         global $OUTPUT;
 
-        if (is_null($questionstat->effectiveweight)) {
-            return '';
-        }
+        if ($this->is_random_question_summary($questionstat)) {
+            list($min, $max) = $questionstat->get_min_max_of('effectiveweight');
 
-        if ($questionstat->negcovar) {
+            if (is_null($min) && is_null($max)) {
+                return '';
+            } else {
+                list( , $negcovar) = $questionstat->get_min_max_of('negcovar');
+                if ($negcovar) {
+                    $min = get_string('negcovar', 'quiz_statistics');
+                }
+
+                $a = new stdClass();
+                $a->min = $min;
+                $a->max = $max;
+                return get_string('rangebetween', 'quiz_statistics', $a);
+            }
+        } else if (is_null($questionstat->effectiveweight)) {
+            return '';
+        } else if ($questionstat->negcovar) {
             $negcovar = get_string('negcovar', 'quiz_statistics');
 
             if (!$this->is_downloading()) {
@@ -372,9 +431,9 @@ class quiz_statistics_table extends flexible_table {
             }
 
             return $negcovar;
+        } else {
+            return get_string('percents', 'moodle', number_format($questionstat->effectiveweight, 2));
         }
-
-        return number_format($questionstat->effectiveweight, 2) . '%';
     }
 
     /**
@@ -385,11 +444,25 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_discrimination_index($questionstat) {
-        if (!is_numeric($questionstat->discriminationindex)) {
-            return $questionstat->discriminationindex;
-        }
+        if ($this->is_random_question_summary($questionstat)) {
+            list($min, $max) = $questionstat->get_min_max_of('discriminationindex');
 
-        return number_format($questionstat->discriminationindex, 2) . '%';
+            if (is_numeric($min)) {
+                $min = get_string('percents', 'moodle', number_format($min, 2));
+            }
+            if (is_numeric($max)) {
+                $max = get_string('percents', 'moodle', number_format($max, 2));
+            }
+
+            $a = new stdClass();
+            $a->min = $min;
+            $a->max = $max;
+            return get_string('rangebetween', 'quiz_statistics', $a);
+        } else if (!is_numeric($questionstat->discriminationindex)) {
+            return $questionstat->discriminationindex;
+        } else {
+            return get_string('percents', 'moodle', number_format($questionstat->discriminationindex, 2));
+        }
     }
 
     /**
@@ -399,11 +472,22 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_discriminative_efficiency($questionstat) {
-        if (!is_numeric($questionstat->discriminativeefficiency)) {
-            return '';
-        }
+        if ($this->is_random_question_summary($questionstat)) {
+            list($min, $max) = $questionstat->get_min_max_of('discriminativeefficiency');
 
-        return number_format($questionstat->discriminativeefficiency, 2) . '%';
+            if (!is_numeric($min) && !is_numeric($max)) {
+                return '';
+            } else {
+                $a = new stdClass();
+                $a->min = get_string('percents', 'moodle', number_format($min, 2));
+                $a->max = get_string('percents', 'moodle', number_format($max, 2));
+                return get_string('rangebetween', 'quiz_statistics', $a);
+            }
+        } else if (!is_numeric($questionstat->discriminativeefficiency)) {
+            return '';
+        } else {
+            return get_string('percents', 'moodle', number_format($questionstat->discriminativeefficiency, 2));
+        }
     }
 
     /**
