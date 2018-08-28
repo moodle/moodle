@@ -120,7 +120,7 @@ if ($form = $import_form->get_data()) {
     }
 
     // Process the uploaded file
-    if (!$qformat->importprocess($category)) {
+    if (!$qformat->importprocess()) {
         print_error('cannotimport', '', $thispageurl->out());
     }
 
