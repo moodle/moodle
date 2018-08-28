@@ -1487,6 +1487,30 @@ function question_categorylist($categoryid) {
     return $categorylist;
 }
 
+/**
+ * Get all parent categories of a given question category in decending order.
+ * @param int $categoryid for which you want to find the parents.
+ * @return array of question category ids of all parents categories.
+ */
+function question_categorylist_parents(int $categoryid) {
+    global $DB;
+    $parent = $DB->get_field('question_categories', 'parent', array('id' => $categoryid));
+    if (!$parent) {
+        return [];
+    }
+    $categorylist = [$parent];
+    $currentid = $parent;
+    while ($currentid) {
+        $currentid = $DB->get_field('question_categories', 'parent', array('id' => $currentid));
+        if ($currentid) {
+            $categorylist[] = $currentid;
+        }
+    }
+    // Present the list in decending order (the top category at the top).
+    $categorylist = array_reverse($categorylist);
+    return $categorylist;
+}
+
 //===========================
 // Import/Export Functions
 //===========================
