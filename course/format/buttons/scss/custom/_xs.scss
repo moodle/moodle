@@ -1,156 +1,162 @@
 html[dir='rtl']{
-  .slider.sections{
-    &.slick-slider{
-      .slick-slide{
-        float: left;
+  .format-buttons{
+    .slider.sections{
+      margin:0;
+      &.slick-slider{
+        .slick-slide{
+          float: left;
+        }
+        .slick-arrow{
+          margin-top: -1rem;
+          &.slick-prev{
+            left:-2rem;
+            top:50%;
+            &:before{
+              transform: rotate(-45deg);
+            }
+          }
+          &.slick-next{
+            right:-2rem;
+            top:50%;
+            &:before{
+              transform: rotate(135deg);
+            }
+          }
+        }
       }
+    }
+    .label-content-controls{
+      .label-prev{
+        div:before{
+          transform: rotate(-45deg);
+        }
+      }
+      .label-next{
+        div:before{
+          transform: rotate(135deg);
+        }
+      }
+    }
+  }
+}
+.format-buttons{
+
+  .sections-wrapper{
+    display: flex;
+    flex: 1;
+    .slider.sections{
+      width:100%;
+      padding: 0 5%;
       .slick-arrow{
         margin-top: -1rem;
         &.slick-prev{
-          left:-2rem;
+          left:-1.5rem;
           top:50%;
           &:before{
-            transform: rotate(-45deg);
+            transform: rotate(45deg);
           }
         }
         &.slick-next{
-          right:-2rem;
+          right:-1.5rem;
           top:50%;
           &:before{
-            transform: rotate(135deg);
+            transform: rotate(225deg);
           }
+        }
+      }
+    }
+  }
+  .sections-content-wrapper{
+    padding:0 5%;
+    .labels-wrapper{
+      height:0;
+      overflow:hidden;
+      transition: all .3s ease-in-out;
+      &.expand{
+        height:auto;
+        transition: all .3s ease-in-out;
+      }
+      .slider.labels{
+        overflow-y: scroll;
+        .nav-item{
+          width:100%;
         }
       }
     }
   }
   .label-content-controls{
-    .label-prev{
-      div:before{
-        transform: rotate(-45deg);
+    position: relative;
+    padding:15px 0;
+    margin:0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    .label-header{
+      max-width: 100%;
+      div{
+        max-width: 100%;
+        .label-title{
+          box-sizing: border-box;
+          max-width: 100%;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
       }
+      .label-icon{
+        display: none!important;
+      }
+    }
+    .label-prev{
+      position: relative;
+      border:0;
+      background-color: inherit;
+      color:#000;
+      outline:none;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      div:before{
+        content:'';
+        width: 1rem;
+        height:1rem;
+        display:block;
+        position: absolute;
+        left: -1.5rem;
+        top:.5rem;
+        border-top: 1px solid transparent;
+        border-right: 1px solid transparent;
+        border-bottom: 1px solid #000;
+        border-left: 1px solid #000;
+        transform: rotate(45deg);
+      }
+    }
+    .label-active{
+      position: relative;
+      color:gold;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .label-next{
+      position: relative;
+      border:0;
+      background-color: inherit;
+      color:#000;
+      outline:none;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       div:before{
-        transform: rotate(135deg);
+        content:'';
+        width: 1rem;
+        height:1rem;
+        display:block;
+        position: absolute;
+        right: -1.5rem;
+        top:.5rem;
+        border-top: 1px solid transparent;
+        border-right: 1px solid transparent;
+        border-bottom: 1px solid #000;
+        border-left: 1px solid #000;
+        transform: rotate(225deg);
       }
-    }
-  }
-}
-.sections-wrapper{
-  display: flex;
-  flex: 1;
-  .slider.sections{
-    width:100%;
-    padding: 0 5%;
-    .slick-arrow{
-      margin-top: -1rem;
-      &.slick-prev{
-        left:-1.5rem;
-        top:50%;
-        &:before{
-          transform: rotate(45deg);
-        }
-      }
-      &.slick-next{
-        right:-1.5rem;
-        top:50%;
-        &:before{
-          transform: rotate(225deg);
-        }
-      }
-    }
-  }
-}
-.sections-content-wrapper{
-  padding:0 5%;
-  .labels-wrapper{
-    height:0;
-    overflow:hidden;
-    transition: all .3s ease-in-out;
-    &.expand{
-      height:auto;
-      transition: all .3s ease-in-out;
-    }
-    .slider.labels{
-      overflow-y: scroll;
-      .nav-item{
-        width:100%;
-      }
-    }
-  }
-}
-.label-content-controls{
-  position: relative;
-  padding:15px 0;
-  margin:0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  .label-header{
-    max-width: 100%;
-    div{
-      max-width: 100%;
-      .label-title{
-        box-sizing: border-box;
-        max-width: 100%;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-      }
-    }
-    .label-icon{
-      display: none!important;
-    }
-  }
-  .label-prev{
-    position: relative;
-    border:0;
-    background-color: inherit;
-    color:#000;
-    outline:none;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    div:before{
-      content:'';
-      width: 1rem;
-      height:1rem;
-      display:block;
-      position: absolute;
-      left: -1.5rem;
-      top:.5rem;
-      border-top: 1px solid transparent;
-      border-right: 1px solid transparent;
-      border-bottom: 1px solid #000;
-      border-left: 1px solid #000;
-      transform: rotate(45deg);
-    }
-  }
-  .label-active{
-    position: relative;
-    color:gold;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .label-next{
-    position: relative;
-    border:0;
-    background-color: inherit;
-    color:#000;
-    outline:none;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    div:before{
-      content:'';
-      width: 1rem;
-      height:1rem;
-      display:block;
-      position: absolute;
-      right: -1.5rem;
-      top:.5rem;
-      border-top: 1px solid transparent;
-      border-right: 1px solid transparent;
-      border-bottom: 1px solid #000;
-      border-left: 1px solid #000;
-      transform: rotate(225deg);
     }
   }
 }

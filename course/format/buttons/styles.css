@@ -231,9 +231,6 @@
     background-color: #85c7ce;
     transition: all .3s ease-in-out; }
 
-ul.buttons {
-  padding: 0; }
-
 @keyframes fadeInFromNone {
   0% {
     display: none;
@@ -256,25 +253,29 @@ ul.buttons {
     display: none;
     opacity: 0; } }
 
-.sections-wrapper {
+.format-buttons ul {
+  padding: 0;
+  margin: 0; }
+
+.format-buttons .sections-wrapper {
   display: -ms-flexbox;
   display: flex;
   -ms-flex: 1;
       flex: 1; }
-  .sections-wrapper .slider.sections {
+  .format-buttons .sections-wrapper .slider.sections {
     max-width: 100%; }
-    .sections-wrapper .slider.sections.slick-slider {
+    .format-buttons .sections-wrapper .slider.sections.slick-slider {
       float: left; }
-      .sections-wrapper .slider.sections.slick-slider .slick-arrow {
+      .format-buttons .sections-wrapper .slider.sections.slick-slider .slick-arrow {
         width: 2rem;
         height: 2rem; }
-        .sections-wrapper .slider.sections.slick-slider .slick-arrow.slick-prev {
+        .format-buttons .sections-wrapper .slider.sections.slick-slider .slick-arrow.slick-prev {
           left: -1.5rem;
           top: 50%; }
-        .sections-wrapper .slider.sections.slick-slider .slick-arrow.slick-next {
+        .format-buttons .sections-wrapper .slider.sections.slick-slider .slick-arrow.slick-next {
           right: -1.5rem;
           top: 50%; }
-      .sections-wrapper .slider.sections.slick-slider .nav-item {
+      .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item {
         box-sizing: border-box;
         border: 1px solid transparent;
         margin-top: 12px;
@@ -282,19 +283,19 @@ ul.buttons {
         transition: all .3s ease-in-out;
         text-overflow: ellipsis;
         white-space: nowrap; }
-        .sections-wrapper .slider.sections.slick-slider .nav-item .section-header {
+        .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item .section-header {
           max-width: 100%;
           margin-top: 12px; }
-          .sections-wrapper .slider.sections.slick-slider .nav-item .section-header div {
+          .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item .section-header div {
             max-width: 132px; }
-          .sections-wrapper .slider.sections.slick-slider .nav-item .section-header .section-title {
+          .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item .section-header .section-title {
             font-size: 1.15rem;
             line-height: 1.5rem;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
             max-width: 100%; }
-          .sections-wrapper .slider.sections.slick-slider .nav-item .section-header .section-description {
+          .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item .section-header .section-description {
             height: 1.375rem;
             opacity: 1;
             transition: all .3s ease-in-out;
@@ -302,16 +303,16 @@ ul.buttons {
             white-space: nowrap;
             overflow: hidden;
             max-width: 100%; }
-            .sections-wrapper .slider.sections.slick-slider .nav-item .section-header .section-description p {
+            .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item .section-header .section-description p {
               text-overflow: ellipsis;
               white-space: nowrap;
               overflow: hidden; }
-        .sections-wrapper .slider.sections.slick-slider .nav-item .section-icon {
+        .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item .section-icon {
           margin: 10px;
           opacity: 1;
           background-color: #7af2ff;
           transition: all .3s ease-in-out; }
-        .sections-wrapper .slider.sections.slick-slider .nav-item .section-tooltip {
+        .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item .section-tooltip {
           box-sizing: content-box;
           font-family: --font-family-sans-serif;
           font-size: 2rem;
@@ -326,94 +327,94 @@ ul.buttons {
           height: 1.5rem;
           text-align: center;
           transition: all .3s ease-in-out; }
-        .sections-wrapper .slider.sections.slick-slider .nav-item:hover {
+        .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item:hover {
           margin-top: 0;
           padding: 12px 0 0 0;
           background-color: #b7b7b7;
           transition: all .3s ease-in-out; }
-          .sections-wrapper .slider.sections.slick-slider .nav-item:hover .section-description {
+          .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item:hover .section-description {
             opacity: 1;
             transition: all .3s ease-in-out; }
-          .sections-wrapper .slider.sections.slick-slider .nav-item:hover .section-icon {
+          .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item:hover .section-icon {
             opacity: 1;
             background-color: #5bc0de;
             transition: all .3s ease-in-out; }
-          .sections-wrapper .slider.sections.slick-slider .nav-item:hover .section-tooltip {
+          .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item:hover .section-tooltip {
             opacity: 1;
             transition: all .3s ease-in-out; }
-            .sections-wrapper .slider.sections.slick-slider .nav-item:hover .section-tooltip:hover {
+            .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item:hover .section-tooltip:hover {
               border-color: #7bc0de; }
-        .sections-wrapper .slider.sections.slick-slider .nav-item.active {
+        .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item.active {
           background-color: #fff;
           margin-top: 0;
           padding: 12px 0 0 0;
           border: 1px solid #b7b7b7;
           border-bottom-color: transparent;
           transition: all .3s ease-in-out; }
-          .sections-wrapper .slider.sections.slick-slider .nav-item.active .section-icon {
+          .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item.active .section-icon {
             opacity: 1;
             transition: all .3s ease-in-out; }
-          .sections-wrapper .slider.sections.slick-slider .nav-item.active .section-tooltip {
+          .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item.active .section-tooltip {
             opacity: 1;
             transition: all .3s ease-in-out; }
-            .sections-wrapper .slider.sections.slick-slider .nav-item.active .section-tooltip:hover {
+            .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item.active .section-tooltip:hover {
               border-color: #7bc0de; }
-          .sections-wrapper .slider.sections.slick-slider .nav-item.active .section-description {
+          .format-buttons .sections-wrapper .slider.sections.slick-slider .nav-item.active .section-description {
             opacity: 1;
             transition: all .3s ease-in-out; }
 
-.labels-wrapper .slider.labels .nav-item {
+.format-buttons .labels-wrapper .slider.labels .nav-item {
   font-size: 1.15rem;
   line-height: 1.375rem; }
-  .labels-wrapper .slider.labels .nav-item .label-header {
+  .format-buttons .labels-wrapper .slider.labels .nav-item .label-header {
     max-width: 100%;
     margin: 30px 12px; }
-    .labels-wrapper .slider.labels .nav-item .label-header div {
+    .format-buttons .labels-wrapper .slider.labels .nav-item .label-header div {
       max-width: 80px; }
-      .labels-wrapper .slider.labels .nav-item .label-header div .label-title {
+      .format-buttons .labels-wrapper .slider.labels .nav-item .label-header div .label-title {
         box-sizing: border-box;
         max-width: 100%;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden; }
-    .labels-wrapper .slider.labels .nav-item .label-header .label-icon {
+    .format-buttons .labels-wrapper .slider.labels .nav-item .label-header .label-icon {
       margin: 0 8px; }
-      .labels-wrapper .slider.labels .nav-item .label-header .label-icon:before {
+      .format-buttons .labels-wrapper .slider.labels .nav-item .label-header .label-icon:before {
         box-sizing: border-box;
         width: 28px;
         height: 28px; }
 
-.labels-wrapper .slider.labels .slick-arrow {
+.format-buttons .labels-wrapper .slider.labels .slick-arrow {
   width: 100%;
   height: 2rem;
   padding-left: 50%; }
-  .labels-wrapper .slider.labels .slick-arrow.slick-prev:before {
+  .format-buttons .labels-wrapper .slider.labels .slick-arrow.slick-prev:before {
     margin-left: -1rem; }
-  .labels-wrapper .slider.labels .slick-arrow.slick-next {
+  .format-buttons .labels-wrapper .slider.labels .slick-arrow.slick-next {
     background: linear-gradient(to bottom, transparent 0%, #fff 25%, #fff 100%);
     bottom: 0; }
-    .labels-wrapper .slider.labels .slick-arrow.slick-next:before {
+    .format-buttons .labels-wrapper .slider.labels .slick-arrow.slick-next:before {
       margin-left: -1rem; }
 
-.slick-slider {
+.format-buttons .slick-slider {
   text-overflow: ellipsis;
   white-space: nowrap; }
-  .slick-slider .slick-slide {
+  .format-buttons .slick-slider .slick-slide {
     cursor: pointer;
     margin: 0 1px;
     transition: all .3s ease-in-out;
     text-overflow: ellipsis;
     white-space: nowrap; }
-  .slick-slider .slick-arrow {
+  .format-buttons .slick-slider .slick-arrow {
     position: absolute;
     border: 0;
     background-color: transparent;
     outline: 0;
     color: transparent;
     cursor: pointer; }
-    .slick-slider .slick-arrow:focus {
+    .format-buttons .slick-slider .slick-arrow:focus {
       outline: 0; }
-    .slick-slider .slick-arrow.slick-prev:before {
+    .format-buttons .slick-slider .slick-arrow.slick-prev:before {
       content: '';
       display: block;
       width: 12px;
@@ -423,7 +424,7 @@ ul.buttons {
       border-bottom: 3px solid #5bc0de;
       border-left: 3px solid #5bc0de;
       border-radius: 3px; }
-    .slick-slider .slick-arrow.slick-next:before {
+    .format-buttons .slick-slider .slick-arrow.slick-next:before {
       content: '';
       display: block;
       width: 12px;
@@ -434,13 +435,13 @@ ul.buttons {
       border-left: 3px solid #5bc0de;
       border-radius: 3px; }
 
-.label-content-wrapper {
+.format-buttons .label-content-wrapper {
   position: relative;
   box-sizing: border-box;
   border: 1px solid #ddd;
   margin: 24px 1px;
   padding: 1vh; }
-  .label-content-wrapper .alert {
+  .format-buttons .label-content-wrapper .alert {
     position: absolute;
     top: 0;
     left: 0;
@@ -450,37 +451,37 @@ ul.buttons {
     overflow-y: scroll;
     z-index: 10; }
 
-.label-content {
+.format-buttons .label-content {
   overflow-y: auto;
   overflow-x: hidden; }
-  .label-content img {
+  .format-buttons .label-content img {
     box-sizing: border-box;
     max-width: 100%;
     height: auto; }
-  .label-content .mediaplugin {
+  .format-buttons .label-content .mediaplugin {
     box-sizing: border-box;
     max-width: 100%;
     height: auto; }
 
-.label-content-controls {
+.format-buttons .label-content-controls {
   position: relative;
   padding: 15px 0;
   margin: 0;
   text-overflow: ellipsis;
   white-space: nowrap; }
-  .label-content-controls .label-header {
+  .format-buttons .label-content-controls .label-header {
     max-width: 100%; }
-    .label-content-controls .label-header div {
+    .format-buttons .label-content-controls .label-header div {
       max-width: 100%; }
-      .label-content-controls .label-header div .label-title {
+      .format-buttons .label-content-controls .label-header div .label-title {
         box-sizing: border-box;
         max-width: 100%;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden; }
-    .label-content-controls .label-header .label-icon {
-      display: none; }
-  .label-content-controls .label-prev {
+    .format-buttons .label-content-controls .label-header .label-icon {
+      display: none !important; }
+  .format-buttons .label-content-controls .label-prev {
     position: relative;
     border: 0;
     background-color: inherit;
@@ -488,19 +489,19 @@ ul.buttons {
     outline: none;
     text-overflow: ellipsis;
     white-space: nowrap; }
-    .label-content-controls .label-prev div:before {
+    .format-buttons .label-content-controls .label-prev div:before {
       content: '';
       width: 1rem;
       height: 1rem;
       display: block;
       border: 0;
       transform: rotate(45deg); }
-  .label-content-controls .label-active {
+  .format-buttons .label-content-controls .label-active {
     position: relative;
     color: gold;
     text-overflow: ellipsis;
     white-space: nowrap; }
-  .label-content-controls .label-next {
+  .format-buttons .label-content-controls .label-next {
     position: relative;
     border: 0;
     background-color: inherit;
@@ -508,7 +509,7 @@ ul.buttons {
     outline: none;
     text-overflow: ellipsis;
     white-space: nowrap; }
-    .label-content-controls .label-next div:before {
+    .format-buttons .label-content-controls .label-next div:before {
       content: '';
       width: 1rem;
       height: 1rem;
@@ -516,59 +517,63 @@ ul.buttons {
       border: 0;
       transform: rotate(225deg); }
 
-.section-content {
+.format-buttons .section-content {
   animation: fadeInFromNone 0.1s ease-out; }
-  .section-content.d-none {
+  .format-buttons .section-content.d-none {
     animation: fadeOutToNone 0.1s ease-out; }
-  @media screen and (min-width: 576px){
-  html[dir='rtl'] .slider.sections.slick-slider .slick-arrow.slick-prev{
+
+.format-buttons #page-footer {
+  position: relative !important; }
+
+@media screen and (min-width: 576px){
+  html[dir='rtl'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-prev{
     left: -2rem;
     top: 50%; }
-  html[dir='rtl'] .slider.sections.slick-slider .slick-arrow.slick-prev:before{
+  html[dir='rtl'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-prev:before{
     transform: rotate(-45deg); }
-  html[dir='rtl'] .slider.sections.slick-slider .slick-arrow.slick-next{
+  html[dir='rtl'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-next{
     right: -2rem;
     top: 50%; }
-  html[dir='rtl'] .slider.sections.slick-slider .slick-arrow.slick-next:before{
+  html[dir='rtl'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-next:before{
     transform: rotate(135deg); }
-  html[dir='rtl'] .label-content-controls .label-prev div:before{
+  html[dir='rtl'] .format-buttons .label-content-controls .label-prev div:before{
     top: 0;
     transform: rotate(180deg); }
-  html[dir='rtl'] .label-content-controls .label-next div:before{
+  html[dir='rtl'] .format-buttons .label-content-controls .label-next div:before{
     top: 0;
     transform: rotate(180deg); }
-  .sections-wrapper{
+  .format-buttons .sections-wrapper{
     display: -ms-flexbox;
     display: flex;
     -ms-flex: 1;
     flex: 1; }
-  .sections-wrapper .slider.sections{
+  .format-buttons .sections-wrapper .slider.sections{
     width: 100%;
     padding: 0 5%; }
-  .sections-wrapper .slider.sections .slick-arrow.slick-prev{
+  .format-buttons .sections-wrapper .slider.sections .slick-arrow.slick-prev{
     left: -1.5rem;
     top: 50%; }
-  .sections-wrapper .slider.sections .slick-arrow.slick-prev:before{
+  .format-buttons .sections-wrapper .slider.sections .slick-arrow.slick-prev:before{
     transform: rotate(45deg); }
-  .sections-wrapper .slider.sections .slick-arrow.slick-next{
+  .format-buttons .sections-wrapper .slider.sections .slick-arrow.slick-next{
     right: -1.5rem;
     top: 50%; }
-  .sections-wrapper .slider.sections .slick-arrow.slick-next:before{
+  .format-buttons .sections-wrapper .slider.sections .slick-arrow.slick-next:before{
     transform: rotate(225deg); }
-  .sections-content-wrapper{
+  .format-buttons .sections-content-wrapper{
     padding: 0; }
-  .sections-content-wrapper .section-content > div{
+  .format-buttons .sections-content-wrapper .section-content > div{
     position: relative; }
-  .sections-content-wrapper .labels-wrapper{
+  .format-buttons .sections-content-wrapper .labels-wrapper{
     height: 0;
     overflow: hidden;
     transition: all .3s ease-in-out; }
-  .sections-content-wrapper .labels-wrapper.expand{
+  .format-buttons .sections-content-wrapper .labels-wrapper.expand{
     height: auto;
     transition: all .3s ease-in-out; }
-  .sections-content-wrapper .labels-wrapper .slider.labels .nav-item{
+  .format-buttons .sections-content-wrapper .labels-wrapper .slider.labels .nav-item{
     width: 100%; }
-  .label-content-controls{
+  .format-buttons .label-content-controls{
     position: absolute !important;
     top: 475px;
     right: 75%;
@@ -578,11 +583,11 @@ ul.buttons {
     line-height: 1rem;
     text-overflow: ellipsis;
     white-space: nowrap; }
-  .label-content-controls .label-header div .label-title{
+  .format-buttons .label-content-controls .label-header div .label-title{
     display: none; }
-  .label-content-controls .label-header .label-icon{
+  .format-buttons .label-content-controls .label-header .label-icon{
     display: none; }
-  .label-content-controls .label-prev{
+  .format-buttons .label-content-controls .label-prev{
     position: relative;
     border: 0;
     background-color: inherit;
@@ -590,7 +595,7 @@ ul.buttons {
     outline: none;
     text-overflow: ellipsis;
     white-space: nowrap; }
-  .label-content-controls .label-prev > div:before{
+  .format-buttons .label-content-controls .label-prev > div:before{
     content: '\f100';
     font-family: FontAwesome;
     font-size: 2rem;
@@ -604,12 +609,12 @@ ul.buttons {
     right: 0;
     top: -.25rem;
     cursor: pointer; }
-  .label-content-controls .label-prev > div:hover:before{
+  .format-buttons .label-content-controls .label-prev > div:hover:before{
     cursor: pointer;
     color: #5bc0de; }
-  .label-content-controls .label-active div{
+  .format-buttons .label-content-controls .label-active div{
     display: none; }
-  .label-content-controls .label-next{
+  .format-buttons .label-content-controls .label-next{
     position: relative;
     border: 0;
     background-color: inherit;
@@ -617,7 +622,7 @@ ul.buttons {
     outline: none;
     text-overflow: ellipsis;
     white-space: nowrap; }
-  .label-content-controls .label-next > div:before{
+  .format-buttons .label-content-controls .label-next > div:before{
     content: '\f101';
     font-family: FontAwesome;
     font-size: 2rem;
@@ -631,14 +636,14 @@ ul.buttons {
     left: 0;
     top: -.25rem;
     cursor: pointer; }
-  .label-content-controls .label-next > div:before:hover{
+  .format-buttons .label-content-controls .label-next > div:before:hover{
     cursor: pointer;
     color: #5bc0de; }
-  .slick-slider.labels .slick-next.slick-disabled{
+  .format-buttons .slick-slider.labels .slick-next.slick-disabled{
     display: none; }
-  .label-next:hover{
+  .format-buttons .label-next:hover{
     max-height: 1rem; }
-  .label-next:hover .label-icon{
+  .format-buttons .label-next:hover .label-icon{
     display: block !important;
     position: absolute;
     bottom: 1.75rem;
@@ -648,14 +653,14 @@ ul.buttons {
     width: 2rem;
     height: 2rem;
     z-index: 5; }
-  .label-next:hover .label-title{
+  .format-buttons .label-next:hover .label-title{
     display: block !important;
     position: absolute;
     bottom: 1.5rem;
     right: -8em;
-    padding-left: 2.5rem;
-    width: 10rem;
-    max-width: 10rem !important;
+    padding: 0 2.5rem;
+    width: 12.5rem;
+    max-width: 12.5rem !important;
     height: 3rem;
     line-height: 1.5rem;
     padding-top: .75rem;
@@ -664,9 +669,9 @@ ul.buttons {
     background-color: #fff;
     box-shadow: 2px 2px 3px #000;
     z-index: 4; }
-  .label-prev:hover{
+  .format-buttons .label-prev:hover{
     max-height: 1rem; }
-  .label-prev:hover .label-icon{
+  .format-buttons .label-prev:hover .label-icon{
     display: block !important;
     position: absolute;
     bottom: 1.75rem;
@@ -676,14 +681,14 @@ ul.buttons {
     width: 2rem;
     height: 2rem;
     z-index: 5; }
-  .label-prev:hover .label-title{
+  .format-buttons .label-prev:hover .label-title{
     display: block !important;
     position: absolute;
     bottom: 1.5rem;
     right: -8rem;
-    width: 10rem;
-    max-width: 10rem !important;
-    padding-left: 2.5rem;
+    width: 12.5rem;
+    max-width: 12.5rem !important;
+    padding: 0 2.5rem;
     height: 3rem;
     line-height: 1.5rem;
     padding-top: .75rem;
@@ -692,198 +697,204 @@ ul.buttons {
     background-color: #fff;
     box-shadow: 2px 2px 3px #000;
     z-index: 4; } }
-  @media screen and (min-width: 768px){
-  html[dir='ltr'] .slider.sections.slick-slider{
+
+@media screen and (min-width: 768px){
+  html[dir='ltr'] .format-buttons .slider.sections.slick-slider{
     float: left; }
-  html[dir='ltr'] .slider.sections.slick-slider .slick-arrow.slick-prev{
+  html[dir='ltr'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-prev{
     left: -1.5rem;
     top: 50%; }
-  html[dir='ltr'] .slider.sections.slick-slider .slick-arrow.slick-prev:before{
+  html[dir='ltr'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-prev:before{
     transform: rotate(45deg); }
-  html[dir='ltr'] .slider.sections.slick-slider .slick-arrow.slick-next{
+  html[dir='ltr'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-next{
     right: -1.5rem;
     top: 50%; }
-  html[dir='ltr'] .slider.sections.slick-slider .slick-arrow.slick-next:before{
+  html[dir='ltr'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-next:before{
     transform: rotate(225deg); }
-  html[dir='ltr'] .slider.labels .nav-item{
+  html[dir='ltr'] .format-buttons .slider.labels .nav-item{
     min-height: 80px; }
-  html[dir='ltr'] .slider.labels .nav-item.active{
+  html[dir='ltr'] .format-buttons .slider.labels .nav-item.active{
     padding: 0 0 0 12px; }
-  html[dir='ltr'] .slider.labels .nav-item:hover{
+  html[dir='ltr'] .format-buttons .slider.labels .nav-item:hover{
     padding: 0 0 0 12px; }
-  html[dir='ltr'] .slider.labels.slick-slider .slick-arrow{
+  html[dir='ltr'] .format-buttons .slider.labels.slick-slider .slick-arrow{
     margin-top: -2rem; }
-  html[dir='ltr'] .slider.labels.slick-slider .slick-arrow.slick-prev{
+  html[dir='ltr'] .format-buttons .slider.labels.slick-slider .slick-arrow.slick-prev{
     left: 0;
     top: 0; }
-  html[dir='ltr'] .slider.labels.slick-slider .slick-arrow.slick-prev:before{
+  html[dir='ltr'] .format-buttons .slider.labels.slick-slider .slick-arrow.slick-prev:before{
     transform: rotate(135deg) translateY(-1rem); }
-  html[dir='ltr'] .slider.labels.slick-slider .slick-arrow.slick-next{
+  html[dir='ltr'] .format-buttons .slider.labels.slick-slider .slick-arrow.slick-next{
     left: 0;
     bottom: 0; }
-  html[dir='ltr'] .slider.labels.slick-slider .slick-arrow.slick-next:before{
+  html[dir='ltr'] .format-buttons .slider.labels.slick-slider .slick-arrow.slick-next:before{
     transform: rotate(-45deg) translateY(1rem); }
-  html[dir='rtl'] .slider.sections.slick-slider .slick-arrow.slick-prev{
+  html[dir='rtl'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-prev{
     left: -1.5rem;
     top: 50%; }
-  html[dir='rtl'] .slider.sections.slick-slider .slick-arrow.slick-prev:before{
+  html[dir='rtl'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-prev:before{
     transform: rotate(-45deg); }
-  html[dir='rtl'] .slider.sections.slick-slider .slick-arrow.slick-next{
+  html[dir='rtl'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-next{
     right: -1.5rem;
     top: 50%; }
-  html[dir='rtl'] .slider.sections.slick-slider .slick-arrow.slick-next:before{
+  html[dir='rtl'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-next:before{
     transform: rotate(135deg); }
-  html[dir='rtl'] .slider.labels .nav-item{
+  html[dir='rtl'] .format-buttons .slider.labels .nav-item{
     min-height: 80px; }
-  html[dir='rtl'] .slider.labels .nav-item.active{
+  html[dir='rtl'] .format-buttons .slider.labels .nav-item.active{
     padding: 0 0 0 12px; }
-  html[dir='rtl'] .slider.labels .nav-item:hover{
+  html[dir='rtl'] .format-buttons .slider.labels .nav-item:hover{
     padding: 0 0 0 12px; }
-  html[dir='rtl'] .slider.labels.slick-slider .slick-arrow{
+  html[dir='rtl'] .format-buttons .slider.labels.slick-slider .slick-arrow{
     margin-top: -2rem; }
-  html[dir='rtl'] .slider.labels.slick-slider .slick-arrow.slick-prev{
+  html[dir='rtl'] .format-buttons .slider.labels.slick-slider .slick-arrow.slick-prev{
     left: 0;
     top: 0; }
-  html[dir='rtl'] .slider.labels.slick-slider .slick-arrow.slick-prev:before{
+  html[dir='rtl'] .format-buttons .slider.labels.slick-slider .slick-arrow.slick-prev:before{
     transform: rotate(225deg) translateY(-1rem); }
-  html[dir='rtl'] .slider.labels.slick-slider .slick-arrow.slick-next{
+  html[dir='rtl'] .format-buttons .slider.labels.slick-slider .slick-arrow.slick-next{
     right: 0;
     bottom: 0; }
-  html[dir='rtl'] .slider.labels.slick-slider .slick-arrow.slick-next:before{
+  html[dir='rtl'] .format-buttons .slider.labels.slick-slider .slick-arrow.slick-next:before{
     transform: rotate(45deg) translateY(1rem); }
-  .sections-wrapper{
+  .format-buttons .sections-wrapper{
     display: -ms-flexbox;
     display: flex;
     -ms-flex: 1;
     flex: 1; }
-  .sections-wrapper .slider.sections{
+  .format-buttons .sections-wrapper .slider.sections{
     width: 75%;
     padding: 0; }
-  .sections-content-wrapper .labels-wrapper{
+  .format-buttons .sections-content-wrapper .labels-wrapper{
     height: auto;
     overflow: visible; }
-  .sections-content-wrapper .section-content{
+  .format-buttons .sections-content-wrapper .section-content{
     position: relative; }
-  .slider.labels{
+  .format-buttons .slider.labels{
     padding: 0;
     margin-top: 24px; }
-  .slider.labels.slick-slider .nav-item{
+  .format-buttons .slider.labels.slick-slider .nav-item{
     box-sizing: content-box;
     float: right;
     max-width: 90%;
     padding: 0; }
-  .slider.labels.slick-slider .slick-arrow.slick-prev{
+  .format-buttons .slider.labels.slick-slider .slick-arrow.slick-prev{
     top: -24px; }
-  .slider.labels.slick-slider .slick-arrow.slick-prev:after{
+  .format-buttons .slider.labels.slick-slider .slick-arrow.slick-prev:after{
     left: -1rem; }
-  .slider.labels.slick-slider .slick-arrow.slick-next{
+  .format-buttons .slider.labels.slick-slider .slick-arrow.slick-next{
     min-height: 40px; }
-  .slider.labels.slick-slider .slick-arrow.slick-next:after{
+  .format-buttons .slider.labels.slick-slider .slick-arrow.slick-next:after{
     left: -1rem; }
-  .label-content-controls{
+  .format-buttons .label-content-controls{
     position: absolute !important;
     top: 475px;
     right: 75%;
     width: 25%; } }
-  @media screen and (min-width: 992px){
-  .sections-wrapper{
+
+@media screen and (min-width: 992px){
+  .format-buttons .sections-wrapper{
     display: -ms-flexbox;
     display: flex;
     -ms-flex: 1;
     flex: 1; }
-  .sections-wrapper .slider.sections{
+  .format-buttons .sections-wrapper .slider.sections{
     width: 75%;
     padding: 0; }
-  .label-content-controls{
+  .format-buttons .label-content-controls{
     position: absolute !important;
     top: 475px;
     right: 75%;
     width: 25%; } }
-  @media screen and (min-width: 1200px){
-  .sections-wrapper{
+
+@media screen and (min-width: 1200px){
+  .format-buttons .sections-wrapper{
     display: -ms-flexbox;
     display: flex;
     -ms-flex: 1;
     flex: 1; }
-  .sections-wrapper .slider.sections{
+  .format-buttons .sections-wrapper .slider.sections{
     width: 83.3333333333%;
     padding: 0; }
-  .label-content-controls{
+  .format-buttons .label-content-controls{
     position: absolute !important;
     top: 475px;
     right: 83.3333333333%;
     width: 16.6666666667%; } }
-  @media screen and (max-width: 575px){
-  html[dir='rtl'] .slider.sections.slick-slider .slick-slide{
+
+@media screen and (max-width: 575px){
+  html[dir='rtl'] .format-buttons .slider.sections{
+    margin: 0; }
+  html[dir='rtl'] .format-buttons .slider.sections.slick-slider .slick-slide{
     float: left; }
-  html[dir='rtl'] .slider.sections.slick-slider .slick-arrow{
+  html[dir='rtl'] .format-buttons .slider.sections.slick-slider .slick-arrow{
     margin-top: -1rem; }
-  html[dir='rtl'] .slider.sections.slick-slider .slick-arrow.slick-prev{
+  html[dir='rtl'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-prev{
     left: -2rem;
     top: 50%; }
-  html[dir='rtl'] .slider.sections.slick-slider .slick-arrow.slick-prev:before{
+  html[dir='rtl'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-prev:before{
     transform: rotate(-45deg); }
-  html[dir='rtl'] .slider.sections.slick-slider .slick-arrow.slick-next{
+  html[dir='rtl'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-next{
     right: -2rem;
     top: 50%; }
-  html[dir='rtl'] .slider.sections.slick-slider .slick-arrow.slick-next:before{
+  html[dir='rtl'] .format-buttons .slider.sections.slick-slider .slick-arrow.slick-next:before{
     transform: rotate(135deg); }
-  html[dir='rtl'] .label-content-controls .label-prev div:before{
+  html[dir='rtl'] .format-buttons .label-content-controls .label-prev div:before{
     transform: rotate(-45deg); }
-  html[dir='rtl'] .label-content-controls .label-next div:before{
+  html[dir='rtl'] .format-buttons .label-content-controls .label-next div:before{
     transform: rotate(135deg); }
-  .sections-wrapper{
+  .format-buttons .sections-wrapper{
     display: -ms-flexbox;
     display: flex;
     -ms-flex: 1;
     flex: 1; }
-  .sections-wrapper .slider.sections{
+  .format-buttons .sections-wrapper .slider.sections{
     width: 100%;
     padding: 0 5%; }
-  .sections-wrapper .slider.sections .slick-arrow{
+  .format-buttons .sections-wrapper .slider.sections .slick-arrow{
     margin-top: -1rem; }
-  .sections-wrapper .slider.sections .slick-arrow.slick-prev{
+  .format-buttons .sections-wrapper .slider.sections .slick-arrow.slick-prev{
     left: -1.5rem;
     top: 50%; }
-  .sections-wrapper .slider.sections .slick-arrow.slick-prev:before{
+  .format-buttons .sections-wrapper .slider.sections .slick-arrow.slick-prev:before{
     transform: rotate(45deg); }
-  .sections-wrapper .slider.sections .slick-arrow.slick-next{
+  .format-buttons .sections-wrapper .slider.sections .slick-arrow.slick-next{
     right: -1.5rem;
     top: 50%; }
-  .sections-wrapper .slider.sections .slick-arrow.slick-next:before{
+  .format-buttons .sections-wrapper .slider.sections .slick-arrow.slick-next:before{
     transform: rotate(225deg); }
-  .sections-content-wrapper{
+  .format-buttons .sections-content-wrapper{
     padding: 0 5%; }
-  .sections-content-wrapper .labels-wrapper{
+  .format-buttons .sections-content-wrapper .labels-wrapper{
     height: 0;
     overflow: hidden;
     transition: all .3s ease-in-out; }
-  .sections-content-wrapper .labels-wrapper.expand{
+  .format-buttons .sections-content-wrapper .labels-wrapper.expand{
     height: auto;
     transition: all .3s ease-in-out; }
-  .sections-content-wrapper .labels-wrapper .slider.labels{
+  .format-buttons .sections-content-wrapper .labels-wrapper .slider.labels{
     overflow-y: scroll; }
-  .sections-content-wrapper .labels-wrapper .slider.labels .nav-item{
+  .format-buttons .sections-content-wrapper .labels-wrapper .slider.labels .nav-item{
     width: 100%; }
-  .label-content-controls{
+  .format-buttons .label-content-controls{
     position: relative;
     padding: 15px 0;
     margin: 0;
     text-overflow: ellipsis;
     white-space: nowrap; }
-  .label-content-controls .label-header{
+  .format-buttons .label-content-controls .label-header{
     max-width: 100%; }
-  .label-content-controls .label-header div{
+  .format-buttons .label-content-controls .label-header div{
     max-width: 100%; }
-  .label-content-controls .label-header div .label-title{
+  .format-buttons .label-content-controls .label-header div .label-title{
     box-sizing: border-box;
     max-width: 100%;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden; }
-  .label-content-controls .label-header .label-icon{
+  .format-buttons .label-content-controls .label-header .label-icon{
     display: none !important; }
-  .label-content-controls .label-prev{
+  .format-buttons .label-content-controls .label-prev{
     position: relative;
     border: 0;
     background-color: inherit;
@@ -891,7 +902,7 @@ ul.buttons {
     outline: none;
     text-overflow: ellipsis;
     white-space: nowrap; }
-  .label-content-controls .label-prev div:before{
+  .format-buttons .label-content-controls .label-prev div:before{
     content: '';
     width: 1rem;
     height: 1rem;
@@ -904,12 +915,12 @@ ul.buttons {
     border-bottom: 1px solid #000;
     border-left: 1px solid #000;
     transform: rotate(45deg); }
-  .label-content-controls .label-active{
+  .format-buttons .label-content-controls .label-active{
     position: relative;
     color: gold;
     text-overflow: ellipsis;
     white-space: nowrap; }
-  .label-content-controls .label-next{
+  .format-buttons .label-content-controls .label-next{
     position: relative;
     border: 0;
     background-color: inherit;
@@ -917,7 +928,7 @@ ul.buttons {
     outline: none;
     text-overflow: ellipsis;
     white-space: nowrap; }
-  .label-content-controls .label-next div:before{
+  .format-buttons .label-content-controls .label-next div:before{
     content: '';
     width: 1rem;
     height: 1rem;

@@ -1,14 +1,17 @@
-.sections-wrapper{
-  display: flex;
-  flex: 1;
-  .slider.sections{
-    width:83.3333333333%;
-    padding:0;
+.format-buttons{
+  .sections-wrapper{
+    display: flex;
+    flex: 1;
+    .slider.sections{
+      width:83.3333333333%;
+      padding:0;
+    }
   }
-}
-.label-content-controls{
-  position: absolute!important;
-  top:475px;
-  right:83.3333333333%;
-  width:16.6666666667%;
+  .label-content-controls{
+    position: absolute!important;
+    top:475px;
+    right:83.3333333333%;
+    width:16.6666666667%;
+  }
+
 }

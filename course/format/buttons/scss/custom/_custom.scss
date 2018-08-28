@@ -1,8 +1,3 @@
-// hot fix - must be changed in renderer.php
-ul.buttons{
-  padding:0;
-}
-
 @keyframes fadeInFromNone {
     0% { display: none; opacity: 0;}
     1% { display: block; opacity: 0;}
@@ -13,331 +8,340 @@ ul.buttons{
     99% { display: block; opacity: 0;}
     100% { display: none; opacity: 0;}
 }
-.sections-wrapper{
-  display: flex;
-  flex: 1;
-  .slider.sections{
-    max-width:100%;
-    &.slick-slider{
-      float: left;
-      .slick-arrow{
-        width:2rem;
-        height:2rem;
-        &.slick-prev{
-          left:-1.5rem;
-          top:50%;
-        }
-        &.slick-next{
-          right:-1.5rem;
-          top:50%;
-        }
-      }
-      .nav-item{
-        box-sizing: border-box;
-        border: 1px solid transparent;
-        margin-top:12px;
-        background-color: #ddd;
-        transition: all .3s ease-in-out;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        .section-header{
-          max-width: 100%;
-          margin-top: 12px;
-          div{
-            max-width: 132px;
+.format-buttons{
+  ul{
+    padding:0;
+    margin: 0;
+  }
+  .sections-wrapper{
+    display: flex;
+    flex: 1;
+    .slider.sections{
+      max-width:100%;
+      &.slick-slider{
+        float: left;
+        .slick-arrow{
+          width:2rem;
+          height:2rem;
+          &.slick-prev{
+            left:-1.5rem;
+            top:50%;
           }
-          .section-title {
-            font-size: 1.15rem;
-            line-height: 1.5rem;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-            max-width: 100%;
+          &.slick-next{
+            right:-1.5rem;
+            top:50%;
           }
-          .section-description{
-            height: 1.375rem;
-            opacity:1;
-            transition: all .3s ease-in-out;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
+        }
+        .nav-item{
+          box-sizing: border-box;
+          border: 1px solid transparent;
+          margin-top:12px;
+          background-color: #ddd;
+          transition: all .3s ease-in-out;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          .section-header{
             max-width: 100%;
-            p{
+            margin-top: 12px;
+            div{
+              max-width: 132px;
+            }
+            .section-title {
+              font-size: 1.15rem;
+              line-height: 1.5rem;
               text-overflow: ellipsis;
               white-space: nowrap;
               overflow: hidden;
+              max-width: 100%;
+            }
+            .section-description{
+              height: 1.375rem;
+              opacity:1;
+              transition: all .3s ease-in-out;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              overflow: hidden;
+              max-width: 100%;
+              p{
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+              }
             }
           }
-        }
-        .section-icon{
-          margin:10px;
-          opacity:1;
-          background-color: #7af2ff;
-          transition: all .3s ease-in-out;
-        }
-        .section-tooltip{
-          box-sizing: content-box;
-          font-family: --font-family-sans-serif;
-          font-size: 2rem;
-          font-weight: bold;
-          color:#7bc0de;
-          opacity:0;
-          padding:0.25rem;
-          margin:0.25rem;
-          border: 3px solid transparent;
-          border-radius: 50%;
-          width:1.5rem;
-          height:1.5rem;
-          text-align: center;
-          transition: all .3s ease-in-out;
-        }
-        &:hover{
-          margin-top: 0;
-          padding: 12px 0 0 0;
-          background-color: #b7b7b7;
-          transition: all .3s ease-in-out;
-          .section-description{
-            opacity: 1;
-            transition: all .3s ease-in-out;
-          }
           .section-icon{
+            margin:10px;
             opacity:1;
-            background-color: #5bc0de;
+            background-color: #7af2ff;
             transition: all .3s ease-in-out;
           }
           .section-tooltip{
-            opacity:1;
+            box-sizing: content-box;
+            font-family: --font-family-sans-serif;
+            font-size: 2rem;
+            font-weight: bold;
+            color:#7bc0de;
+            opacity:0;
+            padding:0.25rem;
+            margin:0.25rem;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            width:1.5rem;
+            height:1.5rem;
+            text-align: center;
             transition: all .3s ease-in-out;
-            &:hover{
-              border-color: #7bc0de;
+          }
+          &:hover{
+            margin-top: 0;
+            padding: 12px 0 0 0;
+            background-color: #b7b7b7;
+            transition: all .3s ease-in-out;
+            .section-description{
+              opacity: 1;
+              transition: all .3s ease-in-out;
+            }
+            .section-icon{
+              opacity:1;
+              background-color: #5bc0de;
+              transition: all .3s ease-in-out;
+            }
+            .section-tooltip{
+              opacity:1;
+              transition: all .3s ease-in-out;
+              &:hover{
+                border-color: #7bc0de;
+              }
             }
           }
-        }
-        &.active {
-          background-color: #fff;
-          margin-top: 0;
-          padding: 12px 0 0 0;
-          border:1px solid #b7b7b7;
-          border-bottom-color: transparent;
-          transition: all .3s ease-in-out;
-          .section-icon{
-            opacity:1;
-            // background-color: #5bc0de;
+          &.active {
+            background-color: #fff;
+            margin-top: 0;
+            padding: 12px 0 0 0;
+            border:1px solid #b7b7b7;
+            border-bottom-color: transparent;
             transition: all .3s ease-in-out;
-          }
-          .section-tooltip{
-            opacity:1;
-            transition: all .3s ease-in-out;
-            &:hover{
-              border-color: #7bc0de;
+            .section-icon{
+              opacity:1;
+              // background-color: #5bc0de;
+              transition: all .3s ease-in-out;
             }
-          }
-          .section-description{
-            opacity: 1;
-            transition: all .3s ease-in-out;
+            .section-tooltip{
+              opacity:1;
+              transition: all .3s ease-in-out;
+              &:hover{
+                border-color: #7bc0de;
+              }
+            }
+            .section-description{
+              opacity: 1;
+              transition: all .3s ease-in-out;
+            }
           }
         }
       }
     }
   }
-}
-.labels-wrapper{
-  .slider.labels{
-    .nav-item{
-        font-size: 1.15rem;
-        line-height: 1.375rem;
-        .label-header{
-          max-width:100%;
-          // padding:1.375rem 5px;
-          margin:30px 12px;
-          div{
-            max-width: 80px;
-            .label-title{
-              box-sizing: border-box;
-              max-width: 100%;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-              overflow: hidden;
+  .labels-wrapper{
+    .slider.labels{
+      .nav-item{
+          font-size: 1.15rem;
+          line-height: 1.375rem;
+          .label-header{
+            max-width:100%;
+            // padding:1.375rem 5px;
+            margin:30px 12px;
+            div{
+              max-width: 80px;
+              .label-title{
+                box-sizing: border-box;
+                max-width: 100%;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+              }
+            }
+            .label-icon{
+              // padding:14px;
+              margin:0 8px;
+              &:before{
+                box-sizing: border-box;
+                // font-size: 14px;
+                width:28px;
+                height:28px;
+              }
             }
           }
-          .label-icon{
-            // padding:14px;
-            margin:0 8px;
+      }
+      .slick-arrow{
+          width:100%;
+          height:2rem;
+          padding-left: 50%;
+          &.slick-prev{
+            // top:-1rem;
             &:before{
-              box-sizing: border-box;
-              // font-size: 14px;
-              width:28px;
-              height:28px;
+              margin-left: -1rem;
             }
           }
-        }
+          &.slick-next{
+            background: linear-gradient(to bottom, transparent 0%, #fff 25%, #fff 100%);
+            bottom:0;
+            &:before{
+              margin-left:-1rem;
+            }
+          }
+      }
+    }
+  }
+  .slick-slider{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    .slick-slide{
+      cursor: pointer;
+      margin:0 1px;
+      transition: all .3s ease-in-out;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .slick-arrow{
-        width:100%;
-        height:2rem;
-        padding-left: 50%;
-        &.slick-prev{
-          // top:-1rem;
-          &:before{
-            margin-left: -1rem;
-          }
-        }
-        &.slick-next{
-          background: linear-gradient(to bottom, transparent 0%, #fff 25%, #fff 100%);
-          bottom:0;
-          &:before{
-            margin-left:-1rem;
-          }
-        }
+      position: absolute;
+      border:0;
+      background-color: transparent;
+      outline: 0;
+      color: transparent;
+      cursor: pointer;
+      &:focus{
+        outline: 0;
+      }
+      &.slick-prev:before{
+        content: '';
+        display: block;
+        width:12px;
+        height:12px;
+        border-top: 1px solid transparent;
+        border-right: 1px solid transparent;
+        border-bottom: 3px solid #5bc0de;
+        border-left: 3px solid #5bc0de;
+        border-radius: 3px;
+      }
+      &.slick-next:before{
+        content: '';
+        display: block;
+        width:12px;
+        height:12px;
+        border-top: 1px solid transparent;
+        border-right: 1px solid transparent;
+        border-bottom: 3px solid #5bc0de;
+        border-left: 3px solid #5bc0de;
+        border-radius: 3px;
+      }
+      // &.slick-disabled:before{
+      //   opacity: 0;
+      // }
     }
   }
-}
-.slick-slider{
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  .slick-slide{
-    cursor: pointer;
-    margin:0 1px;
-    transition: all .3s ease-in-out;
+  .label-content-wrapper {
+    position: relative;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    margin: 24px 1px;
+    padding: 1vh;
+    .alert{
+      position: absolute;
+      top:0;
+      left:0;
+      right:0;
+      box-shadow: 2px 2px 5px #000;
+      max-height: 80vh;
+      overflow-y: scroll;
+      z-index: 10;
+    }
+  }
+  .label-content{
+    // height:58vh;
+    // overflow-y: scroll;
+    overflow-y: auto;
+    overflow-x: hidden;
+    img{
+      box-sizing: border-box;
+      max-width: 100%;
+      height:auto;
+    }
+    .mediaplugin{
+      box-sizing: border-box;
+      max-width: 100%;
+      height:auto;
+    }
+  }
+  .label-content-controls{
+    position: relative;
+    padding:15px 0;
+    margin:0;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  .slick-arrow{
-    position: absolute;
-    border:0;
-    background-color: transparent;
-    outline: 0;
-    color: transparent;
-    cursor: pointer;
-    &:focus{
-      outline: 0;
-    }
-    &.slick-prev:before{
-      content: '';
-      display: block;
-      width:12px;
-      height:12px;
-      border-top: 1px solid transparent;
-      border-right: 1px solid transparent;
-      border-bottom: 3px solid #5bc0de;
-      border-left: 3px solid #5bc0de;
-      border-radius: 3px;
-    }
-    &.slick-next:before{
-      content: '';
-      display: block;
-      width:12px;
-      height:12px;
-      border-top: 1px solid transparent;
-      border-right: 1px solid transparent;
-      border-bottom: 3px solid #5bc0de;
-      border-left: 3px solid #5bc0de;
-      border-radius: 3px;
-    }
-    // &.slick-disabled:before{
-    //   opacity: 0;
-    // }
-  }
-}
-.label-content-wrapper {
-  position: relative;
-  box-sizing: border-box;
-  border: 1px solid #ddd;
-  margin: 24px 1px;
-  padding: 1vh;
-  .alert{
-    position: absolute;
-    top:0;
-    left:0;
-    right:0;
-    box-shadow: 2px 2px 5px #000;
-    max-height: 80vh;
-    overflow-y: scroll;
-    z-index: 10;
-  }
-}
-.label-content{
-  // height:58vh;
-  // overflow-y: scroll;
-  overflow-y: auto;
-  overflow-x: hidden;
-  img{
-    box-sizing: border-box;
-    max-width: 100%;
-    height:auto;
-  }
-  .mediaplugin{
-    box-sizing: border-box;
-    max-width: 100%;
-    height:auto;
-  }
-}
-.label-content-controls{
-  position: relative;
-  padding:15px 0;
-  margin:0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  .label-header{
-    max-width: 100%;
-    div{
+    .label-header{
       max-width: 100%;
-      .label-title{
-        box-sizing: border-box;
+      div{
         max-width: 100%;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
+        .label-title{
+          box-sizing: border-box;
+          max-width: 100%;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+      }
+      .label-icon{
+        display: none!important;
       }
     }
-    .label-icon{
-      display: none;
-    }
-  }
-  .label-prev{
-    position: relative;
-    border:0;
-    background-color: inherit;
-    color:#000;
-    outline:none;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    div:before{
-      content:'';
-      width: 1rem;
-      height:1rem;
-      display:block;
+    .label-prev{
+      position: relative;
       border:0;
-      transform: rotate(45deg);
+      background-color: inherit;
+      color:#000;
+      outline:none;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      div:before{
+        content:'';
+        width: 1rem;
+        height:1rem;
+        display:block;
+        border:0;
+        transform: rotate(45deg);
+      }
     }
-  }
-  .label-active{
-    position: relative;
-    color:gold;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .label-next{
-    position: relative;
-    border:0;
-    background-color: inherit;
-    color:#000;
-    outline:none;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    div:before{
-      content:'';
-      width: 1rem;
-      height:1rem;
-      display:block;
+    .label-active{
+      position: relative;
+      color:gold;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .label-next{
+      position: relative;
       border:0;
-      transform: rotate(225deg);
+      background-color: inherit;
+      color:#000;
+      outline:none;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      div:before{
+        content:'';
+        width: 1rem;
+        height:1rem;
+        display:block;
+        border:0;
+        transform: rotate(225deg);
+      }
     }
   }
-}
-.section-content{
-    animation: fadeInFromNone 0.1s ease-out;
-  &.d-none{
-    animation: fadeOutToNone 0.1s ease-out;
+  .section-content{
+      animation: fadeInFromNone 0.1s ease-out;
+    &.d-none{
+      animation: fadeOutToNone 0.1s ease-out;
+    }
+  }
+  #page-footer{
+    position: relative!important;
   }
 }

@@ -842,7 +842,7 @@ class format_buttons_renderer extends format_topics_renderer
             // } else {
               if(preg_match('/fa-/im', $content[2]) === 1) {
                 // $licon = $this->render_fontawesome($content[2]);
-                $liconStyle = 'font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;';
+                $liconStyle = 'font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit; line-height:2rem;';
                 $liconClass = $content[2];
               } else {
                 $liconStyle = 'background: url('.$this->courserenderer->image_url($content[2], 'format_buttons').') no-repeat; background-size: cover; padding:14px;';

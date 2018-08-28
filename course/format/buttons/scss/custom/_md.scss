@@ -1,50 +1,52 @@
 html[dir='ltr']{
-  .slider.sections{
-    &.slick-slider{
-      float: left;
-      .slick-arrow{
-        &.slick-prev{
-          left:-1.5rem;
-          top:50%;
-          &:before{
-            transform: rotate(45deg);
+  .format-buttons{
+    .slider.sections{
+      &.slick-slider{
+        float: left;
+        .slick-arrow{
+          &.slick-prev{
+            left:-1.5rem;
+            top:50%;
+            &:before{
+              transform: rotate(45deg);
+            }
           }
-        }
-        &.slick-next{
-          right:-1.5rem;
-          top:50%;
-          &:before{
-            transform: rotate(225deg);
+          &.slick-next{
+            right:-1.5rem;
+            top:50%;
+            &:before{
+              transform: rotate(225deg);
+            }
           }
         }
       }
     }
-  }
-  .slider.labels{
-    .nav-item{
-      min-height: 80px;
-      &.active{
-        padding:0 0 0 12px;
-      }
-      &:hover{
-        padding:0 0 0 12px;
-      }
-    }
-    &.slick-slider{
-      .slick-arrow{
-        margin-top: -2rem;
-        &.slick-prev{
-          left:0;
-          top:0;
-          &:before{
-            transform: rotate(135deg) translateY(-1rem);
-          }
+    .slider.labels{
+      .nav-item{
+        min-height: 80px;
+        &.active{
+          padding:0 0 0 12px;
         }
-        &.slick-next{
-          left:0;
-          bottom:0;
-          &:before{
-            transform: rotate(-45deg) translateY(1rem);
+        &:hover{
+          padding:0 0 0 12px;
+        }
+      }
+      &.slick-slider{
+        .slick-arrow{
+          margin-top: -2rem;
+          &.slick-prev{
+            left:0;
+            top:0;
+            &:before{
+              transform: rotate(135deg) translateY(-1rem);
+            }
+          }
+          &.slick-next{
+            left:0;
+            bottom:0;
+            &:before{
+              transform: rotate(-45deg) translateY(1rem);
+            }
           }
         }
       }
@@ -52,30 +54,31 @@ html[dir='ltr']{
   }
 }
 html[dir='rtl']{
-  .slider.sections{
-    &.slick-slider{
-      .slick-slide{
-        // float: right;
-      }
-      .slick-arrow{
-        &.slick-prev{
-          left:-1.5rem;
-          top:50%;
-          &:before{
-            transform: rotate(-45deg);
-          }
+  .format-buttons{
+    .slider.sections{
+      &.slick-slider{
+        .slick-slide{
+          // float: right;
         }
-        &.slick-next{
-          right:-1.5rem;
-          top:50%;
-          &:before{
-            transform: rotate(135deg);
+        .slick-arrow{
+          &.slick-prev{
+            left:-1.5rem;
+            top:50%;
+            &:before{
+              transform: rotate(-45deg);
+            }
+          }
+          &.slick-next{
+            right:-1.5rem;
+            top:50%;
+            &:before{
+              transform: rotate(135deg);
+            }
           }
         }
       }
     }
-  }
-  .slider.labels{
+    .slider.labels{
     .nav-item{
       min-height: 80px;
       &.active{
@@ -105,55 +108,58 @@ html[dir='rtl']{
       }
     }
   }
-}
-.sections-wrapper{
-  display: flex;
-  flex: 1;
-  .slider.sections{
-    width:75%;
-    padding:0;
   }
 }
-.sections-content-wrapper{
-  .labels-wrapper{
-    height:auto;
-    overflow:visible;
-  }
-  .section-content{
-    position: relative;
-  }
-}
-.slider.labels{
-  // height: 60vh;
-  padding: 0;
-  margin-top:24px;
-  &.slick-slider{
-    .nav-item{
-      box-sizing: content-box;
-      float: right;
-      max-width: 90%;
+.format-buttons{
+  .sections-wrapper{
+    display: flex;
+    flex: 1;
+    .slider.sections{
+      width:75%;
       padding:0;
     }
-    .slick-arrow{
-      &.slick-prev{
-        top:-24px;
-        &:after{
-          left:-1rem;
-        }
+  }
+  .sections-content-wrapper{
+    .labels-wrapper{
+      height:auto;
+      overflow:visible;
+    }
+    .section-content{
+      position: relative;
+    }
+  }
+  .slider.labels{
+    // height: 60vh;
+    padding: 0;
+    margin-top:24px;
+    &.slick-slider{
+      .nav-item{
+        box-sizing: content-box;
+        float: right;
+        max-width: 90%;
+        padding:0;
       }
-      &.slick-next{
-        min-height: 40px;
-        // bottom:-18px;
-        &:after{
-          left:-1rem;
+      .slick-arrow{
+        &.slick-prev{
+          top:-24px;
+          &:after{
+            left:-1rem;
+          }
+        }
+        &.slick-next{
+          min-height: 40px;
+          // bottom:-18px;
+          &:after{
+            left:-1rem;
+          }
         }
       }
     }
   }
-}
-.label-content-controls{
-  position: absolute!important;
-  top:475px;
-  right:75%;
-  width:25%;
+  .label-content-controls{
+    position: absolute!important;
+    top:475px;
+    right:75%;
+    width:25%;
+  }  
 }
