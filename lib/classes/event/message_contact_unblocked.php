@@ -26,6 +26,9 @@ namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+debugging('core\\event\\message_contact_unblocked has been deperecated. Please use
+        core\\event\\message_user_unblocked instead', DEBUG_DEVELOPER);
+
 /**
  * Message contact unblocked event class.
  *
@@ -98,5 +101,14 @@ class message_contact_unblocked extends base {
     public static function get_objectid_mapping() {
         // Messaging contacts are not backed up, so no need to map them on restore.
         return array('db' => 'message_contacts', 'restore' => base::NOT_MAPPED);
+    }
+
+    /**
+     * This event has been deprecated.
+     *
+     * @return boolean
+     */
+    public static function is_deprecated() {
+        return true;
     }
 }

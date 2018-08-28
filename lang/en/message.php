@@ -48,9 +48,7 @@ $string['errortranslatingdefault'] = 'Error translating default setting provided
 $string['eventnotificationviewed'] = 'Notification viewed';
 $string['eventnotificationsent'] = 'Notification sent';
 $string['eventmessagecontactadded'] = 'Message contact added';
-$string['eventmessagecontactblocked'] = 'Message contact blocked';
 $string['eventmessagecontactremoved'] = 'Message contact removed';
-$string['eventmessagecontactunblocked'] = 'Message contact unblocked';
 $string['eventmessagedeleted'] = 'Message deleted';
 $string['eventmessageviewed'] = 'Message viewed';
 $string['eventmessagesent'] = 'Message sent';
@@ -180,4 +178,6 @@ $string['writeamessage'] = 'Write a message...';
 $string['you'] = 'You:';
 
 // Deprecated since Moodle 3.6.
+$string['eventmessagecontactblocked'] = 'Message contact blocked';
+$string['eventmessagecontactunblocked'] = 'Message contact unblocked';
 $string['messagingdisabled'] = 'Messaging is disabled on this site, emails will be sent instead';
