@@ -45,11 +45,86 @@ class calculated_random_question_summary extends calculated {
     public $subqdisplayorder;
 
     /**
+     * @var calculated[] The instances storing the calculated stats of the questions that are being summarised.
+     */
+    protected $subqstats;
+
+    /**
+     * calculated_random_question_summary constructor.
+     *
+     * @param \stdClass $question
+     * @param int $slot
+     * @param calculated[] $subqstats The instances of the calculated stats of the questions that are being summarised.
+     */
+    public function __construct($question, $slot, $subqstats) {
+        parent::__construct($question, $slot);
+
+        $this->subqstats = $subqstats;
+        $this->subquestions = implode(',', array_column($subqstats, 'questionid'));
+    }
+
+    /**
      * This is a summary stat so never breakdown by variant.
      *
      * @return bool
      */
     public function break_down_by_variant() {
         return false;
+    }
+
+    /**
+     * Returns the minimum and maximum values of the given attribute in the summarised calculated stats.
+     *
+     * @param string $attribute The attribute that we are looking for its extremums.
+     * @return array An array of [min,max]
+     */
+    public function get_min_max_of($attribute) {
+        $getmethod = 'get_min_max_of_' . $attribute;
+        if (method_exists($this, $getmethod)) {
+            return $this->$getmethod();
+        } else {
+            $min = $max = null;
+
+            // We cannot simply use min or max functions because, in theory, some attributes might be non-scalar.
+            foreach (array_column($this->subqstats, $attribute) as $value) {
+                if (is_scalar($value)) {
+                    if (!isset($min)) {
+                        $min = $value;
+                    }
+                    if (!isset($max)) {
+                        $max = $value;
+                    }
+
+                    $min = min($min, $value);
+                    $max = max($max, $value);
+                }
+            }
+
+            return [$min, $max];
+        }
+    }
+
+    /**
+     * Returns the minimum and maximum values of the standard deviation in the summarised calculated stats.
+     * @return array An array of [min,max]
+     */
+    protected function get_min_max_of_sd() {
+        $min = $max = null;
+
+        foreach ($this->subqstats as $subqstat) {
+            if (isset($subqstat->sd) && $subqstat->maxmark) {
+                if (!isset($min)) {
+                    $min = $subqstat->sd / $subqstat->maxmark;
+                }
+                if (!isset($max)) {
+                    $max = $subqstat->sd / $subqstat->maxmark;
+                }
+
+                $min = min($min, $subqstat->sd / $subqstat->maxmark);
+                $max = max($max, $subqstat->sd / $subqstat->maxmark);
+            }
+        }
+
+        return [$min, $max];
     }
 }

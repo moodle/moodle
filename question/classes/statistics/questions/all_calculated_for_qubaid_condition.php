@@ -405,7 +405,7 @@ class all_calculated_for_qubaid_condition {
      *
      * @param int $slot the slot no
      * @param bool $limited limit number of variants and sub-questions displayed?
-     * @return calculated|calculated_for_subquestion[] stats to display
+     * @return calculated|calculated_for_subquestion|calculated_random_question_summary[] stats to display
      */
     protected function all_subq_and_variant_stats_for_slot($slot, $limited) {
         // Random question in this slot?
@@ -414,10 +414,6 @@ class all_calculated_for_qubaid_condition {
 
             if ($limited) {
                 $randomquestioncalculated = $this->for_slot($slot);
-                // If we're showing a limited view of the statistics then add a
-                // random question summary stat rather than a stat for each
-                // subquestion.
-                $toreturn[] = $this->make_new_random_question_summary_stat($randomquestioncalculated);
 
                 if ($subqvariantstats = $this->all_subq_variants_for_one_slot($slot)) {
                     $subqvariantfacilitystats = $this->find_min_median_and_max_facility_stats_objects($subqvariantstats);
@@ -428,6 +424,12 @@ class all_calculated_for_qubaid_condition {
                     $subqfacilitystats = $this->find_min_median_and_max_facility_stats_objects($subqstats);
                     $toreturn = array_merge($toreturn, $subqfacilitystats);
                 }
+
+                // If we're showing a limited view of the statistics then add a
+                // random question summary stat rather than a stat for each
+                // subquestion.
+                $summarystat = $this->make_new_random_question_summary_stat($randomquestioncalculated, $subqstats);
+                $toreturn = array_merge([$summarystat], $toreturn);
 
                 foreach ($toreturn as $index => $calculated) {
                     $calculated->subqdisplayorder = $index;
@@ -479,13 +481,13 @@ class all_calculated_for_qubaid_condition {
      * subquestion directly.
      *
      * @param  calculated $randomquestioncalculated The calculated instance for the random question slot.
+     * @param  calculated[] $subquestionstats The instances of the calculated stats of the questions that are being summarised.
      * @return calculated_random_question_summary
      */
-    protected function make_new_random_question_summary_stat($randomquestioncalculated) {
+    protected function make_new_random_question_summary_stat($randomquestioncalculated, $subquestionstats) {
         $question = $randomquestioncalculated->question;
         $slot = $randomquestioncalculated->slot;
-        $calculatedsummary = new calculated_random_question_summary($question, $slot);
-        $calculatedsummary->subquestions = $randomquestioncalculated->subquestions;
+        $calculatedsummary = new calculated_random_question_summary($question, $slot, $subquestionstats);
 
         return $calculatedsummary;
     }
