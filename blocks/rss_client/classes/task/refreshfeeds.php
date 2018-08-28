@@ -37,6 +37,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class refreshfeeds extends \core\task\scheduled_task {
 
+    /** The maximum time in seconds that cron will wait between attempts to retry failing RSS feeds. */
+    const CLIENT_MAX_SKIPTIME = HOURSECS * 12;
+
     /**
      * Name for this task.
      *
@@ -65,7 +68,7 @@ class refreshfeeds extends \core\task\scheduled_task {
      */
     public function execute() {
         global $CFG, $DB;
-        require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
+        require_once("{$CFG->libdir}/simplepie/moodle_simplepie.php");
 
         // We are going to measure execution times.
         $starttime = microtime();
@@ -84,22 +87,11 @@ class refreshfeeds extends \core\task\scheduled_task {
                 continue;
             }
 
-            // Fetch the rss feed, using standard simplepie caching
-            // so feeds will be renewed only if cache has expired.
-            \core_php_time_limit::raise(60);
-
-            $feed = new \moodle_simplepie();
-            // Set timeout for longer than normal to be agressive at
-            // fetching feeds if possible..
-            $feed->set_timeout(40);
-            $feed->set_cache_duration(0);
-            $feed->set_feed_url($rec->url);
-            $feed->init();
+            $feed = $this->fetch_feed($rec->url);
 
             if ($feed->error()) {
                 // Skip this feed (for an ever-increasing time if it keeps failing).
-                $block = new \block_rss_client();
-                $rec->skiptime = $block->calculate_skiptime($rec->skiptime);
+                $rec->skiptime = $this->calculate_skiptime($rec->skiptime);
                 $rec->skipuntil = time() + $rec->skiptime;
                 $DB->update_record('block_rss_client', $rec);
                 mtrace("Error: could not load/find the RSS feed - skipping for {$rec->skiptime} seconds.");
@@ -119,6 +111,41 @@ class refreshfeeds extends \core\task\scheduled_task {
 
         // Show times.
         mtrace($counter . ' feeds refreshed (took ' . microtime_diff($starttime, microtime()) . ' seconds)');
+    }
 
+    /**
+     * Fetch a feed for the specified URL.
+     *
+     * @param   string  $url The URL to fetch
+     * @return  \moodle_simplepie
+     */
+    protected function fetch_feed(string $url) : \moodle_simplepie {
+        // Fetch the rss feed, using standard simplepie caching so feeds will be renewed only if cache has expired.
+        \core_php_time_limit::raise(60);
+
+        $feed = new \moodle_simplepie();
+
+        // Set timeout for longer than normal to be agressive at fetching feeds if possible..
+        $feed->set_timeout(40);
+        $feed->set_cache_duration(0);
+        $feed->set_feed_url($url);
+        $feed->init();
+
+        return $feed;
+    }
+
+    /**
+     * Calculates a new skip time for a record based on the current skip time.
+     *
+     * @param   int     $currentskip The current skip time of a record.
+     * @return  int     The newly calculated skip time.
+     */
+    protected function calculate_skiptime(int $currentskip) : int {
+        // If the feed has never failed, then the initial skiptime will be 0. We use a default of 5 minutes in this case.
+        // If the feed has previously failed then we double that time.
+        $newskiptime = max(MINSECS * 5, ($currentskip * 2));
+
+        // Max out at the CLIENT_MAX_SKIPTIME.
+        return min($newskiptime, self::CLIENT_MAX_SKIPTIME);
     }
 }
