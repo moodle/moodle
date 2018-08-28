@@ -173,7 +173,7 @@ html[dir='rtl']{
       display: block!important;
       position: absolute;
       bottom:1.75rem;
-      right:0;
+      right:-0.25rem;
       opacity:1;
       color:#000;
       // background-color: #fff;
@@ -185,10 +185,10 @@ html[dir='rtl']{
     display: block!important;
     position: absolute;
     bottom:1.5rem;
-    right:-6em;
-    padding-left: 0.5rem;
-    width:8rem;
-    max-width: 8rem!important;
+    right:-8em;
+    padding-left: 2.5rem;
+    width:10rem;
+    max-width: 10rem!important;
     height:3rem;
     line-height: 1.5rem;
     padding-top: .75rem;
@@ -205,7 +205,7 @@ html[dir='rtl']{
       display: block!important;
       position: absolute;
       bottom:1.75rem;
-      right:0;
+      right:-0.25rem;
       opacity:1;
       color:#000;
       // background-color: #fff;
@@ -217,10 +217,10 @@ html[dir='rtl']{
     display: block!important;
     position: absolute;
     bottom:1.5rem;
-    right:-6rem;
-    width:8rem;
-    max-width: 8rem!important;
-    padding-left: 0.5rem;
+    right:-8rem;
+    width:10rem;
+    max-width: 10rem!important;
+    padding-left: 2.5rem;
     height:3rem;
     line-height: 1.5rem;
     padding-top: .75rem;

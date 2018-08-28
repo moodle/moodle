@@ -445,7 +445,10 @@ ul.buttons {
     top: 0;
     left: 0;
     right: 0;
-    box-shadow: 2px 2px 5px #000; }
+    box-shadow: 2px 2px 5px #000;
+    max-height: 80vh;
+    overflow-y: scroll;
+    z-index: 10; }
 
 .label-content {
   overflow-y: auto;
@@ -639,7 +642,7 @@ ul.buttons {
     display: block !important;
     position: absolute;
     bottom: 1.75rem;
-    right: 0;
+    right: -0.25rem;
     opacity: 1;
     color: #000;
     width: 2rem;
@@ -649,10 +652,10 @@ ul.buttons {
     display: block !important;
     position: absolute;
     bottom: 1.5rem;
-    right: -6em;
-    padding-left: 0.5rem;
-    width: 8rem;
-    max-width: 8rem !important;
+    right: -8em;
+    padding-left: 2.5rem;
+    width: 10rem;
+    max-width: 10rem !important;
     height: 3rem;
     line-height: 1.5rem;
     padding-top: .75rem;
@@ -667,7 +670,7 @@ ul.buttons {
     display: block !important;
     position: absolute;
     bottom: 1.75rem;
-    right: 0;
+    right: -0.25rem;
     opacity: 1;
     color: #000;
     width: 2rem;
@@ -677,10 +680,10 @@ ul.buttons {
     display: block !important;
     position: absolute;
     bottom: 1.5rem;
-    right: -6rem;
-    width: 8rem;
-    max-width: 8rem !important;
-    padding-left: 0.5rem;
+    right: -8rem;
+    width: 10rem;
+    max-width: 10rem !important;
+    padding-left: 2.5rem;
     height: 3rem;
     line-height: 1.5rem;
     padding-top: .75rem;
