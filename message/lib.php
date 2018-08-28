@@ -187,6 +187,7 @@ function message_search_users($courseids, $searchtext, $sort='', $exceptions='')
 
     $params = array(
         'userid' => $USER->id,
+        'userid2' => $USER->id,
         'query' => "%$searchtext%"
     );
 
@@ -207,10 +208,12 @@ function message_search_users($courseids, $searchtext, $sort='', $exceptions='')
 
     if (in_array(SITEID, $courseids)) {
         // Search on site level.
-        return $DB->get_records_sql("SELECT $ufields, mc.id as contactlistid, mc.blocked
+        return $DB->get_records_sql("SELECT $ufields, mc.id as contactlistid, mub.id as userblockedid
                                        FROM {user} u
                                        LEFT JOIN {message_contacts} mc
                                             ON mc.contactid = u.id AND mc.userid = :userid
+                                       LEFT JOIN {message_users_blocked} mub
+                                            ON mub.userid = :userid2 AND mub.blockeduserid = u.id
                                       WHERE u.deleted = '0' AND u.confirmed = '1'
                                             AND (".$DB->sql_like($fullname, ':query', false).")
                                             $except
@@ -229,11 +232,13 @@ function message_search_users($courseids, $searchtext, $sort='', $exceptions='')
 
         // Everyone who has a role assignment in this course or higher.
         // TODO: add enabled enrolment join here (skodak)
-        $users = $DB->get_records_sql("SELECT DISTINCT $ufields, mc.id as contactlistid, mc.blocked
+        $users = $DB->get_records_sql("SELECT DISTINCT $ufields, mc.id as contactlistid, mub.id as userblockedid
                                          FROM {user} u
                                          JOIN {role_assignments} ra ON ra.userid = u.id
                                          LEFT JOIN {message_contacts} mc
                                               ON mc.contactid = u.id AND mc.userid = :userid
+                                         LEFT JOIN {message_users_blocked} mub
+                                              ON mub.userid = :userid2 AND mub.blockeduserid = u.id
                                         WHERE u.deleted = '0' AND u.confirmed = '1'
                                               AND (".$DB->sql_like($fullname, ':query', false).")
                                               AND ra.contextid $contextwhere

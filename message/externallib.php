@@ -90,23 +90,30 @@ class core_message_external extends external_api {
         foreach($params['messages'] as $message) {
             $receivers[] = $message['touserid'];
         }
-        list($sqluserids, $sqlparams) = $DB->get_in_or_equal($receivers, SQL_PARAMS_NAMED, 'userid_');
+        list($sqluserids, $sqlparams) = $DB->get_in_or_equal($receivers);
         $tousers = $DB->get_records_select("user", "id " . $sqluserids . " AND deleted = 0", $sqlparams);
         $blocklist   = array();
         $contactlist = array();
-        $sqlparams['contactid'] = $USER->id;
+        $contactsqlparams = array_merge($sqlparams, [$USER->id], [$USER->id], $sqlparams);
         $rs = $DB->get_recordset_sql("SELECT *
                                         FROM {message_contacts}
-                                       WHERE userid $sqluserids
-                                             AND contactid = :contactid", $sqlparams);
+                                       WHERE (userid $sqluserids AND contactid = ?)
+                                          OR (userid = ? AND contactid $sqluserids)", $contactsqlparams);
         foreach ($rs as $record) {
-            if ($record->blocked) {
-                // $record->userid is blocking current user
-                $blocklist[$record->userid] = true;
-            } else {
-                // $record->userid have current user as contact
-                $contactlist[$record->userid] = true;
+            $useridtouse = $record->userid;
+            if ($record->userid == $USER->id) {
+                $useridtouse = $record->contactid;
             }
+            $contactlist[$useridtouse] = true;
+        }
+        $rs->close();
+        $blocksqlparams = array_merge($sqlparams, [$USER->id]);
+        $rs = $DB->get_recordset_sql("SELECT *
+                                        FROM {message_users_blocked}
+                                       WHERE userid $sqluserids
+                                         AND blockeduserid = ?", $blocksqlparams);
+        foreach ($rs as $record) {
+            $blocklist[$record->userid] = true;
         }
         $rs->close();
 
@@ -327,7 +334,7 @@ class core_message_external extends external_api {
         $params = self::validate_parameters(self::delete_contacts_parameters(), $params);
 
         foreach ($params['userids'] as $id) {
-            message_remove_contact($id, $userid);
+            \core_message\api::remove_contact($userid, $id);
         }
 
         return null;
