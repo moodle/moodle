@@ -14,6 +14,7 @@ Feature: Manage data storage purposes
     And I set the field "Description" to "Purpose 1 description"
     And I click on ".form-autocomplete-downarrow" "css_element" in the "Lawful bases" "form_row"
     And I click on "Contract (GDPR Art. 6.1(b))" "list_item"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Lawful bases" "form_row"
     And I click on "Legal obligation (GDPR Art 6.1(c))" "list_item"
     And I press key "27" in the field "Lawful bases"
     And I click on ".form-autocomplete-downarrow" "css_element" in the "Sensitive personal data processing reasons" "form_row"
