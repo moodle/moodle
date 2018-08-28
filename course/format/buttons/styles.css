@@ -401,6 +401,7 @@
   white-space: nowrap; }
   .format-buttons .slick-slider .slick-slide {
     cursor: pointer;
+    float: left;
     margin: 0 1px;
     transition: all .3s ease-in-out;
     text-overflow: ellipsis;
@@ -489,7 +490,7 @@
     outline: none;
     text-overflow: ellipsis;
     white-space: nowrap; }
-    .format-buttons .label-content-controls .label-prev div:before {
+    .format-buttons .label-content-controls .label-prev > div:before {
       content: '';
       width: 1rem;
       height: 1rem;
@@ -509,7 +510,7 @@
     outline: none;
     text-overflow: ellipsis;
     white-space: nowrap; }
-    .format-buttons .label-content-controls .label-next div:before {
+    .format-buttons .label-content-controls .label-next > div:before {
       content: '';
       width: 1rem;
       height: 1rem;
@@ -574,129 +575,70 @@
   .format-buttons .sections-content-wrapper .labels-wrapper .slider.labels .nav-item{
     width: 100%; }
   .format-buttons .label-content-controls{
-    position: absolute !important;
-    top: 475px;
-    right: 75%;
-    width: 25%;
-    padding: 15px;
+    position: relative;
+    padding: 15px 0;
     margin: 0;
-    line-height: 1rem;
     text-overflow: ellipsis;
     white-space: nowrap; }
+  .format-buttons .label-content-controls .label-header{
+    max-width: 100%; }
+  .format-buttons .label-content-controls .label-header div{
+    max-width: 100%; }
   .format-buttons .label-content-controls .label-header div .label-title{
-    display: none; }
+    box-sizing: border-box;
+    max-width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden; }
   .format-buttons .label-content-controls .label-header .label-icon{
-    display: none; }
+    display: none !important; }
   .format-buttons .label-content-controls .label-prev{
     position: relative;
     border: 0;
     background-color: inherit;
-    color: transparent;
+    color: #000;
     outline: none;
     text-overflow: ellipsis;
     white-space: nowrap; }
   .format-buttons .label-content-controls .label-prev > div:before{
-    content: '\f100';
-    font-family: FontAwesome;
-    font-size: 2rem;
+    content: '';
     width: 1rem;
     height: 1rem;
     display: block;
-    border: 0;
-    transform: rotate(0);
-    color: #7bc0de;
     position: absolute;
-    right: 0;
-    top: -.25rem;
-    cursor: pointer; }
-  .format-buttons .label-content-controls .label-prev > div:hover:before{
-    cursor: pointer;
-    color: #5bc0de; }
-  .format-buttons .label-content-controls .label-active div{
-    display: none; }
+    left: -1.5rem;
+    top: .5rem;
+    border-top: 1px solid transparent;
+    border-right: 1px solid transparent;
+    border-bottom: 1px solid #000;
+    border-left: 1px solid #000;
+    transform: rotate(45deg); }
+  .format-buttons .label-content-controls .label-active{
+    position: relative;
+    color: gold;
+    text-overflow: ellipsis;
+    white-space: nowrap; }
   .format-buttons .label-content-controls .label-next{
     position: relative;
     border: 0;
     background-color: inherit;
-    color: transparent;
+    color: #000;
     outline: none;
     text-overflow: ellipsis;
     white-space: nowrap; }
   .format-buttons .label-content-controls .label-next > div:before{
-    content: '\f101';
-    font-family: FontAwesome;
-    font-size: 2rem;
+    content: '';
     width: 1rem;
     height: 1rem;
     display: block;
-    border: 0;
-    color: #7bc0de;
-    transform: rotate(0);
     position: absolute;
-    left: 0;
-    top: -.25rem;
-    cursor: pointer; }
-  .format-buttons .label-content-controls .label-next > div:before:hover{
-    cursor: pointer;
-    color: #5bc0de; }
-  .format-buttons .slick-slider.labels .slick-next.slick-disabled{
-    display: none; }
-  .format-buttons .label-next:hover{
-    max-height: 1rem; }
-  .format-buttons .label-next:hover .label-icon{
-    display: block !important;
-    position: absolute;
-    bottom: 1.75rem;
-    right: -0.25rem;
-    opacity: 1;
-    color: #000;
-    width: 2rem;
-    height: 2rem;
-    z-index: 5; }
-  .format-buttons .label-next:hover .label-title{
-    display: block !important;
-    position: absolute;
-    bottom: 1.5rem;
-    right: -8em;
-    padding: 0 2.5rem;
-    width: 12.5rem;
-    max-width: 12.5rem !important;
-    height: 3rem;
-    line-height: 1.5rem;
-    padding-top: .75rem;
-    opacity: 1;
-    color: #000;
-    background-color: #fff;
-    box-shadow: 2px 2px 3px #000;
-    z-index: 4; }
-  .format-buttons .label-prev:hover{
-    max-height: 1rem; }
-  .format-buttons .label-prev:hover .label-icon{
-    display: block !important;
-    position: absolute;
-    bottom: 1.75rem;
-    right: -0.25rem;
-    opacity: 1;
-    color: #000;
-    width: 2rem;
-    height: 2rem;
-    z-index: 5; }
-  .format-buttons .label-prev:hover .label-title{
-    display: block !important;
-    position: absolute;
-    bottom: 1.5rem;
-    right: -8rem;
-    width: 12.5rem;
-    max-width: 12.5rem !important;
-    padding: 0 2.5rem;
-    height: 3rem;
-    line-height: 1.5rem;
-    padding-top: .75rem;
-    opacity: 1;
-    color: #000;
-    background-color: #fff;
-    box-shadow: 2px 2px 3px #000;
-    z-index: 4; } }
+    right: -1.5rem;
+    top: .5rem;
+    border-top: 1px solid transparent;
+    border-right: 1px solid transparent;
+    border-bottom: 1px solid #000;
+    border-left: 1px solid #000;
+    transform: rotate(225deg); } }
 
 @media screen and (min-width: 768px){
   html[dir='ltr'] .format-buttons .slider.sections.slick-slider{
@@ -790,7 +732,138 @@
     position: absolute !important;
     top: 475px;
     right: 75%;
-    width: 25%; } }
+    width: 25%; }
+  .format-buttons .label-content-controls{
+    position: absolute !important;
+    box-sizing: border-box;
+    top: 475px;
+    right: 75%;
+    width: 25%;
+    min-height: 2rem;
+    padding: 15px;
+    margin: 0;
+    line-height: 1rem;
+    text-overflow: ellipsis;
+    white-space: nowrap; }
+  .format-buttons .label-content-controls .label-header div .label-title{
+    display: none; }
+  .format-buttons .label-content-controls .label-header .label-icon{
+    display: none; }
+  .format-buttons .label-content-controls .label-prev{
+    position: relative;
+    border: 0;
+    background-color: inherit;
+    color: transparent;
+    outline: none;
+    text-overflow: ellipsis;
+    white-space: nowrap; }
+  .format-buttons .label-content-controls .label-prev > div:before{
+    content: '\f100';
+    font-family: FontAwesome;
+    font-size: 2rem;
+    width: 1rem;
+    height: 1rem;
+    display: block;
+    border: 0;
+    transform: rotate(0);
+    color: #7bc0de;
+    position: absolute;
+    right: 0;
+    left: auto;
+    top: -.25rem;
+    cursor: pointer; }
+  .format-buttons .label-content-controls .label-prev > div:hover:before{
+    cursor: pointer;
+    color: #5bc0de; }
+  .format-buttons .label-content-controls .label-active div{
+    display: none; }
+  .format-buttons .label-content-controls .label-next{
+    position: relative;
+    border: 0;
+    background-color: inherit;
+    color: transparent;
+    outline: none;
+    text-overflow: ellipsis;
+    white-space: nowrap; }
+  .format-buttons .label-content-controls .label-next > div:before{
+    content: '\f101';
+    font-family: FontAwesome;
+    font-size: 2rem;
+    width: 1rem;
+    height: 1rem;
+    display: block;
+    border: 0;
+    color: #7bc0de;
+    transform: rotate(0);
+    position: absolute;
+    left: 0;
+    top: -.25rem;
+    cursor: pointer; }
+  .format-buttons .label-content-controls .label-next > div:before:hover{
+    cursor: pointer;
+    color: #5bc0de; }
+  .format-buttons .slick-slider.labels .slick-next.slick-disabled{
+    display: none; }
+  .format-buttons .label-next:hover{
+    max-height: 1rem; }
+  .format-buttons .label-next:hover > div:before{
+    border: 0; }
+  .format-buttons .label-next:hover .label-icon{
+    display: block !important;
+    position: absolute;
+    bottom: 1.75rem;
+    right: 0.25rem;
+    opacity: 1;
+    color: #000;
+    width: 2rem;
+    height: 2rem;
+    z-index: 5; }
+  .format-buttons .label-next:hover .label-title{
+    display: block !important;
+    position: absolute;
+    bottom: 1.5rem;
+    right: -10.5em;
+    padding: 0 2.5rem;
+    width: 12.5rem;
+    max-width: 12.5rem !important;
+    height: 3rem;
+    line-height: 1.5rem;
+    padding-top: .75rem;
+    opacity: 1;
+    color: #000;
+    background-color: #fff;
+    box-shadow: 2px 2px 3px #000;
+    z-index: 4; }
+  .format-buttons .label-prev:hover{
+    max-height: 1rem; }
+  .format-buttons .label-prev:hover > div:before{
+    border: 0; }
+  .format-buttons .label-prev:hover .label-icon{
+    display: block !important;
+    position: absolute;
+    bottom: 1.75rem;
+    right: -0.5rem;
+    opacity: 1;
+    color: #000;
+    width: 2rem;
+    height: 2rem;
+    z-index: 5; }
+  .format-buttons .label-prev:hover .label-title{
+    display: block !important;
+    position: absolute;
+    bottom: 1.5rem;
+    right: -10.5rem;
+    width: 12.5rem;
+    max-width: 12.5rem !important;
+    padding: 0 2.5rem;
+    height: 3rem;
+    line-height: 1.5rem;
+    padding-top: .75rem;
+    opacity: 1;
+    color: #000;
+    background-color: #fff;
+    box-shadow: 2px 2px 3px #000;
+    z-index: 4; } }
 
 @media screen and (min-width: 992px){
   .format-buttons .sections-wrapper{

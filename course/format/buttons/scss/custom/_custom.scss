@@ -197,6 +197,7 @@
     white-space: nowrap;
     .slick-slide{
       cursor: pointer;
+      float: left;
       margin:0 1px;
       transition: all .3s ease-in-out;
       text-overflow: ellipsis;
@@ -302,7 +303,7 @@
       outline:none;
       text-overflow: ellipsis;
       white-space: nowrap;
-      div:before{
+      &>div:before{
         content:'';
         width: 1rem;
         height:1rem;
@@ -325,7 +326,7 @@
       outline:none;
       text-overflow: ellipsis;
       white-space: nowrap;
-      div:before{
+      &>div:before{
         content:'';
         width: 1rem;
         height:1rem;

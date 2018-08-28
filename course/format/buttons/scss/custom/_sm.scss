@@ -84,154 +84,78 @@ html[dir='rtl']{
     }
   }
   .label-content-controls{
-    position: absolute!important;
-    top:475px;
-    right:75%;
-    width:25%;
-    padding:15px;
+    position: relative;
+    padding:15px 0;
     margin:0;
-    line-height:1rem;
     text-overflow: ellipsis;
     white-space: nowrap;
     .label-header{
-      // max-width: 100%;
+      max-width: 100%;
       div{
-        // max-width: 100%;
+        max-width: 100%;
         .label-title{
-          display: none;
+          box-sizing: border-box;
+          max-width: 100%;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
         }
       }
       .label-icon{
-        display: none;
+        display: none!important;
       }
     }
     .label-prev{
       position: relative;
       border:0;
       background-color: inherit;
-      color:transparent;
+      color:#000;
       outline:none;
       text-overflow: ellipsis;
       white-space: nowrap;
-      &>div{
-        &:before{
-          content:'\f100';
-          font-family: FontAwesome;
-          font-size: 2rem;
-          width: 1rem;
-          height:1rem;
-          display:block;
-          border:0;
-          transform: rotate(0);
-          color:#7bc0de;
-          position: absolute;
-          right:0;
-          top:-.25rem;
-          cursor:pointer;
-        }
-        &:hover:before{
-          cursor:pointer;
-          color:#5bc0de;
-        }
+      &>div:before{
+        content:'';
+        width: 1rem;
+        height:1rem;
+        display:block;
+        position: absolute;
+        left: -1.5rem;
+        top:.5rem;
+        border-top: 1px solid transparent;
+        border-right: 1px solid transparent;
+        border-bottom: 1px solid #000;
+        border-left: 1px solid #000;
+        transform: rotate(45deg);
       }
     }
-    .label-active div{
-      display: none;
+    .label-active{
+      position: relative;
+      color:gold;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .label-next{
       position: relative;
       border:0;
       background-color: inherit;
-      color:transparent;
+      color:#000;
       outline:none;
       text-overflow: ellipsis;
       white-space: nowrap;
       &>div:before{
-        content:'\f101';
-        font-family: FontAwesome;
-        font-size: 2rem;
+        content:'';
         width: 1rem;
         height:1rem;
         display:block;
-        border:0;
-        color:#7bc0de;
-        transform: rotate(0);
         position: absolute;
-        left:0;
-        top:-.25rem;
-        cursor:pointer;
-        &:hover{
-          cursor:pointer;
-          color:#5bc0de;
-        }
+        right: -1.5rem;
+        top:.5rem;
+        border-top: 1px solid transparent;
+        border-right: 1px solid transparent;
+        border-bottom: 1px solid #000;
+        border-left: 1px solid #000;
+        transform: rotate(225deg);
       }
-    }
-  }
-  .slick-slider.labels .slick-next.slick-disabled{
-    display:none;
-  }
-  .label-next:hover{
-    max-height: 1rem;
-    .label-icon{
-        display: block!important;
-        position: absolute;
-        bottom:1.75rem;
-        right:-0.25rem;
-        opacity:1;
-        color:#000;
-        // background-color: #fff;
-        width:2rem;
-        height:2rem;
-        z-index: 5;
-    }
-    .label-title{
-      display: block!important;
-      position: absolute;
-      bottom:1.5rem;
-      right:-8em;
-      padding:0 2.5rem;
-      width:12.5rem;
-      max-width: 12.5rem!important;
-      height:3rem;
-      line-height: 1.5rem;
-      padding-top: .75rem;
-      opacity:1;
-      color:#000;
-      background-color: #fff;
-      box-shadow: 2px 2px 3px #000;
-      z-index: 4;
-    }
-  }
-  .label-prev:hover{
-    max-height: 1rem;
-    .label-icon{
-        display: block!important;
-        position: absolute;
-        bottom:1.75rem;
-        right:-0.25rem;
-        opacity:1;
-        color:#000;
-        // background-color: #fff;
-        width:2rem;
-        height:2rem;
-        z-index: 5;
-    }
-    .label-title{
-      display: block!important;
-      position: absolute;
-      bottom:1.5rem;
-      right:-8rem;
-      width:12.5rem;
-      max-width: 12.5rem!important;
-      padding:0 2.5rem;
-      height:3rem;
-      line-height: 1.5rem;
-      padding-top: .75rem;
-      opacity:1;
-      color:#000;
-      background-color: #fff;
-      box-shadow: 2px 2px 3px #000;
-      z-index: 4;
     }
   }
 }
