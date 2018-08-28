@@ -22,7 +22,7 @@
     Context variables required for this template:
     * actionurl - Url to post to
     * hasresults - True if there are results
-    * results - List of results containing url, title, settings (array of raw html)
+    * results - List of results containing url, title, path (array of strings), settings (array of raw html)
     * showsave - Show save buttons
 
     Example context (json):
@@ -30,7 +30,7 @@
         "actionurl": "/",
         "hasresults": true,
         "results": [
-            { "url": "/", "title": "Match!", "settings": [ "blah blah blah" ] }
+            { "url": "/", "title": "Match!", "path": ["Administration", "Match!"], "settings": [ "blah blah blah" ] }
         ]
     }
 }}
@@ -41,9 +41,15 @@
     </div>
     <fieldset>
         <div class="clearer"></div>
+        <h2 class="main">{{#str}}searchresults, admin{{/str}}</h2>
         {{#hasresults}}
             {{#results}}
-                <h2 class="main">{{#str}}searchresults, admin{{/str}} - <a href="{{url}}">{{{title}}}</a></h2>
+                <h3 class="adminpagetitle"><a href="{{url}}">{{{title}}}</a></h3>
+                <ul class="adminpagepath" aria-label="{{#str}} pagepath, core {{/str}}">
+                    {{#path}}
+                    <li>{{.}}</li>
+                    {{/path}}
+                </ul>
                 <fieldset class="adminsettings">
                     {{#settings}}
                         <div class="clearer"></div>
