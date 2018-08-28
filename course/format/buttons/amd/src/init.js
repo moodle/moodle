@@ -117,6 +117,7 @@ define(['jquery','format_buttons/slick'], function($, slick) {
               slidesToShow: slides,
               slidesToScroll: 1,
               rtl:false,
+              focusOnSelect: true
             }
           };
           resp.push(brp);
