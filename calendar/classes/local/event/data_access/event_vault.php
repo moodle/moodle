@@ -33,8 +33,6 @@ use core_calendar\local\event\factories\action_factory_interface;
 use core_calendar\local\event\factories\event_factory_interface;
 use core_calendar\local\event\strategies\raw_event_retrieval_strategy_interface;
 
-require_once($CFG->libdir . '/coursecatlib.php');
-
 /**
  * Event vault class.
  *

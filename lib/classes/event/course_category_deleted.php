@@ -86,7 +86,7 @@ class course_category_deleted extends base {
     /**
      * Returns the legacy event data.
      *
-     * @return \coursecat the category that was deleted
+     * @return \core_course_category the category that was deleted
      */
     protected function get_legacy_eventdata() {
         return $this->coursecat;
@@ -95,9 +95,9 @@ class course_category_deleted extends base {
     /**
      * Set custom data of the event - deleted coursecat.
      *
-     * @param \coursecat $coursecat
+     * @param \core_course_category $coursecat
      */
-    public function set_coursecat(\coursecat $coursecat) {
+    public function set_coursecat(\core_course_category $coursecat) {
         $this->coursecat = $coursecat;
     }
 
@@ -105,7 +105,7 @@ class course_category_deleted extends base {
      * Returns deleted coursecat for event observers.
      *
      * @throws \coding_exception
-     * @return \coursecat
+     * @return \core_course_category
      */
     public function get_coursecat() {
         if ($this->is_restored()) {

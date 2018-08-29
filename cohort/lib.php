@@ -138,7 +138,7 @@ function cohort_delete_cohort($cohort) {
  * Somehow deal with cohorts when deleting course category,
  * we can not just delete them because they might be used in enrol
  * plugins or referenced in external systems.
- * @param  stdClass|coursecat $category
+ * @param  stdClass|core_course_category $category
  * @return void
  */
 function cohort_delete_category($category) {

@@ -289,12 +289,9 @@ EOD;
      * Create a test course category
      * @param array|stdClass $record
      * @param array $options
-     * @return coursecat course category record
+     * @return core_course_category course category record
      */
     public function create_category($record=null, array $options=null) {
-        global $DB, $CFG;
-        require_once("$CFG->libdir/coursecatlib.php");
-
         $this->categorycount++;
         $i = $this->categorycount;
 
@@ -312,7 +309,7 @@ EOD;
             $record['idnumber'] = '';
         }
 
-        return coursecat::create($record);
+        return core_course_category::create($record);
     }
 
     /**

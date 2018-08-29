@@ -90,7 +90,7 @@ class core_gradelib_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        $category = coursecat::create(array('name' => 'Cat1'));
+        $category = core_course_category::create(array('name' => 'Cat1'));
 
         // Add a grade letter to the category.
         $letter = new stdClass();

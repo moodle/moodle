@@ -1090,71 +1090,77 @@ function update_category_button() {
  */
 function make_categories_list() {
     throw new coding_exception('Global function make_categories_list() is removed. Please use '.
-            'coursecat::make_categories_list() and coursecat::get_parents()');
+        'core_course_category::make_categories_list() and core_course_category::get_parents()');
 }
 
 /**
  * @deprecated since 2.5
  */
 function category_delete_move() {
-    throw new coding_exception('Function category_delete_move() is removed. Please use coursecat::delete_move() instead.');
+    throw new coding_exception('Function category_delete_move() is removed. Please use ' .
+        'core_course_category::delete_move() instead.');
 }
 
 /**
  * @deprecated since 2.5
  */
 function category_delete_full() {
-    throw new coding_exception('Function category_delete_full() is removed. Please use coursecat::delete_full() instead.');
+    throw new coding_exception('Function category_delete_full() is removed. Please use ' .
+        'core_course_category::delete_full() instead.');
 }
 
 /**
  * @deprecated since 2.5
  */
 function move_category() {
-    throw new coding_exception('Function move_category() is removed. Please use coursecat::change_parent() instead.');
+    throw new coding_exception('Function move_category() is removed. Please use core_course_category::change_parent() instead.');
 }
 
 /**
  * @deprecated since 2.5
  */
 function course_category_hide() {
-    throw new coding_exception('Function course_category_hide() is removed. Please use coursecat::hide() instead.');
+    throw new coding_exception('Function course_category_hide() is removed. Please use core_course_category::hide() instead.');
 }
 
 /**
  * @deprecated since 2.5
  */
 function course_category_show() {
-    throw new coding_exception('Function course_category_show() is removed. Please use coursecat::show() instead.');
+    throw new coding_exception('Function course_category_show() is removed. Please use core_course_category::show() instead.');
 }
 
 /**
- * @deprecated since 2.5. Please use coursecat::get($catid, IGNORE_MISSING) or coursecat::get($catid, MUST_EXIST).
+ * @deprecated since 2.5. Please use core_course_category::get($catid, IGNORE_MISSING) or
+ *     core_course_category::get($catid, MUST_EXIST).
  */
 function get_course_category() {
-    throw new coding_exception('Function get_course_category() is removed. Please use coursecat::get(), see phpdocs for more details');
+    throw new coding_exception('Function get_course_category() is removed. Please use core_course_category::get(), ' .
+        'see phpdocs for more details');
 }
 
 /**
  * @deprecated since 2.5
  */
 function create_course_category() {
-    throw new coding_exception('Function create_course_category() is removed. Please use coursecat::create()');
+    throw new coding_exception('Function create_course_category() is removed. Please use core_course_category::create(), ' .
+        'see phpdocs for more details');
 }
 
 /**
- * @deprecated since 2.5. Please use coursecat::get() and coursecat::get_children()
+ * @deprecated since 2.5. Please use core_course_category::get() and core_course_category::get_children()
  */
 function get_all_subcategories() {
-    throw new coding_exception('Function get_all_subcategories() is removed. Please use appropriate methods() ' .
-            'of coursecat class.');
+    throw new coding_exception('Function get_all_subcategories() is removed. Please use appropriate methods() '.
+        'of core_course_category class. See phpdocs for more details');
 }
 
 /**
- * @deprecated since 2.5. Please use coursecat::get($parentid)->get_children().
+ * @deprecated since 2.5. Please use core_course_category::get($parentid)->get_children().
  */
 function get_child_categories() {
-    throw new coding_exception('Function get_child_categories() is removed. Use coursecat::get_children().');
+    throw new coding_exception('Function get_child_categories() is removed. Use core_course_category::get_children() or see ' .
+        'phpdocs for more details.');
 }
 
 /**
@@ -1162,7 +1168,7 @@ function get_child_categories() {
  */
 function get_categories() {
     throw new coding_exception('Function get_categories() is removed. Please use ' .
-            'appropriate functions from class coursecat');
+            'appropriate functions from class core_course_category');
 }
 
 /**
@@ -1213,7 +1219,7 @@ function print_category_info() {
  */
 function get_course_category_tree() {
     throw new coding_exception('Function get_course_category_tree() is removed, please use course ' .
-            'renderer or coursecat class, see function phpdocs for more info');
+            'renderer or core_course_category class, see function phpdocs for more info');
 }
 
 /**
@@ -1234,14 +1240,16 @@ function print_course() {
  * @deprecated since 2.5
  */
 function get_category_courses_array() {
-    throw new coding_exception('Function get_category_courses_array() is removed, please use methods of coursecat class');
+    throw new coding_exception('Function get_category_courses_array() is removed, please use methods of ' .
+        'core_course_category class');
 }
 
 /**
  * @deprecated since 2.5
  */
 function get_category_courses_array_recursively() {
-    throw new coding_exception('Function get_category_courses_array_recursively() is removed, please use methods of coursecat class', DEBUG_DEVELOPER);
+    throw new coding_exception('Function get_category_courses_array_recursively() is removed, please use ' .
+        'methods of core_course_category class', DEBUG_DEVELOPER);
 }
 
 /**
@@ -1255,7 +1263,8 @@ function blog_get_context_url() {
  * @deprecated since 2.5
  */
 function get_courses_wmanagers() {
-    throw new coding_exception('Function get_courses_wmanagers() is removed, please use coursecat::get_courses()');
+    throw new coding_exception('Function get_courses_wmanagers() is removed, please use ' .
+        'core_course_category::get_courses()');
 }
 
 /**
@@ -3101,8 +3110,8 @@ function calendar_get_all_allowed_types() {
         $types['site'] = true;
     }
 
-    if (coursecat::has_manage_capability_on_any()) {
-        $types['category'] = coursecat::make_categories_list('moodle/category:manage');
+    if (core_course_category::has_manage_capability_on_any()) {
+        $types['category'] = core_course_category::make_categories_list('moodle/category:manage');
     }
 
     // This function warms the context cache for the course so the calls

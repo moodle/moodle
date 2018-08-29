@@ -23,7 +23,6 @@
  */
 
 require_once('../config.php');
-require_once($CFG->dirroot.'/lib/coursecatlib.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
 $categoryid = optional_param('categoryid', null, PARAM_INT);
@@ -52,8 +51,8 @@ $url = new moodle_url('/course/management.php');
 $systemcontext = $context = context_system::instance();
 if ($courseid) {
     $record = get_course($courseid);
-    $course = new course_in_list($record);
-    $category = coursecat::get($course->category);
+    $course = new core_course_list_element($record);
+    $category = core_course_category::get($course->category);
     $categoryid = $category->id;
     $context = context_coursecat::instance($category->id);
     $url->param('categoryid', $categoryid);
@@ -62,14 +61,14 @@ if ($courseid) {
 } else if ($categoryid) {
     $courseid = null;
     $course = null;
-    $category = coursecat::get($categoryid);
+    $category = core_course_category::get($categoryid);
     $context = context_coursecat::instance($category->id);
     $url->param('categoryid', $category->id);
 
 } else {
     $course = null;
     $courseid = null;
-    $category = coursecat::get_default();
+    $category = core_course_category::get_default();
     $categoryid = $category->id;
     $context = context_coursecat::instance($category->id);
     $url->param('categoryid', $category->id);
@@ -108,7 +107,7 @@ $PAGE->set_heading($pageheading);
 // This is a system level page that operates on other contexts.
 require_login();
 
-if (!coursecat::has_capability_on_any(array('moodle/category:manage', 'moodle/course:create'))) {
+if (!core_course_category::has_capability_on_any(array('moodle/category:manage', 'moodle/course:create'))) {
     // The user isn't able to manage any categories. Lets redirect them to the relevant course/index.php page.
     $url = new moodle_url('/course/index.php');
     if ($categoryid) {
@@ -141,7 +140,7 @@ if ($category && !has_any_capability($capabilities, $systemcontext)) {
     navigation_node::override_active_url(new moodle_url('/course/management.php'));
 }
 if (!$issearching && $category !== null) {
-    $parents = coursecat::get_many($category->get_parents());
+    $parents = core_course_category::get_many($category->get_parents());
     $parents[] = $category;
     foreach ($parents as $parent) {
         $PAGE->navbar->add(
@@ -149,7 +148,7 @@ if (!$issearching && $category !== null) {
             new moodle_url('/course/management.php', array('categoryid' => $parent->id))
         );
     }
-    if ($course instanceof course_in_list) {
+    if ($course instanceof core_course_list_element) {
         // Use the list name so that it matches whats being displayed below.
         $PAGE->navbar->add($course->get_formatted_name());
     }
@@ -180,7 +179,7 @@ if ($action !== false && confirm_sesskey()) {
     switch ($action) {
         case 'resortcategories' :
             $sort = required_param('resort', PARAM_ALPHA);
-            $cattosort = coursecat::get((int)optional_param('categoryid', 0, PARAM_INT));
+            $cattosort = core_course_category::get((int)optional_param('categoryid', 0, PARAM_INT));
             $redirectback = \core_course\management\helper::action_category_resort_subcategories($cattosort, $sort);
             break;
         case 'resortcourses' :
@@ -231,7 +230,7 @@ if ($action !== false && confirm_sesskey()) {
             // They must have specified a category.
             required_param('categoryid', PARAM_INT);
             if (!$category->can_delete()) {
-                throw new moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_resort');
+                throw new moodle_exception('permissiondenied', 'error', '', null, 'core_course_category::can_resort');
             }
             $mform = new core_course_deletecategory_form(null, $category);
             if ($mform->is_cancelled()) {
@@ -287,7 +286,7 @@ if ($action !== false && confirm_sesskey()) {
                 if ($courseids === false) {
                     break;
                 }
-                $moveto = coursecat::get($movetoid);
+                $moveto = core_course_category::get($movetoid);
                 try {
                     // If this fails we want to catch the exception and report it.
                     $redirectback = \core_course\management\helper::move_courses_into_category($moveto,
@@ -305,10 +304,10 @@ if ($action !== false && confirm_sesskey()) {
             } else if ($bulkmovecategories) {
                 $categoryids = optional_param_array('bcat', array(), PARAM_INT);
                 $movetocatid = required_param('movecategoriesto', PARAM_INT);
-                $movetocat = coursecat::get($movetocatid);
+                $movetocat = core_course_category::get($movetocatid);
                 $movecount = 0;
                 foreach ($categoryids as $id) {
-                    $cattomove = coursecat::get($id);
+                    $cattomove = core_course_category::get($id);
                     if ($id == $movetocatid) {
                         $notificationsfail[] = get_string('movecategoryownparent', 'error', $cattomove->get_formatted_name());
                         continue;
@@ -369,7 +368,7 @@ if ($action !== false && confirm_sesskey()) {
                     $categoryids = array(
                         required_param('currentcategoryid', PARAM_INT)
                     );
-                    $categories = coursecat::get_many($categoryids);
+                    $categories = core_course_category::get_many($categoryids);
                 } else if ($for === 'selectedcategories') {
                     // Bulk resort selected categories.
                     $categoryids = optional_param_array('bcat', false, PARAM_INT);
@@ -377,14 +376,15 @@ if ($action !== false && confirm_sesskey()) {
                     if ($categoryids === false) {
                         break;
                     }
-                    $categories = coursecat::get_many($categoryids);
+                    $categories = core_course_category::get_many($categoryids);
                 } else if ($for === 'allcategories') {
-                    if ($sortcategoriesby && coursecat::get(0)->can_resort_subcategories()) {
-                        \core_course\management\helper::action_category_resort_subcategories(coursecat::get(0), $sortcategoriesby);
+                    if ($sortcategoriesby && core_course_category::get(0)->can_resort_subcategories()) {
+                        \core_course\management\helper::action_category_resort_subcategories(
+                            core_course_category::get(0), $sortcategoriesby);
                     }
-                    $categorieslist = coursecat::make_categories_list('moodle/category:manage');
+                    $categorieslist = core_course_category::make_categories_list('moodle/category:manage');
                     $categoryids = array_keys($categorieslist);
-                    $categories = coursecat::get_many($categoryids);
+                    $categories = core_course_category::get_many($categoryids);
                     unset($categorieslist);
                 } else {
                     break;
@@ -398,7 +398,7 @@ if ($action !== false && confirm_sesskey()) {
                         \core_course\management\helper::action_category_resort_courses($cat, $sortcoursesby, false);
                     }
                 }
-                coursecat::resort_categories_cleanup($sortcoursesby !== false);
+                core_course_category::resort_categories_cleanup($sortcoursesby !== false);
                 if ($category === null && count($categoryids) === 1) {
                     // They're bulk sorting just a single category and they've not selected a category.
                     // Lets for convenience sake auto-select the category that has been resorted for them.

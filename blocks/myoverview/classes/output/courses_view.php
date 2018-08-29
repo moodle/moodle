@@ -65,7 +65,6 @@ class courses_view implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $CFG;
         require_once($CFG->dirroot.'/course/lib.php');
-        require_once($CFG->dirroot.'/lib/coursecatlib.php');
 
         // Build courses view data structure.
         $coursesview = [
@@ -84,7 +83,7 @@ class courses_view implements renderable, templatable {
             // Convert summary to plain text.
             $exportedcourse->summary = content_to_text($exportedcourse->summary, $exportedcourse->summaryformat);
 
-            $course = new \course_in_list($course);
+            $course = new \core_course_list_element($course);
             foreach ($course->get_course_overviewfiles() as $file) {
                 $isimage = $file->is_valid_image();
                 if ($isimage) {

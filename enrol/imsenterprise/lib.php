@@ -29,7 +29,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/group/lib.php');
-require_once($CFG->dirroot.'/lib/coursecatlib.php');
 
 /**
  * IMS Enterprise file enrolment plugin.
@@ -873,10 +872,9 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
      */
     private function get_default_category_id() {
         global $CFG;
-        require_once($CFG->libdir.'/coursecatlib.php');
 
         if ($this->defaultcategoryid === null) {
-            $category = coursecat::get_default();
+            $category = core_course_category::get_default();
             $this->defaultcategoryid = $category->id;
         }
 
@@ -957,7 +955,7 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                     $newcat->visible = 0;
                     $newcat->parent = $parentid;
                     $newcat->idnumber = $categoryidnumber;
-                    $newcat = coursecat::create($newcat);
+                    $newcat = core_course_category::create($newcat);
                     $catid = $newcat->id;
                     $this->log_line("Created new (hidden) category '$fullnestedcatname'");
                 } else {

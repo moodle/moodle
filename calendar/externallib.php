@@ -242,7 +242,8 @@ class core_calendar_external extends external_api {
             $categories = [];
 
             if (!empty($params['events']['categoryids'])) {
-                $catobjs = \coursecat::get_many(array_merge($params['events']['categoryids'], array_keys($coursecategories)));
+                $catobjs = \core_course_category::get_many(
+                    array_merge($params['events']['categoryids'], array_keys($coursecategories)));
                 foreach ($catobjs as $catobj) {
                     if (isset($coursecategories[$catobj->id]) ||
                             has_capability('moodle/category:manage', $catobj->get_context())) {
@@ -267,7 +268,7 @@ class core_calendar_external extends external_api {
                     $categories = array_flip($categories);
                 } else {
                     $categories = [];
-                    foreach (\coursecat::get_all() as $category) {
+                    foreach (\core_course_category::get_all() as $category) {
                         if (isset($coursecategories[$category->id]) ||
                                 has_capability('moodle/category:manage', $category->get_context(), $USER, false)) {
                             // If the user has access to a course in this category or can manage the category,

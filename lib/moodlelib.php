@@ -9841,7 +9841,7 @@ function get_home_page() {
  * Gets the name of a course to be displayed when showing a list of courses.
  * By default this is just $course->fullname but user can configure it. The
  * result of this function should be passed through print_string.
- * @param stdClass|course_in_list $course Moodle course object
+ * @param stdClass|core_course_list_element $course Moodle course object
  * @return string Display name of course (either fullname or short + fullname)
  */
 function get_course_display_name_for_list($course) {

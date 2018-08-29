@@ -162,8 +162,6 @@ class api {
     public static function search_users($userid, $search, $limitnum = 0) {
         global $CFG, $DB;
 
-        require_once($CFG->dirroot . '/lib/coursecatlib.php');
-
         // Used to search for contacts.
         $fullname = $DB->sql_fullname();
         $ufields = \user_picture::fields('u', array('lastaccess'));
@@ -199,7 +197,7 @@ class api {
         // 'moodle/course:viewparticipants' or 'moodle/course:enrolreview', but since the search_courses function
         // only takes required parameters we can't. However, the chance of a user having 'moodle/course:enrolreview' but
         // *not* 'moodle/course:viewparticipants' are pretty much zero, so it is not worth addressing.
-        if ($arrcourses = \coursecat::search_courses(array('search' => $search), array('limit' => $limitnum),
+        if ($arrcourses = \core_course_category::search_courses(array('search' => $search), array('limit' => $limitnum),
                 array('moodle/course:viewparticipants'))) {
             foreach ($arrcourses as $course) {
                 if (isset($enrolledcourses[$course->id])) {

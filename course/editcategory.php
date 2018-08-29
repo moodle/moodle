@@ -28,7 +28,6 @@
 
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
-require_once($CFG->libdir.'/coursecatlib.php');
 
 require_login();
 
@@ -36,7 +35,7 @@ $id = optional_param('id', 0, PARAM_INT);
 
 $url = new moodle_url('/course/editcategory.php');
 if ($id) {
-    $coursecat = coursecat::get($id, MUST_EXIST, true);
+    $coursecat = core_course_category::get($id, MUST_EXIST, true);
     $category = $coursecat->get_db_record();
     $context = context_coursecat::instance($id);
 
@@ -105,7 +104,7 @@ if ($mform->is_cancelled()) {
         }
         $coursecat->update($data, $mform->get_description_editor_options());
     } else {
-        $category = coursecat::create($data, $mform->get_description_editor_options());
+        $category = core_course_category::create($data, $mform->get_description_editor_options());
     }
     $manageurl->param('categoryid', $category->id);
     redirect($manageurl);
