@@ -27,7 +27,7 @@ Feature: Test exporting Matching questions
     When I navigate to "Export" node in "Course administration > Question bank"
     And I set the field "id_format_xml" to "1"
     And I press "Export questions to file"
-    Then following "click here" should download between "1500" and "1600" bytes
+    Then following "click here" should download between "1600" and "1750" bytes
     # If the download step is the last in the scenario then we can sometimes run
     # into the situation where the download page causes a http redirect but behat
     # has already conducted its reset (generating an error). By putting a logout
