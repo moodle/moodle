@@ -46,6 +46,9 @@ class manager {
     /** @var bool $sessionactive Is the session active? */
     protected static $sessionactive = null;
 
+    /** @var string $logintokenkey Key used to get and store request protection for login form. */
+    protected static $logintokenkey = 'core_auth_login';
+
     /**
      * Start user session.
      *
@@ -923,4 +926,102 @@ class manager {
         )));
     }
 
+    /**
+     * Generate a new login token and store it in the session.
+     *
+     * @return array The current login state.
+     */
+    private static function create_login_token() {
+        global $SESSION;
+
+        $state = [
+            'token' => random_string(32),
+            'created' => time() // Server time - not user time.
+        ];
+
+        if (!isset($SESSION->logintoken)) {
+            $SESSION->logintoken = [];
+        }
+
+        // Overwrite any previous values.
+        $SESSION->logintoken[self::$logintokenkey] = $state;
+
+        return $state;
+    }
+
+    /**
+     * Get the current login token or generate a new one.
+     *
+     * All login forms generated from Moodle must include a login token
+     * named "logintoken" with the value being the result of this function.
+     * Logins will be rejected if they do not include this token as well as
+     * the username and password fields.
+     *
+     * @return string The current login token.
+     */
+    public static function get_login_token() {
+        global $CFG, $SESSION;
+
+        $state = false;
+
+        if (!isset($SESSION->logintoken)) {
+            $SESSION->logintoken = [];
+        }
+
+        if (array_key_exists(self::$logintokenkey, $SESSION->logintoken)) {
+            $state = $SESSION->logintoken[self::$logintokenkey];
+        }
+        if (empty($state)) {
+            $state = self::create_login_token();
+        }
+
+        // Check token lifespan.
+        if ($state['created'] < (time() - $CFG->sessiontimeout)) {
+            $state = self::create_login_token();
+        }
+
+        // Return the current session login token.
+        if (array_key_exists('token', $state)) {
+            return $state['token'];
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Check the submitted value against the stored login token.
+     *
+     * @param mixed $token The value submitted in the login form that we are validating.
+     *                     If false is passed for the token, this function will always return true.
+     * @return boolean If the submitted token is valid.
+     */
+    public static function validate_login_token($token = false) {
+        global $CFG;
+
+        if (!empty($CFG->alternateloginurl) || !empty($CFG->disablelogintoken)) {
+            // An external login page cannot generate the login token we need to protect CSRF on
+            // login requests.
+            // Other custom login workflows may skip this check by setting disablelogintoken in config.
+            return true;
+        }
+        if ($token === false) {
+            // authenticate_user_login is a core function was extended to validate tokens.
+            // For existing uses other than the login form it does not
+            // validate that a token was generated.
+            // Some uses that do not validate the token are login/token.php,
+            // or an auth plugin like auth/ldap/auth.php.
+            return true;
+        }
+
+        $currenttoken = self::get_login_token();
+
+        // We need to clean the login token so the old one is not valid again.
+        self::create_login_token();
+
+        if ($currenttoken !== $token) {
+            // Fail the login.
+            return false;
+        }
+        return true;
+    }
 }
