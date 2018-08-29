@@ -90,9 +90,29 @@ class provider implements
             [
                 'userid' => 'privacy:metadata:message_contacts:userid',
                 'contactid' => 'privacy:metadata:message_contacts:contactid',
-                'blocked' => 'privacy:metadata:message_contacts:blocked',
+                'timecreated' => 'privacy:metadata:message_contacts:timecreated',
             ],
             'privacy:metadata:message_contacts'
+        );
+
+        $items->add_database_table(
+            'message_contact_requests',
+            [
+                'userid' => 'privacy:metadata:message_contact_requests:userid',
+                'requesteduserid' => 'privacy:metadata:message_contact_requests:requesteduserid',
+                'timecreated' => 'privacy:metadata:message_contact_requests:timecreated',
+            ],
+            'privacy:metadata:message_contact_requests'
+        );
+
+        $items->add_database_table(
+            'message_users_blocked',
+            [
+                'userid' => 'privacy:metadata:message_users_blocked:userid',
+                'blockeduserid' => 'privacy:metadata:message_users_blocked:blockeduserid',
+                'timecreated' => 'privacy:metadata:message_users_blocked:timecreated',
+            ],
+            'privacy:metadata:message_users_blocked'
         );
 
         $items->add_database_table(
@@ -186,6 +206,12 @@ class provider implements
         // Export the contacts.
         self::export_user_data_contacts($userid);
 
+        // Export the contact requests.
+        self::export_user_data_contact_requests($userid);
+
+        // Export the blocked users.
+        self::export_user_data_blocked_users($userid);
+
         // Export the notifications.
         self::export_user_data_notifications($userid);
 
@@ -209,6 +235,8 @@ class provider implements
         $DB->delete_records('message_user_actions');
         $DB->delete_records('message_conversation_members');
         $DB->delete_records('message_contacts');
+        $DB->delete_records('message_contact_requests');
+        $DB->delete_records('message_users_blocked');
         $DB->delete_records('notifications');
     }
 
@@ -239,6 +267,8 @@ class provider implements
         $DB->delete_records('message_user_actions', ['userid' => $userid]);
         $DB->delete_records('message_conversation_members', ['userid' => $userid]);
         $DB->delete_records_select('message_contacts', 'userid = ? OR contactid = ?', [$userid, $userid]);
+        $DB->delete_records_select('message_contact_requests', 'userid = ? OR requesteduserid = ?', [$userid, $userid]);
+        $DB->delete_records_select('message_users_blocked', 'userid = ? OR blockeduserid = ?', [$userid, $userid]);
         $DB->delete_records_select('notifications', 'useridfrom = ? OR useridto = ?', [$userid, $userid]);
     }
 
@@ -253,15 +283,67 @@ class provider implements
         $context = \context_system::instance();
 
         // Get the user's contacts.
-        if ($contacts = $DB->get_records('message_contacts', ['userid' => $userid], 'id ASC')) {
+        if ($contacts = $DB->get_records_select('message_contacts', 'userid = ? OR contactid = ?', [$userid, $userid], 'id ASC')) {
             $contactdata = [];
             foreach ($contacts as $contact) {
                 $contactdata[] = (object) [
-                    'contact' => transform::user($contact->contactid),
-                    'blocked' => transform::yesno($contact->blocked)
+                    'contact' => transform::user($contact->contactid)
                 ];
             }
             writer::with_context($context)->export_data([get_string('contacts', 'core_message')], (object) $contactdata);
+        }
+    }
+
+    /**
+     * Export the messaging contact requests data.
+     *
+     * @param int $userid
+     */
+    protected static function export_user_data_contact_requests(int $userid) {
+        global $DB;
+
+        $context = \context_system::instance();
+
+        if ($contactrequests = $DB->get_records_select('message_contact_requests', 'userid = ? OR requesteduserid = ?',
+                [$userid, $userid], 'id ASC')) {
+            $contactrequestsdata = [];
+            foreach ($contactrequests as $contactrequest) {
+                if ($userid == $contactrequest->requesteduserid) {
+                    $maderequest = false;
+                    $contactid = $contactrequest->userid;
+                } else {
+                    $maderequest = true;
+                    $contactid = $contactrequest->requesteduserid;
+                }
+
+                $contactrequestsdata[] = (object) [
+                    'contactrequest' => transform::user($contactid),
+                    'maderequest' => transform::yesno($maderequest)
+                ];
+            }
+            writer::with_context($context)->export_data([get_string('contactrequests', 'core_message')],
+                (object) $contactrequestsdata);
+        }
+    }
+
+    /**
+     * Export the messaging blocked users data.
+     *
+     * @param int $userid
+     */
+    protected static function export_user_data_blocked_users(int $userid) {
+        global $DB;
+
+        $context = \context_system::instance();
+
+        if ($blockedusers = $DB->get_records('message_users_blocked', ['userid' => $userid], 'id ASC')) {
+            $blockedusersdata = [];
+            foreach ($blockedusers as $blockeduser) {
+                $blockedusersdata[] = (object) [
+                    'blockeduser' => transform::user($blockeduser->blockeduserid)
+                ];
+            }
+            writer::with_context($context)->export_data([get_string('blockedusers', 'core_message')], (object) $blockedusersdata);
         }
     }
 

@@ -45,7 +45,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $collection = new collection('core_message');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();
-        $this->assertCount(6, $itemcollection);
+        $this->assertCount(8, $itemcollection);
 
         $messagestable = array_shift($itemcollection);
         $this->assertEquals('messages', $messagestable->get_name());
@@ -58,6 +58,12 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $messagecontacts = array_shift($itemcollection);
         $this->assertEquals('message_contacts', $messagecontacts->get_name());
+
+        $messagecontactrequests = array_shift($itemcollection);
+        $this->assertEquals('message_contact_requests', $messagecontactrequests->get_name());
+
+        $messageusersblocked = array_shift($itemcollection);
+        $this->assertEquals('message_users_blocked', $messageusersblocked->get_name());
 
         $notificationstable = array_shift($itemcollection);
         $this->assertEquals('notifications', $notificationstable->get_name());
@@ -92,8 +98,20 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $privacyfields = $messagecontacts->get_privacy_fields();
         $this->assertArrayHasKey('userid', $privacyfields);
         $this->assertArrayHasKey('contactid', $privacyfields);
-        $this->assertArrayHasKey('blocked', $privacyfields);
+        $this->assertArrayHasKey('timecreated', $privacyfields);
         $this->assertEquals('privacy:metadata:message_contacts', $messagecontacts->get_summary());
+
+        $privacyfields = $messagecontactrequests->get_privacy_fields();
+        $this->assertArrayHasKey('userid', $privacyfields);
+        $this->assertArrayHasKey('requesteduserid', $privacyfields);
+        $this->assertArrayHasKey('timecreated', $privacyfields);
+        $this->assertEquals('privacy:metadata:message_contact_requests', $messagecontactrequests->get_summary());
+
+        $privacyfields = $messageusersblocked->get_privacy_fields();
+        $this->assertArrayHasKey('userid', $privacyfields);
+        $this->assertArrayHasKey('blockeduserid', $privacyfields);
+        $this->assertArrayHasKey('timecreated', $privacyfields);
+        $this->assertEquals('privacy:metadata:message_users_blocked', $messageusersblocked->get_summary());
 
         $privacyfields = $notificationstable->get_privacy_fields();
         $this->assertArrayHasKey('useridfrom', $privacyfields);
@@ -198,12 +216,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user3 = $this->getDataGenerator()->create_user();
         $user4 = $this->getDataGenerator()->create_user();
 
-        // This user will not be added as a contact.
-        $this->getDataGenerator()->create_user();
-
-        message_add_contact($user2->id, 0, $user1->id);
-        message_add_contact($user3->id, 0, $user1->id);
-        message_add_contact($user4->id, 1, $user1->id);
+        \core_message\api::add_contact($user1->id, $user2->id);
+        \core_message\api::add_contact($user1->id, $user3->id);
+        \core_message\api::add_contact($user1->id, $user4->id);
 
         $this->export_context_data_for_user($user1->id, \context_system::instance(), 'core_message');
 
@@ -216,15 +231,83 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $contact1 = array_shift($contacts);
         $this->assertEquals($user2->id, $contact1->contact);
-        $this->assertEquals(get_string('no'), $contact1->blocked);
 
         $contact2 = array_shift($contacts);
         $this->assertEquals($user3->id, $contact2->contact);
-        $this->assertEquals(get_string('no'), $contact2->blocked);
 
         $contact3 = array_shift($contacts);
         $this->assertEquals($user4->id, $contact3->contact);
-        $this->assertEquals(get_string('yes'), $contact3->blocked);
+    }
+
+    /**
+     * Test for provider::export_user_data().
+     */
+    public function test_export_for_context_with_contact_requests() {
+        $this->resetAfterTest();
+
+        // Create users to test with.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+
+        \core_message\api::create_contact_request($user1->id, $user2->id);
+        \core_message\api::create_contact_request($user3->id, $user1->id);
+        \core_message\api::create_contact_request($user1->id, $user4->id);
+
+        $this->export_context_data_for_user($user1->id, \context_system::instance(), 'core_message');
+
+        $writer = writer::with_context(\context_system::instance());
+
+        $contactrequests = (array) $writer->get_data([get_string('contactrequests', 'core_message')]);
+
+        $this->assertCount(3, $contactrequests);
+
+        $contactrequest1 = array_shift($contactrequests);
+        $this->assertEquals($user2->id, $contactrequest1->contactrequest);
+        $this->assertEquals(get_string('yes'), $contactrequest1->maderequest);
+
+        $contactrequest2 = array_shift($contactrequests);
+        $this->assertEquals($user3->id, $contactrequest2->contactrequest);
+        $this->assertEquals(get_string('no'), $contactrequest2->maderequest);
+
+        $contactrequest3 = array_shift($contactrequests);
+        $this->assertEquals($user4->id, $contactrequest3->contactrequest);
+        $this->assertEquals(get_string('yes'), $contactrequest3->maderequest);
+    }
+
+    /**
+     * Test for provider::export_user_data().
+     */
+    public function test_export_for_context_with_blocked_users() {
+        $this->resetAfterTest();
+
+        // Create users to test with.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+
+        \core_message\api::block_user($user1->id, $user2->id);
+        \core_message\api::block_user($user1->id, $user3->id);
+        \core_message\api::block_user($user1->id, $user4->id);
+
+        $this->export_context_data_for_user($user1->id, \context_system::instance(), 'core_message');
+
+        $writer = writer::with_context(\context_system::instance());
+
+        $blockedusers = (array) $writer->get_data([get_string('blockedusers', 'core_message')]);
+
+        $this->assertCount(3, $blockedusers);
+
+        $blockeduser1 = array_shift($blockedusers);
+        $this->assertEquals($user2->id, $blockeduser1->blockeduser);
+
+        $blockeduser2 = array_shift($blockedusers);
+        $this->assertEquals($user3->id, $blockeduser2->blockeduser);
+
+        $blockeduser3 = array_shift($blockedusers);
+        $this->assertEquals($user4->id, $blockeduser3->blockeduser);
     }
 
     /**
@@ -380,6 +463,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // Create users to test with.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
 
         $now = time();
         $timeread = $now - DAYSECS;
@@ -387,8 +472,13 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $systemcontext = \context_system::instance();
 
         // Create contacts.
-        message_add_contact($user1->id, 0, $user2->id);
-        message_add_contact($user2->id, 0, $user1->id);
+        \core_message\api::add_contact($user1->id, $user2->id);
+
+        // Create contact requests.
+        \core_message\api::create_contact_request($user1->id, $user3->id);
+
+        // Block a user.
+        \core_message\api::block_user($user1->id, $user3->id);
 
         // Create messages.
         $m1 = $this->create_message($user1->id, $user2->id, $now + (9 * DAYSECS), true);
@@ -401,8 +491,14 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // Delete one of the messages.
         \core_message\api::delete_message($user1->id, $m2);
 
-        // There should be 2 contacts.
-        $this->assertEquals(2, $DB->count_records('message_contacts'));
+        // There should be 1 contact.
+        $this->assertEquals(1, $DB->count_records('message_contacts'));
+
+        // There should be 1 contact request.
+        $this->assertEquals(1, $DB->count_records('message_contact_requests'));
+
+        // There should be 1 blocked user.
+        $this->assertEquals(1, $DB->count_records('message_users_blocked'));
 
         // There should be two messages.
         $this->assertEquals(2, $DB->count_records('messages'));
@@ -420,6 +516,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         // Confirm all has been deleted.
         $this->assertEquals(0, $DB->count_records('message_contacts'));
+        $this->assertEquals(0, $DB->count_records('message_contact_requests'));
+        $this->assertEquals(0, $DB->count_records('message_users_blocked'));
         $this->assertEquals(0, $DB->count_records('messages'));
         $this->assertEquals(0, $DB->count_records('message_user_actions'));
         $this->assertEquals(0, $DB->count_records('message_conversation_members'));
@@ -438,14 +536,24 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+        $user5 = $this->getDataGenerator()->create_user();
+        $user6 = $this->getDataGenerator()->create_user();
 
         $now = time();
         $timeread = $now - DAYSECS;
 
         // Create contacts.
-        message_add_contact($user1->id, 0, $user2->id);
-        message_add_contact($user2->id, 0, $user1->id);
-        message_add_contact($user2->id, 0, $user3->id);
+        \core_message\api::add_contact($user1->id, $user2->id);
+        \core_message\api::add_contact($user2->id, $user3->id);
+
+        // Create contact requests.
+        \core_message\api::create_contact_request($user1->id, $user3->id);
+        \core_message\api::create_contact_request($user2->id, $user4->id);
+
+        // Block users.
+        \core_message\api::block_user($user1->id, $user5->id);
+        \core_message\api::block_user($user2->id, $user6->id);
 
         // Create messages.
         $m1 = $this->create_message($user1->id, $user2->id, $now + (9 * DAYSECS), $timeread);
@@ -459,8 +567,14 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // Delete one of the messages.
         \core_message\api::delete_message($user1->id, $m2);
 
-        // There should be 3 contacts.
-        $this->assertEquals(3, $DB->count_records('message_contacts'));
+        // There should be 2 contacts.
+        $this->assertEquals(2, $DB->count_records('message_contacts'));
+
+        // There should be 1 contact request.
+        $this->assertEquals(2, $DB->count_records('message_contact_requests'));
+
+        // There should be 1 blocked user.
+        $this->assertEquals(2, $DB->count_records('message_users_blocked'));
 
         // There should be two messages.
         $this->assertEquals(2, $DB->count_records('messages'));
@@ -481,6 +595,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         // Confirm the user 2 data still exists.
         $contacts = $DB->get_records('message_contacts');
+        $contactrequests = $DB->get_records('message_contact_requests');
+        $blockedusers = $DB->get_records('message_users_blocked');
         $messages = $DB->get_records('messages');
         $muas = $DB->get_records('message_user_actions');
         $mcms = $DB->get_records('message_conversation_members');
@@ -488,8 +604,18 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $this->assertCount(1, $contacts);
         $contact = reset($contacts);
-        $this->assertEquals($user3->id, $contact->userid);
-        $this->assertEquals($user2->id, $contact->contactid);
+        $this->assertEquals($user2->id, $contact->userid);
+        $this->assertEquals($user3->id, $contact->contactid);
+
+        $this->assertCount(1, $contactrequests);
+        $contactrequest = reset($contactrequests);
+        $this->assertEquals($user2->id, $contactrequest->userid);
+        $this->assertEquals($user4->id, $contactrequest->requesteduserid);
+
+        $this->assertCount(1, $blockedusers);
+        $blockeduser = reset($blockedusers);
+        $this->assertEquals($user2->id, $blockeduser->userid);
+        $this->assertEquals($user6->id, $blockeduser->blockeduserid);
 
         $this->assertCount(1, $messages);
         $message = reset($messages);
