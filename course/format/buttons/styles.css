@@ -449,7 +449,7 @@
     right: 0;
     box-shadow: 2px 2px 5px #000;
     max-height: 80vh;
-    overflow-y: scroll;
+    overflow-y: auto;
     z-index: 10; }
 
 .format-buttons .label-content {
@@ -465,6 +465,8 @@
     height: auto; }
 
 .format-buttons .label-content-controls {
+  box-sizing: border-box;
+  min-height: 2rem;
   position: relative;
   padding: 15px 0;
   margin: 0;
