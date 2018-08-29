@@ -57,6 +57,7 @@ if (empty($CFG->authloginviaemail)) {
           <script>document.getElementById('anchor').value = location.hash</script>
           <input type="submit" id="loginbtn" value="<?php print_string("login") ?>" />
           <div class="forgetpass"><a href="forgot_password.php"><?php print_string("forgotten") ?></a></div>
+          <input type="hidden" name="logintoken" value="<?php echo s(\core\session\manager::get_login_token()); ?>" />
         </form>
         <div class="desc">
             <?php
