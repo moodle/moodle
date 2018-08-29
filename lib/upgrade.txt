@@ -103,6 +103,22 @@ information provided here is intended especially for developers.
   - extract_draft_file_urls_from_text()
 * Class coursecat is now alias to autoloaded class core_course_category, course_in_list is an alias to
   core_course_list_element, class coursecat_sortable_records is deprecated without replacement.
+* \core_user_external::create_users() and \core_user_external::update_users() can now accept more user profile fields so user
+  creation/update via web service can now be very similar to the edit profile page's functionality. The new fields that have been
+  added are:
+  - maildisplay
+  - interests
+  - url
+  - icq
+  - skype
+  - aim
+  - yahoo
+  - msn
+  - institution
+  - department
+  - phone1
+  - phone2
+  - address
 
 === 3.5 ===
 
