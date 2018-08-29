@@ -70,6 +70,8 @@ class login implements renderable, templatable {
     public $signupurl;
     /** @var string The user name to pre-fill the form with. */
     public $username;
+    /** @var string The csrf token to limit login to requests that come from the login form. */
+    public $logintoken;
 
     /**
      * Constructor.
@@ -109,6 +111,7 @@ class login implements renderable, templatable {
 
         // Identity providers.
         $this->identityproviders = \auth_plugin_base::get_identity_providers($authsequence);
+        $this->logintoken = \core\session\manager::get_login_token();
     }
 
     /**
@@ -141,6 +144,7 @@ class login implements renderable, templatable {
         $data->rememberusername = $this->rememberusername;
         $data->signupurl = $this->signupurl->out(false);
         $data->username = $this->username;
+        $data->logintoken = $this->logintoken;
 
         return $data;
     }
