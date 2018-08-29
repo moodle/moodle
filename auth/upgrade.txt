@@ -1,6 +1,10 @@
 This files describes API changes in /auth/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.3.9 ===
+
+* Login forms generated from Moodle must include a login token to protect automated logins. See \core\session\manager::get_login_token().
+
 === 3.3.5 ===
 
 * Self registration plugins should use core_privacy\local\sitepolicy\manager instead of directly checking

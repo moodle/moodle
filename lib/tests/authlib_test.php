@@ -200,6 +200,59 @@ class core_authlib_testcase extends advanced_testcase {
         $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_FAILED);
         $this->assertEventContextNotUsed($event);
 
+        // Capture failed login token.
+        unset($CFG->alternateloginurl);
+        unset($CFG->disablelogintoken);
+        $sink = $this->redirectEvents();
+        $result = authenticate_user_login('username1', 'password1', false, $reason, 'invalidtoken');
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
+        $this->assertFalse($result);
+        $this->assertEquals(AUTH_LOGIN_FAILED, $reason);
+        // Test Event.
+        $this->assertInstanceOf('\core\event\user_login_failed', $event);
+        $expectedlogdata = array(SITEID, 'login', 'error', 'index.php', 'username1');
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
+        $eventdata = $event->get_data();
+        $this->assertSame($eventdata['other']['username'], 'username1');
+        $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_FAILED);
+        $this->assertEventContextNotUsed($event);
+
+        // Login should work with invalid token if CFG login token settings override it.
+        $CFG->alternateloginurl = 'http://localhost/';
+        $sink = $this->redirectEvents();
+        $result = authenticate_user_login('username1', 'password1', false, $reason, 'invalidtoken');
+        $events = $sink->get_events();
+        $sink->close();
+        $this->assertEmpty($events);
+        $this->assertInstanceOf('stdClass', $result);
+        $this->assertEquals(AUTH_LOGIN_OK, $reason);
+
+        unset($CFG->alternateloginurl);
+        $CFG->disablelogintoken = true;
+
+        $sink = $this->redirectEvents();
+        $result = authenticate_user_login('username1', 'password1', false, $reason, 'invalidtoken');
+        $events = $sink->get_events();
+        $sink->close();
+        $this->assertEmpty($events);
+        $this->assertInstanceOf('stdClass', $result);
+        $this->assertEquals(AUTH_LOGIN_OK, $reason);
+
+        unset($CFG->disablelogintoken);
+        // Normal login with valid token.
+        $reason = null;
+        $token = \core\session\manager::get_login_token();
+        $sink = $this->redirectEvents();
+        $result = authenticate_user_login('username1', 'password1', false, $reason, $token);
+        $events = $sink->get_events();
+        $sink->close();
+        $this->assertEmpty($events);
+        $this->assertInstanceOf('stdClass', $result);
+        $this->assertEquals(AUTH_LOGIN_OK, $reason);
+
         $reason = null;
         // Capture failed login event.
         $sink = $this->redirectEvents();

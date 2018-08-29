@@ -553,6 +553,11 @@ $CFG->admin = 'admin';
 //
 //      $CFG->upgradekey = 'put_some_password-like_value_here';
 //
+// Disable login token validation for login pages. Login token validation is enabled
+// by default unless $CFG->alternateloginurl is set.
+//
+//      $CFG->disablelogintoken = true;
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================

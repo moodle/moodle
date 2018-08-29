@@ -35,7 +35,8 @@
         "rememberusername": true,
         "signupurl": "http://localhost/stable_master/login/signup.php",
         "cookieshelpiconformatted": "",
-        "username": ""
+        "username": "",
+        "logintoken": "randomstring"
     }
 }}
 {{#hasinstructions}}
@@ -95,6 +96,7 @@
                 <div class="clearer"><!-- --></div>
                 <input id="anchor" type="hidden" name="anchor" value="" />
                 <script>document.getElementById('anchor').value = location.hash;</script>
+                <input type="hidden" name="logintoken" value="{{logintoken}}">
                 <input type="submit" id="loginbtn" value={{#quote}}{{#str}} login {{/str}}{{/quote}} />
                 <div class="forgetpass">
                     <a href="{{forgotpasswordurl}}">{{#str}} forgotten {{/str}}</a>
@@ -113,6 +115,7 @@
                 <div class="desc">{{#str}} someallowguest {{/str}}</div>
                 <form action="{{loginurl}}" method="post" id="guestlogin">
                     <div class="guestform">
+                        <input type="hidden" name="logintoken" value="{{logintoken}}">
                         <input type="hidden" name="username" value="guest" />
                         <input type="hidden" name="password" value="guest" />
                         <input type="submit" value={{#quote}}{{#str}} loginguest {{/str}}{{/quote}} />

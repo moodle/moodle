@@ -47,7 +47,8 @@ if (is_restored_user($username)) {
 
 $systemcontext = context_system::instance();
 
-$user = authenticate_user_login($username, $password);
+$reason = null;
+$user = authenticate_user_login($username, $password, false, $reason, false);
 if (!empty($user)) {
 
     // Cannot authenticate unless maintenance access is granted.
