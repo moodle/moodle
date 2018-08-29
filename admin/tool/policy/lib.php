@@ -85,9 +85,13 @@ function tool_policy_before_standard_html_head() {
             && empty($USER->policyagreed)
             && (isguestuser() || !isloggedin())) {
         $output = $PAGE->get_renderer('tool_policy');
-        $page = new \tool_policy\output\guestconsent();
-
-        $message = $output->render($page);
+        try {
+            $page = new \tool_policy\output\guestconsent();
+            $message = $output->render($page);
+        } catch (dml_read_exception $e) {
+            // During upgrades, the new plugin code with new SQL could be in place but the DB not upgraded yet.
+            $message = null;
+        }
     }
 
     return $message;

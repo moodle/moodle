@@ -69,6 +69,12 @@ class policy_version extends persistent {
     /** @var int Policy version has been archived. */
     const STATUS_ARCHIVED = 2;
 
+    /** @var int Policy to be accepted together with others on the consent page. */
+    const AGREEMENTSTYLE_CONSENTPAGE = 0;
+
+    /** @var int Policy to be accepted on its own page before reaching the consent page. */
+    const AGREEMENTSTYLE_OWNPAGE = 1;
+
     /**
      * Return the definition of the properties of this model.
      *
@@ -105,6 +111,14 @@ class policy_version extends persistent {
             ],
             'policyid' => [
                 'type' => PARAM_INT,
+            ],
+            'agreementstyle' => [
+                'type' => PARAM_INT,
+                'choices' => [
+                    self::AGREEMENTSTYLE_CONSENTPAGE,
+                    self::AGREEMENTSTYLE_OWNPAGE,
+                ],
+                'default' => self::AGREEMENTSTYLE_CONSENTPAGE,
             ],
             'revision' => [
                 'type' => PARAM_TEXT,

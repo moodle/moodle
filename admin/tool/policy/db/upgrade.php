@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,15 +15,39 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Plugin upgrade steps are defined here.
  *
  * @package     tool_policy
+ * @category    upgrade
  * @copyright   2018 David Mudrák <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018082900;         // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018050800;         // Requires this Moodle version.
-$plugin->component = 'tool_policy';      // Full name of the plugin (used for diagnostics).
+/**
+ * Execute the plugin upgrade steps from the given old version.
+ *
+ * @param int $oldversion
+ * @return bool
+ */
+function xmldb_tool_policy_upgrade($oldversion) {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2018082900) {
+        // Add field agreementstyle to the table tool_policy_versions.
+        $table = new xmldb_table('tool_policy_versions');
+        $field = new xmldb_field('agreementstyle', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0', 'policyid');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2018082900, 'tool', 'policy');
+    }
+
+    return true;
+}
+
