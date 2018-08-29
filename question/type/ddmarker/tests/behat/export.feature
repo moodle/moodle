@@ -29,7 +29,7 @@ Feature: Test exporting drag and drop markers questions
     When I navigate to "Export" node in "Course administration > Question bank"
     And I set the field "id_format_xml" to "1"
     And I press "Export questions to file"
-    And following "click here" should download between "233600" and "233800" bytes
+    And following "click here" should download between "233700" and "233950" bytes
     # If the download step is the last in the scenario then we can sometimes run
     # into the situation where the download page causes a http redirect but behat
     # has already conducted its reset (generating an error). By putting a logout
