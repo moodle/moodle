@@ -496,11 +496,19 @@ class quiz_statistics_table extends flexible_table {
      * @return bool is this question possibly not pulling it's weight?
      */
     protected function is_dubious_question($questionstat) {
-        if (!is_numeric($questionstat->discriminativeefficiency)) {
+        if ($this->is_random_question_summary($questionstat)) {
+            // We only care about the minimum value here.
+            // If the minimum value is less than the threshold, then we know that there is at least one value below the threshold.
+            list($discriminativeefficiency) = $questionstat->get_min_max_of('discriminativeefficiency');
+        } else {
+            $discriminativeefficiency = $questionstat->discriminativeefficiency;
+        }
+
+        if (!is_numeric($discriminativeefficiency)) {
             return false;
         }
 
-        return $questionstat->discriminativeefficiency < 15;
+        return $discriminativeefficiency < 15;
     }
 
     /**
