@@ -472,11 +472,11 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     # Confirm when clicking on the policy links, the policy content is displayed.
     When I click on "This site policy" "link"
     Then I should see "full text2"
-    And I click on "×" "button"
+    And I click on ".close" "css_element"
     And I should not see "full text2"
     When I click on "This guests policy" "link"
     Then I should see "full text4"
-    And I click on "×" "button"
+    And I click on ".close" "css_element"
     And I should not see "full text4"
     # Confirm when agreeing to policies the pop-up is no longer displayed.
     When I follow "Continue"
