@@ -296,9 +296,10 @@ class core_grading_privacy_testcase extends provider_testcase {
 
         // Update this instance with data.
         $instance->update($data);
+        $instanceid = $instance->get_data('id');
 
         provider::export_item_data($modulecontext, $itemid, ['Test']);
-        $data = (array) writer::with_context($modulecontext)->get_data(['Test', 'Marking guide']);
+        $data = (array) writer::with_context($modulecontext)->get_data(['Test', 'Marking guide', $instanceid]);
         $this->assertCount(2, $data);
         $this->assertEquals('This user made several mistakes.', $data['Spelling mistakes']->remark);
         $this->assertEquals(5, $data['Spelling mistakes']->score);
