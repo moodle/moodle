@@ -34,7 +34,7 @@ $string['admindirname'] = 'Directori d\'administració';
 $string['availablelangs'] = 'Llista d\'idiomes disponibles';
 $string['chooselanguagehead'] = 'Trieu un idioma';
 $string['chooselanguagesub'] = 'Trieu un idioma per a la instal·lació. S\'utilitzarà també com a idioma per defecte del lloc, tot i que després podeu canviar-lo.';
-$string['clialreadyconfigured'] = 'El fitxer config.php ja existeix, feu servir admin/cli/install_database.php si voleu instal·lar el Moodle en aquest lloc web.';
+$string['clialreadyconfigured'] = 'El fitxer config.php ja existeix; feu servir admin/cli/install_database.php si voleu instal·lar Moodle en aquest lloc web.';
 $string['clialreadyinstalled'] = 'El fitxer de configuració config.php ja existeix. Feu servir admin/cli/upgrade.php si voleu actualitzar Moodle per a aquest lloc web.';
 $string['cliinstallheader'] = 'Programa d\'instal·lació de línia d\'ordres de Moodle {$a}';
 $string['databasehost'] = 'Servidor de base de dades:';
@@ -68,8 +68,8 @@ $string['pathshead'] = 'Confirmeu els camins';
 $string['pathsrodataroot'] = 'No es pot escriure en el directori dataroot.';
 $string['pathsroparentdataroot'] = 'No es pot escriure en el directori pare ({$a->parent}). L\'instal·lador no pot crear el directori ({$a->dataroot}).';
 $string['pathssubadmindir'] = 'Alguns serveis d\'allotjament web (pocs) utilitzen /admin com a URL especial perquè accediu a un tauler de control o quelcom semblant. Malauradament, això entra en conflicte amb la ubicació estàndard de les pàgines d\'administració de Moodle. Podeu arreglar aquest problema canviant el nom del directori d\'administració de Moodle en la vostra instal·lació i posant el nom nou aquí. Per exemple: <em>moodleadmin</em>. Això arreglarà els enllaços d\'administració de Moodle.';
-$string['pathssubdataroot'] = '<p>Directori on el Moodle emmagatzemarà els materials pujats pels usuaris.</p>
-<p>Aquest directori hauria de tenir permisos de lectura i escriptura per a l\'usuari del servidor web (normalment \'www-data\', \'nobody\', or \'apache\').</p>
+$string['pathssubdataroot'] = '<p>Directori on Moodle emmagatzemarà els materials pujats pels usuaris.</p>
+<p>Aquest directori hauria de tenir permisos de lectura i escriptura per a l\'usuari del servidor web (normalment «www-data», «nobody», or «apache»).</p>
 <p>No ha de ser accessible directament via web.</p>
 <p>L\'instal·lador provarà de crear-lo si no existeix.</p>';
 $string['pathssubdirroot'] = 'Camí complet del directori d\'instal·lació de Moodle.';
