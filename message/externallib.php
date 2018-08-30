@@ -191,6 +191,7 @@ class core_message_external extends external_api {
     /**
      * Create contacts parameters description.
      *
+     * @deprecated since Moodle 3.6
      * @return external_function_parameters
      * @since Moodle 2.5
      */
@@ -210,6 +211,7 @@ class core_message_external extends external_api {
     /**
      * Create contacts.
      *
+     * @deprecated since Moodle 3.6
      * @param array $userids array of user IDs.
      * @param int $userid The id of the user we are creating the contacts for
      * @return external_description
@@ -256,11 +258,21 @@ class core_message_external extends external_api {
     /**
      * Create contacts return description.
      *
+     * @deprecated since Moodle 3.6
      * @return external_description
      * @since Moodle 2.5
      */
     public static function create_contacts_returns() {
         return new external_warnings();
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function create_contacts_is_deprecated() {
+        return true;
     }
 
     /**
@@ -334,6 +346,7 @@ class core_message_external extends external_api {
     /**
      * Block contacts parameters description.
      *
+     * @deprecated since Moodle 3.6
      * @return external_function_parameters
      * @since Moodle 2.5
      */
@@ -353,6 +366,7 @@ class core_message_external extends external_api {
     /**
      * Block contacts.
      *
+     * @deprecated since Moodle 3.6
      * @param array $userids array of user IDs.
      * @param int $userid The id of the user we are blocking the contacts for
      * @return external_description
@@ -399,6 +413,7 @@ class core_message_external extends external_api {
     /**
      * Block contacts return description.
      *
+     * @deprecated since Moodle 3.6
      * @return external_description
      * @since Moodle 2.5
      */
@@ -407,8 +422,18 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function block_contacts_is_deprecated() {
+        return true;
+    }
+
+    /**
      * Unblock contacts parameters description.
      *
+     * @deprecated since Moodle 3.6
      * @return external_function_parameters
      * @since Moodle 2.5
      */
@@ -428,6 +453,7 @@ class core_message_external extends external_api {
     /**
      * Unblock contacts.
      *
+     * @deprecated since Moodle 3.6
      * @param array $userids array of user IDs.
      * @param int $userid The id of the user we are unblocking the contacts for
      * @return null
@@ -467,11 +493,21 @@ class core_message_external extends external_api {
     /**
      * Unblock contacts return description.
      *
+     * @deprecated since Moodle 3.6
      * @return external_description
      * @since Moodle 2.5
      */
     public static function unblock_contacts_returns() {
         return null;
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function unblock_contacts_is_deprecated() {
+        return true;
     }
 
     /**

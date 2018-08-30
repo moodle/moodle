@@ -3455,3 +3455,159 @@ function get_roles_with_assignment_on_context(context $context) {
 
     return get_roles_used_in_context($context, false);
 }
+
+/**
+ * Add the selected user as a contact for the current user
+ *
+ * @deprecated since Moodle 3.6
+ * @param int $contactid the ID of the user to add as a contact
+ * @param int $blocked 1 if you wish to block the contact
+ * @param int $userid the user ID of the user we want to add the contact for, defaults to current user if not specified.
+ * @return bool/int false if the $contactid isnt a valid user id. True if no changes made.
+ *                  Otherwise returns the result of update_record() or insert_record()
+ */
+function message_add_contact($contactid, $blocked = 0, $userid = 0) {
+    debugging('message_add_contact() is deprecated. Please use \core_message\api::create_contact_request() instead. ' .
+        'If you wish to block or unblock a user please use \core_message\api::is_blocked() and ' .
+        '\core_message\api::block_user() or \core_message\api::unblock_user() respectively.', DEBUG_DEVELOPER);
+
+    global $USER, $DB;
+
+    if (!$DB->record_exists('user', array('id' => $contactid))) {
+        return false;
+    }
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    // Check if a record already exists as we may be changing blocking status.
+    if (\core_message\api::is_contact($userid, $contactid)) {
+        $isblocked = \core_message\api::is_blocked($userid, $contactid);
+        // Check if blocking status has been changed.
+        if ($isblocked != $blocked) {
+            if ($blocked == 1) {
+                if (!$isblocked) {
+                    \core_message\api::block_user($userid, $contactid);
+                }
+            } else {
+                \core_message\api::unblock_user($userid, $contactid);
+            }
+
+            return true;
+        } else {
+            // No change to blocking status.
+            return true;
+        }
+    } else {
+        if ($blocked == 1) {
+            if (!\core_message\api::is_blocked($userid, $contactid)) {
+                \core_message\api::block_user($userid, $contactid);
+            }
+        } else {
+            \core_message\api::unblock_user($userid, $contactid);
+            if (!\core_message\api::does_contact_request_exist($userid, $contactid)) {
+                \core_message\api::create_contact_request($userid, $contactid);
+            }
+        }
+
+        return true;
+    }
+}
+
+/**
+ * Remove a contact.
+ *
+ * @deprecated since Moodle 3.6
+ * @param int $contactid the user ID of the contact to remove
+ * @param int $userid the user ID of the user we want to remove the contacts for, defaults to current user if not specified.
+ * @return bool returns the result of delete_records()
+ */
+function message_remove_contact($contactid, $userid = 0) {
+    debugging('message_remove_contact() is deprecated. Please use \core_message\api::remove_contact() instead.',
+        DEBUG_DEVELOPER);
+
+    global $USER;
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    \core_message\api::remove_contact($userid, $contactid);
+
+    return true;
+}
+
+/**
+ * Unblock a contact.
+ *
+ * @deprecated since Moodle 3.6
+ * @param int $contactid the user ID of the contact to unblock
+ * @param int $userid the user ID of the user we want to unblock the contact for, defaults to current user
+ *  if not specified.
+ * @return bool returns the result of delete_records()
+ */
+function message_unblock_contact($contactid, $userid = 0) {
+    debugging('message_unblock_contact() is deprecated. Please use \core_message\api::unblock_user() instead.',
+        DEBUG_DEVELOPER);
+
+    global $DB, $USER;
+
+    if (!$DB->record_exists('user', array('id' => $contactid))) {
+        return false;
+    }
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    \core_message\api::unblock_user($userid, $contactid);
+
+    return true;
+}
+
+/**
+ * Block a user.
+ *
+ * @deprecated since Moodle 3.6
+ * @param int $contactid the user ID of the user to block
+ * @param int $userid the user ID of the user we want to unblock the contact for, defaults to current user
+ *  if not specified.
+ * @return bool
+ */
+function message_block_contact($contactid, $userid = 0) {
+    debugging('message_block_contact() is deprecated. Please use \core_message\api::is_blocked() and ' .
+        '\core_message\api::block_user() instead.', DEBUG_DEVELOPER);
+
+    global $DB, $USER;
+
+    if (!$DB->record_exists('user', array('id' => $contactid))) {
+        return false;
+    }
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    if (!\core_message\api::is_blocked($userid, $contactid)) {
+        \core_message\api::block_user($userid, $contactid);
+    }
+
+    return true;
+}
+
+/**
+ * Load a user's contact record
+ *
+ * @deprecated since Moodle 3.6
+ * @param int $contactid the user ID of the user whose contact record you want
+ * @return array message contacts
+ */
+function message_get_contact($contactid) {
+    debugging('message_get_contact() is deprecated. Please use \core_message\api::get_contact() instead.',
+        DEBUG_DEVELOPER);
+
+    global $USER;
+
+    return \core_message\api::get_contact($USER->id, $contactid);
+}
