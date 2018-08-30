@@ -72,7 +72,7 @@ class provider implements
                  WHERE rf.instanceid = :instanceid";
         $records = $DB->get_records_sql($sql, $params);
         if ($records) {
-            $subcontext = array_merge($subcontext, [get_string('rubric', 'gradingform_rubric')]);
+            $subcontext = array_merge($subcontext, [get_string('rubric', 'gradingform_rubric'), $instanceid]);
             \core_privacy\local\request\writer::with_context($context)->export_data($subcontext, (object) $records);
         }
     }
