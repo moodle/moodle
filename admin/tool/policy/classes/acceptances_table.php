@@ -415,7 +415,7 @@ class acceptances_table extends \table_sql {
      */
     public function wrap_html_start() {
         echo \html_writer::start_tag('form',
-            ['action' => new \moodle_url('/admin/tool/policy/accept.php'), 'data-action' => 'acceptmodal']);
+            ['action' => new \moodle_url('/admin/tool/policy/accept.php')]);
         echo \html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
         echo \html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'returnurl',
             'value' => $this->get_return_url()]);
@@ -433,8 +433,8 @@ class acceptances_table extends \table_sql {
     public function wrap_html_finish() {
         global $PAGE;
         if ($this->canagreeany) {
-            echo \html_writer::empty_tag('input', ['type' => 'submit',
-                'value' => get_string('consentbulk', 'tool_policy'), 'class' => 'btn btn-primary']);
+            echo \html_writer::empty_tag('input', ['type' => 'submit', 'data-action' => 'acceptmodal',
+                'value' => get_string('consentbulk', 'tool_policy'), 'class' => 'btn btn-primary m-t-1']);
             $PAGE->requires->js_call_amd('tool_policy/acceptmodal', 'getInstance', [\context_system::instance()->id]);
         }
         echo "</form>\n";
