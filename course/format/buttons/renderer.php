@@ -250,13 +250,16 @@ class format_buttons_renderer extends format_topics_renderer
             if(empty($this->get_section_labels($course, $section))){
               continue;
             }
+            // get section name and icon name in array. [1] - section name; [2] - icon name / fa class
+            $sectionnamearr = course_get_format($course)->get_section_name_and_icon($section);
 
             $html .= html_writer::start_tag('li',['class' => 'nav-item mb-auto', 'data-section' => $section]);
             // $html .= html_writer::start_tag('a',['href' => "#section$section",'class' => "nav-link $class", 'aria-controls' => "section-$section"]);
             $html .= html_writer::start_tag('div',['class' => 'd-flex flex-row section-header justify-content-around align-items-center']);
-            $html .= html_writer::tag('span', '', ['class' => 'section-icon d-inline-flex p-3 justify-content-center align-items-center', 'style' => "background: url({$this->courserenderer->image_url('label-default', 'format_buttons')}) no-repeat; background-size: cover;"]);
+            //$html .= html_writer::tag('span', '', ['class' => 'section-icon d-inline-flex p-3 justify-content-center align-items-center '.$sectionnamearr[2], 'style' => "background: url({$this->courserenderer->image_url('label-default', 'format_buttons')}) no-repeat; background-size: cover;"]);  // SG - previouse variant
+            $html .= html_writer::tag('span', '', ['class' => 'section-icon d-inline-flex p-3 justify-content-center align-items-center '.$sectionnamearr[2], 'style' => "font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit; line-height:2rem"]);
             $html .= html_writer::start_tag('div',['class' => 'd-flex flex-column section-header']);
-            $html .= html_writer::tag('span', get_section_name($course, $section), ['class' => ' section-title']);
+            $html .= html_writer::tag('span', $sectionnamearr[1], ['class' => ' section-title']);
             $html .= html_writer::tag('span', $thissection->summary, ['class' => 'section-description']);
             $html .= html_writer::end_tag('div');
             if ($thissection->summary) {

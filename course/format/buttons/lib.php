@@ -328,6 +328,44 @@ class format_buttons extends format_topics
         }
         return $url;
     }
+
+    /**
+     * Returns the display name of the given section that the course prefers and icon name / fa class.
+     *
+     * Use section name is specified by user. Otherwise use default ("Topic #")
+     *
+     * @param int|stdClass $section Section object from database or just field section.section
+     * @return array  Array: [0] - raw name or empty, [1] - section name, [2] - icon name / fa class
+     */
+    public function get_section_name_and_icon($section) {
+        $section = $this->get_section($section);
+        if ((string)$section->name !== '') {
+            $sectionnamearr = $this->parse_section_name($section->name);
+            $sectionnamearr[1] = format_string($sectionnamearr[1], true,
+                    array('context' => context_course::instance($this->courseid)));
+            return $sectionnamearr;
+        } else {
+            $sectionnamearr = array();
+            $sectionnamearr[1] = $this->get_default_section_name($section);
+            $sectionnamearr[2] = 'fa-cog'; // set the default icon name here (for default section name)
+            return $sectionnamearr;
+        }
+    }
+
+    /**
+     * Parse section name to divide it for section name and icon name
+     * 
+     * @param str Raw string name from DB
+     * @return array Array: [0] - raw name, [1] - section name, [2] - icon name / fa class
+     */
+    public function parse_section_name($sectionnameraw) {
+        
+        $reg = '/(.*?)\{\{(.*?)\}\}/im'; // SG - regexp 20180830 - 'sectionname {{icon}}'
+        preg_match($reg, $sectionnameraw, $sectionnamearr);
+
+        return $sectionnamearr; // 0 - raw name, 1 - section name, 2 - icon name
+    }
+
 }
 
 /**
