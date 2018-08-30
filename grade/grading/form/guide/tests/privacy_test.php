@@ -128,10 +128,11 @@ class gradingform_guide_privacy_testcase extends provider_testcase {
 
         // Update this instance with data.
         $instance->update($data);
+        $instanceid = $instance->get_data('id');
 
         // Let's try the method we are testing.
         provider::export_gradingform_instance_data($modulecontext, $instance->get_id(), ['Test']);
-        $data = (array) writer::with_context($modulecontext)->get_data(['Test', 'Marking guide']);
+        $data = (array) writer::with_context($modulecontext)->get_data(['Test', 'Marking guide', $instanceid]);
         $this->assertCount(2, $data);
         $this->assertEquals('Spelling mistakes', $data['Spelling mistakes']->shortname);
         $this->assertEquals('This user made several mistakes.', $data['Spelling mistakes']->remark);
