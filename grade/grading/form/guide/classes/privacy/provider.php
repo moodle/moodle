@@ -83,7 +83,7 @@ class provider implements
                  WHERE gf.instanceid = :instanceid";
         $records = $DB->get_records_sql($sql, $params);
         if ($records) {
-            $subcontext = array_merge($subcontext, [get_string('guide', 'gradingform_guide')]);
+            $subcontext = array_merge($subcontext, [get_string('guide', 'gradingform_guide'), $instanceid]);
             writer::with_context($context)->export_data($subcontext, (object) $records);
         }
     }
