@@ -136,6 +136,25 @@ function blog_remove_associations_for_course($courseid) {
 }
 
 /**
+ * Remove module associated blogs and blog tag instances.
+ *
+ * @param  int $modcontextid Module context ID.
+ */
+function blog_remove_associations_for_module($modcontextid) {
+    global $DB;
+
+    if (!empty($assocblogids = $DB->get_fieldset_select('blog_association', 'blogid',
+        'contextid = :contextid', ['contextid' => $modcontextid]))) {
+        list($sql, $params) = $DB->get_in_or_equal($assocblogids, SQL_PARAMS_NAMED);
+
+        $DB->delete_records_select('tag_instance', "itemid $sql", $params);
+        $DB->delete_records_select('post', "id $sql AND module = :module",
+            array_merge($params, ['module' => 'blog']));
+        $DB->delete_records('blog_association', ['contextid' => $modcontextid]);
+    }
+}
+
+/**
  * Given a record in the {blog_external} table, checks the blog's URL
  * for new entries not yet copied into Moodle.
  * Also attempts to identify and remove deleted blog entries

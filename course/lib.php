@@ -1169,6 +1169,9 @@ function course_delete_module($cmid, $async = false) {
         }
     }
 
+    // Delete associated blogs and blog tag instances.
+    blog_remove_associations_for_module($modcontext->id);
+
     // Delete completion and availability data; it is better to do this even if the
     // features are not turned on, in case they were turned on previously (these will be
     // very quick on an empty table).
