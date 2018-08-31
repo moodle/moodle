@@ -27,6 +27,9 @@ defined('MOODLE_INTERNAL') || die();
 use coding_exception;
 use moodle_exception;
 use tool_dataprivacy\api;
+use tool_dataprivacy\category;
+use tool_dataprivacy\context_instance;
+use tool_dataprivacy\purpose;
 
 /**
  * Class containing helper functions for the data privacy tool.
@@ -208,5 +211,39 @@ class helper {
             }
         }
         return $options;
+    }
+
+    /**
+     * Fetches a category name from the given ID.
+     *
+     * @param int $category The category ID. Could be INHERIT (false, -1), NOT_SET (0), or the actual ID.
+     * @return string The category name.
+     */
+    public static function get_category_name($category) {
+        if ($category === false || $category == context_instance::INHERIT) {
+            return get_string('inherit', 'tool_dataprivacy');
+        } else if ($category == context_instance::NOTSET) {
+            return get_string('notset', 'tool_dataprivacy');
+        } else {
+            $category = new category($category);
+            return format_string($category->get('name'));
+        }
+    }
+
+    /**
+     * Fetches a purpose name from the given ID.
+     *
+     * @param int $purpose The purpose ID. Could be INHERIT (false, -1), NOT_SET (0), or the actual ID.
+     * @return string The purpose name.
+     */
+    public static function get_purpose_name($purpose) {
+        if ($purpose === false || $purpose == context_instance::INHERIT) {
+            return get_string('inherit', 'tool_dataprivacy');
+        } else if ($purpose == context_instance::NOTSET) {
+            return get_string('notset', 'tool_dataprivacy');
+        } else {
+            $purpose = new purpose($purpose);
+            return format_string($purpose->get('name'));
+        }
     }
 }
