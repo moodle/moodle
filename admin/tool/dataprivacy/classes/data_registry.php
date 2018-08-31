@@ -59,13 +59,22 @@ class data_registry {
     /**
      * Returns purpose and category var names from a context class name
      *
-     * @param string $classname
+     * @param string $classname The context level's class.
+     * @param string $pluginname The name of the plugin associated with the context level.
      * @return string[]
      */
-    public static function var_names_from_context($classname) {
+    public static function var_names_from_context($classname, $pluginname = '') {
+        $pluginname = trim($pluginname);
+        if (!empty($pluginname)) {
+            $categoryvar = $classname . '_' . $pluginname . '_category';
+            $purposevar = $classname . '_' . $pluginname . '_purpose';
+        } else {
+            $categoryvar = $classname . '_category';
+            $purposevar = $classname . '_purpose';
+        }
         return [
-            $classname . '_purpose',
-            $classname . '_category',
+            $purposevar,
+            $categoryvar
         ];
     }
 
@@ -74,13 +83,14 @@ class data_registry {
      *
      * The caller code is responsible of checking that $contextlevel is an integer.
      *
-     * @param int $contextlevel
-     * @return int|false[]
+     * @param int $contextlevel The context level.
+     * @param string $pluginname The name of the plugin associated with the context level.
+     * @return int[]|false[]
      */
-    public static function get_defaults($contextlevel) {
+    public static function get_defaults($contextlevel, $pluginname = '') {
 
         $classname = \context_helper::get_class_for_level($contextlevel);
-        list($purposevar, $categoryvar) = self::var_names_from_context($classname);
+        list($purposevar, $categoryvar) = self::var_names_from_context($classname, $pluginname);
 
         $purposeid = get_config('tool_dataprivacy', $purposevar);
         $categoryid = get_config('tool_dataprivacy', $categoryvar);

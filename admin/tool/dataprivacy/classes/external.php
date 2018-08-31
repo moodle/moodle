@@ -1066,6 +1066,304 @@ class external extends external_api {
     }
 
     /**
+     * Parameters for set_context_defaults().
+     *
+     * @return external_function_parameters
+     */
+    public static function set_context_defaults_parameters() {
+        return new external_function_parameters([
+            'contextlevel' => new external_value(PARAM_INT, 'Expired context record ID', VALUE_REQUIRED),
+            'category' => new external_value(PARAM_INT, 'The default category for the given context level', VALUE_REQUIRED),
+            'purpose' => new external_value(PARAM_INT, 'The default purpose for the given context level', VALUE_REQUIRED),
+            'activity' => new external_value(PARAM_PLUGIN, 'The plugin name of the activity', VALUE_DEFAULT, null),
+            'override' => new external_value(PARAM_BOOL, 'Whether to override existing instances with the defaults', VALUE_DEFAULT,
+                false),
+        ]);
+    }
+
+    /**
+     * Updates the default category and purpose for a given context level (and optionally, a plugin).
+     *
+     * @param int $contextlevel The context level.
+     * @param int $category The ID matching the category.
+     * @param int $purpose The ID matching the purpose record.
+     * @param int $activity The name of the activity that we're making a defaults configuration for.
+     * @param bool $override Whether to override the purpose/categories of existing instances to these defaults.
+     * @return array
+     */
+    public static function set_context_defaults($contextlevel, $category, $purpose, $activity, $override) {
+        $warnings = [];
+
+        $params = external_api::validate_parameters(self::set_context_defaults_parameters(), [
+            'contextlevel' => $contextlevel,
+            'category' => $category,
+            'purpose' => $purpose,
+            'activity' => $activity,
+            'override' => $override,
+        ]);
+        $contextlevel = $params['contextlevel'];
+        $category = $params['category'];
+        $purpose = $params['purpose'];
+        $activity = $params['activity'];
+        $override = $params['override'];
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        // Set the context defaults.
+        $result = api::set_context_defaults($contextlevel, $category, $purpose, $activity, $override);
+
+        return [
+            'result' => $result,
+            'warnings' => $warnings
+        ];
+    }
+
+    /**
+     * Returns for set_context_defaults().
+     *
+     * @return external_single_structure
+     */
+    public static function set_context_defaults_returns() {
+        return new external_single_structure([
+            'result' => new external_value(PARAM_BOOL, 'Whether the context defaults were successfully set or not'),
+            'warnings' => new external_warnings()
+        ]);
+    }
+
+    /**
+     * Parameters for get_category_options().
+     *
+     * @return external_function_parameters
+     */
+    public static function get_category_options_parameters() {
+        return new external_function_parameters([
+            'includeinherit' => new external_value(PARAM_BOOL, 'Include option "Inherit"', VALUE_DEFAULT, true),
+            'includenotset' => new external_value(PARAM_BOOL, 'Include option "Not set"', VALUE_DEFAULT, false),
+        ]);
+    }
+
+    /**
+     * Fetches a list of data category options containing category IDs as keys and the category name for the value.
+     *
+     * @param bool $includeinherit Whether to include the "Inherit" option.
+     * @param bool $includenotset Whether to include the "Not set" option.
+     * @return array
+     */
+    public static function get_category_options($includeinherit, $includenotset) {
+        $warnings = [];
+
+        $params = self::validate_parameters(self::get_category_options_parameters(), [
+            'includeinherit' => $includeinherit,
+            'includenotset' => $includenotset
+        ]);
+        $includeinherit = $params['includeinherit'];
+        $includenotset = $params['includenotset'];
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $categories = api::get_categories();
+        $categoryoptions = [];
+        if ($includeinherit) {
+            $categoryoptions[] = [
+                'id' => context_instance::INHERIT,
+                'name' => get_string('inherit', 'tool_dataprivacy'),
+            ];
+        }
+        if ($includenotset) {
+            $categoryoptions[] = [
+                'id' => context_instance::NOTSET,
+                'name' => get_string('notset', 'tool_dataprivacy'),
+            ];
+        }
+        foreach ($categories as $category) {
+            $categoryoptions[] = [
+                'id' => $category->get('id'),
+                'name' => $category->get('name'),
+            ];
+        }
+
+        return [
+            'options' => $categoryoptions,
+            'warnings' => $warnings
+        ];
+    }
+
+    /**
+     * Returns for get_category_options().
+     *
+     * @return external_single_structure
+     */
+    public static function get_category_options_returns() {
+        $optiondefinition = new external_single_structure(
+            [
+                'id' => new external_value(PARAM_INT, 'The category ID'),
+                'name' => new external_value(PARAM_TEXT, 'The category name'),
+            ]
+        );
+
+        return new external_single_structure([
+            'options' => new external_multiple_structure($optiondefinition),
+            'warnings' => new external_warnings()
+        ]);
+    }
+
+    /**
+     * Parameters for get_purpose_options().
+     *
+     * @return external_function_parameters
+     */
+    public static function get_purpose_options_parameters() {
+        return new external_function_parameters([
+            'includeinherit' => new external_value(PARAM_BOOL, 'Include option "Inherit"', VALUE_DEFAULT, true),
+            'includenotset' => new external_value(PARAM_BOOL, 'Include option "Not set"', VALUE_DEFAULT, false),
+        ]);
+    }
+
+    /**
+     * Fetches a list of data storage purposes containing purpose IDs as keys and the purpose name for the value.
+     *
+     * @param bool $includeinherit Whether to include the "Inherit" option.
+     * @param bool $includenotset Whether to include the "Not set" option.
+     * @return array
+     */
+    public static function get_purpose_options($includeinherit, $includenotset) {
+        $warnings = [];
+
+        $params = self::validate_parameters(self::get_category_options_parameters(), [
+            'includeinherit' => $includeinherit,
+            'includenotset' => $includenotset
+        ]);
+        $includeinherit = $params['includeinherit'];
+        $includenotset = $params['includenotset'];
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $purposes = api::get_purposes();
+        $purposeoptions = [];
+        if ($includeinherit) {
+            $purposeoptions[] = [
+                'id' => context_instance::INHERIT,
+                'name' => get_string('inherit', 'tool_dataprivacy'),
+            ];
+        }
+        if ($includenotset) {
+            $purposeoptions[] = [
+                'id' => context_instance::NOTSET,
+                'name' => get_string('notset', 'tool_dataprivacy'),
+            ];
+        }
+        foreach ($purposes as $purpose) {
+            $purposeoptions[] = [
+                'id' => $purpose->get('id'),
+                'name' => $purpose->get('name'),
+            ];
+        }
+
+        return [
+            'options' => $purposeoptions,
+            'warnings' => $warnings
+        ];
+    }
+
+    /**
+     * Returns for get_purpose_options().
+     *
+     * @return external_single_structure
+     */
+    public static function get_purpose_options_returns() {
+        $optiondefinition = new external_single_structure(
+            [
+                'id' => new external_value(PARAM_INT, 'The purpose ID'),
+                'name' => new external_value(PARAM_TEXT, 'The purpose name'),
+            ]
+        );
+
+        return new external_single_structure([
+            'options' => new external_multiple_structure($optiondefinition),
+            'warnings' => new external_warnings()
+        ]);
+    }
+
+    /**
+     * Parameters for get_activity_options().
+     *
+     * @return external_function_parameters
+     */
+    public static function get_activity_options_parameters() {
+        return new external_function_parameters([
+            'nodefaults' => new external_value(PARAM_BOOL, 'Whether to fetch all activities or only those without defaults',
+                VALUE_DEFAULT, false),
+        ]);
+    }
+
+    /**
+     * Fetches a list of activity options for setting data registry defaults.
+     *
+     * @param boolean $nodefaults If false, it will fetch all of the activities. Otherwise, it will only fetch the activities
+     *                            that don't have defaults yet (e.g. when adding a new activity module defaults).
+     * @return array
+     */
+    public static function get_activity_options($nodefaults) {
+        $warnings = [];
+
+        $params = self::validate_parameters(self::get_activity_options_parameters(), [
+            'nodefaults' => $nodefaults,
+        ]);
+        $nodefaults = $params['nodefaults'];
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        // Get activity module plugin info.
+        $pluginmanager = \core_plugin_manager::instance();
+        $modplugins = $pluginmanager->get_plugins_of_type('mod');
+        $modoptions = [];
+        foreach ($modplugins as $plugin) {
+            // Check if we have default purpose and category for this module if we want don't want to fetch everything.
+            if ($nodefaults) {
+                list($purpose, $category) = data_registry::get_defaults(CONTEXT_MODULE, $plugin->name);
+                if ($purpose !== false || $category !== false) {
+                    // If so, skip it.
+                    continue;
+                }
+            }
+
+            $modoptions[] = (object)[
+                'name' => $plugin->name,
+                'displayname' => $plugin->displayname
+            ];
+        }
+
+        return [
+            'options' => $modoptions,
+            'warnings' => $warnings
+        ];
+    }
+
+    /**
+     * Returns for get_category_options().
+     *
+     * @return external_single_structure
+     */
+    public static function get_activity_options_returns() {
+        $optionsdefinition = new external_single_structure(
+            [
+                'name' => new external_value(PARAM_TEXT, 'The plugin name of the activity'),
+                'displayname' => new external_value(PARAM_TEXT, 'The display name of the activity'),
+            ]
+        );
+
+        return new external_single_structure([
+            'options' => new external_multiple_structure($optionsdefinition),
+            'warnings' => new external_warnings()
+        ]);
+    }
+
+    /**
      * Gets the structure of a tree node (link + child branches).
      *
      * @param bool $allowchildbranches
