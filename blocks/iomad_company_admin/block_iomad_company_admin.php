@@ -185,18 +185,20 @@ class block_iomad_company_admin extends block_base {
      * Build tabs for selecting admin page
      */
     public function gettabs($tabs, $selected) {
-        global $OUTPUT;
+        global $OUTPUT, $PAGE;
 
         $showsuspendedcompanies = optional_param('showsuspendedcompanies', false, PARAM_BOOL);
 
         $row = array();
 
-        // Build list.
+	// Build list.
         foreach ($tabs as $key => $tab) {
             $row[] = new tabobject(
                 $key,
-                new moodle_url('/local/iomad_dashboard/index.php', array('tabid'=>$key,
-                                                                         'showsuspendedcompanies' => $showsuspendedcompanies)),
+		new moodle_url($PAGE->url, array(
+                    'tabid'=>$key,
+                    'showsuspendedcompanies' => $showsuspendedcompanies)
+	        ),
                 $tab
             );
         }
@@ -355,7 +357,8 @@ class block_iomad_company_admin extends block_base {
         // Bodge? Modify our own instance to make the default region the
         // content area, not the side bar.
         $instance = $this->instance;
-        $instance->defaultregion = 'content';
+	$instance->defaultregion = 'content';
+	$instance->defaultweight = -10;
         $DB->update_record('block_instances', $instance);
 
         return true;
