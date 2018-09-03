@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+             xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+<title></title>
+
+<script type="text/javascript">
+
+//<![CDATA[
+
+<!--
+
+var strPrintExplanation = '[strPrintExplanation]';
+
+function ShowMessage(){
+	alert(strPrintExplanation);
+}
+
+function ShowKey(){
+	var NList = document.getElementsByTagName('span');
+	for (var i=0; i<NList.length; i++){
+		if (NList[i].className == 'Letter'){
+			if (NList[i].style.display == 'inline'){
+				NList[i].style.display = 'none';
+			}
+			else{
+				NList[i].style.display = 'inline';
+			}
+		}
+	}
+}
+
+//-->
+
+//]]>
+
+</script>
+
+<style type="text/css">
+<!--
+
+body{
+	background-color: #ffffff;
+	color: #000000;
+	font-family: [strFontFace];
+	font-size: [strFontSize];
+}
+
+div.Titles{
+	padding: 0.5em;
+	text-align: center;
+}
+
+table{
+	margin: auto;
+}
+
+table#Grid td{
+	width: 2em;
+	height: 2em;
+	text-align: center;
+	vertical-align: middle;
+	font-size: 140%;
+}
+
+table#Grid td.BlankCell{
+	width: 2em;
+	height: 2em;
+	padding: 0px;
+	text-align: center;
+	vertical-align: middle;
+	background-color: #000000;
+	color: #000000;
+}
+
+table#Grid td.LetterOnlyCell{
+	width: 2em;
+	height: 2em;
+	text-align: center;
+	vertical-align: middle;
+	background-color: #ffffff;
+	color: #000000;
+}
+
+table#Grid td.NumLetterCell{
+	width: 2em;
+	height: 2em;
+	text-align: left;
+	vertical-align: top;
+	background-color: #ffffff;
+	color: #000000;
+	padding: 1px;
+}
+
+span.Num{
+	vertical-align: super;
+	font-size: 100%;
+	font-weight: bold;
+}
+
+span.Letter{
+	font-weight: bold;
+	font-size: 140%;
+	display: none;
+}
+
+table.ClueTable{
+	padding: 0.5em;
+}
+
+.ClueNum{
+	font-weight: bold;
+	font-size: 140%;
+	padding: 0px 1em 0px 0px;
+}
+
+.Clue{
+
+}
+
+-->
+</style>
+
+
+</head>
+<body onload="ShowMessage()">
+
+<div class="Titles">
+	<h2 style="cursor: pointer;" onclick="ShowKey()">[strExerciseTitle]</h2>
+[inclExerciseSubtitle]
+	<h3 class="ExerciseSubtitle">[strExerciseSubtitle]</h3>
+[/inclExerciseSubtitle]
+</div>
+
+<table id="Grid" border="1" cellspacing="0" cellpadding="0">
+
+[StartBlankCell]
+<td class="BlankCell">&nbsp;</td>
+[EndBlankCell]
+
+[StartLetterOnlyCell]
+<td class="LetterOnlyCell">&nbsp;<span class="Letter">[Letter]</span></td>
+[EndLetterOnlyCell]
+
+[StartNumLetterCell]
+<td class="NumLetterCell"><span class="Num">[ClueNum]</span>&nbsp;<span class="Letter">[Letter]</span></td>
+[EndNumLetterCell]
+
+</table>
+
+<table border="0">
+<tr>
+<td valign="top">
+<table border="0" class="ClueTable">
+<tr><td colspan="2"><h3>[strCluesAcrossLabel]</h3></td></tr>
+
+[StartCluesAcrossLoop]
+<tr><td class="ClueNum">[ClueNum]</td>
+<td class="Clue">[Clue]</td></tr>
+[EndCluesAcrossLoop]
+
+</table>
+
+</td>
+
+<td valign="top">
+
+<table border="0" class="ClueTable">
+<tr><td colspan="2"><h3>[strCluesDownLabel]</h3></td></tr>
+
+[StartCluesDownLoop]
+<tr><td class="ClueNum">[ClueNum]</td>
+<td class="Clue">[Clue]</td></tr>
+[EndCluesDownLoop]
+</table>
+
+</td>
+</tr></table>
+
+</body></html>

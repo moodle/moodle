@@ -1,0 +1,408 @@
+[inclScorm1.2]
+//JMIX-SPECIFIC SCORM-RELATED JAVASCRIPT CODE
+
+function SetScormScore(){
+//Reports the current score and any other information back to the LMS
+	if (API != null){
+		API.LMSSetValue('cmi.core.score.raw', Score);
+
+//Now send a detailed reports on the item
+		var ItemLabel = 'Item_1';
+		API.LMSSetValue('cmi.objectives.0.id', 'obj'+ItemLabel);
+		API.LMSSetValue('cmi.interactions.0.id', 'int'+ItemLabel);
+		if (Finished == true){
+			API.LMSSetValue('cmi.objectives.0.status', 'completed');
+		}
+		else{
+			API.LMSSetValue('cmi.objectives.0.status', 'incomplete');
+		}
+
+		API.LMSSetValue('cmi.objectives.0.score.min', '0');
+		API.LMSSetValue('cmi.objectives.0.score.max', '100');
+		API.LMSSetValue('cmi.objectives.0.score.raw', Score);
+//We can only use the performance type, because we're storing multiple responses of various types.
+		API.LMSSetValue('cmi.interactions.0.type', 'performance');
+		API.LMSSetValue('cmi.interactions.0.student_response', AnswersTried);
+
+		API.LMSCommit('');
+	}
+}
+[/inclScorm1.2]
+
+//JMIX STANDARD OUTPUT FORMAT CODE
+
+var CorrectResponse = '[strGuessCorrect]';
+var IncorrectResponse = '[strGuessIncorrect]';
+var TheseAnswersToo = '[strTheseAnswersToo]';
+var ThisMuchCorrect = '[strThisMuch]';
+var NextCorrect = '[strNextCorrect]';
+var YourScoreIs = '[strYourScoreIs]';
+var CapitalizeFirst = [boolCapitalizeFirst];
+var Penalties = 0;
+var Finished = false;
+var TimeOver = false;
+var Score = 0;
+var strInstructions = '';
+var AnswersTried = '';
+
+
+var SegmentTemplate = '&nbsp; &nbsp;<a class="ExSegment" href="javascript:void(0)" onclick="AddSegment([SegmentNumber])" title="[strClickToAdd]">[CurrentSegment]</a>&nbsp; &nbsp;';
+
+var Exercise = '';
+
+var Punctuation = '[strPunctuation]';
+
+var Openers = '[strOpenPunctuation]';
+
+var Guesses = new Array();
+var Remaining = new Array();
+var CorrectParts = new Array();
+
+var ClosestMatch = 0;
+
+var LowerString='';
+var UpperString='';
+
+var Output = '';
+
+var Segments = new Array();
+[SegmentArray]
+
+var GuessSequence = new Array();
+
+var Answers = new Array();
+[AnswerArray]
+
+function WriteToGuess(Feedback) {
+	document.getElementById('GuessDiv').innerHTML = Feedback;
+[inclPreloadImages]
+	RefreshImages();
+[/inclPreloadImages]
+}
+
+function Undo(){
+	if (GuessSequence.length < 1){
+		return;
+	}
+	GuessSequence.length = GuessSequence.length - 1;
+	BuildCurrGuess();
+	BuildExercise();
+	DisplayExercise(Exercise);
+//Following line modified for 6.0.4.44 -- "remaining words" message removed, no longer needed
+	WriteToGuess('<span class="Answer">' + Output + '</span>');
+}
+
+function AddSegment(SegNum){
+[inclTimer]
+	if (TimeOver == true){return;}
+[/inclTimer]
+	GuessSequence[GuessSequence.length] = SegNum;
+	BuildCurrGuess();
+	WriteToGuess('<span class="Answer">' + Output + '</span>');
+	BuildExercise();
+	DisplayExercise(Exercise);
+}
+
+function BuildCurrGuess(){
+
+	var i = 0;
+	var j = 0;
+	var NewSeg = '';
+
+//first, create arrays of all the segments guessed so far and those not yet used
+	GuessSegs = new Array();
+	GuessSegs.length = 0;
+
+//set the "used" markers all to 0
+	for (i=0; i<Segments.length; i++){
+		Segments[i][2] = 0;
+	}
+
+	for (i=0; i<GuessSequence.length; i++){
+		for (j=0; j<Segments.length; j++){
+			if ((Segments[j][1] == GuessSequence[i])&&(Segments[j][2] == 0)){
+				GuessSegs[GuessSegs.length] = Segments[j][0];
+				Segments[j][2] = 1;
+				break;
+			}
+		}
+	}
+
+//Create the list of unused segments
+	RemainingList = '';
+	for (i=0; i<Segments.length; i++){
+		if (Segments[i][2] == 0){
+			RemainingList += Segments[i][0] + '&nbsp; &nbsp;&nbsp;';
+		}
+	}
+
+//now concatenate the segments, adding spaces where appropriate;
+	Output = CompileString(GuessSequence);
+}
+
+function CompileString(InArray){
+	var OutString = '';
+	var i = 0;
+	OutArray = new Array();
+
+	for (i=0; i<InArray.length; i++){
+		OutArray[OutArray.length] = FindSegment(InArray[i]);
+	}
+
+	if (OutArray.length > 0){
+		OutString = OutArray[0];
+	}
+	else{
+		OutString = '';
+	}
+	var Spacer = '';
+
+	for (i=1; i<OutArray.length; i++){
+		Spacer = ' ';
+		if ((Openers.indexOf(OutString.charAt(OutString.length-1)) > -1)||(Punctuation.indexOf(OutArray[i].charAt(0)) > -1)){
+			Spacer = '';
+		}
+		OutString = OutString + Spacer + OutArray[i];
+	}
+
+//Capitalize the first letter if necessary
+	if (CapitalizeFirst == true){
+		i = 0;
+		if ((Openers.indexOf(OutString.charAt(i))>-1)||(OutString.charAt(i) == ' ')){
+			i++;
+		}
+		if ((Openers.indexOf(OutString.charAt(i))>-1)||(OutString.charAt(i) == ' ')){
+			i++;
+		}
+		var Temp = OutString.charAt(i);
+		Temp = Temp.toUpperCase();
+		OutString = OutString.substring(0, i) + Temp + OutString.substring(i+1, OutString.length);
+	}
+	return OutString;
+}
+function CheckAnswer(CheckType){
+
+	if (GuessSequence.length < 1){
+		if (CheckType == 1){
+			ShowMessage(NextCorrect + '<br /><span class="Answer">' + FindSegment(Answers[0][0]) + '</span>');
+			Penalties++;
+		}
+		return;
+	}
+
+	var i = 0;
+	var j = 0;
+	var k = 0;
+	var WellDone = '';
+	var WhichCorrect = -1;
+	var TryAgain = '';
+	var LongestCorrectBit = '';
+	TempCorrect = new Array();
+	LongestCorrect = new Array();
+	var TempHint = '';
+	var HintToReturn = 1;
+	var OtherAnswers = '';
+	var AllDone = false;
+
+	for (i=0; i<Answers.length; i++){
+		TempCorrect.length = 0;
+		for (j=0; j<Answers[i].length; j++){
+			if (Answers[i][j] == GuessSequence[j]){
+				TempCorrect[j] = GuessSequence[j];
+			}
+			else{
+				TempHint = Answers[i][j];
+				break;
+			}
+		}
+		if ((TempCorrect.length == GuessSequence.length)&&(TempCorrect.length == Answers[i].length)){
+
+			WhichCorrect = i;
+			break;
+		}
+		else{
+			if (TempCorrect.length > LongestCorrect.length){
+				LongestCorrect.length = 0;
+				for (k=0; k<TempCorrect.length; k++){
+					LongestCorrect[k] = TempCorrect[k];
+				}
+				HintToReturn = TempHint;
+			}
+		}
+	}
+	if (WhichCorrect > -1){
+		AllDone = true;
+		for (i=0; i<Answers.length; i++){
+			if (i!=WhichCorrect){
+				OtherAnswers += '<br />' + CompileString(Answers[i]);
+			}
+		}
+
+		WellDone = '<span class="Answer">' + Output + '</span><br /><br />' + CorrectResponse + '<br />';
+
+		if (AnswersTried.length > 0){AnswersTried += ' | ';}
+		AnswersTried += Output;
+
+//Do score calculation here
+		Score = Math.floor(((Segments.length-Penalties) * 100)/Segments.length);
+
+[inclAlsoCorrect]
+		if (OtherAnswers.length > 0){
+			WellDone += TheseAnswersToo + '<span class="Answer">' + OtherAnswers + '</span>';
+		}
+[/inclAlsoCorrect]
+
+		WriteToGuess(WellDone);
+		ShowMessage(WellDone + '<br />' + YourScoreIs + ' ' + Score + '%.');
+	}
+
+	else{
+		var WrongGuess = CompileString(GuessSequence);
+		if (AnswersTried.length > 0){AnswersTried += ' | ';}
+		AnswersTried += WrongGuess;
+		TryAgain = '<span class="Answer">' + WrongGuess + '</span><br /><br />';
+		if (CheckType == 0){
+			TryAgain += IncorrectResponse + '<br />';
+		}
+
+		if (LongestCorrect.length > 0){
+
+			LongestCorrectBit = CompileString(LongestCorrect);
+			GuessSequence.length = LongestCorrect.length;
+			TryAgain += ThisMuchCorrect + '<br /><span class="Answer">' + LongestCorrectBit + '</span><br />';
+
+//These lines added for 6.0.3.44
+			WriteToGuess('<span class="Answer">' + LongestCorrectBit + '</span>');
+		}
+		else{
+			GuessSequence.length = 0;
+			WriteToGuess('');
+		}
+
+		if (CheckType == 1){
+			TryAgain += NextCorrect + '<br /><span class="Answer">' + FindSegment(HintToReturn) + '</span>';
+		}
+
+		BuildCurrGuess();
+		BuildExercise();
+		DisplayExercise(Exercise);
+		ShowMessage(TryAgain);
+		Penalties++; //Penalty for inaccurate check
+
+[inclTimer]
+		if (TimeOver == true){
+			Score = Math.floor(((LongestCorrect.length-Penalties) * 100)/Segments.length);
+			if (Score < 0){Score = 0;}
+			ShowMessage(YourScoreIs + ' ' + Score + '%.<br />');
+		}
+[/inclTimer]
+
+	}
+//If the exercise is over, deal with that
+	if ((AllDone == true)||(TimeOver == true)){
+[inclSendResults]
+		setTimeout('SendResults(' + Score + ')', 50);
+[/inclSendResults]
+[inclTimer]
+		window.clearInterval(Interval);
+[/inclTimer]
+		TimeOver = true;
+		Locked = true;
+		Finished = true;
+		setTimeout('Finish()', SubmissionTimeout);
+		WriteToInstructions(YourScoreIs + ' ' + Score + '%.');
+	}
+[inclScorm1.2]
+	if (AllDone == true){
+		SetScormComplete();
+	}
+	else{
+		SetScormIncomplete();
+	}
+[/inclScorm1.2]
+}
+
+function FindSegment(SegID){
+	var Seg = '';
+	for (var i=0; i<Segments.length; i++){
+		if (Segments[i][1] == SegID){
+			Seg = Segments[i][0];
+			break;
+		}
+	}
+	return Seg;
+}
+
+function StartUp(){
+	RemoveBottomNavBarForIE();
+
+//Stash the instructions so they can be redisplayed
+	strInstructions = document.getElementById('InstructionsDiv').innerHTML;
+
+[inclSendResults]
+	GetUserName();
+[/inclSendResults]
+
+[inclScorm1.2]
+	ScormStartUp();
+[/inclScorm1.2]
+
+[inclPreloadImages]
+	PreloadImages([PreloadImageList]);
+[/inclPreloadImages]
+
+	Segments = Shuffle(Segments);
+
+//Build and show the exercise
+	BuildExercise();
+	DisplayExercise(Exercise);
+
+[inclTimer]
+	StartTimer();
+[/inclTimer]
+}
+
+
+function BuildExercise(){
+	Exercise = '';
+
+	var SegRow = '';
+	var TempRow = '';
+
+	for (var i=0; i<Segments.length; i++){
+//if the segment hasn't been used yet
+		if (Segments[i][2] == 0){
+			TempRow = SegmentTemplate;
+			TempRow = TempRow.replace(/\[SegmentNumber\]/g, Segments[i][1]);
+			TempRow = TempRow.replace(/\[CurrentSegment\]/g, Segments[i][0]);
+			SegRow += TempRow;
+		}
+	}
+
+//Make it into a table
+	Exercise = SegRow;
+}
+
+function DisplayExercise(StuffToDisplay){
+	document.getElementById('SegmentDiv').innerHTML = StuffToDisplay;
+	FocusAButton();
+[inclPreloadImages]
+	RefreshImages();
+[/inclPreloadImages]
+}
+
+[inclTimer]
+function TimesUp() {
+	document.getElementById('Timer').innerHTML = '[strTimesUp]';
+[inclPreloadImages]
+	RefreshImages();
+[/inclPreloadImages]
+	TimeOver = true;
+	Finished = true;
+	CheckAnswer(0);
+	Locked = true;
+[inclScorm1.2]
+	SetScormTimedOut();
+[/inclScorm1.2]
+}
+[/inclTimer]

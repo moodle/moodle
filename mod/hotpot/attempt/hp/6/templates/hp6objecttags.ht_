@@ -1,0 +1,18 @@
+
+[QuickTime Player]<object classid="clsid:02bf25d5-8c17-4b23-bc80-d3488abddc6b" data="[strFilePath]" width="[strWidth]" height="[strHeight]" type="audio/quicktime"><param name="src" value="[strFilePath]" /> <param name="autoplay" value="false" /> <param name="controller" value="true" /> <object class="MediaPlayerNotForIE" type="video/quicktime" data="[strFilePath]" width="[strWidth]" height="[strHeight]">  <param name="src" value="[strFilePath]" /> <param name="autoplay" value="false" /> <param name="controller" value="true" /> [strContent]</object> </object>[/QuickTime Player]
+
+[Windows Media Player]<object classid="CLSID:6BF52A52-394A-11d3-B153-00C04F79FAA6" width="[strWidth]" height="[strHeight]">
+<param name="url" value="[strFilePath]" />
+<param name="autostart" value="false" />
+<param name="showcontrols" value="true" />[strContent]</object>
+[/Windows Media Player]
+
+[Real Player]
+<object type="audio/x-pn-realaudio-plugin" classid="CLSID:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="[strWidth]" height="[strHeight]">
+<param name="type" value="audio/x-pn-realaudio-plugin" />
+<param name="src" value="[strFilePath]" />
+<param name="autostart" value="false" />
+<param name="controls" value="[inclVideo]ImageWindow,[/inclVideo]ControlPanel" />
+[strContent]</object>[/Real Player]
+
+[Flash Player]<object codebase="[strFilePath]" type="application/x-shockwave-flash" width="[strWidth]" height="[strHeight]" data="[strFilePath]"> <param name="movie" value="[strFilePath]" />[strContent]</object>[/Flash Player]

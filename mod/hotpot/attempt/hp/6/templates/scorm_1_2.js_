@@ -1,0 +1,102 @@
+//MDH_SCORM modification to support SCORM 1.2 functionality on LMS
+/* JavaScript to find the SCORM API if it is available */
+/* Based on a model at <http://www.claroline.net/doc/en/index.php/How_do_I_create_SCORM_content%3F> */
+
+var API = null; /* SCORM API */
+
+/* look up through the frameset hierarchy for the SCORM API */
+function findAPI(win)
+{
+	while ((win.API == null) && (win.parent != null) && (win.parent != win))
+	{
+		win = win.parent;
+	}
+	API = win.API;
+}
+
+/* initialize the SCORM API */
+function initAPI(win)
+{
+	/* look for the SCORM API up in the frameset */
+	findAPI(win);
+
+	/* if we still have not found the API, look at the opener and its frameset */
+	if ((API == null) && (win.opener != null))
+	{
+		findAPI(win.opener);
+	}
+}
+
+var ScormSubmitted = false; //use this to check whether LMSFinish has been called later.
+
+function ScormStartUp(){
+	initAPI(window);
+	if (API != null){
+		API.LMSInitialize('');
+		API.LMSSetValue('cmi.core.lesson_status', 'browsed');
+		API.LMSSetValue('cmi.core.score.min', 0);
+		API.LMSSetValue('cmi.core.score.max', 100);
+		API.LMSCommit('');
+	}
+}
+
+function CheckLMSFinish(){
+	if (API != null){
+		if (ScormSubmitted == false){
+			API.LMSCommit('');
+			API.LMSFinish('');
+			ScormSubmitted = true;
+		}
+	}
+}
+
+function SetScormIncomplete(){
+	if (ScormSubmitted == true){
+		return;
+	}
+	SetScormScore();
+	if (API != null){
+		API.LMSSetValue('cmi.core.lesson_status', 'incomplete');
+		API.LMSSetValue('cmi.core.session_time', MillisecondsToTime((new Date()).getTime() - ScormStartTime));
+		API.LMSCommit('');
+	}
+}
+
+function SetScormComplete(){
+	if (API != null){
+		API.LMSSetValue('cmi.core.session_time', MillisecondsToTime((new Date()).getTime() - ScormStartTime));
+		API.LMSSetValue('cmi.core.lesson_status', 'completed');
+		SetScormScore();
+		API.LMSCommit('');
+		API.LMSFinish('');
+		ScormSubmitted = true;
+	}
+}
+
+var ScormStartTime = (new Date()).getTime();
+
+var SuspendData = '';
+
+function SetScormTimedOut(){
+	if (API != null){
+		if (ScormSubmitted == false){
+			SetScormScore();
+			API.LMSSetValue('cmi.core.exit', 'time-out');
+			API.LMSCommit('');
+			CheckLMSFinish();
+		}
+	}
+}
+
+//TIME RENDERING FUNCTION
+function MillisecondsToTime(Seconds){
+	Seconds = Math.round(Seconds/1000);
+	var S = Seconds % 60;
+	Seconds -= S;
+	if (S < 10){S = '0' + S;}
+	var M = (Seconds / 60) % 60;
+	if (M < 10){M = '0' + M;}
+	var H = Math.floor(Seconds / 3600);
+	if (H < 10){H = '0' + H;}
+	return H + ':' + M + ':' + S;
+}

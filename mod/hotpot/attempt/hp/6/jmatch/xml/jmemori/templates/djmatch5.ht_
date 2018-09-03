@@ -1,0 +1,575 @@
+<html>
+<head>
+<title>
+[strPlainTitle]
+</title>
+
+<!-- Modification Copyright (c) Michael Rottmeier, April 2005 -->
+<!-- JMemory - Version 2.4 -->
+<!-- http://www.teaching-tools.de.vu -->
+<!-- THIS HEADER MUST STAY UN-TOUCHED -->
+
+<script language="javascript" type="text/javascript">
+
+//<![CDATA[
+
+<!--
+
+// BrowserCheck Object
+
+function BrowserCheck() {
+	var b = navigator.appName
+//HBS extension
+	this.mac = (navigator.appVersion.indexOf('Mac') != -1)
+	if (b=="Netscape") this.b = "ns"
+	else if (b=="Microsoft Internet Explorer") this.b = "ie"
+	else this.b = b
+	this.version = navigator.appVersion
+	this.v = parseInt(this.version)
+	this.ns = (this.b=="ns" && this.v>=4)
+	this.ns4 = (this.b=="ns" && this.v==4)
+	this.ns5 = (this.b=="ns" && this.v==5)
+	this.ie = (this.b=="ie" && this.v>=4)
+	this.ie4 = (this.version.indexOf('MSIE 4')>0)
+	this.ie5 = (this.version.indexOf('MSIE 5')>0)
+	this.min = (this.ns||this.ie)
+	this.CRAPBrowser = (this.ie4 && this.mac); //Cannot Resolve Addresses Properly
+}
+
+is = new BrowserCheck();
+
+var LocFolder = GetFolder(window.location.href);
+function GetFolder(LocPath){
+	LocPath = ReplaceStuff('\'','%27',LocPath);
+	var i = LocPath.lastIndexOf('/');
+	if (i<0){i=LocPath.lastIndexOf('\\')};
+	return LocPath.substring(0,i);
+}
+
+function CombineURLs(InURL){
+	var i = InURL.indexOf('../');
+	var s = LocFolder;
+	while (i >- 1){
+		s = GetFolder(s);
+		InURL = InURL.substring(3,InURL.length);
+		i = InURL.indexOf('../');
+	}
+	return s + '/' + InURL;
+}
+
+x = new Array();
+function ResolveURLs(InText,Attribute){
+	x.length=0;
+	var Temp = InText.toLowerCase();
+	var z;
+	var AttLen = Attribute.length + 2;
+	var y=Temp.lastIndexOf(Attribute + '="');
+	while (y>-1){
+		var sLoc = y+AttLen;
+		if (Temp.substring(sLoc,sLoc+5) != 'http:'){
+			x[x.length]=new Array();
+			x[x.length-1][0] = sLoc;
+			z = Temp.indexOf('"',sLoc);
+			x[x.length-1][1] = z;
+			x[x.length-1][2] = InText.substring(sLoc,z);
+
+		}
+		Temp = Temp.substring(0,y);
+		y=Temp.lastIndexOf(Attribute + '="');
+	}
+	for (var j=0; j<x.length; j++){
+		InText = InText.substring(0,x[j][0]) + CombineURLs(x[j][2]) + InText.substring(x[j][1], InText.length);
+	}
+	return InText;
+}
+
+
+function ResolveAllURLs(Stuff){
+	Stuff = ResolveURLs(Stuff,'href');
+	Stuff = ResolveURLs(Stuff,'src');
+	Stuff = ResolveURLs(Stuff,'parent.location');
+	return Stuff;
+}
+
+// VARIABLES
+var PosFeedback = '[strGuessCorrect]';
+var NegFeedback = '[strGuessIncorrect]';
+var YourScoreIs = '[strYourScoreIs]';
+var ExerciseTitle = '[strExerciseTitle]';
+var ExerciseSubtitle = '[strExerciseSubtitle]';
+var Instructions = '[strInstructions]';
+var Score = 0;
+var ShowCards = false;	// matching memory
+
+[inclSendResults]var StartTime = (new Date()).toLocaleString();[/inclSendResults]
+var PreviousPage = history.length;
+
+
+// OUTPUT GOBBETS
+var NavBar='';
+[inclNavButtons]
+NavBar+='<tr><form name="NavButtons1" action=""><td [inclNavBarColor]bgcolor="[strNavBarColor]" [/inclNavBarColor]align="center">';
+NavBar+='<font face="[strFontFace]" size="-1">';
+[inclBack]
+NavBar+='<input type="button" value="[strBackCaption]" onclick="parent.GoBack()"></input>';
+[/inclBack]
+[inclContents]
+NavBar+='<input type="button" value="[strContentsCaption]" onclick=\'parent.location="[strContentsURL]"\'></input>';
+[/inclContents]
+[inclNextEx]
+NavBar+='<input type="button" value="[strNextExCaption]" onclick=\'parent.location="[strNextExURL]"\'></input>';[/inclNextEx]
+NavBar+='</font></td></form></tr>';
+
+[/inclNavButtons]
+
+var TitleCode = '<tr><td align="center" valign="middle" [inclPageBGColor]bgcolor="[strPageBGColor]"[/inclPageBGColor]>';
+TitleCode += '<font size="+1" face="[strFontFace]" color="[strTitleColor]">' + ExerciseTitle + '</font><br />';
+TitleCode += '<font size="-1" face="[strFontFace]" color="[strTitleColor]">' + ExerciseSubtitle + '<br />';
+TitleCode += '</font></td></tr>';
+
+var Exercise = '';
+
+
+function StartUp(){
+[inclSendResults]
+//Try to get user name
+	UserName = prompt('[strNamePlease]','');
+	UserName += '';
+	if ((UserName.substring(0,4) == 'null')||(UserName.length < 1)){
+		UserName = prompt('[strNamePlease]','');
+		UserName += '';
+		if ((UserName.substring(0,4) == 'null')||(UserName.length < 1)){
+			window.location = PreviousPage;
+		}
+	}
+[/inclSendResults]
+
+// addition: 3rd April 2005
+// preload images
+	var PreloadImages = new Array();
+  var i = 0;
+  var ImgSrc = '';
+  var StartPos = 0; EndPos = 0;
+  for (var x=0; x<F.length; x++){
+  	if (F[x][0].indexOf('<img') > -1){
+     	StartPos = F[x][0].indexOf('src="')+5;
+      EndPos = StartPos+1;
+      while ((EndPos < F[x][0].length-1)&&(F[x][0].charAt(EndPos) != '"')){EndPos++;}
+    	ImgSrc = F[x][0].substring(StartPos, EndPos);
+ 	  	PreloadImages[i] = new Image();
+   	  PreloadImages[i].src = ImgSrc;
+      ImgSrc = '';
+     	i++;
+      }
+    }
+  for (x=0; x<D.length; x++){
+  	if (D[x][0].indexOf('<img') > -1){
+     	StartPos = D[x][0].indexOf('src="')+5;
+      EndPos = StartPos+1;
+      while ((EndPos < D[x][0].length-1)&&(D[x][0].charAt(EndPos) != '"')){EndPos++;}
+    	ImgSrc = D[x][0].substring(StartPos, EndPos);
+ 	  	PreloadImages[i] = new Image();
+   	  PreloadImages[i].src = ImgSrc;
+      ImgSrc = '';
+     	i++;
+      }
+    }
+
+// get the type of exercise
+	for (var x=0; x<D.length; x++){
+		if (D[x][2] == 1){
+			ShowCards = true;
+			break;
+			}
+		}
+
+//Write the top frame
+	WriteFeedback(Instructions);
+
+// build and show the exercise
+	BuildExercise();
+	DisplayExercise(Exercise);
+
+	if (ShowCards == true){
+		for (x=0; x<M.length; x++){
+			BottomFrame.document.getElementById(x).innerHTML = M[x][0];
+			}
+		}
+}
+
+
+// EXERCISE BUILD ROUTINES
+function BuildExercise(){
+
+// build the items array
+	for (var x=0; x<F.length; x++){
+		M[x] = new Array();
+		M[x][0] = F[x][0];
+		M[x][1] = new Array(x, 0);
+		}
+
+	for (var x=0; x<D.length; x++){
+		M[F.length+x] = new Array();
+		M[F.length+x][0] = D[x][0];
+		M[F.length+x][1] = new Array(x, 0);
+		}
+
+	M = Shuffle(M);
+// build the output
+	var Words = 0;
+	var Output = '';
+	var QuadratZahl = '';
+
+	if (Math.sqrt(M.length) == Math.round(Math.sqrt(M.length))){QuadratZahl = true;}
+	else{QuadratZahl = false;}
+
+	Output += '<tr>';
+	for (var y=0; y<M.length; y++){
+		Output += '<td id="[MNum]" onMouseOver="parent.Highlight([MNum])" onMouseOut="parent.Unhighlight([MNum])" ';
+		Output += 'onClick="parent.CheckPair([MNum])" ';
+		Output += 'valign="middle" align="center" bgcolor="[strVLinkColor]" height="100" width="100">';
+		Output += '[Content]</td>';
+		Words++;
+		if (QuadratZahl==true){
+			if (Words == Math.sqrt(M.length)){
+				Output += '</tr><tr>';
+				Words = 0;
+				}
+			}
+		if (QuadratZahl==false){
+			if (Words == (Math.round(Math.sqrt(M.length)))+1){
+				Output += '</tr><tr>';
+				Words = 0;
+				}
+			}
+
+		Output = ReplaceStuff('[Content]', '<font size="+1" face="[strFontFace]" color="[strTitleColor]"><b>JMemory</b></font>', Output);
+		Output = ReplaceStuff('[MNum]', y, Output);
+		}
+	Output += '</tr>';
+
+	Exercise += Output;
+	Exercise = '<center><form name="MemoryGrid"><table border="0">' + Exercise + '</table></form></center>';
+	if (('[strCheckCaption]'!='')&&('[strCheckCaption]'!=' ')){
+		Exercise += '<center><input type="button" id="SolutionBtn" value="[strCheckCaption]" onClick="parent.ShowSolution()"></input></center>';
+		}
+
+}
+
+function Highlight(id){
+	if (M[id][1][1] == 0){
+		BottomFrame.document.getElementById(id).style.backgroundColor = '[strLinkColor]';
+		}
+}
+
+function Unhighlight(id){
+	switch (M[id][1][1]) {
+		case 0 : BottomFrame.document.getElementById(id).style.backgroundColor = '[strVLinkColor]'; break;
+		case 1 : BottomFrame.document.getElementById(id).style.backgroundColor = '[strExBGColor]'; break;
+		}
+}
+
+function ShowLogo(){
+	var Face = '<font size="+1" face="[strFontFace]" color="[strTitleColor]"><b>JMemory</b></font>';
+	if (ShowCards == false){
+		for (var x=0; x<M.length; x++){
+			if (M[x][1][1] == 0){
+				if (BottomFrame.document.getElementById(x) != null){
+					BottomFrame.document.getElementById(x).innerHTML = Face;
+					}
+				}
+			}
+		}
+}
+
+
+function ShowSolution(){
+	var Output = '<table border="0" cellpadding="2">';
+
+	for (var x=0; x<F.length; x++){
+		Output += '<tr>';
+		Output += '<td valign="middle" align="center">' + F[x][0] + '</td>';
+		Output += '<td valign="middle" align="center">' + D[x][0] + '</td>';
+		Output += '</tr>';
+		}
+
+	Output += '</table>';
+
+	DisplayExercise(Output);
+
+[inclSendResults]
+	setTimeout('SendResults(0)', 50);
+[/inclSendResults]
+}
+
+var cardno = 0;
+var Pairs = 0;
+var WMatches = 0; 	// stores wrong matches
+
+function CheckPair(id){
+
+	BottomFrame.document.getElementById(id).innerHTML = M[id][0];
+
+	var Output = '';
+
+	if(cardno==0){
+		cardno++;
+		clickarray[0][0]=M[id][1][0];
+		clickarray[0][1]=id;
+		return;
+		}
+
+	clickarray[1][0]=M[id][1][0];
+	clickarray[1][1]=id;
+	cardno=0;
+
+	if (clickarray[0][1] == clickarray[1][1]){
+		clickarray[0][0] = 0;
+		clickarray[1][0] = 0;
+		clickarray[0][1] = 0;
+		clickarray[1][1] = 0;
+		setTimeout('ShowLogo()', 1000);
+		return;
+		}
+
+	if (clickarray[0][0]==clickarray[1][0]){
+		clickarray[0][0] = 0;
+		clickarray[1][0] = 0;
+		if ((M[(clickarray[0][1])][1][1] == 0)||(M[(clickarray[1][1])][1][1] == 0)){
+			Pairs++;
+			M[(clickarray[0][1])][1][1] = 1;
+			M[(clickarray[1][1])][1][1] = 1;
+			}
+
+		BottomFrame.document.getElementById(clickarray[0][1]).style.backgroundColor='[strExBGColor]';
+		BottomFrame.document.getElementById(clickarray[1][1]).style.backgroundColor='[strExBGColor]';
+		clickarray[0][1] = 0;
+		clickarray[1][1] = 0;
+
+		Output += PosFeedback + ' ' + Pairs;
+		}
+		else{
+			if ((M[(clickarray[0][1])][1][1] == 1)||(M[(clickarray[1][1])][1][1] == 1)){}
+			else{
+				WMatches++;
+				clickarray[0][0] = 0;
+				clickarray[1][0] = 0;
+
+				setTimeout('ShowLogo()', 1000);
+
+				clickarray[0][1] = 0;
+				clickarray[1][1] = 0;
+
+				Output += NegFeedback;
+				Output += '<br />' + PosFeedback + ' ' + Pairs;
+				}
+			}
+
+	if (Output == ''){
+		Output += PosFeedback + ' ' + Pairs;
+		}
+	WriteFeedback(Output);
+
+	if (Pairs == F.length){
+		if (BottomFrame.document.getElementById('SolutionBtn') != null){
+			BottomFrame.document.getElementById('SolutionBtn').style.display = 'none';
+			}
+[inclSendResults]
+		Score = CalculateScore();
+		WriteFeedback(Output + '<br />' + Score + '%');
+		setTimeout('SendResults(' + Score + ')', 50);
+[/inclSendResults]
+	}
+}
+
+function CalculateScore(){
+	var ThisScore = 0;
+	var z = Pairs - WMatches;
+	var s = Pairs + WMatches;
+	if (z < 0){z = 0;}
+	ThisScore = Math.floor((z*100)/s);
+	return ThisScore;
+}
+
+F = new Array();
+[FixedArray]
+
+D = new Array();
+[DragArray]
+
+M = new Array();
+
+clickarray = new Array();
+clickarray[0] = new Array(0,0);
+clickarray[1] = new Array(0,0);
+
+
+
+// OUTPUT ROUTINES
+function WriteFeedback(Feedback) {
+//Build the output string
+	var OutString = '';
+	OutString += '<html>';
+	OutString += '<body  background="[strGraphicURL]" [inclPageBGColor]bgcolor="[strPageBGColor]" [/inclPageBGColor]text="[strTextColor]" link="[strLinkColor]" vlink="[strVLinkColor]">';
+	OutString += '<center><table border="0" cellpadding="5" cellspacing="1" width="85%">';
+	OutString += NavBar;
+	if (Feedback.length>0){
+		OutString += '<tr><td [inclExBGColor]bgcolor="[strExBGColor]" [/inclExBGColor]align="center">';
+		OutString += '<font face="[strFontFace]" size="-1" color="[strTextColor]">';
+		OutString += Feedback;
+		OutString += '</font></td></tr>'
+	}
+	OutString += '</table></center></body></html>';
+
+	if (is.CRAPBrowser){OutString=ResolveAllURLs(OutString);}
+
+//Write it to the frame
+	TopFrame.document.clear();
+	TopFrame.document.open();
+	TopFrame.document.write(OutString);
+	TopFrame.document.close();
+}
+
+function DisplayExercise(StuffToDisplay){
+//Build the output string
+	var OutString = '';
+	OutString += '<html>';
+	OutString += '<body  background="[strGraphicURL]" [inclPageBGColor]bgcolor="[strPageBGColor]" [/inclPageBGColor]text="[strTextColor]" link="[strLinkColor]" vlink="[strVLinkColor]">';
+	OutString += '<center><table border="0" cellpadding="5" cellspacing="1" width="85%">';
+	OutString += TitleCode;
+	OutString += '<tr><td [inclExBGColor]bgcolor="[strExBGColor]" [/inclExBGColor]align="center">';
+	OutString += '<font face="[strFontFace]" size="-1">';
+	OutString += StuffToDisplay;
+	OutString += '</font></td></tr>';
+	OutString += NavBar;
+	OutString += '</table></center></body></html>';
+
+	if (is.CRAPBrowser){OutString=ResolveAllURLs(OutString);}
+
+//Write it to the frame
+	BottomFrame.document.clear();
+	BottomFrame.document.open();
+	BottomFrame.document.write(OutString);
+	BottomFrame.document.close();
+}
+
+
+// UTILITY ROUTINES
+function GoBack(){
+	var BackSkip = history.length - PreviousPage;
+	if (BackSkip > 0){
+		history.go((BackSkip+1)*-1);
+	}
+	else{
+		parent.history.back();
+	}
+}
+
+function Shuffle(InArray){
+	Temp = new Array();
+	var Len = InArray.length;
+
+	var j = Len;
+
+	for (var i=0; i<Len; i++){
+		Temp[i] = InArray[i];
+	}
+
+	for (i=0; i<Len; i++){
+		Num = Math.floor(j  *  Math.random());
+		InArray[i] = Temp[Num];
+
+		for (var k=Num; k < j; k++) {
+			Temp[k] = Temp[k+1];
+		}
+		j--;
+	}
+	return InArray;
+}
+
+function ReplaceStuff(Token, Replacement, InString){
+	var i = InString.indexOf(Token);
+	var FirstBit = '';
+	var LastBit = '';
+	while (i>-1){
+		FirstBit = InString.substring(0, i);
+		LastBit = InString.substring(i + Token.length, InString.length);
+		InString = FirstBit + Replacement + LastBit;
+		i = InString.indexOf(Token);
+	}
+	return InString;
+}
+
+function EscapeDoubleQuotes(InString){
+	var Result = '';
+	for (var i=0; i<InString.length; i++){
+		if (InString.charAt(i) == '"'){
+			Result += '&quot;';
+		}
+		else{
+			Result += InString.charAt(i);
+		}
+	}
+	return Result;
+}
+
+// CGI SUBMISSION ROUTINES
+[inclSendResults]
+var UserName = '';
+
+var ResultForm = '<html><body><form name="Results" action="[strFormMailURL]" method="post" enctype="x-www-form-encoded">';
+ResultForm += '<input type="hidden" name="recipient" value="[strEMail]"></input>';
+ResultForm += '<input type="hidden" name="subject" value="[strExerciseTitle]"></input>';
+ResultForm += '<input type="hidden" name="Exercise" value="[strExerciseTitle]"></input>';
+ResultForm += '<input type="hidden" name="realname" value=""></input>';
+ResultForm += '<input type="hidden" name="Score" value=""></input>';
+ResultForm += '<input type="hidden" name="Start_Time" value=""></input>';
+ResultForm += '<input type="hidden" name="End_Time" value=""></input>';
+ResultForm += '<input type="hidden" name="title" value="Thanks!"></input>';
+[inclPageBGColor]ResultForm += '<input type="hidden" name="bgcolor" value="[strPageBGColor]"></input>';[/inclPageBGColor]
+ResultForm += '<input type="hidden" name="text_color" value="[strTitleColor]"></input>';
+ResultForm += '<input type="hidden" name="sort" value="order:realname,Exercise,Score,Start_Time,End_Time"></input>';
+ResultForm += '</form></body></html>';
+
+function SendResults(Score){
+	var today = new Date;
+	var NewName = '' + today.getTime();
+    var NewWin = window.open('', NewName, 'toolbar=no,location=no,directories=no,status=no, menubar=no,scrollbars=yes,resizable=no,,width=400,height=300');
+
+	NewWin.document.clear();
+	NewWin.document.open();
+	NewWin.document.write(ResultForm);
+	NewWin.document.close();
+	NewWin.document.Results.Score.value = Score + '%';
+	NewWin.document.Results.realname.value = UserName;
+	NewWin.document.Results.End_Time.value = (new Date()).toLocaleString();
+	NewWin.document.Results.Start_Time.value = StartTime;
+	NewWin.document.Results.submit();
+}
+[/inclSendResults]
+
+
+function Blank(){
+	return '<html><body>©Half-Baked Software.<br />© Michael Rottmeier.<br />Loading...</body></html>';
+}
+
+//-->
+
+//]]>
+
+</script>
+
+
+</head>
+<!--<body>Fool those dumb ad-inserting ISPs</body>-->
+
+<!--For full XHTML 1.0 compatibility, remove the border and framespacing attributes.
+These are required for proper display in current browsers, but render the document incompatible. Then, you'll need to add the appropriate Document Type Declaration; use
+the W3C XHTML 1 frameset DTD.-->
+
+<frameset rows="20%,*" framespacing="0" border="0" onload="StartUp()">
+	<frame src="javascript:parent.Blank()" frameborder="0" name="TopFrame"></frame>
+	<frame src="javascript:parent.Blank()" frameborder="0" name="BottomFrame"></frame>
+</frameset>
+
+</html>

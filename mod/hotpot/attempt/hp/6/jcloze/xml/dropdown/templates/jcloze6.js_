@@ -1,0 +1,337 @@
+
+//JCLOZE CORE JAVASCRIPT CODE
+
+var Feedback = '';
+var Correct = '[strCorrect]';
+var Incorrect = '[strIncorrect]';
+var GiveHint = '[strGiveHint]';
+var YourScoreIs = '[strYourScoreIs]';
+var Finished = false;
+var Locked = false;			// set when timer expires
+var Score = 0;
+var TimeOver = false;
+
+I = new Array();
+[strItemArray]
+
+function StartUp(){
+	RemoveBottomNavBarForIE();
+
+[inclSendResults]
+	GetUserName();
+[/inclSendResults]
+
+[inclPreloadImages]
+	PreloadImages([PreloadImageList]);
+[/inclPreloadImages]
+
+	Build_GapText();
+
+[inclTimer]
+	StartTimer();
+[/inclTimer]
+
+}
+
+[inclTimer]
+function TimesUp() {
+	document.getElementById('Timer').innerHTML = '[strTimesUp]';
+[inclPreloadImages]
+	RefreshImages();
+[/inclPreloadImages]
+	TimeOver = true;
+	Finished = true;
+	CheckAnswers();
+	Locked = true;
+}
+[/inclTimer]
+
+// CORE JAVASCRIPT FOR JCLOZE DROPDOWN FUNCTIONALITY
+
+GapList = new Array();
+var MakeIndividualDropdowns = false;
+[inclWordList]MakeIndividualDropdowns = true;[/inclWordList]
+var Score = 0;
+
+function Create_StateArray(){
+	this.GapLocked = false; 	// if correct answer has been chosen
+	this.ClueAskedFor = false;
+	this.Guesses = new Array();
+	this.NumOfTrials = 0;		// if gap was answered correctly the first time, this property won't change
+	this.Score = 0;
+}
+
+function Build_GapText(){
+	var GSpan = null;
+	var SelectorList = new Array();
+
+// create a list of all gap values
+	if (MakeIndividualDropdowns == false){
+		for (var x=0; x<I.length; x++){
+			SelectorList.push(x);
+			}
+// shuffle list with pointers
+		SelectorList = Shuffle(SelectorList);
+		}
+
+	for (var x=0; x<I.length; x++){
+		GSpan = document.getElementById('GapSpan'+x);
+		if (GSpan != null){
+// create a list for this gap
+			if (MakeIndividualDropdowns == true){
+				SelectorList.length = 0;
+				for (var y=0; y<I[x][1].length; y++){
+					SelectorList.push(y);
+					}
+// shuffle list with pointers
+				SelectorList = Shuffle(SelectorList);
+				}
+// remove the input field
+			GSpan.removeChild(GSpan.getElementsByTagName('input')[0]);
+// create the state stuff
+			GapList.push(new Array(null, new Create_StateArray()));
+// put an existing clue button into the GapList array
+			if (GSpan.getElementsByTagName('button').length > 0){
+				GapList[x][0] = GSpan.removeChild(GSpan.getElementsByTagName('button')[0]);
+				}
+// remove the </input> tag - and anything else which might be in there
+			while (GSpan.childNodes.length > 0){
+				GSpan.removeChild(GSpan.firstChild);
+				}
+// add the dropdown element
+			GSpan.appendChild(Create_GapDropdown(x,SelectorList));
+// add the clue button if it exists
+			if (GapList[x][0] != null){
+				GSpan.appendChild(GapList[x][0]);
+				}
+			}
+		}
+}
+
+function Create_GapDropdown(GapId,SelectorList){
+// create dropdown selector
+	var Selector = document.createElement('select');
+	Selector.setAttribute("id", 'Gap'+GapId);
+// append first child node (empty option element)
+	Selector.appendChild(Create_OptionNode('GapContentId_null','  '));
+
+// build selector options for this gap
+	for (var x=0; x<SelectorList.length; x++){
+// create dropdown selectors with identical content
+		if (MakeIndividualDropdowns == false){
+			Selector.appendChild(Create_OptionNode('GapContentId_'+SelectorList[x], I[SelectorList[x]][1][0][0]));
+			}
+// create dropdown selectors with individual content
+		if (MakeIndividualDropdowns){
+			Selector.appendChild(Create_OptionNode('GapContentId_'+SelectorList[x],I[GapId][1][SelectorList[x]][0]));
+			}
+		}
+
+	return Selector;
+}
+
+function Create_OptionNode(Id, Text){
+	var Option = document.createElement('option');
+	Option.setAttribute("value",Id);
+	Option.appendChild(document.createTextNode(Text));
+
+	return Option;
+}
+
+function CheckAnswers(){
+	if (Locked == true){return;}
+	var y = -1;
+	var FElm = null;
+	var AllGapsCorrect = true;
+
+	for (var x=0; x<GapList.length; x++){
+// get the chosen dropdown value
+		y = Get_SelectedDropValue(x);
+// track the chosen answer
+// -1 indicates that nothing has been chosen
+		if (y > -1){
+			if (MakeIndividualDropdowns){GapList[x][1].Guesses.push(I[x][1][y][0]);}
+			else{GapList[x][1].Guesses.push(I[y][1][0][0]);}
+
+// check the gap
+// gap choice is correct
+			if (MakeIndividualDropdowns){if (y == 0){GapList[x][1].GapLocked = true;}}
+			else{if (y == x){GapList[x][1].GapLocked = true;}}
+
+// count this trial
+			if (GapList[x][1].GapLocked == false){
+				GapList[x][1].NumOfTrials++;
+				}
+			}
+
+// display gap value without a selector
+		if (GapList[x][1].GapLocked == true){
+// remove dropdown selector
+			FElm = document.getElementById('GapSpan'+x);
+			while(FElm.childNodes.length > 0){
+				FElm.removeChild(FElm.firstChild);
+				}
+// append solution (text node)
+			//FElm.appendChild(document.createTextNode(I[x][1][0][0]));
+			FElm.innerHTML = I[x][1][0][0];
+			}
+// the wrong value has been chosen
+			else{
+				AllGapsCorrect = false;
+				}
+		}
+
+// calculate score
+	Calculate_Score();
+
+// compile and show feedback
+	Output = '';
+	if (AllGapsCorrect == true){
+		Output = Correct + '<br />';
+		}
+
+	Output += YourScoreIs + ' ' + Score + '%.<br />';
+	if (AllGapsCorrect == false){
+		Output += '<br />' + Incorrect;
+		}
+	ShowMessage(Output);
+	setTimeout('WriteToInstructions(Output)', 50);
+
+
+// send results if exercise is finished
+	Finished = Is_ExerciseFinished;
+	if ((AllGapsCorrect == true)||(Finished == true)){
+// set flags
+		Finished = true;
+// CGI results submission
+[inclSendResults]
+		setTimeout('SendResults(' + Score + ')', 50);
+[/inclSendResults]
+// hotpotatoes.net functionality
+		CompileGuesses();
+		setTimeout('Finish()', SubmissionTimeout);
+		}
+}
+
+function Get_SelectedDropValue(GapId){
+	var Result = -1;
+	var ElmId = document.getElementById('Gap'+GapId);
+	if (ElmId != null){
+		ElmId = ElmId.value;
+		ElmId = ElmId.substr(13,ElmId.length-13);
+		if (ElmId != ''){
+			Result = ElmId;
+			}
+		}
+	return Result;
+}
+
+function Calculate_Score(){
+	var ThisScore = 0;
+	for (var x=0; x<GapList.length; x++){
+		if (GapList[x][1].GapLocked == true){
+			if (MakeIndividualDropdowns){
+				GapList[x][1].Score = 1 - (GapList[x][1].NumOfTrials / I[x][1].length);
+				if (GapList[x][1].NumOfTrials == I[x][1].length){
+					GapList[x][1].Score = 0;
+					}
+				}
+				else{
+					GapList[x][1].Score = 1 - (GapList[x][1].NumOfTrials / GapList.length);
+					if (GapList[x][1].NumOfTrials == GapList.length){
+						GapList[x][1].Score = 0;
+						}
+					}
+// reduce the gap score if user has asked for a clue
+			if (GapList[x][1].ClueAskedFor == true){
+				GapList[x][1].Score /= 2;
+				}
+// normalize score
+			if (GapList[x][1].Score < 0){
+				GapList[x][1].Score = 0;
+				}
+			}
+		ThisScore += GapList[x][1].Score;
+		}
+	Score = Math.floor((ThisScore * 100) / I.length);
+}
+
+function Is_ExerciseFinished(){
+	var Result = true;
+
+	for (var x=0; x<GapList.length; x++){
+		if (GapList[x][1].GapLocked == false){
+			Result = false;
+			break;
+			}
+		}
+
+	return Result;
+}
+
+function ShowClue(ItemNum){
+	if (Locked == true){return;}
+	GapList[ItemNum][1].ClueAskedFor = true;
+	ShowMessage(I[ItemNum][2]);
+}
+
+// hotpotatoes.net related function
+function CompileGuesses(){
+	var F = document.getElementById('store');
+	if (F != null){
+		var Temp = '<?xml version="1.0"?><hpnetresult><fields>';
+		var GapLabel = '';
+		for (var x=0; x<GapList.length; x++){
+			GapLabel = 'Gap #' + (x+1).toString();
+			Temp += '<field><fieldname>' + GapLabel + '</fieldname>';
+			Temp += '<fieldtype>student-responses</fieldtype><fieldlabel>' + GapLabel + '</fieldlabel>';
+			Temp += '<fieldlabelid>JClozeStudentResponses</fieldlabelid><fielddata>';
+			Temp += 'Correct gap value: ' + GapList[x][1].Guesses[GapList[x][1].Guesses.length-1] + ' - ';
+			Temp += 'Solution attempts: ';
+			for (var y=0; y<GapList[x][1].Guesses.length; y++){
+				if (y>0){Temp += '| ';}
+					Temp += GapList[x][1].Guesses[y] + ' ';
+					}
+  		Temp += '</fielddata></field>';
+			}
+		Temp += '</fields></hpnetresult>';
+		Detail = Temp;
+	}
+}
+
+[inclHint]
+function Show_Solution(){
+	if ((Locked == true)||(Finished == true)){return;}
+
+	var FElm = null;
+	for (var x=0; x<GapList.length; x++){
+		if (GapList[x][1].GapLocked == false){
+			GapList[x][1].NumOfTrials = 0;
+			}
+// remove dropdown selector and existing clue button
+		FElm = document.getElementById('GapSpan'+x);
+		while (FElm.childNodes.length > 0){
+			FElm.removeChild(FElm.firstChild);
+			}
+
+// append solution (text node)
+		FElm.appendChild(document.createTextNode(I[x][1][0][0]));
+		}
+
+	Finished = true;
+	Calculate_Score();
+	Output = YourScoreIs + ' ' + Score + '%.';
+
+	ShowMessage(Output);
+	setTimeout('WriteToInstructions(Output)', 50);
+
+// send results if exercise is finished
+// CGI results submission
+[inclSendResults]
+		setTimeout('SendResults(' + Score + ')', 50);
+[/inclSendResults]
+// hotpotatoes.net functionality
+		CompileGuesses();
+		setTimeout('Finish()', SubmissionTimeout);
+}
+[/inclHint]

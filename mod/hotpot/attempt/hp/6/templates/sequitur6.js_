@@ -1,0 +1,297 @@
+
+document.onkeypress = KeyPress;
+
+function KeyPress(e) {
+	var InKey = 0;
+	if (C.gecko) {InKey=e.which;}
+	if (C.ie) {InKey=event.keyCode;}
+
+	var TheKey = String.fromCharCode(InKey).toUpperCase();
+	if (TheKey == 'R'){
+		StartUp();
+		return false;
+	}
+	var TheKeyNum = InKey - 64;
+	if (TheKeyNum > 32){TheKeyNum -= 32;}
+	if ((TheKeyNum > 0)&&(TheKeyNum <= NumberOfOptions)){
+		CheckAnswer(TheKeyNum);
+		return false;
+	}
+
+	return true;
+}
+
+var CorrectIndicator = '[strCorrectIndicator]';
+var IncorrectIndicator = '[strIncorrectIndicator]';
+var StorySoFar = new Array();
+var NumberOfOptions = [intNumberOfOptions];
+var OptionsThisQ = [intNumberOfOptions];
+var YourScoreIs = '[strYourScoreIs]';
+var strTimesUp = '[strTimesUp]';
+
+var CurrentAnswer = '';
+var CurrentNumber = 0;
+var CurrentCorrect = 0;
+var TotalPoints = 0;
+var ScoredPoints = 0;
+var TotalSegments = 0;
+var ThisQScore = 0;
+var FinalScore = 0;
+var AllDone = false;
+var Finished = false;
+var TimeOver = false;
+var SegmentsToShow = 0;
+
+var StartTime = (new Date()).getTime();
+var Captions = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+var ChoiceTemplate = '';
+var OperaButton = '<a href="javascript:CheckAnswer([ChoiceNum], this)">[ChoiceLetter]</a>';
+
+function CreateChoiceButtons(){
+	var TheButtons = document.getElementById('ChoiceDiv');
+	if (TheButtons == null){return;}
+	var Output = '';
+	var Btn;
+	Output += '<table border="0" cellpadding="8" class="ExerciseTable"><tbody>';
+
+	for (var i=1; i<=OptionsThisQ; i++){
+		Btn = ChoiceTemplate;
+		Btn = Btn.replace(/_ChoiceNum_/g, i);
+		Btn = Btn.replace(/\[ChoiceLetter\]/g, '&nbsp;&nbsp;'+Captions.charAt(i-1)+'&nbsp;&nbsp;');
+		Output += Btn;
+	}
+	Output += '</tbody></table>';
+	TheButtons.innerHTML = Output;
+}
+
+function StartUp(){
+
+	ChoiceTemplate = document.getElementById('ChoiceButtons').innerHTML;
+//for Opera, need to replace button with link
+	if (C.opera){
+		ChoiceTemplate = ChoiceTemplate.replace(/<button.*<\/button>/, OperaButton);
+	}
+
+	CreateChoiceButtons();
+
+	TotalSegments = Segments.length;
+
+	CurrentNumber = 0;
+	ShowQuestion();
+	ThisQScore = OptionsThisQ-1;
+	document.getElementById('Story').innerHTML = '';
+	document.getElementById('ScoreBox').innerHTML = '';
+	StorySoFar.length = 0;
+
+	AllDone = false;
+
+[inclTimer]
+	StartTimer();
+[/inclTimer]
+}
+
+function ShowQuestion(){
+
+	var i, j, Num;
+
+	var Range = TotalSegments - CurrentNumber;
+
+	var DistractorPool = new Array();
+	var Distractors = new Array();
+	DistractorPool.length = 0;
+	Distractors.length = 0;
+
+//Find out how many distractors are available
+	for (i=CurrentNumber+1; i<Segments.length; i++){
+		DistractorPool[DistractorPool.length] = i;
+	}
+
+//If it's less than the number of allowed choices, we're getting to the end;
+//reduce the number of choices, and rewrite the button set
+	if ((DistractorPool.length+1) < OptionsThisQ){
+		while ((DistractorPool.length+1) < OptionsThisQ){
+			OptionsThisQ--;
+		}
+	}
+
+	CreateChoiceButtons();
+	TotalPoints += OptionsThisQ-1;
+	var ChoiceSegments = new Array();
+
+	var RightAnswer = RemoveSlashes(Segments[CurrentNumber]);
+	ChoiceSegments[0] = RightAnswer;
+
+	for (i=1; i<OptionsThisQ; i++){
+		Num = Math.floor(DistractorPool.length  *  Math.random());
+		ChoiceSegments[ChoiceSegments.length] = RemoveSlashes(Segments[DistractorPool[Num]]);
+		for (j=Num; j<DistractorPool.length-1; j++){
+			DistractorPool[j] = DistractorPool[j+1];
+		}
+		DistractorPool.length--;
+	}
+	Shuffle(ChoiceSegments);
+
+//Find where the right answer ended up
+	for (i=0; i<ChoiceSegments.length; i++){
+		if (ChoiceSegments[i] == RightAnswer){
+			CurrentCorrect = i+1;
+		}
+	}
+
+	for (i=1; i<=OptionsThisQ; i++){
+			document.getElementById('Choice'+i).innerHTML = ChoiceSegments[i-1];
+	}
+
+	ThisQScore = OptionsThisQ-1;
+
+}
+
+function CheckAnswer(Chosen, Btn){
+
+	if ((CurrentNumber == TotalSegments)||(AllDone == true)){
+		return;
+	}
+	if (Btn.innerHTML == IncorrectIndicator){
+		return;
+	}
+	if (CurrentCorrect == Chosen){
+		StorySoFar[StorySoFar.length] = SlashesToReturn(Segments[CurrentNumber]);
+		CurrentNumber++;
+		if (CurrentNumber >= TotalSegments - 1){
+			StorySoFar[StorySoFar.length] = SlashesToReturn(Segments[TotalSegments-1]);
+		}
+
+		setTimeout("ShowStorySoFar()", 50);
+
+		ScoredPoints += ThisQScore;
+
+		if (CurrentNumber < TotalSegments-1){
+			var CurrentScore = CalculateScore();
+			document.getElementById('ScoreBox').innerHTML = CurrentScore + '%';
+			ShowQuestion();
+		}
+		else{
+			document.getElementById('ChoiceDiv').innerHTML = '';
+			FinalScore = CalculateScore();
+			document.getElementById('ScoreBox').innerHTML = FinalScore + '%';
+			ShowMessage(YourScoreIs + ' ' + FinalScore + '%');
+[inclTimer]
+			window.clearInterval(Interval);
+[/inclTimer]
+			AllDone = true;
+			Finish();
+		}
+	}
+	else{
+		Btn.innerHTML = IncorrectIndicator;
+		document.getElementById('ScoreBox').innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		if (ThisQScore > 0){
+			ThisQScore--;
+		}
+	}
+}
+
+function CalculateScore(){
+	return Math.floor(100*ScoredPoints/TotalPoints);
+}
+
+function Finish(){
+//If there's a form, fill it out and submit it
+	var F = document.getElementById('store');
+	if (F != null){
+		F.starttime.value = StartTime;
+		F.endtime.value = (new Date()).getTime();
+		F.mark.value = FinalScore;
+		F.submit();
+	}
+}
+
+function SlashesToReturn(InString){
+	var LineEnd = ' ';
+	while (InString.charAt(InString.length-1) == '/'){
+		InString= InString.substring(0, InString.length-1);
+		LineEnd += '<br />';
+	}
+	return InString + LineEnd;
+}
+
+function RemoveSlashes(InString){
+	while (InString.charAt(InString.length-1) == '/'){
+		InString= InString.substring(0, InString.length-1);
+	}
+	return InString;
+}
+
+[inclTimer]
+
+function TimesUp(){
+	AllDone = true;
+	CalculateTotalPoints();
+	FinalScore = CalculateScore();
+	document.getElementById('ScoreBox').innerHTML = FinalScore + '%';
+	Finish();
+	ShowMessage(strTimesUp + '<br />' + YourScoreIs + ' ' + FinalScore + '%');
+	window.clearInterval(Interval);
+}
+
+[/inclTimer]
+
+function CalculateTotalPoints(){
+	var j=NumberOfOptions;
+	TotalPoints = 0
+	for (var i=0; i<TotalSegments-1; i++){
+		while (j>TotalSegments-(CurrentNumber-1)){j--;};
+		TotalPoints += j;
+	}
+}
+
+[inclSolution]
+
+function Solution(){
+	if ((CurrentNumber == TotalSegments)||(AllDone == true)){
+		return;
+	}
+	AllDone = true;
+	for (var i=CurrentNumber; i<TotalSegments; i++){
+		StorySoFar[StorySoFar.length] = SlashesToReturn(Segments[i]);
+	}
+	setTimeout("ShowStorySoFar()", 50);
+	CalculateTotalPoints();
+	FinalScore = CalculateScore();
+	document.getElementById('ScoreBox').innerHTML = FinalScore + '%';
+	Finish();
+	ShowMessage(YourScoreIs + ' ' + FinalScore + '%');
+[inclTimer]
+	window.clearInterval(Interval);
+[/inclTimer]
+}
+
+[/inclSolution]
+
+function ShowText(HowManySegments){
+	SegmentsToShow = HowManySegments;
+	if (HowManySegments == 0){
+		document.getElementById('ShowPartText').style.display = 'inline';
+		document.getElementById('ShowWholeText').style.display = 'none';
+	}
+	else{
+		document.getElementById('ShowPartText').style.display = 'none';
+		document.getElementById('ShowWholeText').style.display = 'inline';
+	}
+	ShowStorySoFar();
+}
+
+function ShowStorySoFar(){
+	var StartFrom = 0;
+	if ((SegmentsToShow > 0)&&(StorySoFar.length > SegmentsToShow)){
+		StartFrom = StorySoFar.length - SegmentsToShow;
+	}
+	var Output = '';
+	for (var i=StartFrom; i<StorySoFar.length; i++){
+		Output += StorySoFar[i];
+	}
+	document.getElementById('Story').innerHTML = Output;
+}
+
+var Segments = new Array();
+[SegmentsArray]
