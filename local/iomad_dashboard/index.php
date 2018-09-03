@@ -43,7 +43,10 @@ if (!empty($company) && ( iomad::has_capability('block/iomad_company_admin:compa
 
 // Check if there are any companies.
 if (!$companycount = $DB->count_records('company')) {
+
     // If not redirect to create form.
+    // But first clear any existing notifications. 
+    \core\notification::fetch();
     redirect(new moodle_url('/blocks/iomad_company_admin/company_edit_form.php',
                              array('createnew' => 1)));
 }
