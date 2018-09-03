@@ -41,3 +41,13 @@
 {{^showSuggestions}}
 <input type="text" id="{{inputId}}" placeholder="{{placeholder}}" role="textbox" aria-owns="{{selectionId}}"/>
 {{/showSuggestions}}
+
+{{#js}}
+require(['jquery'], function($) {
+    // Set the minimum width of the input so that the placeholder is whole displayed.
+    var inputElement = $(document.getElementById('{{inputId}}'));
+    if (inputElement.length) {
+        inputElement.css('min-width', inputElement.attr('placeholder').length + 'ch');
+    }
+});
+{{/js}}
