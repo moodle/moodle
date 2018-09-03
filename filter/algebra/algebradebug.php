@@ -338,17 +338,8 @@ Mathematics Tools</a> forum in the Using Moodle course on moodle.org.</li>
 running Unix, a likely cause is that the mimetex binary you are using is
 incompatible with your operating system. You can try compiling it from the
 C sources downloaded from <a href="http://www.forkosh.com/mimetex.zip">
-http://www.forkosh.com/mimetex.zip</a>, or looking for an appropriate
-binary at <a href="http://moodle.org/download/mimetex/">
-http://moodle.org/download/mimetex/</a>. You may then also need to
-edit your moodle/filter/algebra/pix.php file to add
-<br /><?php echo "case &quot;" . PHP_OS . "&quot;:" ;?><br ?> to the list of operating systems
-in the switch (PHP_OS) statement. Windows users may have a problem properly
-unzipping mimetex.exe. Make sure that mimetex.exe is is <b>PRECISELY</b>
-433152 bytes in size. If not, download fresh copy from
-<a href="http://moodle.org/download/mimetex/windows/mimetex.exe">
-http://moodle.org/download/mimetex/windows/mimetex.exe</a>. Lastly check
-the execute permissions on your mimetex binary, as outlined in item 2 above.</li>
+http://www.forkosh.com/mimetex.zip</a>. Lastly check the execute permissions
+on your mimetex binary, as outlined in item 2 above.</li>
 </ol>
 </body>
 </html>
