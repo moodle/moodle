@@ -1,0 +1,125 @@
+/* @group Print Styling */
+
+#printonly {
+    display: none;
+}
+
+@media print {
+
+    #printonly {
+        display: block;
+    }
+
+    html,
+    body {
+        background-color: transparent;
+        color: #000;
+        margin: 0;
+        padding: 0;
+        text-shadow: none;
+    }
+
+    #dock,
+    #topstripe,
+    #page-header,
+    #custommenu-wrap-outer,
+    #block-region-side-pre,
+    #block-region-side-post,
+    .navbar,
+    #graded_users_selector,
+    div.urlselect,
+    #page-footer,
+    .tabtree,
+    .helplink,
+    #newmessageoverlay {
+        display: none;
+    }
+
+    #page-report-outline-user .navbar {
+        display: block;
+    }
+
+    #page-content-wrapper {
+        min-width: auto;
+        width: auto;
+    }
+
+    #block-region-side-post,
+    #block-region-side-pre {
+        width: 0;
+    }
+
+    .side-post-only #page-content #region-main-box {
+        left: 0;
+    }
+
+    .side-post-only #page-content #region-post-box {
+        margin-left: 0 !important;
+    }
+
+    &.side-post-only #page-content #region-main,
+    &.side-post-only #page-content #main-and-pre {
+        margin-left: 0 !important;
+    }
+
+    #main-and-pre.span9,
+    #region-main.span8 {
+        width: 100%;
+    }
+
+    [class*="span"].pull-right,
+    .row-fluid [class*="span"].pull-right {
+        float: left;
+    }
+
+    #page #region-main .region-content {
+        border: 0 solid transparent !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    #page-content #region-main-box .region-content {
+        padding: 0;
+    }
+
+    #page .navbar {
+        background: @white;
+        color: #000;
+        font-size: 1em;
+        margin: 0;
+        padding: 1em 0;
+        text-shadow: none;
+    }
+
+    #page .navbar a {
+        color: #000;
+        font-size: 1em;
+        text-shadow: none;
+    }
+
+    .navbar .sep {
+        text-shadow: none;
+    }
+
+    .headingwrap h2.headingblock,
+    .headingwrap h2.main {
+        text-shadow: none;
+    }
+
+    .breadcrumb-nav,
+    .breadcrumb-button,
+    .action-icon,
+    .icon,
+    .smallicon {
+        display: none !important;
+    }
+    .itemicon {
+        display: inline !important;
+    }
+
+    #page.container-fluid {
+        max-width: 100%;
+    }
+}
+
+/* @end */

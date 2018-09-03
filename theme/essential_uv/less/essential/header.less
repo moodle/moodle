@@ -1,0 +1,296 @@
+/* @group Header */
+@import "../fontawesome/variables";
+
+#page-header {
+    border-bottom: 1px solid #ddd;
+
+    .container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .btn-icon {
+        background-color: #ededed;
+        background-image: none;
+        display: none;
+        padding: 7px 10px;
+        position: absolute;
+        top: 56px;
+        .icon-bar {
+            .box-shadow(0 1px 1px 0 rgba(0,0,0,.45));
+            background-image: none;
+            display: block;
+            height: 2px;
+            width: 18px;
+        }
+        &:hover {
+            background-color: #e5e5e5;
+        }
+        .icon-bar + .icon-bar {
+            margin-top: 3px;
+        }
+    }
+    &.oldnavbar .btn-icon {
+        top: 10px;
+    }
+    #essentialicons {
+        background-image: none;
+        overflow: visible;
+    }
+
+    h2.main,
+    #pageheading {
+        border-bottom: 1px solid #e1e1e1;
+        color: #777;
+        font-size: 1.4em;
+        line-height: 35px;
+    }
+
+    div.titlearea {
+        height: 52px;
+        width: 100%;
+    }
+
+    h1,
+    h2 {
+        margin: 0;
+    }
+
+    h1#title {
+        font-size: 3em;
+        line-height: 40px;
+        padding-top: 4px;
+    }
+    h1#smalltitle {
+        font-size: 2em;
+        line-height: 20px;
+        padding-top: 12px;
+    }
+    h2#subtitle {
+        font-size: 1em;
+        line-height: 20px;
+        padding-top: 6px;
+    }
+
+    a.textlogo {
+        text-decoration: none;
+    }
+
+    #headerlogo {
+        font-size: 4.5em;
+    }
+}
+
+#page-header {
+    .btn-icon {
+        float: right;
+        right: 10px;
+    }
+
+    #essentialicons {
+        button {
+            margin: 0 0 0 5px;
+        }
+    }
+
+    a.logo {
+        background-position: left center;
+        float: left;
+    }
+
+    div.titlearea {
+        margin-left: 80px;
+        padding-left: 10px;
+    }
+
+    #headerlogo {
+        float: left;
+        padding-right: 10px;
+        margin-right: 10px;
+    }
+}
+
+@media (min-width: 768px) {
+    #page-header div.titlearea {
+        display: block !important;
+    }
+}
+
+@media (min-width: @navbarCollapseDesktopWidth) {
+    #page-header div.titlearea {
+        height: 64px;
+    }
+}
+
+#page-header.oldnavbar,
+.pagelayout-maintenance #page-header,
+#page-admin-upgradesettings #page-header,
+.pagelayout-redirect #page-header {
+    margin-top: 0;
+}
+
+// Narrow page width with custom menu items can make the navigation bar big.
+@media (min-width: @navbarCollapseDesktopWidth) {
+    .pagewidthnarrow.custommenuitems {
+        header .navbar-inner {
+            height: @navbarHeight * 2;
+            max-height: @navbarHeight * 2;
+        }
+    }
+}
+
+#page-header {
+    &.logo {
+        min-height: 52px;
+    }
+    &.nologo {
+        height: 52px;
+        max-height: 52px;
+    }
+}
+
+@media (min-width: @navbarCollapseDesktopWidth) {
+    #page-header {
+        &.logo {
+            min-height: 64px;
+        }
+        &.nologo {
+            height: 64px;
+            max-height: 64px;
+        }
+    }
+}
+
+/* @end */
+
+/* @group Social Buttons */
+
+#socialnetworks,
+#mobileapps {
+    margin-right: 5px;
+    padding-right: 5px;
+}
+
+
+@media (min-width: @navbarCollapseDesktopWidth) {
+    #page-header {
+        &.nologo {
+            #socialnetworks,
+            #mobileapps {
+                height: 64px;
+                max-height: 64px;
+            }
+        }
+    }
+}
+
+.socials {
+    margin: 0;
+    p {
+        font-weight: normal;
+        font-size: 1.1em;
+    }
+}
+
+body button {
+    &.socialicon {
+        background-color: #bbb;
+        background-image: none;
+        border-radius: 5px;
+        border: 0 none;
+        font-size: 1.6em;
+        min-width: 29px;
+        padding: 5px;
+        text-align: center;
+        .@{fa-css-prefix} {
+            color: @white;
+        }
+        &:hover,
+        &:focus {
+            background-image: none;
+        }
+    }
+    &.facebook:hover,
+    &.facebook:focus {
+        background-color: #4a6ea9;
+    }
+    &.skype:hover,
+    &.skype:focus {
+        background-color: #00adf7;
+    }
+    &.instagram:hover,
+    &.instagram:focus {
+        background-color: #a5674a;
+    }
+    &.ios:hover,
+    &.ios:focus {
+        background-color: #000;
+    }
+    &.windows:hover,
+    &.windows:focus {
+        background-color: #008a00;
+    }
+    &.winphone:hover,
+    &.winphone:focus {
+        background-color: #9b4f96;
+    }
+    &.android:hover,
+    &.android:focus {
+        background-color: #98cd32;
+    }
+    &.vk:hover,
+    &.vk:focus {
+        background-color: #4a6ea9;
+    }
+    &.twitter:hover,
+    &.twitter:focus {
+        background-color: #00aced;
+    }
+    &.googleplus:hover,
+    &.googleplus:focus {
+        background-color: #f42941;
+    }
+    &.flickr:hover,
+    &.flickr:focus {
+        background-color: #ff3096;
+    }
+    &.instagram:hover,
+    a.instagram:focus {
+        background-color: #b99c6b;
+    }
+    &.youtube:hover,
+    &.youtube:focus {
+        background-color: #f42941;
+    }
+    &.pinterest:hover,
+    &.pinterest:focus {
+        background-color: #f42941;
+    }
+    &.linkedin:hover,
+    &.linkedin:focus {
+        background-color: #4a9cc9;
+    }
+}
+
+ul.socials {
+    text-align: right;
+    li {
+        display: inline-block;
+        text-align: right;
+    }
+}
+
+.socialheading {
+    letter-spacing: .2em;
+    margin: 2px 0 0;
+    padding: 0;
+    text-align: right;
+}
+
+@media (min-width: 768px) {
+    .loggedin #page-header.oldnavbar #essentialicons {
+        right: 132px;
+    }
+}
+
+/* @end */

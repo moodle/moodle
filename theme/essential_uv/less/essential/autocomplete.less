@@ -1,0 +1,68 @@
+/* @group Autocomplete */
+
+// https://gist.github.com/salilpa/2e7f40ac5358c32f9b20
+// https://gist.github.com/daz/2168334
+.ui-autocomplete {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    float: left;
+    display: none;
+    min-width: 160px;
+    _width: 160px;
+    padding: 5px;
+    margin: 2px 0 0 0;
+    list-style: none;
+    border-style: solid;
+    border-width: 1px;
+    .border-radius(@baseBorderRadius);
+    .background-clip(padding-box);
+    *border-right-width: 2px;
+    *border-bottom-width: 2px;
+
+    .ui-menu-item > a.ui-corner-all {
+        display: block;
+        padding: 3px 15px;
+        clear: both;
+        font-weight: normal;
+        line-height: 18px;
+        white-space: nowrap;
+
+        &.ui-state-hover,
+        &.ui-state-active {
+            text-decoration: none;
+            .border-radius(0);
+            background-image: none;
+        }
+    }
+}
+
+.ui-autocomplete {
+    max-height: 240px;
+    max-width: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    cursor: pointer;
+}
+
+.courseitemsearch {
+    width: 100%;
+    p,
+    > div {
+        display: inline;
+    }
+    input {
+        margin-bottom: 4px;
+    }
+    #courseitemsearchresults {
+        position: relative;
+    }
+    .ui-autocomplete {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+}
+
+/* @end */

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>less/fontawesome</location>
+        <name>FontAwesome icon font</name>
+        <license>MIT</license>
+        <version>4.7.0</version>
+        <licenseversion>1.0</licenseversion>
+    </library>
+    <library>
+        <location>amd/src/jBreadCrumb.js</location>
+        <name>jBreadcrumb</name>
+        <license>MIT</license>
+        <version>1.1</version>
+        <licenseversion>1.0</licenseversion>
+    </library>
+    <library>
+        <location>javascript/dock.js</location>
+        <name>Docking Script for Moodle 2.7+</name>
+        <license>GPL</license>
+        <version></version>
+        <licenseversion>3.0</licenseversion>
+    </library>
+    <library>
+        <location>amd/src/fitvids.js</location>
+        <name>FitVids auto video sizer</name>
+        <license>WTFPL</license>
+        <version>1_1_2</version>
+        <licenseversion>2.0</licenseversion>
+    </library>
+</libraries>

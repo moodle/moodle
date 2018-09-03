@@ -58,28 +58,25 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents) {
             var stringkeys = [
                 {
                     key: 'deletecategory',
-                    component: 'tool_dataprivacy'
+                    component: 'tool_dataprivacy',
+                    param: categoryname
                 },
                 {
                     key: 'deletecategorytext',
                     component: 'tool_dataprivacy',
                     param: categoryname
-                },
-                {
-                    key: 'delete'
                 }
             ];
 
             Str.get_strings(stringkeys).then(function(langStrings) {
                 var title = langStrings[0];
                 var confirmMessage = langStrings[1];
-                var buttonText = langStrings[2];
                 return ModalFactory.create({
                     title: title,
                     body: confirmMessage,
                     type: ModalFactory.types.SAVE_CANCEL
                 }).then(function(modal) {
-                    modal.setSaveButtonText(buttonText);
+                    modal.setSaveButtonText(title);
 
                     // Handle save event.
                     modal.getRoot().on(ModalEvents.save, function() {

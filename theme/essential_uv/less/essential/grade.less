@@ -1,0 +1,82 @@
+/* @group Gradebook */
+
+#page-grade-report-grader-index {
+    .generaltable {
+        .heading.r1,
+        .heading_name_row.r1 {
+            > th {
+                vertical-align: middle;
+            }
+        }
+    }
+    h1 {
+        clear: none;
+    }
+
+    .gradeparent {
+        div:nth-of-type(2):not(.topscroll) {
+            &.right_scroller {
+                padding-top: 22px;
+            }
+        }
+        .right_scroller {
+            .topscroll {
+                min-height: 22px;
+            }
+        }
+        div.floater:first-of-type .cell:nth-child(odd),
+        div.floater.floating.lastrow .cell {
+            background-color: @paginationBackground;
+        }
+    }
+
+    #page #page-content #region-main {
+        overflow-x: visible;
+        width: auto;
+    }
+}
+
+#page-grade-report-grader-index {
+    .generaltable {
+        th.user {
+            padding-right: 45px;
+            img.userpicture {
+                float: left;
+            }
+        }
+        .heading.r1,
+        .heading_name_row.r1 {
+            > th {
+                padding-right: 35px;
+            }
+        }
+    }
+}
+
+// Revert selectors in settings/tables.less.
+.path-grade-report-user .user-grade,
+.path-grade-edit-tree .setup-grades {
+    &.generaltable > tbody tr > td {
+        &.leveleven,
+        &.levelodd {
+            a:not(.btn):not([role="menuitem"]),
+            a:not(.btn):not([role="menuitem"]):visited,
+            a:not(.btn):not([role="menuitem"]):hover,
+            a:not(.btn):not([role="menuitem"]):focus,
+            a:not(.btn):not([role="menuitem"]):active,
+            a.toggle-display,
+            a.toggle-display:visited,
+            a.toggle-display:hover,
+            a.toggle-display:focus,
+            a.toggle-display:active {
+                background-color: transparent;
+            }
+        }
+    }
+}
+
+.path-grade-report-user .generaltable.user-grade .dimmed_text {
+    text-decoration: line-through;
+}
+
+/* @end */

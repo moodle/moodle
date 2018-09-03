@@ -1,0 +1,224 @@
+/* @group Footer */
+
+#page-footer {
+    border: 0;
+    font-size: 1em;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+
+    .copy {
+        padding-bottom: 5px;
+        text-align: center;
+        width: 100%;
+    }
+    .footerlinks {
+        .footnote {
+            color: @white;
+            a:hover {
+                text-decoration: none;
+            }
+        }
+        .helplink {
+            a {
+                color: orange;
+            }
+        }
+    }
+
+    hr {
+        border-bottom: 0 none;
+        margin-top: 0;
+        padding: 0;
+    }
+
+    h4 {
+        font-size: 1.2em;
+        margin-bottom: 4px;
+        padding-bottom: 6px;
+    }
+}
+
+#page-footer {
+    text-align: left;
+
+    .copy {
+        float: left;
+    }
+    .footerlinks {
+        .footnote {
+            float: left;
+            margin-left: 0;
+        }
+        .helplink {
+            float: right;
+        }
+    }
+}
+
+
+#page-footer ul,
+#greyboxright ul {
+    list-style-type: none !important;
+    margin: 0 0 10px;
+    li {
+        padding: 0;
+    }
+}
+
+.footerlinks {
+    line-height: 15px;
+}
+
+body.path-admin-setting #page-footer {
+    // Ensure the height is sufficient for the floating buttons.
+    min-height: 101px;
+}
+
+/* @group Footer Block Formatting */
+
+#page-footer {
+    .block {
+        .header {
+            .title h2:before {
+                background-color: transparent;
+                font-size: 1.2em;
+                font-weight: normal;
+                padding-bottom: 0;
+                margin-bottom: 0;
+                text-transform: none;
+            }
+            .block_action {
+                display: none !important;
+            }
+        }
+    }
+}
+#page-footer {
+    .block {
+        .header {
+            .title h2:before {
+                padding-left: 0;
+            }
+        }
+    }
+}
+
+#page-footer .eventskey,
+#page-footer .calendar_filters {
+    display: none;
+}
+
+#page-footer img.profilepicture,
+#page-footer .myprofileitem.picture {
+    float: left;
+    height: 90px;
+    width: 90px;
+}
+
+#page-footer .myprofileitem {
+    &.fullname {
+        margin-top: 10px;
+    }
+}
+#page-footer .myprofileitem {
+    &.picture {
+        margin-right: 20px;
+    }
+}
+
+#page-footer .block_login {
+    .footer a,
+    .footer a:visited {
+        color: @white;
+    }
+}
+
+#page-footer .block_rss_client {
+    li:before {
+        display: none;
+    }
+
+    .content {
+        padding-top: 10px;
+    }
+
+    .content li:hover {
+        background-color: transparent;
+    }
+}
+
+/* @end */
+
+/* @group Performance Information */
+#page-footer .performanceinfo {
+    border-radius: 6px;
+    border-width: 1px;
+    border-style: solid;
+    margin-top: 5px;
+    padding: 8px;
+
+    .span3 {
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    var {
+        border-radius: 5px;
+        font-size: 1.2em;
+        padding: 5px;
+        white-space: nowrap;
+    }
+
+    .span12 {
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+    }
+
+    h2 {
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+        font-size: 1.4em;
+        line-height: 1.4em;
+        font-weight: normal;
+        margin-bottom: 0;
+        margin-top: 5px;
+        padding-bottom: 5px;
+        text-transform: uppercase;
+        &:before {
+            content: "\f05a";
+            font-family: FontAwesome;
+            font-size: 1.65em;
+            vertical-align: bottom;
+        }
+    }
+
+    span {
+        display: block;
+        margin-top: 5px;
+    }
+
+    span.@{fa-css-prefix} {
+        color: inherit;
+        display: inline;
+        font-size: 1em;
+        font-weight: 100;
+        &:hover,
+        &:focus {
+            color: inherit;
+        }
+    }
+}
+#page-footer .performanceinfo {
+    h2 {
+        &:before {
+            margin-right: .3em;
+        }
+    }
+    span.@{fa-css-prefix} {
+        margin-right: .3em;
+    }
+}
+/* @end */
+
+/* @end */

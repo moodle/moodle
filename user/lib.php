@@ -48,16 +48,12 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
     }
 
     // Check username.
-    if (trim($user->username) === '') {
-        throw new moodle_exception('invalidusernameblank');
-    }
-
     if ($user->username !== core_text::strtolower($user->username)) {
         throw new moodle_exception('usernamelowercase');
-    }
-
-    if ($user->username !== core_user::clean_field($user->username, 'username')) {
-        throw new moodle_exception('invalidusername');
+    } else {
+        if ($user->username !== core_user::clean_field($user->username, 'username')) {
+            throw new moodle_exception('invalidusername');
+        }
     }
 
     // Save the password in a temp value for later.
