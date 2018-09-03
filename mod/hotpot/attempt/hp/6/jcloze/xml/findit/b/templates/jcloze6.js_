@@ -1,0 +1,602 @@
+
+//JCLOZE CORE JAVASCRIPT CODE
+
+/* Modification Copyright (c) Michael Rottmeier, March 2005
+ Find-it - Version 3.1.4b for Hot Potatoes v6
+ http://www.teaching-tools.de.vu
+ THIS HEADER MUST STAY UN-TOUCHED */
+
+
+var Feedback = '';
+var Correct = '[strCorrect]';
+var Incorrect = '[strIncorrect]';
+var MissingMistakes = '[strGiveHint]';
+var YourScoreIs = '[strYourScoreIs]';
+var CaseSensitive = [boolCaseSensitive];
+var Finished = false;
+var Locked = false;	// timer specific
+var TimeOver = false;
+var Output = ''; 	// used for feedback storage
+
+I = new Array();
+[strItemArray]
+
+function StartUp(){
+	RemoveBottomNavBarForIE();
+
+[inclSendResults]
+	GetUserName();
+[/inclSendResults]
+
+[inclPreloadImages]
+	PreloadImages([PreloadImageList]);
+[/inclPreloadImages]
+
+	Split_Feedback();
+	Build_GapText();
+
+[inclTimer]
+	StartTimer();
+[/inclTimer]
+}
+
+[inclTimer]
+function TimesUp() {
+	document.getElementById('Timer').innerHTML = '[strTimesUp]';
+[inclPreloadImages]
+	RefreshImages();
+[/inclPreloadImages]
+	TimeOver = true;
+	Finished = true;
+	CheckAnswers();
+	Locked = true;
+}
+[/inclTimer]
+
+
+// CORE JAVASCRIPT FOR JCLOZE DROPDOWN FUNCTIONALITY
+
+GapList = new Array();
+// GapList[x][0] = clue button
+// GapList[x][1] = State data
+// GapList[x][2] = input component in Find-it v3.1b
+var Score = 0;
+var TotWrongChoices = 0;
+
+function Create_StateArray(){
+	this.ErrorFound = false;
+	this.WrongGapValue = '';
+	this.GapSolved = false;
+	this.Guesses = new Array();
+	this.HintsAndChecks = 0;
+	this.Score = 0;
+}
+
+function Build_GapText(){
+	var GSpan = null;
+	var InpComp = null;
+
+// first, prepare the gaps
+	for (var x=0; x<I.length; x++){
+		GSpan = document.getElementById('GapSpan'+x);
+		if (GSpan != null){
+// remove the input field
+			InpComp = GSpan.removeChild(GSpan.getElementsByTagName('input')[0]);
+// create the state stuff
+			GapList.push(new Array(null, new Create_StateArray(), InpComp));
+// put an existing clue button into the GapList array
+			if (GSpan.getElementsByTagName('button').length > 0){
+				GapList[x][0] = GSpan.removeChild(GSpan.getElementsByTagName('button')[0]);
+				}
+// remove the </input> tag - and anything else which might be in there
+			while (GSpan.childNodes.length > 0){
+				GSpan.removeChild(GSpan.firstChild);
+				}
+// add the wrong text output
+			GSpan.appendChild(Create_GapContent(x));
+// store the used gap value (wrong text) for tracking purposes
+			GapList[x][1].WrongGapValue = GSpan.getElementsByTagName('span')[0].firstChild.nodeValue;
+			}
+		}
+
+// second, prepare the other text
+	var TextBody = document.getElementById('ClozeBody'); //.getElementsByTagName('p')[0];
+	TextBody = TextBody.parentNode;
+	if (TextBody != null){
+		for (var y=0; y<TextBody.childNodes.length; y++){
+// markup the text appropriately and replace the old node with the new one
+			TextBody.replaceChild(Markup_Text(TextBody.childNodes[y]), TextBody.childNodes[y]);
+			}
+		}
+}
+
+function Create_GapContent(GapId){
+	var SpanElm = document.createElement('span');
+	SpanElm.className = 'GapSpan';
+	SpanElm.onclick = function(){CheckText(true, GapId);}
+	//SpanElm.setAttribute("onclick", 'CheckText(true, '+GapId+')');
+	//SpanElm.setAttribute("class", 'GapSpan');
+	SpanElm.appendChild(document.createTextNode(Get_WrongGapContent(GapId)));
+	return SpanElm;
+}
+
+function Get_WrongGapContent(GapId){
+	// the first alternative gap answer is considered to be the wrong one
+	var ReturnVal = I[GapId][1][1][0];
+
+// remove the wrong value from the array
+	for (var x=1; x<(I[GapId][1].length-1); x++){
+		I[GapId][1][x][0] = I[GapId][1][x+1][0];
+		}
+	I[GapId][1].length = I[GapId][1].length-1;
+
+	return ReturnVal;
+}
+
+function Markup_Text(Node){
+	for (var x=0; x<Node.childNodes.length; x++){
+//alert(Node.childNodes[x].nodeType);
+		switch (Node.childNodes[x].nodeName.toLowerCase()){
+			case 'span' :
+					if (Node.childNodes[x].attributes.length > 0){
+						if ((Node.childNodes[x].getAttribute('id').substr(0, 7) != 'GapSpan')){
+							Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]);
+							}
+						}
+				break;
+			case 'div' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'p' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'strong' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'em' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'blockquote' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'pre' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'ul' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'ol' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'li' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'sup' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'sub' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'table' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'tr' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'td' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'thead' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'tbody' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+			case 'tfoot' : Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]); break;
+
+			case '#text' :
+				//if (Node.childNodes.length < 1){
+					//if (Node.nodeType == 3){
+						if (Node.nodeValue != ''){
+// add the span tag with the onclick event
+							var SpanNode = document.createElement('span');
+							SpanNode.className = 'GapSpan';
+							SpanNode.onclick = function(){CheckText(false, -1);}
+							SpanNode.appendChild(document.createTextNode(Node.childNodes[x].nodeValue));
+// replace the old node with the new created node (span + text)
+							Node.replaceChild(SpanNode, Node.childNodes[x]);
+							}
+						//}
+					//}
+				break;
+			}
+		}
+
+	return Node;
+}
+
+// FEEDBACK ROUTINES
+CFb = new Array();
+FNoErrorHere = new Array();
+
+//var strFNoErrorHere = 'FNoErrorHere.';
+var strFSomeGapsAreIncorrect = 'There are still some incorrect gaps.';
+var strFWellDone = 'Well done!';
+
+function Split_Feedback(){
+// the feedback bits should look like feedb1## feedb2## feedb3 etc.
+//'Correct' Feedback
+	var Tmp = Correct.split('##');
+	var y = -1;
+	for (var x=0; x<Tmp.length; x++){
+		if (TrimString(Tmp[x]) != ''){
+			if (x == 0){
+				strFSomeGapsAreIncorrect = TrimString(Tmp[x]);
+				}
+			if (x == 1){
+				strFWellDone = TrimString(Tmp[x]);
+				}
+			}
+		}
+
+//'Incorrect' Feedback
+	Tmp = Incorrect.split('##');
+	y = -1;
+	for (var x=0; x<Tmp.length; x++){
+		if (TrimString(Tmp[x]) != ''){
+			y++;
+			FNoErrorHere[y] = TrimString(Tmp[x]);
+			}
+		}
+}
+
+function Get_RandomFeedback(){
+	var Stuff = '';
+// negative feedback
+	var x = Math.floor(Math.random()*FNoErrorHere.length);
+	Stuff = FNoErrorHere[x];
+	return Stuff;
+}
+
+
+// CHECK ROUTINES
+function CheckText(GapState,GapId){
+	if (Finished == true){return;}
+
+// chosen text is wrong:
+	if (GapState==false){
+// show feedback
+		//ShowMessage(strFNoErrorHere);
+		ShowMessage(Get_RandomFeedback());
+// penalty
+		TotWrongChoices++;
+		}
+// chosen text is right:
+		else{
+			CorrectChoice(GapId);
+			}
+}
+
+function CorrectChoice(GapId){
+// the state flag
+	GapList[GapId][1].ErrorFound = true;
+
+// show input component
+	var GSpan = document.getElementById('GapSpan'+GapId);
+	if (GSpan != null){
+// remove the onclick event
+		GSpan.removeAttribute('onclick');
+// remove the text node
+		while (GSpan.childNodes.length > 0){
+			GSpan.removeChild(GSpan.firstChild);
+			}
+		GSpan.appendChild(GapList[GapId][2]);
+// put the wrong gap value into the input component
+		document.getElementById('Gap'+GapId).value = GapList[GapId][1].WrongGapValue;
+// add the clue button if it exists
+		if (GapList[GapId][0] != null){
+// replace the button's caption
+			GapList[GapId][0].firstChild.nodeValue = '[ ? ]';
+			GSpan.appendChild(GapList[GapId][0]);
+			}
+		}
+}
+
+// GAP VALUE CHECK ROUTINES (mainly based on the original JCloze routines)
+var CurrentWord = 0;
+function TrackFocus(BoxNumber){
+	CurrentWord = BoxNumber;
+	InTextBox = true;
+}
+
+function LeaveGap(){
+	InTextBox = false;
+}
+
+function CheckAnswers(){
+
+// check if there is at least one gap visible
+	var NumOfVisibleGaps = 0;
+	for (var x=0; x<GapList.length; x++){
+		if ((GapList[x][1].ErrorFound == true)&&(GapList[x][1].GapSolved == false)){
+			NumOfVisibleGaps++;
+			}
+		}
+
+	if (NumOfVisibleGaps < 1){return;}
+
+	if (Locked == true){return;}
+	SaveCurrentAnswers();
+	var AllCorrect = true;
+
+//Check each answer
+	for (var x=0; x<GapList.length; x++){
+// check only those gaps which are already found
+		if (GapList[x][1].ErrorFound == true){
+			if (GapList[x][1].GapSolved == false){
+//If it's right, calculate its score
+				if (CheckAnswer(x, true) > -1){
+					var TotalChars = GetGapValue(x).length;
+					GapList[x][1].Score = (TotalChars-GapList[x][1].HintsAndChecks)/TotalChars;
+					if (GapList[x][1].Score < 0){GapList[x][1].Score = 0;}
+					GapList[x][1].GapSolved = true;
+//Drop the correct answer into the page, replacing the text box
+					Show_GapSolution(x);
+//					SetCorrectAnswer(x, GetGapValue(x));
+					}
+					else{
+//Otherwise, increment the checks for this item, as a penalty
+						GapList[x][1].HintsAndChecks++;
+
+//then set the flag
+						AllCorrect = false;
+					}
+				}
+			}
+		}
+
+	Output = '';
+// check whether exercise is finished:
+// if all errors are found, show final feedback and finish exercise:
+	if (CheckExStatus() == true){
+		Output += MissingMistakes + Get_NumMissingErr();
+		Finished = true;
+// hotpot.net
+		CompileGuesses();
+		CalculateScore();
+		setTimeout('Finish()', SubmissionTimeout);
+
+[inclSendResults]
+		setTimeout('SendResults(' + Score + ')', 50);
+[/inclSendResults]
+		}
+// else show number of missing errors:
+		else{
+// case 1: all visible gaps are answered correctly
+			if (AllCorrect == true){
+				Output += strFWellDone + '<br />' + MissingMistakes + ' ' + Get_NumMissingErr();
+				}
+// case 2: some of the found gaps are incorrect
+				else{
+					Output += strFSomeGapsAreIncorrect + '<br />' + MissingMistakes + ' ' + Get_NumMissingErr();
+					}
+			}
+
+// calculate the score
+	CalculateScore();
+// show feedback
+	if (Output.length > 1){
+		Output += '<br />' + YourScoreIs + ' ' + Score + '%';
+		ShowMessage(Output);
+		setTimeout('WriteToInstructions(Output)', 50);
+		}
+}
+
+function CheckAnswer(GapNum, MarkAnswer){
+	var Guess = GetGapValue(GapNum);
+	var UpperGuess = '';
+	var UpperAnswer = '';
+	if (CaseSensitive == false){
+		UpperGuess = Guess.toUpperCase();
+	}
+	else{
+		UpperGuess = Guess;
+	}
+	var Match = -1;
+	for (var x=0; x<I[GapNum][1].length; x++){
+		if (CaseSensitive == false){
+			UpperAnswer = I[GapNum][1][x][0].toUpperCase();
+		}
+		else{
+			UpperAnswer = I[GapNum][1][x][0];
+		}
+		if (TrimString(UpperGuess) == UpperAnswer){
+			Match = x;
+			if (MarkAnswer == true){
+				GapList[GapNum][1].GapSolved = true;
+			}
+		}
+	}
+	return Match;
+}
+
+function SaveCurrentAnswers(){
+	var Ans = ''
+	for (var x=0; x<GapList.length; x++){
+		Ans = GetGapValue(x);
+		if ((Ans.length > 0)&&(Ans != GapList[x][1].Guesses[GapList[x][1].Guesses.length-1])){
+			GapList[x][1].Guesses.push(Ans);
+			}
+		}
+}
+
+function GetGapValue(GapId){
+	var RetVal = '';
+	if ((GapId<0)||(GapId>=GapList.length)){return RetVal;}
+	if (document.getElementById('Gap' + GapId) != null){
+		RetVal = document.getElementById('Gap' + GapId).value;
+		RetVal = TrimString(RetVal);
+		}
+		else{
+			if (GapList[GapId][1].Guesses.length > 0){
+				RetVal = GapList[GapId][1].Guesses[GapList[GapId][1].Guesses.length-1];
+				}
+			}
+	return RetVal;
+}
+
+/* NOT USED
+function SetCorrectAnswer(GapId, Val){
+	if ((GapId<0)||(GapId>=GapList.length)){return;}
+	if (document.getElementById('GapSpan' + GapId) != null){
+		document.getElementById('GapSpan' + GapId).innerHTML = '<strong>'+Val+'</strong>';
+		}
+}*/
+
+function CheckExStatus(){
+// checks if all errors have been found or not
+	var ExFin = true;
+	for (var x=0; x<GapList.length; x++){
+		if (GapList[x][1].GapSolved == false){
+			ExFin = false;
+			break;
+			}
+		}
+	return ExFin;
+}
+
+function Get_NumMissingErr(){
+// retrieves the number of still
+// missing errors in the text
+	var i = 0;
+	for (var x=0; x<GapList.length; x++){
+		if (GapList[x][1].ErrorFound == false){
+			i++;
+			}
+		}
+	return i;
+}
+
+function CalculateScore(){
+	var TotScore = 0;
+	for (var x=0; x<GapList.length; x++){
+		TotScore += GapList[x][1].Score;
+		}
+	Score = Math.floor((TotScore * 100)/(GapList.length + TotWrongChoices));
+	if (Score < 0){Score = 0;}
+}
+
+// HINT FUNCTIONALITY
+function ShowHint(){
+	if (Locked == true){return;}
+	var CurrGap = FindCurrent();
+	if (CurrGap < 0){return;}
+
+	var HintString = GetHint(CurrGap);
+
+	if (HintString.length > 0){
+		SetGapValue(CurrGap, HintString);
+		GapList[CurrGap][1].HintsAndChecks++;
+	}
+}
+
+function FindCurrent() {
+	var x = 0;
+	FoundCurrent = -1;
+
+//Test the current word:
+//If its state is not set to already correct, check the word.
+	if (GapList[CurrentWord][1].GapSolved == false){
+		if (CheckAnswer(CurrentWord, false) < 0){
+			return CurrentWord;
+		}
+	}
+
+	x=CurrentWord + 1;
+	while (x<I.length){
+		if (GapList[x][1].GapSolved == false){
+			if (CheckAnswer(x, false) < 0){
+				return x;
+			}
+		}
+	x++;
+	}
+
+	x = 0;
+	while (x<CurrentWord){
+		if (GapList[x][1].GapSolved == false){
+			if (CheckAnswer(x, false) < 0){
+				return x;
+			}
+		}
+	x++;
+	}
+	return FoundCurrent;
+}
+
+function GetHint(GapNum){
+	Guess = GetGapValue(GapNum);
+
+	if (CheckAnswer(GapNum, false) > -1){return ''}
+	RightBits = new Array();
+	for (var i=0; i<I[GapNum][1].length; i++){
+		RightBits[i] = CheckBeginning(Guess, I[GapNum][1][i][0]);
+	}
+	var RightOne = FindLongest(RightBits);
+	var Result = I[GapNum][1][RightOne][0].substring(0,RightBits[RightOne].length);
+//Add another char if the last one is a space
+	if (Result.charAt(Result.length-1) == ' '){
+		Result = I[GapNum][1][RightOne][0].substring(0,RightBits[RightOne].length+1);
+	}
+	return Result;
+}
+
+function CheckBeginning(Guess, Answer){
+	var OutString = '';
+	var i = 0;
+	var UpperGuess = '';
+	var UpperAnswer = '';
+
+	if (CaseSensitive == false) {
+		UpperGuess = Guess.toUpperCase();
+		UpperAnswer = Answer.toUpperCase();
+	}
+	else {
+		UpperGuess = Guess;
+		UpperAnswer = Answer;
+	}
+
+	while (UpperGuess.charAt(i) == UpperAnswer.charAt(i)) {
+		OutString += Guess.charAt(i);
+		i++;
+	}
+	OutString += Answer.charAt(i);
+	return OutString;
+}
+
+function SetGapValue(GNum, Val){
+	if ((GNum<0)||(GNum>=I.length)){return;}
+	if (document.getElementById('Gap' + GNum) != null){
+		document.getElementById('Gap' + GNum).value = Val;
+		document.getElementById('Gap' + GNum).focus();
+	}
+}
+
+
+
+function Show_GapSolution(GapId){
+// show the correct solution
+	var GapSpan = document.getElementById('GapSpan'+GapId);
+	if (GapSpan != null){
+// remove everything in the GapSpan element
+		while (GapSpan.childNodes.length > 0){
+			GapSpan.removeChild(GapSpan.firstChild);
+			}
+// append the text node
+		var StrongNode = document.createElement('strong');
+		StrongNode.appendChild(document.createTextNode(I[GapId][1][0][0]+' '));
+		GapSpan.appendChild(StrongNode);
+		}
+}
+
+function ShowClue(GapId){
+	ShowMessage(I[GapId][2]);
+}
+
+function TypeChars(Chars){
+	var CurrGap = FindCurrent();
+	if (CurrGap < 0){return;}
+	if (document.getElementById('Gap' + CurrGap) != null){
+		SetGapValue(CurrGap, document.getElementById('Gap' + CurrGap).value + Chars);
+	}
+}
+
+// HOTPOT.NET FUNCTIONALITY
+function CompileGuesses(){
+	var F = document.getElementById('store');
+	if (F != null){
+		var Temp = '<?xml version="1.0"?><hpnetresult><fields>';
+		var GapLabel = '';
+		for (var i=0; i<GapList.length; i++){
+			GapLabel = 'Gap ' + (i+1).toString();
+			Temp += '<field><fieldname>' + GapLabel + '</fieldname>';
+			Temp += '<fieldtype>student-responses</fieldtype><fieldlabel>' + GapLabel + '</fieldlabel>';
+			Temp += '<fieldlabelid>JClozeStudentResponses</fieldlabelid><fielddata>';
+			for (var j=0; j<GapList[i][1].Guesses.length; j++){
+				if (j>0){Temp += '| ';}
+				Temp += GapList[i][1].Guesses[j] + ' ';
+			}
+  		Temp += '</fielddata></field>';
+		}
+		Temp += '</fields></hpnetresult>';
+		Detail = Temp;
+	}
+}

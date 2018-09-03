@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "xhtml11.dtd">
+       <html xmlns="http://www.w3.org/1999/xhtml"
+             xml:lang="en"><head>
+
+[strDublinCoreMetadata]
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+<title>[strPlainTitle]</title>
+
+<!-- Made with executable version [strFullVersionInfo] -->
+
+<!-- The following insertion allows you to add your own code directly to this head tag from the configuration screen -->
+
+[strHeaderCode]
+
+<style type="text/css">
+
+[strStyleSheet]
+
+</style>
+
+<script type="text/javascript">
+
+//<![CDATA[
+
+<!--
+
+[strJSBrowserCheck]
+
+[strJSButtons]
+
+[strJSShowMessage]
+
+[strJSUtilities]
+
+[strJSSequitur6]
+
+[inclTimer]
+[strJSTimer]
+[/inclTimer]
+
+//-->
+
+//]]>
+
+</script>
+
+</head>
+
+<body onload="StartUp()">
+
+<!-- BeginTopNavButtons -->
+
+[inclNavButtons]
+[strTopNavBar]
+[/inclNavButtons]
+
+<!-- EndTopNavButtons -->
+
+<div class="Titles">
+	<h2 class="ExerciseTitle">[strExerciseTitle]</h2>
+[inclExerciseSubtitle]
+	<h3 class="ExerciseSubtitle">[strExerciseSubtitle]</h3>
+[/inclExerciseSubtitle]
+[inclTimer]
+<div id="Timer"><span id="TimerText">&nbsp;&nbsp;</span></div>
+[/inclTimer]
+
+</div>
+
+[inclInstructions]
+<div id="InstructionsDiv" class="StdDiv">
+	<p id="Instructions">[strInstructions]</p>
+</div>
+[/inclInstructions]
+
+<!-- [Student login info] -->
+
+<div class="StdDiv">
+
+<div id="ChoiceDiv">
+<table border="0" cellpadding="8" class="ExerciseTable">
+<tbody id="ChoiceButtons">
+<tr>
+<td align="center" valign="middle"><button  class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="CheckAnswer(_ChoiceNum_, this)">&nbsp;&nbsp;[ChoiceLetter]&nbsp;&nbsp;</button></td>
+<td align="left" valign="middle"><span id="Choice_ChoiceNum_" class="Choice"></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="Story" id="Story">
+
+</div>
+
+<span class="Label">[strScore]</span> <span id="ScoreBox">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<br />
+<br />
+
+[inclSolution]
+<button id="SolutionButton" class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="Solution(); return false;">[strSolutionCaption]</button>
+[/inclSolution]
+
+[inclRestart]
+<button class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="location.reload(); return false;">[strRestartCaption]</button>
+[/inclRestart]
+<br />
+
+<button class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" id="ShowWholeText" onclick="ShowText(0); return false;">[strWholeText]</button>
+<button class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" id="ShowPartText" onclick="ShowText(5); return false;">[strPartText]</button>
+
+</div>
+
+<div class="Feedback" id="FeedbackDiv">
+<div class="FeedbackText" id="FeedbackContent"></div>
+<button id="FeedbackOKButton" class="FuncButton" onfocus="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseover="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="HideFeedback(); return false;">&nbsp;[strOKCaption]&nbsp;</button>
+</div>
+
+<!-- BeginBottomNavButtons -->
+
+[inclNavButtons]
+[strBottomNavBar]
+[/inclNavButtons]
+
+<!-- EndBottomNavButtons -->
+
+<!-- BeginSubmissionForm -->
+
+<!-- EndSubmissionForm -->
+
+</body>
+</html>

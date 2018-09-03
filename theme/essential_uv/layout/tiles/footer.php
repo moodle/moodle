@@ -17,7 +17,8 @@
 /**
  * Essential is a clean and customizable theme.
  *
- * @package     theme_essential
+ * @package     theme_essential_uv
+ * @copyright   2017 Gareth J Barnard
  * @copyright   2016 Gareth J Barnard
  * @copyright   2014 Gareth J Barnard, David Bezemer
  * @copyright   2013 Julian Ridden
@@ -40,6 +41,9 @@ if (empty($PAGE->layout_options['nofooter'])) { ?>
                 <div class="footerblock span4">
                     <?php echo $OUTPUT->essential_uv_blocks('footer-right'); ?>
                 </div>
+            </div>
+            <div class="row-fluid">
+                <div class="tool_usertours-resettourcontainer span12"></div>
             </div>
             <div class="footerlinks row-fluid">
                 <hr/>

@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "xhtml11.dtd">
+       <html xmlns="http://www.w3.org/1999/xhtml"
+             xml:lang="en"><head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+<title>
+[strPlainIndexTitle]
+</title>
+
+<!-- Made with executable version [strFullVersionInfo] -->
+
+<!-- The following insertion allows you to add your own code directly to this head tag from the configuration screen -->
+
+[strHeaderCode]
+
+<style type="text/css">
+
+body{
+	font-family: [strFontFace];
+[inclPageBGColor]	background-color: [strPageBGColor];[/inclPageBGColor]
+	color: [strTextColor];
+[inclGraphicURL]	background-image: url([strGraphicURL]);[/inclGraphicURL]
+	padding-left: 5%;
+	padding-right: 5%;
+	font-size: [strFontSize];
+}
+
+div.Titles{
+	padding: 0.5em;;
+	text-align: center;
+	color: [strTitleColor];
+}
+
+.ExerciseTitle{
+	font-size: 140%;
+	color: [strTitleColor];
+}
+
+.ExerciseSubtitle{
+	font-size: 120%;
+	color: [strTitleColor];
+}
+
+div.IndexDiv{
+	margin-left: auto;
+	margin-right: auto;
+	padding: 2em;
+	border-style: solid;
+	border-width: 1px;
+	text-align: center;
+	width: 40%;
+	background-color: [strExBGColor];
+	color: [strTextColor];
+	font-size: 100%;
+}
+
+.Index{
+	text-align: left;
+	font-size: 100%;
+}
+
+a{
+	color: [strLinkColor];
+}
+
+a:visited{
+	color: [strVLinkColor];
+}
+
+a:hover{
+	color: [strLinkColor];
+}
+
+</style>
+</head>
+<body>
+
+<div class="Titles">
+	<h2 class="ExerciseTitle">[strIndexTitle]</h2>
+</div>
+
+<div style="text-align: center;">
+<div class="IndexDiv">
+<ul class="Index">
+
+[BeginIndexItem]<li><a href="[strIndexItemURL]">[strIndexItemTitle]</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>[EndIndexItem]
+
+</ul>
+</div>
+</div>
+
+</body></html>

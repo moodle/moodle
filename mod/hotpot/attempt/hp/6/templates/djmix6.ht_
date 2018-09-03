@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "xhtml11.dtd">
+       <html xmlns="http://www.w3.org/1999/xhtml"
+             xml:lang="en"><head>
+
+[strDublinCoreMetadata]
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+<title>
+[strPlainTitle]
+</title>
+
+<!-- Made with executable version [strFullVersionInfo] -->
+
+<!-- The following insertion allows you to add your own code directly to this head tag from the configuration screen -->
+
+[strHeaderCode]
+
+<style type="text/css">
+
+[strStyleSheet]
+
+</style>
+
+<script type="text/javascript">
+
+//<![CDATA[
+
+<!--
+
+[inclScorm1.2]
+[strJSScorm_1_2]
+[/inclScorm1.2]
+
+[strJSBrowserCheck]
+
+[strJSButtons]
+
+[strJSShowMessage]
+
+[strJSUtilities]
+
+[strJSHotPotNet]
+
+[strJSCard]
+
+[strJSDJMix6]
+
+[inclTimer]
+[strJSTimer]
+[/inclTimer]
+
+[inclSendResults]
+[strJSSendResults]
+[/inclSendResults]
+
+//-->
+
+//]]>
+
+</script>
+
+</head>
+
+<body onload="TimerStartUp()" id="TheBody" [inclScorm1.2]onunload="CheckLMSFinish()"[/inclScorm1.2]>
+<!-- BeginTopNavButtons -->
+
+[inclNavButtons]
+[strTopNavBar]
+[/inclNavButtons]
+
+<!-- EndTopNavButtons -->
+
+<div class="Titles">
+	<h2 class="ExerciseTitle">[strExerciseTitle]</h2>
+[inclExerciseSubtitle]
+	<h3 class="ExerciseSubtitle">[strExerciseSubtitle]</h3>
+[/inclExerciseSubtitle]
+[inclTimer]
+<div id="Timer">&nbsp;<span id="TimerText">&nbsp;&nbsp;</span>&nbsp;</div>
+[/inclTimer]
+
+</div>
+
+<div id="InstructionsDiv" class="StdDiv">
+	<div id="Instructions">[strInstructions]</div>
+</div>
+
+<div class="StdDiv" id="CheckButtonDiv">
+<button id="CheckButton1" class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="CheckResults(0)">&nbsp;[strCheckCaption]&nbsp;</button>
+
+[inclRestart]
+<button class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="location.reload()">&nbsp;[strRestartCaption]&nbsp;</button>
+[/inclRestart]
+
+[inclHint]
+<button class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="CheckResults(1)">&nbsp;[strHintCaption]&nbsp;</button>
+[/inclHint]
+</div>
+
+<script type="text/javascript">
+
+//<![CDATA[
+
+<!--
+
+
+for (var i=0; i<DropTotal; i++){
+	document.write('<div id="Drop' + i + '" class="DropLine" align="center">&nbsp;<br />&nbsp;</div>');
+}
+
+for (var i=0; i<Segments.length; i++){
+	document.write('<div id="D' + i + '" class="CardStyle" onmousedown="beginDrag(event, ' + i + ')"></div>');
+}
+
+//-->
+
+//]]>
+</script>
+
+<div class="Feedback" id="FeedbackDiv">
+<div class="FeedbackText" id="FeedbackContent"></div>
+<button id="FeedbackOKButton" class="FuncButton" onfocus="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseover="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="HideFeedback(); return false;">&nbsp;[strOKCaption]&nbsp;</button>
+</div>
+
+<!-- BeginBottomNavButtons -->
+
+<!-- EndBottomNavButtons -->
+
+<!-- BeginSubmissionForm -->
+
+<!-- EndSubmissionForm -->
+
+</body>
+</html>

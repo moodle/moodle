@@ -1,0 +1,131 @@
+
+[inclScorm1.2]
+//JMATCH-SPECIFIC SCORM-RELATED JAVASCRIPT CODE
+
+function SetScormBrowseTime(){
+if (API != null){
+		API.LMSSetValue('cmi.core.session_time', MillisecondsToTime((new Date()).getTime() - ScormStartTime));
+		API.LMSCommit('');
+	}
+}
+[/inclScorm1.2]
+
+//JMATCH-SPECIFIC CORE JAVASCRIPT CODE
+
+var CurrItem = null;
+var Stage = 2;
+var QList = new Array();
+var ShuffleQs = [boolShuffleQs];
+
+function SetUpItems(){
+
+	var i;
+	var Row = null;
+
+//Remove all the table rows and put them in an array for processing
+	var Qs = document.getElementById('Questions');
+
+//Remove the table rows to an array
+	while (Qs.getElementsByTagName('tr').length > 0){
+		Row = Qs.getElementsByTagName('tr')[0];
+		Row.getElementsByTagName('td')[0].className = 'Hidden';
+		Row.getElementsByTagName('td')[1].className = 'Hidden';
+		QList.push(Qs.removeChild(Row));
+	}
+
+//Shuffle the rows
+	if (ShuffleQs == true){
+		QList = Shuffle(QList);
+	}
+
+//Write the rows back to the table body
+	for (i=0; i<QList.length; i++){
+		Qs.appendChild(QList[i]);
+	}
+}
+
+function StartUp(){
+
+	SetUpItems();
+
+[inclScorm1.2]
+	initAPI(window);
+	if (API != null){
+		API.LMSInitialize('');
+		API.LMSSetValue('cmi.core.lesson_status', 'browsed');
+		API.LMSSetValue('cmi.comments', 'This exercise has no checking or scoring features.');
+		API.LMSCommit('');
+	}
+[/inclScorm1.2]
+
+
+[inclPreloadImages]
+	PreloadImages([PreloadImageList]);
+[/inclPreloadImages]
+
+[inclPreloadImages]
+	RefreshImages();
+[/inclPreloadImages]
+}
+
+var Started = false;
+
+function DeleteItem(){
+	if ((CurrItem == null)||(document.getElementById('Questions').getElementsByTagName('tr').length < 1)){return;}
+
+//Delete the current item
+	var DelItem = CurrItem;
+	Stage = 2;
+	ShowItem();
+	document.getElementById('Questions').removeChild(DelItem);
+}
+
+function ShowItem(){
+	var Qs = document.getElementById('Questions');
+
+	var Len = Qs.getElementsByTagName('tr').length;
+
+//Bail if no more items
+	if (Len < 1){
+		return;
+	}
+
+//if no current item, get the last item so we roll forward
+	if (CurrItem == null){
+		CurrItem = Qs.getElementsByTagName('tr')[Len-1];
+		if (CurrItem == null){
+			return;
+		}
+	}
+
+//if CurrItem has been fully shown, move to the next one
+	if (Stage == 2){
+		CurrItem.getElementsByTagName('td')[0].className = 'Hidden';
+		CurrItem.getElementsByTagName('td')[1].className = 'Hidden';
+		if (CurrItem.nextSibling != null){
+			CurrItem = CurrItem.nextSibling;
+		}
+		else{
+			CurrItem = Qs.getElementsByTagName('tr')[0];
+		}
+	}
+
+//Show the appropriate bits
+	if (Stage == 2){
+//Show the first item and hide the second
+		CurrItem.getElementsByTagName('td')[0].className = 'Showing';
+		CurrItem.getElementsByTagName('td')[1].className = 'Hidden';
+		Stage = 1;
+	}
+	else{
+//Show both items
+		CurrItem.getElementsByTagName('td')[0].className = 'Showing';
+		CurrItem.getElementsByTagName('td')[1].className = 'Showing';
+		Stage = 2;
+	}
+
+[inclPreloadImages]
+	RefreshImages();
+[/inclPreloadImages]
+}
+

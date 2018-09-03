@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "xhtml11.dtd">
+       <html xmlns="http://www.w3.org/1999/xhtml"
+             xml:lang="en"><head>
+
+<!-- Modification Copyright (c) Michael Rottmeier, December 2003 -->
+<!-- JCloze Dropdown - Version 2.4 for Hot Potatoes v6 -->
+<!-- http://www.teaching-tools.de.vu -->
+<!-- THIS HEADER MUST STAY UN-TOUCHED -->
+
+[strDublinCoreMetadata]
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+<title>
+[strPlainTitle]
+</title>
+
+<!-- Made with executable version [strFullVersionInfo] -->
+
+<!-- The following insertion allows you to add your own code directly to this head tag from the configuration screen -->
+
+[strHeaderCode]
+
+<style type="text/css">
+
+[strStyleSheet]
+
+</style>
+
+<script type="text/javascript">
+
+//<![CDATA[
+
+<!--
+
+[strJSBrowserCheck]
+
+[strJSButtons]
+
+[strJSShowMessage]
+
+[strJSUtilities]
+
+[strJSHotPotNet]
+
+[strJSJCloze6]
+
+[inclTimer]
+[strJSTimer]
+[/inclTimer]
+
+[inclSendResults]
+[strJSSendResults]
+[/inclSendResults]
+
+//-->
+
+//]]>
+
+</script>
+
+
+</head>
+
+<body onload="StartUp()" id="TheBody">
+
+<!-- BeginTopNavButtons -->
+
+[inclNavButtons]
+[strTopNavBar]
+[/inclNavButtons]
+
+<!-- EndTopNavButtons -->
+
+<div class="Titles">
+	<h2 class="ExerciseTitle">[strExerciseTitle]</h2>
+	<h3 class="ExerciseSubtitle">[strExerciseSubtitle]</h3>
+[inclTimer]
+<div id="Timer"><span id="TimerText">&nbsp;&nbsp;</span></div>
+[/inclTimer]
+
+</div>
+
+<div id="InstructionsDiv" class="StdDiv">
+	<p id="Instructions">[strInstructions]</p>
+</div>
+
+[inclReading]
+<div class="LeftContainer">
+
+	<div id="Reading" class="StdDiv">
+
+		<div id="ReadingDiv">
+[strReadingText]
+		</div>
+	</div>
+
+</div>
+
+
+<div class="RightContainer">
+[/inclReading]
+
+<div id="MainDiv" class="StdDiv">
+
+<div id="ClozeDiv">
+<form id="Cloze" method="post" action="" onsubmit="return false;">
+<div class="ClozeBody">
+[strClozeBody]
+</div>
+</form>
+</div>
+
+<button id="CheckButton2" class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="CheckAnswers()">&nbsp;[strCheckCaption]&nbsp;</button>
+
+[inclHint]
+<button class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="Show_Solution()">&nbsp;[strHintCaption]&nbsp;</button>
+[/inclHint]
+
+</div>
+
+[inclReading]
+</div>
+[/inclReading]
+
+<div class="Feedback" id="FeedbackDiv">
+<div class="FeedbackText" id="FeedbackContent"></div>
+<button id="FeedbackOKButton" class="FuncButton" onfocus="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseover="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="HideFeedback(); return false;">&nbsp;[strOKCaption]&nbsp;</button>
+</div>
+
+<!-- BeginBottomNavButtons -->
+
+[inclNavButtons]
+[strBottomNavBar]
+[/inclNavButtons]
+
+<!-- EndBottomNavButtons -->
+
+<!-- BeginSubmissionForm -->
+
+<!-- EndSubmissionForm -->
+
+</body>
+
+</html>

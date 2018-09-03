@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Essential is a clean and customizable theme.
+ * essential_uv is a clean and customizable theme.
  *
- * @package     theme_essential
+ * @package     theme_essential_uv
  * @copyright   2016 Gareth J Barnard
  * @copyright   2015 Gareth J Barnard
  * @copyright   2014 Gareth J Barnard, David Bezemer
@@ -127,7 +127,7 @@ class theme_essential_uv_core_course_renderer extends core_course_renderer {
             $categoryrepresentation .= html_writer::empty_tag('img', array('src' => $image, 'class' => 'img-responsive'));
             $categoryrepresentation .= html_writer::end_tag('div');
         } else if (!empty($icon)) {
-            $categoryrepresentation = html_writer::tag('span', '', array('aria-hidden' => 'true', 'class' => 'fa fa-'.$icon));
+            $categoryrepresentation = \theme_essential_uv\toolbox::getfontawesomemarkup($icon);
         } else {
             $categoryrepresentation = '';
         }
@@ -306,60 +306,72 @@ class theme_essential_uv_core_course_renderer extends core_course_renderer {
         if (is_enabled_auth('mnet')) {
             $remotecourses = get_my_remotecourses();
         }
-        // Remote courses will have -ve remoteid as key, so it can be differentiated from normal courses.
+        // Remote courses will have remoteid as key, so it can be differentiated from normal courses.
         foreach ($remotecourses as $id => $val) {
             $remoteid = $val->remoteid * -1;
             $val->id = $remoteid;
             $courses[$remoteid] = $val;
         }
 
-        foreach ($courses as $course) {
-            $modinfo = get_fast_modinfo($course);
-            $courseformat = course_get_format($course->id);
-            $course = $courseformat->get_course();
-            $courseformatsettings = $courseformat->get_format_options();
-            $sesskey = sesskey();
+        if (empty($courses)) {
+            return $data;
+        }
 
-            foreach ($modinfo->get_section_info_all() as $section => $thissection) {
-                if (!$thissection->uservisible) {
-                    continue;
+        $courseitemsearchtype = \get_user_preferences('theme_essential_uv_courseitemsearchtype');
+        $sesskey = sesskey();
+        foreach ($courses as $course) {
+            if (!$courseitemsearchtype) {
+                $label = $course->fullname;
+                if (stristr($label, $term)) {
+                    $courseurl = new moodle_url('/course/view.php', array('id' => $course->id, 'sesskey' => $sesskey));
+                    $data[] = array('id' => $courseurl->out(false), 'label' => $label, 'value' => $label);
                 }
-                if (is_object($thissection)) {
-                    $thissection = $modinfo->get_section_info($thissection->section);
-                } else {
-                    $thissection = $modinfo->get_section_info($thissection);
-                }
-                if ((string) $thissection->name !== '') {
-                    $sectionname = format_string($thissection->name, true,
-                        array('context' => context_course::instance($course->id)));
-                } else {
-                    $sectionname = $courseformat->get_section_name($thissection->section);
-                }
-                if ($thissection->section <= $course->numsections) {
-                    // Do not link 'orphaned' sections.
-                    $courseurl = new moodle_url('/course/view.php');
-                    $courseurl->param('id', $course->id);
-                    $courseurl->param('sesskey', $sesskey);
-                    if ((!empty($courseformatsettings['coursedisplay'])) &&
-                        ($courseformatsettings['coursedisplay'] == COURSE_DISPLAY_MULTIPAGE)) {
-                        $courseurl->param('section', $thissection->section);
-                        $coursehref = $courseurl->out(false);
+            } else {
+                $modinfo = get_fast_modinfo($course);
+                $courseformat = course_get_format($course->id);
+                $course = $courseformat->get_course();
+                $courseformatsettings = $courseformat->get_format_options();
+                $coursenumsections = $courseformat->get_last_section_number();
+
+                foreach ($modinfo->get_section_info_all() as $section => $thissection) {
+                    if (!$thissection->uservisible) {
+                        continue;
+                    }
+                    if (is_object($thissection)) {
+                        $thissection = $modinfo->get_section_info($thissection->section);
                     } else {
-                        $coursehref = $courseurl->out(false).'#section-'.$thissection->section;
+                        $thissection = $modinfo->get_section_info($thissection);
                     }
-                    $label = $course->fullname.' - '.$sectionname;
-                    if (stristr($label, $term)) {
-                        $data[] = array('id' => $coursehref, 'label' => $label, 'value' => $label);
+                    if ((string) $thissection->name !== '') {
+                        $sectionname = format_string($thissection->name, true,
+                            array('context' => context_course::instance($course->id)));
+                    } else {
+                        $sectionname = $courseformat->get_section_name($thissection->section);
                     }
-                }
-                if (!empty($modinfo->sections[$thissection->section])) {
-                    foreach ($modinfo->sections[$thissection->section] as $modnumber) {
-                        $mod = $modinfo->cms[$modnumber];
-                        if (!empty($mod->url)) {
-                            $instancename = $mod->get_formatted_name();
-                            $label = $course->fullname.' - '.$sectionname.' - '.$instancename;
-                            if (stristr($label, $term)) {
-                                $data[] = array('id' => $mod->url->out(false), 'label' => $label, 'value' => $label);
+                    if ($thissection->section <= $coursenumsections) {
+                        // Do not link 'orphaned' sections.
+                        $courseurl = new moodle_url('/course/view.php', array('id' => $course->id, 'sesskey' => $sesskey));
+                        if ((!empty($courseformatsettings['coursedisplay'])) &&
+                            ($courseformatsettings['coursedisplay'] == COURSE_DISPLAY_MULTIPAGE)) {
+                            $courseurl->param('section', $thissection->section);
+                            $coursehref = $courseurl->out(false);
+                        } else {
+                            $coursehref = $courseurl->out(false).'#section-'.$thissection->section;
+                        }
+                        $label = $course->fullname.' - '.$sectionname;
+                        if (stristr($label, $term)) {
+                            $data[] = array('id' => $coursehref, 'label' => $label, 'value' => $label);
+                        }
+                    }
+                    if (!empty($modinfo->sections[$thissection->section])) {
+                        foreach ($modinfo->sections[$thissection->section] as $modnumber) {
+                            $mod = $modinfo->cms[$modnumber];
+                            if (!empty($mod->url)) {
+                                $instancename = $mod->get_formatted_name();
+                                $label = $course->fullname.' - '.$sectionname.' - '.$instancename;
+                                if (stristr($label, $term)) {
+                                    $data[] = array('id' => $mod->url->out(false), 'label' => $label, 'value' => $label);
+                                }
                             }
                         }
                     }

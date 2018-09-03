@@ -1,0 +1,579 @@
+[inclScorm1.2]
+//JMMIX-SPECIFIC SCORM-RELATED JAVASCRIPT CODE
+
+function SetScormScore(){
+//Reports the current score and any other information back to the LMS
+	if (API != null){
+		API.LMSSetValue('cmi.core.score.raw', Score);
+
+//Now send a detailed reports on the item
+		var ItemLabel = 'Item_1';
+		API.LMSSetValue('cmi.objectives.0.id', 'obj'+ItemLabel);
+		API.LMSSetValue('cmi.interactions.0.id', 'int'+ItemLabel);
+		if (Finished == true){
+			API.LMSSetValue('cmi.objectives.0.status', 'completed');
+		}
+		else{
+			API.LMSSetValue('cmi.objectives.0.status', 'incomplete');
+		}
+
+		API.LMSSetValue('cmi.objectives.0.score.min', '0');
+		API.LMSSetValue('cmi.objectives.0.score.max', '100');
+		API.LMSSetValue('cmi.objectives.0.score.raw', Score);
+//We can only use the performance type, because we're storing multiple responses of various types.
+		API.LMSSetValue('cmi.interactions.0.type', 'performance');
+		API.LMSSetValue('cmi.interactions.0.student_response', AnswersTried);
+
+
+		API.LMSCommit('');
+	}
+}
+[/inclScorm1.2]
+
+//JMIX DRAG-DROP OUTPUT FORMAT CODE
+
+var Punctuation = '[strPunctuation]';
+
+var Openers = '[strOpenPunctuation]';
+var CorrectResponse = '[strGuessCorrect]';
+var IncorrectResponse = '[strGuessIncorrect]';
+var ThisMuchCorrect = '[strThisMuch]';
+var TheseAnswersToo = '[strTheseAnswersToo]';
+var YourScoreIs = '[strYourScoreIs]';
+var NextCorrect = '[strNextCorrect]';
+var FeedbackWidth = 200; //default
+var ExBGColor = '[strExBGColor]';
+var PageBGColor = '[strPageBGColor]';
+var TextColor = '[strTextColor]';
+var TitleColor = '[strTitleColor]';
+var DropTotal = 3; // number of lines that will be available for dropping on
+var Gap = 4; //Gap between two segments when they're next to each other on a line
+var DropHeight = 30;
+var CapitalizeFirst = [boolCapitalizeFirst];
+var CompiledOutput = '';
+var TempSegment = '';
+var FirstSegment = -1;
+var FirstDiv = -1;
+var Penalties = 0;
+var Score = 0;
+var TimeOver = false;
+
+var CurrDrag = -1;
+var topZ = 100;
+var Cds = new Array();
+var L = new Array();
+var Finished = false;
+
+var Locked = false;
+var DivWidth = 600;
+var LeftColPos = 100;
+var DragTop = 120;
+var DragNumber = -1;
+var AnswersTried = '';
+
+Lines = new Array();
+
+function CapFirst(InString){
+	var i = 0;
+	if ((Openers.indexOf(InString.charAt(i))>-1)||(InString.charAt(i) == ' ')){
+		i++;
+	}
+	if ((Openers.indexOf(InString.charAt(i))>-1)||(InString.charAt(i) == ' ')){
+		i++;
+	}
+	var Temp = InString.charAt(i);
+	Temp = Temp.toUpperCase();
+	InString = InString.substring(0, i) + Temp + InString.substring(i+1, InString.length);
+	return InString;
+}
+
+function CheckResults(ChkType){
+//Get sequence student has chosen
+	GetGuessSequence();
+
+//Compile the answer
+	CompiledOutput = CompileString(GuessSequence);
+
+//Check the answer
+	CheckAnswer(ChkType);
+}
+
+function GetGuessSequence(){
+//Put pointers to draggables in arrays based on the lines they're sitting on
+	var Drops = new Array();
+	for (var i=0; i<L.length; i++){
+		Drops[i] = new Array();
+	}
+
+	var CardPos = 0;
+
+	for (i=0; i<Cds.length; i++){
+		for (var j=0; j<L.length; j++){
+//Slight modification for 6.0.4: allow some leeway for 1px inaccuracy in card placing by browser.
+			CardPos = L[j].GetB() - (Cds[i].GetH()+2);
+			if (((Cds[i].GetT() - CardPos) < 4)&&((Cds[i].GetT() - CardPos) > -4)){
+				Drops[j][Drops[j].length] = Cds[i];
+			}
+		}
+	}
+
+//Sort the drop arrays based on the Left of each div
+	for (i=0; i<Drops.length; i++){
+		Drops[i].sort(CompDrags);
+	}
+
+//Put the tags into the GuessSequence array
+	GuessSequence.length = 0;
+	for (i=0; i<Drops.length; i++){
+		for (j=0; j<Drops[i].length; j++){
+			GuessSequence[GuessSequence.length] = Drops[i][j].tag;
+		}
+	}
+
+//Set the variable recording which div is first
+	var NewFirstDiv = -1;
+	for (i=0; i<Drops.length; i++){
+		if (Drops[i].length > 0){
+			NewFirstDiv = Drops[i][0].index;
+			break;
+		}
+	}
+	return NewFirstDiv;
+}
+
+function CompDrags(a,b){
+	return a.GetL() - b.GetL();
+}
+
+function FindSegment(SegID){
+	var Seg = '';
+	for (var i=0; i<Segments.length; i++){
+		if (Segments[i][1] == SegID){
+			Seg = Segments[i][0];
+			break;
+		}
+	}
+	return Seg;
+}
+
+function CompileString(InArray){
+	var OutString = '';
+	var i = 0;
+	OutArray = new Array();
+
+	for (i=0; i<InArray.length; i++){
+		OutArray[OutArray.length] = FindSegment(InArray[i]);
+	}
+
+	if (OutArray.length > 0){
+		OutString = OutArray[0];
+	}
+	else{
+		OutString = '';
+	}
+	var Spacer = '';
+
+	for (i=1; i<OutArray.length; i++){
+		Spacer = ' ';
+		if ((Openers.indexOf(OutString.charAt(OutString.length-1)) > -1)||(Punctuation.indexOf(OutArray[i].charAt(0)) > -1)){
+			Spacer = '';
+		}
+		OutString = OutString + Spacer + OutArray[i];
+	}
+
+//Capitalize the first letter if necessary
+	if (CapitalizeFirst == true){
+		OutString = CapFirst(OutString);
+	}
+	return OutString;
+}
+
+function CheckAnswer(CheckType){
+	if (Locked == true){return;}
+	if (GuessSequence.length < 1){
+		if (CheckType == 1){
+			Penalties++;
+			ShowMessage(NextCorrect + '<br /><br />' + FindSegment(Answers[0][0]));
+		}
+		return;
+	}
+	var i = 0;
+	var j = 0;
+	var k = 0;
+	var WellDone = '';
+	var WhichCorrect = -1;
+	var TryAgain = '';
+	var LongestCorrectBit = '';
+	TempCorrect = new Array();
+	LongestCorrect = new Array();
+	var TempHint = '';
+	var HintToReturn = 1;
+	var OtherAnswers = '';
+	var AllDone = false;
+
+	for (i=0; i<Answers.length; i++){
+		TempCorrect.length = 0;
+		for (j=0; j<Answers[i].length; j++){
+			if (Answers[i][j] == GuessSequence[j]){
+				TempCorrect[j] = GuessSequence[j];
+			}
+			else{
+				TempHint = Answers[i][j];
+				break;
+			}
+		}
+		if ((TempCorrect.length == GuessSequence.length)&&(TempCorrect.length == Answers[i].length)){
+			WhichCorrect = i;
+			break;
+		}
+		else{
+			if (TempCorrect.length > LongestCorrect.length){
+				LongestCorrect.length = 0;
+				for (k=0; k<TempCorrect.length; k++){
+					LongestCorrect[k] = TempCorrect[k];
+				}
+				HintToReturn = TempHint;
+			}
+		}
+	}
+	if (WhichCorrect > -1){
+		AllDone = true;
+		for (i=0; i<Answers.length; i++){
+			if (i!=WhichCorrect){
+				OtherAnswers += '<br />' + CompileString(Answers[i]);
+			}
+		}
+		WellDone = '<span class="CorrectAnswer">' + CompiledOutput + '</span><br /><br />' + CorrectResponse + '<br />';
+
+		if (AnswersTried.length > 0){AnswersTried += ' | ';}
+		AnswersTried += CompiledOutput;
+
+//Do score calculation here
+		Score = Math.floor(((Segments.length-Penalties) * 100)/Segments.length);
+		WellDone += YourScoreIs + ' ' + Score + '%.<br />';
+
+[inclAlsoCorrect]
+		if (OtherAnswers.length > 0){
+			WellDone += TheseAnswersToo + '<span class="CorrectAnswer">' + OtherAnswers + '</span>';
+		}
+[/inclAlsoCorrect]
+
+		ShowMessage(WellDone);
+		WriteToInstructions(YourScoreIs + ' ' + Score + '%.');
+	}
+
+	else{
+		var WrongGuess = CompileString(GuessSequence);
+		if (AnswersTried.length > 0){AnswersTried += ' | ';}
+		AnswersTried += WrongGuess;
+		TryAgain = '<span class="Guess">' + WrongGuess + '</span><br /><br />';
+		if ((CheckType == 0)||(LongestCorrect.length==0)){
+			TryAgain += IncorrectResponse + '<br />';
+		}
+
+		if (LongestCorrect.length > 0){
+			LongestCorrectBit = CompileString(LongestCorrect);
+			GuessSequence.length = LongestCorrect.length;
+			TryAgain += '<br />' + ThisMuchCorrect + '<br /><span class="Guess">' + LongestCorrectBit + '</span><br />';
+		}
+
+		if (CheckType == 1){
+			TryAgain += '<br />' + NextCorrect + '<br />' + FindSegment(HintToReturn);
+		}
+
+[inclTimer]
+		if (TimeOver == true){
+			Score = Math.floor(((LongestCorrect.length-Penalties) * 100)/Segments.length);
+			if (Score < 0){Score = 0;}
+			TryAgain += YourScoreIs + ' ' + Score + '%.<br />';
+		}
+[/inclTimer]
+		Penalties++; //Penalty for inaccurate check
+		ShowMessage(TryAgain);
+	}
+
+//If the exercise is over, deal with that
+	if ((AllDone == true)||(TimeOver == true)){
+[inclSendResults]
+		setTimeout('SendResults(' + Score + ')', 50);
+[/inclSendResults]
+[inclTimer]
+		window.clearInterval(Interval);
+[/inclTimer]
+		TimeOver = true;
+		Locked = true;
+		Finished = true;
+		setTimeout('Finish()', SubmissionTimeout);
+		WriteToInstructions(YourScoreIs + ' ' + Score + '%.');
+	}
+
+[inclScorm1.2]
+	if (AllDone == true){
+		SetScormComplete();
+	}
+	else{
+		SetScormIncomplete();
+	}
+[/inclScorm1.2]
+}
+
+
+var Segments = new Array();
+[SegmentArray]
+
+var GuessSequence = new Array();
+
+var Answers = new Array();
+[AnswerArray]
+
+function doDrag(e) {
+	if (CurrDrag == -1) {return};
+	if (C.ie){var Ev = window.event}else{var Ev = e}
+	var difX = Ev.clientX-window.lastX;
+	var difY = Ev.clientY-window.lastY;
+	var newX = Cds[CurrDrag].GetL()+difX;
+	var newY = Cds[CurrDrag].GetT()+difY;
+	Cds[CurrDrag].SetL(newX);
+	Cds[CurrDrag].SetT(newY);
+	window.lastX = Ev.clientX;
+	window.lastY = Ev.clientY;
+	return false;
+}
+
+function beginDrag(e, DragNum) {
+	CurrDrag = DragNum;
+	if (C.ie){
+		var Ev = window.event;
+		document.onmousemove=doDrag;
+		document.onmouseup=endDrag;
+	}
+	else{
+		var Ev = e;
+		window.onmousemove=doDrag;
+		window.onmouseup=endDrag;
+	}
+	Cds[CurrDrag].SwapColours();
+	topZ++;
+	Cds[CurrDrag].css.zIndex = topZ;
+	window.lastX=Ev.clientX;
+	window.lastY=Ev.clientY;
+	return true;
+}
+
+function endDrag(e) {
+	if (CurrDrag == -1) {return};
+	Cds[CurrDrag].SwapColours();
+	if (C.ie){document.onmousemove=null}else{window.onmousemove=null;}
+	onEndDrag();
+	CurrDrag = -1;
+	return true;
+}
+
+function onEndDrag(){
+//Snap to lines
+	var i = 0;
+	var SnapLine = Cds[CurrDrag].GetT();
+	var BiggestOverlap = -1;
+	var OverlapRect = 0;
+	for (i=0; i<L.length; i++){
+		if (Cds[CurrDrag].Overlap(L[i]) > OverlapRect){
+			OverlapRect = Cds[CurrDrag].Overlap(L[i]);
+			BiggestOverlap = i;
+		}
+	}
+	if (BiggestOverlap > -1){
+		SnapLine = L[BiggestOverlap].GetB() - (Cds[CurrDrag].GetH() + 2);
+		Cds[CurrDrag].SetT(SnapLine);
+		CheckOver(-1);
+	}
+	if (CapitalizeFirst==true){
+		setTimeout('DoCapitalization()', 50);
+	}
+}
+
+//Following function modified for 6.2.5.2; avoids image dragging bug.
+function DoCapitalization(){
+//Capitalize first segment if necessary
+	var FD = GetGuessSequence();
+	if ((FD == -1)&&(FirstDiv > -1)){
+		Cds[FirstDiv].SetHTML(Segments[FirstDiv][0]);
+	}
+	if (((FD != FirstDiv)&&(CapitalizeFirst == true))&&(FD > -1)){
+		if (FirstDiv > -1){
+			Cds[FirstDiv].SetHTML(Segments[FirstDiv][0]);
+		}
+	}
+	if ((FD > -1)&&(CapitalizeFirst == true)){
+		var Temp = CapFirst(Segments[FD][0]);
+		Cds[FD].SetHTML(Temp);
+		FirstDiv = FD;
+	}
+}
+
+function CheckOver(NoMove){
+//This recursive function spreads out the Cards on a line if two of them are overlapping;
+//if the spread operation moves one beyond the end of a line, it wraps it to the next line.
+	for (var i=0; i<Cds.length; i++){
+		for (var j=0; j<Cds.length; j++){
+			if (i!=j){
+				if (Cds[i].Overlap(Cds[j]) > 0){
+					if ((i==NoMove)||(Cds[i].GetL() < Cds[j].GetL())){
+						Cds[j].DockToR(Cds[i]);
+						if (Cds[j].GetR() > (LeftColPos + DivWidth)){
+							Cds[j].SetL(LeftColPos);
+							Cds[j].SetT(Cds[j].GetT() + DropHeight);
+						}
+						CheckOver(j);
+					}
+					else{
+						Cds[i].DockToR(Cds[j]);
+						if (Cds[i].GetR() > (LeftColPos + DivWidth)){
+							Cds[i].SetL(LeftColPos);
+							Cds[i].SetT(Cds[i].GetT() + DropHeight);
+						}
+						CheckOver(i);
+					}
+				}
+			}
+		}
+	}
+}
+
+function StartUp(){
+
+[inclSendResults]
+	GetUserName();
+[/inclSendResults]
+
+[inclScorm1.2]
+	ScormStartUp();
+[/inclScorm1.2]
+
+[inclPreloadImages]
+	PreloadImages([PreloadImageList]);
+[/inclPreloadImages]
+
+	Segments = Shuffle(Segments);
+
+//Calculate page dimensions and positions
+	pg = new PageDim();
+	DivWidth = Math.floor((pg.W*4)/5);
+	LeftColPos = Math.floor(pg.W/10);
+	DragTop = parseInt(document.getElementById('CheckButtonDiv').offsetHeight) + parseInt(document.getElementById('CheckButtonDiv').offsetTop) + 10;
+
+	var CurrTop = DragTop + 10;
+
+//Position the drop divs
+	for (var i=0; i<DropTotal; i++){
+		L[i] = new Card('Drop' + i, 0);
+		L[i].SetT(CurrTop)
+		L[i].tag = CurrTop-5;
+		L[i].SetL(LeftColPos);
+		L[i].css.backgroundColor = '[strPageBGColor]';
+		CurrTop += L[i].GetH();
+		topZ++;
+		L[i].css.zIndex = topZ;
+	}
+	DropHeight = L[0].GetH();
+
+	CurrTop = DragTop;
+	var TempInt = 0;
+	var DropHome = 0;
+
+	for (i=0; i<Segments.length; i++){
+//Create a new pointer in the C array to ref the card div
+		Cds[i] = new Card('D'+i, 0);
+//Fix for 6.2.5.2 image dragging bug
+		Cds[i].SetHTML(Segments[i][0]);
+		//Cds[i].elm.innerHTML = Segments[i][0]; //Old version
+		Cds[i].SetT(CurrTop);
+		Cds[i].SetL(LeftColPos);
+		Cds[i].css.cursor = 'move';
+		TempInt = Cds[i].GetH();
+		CurrTop = CurrTop + TempInt + 5;
+		Cds[i].css.backgroundColor = '[strExBGColor]';
+		Cds[i].css.color = '[strTextColor]';
+		topZ++;
+		Cds[i].css.zIndex = topZ;
+		Cds[i].tag = Segments[i][1];
+		Cds[i].index = i;
+	}
+//Place them at the bottom of the page
+	SetInitialPositions();
+
+[inclTimer]
+	StartTimer();
+[/inclTimer]
+}
+
+function SetInitialPositions(){
+//Places all the divs at the bottom of the page in centred rows
+//First, get the vertical position of the first row
+	var RTop = L[L.length-1].GetB() + 10;
+
+//Create an array to hold the numbers of Cards for each row
+	CRows = new Array();
+	CRows[0] = new Array();
+	Widths = new Array();
+	var i=0;
+	var r=0;
+	var RowWidth=0;
+//Sort the Cards into rows, storing their numbers in the array
+
+	while (i<Cds.length){
+//if it fits on this row, add it
+		if ((RowWidth + Cds[i].GetW() + 5) < DivWidth){
+			CRows[r][CRows[r].length] = i;
+			RowWidth += Cds[i].GetW() + 5;
+//Store the width in the Widths array for later
+			Widths[r] = RowWidth;
+		}
+//if not, increment the row number, and add it to the next row
+		else{
+			r++;
+			CRows[r] = new Array();
+			CRows[r][CRows[r].length] = i;
+			RowWidth = Cds[i].GetW() + 5;
+//Store the width in the Widths array for later
+			Widths[r] = RowWidth;
+		}
+//move to the next Card
+		i++;
+	}
+//Now we have the numbers in rows, set out each row
+	r=0;
+	var Indent=0;
+	for (r=0; r<CRows.length; r++){
+//Get the required indent for this row
+		Indent = Math.floor((DivWidth-Widths[r])/2);
+//Set the first card in position
+		Cds[CRows[r][0]].SetL(Indent + LeftColPos);
+		Cds[CRows[r][0]].SetT(RTop);
+		Cds[CRows[r][0]].SetHome();
+		for (i=1; i<CRows[r].length; i++){
+			Cds[CRows[r][i]].DockToR(Cds[CRows[r][i-1]]);
+			Cds[CRows[r][i]].SetHome();
+		}
+//Increment the row height
+		RTop += Cds[0].GetH() + 5;
+	}
+}
+
+function TimerStartUp(){
+	setTimeout('StartUp()', 300);
+}
+
+[inclTimer]
+function TimesUp() {
+	document.getElementById('Timer').innerHTML = '[strTimesUp]';
+[inclPreloadImages]
+	RefreshImages();
+[/inclPreloadImages]
+	TimeOver = true;
+	CheckAnswer(0);
+	Locked = true;
+[inclScorm1.2]
+	SetScormTimedOut();
+[/inclScorm1.2]
+}
+[/inclTimer]

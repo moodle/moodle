@@ -1,0 +1,69 @@
+body .h5p-result {
+  background: #fff;
+  border: solid 1px #C9C9C9;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.12);
+  color: #5C5C5C;
+  font-size: 15px;
+  height: auto;
+  margin: 1em 0;
+  padding: 30px;
+}
+
+body .h5p-compound-container {
+  border: none;
+  box-shadow: none;
+  margin: 0;
+  padding: 0;
+}
+
+body .h5p-reporting-main-title {
+  display: inline-block;
+  font-size: 1.3em;
+  font-weight: 600;
+}
+
+body .h5p-reporting-main-container {
+  margin: 10px;
+}
+
+body .h5p-reporting-main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+
+  background-color: #f3f3f3;
+  border-bottom: solid 1px #dfdfdf;
+  padding: 0.7em 2em;
+}
+
+body .h5p-reporting-main-score-wrapper {
+  display: inline-block;
+  font-size: 0.95em;
+  font-weight: bold;
+  text-align: right;
+}
+
+body .h5p-reporting-scaled-label,
+body .h5p-reporting-main-score-label {
+  font-weight: normal;
+}
+
+/* Properly formats content after it has been cleaned */
+body .h5p-reporting-main-score-container,
+body .h5p-reporting-main-scaled-container {
+  display: block;
+}
+
+body .h5p-reporting-main-score-label,
+body .h5p-reporting-main-score,
+body .h5p-reporting-score-label,
+body .h5p-reporting-score,
+body .h5p-reporting-scaled-label,
+body .h5p-reporting-scaled-score {
+  display: inline-block;
+}
+
+body .h5p-reporting-main-score {
+  margin-left: 0.4em;
+}

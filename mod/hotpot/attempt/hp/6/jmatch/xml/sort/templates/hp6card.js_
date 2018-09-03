@@ -1,0 +1,174 @@
+// v 6.3.0.4
+//complété par Agnes Simonet pour HighlightIfWrong
+
+function Card(ID, OverlapTolerance){
+	this.elm=document.getElementById(ID);
+	this.name=ID;
+	this.css=this.elm.style;
+	this.elm.style.left = 0 +'px';
+	this.elm.style.top = 0 +'px';
+	this.HomeL = 0;
+	this.HomeT = 0;
+	this.tag=-1;
+	this.index=-1;
+	this.OverlapTolerance = OverlapTolerance;
+}
+
+function CardGetL(){return parseInt(this.css.left)}
+Card.prototype.GetL=CardGetL;
+
+function CardGetT(){return parseInt(this.css.top)}
+Card.prototype.GetT=CardGetT;
+
+function CardGetW(){return parseInt(this.elm.offsetWidth)}
+Card.prototype.GetW=CardGetW;
+
+function CardGetH(){return parseInt(this.elm.offsetHeight)}
+Card.prototype.GetH=CardGetH;
+
+function CardGetB(){return this.GetT()+this.GetH()}
+Card.prototype.GetB=CardGetB;
+
+function CardGetR(){return this.GetL()+this.GetW()}
+Card.prototype.GetR=CardGetR;
+
+function CardSetL(NewL){this.css.left = NewL+'px'}
+Card.prototype.SetL=CardSetL;
+
+function CardSetT(NewT){this.css.top = NewT+'px'}
+Card.prototype.SetT=CardSetT;
+
+function CardSetW(NewW){this.css.width = NewW+'px'}
+Card.prototype.SetW=CardSetW;
+
+function CardSetH(NewH){this.css.height = NewH+'px'}
+Card.prototype.SetH=CardSetH;
+
+function CardInside(X,Y){
+	var Result=false;
+	if(X>=this.GetL()){if(X<=this.GetR()){if(Y>=this.GetT()){if(Y<=this.GetB()){Result=true;}}}}
+	return Result;
+}
+Card.prototype.Inside=CardInside;
+
+function CardSwapColours(){
+	var c=this.css.backgroundColor;
+	this.css.backgroundColor=this.css.color;
+	this.css.color=c;
+}
+Card.prototype.SwapColours=CardSwapColours;
+
+function CardHighlight(){
+	this.css.backgroundColor='[strTextColor]';
+	this.css.color='[strExBGColor]';
+}
+Card.prototype.Highlight=CardHighlight;
+
+function CardUnhighlight(){
+	this.css.backgroundColor='[strExBGColor]';
+	this.css.color='[strTextColor]';
+}
+Card.prototype.Unhighlight=CardUnhighlight;
+
+// ajout par AS
+
+function CardHighlightIfWrong(){
+	this.css.backgroundColor='[strLinkColor]';
+	this.css.color='[strTextColor]';
+}
+Card.prototype.HighlightIfWrong=CardHighlightIfWrong;
+
+// fin de l'ajout
+
+function CardOverlap(OtherCard){
+	var smR=(this.GetR()<(OtherCard.GetR()+this.OverlapTolerance))? this.GetR(): (OtherCard.GetR()+this.OverlapTolerance);
+	var lgL=(this.GetL()>OtherCard.GetL())? this.GetL(): OtherCard.GetL();
+	var HDim=smR-lgL;
+	if (HDim<1){return 0;}
+	var smB=(this.GetB()<OtherCard.GetB())? this.GetB(): OtherCard.GetB();
+	var lgT=(this.GetT()>OtherCard.GetT())? this.GetT(): OtherCard.GetT();
+	var VDim=smB-lgT;
+	if (VDim<1){return 0;}
+	return (HDim*VDim);
+}
+Card.prototype.Overlap=CardOverlap;
+
+function CardDockToR(OtherCard){
+	this.SetL(OtherCard.GetR() + 5);
+	this.SetT(OtherCard.GetT());
+}
+Card.prototype.DockToR=CardDockToR;
+
+function CardSetHome(){
+	this.HomeL=this.GetL();
+	this.HomeT=this.GetT();
+}
+Card.prototype.SetHome=CardSetHome;
+
+function CardGoHome(){
+	this.SetL(this.HomeL);
+	this.SetT(this.HomeT);
+}
+Card.prototype.GoHome=CardGoHome;
+
+//Fix for 6.2.5.2: avoid image dragging problem in draggable cards
+function CardSetHTML(HTML){
+	this.elm.innerHTML = HTML;
+	var DragImgs = this.elm.getElementsByTagName('img');
+	if (DragImgs.length > 0){
+		for (var i=0; i<DragImgs.length; i++){
+			DragImgs[i]. onmousedown = function(){return false;}
+		}
+	}
+}
+Card.prototype.SetHTML = CardSetHTML;
+
+// ***************************************************************
+
+function doDrag(e) {
+	if (CurrDrag == -1) {return};
+	if (C.ie){var Ev = window.event}else{var Ev = e}
+	var difX = Ev.clientX-window.lastX;
+	var difY = Ev.clientY-window.lastY;
+	var newX = DC[CurrDrag].GetL()+difX;
+	var newY = DC[CurrDrag].GetT()+difY;
+	DC[CurrDrag].SetL(newX);
+	DC[CurrDrag].SetT(newY);
+	window.lastX = Ev.clientX;
+	window.lastY = Ev.clientY;
+	return false;
+}
+
+function beginDrag(e, DragNum) {
+	CurrDrag = DragNum;
+	if (C.ie){
+		var Ev = window.event;
+		document.onmousemove=doDrag;
+		document.onmouseup=endDrag;
+	}
+	else{
+		var Ev = e;
+		window.onmousemove=doDrag;
+		window.onmouseup=endDrag;
+	}
+	DC[CurrDrag].Highlight();
+	topZ++;
+	DC[CurrDrag].css.zIndex = topZ;
+	window.lastX=Ev.clientX;
+	window.lastY=Ev.clientY;
+	return false;
+}
+
+function endDrag(e) {
+	if (CurrDrag == -1) {return};
+	DC[CurrDrag].Unhighlight();
+	if (C.ie){document.onmousemove=null}else{window.onmousemove=null;}
+	onEndDrag();
+	CurrDrag = -1;
+//Need a bugfix for Opera focus problem here
+	if (C.opera){FocusAButton();}
+	return true;
+}
+
+var CurrDrag = -1;
+var topZ = 100;

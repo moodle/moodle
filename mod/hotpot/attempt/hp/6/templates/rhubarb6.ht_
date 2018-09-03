@@ -1,0 +1,159 @@
+<?xml version="1.0"?>
+       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "xhtml11.dtd">
+       <html xmlns="http://www.w3.org/1999/xhtml"
+             xml:lang="en"><head>
+
+[strDublinCoreMetadata]
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+<title>[strPlainTitle]</title>
+
+<!-- Made with executable version [strFullVersionInfo] -->
+
+<!-- The following insertion allows you to add your own code directly to this head tag from the configuration screen -->
+
+[strHeaderCode]
+
+<style type="text/css">
+
+[strStyleSheet]
+
+</style>
+
+<script type="text/javascript">
+
+//<![CDATA[
+
+<!--
+
+[strJSBrowserCheck]
+
+[strJSButtons]
+
+[strJSShowMessage]
+
+[strJSUtilities]
+
+[strJSRhubarb6]
+
+[inclTimer]
+[strJSTimer]
+[/inclTimer]
+
+//-->
+
+//]]>
+
+</script>
+
+</head>
+
+<body onload="StartUp()">
+
+<!-- BeginTopNavButtons -->
+
+[inclNavButtons]
+[strTopNavBar]
+[/inclNavButtons]
+
+<!-- EndTopNavButtons -->
+
+<div class="Titles">
+	<h2 class="ExerciseTitle">[strExerciseTitle]</h2>
+[inclExerciseSubtitle]
+	<h3 class="ExerciseSubtitle">[strExerciseSubtitle]</h3>
+[/inclExerciseSubtitle]
+[inclTimer]
+<div id="Timer"><span id="TimerText">&nbsp;&nbsp;</span></div>
+[/inclTimer]
+
+</div>
+
+[inclInstructions]
+<div id="InstructionsDiv" class="StdDiv">
+	<p id="Instructions">[strInstructions]</p>
+</div>
+[/inclInstructions]
+
+<!-- [Student login info] -->
+
+<div class="StdDiv">
+
+<table border="0" cellpadding="8" style="margin-left: auto; margin-right: auto;"><tr>
+
+<td style="text-align: center; vertical-align: top;">
+
+<form id="Rhubarb" action="" onsubmit="CheckGuess(); return false">
+<div style="margin-top: 10px;">
+<label for="Guess">[strGuessHere]</label>
+<input type="text" id="Guess" size="15" onfocus="InTextBox=true;" onblur="InTextBox=false;"></input>
+
+<br />
+
+<button id="CheckButton"  class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="CheckGuess(); return false;">[strCheckCaption]</button>
+
+[inclHint]
+<button id="HintButton"  class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="Hint(); return false;">[strHintCaption]</button>
+[/inclHint]
+
+[inclSolution]
+<button id="SolutionButton"  class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="Solution(); return false;">[strSolutionCaption]</button>
+[/inclSolution]
+
+[inclRestart]
+<button id="RestartButton"  class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="location.reload(); return false;">[strRestartCaption]</button>
+[/inclRestart]
+
+[inclKeypad]
+<div class="Keypad">
+
+[Keypad]
+
+</div>
+[/inclKeypad]
+
+</div>
+</form>
+
+<span class="Label">[strYourScoreIs]</span> <span id="ScoreBox">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+
+<br /><br />
+
+<span class="Label" id="UsedBoxLabel"></span><br />
+<span id="UsedBox"></span>
+
+</td>
+
+<td style="text-align: center; vertical-align: top;">
+
+<div class="Story" id="Stars">
+[strPreparingExercise]
+</div>
+
+</td>
+
+</tr></table>
+
+</div>
+
+<div class="Feedback" id="FeedbackDiv">
+<div class="FeedbackText" id="FeedbackContent"></div>
+<button id="FeedbackOKButton" class="FuncButton" onfocus="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseover="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="HideFeedback(); return false;">&nbsp;[strOKCaption]&nbsp;</button>
+</div>
+
+<!-- BeginBottomNavButtons -->
+
+[inclNavButtons]
+[strBottomNavBar]
+[/inclNavButtons]
+
+<!-- EndBottomNavButtons -->
+
+<!-- BeginSubmissionForm -->
+
+<!-- EndSubmissionForm -->
+
+</body>
+</html>

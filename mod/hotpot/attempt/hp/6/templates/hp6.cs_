@@ -1,0 +1,605 @@
+
+/* This is the CSS stylesheet used in the exercise. */
+/* Elements in square brackets are replaced by data based on configuration settings when the exercise is built. */
+
+/* BeginCorePageCSS */
+
+/* Made with executable version [strFullVersionInfo] */
+
+
+/* Hack to hide a nested Quicktime player from IE, which can't handle it. */
+* html object.MediaPlayerNotForIE {
+	display: none;
+}
+
+body{
+	font-family: [strFontFace];
+[inclPageBGColor]	background-color: [strPageBGColor];[/inclPageBGColor]
+	color: [strTextColor];
+[inclGraphicURL]	background-image: url([strGraphicURL]);[/inclGraphicURL]
+	margin-right: 5%;
+	margin-left: 5%;
+	font-size: [strFontSize];
+}
+
+p{
+	text-align: left;
+	margin: 0px;
+	font-size: 100%;
+}
+
+table,div,span,td{
+	font-size: 100%;
+	color: [strTextColor];
+}
+
+div.Titles{
+	padding: 0.5em;;
+	text-align: center;
+	color: [strTitleColor];
+}
+
+button{
+	font-family: [strFontFace];
+	font-size: 100%;
+	display: inline;
+}
+
+.ExerciseTitle{
+	font-size: 140%;
+	color: [strTitleColor];
+}
+
+.ExerciseSubtitle{
+	font-size: 120%;
+	color: [strTitleColor];
+}
+
+div.StdDiv{
+[inclExBGColor]	background-color: [strExBGColor];[/inclExBGColor]
+	text-align: center;
+	font-size: 100%;
+	color: [strTextColor];
+	padding: 0.5em;
+	border-style: solid;
+	border-width: 1px 1px 1px 1px;
+	border-color: [strTextColor];
+	margin-bottom: 1px;
+}
+
+/* EndCorePageCSS */
+
+.RTLText{
+	text-align: right;
+	font-size: 150%;
+	direction: rtl;
+	font-family: "Simplified Arabic", "Traditional Arabic", "Times New Roman", [strFontFace];
+}
+
+.CentredRTLText{
+	text-align: center;
+	font-size: 150%;
+	direction: rtl;
+	font-family: "Simplified Arabic", "Traditional Arabic", "Times New Roman", [strFontFace];
+}
+
+button p.RTLText{
+	text-align: center;
+}
+
+.RTLGapBox{
+	text-align: right;
+	font-size: 150%;
+	direction: rtl;
+	font-family: "Times New Roman", [strFontFace];
+}
+
+.Guess{
+	font-weight: bold;
+}
+
+.CorrectAnswer{
+	font-weight: bold;
+}
+
+div#Timer{
+	padding: 0.25em;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	color: [strTitleColor];
+}
+
+span#TimerText{
+	padding: 0.25em;
+	border-width: 1px;
+	border-style: solid;
+	font-weight: bold;
+	display: none;
+	color: [strTitleColor];
+}
+
+span.Instructions{
+
+}
+
+div.ExerciseText{
+
+}
+
+.FeedbackText, .FeedbackText span.CorrectAnswer, .FeedbackText span.Guess, .FeedbackText span.Answer{
+	color: [strTitleColor];
+}
+
+.LeftItem{
+	font-size: 100%;
+	color: [strTextColor];
+	text-align: left;
+}
+
+.RightItem{
+	font-weight: bold;
+	font-size: 100%;
+	color: [strTextColor];
+}
+
+span.CorrectMark{
+
+}
+
+input, textarea{
+	font-family: [strFontFace];
+	font-size: 120%;
+}
+
+select{
+	font-size: 100%;
+}
+
+div.Feedback {
+[inclPageBGColor]	background-color: [strPageBGColor];[/inclPageBGColor]
+	left: 33%;
+	width: 34%;
+	top: 33%;
+	z-index: 1;
+	border-style: solid;
+	border-width: 1px;
+	padding: 5px;
+	text-align: center;
+	color: [strTitleColor];
+	position: absolute;
+	display: none;
+	font-size: 100%;
+}
+
+
+[inclReading]
+div.LeftContainer{
+	border-style: none;
+	padding: 2px 0px 2px 0px;
+	float: left;
+	width: 49.8%;
+	margin-bottom: 0px;
+}
+
+div.RightContainer{
+	border-style: none;
+	padding: 2px 0px 2px 0px;
+	float: right;
+	width: 49.8%;
+	margin-bottom: 0px;
+}
+
+.ReadingText{
+	text-align: left;
+}
+
+#ReadingDiv h3.ExerciseSubtitle{
+	color: [strTextColor];
+}
+
+[/inclReading]
+
+div.ExerciseDiv{
+	color: [strTextColor];
+}
+
+/* JMatch flashcard styles */
+table.FlashcardTable{
+	background-color: transparent;
+	color: [strTextColor];
+	border-color: [strTextColor];
+	margin-left: 5%;
+	margin-right: 5%;
+	margin-top: 2em;
+	margin-bottom: 2em;
+	width: 90%;
+	position: relative;
+	text-align: center;
+	padding: 0px;
+}
+
+table.FlashcardTable tr{
+	border-style: none;
+	margin: 0px;
+	padding: 0px;
+[inclExBGColor]	background-color: [strExBGColor];[/inclExBGColor]
+}
+
+table.FlashcardTable td.Showing{
+	font-size: 140%;
+	text-align: center;
+	width: 50%;
+	display: table-cell;
+	padding: 2em;
+	margin: 0px;
+	border-style: solid;
+	border-width: 1px;
+	color: [strTextColor];
+[inclExBGColor]	background-color: [strExBGColor];[/inclExBGColor]
+}
+
+table.FlashcardTable td.Hidden{
+	display: none;
+}
+
+/* JMix styles */
+div#SegmentDiv{
+	margin-top: 2em;
+	margin-bottom: 2em;
+	text-align: center;
+}
+
+a.ExSegment{
+	font-size: 120%;
+	font-weight: bold;
+	text-decoration: none;
+	color: [strTextColor];
+}
+
+span.RemainingWordList{
+	font-style: italic;
+}
+
+div.DropLine {
+	position: absolute;
+	text-align: center;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: [strTitleColor];
+	width: 80%;
+}
+
+/* JCloze styles */
+
+.ClozeWordList{
+	text-align: center;
+	font-weight: bold;
+}
+
+div.ClozeBody{
+	text-align: left;
+	margin-top: 2em;
+	margin-bottom: 2em;
+	line-height: 2.0
+}
+
+span.GapSpan{
+	font-weight: bold;
+}
+
+/* JCross styles */
+
+table.CrosswordGrid{
+	margin: auto auto 1em auto;
+	border-collapse: collapse;
+	padding: 0px;
+	background-color: #000000;
+}
+
+table.CrosswordGrid tbody tr td{
+	width: 1.5em;
+	height: 1.5em;
+	text-align: center;
+	vertical-align: middle;
+	font-size: 140%;
+	padding: 1px;
+	margin: 0px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #000000;
+	color: #000000;
+}
+
+table.CrosswordGrid span{
+	color: #000000;
+}
+
+table.CrosswordGrid td.BlankCell{
+	background-color: #000000;
+	color: #000000;
+}
+
+table.CrosswordGrid td.LetterOnlyCell{
+	text-align: center;
+	vertical-align: middle;
+	background-color: #ffffff;
+	color: #000000;
+	font-weight: bold;
+}
+
+table.CrosswordGrid td.NumLetterCell{
+	text-align: left;
+	vertical-align: top;
+	background-color: #ffffff;
+	color: #000000;
+	padding: 1px;
+	font-weight: bold;
+}
+
+.NumLetterCellText{
+	cursor: pointer;
+	color: #000000;
+}
+
+.GridNum{
+	vertical-align: super;
+	font-size: 66%;
+	font-weight: bold;
+	text-decoration: none;
+	color: #000000;
+}
+
+.GridNum:hover, .GridNum:visited{
+	color: #000000;
+}
+
+table#Clues{
+	margin: auto;
+	vertical-align: top;
+}
+
+table#Clues td{
+	vertical-align: top;
+}
+
+table.ClueList{
+  margin: auto;
+}
+
+td.ClueNum{
+	text-align: right;
+	font-weight: bold;
+	vertical-align: top;
+}
+
+td.Clue{
+	text-align: left;
+}
+
+div#ClueEntry{
+	text-align: left;
+	margin-bottom: 1em;
+}
+
+/* Keypad styles */
+
+div.Keypad{
+	text-align: center;
+	display: none; /* initially hidden, shown if needed */
+	margin-bottom: 0.5em;
+}
+
+div.Keypad button{
+	font-family: [strFontFace];
+	font-size: 120%;
+	background-color: #ffffff;
+	color: #000000;
+	width: 2em;
+}
+
+/* JQuiz styles */
+
+div.QuestionNavigation{
+	text-align: center;
+}
+
+.QNum{
+	margin: 0em 1em 0.5em 1em;
+	font-weight: bold;
+	vertical-align: middle;
+}
+
+textarea{
+	font-family: [strFontFace];
+}
+
+.QuestionText{
+	text-align: left;
+	margin: 0px;
+	font-size: 100%;
+}
+
+.Answer{
+	font-size: 120%;
+	letter-spacing: 0.1em;
+}
+
+.PartialAnswer{
+	font-size: 120%;
+	letter-spacing: 0.1em;
+	color: [strTitleColor];
+}
+
+.Highlight{
+	color: #000000;
+	background-color: #ffff00;
+	font-weight: bold;
+	font-size: 120%;
+}
+
+ol.QuizQuestions{
+	text-align: left;
+	list-style-type: none;
+}
+
+li.QuizQuestion{
+	padding: 1em;
+	border-style: solid;
+	border-width: 0px 0px 1px 0px;
+}
+
+ol.MCAnswers{
+	text-align: left;
+	list-style-type: upper-alpha;
+	padding: 1em;
+}
+
+ol.MCAnswers li{
+	margin-bottom: 1em;
+}
+
+ol.MSelAnswers{
+	text-align: left;
+	list-style-type: lower-alpha;
+	padding: 1em;
+}
+
+div.ShortAnswer{
+	padding: 1em;
+}
+
+.FuncButton {
+	text-align: center;
+	border-style: solid;
+[inclExBGColor]
+	border-left-color: [strFuncLightColor];
+	border-top-color: [strFuncLightColor];
+	border-right-color: [strFuncShadeColor];
+	border-bottom-color: [strFuncShadeColor];
+	color: [strTextColor];
+	background-color: [strExBGColor];
+[/inclExBGColor]
+	border-width: 2px;
+	padding: 3px 6px 3px 6px;
+	cursor: pointer;
+}
+
+.FuncButtonUp {
+	color: [strExBGColor];
+	text-align: center;
+	border-style: solid;
+[inclExBGColor]
+	border-left-color: [strFuncLightColor];
+	border-top-color: [strFuncLightColor];
+	border-right-color: [strFuncShadeColor];
+	border-bottom-color: [strFuncShadeColor];
+[/inclExBGColor]
+	background-color: [strTextColor];
+	color: [strExBGColor];
+	border-width: 2px;
+	padding: 3px 6px 3px 6px;
+	cursor: pointer;
+}
+
+.FuncButtonDown {
+	color: [strExBGColor];
+	text-align: center;
+	border-style: solid;
+[inclExBGColor]
+	border-left-color: [strFuncShadeColor];
+	border-top-color: [strFuncShadeColor];
+	border-right-color: [strFuncLightColor];
+	border-bottom-color: [strFuncLightColor];
+	background-color: [strTextColor];
+	color: [strExBGColor];
+[/inclExBGColor]
+	border-width: 2px;
+	padding: 3px 6px 3px 6px;
+	cursor: pointer;
+}
+
+/*BeginNavBarStyle*/
+
+div.NavButtonBar{
+[inclNavBarColor]	background-color: [strNavBarColor];[/inclNavBarColor]
+	text-align: center;
+	margin: 2px 0px 2px 0px;
+	clear: both;
+	font-size: 100%;
+}
+
+.NavButton {
+	border-style: solid;
+[inclNavBarColor]
+	border-left-color: [strNavLightColor];
+	border-top-color: [strNavLightColor];
+	border-right-color: [strNavShadeColor];
+	border-bottom-color: [strNavShadeColor];
+	background-color: [strNavBarColor];
+	color: [strNavTextColor];
+[/inclNavBarColor]
+	border-width: 2px;
+	cursor: pointer;
+}
+
+.NavButtonUp {
+	border-style: solid;
+[inclNavBarColor]
+	border-left-color: [strNavLightColor];
+	border-top-color: [strNavLightColor];
+	border-right-color: [strNavShadeColor];
+	border-bottom-color: [strNavShadeColor];
+	color: [strNavBarColor];
+	background-color: [strNavTextColor];
+[/inclNavBarColor]
+	border-width: 2px;
+	cursor: pointer;
+}
+
+.NavButtonDown {
+	border-style: solid;
+[inclNavBarColor]
+	border-left-color: [strNavShadeColor];
+	border-top-color: [strNavShadeColor];
+	border-right-color: [strNavLightColor];
+	border-bottom-color: [strNavLightColor];
+	color: [strNavBarColor];
+	background-color: [strNavTextColor];
+[/inclNavBarColor]
+	border-width: 2px;
+	cursor: pointer;
+}
+
+/*EndNavBarStyle*/
+
+a{
+	color: [strLinkColor];
+}
+
+a:visited{
+	color: [strVLinkColor];
+}
+
+a:hover{
+	color: [strLinkColor];
+}
+
+div.CardStyle {
+	position: absolute;
+	font-family: [strFontFace];
+	font-size: 100%;
+	padding: 5px;
+	border-style: solid;
+	border-width: 1px;
+	color: [strTextColor];
+[inclExBGColor]	background-color: [strExBGColor];[/inclExBGColor]
+	left: -50px;
+	top: -50px;
+	overflow: visible;
+}
+
+.rtl{
+	text-align: right;
+	font-size: 140%;
+}

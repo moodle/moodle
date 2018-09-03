@@ -1,0 +1,270 @@
+
+//  \u002A (*) removed from Punc list, <br />  added
+
+var Punc = ' \u0021 \u0022 \u0023 \u0025 \u0026 \u0027 \u0028 \u0029 \u002C \u002D \u002E \u002F \u003A \u003B \u003F \u0040 \u005B \u005C \u005D \u007B \u007D \u00A1 \u00AB \u00AD \u00B7 \u00BB \u00BF \u037E \u0387 \u055A \u055B \u055C \u055D \u055E \u055F \u0589 \u058A \u05BE \u05C0 \u05C3 \u05F3 \u05F4 \u060C \u061B \u061F \u066A \u066B \u066C \u066D \u06D4 \u0700 \u0701 \u0702 \u0703 \u0704 \u0705 \u0706 \u0707 \u0708 \u0709 \u070A \u070B \u070C \u070D \u0964 \u0965 \u0970 \u0DF4 \u0E4F \u0E5A \u0E5B \u0F04 \u0F05 \u0F06 \u0F07 \u0F08 \u0F09 \u0F0A \u0F0B \u0F0C \u0F0D \u0F0E \u0F0F \u0F10 \u0F11 \u0F12 \u0F3A \u0F3B \u0F3C \u0F3D \u0F85 \u104A \u104B \u104C \u104D \u104E \u104F \u10FB \u1361 \u1362 \u1363 \u1364 \u1365 \u1366 \u1367 \u1368 \u166D \u166E \u169B \u169C \u16EB \u16EC \u16ED \u17D4 \u17D5 \u17D6 \u17D7 \u17D8 \u17D9 \u17DA \u17DC \u1800 \u1801 \u1802 \u1803 \u1804 \u1805 \u1806 \u1807 \u1808 \u1809 \u180A \u2010 \u2011 \u2012 \u2013 \u2014 \u2015 \u2016 \u2017 \u2018 \u2019 \u201A \u201B \u201C \u201D \u201E \u201F \u2020 \u2021 \u2022 \u2023 \u2024 \u2025 \u2026 \u2027 \u2030 \u2031 \u2032 \u2033 \u2034 \u2035 \u2036 \u2037 \u2038 \u2039 \u203A \u203B \u203C \u203D \u203E \u2041 \u2042 \u2043 \u2045 \u2046 \u2048 \u2049 \u204A \u204B \u204C \u204D \u207D \u207E \u208D \u208E \u2329 \u232A \u3001 \u3002 \u3003 \u3008 \u3009 \u300A \u300B \u300C \u300D \u300E \u300F \u3010 \u3011 \u3014 \u3015 \u3016 \u3017 \u3018 \u3019 \u301A \u301B \u301C \u301D \u301E \u301F \u3030 \uFD3E \uFD3F \uFE30 \uFE31 \uFE32 \uFE35 \uFE36 \uFE37 \uFE38 \uFE39 \uFE3A \uFE3B \uFE3C \uFE3D \uFE3E \uFE3F \uFE40 \uFE41 \uFE42 \uFE43 \uFE44 \uFE49 \uFE4A \uFE4B \uFE4C \uFE50 \uFE51 \uFE52 \uFE54 \uFE55 \uFE56 \uFE57 \uFE58 \uFE59 \uFE5A \uFE5B \uFE5C \uFE5D \uFE5E \uFE5F \uFE60 \uFE61 \uFE63 \uFE68 \uFE6A \uFE6B \uFF01 \uFF02 \uFF03 \uFF05 \uFF06 \uFF07 \uFF08 \uFF09 \uFF0A \uFF0C \uFF0D \uFF0E \uFF0F \uFF1A \uFF1B \uFF1F \uFF20 \uFF3B \uFF3C \uFF3D \uFF5B \uFF5D \uFF61 \uFF62 \uFF63 \uFF64 <br /> ';
+
+var TriedWords = '';
+var Correct = 0;
+var TotalWords = 0;
+var strFinished = '[strFinished]';
+var AllDone = false;
+var Finished = false;
+var TimeOver = false;
+var DoneList = new Array();
+var Words = new Array();
+var BlankWords = new Array();
+var FreeWords = new Array();
+var Detail = 'Wrong guesses: ';
+var StartTime = (new Date()).getTime();
+var YourScoreIs = '[strYourScoreIs]';
+var strTimesUp = '[strTimesUp]';
+
+var FinalScore = 0;
+
+function StartUp(){
+
+//[Startup code for getting student id]
+
+	TotalWords = Words.length;
+
+	var x = 0;
+	var y = 0;
+	var Temp = '';
+
+	for (x=0; x<Words.length; x++){
+		DoneList[x] = 1;
+		if (Words[x] == 'xxxNewParaxxx'){
+			BlankWords[x] = '<br />';
+			Words[x] = '<br />';
+			TotalWords--;
+			DoneList[x] = 0;
+		}
+		else{
+			if (Punc.indexOf(Words[x]) > -1) {
+				BlankWords[x] = Words[x];
+				TotalWords--;
+				DoneList[x] = 0;
+			}
+			else {
+				Temp = '';
+				for (y=0; y<Words[x].length; y++) {
+					if (Words[x].charAt(y) == '\''){
+						Temp += '\'';
+					}
+					else{
+						Temp += '*';
+					}
+				}
+			BlankWords[x] = Temp;
+			}
+		}
+	}
+
+	if (FreeWords.length > 0){
+		for (x=0; x<FreeWords.length; x++){
+			for (y=0; y<Words.length; y++){
+				if (FreeWords[x].toUpperCase() == Words[y].toUpperCase()){
+					BlankWords[y] = Words[y];
+					DoneList[y] = 0;
+					TotalWords--;
+				}
+			}
+		}
+	}
+
+	WriteText();
+	document.getElementById('Guess').value = '';
+	document.getElementById('Guess').focus();
+
+[inclTimer]
+	StartTimer();
+[/inclTimer]
+}
+
+function WriteText() {
+
+	var Output = '';
+	var x = 0;
+	var LastOne = 'Punc';
+
+	for (x=0; x<BlankWords.length; x++) {
+		if ((Punc.indexOf(BlankWords[x]) == -1) && (LastOne != 'Punc')) {
+			Output += ' ';
+		}
+
+		Output += BlankWords[x];
+
+		if (Punc.indexOf(BlankWords[x]) > -1) {
+			LastOne = 'Punc';
+		}
+
+		else {
+			LastOne = 'NotPunc';
+		}
+	}
+	document.getElementById('Stars').innerHTML = Output;
+}
+
+function CheckGuess(){
+	var Input = TrimString(document.getElementById('Guess').value);
+	if (Input.length < 1){return;};
+	if (Input.indexOf(' ') < 0){
+		CheckWord(Input);
+	}
+	else{
+		var InputWords = Input.split(' ');
+		for (var i=0; i<InputWords.length; i++){
+			CheckWord(InputWords[i]);
+		}
+	}
+}
+
+function CheckWord(InputWord) {
+
+	if (AllDone == true){
+		return;
+	}
+
+	if (InputWord.length == 0) {
+		return;
+	}
+
+	var x = 0;
+	var FoundOne = 0;
+
+	for (x=0; x<Words.length; x++) {
+		if (InputWord.toUpperCase() == Words[x].toUpperCase()) {
+
+			FoundOne = -1;
+			if (BlankWords[x] != Words[x]){
+				Correct++;
+			}
+			BlankWords[x] = Words[x];
+			DoneList[x] = 0;
+		}
+	}
+
+	if (FoundOne == -1) {
+		WriteText();
+	}
+
+	else {
+		document.getElementById('UsedBoxLabel').innerHTML = '[strIncorrectWords]';
+		document.getElementById('UsedBox').innerHTML += InputWord + '<br />';
+		Detail += InputWord + ' ';
+		Correct--;
+	}
+
+	document.getElementById('ScoreBox').innerHTML = Correct + '/' + TotalWords;
+
+	document.getElementById('Guess').value = '';
+	CheckFinished();
+	if (AllDone == false){
+		document.getElementById('Guess').focus();
+	}
+}
+
+function Hint(){
+
+	if (AllDone == true){
+		return;
+	}
+
+	var x = 0;
+	var y = 0;
+
+//find the first unrevealed word
+
+	while ((Words[x] == BlankWords[x]) && (x < Words.length - 1)) {
+		x = x + 1;
+	}
+
+//find the first incorrect letter
+
+	while ((Words[x].charAt(y) == BlankWords[x].charAt(y)) && (y < Words[x].length - 1)) {
+		y = y + 1;
+	}
+
+	BlankWords[x] = Words[x].substring(0, y+1) + BlankWords[x].substring(y+1, BlankWords[x].length);
+
+
+	if (BlankWords[x] == Words[x]){
+		DoneList[x] = 0;
+	}
+
+	WriteText();
+
+	Correct--;
+
+	document.getElementById('ScoreBox').innerHTML = Correct + '/' + TotalWords;
+	CheckFinished();
+	document.getElementById('Guess').focus();
+}
+
+function CheckFinished(){
+	var Done = true;
+	for (var x=0; x<DoneList.length; x++){
+		if (DoneList[x] == 1){
+			Done = false;
+		}
+	}
+	if (Done == true){
+		FinalScore = Math.floor((100 * Correct)/TotalWords);
+		document.getElementById('ScoreBox').innerHTML = FinalScore + '%';
+		ShowMessage(strFinished + '<br />' + YourScoreIs + ' ' + FinalScore + '%');
+		AllDone = true;
+[inclTimer]
+		window.clearInterval(Interval);
+[/inclTimer]
+		Finish();
+	}
+}
+
+function Finish(){
+//If there's a form, fill it out and submit it
+	var F = document.getElementById('store');
+	if (F != null){
+		F.starttime.value = StartTime;
+		F.endtime.value = (new Date()).getTime();
+		F.mark.value = FinalScore;
+		F.detail.value = Detail;
+		F.submit();
+	}
+}
+
+function Solution(){
+//Save current score
+	for (var i=0; i<Words.length; i++){
+		BlankWords[i] = Words[i];
+		DoneList[i] = 0;
+	}
+	WriteText();
+	CheckFinished();
+}
+
+[inclTimer]
+
+function TimesUp() {
+	AllDone = true;
+	FinalScore = Math.floor((100 * Correct)/TotalWords);
+	document.getElementById('ScoreBox').innerHTML = ' ' + FinalScore + '%';
+	Finish();
+	ShowMessage(strTimesUp + '<br />' + YourScoreIs + ' ' + FinalScore + '%');
+	window.clearInterval(Interval);
+}
+
+[/inclTimer]
+
+[inclKeypad]
+
+function TypeChars(Chars){
+	document.getElementById('Guess').value += Chars;
+}
+
+[/inclKeypad]
+
+[WordsArray]
+
+[FreeWordsArray]
+
+

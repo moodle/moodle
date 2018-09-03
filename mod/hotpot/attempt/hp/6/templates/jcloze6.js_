@@ -1,0 +1,390 @@
+
+[inclScorm1.2]
+//JCLOZE-SPECIFIC SCORM-RELATED JAVASCRIPT CODE
+
+function SetScormScore(){
+//Reports the current score and any other information back to the LMS
+	if (API != null){
+		API.LMSSetValue('cmi.core.score.raw', Score);
+//Now send detailed reports about each item
+		for (var i=0; i<State.length; i++){
+			var ThisItemGuesses = '';
+			var GapLabel = 'Gap_' + (i+1).toString();
+			var ThisItemScore = Math.floor(State[i].ItemScore * 100) + '';
+			API.LMSSetValue('cmi.objectives.' + i + '.id', 'obj'+GapLabel);
+			API.LMSSetValue('cmi.interactions.' + i + '.id', 'int'+GapLabel);
+			API.LMSSetValue('cmi.objectives.' + i + '.score.raw', ThisItemScore);
+			API.LMSSetValue('cmi.objectives.' + i + '.score.min', '0');
+			API.LMSSetValue('cmi.objectives.' + i + '.score.max', '100');
+			if (State[i].AnsweredCorrectly == true){
+				API.LMSSetValue('cmi.objectives.' + i + '.status', 'completed');
+			}
+			else{
+				API.LMSSetValue('cmi.objectives.' + i + '.status', 'incomplete');
+			}
+			for (var j=0; j<State[i].Guesses.length; j++){
+				if (j>0){ThisItemGuesses += ' | ';}
+				ThisItemGuesses += State[i].Guesses[j];
+			}
+			API.LMSSetValue('cmi.interactions.' + i + '.type', 'fill-in');
+			API.LMSSetValue('cmi.interactions.' + i + '.student_response', ThisItemGuesses);
+		}
+		API.LMSCommit('');
+	}
+}
+[/inclScorm1.2]
+
+//JCLOZE CORE JAVASCRIPT CODE
+
+function ItemState(){
+	this.ClueGiven = false;
+	this.HintsAndChecks = 0;
+	this.MatchedAnswerLength = 0;
+	this.ItemScore = 0;
+	this.AnsweredCorrectly = false;
+	this.Guesses = new Array();
+	return this;
+}
+
+var Feedback = '';
+var Correct = '[strCorrect]';
+var Incorrect = '[strIncorrect]';
+var GiveHint = '[strGiveHint]';
+var CaseSensitive = [boolCaseSensitive];
+var YourScoreIs = '[strYourScoreIs]';
+var Finished = false;
+var Locked = false;
+var Score = 0;
+var CurrentWord = 0;
+var Guesses = '';
+var TimeOver = false;
+
+I = new Array();
+[strItemArray]
+
+State = new Array();
+
+function StartUp(){
+	RemoveBottomNavBarForIE();
+//Show a keypad if there is one	(added bugfix for 6.0.4.12)
+	if (document.getElementById('CharacterKeypad') != null){
+		document.getElementById('CharacterKeypad').style.display = 'block';
+	}
+
+[inclScorm1.2]
+	ScormStartUp();
+[/inclScorm1.2]
+
+[inclSendResults]
+	GetUserName();
+[/inclSendResults]
+
+[inclPreloadImages]
+	PreloadImages([PreloadImageList]);
+[/inclPreloadImages]
+
+	var i = 0;
+
+	State.length = 0;
+	for (i=0; i<I.length; i++){
+		State[i] = new ItemState();
+	}
+
+	ClearTextBoxes();
+
+[inclTimer]
+	StartTimer();
+[/inclTimer]
+
+}
+
+function ShowClue(ItemNum){
+	if (Locked == true){return;}
+	State[ItemNum].ClueGiven = true;
+	ShowMessage(I[ItemNum][2]);
+}
+
+function SaveCurrentAnswers(){
+	var Ans = '';
+	for (var i=0; i<I.length; i++){
+		Ans = GetGapValue(i);
+		if ((Ans.length > 0)&&(Ans != State[i].Guesses[State[i].Guesses.length-1])){
+			State[i].Guesses[State[i].Guesses.length] = Ans;
+		}
+	}
+}
+
+function CompileGuesses(){
+	var F = document.getElementById('store');
+	if (F != null){
+		var Temp = '<?xml version="1.0"?><hpnetresult><fields>';
+		var GapLabel = '';
+		for (var i=0; i<State.length; i++){
+			GapLabel = 'Gap ' + (i+1).toString();
+			Temp += '<field><fieldname>' + GapLabel + '</fieldname>';
+			Temp += '<fieldtype>student-responses</fieldtype><fieldlabel>' + GapLabel + '</fieldlabel>';
+			Temp += '<fieldlabelid>JClozeStudentResponses</fieldlabelid><fielddata>';
+			for (var j=0; j<State[i].Guesses.length; j++){
+				if (j>0){Temp += '| ';}
+				Temp += State[i].Guesses[j] + ' ';
+			}
+			Temp += '</fielddata></field>';
+		}
+		Temp += '</fields></hpnetresult>';
+		Detail = Temp;
+	}
+}
+
+function CheckAnswers(){
+	if (Locked == true){return;}
+	SaveCurrentAnswers();
+	var AllCorrect = true;
+
+//Check each answer
+	for (var i = 0; i<I.length; i++){
+
+		if (State[i].AnsweredCorrectly == false){
+//If it's right, calculate its score
+			if (CheckAnswer(i, true) > -1){
+				var TotalChars = GetGapValue(i).length;
+				State[i].ItemScore = (TotalChars-State[i].HintsAndChecks)/TotalChars;
+				if (State[i].ClueGiven == true){State[i].ItemScore /= 2;}
+				if (State[i].ItemScore <0 ){State[i].ItemScore = 0;}
+				State[i].AnsweredCorrectly = true;
+//Drop the correct answer into the page, replacing the text box
+				SetCorrectAnswer(i, GetGapValue(i));
+			}
+			else{
+//Otherwise, increment the hints for this item, as a penalty
+				State[i].HintsAndChecks++;
+
+//then set the flag
+				AllCorrect = false;
+			}
+		}
+	}
+
+//Calculate the total score
+	var TotalScore = 0;
+	for (i=0; i<State.length; i++){
+		TotalScore += State[i].ItemScore;
+	}
+	TotalScore = Math.floor((TotalScore * 100)/I.length);
+
+//Compile the output
+	Output = '';
+
+	if (AllCorrect == true){
+		Output = Correct + '<br />';
+	}
+
+	Output += YourScoreIs + ' ' + TotalScore + '%.<br />';
+	if (AllCorrect == false){
+		Output += Incorrect;
+	}
+	ShowMessage(Output);
+	setTimeout('WriteToInstructions(Output)', 50);
+
+	Score = TotalScore;
+	CompileGuesses();
+
+	if ((AllCorrect == true)||(Finished == true)){
+
+[inclSendResults]
+		setTimeout('SendResults(' + TotalScore + ')', 50);
+[/inclSendResults]
+[inclTimer]
+		window.clearInterval(Interval);
+[/inclTimer]
+		TimeOver = true;
+		Locked = true;
+		Finished = true;
+		setTimeout('Finish()', SubmissionTimeout);
+	}
+[inclScorm1.2]
+	if (AllCorrect == true){
+		SetScormComplete();
+	}
+	else{
+		SetScormIncomplete();
+	}
+[/inclScorm1.2]
+}
+
+function TrackFocus(BoxNumber){
+	CurrentWord = BoxNumber;
+	InTextBox = true;
+}
+
+function LeaveGap(){
+	InTextBox = false;
+}
+
+function CheckBeginning(Guess, Answer){
+	var OutString = '';
+	var i = 0;
+	var UpperGuess = '';
+	var UpperAnswer = '';
+
+	if (CaseSensitive == false) {
+		UpperGuess = Guess.toUpperCase();
+		UpperAnswer = Answer.toUpperCase();
+	}
+	else {
+		UpperGuess = Guess;
+		UpperAnswer = Answer;
+	}
+
+	while (UpperGuess.charAt(i) == UpperAnswer.charAt(i)) {
+		OutString += Guess.charAt(i);
+		i++;
+	}
+	OutString += Answer.charAt(i);
+	return OutString;
+}
+
+function GetGapValue(GNum){
+	var RetVal = '';
+	if ((GNum<0)||(GNum>=I.length)){return RetVal;}
+	if (document.getElementById('Gap' + GNum) != null){
+		RetVal = document.getElementById('Gap' + GNum).value;
+		RetVal = TrimString(RetVal);
+	}
+	else{
+		RetVal = State[GNum].Guesses[State[GNum].Guesses.length-1];
+	}
+	return RetVal;
+}
+
+function SetGapValue(GNum, Val){
+	if ((GNum<0)||(GNum>=I.length)){return;}
+	if (document.getElementById('Gap' + GNum) != null){
+		document.getElementById('Gap' + GNum).value = Val;
+		document.getElementById('Gap' + GNum).focus();
+	}
+}
+
+function SetCorrectAnswer(GNum, Val){
+	if ((GNum<0)||(GNum>=I.length)){return;}
+	if (document.getElementById('GapSpan' + GNum) != null){
+		document.getElementById('GapSpan' + GNum).innerHTML = Val;
+	}
+}
+
+function FindCurrent() {
+	var x = 0;
+	FoundCurrent = -1;
+
+//Test the current word:
+//If its state is not set to already correct, check the word.
+	if (State[CurrentWord].AnsweredCorrectly == false){
+		if (CheckAnswer(CurrentWord, false) < 0){
+			return CurrentWord;
+		}
+	}
+
+	x=CurrentWord + 1;
+	while (x<I.length){
+		if (State[x].AnsweredCorrectly == false){
+			if (CheckAnswer(x, false) < 0){
+				return x;
+			}
+		}
+	x++;
+	}
+
+	x = 0;
+	while (x<CurrentWord){
+		if (State[x].AnsweredCorrectly == false){
+			if (CheckAnswer(x, false) < 0){
+				return x;
+			}
+		}
+	x++;
+	}
+	return FoundCurrent;
+}
+
+function CheckAnswer(GapNum, MarkAnswer){
+	var Guess = GetGapValue(GapNum);
+	var UpperGuess = '';
+	var UpperAnswer = '';
+	if (CaseSensitive == false){
+		UpperGuess = Guess.toUpperCase();
+	}
+	else{
+		UpperGuess = Guess;
+	}
+	var Match = -1;
+	for (var i = 0; i<I[GapNum][1].length; i++){
+		if (CaseSensitive == false){
+			UpperAnswer = I[GapNum][1][i][0].toUpperCase();
+		}
+		else{
+			UpperAnswer = I[GapNum][1][i][0];
+		}
+		if (TrimString(UpperGuess) == UpperAnswer){
+			Match = i;
+			if (MarkAnswer == true){
+				State[GapNum].AnsweredCorrectly = true;
+			}
+		}
+	}
+	return Match;
+}
+
+function GetHint(GapNum){
+	Guess = GetGapValue(GapNum);
+
+	if (CheckAnswer(GapNum, false) > -1){return ''}
+	RightBits = new Array();
+	for (var i=0; i<I[GapNum][1].length; i++){
+		RightBits[i] = CheckBeginning(Guess, I[GapNum][1][i][0]);
+	}
+	var RightOne = FindLongest(RightBits);
+	var Result = I[GapNum][1][RightOne][0].substring(0,RightBits[RightOne].length);
+//Add another char if the last one is a space
+	if (Result.charAt(Result.length-1) == ' '){
+		Result = I[GapNum][1][RightOne][0].substring(0,RightBits[RightOne].length+1);
+	}
+	return Result;
+}
+
+function ShowHint(){
+	if (document.getElementById('FeedbackDiv').style.display == 'block'){return;}
+	if (Locked == true){return;}
+	var CurrGap = FindCurrent();
+	if (CurrGap < 0){return;}
+
+	var HintString = GetHint(CurrGap);
+
+	if (HintString.length > 0){
+		SetGapValue(CurrGap, HintString);
+		State[CurrGap].HintsAndChecks += 1;
+	}
+	ShowMessage(GiveHint);
+}
+
+function TypeChars(Chars){
+	var CurrGap = FindCurrent();
+	if (CurrGap < 0){return;}
+	if (document.getElementById('Gap' + CurrGap) != null){
+		SetGapValue(CurrGap, document.getElementById('Gap' + CurrGap).value + Chars);
+	}
+}
+
+[inclTimer]
+function TimesUp() {
+	document.getElementById('Timer').innerHTML = '[strTimesUp]';
+[inclPreloadImages]
+	RefreshImages();
+[/inclPreloadImages]
+	TimeOver = true;
+	Finished = true;
+	CheckAnswers();
+	Locked = true;
+[inclScorm1.2]
+	SetScormTimedOut();
+[/inclScorm1.2]
+}
+[/inclTimer]
