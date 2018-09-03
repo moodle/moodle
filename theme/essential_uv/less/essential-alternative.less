@@ -547,6 +547,11 @@
                         }
                     }
                 }
+
+                button.close {
+                    background: transparent;
+                }
+
                 .btn {
                     .buttonBackground(@btnBackground, @btnBackgroundHighlight, @grayDark, 0 1px 1px rgba(255,255,255,.75));
                     &:hover,
@@ -1146,7 +1151,7 @@
                         a {
                             color: ~"[[setting:alternativethemeurlcolor@{index}]]";
                             &:hover {
-                                color: @white; // TODO: Page background colour needs to be a setting.
+                                color: @white !important; // TODO: Page background colour needs to be a setting.
                                 background-color: ~"[[setting:alternativethemeurlcolor@{index}]]";
                                 .@{fa-css-prefix}:before {
                                     color: @white; // TODO: Page background colour needs to be a setting.

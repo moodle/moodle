@@ -490,7 +490,7 @@ $string['aftercontent'] = 'After content';
 $string['frontpagemiddleblocks'] = 'Enable additional front page \'Home\' (was \'Middle\') blocks';
 $string['frontpagemiddleblocksdesc'] = 'If enabled this will display an additional block location just under the marketing spots.';
 $string['frontpagehomeblocksperrow'] = 'Home (was \'Middle\') blocks per row';
-$string['frontpagehomeblocksperrowdesc'] = 'State up to how many blocks per row between {$a->lower} and {$a->upper} for the \'Home blocks\' block region.';
+$string['frontpagehomeblocksperrowdesc'] = 'State up to how many blocks per row between {$a->lower} and {$a->upper} for the \'Home blocks\' block region.  Note: For ease when editing, two blocks per row will be shown regardless of this setting.';
 $string['fppagetopblocks'] = 'Enable additional front page \'Page top\' blocks';
 $string['fppagetopblocksdesc'] = 'If enabled this will display an additional block location beside the side blocks and above the content area.  Note: The number of blocks per row depends on the setting \'fppagetopblocksperrow\'.';
 $string['fppagetopblocksperrow'] = 'Page top blocks per row';
@@ -897,7 +897,7 @@ $string['propertiesvalue'] = 'Value';
 $string['propertiesexport'] = 'Export properties as a JSON string';
 $string['propertiesreturn'] = 'Return';
 $string['putpropertiesname'] = 'Put properties - Experimental!';
-$string['putpropertiesdesc'] = 'Paste the JSON string and \'Save changes\'.  Warning!  Does not valiate setting values and performs a \'Purge all caches\'.';
+$string['putpropertiesdesc'] = 'Paste the JSON string and \'Save changes\'.  Warning!  Does not validate setting values and performs a \'Purge all caches\'.';
 
 $string['putpropertyreport'] = 'Report:';
 $string['putpropertyversion'] = 'version:';
@@ -956,10 +956,17 @@ $string['badgepreferences'] = 'Badge';
 // Incourse.
 $string['returntosection'] = 'Return to: {$a->section}';
 
-// Course content search.
-$string['findcoursecontent'] = 'Course content: ';
+// Course fullname and course content search.
+$string['findcoursecontent'] = 'Course search: ';
+$string['searchallcoursecontent'] = 'Search all course content';
+$string['searchallcoursecontentdefault'] = 'Default search all course content';
+$string['searchallcoursecontentdefaultdesc'] = 'Sets the value of the \'Search all course content\' checkbox on the course content search.  If \'Search all course content\' is unticked, then only the course fullname is searched for a match.';
 
 // essential_admin_setting_configinteger.
 $string['asconfigintlower'] = '{$a->value} is less than the lower range limit of {$a->lower}';
 $string['asconfigintupper'] = '{$a->value} is greater than the upper range limit of {$a->upper}';
 $string['asconfigintnan'] = '{$a->value} is not a number';
+
+// Privacy.
+$string['privacy:metadata:preference:courseitemsearchtype'] = 'The users choice of course search (\'course fullname\' - \'0\' or all course content - \'1\') if ever stored when \'coursecontentsearch\' was ticked.  If nothing stated then either the course search is off or the user has never viewed the dsahboard it when it was on.';
+$string['privacy:request:preference:courseitemsearchtype'] = 'The user has chosen "{$a->value}" for the course search user preference "{$a->name}" where \'0\' is the \'course fullname only\' and \'1\' is \'all course content\'.';

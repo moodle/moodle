@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-function xmldb_theme_essential_upgrade($oldversion = 0) {
+function xmldb_theme_essential_uv_upgrade($oldversion = 0) {
 
     global $DB;
     $dbman = $DB->get_manager();
@@ -34,7 +34,7 @@ function xmldb_theme_essential_upgrade($oldversion = 0) {
 
         $table = new xmldb_table('config_plugins');
         if ($dbman->table_exists($table) == true) {
-            $conditions = array('plugin' => 'theme_essential', 'name' => 'populateme');
+            $conditions = array('plugin' => 'theme_essential_uv', 'name' => 'populateme');
             $settings = array('analyticsenabled', 'analytics', 'analyticssiteid', 'analyticsimagetrack', 'analyticssiteurl',
                 'analyticsuseuserid', 'analyticstrackingid', 'analyticstrackadmin', 'analyticscleanurl');
             foreach ($settings as $setting) {
@@ -43,11 +43,11 @@ function xmldb_theme_essential_upgrade($oldversion = 0) {
             }
         }
 
-        upgrade_plugin_savepoint(true, 2017102903, 'theme', 'essential');
+        upgrade_plugin_savepoint(true, 2017102903, 'theme', 'essential_uv');
     }
 
     if ($oldversion < 2018051901) {
-        upgrade_plugin_savepoint(true, 2018051901, 'theme', 'essential');
+        upgrade_plugin_savepoint(true, 2018051901, 'theme', 'essential_uv');
     }
 
     // Automatic 'Purge all caches'....

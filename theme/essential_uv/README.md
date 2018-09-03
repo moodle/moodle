@@ -1,5 +1,10 @@
 The "Essential" Moodle Theme
 ============================
+
+Univalle Customized Version
+
+============================
+
 ![image1](pix/screenshot.jpg "Essential Screenshot")
 
 [![Build Status](https://travis-ci.org/gjb2048/moodle-theme_essential.svg?branch=master)](https://travis-ci.org/gjb2048/moodle-theme_essential)

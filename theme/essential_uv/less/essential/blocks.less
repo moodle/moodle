@@ -9,11 +9,16 @@
     .content {
         padding: 4px 0;
     }
-    .moodle-actionmenu[data-enhanced].show .menu a:hover {
-        text-decoration: none;
+    .header .icon {
+        font-size: 15px;
+        height: 15px;
+        width: 15px;
     }
     .icon {
         margin-right: 5px;
+    }
+    .moodle-actionmenu[data-enhanced].show .menu a:hover {
+        text-decoration: none;
     }
 }
 
@@ -173,7 +178,7 @@ p.tree_item.leaf a {
 
 .block_navigation,
 .block_settings {
-    &.block .block_tree .tree_item {
+    .block_tree .tree_item {
         &.branch {
             padding-left: 0;
         }

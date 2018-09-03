@@ -8,10 +8,17 @@
     "url": "http://about.me/gjbarnard"
   },
   "contributors": [
-    { "name": "David Scotson" },
-    { "name": "Bas Brands", "url": "http://www.basbrands.nl" },
-    { "name": "Joby Harding", "url": "http://www.iamjoby.com"
-  }
+    {
+      "name": "David Scotson"
+    },
+    {
+      "name": "Bas Brands",
+      "url": "http://www.basbrands.nl"
+    },
+    {
+      "name": "Joby Harding",
+      "url": "http://www.iamjoby.com"
+    }
   ],
   "repository": {
     "type": "git",
@@ -20,7 +27,7 @@
   "bugs": {
     "url": "https://github.com/gjb2048/moodle-theme_essential/issues"
   },
- "devDependencies": {
+  "devDependencies": {
     "grunt": "~1.0.1",
     "grunt-contrib-less": "~1.4.1",
     "grunt-contrib-watch": "~1.0.0",
