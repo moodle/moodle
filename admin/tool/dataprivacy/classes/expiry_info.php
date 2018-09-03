@@ -36,15 +36,28 @@ defined('MOODLE_INTERNAL') || die();
 class expiry_info {
 
     /** @var bool Whether this context is fully expired */
-    protected $isexpired = false;
+    protected $fullyexpired = false;
+
+    /** @var bool Whether the default expiry value of this purpose has been reached */
+    protected $defaultexpiryreached = false;
+
+    /** @var int[] List of expires roles */
+    protected $expired = [];
+
+    /** @var int[] List of unexpires roles */
+    protected $unexpired = [];
 
     /**
      * Constructor for the expiry_info class.
      *
-     * @param   bool    $isexpired Whether the retention period for this context has expired yet.
+     * @param   bool    $default Whether the default expiry period for this context has been reached.
+     * @param   int[]   $expired A list of roles in this context which have explicitly expired.
+     * @param   int[]   $unexpired A list of roles in this context which have not yet expired.
      */
-    public function __construct(bool $isexpired) {
-        $this->isexpired = $isexpired;
+    public function __construct(bool $default, array $expired, array $unexpired) {
+        $this->defaultexpiryreached = $default;
+        $this->expired = $expired;
+        $this->unexpired = $unexpired;
     }
 
     /**
@@ -54,7 +67,7 @@ class expiry_info {
      * @return  bool
      */
     public function is_fully_expired() : bool {
-        return $this->isexpired;
+        return $this->defaultexpiryreached && empty($this->unexpired);
     }
 
     /**
@@ -67,7 +80,57 @@ class expiry_info {
             return true;
         }
 
+        if (!empty($this->get_expired_roles())) {
+            return true;
+        }
+
+        if ($this->is_default_expired()) {
+            return true;
+        }
+
         return false;
+    }
+
+    /**
+     * Get the list of explicitly expired role IDs.
+     * Note: This does not list roles which have been expired via the default retention policy being reached.
+     *
+     * @return  int[]
+     */
+    public function get_expired_roles() : array {
+        if ($this->is_default_expired()) {
+            return [];
+        }
+        return $this->expired;
+    }
+
+    /**
+     * Check whether the specified role is explicitly expired.
+     * Note: This does not list roles which have been expired via the default retention policy being reached.
+     *
+     * @param   int $roleid
+     * @return  bool
+     */
+    public function is_role_expired(int $roleid) : bool {
+        return false !== array_search($roleid, $this->expired);
+    }
+
+    /**
+     * Whether the default retention policy has been reached.
+     *
+     * @return  bool
+     */
+    public function is_default_expired() : bool {
+        return $this->defaultexpiryreached;
+    }
+
+    /**
+     * Get the list of unexpired role IDs.
+     *
+     * @return  int[]
+     */
+    public function get_unexpired_roles() : array {
+        return $this->unexpired;
     }
 
     /**
@@ -86,7 +149,20 @@ class expiry_info {
         }
 
         // If the child is not fully expired, then none of the parents can be either.
-        $this->isexpired = false;
+        $this->fullyexpired = false;
+
+        // Remove any role in this node which is not expired in the child.
+        foreach ($this->expired as $key => $roleid) {
+            if (!$child->is_role_expired($roleid)) {
+                unset($this->expired[$key]);
+            }
+        }
+
+        array_merge($this->unexpired, $child->get_unexpired_roles());
+
+        if (!$child->is_default_expired()) {
+            $this->defaultexpiryreached = false;
+        }
 
         return $this;
     }
