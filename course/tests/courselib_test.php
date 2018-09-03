@@ -304,6 +304,50 @@ class core_course_courselib_testcase extends advanced_testcase {
     }
 
     /**
+     * Create module associated blog and tags.
+     *
+     * @param object $course Course.
+     * @param object $modulecontext The context of the module.
+     */
+    private function create_module_asscociated_blog($course, $modulecontext) {
+        global $DB, $CFG;
+
+        // Create default group.
+        $group = new stdClass();
+        $group->courseid = $course->id;
+        $group->name = 'Group';
+        $group->id = $DB->insert_record('groups', $group);
+
+        // Create default user.
+        $user = $this->getDataGenerator()->create_user(array(
+            'username' => 'testuser',
+            'firstname' => 'Firsname',
+            'lastname' => 'Lastname'
+        ));
+
+        // Create default post.
+        $post = new stdClass();
+        $post->userid = $user->id;
+        $post->groupid = $group->id;
+        $post->content = 'test post content text';
+        $post->module = 'blog';
+        $post->id = $DB->insert_record('post', $post);
+
+        // Create default tag.
+        $tag = $this->getDataGenerator()->create_tag(array('userid' => $user->id,
+            'rawname' => 'Testtagname', 'isstandard' => 1));
+        // Apply the tag to the blog.
+        $DB->insert_record('tag_instance', array('tagid' => $tag->id, 'itemtype' => 'user',
+            'component' => 'core', 'itemid' => $post->id, 'ordering' => 0));
+
+        require_once($CFG->dirroot . '/blog/locallib.php');
+        $blog = new blog_entry($post->id);
+        $blog->add_association($modulecontext->id);
+
+        return $blog;
+    }
+
+    /**
      * Test create_module() for multiple modules defined in the $modules array (first declaration of the function).
      */
     public function test_create_module() {
@@ -1521,6 +1565,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Get the module context.
         $modcontext = context_module::instance($module->cmid);
 
+        $assocblog = $this->create_module_asscociated_blog($course, $modcontext);
+
         // Verify context exists.
         $this->assertInstanceOf('context_module', $modcontext);
 
@@ -1564,6 +1610,18 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Verify the course_module record has been deleted.
         $cmcount = $DB->count_records('course_modules', array('id' => $module->cmid));
         $this->assertEmpty($cmcount);
+
+        // Verify the blog_association record has been deleted.
+        $this->assertCount(0, $DB->get_records('blog_association',
+                array('contextid' => $modcontext->id)));
+
+        // Verify the blog post record has been deleted.
+        $this->assertCount(0, $DB->get_records('post',
+                array('id' => $assocblog->id)));
+
+        // Verify the tag instance record has been deleted.
+        $this->assertCount(0, $DB->get_records('tag_instance',
+                array('itemid' => $assocblog->id)));
 
         // Test clean up of module specific messes.
         switch ($type) {
