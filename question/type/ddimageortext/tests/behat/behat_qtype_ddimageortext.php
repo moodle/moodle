@@ -41,7 +41,8 @@ class behat_qtype_ddimageortext extends behat_base {
      * @return string the xpath expression.
      */
     protected function drag_xpath($dragitem) {
-        return '//div[contains(@class, " drag ") and contains(normalize-space(.), "' . $this->escape($dragitem) . '")]';
+        return '//div[contains(concat(" ", @class, " "), " drag ") and ' .
+                'contains(normalize-space(.), "' . $this->escape($dragitem) . '")]';
     }
 
     /**
@@ -50,7 +51,8 @@ class behat_qtype_ddimageortext extends behat_base {
      * @return string the xpath expression.
      */
     protected function drop_xpath($placenumber) {
-        return '//div[contains(@class, "dropzone ") and contains(@class, "place' . $placenumber . ' ")]';
+        return '//div[contains(concat(" ", @class, " "), " dropzone ") and ' .
+                'contains(concat(" ", @class, " "), " place' . $placenumber . ' ")]';
     }
 
     /**
