@@ -22,15 +22,15 @@ html[dir='rtl']{
     }
     .label-content-controls{
       .label-prev{
-        div:before{
+        &>div:before{
           top:0;
-          transform: rotate(180deg);
+          transform: rotate(-45deg);
         }
       }
       .label-next{
-        div:before{
+        &>div:before{
           top:0;
-          transform: rotate(180deg);
+          transform: rotate(135deg);
         }
       }
     }

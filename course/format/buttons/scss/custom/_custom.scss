@@ -56,7 +56,7 @@
             }
             .section-description{
               height: 1.375rem;
-              opacity:1;
+              opacity:0;
               transition: all .3s ease-in-out;
               text-overflow: ellipsis;
               white-space: nowrap;
@@ -97,7 +97,7 @@
             background-color: #b7b7b7;
             transition: all .3s ease-in-out;
             .section-description{
-              opacity: 1;
+              opacity: 0;
               transition: all .3s ease-in-out;
             }
             .section-icon{
@@ -133,7 +133,7 @@
               }
             }
             .section-description{
-              opacity: 1;
+              opacity: 0;
               transition: all .3s ease-in-out;
             }
           }
@@ -339,12 +339,20 @@
     }
   }
   .section-content{
-      animation: fadeInFromNone 0.1s ease-out;
+      animation: fadeInFromNone 0.3s ease-out;
     &.d-none{
-      animation: fadeOutToNone 0.1s ease-out;
+      animation: fadeOutToNone 0.3s ease-out;
     }
   }
   #page-footer{
     position: relative!important;
+  }
+}
+html[dir='rtl'] .format-buttons .section-content .label-content-wrapper .alert.alert-dismissible{
+  padding: 2rem 3.90625rem;
+  overflow-y: auto;
+  .close{
+    right:auto;
+    left:0;
   }
 }

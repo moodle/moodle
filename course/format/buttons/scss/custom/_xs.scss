@@ -114,7 +114,7 @@ html[dir='rtl']{
       outline:none;
       text-overflow: ellipsis;
       white-space: nowrap;
-      div:before{
+      &>div:before{
         content:'';
         width: 1rem;
         height:1rem;
@@ -143,7 +143,7 @@ html[dir='rtl']{
       outline:none;
       text-overflow: ellipsis;
       white-space: nowrap;
-      div:before{
+      &>div:before{
         content:'';
         width: 1rem;
         height:1rem;
