@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/tool/dataprivacy/db" VERSION="20180821" COMMENT="XMLDB file for Moodle tool/dataprivacy"
+<XMLDB PATH="admin/tool/dataprivacy/db" VERSION="20180904" COMMENT="XMLDB file for Moodle tool/dataprivacy"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -98,6 +98,9 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="unexpiredroles" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Roles which have explicitly not expired yet."/>
+        <FIELD NAME="expiredroles" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Explicitly expires roles"/>
+        <FIELD NAME="defaultexpired" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="The default retention period has passed."/>
         <FIELD NAME="status" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -145,6 +148,28 @@
         <KEY NAME="contextlistid" TYPE="foreign" FIELDS="contextlistid" REFTABLE="tool_dataprivacy_contextlist" REFFIELDS="id" COMMENT="Reference to the contextlist"/>
         <KEY NAME="request_contextlist" TYPE="unique" FIELDS="requestid, contextlistid" COMMENT="Uniqueness constraint on request and contextlist"/>
       </KEYS>
+    </TABLE>
+    <TABLE NAME="tool_dataprivacy_purposerole" COMMENT="Data purpose overrides for a specific role">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="purposeid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="lawfulbases" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="sensitivedatareasons" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="retentionperiod" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="protected" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="purposepurposeid" TYPE="foreign" FIELDS="purposeid" REFTABLE="tool_dataprivacy_purpose" REFFIELDS="id"/>
+        <KEY NAME="puproseroleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="purposerole" UNIQUE="true" FIELDS="purposeid, roleid"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>
