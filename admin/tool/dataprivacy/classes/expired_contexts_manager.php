@@ -271,6 +271,7 @@ class expired_contexts_manager {
             } else {
                 $expiryinfo = static::get_expiry_info($purpose, $record->expirydate);
             }
+
             foreach ($datalist as $path => $data) {
                 // Merge with already-processed children.
                 if (strpos($path, $context->path) !== 0) {
@@ -279,6 +280,7 @@ class expired_contexts_manager {
 
                 $expiryinfo->merge_with_child($data->info);
             }
+
             $datalist[$context->path] = (object) [
                 'context' => $context,
                 'record' => $record,
@@ -425,11 +427,39 @@ class expired_contexts_manager {
         }
 
         $privacymanager = $this->get_privacy_manager();
-        if ($context instanceof \context_user) {
-            $this->delete_expired_user_context($expiredctx);
-        } else {
-            // This context is fully expired - that is that the default retention period has been reached.
-            $privacymanager->delete_data_for_all_users_in_context($context);
+        if ($expiredctx->is_fully_expired()) {
+            if ($context instanceof \context_user) {
+                $this->delete_expired_user_context($expiredctx);
+            } else {
+                // This context is fully expired - that is that the default retention period has been reached, and there are
+                // no remaining overrides.
+                $privacymanager->delete_data_for_all_users_in_context($context);
+            }
+
+            // Mark the record as cleaned.
+            $expiredctx->set('status', expired_context::STATUS_CLEANED);
+            $expiredctx->save();
+
+            return $context;
+        }
+
+        // We need to find all users in the context, and delete just those who have expired.
+        $collection = $privacymanager->get_users_in_context($context);
+
+        // Apply the expired and unexpired filters to remove the users in these categories.
+        $userassignments = $this->get_role_users_for_expired_context($expiredctx, $context);
+        $approvedcollection = new \core_privacy\local\request\userlist_collection($context);
+        foreach ($collection as $pendinguserlist) {
+            $userlist = filtered_userlist::create_from_userlist($pendinguserlist);
+            $userlist->apply_expired_context_filters($userassignments->expired, $userassignments->unexpired);
+            if (count($userlist)) {
+                $approvedcollection->add_userlist($userlist);
+            }
+        }
+
+        if (count($approvedcollection)) {
+            // Perform the deletion with the newly approved collection.
+            $privacymanager->delete_data_for_users_in_context($approvedcollection);
         }
 
         // Mark the record as cleaned.
@@ -545,14 +575,40 @@ class expired_contexts_manager {
      * @return  expiry_info
      */
     protected static function get_expiry_info(purpose $purpose, int $comparisondate = 0) : expiry_info {
-        if (empty($comparisondate)) {
-            // The date is empty, therefore this context cannot be considered for automatic expiry.
-            $defaultexpired = false;
-        } else {
-            $defaultexpired = static::has_expired($purpose->get('retentionperiod'), $comparisondate);
-        }
+        $overrides = $purpose->get_purpose_overrides();
+        $expiredroles = $unexpiredroles = [];
+        if (empty($overrides)) {
+            // There are no overrides for this purpose.
+            if (empty($comparisondate)) {
+                // The date is empty, therefore this context cannot be considered for automatic expiry.
+                $defaultexpired = false;
+            } else {
+                $defaultexpired = static::has_expired($purpose->get('retentionperiod'), $comparisondate);
+            }
 
-        return new expiry_info($defaultexpired);
+            return new expiry_info($defaultexpired, [], []);
+        } else {
+            foreach ($overrides as $override) {
+                if (static::has_expired($override->get('retentionperiod'), $comparisondate)) {
+                    // This role has expired.
+                    $expiredroles[] = $override->get('roleid');
+                } else {
+                    // This role has not yet expired.
+                    $unexpiredroles[] = $override->get('roleid');
+                }
+            }
+
+            $defaultexpired = false;
+            if (static::has_expired($purpose->get('retentionperiod'), $comparisondate)) {
+                $defaultexpired = true;
+            }
+
+            if ($defaultexpired) {
+                $expiredroles = [];
+            }
+
+            return new expiry_info($defaultexpired, $expiredroles, $unexpiredroles);
+        }
     }
 
     /**
@@ -565,7 +621,7 @@ class expired_contexts_manager {
      * @return  expired_context|null
      */
     protected function update_from_expiry_info(\stdClass $expiryrecord) {
-        if ($expiryrecord->info->is_any_expired()) {
+        if ($isanyexpired = $expiryrecord->info->is_any_expired()) {
             // The context is expired in some fashion.
             // Create or update as required.
             if ($expiryrecord->record->expiredctxid) {
@@ -577,6 +633,15 @@ class expired_contexts_manager {
                 }
             } else {
                 $expiredcontext = expired_context::create_from_expiry_info($expiryrecord->context, $expiryrecord->info);
+            }
+
+            if ($expiryrecord->context instanceof \context_user) {
+                $userassignments = $this->get_role_users_for_expired_context($expiredcontext, $expiryrecord->context);
+                if (!empty($userassignments->unexpired)) {
+                    $expiredcontext->delete();
+
+                    return null;
+                }
             }
 
             return $expiredcontext;
@@ -608,7 +673,6 @@ class expired_contexts_manager {
         // Fetch the current nested expiry data.
         $expiryrecords = self::get_nested_expiry_info($context->path);
 
-        // Find the current record.
         if (empty($expiryrecords[$context->path])) {
             $expiredctx->delete();
             return null;
@@ -648,6 +712,65 @@ class expired_contexts_manager {
         }
 
         return $expiredctx;
+    }
+
+    /**
+     * Get the list of actual users for the combination of expired, and unexpired roles.
+     *
+     * @param   expired_context $expiredctx
+     * @param   \context        $context
+     * @return  \stdClass
+     */
+    protected function get_role_users_for_expired_context(expired_context $expiredctx, \context $context) : \stdClass {
+        $expiredroles = $expiredctx->get('expiredroles');
+        $expiredroleusers = [];
+        if (!empty($expiredroles)) {
+            // Find the list of expired role users.
+            $expiredroleuserassignments = get_role_users($expiredroles, $context, true, 'ra.id, u.id AS userid', 'ra.id');
+            $expiredroleusers = array_map(function($assignment) {
+                    return $assignment->userid;
+                }, $expiredroleuserassignments);
+        }
+        $expiredroleusers = array_unique($expiredroleusers);
+
+        $unexpiredroles = $expiredctx->get('unexpiredroles');
+        $unexpiredroleusers = [];
+        if (!empty($unexpiredroles)) {
+            // Find the list of unexpired role users.
+            $unexpiredroleuserassignments = get_role_users($unexpiredroles, $context, true, 'ra.id, u.id AS userid', 'ra.id');
+            $unexpiredroleusers = array_map(function($assignment) {
+                    return $assignment->userid;
+                }, $unexpiredroleuserassignments);
+        }
+        $unexpiredroleusers = array_unique($unexpiredroleusers);
+
+        if (!$expiredctx->get('defaultexpired')) {
+            $tofilter = get_users_roles($context, $expiredroleusers);
+            $tofilter = array_filter($tofilter, function($userroles) use ($expiredroles) {
+                // Each iteration contains the list of role assignment for a specific user.
+                // All roles that the user holds must match those in the list of expired roles.
+                if (count($userroles) === 1) {
+                    // Shortcut - only one role held which must be one of the expired roles.
+                    // TODO I think this is wrong.
+                    return false;
+                }
+
+                foreach ($userroles as $ra) {
+                    if (false === array_search($ra->roleid, $expiredroles)) {
+                        // This role was not found in the list of assignments.
+                        return true;
+                    }
+                }
+
+                return false;
+            });
+            $unexpiredroleusers = array_merge($unexpiredroleusers, array_keys($tofilter));
+        }
+
+        return (object) [
+            'expired' => $expiredroleusers,
+            'unexpired' => $unexpiredroleusers,
+        ];
     }
 
     /**

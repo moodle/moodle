@@ -162,7 +162,6 @@ class purpose extends \core\persistent {
      * @return null
      */
     public function is_used() {
-
         if (\tool_dataprivacy\contextlevel::is_purpose_used($this->get('id')) ||
                 \tool_dataprivacy\context_instance::is_purpose_used($this->get('id'))) {
             return true;
@@ -179,5 +178,14 @@ class purpose extends \core\persistent {
         }
 
         return false;
+    }
+
+    /**
+     * Get a list of the role purpose overrides for this purpose.
+     *
+     * @return  array
+     */
+    public function get_purpose_overrides() : array {
+        return purpose_override::get_overrides_for_purpose($this);
     }
 }
