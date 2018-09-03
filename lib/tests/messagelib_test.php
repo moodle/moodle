@@ -287,6 +287,8 @@ class core_messagelib_testcase extends advanced_testcase {
             $this->assertInstanceOf('coding_exception', $e);
         }
         $this->assertCount(0, $sink->get_messages());
+        $this->assertDebuggingCalled('Attempt to send msg from a provider xxxxx/instantmessage '.
+            'that is inactive or not allowed for the user id='.$user2->id);
 
         $message->component = 'moodle';
         $message->name = 'xxx';
@@ -297,6 +299,8 @@ class core_messagelib_testcase extends advanced_testcase {
             $this->assertInstanceOf('coding_exception', $e);
         }
         $this->assertCount(0, $sink->get_messages());
+        $this->assertDebuggingCalled('Attempt to send msg from a provider moodle/xxx '.
+            'that is inactive or not allowed for the user id='.$user2->id);
         $sink->close();
         $this->assertFalse($DB->record_exists('messages', array()));
 
@@ -430,6 +434,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\message_sent', $events[0]);
         $eventsink->clear();
 
+        // No messages are sent when the feature is disabled.
         $CFG->messaging = 0;
 
         $message = new \core\message\message();
@@ -446,20 +451,19 @@ class core_messagelib_testcase extends advanced_testcase {
         $message->notification      = '0';
 
         $messageid = message_send($message);
+        $this->assertFalse($messageid);
+        $this->assertDebuggingCalled('Attempt to send msg from a provider moodle/instantmessage '.
+            'that is inactive or not allowed for the user id='.$user2->id);
         $emails = $sink->get_messages();
         $this->assertCount(0, $emails);
-        $savedmessage = $DB->get_record('messages', array('id' => $messageid), '*', MUST_EXIST);
         $sink->clear();
-        $this->assertTrue($DB->record_exists('message_user_actions', array('userid' => $user2->id, 'messageid' => $messageid,
-            'action' => \core_message\api::MESSAGE_ACTION_READ)));
         $DB->delete_records('messages', array());
         $DB->delete_records('message_user_actions', array());
         $events = $eventsink->get_events();
-        $this->assertCount(2, $events);
-        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
-        $this->assertInstanceOf('\core\event\message_viewed', $events[1]);
+        $this->assertCount(0, $events);
         $eventsink->clear();
 
+        // Example of a message that is sent and viewed.
         $CFG->messaging = 1;
 
         $message = new \core\message\message();
