@@ -43,7 +43,7 @@ html[dir='ltr']{
           }
           &.slick-next{
             left:0;
-            bottom:0;
+            bottom:-2rem;
             &:before{
               transform: rotate(-45deg) translateY(1rem);
             }
@@ -79,49 +79,49 @@ html[dir='rtl']{
       }
     }
     .slider.labels{
-    .nav-item{
-      min-height: 80px;
-      &.active{
-        padding:0 0 0 12px;
+      .nav-item{
+        min-height: 80px;
+        &.active{
+          padding:0 0 0 12px;
+        }
+        &:hover{
+          padding:0 0 0 12px;
+        }
       }
-      &:hover{
-        padding:0 0 0 12px;
+      &.slick-slider{
+        .slick-arrow{
+          margin-top: -2rem;
+          &.slick-prev{
+            left:0;
+            top:0;
+            &:before{
+              transform: rotate(225deg) translateY(-1rem);
+            }
+          }
+          &.slick-next{
+            right:0;
+            bottom:-2rem;
+            &:before{
+              transform: rotate(45deg) translateY(1rem);
+            }
+          }
+        }
       }
     }
-    &.slick-slider{
-      .slick-arrow{
-        margin-top: -2rem;
-        &.slick-prev{
-          left:0;
+    .label-content-controls{
+      .label-prev{
+        &>div:before{
           top:0;
-          &:before{
-            transform: rotate(225deg) translateY(-1rem);
-          }
+          transform: rotate(180deg);
         }
-        &.slick-next{
-          right:0;
-          bottom:0;
-          &:before{
-            transform: rotate(45deg) translateY(1rem);
-          }
+      }
+      .label-next{
+        &>div:before{
+          top:0;
+          transform: rotate(180deg);
         }
       }
     }
-  }
-  .label-content-controls{
-    .label-prev{
-      &>div:before{
-        top:0;
-        transform: rotate(180deg);
-      }
-    }
-    .label-next{
-      &>div:before{
-        top:0;
-        transform: rotate(180deg);
-      }
-    }
-  }
   }
 }
 .format-buttons{
@@ -172,22 +172,14 @@ html[dir='rtl']{
   }
   .label-content-controls{
     position: absolute!important;
-    top:475px;
-    right:75%;
-    width:25%;
-  }
-  .label-content-controls{
-    position: absolute!important;
     box-sizing: border-box;
-    top:475px;
+    top:515px;
     right:75%;
     width:25%;
     min-height: 2rem;
     padding:15px;
     margin:0;
     line-height:1rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     .label-header{
       // max-width: 100%;
       div{
@@ -206,8 +198,6 @@ html[dir='rtl']{
       background-color: inherit;
       color:transparent;
       outline:none;
-      text-overflow: ellipsis;
-      white-space: nowrap;
       &>div{
         &:before{
           content:'\f100';
@@ -240,8 +230,6 @@ html[dir='rtl']{
       background-color: inherit;
       color:transparent;
       outline:none;
-      text-overflow: ellipsis;
-      white-space: nowrap;
       &>div:before{
         content:'\f101';
         font-family: FontAwesome;
@@ -263,8 +251,8 @@ html[dir='rtl']{
       }
     }
   }
-  .slick-slider.labels .slick-next.slick-disabled{
-    display:none;
+  .labels-wrapper  .slick-slider.labels .slick-arrow.slick-next.slick-disabled{
+    background: transparent;
   }
   .label-next:hover{
     max-height: 1rem;

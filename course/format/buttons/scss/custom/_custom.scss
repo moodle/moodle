@@ -9,6 +9,10 @@
     100% { display: none; opacity: 0;}
 }
 .format-buttons{
+  #region-main .card{
+    overflow-y: auto;
+    min-height: 52rem;
+  }
   ul{
     padding:0;
     margin: 0;
@@ -38,41 +42,32 @@
           margin-top:12px;
           background-color: #ddd;
           transition: all .3s ease-in-out;
-          text-overflow: ellipsis;
-          white-space: nowrap;
           .section-header{
             max-width: 100%;
             margin-top: 12px;
-            div{
+            font-size: 28px;
+            .section-header-inner{
               max-width: 132px;
-            }
-            .section-title {
-              font-size: 1.15rem;
-              line-height: 1.5rem;
-              text-overflow: ellipsis;
-              white-space: nowrap;
+              height: 64px;
+              margin:8px 0;
               overflow: hidden;
-              max-width: 100%;
-            }
-            .section-description{
-              height: 1.375rem;
-              opacity:0;
-              transition: all .3s ease-in-out;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-              overflow: hidden;
-              max-width: 100%;
-              p{
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                overflow: hidden;
+              .section-title {
+                font-size: 18px;
+                line-height: 30px;
+                max-width: 100%;
+              }
+              .section-description{
+                display: none;
+                height: 1.375rem;
+                opacity:0;
+                transition: all .3s ease-in-out;
+                max-width: 100%;
               }
             }
           }
           .section-icon{
             margin:10px;
             opacity:1;
-            background-color: #7af2ff;
             transition: all .3s ease-in-out;
           }
           .section-tooltip{
@@ -102,7 +97,6 @@
             }
             .section-icon{
               opacity:1;
-              background-color: #5bc0de;
               transition: all .3s ease-in-out;
             }
             .section-tooltip{
@@ -122,7 +116,6 @@
             transition: all .3s ease-in-out;
             .section-icon{
               opacity:1;
-              // background-color: #5bc0de;
               transition: all .3s ease-in-out;
             }
             .section-tooltip{
@@ -143,20 +136,34 @@
   }
   .labels-wrapper{
     .slider.labels{
+      .slick-list.draggabe{
+        &:last-child{
+          border-bottom: 45px solid transparent;
+        }
+      }
       .nav-item{
           font-size: 1.15rem;
           line-height: 1.375rem;
+          height:88px;
+          font-size: 28px;
+          // margin-top:4px;
+          // margin-bottom:4px;
           .label-header{
             max-width:100%;
-            // padding:1.375rem 5px;
-            margin:30px 12px;
+            height:88px;
+            // margin:30px 12px;
             div{
               max-width: 80px;
+              max-height:80px;
+              overflow-y: hidden;
               .label-title{
+                font-size: 1.15rem;
                 box-sizing: border-box;
                 max-width: 100%;
-                text-overflow: ellipsis;
-                white-space: nowrap;
+                max-height: inherit;
+                padding: 10px 0;
+                // text-overflow: ellipsis;
+                // white-space: nowrap;
                 overflow: hidden;
               }
             }
@@ -193,15 +200,14 @@
     }
   }
   .slick-slider{
-    text-overflow: ellipsis;
-    white-space: nowrap;
     .slick-slide{
       cursor: pointer;
       float: left;
       margin:0 1px;
       transition: all .3s ease-in-out;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      &:focus{
+        outline:0;
+      }
     }
     .slick-arrow{
       position: absolute;
@@ -279,8 +285,6 @@
     position: relative;
     padding:15px 0;
     margin:0;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     .label-header{
       max-width: 100%;
       div{
@@ -288,9 +292,6 @@
         .label-title{
           box-sizing: border-box;
           max-width: 100%;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow: hidden;
         }
       }
       .label-icon{
@@ -303,8 +304,6 @@
       background-color: inherit;
       color:#000;
       outline:none;
-      text-overflow: ellipsis;
-      white-space: nowrap;
       &>div:before{
         content:'';
         width: 1rem;
@@ -317,8 +316,6 @@
     .label-active{
       position: relative;
       color:gold;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
     .label-next{
       position: relative;
@@ -326,8 +323,6 @@
       background-color: inherit;
       color:#000;
       outline:none;
-      text-overflow: ellipsis;
-      white-space: nowrap;
       &>div:before{
         content:'';
         width: 1rem;
@@ -342,6 +337,9 @@
       animation: fadeInFromNone 0.3s ease-out;
     &.d-none{
       animation: fadeOutToNone 0.3s ease-out;
+    }
+    &>div{
+      padding-bottom: 3rem;
     }
   }
   #page-footer{

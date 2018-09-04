@@ -258,7 +258,7 @@ class format_buttons_renderer extends format_topics_renderer
             $html .= html_writer::start_tag('div',['class' => 'd-flex flex-row section-header justify-content-around align-items-center']);
             //$html .= html_writer::tag('span', '', ['class' => 'section-icon d-inline-flex p-3 justify-content-center align-items-center '.$sectionnamearr[2], 'style' => "background: url({$this->courserenderer->image_url('label-default', 'format_buttons')}) no-repeat; background-size: cover;"]);  // SG - previouse variant
             $html .= html_writer::tag('span', '', ['class' => 'section-icon d-inline-flex p-3 justify-content-center align-items-center '.$sectionnamearr[2], 'style' => "font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit; line-height:2rem"]);
-            $html .= html_writer::start_tag('div',['class' => 'd-flex flex-column section-header']);
+            $html .= html_writer::start_tag('div',['class' => 'd-flex flex-column section-header-inner']);
             $html .= html_writer::tag('span', $sectionnamearr[1], ['class' => ' section-title']);
             $html .= html_writer::tag('span', $thissection->summary, ['class' => 'section-description']);
             $html .= html_writer::end_tag('div');

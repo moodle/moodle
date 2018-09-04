@@ -87,8 +87,6 @@ html[dir='rtl']{
     position: relative;
     padding:15px 0;
     margin:0;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     .label-header{
       max-width: 100%;
       div{
@@ -96,9 +94,6 @@ html[dir='rtl']{
         .label-title{
           box-sizing: border-box;
           max-width: 100%;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow: hidden;
         }
       }
       .label-icon{
@@ -111,8 +106,6 @@ html[dir='rtl']{
       background-color: inherit;
       color:#000;
       outline:none;
-      text-overflow: ellipsis;
-      white-space: nowrap;
       &>div:before{
         content:'';
         width: 1rem;
@@ -131,8 +124,6 @@ html[dir='rtl']{
     .label-active{
       position: relative;
       color:gold;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
     .label-next{
       position: relative;
@@ -140,8 +131,6 @@ html[dir='rtl']{
       background-color: inherit;
       color:#000;
       outline:none;
-      text-overflow: ellipsis;
-      white-space: nowrap;
       &>div:before{
         content:'';
         width: 1rem;
