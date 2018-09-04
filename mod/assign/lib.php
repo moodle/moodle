@@ -345,7 +345,7 @@ function assign_update_events($assign, $override = null) {
                 unset($event->id);
             }
             $event->name      = $eventname.' ('.get_string('duedate', 'assign').')';
-            calendar_event::create($event);
+            calendar_event::create($event, false);
         }
     }
 
