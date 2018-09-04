@@ -14,25 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// Define array structure that will provide all the info and links
-// for the company admin block and navigation.
+// Define the Iomad menu items that are defined by this plugin
 
-// NOTE -- THIS FILE IS DEPRECATED AND NO LONGER USED
-// See db/iomadmenu.php in relevant plugins
+function block_iomad_company_admin_menu() {
 
-class iomad_admin_menu {
-
-    public static function getmenu() {
-        global $CFG, $SESSION, $USER;
-
-        $edittitle = '';
-        if (empty($SESSION->currenteditingcompany) && empty($USER->company)) {
-            $edittitle = get_string('createcompany', 'block_iomad_company_admin');
-        } else {
-            $edittitle = get_string('editcompany', 'block_iomad_company_admin');
-        }
-
-        $returnarray = array(
+        return array(
             'managecompanies' => array(
                 'category' => 'CompanyAdmin',
                 'tab' => 1,
@@ -199,17 +185,6 @@ class iomad_admin_menu {
                 'icon' => 'fa-group',
                 'iconsmall' => 'fa-download',
             ),
-            'bulkusers' => array(
-                'category' => 'UserAdmin',
-                'tab' => 2,
-                'name' => get_string('users_bulk', 'block_iomad_company_admin'),
-                'url' => '/admin/user/user_bulk.php',
-                'cap' => 'block/iomad_company_admin:company_add',
-                'icondefault' => 'users',
-                'style' => 'user',
-                'icon' => 'fa-group',
-                'iconsmall' => 'fa-reply-all'
-            ),
             'createcourse' => array(
                 'category' => 'CourseAdmin',
                 'tab' => 3,
@@ -287,19 +262,7 @@ class iomad_admin_menu {
                 'icon' => 'fa-map-marker',
                 'iconsmall' => 'fa-gear',
             ),
-            'learningpath' => array(
-                'category' => 'CourseAdmin',
-                'tab' => 3,
-                'name' => get_string('learningpaths', 'local_iomad_learningpath'),
-                'url' => '/local/iomad_learningpath/manage.php',
-                'cap' => 'local/iomad_learningpath:manage',
-                'icondefault' => 'learningpath',
-                'style' => 'company',
-                'icon' => 'fa-map-signs',
-                'iconsmall' => 'fa-gear',
-            ),
-        );
-        $returnarray['manageiomadlicenses'] = array(
+            'manageiomadlicenses' => array(
                 'category' => 'LicenseAdmin',
                 'tab' => 4,
                 'name' => get_string('managelicenses', 'block_iomad_company_admin'),
@@ -309,8 +272,8 @@ class iomad_admin_menu {
                 'style' => 'license',
                 'icon' => 'fa-legal',
                 'iconsmall' => 'fa-gear',
-            );
-        $returnarray['licenseusers'] = array(
+            ),
+            'licenseusers' => array(
                 'category' => 'LicenseAdmin',
                 'tab' => 4,
                 'name' => get_string('licenseusers', 'block_iomad_company_admin'),
@@ -320,109 +283,50 @@ class iomad_admin_menu {
                 'style' => 'license',
                 'icon' => 'fa-legal',
                 'iconsmall' => 'fa-user'
-            );
-
-        $returnarray['EmailTemplates'] = array(
-            'category' => 'CompanyAdmin',
-            'tab' => 1,
-            'name' => get_string('blocktitle', 'local_email'),
-            'url' => '/local/email/template_list.php',
-            'cap' => 'local/email:list',
-            'icondefault' => 'emailtemplates',
-            'style' => 'company',
-            'icon' => 'fa-inbox',
-            'iconsmall' => 'fa-gear'
+            ),
+            'iomadframeworksettings' => array(
+                'category' => 'CompetencyAdmin',
+                'tab' => 5,
+                'name' => get_string('frameworksettings', 'block_iomad_company_admin'),
+                'url' => 'iomad_frameworks_form.php',
+                'cap' => 'block/iomad_company_admin:manageframeworks',
+                'icondefault' => 'managecoursesettings',
+                'style' => 'competency',
+                'icon' => 'fa-list',
+                'iconsmall' => 'fa-cog'
+            ),
+            'companytemplates' => array(
+                'category' => 'CompetencyAdmin',
+                'tab' => 5,
+                'name' => get_string('companytemplates', 'block_iomad_company_admin'),
+                'url' => 'company_competency_templates_form.php',
+                'cap' => 'block/iomad_company_admin:company_template',
+                'icondefault' => 'assigntocompany',
+                'style' => 'competency',
+                'icon' => 'fa-cubes',
+                'iconsmall' => 'fa-chevron-circle-right'
+            ),
+            'iomadtemplatesettings' => array(
+                'category' => 'CompetencyAdmin',
+                'tab' => 5,
+                'name' => get_string('templatesettings', 'block_iomad_company_admin'),
+                'url' => 'iomad_templates_form.php',
+                'cap' => 'block/iomad_company_admin:managetemplates',
+                'icondefault' => 'managecoursesettings',
+                'style' => 'competency',
+                'icon' => 'fa-cubes',
+                'iconsmall' => 'fa-cog'
+            ),
+            'edittemplates' => array(
+                'category' => 'CompetencyAdmin',
+                'tab' => 5,
+                'name' => get_string('templates', 'tool_lp'),
+                'url' => '/admin/tool/lp/learningplans.php?pagecontextid=1',
+                'cap' => 'block/iomad_company_admin:templateview',
+                'icondefault' => 'userenrolements',
+                'style' => 'competency',
+                'icon' => 'fa-cubes',
+                'iconsmall' => 'fa-eye'
+            )
         );
-
-        $returnarray['ShopSettings_list'] = array(
-            'category' => 'ECommerceAdmin',
-            'tab' => 6,
-            'name' => get_string('courses', 'block_iomad_commerce'),
-            'url' => '/blocks/iomad_commerce/courselist.php',
-            'cap' => 'block/iomad_commerce:admin_view',
-            'icondefault' => 'courses',
-            'style' => 'ecomm',
-            'icon' => 'fa-file-text',
-            'iconsmall' => 'fa-money'
-        );
-        $returnarray['Orders'] = array(
-            'category' => 'ECommerceAdmin',
-            'tab' => 6,
-            'name' => get_string('orders', 'block_iomad_commerce'),
-            'url' => '/blocks/iomad_commerce/orderlist.php',
-            'cap' => 'block/iomad_commerce:admin_view',
-            'icondefault' => 'orders',
-            'style' => 'ecomm',
-            'icon' => 'fa-truck',
-            'iconsmall' => 'fa-eye'
-        );
-
-        $returnarray['companyframeworks'] = array(
-            'category' => 'CompetencyAdmin',
-            'tab' => 5,
-            'name' => get_string('companyframeworks', 'block_iomad_company_admin'),
-            'url' => '/blocks/iomad_company_admin/company_competency_frameworks_form.php',
-            'cap' => 'block/iomad_company_admin:company_framework',
-            'icondefault' => 'assigntocompany',
-            'style' => 'competency',
-            'icon' => 'fa-list',
-            'iconsmall' => 'fa-chevron-circle-right'
-        );
-        $returnarray['iomadframeworksettings'] = array(
-            'category' => 'CompetencyAdmin',
-            'tab' => 5,
-            'name' => get_string('frameworksettings', 'block_iomad_company_admin'),
-            'url' => '/blocks/iomad_company_admin/iomad_frameworks_form.php',
-            'cap' => 'block/iomad_company_admin:manageframeworks',
-            'icondefault' => 'managecoursesettings',
-            'style' => 'competency',
-            'icon' => 'fa-list',
-            'iconsmall' => 'fa-cog'
-        );
-        $returnarray['editframeworks'] = array(
-            'category' => 'CompetencyAdmin',
-            'tab' => 5,
-            'name' => get_string('competencyframeworks', 'tool_lp'),
-            'url' => '/admin/tool/lp/competencyframeworks.php?pagecontextid=1',
-            'cap' => 'block/iomad_company_admin:competencyview',
-            'icondefault' => 'courses',
-            'style' => 'competency',
-            'icon' => 'fa-list',
-            'iconsmall' => 'fa-eye'
-        );
-        $returnarray['companytemplates'] = array(
-            'category' => 'CompetencyAdmin',
-            'tab' => 5,
-            'name' => get_string('companytemplates', 'block_iomad_company_admin'),
-            'url' => '/blocks/iomad_company_admin/company_competency_templates_form.php',
-            'cap' => 'block/iomad_company_admin:company_template',
-            'icondefault' => 'assigntocompany',
-            'style' => 'competency',
-            'icon' => 'fa-cubes',
-            'iconsmall' => 'fa-chevron-circle-right'
-        );
-        $returnarray['iomadtemplatesettings'] = array(
-            'category' => 'CompetencyAdmin',
-            'tab' => 5,
-            'name' => get_string('templatesettings', 'block_iomad_company_admin'),
-            'url' => '/blocks/iomad_company_admin/iomad_templates_form.php',
-            'cap' => 'block/iomad_company_admin:managetemplates',
-            'icondefault' => 'managecoursesettings',
-            'style' => 'competency',
-            'icon' => 'fa-cubes',
-            'iconsmall' => 'fa-cog'
-        );
-        $returnarray['edittemplates'] = array(
-            'category' => 'CompetencyAdmin',
-            'tab' => 5,
-            'name' => get_string('templates', 'tool_lp'),
-            'url' => '/admin/tool/lp/learningplans.php?pagecontextid=1',
-            'cap' => 'block/iomad_company_admin:templateview',
-            'icondefault' => 'userenrolements',
-            'style' => 'competency',
-            'icon' => 'fa-cubes',
-            'iconsmall' => 'fa-eye'
-        );
-        return $returnarray;
-    }
 }

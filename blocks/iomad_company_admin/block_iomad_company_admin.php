@@ -59,6 +59,24 @@ class block_iomad_company_admin extends block_base {
         return true;
     }
 
+    /**
+     * Iterate through db/iomadmenu.php in plugins
+     * NOTE... plugins info is cached, so purge if you change anything
+     * directories
+     * @return array
+     */
+    private function get_menu() {
+        $menus = [];
+        $plugins = get_plugins_with_function('menu', $file = 'db/iomadmenu.php', $include = true);
+        foreach ($plugins as $plugintype) {
+            foreach ($plugintype as $plugin => $menufunction) {
+                $menus += $menufunction();
+            }
+        }
+
+        return $menus;
+    }
+
     public function get_content() {
         global $OUTPUT, $CFG, $SESSION, $USER;
 
@@ -118,7 +136,8 @@ class block_iomad_company_admin extends block_base {
 
         // Build content for selected tab (from menu array).
         $adminmenu = new iomad_admin_menu();
-        $menus = $adminmenu->getmenu();
+        //$menus = $adminmenu->getmenu();
+        $menus = $this->get_menu();
         $html = '<div class="iomadlink_container clearfix">';
         foreach ($menus as $key => $menu) {
 
