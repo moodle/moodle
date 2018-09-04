@@ -10462,6 +10462,12 @@ div.editor_atto_toolbar button .icon {
   line-height: 3rem !important;
   /* stylelint-disable-line declaration-no-important */ }
 
+.dir-rtl .dir-rtl-hide {
+  display: none; }
+
+.dir-ltr .dir-ltr-hide {
+  display: none; }
+
 .icon {
   font-size: 16px;
   width: 16px;

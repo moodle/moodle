@@ -2140,3 +2140,15 @@ div.editor_atto_toolbar button .icon {
         line-height: $length !important; /* stylelint-disable-line declaration-no-important */
     }
 }
+
+.dir-rtl {
+    .dir-rtl-hide {
+        display: none;
+    }
+}
+
+.dir-ltr {
+    .dir-ltr-hide {
+        display: none;
+    }
+}
