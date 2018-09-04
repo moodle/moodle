@@ -418,6 +418,7 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
 
     $mform->addElement('text', 'institution', get_string('institution'), 'maxlength="255" size="25"');
     $mform->setType('institution', core_user::get_property_type('institution'));
+    $mform->setDefault('institution', 'Universidad del Valle');
 
     $mform->addElement('text', 'department', get_string('department'), 'maxlength="255" size="25"');
     $mform->setType('department', core_user::get_property_type('department'));
