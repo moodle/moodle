@@ -979,4 +979,27 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         choice_user_submit_response($optionids[1], $choicewithoptions, $user2->id, $course, $cm);
     }
+
+    /**
+     * A user who does not have capabilities to add events to the calendar should be able to create an choice.
+     */
+    public function test_creation_with_no_calendar_capabilities() {
+        $this->resetAfterTest();
+        $course = self::getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $user = self::getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $roleid = self::getDataGenerator()->create_role();
+        self::getDataGenerator()->role_assign($roleid, $user->id, $context->id);
+        assign_capability('moodle/calendar:manageentries', CAP_PROHIBIT, $roleid, $context, true);
+        $generator = self::getDataGenerator()->get_plugin_generator('mod_choice');
+        // Create an instance as a user without the calendar capabilities.
+        $this->setUser($user);
+        $time = time();
+        $params = array(
+            'course' => $course->id,
+            'timeopen' => $time + 200,
+            'timeclose' => $time + 500,
+        );
+        $generator->create_instance($params);
+    }
 }

@@ -51,6 +51,7 @@ require_capability('mod/data:managetemplates', $context);
 $PAGE->set_url(new moodle_url('/mod/data/preset.php', array('d'=>$data->id)));
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
+$PAGE->force_settings_menu(true);
 
 // fill in missing properties needed for updating of instance
 $data->course     = $cm->course;

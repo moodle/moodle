@@ -2385,7 +2385,7 @@ function scorm_update_calendar(stdClass $scorm, $cmid) {
             $event->timeduration = 0;
 
             $calendarevent = calendar_event::load($event->id);
-            $calendarevent->update($event);
+            $calendarevent->update($event, false);
         } else {
             // Calendar event is on longer needed.
             $calendarevent = calendar_event::load($event->id);
@@ -2406,7 +2406,7 @@ function scorm_update_calendar(stdClass $scorm, $cmid) {
             $event->visible = instance_is_visible('scorm', $scorm);
             $event->timeduration = 0;
 
-            calendar_event::create($event);
+            calendar_event::create($event, false);
         }
     }
 
@@ -2426,7 +2426,7 @@ function scorm_update_calendar(stdClass $scorm, $cmid) {
             $event->timeduration = 0;
 
             $calendarevent = calendar_event::load($event->id);
-            $calendarevent->update($event);
+            $calendarevent->update($event, false);
         } else {
             // Calendar event is on longer needed.
             $calendarevent = calendar_event::load($event->id);
@@ -2447,7 +2447,7 @@ function scorm_update_calendar(stdClass $scorm, $cmid) {
             $event->visible = instance_is_visible('scorm', $scorm);
             $event->timeduration = 0;
 
-            calendar_event::create($event);
+            calendar_event::create($event, false);
         }
     }
 
