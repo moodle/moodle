@@ -207,7 +207,7 @@ if ($ADMIN->fulltree) {
     $description = get_string('searchallcoursecontentdefaultdesc', 'theme_essential_uv');
     $default = true;
     $setting = new admin_setting_configcheckbox($name, $title, $description, $default, true, false);
-    $essentialsettingsfeature->add($setting);
+    $essential_uvsettingsfeature->add($setting);
     
     // Custom scrollbars.
     $name = 'theme_essential_uv/customscrollbars';
