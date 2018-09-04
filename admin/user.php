@@ -227,16 +227,16 @@
     $usersearchcount = get_users(false, '', false, null, "", '', '', '', '', '*', $extrasql, $params);
 
     if ($extrasql !== '') {
-        echo $OUTPUT->heading("$usersearchcount / $usercount ".get_string('users'));
+        // echo $OUTPUT->heading("$usersearchcount / $usercount ".get_string('users'));
         $usercount = $usersearchcount;
     } else {
-        echo $OUTPUT->heading("$usercount ".get_string('users'));
+        // echo $OUTPUT->heading("$usercount ".get_string('users'));
     }
 
     $strall = get_string('all');
 
     $baseurl = new moodle_url('/admin/user.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
-    echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
+    // echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
 
     flush();
 
