@@ -113,22 +113,22 @@ class block_iomad_company_admin extends block_base {
         // Build tabs.
         $tabs = array();
         if (iomad::has_capability('block/iomad_company_admin:companymanagement_view', $context)) {
-            $tabs[1] = get_string('companymanagement', 'block_iomad_company_admin');
+            $tabs[1] = ['fa-building', get_string('companymanagement', 'block_iomad_company_admin')];
         }
         if (iomad::has_capability('block/iomad_company_admin:usermanagement_view', $context)) {
-            $tabs[2] = get_string('usermanagement', 'block_iomad_company_admin');
+            $tabs[2] = ['fa-user', get_string('usermanagement', 'block_iomad_company_admin')];
         }
         if (iomad::has_capability('block/iomad_company_admin:coursemanagement_view', $context)) {
-            $tabs[3] = get_string('coursemanagement', 'block_iomad_company_admin');
+            $tabs[3] = ['fa-file-text', get_string('coursemanagement', 'block_iomad_company_admin')];
         }
         if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $context)) {
-            $tabs[4] = get_string('licensemanagement', 'block_iomad_company_admin');
+            $tabs[4] = ['fa-legal', get_string('licensemanagement', 'block_iomad_company_admin')];
         }
         if (iomad::has_capability('block/iomad_company_admin:competencymanagement_view', $context)) {
-            $tabs[5] = get_string('competencymanagement', 'block_iomad_company_admin');
+            $tabs[5] = ['fa-cubes', get_string('competencymanagement', 'block_iomad_company_admin')];
         }
         if (iomad::has_capability('block/iomad_commerce:admin_view', $context)) {
-            $tabs[6] = get_string('blocktitle', 'block_iomad_commerce');
+            $tabs[6] = ['fa-truck', get_string('blocktitle', 'block_iomad_commerce')];
         }
         $tabhtml = $this->gettabs($tabs, $selectedtab);
 
@@ -146,7 +146,7 @@ class block_iomad_company_admin extends block_base {
                 continue;
             }
 
-            // If no capability the move on.
+            // If no capability then move on.
             if (!iomad::has_capability($menu['cap'], $context)) {
                 continue;
             }
@@ -211,14 +211,15 @@ class block_iomad_company_admin extends block_base {
         $row = array();
 
 	// Build list.
-        foreach ($tabs as $key => $tab) {
+        foreach ($tabs as $key => $tabdata) {
+            list($fa, $tab) = $tabdata;
             $row[] = new tabobject(
                 $key,
 		new moodle_url($PAGE->url, array(
                     'tabid'=>$key,
                     'showsuspendedcompanies' => $showsuspendedcompanies)
 	        ),
-                $tab
+                '<i class="fa ' . $fa . '"></i> ' . $tab
             );
         }
         $html = $OUTPUT->tabtree($row, $selected);
