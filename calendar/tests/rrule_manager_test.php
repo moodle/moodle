@@ -451,6 +451,9 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
      */
     public function test_every_300_days_forever() {
         global $DB;
+
+        // Change the start date for forever events to 9am of the current date.
+        $this->change_event_startdate(date('Ymd\T090000'));
         $startdatetime = new DateTime(date('Y-m-d H:i:s', $this->event->timestart));
 
         $interval = new DateInterval('P300D');
@@ -463,7 +466,8 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $mang = new rrule_manager($rrule);
         $mang->parse_rrule();
         $mang->create_events($this->event);
-        $records = $DB->get_records('event', array('repeatid' => $this->event->id), 'timestart ASC');
+        // Get the first 100 samples. This should be enough to verify that we have generated the recurring events correctly.
+        $records = $DB->get_records('event', array('repeatid' => $this->event->id), 'timestart ASC', 0, 100);
 
         $expecteddate = clone($startdatetime);
         foreach ($records as $record) {
@@ -542,8 +546,20 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
                 $expecteddate->add($interval);
             }
         }
+    }
 
-        // Forever event. This should generate events over time() + 10 year period, every 50th Monday.
+    /**
+     * Test recurrence rules for weekly frequency for RRULE with BYDAY rule set, recurring forever.
+     */
+    public function test_weekly_byday_forever() {
+        global $DB;
+
+        // Set the next Monday as the starting date of this event.
+        $startdate = new DateTime('next Monday');
+        // Change the start date of the parent event.
+        $startdate = $this->change_event_startdate($startdate->format('Ymd\T090000'));
+
+        // Forever event. This should generate events over time() + 10 year period, every 50 weeks.
         $rrule = 'FREQ=WEEKLY;BYDAY=MO;INTERVAL=50';
 
         $mang = new rrule_manager($rrule);
@@ -554,13 +570,14 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $untildate->add(new DateInterval('P10Y'));
         $until = $untildate->getTimestamp();
 
-        $interval = new DateInterval('P50W');
         $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart');
 
-        // First instance of this set of recurring events: Monday, 17-08-1998.
+        $interval = new DateInterval('P50W');
+
+        // First instance of this set of recurring events.
         $expecteddate = clone($startdate);
-        $expecteddate->modify('1998-08-17');
-        $expecteddate->add($offsetinterval);
+
+        // Iterate over each record and increment the expected date accordingly.
         foreach ($records as $record) {
             $eventdateexpected = $expecteddate->format('Y-m-d H:i:s');
             $eventdateactual = date('Y-m-d H:i:s', $record->timestart);
@@ -666,17 +683,21 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     public function test_monthly_events_with_bymonthday_forever() {
         global $DB;
 
+        // Change the start date for forever events to 9am of the 2nd day of the current month and year.
+        $this->change_event_startdate(date('Ym02\T090000'));
         $startdatetime = new DateTime(date('Y-m-d H:i:s', $this->event->timestart));
         $startdate = new DateTime(date('Y-m-d', $this->event->timestart));
 
         $offsetinterval = $startdatetime->diff($startdate, true);
         $interval = new DateInterval('P12M');
 
-        // Forever event. This should generate events over 10 year period, on 2nd day of every 12th month.
+        // Forever event. This should generate events over a 10-year period, on 2nd day of the month, every 12 months.
         $rrule = "FREQ=MONTHLY;INTERVAL=12;BYMONTHDAY=2";
 
         $mang = new rrule_manager($rrule);
-        $until = time() + (YEARSECS * $mang::TIME_UNLIMITED_YEARS);
+        $untildate = new DateTime();
+        $untildate->add(new DateInterval('P' . $mang::TIME_UNLIMITED_YEARS . 'Y'));
+        $until = $untildate->getTimestamp();
 
         $mang->parse_rrule();
         $mang->create_events($this->event);
@@ -818,24 +839,33 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     public function test_monthly_events_with_byday_forever() {
         global $DB;
 
+        // Change the start date for forever events to 9am of the 2nd day of the current month and year.
+        $this->change_event_startdate(date('Ym02\T090000'));
+
         $startdatetime = new DateTime(date('Y-m-d H:i:s', $this->event->timestart));
         $startdate = new DateTime(date('Y-m-d', $this->event->timestart));
 
         $offsetinterval = $startdatetime->diff($startdate, true);
         $interval = new DateInterval('P12M');
 
-        // Forever event. This should generate events over 10 year period, on 2nd day of every 12th month.
+        // Forever event. This should generate events over a 10 year period, on 1st Monday of the month every 12 months.
         $rrule = "FREQ=MONTHLY;INTERVAL=12;BYDAY=1MO";
 
         $mang = new rrule_manager($rrule);
-        $until = time() + (YEARSECS * $mang::TIME_UNLIMITED_YEARS);
+        $untildate = new DateTime();
+        $untildate->add(new DateInterval('P' . $mang::TIME_UNLIMITED_YEARS . 'Y'));
+        $until = $untildate->getTimestamp();
 
         $mang->parse_rrule();
         $mang->create_events($this->event);
 
         $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart');
-
-        $expecteddate = new DateTime('first Monday of September 1998');
+        $expecteddate = new DateTime('first Monday of this month');
+        // Move to the next interval's first Monday if the calculated start date is after this month's first Monday.
+        if ($expecteddate->getTimestamp() < $startdate->getTimestamp()) {
+            $expecteddate->add($interval);
+            $expecteddate->modify('first Monday of this month');
+        }
         foreach ($records as $record) {
             $expecteddate->add($offsetinterval);
             $this->assertLessThanOrEqual($until, $record->timestart);
@@ -880,7 +910,7 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         // Create a yearly event, until the time limit is hit.
         $until = strtotime('+20 day +10 years', $this->event->timestart);
         $until = date('Ymd\THis\Z', $until);
-        $rrule = "FREQ=YEARLY;BYMONTH=9;UNTIL=$until"; // Forever event.
+        $rrule = "FREQ=YEARLY;BYMONTH=9;UNTIL=$until";
         $mang = new rrule_manager($rrule);
         $mang->parse_rrule();
         $mang->create_events($this->event);
@@ -901,18 +931,6 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $count = $DB->count_records('event', array('repeatid' => $this->event->id));
         $this->assertEquals(5, $count);
         for ($i = 0, $time = $this->event->timestart; $i < 5; $i++, $yoffset = $i * 2,
-            $time = strtotime("+$yoffset years", $this->event->timestart)) {
-            $result = $DB->record_exists('event', array('repeatid' => $this->event->id,
-                    'timestart' => ($time)));
-            $this->assertTrue($result);
-        }
-
-        $rrule = "FREQ=YEARLY;BYMONTH=9;INTERVAL=2"; // Forever event.
-        $mang = new rrule_manager($rrule);
-        $until = time() + (YEARSECS * $mang::TIME_UNLIMITED_YEARS);
-        $mang->parse_rrule();
-        $mang->create_events($this->event);
-        for ($i = 0, $time = $this->event->timestart; $time < $until; $i++, $yoffset = $i * 2,
             $time = strtotime("+$yoffset years", $this->event->timestart)) {
             $result = $DB->record_exists('event', array('repeatid' => $this->event->id,
                     'timestart' => ($time)));
@@ -995,10 +1013,43 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     }
 
     /**
+     * Test for rrule with FREQ=YEARLY and INTERVAL=2 with BYMONTH rule set, recurring forever.
+     */
+    public function test_yearly_september_every_two_years_forever() {
+        global $DB;
+
+        // Change the start date for forever events to 9am on the 2nd day of September of the current year.
+        $this->change_event_startdate(date('Y0902\T090000'));
+
+        $rrule = "FREQ=YEARLY;BYMONTH=9;INTERVAL=2"; // Forever event.
+        $mang = new rrule_manager($rrule);
+        $untildate = new DateTime();
+        $untildate->add(new DateInterval('P' . $mang::TIME_UNLIMITED_YEARS . 'Y'));
+        $untiltimestamp = $untildate->getTimestamp();
+        $mang->parse_rrule();
+        $mang->create_events($this->event);
+
+        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart');
+
+        $interval = new DateInterval('P2Y');
+        $expecteddate = new DateTime(date('Y0902\T090000'));
+        foreach ($records as $record) {
+            $this->assertLessThanOrEqual($untiltimestamp, $record->timestart);
+            $this->assertEquals($expecteddate->format('Y-m-d H:i:s'), date('Y-m-d H:i:s', $record->timestart));
+
+            // Go to the next expected date.
+            $expecteddate->add($interval);
+        }
+    }
+
+    /**
      * Test for rrule with FREQ=YEARLY with BYMONTH and BYDAY rules set, recurring forever.
      */
     public function test_yearly_bymonth_byday_forever() {
         global $DB;
+
+        // Change the start date for forever events to the first day of September of the current year at 9am.
+        $this->change_event_startdate(date('Y0901\T090000'));
 
         // Every 2 years on the first Monday of September.
         $rrule = "FREQ=YEARLY;BYMONTH=9;INTERVAL=2;BYDAY=1MO";
@@ -1018,9 +1069,9 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $offsetinterval = $startdatetime->diff($startdate, true);
         $interval = new DateInterval('P2Y');
 
-        // First occurrence of this set of events is on the first Monday of September 1999.
+        // First occurrence of this set of events is on the first Monday of September.
         $expecteddate = clone($startdatetime);
-        $expecteddate->modify('first Monday of September 1999');
+        $expecteddate->modify('first Monday of September');
         $expecteddate->add($offsetinterval);
         foreach ($records as $record) {
             $this->assertLessThanOrEqual($untiltimestamp, $record->timestart);
@@ -1039,6 +1090,9 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
      */
     public function test_yearly_forever() {
         global $DB;
+
+        // Change the start date for forever events to 9am of the current date.
+        $this->change_event_startdate(date('Ymd\T090000'));
 
         $startdatetime = new DateTime(date('Y-m-d H:i:s', $this->event->timestart));
 
@@ -1137,13 +1191,18 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /**
      * Every other day - forever:
      *
-     * DTSTART;TZID=US-Eastern:19970902T090000
+     * DTSTART;TZID=US-Eastern:[Current date]T090000
      * RRULE:FREQ=DAILY;INTERVAL=2
-     *   ==> (1997 9:00 AM EDT)September2,4,6,8...24,26,28,30;October 2,4,6...20,22,24
-     *       (1997 9:00 AM EST)October 26,28,30;November 1,3,5,7...25,27,29;Dec 1,3,...
+     *
+     * Sample results (e.g. in the year 1997):
+     *  (1997 9:00 AM EDT)September2,4,6,8...24,26,28,30;October 2,4,6...20,22,24
+     *  (1997 9:00 AM EST)October 26,28,30;November 1,3,5,7...25,27,29;Dec 1,3,...
      */
     public function test_every_other_day_forever() {
         global $DB;
+
+        // Change the start date for forever events to 9am of the current date in US/Eastern time.
+        $this->change_event_startdate(date('Ymd\T090000'), 'US/Eastern');
 
         $startdatetime = new DateTime(date('Y-m-d H:i:s', $this->event->timestart));
         $interval = new DateInterval('P2D');
@@ -1153,7 +1212,8 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $mang->parse_rrule();
         $mang->create_events($this->event);
 
-        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart');
+        // Get the first 100 samples. This should be enough to verify that we have generated the recurring events correctly.
+        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart', 0, 100);
 
         $untildate = new DateTime();
         $untildate->add(new DateInterval('P' . $mang::TIME_UNLIMITED_YEARS . 'Y'));
@@ -1331,15 +1391,20 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /**
      * Every other week - forever:
      *
-     * DTSTART;TZID=US-Eastern:19970902T090000
+     * DTSTART;TZID=US-Eastern:[Current date]T090000
      * RRULE:FREQ=WEEKLY;INTERVAL=2;WKST=SU
-     *   ==> (1997 9:00 AM EDT)September 2,16,30;October 14
-     *       (1997 9:00 AM EST)October 28;November 11,25;December 9,23
-     *       (1998 9:00 AM EST)January 6,20;February
-     *        ...
+     *
+     * Sample results (e.g. in the year 1997):
+     *  (1997 9:00 AM EDT)September 2,16,30;October 14
+     *  (1997 9:00 AM EST)October 28;November 11,25;December 9,23
+     *  (1998 9:00 AM EST)January 6,20;February
+     *  ...
      */
     public function test_every_other_week_forever() {
         global $DB;
+
+        // Change the start date for forever events to 9am of the current date in US/Eastern time.
+        $this->change_event_startdate(date('Ymd\T090000'), 'US/Eastern');
 
         $interval = new DateInterval('P2W');
 
@@ -1348,7 +1413,8 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $mang->parse_rrule();
         $mang->create_events($this->event);
 
-        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart');
+        // Get the first 100 samples. This should be enough to verify that we have generated the recurring events correctly.
+        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart', 0, 100);
 
         $untildate = new DateTime();
         $untildate->add(new DateInterval('P' . $mang::TIME_UNLIMITED_YEARS . 'Y'));
@@ -1694,25 +1760,28 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /**
      * Monthly on the third to the last day of the month, forever:
      *
-     * DTSTART;TZID=US-Eastern:19970928T090000
+     * DTSTART;TZID=US-Eastern:[Current year]0928T090000
      * RRULE:FREQ=MONTHLY;BYMONTHDAY=-3
-     *   ==> (1997 9:00 AM EDT)September 28
-     *       (1997 9:00 AM EST)October 29;November 28;December 29
-     *       (1998 9:00 AM EST)January 29;February 26
-     *       ...
+     *
+     * Sample results (e.g. in the year 1997):
+     *  (1997 9:00 AM EDT)September 28
+     *  (1997 9:00 AM EST)October 29;November 28;December 29
+     *  (1998 9:00 AM EST)January 29;February 26
+     *  ...
      */
     public function test_third_to_the_last_day_of_the_month_forever() {
         global $DB;
 
-        // Change our event's date to 05-09-1997, based on the example from the RFC.
-        $this->change_event_startdate('19970928T090000', 'US/Eastern');
+        // Change our event's date to 28 September of the current year, based on the example from the RFC.
+        $this->change_event_startdate(date('Y0928\T090000'), 'US/Eastern');
 
         $rrule = 'FREQ=MONTHLY;BYMONTHDAY=-3';
         $mang = new rrule_manager($rrule);
         $mang->parse_rrule();
         $mang->create_events($this->event);
 
-        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart');
+        // Get the first 100 samples. This should be enough to verify that we have generated the recurring events correctly.
+        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart', 0, 100);
 
         $untildate = new DateTime();
         $untildate->add(new DateInterval('P' . $mang::TIME_UNLIMITED_YEARS . 'Y'));
@@ -1868,22 +1937,29 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /**
      * Every Tuesday, every other month:
      *
-     * DTSTART;TZID=US-Eastern:19970902T090000
+     * DTSTART;TZID=US-Eastern:[Next Tuesday]T090000
      * RRULE:FREQ=MONTHLY;INTERVAL=2;BYDAY=TU
-     *   ==> (1997 9:00 AM EDT)September 2,9,16,23,30
-     *       (1997 9:00 AM EST)November 4,11,18,25
-     *       (1998 9:00 AM EST)January 6,13,20,27;March 3,10,17,24,31
-     *       ...
+     *
+     * Sample results (e.g. in the year 1997):
+     *  (1997 9:00 AM EDT)September 2,9,16,23,30
+     *  (1997 9:00 AM EST)November 4,11,18,25
+     *  (1998 9:00 AM EST)January 6,13,20,27;March 3,10,17,24,31
+     *  ...
      */
     public function test_every_tuesday_every_other_month_forever() {
         global $DB;
+
+        // Change the start date for forever events to 9am of the Tuesday on or before of the current date in US/Eastern time.
+        $nexttuesday = new DateTime('next Tuesday');
+        $this->change_event_startdate($nexttuesday->format('Ymd\T090000'), 'US/Eastern');
 
         $rrule = 'FREQ=MONTHLY;INTERVAL=2;BYDAY=TU';
         $mang = new rrule_manager($rrule);
         $mang->parse_rrule();
         $mang->create_events($this->event);
 
-        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart');
+        // Get the first 100 samples. This should be enough to verify that we have generated the recurring events correctly.
+        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart', 0, 100);
 
         $untildate = new DateTime();
         $untildate->add(new DateInterval('P' . $mang::TIME_UNLIMITED_YEARS . 'Y'));
@@ -2053,18 +2129,22 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /**
      * Every 20th Monday of the year, forever:
      *
-     * DTSTART;TZID=US-Eastern:19970519T090000
+     * DTSTART;TZID=US-Eastern:[20th Monday of the current year]T090000
      * RRULE:FREQ=YEARLY;BYDAY=20MO
-     *   ==> (1997 9:00 AM EDT)May 19
-     *       (1998 9:00 AM EDT)May 18
-     *       (1999 9:00 AM EDT)May 17
-     *       ...
+     *
+     * Sample results (e.g. in the year 1997):
+     *  (1997 9:00 AM EDT)May 19
+     *  (1998 9:00 AM EDT)May 18
+     *  (1999 9:00 AM EDT)May 17
+     *  ...
      */
     public function test_yearly_every_20th_monday_forever() {
         global $DB;
 
-        // Change our event's date to 19-05-1997, based on the example from the RFC.
-        $startdatetime = $this->change_event_startdate('19970519T090000', 'US/Eastern');
+        // Change our event's date to the 20th Monday of the current year.
+        $twentiethmonday = new DateTime(date('Y-01-01'));
+        $twentiethmonday->modify('+20 Monday');
+        $startdatetime = $this->change_event_startdate($twentiethmonday->format('Ymd\T090000'), 'US/Eastern');
 
         $startdate = new DateTime($startdatetime->format('Y-m-d'));
 
@@ -2100,18 +2180,22 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /**
      * Monday of week number 20 (where the default start of the week is Monday), forever:
      *
-     * DTSTART;TZID=US-Eastern:19970512T090000
+     * DTSTART;TZID=US-Eastern:[1st day of the 20th week this year]T090000
      * RRULE:FREQ=YEARLY;BYWEEKNO=20;BYDAY=MO
-     * ==> (1997 9:00 AM EDT)May 12
-     *     (1998 9:00 AM EDT)May 11
-     *     (1999 9:00 AM EDT)May 17
-     *     ...
+     *
+     * Sample results (e.g. in the year 1997):
+     *  (1997 9:00 AM EDT)May 12
+     *  (1998 9:00 AM EDT)May 11
+     *  (1999 9:00 AM EDT)May 17
+     *  ...
      */
     public function test_yearly_byweekno_forever() {
         global $DB;
 
-        // Change our event's date to 12-05-1997, based on the example from the RFC.
-        $startdatetime = $this->change_event_startdate('19970512T090000', 'US/Eastern');
+        // Change our event's date to the start of the 20th week of the current year.
+        $twentiethweek = new DateTime(date('Y-01-01'));
+        $twentiethweek->setISODate($twentiethweek->format('Y'), 20);
+        $startdatetime = $this->change_event_startdate($twentiethweek->format('Ymd\T090000'), 'US/Eastern');
 
         $startdate = clone($startdatetime);
         $startdate->modify($startdate->format('Y-m-d'));
@@ -2146,18 +2230,21 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /**
      * Every Thursday in March, forever:
      *
-     * DTSTART;TZID=US-Eastern:19970313T090000
+     * DTSTART;TZID=US-Eastern:[First thursday of March of the current year]T090000
      * RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=TH
-     *   ==> (1997 9:00 AM EST)March 13,20,27
-     *       (1998 9:00 AM EST)March 5,12,19,26
-     *       (1999 9:00 AM EST)March 4,11,18,25
-     *       ...
+     *
+     * Sample results (e.g. in the year 1997):
+     *  (1997 9:00 AM EST)March 13,20,27
+     *  (1998 9:00 AM EST)March 5,12,19,26
+     *  (1999 9:00 AM EST)March 4,11,18,25
+     *  ...
      */
     public function test_every_thursday_in_march_forever() {
         global $DB;
 
-        // Change our event's date to 12-05-1997, based on the example from the RFC.
-        $startdatetime = $this->change_event_startdate('19970313T090000', 'US/Eastern');
+        // Change our event's date to the first Thursday of March of the current year at 9am US/Eastern time.
+        $firstthursdayofmarch = new DateTime('first Thursday of March');
+        $startdatetime = $this->change_event_startdate($firstthursdayofmarch->format('Ymd\T090000'), 'US/Eastern');
 
         $interval = new DateInterval('P1Y');
 
@@ -2166,7 +2253,8 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $mang->parse_rrule();
         $mang->create_events($this->event);
 
-        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart');
+        // Get the first 100 samples. This should be enough to verify that we have generated the recurring events correctly.
+        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart', 0, 100);
 
         $untildate = new DateTime();
         $untildate->add(new DateInterval('P' . $mang::TIME_UNLIMITED_YEARS . 'Y'));
@@ -2176,7 +2264,7 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $startdate = new DateTime($startdatetime->format('Y-m-d'));
         $offsetinterval = $startdatetime->diff($startdate, true);
         $expecteddate->setTimezone(new DateTimeZone(get_user_timezone()));
-        $april1st = new DateTime('1997-04-01');
+        $april1st = new DateTime('April 1');
         foreach ($records as $record) {
             $this->assertLessThanOrEqual($untiltimestamp, $record->timestart);
             $this->assertEquals($expecteddate->format('Y-m-d H:i:s'), date('Y-m-d H:i:s', $record->timestart));
@@ -2201,18 +2289,21 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /**
      * Every Thursday, but only during June, July, and August, forever:
      *
-     * DTSTART;TZID=US-Eastern:19970605T090000
+     * DTSTART;TZID=US-Eastern:[First Thursday of June of the current year]T090000
      * RRULE:FREQ=YEARLY;BYDAY=TH;BYMONTH=6,7,8
-     *   ==> (1997 9:00 AM EDT)June 5,12,19,26;July 3,10,17,24,31;August 7,14,21,28
-     *       (1998 9:00 AM EDT)June 4,11,18,25;July 2,9,16,23,30;August 6,13,20,27
-     *       (1999 9:00 AM EDT)June 3,10,17,24;July 1,8,15,22,29;August 5,12,19,26
-     *       ...
+     *
+     * Sample results (e.g. in the year 1997):
+     *  (1997 9:00 AM EDT)June 5,12,19,26;July 3,10,17,24,31;August 7,14,21,28
+     *  (1998 9:00 AM EDT)June 4,11,18,25;July 2,9,16,23,30;August 6,13,20,27
+     *  (1999 9:00 AM EDT)June 3,10,17,24;July 1,8,15,22,29;August 5,12,19,26
+     *  ...
      */
     public function test_every_thursday_june_july_august_forever() {
         global $DB;
 
-        // Change our event's date to 05-06-1997, based on the example from the RFC.
-        $startdatetime = $this->change_event_startdate('19970605T090000', 'US/Eastern');
+        // Change our event's date to the first Thursday of June in the current year at 9am US/Eastern time.
+        $firstthursdayofjune = new DateTime('first Thursday of June');
+        $startdatetime = $this->change_event_startdate($firstthursdayofjune->format('Ymd\T090000'), 'US/Eastern');
 
         $startdate = new DateTime($startdatetime->format('Y-m-d'));
 
@@ -2225,14 +2316,15 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $mang->parse_rrule();
         $mang->create_events($this->event);
 
-        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart');
+        // Get the first 100 samples. This should be enough to verify that we have generated the recurring events correctly.
+        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart', 0, 100);
 
         $untildate = new DateTime();
         $untildate->add(new DateInterval('P' . $mang::TIME_UNLIMITED_YEARS . 'Y'));
         $untiltimestamp = $untildate->getTimestamp();
 
         $expecteddate = new DateTime(date('Y-m-d H:i:s', $startdatetime->getTimestamp()));
-        $september1st = new DateTime('1997-09-01');
+        $september1st = new DateTime('September 1');
         foreach ($records as $record) {
             $this->assertLessThanOrEqual($untiltimestamp, $record->timestart);
             $this->assertEquals($expecteddate->format('Y-m-d H:i:s'), date('Y-m-d H:i:s', $record->timestart));
@@ -2254,22 +2346,28 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /**
      * Every Friday the 13th, forever:
      *
-     * DTSTART;TZID=US-Eastern:19970902T090000
-     * EXDATE;TZID=US-Eastern:19970902T090000
+     * DTSTART;TZID=US-Eastern:[Current date]T090000
      * RRULE:FREQ=MONTHLY;BYDAY=FR;BYMONTHDAY=13
-     *   ==> (1998 9:00 AM EST)February 13;March 13;November 13
-     *       (1999 9:00 AM EDT)August 13
-     *       (2000 9:00 AM EDT)October 13
+     *
+     * Sample results (e.g. in the year 1997):
+     *  (1998 9:00 AM EST)February 13;March 13;November 13
+     *  (1999 9:00 AM EDT)August 13
+     *  (2000 9:00 AM EDT)October 13
+     *  ...
      */
     public function test_friday_the_thirteenth_forever() {
         global $DB;
+
+        // Change our event's date to the first Thursday of June in the current year at 9am US/Eastern time.
+        $this->change_event_startdate(date('Ymd\T090000'), 'US/Eastern');
 
         $rrule = 'FREQ=MONTHLY;BYDAY=FR;BYMONTHDAY=13';
         $mang = new rrule_manager($rrule);
         $mang->parse_rrule();
         $mang->create_events($this->event);
 
-        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart');
+        // Get the first 100 samples. This should be enough to verify that we have generated the recurring events correctly.
+        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart', 0, 100);
 
         $untildate = new DateTime();
         $untildate->add(new DateInterval('P' . $mang::TIME_UNLIMITED_YEARS . 'Y'));
@@ -2285,17 +2383,22 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /**
      * The first Saturday that follows the first Sunday of the month, forever:
      *
-     * DTSTART;TZID=US-Eastern:19970913T090000
+     * DTSTART;TZID=US-Eastern:[The Saturday after the month's first Sunday]T090000
      * RRULE:FREQ=MONTHLY;BYDAY=SA;BYMONTHDAY=7,8,9,10,11,12,13
-     *   ==> (1997 9:00 AM EDT)September 13;October 11
-     *       (1997 9:00 AM EST)November 8;December 13
-     *       (1998 9:00 AM EST)January 10;February 7;March 7
-     *       (1998 9:00 AM EDT)April 11;May 9;June 13...
+     *
+     * Sample results (e.g. from 13 September 1997):
+     *  (1997 9:00 AM EDT)September 13;October 11
+     *  (1997 9:00 AM EST)November 8;December 13
+     *  (1998 9:00 AM EST)January 10;February 7;March 7
+     *  (1998 9:00 AM EDT)April 11;May 9;June 13...
      */
     public function test_first_saturday_following_first_sunday_forever() {
         global $DB;
 
-        $startdatetime = $this->change_event_startdate('19970913T090000', 'US/Eastern');
+        // Change our event's date to the next Saturday after the first Sunday of the the current month at 9am US/Eastern time.
+        $firstsaturdayafterfirstsunday = new DateTime('first Sunday of this month');
+        $firstsaturdayafterfirstsunday->modify('next Saturday');
+        $startdatetime = $this->change_event_startdate($firstsaturdayafterfirstsunday->format('Ymd\T090000'), 'US/Eastern');
         $startdate = new DateTime($startdatetime->format('Y-m-d'));
         $offset = $startdatetime->diff($startdate, true);
 
@@ -2304,7 +2407,8 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $mang->parse_rrule();
         $mang->create_events($this->event);
 
-        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart');
+        // Get the first 100 samples. This should be enough to verify that we have generated the recurring events correctly.
+        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart', 0, 100);
 
         $untildate = new DateTime();
         $untildate->add(new DateInterval('P' . $mang::TIME_UNLIMITED_YEARS . 'Y'));
@@ -2330,17 +2434,29 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /**
      * Every four years, the first Tuesday after a Monday in November, forever (U.S. Presidential Election day):
      *
-     * DTSTART;TZID=US-Eastern:19961105T090000
+     * DTSTART;TZID=US-Eastern:[Most recent election date]T090000
      * RRULE:FREQ=YEARLY;INTERVAL=4;BYMONTH=11;BYDAY=TU;BYMONTHDAY=2,3,4,5,6,7,8
-     *   ==> (1996 9:00 AM EST)November 5
-     *       (2000 9:00 AM EST)November 7
-     *       (2004 9:00 AM EST)November 2
-     *       ...
+     *
+     * Sample results (e.g. from 05 November 1996):
+     *  (1996 9:00 AM EST)November 5
+     *  (2000 9:00 AM EST)November 7
+     *  (2004 9:00 AM EST)November 2
+     *  ...
      */
     public function test_every_us_presidential_election_forever() {
         global $DB;
 
-        $startdatetime = $this->change_event_startdate('19961105T090000', 'US/Eastern');
+        // Calculate the most recent election date, starting from 1996 (e.g. today's 2017 so the most recent election was in 2016).
+        $currentyear = (int) date('Y');
+        $electionyear = 1996;
+        while ($electionyear + 4 < $currentyear) {
+            $electionyear += 4;
+        }
+        $electiondate = new DateTime('first Monday of November ' . $electionyear);
+        $electiondate->modify('+1 Tuesday');
+
+        // Use the most recent election date as the starting date of our recurring events.
+        $startdatetime = $this->change_event_startdate($electiondate->format('Ymd\T090000'), 'US/Eastern');
         $startdate = new DateTime($startdatetime->format('Y-m-d'));
         $offset = $startdatetime->diff($startdate, true);
 
@@ -2407,23 +2523,27 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
      * The 2nd to last weekday of the month:
      *
      * DTSTART;TZID=US-Eastern:19970929T090000
-     * RRULE:FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-2
+     * RRULE:FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-2;COUNT=7
      *   ==> (1997 9:00 AM EDT)September 29
      *       (1997 9:00 AM EST)October 30;November 27;December 30
      *       (1998 9:00 AM EST)January 29;February 26;March 30
      *       ...
+     *
+     * (Original RFC example is set to recur forever. But we just want to verify that the results match the dates listed from
+     * the RFC example. So just limit the count to 7.)
      */
-    public function test_second_to_the_last_weekday_of_the_month_forever() {
+    public function test_second_to_the_last_weekday_of_the_month() {
         global $DB;
 
         $this->change_event_startdate('19970929T090000', 'US/Eastern');
 
-        $rrule = 'FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-2';
+        $rrule = 'FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-2;COUNT=7';
         $mang = new rrule_manager($rrule);
         $mang->parse_rrule();
         $mang->create_events($this->event);
 
-        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart');
+        // Get the first 7 samples. This should be enough to verify that we have generated the recurring events correctly.
+        $records = $DB->get_records('event', ['repeatid' => $this->event->id], 'timestart ASC', 'id, repeatid, timestart', 0, 7);
 
         $expecteddates = [
             (new DateTime('1997-09-29 09:00:00 EDT'))->getTimestamp(),
@@ -2444,10 +2564,8 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
             $this->assertLessThanOrEqual($untiltimestamp, $record->timestart);
 
             // Confirm that the first 7 records correspond to the expected dates listed above.
-            if ($i < 7) {
-                $this->assertEquals($expecteddates[$i], $record->timestart);
-                $i++;
-            }
+            $this->assertEquals($expecteddates[$i], $record->timestart);
+            $i++;
         }
     }
 
@@ -2747,13 +2865,19 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /**
      * Change the event's timestart (DTSTART) based on the test's needs.
      *
-     * @param string $datestr The date string. In YYYYmmddThhiiss format. e.g. 19990902T090000.
-     * @param string $timezonestr A valid timezone string. e.g. 'US/Eastern'.
+     * @param string $datestr The date string. In 'Ymd\This' format. e.g. 19990902T090000.
+     * @param null|string $timezonestr A valid timezone string. e.g. 'US/Eastern'.
+     *                                 If not provided, the default timezone will be used.
      * @return bool|DateTime
      */
-    protected function change_event_startdate($datestr, $timezonestr) {
-        $timezone = new DateTimeZone($timezonestr);
-        $newdatetime = DateTime::createFromFormat('Ymd\THis', $datestr, $timezone);
+    protected function change_event_startdate($datestr, $timezonestr = null) {
+        // Use default timezone if not provided.
+        if ($timezonestr === null) {
+            $newdatetime = DateTime::createFromFormat('Ymd\THis', $datestr);
+        } else {
+            $timezone = new DateTimeZone($timezonestr);
+            $newdatetime = DateTime::createFromFormat('Ymd\THis', $datestr, $timezone);
+        }
 
         // Update the start date of the parent event.
         $calevent = calendar_event::load($this->event->id);
