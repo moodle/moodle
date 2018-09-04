@@ -1367,12 +1367,16 @@ class external extends external_api {
         $pluginmanager = \core_plugin_manager::instance();
         $modplugins = $pluginmanager->get_plugins_of_type('mod');
         $modoptions = [];
+
+        // Get the module-level defaults. data_registry::get_defaults falls back to this when there are no activity defaults.
+        list($levelpurpose, $levelcategory) = data_registry::get_defaults(CONTEXT_MODULE);
         foreach ($modplugins as $plugin) {
             // Check if we have default purpose and category for this module if we want don't want to fetch everything.
             if ($nodefaults) {
                 list($purpose, $category) = data_registry::get_defaults(CONTEXT_MODULE, $plugin->name);
-                if ($purpose !== false || $category !== false) {
-                    // If so, skip it.
+                // Compare this with the module-level defaults.
+                if ($purpose !== $levelpurpose || $category !== $levelcategory) {
+                    // If the defaults for this activity has been already set, there's no need to add this in the list of options.
                     continue;
                 }
             }
