@@ -71,10 +71,12 @@ class accept_policy extends \moodleform {
 
         $mform->addElement('hidden', 'returnurl');
         $mform->setType('returnurl', PARAM_LOCALURL);
-
-        $mform->addElement('static', 'user', get_string('acceptanceusers', 'tool_policy'), join(', ', $usernames));
-        $mform->addElement('static', 'policy', get_string('acceptancepolicies', 'tool_policy'),
-            join(', ', $versionnames));
+        $useracceptancelabel = (count($usernames) > 1) ? get_string('acceptanceusers', 'tool_policy') :
+                get_string('user');
+        $mform->addElement('static', 'user', $useracceptancelabel, join(', ', $usernames));
+        $policyacceptancelabel = (count($versionnames) > 1) ? get_string('acceptancepolicies', 'tool_policy') :
+                get_string('policydochdrpolicy', 'tool_policy');
+        $mform->addElement('static', 'policy', $policyacceptancelabel, join(', ', $versionnames));
 
         if ($revoke) {
             $mform->addElement('static', 'ack', '', get_string('revokeacknowledgement', 'tool_policy'));

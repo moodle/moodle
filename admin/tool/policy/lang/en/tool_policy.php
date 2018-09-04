@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['acceptanceacknowledgement'] = 'I acknowledge that I have received a request to give consent on behalf of user(s).';
+$string['acceptanceacknowledgement'] = 'I acknowledge that I have received a request to give consent on behalf of the above user(s).';
 $string['acceptancecount'] = '{$a->agreedcount} of {$a->policiescount}';
 $string['acceptancenote'] = 'Remarks';
 $string['acceptancepolicies'] = 'Policies';
@@ -53,7 +53,7 @@ $string['agreepolicies'] = 'Please agree to the following policies';
 $string['backtoprevious'] = 'Go back to previous page';
 $string['backtotop'] = 'Back to top';
 $string['consentbulk'] = 'Consent';
-$string['consentdetails'] = 'Give consent on behalf of user';
+$string['consentdetails'] = 'Give consent on behalf of user(s)';
 $string['consentpagetitle'] = 'Consent';
 $string['contactdpo'] = 'For any questions about the policies please contact the privacy officer.';
 $string['dataproc'] = 'Personal data processing';
@@ -78,7 +78,7 @@ $string['filterpolicy'] = 'Policy: {$a}';
 $string['guestconsent:continue'] = 'Continue';
 $string['guestconsentmessage'] = 'If you continue browsing this website, you agree to our policies:';
 $string['iagree'] = 'I agree to the {$a}';
-$string['iagreetothepolicy'] = 'Give consent on behalf of user';
+$string['iagreetothepolicy'] = 'Give consent';
 $string['inactivate'] = 'Set status to "Inactive"';
 $string['inactivating'] = 'Inactivating a policy';
 $string['inactivatingconfirm'] = '<p>You are about to inactivate policy <em>\'{$a->name}\'</em> version <em>\'{$a->revision}\'</em>.</p>';
@@ -159,7 +159,7 @@ $string['privacy:metadata:versions:contentformat'] = 'The format of the content 
 $string['privacysettings'] = 'Privacy settings';
 $string['readpolicy'] = 'Please read our {$a}';
 $string['refertofullpolicytext'] = 'Please refer to the full {$a} if you would like to review the text.';
-$string['revokeacknowledgement'] = 'I acknowledge that I have received a request to withdraw consent on behalf of user(s).';
+$string['revokeacknowledgement'] = 'I acknowledge that I have received a request to withdraw consent on behalf of the above user(s).';
 $string['revokedetails'] = 'Withdraw user consent';
 $string['save'] = 'Save';
 $string['saveasdraft'] = 'Save as draft';
