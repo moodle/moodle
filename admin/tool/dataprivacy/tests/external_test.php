@@ -544,6 +544,9 @@ class tool_dataprivacy_external_testcase extends externallib_advanced_testcase {
         $return = (object) external_api::clean_returnvalue(external::get_activity_options_returns(), $result);
         $options = $return->options;
 
+        // Make sure the options list is not empty.
+        $this->assertNotEmpty($options);
+
         $pluginwithdefaults = [
             'name' => 'assign',
             'displayname' => get_string('pluginname', 'assign')
