@@ -2347,6 +2347,22 @@ function check_is_https(environment_results $result) {
 }
 
 /**
+ * Check if the site is using 64 bits PHP.
+ *
+ * @param  environment_results $result
+ * @return environment_results|null updated results object, or null if the site is using 64 bits PHP.
+ */
+function check_sixtyfour_bits(environment_results $result) {
+
+    if (PHP_INT_SIZE === 4) {
+         $result->setInfo('php not 64 bits');
+         $result->setStatus(false);
+         return $result;
+    }
+    return null;
+}
+
+/**
  * Assert the upgrade key is provided, if it is defined.
  *
  * The upgrade key can be defined in the main config.php as $CFG->upgradekey. If
