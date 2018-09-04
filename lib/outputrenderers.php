@@ -3009,7 +3009,7 @@ EOD;
     /**
      * Returns HTML to display the paging bar.
      *
-     * @param paging_bar $pagingbar.
+     * @param paging_bar $pagingbar
      * @return string the HTML to output.
      */
     protected function render_paging_bar(paging_bar $pagingbar) {
