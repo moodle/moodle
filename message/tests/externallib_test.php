@@ -330,6 +330,429 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test getting contact requests.
+     */
+    public function test_get_contact_requests() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Block one user, their request should not show up.
+        \core_message\api::block_user($user1->id, $user3->id);
+
+        \core_message\api::create_contact_request($user2->id, $user1->id);
+        \core_message\api::create_contact_request($user3->id, $user1->id);
+
+        $requests = core_message_external::get_contact_requests($user1->id);
+        $requests = external_api::clean_returnvalue(core_message_external::get_contact_requests_returns(), $requests);
+
+        $this->assertCount(1, $requests);
+
+        $request = reset($requests);
+
+        $this->assertEquals($user2->id, $request['id']);
+        $this->assertEquals($user2->picture, $request['picture']);
+        $this->assertEquals($user2->firstname, $request['firstname']);
+        $this->assertEquals($user2->lastname, $request['lastname']);
+        $this->assertEquals($user2->firstnamephonetic, $request['firstnamephonetic']);
+        $this->assertEquals($user2->lastnamephonetic, $request['lastnamephonetic']);
+        $this->assertEquals($user2->middlename, $request['middlename']);
+        $this->assertEquals($user2->alternatename, $request['alternatename']);
+        $this->assertEquals($user2->email, $request['email']);
+    }
+
+    /**
+     * Test getting contact requests with messaging disabled.
+     */
+    public function test_get_contact_requests_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::get_contact_requests($user1->id);
+    }
+
+    /**
+     * Test getting contact requests with no permission.
+     */
+    public function test_get_contact_requests_no_permission() {
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user3);
+
+        // Ensure an exception is thrown.
+        $this->expectException('required_capability_exception');
+        core_message_external::create_contact_request($user1->id, $user2->id);
+    }
+
+    /**
+     * Test creating a contact request.
+     */
+    public function test_create_contact_request() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        $return = core_message_external::create_contact_request($user1->id, $user2->id);
+        $return = external_api::clean_returnvalue(core_message_external::create_contact_request_returns(), $return);
+        $this->assertEquals(array(), $return);
+
+        $request = $DB->get_records('message_contact_requests');
+
+        $this->assertCount(1, $request);
+
+        $request = reset($request);
+
+        $this->assertEquals($user1->id, $request->userid);
+        $this->assertEquals($user2->id, $request->requesteduserid);
+    }
+
+    /**
+     * Test creating a contact request with messaging disabled.
+     */
+    public function test_create_contact_request_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::create_contact_request($user1->id, $user2->id);
+    }
+
+    /**
+     * Test creating a contact request with no permission.
+     */
+    public function test_create_contact_request_no_permission() {
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user3);
+
+        // Ensure an exception is thrown.
+        $this->expectException('required_capability_exception');
+        core_message_external::create_contact_request($user1->id, $user2->id);
+    }
+
+    /**
+     * Test confirming a contact request.
+     */
+    public function test_confirm_contact_request() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        \core_message\api::create_contact_request($user1->id, $user2->id);
+
+        $this->setUser($user2);
+
+        $return = core_message_external::confirm_contact_request($user1->id, $user2->id);
+        $return = external_api::clean_returnvalue(core_message_external::confirm_contact_request_returns(), $return);
+        $this->assertEquals(array(), $return);
+
+        $this->assertEquals(0, $DB->count_records('message_contact_requests'));
+
+        $contact = $DB->get_records('message_contacts');
+
+        $this->assertCount(1, $contact);
+
+        $contact = reset($contact);
+
+        $this->assertEquals($user1->id, $contact->userid);
+        $this->assertEquals($user2->id, $contact->contactid);
+    }
+
+    /**
+     * Test confirming a contact request with messaging disabled.
+     */
+    public function test_confirm_contact_request_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::confirm_contact_request($user1->id, $user2->id);
+    }
+
+    /**
+     * Test confirming a contact request with no permission.
+     */
+    public function test_confirm_contact_request_no_permission() {
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user3);
+
+        // Ensure an exception is thrown.
+        $this->expectException('required_capability_exception');
+        core_message_external::confirm_contact_request($user1->id, $user2->id);
+    }
+
+    /**
+     * Test declining a contact request.
+     */
+    public function test_decline_contact_request() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        \core_message\api::create_contact_request($user1->id, $user2->id);
+
+        $this->setUser($user2);
+
+        $return = core_message_external::decline_contact_request($user1->id, $user2->id);
+        $return = external_api::clean_returnvalue(core_message_external::decline_contact_request_returns(), $return);
+        $this->assertEquals(array(), $return);
+
+        $this->assertEquals(0, $DB->count_records('message_contact_requests'));
+        $this->assertEquals(0, $DB->count_records('message_contacts'));
+    }
+
+    /**
+     * Test declining a contact request with messaging disabled.
+     */
+    public function test_decline_contact_request_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::decline_contact_request($user1->id, $user2->id);
+    }
+
+    /**
+     * Test declining a contact request with no permission.
+     */
+    public function test_decline_contact_request_no_permission() {
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user3);
+
+        // Ensure an exception is thrown.
+        $this->expectException('required_capability_exception');
+        core_message_external::decline_contact_request($user1->id, $user2->id);
+    }
+
+    /**
+     * Test blocking a user.
+     */
+    public function test_block_user() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Blocking a user.
+        $return = core_message_external::block_user($user1->id, $user2->id);
+        $return = external_api::clean_returnvalue(core_message_external::block_user_returns(), $return);
+        $this->assertEquals(array(), $return);
+
+        // Get list of blocked users.
+        $record = $DB->get_record('message_users_blocked', []);
+
+        $this->assertEquals($user1->id, $record->userid);
+        $this->assertEquals($user2->id, $record->blockeduserid);
+
+        // Blocking a user who is already blocked.
+        $return = core_message_external::block_user($user1->id, $user2->id);
+        $return = external_api::clean_returnvalue(core_message_external::block_user_returns(), $return);
+        $this->assertEquals(array(), $return);
+
+        $this->assertEquals(1, $DB->count_records('message_users_blocked'));
+    }
+
+    /**
+     * Test blocking a user with messaging disabled.
+     */
+    public function test_block_user_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::block_user($user1->id, $user2->id);
+    }
+
+    /**
+     * Test blocking a user with no permission.
+     */
+    public function test_block_user_no_permission() {
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user3);
+
+        // Ensure an exception is thrown.
+        $this->expectException('required_capability_exception');
+        core_message_external::block_user($user1->id, $user2->id);
+    }
+
+    /**
+     * Test unblocking a user.
+     */
+    public function test_unblock_user() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Block the user.
+        \core_message\api::block_user($user1->id, $user2->id);
+
+        // Unblocking a user.
+        $return = core_message_external::unblock_user($user1->id, $user2->id);
+        $return = external_api::clean_returnvalue(core_message_external::unblock_user_returns(), $return);
+        $this->assertEquals(array(), $return);
+
+        $this->assertEquals(0, $DB->count_records('message_users_blocked'));
+
+        // Unblocking a user who is already unblocked.
+        $return = core_message_external::unblock_user($user1->id, $user2->id);
+        $return = external_api::clean_returnvalue(core_message_external::unblock_user_returns(), $return);
+        $this->assertEquals(array(), $return);
+
+        $this->assertEquals(0, $DB->count_records('message_users_blocked'));
+    }
+
+    /**
+     * Test unblocking a user with messaging disabled.
+     */
+    public function test_unblock_user_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::unblock_user($user1->id, $user2->id);
+    }
+
+    /**
+     * Test unblocking a user with no permission.
+     */
+    public function test_unblock_user_no_permission() {
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user3);
+
+        // Ensure an exception is thrown.
+        $this->expectException('required_capability_exception');
+        core_message_external::unblock_user($user1->id, $user2->id);
+    }
+
+    /**
      * Test get_contacts.
      */
     public function test_get_contacts() {
