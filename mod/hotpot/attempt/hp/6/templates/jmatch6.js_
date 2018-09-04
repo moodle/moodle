@@ -1,0 +1,310 @@
+
+[inclScorm1.2]
+//JMATCH-SPECIFIC SCORM-RELATED JAVASCRIPT CODE
+
+function SetScormScore(){
+//Reports the current score and any other information back to the LMS
+	if (API != null){
+		API.LMSSetValue('cmi.core.score.raw', Score);
+
+//Now send a detailed reports on the item
+		var ItemLabel = 'Matching';
+		API.LMSSetValue('cmi.objectives.0.id', 'obj'+ItemLabel);
+		API.LMSSetValue('cmi.interactions.0.id', 'int'+ItemLabel);
+		API.LMSSetValue('cmi.objectives.0.status', API.LMSGetValue('cmi.core.lesson_status'));
+		API.LMSSetValue('cmi.objectives.0.score.min', '0');
+		API.LMSSetValue('cmi.objectives.0.score.max', '100');
+		API.LMSSetValue('cmi.objectives.0.score.raw', Score);
+//We can only use the performance type, because we're storing multiple responses of various types.
+		API.LMSSetValue('cmi.interactions.0.type', 'performance');
+
+		var AnswersTried = '';
+		for (var i=0; i<Status[0][3].length; i++){
+			if (i>0){AnswersTried += ' | ';}
+			for (var j=0; j<Status.length; j++){
+				if (j>0){AnswersTried += ',';}
+				AnswersTried += j + '.' + Status[j][3][i];
+			}
+		}
+		API.LMSSetValue('cmi.interactions.0.student_response', AnswersTried);
+		API.LMSCommit('');
+	}
+}
+[/inclScorm1.2]
+
+//JMATCH CORE JAVASCRIPT CODE
+
+var CorrectIndicator = '[strCorrectIndicator]';
+var IncorrectIndicator = '[strIncorrectIndicator]';
+var YourScoreIs = '[strYourScoreIs]';
+var CorrectResponse = '[strGuessCorrect]';
+var IncorrectResponse = '[strGuessIncorrect]';
+var TotalUnfixedLeftItems = 0;
+var TotCorrectChoices = 0;
+var Penalties = 0;
+var Finished = false;
+var TimeOver = false;
+
+var Score = 0;
+var Locked = false;
+var ShuffleQs = [boolShuffleQs];
+var QsToShow = [QsToShow];
+
+
+function StartUp(){
+	RemoveBottomNavBarForIE();
+
+[inclScorm1.2]
+	ScormStartUp();
+[/inclScorm1.2]
+
+[inclSendResults]
+	GetUserName();
+[/inclSendResults]
+
+[inclPreloadImages]
+	PreloadImages([PreloadImageList]);
+[/inclPreloadImages]
+
+	SetUpItems(ShuffleQs,QsToShow);
+
+	TotalUnfixedLeftItems = document.getElementById('MatchDiv').getElementsByTagName('select').length;
+
+//Create arrays
+	CreateStatusArrays();
+
+[inclTimer]
+	StartTimer();
+[/inclTimer]
+}
+
+Status = new Array();
+
+
+function CreateStatusArrays(){
+	var Selects = document.getElementById('Questions').getElementsByTagName('select');
+	for (var x=0; x<Selects.length; x++){
+		Status[x] = new Array();
+		Status[x][0] = 0; // Item not matched correctly yet
+		Status[x][1] = 0; //Tries at this item so far
+		Status[x][2] = Selects[x].id; //Store a ref to the original drop-down
+		Status[x][3] = new Array(); //Sequence of guesses for this item
+	}
+}
+
+function GetKeyFromSelectContainer(Container){
+	var Result = -1;
+	if (Container.getElementsByTagName('select').length > 0){
+		var Select = Container.getElementsByTagName('select')[0];
+		if (Select != null){
+			Result = parseInt(Select.id.substring(1, Select.id.length));
+		}
+	}
+	return Result;
+}
+
+function GetKeyFromSelect(Select){
+	var Result = -1;
+	if (Select != null){
+		Result = parseInt(Select.id.substring(1, Select.id.length));
+	}
+	return Result;
+}
+
+var OriginalKeys = new Array();
+var ReducedKeys = new Array();
+
+function GetUniqueKeys(Container, TargetArray){
+	TargetArray.length = 0;
+	var x = -1;
+	var SList = Container.getElementsByTagName('select');
+	if (SList.length > 0){
+		for (var i=0; i<SList.length; i++){
+			x = GetKeyFromSelect(SList[i]);
+			if (TargetArray.indexOf(x) < 0){
+				TargetArray.push(x);
+			}
+		}
+	}
+}
+
+function SetUpItems(ShuffleQs, ReduceTo){
+	var QList = new Array();
+	var i, j, k, Selects, Options;
+
+//Remove all the table rows and put them in an array for processing
+	var Qs = document.getElementById('Questions');
+
+//First, get a list of keys
+	GetUniqueKeys(Qs, OriginalKeys);
+
+//Remove the table rows to an array
+	while (Qs.getElementsByTagName('tr').length > 0){
+		QList.push(Qs.removeChild(Qs.getElementsByTagName('tr')[0]));
+	}
+
+	var Reducing = (QList.length > ReduceTo);
+
+//If required, select random rows to delete
+	if (Reducing == true){
+		var DumpItem = 0;
+		while (ReduceTo < QList.length){
+
+//Get a number to delete from the array
+			DumpItem = Math.floor(QList.length*Math.random());
+			for (i=DumpItem; i<(QList.length-1); i++){
+				QList[i] = QList[i+1];
+			}
+			QList.length = QList.length-1;
+		}
+	}
+//Shuffle the rows if necessary
+	if (ShuffleQs == true){
+		QList = Shuffle(QList);
+	}
+
+	TotalUnfixedLeftItems = QList.length;
+
+//Write the rows back to the table body
+	for (i=0; i<QList.length; i++){
+		Qs.appendChild(QList[i]);
+	}
+
+//Now we need to remove any drop-down options that no longer have associated select items
+	if (Reducing == true){
+		GetUniqueKeys(Qs, ReducedKeys);
+
+		Selects = Qs.getElementsByTagName('select');
+		for (i=0; i<Selects.length; i++){
+			Options = Selects[i].getElementsByTagName('option');
+			for (j=Options.length-1; j>=0; j--){
+				if (OptionRequired(Options[j].value) == false){
+					Selects[i].removeChild(Options[j]);
+				}
+			}
+		}
+	}
+}
+
+function OptionRequired(Key){
+	if (ReducedKeys.indexOf(Key) > -1){
+		return true;
+	}
+	else{
+		if (OriginalKeys.indexOf(Key) > -1){
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+}
+
+function CheckAnswers(){
+	if (Locked == true){return;}
+	var Select = null;
+	var Key = -1;
+	var Parent = null;
+	var Answer = null;
+	var AnsText = '';
+	var AllDone = true;
+	TotCorrectChoices = 0;
+
+//for each item not fixed or a distractor
+	for (var i=0; i<Status.length; i++){
+
+//if it hasn't been answered correctly yet
+		if (Status[i][0] < 1){
+
+//Add one to the number of tries for this item
+			Status[i][1]++;
+
+//Get a pointer to the drop-down
+			Select = document.getElementById(Status[i][2]);
+			Key = GetKeyFromSelect(Select);
+//Save the answer given
+			Status[i][3].push(Select.options[Select.selectedIndex].value);
+
+//Check the answer
+			if (Select.options[Select.selectedIndex].value == Key){
+					Status[i][0] = 1;
+					AnsText = Select.options[Select.selectedIndex].innerHTML;
+					Parent = Select.parentNode;
+					Parent.removeChild(Select);
+					Parent.innerHTML = AnsText;
+					Parent.nextSibling.innerHTML = CorrectIndicator;
+			}
+			else{
+				AllDone = false;
+				Parent = Select.parentNode;
+				Parent.nextSibling.innerHTML = IncorrectIndicator;
+			}
+		}
+		else{
+//Add a copy of the last (correct) answer.
+			Status[i][3].push(Status[i][3][Status[i][3].length-1]);
+		}
+//If it's correct, count it
+		if (Status[i][0] == 1){
+			TotCorrectChoices++;
+		}
+	}
+//Calculate the score
+	Score = Math.floor(((TotCorrectChoices-Penalties)/TotalUnfixedLeftItems)*100);
+	if (Score<0){Score = 0;}
+	var Feedback = '';
+
+//Build the feedback
+	if (AllDone == true){
+		Feedback = YourScoreIs + ' ' + Score + '%.' + '<br />' + CorrectResponse;
+	}
+	else{
+		Feedback = YourScoreIs + ' ' + Score + '%.' + '<br />' + IncorrectResponse;
+//Penalty for incorrect check
+		Penalties++;
+	}
+
+//If the exercise is over, deal with that
+	if ((AllDone == true)||(TimeOver == true)){
+[inclSendResults]
+		setTimeout('SendResults(' + Score + ')', 50);
+[/inclSendResults]
+[inclTimer]
+		window.clearInterval(Interval);
+[/inclTimer]
+		TimeOver = true;
+		Locked = true;
+		Finished = true;
+		setTimeout('Finish()', SubmissionTimeout);
+		WriteToInstructions(Feedback);
+	}
+
+//Show the feedback
+	ShowMessage(Feedback);
+
+[inclScorm1.2]
+	if (AllDone == true){
+		SetScormComplete();
+	}
+	else{
+		SetScormIncomplete();
+	}
+[/inclScorm1.2]
+}
+
+[inclTimer]
+function TimesUp() {
+	document.getElementById('Timer').innerHTML = '[strTimesUp]';
+[inclPreloadImages]
+	RefreshImages();
+[/inclPreloadImages]
+	TimeOver = true;
+	Finished = true;
+	CheckAnswers();
+	Locked = true;
+[inclScorm1.2]
+	SetScormTimedOut();
+[/inclScorm1.2]
+}
+[/inclTimer]
+

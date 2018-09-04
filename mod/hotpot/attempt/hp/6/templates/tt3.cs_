@@ -1,0 +1,308 @@
+
+/* This is the CSS stylesheet used in the exercise. */
+/* Elements in square brackets are replaced by data based on configuration settings when the exercise is built. */
+
+
+
+/* Made with executable version [strFullVersionInfo] */
+
+body{
+	font-family: [strFontFace];
+[inclPageBGColor]	background-color: [strPageBGColor];[/inclPageBGColor]
+	color: [strTextColor];
+[inclGraphicURL]	background-image: url([strGraphicURL]);[/inclGraphicURL]
+	margin-right: 5%;
+	margin-left: 5%;
+	font-size: [strFontSize];
+}
+
+p{
+	text-align: left;
+	margin: 0px;
+	font-size: 100%;
+}
+
+div,span,td{
+	font-size: 100%;
+	color: [strTextColor];
+}
+
+div.Titles{
+	padding: 0.5em;
+	text-align: center;
+	color: [strTitleColor];
+}
+
+button{
+	font-family: [strFontFace];
+	font-size: 100%;
+	display: inline;
+}
+
+.ExerciseTitle{
+	font-size: 140%;
+	color: [strTitleColor];
+}
+
+.ExerciseSubtitle{
+	font-size: 120%;
+	color: [strTitleColor];
+}
+
+div.StdDiv{
+[inclExBGColor]	background-color: [strExBGColor];[/inclExBGColor]
+	text-align: center;
+	font-size: 100%;
+	color: [strTextColor];
+	padding: 8px;
+	border-style: solid;
+	border-width: 1px 1px 1px 1px;
+	border-color: [strTextColor];
+	margin-bottom: 1px;
+}
+
+div#Timer{
+	padding: 0.25em;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	color: [strTitleColor];
+}
+
+span#TimerText{
+	padding: 0.25em;
+	border-width: 1px;
+	border-style: solid;
+	font-weight: bold;
+	display: none;
+	color: [strTitleColor];
+}
+
+span.Instructions{
+
+}
+
+div.Story{
+[isRTL]
+	direction: rtl;
+	text-align: right;
+[/isRTL]
+[isLTR]
+	text-align: left;
+[/isLTR]
+	color: [strTitleColor];
+	font-family: [strFontFace];
+	background-color: [strPageBGColor];
+	margin-left: 5%;
+	margin-right: 5%;
+	margin-bottom: 1.0em;
+	padding: 0.5em;
+	border-width: 1px;
+	border-style: solid;
+	border-color: [strTitleColor];
+}
+
+[inclRTLText]
+
+/* Begin RTL text selectors */
+
+.RTLText{
+	text-align: right;
+	font-size: 150%;
+	direction: rtl;
+	font-family: "Simplified Arabic", "Traditional Arabic", "Times New Roman", [strFontFace];
+}
+
+.CentredRTLText{
+	text-align: center;
+	font-size: 150%;
+	direction: rtl;
+	font-family: "Simplified Arabic", "Traditional Arabic", "Times New Roman", [strFontFace];
+}
+
+button p.RTLText{
+	text-align: center;
+}
+
+.RTLGapBox{
+	text-align: right;
+	font-size: 150%;
+	direction: rtl;
+	font-family: "Times New Roman", [strFontFace];
+}
+
+[/inclRTLText]
+
+/* Begin Rhubarb-specific css */
+
+[inclKeypad]
+div.Keypad{
+	text-align: left;
+	width: 100%;
+}
+
+div.Keypad button{
+	background-color: #ffffff;
+	color: #000000;
+	width: 2em;
+}
+[/inclKeypad]
+
+/* End Rhubarb-specific css */
+
+/* Begin Sequitur-specific css */
+
+span.Choice{
+	color: [strTextColor];
+}
+
+table.ExerciseTable{
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 2.0em;
+}
+
+button#ShowWholeText{
+	display: none;
+}
+
+/* End Sequitur-specific css */
+
+
+.FuncButton {
+	text-align: center;
+	border-style: solid;
+[inclExBGColor]
+	border-left-color: [strFuncLightColor];
+	border-top-color: [strFuncLightColor];
+	border-right-color: [strFuncShadeColor];
+	border-bottom-color: [strFuncShadeColor];
+	color: [strTextColor];
+	background-color: [strExBGColor];
+[/inclExBGColor]
+	border-width: 2px;
+	padding: 3px 6px 3px 6px;
+	cursor: pointer;
+}
+
+.FuncButtonUp {
+	color: [strExBGColor];
+	text-align: center;
+	border-style: solid;
+[inclExBGColor]
+	border-left-color: [strFuncLightColor];
+	border-top-color: [strFuncLightColor];
+	border-right-color: [strFuncShadeColor];
+	border-bottom-color: [strFuncShadeColor];
+[/inclExBGColor]
+	background-color: [strTextColor];
+	color: [strExBGColor];
+	border-width: 2px;
+	padding: 3px 6px 3px 6px;
+	cursor: pointer;
+}
+
+.FuncButtonDown {
+	color: [strExBGColor];
+	text-align: center;
+	border-style: solid;
+[inclExBGColor]
+	border-left-color: [strFuncShadeColor];
+	border-top-color: [strFuncShadeColor];
+	border-right-color: [strFuncLightColor];
+	border-bottom-color: [strFuncLightColor];
+	background-color: [strTextColor];
+	color: [strExBGColor];
+[/inclExBGColor]
+	border-width: 2px;
+	padding: 3px 6px 3px 6px;
+	cursor: pointer;
+}
+
+/*BeginNavBarStyle*/
+
+div.NavButtonBar{
+[inclNavBarColor]	background-color: [strNavBarColor];[/inclNavBarColor]
+	text-align: center;
+	margin: 2px 0px 2px 0px;
+	clear: both;
+	font-size: 100%;
+}
+
+.NavButton {
+	border-style: solid;
+[inclNavBarColor]
+	border-left-color: [strNavLightColor];
+	border-top-color: [strNavLightColor];
+	border-right-color: [strNavShadeColor];
+	border-bottom-color: [strNavShadeColor];
+	background-color: [strNavBarColor];
+	color: [strNavTextColor];
+[/inclNavBarColor]
+	border-width: 2px;
+	cursor: pointer;
+}
+
+.NavButtonUp {
+	border-style: solid;
+[inclNavBarColor]
+	border-left-color: [strNavLightColor];
+	border-top-color: [strNavLightColor];
+	border-right-color: [strNavShadeColor];
+	border-bottom-color: [strNavShadeColor];
+	color: [strNavBarColor];
+	background-color: [strNavTextColor];
+[/inclNavBarColor]
+	border-width: 2px;
+	cursor: pointer;
+}
+
+.NavButtonDown {
+	border-style: solid;
+[inclNavBarColor]
+	border-left-color: [strNavShadeColor];
+	border-top-color: [strNavShadeColor];
+	border-right-color: [strNavLightColor];
+	border-bottom-color: [strNavLightColor];
+	color: [strNavBarColor];
+	background-color: [strNavTextColor];
+[/inclNavBarColor]
+	border-width: 2px;
+	cursor: pointer;
+}
+
+/*EndNavBarStyle*/
+
+a{
+	color: [strLinkColor];
+}
+
+a:visited{
+	color: [strVLinkColor];
+}
+
+a:hover{
+	color: [strLinkColor];
+}
+
+/* Elements added from hp6.cs_ */
+
+.FeedbackText{
+	color: [strTitleColor];
+}
+
+div.Feedback {
+[inclPageBGColor]	background-color: [strPageBGColor];[/inclPageBGColor]
+	left: 33%;
+	width: 34%;
+	top: 33%;
+	z-index: 1;
+	border-style: solid;
+	border-width: 1px;
+	padding: 5px;
+	text-align: center;
+	color: [strTitleColor];
+	position: absolute;
+	display: none;
+	font-size: 100%;
+}

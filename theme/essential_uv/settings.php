@@ -201,6 +201,14 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $essential_uvsettingsfeature->add($setting);
 
+    // Course content search type default.
+    $name = 'theme_essential_uv/searchallcoursecontentdefault';
+    $title = get_string('searchallcoursecontentdefault', 'theme_essential_uv');
+    $description = get_string('searchallcoursecontentdefaultdesc', 'theme_essential_uv');
+    $default = true;
+    $setting = new admin_setting_configcheckbox($name, $title, $description, $default, true, false);
+    $essentialsettingsfeature->add($setting);
+    
     // Custom scrollbars.
     $name = 'theme_essential_uv/customscrollbars';
     $title = get_string('customscrollbars', 'theme_essential_uv');

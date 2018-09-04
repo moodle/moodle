@@ -1,0 +1,34 @@
+{
+    "name": "h5p/h5p-core",
+    "type": "library",
+    "description": "H5P Core functionality in PHP",
+    "keywords": ["h5p","hvp","interactive","content","quiz"],
+    "homepage": "https://h5p.org",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Svein-Tore Griff With",
+            "email": "with@joubel.com",
+            "homepage": "http://joubel.com",
+            "role": "CEO"
+        },
+        {
+            "name": "Frode Petterson",
+            "email": "frode.petterson@joubel.com",
+            "homepage": "http://joubel.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "files": [
+          "h5p.classes.php",
+          "h5p-development.class.php",
+          "h5p-file-storage.interface.php",
+          "h5p-default-storage.class.php",
+          "h5p-event-base.class.php"
+        ]
+    }
+}

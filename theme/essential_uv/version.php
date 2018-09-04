@@ -18,6 +18,7 @@
  * Essential is a clean and customizable theme.
  *
  * @package     theme_essential
+ * @copyright   2018 Gareth J Barnard
  * @copyright   2017 Gareth J Barnard
  * @copyright   2016 Gareth J Barnard
  * @copyright   2015 Gareth J Barnard
@@ -28,11 +29,11 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version = 2017040306; // YYYYMMDDVV.
+$plugin->version = 2018051901; // YYYYMMDDVV.
 $plugin->maturity = MATURITY_STABLE; // This version's maturity level.
-$plugin->release = '3.3.1.2 (Build: 2017040306)';
-$plugin->requires  = 2017051500.00; // 3.3 (Build: 20170515).
+$plugin->release = '3.5.0.2 (Build: 2018051901)';
+$plugin->requires  = 2018051700.00; // 3.5 (Build: 20180517).
 $plugin->component = 'theme_essential_uv';
 $plugin->dependencies = array(
-    'theme_bootstrapbase'  => 2017051500
+    'theme_bootstrapbase'  => 2018051400
 );

@@ -56,7 +56,7 @@ class toolbox {
         }
     }
 
-    // Moodle CSS file serving.
+        // Moodle CSS file serving.
     static public function get_csswww() {
         global $CFG;
 
@@ -133,6 +133,11 @@ class toolbox {
         return $us->pix_url($imagename, $component);
     }
 
+    static public function getfontawesomemarkup($theicon, $classes = array(), $attributes = array(), $content = '') {
+        $us = self::check_corerenderer();
+        return $us->getfontawesomemarkup($theicon, $classes, $attributes, $content);
+    }
+
     /**
      * States if course content search can be used.  Will not work if theme is in $CFG->themedir.
      * @return boolean false|true if course content search can be used.
@@ -141,9 +146,66 @@ class toolbox {
         $canwe = false;
         global $CFG;
         if ((self::get_setting('coursecontentsearch')) && (file_exists("$CFG->dirroot/theme/essential_uv/"))) {
+            global $PAGE;
+            // MyDashboard uses columns3.php.  Change if needed. And 'process_content_search' below.
+            $essential_uvsearch = new \moodle_url('index.php');
+            $essential_uvsearch->param('sesskey', sesskey());
+            $inspectorscourerdata = array('data' => array('theme' => $essential_uvsearch->out(false)));
+            $PAGE->requires->js_call_amd('theme_essential_uv/inspector_scourer', 'init', $inspectorscourerdata);
+
+            \user_preference_allow_ajax_update('theme_essential_uv_courseitemsearchtype', PARAM_INT);
+
             $canwe = true;
         }
         return $canwe;
+    }
+
+    static public function process_content_search() {
+        $term = \optional_param('term', '', PARAM_TEXT);
+        if ($term) {
+            // Autocomplete AJAX call.
+            global $CFG, $PAGE;
+
+            // Might be overkill but would probably stop DOS attack from lots of DB reads.
+            \require_sesskey();
+
+            if ($CFG->forcelogin) {
+                \require_login();
+            }
+            $courserenderer = $PAGE->get_renderer('core', 'course');
+
+            echo json_encode($courserenderer->inspector_ajax($term));
+
+            die();
+        }
+
+        $pref = \optional_param('pref', '', PARAM_TEXT);
+        if (($pref) && ($pref == 'courseitemsearchtype')) {
+            // Autocomplete AJAX user preference call.
+            global $CFG;
+
+            // Might be overkill but would probably stop DOS attack from lots of DB reads.
+            \require_sesskey();
+
+            if ($CFG->forcelogin) {
+                \require_login();
+            }
+
+            $value = \optional_param('value', '', PARAM_INT);
+
+            // Update.
+            if (($value == 0) || ($value == 1)) {
+                if (!\set_user_preference('theme_essential_uv_courseitemsearchtype', $value)) {
+                    print_error('errorsettinguserpref');
+                }
+                echo 'OK';
+            } else {
+                header('HTTP/1.1 406 Not Acceptable');
+                echo 'Not Acceptable';
+            }
+
+            die();
+        }
     }
 
     static private function check_corerenderer() {

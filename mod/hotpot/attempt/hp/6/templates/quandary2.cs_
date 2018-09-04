@@ -1,0 +1,253 @@
+
+/* This is the CSS stylesheet used in the exercise. */
+/* Elements in square brackets are replaced by data based on configuration settings when the exercise is built. */
+
+
+body{
+	font-family: [strFontFace];
+[inclPageBGColor]	background-color: [strPageBGColor];[/inclPageBGColor]
+	color: [strTextColor];
+[inclGraphicURL]	background-image: url([strGraphicURL]);[/inclGraphicURL]
+	margin-right: 5%;
+	margin-left: 5%;
+	font-size: [strFontSize];
+}
+
+p{
+	text-align: left;
+	margin: 0px;
+}
+
+div,span,td{
+	color: [strTextColor];
+}
+
+div.Titles{
+	padding: 0.5em;
+	text-align: center;
+	color: [strTitleColor];
+}
+
+button{
+	display: inline;
+	font-size: 100%; /* Required to make IE scale button caption text size! */
+}
+
+.ExerciseTitle{
+	font-size: 140%;
+	color: [strTitleColor];
+}
+
+div#Timer{
+	padding: 0.3em;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+span#TimerText{
+	padding: 0.3em;
+	border-width: 1px;
+	border-style: solid;
+	font-weight: bold;
+	display: none;
+}
+
+div.ControlButtons{
+	text-align: center;
+}
+
+.Instructions{
+	margin-top: 1em;
+}
+
+.DecisionPointTitle{
+
+}
+
+.DecisionPointText{
+	text-align: left;
+	margin: auto;
+}
+
+td#AssetDisplay{
+	display: none;
+}
+
+div.Assets{
+	margin: 20px;
+}
+
+table.AssetTable{
+	border-width: 3px;
+	border-style: double;
+	border-color: [strTextColor];
+	padding: 0.3em;
+}
+
+table.AssetTable th{
+	background-color: [strTextColor];
+	color: [strExBGColor];
+	padding: 0.3em;
+}
+
+div.LinkList{
+	margin-top: 10px;
+}
+
+table.LinkTable{
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+}
+
+.FeedbackText{
+	color: [strTitleColor];
+}
+
+table.DPTable{
+	margin-left: auto;
+	margin-right: auto;
+	border-width: 0px;
+	padding: 10px;
+	vertical-align: top;
+}
+
+div.Feedback {
+[inclPageBGColor]	background-color: [strPageBGColor];[/inclPageBGColor]
+	left: 33%;
+	width: 34%;
+	top: 33%;
+	z-index: 1;
+	border-style: solid;
+	border-width: 1px;
+	padding: 5px;
+	text-align: center;
+	color: [strTitleColor];
+	position: absolute;
+	display: none;
+}
+
+div.DecisionPoint{
+[inclExBGColor]	background-color: [strExBGColor];[/inclExBGColor]
+	text-align: center;
+	color: [strTextColor];
+	padding: 0.5em;
+	border-style: solid;
+	border-width: 1px 1px 1px 1px;
+	border-color: [strTextColor];
+	margin: 1px;
+}
+
+.FuncButton {
+	text-align: center;
+	border-style: solid;
+[inclExBGColor]
+	border-left-color: [strFuncLightColor];
+	border-top-color: [strFuncLightColor];
+	border-right-color: [strFuncShadeColor];
+	border-bottom-color: [strFuncShadeColor];
+	color: [strTextColor];
+	background-color: [strExBGColor];
+[/inclExBGColor]
+	border-width: 2px;
+	padding: 3px 6px 3px 6px;
+	cursor: pointer;
+}
+
+.FuncButtonUp {
+	color: [strExBGColor];
+	text-align: center;
+	border-style: solid;
+[inclExBGColor]
+	border-left-color: [strFuncLightColor];
+	border-top-color: [strFuncLightColor];
+	border-right-color: [strFuncShadeColor];
+	border-bottom-color: [strFuncShadeColor];
+[/inclExBGColor]
+	background-color: [strTextColor];
+	color: [strExBGColor];
+	border-width: 2px;
+	padding: 3px 6px 3px 6px;
+	cursor: pointer;
+}
+
+.FuncButtonDown {
+	color: [strExBGColor];
+	text-align: center;
+	border-style: solid;
+[inclExBGColor]
+	border-left-color: [strFuncShadeColor];
+	border-top-color: [strFuncShadeColor];
+	border-right-color: [strFuncLightColor];
+	border-bottom-color: [strFuncLightColor];
+	background-color: [strTextColor];
+	color: [strExBGColor];
+[/inclExBGColor]
+	border-width: 2px;
+	padding: 3px 6px 3px 6px;
+	cursor: pointer;
+}
+
+/*BeginNavBarStyle*/
+
+div.NavButtonBar{
+[inclNavBarColor]	background-color: [strNavBarColor];[/inclNavBarColor]
+	text-align: center;
+	margin: 2px 0px 2px 0px;
+	clear: both;
+}
+
+.NavButton {
+	border-style: solid;
+[inclNavBarColor]
+	border-left-color: [strNavLightColor];
+	border-top-color: [strNavLightColor];
+	border-right-color: [strNavShadeColor];
+	border-bottom-color: [strNavShadeColor];
+	background-color: [strNavBarColor];
+	color: [strNavTextColor];
+[/inclNavBarColor]
+	border-width: 2px;
+	cursor: pointer;
+}
+
+.NavButtonUp {
+	border-style: solid;
+[inclNavBarColor]
+	border-left-color: [strNavLightColor];
+	border-top-color: [strNavLightColor];
+	border-right-color: [strNavShadeColor];
+	border-bottom-color: [strNavShadeColor];
+	color: [strNavBarColor];
+	background-color: [strNavTextColor];
+[/inclNavBarColor]
+	border-width: 2px;
+	cursor: pointer;
+}
+
+.NavButtonDown {
+	border-style: solid;
+[inclNavBarColor]
+	border-left-color: [strNavShadeColor];
+	border-top-color: [strNavShadeColor];
+	border-right-color: [strNavLightColor];
+	border-bottom-color: [strNavLightColor];
+	color: [strNavBarColor];
+	background-color: [strNavTextColor];
+[/inclNavBarColor]
+	border-width: 2px;
+	cursor: pointer;
+}
+
+a{
+	color: [strLinkColor];
+}
+
+a:visited{
+	color: [strVLinkColor];
+}
+
+a:hover{
+	color: [strLinkColor];
+}

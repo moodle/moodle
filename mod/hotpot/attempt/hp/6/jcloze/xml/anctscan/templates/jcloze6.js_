@@ -1,0 +1,335 @@
+
+//JCLOZE CORE JAVASCRIPT CODE
+
+/* Modification Copyright (c) Michael Rottmeier, March 2005
+ Find-it - Version 3.1.4a for Hot Potatoes v6
+ http://www.teaching-tools.de.vu
+ THIS HEADER MUST STAY UN-TOUCHED */
+
+var Feedback = '';
+var Correct = '[strCorrect]';
+var Incorrect = '[strIncorrect]';
+var GiveHint = '[strGiveHint]';
+var YourScoreIs = '[strYourScoreIs]';
+var Finished = false;
+var Locked = false;	// timer specific
+var TimeOver = false;
+
+var WrongWordCount = 0;
+var CorrectWordCount = 0;
+
+I = new Array();
+[strItemArray]
+
+function StartUp(){
+	RemoveBottomNavBarForIE();
+
+[inclSendResults]
+	GetUserName();
+[/inclSendResults]
+
+[inclPreloadImages]
+	PreloadImages([PreloadImageList]);
+[/inclPreloadImages]
+
+	Split_Feedback();
+	Build_GapText();
+
+[inclTimer]
+	StartTimer();
+[/inclTimer]
+}
+
+[inclTimer]
+function TimesUp(){
+	document.getElementById('Timer').innerHTML = '[strTimesUp]';
+[inclPreloadImages]
+	RefreshImages();
+[/inclPreloadImages]
+	TimeOver = true;
+	Finished = true;
+	Locked = true;
+}
+[/inclTimer]
+
+
+// CORE JAVASCRIPT FOR JCLOZE DROPDOWN FUNCTIONALITY
+
+GapList = new Array();
+// GapList[x][0] = clue button
+// GapList[x][1] = State data
+// GapList[x][2] = input component in Find-it v3.1b
+var Score = 0;
+var TotWrongChoices = 0;
+
+function Create_StateArray(){
+	this.ErrorFound = false;
+	this.WrongGapValue = '';
+}
+
+function SetClassAndOnclick(GapSpan, myClassName, myFunction){
+	if (typeof(window.isNonStandardIE)=='undefined') {
+		if (navigator.appName=='Microsoft Internet Explorer' && (document.documentMode==null || document.documentMode<8)) {
+            // either IE8+ (in compatability mode) or IE7, IE6, IE5 ...
+			window.isNonStandardIE = true;
+		} else {
+			// Firefox, Safari, Opera, IE8+
+			window.isNonStandardIE = false;
+		}
+	}
+	if (window.isNonStandardIE){
+        GapSpan.setAttribute('className', myClassName);
+		GapSpan.setAttribute('onclick', new Function(myFunction));
+	} else{
+        GapSpan.setAttribute('class', myClassName);
+		GapSpan.setAttribute('onclick', myFunction);
+	}
+}
+
+function NewGapSpan(GapStatus, GapId, GapText){
+	var GapSpan = document.createElement('span');
+	if (GapStatus){
+		GapSpan.setAttribute('id', 'GapSpan' + GapId);
+		CorrectWordCount++;
+	} else {
+		WrongWordCount++;
+	}
+	SetClassAndOnclick(GapSpan, 'GapSpan', 'CheckText('+GapStatus+','+GapId+',this)');
+	GapSpan.appendChild(document.createTextNode(GapText));
+	return GapSpan;
+}
+
+function Build_GapText(){
+	for (var x=0; x<I.length; x++){
+		var oldSpan = document.getElementById('GapSpan'+x);
+		if (oldSpan){
+			GapList[x] = new Array(null, new Create_StateArray());
+			var newSpan = NewGapSpan(true, x, I[x][1][0][0]);
+			oldSpan.parentNode.replaceChild(newSpan, oldSpan);
+		}
+	}
+	var Cloze = document.getElementById('Cloze');
+	if (Cloze){
+		for (var x=0; x<Cloze.childNodes.length; x++){
+			Cloze.replaceChild(Markup_Text(Cloze.childNodes[x]), Cloze.childNodes[x]);
+		}
+		if (Cloze.style) {
+			Cloze.style.display = '';
+		}
+	}
+}
+
+function Markup_Text(Node){
+	if (Node && Node.childNodes){
+		var x_max = Node.childNodes.length;
+	} else {
+		var x_max = 0;
+	}
+	if (typeof(window.CurrentGapId)=='undefined') {
+		window.CurrentGapId = -1;
+	}
+	for (var x=0; x<x_max; x++){
+		switch (Node.childNodes[x].nodeName.toLowerCase()){
+
+			case 'span' :
+				if (Node.childNodes[x].id.substring(0,7)=='GapSpan'){
+					window.CurrentGapId++;
+				} else{
+					Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]);
+				}
+				break;
+
+			case '#text' :
+				var txt = Node.childNodes[x].nodeValue;
+				if (typeof(txt)=='string' && txt.length){
+					var NewNode = document.createElement('span');
+					var space = ' \t\n\r' + '!"#$%&\'()*+,-./:+<=>?@\\[\\]\\\\^_`{|}~';
+					var match_space = new RegExp('[' + space + ']+');
+					var match_chars = new RegExp('[^' + space + ']+');
+					var i_max = txt.length
+					var i_chars = 0;
+					var i_space = 0;
+					while (i_chars<i_max && i_space<i_max){
+						var m = match_space.exec(txt.substr(i_chars));
+						if (m){
+							i_space = i_chars + m.index;
+						} else{
+							i_space = i_max;
+						}
+						if (i_space>i_chars){
+							NewNode.appendChild(NewGapSpan(false, Math.max(0, CurrentGapId), txt.substring(i_chars, i_space)));
+						}
+						var m = match_chars.exec(txt.substr(i_space));
+						if (m){
+							i_chars = i_space + m.index;
+						} else{
+							i_chars = i_max;
+						}
+						if (i_chars>i_space){
+							NewNode.appendChild(document.createTextNode(txt.substring(i_space, i_chars)));
+						}
+					}
+					Node.replaceChild(NewNode, Node.childNodes[x]);
+				}
+				break;
+
+			case 'param' :
+				// IE chokes on this one;
+				break;
+
+			default :
+				Node.replaceChild(Markup_Text(Node.childNodes[x]), Node.childNodes[x]);
+				break;
+		}
+	}
+	return Node;
+}
+
+// FEEDBACK ROUTINES
+CFb = new Array();
+IFb = new Array();
+
+function Split_Feedback(){
+// the feedback bits should look like feedb1## feedb2## feedb3 etc.
+//'Correct' Feedback
+	var Tmp = Correct.split('##');
+	var y = -1;
+	for (var x=0; x<Tmp.length; x++){
+		if (TrimString(Tmp[x]) != ''){
+			y++;
+			CFb[y] = TrimString(Tmp[x]);
+		}
+	}
+
+//'Incorrect' Feedback
+	Tmp = Incorrect.split('##');
+	y = -1;
+	for (var x=0; x<Tmp.length; x++){
+		if (TrimString(Tmp[x]) != ''){
+			y++;
+			IFb[y] = TrimString(Tmp[x]);
+		}
+	}
+}
+
+function Get_RandomFeedback(FType){
+	var Stuff = '';
+// positive feedback
+	if (FType==true){
+		var x = Math.floor(Math.random()*CFb.length);
+		Stuff = CFb[x];
+// negative feedback
+	} else{
+		var x = Math.floor(Math.random()*IFb.length);
+		Stuff = IFb[x];
+	}
+	return Stuff;
+}
+
+
+// CHECK ROUTINES
+
+function CheckText(GapState,GapId,GapSpan){
+	if (Finished){
+		return;
+	}
+	if (GapSpan){
+		var txt = GetTextFromNode(GapSpan); // see hp.js
+		if (txt){
+			HP.onclickCheck(GapState, GapId, txt);
+		}
+		SetClassAndOnclick(GapSpan, 'SelectedGapSpan', 'UncheckText('+GapState+','+GapId+',this)');
+	}
+	if (GapState){
+		GapList[GapId][1].ErrorFound = true;
+	} else{
+		TotWrongChoices++;
+	}
+	if (CheckExStatus()){
+		Finished = true;
+	}
+}
+
+function UncheckText(GapState, GapId, GapSpan){
+	if (Finished){
+		return;
+	}
+	if (GapSpan){
+		SetClassAndOnclick(GapSpan, 'GapSpan', 'CheckText('+GapState+','+GapId+',this)');
+	}
+}
+
+function ShowClue(GapId){
+	ShowMessage(I[GapId][2]);
+}
+
+function CheckExStatus(){
+	ExStatus = true;
+	for (var x=0; x<GapList.length; x++){
+		if (GapList[x][1].ErrorFound == false){
+			ExStatus = false;
+			break;
+		}
+	}
+	if (ExStatus){
+		CalculateScore();
+		ShowMessage(YourScoreIs + ' ('+Score+'%)');
+	}
+	return ExStatus;
+}
+
+function Get_NumMissingErr(){
+// retrieves the number of still
+// missing errors in the text
+	var i = 0;
+	for (var x=0; x<GapList.length; x++){
+		if (GapList[x][1].ErrorFound == false){
+			i++;
+		}
+	}
+	return i;
+}
+
+function CalculateScore(){
+	Score = 0;
+	var TotGaps = GapList.length;
+	if (TotGaps){
+		var TotCorrectChoices = 0;
+		for (var i=0; i<TotGaps; i++){
+			if (GapList[i][1].ErrorFound){
+				TotCorrectChoices++;
+			}
+		}
+		if (TotCorrectChoices > TotWrongChoices){
+			Score = Math.floor(100 * (TotCorrectChoices - TotWrongChoices) / TotGaps);
+		}
+	}
+}
+
+[inclHint]
+function ShowSolution(){
+	if (Finished == true){
+		return;
+	}
+
+	for (var x=0; x<GapList.length; x++){
+		if (! GapList[x][1].ErrorFound){
+			GapList[x][1].ErrorFound = true;
+			var GapSpan = document.getElementById('GapSpan' + x);
+			if (GapSpan){
+				SetClassAndOnclick(GapSpan, 'CorrectGapSpan', 'UncheckText(true,'+x+',this)');
+			}
+			TotWrongChoices++;
+			break; // only reveal one word at a time
+		}
+	}
+
+	if (CheckExStatus()){
+		Finished = true;
+		CalculateScore();
+		ShowMessage(YourScoreIs + ' ('+Score+'%)');
+	} else {
+		ShowMessage(GiveHint);
+	}
+}
+[/inclHint]

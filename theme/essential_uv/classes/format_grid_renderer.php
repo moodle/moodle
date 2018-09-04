@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * essential_uv is a clean and customizable theme.
+ * Essential_uv is a clean and customizable theme.
  *
  * @package     theme_essential_uv
  * @copyright   2016 Gareth J Barnard
@@ -35,15 +35,23 @@ if (file_exists("$CFG->dirroot/course/format/grid/renderer.php")) {
         use \theme_essential_uv\format_renderer_toolbox;
 
         /**
-         * Backwards compatibility method to get 'topic0attop' attribute value.
+         * Backwards compatibility method to get 'section0attop' attribute value.
          *
-         * @return boolean Value of topic0attop.
+         * @return boolean Value of section0attop.
          */
-        private function get_topic0attop() {
-            if (property_exists($this, 'topic0attop')) {
-                $reflectionproperty = new ReflectionProperty($this, 'topic0attop');
+        private function get_section0attop() {
+            if (property_exists($this, 'section0attop')) {
+                $reflectionproperty = new ReflectionProperty($this, 'section0attop');
                 if ($reflectionproperty->isProtected()) {
-                    return $this->topic0attop;
+                    $settings = $this->courseformat->get_settings();
+                    if (!$this->section0attop) {
+                        $section0attop = 0;
+                    } else if ($settings['setsection0ownpagenogridonesection'] == 2) {
+                        $section0attop = 0;
+                    } else {
+                        $section0attop = 1;
+                    }
+                    return $section0attop;
                 }
             }
             // Grid format fix #24 not implemented.  Assume section 0 is at the top.
@@ -51,7 +59,7 @@ if (file_exists("$CFG->dirroot/course/format/grid/renderer.php")) {
         }
 
         public function get_nav_links($course, $sections, $sectionno) {
-            if (!$this->get_topic0attop()) {
+            if (!$this->get_section0attop()) {
                 $buffer = -1;
             } else {
                 $buffer = 0;
@@ -61,7 +69,7 @@ if (file_exists("$CFG->dirroot/course/format/grid/renderer.php")) {
 
         public function print_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection) {
             $this->print_single_section_page_content($course, $sections, $mods, $modnames, $modnamesused, $displaysection,
-                $this->get_topic0attop($course));
+                $this->get_section0attop());
         }
     }
 }

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/hotpot/db" VERSION="20131115" COMMENT="XMLDB file for Moodle mod/hotpot"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="hotpot" COMMENT="This table keeps information about the module instances and their settings" NEXT="hotpot_cache">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="sourcefile"/>
+        <FIELD NAME="sourcefile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="sourcetype"/>
+        <FIELD NAME="sourcetype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="sourcefile" NEXT="sourcelocation"/>
+        <FIELD NAME="sourcelocation" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="sourcetype" NEXT="configfile"/>
+        <FIELD NAME="configfile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="sourcelocation" NEXT="configlocation"/>
+        <FIELD NAME="configlocation" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="configfile" NEXT="entrycm"/>
+        <FIELD NAME="entrycm" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="configlocation" NEXT="entrygrade"/>
+        <FIELD NAME="entrygrade" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="100" SEQUENCE="false" PREVIOUS="entrycm" NEXT="entrypage"/>
+        <FIELD NAME="entrypage" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="entrygrade" NEXT="entrytext"/>
+        <FIELD NAME="entrytext" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="entrypage" NEXT="entryformat"/>
+        <FIELD NAME="entryformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="entrytext" NEXT="exitpage"/>
+        <FIELD NAME="exitpage" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="entryformat" NEXT="entryoptions"/>
+        <FIELD NAME="entryoptions" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="exitpage" NEXT="exittext"/>
+        <FIELD NAME="exittext" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="entryoptions" NEXT="exitformat"/>
+        <FIELD NAME="exitformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="exittext" NEXT="exitoptions"/>
+        <FIELD NAME="exitoptions" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="exitformat" NEXT="exitcm"/>
+        <FIELD NAME="exitcm" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="exitoptions" NEXT="exitgrade"/>
+        <FIELD NAME="exitgrade" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="exitcm" NEXT="outputformat"/>
+        <FIELD NAME="outputformat" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="exitgrade" NEXT="navigation"/>
+        <FIELD NAME="navigation" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="outputformat" NEXT="title"/>
+        <FIELD NAME="title" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="3" SEQUENCE="false" PREVIOUS="navigation" NEXT="stopbutton"/>
+        <FIELD NAME="stopbutton" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="title" NEXT="stoptext"/>
+        <FIELD NAME="stoptext" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="stopbutton" NEXT="allowpaste"/>
+        <FIELD NAME="allowpaste" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="stoptext" NEXT="usefilters"/>
+        <FIELD NAME="usefilters" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="allowpaste" NEXT="useglossary"/>
+        <FIELD NAME="useglossary" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="usefilters" NEXT="usemediafilter"/>
+        <FIELD NAME="usemediafilter" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="useglossary" NEXT="studentfeedback"/>
+        <FIELD NAME="studentfeedback" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="usemediafilter" NEXT="studentfeedbackurl"/>
+        <FIELD NAME="studentfeedbackurl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="studentfeedback" NEXT="timeopen"/>
+        <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="studentfeedbackurl" NEXT="timeclose"/>
+        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeopen" NEXT="timelimit"/>
+        <FIELD NAME="timelimit" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="the time, as a UNIX date stamp, within which a student must complete the unit" PREVIOUS="timeclose" NEXT="delay1"/>
+        <FIELD NAME="delay1" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="the minimum time delay, as a UNIX date stamp, between the first and second attempts" PREVIOUS="timelimit" NEXT="delay2"/>
+        <FIELD NAME="delay2" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="the minimum time delay, as a UNIX date stamp, between attempts after the second attempt" PREVIOUS="delay1" NEXT="delay3"/>
+        <FIELD NAME="delay3" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="the minimum time delay, as a UNIX date stamp, between attempts after the second attempt" PREVIOUS="delay2" NEXT="password"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="delay3" NEXT="subnet"/>
+        <FIELD NAME="subnet" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="password" NEXT="reviewoptions"/>
+        <FIELD NAME="reviewoptions" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="subnet" NEXT="attemptlimit"/>
+        <FIELD NAME="attemptlimit" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="reviewoptions" NEXT="grademethod"/>
+        <FIELD NAME="grademethod" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="attemptlimit" NEXT="gradeweighting"/>
+        <FIELD NAME="gradeweighting" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="grademethod" NEXT="clickreporting"/>
+        <FIELD NAME="clickreporting" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradeweighting" NEXT="discarddetails"/>
+        <FIELD NAME="discarddetails" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="clickreporting" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="discarddetails" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="completionmingrade"/>
+        <FIELD NAME="completionmingrade" TYPE="number" LENGTH="6" NOTNULL="true" DEFAULT="0.00" SEQUENCE="false" DECIMALS="2" PREVIOUS="timemodified" NEXT="completionpass"/>
+        <FIELD NAME="completionpass" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="completionmingrade" NEXT="completioncompleted"/>
+        <FIELD NAME="completioncompleted" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="completionpass"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="hotpot_cache" COMMENT="Cached browser-ready versions of the HotPot exercises" PREVIOUS="hotpot" NEXT="hotpot_attempts">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="hotpotid"/>
+        <FIELD NAME="hotpotid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="slasharguments"/>
+        <FIELD NAME="slasharguments" TYPE="char" LENGTH="1" NOTNULL="true" SEQUENCE="false" PREVIOUS="hotpotid" NEXT="hotpot_bodystyles"/>
+        <FIELD NAME="hotpot_bodystyles" TYPE="char" LENGTH="8" NOTNULL="true" SEQUENCE="false" PREVIOUS="slasharguments" NEXT="hotpot_enableobfuscate"/>
+        <FIELD NAME="hotpot_enableobfuscate" TYPE="char" LENGTH="1" NOTNULL="true" SEQUENCE="false" PREVIOUS="hotpot_bodystyles" NEXT="hotpot_enableswf"/>
+        <FIELD NAME="hotpot_enableswf" TYPE="char" LENGTH="1" NOTNULL="true" SEQUENCE="false" PREVIOUS="hotpot_enableobfuscate" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="hotpot_enableswf" NEXT="sourcefile"/>
+        <FIELD NAME="sourcefile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="sourcetype"/>
+        <FIELD NAME="sourcetype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="sourcefile" NEXT="sourcelocation"/>
+        <FIELD NAME="sourcelocation" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" PREVIOUS="sourcetype" NEXT="sourcerepositoryid"/>
+        <FIELD NAME="sourcerepositoryid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="sourcelocation" NEXT="sourcelastmodified"/>
+        <FIELD NAME="sourcelastmodified" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="sourcerepositoryid" NEXT="sourceetag"/>
+        <FIELD NAME="sourceetag" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="sourcelastmodified" NEXT="configfile"/>
+        <FIELD NAME="configfile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="sourceetag" NEXT="configlocation"/>
+        <FIELD NAME="configlocation" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="configfile" NEXT="configrepositoryid"/>
+        <FIELD NAME="configrepositoryid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="configlocation" NEXT="configlastmodified"/>
+        <FIELD NAME="configlastmodified" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="configrepositoryid" NEXT="configetag"/>
+        <FIELD NAME="configetag" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="configlastmodified" NEXT="navigation"/>
+        <FIELD NAME="navigation" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="configetag" NEXT="title"/>
+        <FIELD NAME="title" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="navigation" NEXT="stopbutton"/>
+        <FIELD NAME="stopbutton" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="title" NEXT="stoptext"/>
+        <FIELD NAME="stoptext" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="stopbutton" NEXT="allowpaste"/>
+        <FIELD NAME="allowpaste" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="stoptext" NEXT="usefilters"/>
+        <FIELD NAME="usefilters" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="allowpaste" NEXT="useglossary"/>
+        <FIELD NAME="useglossary" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="usefilters" NEXT="usemediafilter"/>
+        <FIELD NAME="usemediafilter" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="useglossary" NEXT="studentfeedback"/>
+        <FIELD NAME="studentfeedback" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="usemediafilter" NEXT="studentfeedbackurl"/>
+        <FIELD NAME="studentfeedbackurl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="studentfeedback" NEXT="timelimit"/>
+        <FIELD NAME="timelimit" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="studentfeedbackurl" NEXT="delay3"/>
+        <FIELD NAME="delay3" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="-1" SEQUENCE="false" PREVIOUS="timelimit" NEXT="clickreporting"/>
+        <FIELD NAME="clickreporting" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="delay3" NEXT="content"/>
+        <FIELD NAME="content" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="clickreporting" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="content" NEXT="md5key"/>
+        <FIELD NAME="md5key" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="timemodified"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="hotpotid"/>
+        <KEY NAME="hotpotid" TYPE="foreign" FIELDS="hotpotid" REFTABLE="hotpot" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="hotpotid-md5key" UNIQUE="false" FIELDS="hotpotid, md5key"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="hotpot_attempts" COMMENT="Info about user attempts at HotPot activities" PREVIOUS="hotpot_cache" NEXT="hotpot_details">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="hotpotid"/>
+        <FIELD NAME="hotpotid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="hotpotid" NEXT="starttime"/>
+        <FIELD NAME="starttime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="endtime"/>
+        <FIELD NAME="endtime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="starttime" NEXT="score"/>
+        <FIELD NAME="score" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="endtime" NEXT="penalties"/>
+        <FIELD NAME="penalties" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="score" NEXT="attempt"/>
+        <FIELD NAME="attempt" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="penalties" NEXT="timestart"/>
+        <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="attempt" NEXT="timefinish"/>
+        <FIELD NAME="timefinish" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timestart" NEXT="status"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="timefinish" NEXT="clickreportid"/>
+        <FIELD NAME="clickreportid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="status" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="clickreportid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="hotpotid"/>
+        <KEY NAME="hotpotid" TYPE="foreign" FIELDS="hotpotid" REFTABLE="hotpot" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="hotpot_details" COMMENT="Raw XML data returned from HotPot attempts" PREVIOUS="hotpot_attempts" NEXT="hotpot_questions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="attemptid"/>
+        <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="details"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="attemptid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="attemptid"/>
+        <KEY NAME="attemptid" TYPE="foreign" FIELDS="attemptid" REFTABLE="hotpot_attempts" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="hotpot_questions" COMMENT="details about questions in Hot Potatoes quiz attempts" PREVIOUS="hotpot_details" NEXT="hotpot_responses">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="name"/>
+        <FIELD NAME="name" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="type"/>
+        <FIELD NAME="type" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="name" NEXT="text"/>
+        <FIELD NAME="text" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="type" NEXT="hotpotid"/>
+        <FIELD NAME="hotpotid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="text" NEXT="md5key"/>
+        <FIELD NAME="md5key" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="hotpotid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="hotpotid"/>
+        <KEY NAME="hotpotid" TYPE="foreign" FIELDS="hotpotid" REFTABLE="hotpot" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="md5key" UNIQUE="false" FIELDS="md5key"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="hotpot_responses" COMMENT="details about responses in Hot Potatoes quiz attempts" PREVIOUS="hotpot_questions" NEXT="hotpot_strings">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="attemptid"/>
+        <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="questionid"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="attemptid" NEXT="score"/>
+        <FIELD NAME="score" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="questionid" NEXT="weighting"/>
+        <FIELD NAME="weighting" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="score" NEXT="correct"/>
+        <FIELD NAME="correct" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="weighting" NEXT="wrong"/>
+        <FIELD NAME="wrong" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="correct" NEXT="ignored"/>
+        <FIELD NAME="ignored" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="wrong" NEXT="hints"/>
+        <FIELD NAME="hints" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="ignored" NEXT="clues"/>
+        <FIELD NAME="clues" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="hints" NEXT="checks"/>
+        <FIELD NAME="checks" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="clues"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="attemptid"/>
+        <KEY NAME="attemptid" TYPE="foreign" FIELDS="attemptid" REFTABLE="hotpot_attempts" REFFIELDS="id" PREVIOUS="primary" NEXT="questionid"/>
+        <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="hotpot_questions" REFFIELDS="id" PREVIOUS="attemptid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="hotpot_strings" COMMENT="strings used in Hot Potatoes questions and responses" PREVIOUS="hotpot_responses">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="string"/>
+        <FIELD NAME="string" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="md5key"/>
+        <FIELD NAME="md5key" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="string"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="md5key" UNIQUE="false" FIELDS="md5key"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

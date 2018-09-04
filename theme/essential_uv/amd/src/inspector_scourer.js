@@ -19,7 +19,7 @@ define(['jquery', 'jqueryui', 'core/log'], function($, jqui, log) {
             $(document).ready(function($) {
 
                 log.debug('Essential Inspector Scourer AMD init');
-                log.debug('Essential Inspector Scourer AJAX File: ' + data.theme);
+                log.debug('Essential Inspector Scourer AJAX URL: ' + data.theme);
 
                 $("#courseitemsearch").autocomplete({
                     source: data.theme,
@@ -32,6 +32,23 @@ define(['jquery', 'jqueryui', 'core/log'], function($, jqui, log) {
                         }
                     }
                 }).prop("disabled", false);
+                $("#courseitemsearchtype").click(function(){
+                    var $checked = $(this).prop("checked") | 0; // Convert to integer from true or false.
+                    log.debug('Essential Inspector Scourer AJAX SACC: ' + $checked);
+
+                    $.ajax({
+                        url: data.theme + '&pref=courseitemsearchtype&value=' + $checked,
+                        statusCode: {
+                            404: function() {
+                                log.debug("Essential Inspector Scourer AJAX SACC - url not found");
+                            },
+                            406: function() {
+                                log.debug("Essential Inspector Scourer AJAX SACC - value not acceptable");
+                            }
+                        }
+                    });
+                });
+                $("#courseitemsearchtype").prop("disabled", false);
             });
         }
     };

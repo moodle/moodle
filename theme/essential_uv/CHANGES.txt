@@ -1,3 +1,43 @@
+New in 3.5.0.2
+==============
+- FIX: Block editing menu item hover.
+- FIX: Update frontpage home block area information.
+
+New in 3.5.0.1
+==============
+- NEW: Moodle 3.5 version based on 3.4.1.2 of the theme.
+- FIX: Issue #865: Login box centred instructions.
+- NEW: Issue #867: Skip links for footer blocks sometimes appear over main course page content.
+
+New in 3.4.1.2
+==============
+- FIX: Revert back to M3.4 requirement as new Privacy API support will not confict.  However if you do require
+       it then you will need Moodle 2017111302.00 3.4.2 (Build: 20180319)+.
+- NEW: Added 'Search all course content' checkbox user preference to search all course content or only the course
+       title when performing a 'Course search' on the dashboard.  Thanks to "Linnaeus University" for funding this
+       enhancement.
+
+New in 3.4.1.1
+==============
+- NEW: Privacy API support.  Requires Moodle 2017111302.00 3.4.2 (Build: 20180319)+.  Analytics removed
+       until such a time as their use with GDPR is clearer.
+
+New in 3.4.1.0
+==============
+- FIX: Issue #850: Flip main content and blocks, RTL mode.
+- Possible FIX: Issue #853: Possible solution for "Site logo needs textual description for accessibility".
+- FIX: Issue #856: Undefined property: stdClass::$numsections.
+- FIX: Issue #857: Display glitch with docked blocks.
+- FIX: Issue #859: Gradebook icons not red or green.
+- FIX: Issue #860: Rendering problem in quiz form.
+- FIX: Issue #862: Missing folder icon in courses list since commit 77abc460.
+- FIX: Alert close icon in alternative colour schemes.
+- FIX: Improved course content search so that will work with $CFG->themedir.
+
+New in 3.4.0.1
+==============
+- NEW: Implemented core updates for activity navigation and user tour reset.
+
 New in 3.3.1.2
 ==============
 - FIX: Issue #836: Secure layout broken.
