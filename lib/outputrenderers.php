@@ -3007,41 +3007,15 @@ EOD;
     }
 
     /**
-     * Internal implementation of paging bar rendering.
+     * Returns HTML to display the paging bar.
      *
-     * @param paging_bar $pagingbar
-     * @return string
+     * @param paging_bar $pagingbar.
+     * @return string the HTML to output.
      */
     protected function render_paging_bar(paging_bar $pagingbar) {
-        $output = '';
-        $pagingbar = clone($pagingbar);
-        $pagingbar->prepare($this, $this->page, $this->target);
-
-        if ($pagingbar->totalcount > $pagingbar->perpage) {
-            $output .= get_string('page') . ':';
-
-            if (!empty($pagingbar->previouslink)) {
-                $output .= ' (' . $pagingbar->previouslink . ') ';
-            }
-
-            if (!empty($pagingbar->firstlink)) {
-                $output .= ' ' . $pagingbar->firstlink . ' ...';
-            }
-
-            foreach ($pagingbar->pagelinks as $link) {
-                $output .= "  $link";
-            }
-
-            if (!empty($pagingbar->lastlink)) {
-                $output .= ' ... ' . $pagingbar->lastlink . ' ';
-            }
-
-            if (!empty($pagingbar->nextlink)) {
-                $output .= '  (' . $pagingbar->nextlink . ')';
-            }
-        }
-
-        return html_writer::tag('div', $output, array('class' => 'paging'));
+        // Any more than 10 is not usable and causes weird wrapping of the pagination.
+        $pagingbar->maxdisplay = 10;
+        return $this->render_from_template('core/paging_bar', $pagingbar->export_for_template($this));
     }
 
     /**

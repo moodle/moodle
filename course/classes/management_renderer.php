@@ -571,47 +571,14 @@ class core_course_management_renderer extends plugin_renderer_base {
             $html .= html_writer::div($str, 'listing-pagination-totals dimmed');
         }
 
-        if ($totalcourses <= $perpage) {
-            return $html;
-        }
-        $aside = 2;
-        $span = $aside * 2 + 1;
-        $start = max($page - $aside, 0);
-        $end = min($page + $aside, $totalpages - 1);
-        if (($end - $start) < $span) {
-            if ($start == 0) {
-                $end = min($totalpages - 1, $span - 1);
-            } else if ($end == ($totalpages - 1)) {
-                $start = max(0, $end - $span + 1);
-            }
-        }
-        $items = array();
         if ($viewmode !== 'default') {
             $baseurl = new moodle_url('/course/management.php', array('categoryid' => $category->id,
                 'view' => $viewmode));
         } else {
             $baseurl = new moodle_url('/course/management.php', array('categoryid' => $category->id));
         }
-        if ($page > 0) {
-            $items[] = $this->action_button(new moodle_url($baseurl, array('page' => 0)), get_string('first'));
-            $items[] = $this->action_button(new moodle_url($baseurl, array('page' => $page - 1)), get_string('prev'));
-            $items[] = '...';
-        }
-        for ($i = $start; $i <= $end; $i++) {
-            $class = '';
-            if ($page == $i) {
-                $class = 'active-page';
-            }
-            $pageurl = new moodle_url($baseurl, array('page' => $i));
-            $items[] = $this->action_button($pageurl, $i + 1, null, $class, get_string('pagea', 'moodle', $i+1));
-        }
-        if ($page < ($totalpages - 1)) {
-            $items[] = '...';
-            $items[] = $this->action_button(new moodle_url($baseurl, array('page' => $page + 1)), get_string('next'));
-            $items[] = $this->action_button(new moodle_url($baseurl, array('page' => $totalpages - 1)), get_string('last'));
-        }
 
-        $html .= html_writer::div(join('', $items), 'listing-pagination');
+        $html .= $this->output->paging_bar($totalcourses, $page, $perpage, $baseurl);
         return $html;
     }
 
@@ -1055,7 +1022,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         }
 
         $menu = new action_menu;
-        $menu->attributes['class'] .= ' view-mode-selector vms';
+        $menu->attributes['class'] .= ' view-mode-selector vms ml-1';
 
         $selected = null;
         foreach ($modes as $mode => $modestr) {
@@ -1079,7 +1046,7 @@ class core_course_management_renderer extends plugin_renderer_base {
 
         $menu->set_menu_trigger($selected);
 
-        $html = html_writer::start_div('view-mode-selector vms');
+        $html = html_writer::start_div('view-mode-selector vms d-flex');
         $html .= get_string('viewing').' '.$this->render($menu);
         $html .= html_writer::end_div();
 
