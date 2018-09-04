@@ -14,7 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-class block_iomad_company_admin_renderer extends plugin_renderer_base {
+namespace block_iomad_company_admin\output;
+
+defined('MOODLE_INTERNAL') || die();
+
+use plugin_renderer_base;
+
+class renderer extends plugin_renderer_base {
 
     /**
      * Display list of available roles
@@ -33,7 +39,7 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
             $out = '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $title) . '</h3>';
         }
 
-        $table = new html_table();
+        $table = new \html_table();
         $table->head = array(
             get_string('name'),
             get_string('description'),
@@ -48,7 +54,7 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
             $table->data[] = $row;
         }
 
-        $out .= html_writer::table($table);
+        $out .= \html_writer::table($table);
         return $out;
     }
 
@@ -73,14 +79,14 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
         $out .= '<p><b>' . get_string('rolename', 'block_iomad_company_admin', $role->name) . '</b></p>';
         $out .= '<p>' . get_string('iomadcapabilities_boiler', 'block_iomad_company_admin') . '</p>';
 
-        $table = new html_table();
+        $table = new \html_table();
         foreach ($capabilities as $capability) {
             $checked = '';
             if (!$capability->iomad_restriction) {
                 $checked = 'checked="checked"';
             }
             $value ="{$prefix}.{$roleid}.{$capability->capability}";
-            $caplink = '<a href="' .iomad::documentation_link() . $capability->capability . '">' . get_capability_string($capability->capability) . '</a>';
+            $caplink = '<a href="' . \iomad::documentation_link() . $capability->capability . '">' . get_capability_string($capability->capability) . '</a>';
             $row = array(
                 $caplink . '<br /><small>' . $capability->capability . '</small>',
                 '<input class="checkbox" type="checkbox" ' . $checked. ' value="' . $value . '" />' . get_string('allow'),
@@ -88,7 +94,7 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
             $table->data[] = $row;
         }
 
-        $out .= html_writer::table($table);
+        $out .= \html_writer::table($table);
         return $out;
     }
     
@@ -126,13 +132,13 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
 
         $out .= '<a class="btn btn-primary" href="'.$backlink.'">' .
                                            get_string('back') . '</a>'; 
-        $table = new html_table();
+        $table = new \html_table();
         foreach ($templates as $template) {
-            $deletelink = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php',
+            $deletelink = new \moodle_url('/blocks/iomad_company_admin/company_capabilities.php',
                                           array('templateid' => $template->id,
                                                 'action' => 'delete',
                                                 'sesskey' => sesskey()));
-            $editlink = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php',
+            $editlink = new \moodle_url('/blocks/iomad_company_admin/company_capabilities.php',
                                         array('templateid' => $template->id, 'action' => 'edit'));
             $row = array($template->name, '<a class="btn btn-primary" href="'.$deletelink.'">' .
                                            get_string('deleteroletemplate', 'block_iomad_company_admin') . '</a> ' .
@@ -142,7 +148,7 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
             $table->data[] = $row;
         }
 
-        $out .= html_writer::table($table);
+        $out .= \html_writer::table($table);
         return $out;
     }
     
