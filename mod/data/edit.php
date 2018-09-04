@@ -156,6 +156,7 @@ if ($rid) {
 
 $PAGE->set_title($data->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->force_settings_menu(true);
 
 // Process incoming data for adding/updating records.
 
