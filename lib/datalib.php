@@ -476,6 +476,10 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 
     $fullname  = $DB->sql_fullname();
 
+    if(empty($extraselect) && empty($extraparams)){
+        return false;
+    }  
+
     $select = "deleted <> 1 AND id <> :guestid";
     $params = array('guestid' => $CFG->siteguest);
 
