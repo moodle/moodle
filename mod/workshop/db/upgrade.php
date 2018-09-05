@@ -79,7 +79,7 @@ function xmldb_workshop_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        $field = new xmldb_field('submissiontypefile', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '2',
+        $field = new xmldb_field('submissiontypefile', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1',
                 'submissiontypetext');
 
         // Conditionally launch add field submissiontypefile.

@@ -154,7 +154,7 @@ class workshop_summary_exporter extends exporter {
             ),
             'submissiontypefile' => array (
                 'type' => PARAM_INT,
-                'default' => 2,
+                'default' => 1,
                 'description' => 'Indicates whether a file upload is required as part of each submission. ' .
                         '0 for no, 1 for optional, 2 for required.',
                 'optional' => true
