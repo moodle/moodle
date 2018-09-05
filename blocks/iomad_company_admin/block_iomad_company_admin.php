@@ -130,6 +130,9 @@ class block_iomad_company_admin extends block_base {
         if (iomad::has_capability('block/iomad_commerce:admin_view', $context)) {
             $tabs[6] = ['fa-truck', get_string('blocktitle', 'block_iomad_commerce')];
         }
+        if (iomad::has_capability('block/iomad_reports:view', $context)) {
+            $tabs[7] = ['fa-bar-chart-o', get_string('reports', 'block_iomad_company_admin')];
+        }
         $tabhtml = $this->gettabs($tabs, $selectedtab);
 
         $this->content->text .= $tabhtml;

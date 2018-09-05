@@ -583,9 +583,17 @@ if ($departmentid != $parentlevel->id) {
         redirect(new moodle_url($linkurl, $urlparams));
     }
 }
-$managerselect = new single_select(new moodle_url($linkurl, $urlparams), 'managertype', $managertypes, $roleid);
-$managerselect->label = get_string('managertype', 'block_iomad_company_admin') .
-                        $output->help_icon('managertype', 'block_iomad_company_admin') . '&nbsp';
+$managerselect = new single_select(
+    new moodle_url($linkurl, $urlparams),
+    'managertype',
+    $managertypes,
+    $roleid,
+    array('' => 'choosedots'),
+    null,
+    ['label' => get_string('managertype', 'block_iomad_company_admin')]
+);
+//$managerselect->label = get_string('managertype', 'block_iomad_company_admin');
+//                        $output->help_icon('managertype', 'block_iomad_company_admin') . '&nbsp';
 
 $othersselect = new single_select(new moodle_url($linkurl, $urlparams), 'showothermanagers',
                 array(get_string('no'), get_string('yes')), $showothermanagers);

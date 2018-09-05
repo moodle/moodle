@@ -501,6 +501,7 @@ $string['profile_field_company_not_set'] = 'profile_field_company is required wh
 $string['programallocate'] = 'Allocate program license';
 $string['programallocate_help'] = 'Selecting yes will allocate all of the courses in this program to the user.';
 $string['reminderemails'] = 'Reminder emails';
+$string['reports'] = 'Reports';
 $string['resetpassword'] = 'Re-send user details';
 $string['resetpasswordcheck'] = 'Do you really want to reset this user\'s password';
 $string['resetpasswordcheckfull'] = 'Do you really want to reset this user\'s password';
