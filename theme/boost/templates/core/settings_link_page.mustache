@@ -1,0 +1,147 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/settings_link_page
+
+    Displays the admin tree as a list of grouped links.
+
+    Example context (json):
+    {
+        "node": {
+            "text": "Root of menu",
+            "key": "test0",
+            "display": true,
+            "children": [
+                {
+                    "text": "Child of menu",
+                    "key": "test1",
+                    "display": true,
+                    "children": []
+                }
+            ]
+        }
+    }
+}}
+
+<ul class="nav nav-tabs" role="tablist">
+<!-- First the top most node and immediate children -->
+    <li class="nav-item">
+        <a class="nav-link active" href="#link{{node.key}}" data-toggle="tab" role="tab">{{node.text}}</a>
+    </li>
+<!-- Now the first level children with sub nodes -->
+{{#node.children}}
+    {{#children.count}}
+        {{#display}}
+            {{^is_short_branch}}
+                <li class="nav-item">
+                    <a class="nav-link" href="#link{{key}}" data-toggle="tab" role="tab">{{text}}</a>
+                </li>
+            {{/is_short_branch}}
+        {{/display}}
+    {{/children.count}}
+{{/node.children}}
+</ul>
+
+<div class="tab-content mt-3">
+    <div class="tab-pane active" id="link{{node.key}}" role="tabpanel">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3">
+                </div>
+                <div class="col">
+                    <ul class="list-unstyled">
+                        {{#node.children}}
+                            {{^children.count}}
+                                {{#display}}
+                                    <li><a href="{{{action}}}">{{text}}</a></li>
+                                {{/display}}
+                            {{/children.count}}
+                        {{/node.children}}
+                    </ul>
+                </div>
+            </div>
+
+            {{#node.children}}
+                {{#display}}
+                    {{#children.count}}
+                        {{#is_short_branch}}
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
+                                    {{^action}}<h4>{{text}}<h4>{{/action}}
+                                </div>
+                                <div class="col">
+                                    <ul class="list-unstyled">
+                                        {{#children}}
+                                            {{> core/settings_link_page_single }}
+                                        {{/children}}
+                                    </ul>
+                                </div>
+                            </div>
+                        {{/is_short_branch}}
+                    {{/children.count}}
+                {{/display}}
+            {{/node.children}}
+        </div>
+    </div>
+    {{#node.children}}
+        {{#children.count}}
+            <div class="tab-pane" id="link{{key}}" role="tabpanel">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
+                            {{^action}}<h4>{{text}}<h4>{{/action}}
+                        </div>
+                        <div class="col-sm-9">
+                            <ul class="list-unstyled">
+                                {{#children}}
+                                    {{#display}}
+                                        {{^children.count}}
+                                            <li><a href="{{{action}}}">{{text}}</a></li>
+                                        {{/children.count}}
+                                    {{/display}}
+                                {{/children}}
+                            </ul>
+                        </div>
+                    </div>
+                    {{#children}}
+                        {{#display}}
+                            {{#children.count}}
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
+                                        {{^action}}<h4>{{text}}<h4>{{/action}}
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <ul class="list-unstyled">
+                                            {{#children}}
+                                                {{> core/settings_link_page_single }}
+                                            {{/children}}
+                                        </ul>
+                                    </div>
+                                </div>
+                            {{/children.count}}
+                        {{/display}}
+                    {{/children}}
+                </div>
+            </div>
+        {{/children.count}}
+    {{/node.children}}
+</div>

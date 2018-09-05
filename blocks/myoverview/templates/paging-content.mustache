@@ -1,0 +1,44 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/paging-content
+
+    This template renders each of the content regions for a paginated
+    content section.
+
+    Example context (json):
+    {
+        "pages": [
+            {
+                "active": true,
+                "page": 1,
+                "content": "<p>Some page content</p>"
+            },
+            {
+                "page": 2,
+                "content": "<p>Some page content</p>"
+            }
+        ]
+    }
+}}
+<div id="{{$pagingcontentid}}paging-content-{{uniqid}}{{/pagingcontentid}}" data-region="paging-content">
+    {{#pages}}
+        {{$paging-content-item}}
+            {{> block_myoverview/paging-content-item }}
+        {{/paging-content-item}}
+    {{/pages}}
+</div>

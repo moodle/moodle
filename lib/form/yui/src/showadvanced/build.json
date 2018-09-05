@@ -1,0 +1,10 @@
+{
+    "name": "moodle-form-showadvanced",
+    "builds": {
+        "moodle-form-showadvanced": {
+            "jsfiles": [
+                "showadvanced.js"
+            ]
+        }
+    }
+}

@@ -1,0 +1,13 @@
+This files describes API changes in /cohort/ information provided here is intended
+especially for developers.
+
+=== 3.1 ===
+* The Webservice core_cohort_get_cohorts now has the added functionality of getting all cohorts
+  by not passing any parameters
+
+=== 2.6 ===
+* Webservice core_cohort_update_cohorts was incorrectly specifiying float as the parameter type
+  for cohort id. This field is actually int and input is now reported and processed as such.
+* Webservice core_cohort_get_cohorts was incorrectly specifiying float as the return
+  type for cohort id. The actual return type is int and is now reported as such.
+

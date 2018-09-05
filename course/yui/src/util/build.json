@@ -1,0 +1,20 @@
+{
+  "name": "moodle-course-util",
+  "builds": {
+    "moodle-course-util-base": {
+      "jsfiles": [
+        "base.js"
+      ]
+    },
+    "moodle-course-util-section": {
+      "jsfiles": [
+        "section.js"
+      ]
+    },
+    "moodle-course-util-cm": {
+      "jsfiles": [
+        "cm.js"
+      ]
+    }
+  }
+}

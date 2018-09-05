@@ -1,0 +1,58 @@
+{{!
+    @template theme_boost/core_form/element-radio
+
+    Example context (json):
+    {
+        "element": {
+            "id": "id_test_radio0",
+            "name": "test_radio_button"
+        }
+    }
+
+}}
+<div class="form-group row {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
+    <div class="col-md-3">
+        {{#text}}
+            <label for="{{element.id}}">
+                {{{label}}}
+            </label>
+        {{/text}}
+    </div>
+    <div class="col-md-9 checkbox">
+        <div class="form-check">
+        <span class="text-nowrap">
+            <label class="form-check-label">
+                {{^element.hardfrozen}}{{#element.frozen}}{{#element.checked}}
+                    <input type="hidden" name="{{element.name}}" value="{{element.value}}">
+                {{/element.checked}}{{/element.frozen}}{{/element.hardfrozen}}
+                <input type="radio" class="form-check-input" {{^element.frozen}}name="{{element.name}}"{{/element.frozen}}
+                    id="{{element.id}}" value="{{element.value}}"
+                    {{#element.checked}}checked{{/element.checked}}
+                    {{#element.frozen}}disabled{{/element.frozen}}
+                    {{#error}}
+                        autofocus aria-describedby="id_error_{{element.name}}"
+                    {{/error}} {{{element.attributes}}} >
+                {{#text}}
+                    {{{.}}}
+                {{/text}}
+                {{^text}}
+                    {{{label}}}
+                {{/text}}
+            </label>
+            {{#required}}<abbr class="initialism text-danger" title="{{#str}}required{{/str}}">{{#pix}}req, core, {{#str}}required{{/str}}{{/pix}}</abbr>{{/required}}
+            {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">!</abbr>{{/advanced}}
+            {{{helpbutton}}}
+            </span>
+        </div>
+        <div class="form-control-feedback invalid-feedback" id="id_error_{{element.name}}" {{#error}} style="display: block;"{{/error}}>
+            {{{error}}}
+        </div>
+    </div>
+</div>
+{{^element.frozen}}
+{{#js}}
+require(['theme_boost/form-display-errors'], function(module) {
+    module.enhance({{#quote}}{{element.id}}{{/quote}});
+});
+{{/js}}
+{{/element.frozen}}

@@ -1,0 +1,6 @@
+              <ANSWER>
+                <ID>[#answer_id#]</ID>
+                <ANSWER_TEXT>[#answer_text#]</ANSWER_TEXT>
+                <FRACTION>[#answer_score#]</FRACTION>
+                <FEEDBACK>[#answer_feedback#]</FEEDBACK>
+              </ANSWER>

@@ -1,0 +1,97 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_lti/cartridge_registration_form
+
+    This template provides the layout for the external tool configuration page in the
+    LTI module.
+
+    Classes required for JS:
+    * lead
+    * centered-menu
+    * well
+    * form-horizontal
+    * text-center
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+    }
+
+}}
+<div class="centered-menu">
+    <div class="well">
+        <form id="cartridge-registration-form" class="form-horizontal">
+            <p class="lead text-center">{{#str}} enterkeyandsecret, mod_lti {{/str}}</p>
+            <p class="text-center">{{#str}} enterkeyandsecret_help, mod_lti {{/str}}</p>
+            <div class="control-group">
+                <div class="control-label">
+                    <label for="registration-key" style="display: inline-block">{{#str}} resourcekey_admin, mod_lti {{/str}}</label>
+                    {{#keyhelp}}
+                        {{>core/help_icon}}
+                    {{/keyhelp}}
+                </div>
+                <div class="controls">
+                    <input name="tool-key"
+                        class="input-block-level form-control"
+                        type="text"
+                        id="registration-key">
+                </div>
+            </div>
+            <div class="control-group">
+                <div class ="control-label">
+                    <label for="registration-secret" style="display: inline-block">{{#str}} password_admin, mod_lti {{/str}}</label>
+                    {{#secrethelp}}
+                        {{>core/help_icon}}
+                    {{/secrethelp}}
+                </div>
+                <div class="controls">
+                    <input name="tool-secret"
+                        class="input-block-level form-control"
+                        type="text"
+                        id="registration-secret">
+                </div>
+            </div>
+            <div class="control-group m-t-1">
+                <div class="controls">
+                    <button id="cartridge-registration-submit" type="submit" class="btn btn-success">
+                        <span class="btn-text">{{#str}} savechanges {{/str}}</span>
+                        <div class="btn-loader">
+                            {{> mod_lti/loader }}
+                        </div>
+                    </button>
+                    <button id="cartridge-registration-cancel" type="button" class="btn">
+                        <span class="btn-text">{{#str}} cancel {{/str}}</span>
+                        <div class="btn-loader">
+                            {{> mod_lti/loader }}
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{{#js}}
+    require(['mod_lti/cartridge_registration_form'], function(registration) {
+        registration.init();
+    });
+{{/js}}

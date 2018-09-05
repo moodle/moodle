@@ -1,0 +1,1 @@
+define(["jquery","core/ajax"],function(a,b){var c=[];return{get_values:function(d){var e=a.Deferred();return"undefined"==typeof c[d]?b.call([{methodname:"core_competency_get_scale_values",args:{scaleid:d},done:function(a){c[d]=a,e.resolve(a)},fail:e.reject}]):e.resolve(c[d]),e.promise()}}});

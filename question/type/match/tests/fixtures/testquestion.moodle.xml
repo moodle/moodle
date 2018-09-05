@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+        <text>$course$/Test questions</text>
+
+    </category>
+  </question>
+
+<!-- question: 114000  -->
+  <question type="matching">
+    <name>
+      <text>matching-001</text>
+    </name>
+    <questiontext format="html">
+      <text>Classify the animals.</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text>General feedback.</text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <shuffleanswers>true</shuffleanswers>
+    <correctfeedback format="html">
+      <text>Well done!</text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text>Parts, but only parts, of your response are correct.</text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text>That is not right at all.</text>
+    </incorrectfeedback>
+    <shownumcorrect/>
+    <subquestion format="html">
+      <text>frog</text>
+      <answer>
+        <text>amphibian</text>
+      </answer>
+    </subquestion>
+    <subquestion format="html">
+      <text>cat</text>
+      <answer>
+        <text>mammal</text>
+      </answer>
+    </subquestion>
+    <subquestion format="html">
+      <text>newt</text>
+      <answer>
+        <text>amphibian</text>
+      </answer>
+    </subquestion>
+    <subquestion format="html">
+      <text></text>
+      <answer>
+        <text>insect</text>
+      </answer>
+    </subquestion>
+  </question>
+
+</quiz>

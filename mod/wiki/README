@@ -1,0 +1,5 @@
+Wiki 2.0
+
+by Jordi Piguillem and Ludo (Marc Alier) 2008 - Universitat Politecnica de 
+Catalunya
+http://www.upc.edu - http://dfwikilabs.org 

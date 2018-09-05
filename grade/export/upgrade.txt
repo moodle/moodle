@@ -1,0 +1,7 @@
+This files describes API changes in /grade/export/* - plugins,
+information provided here is intended especially for developers.
+
+=== 2.8 ===
+
+The UI for the grade export form was simplified down so it's all on one page. The export preview was removed because it was not useful (more useful on import than on export). To update your export plugins you must pass 'simpleui' => true as an option to the grade_export_form, and make your grade_export_form submit directly to your export script. It's easiest to look at a complete example - see "git show 1cc43058" for a complete example of updating the ods exporter.
+Also the grade export UI form was changed to support multiples display types. The combo box was removed from (Open Document, Plain Text, Excel) and for each selected display type a column is generated. We didn't extended this solution to XML export which remains with a combo and can only select a single display type.

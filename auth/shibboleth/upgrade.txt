@@ -1,0 +1,12 @@
+This files describes API changes in /auth/shibboleth/*,
+information provided here is intended especially for developers.
+
+=== 3.5.2 ===
+
+* Moved the public function unserializesession in auth/shibboleth/logout.php to auth/shibboleth/classes/helper.php and
+  made it private. This function should not have been used outside of this file.
+
+=== 3.3 ===
+
+* The config.html file was migrated to use the admin settings API.
+  The identifier for configuration data stored in config_plugins table was converted from 'auth/shibboleth' to 'auth_shibboleth'.

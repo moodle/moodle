@@ -1,0 +1,38 @@
+This files describes API changes in the lti code.
+
+=== 3.4 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-57432 for more info:
+    - mod_lti_upgrade_custom_separator()
+
+=== 3.2 ===
+
+* Support for LTI ContentItem message type.
+* New function lti_build_content_item_selection_request() for building an LTI ContentItemSelectionRequest.
+* New Select content button in External tool configuration page that lets the user configure an external tool by fetching tool
+  configuration content from the preconfigured tool's content selection interface.
+
+=== 3.1 ===
+
+* When requesting a grade from the outcome service, and empty grade will now be returned as
+  an empty grade in accordance with the spec. Previously a grade of 0 would be returned.
+
+=== 3.0 ===
+
+* Function lti_view (locallib.php) was renamed to lti_launch_tool.
+  A new and different lti_view function was created in the module lib.php containing the code for launching events and update the completion status for the module.
+
+
+=== 2.8 ===
+
+* Support for LTI 2 added, including extensible services implemented as ltiservice plugins.
+* Function sendOAuthBodyPOST removed from OAuthBody.php because it was not being used.
+* The field 'grade' in the table {lti} is now an integer rather than a numeric to bring it
+  in line with the 'grade' field in other activities.
+
+=== 2.7 ===
+
+* mod_lti\event\unknown_service_api_called now has less data stored in 'other'
+  but everything is still available for event observers via method get_message_data()
+

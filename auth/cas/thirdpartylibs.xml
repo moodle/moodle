@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>CAS</location>
+    <name>CAS</name>
+    <license>Apache</license>
+    <version>1.3.5</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
+</libraries>

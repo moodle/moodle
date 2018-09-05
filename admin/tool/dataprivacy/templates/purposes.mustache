@@ -1,0 +1,126 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_dataprivacy/purposes
+
+    Manage purposes.
+
+    Classes required for JS:
+
+    Data attributes required for JS:
+
+    Context variables required for this template:
+    * purposes - array of objects
+    * actions - array of actions (already in HTML).
+
+    Example context (json):
+    {
+        "purposesexist": 1,
+        "purposes": [
+            {
+                "name" : "Purpose 1",
+                "description": "<strong>Purpose 1 description</strong>",
+                "retentionperiod": 86400,
+                "protected": 1,
+                "formattedretentionperiod": "1 day",
+                "actions": [
+                ]
+            }, {
+                "name" : "Purpose 2",
+                "description": "<strong>Purpose 2 description</strong>",
+                "retentionperiod": 7200,
+                "protected": 0,
+                "formattedretentionperiod": "2 hours",
+                "actions": [
+                ]
+            }
+        ]
+    }
+
+}}
+
+{{#navigation}}
+    {{> core/action_link}}
+{{/navigation}}
+
+<div data-region="purposes" class="m-t-3 m-b-1">
+    <h3>{{#str}}purposes, tool_dataprivacy{{/str}}</h3>
+    <div class="m-y-1">
+        <button class="btn btn-secondary" data-add-element="purpose">
+            {{#pix}}t/add, moodle, {{#str}}addpurpose, tool_dataprivacy{{/str}}{{/pix}}
+        </button>
+    </div>
+    <table class="generaltable fullwidth">
+        <caption class="accesshide">{{#str}}purposeslist, tool_dataprivacy{{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col" class="col-md-2">{{#str}}name{{/str}}</th>
+                <th scope="col" class="col-md-3">{{#str}}description{{/str}}</th>
+                <th scope="col" class="col-md-2">{{#str}}lawfulbases, tool_dataprivacy{{/str}}</th>
+                <th scope="col" class="col-md-2">{{#str}}sensitivedatareasons, tool_dataprivacy{{/str}}</th>
+                <th scope="col" class="col-md-1">{{#str}}retentionperiod, tool_dataprivacy{{/str}}</th>
+                <th scope="col" class="col-md-1">{{#str}}protected, tool_dataprivacy{{/str}}</th>
+                <th scope="col" class="col-md-1">{{#str}}actions{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#purposes}}
+            <tr data-purposeid="{{id}}">
+                <td class="col-md-2">{{{name}}}</td>
+                <td class="col-md-3">{{{description}}}</td>
+                <td class="col-md-2">
+                    <ul>
+                        {{#formattedlawfulbases}}
+                            <li>
+                                <span>{{name}}{{# pix }} i/info, core, {{description}} {{/ pix }}</span>
+                            </li>
+                        {{/formattedlawfulbases}}
+                    </ul>
+                </td>
+                <td class="col-md-2">
+                    <ul>
+                        {{#formattedsensitivedatareasons}}
+                            <li>
+                                <span>{{name}}{{# pix }} i/info, core, {{description}} {{/ pix }}</span>
+                            </li>
+                        {{/formattedsensitivedatareasons}}
+                    </ul>
+                </td>
+                <td class="col-md-1">{{formattedretentionperiod}}</td>
+                <td class="col-md-1">
+                    {{#protected}}
+                        {{#pix}}i/checked, core, {{#str}}yes{{/str}}{{/pix}}
+                    {{/protected}}
+                    {{^protected}}
+                        {{#str}}no{{/str}}
+                    {{/protected}}
+                </td>
+                <td class="col-md-1">
+                    {{#actions}}
+                        {{> core/action_menu}}
+                    {{/actions}}
+                </td>
+            </tr>
+            {{/purposes}}
+        </tbody>
+    </table>
+    {{^purposes}}
+        <p>
+            {{#str}}nopurposes, tool_dataprivacy{{/str}}
+        </p>
+    {{/purposes}}
+</div>

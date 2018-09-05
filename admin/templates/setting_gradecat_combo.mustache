@@ -1,0 +1,51 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_admin/setting_gradecat_combo
+
+    Admin gradecat_combo setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * id - element id
+    * options - list of options containing name, value and selected
+    * forced - is it forced
+    * advanced - is it advanced
+
+    Example context (json):
+    {
+        "name": "test",
+        "id": "test0",
+        "options": [
+            { "name": "Option name", "value": "Value", "selected": true }
+        ],
+        "forced": true,
+        "advanced": true
+    }
+}}
+<div class="form-group">
+    <select id="{{id}}" name="{{name}}[value]" class="form-select">
+        {{#options}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+        {{/options}}
+    </select>
+    <input type="checkbox" id="{{id}}force" name="{{name}}[forced]" value="1" {{#forced}}checked{{/forced}}>
+    <label for="{{id}}force">{{#str}}force{{/str}}</label>
+    <input type="checkbox" id="{{id}}adv" name="{{name}}[adv]" value="1" {{#advanced}}checked{{/advanced}}>
+    <label for="{{id}}adv">{{#str}}advanced{{/str}}</label>
+</div>
+

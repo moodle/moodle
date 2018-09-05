@@ -1,0 +1,73 @@
+// Some - backwards compatibility for BS2. We may have plugins and user content targeted for BS2.
+
+// Well -> Panel -> Card. We skipped panel (BS3) so lets just support well and card.
+.well {
+    @extend .card;
+}
+
+// Some things just got renamed.
+.img-responsive {
+    @extend .img-fluid;
+}
+
+.text-error {
+    @extend .text-danger;
+}
+
+.btn-default {
+    @extend .btn-secondary;
+}
+
+// Labels and badges.
+
+.label {
+    @extend .tag;
+    @include tag-variant($tag-default-bg);
+}
+
+.label-success {
+    @include tag-variant($tag-success-bg);
+}
+
+.label-info {
+    @include tag-variant($tag-info-bg);
+}
+
+.label-warning {
+    @include tag-variant($tag-warning-bg);
+}
+
+.label-important {
+    @include tag-variant($tag-danger-bg);
+}
+
+.badge {
+    @extend .tag;
+    @include tag-variant($tag-default-bg);
+    @include border-radius($font-size-root / 2);
+}
+
+.badge-success {
+    @include tag-variant($tag-success-bg);
+}
+
+.badge-info {
+    @include tag-variant($tag-info-bg);
+}
+
+.badge-warning {
+    @include tag-variant($tag-warning-bg);
+}
+
+.badge-important {
+    @include tag-variant($tag-danger-bg);
+}
+
+// Floats.
+.pull-left {
+    @include pull-left();
+}
+
+.pull-right {
+    @include pull-right();
+}

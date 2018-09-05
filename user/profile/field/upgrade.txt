@@ -1,0 +1,6 @@
+This files describes API changes in /user/profile/field/* - user profile fields,
+information provided here is intended especially for developers.
+
+=== 3.4 ===
+
+* profile_field_base::__construct() now takes three arguments instead of two. Update your plugins if required.

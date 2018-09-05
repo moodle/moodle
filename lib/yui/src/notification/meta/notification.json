@@ -1,0 +1,43 @@
+{
+  "moodle-core-notification": {
+    "requires": [
+        "moodle-core-notification-dialogue",
+        "moodle-core-notification-alert",
+        "moodle-core-notification-confirm",
+        "moodle-core-notification-exception",
+        "moodle-core-notification-ajaxexception"
+    ]
+  },
+  "moodle-core-notification-dialogue": {
+    "requires": [
+        "base",
+        "node",
+        "panel",
+        "escape",
+        "event-key",
+        "dd-plugin",
+        "moodle-core-widget-focusafterclose",
+        "moodle-core-lockscroll"
+    ]
+  },
+  "moodle-core-notification-alert": {
+    "requires": [
+        "moodle-core-notification-dialogue"
+    ]
+  },
+  "moodle-core-notification-confirm": {
+    "requires": [
+        "moodle-core-notification-dialogue"
+    ]
+  },
+  "moodle-core-notification-exception": {
+    "requires": [
+        "moodle-core-notification-dialogue"
+    ]
+  },
+  "moodle-core-notification-ajaxexception": {
+    "requires": [
+        "moodle-core-notification-dialogue"
+    ]
+  }
+}

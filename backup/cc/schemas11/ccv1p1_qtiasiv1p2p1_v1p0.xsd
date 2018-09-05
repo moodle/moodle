@@ -1,0 +1,1890 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<xs:schema xmlns="http://www.imsglobal.org/xsd/ims_qtiasiv1p2"
+    targetNamespace="http://www.imsglobal.org/xsd/ims_qtiasiv1p2"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+    version="IMS CC 1.1 QTI ASI 1.2.1"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    <xs:import namespace = "http://www.w3.org/XML/1998/namespace" schemaLocation = "xml.xsd"/>
+    <xs:annotation>
+        <xs:documentation>
+            XSD Data File Information
+            -------------------------
+            Author:         Colin Smythe
+            Date:           31st October, 2010
+            Version:        1.1
+            Status:         Final Release
+            Description:    This model forms part of the IMS Common Cartridge v1.1 specification.  This model is the 
+                            profile of the IMS QTI v1.2.1 specification.  The changes made to the original specification 
+                            to create this profile are:
+                            
+                            Root
+                            (a) Only one Assessment or one ObjectBank can be exchanged i.e. not Sections or Items;
+                            (b) The qticomment attribute has been removed.
+                            
+                            Assessment
+                            (a) Only a single Section must be contained in the Assessment;
+                            (b) The metadata is mandatory (see the specification for the fields that must be defined) with a multiplicity of 1;
+                            (c) All of the other Assessment fields have been removed apart from the optional PresentationMaterial;
+                            (d) The title attribute has been made mandatory.
+                            
+                            Object Bank
+                            (a) Only Items can be containd in the object bank;
+                            (b) The Qticomment structure has been removed.
+                            
+                            Section
+                            (a) All of the internal structure has been removed except the containment of Items (at least one is required);
+                            (b) The language attribute has been removed.
+                            
+                            Item
+                            (a) The deprecated attributes have been removed from the ItemMetadata class;
+                            (b) All qticomment attributes have been removed from various classes;
+                            (c) The Item pre and post condition attributes have been removed from the Item class;
+                            (d) The itemproc_extension structure has been removed from the Item class;
+                            (e) The reference structure has been removed from the Item class;
+                            (f) The objectives attribute has been removed from the Item class;
+                            (g) The itemcontrol attribute has been removed from the Item class;
+                            (h) The item rubric attribute and its associated classes have been removed from the Item class;
+                            (i) The duration attribute has been removed from the Item class;
+                            (j) The itemmetadata attribute has been made mandatory in the Item class;
+                            (k) The label, language and maxattempts attributes have been removed from the Item class;
+                            (l) The interpretvar attribute has been removed frm the Outcomes class;
+                            (m) The response_xy, response_num, response_grp and response_extension attributes have
+                                been removed from the Presentation class;
+                            (n) All extension attributes have been removed from various classes;
+                            (o) The ItemType, LevelofDifficulty, RenderingType, ResponseMultiplicity, Status and TypeofSolution 
+                                have been deleted;
+                            (p) The ItemFeedback Class has been restructured as only flow_mat is used;
+                            (q) A single decvar is required i.e. for the default variable SCORE.
+                            
+                            Item-Response
+                            (a) The Rrange and Rarea attributes have been removed from the ResponseLabel Class.
+                            
+                            Item-Render
+                            (a) The render_hotspot attributes and the RenderHotspot class have been removed;
+                            (b) The render_slider attributes and the RenderSlider class have been removed;
+                            (c) The render_extension attribute has been removed from the ResponseType class;
+                            (d) The response_na attribute has been removed;
+                            (e) The qticomment attribute has been removed from the ResponseLabel class;
+                            
+                            Item-General
+                            (a) The Interpretvar class has been removed;
+                            (b) The DurationBase class has been removed and all derived attributes from the Conditionvar and CompositionLogic classes;
+                            (c) The var_extension attribute has been removed from the Conditionvar class;
+                            (d) The qticomment attributes have been removed from the Hint and Solution classes;
+                            (e) Setvar is restricted to the Set action;
+                            (f) Variable types are restricted to 'Integer' and 'Decimal';
+                            (g) The defaultval and cutvalue, attributes for decvar have been removed;
+                            (h) Outcomes is limtied to a single decvar which must have only the variable "SCORE" declared;
+                            (i) The classes or, varlt, varlte, vargt, vargte, varinside, varsubset and unanswered have been removed;
+                            (j) The classes 'and', 'not' and 'conditionvar' have been significantly simplied i.e. see clause above for detail;
+                            (k) The feedbacktype attribute for the displayfeedback element is now mandatory with no default value.
+                            
+                            Selection and Ordering
+                            (a) The entire Selection and Ordering (Package) has been removed.
+                            
+                            Outcomes
+                            (a) The entire Outcomes Processing (Package) has been removed.
+                            
+                            Material
+                            (a) The Reference Class has been removed as this is not required;
+                            (b) All entityref attributes have been removed;
+                            (c) Extensions have been removed;
+                            (d) Only 'mattext', 'matref' and 'matbreak' are permitted as types of material.
+                            
+                            Common
+                            (a) The Rubric class has been removed Items and Sections and it is only permitted to contain a single instance of material;
+                            (b) The ContextControl class has been removed i.e. no Control switches required;
+                            (c) The QtiComment Class has been removed;
+                            (d) The MetadataRule Class has been removed;
+                            (e) the Parameterization Class has been removed;
+                            (f) The 'view' attribute has been removed;
+                            (g) The Vocabulary Class has been removed and its attribute in the QtiMetadata Class also removed.
+
+            History:        Version 1.0: This profile is taken from the UML description of the QTIv1.2.1 specification.
+                            Version 1.1: Material has been returned as an alternative to flow_mat in ItemFeedback, 
+                            SolutionMaterial and HintMaterial.  Also, Assessment Rubric has been permitted but it must 
+                            only contain a single instance of material.
+
+            License:        IPR, License and Distribution Notices
+
+                            This machine readable file is derived from IMS Global Learning Consortium (GLC) specification IMS Common Cartridge Version 1.1
+                            found at http://www.imsglobal.org/cc and the original IMS GLC schema binding or code base
+                            http://www.imsglobal.org/cc.
+
+                            Recipients of this document are requested to submit, with their comments, notification of any
+                            relevant patent claims or other intellectual property rights of which they may be aware that might be
+                            infringed by the schema binding contained in this document.
+
+                            IMS GLC takes no position regarding the validity or scope of any intellectual property or other
+                            rights that might be claimed to pertain to the implementation or use of the technology described in this
+                            document or the extent to which any license under such rights might or might not be available; neither
+                            does it represent that it has made any effort to identify any such rights. Information on IMS GLCs
+                            procedures with respect to rights in IMS GLC specifications can be found at the IMS GLC Intellectual Property
+                            Rights web page: http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf.
+
+                            Copyright (c) IMS Global Learning Consortium 1999-2011. All Rights Reserved.
+
+                            License Notice for Users
+
+                            Users of products or services that include this document are hereby granted a worldwide, royalty-free, 
+                            non-exclusive license to use this document. 
+
+                            Distribution Notice for Developers
+
+                            Developers of products or services that are not original incorporators of this document and 
+                            have not changed this document, that is, are distributing a software product that incorporates this 
+                            document as is from a third-party source other than IMS, are hereby granted permission to copy,
+                            display and distribute the contents of this document in any medium for any purpose without fee or 
+                            royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL
+                            copies, or portions thereof.
+
+                            Developers of products or services that are original incorporators of this document and wish 
+                            to provide distribution of this document as is or with modifications and developers of products and 
+                            services that are not original incorporators of this document and have changed this document, are
+                            required to register with the IMS GLC community on the IMS GLC website as described in the following two
+                            paragraphs:-
+
+                            *  If you wish to distribute this document as is, with no modifications, you are hereby granted 
+                               permission to copy, display and distribute the contents of this document in any medium for any 
+                               purpose without fee or royalty provided that you include this IPR, License and Distribution notice in
+                               its entirety on ALL copies, or portions thereof, that you make and you complete a valid license 
+                               registration with IMS and receive an email from IMS granting the license. To register, follow the 
+                               instructions on the IMS website: http://www.imsglobal.org/specificationdownload.cfm. Once 
+                               registered you are granted permission to transfer unlimited distribution rights of this document for the 
+                               purposes of third-party or other distribution of your product or service that incorporates this 
+                               document as long as this IPR, License and Distribution notice remains in place in its entirety; 
+
+                            *  If you wish to create and distribute a derived work from this document, you are hereby 
+                               granted permission to copy, display and distribute the contents of the derived work in any medium for 
+                               any purpose without fee or royalty provided that you include this IPR, License and Distribution 
+                               notice in its entirety on ALL copies, or portions thereof, that you make and you complete a valid 
+                               profile registration with IMS GLC and receive an email from IMS GLC granting the license. To register, follow
+                               the instructions on the IMS GLC website: http://www.imsglobal.org/profile/. Once registered you are 
+                               granted permission to transfer unlimited distribution rights of the derived work for the purposes of 
+                               third-party or other distribution of your product or service that incorporates the derived work as long 
+                               as this IPR, License and Distribution notice remains in place in its entirety. 
+
+                            The limited permissions granted above are perpetual and will not be revoked by IMS GLC or its 
+                            successors or assigns.
+
+                            THIS SPECIFICATION IS BEING OFFERED WITHOUT ANY WARRANTY WHATSOEVER, AND IN PARTICULAR, ANY WARRANTY OF NONINFRINGEMENT IS
+                            EXPRESSLY DISCLAIMED. ANY USE OF THIS SPECIFICATION SHALL BE MADE ENTIRELY AT THE IMPLEMENTERS OWN RISK, AND NEITHER THE CONSORTIUM
+                            NOR ANY OF ITS MEMBERS OR SUBMITTERS, SHALL HAVE ANY LIABILITY WHATSOEVER TO ANY IMPLEMENTER OR THIRD PARTY FOR ANY DAMAGES OF
+                            ANY NATURE WHATSOEVER, DIRECTLY OR INDIRECTLY, ARISING FROM THE USE OF THIS SPECIFICATION.
+
+            Source UML File Information
+            ---------------------------
+            The source file information must be supplied as an XMI file (without diagram layout information).
+            The supported UML authoring tools are:
+            (a) Poseidon – v6 (and later)
+
+            Source XSLT File Information
+            ----------------------------
+            XSL Generator:    UMLtoXSDTransformv0p9.xsl
+            XSLT Processor:   Xalan
+            Release:          1.0 Beta 3
+            Date:             31st May, 2009
+
+            IMS GLC Auto-generation Binding Tool-kit (I-BAT)
+            ------------------------------------------------
+            This file was auto-generated using the IMS GLC Binding Auto-generation Tool-kit (I-BAT).  While every
+            attempt has been made to ensure that this tool auto-generates the files correctly, users should be aware
+            that this is an experimental tool.  Permission is given to make use of this tool.  IMS GLC makes no
+            claim on the materials created by third party users of this tool.  Details on how to use this tool
+            are contained in the IMS GLC "I-BAT" Documentation available at the IMS GLC web-site.
+
+            Tool Copyright:  2005-2010 (c) IMS Global Learning Consortium Inc.  All Rights Reserved.
+        </xs:documentation>
+    </xs:annotation>
+    
+        <xs:annotation>
+        <xs:documentation>
+            Schematron Validation Rules Information
+            ---------------------------------------
+            Author:         Colin Smythe
+            Date:           5th January, 2011
+            Version:        1.1
+            Status:         Final Release
+            
+            Description:    This set of schematron rules have been created to increase the validation capability of the QTIv1.2.1 XSD.
+                            A total of 12 rule sets have been created to ensure that:
+                            [1]  Only valid Assessment metadata is defined;
+                            [2]  Only valid Question types are defined in the Itemmetatadata fields;
+                            [3]  The structure of a True/False question is correct;
+                            [4]  The structure of a Multiple-Choice (Single Response) question is correct;
+                            [5]  The structure of a Multiple-Choice (Multiple Response) question is correct;
+                            [6]  The structure of a Fill In Blank question is correct;
+                            [7]  The structure of a Pattern Match question is correct;
+                            [8]  The structure of an Essay question is correct;
+                            [9]  The structures of the response processing/response-label are correct;
+                            [10] The structure of a Hint in an Item is correct;
+                            [11] The structure of a Solution in an Item is correct;
+                            [12] The structure of the response processing feedback structure in an Item is correct;
+                            [13] Generic features of an Item are correctly implemented.
+            
+            Rule Set:       [1]  The set of rules to ensure that only valid Assessment metadata is defined. 
+                                 The rules are:
+                                 (a) Only valid entries are defined for the Assessment metadata fieldlabel values;
+                                 (b) Only valid entries are defined for the Assessment metadata fieldentry values for fieldlabel = 'qmd_assessmenttype';
+                                 (c) Only valid entries are defined for the Assessment metadata fieldentry values for fieldlabel = 'qmd_scoretype';
+                                 (d) Only valid entries are defined for the Assessment metadata fieldentry values for fieldlabel = 'qmd_feedbackpermitted';
+                                 (e) Only valid entries are defined for the Assessment metadata fieldentry values for fieldlabel = 'qmd_hintspermitted';
+                                 (f) Only valid entries are defined for the Assessment metadata fieldentry values for fieldlabel = 'qmd_solutionspermitted';
+                                 (g) Only valid entries are defined for the Assessment metadata fieldentry values for fieldlabel = 'qmd_timelimit';
+                                 (h) Only valid entries are defined for the Assessment metadata fieldentry values for fieldlabel = 'cc_allow_late_submission';
+                                 (i) Only valid entries are defined for the Assessment metadata fieldentry values for fieldlabel = 'cc_maxattempts';
+                                 (j) Only valid entries are defined for the Assessment metadata fieldentry values for fieldlabel = 'cc_profile';
+                                 (k) There must be no more than one Assessment metadata field with fieldlabel='cc_profile';
+                                 (l) There must be no more than one Assessment metadata field with fieldlabel='qmd_assessmenttype';
+                                 (m) There must be no more than one Assessment metadata field with fieldlabel='qmd_scoretype';
+                                 (n) There must be no more than one Assessment metadata field with fieldlabel='qmd_feedbackpermitted';
+                                 (o) There must be no more than one Assessment metadata field with fieldlabel='qmd_hintspermitted';
+                                 (p) There must be no more than one Assessment metadata field with fieldlabel='qmd_solutionspermitted';
+                                 (q) There must be no more than one Assessment metadata field with fieldlabel='qmd_timelimit';
+                                 (r) There must be no more than one Assessment metadata field with fieldlabel='cc_allow_late_submission';
+                                 (s) There must be no more than one Assessment metadata field with fieldlabel='cc_maxattempts'.
+            
+                            [2]  The set of rules to ensure that only valid Question types are defined in the Itemmetatadata fields.
+                                 The rules are:
+                                 (a) Only valid entries are defined for the Itemmetadata fieldlabel values;
+                                 (b) Only valid entries are defined for the Itemmetadata fieldentry values for fieldlabel = 'cc_profile';
+                                 (c) Only valid entries are defined for the Itemmetadata fieldentry values for fieldlabel = 'cc_weighting';
+                                 (d) Only valid entries are defined for the Itemmetadata fieldentry values for fieldlabel = 'qmd_scoringpermitted';
+                                 (e) Only valid entries are defined for the Itemmetadata fieldentry values for fieldlabel = 'qmd_computerscored';
+                                 (f) The Item metadata field with fieldlabel='cc_profile' must be present;
+                                 (g) There must only be one Item metadata fields with fieldlabel='cc_profile'for each Item;
+                                 (h) There must be no more than one Item metadata field with fieldlabel='cc_weighting'for each Item;
+                                 (i) There must be no more than one Item metadata field with fieldlabel='qmd_scoringpermitted' for each Item;
+                                 (j) There must be no more than one Item metadata field with fieldlabel='qmd_computerscored'for each Item.
+                                
+                            [3]  The set of rules to ensure that the structure of a True/False question is correct.
+                                 The rules are:
+                                 (a) That @rcardinality='Single';
+                                 (b) The element 'response_str' is not used;
+                                 (c) The element 'render_fib' is not used;
+                                 (d) That there are zero or two response labels;
+                                 (e) That the response processing uses the correct identifiers i.e. varequal/@respident value is equal to the response_lid/@ident;
+                                 (f) The varsubstring element must not be used.
+                            
+                            [4]  The set of rules to ensure that the structure of a Multiple-Choice (Single Response) question is correct.
+                                 The rules are:
+                                 (a) That @rcardinality='Single';
+                                 (b) The element 'response_str' is not used;
+                                 (c) The element 'render_fib' is not used;
+                                 (d) That there are at least three response labels;
+                                 (e) That the response processing uses the correct identifiers i.e. varequal/@respident value is equal to the response_lid/@ident; 
+                                 (f) The varsubstring element must not be used.
+                            
+                            [5]  The set of rules to ensure that the structure of a Multiple-Choice (Multiple Response) question is correct.
+                                 The rules are:
+                                 (a) That @rcardinality='Multiple';
+                                 (b) The element 'response_str' is not used;
+                                 (c) The element 'render_fib' is not used;
+                                 (d) That there are at least two response labels;
+                                 (e) That the response processing uses the correct identifiers i.e. varequal/@respident value is equal to the response_lid/@ident;
+                                 (f) The varsubstring element must not be used..
+                                
+                            [6]  The set of rules to ensure that the structure of a Fill-in-Blank question is correct.
+                                 The rules are:
+                                 (a) The element 'response_lid' is not used;
+                                 (b) The element 'render_choice' is not used;
+                                 (c) That the response processing uses the correct identifiers i.e. varequal/@respident value is equal to the response_str/@ident;
+                                 (d) There is no use of the 'varsubstring' element.
+                                
+                            [7]  The set of rules to ensure that the structure of a Pattern Match question is correct.
+                                 The rules are:
+                                 (a) The element 'response_lid' is not used;
+                                 (b) The element 'render_choice' is not used;
+                                 (c) That the response processing uses the correct identifiers i.e. varequal/@respident value is equal to the response_str/@ident.
+                                
+                            [8]  The set of rules to ensure that the structure of an Essay question is correct.
+                                 The rules are:
+                                 (a) The element 'response_lid' is not used;
+                                 (b) The element 'render_choice' is not used;
+                                 (c) There is no use of the 'varequal' element;
+                                 (d) There is no use of the 'varsubstring' element;
+                                 (e) No more than a single Solution feedback can be supplied;
+                                 (f) The fieldentry Item metadata for an Essay question with the fieldlabel='qmd_computerscored' must be set as 'No'.                                
+                                
+                            [9]  The set of rules to ensure that the Response Processing/Response-Label structures are valid.
+                                 The rules are:
+                                 (a) There are no invalid response labels used in the 'varequal' element for T/F and MC questions. 
+                            
+                            [10] The set of rules to ensure that the structure of a Hint in an Item is correct.
+                                 The rules are:
+                                 (a) The element 'displayfeedback@feedbacktype=Hint' is accompanied by the @linkrefid='hint' attribute;
+                                 (b) The element 'itemfeedback@ident=hint' is not followed by the 'solution' element;
+                                 (c) The element 'itemfeedback@ident=hint' is not followed by the 'flow_mat' element;
+                                 (d) If the element 'displayfeedback@feedbacktype=Hint' is used it must be accompanied by hint feedback.
+                                
+                            [11] The set of rules to ensure that the structure of a Solution in an Item is correct.
+                                 The rules are:
+                                 (a) The element 'displayfeedback@feedbacktype=Solution' is accompanied by the @linkrefid='solution' attribute;
+                                 (b) The element 'itemfeedback@ident=solution' is not followed by the 'hint' element;
+                                 (c) The element 'itemfeedback@ident=solution' is not followed by the 'flow_mat' element;
+                                 (d) If the element 'displayfeedback@feedbacktype=Solution' is used it must be accompanied by solution feedback.
+                                 
+                            [12] The set of rules to ensure that the general structure of the Response Processing in an Item is correct.
+                                 The rules are:
+                                 (a) The element 'displayfeedback@feedbacktype=Response' is not accompanied by the @linkrefid='solution' attribute;
+                                 (b) The element 'displayfeedback@feedbacktype=Response' is not accompanied by the @linkrefid='hint' attribute;
+                                 (c) To check that for each element 'displayfeedback@feedbacktype=Response' the corresponding 'itemfeedback' element exists;
+                                 (d) To check that a given response processing itemfeedback identifier there is a corresponding displayfeedback trigger for that identifier.
+                                 
+                            [13] The set of rules to ensure that the general features in an Item are correct.
+                                 The rules are:
+                                 (a) To ensure that each Item has a unique @ident attribute.
+        </xs:documentation>
+        <xs:appinfo>
+            <sch:ns uri="http://www.imsglobal.org/xsd/ims_qtiasiv1p2" prefix="asi"/>
+            <sch:title>Schematron validation rules for the Common Cartridge v1p1 profile of QTI v1.2.1</sch:title>
+            
+<!-- RULE 1: Assessment Metadata Fields Validation -->
+            <sch:pattern abstract="false" name="RULE SET 1">
+                <sch:title>RULE SET 1: Ensure that only valid metadata is defined in the Assessment metadata fields</sch:title>
+                
+                <sch:rule abstract="false" context="asi:assessment/asi:qtimetadata/asi:qtimetadatafield">
+                    <sch:assert test="asi:fieldlabel='cc_profile' or asi:fieldlabel='qmd_assessmenttype' 
+                                                                  or asi:fieldlabel='qmd_scoretype'
+                                                                  or asi:fieldlabel='qmd_feedbackpermitted'
+                                                                  or asi:fieldlabel='qmd_hintspermitted'
+                                                                  or asi:fieldlabel='qmd_solutionspermitted'
+                                                                  or asi:fieldlabel='qmd_timelimit'
+                                                                  or asi:fieldlabel='cc_allow_late_submission'
+                                                                  or asi:fieldlabel='cc_maxattempts'">
+                        [RULE 1a] Invalid Assessment metadata fieldlabel value: <sch:value-of select="asi:fieldlabel"/>.
+                    </sch:assert>
+                </sch:rule>              
+                
+                <sch:rule abstract="false" context="asi:assessment/asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel[.='qmd_assessmenttype']">
+                    <sch:assert test="../asi:fieldentry='Examination'">
+                        [RULE 1b] Invalid fieldentry Assessment metadata for the fieldlabel='qmd_assessmenttype' value: <sch:value-of select="../asi:fieldentry"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:assessment/asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel[.='qmd_scoretype']">
+                    <sch:assert test="../asi:fieldentry='Percentage'">
+                        [RULE 1c] Invalid fieldentry Assessment metadata for the fieldlabel='qmd_scoretype' value: <sch:value-of select="../asi:fieldentry"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:assessment/asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel[.='qmd_feedbackpermitted']">
+                    <sch:assert test="../asi:fieldentry='No' or ../asi:fieldentry='Yes'">
+                        [RULE 1d] Invalid fieldentry Assessment metadata for the fieldlabel='qmd_feedbackpermitted' value: <sch:value-of select="../asi:fieldentry"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:assessment/asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel[.='qmd_hintspermitted']">
+                    <sch:assert test="../asi:fieldentry='No' or ../asi:fieldentry='Yes'">
+                        [RULE 1e] Invalid fieldentry Assessment metadata for the fieldlabel='qmd_hintspermitted' value: <sch:value-of select="../asi:fieldentry"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:assessment/asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel[.='qmd_solutionspermitted']">
+                    <sch:assert test="../asi:fieldentry='No' or ../asi:fieldentry='Yes'">
+                        [RULE 1f] Invalid fieldentry Assessment metadata for the fieldlabel='qmd_solutionspermitted' value: <sch:value-of select="../asi:fieldentry"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:assessment/asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel[.='qmd_timelimit']">
+                    <sch:assert test="not(contains(../asi:fieldentry, '.')) and ../asi:fieldentry &gt; 0 and ../asi:fieldentry &lt; 527041">
+                        [RULE 1g] Invalid fieldentry Assessment metadata for the fieldlabel='qmd_timelimit' i.e. not a valid integer with value: <sch:value-of select="../asi:fieldentry"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:assessment/asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel[.='cc_allow_late_submission']">
+                    <sch:assert test="../asi:fieldentry='No' or ../asi:fieldentry='Yes'">
+                        [RULE 1h] Invalid fieldentry Assessment metadata for the fieldlabel='cc_allow_late_submission' value: <sch:value-of select="../asi:fieldentry"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:assessment/asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel[.='cc_maxattempts']">
+                    <sch:assert test="../asi:fieldentry='Examination'
+                        or ../asi:fieldentry='1' or ../asi:fieldentry='2'
+                        or ../asi:fieldentry='3' or ../asi:fieldentry='4'
+                        or ../asi:fieldentry='5' or ../asi:fieldentry='unlimited'">
+                        [RULE 1i] Invalid fieldentry Assessment metadata for the fieldlabel='cc_maxattempts' value: <sch:value-of select="../asi:fieldentry"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:assessment/asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel[.='cc_profile']">
+                    <sch:assert test="../asi:fieldentry='cc.exam.v0p1'">
+                        [RULE 1j] Invalid fieldentry Assessment metadata for the fieldlabel='cc_profile' value: <sch:value-of select="../asi:fieldentry"/>.
+                    </sch:assert>
+                </sch:rule>
+
+                <sch:rule abstract="false" context="asi:assessment/asi:qtimetadata">
+                    
+                    <sch:assert test="count(asi:qtimetadatafield/asi:fieldlabel[.='cc_profile']) &lt; 2">
+                        [RULE 1k] There are repeated assessment metadata fields of fieldlabel='cc_profile' with count=<sch:value-of select="count(asi:qtimetadatafield/asi:fieldlabel[.='cc_profile'])"/>.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_assessmenttype']) &lt; 2">
+                        [RULE 1l] There are repeated assessment metadata fields of fieldlabel='qmd_assessmenttype' with count=<sch:value-of select="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_assessmenttype'])"/>.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_scoretype']) &lt; 2">
+                        [RULE 1m] There are repeated assessment metadata fields of fieldlabel='qmd_scoretype' with count=<sch:value-of select="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_scoretype'])"/>.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_feedbackpermitted']) &lt; 2">
+                        [RULE 1n] There are repeated assessment metadata fields of fieldlabel='qmd_feedbackpermitted' with count=<sch:value-of select="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_feedbackpermitted'])"/>.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_hintspermitted']) &lt; 2">
+                        [RULE 1o] There are repeated assessment metadata fields of fieldlabel='qmd_hintspermitted' with count=<sch:value-of select="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_hintspermitted'])"/>.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_solutionspermitted']) &lt; 2">
+                        [RULE 1p] There are repeated assessment metadata fields of fieldlabel='qmd_solutionspermitted' with count=<sch:value-of select="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_solutionspermitted'])"/>.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_timelimit']) &lt; 2">
+                        [RULE 1q] There are repeated assessment metadata fields of fieldlabel='qmd_timelimit' with count=<sch:value-of select="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_timelimit'])"/>.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:qtimetadatafield/asi:fieldlabel[.='cc_allow_late_submission']) &lt; 2">
+                        [RULE 1r] There are repeated assessment metadata fields of fieldlabel='cc_allow_late_submission' with count=<sch:value-of select="count(asi:qtimetadatafield/asi:fieldlabel[.='cc_allow_late_submission'])"/>.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:qtimetadatafield/asi:fieldlabel[.='cc_maxattempts']) &lt; 2">
+                        [RULE 1s] There are repeated assessment metadata fields of fieldlabel='cc_maxattempts' with count=<sch:value-of select="count(asi:qtimetadatafield/asi:fieldlabel[.='cc_maxattempts'])"/>.
+                    </sch:assert>
+                    
+                </sch:rule>
+                
+            </sch:pattern>
+<!-- **************************************************************************** -->
+            
+<!-- RULE 2: Item Metadata Fields Validation -->
+            <sch:pattern abstract="false" name="RULE SET 2">
+                <sch:title>RULE SET 2: Ensure that only valid metadata is defined in the Itemmetatadata fields</sch:title>
+                
+                <sch:rule abstract="false" context="asi:itemmetadata/asi:qtimetadata/asi:qtimetadatafield">
+                    <sch:assert test="asi:fieldlabel='cc_profile'
+                                      or asi:fieldlabel='cc_question_category' 
+                                      or asi:fieldlabel='cc_weighting'
+                                      or asi:fieldlabel='qmd_scoringpermitted'
+                                      or asi:fieldlabel='qmd_computerscored'">
+                        [RULE 2a] Invalid Itemmetadata fieldlabel value: <sch:value-of select="../asi:fieldlabel"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:itemmetadata/asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel[.='cc_profile']">
+                    <sch:assert test="../asi:fieldentry='cc.multiple_choice.v0p1'
+                                      or ../asi:fieldentry='cc.multiple_response.v0p1' 
+                                      or ../asi:fieldentry='cc.true_false.v0p1'
+                                      or ../asi:fieldentry='cc.fib.v0p1'
+                                      or ../asi:fieldentry='cc.pattern_match.v0p1'
+                                      or ../asi:fieldentry='cc.essay.v0p1'">
+                        [RULE 2b] Invalid fieldentry Question Type (fieldlabel='cc_profile') value: <sch:value-of select="../asi:fieldentry"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:itemmetadata/asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel[.='cc_weighting']">
+                    <sch:assert test="not(contains(../asi:fieldentry, '.')) and ../asi:fieldentry &gt; 0 and ../asi:fieldentry &lt; 100">
+                        [RULE 2c] Invalid fieldentry Item metadata weighting for the fieldlabel='cc_weighting' i.e. not an integer in the range 1..99, with value: <sch:value-of select="../asi:fieldentry"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:itemmetadata/asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel[.='qmd_scoringpermitted']">
+                    <sch:assert test="../asi:fieldentry = 'Yes'">
+                        [RULE 2d] Invalid fieldentry Item metadata for the fieldlabel='qmd_scoringpermitted' with value: <sch:value-of select="../asi:fieldentry"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:itemmetadata/asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel[.='qmd_computerscored']">
+                    <sch:assert test="../asi:fieldentry = 'No' or ../asi:fieldentry = 'Yes'">
+                        [RULE 2e] Invalid fieldentry Item metadata for the fieldlabel='qmd_computerscored' with value: <sch:value-of select="../asi:fieldentry"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:itemmetadata/asi:qtimetadata">
+                    
+                    <sch:assert test="count(asi:qtimetadatafield/asi:fieldlabel[.='cc_profile']) > 0">
+                        [RULE 2f] The Item metadata field with fieldlabel='cc_profile' is missing.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:qtimetadatafield/asi:fieldlabel[.='cc_profile'])=0 or count(asi:qtimetadatafield/asi:fieldlabel[.='cc_profile'])=1">
+                        [RULE 2g] There are too many Item metadata fields with fieldlabel='cc_profile' i.e. count=<sch:value-of select="count(asi:qtimetadatafield/asi:fieldlabel[.='cc_profile'])"/>.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:qtimetadatafield/asi:fieldlabel[.='cc_weighting']) &lt; 2">
+                        [RULE 2h] There are too many Item metadata fields with fieldlabel='cc_weighting' i.e. count=<sch:value-of select="count(asi:qtimetadatafield/asi:fieldlabel[.='cc_weighting'])"/>.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_scoringpermitted']) &lt; 2">
+                        [RULE 2i] There are too many Item metadata fields with fieldlabel='qmd_scoringpermitted' i.e. count=<sch:value-of select="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_scoringpermitted'])"/>.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_computerscored']) &lt; 2">
+                        [RULE 2j] There are too many Item metadata fields with fieldlabel='qmd_computerscored' i.e. count=<sch:value-of select="count(asi:qtimetadatafield/asi:fieldlabel[.='qmd_computerscored'])"/>.
+                    </sch:assert>
+                    
+                </sch:rule>
+                
+            </sch:pattern>            
+<!-- **************************************************************************** -->
+            
+<!-- RULE 3: True/False Question Structure Fields Validation -->
+            <sch:pattern name="RULE SET 3">
+                <sch:title>RULE SET 3: Ensure that the structure of a True/False question is correct</sch:title>
+                
+                <sch:rule abstract="false" context="asi:fieldentry[.='cc.true_false.v0p1']">
+                    <sch:assert test="../../../../asi:presentation/asi:response_lid[@rcardinality='Single']">
+                        [RULE 3a] Incorrect cardinality attribute value for the T/F question: <sch:value-of select="../../../../asi:presentation/asi:response_lid/@rcardinality"/>
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_str) = 0">
+                        [RULE 3b] The invalid 'response_str' element has been used for a T/F question.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_lid/asi:render_fib) = 0">
+                        [RULE 3c] The invalid 'render_fib' element has been used for a T/F question.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_lid/asi:render_choice/asi:response_label) = 2">
+                        [RULE 3d] There are too many or too few response labels for the T/F question.
+                    </sch:assert>
+                    
+                    <sch:assert test="../../../../asi:presentation/asi:response_lid/@ident = ../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varequal/@respident">
+                        [RULE 3e] The T/F response processing Varequal respident attribute 
+                        (<sch:value-of select="../../../../asi:presentation/asi:response_lid/@ident"/>)
+                        value is not equal to the corresonding Response_lid ident 
+                        (<sch:value-of select="../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varequal/@respident"/>)
+                        attribute for the True/False question.                  
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varsubstring) = 0">
+                        [RULE 3f] There is an invalid use of the varsubstring element in a T/F question.
+                    </sch:assert>
+                    
+                </sch:rule>
+                
+            </sch:pattern>           
+<!-- **************************************************************************** -->
+
+<!-- RULE 4: Multiple Choice-Single Response Question Structure Fields Validation -->
+            <sch:pattern name="RULE SET 4">
+                <sch:title>RULE SET 4: Ensure that the structure of a MC-SR question is correct</sch:title>
+                
+                <sch:rule abstract="false" context="asi:fieldentry[.='cc.multiple_choice.v0p1']">
+                    <sch:assert test="../../../../asi:presentation/asi:response_lid[@rcardinality='Single']">
+                        [RULE 4a] Incorrect cardinality attribute value for the MC-SR question: <sch:value-of select="../../../../asi:presentation/asi:response_lid/@rcardinality"/>.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_str) = 0">
+                        [RULE 4b] The invalid 'response_str' element has been used for a MC-SR question.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_lid/asi:render_fib) = 0">
+                        [RULE 4c] The invalid 'render_fib' element has been used for a MC-SR question.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_lid/asi:render_choice/asi:response_label) > 2">
+                        [RULE 4d] There are too too few response labels for the MC-SR question.
+                    </sch:assert>
+                    
+                    <sch:assert test="../../../../asi:presentation/asi:response_lid/@ident = ../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varequal/@respident">
+                        [RULE 4e] The MC-SR response processing Varequal respident attribute 
+                        (<sch:value-of select="../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varequal/@respident"/>)                        
+                        value is not equal to the corresonding Response_lid ident 
+                        (<sch:value-of select="../../../../asi:presentation/asi:response_lid/@ident"/>)
+                        attribute for the Multiple Choice single response question.                  
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/descendant::asi:varsubstring) = 0">
+                        [RULE 4f] There is an invalid use of the varsubstring element in a MC-SR question.
+                    </sch:assert>
+                    
+                </sch:rule>
+                
+            </sch:pattern>
+<!-- **************************************************************************** -->
+
+<!-- RULE 5: Multiple Choice-Multiple Response Question Structure Fields Validation -->
+            <sch:pattern name="RULE SET 5">
+                <sch:title>RULE SET 5: Ensure that the structure of a MC-MR question is correct</sch:title>
+                
+                <sch:rule abstract="false" context="asi:fieldentry[.='cc.multiple_response.v0p1']">
+                    
+                    <sch:assert test="../../../../asi:presentation/asi:response_lid[@rcardinality='Multiple']">
+                        [RULE 5a] Incorrect cardinality attribute value for the MC-MR question: <sch:value-of select="../../../../asi:presentation/asi:response_lid/@rcardinality"/>.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_str) = 0">
+                        [RULE 5b] The invalid 'response_str' element has been used for a MC-MR question.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_lid/asi:render_fib) = 0">
+                        [RULE 5c] The invalid 'render_fib' element has been used for a MC-MR question.
+                    </sch:assert>
+                                       
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_lid/asi:render_choice/asi:response_label) > 1">
+                        [RULE 5d] There are too too few response labels for the MC-MR question.
+                    </sch:assert>
+                    
+                    <sch:assert test="../../../../asi:presentation/asi:response_lid/@ident = ../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varequal/@respident or ../../../../asi:presentation/asi:response_lid/@ident = ../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:and/asi:varequal/@respident">
+                        [RULE 5e] The MC-MR response processing Varequal respident attribute 
+                        (<sch:value-of select="../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varequal/@respident"/>)
+                        value is not equal to the corresonding Response_lid ident 
+                        (<sch:value-of select="../../../../asi:presentation/asi:response_lid/@ident"/>)
+                        attribute for the Multiple Choice multiple response question.                  
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varsubstring) = 0">
+                        [RULE 5f] There is an invalid use of the varsubstring element in a MC-MR question.
+                    </sch:assert>
+                    
+                </sch:rule>
+                
+            </sch:pattern>            
+<!-- **************************************************************************** -->
+            
+<!-- RULE 6: Fill-in-Blank Question Structure Fields Validation -->
+            <sch:pattern name="RULE SET 6">
+                <sch:title>RULE SET 6: Ensure that the structure of a FIB question is correct</sch:title>
+                
+                <sch:rule abstract="false" context="asi:fieldentry[.='cc.fib.v0p1']">
+                    
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_lid) = 0">
+                        [RULE 6a] The invalid 'response_lid' element has been used for a FIB question.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_str/asi:render_choice) = 0">
+                        [RULE 6b] The invalid 'render_choice' element has been used for a FIB question.
+                    </sch:assert>
+                    
+                    <sch:assert test="../../../../asi:presentation/asi:response_str/@ident = ../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varequal/@respident">
+                        [RULE 6c] The FIB response processing Varequal respident attribute 
+                        (<sch:value-of select="../../../../asi:presentation/asi:response_str/@ident"/>)
+                        value is not equal to the corresonding Response_str ident 
+                        (<sch:value-of select="../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varequal/@respident"/>)
+                        attribute for the FIB question.                  
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varsubstring) = 0">
+                        [RULE 6d] There is an invalid use of the 'varsubstring' element in the FIB question.
+                    </sch:assert>
+                    
+                </sch:rule>
+                
+            </sch:pattern>            
+<!-- **************************************************************************** -->
+            
+<!-- RULE 7: Pattern Match Question Structure Fields Validation -->
+            <sch:pattern name="RULE SET 7">
+                <sch:title>RULE SET 7: Ensure that the structure of a Pattern Match question is correct</sch:title>
+                
+                <sch:rule abstract="false" context="asi:fieldentry[.='cc.pattern_match.v0p1']">
+                    
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_lid) = 0">
+                        [RULE 7a] The invalid 'response_lid' element has been used for a Pattern Match question.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_str/asi:render_choice) = 0">
+                        [RULE 7b] The invalid 'render_choice' element has been used for a Pattern Match question.
+                    </sch:assert>
+                    
+                    <sch:assert test="../../../../asi:presentation/asi:response_str/@ident = ../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varequal/@respident">
+                        [RULE 7c] The FIB response processing Varequal respident attribute 
+                        (<sch:value-of select="../../../../asi:presentation/asi:response_str/@ident"/>)
+                        value is not equal to the corresonding Response_str ident 
+                        (<sch:value-of select="../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varequal/@respident"/>)
+                        attribute for the Pattern Match question.                  
+                    </sch:assert>
+                    
+                </sch:rule>
+                
+            </sch:pattern>            
+<!-- **************************************************************************** -->
+            
+<!-- RULE 8: Essay Question Structure Fields Validation -->
+            <sch:pattern name="RULE SET 8">
+                <sch:title>RULE SET 8: Ensure that the structure of a Essay question is correct</sch:title>
+                
+                <sch:rule abstract="false" context="asi:fieldentry[.='cc.essay.v0p1']">
+                    
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_lid) = 0">
+                        [RULE 8a] The invalid 'response_lid' element has been used for an Essay question.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:presentation/asi:response_str/asi:render_choice) = 0">
+                        [RULE 8b] The invalid 'render_choice' element has been used for an Essay question.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/descendant::asi:varequal) = 0">
+                        [RULE 8c] There is an invalid use of the 'varequal' element in an Essay question.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varsubstring) = 0">
+                        [RULE 8d] There is an invalid use of the 'varsubstring' element in an Essay question.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(../../../../asi:itemfeedback/asi:solution) &lt; 2">
+                        [RULE 8e] Too many Solution feedback structures are supplied.
+                    </sch:assert>
+                    
+                    <sch:assert test="../../../asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel='qmd_computerscored' and ../../../asi:qtimetadata/asi:qtimetadatafield/asi:fieldentry = 'No'">
+                        [RULE 8f] Invalid fieldentry Item metadata for an Essay question with the fieldlabel='qmd_computerscored' with value: <sch:value-of select="../../../asi:qtimetadata/asi:qtimetadatafield/asi:fieldlabel[.='qmd_computerscored']/../asi:fieldentry"/>.
+                    </sch:assert>
+                    
+                </sch:rule>
+                
+            </sch:pattern>            
+<!-- **************************************************************************** -->
+            
+<!-- RULE 9: General Response Processing/Response-Label structure validation -->
+<!--
+            <sch:pattern name="RULE SET 9">
+                <sch:title>RULE SET 9: Ensure that the response processing operates on valid response labels</sch:title>
+                
+                <sch:rule abstract="false" context="asi:item">
+                    
+                    <sch:let name="ResponseLidIdent" value="asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varequal/@respident"/>
+                    <sch:let name="VarEqualValue" value="asi:resprocessing/asi:respcondition/asi:conditionvar/asi:varequal[@respident=$ResponseLidIdent]"/>
+                    <sch:assert test="count(asi:presentation/asi:response_lid[@ident = $ResponseLidIdent]/asi:render_choice/asi:response_label[@ident=$VarEqualValue]) = count(asi:presentation/asi:response_lid[@ident = $ResponseLidIdent]/asi:render_choice/asi:response_label)">
+                        [RULE 9a] At least <sch:value-of select="count(asi:presentation/asi:response_lid[@ident = $ResponseLidIdent]/asi:render_choice/asi:response_label)-count(asi:presentation/asi:response_lid[@ident = $ResponseLidIdent]/asi:render_choice/asi:response_label[@ident=$VarEqualValue])"/> of the varequal response label values (<sch:value-of select="$VarEqualValue"/>) is/are invalid in a T/F or MC question.
+                    </sch:assert>
+                    
+                </sch:rule>
+                
+            </sch:pattern>
+-->            
+<!-- **************************************************************************** -->
+            
+<!-- RULE 10: Hint structure validation -->
+            <sch:pattern name="RULE SET 10">
+                <sch:title>RULE SET 10: Ensure that the structure of a Hint in an Item is correct</sch:title>
+                
+                <sch:rule abstract="false" context="asi:item">
+                    
+                    <sch:assert test="count(asi:resprocessing/asi:respcondition/asi:displayfeedback[@feedbacktype='Solution' and @linkrefid='hint']) = 0">
+                        [RULE 10a] The displayfeedback@feedbacktype='Solution' has been used to identify a Hint.
+                    </sch:assert>
+                                       
+                    <sch:assert test="count(asi:itemfeedback[@ident='hint']/asi:solution)=0">
+                        [RULE 10b] The itemfeedback@ident='hint' has been used to identify a Solution.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:itemfeedback[@ident='hint']/asi:flow_mat)=0">
+                        [RULE 10c] The itemfeedback@ident='hint' has been used to identify Response feedback.
+                    </sch:assert>
+                    
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:item/asi:resprocessing/asi:respcondition/asi:displayfeedback[@feedbacktype='Hint']">
+                    <sch:assert test="count(../../../asi:itemfeedback[@ident='hint']) = 1">
+                        [RULE 10d] A displayfeedback[@feedbacktype='Hint'] trigger has no accompanying hint feedback.
+                    </sch:assert>
+                </sch:rule>
+                
+            </sch:pattern>            
+<!-- **************************************************************************** -->
+            
+<!-- RULE 11: Solution structure validation (in this Rule any type of Item is permitted support for solutions) -->
+            <sch:pattern name="RULE SET 11">
+                <sch:title>RULE SET 11: Ensure that the structure of a Solution in an Item is correct</sch:title>
+                
+                <sch:rule abstract="false" context="asi:item">
+                    
+                    <sch:assert test="count(asi:resprocessing/asi:respcondition/asi:displayfeedback[@feedbacktype='Hint' and @linkrefid='solution']) = 0">
+                        [RULE 11a] The displayfeedback@feedbacktype='Hint' has been used to identify a Solution.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:itemfeedback[@ident='solution']/asi:hint) = 0">
+                        [RULE 11b] The itemfeedback@ident='solution' has been used to identify a Hint.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:itemfeedback[@ident='solution']/asi:flow_mat) = 0">
+                        [RULE 11c] The itemfeedback@ident='solution' has been used to identify Response feedback.
+                    </sch:assert>
+                    
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:item/asi:resprocessing/asi:respcondition/asi:displayfeedback[@feedbacktype='Solution']">
+                    <sch:assert test="count(../../../asi:itemfeedback[@ident='solution']) = 1">
+                        [RULE 11d] A displayfeedback[@feedbacktype='Solution'] trigger has no accompanying solution feedback.
+                    </sch:assert>
+                </sch:rule>
+                
+            </sch:pattern>            
+<!-- **************************************************************************** -->
+            
+<!-- RULE 12: General Response Processing Feedback structure validation -->
+            <sch:pattern name="RULE SET 12">
+                <sch:title>RULE SET 12: Ensure that the structure of the response processing feedback structure in an Item is correct</sch:title>
+                
+                <sch:rule abstract="false" context="asi:item">
+                    
+                    <sch:assert test="count(asi:resprocessing/asi:respcondition/asi:displayfeedback[@feedbacktype='Response' and @linkrefid='solution']) = 0">
+                        [RULE 12a] The displayfeedback@feedbacktype='Response' has been used to identify a Solution.
+                    </sch:assert>
+                    
+                    <sch:assert test="count(asi:resprocessing/asi:respcondition/asi:displayfeedback[@feedbacktype='Response' and @linkrefid='hint']) = 0">
+                        [RULE 12b] The displayfeedback@feedbacktype='Response' has been used to identify a Hint.
+                    </sch:assert>
+                    
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:item/asi:resprocessing/asi:respcondition/asi:displayfeedback[@feedbacktype='Response']">
+                    <sch:assert test="../../../asi:itemfeedback/@ident = @linkrefid">
+                        [RULE 12c] For the given displayfeedback identifier (<sch:value-of select="@linkrefid"/>) there is no itemfeedback with the correct identifier (<sch:value-of select="../../../asi:itemfeedback/@ident"/>).
+                    </sch:assert>                   
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="asi:item/asi:itemfeedback/asi:flow_mat">
+                    <sch:assert test="../@ident = ../../asi:resprocessing/asi:respcondition/asi:displayfeedback[@feedbacktype='Response']/@linkrefid">
+                        [RULE 12d] For the given response processing itemfeedback identifier (<sch:value-of select="../@ident"/>) there is no displayfeedback trigger with the correct identifier (<sch:value-of select="../../asi:resprocessing/asi:respcondition/asi:displayfeedback[@feedbacktype='Response']/@linkrefid"/>).
+                    </sch:assert>                   
+                </sch:rule>
+                
+            </sch:pattern>            
+<!-- **************************************************************************** -->
+            
+<!-- RULE 13: The generic features of an Item must be correct -->
+            <sch:pattern name="RULE SET 13">
+                <sch:title>RULE SET 13: Ensure that the generic features of an Item are correct</sch:title>
+                
+                <sch:rule abstract="false" context="asi:item">
+                    
+                    <sch:assert test="not(@ident=preceding-sibling::asi:item/@ident)">
+                        [RULE 13a] There are Items that have common identifiers: <sch:value-of select="@ident"/>.
+                    </sch:assert>
+                    
+                </sch:rule>
+                
+            </sch:pattern>            
+<!-- **************************************************************************** -->
+            
+        </xs:appinfo>
+    </xs:annotation>
+
+    <!-- Generate Global Attributes *********************************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate Namespaced extension Group  ************************************************************* -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate Special DataTypes  ********************************************************************** -->
+
+    <xs:complexType name="EmptyPrimitiveTypeType">
+        <xs:complexContent>
+            <xs:restriction base="xs:anyType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the enumerated simpleType declarations ************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the simpleType elements based IMS data-types  ******************************************* -->
+
+    <xs:element name="matbreak" type="EmptyPrimitiveTypeType"/>
+
+    <xs:element name="other" type="EmptyPrimitiveTypeType"/>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the derived data-type elements based upon simpleType ************************************ -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the derived data-type elements based upon derived simpleType **************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the data-type ComplexTypes ************************************************************** -->
+
+    <xs:complexType name="questestinteropType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                The root structure can consist of either:
+                
+                * A single object bank;
+                * An assessment;
+                * A set of item(s);
+                * A set of section(s);
+                * Any combination of items and sections.
+                
+                As the root this is mandatory and can 
+                occur once.
+                
+                Common Cartridge Profile
+                
+                A Commn Cartridge is allowed to contain 
+                only an objectbank or an assessement. 
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "1" maxOccurs = "1">
+                <xs:element name="objectbank" type="objectbankType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="assessment" type="assessmentType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="assessmentType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                QTI General
+                
+                An Assessment object is the logical construction of the test.  An Assessment must 
+                contain at least one Section which in turn will contain Items and/or Sections.  An 
+                Assessment must eventually be constructed from a set of Items i.e. questions
+                that are to be offered in the test.  An Assessment object contains all of the information 
+                to make the use of individual Items meaningful i.e. apart from the Sections the object 
+                includes the relationships between the Sections, the group evaluation processing and 
+                the corresponding feedback.
+                
+                Common Cartridge Profile
+                
+                The Assessment must consist of only one Section.  The only other permitted attributes 
+                are the mandatory identifier and title.  Optional language, metadata, rubric and 
+                presentation_material is also supported.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="qtimetadata" type="qtimetadataType" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="rubric" type="rubricType" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="presentation_material" type="presentation_materialType" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="section" type="sectionType" minOccurs = "1" maxOccurs = "1"/>
+        </xs:sequence>
+        <xs:attribute name="ident" use="required" type="xs:string"/>
+        <xs:attribute name="title" use="required" type="xs:string"/>
+        <xs:attribute ref="xml:lang" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="objectbankType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                QTI General
+                
+                An object bank is an unordered set of items and sections.  It is recommended
+                that there is a metadata description for the object bank as a whole.  The object 
+                bank should have a globally unique identifier.
+                
+                Common Cartridge Profile
+                
+                In the Common Cartridge the object-bank can only contain Items.  Meta-data 
+                support is available but the profile has no mandated entries.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="qtimetadata" type="qtimetadataType" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="item" type="itemType" minOccurs = "1" maxOccurs = "unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="ident" use="required" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="sectionType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                QTI General
+                
+                A Section is the core grouping concept within QTI.  A Section consists of one or more Items or Sections (or
+                references to Items and Sections).  In general, the objects contained within a Secton will have some relationship 
+                either in terms of content or content delivery.  The Section data structure is used to define arbitrarily complex 
+                hierarchical section and item data structures.  It may contain meta-data, objectives, rubric control switches, 
+                assessment-level processing, feedback and selection and sequencing information for sections and items.
+                
+                Common Cartridge Profile
+                
+                In Common Cartridge the Section can only contain a list of Items.  No metadata is permitted.  The identifier is 
+                mandatory but the title and language are optional.
+                
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="item" type="itemType" minOccurs = "1" maxOccurs = "unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="ident" use="required" type="xs:string"/>
+        <xs:attribute name="title" use="optional" type="xs:string"/>
+        <xs:attribute ref="xml:lang" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="itemType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                An Item the smallest exchangeable object within QTI-XML.  An Item is more than a 
+                ‘Question’ in that it contains the ‘Question’, the presentation/rendering instructions, 
+                the response processing to be applied to the participant’s response(s), the feedback 
+                that may be presented (including hints and solutions) and the meta-data describing 
+                the Item.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="itemmetadata" type="itemmetadataType" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="presentation" type="presentationType" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="resprocessing" type="resprocessingType" minOccurs = "0" maxOccurs = "unbounded"/>
+            <xs:element name="itemfeedback" type="itemfeedbackType" minOccurs = "0" maxOccurs = "unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="ident" use="required" type="xs:string"/>
+        <xs:attribute name="title" use="optional" type="xs:string"/>
+        <xs:attribute ref="xml:lang" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="itemmetadataType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                Contains all of the QTI-specific metada-data 
+                to be applied to the Item.  This meta-data can 
+                consist of either entries defined using an 
+                external vocabulary or the individually named 
+                entries.  Usage of the contained attributes are 
+                deprecated apart from the 'qtimetadata' attribute.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="qtimetadata" type="qtimetadataType" minOccurs = "1" maxOccurs = "unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="presentationType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                Contains all of the instructions for the presentation of the question 
+                during an evaluation.  This information includes the actual material 
+                to be presented.  The labels for the possible responses are also
+                 identified and these are used by the response processing element 
+                defined elsewhere in the Item.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "1" maxOccurs = "1">
+                <xs:element name="flow" type="flowType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:choice minOccurs = "1" maxOccurs = "unbounded">
+                    <xs:element name="material" type="materialType" minOccurs = "1" maxOccurs = "1"/>
+                    <xs:element name="response_lid" type="response_lidType" minOccurs = "1" maxOccurs = "1"/>
+                    <xs:element name="response_str" type="response_strType" minOccurs = "1" maxOccurs = "1"/>
+                </xs:choice>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="label" use="optional" type="xs:string"/>
+        <xs:attribute ref="xml:lang" use="optional"/>
+        <xs:attribute name="x0" use="optional" type="xs:string"/>
+        <xs:attribute name="y0" use="optional" type="xs:string"/>
+        <xs:attribute name="width" use="optional" type="xs:string"/>
+        <xs:attribute name="height" use="optional" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="resprocessingType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This contains all of the instructions for the response 
+                processing.  This includes the scoring variables to contain 
+                the associated scores and the set of response condition 
+                tests that are to be applied to the received user response.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="outcomes" type="outcomesType" minOccurs = "1" maxOccurs = "1"/>
+            <xs:choice minOccurs = "1" maxOccurs = "unbounded">
+                <xs:element name="respcondition" type="respconditionType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="outcomesType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                Contains all of the variable declarations that are to be 
+                made available to the scoring algorithm.  Each variable 
+                is declared using the 'decvar' structure apart from the 
+                default variable called ‘SCORE’ that is an integer and 
+                has a default value of zero (0).
+                
+                Common Cartridge Profile
+                
+                A single variable is permitted.  This is "SCORE".
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="decvar" type="decvarType" minOccurs = "1" maxOccurs = "1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="itemfeedbackType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                The container for the feedback that is to be presented as a result of the 
+                user’s responses.  The feedback can include hints and solutions and 
+                both of these can be revealed in a variety of different ways.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "1" maxOccurs = "unbounded">
+                <xs:choice minOccurs = "1" maxOccurs = "1">
+                    <xs:element name="flow_mat" type="flow_matType" minOccurs = "1" maxOccurs = "1"/>
+                    <xs:element name="material" type="materialType" minOccurs = "1" maxOccurs = "1"/>
+                </xs:choice>
+                <xs:element name="solution" type="solutionType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="hint" type="hintType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="ident" use="required" type="xs:string"/>
+        <xs:attribute name="title" use="optional" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="respconditionType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                Contains the actual test to be applied to the user responses 
+                to determine their correctness or otherwise.  Each 'respcondition' 
+                contains an actual test, the assignment of a value to the associate 
+                scoring variables and the identification of the feedback to be 
+                associated with the test.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="conditionvar" type="conditionvarType" minOccurs = "1" maxOccurs = "1"/>
+            <xs:element name="setvar" type="setvarType" minOccurs = "0" maxOccurs = "unbounded"/>
+            <xs:element name="displayfeedback" type="displayfeedbackType" minOccurs = "0" maxOccurs = "unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="title" use="optional" type="xs:string"/>
+        <xs:attribute name="continue" use="optional" default="No">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Yes"/>
+                    <xs:enumeration value="No"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="presentation_materialType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This is the information that is to be presented to set the context for the 
+                contained objects.  This can be used to contain question-based material 
+                that is common to all of the child objects.  This is used in Assessment and 
+                Section objects. 
+            </xs:documentation>
+            <xs:documentation source="umlcommentbox">
+                This is the information that is used to describe the solution. 
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="flow_mat" type="flow_matType" minOccurs = "1" maxOccurs = "unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="flow_matType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This allows the materials to be displayed to the users to be grouped together 
+                using flows.  The manner in which these flows are handled is dependent upon 
+                the display-engine.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "1" maxOccurs = "unbounded">
+                <xs:element name="flow_mat" type="flow_matType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="material" type="materialType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="material_ref" type="material_refType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="class" use="optional" default="Block" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="materialType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This is the container for any content that is to be displayed by the question-engine. 
+                The supported content types are text (emphasised or not), images, audio, video, 
+                application and applet.  The content can be internally referenced to avoid the need 
+                for duplicate copies.  Alternative information can be defined – this is used if the 
+                primary content cannot be displayed.
+                
+                Common Cartridge Profile
+                
+                Only the 'mattext', 'matref' and 'matbreak' types are permitted.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "1" maxOccurs = "unbounded">
+                <xs:element name="mattext" type="mattextType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="matref" type="matrefType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element ref="matbreak" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+            <xs:element name="altmaterial" type="altmaterialType" minOccurs = "0" maxOccurs = "unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="label" use="optional" type="xs:string"/>
+        <xs:attribute ref="xml:lang" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="altmaterialType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This is the container for alternative content.  This content is to be 
+                displayed if, for whatever reason, the primary content cannot be 
+                rendered.  Alternative language implementations of the host 'material' 
+                element are also supported using this structure.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "1" maxOccurs = "unbounded">
+                <xs:element name="mattext" type="mattextType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="matref" type="matrefType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element ref="matbreak" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute ref="xml:lang" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="flowType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This is the container for all of the instructions for the presentation with flow 
+                blocking of the question during a test.  This information includes the actual 
+                material to be presented.  The labels for the possible responses are also 
+                identified and these are used by the response processing element defined 
+                elsewhere in the Item.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "1" maxOccurs = "unbounded">
+                <xs:element name="flow" type="flowType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="material" type="materialType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="material_ref" type="material_refType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="response_lid" type="response_lidType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="response_str" type="response_strType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="class" use="optional" default="Block" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="render_choiceType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                Contains the instructions for the question-engine to render the question 
+                using a classical multiple choice format.  The number of possible responses 
+                is determined by the 'response_label' structures contained.  Both flowed and 
+                non-flowed formats are supported
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "0" maxOccurs = "unbounded">
+                <xs:element name="material" type="materialType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="material_ref" type="material_refType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="response_label" type="response_labelType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="flow_label" type="flow_labelType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="shuffle" use="optional" default="No">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Yes"/>
+                    <xs:enumeration value="No"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="minnumber" use="optional" type="xs:string"/>
+        <xs:attribute name="maxnumber" use="optional" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="render_fibType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                Contains the instructions for the question-engine to render the question 
+                using a classical fill-in blank format.  The number of possible responses 
+                is determined by the 'response_label' structures contained.  Both flowed 
+                and non-flowed formats are supported.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "0" maxOccurs = "unbounded">
+                <xs:element name="material" type="materialType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="material_ref" type="material_refType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="response_label" type="response_labelType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="flow_label" type="flow_labelType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="encoding" use="optional" default="utf-8" type="xs:string"/>
+        <xs:attribute name="charset" use="optional" default="ascii-us" type="xs:string"/>
+        <xs:attribute name="rows" use="optional" type="xs:string"/>
+        <xs:attribute name="columns" use="optional" type="xs:string"/>
+        <xs:attribute name="maxchars" use="optional" type="xs:string"/>
+        <xs:attribute name="minnumber" use="optional" type="xs:string"/>
+        <xs:attribute name="maxnumber" use="optional" type="xs:string"/>
+        <xs:attribute name="prompt" use="optional" default="Box">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Asterisk"/>
+                    <xs:enumeration value="Box"/>
+                    <xs:enumeration value="Dashline"/>
+                    <xs:enumeration value="Underline"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="fibtype" use="optional" default="String">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Decimal"/>
+                    <xs:enumeration value="Integer"/>
+                    <xs:enumeration value="Scientific"/>
+                    <xs:enumeration value="String"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="qtimetadataType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                QTI General
+                
+                The QTI-specific meta-data assigned to the parent object i.e.
+                Assessment, Section, Item or Object-bank.  This approach 
+                requires that the approriate external vocabulary is defined and
+                referenced in label/field tuple.
+                
+                Common Cartridge Profile
+                
+                The Vocabulary structure has been removed.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="qtimetadatafield" type="qtimetadatafieldType" minOccurs = "1" maxOccurs = "unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="qtimetadatafieldType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                The structure responsible for containing each of 
+                the QTI-specific meta-data fields.  The label should 
+                appear in the vocabulary.  If no vocabulary is used 
+                then external validation cannot take place.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="fieldlabel" type="xs:string" minOccurs = "1" maxOccurs = "1"/>
+            <xs:element name="fieldentry" type="xs:string" minOccurs = "1" maxOccurs = "1"/>
+        </xs:sequence>
+        <xs:attribute ref="xml:lang" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="rubricType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This is used to contain contextual information i.e. rubric that 
+                is important to the object e.g. it could contain standard data 
+                values that might or might not be useful for answering the 
+                question.
+                
+                Common Cartridge Profile
+                
+                This is used in assessments to provide instructions.  Only a 
+                single mattext is permitted in the material.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="material" type="materialType" minOccurs = "1" maxOccurs = "1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="response_labelType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This contains the possible response choices that are presented 
+                to the user.  This information includes the material to be shown 
+                to the user and the logical label that is associated with that 
+                response.  The label is used in the response processing.  Flow 
+                and non-flow approaches are supported.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "0" maxOccurs = "unbounded">
+                <xs:element name="material" type="materialType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="material_ref" type="material_refType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="flow_mat" type="flow_matType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="ident" use="required" type="xs:string"/>
+        <xs:attribute name="labelrefid" use="optional" type="xs:string"/>
+        <xs:attribute name="rshuffle" use="optional" default="Yes">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Yes"/>
+                    <xs:enumeration value="No"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="match_group" use="optional" type="xs:string"/>
+        <xs:attribute name="match_max" use="optional" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="flow_labelType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This is the blocking/paragraph equivalent to the 'response_label'
+                structure.  This structure shold always be used to encapsulate the
+                'response_label construct.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "1" maxOccurs = "unbounded">
+                <xs:element name="flow_label" type="flow_labelType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="response_label" type="response_labelType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="class" use="optional" default="Block" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="response_lidType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                QTI General
+                
+                This contains the instructions for the presentation of questions whose response will be either a 'response_lid' (logical identifier), 
+                'response_xy' (xy-co-ordinate), 'response_str' (a string), 'response_num' (a number) and 'response_grp' ( a group of logical
+                identifiers).  The question can be rendered in a variety of ways depending on the way in which the material is to be presented to the 
+                participant.
+                
+                Common Cartridge Profile
+                
+                Only the response_lid and response_str response types are supported with render_choice and render_fib rendering.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "0" maxOccurs = "1">
+                <xs:element name="material" type="materialType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="material_ref" type="material_refType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+            <xs:choice minOccurs = "1" maxOccurs = "1">
+                <xs:element name="render_choice" type="render_choiceType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="render_fib" type="render_fibType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+            <xs:choice minOccurs = "0" maxOccurs = "1">
+                <xs:element name="material" type="materialType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="material_ref" type="material_refType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="rcardinality" use="optional" default="Single">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Single"/>
+                    <xs:enumeration value="Multiple"/>
+                    <xs:enumeration value="Ordered"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="rtiming" use="optional" default="No">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Yes"/>
+                    <xs:enumeration value="No"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="ident" use="required" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="response_strType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                QTI General
+                
+                This contains the instructions for the presentation of questions whose response will be either a 'response_lid' (logical identifier), 
+                'response_xy' (xy-co-ordinate), 'response_str' (a string), 'response_num' (a number) and 'response_grp' ( a group of logical
+                identifiers).  The question can be rendered in a variety of ways depending on the way in which the material is to be presented to the 
+                participant.
+                
+                Common Cartridge Profile
+                
+                Only the response_lid and response_str response types are supported with render_choice and render_fib rendering.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "0" maxOccurs = "1">
+                <xs:element name="material" type="materialType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="material_ref" type="material_refType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+            <xs:choice minOccurs = "1" maxOccurs = "1">
+                <xs:element name="render_choice" type="render_choiceType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="render_fib" type="render_fibType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+            <xs:choice minOccurs = "0" maxOccurs = "1">
+                <xs:element name="material" type="materialType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="material_ref" type="material_refType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="rcardinality" use="optional" default="Single">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Single"/>
+                    <xs:enumeration value="Multiple"/>
+                    <xs:enumeration value="Ordered"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="rtiming" use="optional" default="No">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Yes"/>
+                    <xs:enumeration value="No"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="ident" use="required" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="solutionType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                QTI General
+                
+                Contains the solution(s) that are to be revealed to the participant.  When these solutions are revealed is outside the scope of the 
+                specification.  The information can be revealed in several manners.  The default mode is to show the 'Complete' solution.
+                
+                Common Cartridge Profile
+                
+                The material is presented in the form of flow_mat only.  The only form of feedback is 'Complete'.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="solutionmaterial" type="solutionmaterialType" minOccurs = "1" maxOccurs = "unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="feedbackstyle" use="optional" default="Complete">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Complete"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="hintType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                QTI General
+                
+                Contains the hints(s) that are to be revealed to the participant.  When these hints are revealed is outside the scope of the 
+                specification.  The information can be revealed in several manners.  The default mode is to show the 'Complete' hint.
+                
+                Common Cartridge Profile
+                
+                The material is presented in the form of flow_mat only.  The only form of feedback is 'Complete'.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="hintmaterial" type="hintmaterialType" minOccurs = "1" maxOccurs = "unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="feedbackstyle" use="optional" default="Complete">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Complete"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="conditionvarType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                QTI General
+                
+                The conditional test that is to be applied to the user’s response.  
+                A wide range of separate and combinatorial tests can be applied.
+                
+                Common Cartridge Profile
+                
+                The extension has been removed.  All of the conditions operating 
+                on duration have been removed.  The only permited conditions are 
+                'varequal', 'varsubstring', 'and', 'other'.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "1" maxOccurs = "unbounded">
+                <xs:element name="and" type="andType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element ref="other" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="varequal" type="varequalType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="varsubstring" type="varsubstringType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="solutionmaterialType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This is the information that is used to describe the solution. 
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+            <xs:element name="flow_mat" type="flow_matType" minOccurs = "1" maxOccurs = "unbounded"/>
+            <xs:element name="material" type="materialType" minOccurs = "1" maxOccurs = "unbounded"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="hintmaterialType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This is the information that is presented as a hint.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+            <xs:element name="flow_mat" type="flow_matType" minOccurs = "1" maxOccurs = "unbounded"/>
+            <xs:element name="material" type="materialType" minOccurs = "1" maxOccurs = "unbounded"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="andType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                QTI General
+                
+                This defines the set of clauses that can be used within the 
+                logic statements of 'and', 'or' and 'not'.  These logic statements
+                enable the construction of complex conditional tests.
+                
+                Common Cartridge Profile
+                
+                The extension has been removed.  All of the conditions operating 
+                on duration have been removed.  The 'or' conditional has been removed 
+                and 'and' and 'not' have been considerably simplified.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "1" maxOccurs = "unbounded">
+                <xs:element name="not" type="notType" minOccurs = "1" maxOccurs = "1"/>
+                <xs:element name="varequal" type="varequalType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="notType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                QTI General
+                
+                This defines the set of clauses that can be used within the 
+                logic statements of 'and', 'or' and 'not'.  These logic statements
+                enable the construction of complex conditional tests.
+                
+                Common Cartridge Profile
+                
+                The extension has been removed.  All of the conditions operating 
+                on duration have been removed.  The 'or' conditional has been removed 
+                and 'and' and 'not' have been considerably simplified.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs = "1" maxOccurs = "unbounded">
+                <xs:element name="varequal" type="varequalType" minOccurs = "1" maxOccurs = "1"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="mattextType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This is the container of any text that is to be displayed to the users.
+                It is the base type for normal and emphasised text.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="texttype" use="optional" default="text/plain" type="xs:string"/>
+                <xs:attribute name="charset" use="optional" default="ascii-us" type="xs:string"/>
+                <xs:attribute name="label" use="optional" type="xs:string"/>
+                <xs:attribute name="uri" use="optional" type="xs:string"/>
+                <xs:attribute name="width" use="optional" type="xs:string"/>
+                <xs:attribute name="height" use="optional" type="xs:string"/>
+                <xs:attribute name="x0" use="optional" type="xs:string"/>
+                <xs:attribute name="y0" use="optional" type="xs:string"/>
+                <xs:attribute ref="xml:lang" use="optional"/>
+                <xs:attribute ref="xml:space" use="optional" default="default"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="material_refType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This is used to contain a reference to the required full material block.  This 
+                material will have had an identifier assigned to enable such a reference to 
+                be reconciled when the instance is parsed into the system.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="EmptyPrimitiveTypeType">
+                <xs:attribute name="linkrefid" use="required" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="matrefType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This is used to contain a reference to the required full material block.  This 
+                material will have had an identifier assigned to enable such a reference to 
+                be reconciled when the instance is parsed into the system.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="EmptyPrimitiveTypeType">
+                <xs:attribute name="linkrefid" use="required" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="decvarType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                QTI General
+                
+                This is used  for the declaration of the scoring variables.
+                The name of the variable that is to be declared.  The default 
+                name is ‘SCORE’.  All numeric variables have the associated
+                 ‘x.min’, ‘x.max’ and ‘x.normalised’ variables declared.
+                Several of the optional attributes depend upon the type of
+                variable that is declared.
+                
+                Common Cartridge Profile
+                
+                Only the variable types of decimal and integer are permitted.
+                Only a single "SCORE" variable is permitted.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="varname" use="required" fixed="SCORE" type="xs:string"/>
+                <xs:attribute name="vartype" use="optional" default="Integer">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="Decimal"/>
+                            <xs:enumeration value="Integer"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="minvalue" use="optional" type="xs:string"/>
+                <xs:attribute name="maxvalue" use="optional" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="setvarType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                QTI General
+                
+                This is responsible for changing the value of the scoring 
+                variable as a result of the associated response processing test.
+                The default action is to 'Set' the 'SCORE' variable to the value
+                given in the string.
+                
+                Common Cartridge Profile
+                
+                Only the actons Set, Add and Subtract are premitted.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="varname" use="optional" default="SCORE" type="xs:string"/>
+                <xs:attribute name="action" use="optional" default="Set">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="Set"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="varequalType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This is the test of equivalence.  The data for the test is 
+                contained as a string.  The accompanying attributes are
+                the identifier for the associated 'response_label', the 
+                ordinal 'index' of the response and whether or not the
+                value is case-sensitive when processing strings.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="respident" use="required" type="xs:string"/>
+                <xs:attribute name="case" use="optional" default="No">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="No"/>
+                            <xs:enumeration value="Yes"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="displayfeedbackType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This is used for assigning an associated feedback to the 
+                aggregated scoring if the ‘True’ state results.  Feedback
+                for hints, solutions and response processing are supported.
+                The feedback is identified using the pointer 'linkrefid'.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="feedbacktype" use="required">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="Response"/>
+                            <xs:enumeration value="Solution"/>
+                            <xs:enumeration value="Hint"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="linkrefid" use="required" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="varsubstringType">
+        <xs:annotation>
+            <xs:documentation source="umlcommentbox">
+                This is the test for a contained substring. 
+                The data for comparison is presented as a 
+                string.  The associated attributes are the 
+                response label identifier, the ordinal index of 
+                the response and whether or not the value is 
+                case-sensitive when processing the strings.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="respident" use="required" type="xs:string"/>
+                <xs:attribute name="case" use="optional" default="No">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="No"/>
+                            <xs:enumeration value="Yes"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the elements ********************************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the root element(s) *************************************************************** -->
+
+    <xs:element name="questestinterop" type="questestinteropType"/>
+
+    <!-- ================================================================================================== -->
+
+</xs:schema>

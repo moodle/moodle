@@ -1,0 +1,10 @@
+{
+  "moodle-qtype_ddwtos-dd": {
+    "requires": [
+        "node",
+        "dd",
+        "dd-drop",
+        "dd-constrain"
+    ]
+  }
+}

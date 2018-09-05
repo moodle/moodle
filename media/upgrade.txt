@@ -1,0 +1,6 @@
+This files describes API changes in /media/ plugins,
+information provided here is intended especially for developers.
+
+=== 3.3 ===
+* core_media_manager setup() is now deprecated as it is now called when initialising core_media_manager::instance().
+* core_media_manager is now final. Do not extend core_media_manager, instead create a media plugin.

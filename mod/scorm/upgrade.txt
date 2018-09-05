@@ -1,0 +1,28 @@
+This files describes API changes in the mod_scorm code.
+
+=== 3.5 ===
+* In get_scorms_by_courses() external/ws function, the force new attempt setting is no longer a boolean - now accepts 3 values:
+  No (0), On complete (1) and the new Always (2). See MDL-32585 for more details.
+
+=== 3.3.2 ===
+
+* scorm_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
+  now optionally takes the module instance object or ID, and the course module object or ID. Please try to send the full
+  objects instead of the ids to save DB calls.
+
+=== 3.1 ===
+* Group and groupings support has now been enabled.
+
+=== 3.0 ===
+
+* External function mod_scorm_external::get_scorms_by_courses returned parameter "name" has been changed to PARAM_RAW,
+  this is because the new external_format_string function may return raw data if the global moodlewssettingraw parameter is used.
+* Function scorm_view_display was renamed to scorm_print_launch to avoid
+  confussion with new function scorm_view.
+
+=== 2.8 ===
+
+* Coding style fixes. A large number of coding style issues were fixed in MDL-45887. This means any local modifications
+ to mod_scorm are likely to conflict.
+
+* All scorm report plugins should use namespaced classnames now. Refer MDL-46469 for details.

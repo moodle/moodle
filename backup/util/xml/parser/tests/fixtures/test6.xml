@@ -1,0 +1,60 @@
+<test>
+  <MOODLE_BACKUP>
+    <COURSE>
+      <FORMATDATA>
+        <WEEKS>
+          <WEEK>
+            <SECTION>1</SECTION>
+            <HIDENUMBER>1</HIDENUMBER>
+            <HIDEDATE>0</HIDEDATE>
+            <SHOWTO></SHOWTO>
+            <OFFLINEMATERIAL>0</OFFLINEMATERIAL>
+          </WEEK>
+          <WEEK>
+            <SECTION>2</SECTION>
+            <HIDENUMBER>0</HIDENUMBER>
+            <HIDEDATE>0</HIDEDATE>
+            <RESETNUMBER>0</RESETNUMBER>
+            <SHOWTO></SHOWTO>
+            <OFFLINEMATERIAL>0</OFFLINEMATERIAL>
+          </WEEK>
+        </WEEKS>
+        <IMPORTED>
+        </IMPORTED>
+      </FORMATDATA>
+      <GROUPEDNOTOBSERVED>
+        <NOBODYOBSERVERSTHIS>
+          <NOTOBSERVED>Muhehe</NOTOBSERVED>
+        </NOBODYOBSERVERSTHIS>
+      </GROUPEDNOTOBSERVED>
+      <EMPTYGROUPED>
+      </EMPTYGROUPED>
+      <SECONDGROUPED>
+        <SUBS>
+          <SUB>
+            <PROP>Unit tests rock!</PROP>
+          </SUB>
+        </SUBS>
+      </SECONDGROUPED>
+    </COURSE>
+  </MOODLE_BACKUP>
+  <moodle2>
+    <grouped id="this is not parsed at the moment because there are no final elements">
+      <subs>
+        <sub id="34">
+          <prop>Oh yeah</prop>
+        </sub>
+      </subs>
+    </grouped>
+    <groupednonemptywithattr id="78">
+      <prop>Go baby go</prop>
+      <subs>
+        <sub id="89">
+          <prop>http://moodle.org</prop>
+        </sub>
+      </subs>
+    </groupednonemptywithattr>
+    <groupedemptywithattr attr="ay?">
+    </groupedemptywithattr>
+  </moodle2>
+</test>

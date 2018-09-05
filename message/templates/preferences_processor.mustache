@@ -1,0 +1,64 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/preferences_processor
+
+    The message processor configuration block for the preferences page
+
+    Classes required for JS:
+    * None
+
+    Data attibutes required for JS:
+    * None
+
+    Context variables required for this template:
+    * userid The logged in user id
+    * displayname The display name for the processor form
+    * name The name of the processor
+    * formhtml The form HTML
+
+    Example context (json):
+    {
+        "userid": 1,
+        "displayname": "Email",
+        "name": "email",
+        "formhtml": "<input name='test' type='text' />"
+    }
+}}
+<h4>{{displayname}}</h4>
+<div class="processor-container"
+    data-user-id="{{userid}}"
+    data-processor-name="{{name}}"
+    data-processor-id="{{uniqid}}">
+
+    <div class="loading-container">
+        <div class="vertical-align"></div>
+        {{> core/loading }}
+    </div>
+    <form>
+        {{{formhtml}}}
+        <div class="form-actions m-t-1">
+            <button type="submit" class="btn btn-primary">{{#str}} savechanges {{/str}}</button>
+            <button type="button" class="btn" data-cancel-button>{{#str}} cancel {{/str}}</button>
+        </div>
+    </form>
+</div>
+{{#js}}
+require(['jquery', 'core_message/preferences_processor_form'], function($, ProcessorForm) {
+    new ProcessorForm($('[data-processor-id="{{uniqid}}"]'));
+});
+{{/js}}

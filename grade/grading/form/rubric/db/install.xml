@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="grade/grading/form/rubric/db" VERSION="20120122" COMMENT="XMLDB file for Moodle rubrics"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="gradingform_rubric_criteria" COMMENT="Stores the rows of the rubric grid.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="definitionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the form definition this criterion is part of"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Defines the order of the criterion in the rubric"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The criterion description"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="The format of the description field"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_definitionid" TYPE="foreign" FIELDS="definitionid" REFTABLE="grading_definitions" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="gradingform_rubric_levels" COMMENT="Stores the columns of the rubric grid.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="criterionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The rubric criterion we are level of"/>
+        <FIELD NAME="score" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="5" COMMENT="The score for this level"/>
+        <FIELD NAME="definition" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The optional text describing the level"/>
+        <FIELD NAME="definitionformat" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The format of the definition field"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_criterionid" TYPE="foreign" FIELDS="criterionid" REFTABLE="gradingform_rubric_criteria" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="gradingform_rubric_fillings" COMMENT="Stores the data of how the rubric is filled by a particular rater">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the grading form instance"/>
+        <FIELD NAME="criterionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the criterion (row) in the rubric"/>
+        <FIELD NAME="levelid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="If a particular level was selected during the assessment, its ID is stored here"/>
+        <FIELD NAME="remark" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Side note feedback regarding this particular criterion"/>
+        <FIELD NAME="remarkformat" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="The format of the remark field"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_instanceid" TYPE="foreign" FIELDS="instanceid" REFTABLE="grading_instances" REFFIELDS="id"/>
+        <KEY NAME="fk_criterionid" TYPE="foreign" FIELDS="criterionid" REFTABLE="gradingform_rubric_criteria" REFFIELDS="id"/>
+        <KEY NAME="uq_instance_criterion" TYPE="unique" FIELDS="instanceid, criterionid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_levelid" UNIQUE="false" FIELDS="levelid" COMMENT="levelid acts as a foreign key but null values are allowed"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

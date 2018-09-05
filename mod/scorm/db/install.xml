@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/scorm/db" VERSION="20180315" COMMENT="XMLDB file for Moodle mod/scorm"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="scorm" COMMENT="each table is one SCORM module and its configuration">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="scormtype" TYPE="char" LENGTH="50" NOTNULL="true" DEFAULT="local" SEQUENCE="false" COMMENT="local, external or repository"/>
+        <FIELD NAME="reference" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="version" TYPE="char" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="maxgrade" TYPE="float" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="grademethod" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="whatgrade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="maxattempt" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="forcecompleted" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="forcenewattempt" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lastattemptlock" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="masteryoverride" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="displayattemptstatus" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="displaycoursestructure" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="updatefreq" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Define when the package must be automatically update"/>
+        <FIELD NAME="sha1hash" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="package content or ext path hash"/>
+        <FIELD NAME="md5hash" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="MD5 Hash of package file"/>
+        <FIELD NAME="revision" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="revison number"/>
+        <FIELD NAME="launch" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="skipview" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="hidebrowse" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="hidetoc" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="nav" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="navpositionleft" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="-100" SEQUENCE="false"/>
+        <FIELD NAME="navpositiontop" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="-100" SEQUENCE="false"/>
+        <FIELD NAME="auto" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="popup" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="options" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="width" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="100" SEQUENCE="false"/>
+        <FIELD NAME="height" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="600" SEQUENCE="false"/>
+        <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="completionstatusrequired" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="completionscorerequired" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="completionstatusallscos" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="displayactivityname" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="autocommit" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scorm_scoes" COMMENT="each SCO part of the SCORM module">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scorm" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="manifest" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="organization" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="parent" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="identifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="launch" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="scormtype" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="order of scoes"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="scorm" TYPE="foreign" FIELDS="scorm" REFTABLE="scorm" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="scorm_scoes_data" COMMENT="Contains variable data get from packages">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="scorm_scoes_data_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="scorm_scoes_track" COMMENT="to track SCOes">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="scormid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="element" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="scormid" TYPE="foreign" FIELDS="scormid" REFTABLE="scorm" REFFIELDS="id"/>
+        <KEY NAME="scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-scormid-scoid-attempt-element" UNIQUE="true" FIELDS="userid, scormid, scoid, attempt, element"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="element" UNIQUE="false" FIELDS="element"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scorm_seq_objective" COMMENT="SCORM2004 objective description">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="primaryobj" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="objectiveid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="satisfiedbymeasure" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="minnormalizedmeasure" TYPE="float" LENGTH="11" NOTNULL="true" DEFAULT="0.0000" SEQUENCE="false" DECIMALS="4"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="scorm_objective_uniq" TYPE="unique" FIELDS="scoid, id"/>
+        <KEY NAME="scorm_objective_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="scorm_seq_mapinfo" COMMENT="SCORM2004 objective mapinfo description">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="objectiveid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="targetobjectiveid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="readsatisfiedstatus" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="readnormalizedmeasure" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="writesatisfiedstatus" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="writenormalizedmeasure" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="scorm_mapinfo_uniq" TYPE="unique" FIELDS="scoid, id, objectiveid"/>
+        <KEY NAME="scorm_mapinfo_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco"/>
+        <KEY NAME="scorm_mapinfo_objectiveid" TYPE="foreign" FIELDS="objectiveid" REFTABLE="scorm_seq_objective" REFFIELDS="id" COMMENT="The relative objective"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="scorm_seq_ruleconds" COMMENT="SCORM2004 rule conditions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="conditioncombination" TYPE="char" LENGTH="3" NOTNULL="true" DEFAULT="all" SEQUENCE="false"/>
+        <FIELD NAME="ruletype" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="scorm_ruleconds_un" TYPE="unique" FIELDS="scoid, id"/>
+        <KEY NAME="scorm_ruleconds_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="scorm_seq_rulecond" COMMENT="SCORM2004 rule condition">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="ruleconditionsid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="refrencedobjective" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="measurethreshold" TYPE="float" LENGTH="11" NOTNULL="true" DEFAULT="0.0000" SEQUENCE="false" DECIMALS="4"/>
+        <FIELD NAME="operator" TYPE="char" LENGTH="5" NOTNULL="true" DEFAULT="noOp" SEQUENCE="false"/>
+        <FIELD NAME="cond" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="always" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="scorm_rulecond_uniq" TYPE="unique" FIELDS="id, scoid, ruleconditionsid"/>
+        <KEY NAME="scorm_rulecond_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco"/>
+        <KEY NAME="scorm_rulecond_ruleconditionsid" TYPE="foreign" FIELDS="ruleconditionsid" REFTABLE="scorm_seq_ruleconds" REFFIELDS="id" COMMENT="The relative rulecondition"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="scorm_seq_rolluprule" COMMENT="SCORM2004 sequencing rule">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="childactivityset" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="minimumcount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="minimumpercent" TYPE="float" LENGTH="11" NOTNULL="true" DEFAULT="0.0000" SEQUENCE="false" DECIMALS="4"/>
+        <FIELD NAME="conditioncombination" TYPE="char" LENGTH="3" NOTNULL="true" DEFAULT="all" SEQUENCE="false"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="scorm_rolluprule_uniq" TYPE="unique" FIELDS="scoid, id"/>
+        <KEY NAME="scorm_rolluprule_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="scorm_seq_rolluprulecond" COMMENT="SCORM2004 sequencing rule">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="rollupruleid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="operator" TYPE="char" LENGTH="5" NOTNULL="true" DEFAULT="noOp" SEQUENCE="false"/>
+        <FIELD NAME="cond" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="scorm_rulluprulecond_uniq" TYPE="unique" FIELDS="scoid, rollupruleid, id"/>
+        <KEY NAME="scorm_rolluprulecond_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco"/>
+        <KEY NAME="scorm_rolluprulecond_rolluprule" TYPE="foreign" FIELDS="rollupruleid" REFTABLE="scorm_seq_rolluprule" REFFIELDS="id" COMMENT="The relative rolluprule"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="scorm_aicc_session" COMMENT="Used by AICC HACP to store session information">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="id from user table"/>
+        <FIELD NAME="scormid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="id from scorm table"/>
+        <FIELD NAME="hacpsession" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="sessionid used to authenticate AICC HACP communication"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="id from scorm_scoes table"/>
+        <FIELD NAME="scormmode" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="scormstatus" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="lessonstatus" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="sessiontime" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="time this session was created"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="time this session was last used"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="scormid" TYPE="foreign" FIELDS="scormid" REFTABLE="scorm" REFFIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

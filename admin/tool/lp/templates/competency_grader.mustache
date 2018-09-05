@@ -1,0 +1,59 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_lp/competency_grader
+
+    Template for grading a competency.
+
+    Classes required for JS:
+      None
+
+    Data required for JS:
+    * ratings - list of value, name selected for valid ratings
+
+    Example context (json):
+    {
+        "ratings": [
+            {"name": "Bad", "value": 0, "selected": true},
+            {"name": "OK", "value": 1},
+            {"name": "Good", "value": 2}
+        ]
+    }
+}}
+<div class="competency-grader" data-region="competency-grader">
+    <form>
+        <div class="content">
+            <div data-region="rating">
+                <label for="rating_{{uniqid}}">{{#str}}rating, tool_lp{{/str}}</label>
+                <select name="rating" id="rating_{{uniqid}}" class="custom-select">
+                    {{#ratings}}
+                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                    {{/ratings}}
+                </select>
+            </div>
+            <div data-region="comment" class="m-t-1">
+                <label for="comment_{{uniqid}}">{{#str}}ratecomment, tool_lp{{/str}}</label>
+                <textarea name="comment" id="comment_{{uniqid}}" class="form-control m-b-1"></textarea>
+            </div>
+        </div>
+        <div data-region="footer" class="pull-xs-right">
+            <button data-action="rate" class="btn btn-primary">{{#str}}rate, tool_lp{{/str}}</button>
+            <button data-action="cancel" class="btn btn-secondary">{{#str}}cancel{{/str}}</button>
+        </div>
+        <div class="clearfix"></div>
+    </form>
+</div>

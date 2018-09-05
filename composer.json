@@ -1,0 +1,13 @@
+{
+    "name": "moodle/moodle",
+    "license": "GPL-3.0-or-later",
+    "description": "Moodle - the world's open source learning platform",
+    "type": "project",
+    "homepage": "https://moodle.org",
+    "require-dev": {
+        "phpunit/phpunit": "6.5.*",
+        "phpunit/dbUnit": "3.0.*",
+        "moodlehq/behat-extension": "3.35.1",
+        "mikey179/vfsStream": "^1.6"
+    }
+}

@@ -1,0 +1,20 @@
+This files describes API changes in the editor_atto code.
+
+=== 3.4 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-57432 for more info:
+    - atto_equation_update_librarygroup4_setting()
+
+=== 3.0 ===
+
+* Rangy updated to 1.3.0.
+  Rangy has deprecated the createCssClassApplier function in this version (it is now createClassApplier).
+
+=== 2.9 ===
+
+* When adding a shortcut to the button of a plugin, atto will add a layer of validation
+to ensure that only the required keys are pressed. However, if you are using a custom
+keyConfig object you must validate the shortcut yourself. This is particularly important
+for non-English keyboard users. For more information read the documentation of
+EditorPluginButtons::_addKeyboardListener() and MDL-47133.

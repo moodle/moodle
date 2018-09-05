@@ -1,0 +1,25 @@
+<table width="100%" cellpadding="5">
+    <tr>
+        <td class="c0"><label for="name"><?php echo get_string('fieldname', 'data'); ?></label></td>
+        <td class="c1"><input class="fieldname" type="text" name="name" id="name" value="<?php p($this->field->name); ?>" /></td>
+    </tr>
+    <tr>
+        <td class="c0"><label for="description"><?php echo get_string('fielddescription', 'data'); ?></label></td>
+        <td class="c1"><input class="fielddescription" type="text" name="description" id="description" value="<?php p($this->field->description);?>" /></td>
+    </tr>
+    <tr>
+        <td class="c0"><label for="required"><?php echo get_string('requiredfield', 'data'); ?></label></td>
+        <td class="c1"><input class="requiredfield" type="checkbox" name="required" id="required" <?php p($this->field->required ? "checked=\"checked\"" : ""); ?>/></td>
+    </tr>
+    <tr>
+        <td class="c0"><label for="param3">
+            <?php echo get_string('maxsize', 'data'); ?></label></td>
+        <td class="c1">
+            <?php
+                $course = $DB->get_record('course', array('id'=>$this->data->course));
+                $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes, 0, $this->field->param3);
+                echo html_writer::select($choices, 'param3', $this->field->param3, false, array('id' => 'param3'));
+            ?>
+        </td>
+    </tr>
+</table>

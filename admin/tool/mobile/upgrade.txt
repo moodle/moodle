@@ -1,0 +1,18 @@
+This files describes changes in tool_mobile code.
+Information provided here is intended especially for developers.
+
+=== 3.5 ===
+
+ * External function tool_mobile::tool_mobile_get_plugins_supporting_mobile now returns additional plugins information required by
+   Moodle Mobile 3.5.0.
+
+=== 3.4 ===
+
+ * External function tool_mobile::tool_mobile_get_plugins_supporting_mobile is now available via AJAX for not logged users.
+   When called via AJAX without a user session the function will return only auth plugins.
+
+=== 3.3 ===
+
+ * External function tool_mobile::get_public_config now returns the mobilecssurl field (Mobile custom CSS theme).
+ * External function tool_mobile::get_public_config now returns the identityproviders field (list of external identity providers).
+

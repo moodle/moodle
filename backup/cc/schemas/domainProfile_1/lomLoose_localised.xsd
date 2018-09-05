@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--*************************************************************************-->
+<!--** This schema has been modified from the original base schema named - **-->
+<!--** lomLoose_localised.xsd                                                        **-->
+<!--** using the IMS SchemaProf tool. This tool is based on software from  **-->
+<!--** the TELCERT Project which was funded in part by the European        **-->
+<!--** Commission under contract IST-507128                                **-->
+<!--*************************************************************************-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ag="http://ltsc.ieee.org/xsd/imscc/LOM/unique" xmlns:voc="http://ltsc.ieee.org/xsd/imscc/LOM/vocab" xmlns:ex="http://ltsc.ieee.org/xsd/imscc/LOM/extend" xmlns="http://ltsc.ieee.org/xsd/imscc/LOM" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://ltsc.ieee.org/xsd/imscc/LOM" elementFormDefault="qualified" version="IEEE LTSC LOM XML 1.0 localised_Schema_2008_6_30">
+	<xsd:include xmlns:xsd="http://www.w3.org/2001/XMLSchema" schemaLocation="imscc_m_definition.xsd" />
+    <xs:annotation>
+        <xs:documentation>
+         This work is licensed under the Creative Commons Attribution-ShareAlike
+         License.  To view a copy of this license, see the file license.txt,
+         visit http://creativecommons.org/licenses/by-sa/2.0 or send a letter to
+         Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
+      </xs:documentation>
+        <xs:documentation>
+         This file represents a composite schema for validating
+         LOM XML Instances.  This file is built by default to represent a
+         composite schema for validation of the following:
+
+         1) The use of LOMv1.0 base schema (i.e., 1484.12.1-2002) vocabulary
+            source/value pairs only
+         2) Uniqueness constraints defined by LOMv1.0 base schema
+         3) No existenace of any defined extensions:
+            LOMv1.0 base schema XML element extension,
+            LOMv1.0 base schema XML attribute extension and
+            LOMv1.0 base schema vocabulary data type extension
+
+         Alternative composite schemas can be assembled by selecting
+         from the various alternative component schema listed below.
+      </xs:documentation>
+      <xs:documentation>
+         This file has been modified by the Knowledge Media Institute of the 
+         University Koblenz-Landau (http://iwm.uni-koblenz.de). It contains the
+         following changes:
+         1) Instead of "unique/strict.xsd" the schema "unique/loose.xsd" is imported 
+            because this reflects what is said in 1484.12.3-2005, page 35 (section C.1.3)
+         2) In all component XSDs the schemaLocation attribute was amended to the 
+            xs:import and xs:include statements. This enables the usage of the schemas
+            with tools which don't deal well with missing schemaLocation informations.
+            
+         This file is available at "http://iwm.uni-koblenz.de/xsd/IEEE-LOM/loose"
+      </xs:documentation>
+    <xs:documentation xml:lang="en">conformance: This profile restricts 'IEEE LOM 1.0 loose' to the elements needed to cover unqualified Dublin Core.
+dc:contributor, dc:creator, dc:publisher map to 	lifeCycle.contribute.entity with appropriate value of lifeCycle.contribute.role,
+dc:coverage maps to general.coverage,
+dc:date maps to lifeCycle.contribute.date,
+dc:description maps to general.description,
+dc:format maps to technical.format,
+dc:identifier maps to general.identifier,
+dc:language maps to general.language,
+dc:relation maps to Relation,
+dc:rights maps to Rights,
+dc:source is not mapped,
+dc:subject maps to general.keyword (see also classification.keyword),
+dc:title maps to general.title
+dc:type maps to Educational.learningResourceType
+</xs:documentation>
+	<xs:documentation xml:lang="en">scope: This profile is used within the Common Cartridge specification.</xs:documentation>
+	<xs:documentation xml:lang="en">name: IMS Common Cartridge profile of IEEE LOM V1.0 loose  for unqualified Dublin Core</xs:documentation>
+	</xs:annotation>
+    <!-- Learning Object Metadata -->
+    <xs:include schemaLocation="anyElement_localised.xsd" />
+    <!-- LOM data element uniqueness constraints:  use one of the following         -->
+    <!-- Use unique/loose.xsd to relax element uniqueness constraints               -->
+    <!-- Use unique/strict.xsd to enforce element uniqueness constraints            -->
+    <!-- <xs:import namespace="http://ltsc.ieee.org/xsd/imscc/LOM/unique"
+              schemaLocation="unique/loose.xsd"/> -->
+    <xs:import namespace="http://ltsc.ieee.org/xsd/imscc/LOM/unique" schemaLocation="unique/loose.xsd" />
+
+    <!-- Vocabulary value validation:  use one of the following                     -->
+    <!-- Use vocab/loose.xsd to relax vocabulary value constraints                  -->
+    <!-- Use vocab/strict.xsd to enforce the LOMv1.0 base schema vocabulary values  -->
+    <!-- Use vocab/custom.xsd to enforce custom vocabulary values                   -->
+    <!--<xs:import namespace="http://ltsc.ieee.org/xsd/imscc/LOM/vocab"
+              schemaLocation="vocab/loose.xsd"/> -->
+    <xs:import namespace="http://ltsc.ieee.org/xsd/imscc/LOM/vocab" schemaLocation="vocab/loose.xsd" />
+
+    <!-- <xs:import namespace="http://ltsc.ieee.org/xsd/imscc/LOM/vocab"
+              schemaLocation="vocab/custom.xsd"/> -->
+    <!-- Extension elements/attributes support:  use one of the following           -->
+    <!-- Use extend/strict.xsd to enforce no element/attribute extension            -->
+    <!-- Use extend/custom.xsd to allow element/attribute extension                 -->
+    <xs:import namespace="http://ltsc.ieee.org/xsd/imscc/LOM/extend" schemaLocation="extend/custom.xsd" />
+
+    <!--<xs:import namespace="http://ltsc.ieee.org/xsd/imscc/LOM/extend"
+              schemaLocation="extend/custom.xsd"/> -->
+    <xs:include schemaLocation="dataTypes_localised.xsd" />
+    <xs:include schemaLocation="elementNames_localised.xsd" />
+    <xs:include schemaLocation="elementTypes_localised.xsd" />
+    <xs:include schemaLocation="rootElement_localised.xsd" />
+    <xs:include schemaLocation="vocabValues_localised.xsd" />
+    <xs:include schemaLocation="vocabTypes_localised.xsd" />
+</xs:schema>

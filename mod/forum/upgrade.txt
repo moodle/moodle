@@ -1,0 +1,117 @@
+This files describes API changes in /mod/forum/*,
+information provided here is intended especially for developers.
+
+=== 3.4 ===
+  * External function get_forum_discussion_posts now returns an additional field "ratinginfo" containing rating information.
+
+=== 3.3 ===
+  * External function get_forums_by_courses now returns and additional field "istracked" that indicates if the user
+   is tracking the related forum.
+  * The legacy forum.js file has been removed, this includes the js functions:
+    forum_produce_subscribe_link, forum_produce_tracking_link, lockoptions_timetoitems,
+    lockoptions_timefromitems, lockoptions, lockoption, unlockoption
+  * External function can_add_discussion now returns two additional fields:
+   "canpindiscussions" that indicates if the user can add pinned discussions.
+   "cancreateattachment" that indicates if the user can add attachments to the discussion.
+
+=== 3.2 ===
+ * The setting $CFG->forum_replytouser has been removed in favour of a centralized noreplyaddress setting.
+   Please use $CFG->noreplyaddress setting instead.
+ * The following functions have been finally deprecated and should no longer be used.
+  - forum_count_unrated_posts
+  - forum_tp_count_discussion_read_records
+  - forum_get_user_discussions
+  - forum_tp_count_forum_posts
+  - forum_tp_count_forum_read_records
+  - forum_get_open_modes
+  - forum_get_child_posts
+  - forum_get_discussion_posts
+  - forum_get_ratings
+  - forum_get_tracking_link
+  - forum_tp_count_discussion_unread_posts
+  - forum_convert_to_roles
+  - forum_tp_get_read_records
+  - forum_tp_get_discussion_read_records
+  - forum_user_enrolled
+  - forum_user_can_view_post
+  - forum_shorten_post
+  - forum_is_subscribed
+  - forum_subscribe
+  - forum_unsubscribe
+  - forum_subscribed_users
+  - forum_is_forcesubscribed
+  - forum_forcesubscribe
+  - forum_get_forcesubscribed
+  - forum_get_subscribed_forums
+  - forum_get_optional_subscribed_forums
+  - forum_get_potential_subscribers
+ * External functions that were returning file information now return the following file fields:
+   filename, filepath, mimetype, filesize, timemodified and fileurl.
+   Those fields are now marked as VALUE_OPTIONAL for backwards compatibility.
+
+=== 3.1 ===
+ * The inteface to forum_get_email_message_id() has changed and no longer needs the $host argument.
+
+=== 3.0 ===
+ * External function get_forums_by_courses now returns and additional field "cancreatediscussions" that indicates if the user
+   can create discussions in the forum.
+ * A new optional parameter (groupid) has been added to get_forum_discussions.
+   This parameter can override the automatically calculated current group.
+ * New constant FORUM_POSTS_ALL_USER_GROUPS, to be used as parameter in functions where we'd need to retrieve all the user posts.
+
+=== 2.8 ===
+ * The following functions have all been marked as deprecated. Many of
+   these have not been supported in many releases and should not be relied
+   upon:
+     forum_count_unrated_posts
+     forum_tp_count_discussion_read_records
+     forum_get_user_discussions
+     forum_tp_count_forum_posts
+     forum_tp_count_forum_read_records
+     forum_get_open_modes
+     forum_get_child_posts
+     forum_get_discussion_posts
+     forum_get_ratings
+     forum_get_tracking_link
+     forum_tp_count_discussion_unread_posts
+     forum_convert_to_roles
+     forum_tp_get_read_records
+     forum_tp_get_discussion_read_records
+     forum_user_enrolled
+     forum_user_can_view_post
+ * The following functions have been deprecated and replaced. Please see the phpdoc for each on the new function to use instead:
+   * forum_is_subscribed
+   * forum_subscribe
+   * forum_unsubscribe
+   * forum_subscribed_users
+   * forum_is_forcesubscribed
+   * forum_forcesubscribe
+   * forum_get_forcesubscribed
+   * forum_get_subscribed_forums
+   * forum_get_optional_subscribed_forums
+   * forum_get_potential_subscribers
+ * External function mod_forum_external::get_forum_discussions has been deprecated.
+   Use mod_forum_external::get_forum_discussions_paginated instead.
+
+=== 2.6 ===
+
+* The file post_form.php should not be included, the class it contained has
+  been moved so that it can benefit from autoloading.
+* The function forum_shorten_post() has been deprecated. It was doing a poor
+  job of shortening forum post text and the shorten_text() function does a
+  much better job.
+* The constant FORUM_TRACKING_ON has been deprecated and replaced by
+  FORUM_TRACKING_FORCED. The value between them is maintained, so they are
+  interchangeable, but code should migrate to the new name.
+
+=== 2.5 ===
+
+The function forum_check_throttling has been changed so that a warning object is returned when a user has reached the 'Post threshold for warning' or
+'Post threshold for blocking' setting, rather than echoing this on screen. This allows the warning to be moved inside the post form as it can be added
+as a HTML element, where it is more noticeable. False is returned if there is no need to warn, or restrict the user from posting - see MDL-39182.
+
+=== 2.3.5, 2.4.2 ===
+
+* mod/forum:allowforcesubscribe capability will be forcefully assigned to frontpage role, as it was mistakenly missed off
+when the capability was initially created. If you don't want users with frontpage role to get forum (with forcesubscribe) emails,
+then please remove this capability for frontpage role.

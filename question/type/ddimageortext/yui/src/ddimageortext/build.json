@@ -1,0 +1,10 @@
+{
+    "name": "moodle-qtype_ddimageortext-dd",
+    "builds": {
+        "moodle-qtype_ddimageortext-dd": {
+            "jsfiles": [
+                "ddimageortext.js"
+            ]
+        }
+    }
+}

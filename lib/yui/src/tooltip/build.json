@@ -1,0 +1,10 @@
+{
+  "name": "moodle-core-tooltip",
+  "builds": {
+    "moodle-core-tooltip": {
+      "jsfiles": [
+        "tooltip.js"
+      ]
+    }
+  }
+}

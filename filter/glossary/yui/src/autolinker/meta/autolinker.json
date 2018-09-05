@@ -1,0 +1,16 @@
+{
+  "moodle-filter_glossary-autolinker": {
+    "requires": [
+        "base",
+        "node",
+        "io-base",
+        "json-parse",
+        "event-delegate",
+        "overlay",
+        "moodle-core-event",
+        "moodle-core-notification-alert",
+        "moodle-core-notification-exception",
+        "moodle-core-notification-ajaxexception"
+    ]
+  }
+}

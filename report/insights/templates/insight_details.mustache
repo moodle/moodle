@@ -1,0 +1,132 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_insights/insight_details
+
+    Actions panel at the bottom of the assignment grading UI.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+        "insightname": "Best insight ever",
+        "timecreated": "Thursday, 5 October 2017, 4:16 PM",
+        "timerange": "Monday, 4 September 2017, 6:00 PM to Thursday, 5 October 2017, 12:00 AM",
+        "sampleimage": "<a href=\"#\">Link</a>",
+        "sampledescription": "Sample description",
+        "style": "success",
+        "outcomeicon": {
+            "attributes": [
+                {"name": "src", "value": "https://moodle.org/logo/moodle-logo.svg" }
+            ]
+        },
+        "predictiondisplayvalue": "This dev will understand it",
+        "calculations": [
+            {
+                "style": "success",
+                "outcomeicon": {
+                    "attributes": [
+                        {"name": "src", "value": "https://moodle.org/logo/moodle-logo.svg" }
+                    ]
+                },
+                "name": "Indicator 1",
+                "displayvalue": "yes"
+            }, {
+                "style": "info",
+                "name": "Indicator 2",
+                "displayvalue": "20%"
+            }, {
+                "style": "",
+                "name": "Indicator 2",
+                "displayvalue": "20%"
+            }, {
+                "style": "warning",
+                "name": "Indicator 2",
+                "displayvalue": "20%"
+            }, {
+                "style": "danger",
+                "name": "Indicator 2",
+                "displayvalue": "20%"
+            }
+        ]
+    }
+}}
+
+<h2 class="m-b-2">{{#str}}insightprediction, report_insights, {{insightname}} {{/str}}</h2>
+<table class="generaltable insights-list">
+    <caption>
+            {{#str}}prediction, report_insights{{/str}}:
+            <span class="{{#style}}table-{{style}}{{/style}}">
+                {{#outcomeicon}}
+                    {{> core/pix_icon}}
+                {{/outcomeicon}}
+                {{predictiondisplayvalue}}
+            </span>
+        </caption>
+    <thead>
+        <tr>
+            <th scope="col" class="col-sm-10">{{#str}}name{{/str}}</th>
+            <th scope="col" class="col-sm-2">{{#str}}actions{{/str}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{> report_insights/insight}}
+    </tbody>
+</table>
+
+<table class="generaltable prediction-timedetails">
+    <caption>{{#str}}predictiondetails, report_insights{{/str}}</caption>
+    <tbody>
+        <tr>
+            <td scope="col" class="col-sm-3">{{#str}}timecreated, report_insights{{/str}}</td>
+            <td scope="col" class="col-sm-9">{{timecreated}}</td>
+        </tr>
+        {{#timerange}}
+            <tr>
+                <td scope="col" class="col-sm-3">{{#str}}timerange, report_insights{{/str}}</td>
+                <td scope="col" class="col-sm-9">{{.}}</td>
+            </tr>
+        {{/timerange}}
+    </tbody>
+</table>
+<table class="generaltable prediction-calculations">
+    <caption class="accesshide">{{#str}}predictioncalculations, report_insights{{/str}}</caption>
+    <thead>
+        <tr>
+            <th scope="col" class="col-sm-8">{{#str}}indicator, report_insights{{/str}}</th>
+            <th scope="col" class="col-sm-4">{{#str}}calculatedvalue, report_insights{{/str}}</th>
+        </tr>
+    </thead>
+    <tbody>
+    {{#calculations}}
+        <tr>
+            <td class="{{#style}}table-{{style}}{{/style}} col-sm-8">{{name}}</td>
+            <td class="{{#style}}table-{{style}}{{/style}} col-sm-4">{{#outcomeicon}}{{> core/pix_icon}}{{/outcomeicon}} {{displayvalue}}</td>
+        </tr>
+    {{/calculations}}
+    </tbody>
+</table>
+{{#nocalculations}}
+    {{> core/notification_info}}
+{{/nocalculations}}

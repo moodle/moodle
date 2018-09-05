@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="role">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="shortname" minOccurs="0"/>
+                <xs:element ref="name" minOccurs="0"/>
+                <xs:element ref="description" minOccurs="0"/>
+                <xs:element ref="archetype" minOccurs="0"/>
+                <xs:element ref="contextlevels" minOccurs="0"/>
+                <xs:element ref="allowassign" minOccurs="0"/>
+                <xs:element ref="allowoverride" minOccurs="0"/>
+                <xs:element ref="allowswitch" minOccurs="0"/>
+                <xs:element ref="allowview" minOccurs="0"/>
+                <xs:element ref="permissions" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="archetype" type="xs:string"/>
+    <xs:element name="contextlevels">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="level"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="level" type="xs:string"/>
+    <xs:element name="allowassign">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="shortname"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="allowoverride">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="shortname"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="allowswitch">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="shortname"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="allowview">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="shortname"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="permissions">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="inherit" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="allow" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="prevent" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="prohibit" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="shortname" type="xs:string"/>
+    <xs:element name="name" type="xs:string"/>
+    <xs:element name="description" type="xs:string"/>
+    <xs:element name="inherit" type="xs:string"/>
+    <xs:element name="allow" type="xs:string"/>
+    <xs:element name="prevent" type="xs:string"/>
+    <xs:element name="prohibit" type="xs:string"/>
+</xs:schema>

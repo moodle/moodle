@@ -1,0 +1,9 @@
+{
+    "moodle-form-showadvanced": {
+        "requires": [
+            "node",
+            "base",
+            "selector-css3"
+        ]
+    }
+}

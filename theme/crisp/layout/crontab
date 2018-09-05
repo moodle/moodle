@@ -1,0 +1,13 @@
+SHELL=/bin/sh
+#envio de correos en foros Campus virtual
+
+
+*/1     *       *       *       *       /usr/local/bin/php /vhosts/campus/public_html/moodle/admin/tool/task/cli/schedule_task.php --execute='\mo
+d_forum\task\cron_task'
+
+30      2       *       *       *        /usr/local/bin/php /vhosts/campus/public_html/moodle/admin/cli/cron.php
+0       4       *       *       *        /usr/local/bin/php /vhosts/campus/public_html/moodle/course/delete_course_old/delete_list_courses.php
+#40     3       *       *       *       /bin/rm /var/spool/clientmqueue/*
+15      3       *       *       *        /bin/sh /root/scripts-campus/actualizarAdicionesCancelaciones.sh
+15      3       *       *       *       /bin/sh /root/scripts-campus/actualizarSedeEstudiantes.sh
+

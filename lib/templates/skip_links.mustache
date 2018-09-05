@@ -1,0 +1,21 @@
+{{!
+    @template core/skip_links
+
+    Example context (json):
+    {
+        "links": [
+            {"url": "http://example.com/link1", "text": "Link 1"},
+            {"url": "http://example.com/link2", "text": "Link 2"}
+        ]
+    }
+}}
+<div class="skiplinks">
+{{#links}}
+    <a href="#{{{url}}}" class="skip">{{{text}}}</a>
+{{/links}}
+</div>
+{{#js}}
+require(['core/yui'], function(Y) {
+    M.util.init_skiplink(Y);
+});
+{{/js}}

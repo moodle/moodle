@@ -1,0 +1,337 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>Class: Scroller - documentation</title>
+  
+		<style type="text/css" media="screen">
+			@import "media/css/doc.css";
+			@import "media/css/shCore.css";
+			@import "media/css/shThemeDataTables.css";
+		</style>
+	
+		<script type="text/javascript" src="media/js/shCore.js"></script>
+		<script type="text/javascript" src="media/js/shBrushJScript.js"></script>
+		<script type="text/javascript" src="media/js/jquery.js"></script>
+		<script type="text/javascript" src="media/js/doc.js"></script>
+	</head>
+	<body>
+		<div class="fw_container">
+			
+				<a name="top"></a>
+				<div class="fw_header">
+					<h1 class="page-title">Class: Scroller</h1>
+					
+					<div class="page-info">
+						Scroller v1.1.0 documentation
+					</div>
+				</div>
+
+				
+
+				<div class="fw_nav">
+					<h2>Navigation</h2>
+					<ul>
+					<li><a href="#top">Overview</a></li>
+					<li><a href="#summary">Summary</a><div><table cellpadding="5" border="0" cellspacing="0" width="100%"><tbody><tr><td>Classes (0)</td><td><a href="#summary_namespaces">Namespaces (3)</a></td></tr><tr><td><a href="#summary_properties">Properties (1)</a></td><td><a href="#summary_properties_static">Static properties (1)</a></td></tr><tr><td><a href="#summary_methods">Methods (4)</a></td><td>Static methods (0)</td></tr><tr><td>Events (0)</td><td></td></tr></tbody></table></div></li><li><a href="#details">Details</a><div><table cellpadding="5" border="0" cellspacing="0" width="100%"><tbody><tr><td><a href="#summary_properties">Properties (1)</a></td><td><a href="#summary_properties_static">Static properties (1)</a></td></tr><tr><td><a href="#summary_methods">Methods (4)</a></td><td>Static methods (0)</td></tr><tr><td>Events (0)</td><td></td></tr></tbody></table></div></li></ul>
+					<div style="margin-top: 10px;">
+						<input type="hidden" name="show_private" value="0">
+						<span id="private_label">Hiding</span> private elements 
+							(<a id="private_toggle" href="">toggle</a>)
+						</span>
+					</div>
+					<div>
+						<input type="hidden" name="show_extended" value="1">
+						<span id="extended_label">Showing</span> extended elements 
+							(<a id="extended_toggle" href="">toggle</a>)
+						</span>
+					</div>
+				</div>
+
+				<div class="fw_content">
+					<a name="overview"></a>
+					<div class="doc_overview">
+						<div class="nav_blocker"></div>
+						<dl><dt id="Scroller" class="  even"><a name="Scroller"></a><a name="Scroller_details"></a><span class="type-attr"><span class="type-signature"></span></span><span class="type-name"><a>new Scroller</a></span><span class="type-sig"><span class="signature">(oDT, <span class="optional">oOpts</span>)</span><span class="type-signature"></span></span></span></dt><dd class="  even"><p>Scroller is a virtual rendering plug-in for DataTables which allows large
+datasets to be drawn on screen every quickly. What the virtual rendering means
+is that only the visible portion of the table (and a bit to either side to make
+the scrolling smooth) is drawn, while the scrolling container gives the 
+visual impression that the whole table is visible. This is done by making use
+of the pagination abilities of DataTables and moving the table around in the
+scrolling container DataTables adds to the page. The scrolling container is
+forced to the height it would be for the full table display using an extra 
+element. </p>
+
+<p>Note that rows in the table MUST all be the same height. Information in a cell
+which expands on to multiple lines will cause some odd behaviour in the scrolling.</p>
+
+<p>Scroller is initialised by simply including the letter 'S' in the sDom for the
+table you want to have this feature enabled on. Note that the 'S' must come
+AFTER the 't' parameter in sDom.</p>
+
+<p>Key features include:
+  <ul class="limit_length">
+    <li>Speed! The aim of Scroller for DataTables is to make rendering large data sets fast</li>
+    <li>Full compatibility with deferred rendering in DataTables 1.9 for maximum speed</li>
+    <li>Correct visual scrolling implementation, similar to "infinite scrolling" in DataTable core</li>
+    <li>Integration with state saving in DataTables (scrolling position is saved)</li>
+    <li>Easy to use</li>
+  </ul></p><div class="collapse_details"><h3>Constructor</h3><dl class="details">
+	
+</dl>
+<h5>Parameters:</h5>
+
+<table class="params">
+    <thead>
+	<tr>
+        <th width="20"></th>
+        <th width="12%" class="bottom_border name">Name</th>
+		<th width="10%" class="bottom_border">Type</th>
+		<th width="10%" class="bottom_border">Attributes</th>
+		<th width="10%" class="bottom_border">Default</th>
+		<th class="last bottom_border">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	<tr class="even"><td class="number right_border"><div>1</div></td><td class="name">oDT</td><td class="type type-param">object</td><td class="attributes"></td><td class="default"></td><td class="description last"><p>DataTables settings object</p></td></tr><tr class="odd"><td class="number right_border"><div>2</div></td><td class="name">oOpts</td><td class="type type-param">object</td><td class="attributes">Optional</td><td class="default">{}</td><td class="description last"><p>Configuration object for FixedColumns. Options are defined by <a href="Scroller.oDefaults.html">Scroller.oDefaults</a></p></td></tr>
+	</tbody>
+</table><h5>Example:</h5>
+    <div class="example-code">
+    	<pre class="brush: js">		$(document).ready(function() {
+			$('#example').dataTable( {
+				"sScrollY": "200px",
+				"sAjaxSource": "media/dataset/large.txt",
+				"sDom": "frtiS",
+				"bDeferRender": true
+			} );
+		} );</pre>
+    </div>
+</div>
+</dl><h3 class="subsection-title">Requires</h3>
+<ul>
+	<li>module:jQuery</li><li>module:DataTables</li>
+</ul>
+
+					</div>
+
+					
+					<div class="doc_summary">
+						<a name="summary"></a>
+						<h2>Summary</h2>
+
+						<div class="doc_group"><a name="summary_namespaces"></a><h3 class="subsection-title">Namespaces</h3>
+<dl>
+	<dt class="even"><span class="type-name"><a href="c6053fac6b.html">dom</a></span></dt><dd class="even"><p>DOM elements used by the class instance</p></dd><dt class="odd"><span class="type-name"><a href="Scroller.oDefaults.html">oDefaults</a></span></dt><dd class="odd"><p>Scroller default settings for initialisation</p></dd><dt class="even"><span class="type-name"><a href="baed189d4a.html">s</a></span></dt><dd class="even"><p>Settings object which contains customisable information for the Scroller instance</p></dd>
+</dl></div><div class="doc_group"><a name="summary_properties"></a><h3 class="subsection-title">Properties - instance</h3>
+
+<dl>
+    <dt class="  even"><span class="type-attr"><span class="type-signature"></span></span><span class="type-name"><a href="#CLASS">CLASS</a></span><span class="type-sig"><span class="type-signature"> :String</span></span></dt><dd class="  even"><p>Name of this class</p></dd>
+</dl></div><div class="doc_group"><a name="summary_properties_static"></a><h3 class="subsection-title">Properties - static</h3>
+
+<dl>
+    <dt class="  even"><span class="type-attr"><span class="type-signature">&lt;static> </span></span><span class="type-name"><a href="#VERSION">VERSION</a></span><span class="type-sig"><span class="type-signature"> :String</span></span></dt><dd class="  even"><p>Scroller version</p></dd>
+</dl></div><div class="doc_group"><a name="summary_methods"></a><h3 class="subsection-title">Methods - instance</h3>
+
+<dl>
+    <dt class="  even"><span class="type-attr"><span class="type-signature"></span></span><span class="type-name"><a href="#fnMeasure">fnMeasure</a></span><span class="type-sig"><span class="signature">(<span class="optional">bRedraw</span>)</span><span class="type-signature"> &rarr; {void}</span></span></dt><dd class="  even"><p>Calculate and store information about how many rows are to be displayed in the scrolling
+viewport, based on current dimensions in the browser's rendering. This can be particularly
+useful if the table is initially drawn in a hidden element - for example in a tab.</p></dd><dt class="  odd"><span class="type-attr"><span class="type-signature"></span></span><span class="type-name"><a href="#fnPixelsToRow">fnPixelsToRow</a></span><span class="type-sig"><span class="signature">(iPixels)</span><span class="type-signature"> &rarr; {int}</span></span></dt><dd class="  odd"><p>Calculate the row number that will be found at the given pixel position (y-scroll)</p></dd><dt class="  even"><span class="type-attr"><span class="type-signature"></span></span><span class="type-name"><a href="#fnRowToPixels">fnRowToPixels</a></span><span class="type-sig"><span class="signature">(iRow)</span><span class="type-signature"> &rarr; {int}</span></span></dt><dd class="  even"><p>Calculate the pixel position from the top of the scrolling container for a given row</p></dd><dt class="  odd"><span class="type-attr"><span class="type-signature"></span></span><span class="type-name"><a href="#fnScrollToRow">fnScrollToRow</a></span><span class="type-sig"><span class="signature">(iRow, <span class="optional">bAnimate</span>)</span><span class="type-signature"> &rarr; {void}</span></span></dt><dd class="  odd"><p>Calculate the row number that will be found at the given pixel position (y-scroll)</p></dd>
+</dl>
+</div>
+					</div>
+					
+
+
+					
+					<div class="doc_details">
+						<a name="details"></a>
+						<h2>Details</h2>
+						<div class="doc_group"><a name="details_properties"></a><h3 class="subsection-title">Properties - instance</h3>
+<dl>
+    <dt class="  even"><a name="CLASS"></a><a name="CLASS_details"></a><span class="type-attr"><span class="type-signature"></span></span><span class="type-name"><a href="#CLASS">CLASS</a></span><span class="type-sig"><span class="type-signature"> :String</span></span></dt><dd class="  even"><p>Name of this class</p><div class="collapse_details"><dl class="details">
+	
+</dl>
+</div></dd>
+</dl></div><div class="doc_group"><a name="details_properties"></a><h3 class="subsection-title">Properties - static</h3>
+<dl>
+    <dt class="  even"><a name="VERSION"></a><a name="VERSION_details"></a><span class="type-attr"><span class="type-signature">&lt;static> </span></span><span class="type-name"><a href="#VERSION">VERSION</a></span><span class="type-sig"><span class="type-signature"> :String</span></span></dt><dd class="  even"><p>Scroller version</p><div class="collapse_details"><dl class="details">
+	
+</dl>
+</div></dd>
+</dl></div><div class="doc_group"><a name="details_methods"></a><h3 class="subsection-title">Methods - instance</h3>
+<dl>
+    <dt id="Scroller#fnMeasure" class="  even"><a name="fnMeasure"></a><a name="fnMeasure_details"></a><span class="type-attr"><span class="type-signature"></span></span><span class="type-name"><a>fnMeasure</a></span><span class="type-sig"><span class="signature">(<span class="optional">bRedraw</span>)</span><span class="type-signature"> &rarr; {void}</span></span></span></dt><dd class="  even"><p>Calculate and store information about how many rows are to be displayed in the scrolling
+viewport, based on current dimensions in the browser's rendering. This can be particularly
+useful if the table is initially drawn in a hidden element - for example in a tab.</p><div class="collapse_details"><dl class="details">
+	
+</dl>
+<h5>Parameters:</h5>
+
+<table class="params">
+    <thead>
+	<tr>
+        <th width="20"></th>
+        <th width="12%" class="bottom_border name">Name</th>
+		<th width="10%" class="bottom_border">Type</th>
+		<th width="10%" class="bottom_border">Attributes</th>
+		<th width="10%" class="bottom_border">Default</th>
+		<th class="last bottom_border">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	<tr class="even"><td class="number right_border"><div>1</div></td><td class="name">bRedraw</td><td class="type type-param">bool</td><td class="attributes">Optional</td><td class="default">true</td><td class="description last"><p>Redraw the table automatically after the recalculation, with
+   the new dimentions forming the basis for the draw.</p></td></tr>
+	</tbody>
+</table><h5>Example:</h5>
+    <div class="example-code">
+    	<pre class="brush: js">   $(document).ready(function() {
+     // Make the example container hidden to throw off the browser's sizing
+     document.getElementById('container').style.display = "none";
+     var oTable = $('#example').dataTable( {
+       "sScrollY": "200px",
+       "sAjaxSource": "media/dataset/large.txt",
+       "sDom": "frtiS",
+       "bDeferRender": true,
+       "fnInitComplete": function (o) {
+         // Immediately scroll to row 1000
+         o.oScroller.fnScrollToRow( 1000 );
+       }
+     } );
+     
+     setTimeout( function () {
+       // Make the example container visible and recalculate the scroller sizes
+       document.getElementById('container').style.display = "block";
+       oTable.fnSettings().oScroller.fnMeasure();
+     }, 3000 );</pre>
+    </div>
+</div>
+<dt id="Scroller#fnPixelsToRow" class="  odd"><a name="fnPixelsToRow"></a><a name="fnPixelsToRow_details"></a><span class="type-attr"><span class="type-signature"></span></span><span class="type-name"><a>fnPixelsToRow</a></span><span class="type-sig"><span class="signature">(iPixels)</span><span class="type-signature"> &rarr; {int}</span></span></span></dt><dd class="  odd"><p>Calculate the row number that will be found at the given pixel position (y-scroll)</p><div class="collapse_details"><dl class="details">
+	
+</dl>
+<h5>Parameters:</h5>
+
+<table class="params">
+    <thead>
+	<tr>
+        <th width="20"></th>
+        <th width="12%" class="bottom_border name">Name</th>
+		<th width="10%" class="bottom_border">Type</th>
+		<th width="10%" class="bottom_border">Attributes</th>
+		<th width="10%" class="bottom_border">Default</th>
+		<th class="last bottom_border">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	<tr class="even"><td class="number right_border"><div>1</div></td><td class="name">iPixels</td><td class="type type-param">int</td><td class="attributes"></td><td class="default"></td><td class="description last"><p>Offset from top to caluclate the row number of</p></td></tr>
+	</tbody>
+</table><h5>Returns:</h5><p class="returns"><p>Row index</p></p><h5>Example:</h5>
+    <div class="example-code">
+    	<pre class="brush: js">   $(document).ready(function() {
+     $('#example').dataTable( {
+       "sScrollY": "200px",
+       "sAjaxSource": "media/dataset/large.txt",
+       "sDom": "frtiS",
+       "bDeferRender": true,
+       "fnInitComplete": function (o) {
+         // Find what row number is at 500px
+         alert( o.oScroller.fnPixelsToRow( 500 ) );
+       }
+     } );
+   } );</pre>
+    </div>
+</div>
+<dt id="Scroller#fnRowToPixels" class="  even"><a name="fnRowToPixels"></a><a name="fnRowToPixels_details"></a><span class="type-attr"><span class="type-signature"></span></span><span class="type-name"><a>fnRowToPixels</a></span><span class="type-sig"><span class="signature">(iRow)</span><span class="type-signature"> &rarr; {int}</span></span></span></dt><dd class="  even"><p>Calculate the pixel position from the top of the scrolling container for a given row</p><div class="collapse_details"><dl class="details">
+	
+</dl>
+<h5>Parameters:</h5>
+
+<table class="params">
+    <thead>
+	<tr>
+        <th width="20"></th>
+        <th width="12%" class="bottom_border name">Name</th>
+		<th width="10%" class="bottom_border">Type</th>
+		<th width="10%" class="bottom_border">Attributes</th>
+		<th width="10%" class="bottom_border">Default</th>
+		<th class="last bottom_border">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	<tr class="even"><td class="number right_border"><div>1</div></td><td class="name">iRow</td><td class="type type-param">int</td><td class="attributes"></td><td class="default"></td><td class="description last"><p>Row number to calculate the position of</p></td></tr>
+	</tbody>
+</table><h5>Returns:</h5><p class="returns"><p>Pixels</p></p><h5>Example:</h5>
+    <div class="example-code">
+    	<pre class="brush: js">   $(document).ready(function() {
+     $('#example').dataTable( {
+       "sScrollY": "200px",
+       "sAjaxSource": "media/dataset/large.txt",
+       "sDom": "frtiS",
+       "bDeferRender": true,
+       "fnInitComplete": function (o) {
+         // Find where row 25 is
+         alert( o.oScroller.fnRowToPixels( 25 ) );
+       }
+     } );
+   } );</pre>
+    </div>
+</div>
+<dt id="Scroller#fnScrollToRow" class="  odd"><a name="fnScrollToRow"></a><a name="fnScrollToRow_details"></a><span class="type-attr"><span class="type-signature"></span></span><span class="type-name"><a>fnScrollToRow</a></span><span class="type-sig"><span class="signature">(iRow, <span class="optional">bAnimate</span>)</span><span class="type-signature"> &rarr; {void}</span></span></span></dt><dd class="  odd"><p>Calculate the row number that will be found at the given pixel position (y-scroll)</p><div class="collapse_details"><dl class="details">
+	
+</dl>
+<h5>Parameters:</h5>
+
+<table class="params">
+    <thead>
+	<tr>
+        <th width="20"></th>
+        <th width="12%" class="bottom_border name">Name</th>
+		<th width="10%" class="bottom_border">Type</th>
+		<th width="10%" class="bottom_border">Attributes</th>
+		<th width="10%" class="bottom_border">Default</th>
+		<th class="last bottom_border">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	<tr class="even"><td class="number right_border"><div>1</div></td><td class="name">iRow</td><td class="type type-param">int</td><td class="attributes"></td><td class="default"></td><td class="description last"><p>Row index to scroll to</p></td></tr><tr class="odd"><td class="number right_border"><div>2</div></td><td class="name">bAnimate</td><td class="type type-param">bool</td><td class="attributes">Optional</td><td class="default">true</td><td class="description last"><p>Animate the transision or not</p></td></tr>
+	</tbody>
+</table><h5>Example:</h5>
+    <div class="example-code">
+    	<pre class="brush: js">   $(document).ready(function() {
+     $('#example').dataTable( {
+       "sScrollY": "200px",
+       "sAjaxSource": "media/dataset/large.txt",
+       "sDom": "frtiS",
+       "bDeferRender": true,
+       "fnInitComplete": function (o) {
+         // Immediately scroll to row 1000
+         o.oScroller.fnScrollToRow( 1000 );
+       }
+     } );
+     
+     // Sometime later on use the following to scroll to row 500...
+         var oSettings = $('#example').dataTable().fnSettings();
+     oSettings.oScroller.fnScrollToRow( 500 );
+   } );</pre>
+    </div>
+</div>
+
+</dd>
+</div>
+   					</div>
+				
+		</div>
+
+		<div class="fw_footer">
+			Scroller: Copyright 2011-2012 Allan Jardine, all rights reserved<br>
+
+			Documentation generated by <a href="https://github.com/micmath/JSDoc">JSDoc 3</a> on
+			23th Sep 2012 - 14:28
+			with the <a href="http://datatables.net/">DataTables</a> template.
+		</div>
+	</body>
+</html>

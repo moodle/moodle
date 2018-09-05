@@ -1,0 +1,21 @@
+quizattempt,firstname,lastname,responses.1.1.answer,responses.1.2.answer,responses.1.-submit,responses.1.-tryagain,finished
+1,Juniper,Jones,Pussy-cat,Bow-wow,1,0,0
+1,Juniper,Jones,Owl,Bow-wow,0,1,0
+1,Juniper,Jones,Owl,Bow-wow,1,0,1
+2,Juniper,Smith,Dog,Pussy-cat,1,0,0
+2,Juniper,Smith,Dog,Pussy-cat,0,1,0
+2,Juniper,Smith,Dog,Pussy-cat,1,0,1
+3,Juniper,Vicars,Owl,"Wiggly worm",1,0,0
+3,Juniper,Vicars,Owl,"Wiggly worm",1,0,0
+3,Juniper,Vicars,Owl,"Wiggly worm",1,0,1
+4,Juniper,Pacino,Owl,Pussy-cat,1,0,0
+5,Juniper,Jones,Pussy-cat,Bow-wow,1,0,0
+5,Juniper,Jones,Owl,Bow-wow,0,1,0
+5,Juniper,Jones,Owl,Bow-wow,1,0,1
+6,Juniper,Smith,Dog,Pussy-cat,1,0,0
+6,Juniper,Smith,Dog,Pussy-cat,0,1,0
+6,Juniper,Smith,Dog,Pussy-cat,1,0,1
+7,Juniper,Vicars,Owl,"Wiggly worm",1,0,0
+7,Juniper,Vicars,Owl,"Wiggly worm",1,0,0
+7,Juniper,Vicars,Owl,"Wiggly worm",1,0,1
+8,Juniper,Pacino,Owl,Pussy-cat,1,0,0

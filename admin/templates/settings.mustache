@@ -1,0 +1,57 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_admin/settings
+
+    Admin settings form template.
+
+    Context variables required for this template:
+    * actionurl - url to submit to
+    * params - list of parameters containing name and value
+    * return - page to return to
+    * title - form title
+    * settings - raw html for settings
+    * showsave - true if we need save buttons
+
+    Example context (json):
+    {
+        "actionurl": "/",
+        "return": "/",
+        "title": "Settings Form",
+        "settings": "RAW HTML",
+        "showsave": true
+    }
+}}
+<form action="{{actionurl}}" method="post" id="adminsettings">
+    <div class="settingsform clearfix">
+        {{#params}}
+            <input type="hidden" name="{{name}}" value="{{value}}">
+            <input type="hidden" name="action" value="save-settings">
+        {{/params}}
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <input type="hidden" name="return" value="{{return}}">
+        {{#title}}
+            <h2>{{title}}</h2>
+        {{/title}}
+        {{{settings}}}
+        {{#showsave}}
+            <div class="form-buttons">
+                <input type="submit" class="form-submit" value={{#quote}}{{#str}}savechanges, admin{{/str}}{{/quote}}>
+            </div>
+        {{/showsave}}
+    </div>
+</form>

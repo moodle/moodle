@@ -1,0 +1,19 @@
+slot,randq,variant,subpart,modelresponse,actualresponse,totalcount
+1,numerical,1,1,"3.142 (3.142..3.142)",3.142,1
+1,numerical,1,1,"3.14 (3.14..3.14)",3.14,7
+1,numerical,1,1,"3.1 (3.1..3.1)",3.1,4
+1,shortanswer,1,1,frog,frog,9
+1,shortanswer,1,1,*,butterfly,2
+1,shortanswer,1,1,toad,toad,2
+2,,1,1,{a} + {b} (±0.01 Relative),9.9,3
+2,,1,1,[NO MATCH],-0.7,1
+2,,1,1,[NO MATCH],-0.2,1
+2,,1,1,[NO MATCH],-1,1
+2,,4,1,{a} + {b} (±0.01 Relative),19.4,2
+2,,4,1,[NO MATCH],0,1
+2,,4,1,[NO MATCH],-0.4,1
+3,,1,1,frog: amphibian,amphibian,25
+3,,1,2,cat: mammal,mammal,24
+3,,1,2,cat: amphibian,amphibian,1
+3,,1,3,newt: amphibian,amphibian,24
+3,,1,3,newt: mammal,mammal,1

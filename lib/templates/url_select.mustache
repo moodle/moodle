@@ -1,0 +1,81 @@
+{{!
+    @template core/url_select
+
+    Example context (json):
+    {
+        "id": "url_select_test",
+        "action": "https://example.com/post",
+        "formid": "url_select_form",
+        "sesskey": "sesskey",
+        "label": "core/url_select",
+        "helpicon": {
+            "title": "Help with something",
+            "text": "Help with something",
+            "url": "http://example.org/help",
+            "linktext": "",
+            "icon":{
+                "extraclasses": "iconhelp",
+                "attributes": [
+                    {"name": "src", "value": "../../../pix/help.svg"},
+                    {"name": "alt", "value": "Help icon"}
+                ]
+            }
+        },
+        "showbutton": "Go",
+        "options": [{
+            "name": "Group 1", "isgroup": true, "options":
+            [
+                {"name": "Item 1", "isgroup": false, "value": "1"},
+                {"name": "Item 2", "isgroup": false, "value": "2"}
+            ]},
+            {"name": "Group 2", "isgroup": true, "options":
+            [
+                {"name": "Item 3", "isgroup": false, "value": "3"},
+                {"name": "Item 4", "isgroup": false, "value": "4"}
+            ]}]
+    }
+}}
+<div class="{{classes}}">
+    <form method="post" action="{{action}}" class="form-inline" id="{{formid}}">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        {{#label}}
+            <label for="{{id}}"{{#labelattributes}} {{name}}="{{value}}"{{/labelattributes}}>
+                {{label}}
+            </label>
+        {{/label}}
+        {{#helpicon}}
+            {{>core/help_icon}}
+        {{/helpicon}}
+        <select {{#attributes}}{{name}}="{{value}}" {{/attributes}} id="{{id}}" class="custom-select {{classes}}" name="jump">
+            {{#options}}
+                {{#isgroup}}
+                    <optgroup label="{{name}}">
+                        {{#options}}
+                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                        {{/options}}
+                    </optgroup>
+                {{/isgroup}}
+                {{^isgroup}}
+                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                {{/isgroup}}
+            {{/options}}
+        </select>
+        {{#showbutton}}
+            <input type="submit" class="btn btn-secondary" value="{{showbutton}}">
+        {{/showbutton}}
+        {{^showbutton}}
+            <noscript>
+                <input type="submit" class="btn btn-secondary" value="{{#str}}go, core{{/str}}">
+            </noscript>
+        {{/showbutton}}
+    </form>
+</div>
+{{^showbutton}}
+    {{#js}}
+        require(['jquery'], function($) {
+            $('#{{id}}').change(function() {
+                $('#{{formid}}').submit();
+            });
+        });
+    {{/js}}
+{{/showbutton}}

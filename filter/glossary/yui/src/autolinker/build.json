@@ -1,0 +1,10 @@
+{
+  "name": "moodle-filter_glossary-autolinker",
+  "builds": {
+    "moodle-filter_glossary-autolinker": {
+      "jsfiles": [
+        "autolinker.js"
+      ]
+    }
+  }
+}

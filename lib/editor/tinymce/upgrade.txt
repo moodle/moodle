@@ -1,0 +1,32 @@
+This files describes API changes in /lib/editor/tinymce/* - TinyMCE editor,
+information provided here is intended especially for developers.
+
+=== 2.8 ===
+
+* Removed the 'DragMath' plugin as it is incompatible with GNU GPL license - see MDL-32450.
+
+=== 2.6 ===
+
+* added a new plugin to toggle the 2nd and 3rd toolbars
+* added a new plugin to wrap the toolbars on small screens.
+This plugin will be automatically added to existing toolbars by replacing the middle occurrence of | with "wrap".
+* New functions to make adding of new buttons easier:
+  - editor_tinymce_plugin::find_button()
+  - editor_tinymce_plugin::count_button_rows()
+
+=== 2.5 ===
+
+* update filter related code to use short filter names instead
+  of original paths, ex.: 'filter/tex' ---> 'tex'
+
+=== 2.4 ===
+
+new features:
+
+* subplugin support - see http://docs.moodle.org/dev/TinyMCE_plugins
+
+
+changes:
+
+* Editor directory exception was removed from Moodle JS loader, use moodle_url instance
+  if you want to prevent standard caching.

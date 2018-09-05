@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="lib/editor/atto/db" VERSION="20140819" COMMENT="XMLDB file for Moodle lib/editor/atto"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="editor_atto_autosave" COMMENT="Draft text that is auto-saved every 5 seconds while an editor is open.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="elementid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The unique id for the text editor in the form."/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The contextid that the form was loaded with."/>
+        <FIELD NAME="pagehash" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="The HTML DOM id of the page that loaded the form."/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the user that loaded the form."/>
+        <FIELD NAME="drafttext" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The draft text"/>
+        <FIELD NAME="draftid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Optional draft area id containing draft files."/>
+        <FIELD NAME="pageinstance" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="The browser tab instance that last saved the draft text. This is to prevent multiple tabs from the same user saving different text alternately."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Store the last modified time for the auto save text."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="autosave_uniq_key" TYPE="unique" FIELDS="elementid, contextid, userid, pagehash" COMMENT="Unique key for the user in the form in the page."/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

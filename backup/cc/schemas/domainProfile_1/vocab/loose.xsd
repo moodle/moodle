@@ -1,0 +1,147 @@
+<xs:schema targetNamespace="http://ltsc.ieee.org/xsd/imscc/LOM/vocab"
+           xmlns="http://ltsc.ieee.org/xsd/imscc/LOM/vocab"
+           xmlns:lom="http://ltsc.ieee.org/xsd/imscc/LOM"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           version="IEEE LTSC LOM XML 1.0">
+
+  <xs:annotation>
+    <xs:documentation>
+       This work is licensed under the Creative Commons Attribution-ShareAlike
+       License.  To view a copy of this license, see the file license.txt,
+       visit http://creativecommons.org/licenses/by-sa/2.0 or send a letter to
+       Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
+    </xs:documentation>
+
+    <xs:documentation>
+       This component schema definition provides simple type declarations for LOM
+       data elements that are defined as Vocabulary data types.
+
+       This component schema definition enforces that vocabulary sources and values
+       are character strings, which simplifies the schema validation process for those
+       applications that perform vocabulary source/value validation using
+       post-schema-validation.
+
+       This component schema definition relaxes the validation constraints by
+       allowing both sources and values to be arbitrary character strings.
+
+       NOTE: The absence of the enforcement of vocabulary values does not relieve a
+       particular LOM XML instance from satisfying vocabulary requirements defined
+       in the LOMv1.0 base schema. Applications that require the use of vocab/loose.xsd
+       component XSD should enforce those vocabulary requirements by other means.
+    </xs:documentation>
+      <xs:documentation>
+         This file has been modified by the Knowledge Media Institute of the 
+         University Koblenz-Landau (http://iwm.uni-koblenz.de). It contains the
+         following changes:
+         1) Instead of "unique/strict.xsd" the schema "unique/loose.xsd" is imported 
+            because this reflects what is said in 1484.12.3-2005, page 35 (section C.1.3)
+         2) In all component XSDs the schemaLocation attribute was amended to the 
+            xs:import and xs:include statements. This enables the usage of the schemas
+            with tools which don't deal well with missing schemaLocation informations.
+            
+         This file is available at "http://iwm.uni-koblenz.de/xsd/IEEE-LOM/loose"
+      </xs:documentation>
+
+  </xs:annotation>
+
+  <xs:import namespace="http://ltsc.ieee.org/xsd/imscc/LOM" schemaLocation="../lomLoose_localised.xsd"/>
+
+  <!-- Vocabulary data type declarations -->
+
+  <!-- Source -->
+  <xs:simpleType name="source">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 1.7 Structure -->
+  <xs:simpleType name="structure">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 1.8 Aggregation Level -->
+  <xs:simpleType name="aggregationLevel">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 2.2 Status -->
+  <xs:simpleType name="status">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 2.3.1 Role -->
+  <xs:simpleType name="role">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 3.2.1 Role -->
+  <xs:simpleType name="roleMeta">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 4.4.1.1 Type -->
+  <xs:simpleType name="type">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 4.4.1.2 Name -->
+  <xs:simpleType name="name">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 5.1 Interactivity Type -->
+  <xs:simpleType name="interactivityType">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 5.2 Learning Resource Type -->
+  <xs:simpleType name="learningResourceType">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 5.3 Interactivity Level -->
+  <xs:simpleType name="interactivityLevel">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 5.4 Semantic Density -->
+  <xs:simpleType name="semanticDensity">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 5.5 Intended End User Role -->
+  <xs:simpleType name="intendedEndUserRole">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 5.6 Context -->
+  <xs:simpleType name="context">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 5.8 Difficulty -->
+  <xs:simpleType name="difficulty">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 6.1 Cost -->
+  <xs:simpleType name="cost">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 6.2 Copyright and Other Restrictions -->
+  <xs:simpleType name="copyrightAndOtherRestrictions">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 7.1 Kind -->
+  <xs:simpleType name="kind">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+  <!-- 9.1 Purpose -->
+  <xs:simpleType name="purpose">
+    <xs:restriction base="lom:CharacterString"/>
+  </xs:simpleType>
+
+</xs:schema>

@@ -1,0 +1,53 @@
+/* Styling for mustache templates */
+
+// TODO: MDL-55142 remove browser these brwoser hacks:
+/* stylelint-disable declaration-block-no-duplicate-properties */
+// RTL styles for column templates.
+#grid {
+    // A mixin to set styles for the fluid row when RTL language enabled.
+    .fluid-rtl(@fluidGridColumnWidth, @fluidGridGutterWidth) {
+        .dir-rtl {
+            .row-fluid.rtl-compatible {
+                [class*="span"] {
+                    float: right;
+                    margin-left: 0;
+                    *margin-left: 0;
+                    margin-right: @fluidGridGutterWidth;
+                    *margin-right: @fluidGridGutterWidth - (.5 / @gridRowWidth * 100 * 1%);
+                }
+                [class*="span"]:first-child {
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+}
+/* stylelint-enable */
+
+
+// Style for template 3 columns auto.
+.columns-autoflow-1to1to1 {
+    .content-columns(3);
+}
+
+@media (max-width: 767px) {
+    // Change to a single column for smaller screens.
+    .columns-autoflow-1to1to1 {
+        .content-columns(1, 0);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+    // Include fluid-rtl mixin from grid namespace.
+    #grid > .fluid-rtl(@fluidGridColumnWidth768, @fluidGridGutterWidth768);
+}
+
+@media (min-width: 980px) and (max-width: 1199px) {
+    // Include fluid-rtl mixin from grid namespace.
+    #grid > .fluid-rtl(@fluidGridColumnWidth, @fluidGridGutterWidth);
+}
+
+@media (min-width: 1200px) {
+    // Include fluid-rtl mixin from grid namespace.
+    #grid > .fluid-rtl(@fluidGridColumnWidth1200, @fluidGridGutterWidth1200);
+}

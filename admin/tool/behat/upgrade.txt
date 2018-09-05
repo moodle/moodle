@@ -1,0 +1,8 @@
+This files describes API changes in the tool_behat code.
+
+=== 2.7 ===
+* Constants behat_base::cap_allow, behat_base::cap_prevent and
+  behat_base::cap_prohibit have been removed in favour of the
+  lang/en/role.php language strings 'allow', 'prevent' and 'prohibit'.
+* @_only_local tag used in .feature files replaced by @_file_upload tag
+* @_alerts tag used in .feature files replaced by @_alert tag

@@ -1,0 +1,31 @@
+This files describes API changes for question import/export format plugins.
+
+=== 2.3 ===
+
+* This plugin type now supports cron in the standard way. If required, Create a
+  lib.php file containing
+function qformat_mypluginname_cron() {};
+
+=== 2.1.5 / 2.2.3 / 2.3 ===
+
+* The readquestions method used to take a second argument $context. However, at
+  the point where this method was called, it was impossible to know what
+  context the quetsions were going to be saved into, so the value could be
+  wrong. Also, none of the standard question formats were using this argument,
+  so it was removed. See MDL-32220.
+
+=== 2.2 ===
+
+* The plugin name used to be defined in a string called the same thing as the
+format, with assoicated help strings, for example:
+
+$string['aiken'] = 'Aiken format';
+$string['aiken_help'] = 'This is a simple format ...';
+$string['aiken_link'] = 'qformat/aiken';
+
+This needs to be changed to use the standard string name pluginname, as for
+other plugin types.
+
+$string['pluginname'] = 'Aiken format';
+$string['pluginname_help'] = 'This is a simple format ...';
+$string['pluginname_link'] = 'qformat/aiken';

@@ -1,0 +1,202 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<xs:schema xmlns="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1"
+    targetNamespace="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    version="IMS CC WBLNK 1.1"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    <xs:annotation>
+        <xs:documentation>
+            XSD Data File Information
+            -------------------------
+            Author:         Colin Smythe
+            Date:           31st August, 2010
+            Version:        1.1
+            Status:         Final
+            Description:    This is the IMS GLC Web Links Data Model for the Common Cartridge.
+
+            History:        Version 1.0 - the first release of this data model;
+                            Version 1.1 - updates made to the namespace.
+
+            License:        IPR, License and Distribution Notices
+
+                            This machine readable file is derived from IMS Global Learning Consortium (GLC) specification IMS Common Cartridge Version 1.1
+                            found at http://www.imsglobal.org/cc and the original IMS GLC schema binding or code base
+                            http://www.imsglobal.org/cc.
+
+                            Recipients of this document are requested to submit, with their comments, notification of any
+                            relevant patent claims or other intellectual property rights of which they may be aware that might be
+                            infringed by the schema binding contained in this document.
+
+                            IMS GLC takes no position regarding the validity or scope of any intellectual property or other
+                            rights that might be claimed to pertain to the implementation or use of the technology described in this
+                            document or the extent to which any license under such rights might or might not be available; neither
+                            does it represent that it has made any effort to identify any such rights. Information on IMS GLCs
+                            procedures with respect to rights in IMS GLC specifications can be found at the IMS GLC Intellectual Property
+                            Rights web page: http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf.
+
+                            Copyright (c) IMS Global Learning Consortium 1999-2011. All Rights Reserved.
+
+                            License Notice for Users
+
+                            Users of products or services that include this document are hereby granted a worldwide, royalty-free, 
+                            non-exclusive license to use this document. 
+
+                            Distribution Notice for Developers
+
+                            Developers of products or services that are not original incorporators of this document and 
+                            have not changed this document, that is, are distributing a software product that incorporates this 
+                            document as is from a third-party source other than IMS, are hereby granted permission to copy,
+                            display and distribute the contents of this document in any medium for any purpose without fee or 
+                            royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL
+                            copies, or portions thereof.
+
+                            Developers of products or services that are original incorporators of this document and wish 
+                            to provide distribution of this document as is or with modifications and developers of products and 
+                            services that are not original incorporators of this document and have changed this document, are
+                            required to register with the IMS GLC community on the IMS GLC website as described in the following two
+                            paragraphs:-
+
+                            *  If you wish to distribute this document as is, with no modifications, you are hereby granted 
+                               permission to copy, display and distribute the contents of this document in any medium for any 
+                               purpose without fee or royalty provided that you include this IPR, License and Distribution notice in
+                               its entirety on ALL copies, or portions thereof, that you make and you complete a valid license 
+                               registration with IMS and receive an email from IMS granting the license. To register, follow the 
+                               instructions on the IMS website: http://www.imsglobal.org/specificationdownload.cfm. Once 
+                               registered you are granted permission to transfer unlimited distribution rights of this document for the 
+                               purposes of third-party or other distribution of your product or service that incorporates this 
+                               document as long as this IPR, License and Distribution notice remains in place in its entirety; 
+
+                            *  If you wish to create and distribute a derived work from this document, you are hereby 
+                               granted permission to copy, display and distribute the contents of the derived work in any medium for 
+                               any purpose without fee or royalty provided that you include this IPR, License and Distribution 
+                               notice in its entirety on ALL copies, or portions thereof, that you make and you complete a valid 
+                               profile registration with IMS GLC and receive an email from IMS GLC granting the license. To register, follow
+                               the instructions on the IMS GLC website: http://www.imsglobal.org/profile/. Once registered you are 
+                               granted permission to transfer unlimited distribution rights of the derived work for the purposes of 
+                               third-party or other distribution of your product or service that incorporates the derived work as long 
+                               as this IPR, License and Distribution notice remains in place in its entirety. 
+
+                            The limited permissions granted above are perpetual and will not be revoked by IMS GLC or its 
+                            successors or assigns.
+
+                            THIS SPECIFICATION IS BEING OFFERED WITHOUT ANY WARRANTY WHATSOEVER, AND IN PARTICULAR, ANY WARRANTY OF NONINFRINGEMENT IS
+                            EXPRESSLY DISCLAIMED. ANY USE OF THIS SPECIFICATION SHALL BE MADE ENTIRELY AT THE IMPLEMENTERS OWN RISK, AND NEITHER THE CONSORTIUM
+                            NOR ANY OF ITS MEMBERS OR SUBMITTERS, SHALL HAVE ANY LIABILITY WHATSOEVER TO ANY IMPLEMENTER OR THIRD PARTY FOR ANY DAMAGES OF
+                            ANY NATURE WHATSOEVER, DIRECTLY OR INDIRECTLY, ARISING FROM THE USE OF THIS SPECIFICATION.
+
+            Source UML File Information
+            ---------------------------
+            The source file information must be supplied as an XMI file (without diagram layout information).
+            The supported UML authoring tools are:
+            (a) Poseidon – v6 (and later)
+
+            Source XSLT File Information
+            ----------------------------
+            XSL Generator:    UMLtoXSDTransformv0p9.xsl
+            XSLT Processor:   Xalan
+            Release:          1.0 Beta 3
+            Date:             31st May, 2009
+
+            IMS GLC Auto-generation Binding Tool-kit (I-BAT)
+            ------------------------------------------------
+            This file was auto-generated using the IMS GLC Binding Auto-generation Tool-kit (I-BAT).  While every
+            attempt has been made to ensure that this tool auto-generates the files correctly, users should be aware
+            that this is an experimental tool.  Permission is given to make use of this tool.  IMS GLC makes no
+            claim on the materials created by third party users of this tool.  Details on how to use this tool
+            are contained in the IMS GLC "I-BAT" Documentation available at the IMS GLC web-site.
+
+            Tool Copyright:  2005-2010 (c) IMS Global Learning Consortium Inc.  All Rights Reserved.
+        </xs:documentation>
+    </xs:annotation>
+
+    <!-- Generate Global Attributes *********************************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate Namespaced extension Group  ************************************************************* -->
+
+    <xs:group name="grpStrict.any">
+        <xs:annotation>
+            <xs:documentation>
+                Any namespaced element from any namespace may be included within an "any" element.
+                The namespace for the imported element must be defined in the instance, and the schema must be imported.
+                The extension has a definition of "strict" i.e. they must have their own namespace.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:any namespace = "##other" processContents = "strict" minOccurs = "0" maxOccurs = "unbounded"/>
+        </xs:sequence>
+    </xs:group>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate Special DataTypes  ********************************************************************** -->
+
+    <xs:complexType name="EmptyPrimitiveType.Type">
+        <xs:complexContent>
+            <xs:restriction base="xs:anyType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the enumerated simpleType declarations ************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the simpleType elements based IMS data-types  ******************************************* -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the derived data-type elements based upon simpleType ************************************ -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the derived data-type elements based upon derived simpleType **************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the data-type ComplexTypes ************************************************************** -->
+
+    <xs:complexType name="WebLink.Type">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The WebLink complexType for the associated object.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="title" type="xs:normalizedString" minOccurs = "1" maxOccurs = "1"/>
+            <xs:element name="url" type="URL.Type" minOccurs = "1" maxOccurs = "1"/>
+            <xs:group ref="grpStrict.any"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="URL.Type">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The URL for the web link.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="EmptyPrimitiveType.Type">
+                <xs:attribute name="href" use="required" type="xs:normalizedString"/>
+                <xs:attribute name="target" use="optional" type="xs:normalizedString"/>
+                <xs:attribute name="windowFeatures" use="optional" type="xs:normalizedString"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the elements ********************************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the root element(s) *************************************************************** -->
+
+    <xs:element name="webLink" type="WebLink.Type"/>
+
+    <!-- ================================================================================================== -->
+
+</xs:schema>

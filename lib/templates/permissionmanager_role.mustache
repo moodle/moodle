@@ -1,0 +1,52 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/permissionmanager_role
+
+    Template which defines the role name in the capability table.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * role-id
+    * action
+
+    Context variables required for this template:
+    * rolename Name of the role rendered
+    * roleid Id of the role
+    * action WEhich action is done on click
+    * spanclass class attribute of span
+    * linkclass class attribute of link
+    * adminurl moodle admin url
+    * imageurl moodle url for delete(x) image
+
+    Example context (json):
+    {"rolename" : "Manager",
+     "roleid" : 1,
+     "action": "prevent",
+     "spanclass": "allowed",
+     "linkclass": "preventlink",
+     "adminurl" : "http://localhost/moodle/admin/"}
+}}
+<span style="display:inline-block;" class="{{spanclass}}">&nbsp;{{rolename}}&nbsp;
+    <a href="{{adminurl}}roles/permissions.php" class="{{linkclass}}" data-role-id="{{roleid}}" data-action="{{action}}">
+        {{#icon}}
+            {{#pix}}{{icon}}, core, {{iconalt}}{{/pix}}
+        {{/icon}}
+    </a>
+</span>

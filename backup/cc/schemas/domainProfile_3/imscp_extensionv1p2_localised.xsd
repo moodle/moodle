@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    IPR, License and Distribution Notices
+    This machine readable file is derived from IMS specification IMS Content Packaging Version: 1.2 
+    found at http://www.imsglobal.org/content/packaging and the original IMS schema binding or code base 
+    http://www.imsglobal.org/content/packaging/.
+    
+    Recipients of this document are requested to submit, with their comments, notification of any relevant patent 
+    claims or other intellectual property rights of which they may be aware that might be infringed by the schema 
+    binding contained in this document.
+    
+    IMS takes no position regarding the validity or scope of any intellectual property or other rights that might be 
+    claimed to pertain to the implementation or use of the technology described in this document or the extent to 
+    which any license under such rights might or might not be available; neither does it represent that it has made 
+    any effort to identify any such rights. Information on IMS�s procedures with respect to rights in IMS specifications 
+    can be found at the IMS Intellectual Property Rights web page: http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf.
+    
+    Copyright © IMS Global Learning Consortium 1999-2008. All Rights Reserved.
+    
+    License Notice for Users
+    Users of products or services that include this document are hereby granted a worldwide, royalty-free, 
+    non-exclusive license to use this document.
+    
+    Distribution Notice for Developers
+    Developers of products or services that are not original incorporators of this document and have not changed this document, that is, are distributing a software product that incorporates this document as is from a third-party source other than IMS, are hereby granted permission to copy, display and distribute the contents of this document in any medium for any purpose without fee or royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL copies, or portions thereof.
+    
+    Developers of products or services that are original incorporators of this document and wish to provide distribution of this document as is or with modifications and developers of products and services that are not original incorporators of this document and have changed this document, are required to register with the IMS community on the IMS website as described in the following two paragraphs:
+    
+    - If you wish to distribute this document as is, with no modifications, you are hereby granted permission to copy, 
+    display and distribute the contents of this document in any medium for any purpose without fee or royalty provided 
+    that you include this IPR, License and Distribution notice in its entirety on ALL copies, or portions thereof, that you make and you complete a valid license registration with IMS and receive an email from IMS granting the license. 
+    To register, follow the instructions on the IMS website: http://www.imsglobal.org/specificationdownload.cfm. Once 
+    registered you are granted permission to transfer unlimited distribution rights of this document for the purposes 
+    of third-party or other distribution of your product or service that incorporates this document as long as this IPR, 
+    License and Distribution notice remains in place in its entirety.
+    
+    - If you wish to create and distribute a derived work from this document, you are hereby granted permission to copy, 
+    display and distribute the contents of the derived work in any medium for any purpose without fee or royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL copies, or portions thereof, that you make and you complete a valid profile registration with IMS and receive an email from IMS granting the license. To register, follow the instructions on the IMS website: http://www.imsglobal.org/profile/. Once registered you are granted permission to transfer unlimited distribution rights of the derived work for the purposes of third-party or other distribution of your product or service that incorporates the derived work as long as this IPR, License and Distribution notice remains in place in its entirety.
+    
+    The limited permissions granted above are perpetual and will not be revoked by IMS or its successors or assigns.
+    
+    THIS SPECIFICATION IS BEING OFFERED WITHOUT ANY WARRANTY WHATSOEVER, AND IN PARTICULAR, 
+    ANY WARRANTY OF NONINFRINGEMENT IS EXPRESSLY DISCLAIMED. ANY USE OF THIS SPECIFICATION 
+    SHALL BE MADE ENTIRELY AT THE IMPLEMENTER�S OWN RISK, AND NEITHER THE CONSORTIUM, NOR 
+    ANY OF ITS MEMBERS OR SUBMITTERS, SHALL HAVE ANY LIABILITY WHATSOEVER TO ANY IMPLEMENTER 
+    OR THIRD PARTY FOR ANY DAMAGES OF ANY NATURE WHATSOEVER, DIRECTLY OR INDIRECTLY, ARISING 
+    FROM THE USE OF THIS SPECIFICATION.
+-->
+<!--*************************************************************************-->
+<!--** This schema has been modified from the original base schema named - **-->
+<!--** imscp_extensionv1p2.xsd                                             **-->
+<!--** using the IMS SchemaProf tool. This tool is based on software from  **-->
+<!--** the TELCERT Project which was funded in part by the European        **-->
+<!--** Commission under contract IST-507128                                **-->
+<!--*************************************************************************-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.imsglobal.org/xsd/imscp_extensionv1p2" targetNamespace="http://www.imsglobal.org/xsd/imscp_extensionv1p2" version="IMS CPX 1.2 localised_Schema_2008_6_30" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="http://www.imsglobal.org/xsd/ims_xlink.xsd" />
+    <xs:annotation>
+        <xs:documentation>
+            XSD Data File Information
+            -------------------------
+            Author:       Colin Smythe (IMS, UK)
+            Date:         31st October, 2006
+            Version:      2.0
+            Status:       Public Draft
+            Description:  This is a normative representation of the IMS Packaging Extension 1.0 Information Model for binding 
+                          purposes.  Read the corresponding IMS Content Packaging Information Model for the Platform 
+                          Independent Model representation.
+
+            History:      Version 2 includes the modified definition of LingualTitle.
+                          Version 1  of the IMS Packaging Utility v1.2 XSD for public draft release.
+                          It has a target namespace of http://www.imsglobal.org/xsd/imscp_extensionv1p2.
+                          This Utility uses this general approach to modeling:
+                          (1) All of the elements and attributes are defined as local to their host object;
+                          (2) There are multiple host objects;
+                          (3) Comments have been added to the complexType definitions.
+
+            Copyright:    2006 (c) IMS Global Learning Consortium Inc.  All Rights Reserved.
+                          IMS Global Learning Consortium, Inc. (IMS/GLC) is publishing the information
+                          contained in this binding ("Specification") for purposes of scientific
+                          experimental and scholarly collaboration only.  IMS/GLC makes no warranty or 
+                          representation regarding the accuracy or completeness of the Specification.
+                          This material is provided on an "As Is" and "As Available basis".
+                          The Specification is at all times subject to change and revision without
+                          notice. It is your sole responsibility to evaluate the usefulness, accuracy
+                          and completeness of the Specification as it relates to you.  IMS/GLC would
+                          appreciate receiving your comments and suggestions.  Please contact IMS/GLC
+                          through our website at: http://www.imsglobal.org.
+
+            Source XSLT File Information
+            ----------------------------
+            XSL Generator:    UMLtoXSDTransformv0p7.xsl
+            XSLT Processor:   Xalan
+            Release:          1.0 Beta 1
+            Date:             30th November, 2005
+
+            Auto-generation Tool
+            --------------------
+            This WSDL/XSD was auto-generated using the IMS WSDL/XSD auto-generation tool.  While every attempt
+            has been made to ensure that this tool auto-generates the XSDs correctly, users should be aware
+            that this is an experimental tool.  Permission is given to make use of this tool.  IMS makes no
+            claim on the materials created by third party users of this tool.  Details on how to use this tool
+            are contained in the IMS document: "IMS General Web Services: WSDL/XSD Binding Auto-generation"
+            available at the IMS web-site.
+            Tool Copyright:  2006 (c) IMS Global Learning Consortium Inc.  All Rights Reserved.
+        </xs:documentation>
+    <xs:documentation xml:lang="en">general: This profile of the extension schema of IMS CP 1.2 restricts extensions to use the variant element only.</xs:documentation>
+	</xs:annotation>
+
+        <!-- Generate Global Attributes ***********************************************************************  -->
+
+        <!-- =====================================  -->
+
+        <!-- Generate Namespaced extension Group  *************************************************************  -->
+
+            <xs:group name="grpStrict.any">
+                <xs:annotation>
+                    <xs:documentation>
+                        Any namespaced element from any namespace may be included within an "any" element.
+                        The namespace for the imported element must be defined in the instance, and the schema must be imported.
+                        The extension has a definition of "strict" i.e. they must have their own namespace.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:sequence>
+                    <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
+            </xs:group>
+
+        <!-- =====================================  -->
+
+        <!-- Generate the enumerated simpleType declarations **************************************************  -->
+
+        <!-- =====================================  -->
+
+        <!-- Generate the simpleType elements based IMS data-types  *******************************************  -->
+
+        <!-- =====================================  -->
+
+        <!-- Generate the derived data-type elements **********************************************************  -->
+
+        <!-- =====================================  -->
+
+        <!-- Generate the data-type elements ******************************************************************  -->
+
+            <xs:complexType name="IPointer.Type">
+                <xs:annotation>
+                    <xs:documentation>
+                        A bound instance of an IPointer object allows a packager to associate
+                        a specific XML node set in the same IMS Manifest Document that contains 
+                        it or an XML node set in a different IMS Manifest Document instance with 
+                        the parent object containing an IMS Pointer instance.  
+                        
+                        A referenced node set must be a valid child of the referencing parent element, 
+                        both as to kind and multiplicity in a referencing parent's context.
+
+                        <p>Represents a binding of the kinds of objects defined as children of ims-cp-imManifest : Manifest.[ ManifestMetadata, Organizations, Resources, Manifest, Extension ].</p>
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:sequence>
+                    <xs:group ref="grpStrict.any" />
+                </xs:sequence>
+                <xs:attribute name="identifier" use="required" type="xs:ID" />
+                <xs:attribute ref="xlink:type" use="optional" default="simple" />
+                <xs:attribute ref="xlink:href" use="required" />
+                <xs:anyAttribute namespace="##other" processContents="strict" />
+            </xs:complexType>
+
+            <xs:complexType name="Metadata.Type">
+                <xs:annotation>
+                    <xs:documentation>
+                        An instance of the metadata element contains data structures that declare descriptive
+                        information about a metadata element's parent only.
+                        
+                        One or more different metadata models may be declared as child extensions of a 
+                        metadata element.
+
+                        <p>Represents a binding of the kinds of child objects defined for ims-cp-imMetadata:  Metadata.[ Extension ].</p>
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:sequence>
+                    <xs:group ref="grpStrict.any" />
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="Variant.Type">
+                <xs:annotation>
+                    <xs:documentation>
+                        A variant element is closely analogous to a resource element in the 
+                        IMS Content Packaging Information Model.  Variant is a container for a 
+                        an alternative resource.  A resource may contain references 
+                        to assets that are all of the same type or different types (i.e., file formats).
+                        
+                        The Variant class points to the alternatibe resource.  Metadata is used to 
+                        describe the nature of a collection of alternative assets and their intended 
+                        use.  Examples include, but are not limited to, use as lingual variants, 
+                        visual or auditory variants, remediation variants, or platform delivery variants.
+                        
+                        The scope of referenced assets is specific to a Variant object.  Their use is in the
+                        context of the parent object containing a variant instance, typically a bound instance
+                        of a Resource object from the IMS CP namespace.
+
+                        <p>Represents a binding of the kinds of child objects defined for ims-cp-imResource: Resource.[ Metadata, File, Dependency, Extension ].</p>
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:sequence>
+                    <xs:element name="metadata" type="Metadata.Type" minOccurs="1" maxOccurs="1" />
+                </xs:sequence>
+                <xs:attribute name="identifier" use="required" type="xs:ID" />
+                <xs:attribute name="identifierref" use="required" type="xs:IDREF" />
+            </xs:complexType>
+
+            <xs:complexType name="LingualTitle.Type">
+                <xs:simpleContent>
+                    <xs:extension base="xs:string">
+                        <xs:attribute name="language" use="required" type="xs:string" />
+                    </xs:extension>
+                </xs:simpleContent>
+            </xs:complexType>
+
+        <!-- =====================================  -->
+
+        <!-- Declaration of the elements **********************************************************************  -->
+
+        <!-- =====================================  -->
+
+        <!-- Declaration of the root element(s) ***************************************************************  -->
+
+            <xs:element name="ipointer" type="IPointer.Type" />
+            <xs:element name="variant" type="Variant.Type" />
+            <xs:element name="lingualTitle" type="LingualTitle.Type" />
+
+        <!-- =====================================  -->
+
+</xs:schema>

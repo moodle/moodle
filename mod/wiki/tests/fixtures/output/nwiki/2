@@ -1,0 +1,12 @@
+<h3><a name="toc-1"></a>Links</h3>
+<h4><a name="toc-2"></a>Internal links</h4>
+<p>Some <a href="http://links">links</a>. <a href="http://link">Another Link</a>.</p>
+<h5><a name="toc-3"></a>Anchors</h5>
+<p>This is an <a href="#External+links">anchor</a> to the external links section.</p>
+<p>And this is an <a href="http://link#Section">anchor to another page</a>.</p>
+<h4><a name="toc-4"></a>External links</h4>
+<p>A link to <a href="http://www.google.com">http://www.google.com</a> , and a link to <a href="http://www.apple.com">apple</a>. </p>
+<p>The same link to <a href="http://www.apple.com">Apple Corporation</a>.</p>
+<h4><a name="toc-5"></a>Attachments & images</h4>
+<p>That's an <a href="attachment.png" class="wiki-attachment">attachment</a>.</p>
+<p>And that's an <div class="wiki_image_left"><p></p><img src="image.png" alt="image" /></div>.</p>

@@ -1,0 +1,65 @@
+.yui3-treeview,
+.yui3-treeview * {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.yui3-treeview-children {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* This ensures that the root node is always "open". */
+.yui3-treeview-children .yui3-treeview-children { display: none; }
+
+.yui3-treeview-indicator {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    visibility: hidden;
+    top: 0;
+    width: 20px;
+}
+
+.yui3-treeview-indicator s {
+    border: 5px solid transparent;
+    border-left-color: #afafaf;
+    display: inline-block;
+    *display: none; /* Hide from IE 6-7 */
+    height: 5px;
+    left: 6px;
+    position: relative;
+    top: -1px;
+    vertical-align: middle;
+    width: 5px;
+}
+
+.yui3-treeview-label { white-space: pre; }
+.yui3-treeview-node .yui3-treeview-children { margin-left: 16px; }
+
+.yui3-treeview-row {
+    cursor: pointer;
+    overflow: hidden;
+    padding: 0 4px 0 20px;
+    position: relative;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* -- Node states ----------------------------------------------------------- */
+.yui3-treeview-can-have-children > .yui3-treeview-row > .yui3-treeview-indicator { visibility: visible; }
+
+.yui3-treeview-open > .yui3-treeview-row > .yui3-treeview-indicator s {
+    border-left-color: transparent;
+    border-top-color: #afafaf;
+    left: 4px;
+    top: 2px;
+}
+
+.yui3-treeview-open > .yui3-treeview-children { display: block; }

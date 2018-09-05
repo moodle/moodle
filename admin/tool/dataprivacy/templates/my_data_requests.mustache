@@ -1,0 +1,169 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more comments.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_dataprivacy/my_data_requests
+
+    A user's data requests page.
+
+    Classes required for JS:
+    * requestactions
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * requests - Array of data requests.
+
+    Example context (json):
+    {
+        "requests": [
+            {
+                "id": 1,
+                "typename" : "Data export",
+                "comments": "I would like to download all of my daughter's personal data",
+                "statuslabelclass": "label-default",
+                "statuslabel": "Pending",
+                "timecreated" : 1517902087,
+                "requestedbyuser" : {
+                    "fullname": "Martha Smith",
+                    "profileurl": "#"
+                }
+            },
+            {
+                "id": 2,
+                "typename" : "Data export",
+                "comments": "Give me all of the information you have about me, or else...",
+                "statuslabelclass": "label-warning",
+                "statuslabel": "Awaiting completion",
+                "timecreated" : 1517902087,
+                "requestedbyuser" : {
+                    "fullname": "Martha Smith",
+                    "profileurl": "#"
+                }
+            },
+            {
+                "id": 3,
+                "typename" : "Data deletion",
+                "comments": "Please delete all of my son's personal data.",
+                "statuslabelclass": "label-success",
+                "statuslabel": "Deleted",
+                "timecreated" : 1517902087,
+                "requestedbyuser" : {
+                    "fullname": "Martha Smith",
+                    "profileurl": "#"
+                }
+            },
+            {
+                "id": 4,
+                "typename" : "Data deletion",
+                "comments": "Delete my data or I'm coming for you...",
+                "statuslabelclass": "label-danger",
+                "statuslabel": "Rejected",
+                "timecreated" : 1517902087,
+                "requestedbyuser" : {
+                    "fullname": "Martha Smith",
+                    "profileurl": "#"
+                }
+            },
+            {
+                "id": 5,
+                "typename" : "Data export",
+                "comments": "Please let me download my data",
+                "statuslabelclass": "label-info",
+                "statuslabel": "Processing",
+                "timecreated" : 1517902087,
+                "requestedbyuser" : {
+                    "fullname": "Martha Smith",
+                    "profileurl": "#"
+                }
+            },
+            {
+                "id": 6,
+                "typename" : "Data export",
+                "comments": "Please let me download my data",
+                "statuslabelclass": "label",
+                "statuslabel": "Expired",
+                "statuslabeltitle": "Download has expired. Submit a new request if you wish to export your personal data.",
+                "timecreated" : 1517902087,
+                "requestedbyuser" : {
+                    "fullname": "Martha Smith",
+                    "profileurl": "#"
+                }
+            }
+        ]
+    }
+}}
+
+{{#httpsite}}
+    {{> core/notification_warning}}
+{{/httpsite}}
+
+<div data-region="datarequests">
+    <div class="m-t-1 m-b-1">
+        <a href="{{newdatarequesturl}}" class="btn btn-primary" data-action="new-request">
+            {{#str}}newrequest, tool_dataprivacy{{/str}}
+        </a>
+    </div>
+    <table class="generaltable fullwidth">
+        <thead>
+            <tr>
+                <th scope="col">{{#str}}requesttype, tool_dataprivacy{{/str}}</th>
+                <th scope="col">{{#str}}daterequested, tool_dataprivacy{{/str}}</th>
+                <th scope="col">{{#str}}requestby, tool_dataprivacy{{/str}}</th>
+                <th scope="col">{{#str}}requeststatus, tool_dataprivacy{{/str}}</th>
+                <th scope="col" colspan="2">{{#str}}message, tool_dataprivacy{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#requests}}
+            <tr {{!
+              }} data-region="request-node"{{!
+              }} data-id="{{id}}"{{!
+              }} data-type="{{type}}"{{!
+              }} data-status="{{status}}"{{!
+              }}>
+                <td>{{typename}}</td>
+                <td>{{#userdate}} {{timecreated}}, {{#str}} strftimedatetime {{/str}} {{/userdate}}</td>
+                <td><a href="{{requestedbyuser.profileurl}}" title="{{#str}}viewprofile{{/str}}">{{requestedbyuser.fullname}}</a></td>
+                <td>
+                    <span class="label {{statuslabelclass}}" title="{{statuslabeltitle}}">{{statuslabel}}</span>
+                </td>
+                <td>{{comments}}</td>
+                <td>
+                    {{#actions}}
+                        {{> core/action_menu}}
+                    {{/actions}}
+                </td>
+            </tr>
+            {{/requests}}
+            {{^requests}}
+            <tr>
+                <td class="text-muted" colspan="5">
+                    {{#str}}nopersonaldatarequests, tool_dataprivacy{{/str}}
+                </td>
+            </tr>
+            {{/requests}}
+        </tbody>
+    </table>
+</div>
+
+{{#js}}
+// Initialise the JS.
+require(['tool_dataprivacy/myrequestactions'], function(ActionsMod) {
+    ActionsMod.init();
+});
+{{/js}}

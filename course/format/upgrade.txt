@@ -1,0 +1,108 @@
+This files describes API changes for course formats
+
+Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
+
+=== 3.5 ===
+* Course formats should overwrite get_config_for_external function to return the course format settings viewable by the
+  current user.
+  If the course format does not have any setting that could be considerated private (like a private/access key/token),
+  is ok to return all the settigns via the get_format_options function.
+
+=== 3.3 ===
+* Javascript code for editing activities and sections was moved to an AMD module, course/rest.php is no longer
+  responsible for editing actions, instead it is done in web services. Carefully test all editing actions during upgrade.
+* The new method format_base::allow_stealth_module_visibility() can indicate whether course format supports "stealth"
+  activities mode when they are available but not visible on course page. Course format that supports stealth mode
+  must check $cm->is_visible_on_course_page() when displaying activities list on the course page instead of $cm->uservisible.
+  For all other plugins except course formats the same property $cm->uservisible indicates if the activity contents
+  is actually available to student.
+* Option "Number of sections" (numsections) was removed from topics and weeks formats, instead the actual number of records
+  in the course_sections table is treated as a number of sections (excluding section 0 that should always be present).
+* Method create_course() will populate the new course with empty sections if $data->numsections is provided even if
+  "numsections" is not an option defined by the course format.
+* course/changenumsections.php can now be used to insert sections at any positions.
+* The variable SECTIONLEFTSIDE was changed from '.left .section-handle img' to '.left .section-handle .icon' in
+  course/format/topics/format.js and course/format/weeks/format.js due to the introduction of Font Awesome (see MDL-40759)
+  which altered the HTML. Please check if your course format relies on this selector, and if so, update it.
+
+=== 3.2 ===
+* Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted
+* Course formats can overwrite get_default_course_enddate function to set the default course end date for new courses.
+  format_base::get_default_course_enddate uses the new "Course duration" site setting to calculate the default course end date
+  from the default course start date.
+* New method format_base::supports_news() which is used to determine whether an Announcements forum will be automatically created on
+  course creation. For course format plugin developers, please override format_base::supports_news() to return true if you want the
+  Announcements forum to be created upon course creation and remove the block names defined in format_base::get_default_blocks().
+
+=== 3.1 ===
+* Course format may use the inplace_editable template to allow quick editing of section names, see
+  https://docs.moodle.org/dev/Inplace_editable and MDL-51802 for example implementation.
+
+=== 3.0 ===
+* Course formats should now use section_edit_control_items and use the returned array of controls items and their attributes to create a
+  renderable menu or array of links.  Plugin calls to section_edit_controls will now include the section edit control in the returned array.
+* The section name is now wrapped in a new span (.sectionname > span), process_sections method in format.js should be updated so .sectionname
+  DOM node's wraps the section title in a span. You can look at how to implement the change in course/format/topics/format.js or MDL-48947.
+* New method format_base::get_default_section_name retrieves the default section name for the given course format. The base
+  implementation basically uses the implementation of format_base::get_section_name. The method can be overridden in
+  format_base subclasses that use sections (i.e. format_topics, format_weeks). In relation to the changes made for the default
+  section name, the default section name is now being shown when editing the section information.
+
+=== 2.9 ===
+* Course formats may support deleting sections, see MDL-10405 for more details.
+  format_section_renderer_base::section_edit_controls() is now also called for
+  stealth sections and it also returns "delete" control.
+
+=== 2.8 ===
+* The activity chooser now uses M.course.format.get_sectionwrapperclass()
+  to determine the section selector, rather than a hard-coded `li.section`.
+* Activity duplication in /course/modduplicate.php is deprecated and is now done in /course/mod.php.  Deprecated calls will be honored by
+  redirecting to /course/mod.php for 3rd party plugin support.
+* New method format_base::section_get_available_hook() allows plugins to override section availability.
+
+=== 2.7 ===
+* The ->testedbrowsers array no longer needs to be defined in supports_ajax().
+* format_section_renderer_base::section_hidden has an new second optional argument $courseorid.
+  If provided the section name is printed in the not available string when displaying the hidden section.
+
+=== 2.6 ===
+
+* core_course_renderer::course_section_cm_edit_actions has two new optional arguments and now uses and action_menu component.
+* core_course_renderer::course_section_cm has been altered to call core_course_renderer::course_section_cm_edit_actions with the two new arguments
+* An additional course renderer function has been created which allows you to
+  specify the wrapper for a course module within a section (e.g. the <li>).  This can be
+  found in core_course_renderer::course_section_cm_list_item().
+
+=== 2.5 ===
+
+* Functions responsible for output in course/lib.php are deprecated, the code is moved to
+  appropriate renderers: print_section(), print_section_add_menus(), get_print_section_cm_text(),
+  make_editing_buttons()
+  See functions' phpdocs in lib/deprecatedlib.php
+* Function get_print_section_cm_text() is deprecated, replaced with methods in cm_info
+
+=== 2.4 ===
+
+Course format API has been changed significantly. Instead of implementing callbacks course formats
+may overwrite the class format_base. See format_legacy class for a template for upgrading course
+format.
+
+* Function settings_navigation::add_course_editing_links() is completely removed, course format
+  functions callback_XXXX_request_key() are no longer used (where XXXX is the course format name)
+* functions get_generic_section_name(), get_all_sections(), add_mod_to_section(), get_all_mods()
+  are deprecated. See their phpdocs in lib/deprecatedlib.php on how to replace them
+* Course formats may now have their settings.php file as the most of other plugin types
+* Function format_section_renderer_base::is_section_current() is deprecated, overwrite/use
+  function is_section_current in format class
+
+=== 2.3 ===
+
+* The new $course->coursedisplay option was introduced, users can now choose to display
+  a section at a time if the course formats support it:
+ - COURSE_DISPLAY_SINGLEPAGE indicates the teacher has chosen to display all sections on one page
+ - COURSE_DISPLAY_MULTIPAGE indicates the teacher has chose to have seperate pages with each section.
+
+* The parameter for 'currently active section' was standardised in core:
+  - The course format is passed the currently live section through the $displaysection varaible to format.php
+  - A 'section' paramter is the standardised way to pass around the current section in a course
+  - Navigation no longer looks for custom parameters defined in callback_format_request_key

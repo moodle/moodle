@@ -1,0 +1,20 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<xs:schema xmlns    ="http://dummy.libxml2.validator"
+    targetNamespace ="http://dummy.libxml2.validator"
+    xmlns:xs        ="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi       ="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:imscp     ="http://www.imsglobal.org/xsd/imscc/imscp_v1p1"
+    xmlns:imslom    ="http://ltsc.ieee.org/xsd/imscc/LOM"
+    xmlns:lom       ="http://ltsc.ieee.org/xsd/LOM"
+    xmlns:cc        ="http://www.imsglobal.org/xsd/imsccauth_v1p0"
+    version="1.0"
+    elementFormDefault  ="qualified"
+    attributeFormDefault="unqualified"
+    >
+
+    <xs:import namespace ="http://www.w3.org/XML/1998/namespace"          schemaLocation = "xml.xsd"                                      />
+    <xs:import namespace ="http://www.imsglobal.org/xsd/imscc/imscp_v1p1" schemaLocation = "imscp_v1p2_localised.xsd"                     />
+    <xs:import namespace ="http://ltsc.ieee.org/xsd/imscc/LOM"            schemaLocation = "domainProfile_1/lomLoose_localised.xsd"       />
+    <xs:import namespace ="http://ltsc.ieee.org/xsd/LOM"                  schemaLocation = "domainProfile_2/lomLoose_localised.xsd"       />
+    <xs:import namespace ="http://www.imsglobal.org/xsd/imsccauth_v1p0"   schemaLocation = "domainProfile_0/imsccauth_v1p0_localised.xsd" />
+</xs:schema>

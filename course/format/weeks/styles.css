@@ -1,0 +1,34 @@
+.course-content ul.weeks {
+    margin: 0;
+    list-style: none;
+}
+
+.course-content ul.weeks li.section .content {
+    margin: 0 40px;
+}
+
+.course-content ul.weeks li.section .left,
+.course-content ul.weeks li.section .right {
+    width: 40px;
+    padding: 0 6px;
+}
+
+.course-content ul.weeks li.section .left {
+    padding-top: 22px;
+    text-align: right;
+}
+
+.jsenabled .course-content ul.weeks li.section .left,
+.jsenabled .course-content ul.weeks li.section .right {
+    width: auto;
+}
+
+.course-content ul.weeks li.section .left .section-handle img.icon {
+    padding: 0;
+    vertical-align: baseline;
+}
+
+.course-content ul.weeks li.section .section_action_menu .textmenu,
+.course-content ul.weeks li.section .section_action_menu .menu-action-text {
+    white-space: nowrap;
+}

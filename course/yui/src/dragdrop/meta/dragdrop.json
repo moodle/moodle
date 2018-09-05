@@ -1,0 +1,16 @@
+{
+    "moodle-course-dragdrop": {
+        "requires": [
+            "base",
+            "node",
+            "io",
+            "dom",
+            "dd",
+            "dd-scroll",
+            "moodle-core-dragdrop",
+            "moodle-core-notification",
+            "moodle-course-coursebase",
+            "moodle-course-util"
+        ]
+    }
+}

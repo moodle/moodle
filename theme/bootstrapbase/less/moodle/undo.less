@@ -1,0 +1,170 @@
+/* some very targetted corrections to roll back nameclashes between
+ * Moodle and Bootstrap like .row, .label, .content, .controls
+ *
+ * Mostly relies on these styles being more specific than the Bootstrap
+ * ones in order to overule them.
+ */
+
+// .label vs .label
+
+li.activity.label,
+.file-picker td.label {
+    background: inherit;
+    color: inherit;
+    border: inherit;
+    text-shadow: none;
+    padding: 8px;
+    white-space: normal;
+    display: block;
+    font-size: inherit;
+    line-height: inherit;
+}
+.file-picker td.label {
+    display: table-cell;
+    text-align: right;
+}
+
+// Some of this dialog is sized in ems so a different font size
+// effects the whole layout.
+.choosercontainer #chooseform .option label {
+    font-size: 12px;
+}
+
+// Reset the outline on a focussed modal for accessibility.
+.modal:focus {
+    outline: rgb(94, 158, 215) auto 5px;
+}
+
+/* block.invisible vs .invisible
+ * block.hidden vs .invisible
+ *
+ * uses .invisible where the rest of Moodle uses .dimmed
+ * fixible in block renderer?
+ *
+ * There's seems to be even more naming confusion here since,
+ * blocks can be actually 'visible' (or not) to students,
+ * marked 'visible' but really just dimmed to indicate to editors
+ * that students can't see them or  'visible' to the user who
+ * collapses them, 'visible' if you have the right role and in
+ * different circumstances different sections of a block can
+ * be 'visible' or not.
+ *
+ * currently worked around in renderers.php function block{}
+ * by rewriting the class name "invisible" to "dimmed",
+ * though the blocks don't look particularly different apart
+ * from their contents disappearing. Maybe try .muted? or
+ * dimming all the edit icons apart from unhide, might be a
+ * nice effect, though they'd still be active. Maybe reverse
+ * it to white?
+ */
+
+li.section.hidden,
+.block.hidden,
+.block.invisible {
+    visibility: visible;
+    display: block;
+}
+
+
+/* .row vs .row
+ *
+ * very tricky to track down this when it goes wrong,
+ * since the styles are applied to generated content
+ *
+ * basically if you see things shifted left or right compared
+ * with where they should be check for a .row
+ */
+#turnitintool_style .row,
+.forumpost .row {
+    margin-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+    // not sure if this needs !important
+}
+#turnitintool_style .row:before,
+#turnitintool_style .row:after,
+.forumpost .row:before,
+.forumpost .row:after {
+    content: none;
+}
+/* fieldset.hidden vs .hidden
+ *
+ * Moodle uses fieldset.hidden for mforms, to signify a collection of
+ * form elements that don't have a box drawn round them. Bootstrap
+ * uses hidden for stuff that is hidden in various responsive modes.
+ *
+ * Relatedly, there is also fieldset.invisiblefieldset which hides the
+ * border and sets the display to inline.
+ *
+ * Originally this just set block and visible, but it is used
+ * in random question dialogue in Quiz,
+ * that dialogue is hidden and shown, so when hidden the
+ * above workaround leaves you with a button floating around
+ */
+
+fieldset.hidden {
+    display: inherit;
+    visibility: inherit;
+}
+
+/* .container vs .container
+ *
+ * bootstrap uses .container to set the width of the layout at 960px or so, Moodle uses it
+ * in the Quiz to contain the questions to add. If you don't overule the Bootstrap code,
+ * it becomes near unuseable.
+ */
+
+#questionbank + .container {
+    width: auto;
+}
+// In Moodle .hide is the eye icon
+// In Bootstrap it hides things
+img.hide {
+    display: inherit;
+}
+
+// Bootstrap adds a background sprite to anything with classname starting "icon-".
+// we only want to load it if we use them in content.
+.icon-bar,
+img.icon-post,
+img.icon-info,
+img.icon-warn,
+img.icon-pre {
+    background-image: none;
+}
+
+// Weird big margins on login page
+.loginbox.twocolumns,
+.loginbox.twocolumns {
+    .signuppanel,
+    .loginpanel {
+        padding: 0;
+        margin: 0;
+    }
+}
+
+//Bootstrap needs tooltips to be specified. Moodle does not use this
+.tooltip {
+    .opacity(100);
+    display: inline;
+}
+
+// Allow the custom menu to expand/collapse when the user hovers over it with JS disabled.
+body:not(.jsenabled) .dropdown:hover > .dropdown-menu {
+    display: block;
+    margin-top: -6px; // We need to move it up to counter the arrows as they introduce hover bugs.
+}
+
+// Extends bootstrapbase/less/bootstrap/navbar.less
+// to enable scroll in the language menu.
+body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
+.langmenu.open > .dropdown-menu {
+    display: block;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+// Extends bootstrapbase/less/bootstrap/type.less
+// to enable ol lists to use a larger number set.
+
+ol {
+    margin: 0 0 @baseLineHeight / 2 2.5em;
+}

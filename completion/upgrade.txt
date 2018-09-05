@@ -1,0 +1,7 @@
+This files describes API changes in /completion/* - completion,
+information provided here is intended especially for developers.
+
+=== 2.9 ===
+
+* A completed and failed activity counts as a completed activity for
+  course completion.

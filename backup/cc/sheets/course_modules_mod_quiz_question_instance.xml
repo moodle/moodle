@@ -1,0 +1,5 @@
+        <QUESTION_INSTANCE>
+          <ID>[#instance_id#]</ID>
+          <QUESTION>[#question_id#]</QUESTION>
+          <GRADE>1</GRADE>
+        </QUESTION_INSTANCE>

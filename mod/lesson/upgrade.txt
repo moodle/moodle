@@ -1,0 +1,41 @@
+This files describes API changes in the lesson code.
+
+=== 3.4 ===
+
+* External function mod_lesson_external::get_user_attempt() now returns the full page object inside each answerpages.
+
+=== 3.3.2 ===
+
+* lesson_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
+  now optionally takes the module instance object or ID, and the course module object or ID. Please try to send the full
+  objects instead of the ids to save DB calls.
+
+=== 3.3 ===
+
+* lesson::callback_on_view() has an additional optional parameter $redirect default to true.
+  It can be set to false to avoid redirection and return the page to redirect.
+=== 3.1 ===
+* Removed the unused file reformat.php
+* removedoublecr() and importmodifiedaikenstyle() have now been removed.
+
+=== 3.0 ===
+* Removed broken high score code.  Use the activity results block instead.
+
+=== 2.9 ===
+* The  grade_item_delete function in mod/lesson/lib.php was removed because it was not doing anything and was never called.
+* A third optional boolean parameter $endreached was added to lesson::update_timer to indicate that end of lesson was reached. This is used by 'completionendreached' custom completion rule.
+* lesson_page_type_endofbranch::update in mod/lesson/pagetypes/endofbranch.php
+  and lesson_page_type_endofcluster::update in mod/lesson/pagetypes/endofcluster.php
+  have been removed, this is now handled by the base class: lesson_page::update in
+  locallib.php and the exact same code is executed (it is also executed by the
+  lesson_page_type_cluster class that previously had no update function).
+* A fourth parameter (format) has been added to the add_answer() function
+  located as part of the lesson_add_page_form_base class. If specified with a value of 'LESSON_ANSWER_HTML'
+  then a rich html editor is generated. Otherwise an editor is created with Moodle Auto Format
+* removedoublecr() and importmodifiedaikenstyle() are now deprecated.
+* Added support for groups and groupings. If enabled, this allows the Report and
+  Grade Essay view to be filtered by a group
+
+=== Earlier changes ===
+
+* Were not documented in this way. Sorry.

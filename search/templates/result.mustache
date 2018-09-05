@@ -1,0 +1,98 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_search/result
+
+    Template which shows a search result.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * courseurl
+    * coursefullname
+    * title
+    * docurl
+    * contexturl
+
+    Optional context variables for this template:
+    * content
+    * userurl
+    * userfullname
+    * description1
+    * description2
+    * filename
+    * multiplefiles
+    * filenames
+
+    Example context (json):
+    {
+        "courseurl": "https://example.com/course/view.php?id=2",
+        "coursefullname": "Example course",
+        "title": "Example title",
+        "docurl": "https://example.com/mod/example/view.php?id=4",
+        "content": "I am content",
+        "contexturl": "https://example.com/mod/example/view.php?id=2",
+        "userurl": "https://example.com/user/profile.php?id=3",
+        "userfullname": "Example User Full Name",
+        "multiplefiles": true,
+        "filenames":
+        [
+            "file1.txt",
+            "file2.txt"
+        ]
+    }
+}}
+<div class="result">
+    <h4 class="result-title">
+        <a href="{{{docurl}}}">{{{title}}}</a>
+    </h4>
+    {{#content}}
+        <div class="result-content">{{{content}}}</div>
+    {{/content}}
+    {{#description1}}
+        <div class="result-content">{{{description1}}}</div>
+    {{/description1}}
+    {{#description2}}
+        <div class="result-content">{{{description2}}}</div>
+    {{/description2}}
+    {{#filename}}
+        <div class="result-content-filename">
+            {{#str}}matchingfile, search, {{{filename}}}{{/str}}
+        </div>
+    {{/filename}}
+    {{#multiplefiles}}
+        <div class="result-content-filenames">
+            {{#str}}matchingfiles, search{{/str}}<br>
+            <ul class="list">
+            {{#filenames}}
+                <li><span class="filename">{{.}}</span></li>
+            {{/filenames}}
+            </ul>
+        </div>
+    {{/multiplefiles}}
+    <div class="result-context-info">
+        <a href="{{{contexturl}}}">{{#str}}viewresultincontext, search{{/str}}</a> -
+        <a href="{{{courseurl}}}">{{#str}}incourse, search, {{{coursefullname}}}{{/str}}</a>
+        {{#userfullname}}
+            - <a href="{{{userurl}}}">{{#str}}byname, moodle, {{{userfullname}}}{{/str}}</a>
+        {{/userfullname}}
+    </div>
+</div>

@@ -1,0 +1,44 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/tabtree
+
+    Tab tree.
+
+    Example context (json):
+    {
+        "tabs": [{
+            "active": "true",
+            "inactive": "false",
+            "link": [{
+                "link": "http://moodle.org"
+            }],
+            "title": "Moodle.org",
+            "text": "Moodle community"
+        }]
+    }
+}}
+<ul class="nav nav-tabs mb-3">
+  {{#tabs}}
+    <li class="nav-item">
+      <a class="nav-link{{#active}} active{{/active}}{{#inactive}} disabled{{/inactive}}" {{#link}}href="{{{link}}}"{{/link}} title="{{title}}">{{{text}}}</a>
+    </li>
+  {{/tabs}}
+</ul>
+{{#secondrow}}
+  {{>core/tabtree}}
+{{/secondrow}}

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>mimetex.*</location>
+    <name>mimeTeX</name>
+    <license>GPL</license>
+    <version>1.74</version>
+    <licenseversion>3.0+</licenseversion>
+  </library>
+</libraries>

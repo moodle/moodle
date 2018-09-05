@@ -1,0 +1,115 @@
+.singlebutton {
+    div {
+        display: inline-block;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        margin-left: 5px;
+    }
+}
+
+// Two singlebuttons side by side for ok/cancel.
+#notice {
+    .buttons {
+        .singlebutton {
+            display: inline-block;
+        }
+    }
+}
+
+.continuebutton {
+    text-align: center;
+}
+
+p.arrow_button {
+    margin-top: 5em;
+    text-align: center;
+    #remove {
+        margin: 3em auto 5em;
+    }
+    input {
+        .btn-block;
+    }
+}
+
+#addcontrols {
+    // The margin top is equal the combination of the line-height and margin of a <p>,
+    // because the visual parent is a <p>.
+    margin-top: @baseLineHeight + (@baseLineHeight / 2);
+    text-align: center;
+    margin-bottom: 3em;
+    label {
+        display: inline;
+    }
+}
+
+#addcontrols,
+#removecontrols {
+    input {
+        .btn-block;
+        margin: auto;
+    }
+}
+
+.btn-lineup {
+    margin: 0 0 10px 5px;
+}
+
+input[name="searchwikicontent"] + input[type="submit"],
+select + input[type="submit"],
+input[type="text"] + input[type="button"],
+input[type="password"] + input[type="submit"],
+input[type="text"] + button,
+input[type="text"] + input[type="submit"] {
+    .btn-lineup
+}
+
+button,
+input.form-submit,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+    .btn;
+}
+button,
+input.form-submit,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+    .btn-lineup;
+}
+
+// The above buttons rules are really dumb and muck things up for simple pages using bootstrap correctly.
+// e.g. cohort search form.
+// Undo the above silly rules one by one for pages we know to be broken by them.
+form.search-cohort input[type="text"],
+form.search-cohort input[type="submit"],
+form.search-cohort label {
+    .m-t-1
+}
+
+form.search-cohort label {
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+form.search-cohort input[type="submit"] {
+    margin-bottom: 0;
+    margin-left: 0;
+}
+
+button {
+    &.yui3-button {
+        &.closebutton {
+            background-position: 0 0;
+            &:hover {
+                background-position: 0 0;
+                // Because we assign the button look to every button tag
+                // above, we need to remove some styles from non-standard
+                // looking buttons. Correct fix, assign .btn class to every
+                // actual button in Moodle so we don't need to carpet bomb the
+                // bare button tag.
+            }
+        }
+    }
+}
+

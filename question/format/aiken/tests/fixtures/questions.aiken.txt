@@ -1,0 +1,11 @@
+The Moodle project was started by:
+A) Petr Skoda
+B) Martin Dougiamas
+C) Eloy Lafuente
+D) Tim Hunt
+ANSWER: B
+
+Moodle's abilities include handling user input that includes <html class="cool"> & images:
+A) True
+B) False
+ANSWER: A

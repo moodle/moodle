@@ -1,0 +1,110 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Manage competency frameworks template.
+
+    Classes required for JS:
+    * drag-parentnode
+    * drag-handlecontainer
+    * drag-samenode
+    * competencyframeworkactions
+
+    Data attributes required for JS:
+    * data-region = managecompetencies
+    * data-frameworkid = id
+    * data-action = deletecompetencyframework
+
+    Context variables required for this template:
+    * competencyframeworks - array of objects containing id, shortname, idnumber, visible
+    * canmanage - true if this user has permission to manage the frameworks
+    * navigation - array of strings containing buttons for navigation
+}}
+<div data-region="managecompetencies">
+<div class="pull-left">
+    {{#navigation}}
+    {{{.}}}
+    {{/navigation}}
+</div>
+<table class="generaltable fullwidth managecompetencies">
+    <caption>{{#str}}listcompetencyframeworkscaption, tool_lp{{/str}}</caption>
+    <thead>
+        <tr>
+            <th scope="col">{{#str}}competencyframeworkname, tool_lp{{/str}}</th>
+            <th scope="col">{{#str}}competencies, core_competency{{/str}}</th>
+            <th scope="col">{{#str}}category, tool_lp{{/str}}</th>
+            <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
+        </tr>
+    </thead>
+    <tbody class="drag-parentnode">
+        {{#competencyframeworks}}
+        <tr class="drag-samenode" data-frameworkid="{{id}}">
+            <td><span class="drag-handlecontainer"></span><span><a href="{{pluginbaseurl}}/competencies.php?competencyframeworkid={{id}}&amp;pagecontextid={{pagecontextid}}">{{{shortname}}} ({{idnumber}})</a></span> {{^visible}}{{#str}}hiddenhint, tool_lp{{/str}}{{/visible}}</td>
+            <td>{{competenciescount}}</td>
+            <td>{{contextnamenoprefix}}</td>
+            <td>
+            {{#canmanage}}
+            <ul title="{{#str}}edit{{/str}}" class="competencyframeworkactions">
+                <li>
+                    <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
+                    <ul class="dropdown dropdown-menu">
+                        <li class="dropdown-item">
+                            <a href="{{pluginbaseurl}}/editcompetencyframework.php?id={{id}}&amp;pagecontextid={{pagecontextid}}">
+                                {{#pix}}t/edit{{/pix}} {{#str}}edit{{/str}}
+                            </a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a data-action="duplicatecompetencyframework" href="#" data-frameworkid="{{id}}">
+                                {{#pix}}t/copy{{/pix}} {{#str}}duplicate{{/str}}
+                            </a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a data-action="deletecompetencyframework" href="#" data-frameworkid="{{id}}">
+                                {{#pix}}t/delete{{/pix}} {{#str}}delete{{/str}}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            {{/canmanage}}
+            </td>
+        </tr>
+        {{/competencyframeworks}}
+    </tbody>
+</table>
+{{^competencyframeworks}}
+<p class="alert alert-info">
+    {{#str}}nocompetencyframeworks, tool_lp{{/str}}
+</p>
+{{/competencyframeworks}}
+
+{{#js}}
+// Initialise the JS.
+require(['tool_lp/frameworkactions',
+         'tool_lp/menubar'],
+        function(actionsMod, menubar) {
+
+    actionsMod.init({{pagecontextid}});
+
+    menubar.enhance('.competencyframeworkactions', {
+        "[data-action='deletecompetencyframework']": actionsMod.deleteHandler,
+        "[data-action='duplicatecompetencyframework']": actionsMod.duplicateHandler,
+    });
+});
+
+{{/js}}
+
+</div>

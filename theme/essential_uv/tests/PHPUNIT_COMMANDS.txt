@@ -1,0 +1,21 @@
+Ref: https://docs.moodle.org/dev/PHPUnit
+
+composer install --dev
+
+php admin/tool/phpunit/cli/init.php
+
+vendor/bin/phpunit theme_essential_corerenderer_testcase theme/essential/tests/corerenderer_test.php
+or
+vendor\bin\phpunit theme_essential_corerenderer_testcase theme/essential/tests/corerenderer_test.php
+
+vendor/bin/phpunit theme_essential_privacy_testcase theme/essential/tests/privacy_provider_test.php
+or
+vendor\bin\phpunit theme_essential_privacy_testcase theme/essential/tests/privacy_provider_test.php
+
+vendor/bin/phpunit theme_essential_toolbox_testcase theme/essential/tests/toolbox_test.php
+or
+vendor\bin\phpunit theme_essential_toolbox_testcase theme/essential/tests/toolbox_test.php
+
+vendor/bin/phpunit --group theme_essential
+or
+vendor\bin\phpunit --group theme_essential

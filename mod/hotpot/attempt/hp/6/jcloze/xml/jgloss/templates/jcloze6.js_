@@ -1,0 +1,92 @@
+
+//JCLOZE CORE JAVASCRIPT CODE
+
+var Finished = false;
+var Locked = false;
+var TimeOver = false;
+
+I = new Array();
+[strItemArray]
+
+function StartUp(){
+	RemoveBottomNavBarForIE();
+
+	// initialize gloss functionality
+	Add_GlossFunctionality();
+
+[inclPreloadImages]
+	PreloadImages([PreloadImageList]);
+[/inclPreloadImages]
+
+[inclTimer]
+	StartTimer();
+[/inclTimer]
+
+}
+
+[inclTimer]
+function TimesUp() {
+	document.getElementById('Timer').innerHTML = '[strTimesUp]';
+[inclPreloadImages]
+	RefreshImages();
+[/inclPreloadImages]
+	TimeOver = true;
+	Finished = true;
+	Locked = true;
+}
+[/inclTimer]
+
+
+/*--------------------------------------------------------------------------------------------------
+ Modification Copyright (c) Michael Rottmeier, December 2003
+ JGloss - Version 1.2, for Hot Potatoes v6+
+ http://www.teaching-tools.de.vu
+ THIS HEADER MUST STAY UN-TOUCHED
+--------------------------------------------------------------------------------------------------*/
+
+WL = new Array();
+
+function Add_GlossFunctionality(){
+	//var TextBody = document.getElementById('ClozeBody');
+	var GSpan = null;
+	var Content = '';
+// get all the gap span elements
+	for (var x=0; x<I.length; x++){
+		GSpan = document.getElementById('GapSpan'+x);
+		if (GSpan != null){
+			Content = '<a href="#" onmouseover="Show_GlossContent(event, '+x+')" ';
+			Content += 'onmousedown="Show_GlossContent(event, '+x+')" onmouseup="Show_GlossContent(event, '+x+')" ';
+			Content += 'onmouseout="HideFeedback()">'+I[x][1][0][0]+'</a>';
+			GSpan.innerHTML = Content;
+			}
+		}
+}
+
+function Show_GlossContent(e,id){
+// display the gloss content
+// (based on hp6utilities.js_ShowMessage() function)
+	document.getElementById('FeedbackContent').innerHTML = '<p>' + I[id][2] + '</p>';
+	var FDiv = document.getElementById('FeedbackDiv');
+	topZ++;
+	FDiv.style.zIndex = topZ;
+
+	if (C.IE){var Evt = window.event;}
+	else{var Evt = e;}
+	var Pos = {X:0, Y:0};
+	Pos.X = Evt.clientX;
+	Pos.Y = Evt.clientY;
+	var VertPos = GetScrollTop();
+	FDiv.style.top = Pos.Y-40-parseInt(FDiv.offsetHeight)+VertPos+'px';
+	FDiv.style.left = Pos.X-parseInt(FDiv.offsetWidth)-10+'px';
+	FDiv.style.width = 'auto';
+	if (parseInt(FDiv.style.left) < 5){FDiv.style.left = '10px'};
+	FDiv.style.display = 'block';
+
+	ShowElements(false, 'input');
+	ShowElements(false, 'select');
+	ShowElements(false, 'object');
+
+// hide the OK button
+	document.getElementById('FeedbackOKButton').style.display = 'none';
+}
+

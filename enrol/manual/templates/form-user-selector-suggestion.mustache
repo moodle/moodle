@@ -1,0 +1,57 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template enrol_manual/form-user-selector-suggestion
+
+    Moodle template for the list of valid options in an autocomplate form element.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * profileimageurlsmall Url to a small profile image.
+    * profileimageurl Url to a profile image.
+    * fullname Users full name
+    * hasidentity boolean to say if there are identity fields to show
+    * identity concatenated list of identity fields.
+    * id user id field
+    * email user email field
+    * idnumber user idnumber field
+    * phone1 user phone1 field
+    * phone2 user phone2 field
+    * department user department field
+    * institution user institution field
+
+    Example context (json):
+    { "id": "1",
+      "fullname": "Admin",
+      "hasidentity": true,
+      "identity": "Admin User, 0144114141",
+      "profileimageurl": "invalid url",
+      "profileimageurlsmall": "invalid url"
+    }
+}}
+<span>
+    <img height="12" src="{{profileimageurlsmall}}" alt="" role="presentation">
+    <span>{{fullname}}</span>
+    {{#hasidentity}}
+    <span><small>{{identity}}</small></span>
+    {{/hasidentity}}
+</span>

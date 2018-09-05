@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_strike-button",
+  "builds": {
+    "moodle-atto_strike-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}

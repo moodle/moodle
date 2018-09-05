@@ -1,0 +1,1 @@
+YUI.add("moodle-question-searchform",function(e,t){var n={OPTIONS:".searchoptions"},r;M.question=M.question||{},r=M.question.searchform={},r.init=function(){e.delegate("change",this.option_changed,e.config.doc,n.OPTIONS,this)},r.option_changed=function(e){e.target.getDOMNode().form.submit()}},"@VERSION@",{requires:["base","node"]});

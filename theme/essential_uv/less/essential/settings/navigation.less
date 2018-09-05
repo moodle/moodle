@@ -1,0 +1,182 @@
+/* @group Navbar */
+@import "../../fontawesome/variables";
+
+.navbar {
+    .navbar-inner {
+        .brand {
+            color: ~"[[setting:themenavcolor]]";
+        }
+
+        .btn-navbar {
+            .icon-bar {
+                background-color: ~"[[setting:themecolor]]";
+            }
+        }
+
+        .dropdown-menu {
+            border: 1px solid ~"[[setting:themecolor]]";
+        }
+
+        .nav > li.dropdown a,
+        .nav > li > a,
+        .search-input-wrapper > div .@{fa-css-prefix} {
+            color: ~"[[setting:themenavcolor]]";
+            &:hover,
+            &:focus {
+                color: ~"[[setting:themecolor]]";
+                background-color: ~"[[setting:themenavcolor]]";
+            }
+        }
+
+        #custom_menu_courses {
+            .dropdown-menu li > a > span.onlyenrolled {
+                background-color: ~"[[setting:mycoursesorderenrolbackcolour]]";
+            }
+        }
+
+        .nav > li.dropdown .dropdown-menu li {
+            > a {
+                color: ~"[[setting:themeurlcolor]]";
+                &:hover {
+                    color: @white; // TODO: Page background colour needs to be a setting.
+                    background-color: ~"[[setting:themeurlcolor]]";
+                }
+                &:focus,
+                &.open {
+                    color: @white; // TODO: Page background colour needs to be a setting.
+                    background-color: ~"[[setting:themeurlcolor]]";
+                    .@{fa-css-prefix} {
+                        color: @white; // TODO: Page background colour needs to be a setting.
+                    }
+                }
+                &:hover .dimmed_text {
+                    color: @grayLighter;
+                }
+            }
+            &.dropdown-submenu:hover > a {
+                color: @white; // TODO: Page background colour needs to be a setting.
+                background-color: ~"[[setting:themeurlcolor]]";
+                .@{fa-css-prefix} {
+                    color: inherit;
+                }
+            }
+        }
+
+        .nav {
+            li.dropdown {
+                &.open > .dropdown-toggle,
+                &.active > .dropdown-toggle,
+                &.open.active > .dropdown-toggle {
+                    color: @white; // TODO: Page background colour needs to be a setting.
+                    background-color: ~"[[setting:themehovercolor]]";
+                }
+            }
+        }
+
+        .usermenu {
+            .dropdown {
+                img.userpicture {
+                    border-radius: ~"[[setting:usermenuuserimageborderradius]]px";
+                }
+                .dropdown-menu {
+                    border: 1px solid ~"[[setting:themecolor]]";
+                    hr.sep {
+                        border-bottom: 1px dotted ~"[[setting:themecolor]]";
+                    }
+                }
+            }
+        }
+
+        .popover-region-toggle {
+            color: ~"[[setting:themenavcolor]]";
+            &:hover,
+            &:focus {
+                color: ~"[[setting:themecolor]]";
+                background-color: ~"[[setting:themenavcolor]]";
+            }
+        }
+
+    }
+}
+
+.dropdown-submenu {
+    > a:after {
+        border-left-color: ~"[[setting:themeiconcolor]]";
+    }
+    &:focus,
+    &:hover {
+        > a:after {
+            border-left-color: ~"[[setting:themenavcolor]]";
+        }
+    }
+}
+.navbar {
+    .navbar-inner {
+        .usermenu {
+            .dropdown {
+                .dropdown-submenu {
+                    > a:after {
+                        border-right-color: ~"[[setting:themeiconcolor]]";
+                    }
+                    &:focus,
+                    &:hover {
+                       > a:after {
+                            border-right-color: ~"[[setting:themenavcolor]]";
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 979px) {
+    .navbar {
+        .nav-collapse.in {
+            .nav, .nav .dropdown-menu {
+                .dropdown-submenu {
+                    .dropdown-toggle:after {
+                        border-top-color: ~"[[setting:themeiconcolor]]";
+                    }
+                    &:focus,
+                    &:hover {
+                        .dropdown-toggle:after {
+                            border-top-color: ~"[[setting:themenavcolor]]";
+                        }
+                    }
+                }
+                .dropdown-submenu,
+                .dropdown-submenu:hover {
+                    &.open {
+                        > a {
+                            color: ~"[[setting:themenavcolor]]";
+                            background-color: ~"[[setting:themecolor]]";
+                            &.dropdown-toggle:after {
+                                border-top-color: ~"[[setting:themenavcolor]]";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .navbar {
+        .nav-collapse.in {
+            .nav,
+            .nav .dropdown-menu {
+                .dropdown-submenu {
+                    .dropdown-toggle:after {
+                        border-left-color: transparent;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.dropdownmenuscroll div.dropdown-menu > ul,
+.dropdownsubmenuscroll li.dropdown-submenu > ul {
+    max-height: ~"[[setting:dropdownmenumaxheight]]px";
+}
+
+/* @end */

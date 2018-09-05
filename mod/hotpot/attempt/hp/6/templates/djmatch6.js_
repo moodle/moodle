@@ -1,0 +1,370 @@
+
+[inclScorm1.2]
+//JMATCH-SPECIFIC SCORM-RELATED JAVASCRIPT CODE
+
+function SetScormScore(){
+//Reports the current score and any other information back to the LMS
+	if (API != null){
+		API.LMSSetValue('cmi.core.score.raw', Score);
+
+
+//Now send a detailed reports on the item
+		var ItemLabel = 'Matching';
+		API.LMSSetValue('cmi.objectives.0.id', 'obj'+ItemLabel);
+		API.LMSSetValue('cmi.interactions.0.id', 'int'+ItemLabel);
+		API.LMSSetValue('cmi.objectives.0.status', API.LMSGetValue('cmi.core.lesson_status'));
+		API.LMSSetValue('cmi.objectives.0.score.min', '0');
+		API.LMSSetValue('cmi.objectives.0.score.max', '100');
+		API.LMSSetValue('cmi.objectives.0.score.raw', Score);
+//We can only use the performance type, because we're storing multiple responses of various types.
+		API.LMSSetValue('cmi.interactions.0.type', 'performance');
+		API.LMSSetValue('cmi.interactions.0.student_response', AnswersTried);
+
+		API.LMSCommit('');
+	}
+}
+[/inclScorm1.2]
+
+//JMATCH-SPECIFIC CORE JAVASCRIPT CODE
+
+var CorrectResponse = '[strGuessCorrect]';
+var IncorrectResponse = '[strGuessIncorrect]';
+var YourScoreIs = '[strYourScoreIs]';
+var DivWidth = 600; //default value
+var FeedbackWidth = 200; //default
+var ExBGColor = '[strExBGColor]';
+var PageBGColor = '[strPageBGColor]';
+var TextColor = '[strTextColor]';
+var TitleColor = '[strTitleColor]';
+var Penalties = 0;
+var Score = 0;
+var TimeOver = false;
+var Locked = false;
+var ShuffleQs = [boolShuffleQs];
+var QsToShow = [QsToShow];
+
+var DragWidth = 200;
+var LeftColPos = 100;
+var RightColPos = 500;
+var DragTop = 120;
+var Finished = false;
+var AnswersTried = '';
+
+//Fixed and draggable card arrays
+FC = new Array();
+DC = new Array();
+
+function onEndDrag(){
+//Is it dropped on any of the fixed cards?
+	var Docked = false;
+	var DropTarget = DroppedOnFixed(CurrDrag);
+	if (DropTarget > -1){
+//If so, send home any card that is currently docked there
+		for (var i=0; i<DC.length; i++){
+			if (DC[i].tag == DropTarget+1){
+				DC[i].GoHome();
+				DC[i].tag = 0;
+				D[i][2] = 0;
+			}
+		}
+//Dock the dropped card
+		DC[CurrDrag].DockToR(FC[DropTarget]);
+		D[CurrDrag][2] = F[DropTarget][1];
+		DC[CurrDrag].tag = DropTarget+1;
+		Docked = true;
+	}
+
+	if (Docked == false){
+		DC[CurrDrag].GoHome();
+		DC[CurrDrag].tag = 0;
+		D[CurrDrag][2] = 0;
+	}
+}
+
+function DroppedOnFixed(DNum){
+	var Result = -1;
+	var OverlapArea = 0;
+	var Temp = 0;
+	for (var i=0; i<FC.length; i++){
+		Temp = DC[DNum].Overlap(FC[i]);
+		if (Temp > OverlapArea){
+			OverlapArea = Temp;
+			Result = i;
+		}
+	}
+	return Result;
+}
+
+
+function StartUp(){
+
+[inclScorm1.2]
+	ScormStartUp();
+[/inclScorm1.2]
+
+[inclSendResults]
+	GetUserName();
+[/inclSendResults]
+
+[inclPreloadImages]
+	PreloadImages([PreloadImageList]);
+[/inclPreloadImages]
+
+//Calculate page dimensions and positions
+	pg = new PageDim();
+	DivWidth = Math.floor((pg.W*4)/5);
+	DragWidth = Math.floor((DivWidth*3)/10);
+	LeftColPos = Math.floor(pg.W/15);
+	RightColPos = pg.W - (DragWidth + LeftColPos);
+	DragTop = parseInt(document.getElementById('CheckButtonDiv').offsetHeight) + parseInt(document.getElementById('CheckButtonDiv').offsetTop) + 10;
+
+	if (C.ie){
+		DragTop += 15;
+	}
+
+//Reduce array if required
+	if (QsToShow < F.length){
+		ReduceItems2();
+	}
+
+//Shuffle the left items if required
+	if (ShuffleQs == true){
+		F = Shuffle(F);
+	}
+
+//Shuffle the items on the right
+	D = Shuffle(D);
+
+	var CurrTop = DragTop;
+	var TempInt = 0;
+	var DropHome = 0;
+	var Widest = 0;
+	var CardContent = '';
+	for (var i=0; i<F.length; i++){
+		CardContent = F[i][0];
+		FC[i] = new Card('F' + i, 10);
+		FC[i].elm.innerHTML = CardContent;
+		if (FC[i].GetW() > Widest){
+			Widest = FC[i].GetW();
+		}
+	}
+	if (Widest > DragWidth){Widest = DragWidth;}
+
+	CurrTop = DragTop;
+
+	DragWidth = Math.floor((DivWidth-Widest)/2) - 24;
+	RightColPos = DivWidth + LeftColPos - (DragWidth + 14);
+	var Highest = 0;
+	var WidestRight = 0;
+
+	for (i=0; i<D.length; i++){
+		DC[i] = new Card('D' + i, 10);
+		CardContent = D[i][0];
+
+//Fix for 6.2.5.2 problem with dragging images.
+		DC[i].SetHTML(CardContent);
+		//DC[i].elm.innerHTML = CardContent;  //old version
+		if (DC[i].GetW() > DragWidth){DC[i].SetW(DragWidth);}
+		DC[i].css.cursor = 'move';
+		DC[i].css.backgroundColor = '[strExBGColor]';
+		DC[i].css.color = '[strTextColor]';
+		TempInt = DC[i].GetH();
+		if (TempInt > Highest){Highest = TempInt;}
+		TempInt = DC[i].GetW();
+		if (TempInt > WidestRight){WidestRight = TempInt;}
+	}
+
+//Fix for 6.2: the reduction by 12 seems to be required -- no idea why!
+	var HeightToSet = Highest-12;
+	var WidthToSet = WidestRight-12;
+
+	for (i=0; i<D.length; i++){
+		DC[i].SetT(CurrTop);
+		DC[i].SetL(RightColPos);
+		if (DC[i].GetH() < Highest){
+			DC[i].SetH(HeightToSet);
+		}
+		if (DC[i].GetW() < WidestRight){
+			DC[i].SetW(WidthToSet);
+		}
+		DC[i].SetHome();
+		DC[i].tag = -1;
+		CurrTop = CurrTop + DC[i].GetH() + 5;
+	}
+
+	CurrTop = DragTop;
+
+	for (var i=0; i<F.length; i++){
+		FC[i].SetW(Widest);
+		if (FC[i].GetH() < Highest){
+			FC[i].SetH(HeightToSet);
+		}
+		FC[i].SetT(CurrTop);
+		FC[i].SetL(LeftColPos);
+		FC[i].SetHome();
+		TempInt = FC[i].GetH();
+		CurrTop = CurrTop + TempInt + 5;
+	}
+
+[inclSlide]
+//Slide any elements that should be in position over
+	for (i=0; i<D.length; i++){
+		if (D[i][2] > 0){
+			DC[i].tag = D[i][1];
+			D[i][2] = D[i][1];
+			var TopChange = 0;
+//Find the right target element
+			var TargItem = -1;
+			for (var j=0; j<F.length; j++){
+				if (F[j][1] == D[i][1]){
+					TargItem = j;
+				}
+			}
+			var TargetLeft = FC[TargItem].GetR() + 5;
+			var TargetTop = FC[TargItem].GetT();
+
+			if (TargetTop < DC[i].GetT()){
+				TopChange = -1;
+			}
+			else {
+				if (TargetTop > DC[i].GetT()){
+					TopChange = 1;
+				}
+			}
+			Slide(i, TargetLeft, TargetTop, TopChange);
+			D[i][2] = F[TargItem][1];
+			DC[i].tag = TargItem+1;
+		}
+	}
+[/inclSlide]
+[inclTimer]
+	StartTimer();
+[/inclTimer]
+}
+
+[inclSlide]
+function Slide(MoverNum, TargL, TargT, TopChange){
+	var TempInt = DC[MoverNum].GetL();
+	if (TempInt > TargL){
+		DC[MoverNum].SetL(TempInt - 5);
+	}
+	TempInt = DC[MoverNum].GetT();
+	if (TempInt != TargT){
+		DC[MoverNum].SetT(TempInt + TopChange);
+	}
+	if ((DC[MoverNum].GetL() > TargL)||(DC[MoverNum].GetT() != TargT)){
+		setTimeout('Slide('+MoverNum+','+TargL+','+TargT+','+TopChange+')', 1);
+	}
+	else{
+		DC[MoverNum].SetL(TargL);
+	}
+}
+[/inclSlide]
+
+F = new Array();
+[FixedArray]
+
+D = new Array();
+[DragArray]
+
+function ReduceItems2(){
+	var ItemToDump=0;
+	var j=0;
+	while (F.length > QsToShow){
+		ItemToDump = Math.floor(F.length*Math.random());
+		for (j=ItemToDump; j<(F.length-1); j++){
+			F[j] = F[j+1];
+		}
+		for (j=ItemToDump; j<(D.length-1); j++){
+			D[j] = D[j+1];
+		}
+		F.length = F.length-1;
+		D.length = D.length-1;
+	}
+}
+
+function TimerStartUp(){
+	setTimeout('StartUp()', 300);
+}
+
+function CheckAnswers(){
+	if (Locked == true){return;}
+//Set the default score and response
+	var TotalCorrect = 0;
+	Score = 0;
+	var Feedback = '';
+
+//for each fixed, check to see if the tag value for the draggable is the same as the fixed
+	if (AnswersTried.length > 0){AnswersTried += ' | ';}
+	var i, j;
+	for (i=0; i<D.length; i++){
+		if (i>0){AnswersTried += ',';}
+		AnswersTried += D[i][1] + '.' + D[i][2] + '';
+		if ((D[i][2] == D[i][1])&&(D[i][2] > 0)){
+			TotalCorrect++;
+		}
+		else{
+//Change made for version 6.0.3.41: don't send wrong items home,
+//show them in a more conspicuous way.
+//			DC[i].GoHome();
+				DC[i].SetL(DC[i].GetL() + 10);
+				DC[i].Highlight();
+		}
+	}
+
+	Score = Math.floor((100*(TotalCorrect-Penalties))/F.length);
+
+	var AllDone = false;
+
+	if (TotalCorrect == F.length) {
+		AllDone = true;
+	}
+
+	if (AllDone == true){
+		Feedback = YourScoreIs + ' ' + Score + '%.';
+		ShowMessage(Feedback + '<br />' + CorrectResponse);
+	}
+	else {
+		Feedback = YourScoreIs + ' ' + Score + '%.' + '<br />' + IncorrectResponse;
+		ShowMessage(Feedback);
+		Penalties++; // Penalty for inaccurate check
+	}
+//If the exercise is over, deal with that
+	if ((AllDone == true)||(TimeOver == true)){
+[inclSendResults]
+		setTimeout('SendResults(' + Score + ')', 50);
+[/inclSendResults]
+[inclTimer]
+		window.clearInterval(Interval);
+[/inclTimer]
+		TimeOver = true;
+		Locked = true;
+		Finished = true;
+		setTimeout('Finish()', SubmissionTimeout);
+		WriteToInstructions(Feedback);
+	}
+[inclScorm1.2]
+	if (AllDone == true){
+		SetScormComplete();
+	}
+	else{
+		SetScormIncomplete();
+	}
+[/inclScorm1.2]
+}
+
+[inclTimer]
+function TimesUp() {
+	document.getElementById('Timer').innerHTML = '[strTimesUp]';
+[inclPreloadImages]
+	RefreshImages();
+[/inclPreloadImages]
+	TimeOver = true;
+	CheckAnswers();
+	Locked = true;
+[inclScorm1.2]
+	SetScormTimedOut();
+[/inclScorm1.2]
+}
+[/inclTimer]
+

@@ -1,0 +1,10 @@
+@font-face {
+  font-family: 'h5p-hub';
+  src: url('fonts/h5p-hub.eot?626d03');
+  src: url('fonts/h5p-hub.eot?626d03#iefix') format('embedded-opentype'),
+  url('fonts/h5p-hub.ttf?626d03') format('truetype'),
+  url('fonts/h5p-hub.woff?626d03') format('woff'),
+  url('fonts/h5p-hub.svg?626d03#h5p-hub') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}

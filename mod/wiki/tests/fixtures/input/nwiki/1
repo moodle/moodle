@@ -1,0 +1,20 @@
+= Header 1 =
+
+First paragraph with no formats.
+
+''This paragraph has bold text.''
+
+== False header =
+
+'''This part of the paragraph is italicized.''' But not this part.
+
+==Header 2==
+
+Some mix of '''italics''' and ''bold'', and some '''''italics & bold'''''.
+
+And that '''italics and ''both'''''.
+
+And this: '''italics and''' '''''both'''''.
+
+---
+----

@@ -1,0 +1,40 @@
+{{< core_form/element-template-inline }}
+    {{$element}}
+        {{^element.frozen}}
+        <select class="custom-select {{#error}}is-invalid{{/error}}" name="{{element.name}}"
+            id="{{element.id}}"
+            {{#element.multiple}}multiple{{/element.multiple}}
+            {{#error}}
+                autofocus aria-describedby="id_error_{{element.name}}"
+            {{/error}}
+            {{{element.attributes}}} >
+            {{#element.options}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{text}}}</option>
+            {{/element.options}}
+        </select>
+        {{/element.frozen}}
+        {{#element.frozen}}
+            {{#element.options}}
+                {{#selected}}
+                    {{{text}}}
+                    {{^element.hardfrozen}}
+                        <input type="hidden" name="{{element.name}}" value="{{value}}">
+                    {{/element.hardfrozen}}
+                {{/selected}}
+            {{/element.options}}
+        {{/element.frozen}}
+    {{/element}}
+{{/ core_form/element-template-inline }}
+{{^element.frozen}}
+{{#js}}
+require(['core/form-autocomplete'], function(module) {
+    module.enhance({{#quote}}#{{element.id}}{{/quote}},
+                   {{element.tags}},
+                   {{#quote}}{{element.ajax}}{{/quote}},
+                   {{#quote}}{{element.placeholder}}{{/quote}},
+                   {{element.casesensitive}},
+                   {{element.showsuggestions}},
+                   {{#quote}}{{element.noselectionstring}}{{/quote}});
+});
+{{/js}}
+{{/element.frozen}}

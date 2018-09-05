@@ -1,0 +1,8 @@
+{
+  "moodle-core-maintenancemodetimer": {
+    "requires": [
+        "base",
+        "node"
+    ]
+  }
+}

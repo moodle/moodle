@@ -1,0 +1,1194 @@
+This files describes API changes in core libraries and APIs,
+information provided here is intended especially for developers.
+
+=== 3.5.2 ===
+
+* Custom AJAX handlers for the form autocomplete fields can now optionally return string in their processResults()
+  callback. If a string is returned, it is displayed instead of the list if suggested items. This can be used, for
+  example, to inform the user that there are too many items matching the current search criteria.
+* coursecat::get() now has optional $user parameter.
+* coursecat::is_uservisible() now has optional $user parameter.
+
+=== 3.5 ===
+
+* There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR
+  compliant. Plugins use this API to report what information they store or process regarding users, and provide ability
+  to export and delete personal data. See https://docs.moodle.org/dev/Privacy_API for guidelines on how to implement the
+  privacy API in your plugin.
+* The cron runner now sets up a fresh PAGE and OUTPUT between each task.
+* The core_renderer methods notify_problem(), notify_success(), notify_message() and notify_redirect() that were
+  deprecated in Moodle 3.1 have been removed. Use \core\notification::add(), or \core\output\notification as required.
+* The maximum supported precision (the total number of digits) for XMLDB_TYPE_NUMBER ("number") fields raised from 20 to
+  38 digits. Additionally, the whole number part (precision minus scale) must not be longer than the maximum length of
+  integer fields (20 digits). Note that PHP floats commonly support precision of roughly 15 digits only (MDL-32113).
+* Event triggering and event handlers:
+    - The following events, deprecated since moodle 2.6, have been finally removed: groups_members_removed,
+      groups_groupings_groups_removed, groups_groups_deleted, groups_groupings_deleted.
+* The following functions have been finally deprecated and can not be used any more:
+  - notify()
+* XMLDB now validates the PATH attribute on every install.xml file. Both the XMLDB editor and installation will fail
+  when a problem is detected with it. Please ensure your plugins contain correct directory relative paths.
+* Add recaptchalib_v2.php for support of reCAPTCHA v2.
+* Plugins can define class 'PLUGINNAME\privacy\local\sitepolicy\handler' if they implement an alternative mechanisms for
+  site policies managements and agreements. Administrators can define which component is to be used for handling site
+  policies and agreements. See https://docs.moodle.org/dev/Site_policy_handler
+* Scripts can define a constant NO_SITEPOLICY_CHECK and set it to true before requiring the main config.php file. It
+  will make the require_login() skipping the test for the user's policyagreed status. This is useful for plugins that
+  act as a site policy handler.
+* There is a new is_fulltext_search_supported() DML function. The default implementation returns false. This function
+  is used by 'Simple search' global search engine to determine if the database full-text search capabilities can be used.
+* The following have been removed from the list of core subsystems:
+   - core_register
+   - core_publish
+  Following this change, \core_register_renderer and \core_publish_renderer have been removed and their methods have been
+  moved to \core_admin_renderer and \core_course_renderer respectively.
+
+=== 3.4 ===
+
+* oauth2_client::request method has an extra parameter to specify the accept header for the response (MDL-60733)
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-57432 for more info:
+    - upgrade_mimetypes()
+    - upgrade_fix_missing_root_folders_draft()
+    - upgrade_minmaxgrade()
+    - upgrade_course_tags()
+
+* Added new moodleform element 'filetypes' and new admin setting widget 'admin_setting_filetypes'. These new widgets
+  allow users to define a list of file types; either by typing them manually or selecting them from a list. The widgets
+  directly support the syntax used to feed the 'accepted_types' option of the filemanager and filepicker elements. File
+  types can be specified as extensions (.jpg or just jpg), mime types (text/plain) or groups (image).
+* Removed accesslib private functions: load_course_context(), load_role_access_by_context(), dedupe_user_access() (MDL-49398).
+* Internal "accessdata" structure format has changed to improve ability to perform role definition caching (MDL-49398).
+* Role definitions are no longer cached in user session (MDL-49398).
+* External function core_group_external::get_activity_allowed_groups now returns an additional field: canaccessallgroups.
+  It indicates whether the user will be able to access all the activity groups.
+* file_get_draft_area_info does not sum the root folder anymore when calculating the foldercount.
+* The moodleform element classes can now optionally provide a public function validateSubmitValue(). This method can be
+  used to perform implicit validation of submitted values - without the need to explicitly add the validation rules to
+  every form. The method should accept a single parameter with the submitted value. It should return a string with the
+  eventual validation error, or an empty value if the validation passes.
+* New user_picture attribute $includefullname to determine whether to include the user's full name with the user's picture.
+* Enrol plugins which provide enrolment actions can now declare the following "data-action" attributes in their implementation of
+  enrol_plugin::get_user_enrolment_actions() whenever applicable:
+  * "editenrolment" - For editing a user'e enrolment details. Defined by constant ENROL_ACTION_EDIT.
+  * "unenrol" - For unenrolling a student. Defined by constant ENROL_ACTION_UNENROL.
+  These attributes enable enrol actions to be rendered via modals. If not added, clicking on the enrolment action buttons will still
+  redirect the user to the appropriate enrolment action page. Though optional, it is recommended to add these attributes for a
+  better user experience when performing enrol actions.
+* The enrol_plugin::get_user_enrolment_actions() implementations for core enrol plugins have been removed and moved to
+  the parent method itself. New enrol plugins don't have to implement get_user_enrolment_actions(), but just need to
+  make sure that they override:
+  - enrol_plugin::allow_manage(), and/or
+  - enrol_plugin::allow_unenrol_user() or enrol_plugin::allow_unenrol()
+  Existing enrol plugins that override enrol_plugin::get_user_enrolment_actions() don't have to do anything, but can
+  also opt to remove their own implementation of the method if they basically have the same logic as the parent method.
+* New optional parameter $enrolid for the following functions:
+  - get_enrolled_join()
+  - get_enrolled_sql()
+  - get_enrolled_with_capabilities_join()
+  Setting this parameter to a non-zero value will add a condition to the query such that only users that were enrolled
+  with this enrolment method will be returned.
+* New optional parameter 'closeSuggestionsOnSelect' for the enhance() function for form-autocomplete. Setting this to true will
+  close the suggestions popup immediately after an option has been selected. If not specified, it defaults to true for single-select
+  elements and false for multiple-select elements.
+* user_can_view_profile() now also checks the moodle/user:viewalldetails capability.
+* The core/modal_confirm dialogue has been deprecated. Please use the core/modal_save_cancel dialogue instead. Please ensure you
+  update to use the ModalEvents.save and ModalEvents.cancel events instead of their yes/no counterparts.
+* Instead of checking the 'moodle/course:viewparticipants' and 'moodle/site:viewparticipants' capabilities use the
+  new functions course_can_view_participants() and course_require_view_participants().
+* $stored_file->add_to_curl_request() now adds the filename to the curl request.
+* The option for Login HTTPS (authentication-only SSL) has been removed
+* $CFG->loginhttps is now deprecated, do not use it.
+* $PAGE->https_required and $PAGE->verify_https_required() are now deprecated. They are no longer used and will throw a coding_exception.
+* $CFG->httpswwwroot is now deprecated and will always result in the same value as wwwroot.
+* Added function core_role_set_view_allowed() to check if a user should be able to see a given role.
+  This should be checked whenever displaying a list of roles to a user, however, core_role_set_assign_allowed may need to override it
+  in some cases.
+* Deprecated allow_override, allow_assign and allow_switch and replaced with core_role_set_*_allowed to avoid function names conflicting.
+
+=== 3.3.1 ===
+
+* ldap_get_entries_moodle() now always returns lower-cased attribute names in the returned entries.
+  It was suppposed to do so before, but it actually didn't.
+
+=== 3.3 ===
+
+* Behat compatibility changes are now being documented at
+  https://docs.moodle.org/dev/Acceptance_testing/Compatibility_changes
+* PHPUnit's bootstrap has been changed to use HTTPS wwwroot (https://www.example.com/moodle) from previous HTTP version. Any
+  existing test expecting the old HTTP URLs will need to be switched to the new HTTPS value (reference: MDL-54901).
+* The information returned by the idp list has changed. This is usually only rendered by the login page and login block.
+  The icon attribute is removed and an iconurl attribute has been added.
+* Support added for a new type of external file: FILE_CONTROLLED_LINK. This is an external file that Moodle can control
+  the permissions. Moodle makes files read-only but can grant temporary write access.
+    When accessing a URL, the info from file_browser::get_file_info will be checked to determine if the user has write access,
+    if they do - the remote file will have access controls set to allow editing.
+* The method moodleform::after_definition() has been added and can now be used to add some logic
+  to be performed after the form's definition was set. This is useful for intermediate subclasses.
+* Moodle has support for font-awesome icons. Plugins should use the xxx_get_fontawesome_icon_map callback
+  to map their custom icons to one from font-awesome.
+* $OUTPUT->pix_url() has been deprecated because it is was used mostly to manually generate image tags for icons.
+  We now distinguish between icons and "small images". The difference is that an icon does not have to be rendered as an image tag
+  with a source. It is OK to still have "small images" - if this desired use $OUTPUT->image_icon() and $OUTPUT->image_url(). For
+  other uses - use $OUTPUT->pix_icon() or the pix helper in mustache templates {{#pix}}...{{/pix}}
+  For other valid use cases use $OUTPUT->image_url().
+* Activity icons have been split from standard icons. Use $OUTPUT->image_icon instead of $OUTPUT->pix_icon for these
+  type of icons (the coloured main icon for each activity).
+* YUI module moodle-core-formautosubmit has been removed, use jquery .change() instead (see lib/templates/url_select.mustache for
+  an example)
+* $mform->init_javascript_enhancement() is deprecated and no longer does anything. Existing uses of smartselect enhancement
+  should be switched to the searchableselector form element or other solutions.
+* Return value of the validate_email() is now proper boolean as documented. Previously the function could return 1, 0 or false.
+* The mcore YUI rollup which included various YUI modules such as moodle-core-notification is no longer included on every
+  page. Missing YUI depdencies may be exposed by this change (e.g. missing a requirement on moodle-core-notification when
+  using M.core.dialogue).
+* Various legacy javascript functions have been removed:
+    * M.util.focus_login_form and M.util.focus_login_error no longer do anything. Please use jquery instead. See
+      lib/templates/login.mustache for an example.
+    * Some outdated global JS functions have been removed and should be replaced with calls to jquery
+      or alternative approaches:
+        checkall, checknone, select_all_in_element_with_id, select_all_in, deselect_all_in, confirm_if, findParentNode,
+        filterByParent, stripHTML
+    * M.util.init_toggle_class_on_click has been removed.
+* The following functions have been deprecated and should not be used any more:
+  - file_storage::try_content_recovery  - See MDL-46375 for more information
+  - file_storage::content_exists        - See MDL-46375 for more information
+  - file_storage::deleted_file_cleanup  - See MDL-46375 for more information
+  - file_storage::get_converted_document
+  - file_storage::is_format_supported_by_unoconv
+  - file_storage::can_convert_documents
+  - file_storage::send_test_pdf
+  - file_storage::test_unoconv_path
+* Following behat steps have been removed from core:
+    - I click on "<element_string>" "<selector_string>" in the "<row_text_string>" table row
+    - I go to notifications page
+    - I add "<filename_string>" file from recent files to "<filepicker_field_string>" filepicker
+    - I upload "<filepath_string>" file to "<filepicker_field_string>" filepicker
+    - I create "<foldername_string>" folder in "<filepicker_field_string>" filepicker
+    - I open "<foldername_string>" folder from "<filepicker_field_string>" filepicker
+    - I unzip "<filename_string>" file from "<filepicker_field_string>" filepicker
+    - I zip "<filename_string>" folder from "<filepicker_field_string>" filepicker
+    - I delete "<file_or_folder_name_string>" from "<filepicker_field_string>" filepicker
+    - I send "<message_contents_string>" message to "<username_string>"
+    - I add "<user_username_string>" user to "<cohort_idnumber_string>" cohort
+    - I add "<username_string>" user to "<group_name_string>" group
+    - I fill in "<field_string>" with "<value_string>"
+    - I select "<option_string>" from "<select_string>"
+    - I select "<radio_button_string>" radio button
+    - I check "<option_string>"
+    - I uncheck "<option_string>"
+    - the "<field_string>" field should match "<value_string>" value
+    - the "<checkbox_string>" checkbox should be checked
+    - the "<checkbox_string>" checkbox should not be checked
+    - I fill the moodle form with:
+    - "<element_string>" "<selector_string>" should exists
+    - "<element_string>" "<selector_string>" should not exists
+    - the following "<element_string>" exists:
+* get_user_capability_course() now has an additional parameter 'limit'. This can be used to return a set number of records with
+  the submitted capability. The parameter 'fieldsexceptid' will now accept context fields which can be used for preloading.
+* The caching option 'immutable' has been added to send_stored_file() and send_file().
+* New adhoc task refresh_mod_calendar_events_task that updates existing calendar events of modules.
+* New 'priority' column for the event table to determine which event to show in case of events with user and group overrides.
+* Webservices core_course_search_courses and core_course_get_courses_by_field will always return the sortorder field.
+* core_course_external::get_activities_overview has been deprecated. Please do not call this function any more.
+* Changed the pix mustache template helper to accept context variables for the key, component and alt text.
+* New auth_plugin_base helper methods:
+  - get_identity_providers() - Retrieves available auth identity providers.
+  - prepare_identity_providers_for_output() - Prepares auth identity provider data for output (e.g. to templates, WS, etc.).
+
+=== 3.2 ===
+
+* Custom roles with access to any part of site administration that do not use the manager archetype will need
+  moodle/site:configview capability added.
+* Admin setting "Show My courses expanded on Dashboard" has been removed.
+* Some backwards and forwards compatibility has been added for different bootstrap versions.
+  This is to allow the same markup to work in "clean" and "boost" themes alot of the time. It is also to allow user text
+  with bootstrap classes to keep working in the new theme. See MDL-56004 for the list of supported classes.
+* MForms element 'submitlink' has been deprecated.
+* Searchable selector form element is now a wrapper for autocomplete. A "No selection" option is automatically
+  added to the options list for best backwards compatibility - if you were manually adding a "no selection" option you will need
+  to remove it.
+* Node.js versions >=4 are now required to run grunt.
+* JQuery has been updated to 3.1.0. JQuery migrate plugins are no longer shipped - please read
+  https://jquery.com/upgrade-guide/3.0/ and update your javascript.
+* New option 'blanktarget' added to format_text. This option adds target="_blank" to links
+* A new webservice structure `external_files` has been created which provides a standardised view of files in Moodle and
+  should be used for all file return descriptions.
+  Files matching this format can be retrieved via the new `external_util::get_area_files` method.
+  See MDL-54951 for further information.
+* The parameter $usepost of the following functions has been deprecated and is not used any more:
+  - get_max_upload_file_size()
+  - get_user_max_upload_file_size()
+* The following classes have been removed and should not be used any more:
+    - boxclient - See MDL-49599 for more information.
+* The following functions have been removed and should not be used any more:
+    - file_modify_html_header() - See MDL-29738 for more information.
+* core_grades_external::get_grades has been deprecated. Please do not call this function any more.
+  External function gradereport_user_external::get_grade_items can be used for retrieving the course grades information.
+* New option 'escape' added to format_string. When true (default), escapes HTML entities from the string
+* The following functions have been deprecated and are not used any more:
+  - get_records_csv() Please use csv_import_reader::load_csv_content() instead.
+  - put_records_csv() Please use download_as_dataformat (lib/dataformatlib.php) instead.
+  - zip_files()   - See MDL-24343 for more information.
+  - unzip_file()  - See MDL-24343 for more information.
+  - print_log()           - See MDL-43681 for more information
+  - print_log_csv()       - See MDL-43681 for more information
+  - print_log_ods()       - See MDL-43681 for more information
+  - print_log_xls()       - See MDL-43681 for more information
+  - print_mnet_log()      - See MDL-43681 for more information
+  - build_logs_array()    - See MDL-43681 for more information
+  - get_logs()            - See MDL-43681 for more information
+  - get_logs_usercourse() - See MDL-43681 for more information
+  - get_logs_userday()    - See MDL-43681 for more information
+  - prevent_form_autofill_password() Please do not use anymore.
+* The password_compat library was removed as it is no longer required.
+* Phpunit has been upgraded to 5.4.x and following has been deprecated and is not used any more:
+  - setExpectedException(), use @expectedException or $this->expectException() and $this->expectExceptionMessage()
+  - getMock(), use createMock() or getMockBuilder()->getMock()
+  - UnitTestCase class is removed.
+* The following methods have been finally deprecated and should no longer be used:
+  - course_modinfo::build_section_cache()
+  - cm_info::get_deprecated_group_members_only()
+  - cm_info::is_user_access_restricted_by_group()
+* The following methods in cm_info::standardmethods have also been finally deprecated and should no longer be used:
+  - cm_info::get_after_edit_icons()
+  - cm_info::get_after_link()
+  - cm_info::get_content()
+  - cm_info::get_custom_data()
+  - cm_info::get_extra_classes()
+  - cm_info::get_on_click()
+  - cm_info::get_url()
+  - cm_info::obtain_dynamic_data()
+  Calling them through the magic method __call() will throw a coding exception.
+* The alfresco library has been removed from core. It was an old version of
+  the library which was not compatible with newer versions of Alfresco.
+* Added down arrow: $OUTPUT->darrow.
+* All file_packer implementations now accept an additional parameter to allow a simple boolean return value instead of
+  an array of individual file statuses.
+* "I set the field "field_string" to multiline:" now end with colon (:), as PyStrings is supposed to end with ":"
+* New functions to support deprecation of events have been added to the base event. See MDL-46214 for further details.
+* A new function `get_name_with_info` has been added to the base event. This function adds information about event
+  deprecations and should be used where this information is relevant.
+* Following api's have been deprecated in behat_config_manager, please use behat_config_util instead.
+  - get_features_with_tags
+  - get_components_steps_definitions
+  - get_config_file_contents
+  - merge_behat_config
+  - get_behat_profile
+  - profile_guided_allocate
+  - merge_config
+  - clean_path
+  - get_behat_tests_path
+* behat_util::start_test_mode() accepts 3 options now:
+  - 1. Theme sute with all features: If behat should initialise theme suite with all core features.
+  - 2. Parallel runs: How many parallel runs will be running.
+  - 3. Run: Which process behat should be initialise for.
+* behat_context_helper::set_session() has been deprecated, please use behat_context_helper::set_environment() instead.
+* data-fieldtype="type" attribute has been added to form field default template.
+* form elements extending MoodleQuickForm_group must call $this->createFormElement() instead of
+  @MoodleQuickForm::createElement() in order to be compatible with PHP 7.1
+* Relative paths in $CFG->alternateloginurl will be resolved to absolute path within moodle site. Previously they
+  were resolved to absolute path within the server. That means:
+  - $CFG->wwwroot: http://example.com/moodle
+  - $CFG->alternateloginurl : /my/super/login.php
+  - Login url will be: http://example.com/moodle/my/super/login.php (moodle root based)
+* Database (DML) layer:
+  - new sql_equal() method available for places where case sensitive/insensitive varchar comparisons are required.
+* PostgreSQL connections now use advanced options to reduce connection overhead.  These options are not compatible
+  with some connection poolers.  The dbhandlesoptions parameter has been added to allow the database to configure the
+  required defaults. The parameters that are required in the database are;
+    ALTER DATABASE moodle SET client_encoding = UTF8;
+    ALTER DATABASE moodle SET standard_conforming_strings = on;
+    ALTER DATABASE moodle SET search_path = 'moodle,public';  -- Optional, if you wish to use a custom schema.
+  You can set these options against the database or the moodle user who connects.
+* Some form elements have been refined to better support right-to-left languages. In RTL,
+  most fields should not have their direction flipped, a URL, a path to a file, a number, ...
+  are always displayed LTR. Input fields and text areas now will best guess whether they
+  should be forced to be displayed in LTR based on the PARAM type associated with it. You
+  can call $mform->setForceLtr($elementName, true/false) on some form fields to manually
+  set the value.
+* Action menus do_not_enhance() is deprecated, use a list of action_icon instead.
+* The user_not_fully_set_up() function has a new $strict parameter (defaulting to true) in order to decide when
+  custom fields (and other checks) should be evaluated to determine if the user has been completely setup.
+* profile_field_base class has new methods: get_field_config_for_external() and get_field_properties().
+  This two new methods should be implemented by profile field plugins to make them compatible with Web Services.
+* The minifier library used by core_minify has been switched to https://github.com/matthiasmullie/minify - there are minor differences
+  in minifier output.
+* context_header additional buttons can now have a class attribute provided in the link attributes.
+* The return signature for the antivirus::scan_file() function has changed.
+  The calling function will now handle removal of infected files from Moodle based on the new integer return value.
+* The first parameter $eventdata of both message_send() and \core\message\manager::send_message() should
+  be \core\message\message. Use of stdClass is deprecated.
+* The message_sent event now expects other[courseid] to be always set, exception otherwise. For BC with contrib code,
+  message_sent::create_from_ids() will show a debugging notice if the \core\message\message being sent is missing
+  the courseid property, defaulting to SITEID automatically. In Moodle 3.6 (MDL-55449) courseid will be fully mandatory
+  for all messages sent.
+* The send_confirmation_email() function has a new optional parameter $confirmationurl to provide a different confirmation URL.
+* Introduced a new hook for plugin developers:
+    - <component>_course_module_background_deletion_recommended()
+  This hook should be used in conjunction with the existing '<component>_pre_course_module_delete($mod)'. It must
+  return a boolean and is called by core to check whether a plugin's implementation of
+  <component>_pre_course_module_deleted($mod) will take a long time. A plugin should therefore only implement this
+  function if it also implements <component>_pre_course_module_delete($mod).
+  An example in current use is recyclebin, which performs what can be a lengthy backup process in
+  tool_recyclebin_pre_course_module_delete. The recyclebin, if enabled, now returns true in its implementation of
+  tool_recyclebin_course_module_background_deletion_recommended(), to indicate to core that the deletion (and
+  execution of tool_recyclebin_pre_course_module_delete) should be handled with an adhoc task, meaning it will not
+  occur in real time.
+
+=== 3.1 ===
+
+* Webservice function core_course_search_courses accepts a new parameter 'limittoenrolled' to filter the results
+  only to courses the user is enrolled in, and are visible to them.
+* External functions that are not calling external_api::validate_context are buggy and will now generate
+  exceptions. Previously they were only generating warnings in the webserver error log.
+  See https://docs.moodle.org/dev/External_functions_API#Security
+* The moodle/blog:associatecourse and moodle/blog:associatemodule capabilities has been removed.
+* The following functions has been finally deprecated and can not be used any more:
+    - profile_display_badges()
+    - useredit_shared_definition_preferences()
+    - calendar_normalize_tz()
+    - get_user_timezone_offset()
+    - get_timezone_offset()
+    - get_list_of_timezones()
+    - calculate_user_dst_table()
+    - dst_changes_for_year()
+    - get_timezone_record()
+    - test_get_list_of_timezones()
+    - test_get_timezone_offset()
+    - test_get_user_timezone_offset()
+* The google api library has been updated to version 1.1.7. There was some important changes
+  on the SSL handling. Now the SSL version will be determined by the underlying library.
+  For more information see https://github.com/google/google-api-php-client/pull/644
+* The get_role_users() function will now add the $sort fields that are not part
+  of the requested fields to the query result and will throw a debugging message
+  with the added fields when that happens.
+* The core_user::fill_properties_cache() static method has been introduced to be a reference
+  and allow standard user fields data validation. Right now only type validation is supported
+  checking it against the parameter (PARAM_*) type of the target user field. MDL-52781 is
+  going to add support to null/not null and choices validation, replacing the existing code to
+  validate the user fields in different places in a common way.
+* Webservice function core_course_search_courses now returns results when the search string
+  is less than 2 chars long.
+* Webservice function core_course_search_courses accepts a new parameter 'requiredcapabilities' to filter the results
+  by the capabilities of the current user.
+* New mform element 'course' handles thousands of courses with good performance and usability.
+* The redirect() function will now redirect immediately if output has not
+  already started. Messages will be displayed on the subsequent page using
+  session notifications. The type of message output can be configured using the
+  fourth parameter to redirect().
+* The specification of extra classes in the $OUTPUT->notification()
+  function, and \core\output\notification renderable have been deprecated
+  and will be removed in a future version.
+  Notifications should use the levels found in \core\output\notification.
+* The constants for NOTIFY_PROBLEM, NOTIFY_REDIRECT, and NOTIFY_MESSAGE in
+  \core\output\notification have been deprecated in favour of NOTIFY_ERROR,
+  NOTIFY_WARNING, and NOTIFY_INFO respectively.
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-51580 for more info:
+    - upgrade_mysql_fix_unsigned_and_lob_columns()
+    - upgrade_course_completion_remove_duplicates()
+    - upgrade_save_orphaned_questions()
+    - upgrade_rename_old_backup_files_using_shortname()
+    - upgrade_mssql_nvarcharmax()
+    - upgrade_mssql_varbinarymax()
+    - upgrade_fix_missing_root_folders()
+    - upgrade_course_modules_sequences()
+    - upgrade_grade_item_fix_sortorder()
+    - upgrade_availability_item()
+* A new parameter $ajaxformdata was added to the constructor for moodleform. When building a
+  moodleform in a webservice or ajax script (for example using the new fragments API) we
+  cannot allow the moodleform to parse it's own data from _GET and _POST - we must pass it as
+  an array.
+* Plugins can extend the navigation for user by declaring the following callback:
+  <frankenstyle>_extend_navigation_user(navigation_node $parentnode, stdClass $user,
+                                        context_user $context, stdClass $course,
+                                        context_course $coursecontext)
+* The function notify() now throws a debugging message - see MDL-50269.
+* Ajax calls going through lib/ajax/* now validate the return values before sending
+  the response. If the validation does not pass an exception is raised. This behaviour
+  is consistent with web services.
+* Several changes in Moodle core, standard plugins and third party libraries to
+  ensure compatibility with PHP7. All plugins are recommended to perform testing
+  against PHP7 as well. Refer to https://docs.moodle.org/dev/Moodle_and_PHP7 for more
+  information. The following changes may affect you:
+  * Class moodleform, moodleform_mod and some module classes have been changed to use
+    __construct() for the constructor. Calling parent constructors by the class
+    name will display debugging message. Incorrect: parent::moodleform(),
+    correct: parent::__construct()
+  * All form elements have also changed the constructor syntax. No changes are
+    needed for using form elements, however if plugin defines new form element it
+    needs to use correct syntax. For example, incorrect: parent::HTML_QuickForm_input(),
+    HTML_QuickForm_input::HTML_QuickForm_input(), $this->HTML_QuickForm_input().
+    Correct: HTML_QuickForm_input::__construct() or parent::__construct().
+  * profile_field_base::profile_field_base() is deprecated, use parent::__construct()
+    in custom profile fields constructors. Similar deprecations in exsiting
+    profile_field_* classes.
+  * user_filter_type::user_filter_type() is deprecated, use parent::__construct() in
+    custom user filters. Similar deprecations in existing user_filter_* classes.
+  * table_default_export_format_parent::table_default_export_format_parent() is
+    deprecated, use parent::__construct() in extending classes.
+* groups_delete_group_members() $showfeedback parameter has been removed and is no longer
+  respected. Users of this function should output their own feedback if required.
+* Number of changes to Tags API, see tag/upgrade.txt for more details
+* The previous events API handlers are being deprecated in favour of events 2 API, debugging messages are being displayed if
+  there are 3rd party plugins using it. Switch to events 2 API please, see https://docs.moodle.org/dev/Event_2#Event_dispatching_and_observers
+  Note than you will need to bump the plugin version so moodle is aware that you removed the plugin's event handlers.
+* mforms validation functions are not available in the global JS namespace anymore, event listeners
+  are assigned to fields and buttons through a self-contained JS function.
+* Added $CFG->urlrewriteclass option to config.php allowing clean / semantic urls to
+  be implemented in a plugin, eg local_cleanurls.
+* $CFG->pathtoclam global setting has been moved to clamav antivirus plugin setting of the same name.
+* clam_message_admins() and get_clam_error_code() have been deprecated, its functionality
+  is now a part of \antivirus_clamav\scanner class methods.
+* \repository::antivir_scan_file() has been deprecated, \core\antivirus\manager::scan_file() that
+  applies antivirus plugins is replacing its functionality.
+* Added core_text::str_max_bytes() which safely truncates multi-byte strings to a maximum number of bytes.
+* Zend Framework has been removed completely.
+* Any plugin can report when a scale is being used with the callback function [pluginname]_scale_used_anywhere(int $scaleid).
+* Changes in file_rewrite_pluginfile_urls: Passing a new option reverse = true in the $options var will make the function to convert
+  actual URLs in $text to encoded URLs in the @@PLUGINFILE@@ form.
+* behat_util::is_server_running() is removed, please use behat_util::check_server_status() instead.
+* Behat\Mink\Selector\SelectorsHandler::xpathLiteral() method is deprecated use behat_context_helper::escape instead
+  when building Xpath, or pass the unescaped value when using the named selector.',
+* table_sql download process is using the new data formats plugin which you can't use if you are buffering any output
+    * flexible_table::get_download_menu(), considered private, has been deleted. Use
+      $OUTPUT->download_dataformat_selector() instead.
+  when building Xpath, or pass the unescaped value when using the named selector.
+* Add new file_is_executable(), to consistently check for executables even in Windows (PHP bug #41062).
+* Introduced new hooks for plugin developers.
+    - <component>_pre_course_category_delete($category)
+    - <component>_pre_course_delete($course)
+    - <component>_pre_course_module_delete($cm)
+    - <component>_pre_block_delete($instance)
+    - <component>_pre_user_delete($user)
+  These hooks allow developers to use the item in question before it is deleted by core. For example, if your plugin is
+  a module (plugins located in the mod folder) called 'xxx' and you wish to interact with the user object before it is
+  deleted then the function to create would be mod_xxx_pre_user_delete($user) in mod/xxx/lib.php.
+* pear::Net::GeoIP has been removed.
+
+=== 3.0 ===
+
+* Minify updated to 2.2.1
+* htmlpurifier upgraded to 4.7.0
+* Less.php upgraded to 1.7.0.9
+* The horde library has been updated to version 5.2.7.
+* Google libraries (lib/google) updated to 1.1.5
+* Html2Text library has been updated to the latest version of the library.
+* External functions x_is_allowed_from_ajax() methods have been deprecated. Define 'ajax' => true in db/services.php instead.
+* External functions can be called without a session if they define 'loginrequired' => true in db/services.php.
+* All plugins are required to declare their frankenstyle component name via
+  the $plugin->component property in their version.php file. See
+  https://docs.moodle.org/dev/version.php for details (MDL-48494).
+* PHPUnit is upgraded to 4.7. Some tests using deprecated assertions etc may need changes to work correctly.
+* Users of the text editor API to manually create a text editor should call set_text before calling use_editor.
+* Javascript - SimpleYUI and the Y instance used for modules have been merged. Y is now always the same instance of Y.
+* get_referer() has been deprecated, please use the get_local_referer function instead.
+* \core\progress\null is renamed to \core\progress\none for improved PHP7 compatibility as null is a reserved word (see MDL-50453).
+* \webservice_xmlrpc_client now respects proxy server settings. If your XMLRPC server is available on your local network and not via your proxy server, you may need to add it to the list of proxy
+  server exceptions in $CFG->proxybypass. See MDL-39353 for details.
+* Group and groupings idnumbers can now be passed to and/or are returned from the following web services functions:
+  ** core_group_external::create_groups
+  ** core_group_external::get_groups
+  ** core_group_external::get_course_groups
+  ** core_group_external::create_groupings
+  ** core_group_external::update_groupings
+  ** core_group_external::get_groupings
+  ** core_group_external::get_course_groupings
+  ** core_group_external::get_course_user_groups
+* Following functions are removed from core. See MDL-50049 for details.
+    password_compat_not_supported()
+    session_get_instance()
+    session_is_legacy()
+    session_kill_all()
+    session_touch()
+    session_kill()
+    session_kill_user()
+    session_set_user()
+    session_is_loggedinas()
+    session_get_realuser()
+    session_loginas()
+    js_minify()
+    css_minify_css()
+    update_login_count()
+    reset_login_count()
+    check_gd_version()
+    update_log_display_entry()
+    get_recent_enrolments()
+    groups_filter_users_by_course_module_visible()
+    groups_course_module_visible()
+    error()
+    formerr()
+    editorhelpbutton()
+    editorshortcutshelpbutton()
+    choose_from_menu()
+    update_event()
+    get_generic_section_name()
+    get_all_sections()
+    add_mod_to_section()
+    get_all_mods()
+    get_course_section()
+    format_weeks_get_section_dates()
+    get_print_section_cm_text()
+    print_section_add_menus()
+    make_editing_buttons()
+    print_section()
+    print_overview()
+    print_recent_activity()
+    delete_course_module()
+    update_category_button()
+    make_categories_list()
+    category_delete_move()
+    category_delete_full()
+    move_category()
+    course_category_hide()
+    course_category_show()
+    get_course_category()
+    create_course_category()
+    get_all_subcategories()
+    get_child_categories()
+    get_categories()
+    print_course_search()
+    print_my_moodle()
+    print_remote_course()
+    print_remote_host()
+    print_whole_category_list()
+    print_category_info()
+    get_course_category_tree()
+    print_courses()
+    print_course()
+    get_category_courses_array()
+    get_category_courses_array_recursively()
+    blog_get_context_url()
+    get_courses_wmanagers()
+    convert_tree_to_html()
+    convert_tabrows_to_tree()
+    can_use_rotated_text()
+    get_parent_contexts()
+    get_parent_contextid()
+    get_child_contexts()
+    create_contexts()
+    cleanup_contexts()
+    build_context_path()
+    rebuild_contexts()
+    preload_course_contexts()
+    context_moved()
+    fetch_context_capabilities()
+    context_instance_preload()
+    get_contextlevel_name()
+    print_context_name()
+    mark_context_dirty()
+    delete_context()
+    get_context_url()
+    get_course_context()
+    get_user_courses_bycap()
+    get_role_context_caps()
+    get_courseid_from_context()
+    context_instance_preload_sql()
+    get_related_contexts_string()
+    get_plugin_list_with_file()
+    check_browser_operating_system()
+    check_browser_version()
+    get_device_type()
+    get_device_type_list()
+    get_selected_theme_for_device_type()
+    get_device_cfg_var_name()
+    set_user_device_type()
+    get_user_device_type()
+    get_browser_version_classes()
+    generate_email_supportuser()
+    badges_get_issued_badge_info()
+    can_use_html_editor()
+    enrol_cohort_get_cohorts()
+    enrol_cohort_can_view_cohort()
+    cohort_get_visible_list()
+    enrol_cohort_enrol_all_users()
+    enrol_cohort_search_cohorts()
+* The never unused webdav_locks table was dropped.
+* The actionmenu hideMenu() function now expects an EventFacade object to be passed to it,
+  i.e. a call to M.core.actionmenu.instance.hideMenu() should be change to M.core.actionmenu.instance.hideMenu(e)
+* In the html_editors (tinyMCE, Atto), the manage files button can be hidden by changing the 'enable_filemanagement' option to false.
+* external_api::validate_context now is public, it can be called from other classes.
+* rss_error() now supports returning of correct HTTP status of error and will return '404 Not Found'
+  unless other status is specified.
+* Plugins can extend the navigation for categories settings by declaring the following callback:
+  <frankenstyle>_extend_navigation_category_settings(navigation_node, context_coursecat)
+* The clilib.php provides two new functions cli_write() and cli_writeln() that should be used for outputting texts from the command
+  line interface scripts.
+* External function core_course_external::get_course_contents returned parameter "name" has been changed to PARAM_RAW,
+  this is because the new external_format_string function may return raw data if the global moodlewssettingraw parameter is used.
+* Function is_web_crawler() has been deprecated, please use core_useragent::is_web_crawler() instead.
+
+=== 2.9.1 ===
+
+* New methods grade_grade::get_grade_max() and get_grade_min() must be used rather than directly the public properties rawgrademax and rawgrademin.
+* New method grade_item::is_aggregate_item() indicates when a grade_item is an aggreggated type grade.
+
+=== 2.9 ===
+
+* The default home page for users has been changed to the dashboard (formely my home). See MDL-45774.
+* Support for rendering templates from php or javascript has been added. See MDL-49152.
+* Support for loading AMD javascript modules has been added. See MDL-49046.
+* Webservice core_course_delete_courses now return warning messages on any failures and does not try to rollback the entire deletion.
+* \core\event\course_viewed 'other' argument renamed from coursesectionid to coursesectionnumber as it contains the section number.
+* New API core_filetypes::add_type (etc.) allows custom filetypes to be added and modified.
+* PHPUnit: PHPMailer Sink is now started for all tests and is setup within the phpunit wrapper for advanced tests.
+  Catching debugging messages when sending mail will no longer work. Use $sink = $this->redirectEmails(); and then check
+  the message in the sink instead.
+* The file pluginlib.php was deprecated since 2.6 and has now been removed, do not include or require it.
+* \core_component::fetch_subsystems() now returns a valid path for completion component instead of null.
+* Deprecated JS global methods have been removed (show_item, destroy_item, hide_item, addonload, getElementsByTagName, findChildNodes).
+* For 3rd party plugin specific environment.xml files, it's now possible to specify version independent checks by using the
+  <PLUGIN name="component_name"> tag instead of the version dependent <MOODLE version="x.y"> one. If the PLUGIN tag is used any
+  Moodle specific tags will be ignored.
+* html_table: new API for adding captions to tables (new field, $table->caption) and subsequently hiding said captions from sighted users using accesshide (enabled using $table->captionhide).
+* The authorization procedure in the mdeploy.php script has been improved. The script
+  now relies on the main config.php when deploying an available update.
+* sql_internal_reader and sql_select_reader interfaces have been deprecated in favour of sql_internal_table_reader
+  and sql_reader which use iterators to be more memory efficient.
+* $CFG->enabletgzbackups setting has been removed as now backups are stored internally using .tar.gz format by default, you can
+  set $CFG->usezipbackups to store them in zip format. This does not affect the restore process, which continues accepting both.
+* Added support for custom string manager implementations via $CFG->customstringmanager
+  directive in the config.php. See MDL-49361 for details.
+* Add new make_request_directory() for creation of per-request files.
+* Added generate_image_thumbnail_from_string. This should be used instead of generate_image_thumbnail when the source is a string.
+  This prevents the need to write files to disk unnecessarily.
+* Added generate_image_thumbnail to stored_file class. This should be used when generating thumbnails for stored files.
+  This prevents the need to write files to disk unnecessarily.
+* Removed pear/HTTP/WebDav. See MDL-49534 for details.
+* Use standard PHP date time classes and methods - see new core_date class for timezone normalisation methods.
+* Moved lib/google/Google/ to lib/google/src/Google. This is to address autoloader issues with Google's provided autoloader
+  for the library. See MDL-49519 for details.
+* The outdated lib/google/Google_Client.php and related files have been completely removed. To use
+  the new client, read lib/google/readme_moodle.txt, please.
+* profile_display_badges() has been deprecated. See MDL-48935 for details.
+* Added a new method add_report_nodes() to pagelib.php. If you are looking to add links to the user profile page under the heading "Reports"
+  then please use this function to ensure that the breadcrumb and navigation block are created properly for all user profile pages.
+* process_new_icon() now does not always return a PNG file. When possible, it will try to keep the format of the original file.
+  Set the new argument $preferpng to true to force PNG. See MDL-46763 and MDL-50041 for details.
+
+=== 2.8 ===
+
+* Gradebook grade category option "aggregatesubcats" has been removed completely.
+  This means that the database column is removed, the admin settings are removed and
+  the properties from the grade_category object have been removed. If any courses were
+  found to be using this setting, a warning to check the grades will be shown in the
+  course grader report after upgrading the site. The same warning will be shown on
+  courses restored from backup that had this setting enabled (see MDL-47503).
+* lib/excelllib.class.php has been updated. The class MoodleExcelWorkbook will now only produce excel 2007 files.
+* renderers: We now remove the suffix _renderable when looking for a render method for a renderable.
+  If you have a renderable class named like "blah_renderable" and have a method on a renderer named "render_blah_renderable"
+  you will need to change the name of your render method to "render_blah" instead, as renderable at the end is no longer accepted.
+* New functions get_course_and_cm_from_cmid($cmorid, $modulename) and
+  get_course_and_cm_from_instance($instanceorid, $modulename) can be used to
+  more efficiently load these basic data objects at the start of a script.
+* New function cm_info::create($cm) can be used when you need a cm_info
+  object, but have a $cm which might only be a standard database record.
+* $CFG->enablegroupmembersonly no longer exists.
+* Scheduled tasks have gained support for syntax to introduce variability when a
+  task will run across installs. When a when hour or minute are defined as 'R'
+  they will be installed with a random hour/minute value.
+* Several classes grade_edit_tree_column_xxx were removed since grades setup page
+  has been significantly changed. These classes should not be used outside of
+  gradebook or developers can copy them into their plugins from 2.7 branch.
+* Google APIs Client Library (lib/google/) has been upgraded to 1.0.5-beta and
+  API has changed dramatically without backward compatibility. Any code accessing
+  it must be amended. It does not apply to lib/googleapi.php. See MDL-47297
+* Added an extra parameter to the function get_formatted_help_string() (default null) which is used to specify
+  additional string parameters.
+* User settings node and course node in navigation now support callbacks from admin tools.
+* grade_get_grades() optional parameteres $itemtype, $itemmodule, $iteminstance are now required.
+
+DEPRECATIONS:
+* completion_info->get_incomplete_criteria() is deprecated and will be removed in Moodle 3.0.
+* grade_category::aggregate_values() is deprecated and will be removed in Moodle 3.0.
+* groups_filter_users_by_course_module_visible() is deprecated; replace with
+  core_availability\info::filter_user_list. Will be removed in Moodle 3.0.
+* groups_course_module_visible() is deprecated; replace with $cm->uservisible.
+* cm_info property $cm->groupmembersonly is deprecated and always returns 0.
+  Use core_availability\info::filter_user_list if trying to determine which
+  other users can see an activity.
+* cm_info method $cm->is_user_access_restricted_by_group() is deprecated and
+  always returns false. Use $cm->uservisible to determine whether the user can
+  access the activity.
+* Constant FEATURE_GROUPMEMBERSONLY (used in module _supports functions) is
+  deprecated.
+* cohort_get_visible_list() is deprecated. There is a better function cohort_get_available_cohorts()
+  that respects user capabilities to view cohorts.
+* enrol_cohort_get_cohorts() and enrol_cohort_search_cohorts() are deprecated since
+  functionality is removed. Please use cohort_get_available_cohorts()
+* enrol_cohort_enrol_all_users() is deprecated; enrol_manual is now responsible for this action
+* enrol_cohort_can_view_cohort() is deprecated; replace with cohort_can_view_cohort()
+
+=== 2.6.4 / 2.7.1 ===
+
+* setnew_password_and_mail() and update_internal_user_password() will trigger
+  \core\event\user_password_updated. Previously they used to generate
+  \core\event\user_updated event.
+* update_internal_user_password() accepts optional boolean $fasthash for fast
+  hashing.
+* user_update_user() and user_create_user() api's accept optional param
+  $triggerevent to avoid respective events to be triggred from the api's.
+
+=== 2.7 ===
+
+* PHPUnit cannot be installed via PEAR any more, please use composer package manager instead.
+* $core_renderer->block_move_target() changed to support more verbose move-block-here descriptions.
+
+Events and Logging:
+* Significant changes in Logging API. For upgrading existing events_trigger() and
+  add_to_log() see http://docs.moodle.org/dev/Migrating_logging_calls_in_plugins
+  For accessing logs from plugins see http://docs.moodle.org/dev/Migrating_log_access_in_reports
+* The validation of the following events is now stricter (see MDL-45445):
+    - \core\event\blog_entry_created
+    - \core\event\blog_entry_deleted
+    - \core\event\blog_entry_updated
+    - \core\event\cohort_member_added
+    - \core\event\cohort_member_removed
+    - \core\event\course_category_deleted
+    - \core\event\course_completed
+    - \core\event\course_content_deleted
+    - \core\event\course_created
+    - \core\event\course_deleted
+    - \core\event\course_restored
+    - \core\event\course_section_updated (see MDL-45229)
+    - \core\event\email_failed
+    - \core\event\group_member_added
+    - \core\event\group_member_removed
+    - \core\event\note_created
+    - \core\event\note_deleted
+    - \core\event\note_updated
+    - \core\event\role_assigned
+    - \core\event\role_deleted
+    - \core\event\role_unassigned
+    - \core\event\user_graded
+    - \core\event\user_loggedinas
+    - \core\event\user_profile_viewed
+    - \core\event\webservice_token_created
+
+DEPRECATIONS:
+* $module uses in mod/xxx/version.php files is now deprecated. Please use $plugin instead. It will be removed in Moodle 2.10.
+* Update init methods in all event classes - "level" property was renamed to "edulevel", the level property is now deprecated.
+* Abstract class \core\event\course_module_instances_list_viewed is deprecated now, use \core\event\instances_list_viewed instead.
+* Abstract class core\event\content_viewed has been deprecated. Please extend base event or other relevant abstract class.
+* mod_book\event\instances_list_viewed has been deprecated. Please use mod_book\event\course_module_instance_list_viewed instead.
+* mod_chat\event\instances_list_viewed has been deprecated. Please use mod_chat\event\course_module_instance_list_viewed instead.
+* mod_choice\event\instances_list_viewed has been deprecated. Please use mod_choice\event\course_module_instance_list_viewed instead.
+* mod_feedback\event\instances_list_viewed has been deprecated. Please use mod_feedback\event\course_module_instance_list_viewed instead.
+* mod_page\event\instances_list_viewed has been deprecated. Please use mod_page\event\course_module_instance_list_viewed instead.
+* The constants FRONTPAGECOURSELIST, FRONTPAGETOPICONLY & FRONTPAGECOURSELIMIT have been removed.
+* Conditional availability API has moved and changed. The condition_info class is
+  replaced by \core_availability\info_module, and condition_info_section by
+  \core_availability\info_section. (Code that uses the old classes will generally
+  still work.)
+* coursemodule_visible_for_user() has been deprecated but still works - replaced
+  by a new static function \core_availability\info_module::is_user_visible()
+* cm_info::is_user_access_restricted_by_conditional_access has been deprecated
+  but still works (it has never done what its name suggests, and is
+  unnecessary).
+* cm_info and section_info property showavailability has been deprecated, but
+  still works (with the caveat that this information is now per-user).
+* cm_info and section_info properties availablefrom and availableuntil have been
+  deprecated and always return zero (underlying data doesn't have these values).
+* section_info property groupingid has been deprecated and always returns zero,
+  same deal.
+* Various cm_info methods have been deprecated in favour of their read-only properties (get_url(), get_content(), get_extra_classes(),
+  get_on_click(), get_custom_data(), get_after_link, get_after_edit_icons)
+* The ajaxenabled function has been deprecated and always returns true. All code should be fully functional in Javascript.
+* count_login_failures() has been deprecated, use user_count_login_failures() instead. Refer MDL-42891 for details.
+
+Conditional availability (activities and sections):
+* New conditional availability API in /availability, including new availability
+  condition plugins in /availability/condition. The new API is very similar with
+  regard to checking availability, but any code that modifies availability settings
+  for an activity or section is likely to need substantial changes.
+
+YUI:
+  * The lightbox attribute for moodle-core-notification-dialogue has been
+    deprecated and replaced by the modal attribute. This was actually
+    changed in Moodle 2.2, but has only been marked as deprecated now. It
+    will be removed in Moodle 2.9.
+  * When destroying any type of dialogue based on moodle-core-notification, the relevant content is also removed from
+    the DOM. Previously it was left orphaned.
+
+JavaSript:
+    * The findChildNodes global function has been deprecated. Y.all should
+      be used instead.
+    * The callback argument to confirm_action and M.util.show_confirm_dialog has been deprecated. If you need to write a
+      confirmation which includes a callback, please use moodle-core-notification-confirmation and attach callbacks to the
+      events provided.
+
+* New locking api and admin settings to configure the system locking type.
+* New "Time spent waiting for the database" performance metric displayed along with the
+  other MDL_PERF vars; the change affects both the error logs and the vars displayed in
+  the page footer.
+* Changes in the tag API. The component and contextid are now saved when assigning tags to an item. Please see
+  tag/upgrade.txt for more information.
+
+=== 2.6 ===
+
+* Use new methods from core_component class instead of get_core_subsystems(), get_plugin_types(),
+  get_plugin_list(), get_plugin_list_with_class(), get_plugin_directory(), normalize_component(),
+  get_component_directory() and get_plugin_list_with_file(). The names of the new methods are
+  exactly the same, the only differences are that core_component::get_plugin_types() now always returns
+  full paths and core_component::get_plugin_list() does not accept empty parameter any more.
+* Use core_text::* instead of textlib:: and also core_collator::* instead of collatorlib::*.
+* Use new function moodleform::mock_submit() to simulate form submission in unit tests (backported).
+* New $CFG->localcachedir setting useful for cluster nodes. Admins have to update X-Sendfile aliases if used.
+* MS SQL Server drivers are now using NVARCHAR(MAX) instead of NTEXT and VARBINARY(MAX) instead of IMAGE,
+  this change should be fully transparent and it should help significantly with add-on compatibility.
+* The string manager classes were renamed. Note that they should not be modified or used directly,
+  always use get_string_manager() to get instance of the string manager.
+* The ability to use an 'insecure' rc4encrypt/rc4decrypt key has been removed.
+* Use $CFG->debugdeveloper instead of debugging('', DEBUG_DEVELOPER).
+* Use set_debugging(DEBUG_xxx) when changing debugging level for current request.
+* Function moveto_module() does not modify $mod argument and instead now returns the new module visibility value.
+* Use behat_selectors::get_allowed_text_selectors() and behat_selectors::get_allowed_selectors() instead of
+  behat_command::$allowedtextselectors and behat_command::$allowedselectors
+* Subplugins are supported in admin tools and local plugins.
+* file_packer/zip_packer API has been modified so that key functions support a new file_progress interface
+  to report progress during long operations. Related to this, zip_archive now supports an estimated_count()
+  function that returns an approximate number of entries in the zip faster than the count() function.
+* Class cm_info no longer extends stdClass. All properties are read-only and calculated on first request only.
+* Class course_modinfo no longer extends stdClass. All properties are read-only.
+* Database fields modinfo and sectioncache in table course are removed. Application cache core/coursemodinfo
+  is used instead. Course cache is still reset, rebuilt and retrieved using function rebuild_course_cache() and
+  get_fast_modinfo(). Purging all caches and every core upgrade purges course modinfo cache as well.
+  If function get_fast_modinfo() is called for multiple courses make sure to include field cacherev in course
+  object.
+* Internal (noreply and support) user support has been added for sending/receiving message.
+  Use core_user::get_noreply_user() and core_user::get_support_user() to get noreply and support user's respectively.
+  Real users can be used as noreply/support users by setting $CFG->noreplyuserid and $CFG->supportuserid
+* New function readfile_allow_large() in filelib.php for use when very large files may need sending to user.
+* Use core_plugin_manager::reset_caches() when changing visibility of plugins.
+* Implement new method get_enabled_plugins() method in subplugin info classes.
+* Each plugin should include version information in version.php.
+* Module and block tables do not contain version column any more, use get_config('xx_yy', 'version') instead.
+* $USER->password field is intentionally unset so that session data does not contain password hashes.
+* Use core_shutdown_manager::register_function() instead of register_shutdown_function().
+* New file packer for .tar.gz files; obtain by calling get_file_packer('application/x-gzip'). Intended initially
+  for use in backup/restore only, as there are limitations on supported filenames. Also new packer for
+  backups which supports both compression formats; get_file_packer('application/vnd.moodle.backup').
+* New optional parameter to stored_file::get_content_file_handle to open file handle with 'gzopen' instead
+  of 'fopen' to read gzip-compressed files if required.
+* update_internal_user_password() and setnew_password_and_mail() now trigger user_updated event.
+* Add thirdpartylibs.xml file to plugins that bundle any 3rd party libraries.
+* New class introduced to help auto generate zIndex values for modal dialogues. Class "moodle-has-zindex"
+  should set on any element which uses a non-default zindex and needs to ensure it doesn't show above a
+  dialogue.
+* $CFG->filelifetime is now used consistently for most file serving operations, the default was lowered
+  to 6 hours from 24 hours because etags and x-sendfile support should make file serving less expensive.
+* Date format locale charset for windows server will come from calendar type and for gregorian it will use
+  lang file.
+* The library to interact with Box.net (class boxclient) is only compatible with their APIv1 which
+  reaches its end of life on the 14th of Dec. You should migrate your scripts to make usage of the
+  new class boxnet_client(). Note that the method names and return values have changed.
+* Settings pages are now possible for Calendar type plugins. Calendar type plugins that require a settings page to
+  work properly will need to set their requires version to a number that is equal to or grater than the 2.6.1 release version.
+* The admin/tool/generator tool was overhauled to use testing data generators and the previous interface to create
+  test data was removed (it was not working correctly anyway). If you were using this tool you will probably need to
+  update your code.
+
+DEPRECATIONS:
+Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices
+and will be removed in a future release (target: 2.8), a summary follows:
+
+Accesslib:
+    * get_context_instance()                ->  context_xxxx::instance()
+    * get_context_instance_by_id()          ->  context::instance_by_id($id)
+    * get_system_context()                  ->  context_system::instance()
+    * context_moved()                       ->  context::update_moved()
+    * preload_course_contexts()             ->  context_helper::preload_course()
+    * context_instance_preload()            ->  context_helper::preload_from_record()
+    * context_instance_preload_sql()        ->  context_helper::get_preload_record_columns_sql()
+    * get_contextlevel_name()               ->  context_helper::get_level_name()
+    * create_contexts()                     ->  context_helper::create_instances()
+    * cleanup_contexts()                    ->  context_helper::cleanup_instances()
+    * build_context_path()                  ->  context_helper::build_all_paths()
+    * print_context_name()                  ->  $context->get_context_name()
+    * mark_context_dirty()                  ->  $context->mark_dirty()
+    * delete_context()                      ->  $context->delete_content() or context_helper::delete_instance()
+    * get_context_url()                     ->  $context->get_url()
+    * get_course_context()                  ->  $context->get_course_context()
+    * get_parent_contexts()                 ->  $context->get_parent_context_ids()
+    * get_parent_contextid()                ->  $context->get_parent_context()
+    * get_child_contexts()                  ->  $context->get_child_contexts()
+    * rebuild_contexts()                    ->  $context->reset_paths()
+    * get_user_courses_bycap()              ->  enrol_get_users_courses()
+    * get_courseid_from_context()           ->  $context->get_course_context(false)
+    * get_role_context_caps()               ->  (no replacement)
+    * load_temp_role()                      ->  (no replacement)
+    * remove_temp_roles()                   ->  (no replacement)
+    * get_related_contexts_string()         ->  $context->get_parent_context_ids(true)
+    * get_recent_enrolments()               ->  (no replacement)
+
+Enrollment:
+    * get_course_participants()             -> get_enrolled_users()
+    * is_course_participant()               -> is_enrolled()
+
+Output:
+    * current_theme()                       -> $PAGE->theme->name
+    * skip_main_destination()               -> $OUTPUT->skip_link_target()
+    * print_container()                     -> $OUTPUT->container()
+    * print_container_start()               -> $OUTPUT->container_start()
+    * print_container_end()                 -> $OUTPUT->container_end()
+    * print_continue()                      -> $OUTPUT->continue_button()
+    * print_header()                        -> $PAGE methods
+    * print_header_simple()                 -> $PAGE methods
+    * print_side_block()                    -> $OUTPUT->block()
+    * print_arrow()                         -> $OUTPUT->arrow()
+    * print_scale_menu_helpbutton()         -> $OUTPUT->help_icon_scale($courseid, $scale)
+    * print_checkbox()                      -> html_writer::checkbox()
+
+Navigation:
+    * print_navigation()                    -> $OUTPUT->navbar()
+    * build_navigation()                    -> $PAGE->navbar methods
+    * navmenu()                             -> (no replacement)
+    * settings_navigation::
+          get_course_modules()              -> (no replacement)
+
+Files and repositories:
+    * stored_file::replace_content_with()   -> stored_file::replace_file_with()
+    * stored_file::set_filesize()           -> stored_file::replace_file_with()
+    * stored_file::get_referencelifetime()  -> (no replacement)
+    * repository::sync_external_file()      -> see repository::sync_reference()
+    * repository::get_file_by_reference()   -> repository::sync_reference()
+    * repository::
+          get_reference_file_lifetime()     -> (no replacement)
+    * repository::sync_individual_file()    -> (no replacement)
+    * repository::reset_caches()            -> (no replacement)
+
+Calendar:
+    * add_event()                           -> calendar_event::create()
+    * update_event()                        -> calendar_event->update()
+    * delete_event()                        -> calendar_event->delete()
+    * hide_event()                          -> calendar_event->toggle_visibility(false)
+    * show_event()                          -> calendar_event->toggle_visibility(true)
+
+Misc:
+    * filter_text()                         -> format_text(), format_string()...
+    * httpsrequired()                       -> $PAGE->https_required()
+    * detect_munged_arguments()             -> clean_param([...], PARAM_FILE)
+    * mygroupid()                           -> groups_get_all_groups()
+    * js_minify()                           -> core_minify::js_files()
+    * css_minify_css()                      -> core_minify::css_files()
+    * course_modinfo::build_section_cache() -> (no replacement)
+    * generate_email_supportuser()          -> core_user::get_support_user()
+
+Sessions:
+    * session_get_instance()->xxx()         -> \core\session\manager::xxx()
+    * session_kill_all()                    -> \core\session\manager::kill_all_sessions()
+    * session_touch()                       -> \core\session\manager::touch_session()
+    * session_kill()                        -> \core\session\manager::kill_session()
+    * session_kill_user()                   -> \core\session\manager::kill_user_sessions()
+    * session_gc()                          -> \core\session\manager::gc()
+    * session_set_user()                    -> \core\session\manager::set_user()
+    * session_is_loggedinas()               -> \core\session\manager::is_loggedinas()
+    * session_get_realuser()                -> \core\session\manager::get_realuser()
+    * session_loginas()                     -> \core\session\manager::loginas()
+
+User-agent related functions:
+    * check_browser_operating_system()      -> core_useragent::check_browser_operating_system()
+    * check_browser_version()               -> core_useragent::check_browser_version()
+    * get_device_type()                     -> core_useragent::get_device_type()
+    * get_device_type_list()                -> core_useragent::get_device_type_list()
+    * get_selected_theme_for_device_type()  -> core_useragent::get_device_type_theme()
+    * get_device_cfg_var_name()             -> core_useragent::get_device_type_cfg_var_name()
+    * set_user_device_type()                -> core_useragent::set_user_device_type()
+    * get_user_device_type()                -> core_useragent::get_user_device_type()
+    * get_browser_version_classes()         -> core_useragent::get_browser_version_classes()
+
+YUI:
+    * moodle-core-notification has been deprecated with a recommendation of
+      using its subclasses instead. This is to allow for reduced page
+      transport costs. Current subclasses include:
+      * dialogue
+      * alert
+      * confirm
+      * exception
+      * ajaxexception
+
+Event triggering and event handlers:
+    * All existing events and event handlers should be replaced by new
+      event classes and matching new event observers.
+    * See http://docs.moodle.org/dev/Event_2 for more information.
+    * The following events will be entirely removed, though they can still
+      be captured using handlers, but they should not be used any more.
+      * groups_members_removed          -> \core\event\group_member_removed
+      * groups_groupings_groups_removed -> (no replacement)
+      * groups_groups_deleted           -> \core\event\group_deleted
+      * groups_groupings_deleted        -> \core\event\grouping_deleted
+    * edit_module_post_actions() does not trigger events any more.
+
+=== 2.5.1 ===
+
+* New get_course() function for use when obtaining the course record from database. Will
+  reuse existing $COURSE or $SITE globals if possible to improve performance.
+
+=== 2.5 ===
+
+* The database drivers (moodle_database and subclasses) aren't using anymore the ::columns property
+  for caching database metadata. MUC (databasemeta) is used instead. Any custom DB driver should
+  apply for that change.
+* The cron output has been changed to include time and memory usage (see cron_trace_time_and_memory()),
+  so any custom utility relying on the old output may require modification.
+* Function get_max_file_sizes now returns an option for (for example) "Course limit (500MB)" or
+  "Site limit (200MB)" when appropriate with the option set to 0. This function no longer returns
+  an option for 0 bytes. Existing code that was replacing the 0 option in the return
+  from this function with a more sensible message, can now use the return from this function directly.
+* Functions responsible for output in course/lib.php are deprecated, the code is moved to
+  appropriate renderers: print_section(), print_section_add_menus(), get_print_section_cm_text(),
+  make_editing_buttons()
+  See functions' phpdocs in lib/deprecatedlib.php
+* Function get_print_section_cm_text() is deprecated, replaced with methods in cm_info
+* zip_packer may create empty zip archives, there is a new option to ignore
+  problematic files when creating archive
+* The function delete_course_module was deprecated and has been replaced with
+  course_delete_module. The reason for this was because the function delete_course_module
+  only partially deletes data, so wherever it was called extra code was needed to
+  perform the whole deletion process. The function course_delete_module now takes care
+  of the whole process.
+* curl::setopt() does not accept constant values any more. As it never worked properly,
+  we decided to make the type check stricter. Now, the keys of the array pass must be a string
+  corresponding to the curl constant name.
+* Function get_users_listing now return list of users except guest and deleted users. Previously
+  deleted users were excluded by get_users_listing. As guest user is not expected while browsing users,
+  and not included in get_user function, it will not be returned by get_users_listing.
+* The add_* functions in course/dnduploadlib.php have been deprecated. Plugins should be using the
+  MODNAME_dndupload_register callback instead.
+* The signature of the add() method of classes implementing the parentable_part_of_admin_tree
+  interface (such as admin_category) has been extended. The new parameter allows the caller
+  to prepend the new node before an existing sibling in the admin tree.
+* condition_info:get_condition_user_fields($formatoptions) now accepts the optional
+  param $formatoptions, that will determine if the field names are processed by
+  format_string() with the passed options.
+* remove all references to $CFG->gdversion, GD PHP extension is now required
+* Formslib will now throw a developer warning if a PARAM_ type hasn't been set for elements which
+  need it. Please set PARAM_RAW explicitly if you do not want any cleaning.
+* Functions responsible for managing and accessing course categories are moved to class coursecat
+  in lib/coursecatlib.php, functions responsible for rendering courses and categories lists are
+  moved to course/renderer.php. The following global functions are deprecated: make_categories_list(),
+  category_delete_move(), category_delete_full(), move_category(), course_category_hide(),
+  course_category_show(), get_course_category(), create_course_category(), get_all_subcategories(),
+  get_child_categories(), get_categories(), print_my_moodle(), print_remote_course(),
+  print_remote_host(), print_whole_category_list(), print_category_info(), get_course_category_tree(),
+  print_courses(), print_course(), get_category_courses_array(), get_category_courses_array_recursively(),
+  get_courses_wmanagers()
+  See http://docs.moodle.org/dev/Courses_lists_upgrade_to_2.5
+* $core_renderer->block_move_target() changed to support more verbose move-block-here descriptions.
+* Additional (optional) param $onlyactive has been added to get_enrolled_users, count_enrolled_users
+  functions to get information for only active (excluding suspended enrolments) users. Included two
+  helper functions extract_suspended_users, get_suspended_userids to extract suspended user information.
+* The core_plugin_manager class now provides two new helper methods for getting information
+  about known plugins: get_plugins_of_type() and get_subplugins_of_plugin().
+* The get_uninstall_url() method of all subclasses of \core\plugininfo\base class is now expected
+  to always return moodle_url. Subclasses can use the new method is_uninstall_allowed()
+  to control the availability of the 'Uninstall' link at the Plugins overview page (previously
+  they would do it by get_uninstall_url() returning null). By default, URL to a new general plugin
+  uninstall tool is returned. Unless the plugin type needs extra steps that can't be handled by
+  plugininfo_xxx::uninstall() method or xmldb_xxx_uninstall() function, this default URL should
+  satisfy all plugin types.
+
+Database (DML) layer:
+* $DB->sql_empty() is deprecated, you have to use sql parameters with empty values instead,
+  please note hardcoding of empty strings in SQL queries breaks execution in Oracle database.
+* Indexes must not be defined on the same columns as keys, this is now reported as fatal problem.
+  Please note that internally we create indexes instead of foreign keys.
+
+YUI changes:
+* M.util.help_icon has been deprecated. Code should be updated to use moodle-core-popuphelp
+  instead. To do so, remove any existing JS calls to M.util.help_icon from your PHP and ensure
+  that your help link is placed in a span which has the class 'helplink'.
+
+=== 2.4 ===
+
+* Pagelib: Numerous deprecated functions were removed as classes page_base, page_course
+  and page_generic_activity.
+* use $CFG->googlemapkey3 instead of removed $CFG->googlemapkey and migrate to Google Maps API V3
+* Function settings_navigation::add_course_editing_links() is completely removed
+* function global_navigation::format_display_course_content() is removed completely (the
+  functionality is moved to course format class)
+* in the function global_navigation::load_generic_course_sections() the argument $courseformat is
+  removed
+* New component and itemid columns in groups_members table - this allows plugin to create protected
+  group memberships using 'xx_yy_allow_group_member_remove' callback and there is also a new restore
+  callback 'xx_yy_restore_group_member()'.
+* New general role assignment restore plugin callback 'xx_yy_restore_role_assignment()'.
+* functions get_generic_section_name(), get_all_sections(), add_mod_to_section(), get_all_mods()
+  are deprecated. See their phpdocs in lib/deprecatedlib.php on how to replace them
+
+YUI changes:
+* moodle-enrol-notification has been renamed to moodle-core-notification
+* YUI2 code must now use 2in3, see http://yuilibrary.com/yui/docs/yui/yui-yui2.html
+* M.util.init_select_autosubmit() and M.util.init_url_select() have been deprecated. Code using this should be updated
+  to use moodle-core-formautosubmit
+
+Unit testing changes:
+* output debugging() is not sent to standard output any more,
+  use $this->assertDebuggingCalled(), $this->assertDebuggingNotCalled(),
+  $this->getDebuggingMessages() or $this->assertResetDebugging() instead.
+
+=== 2.3 ===
+
+Database layer changes:
+* objects are not allowed in paramters of DML functions, use explicit casting to strings if necessary
+
+Note:
+* DDL and DML methods which were deprecated in 2.0 have now been removed, they will no longer produce
+debug messages and will produce fatal errors
+
+API changes:
+
+* send_stored_file() has changed its interface
+* deleted several resourcelib_embed_* functions from resourcelib.php
+
+=== 2.2 ===
+
+removed unused libraries:
+* odbc, base32, CodeSniffer, overlib, apd profiling, kses, Smarty, PEAR Console, swfobject, cssshover.htc, md5.js
+
+API changes:
+* new admin/tool plugin type
+* new context API - old API is still available
+* deleted users do not have context any more
+* removed global search
+
+
+=== 2.1 ===
+
+API changes:
+* basic suport for restore from 1.9
+* new mobile devices API
+* new questions API
+
+
+=== 2.0 ===
+
+API changes:
+* new DML API - http://docs.moodle.org/dev/DML_functions
+* new DDL API - http://docs.moodle.org/dev/DDL_functions
+* new file API - http://docs.moodle.org/dev/File_API
+* new $PAGE and $OUTPUT API
+* new navigation API
+* new theme API - http://docs.moodle.org/dev/Theme_changes_in_2.0
+* new javascript API - http://docs.moodle.org/dev/JavaScript_usage_guide
+* new portfolio API
+* new local plugin type
+* new translation support - http://lang.moodle.org
+* new web service API
+* new cohorts API
+* new messaging API
+* new rating API
+* new comment API
+* new sessions API
+* new enrolment API
+* new backup/restore API
+* new blocks API
+* new filters API
+* improved plugin support (aka Frankenstyle)
+* new registration and hub API
+* new course completion API
+* new plagiarism API
+* changed blog API
+* new text editor API
+* new my moodle and profiles API

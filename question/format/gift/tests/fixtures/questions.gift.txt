@@ -1,0 +1,49 @@
+// essay
+::Q8:: How are you? {}
+
+// question: 2  name: Moodle activities
+::Moodle activities::[html]Match the <b>activity</b> to the description.{
+    =[html]An activity supporting asynchronous discussions. -> Forum
+    =[moodle]A teacher asks a question and specifies a choice of multiple responses. -> Choice
+    =[plain]A bank of record entries which participants can add to. -> Database
+    =[markdown]A collection of web pages that anyone can add to or edit. -> Wiki
+    = -> Chat
+}
+
+// multiple choice with specified feedback for right and wrong answers
+::Q2:: What's between orange and green in the spectrum?
+{
+    =yellow # right; good!
+    ~red # [html]wrong, it's yellow
+    ~[plain]blue # wrong, it's yellow
+}
+
+// multiple choice, multiple response with specified feedback for right and wrong answers
+::colours:: What's between orange and green in the spectrum?
+{
+    ~%50%yellow # right; good!
+    ~%-100%red # [html]wrong
+    ~%50%off-beige # right; good!
+    ~%-100%[plain]blue # wrong
+}
+
+// math range question
+::Q5:: What is a number from 1 to 5? {#3:2~#Completely wrong}";
+
+// question: 666  name: Shortanswer
+::Shortanswer::Which is the best animal?{
+    =Frog#Good!
+    =%50%Cat#What is it with Moodlers and cats?
+    =%0%*#Completely wrong
+}
+
+// true/false, with general feedback
+::Q1:: 42 is the Absolute Answer to everything.{
+FALSE#42 is the Ultimate Answer.#You gave the right answer.
+####This is, of course, a Hitchiker's Guide to the Galaxy reference.}";
+
+// name 0-11
+::2-08 TSL::TSL is blablabla.{T}
+
+// name 0-11
+::2-08 TSL::TSL is blablabla.{TRUE}

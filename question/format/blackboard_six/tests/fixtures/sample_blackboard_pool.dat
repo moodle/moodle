@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='utf-8'?>
+<POOL>
+    <TITLE value='exam 3 2008-9'/>
+    <QUESTIONLIST>
+        <QUESTION id='q1' class='QUESTION_TRUEFALSE' points='1'/>
+        <QUESTION id='q7' class='QUESTION_MULTIPLECHOICE' points='1'/>
+        <QUESTION id='q8' class='QUESTION_MULTIPLEANSWER' points='1'/>
+        <QUESTION id='q39-44' class='QUESTION_MATCH' points='1'/>
+        <QUESTION id='q9' class='QUESTION_ESSAY' points='1'/>
+        <QUESTION id='q27' class='QUESTION_FILLINBLANK' points='1'/>
+    </QUESTIONLIST>
+    <QUESTION_TRUEFALSE id='q1'>
+        <BODY>
+            <TEXT><![CDATA[<span style="font-size:12pt">42 is the Absolute Answer to everything.</span>]]></TEXT>
+            <FLAGS>
+                <ISHTML value='true'/>
+                <ISNEWLINELITERAL value='false'/>
+            </FLAGS>
+        </BODY>
+        <ANSWER id='q1_a1'>
+            <TEXT>False</TEXT>
+        </ANSWER>
+        <ANSWER id='q1_a2'>
+            <TEXT>True</TEXT>
+        </ANSWER>
+        <GRADABLE>
+            <CORRECTANSWER answer_id='q1_a2'/>
+            <FEEDBACK_WHEN_CORRECT><![CDATA[You gave the right answer.]]></FEEDBACK_WHEN_CORRECT>
+            <FEEDBACK_WHEN_INCORRECT><![CDATA[42 is the Ultimate Answer.]]></FEEDBACK_WHEN_INCORRECT>
+        </GRADABLE>
+    </QUESTION_TRUEFALSE>
+    <QUESTION_MULTIPLECHOICE id='q7'>
+        <BODY>
+            <TEXT><![CDATA[<span style="font-size:12pt">What's between orange and green in the spectrum?</span>]]></TEXT>
+            <FLAGS>
+                <ISHTML value='true'/>
+                <ISNEWLINELITERAL value='false'/>
+            </FLAGS>
+        </BODY>
+        <ANSWER id='q7_a1' position='1'>
+        <TEXT><![CDATA[<span style="font-size:12pt">red</span>]]></TEXT>
+        </ANSWER>
+        <ANSWER id='q7_a2' position='2'>
+        <TEXT><![CDATA[<span style="font-size:12pt">yellow</span>]]></TEXT>
+        </ANSWER>
+        <ANSWER id='q7_a3' position='3'>
+        <TEXT><![CDATA[<span style="font-size:12pt">blue</span>]]></TEXT>
+        </ANSWER>
+        <GRADABLE>
+            <CORRECTANSWER answer_id='q7_a2'/>
+            <FEEDBACK_WHEN_CORRECT><![CDATA[You gave the right answer.]]></FEEDBACK_WHEN_CORRECT>
+            <FEEDBACK_WHEN_INCORRECT><![CDATA[Only yellow is between orange and green in the spectrum.]]></FEEDBACK_WHEN_INCORRECT>
+        </GRADABLE>
+    </QUESTION_MULTIPLECHOICE>
+    <QUESTION_MULTIPLEANSWER id='q8'>
+        <BODY>
+            <TEXT><![CDATA[<span style="font-size:12pt">What's between orange and green in the spectrum?</span>]]></TEXT>
+            <FLAGS>
+                <ISHTML value='true'/>
+                <ISNEWLINELITERAL value='false'/>
+            </FLAGS>
+        </BODY>
+        <ANSWER id='q8_a1' position='1'>
+        <TEXT><![CDATA[<span style="font-size:12pt">yellow</span>]]></TEXT>
+        </ANSWER>
+        <ANSWER id='q8_a2' position='2'>
+        <TEXT><![CDATA[<span style="font-size:12pt">red</span>]]></TEXT>
+        </ANSWER>
+        <ANSWER id='q8_a3' position='3'>
+        <TEXT><![CDATA[<span style="font-size:12pt">off-beige</span>]]></TEXT>
+        </ANSWER>
+        <ANSWER id='q8_a4' position='4'>
+        <TEXT><![CDATA[<span style="font-size:12pt">blue</span>]]></TEXT>
+        </ANSWER>
+        <GRADABLE>
+            <CORRECTANSWER answer_id='q8_a1'/>
+            <CORRECTANSWER answer_id='q8_a3'/>
+            <FEEDBACK_WHEN_CORRECT><![CDATA[You gave the right answer.]]></FEEDBACK_WHEN_CORRECT>
+            <FEEDBACK_WHEN_INCORRECT><![CDATA[Only yellow and off-beige are between orange and green in the spectrum.]]></FEEDBACK_WHEN_INCORRECT>
+        </GRADABLE>
+    </QUESTION_MULTIPLEANSWER>
+    <QUESTION_MATCH id='q39-44'>
+        <BODY>
+            <TEXT><![CDATA[<i>Classify the animals.</i>]]></TEXT>
+            <FLAGS>
+                <ISHTML value='true'/>
+                <ISNEWLINELITERAL value='false'/>
+            </FLAGS>
+        </BODY>
+        <ANSWER id='q39-44_a1' position='1'>
+            <TEXT><![CDATA[frog]]></TEXT>
+        </ANSWER>
+        <ANSWER id='q39-44_a2' position='2'>
+            <TEXT><![CDATA[cat]]></TEXT>
+        </ANSWER>
+        <ANSWER id='q39-44_a3' position='3'>
+            <TEXT><![CDATA[newt]]></TEXT>
+        </ANSWER>
+        <CHOICE id='q39-44_c1' position='1'>
+            <TEXT><![CDATA[mammal]]></TEXT>
+        </CHOICE>
+        <CHOICE id='q39-44_c2' position='2'>
+            <TEXT><![CDATA[insect]]></TEXT>
+        </CHOICE>
+        <CHOICE id='q39-44_c3' position='3'>
+            <TEXT><![CDATA[amphibian]]></TEXT>
+        </CHOICE>
+        <GRADABLE>
+            <CORRECTANSWER answer_id='q39-44_a1' choice_id='q39-44_c3'/>
+            <CORRECTANSWER answer_id='q39-44_a2' choice_id='q39-44_c1'/>
+            <CORRECTANSWER answer_id='q39-44_a3' choice_id='q39-44_c3'/>
+        </GRADABLE>
+    </QUESTION_MATCH>
+    <QUESTION_ESSAY id='q9'>
+        <BODY>
+            <TEXT><![CDATA[How are you?]]></TEXT>
+            <FLAGS>
+                <ISHTML value='true'/>
+                <ISNEWLINELITERAL value='false'/>
+            </FLAGS>
+        </BODY>
+        <ANSWER id='q9_a1'>
+            <TEXT><![CDATA[Blackboard answer for essay questions will be imported as informations for graders.]]></TEXT>
+        </ANSWER>
+        <GRADABLE>
+        </GRADABLE>
+    </QUESTION_ESSAY>
+    <QUESTION_FILLINBLANK id='q27'>
+        <BODY>
+            <TEXT><![CDATA[<span style="font-size:12pt">Name an amphibian: __________.</span>]]></TEXT>
+            <FLAGS>
+                <ISHTML value='true'/>
+                <ISNEWLINELITERAL value='false'/>
+            </FLAGS>
+        </BODY>
+        <ANSWER id='q27_a1' position='1'>
+            <TEXT>frog</TEXT>
+        </ANSWER>
+        <GRADABLE>
+        </GRADABLE>
+    </QUESTION_FILLINBLANK>
+</POOL>

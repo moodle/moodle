@@ -1,0 +1,149 @@
+.que.ddmarker .qtext {
+    margin-bottom: 0.5em;
+    display: block;
+}
+
+.que.ddmarker div.droparea img,
+form.mform fieldset#id_previewareaheader div.droparea img {
+    border: 1px solid #000;
+    max-width: none;
+}
+
+.que.ddmarker .draghome img,
+.que.ddmarker .draghome span {
+    visibility: hidden;
+}
+
+.que.ddmarker .dragitems .dragitem {
+    cursor: move;
+    position: absolute;
+    z-index: 2;
+}
+
+.que.ddmarker .dragitems .draghome {
+    margin: 10px;
+}
+
+.que.ddmarker .dragitems {
+    margin-top: 10px;
+}
+
+.que.ddmarker .dragitems.readonly .dragitem {
+    cursor: auto;
+}
+
+.que.ddmarker div.ddarea,
+form.mform fieldset#id_previewareaheader div.ddarea {
+    text-align: center;
+}
+
+form.mform fieldset#id_previewareaheader div.ddarea .markertexts {
+    min-height: 80px;
+}
+
+.que.ddmarker .dropbackground,
+form.mform fieldset#id_previewareaheader .dropbackground {
+    margin: 0 auto;
+}
+
+.que.ddmarker div.dragitems div.draghome,
+.que.ddmarker div.dragitems div.dragitem,
+form.mform fieldset#id_previewareaheader div.draghome,
+form.mform fieldset#id_previewareaheader div.drag {
+    font: 13px/1.231 arial, helvetica, clean, sans-serif;
+}
+
+.que.ddmarker div.dragitems span.markertext,
+.que.ddmarker div.markertexts span.markertext,
+form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
+    margin: 0 5px;
+    z-index: 3;
+    background-color: white;
+    border: 2px solid black;
+    padding: 5px;
+    display: inline-block;
+    zoom: 1;
+    border-radius: 10px;
+}
+
+.que.ddmarker div.markertexts span.markertext {
+    z-index: 2;
+    background-color: yellow;
+    border-style: solid;
+    border-width: 2px;
+    border-color: khaki;
+}
+
+.que.ddmarker span.wrongpart {
+    background-color: yellow;
+    border-style: solid;
+    border-width: 2px;
+    border-color: khaki;
+    padding: 5px;
+    border-radius: 10px;
+    filter: alpha(opacity=60);
+    opacity: 0.6;
+    margin: 5px;
+    display: inline-block;
+}
+
+.que.ddmarker div.dragitems img.target {
+    position: absolute;
+    left: -7px; /* This must be half the size of the target image, minus 0.5. */
+    top: -7px;  /* In other words, this works for a 15x15 cross-hair. */
+}
+
+.que.ddmarker div.dragitems div.draghome img.target {
+    display: none;
+}
+
+.que.ddmarker .dragitem.yui3-dd-dragging span.markertext {
+    z-index: 3;
+    box-shadow: 3px 3px 4px #000;
+}
+
+#page-question-type-ddmarker .ddarea .grid {
+    position: absolute;
+    background: url([[pix:qtype_ddmarker|grid]]) repeat scroll 0 0;
+}
+/* Editing form. Style repeated elements*/
+/*Top*/
+body#page-question-type-ddmarker div[id^=fitem_id_][id*=hint_] {
+    background: #eee;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #bbb;
+    border-bottom: 0;
+}
+
+body#page-question-type-ddmarker div[id^=fitem_id_][id*=hint_] .fitemtitle {
+    font-weight: bold;
+}
+/* Middle */
+body#page-question-type-ddmarker div[id^=fitem_id_][id*=hintoptions_],
+body#page-question-type-ddmarker div[id^=fitem_id_][id*=hintshownumcorrect_] {
+    background: #eee;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #bbb;
+    border-top: 0;
+    border-bottom: 0;
+}
+/* Bottom */
+body#page-question-type-ddmarker div[id^=fitem_id_][id*=hintclearwrong_] {
+    background: #eee;
+    margin-bottom: 2em;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #bbb;
+    border-top: 0;
+}
+
+body#page-question-type-ddmarker #fitem_id_penalty {
+    margin-bottom: 2em;
+}

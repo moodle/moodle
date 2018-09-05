@@ -1,0 +1,371 @@
+	<?php
+	// This file is part of Moodle - http://moodle.org/
+	//
+	// Moodle is free software: you can redistribute it and/or modify
+	// it under the terms of the GNU General Public License as published by
+	// the Free Software Foundation, either version 3 of the License, or
+	// (at your option) any later version.
+	//
+	// Moodle is distributed in the hope that it will be useful,
+	// but WITHOUT ANY WARRANTY; without even the implied warranty of
+	// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	// GNU General Public License for more details.
+	//
+	// You should have received a copy of the GNU General Public License
+	// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+	// Get the HTML for the settings bits.
+
+	/**
+	 * Moodle's crisp theme, an example of how to make a Bootstrap theme
+	 *
+	 * DO NOT MODIFY THIS THEME!
+	 * COPY IT FIRST, THEN RENAME THE COPY AND MODIFY IT INSTEAD.
+	 *
+	 * For full information about creating Moodle themes, see:
+	 * http://docs.moodle.org/dev/Themes_2.0
+	 *
+	 * @package   theme_crisp
+	 * @copyright 2014 dualcube {@link http://dualcube.com}
+	 * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+	 */
+	  $error_message = null;
+	 if(isset($_GET["errorcode"])){
+		
+		switch ($_GET["errorcode"]){
+			case "3":
+				$error_message = get_string("invalidlogin");break;
+			case "4":
+				$error_message = get_string('sessionerroruser', 'error');break;
+			case "1":
+				$error_message = get_string("cookiesnotenabled");break;
+			case "2":
+				$error_message = get_string('username').': '.get_string("invalidusername");break;	
+			default:
+				$error_message = get_string("invalidlogin");break;  
+		}
+}
+	//require_once($CFG->dirroot.'/calendar/lib.php');
+	$html = theme_crisp_get_html_for_settings($OUTPUT, $PAGE);
+	global $DB, $USER;
+	if (right_to_left()) {
+	    $regionbsid = 'region-bs-main-and-post';
+	} else {
+	    $regionbsid = 'region-bs-main-and-pre';
+	}
+	$hassidepre = $PAGE->blocks->region_has_content('side-pre', $OUTPUT);
+	?>
+	<?php require('header-principal-site.php'); ?>    
+
+	<div id="show-admin">
+		<a class="admin-sets" href="#">
+			<span></span>
+		</a>
+		<div class="adminset">  
+		<?php if ($hassidepre) { ?>
+			<?php echo $OUTPUT->blocks_for_region('side-pre') ?>
+		<?php 
+	}
+	?>
+		</div>
+	</div>
+		
+	<div id="page-content" class="container">
+		<div class="row-fluid">
+			<section id="region-main" class="span12 pull-right">
+				<!-- Necessary HTML -->
+				<div class="bodydetails">
+					
+					<!--primer slider e inicio de secion-->
+						<div id='box-slide-login' class='row-fluid'>
+							
+							<!-- login -->
+							<div id='login-box' class='span4'>
+								<div id="login-header">
+									<center><h2>Campus Virtual </h2>
+										<?php
+										if (!isloggedin()) {?>
+										<i class="fa fa-user" aria-hidden="true"></i>ENTRAR
+										<?php } ?>
+									</center>
+
+
+								</div>
+								<div id="login-body">
+									<?php
+											if (isloggedin() && !isguestuser()) {?>
+											<div id="info-user-login">
+												<?php
+												echo $OUTPUT->user_picture($USER, array('size'=>75));?><br><?php
+												echo $USER->firstname.$USER->lastname;?><br><?php
+												echo $USER->email;?><br><br>
+												<a href="<?php echo $CFG->wwwroot?>/my/" id="btn-info-user-login">Mis Cursos</a>
+												<a href="<?php echo $CFG->wwwroot?>/user/profile.php?id=<?php echo $USER->id;?>" id="btn-info-user-login">Perfil</a>
+												<a href="<?php echo $CFG->wwwroot?>/login/logout.php?sesskey=<?php echo $USER->sesskey;?>" id="btn-info-user-login">Salir</a>
+											</div>
+											<?php
+											}
+											else{
+												?>
+									<form action="<?php echo $CFG->wwwroot.'/login/index.php';?>" method="post" id="login">
+<?php 
+						                    if ($error_message!=''){
+											$html_error_message = '	
+											<div class="loginerrors" role="alert">
+												<a href="#" id="loginerrormessage" class="accesshide"> </a>';									
+						  $html_error_message.='<span class="error">';
+									$html_error_message.='<img class="icon icon icon-pre" alt="Error" src="'.$CFG->wwwroot. '/theme/image.php/crisp/core/1524236107/i/warning">';
+		   $html_error_message.=$error_message.'</span>
+											</div>	<br>';
+											echo $html_error_message;
+											}
+?>
+		
+								                <div class="loginform-principal">
+								                    <div class="form-label">
+								                        <label for="username">
+								                                <?php echo get_string('username');?>
+								                        </label>
+								                    </div>
+								                    <div class="form-input">
+								                        <input name="username" id="username" size="15" value="" type="text">
+								                    </div>
+								                    <div class="clearer"><!-- --></div>
+								                    <div class="form-label">
+								                        <label for="password"><?php echo get_string('password');?></label>
+								                    </div>
+								                    <div class="form-input">
+								                        <input name="password" id="password" size="15" value="" type="password">
+								                    </div>
+								                </div>
+
+								                <div class="clearer"><!-- --></div>
+								                    <div class="rememberpass">
+								                        <input name="rememberusername" id="rememberusername" value="1" type="checkbox">
+								                        <label for="rememberusername">Recordar Usuario</label>
+								                    </div>
+								                <div class="clearer"><!-- --></div>
+								                <input id="anchor" name="anchor" value="" type="hidden">
+								                <input id="loginbtn" value="Acceder" type="submit">
+								    
+								            </form><?php } ?>
+								</div>
+
+								<div id="login-footer">
+										<div class="forgetpass">
+						                    <a href="<?php echo $CFG->wwwroot; ?>/login/forgot_password.php">¿Olvidaste tu usuario o contraseña?</a>
+
+						                </div>
+								</div>
+
+							</div>
+						
+						<!-- fin inicio de sesion-->
+
+						<!-- carousel -->  
+						<div id='slider-box' class='span8'>
+						    <div id="owl-slide1" class="owl-carousel owl-theme">
+									<?php
+										$numberofslides = theme_crisp_get_setting('numberofslides');
+										for($i = 1; $i <= $numberofslides; $i++){
+											$slideimg = theme_crisp_render_slideimg($i, 'slide'.$i.'image');
+											$url = theme_crisp_get_setting('slide'.$i.'caption');
+									?>
+										<a href="<?php echo $url; ?>" target="_blank"><div class="item"><img src="<?php echo $slideimg; ?>" alt=""/></div></a>				
+									<?php } ?>
+						    </div>							
+						</div>
+					</div>
+					
+					<div class="row-fluid">
+						<div class="span12 text_uv_home">
+						<p ALIGN="justify">Dirección de Nuevas Tecnologías y Educación Virtual  informa que los días 23 al 27 de Julio del 2018 a partir de las 8am se suspenderá el servicio de Campus Virtual con el fin de realizar las actividades periódicas de actualización y mantenimiento de la plataforma.
+
+El servicio de Campus Virtual será reestablecido el día 30 de Julio del 2018 a partir de las 8am..</p>
+						</div>
+					</div>
+
+					<div id="contenedor2" class="container">
+						<?php 
+							//MENSAJES PARA MOSTRAR EN LA PÁGINA PRINCIPAL (MANTENIMIENTO DEL CAMPUS,MENSAJES IMPORTANTES ETC)
+							$pluginname = 'theme_crisp';
+							$fieldname = 'textinformation';
+							$body = $DB->get_record_sql('select mcp.value from {config_plugins} mcp
+							  where mcp.plugin = ? and mcp.name = ?', array($pluginname, $fieldname));
+						
+						
+							
+								if (!empty($body->value)) {
+						?>
+										<div style="margin: 0px 0px 0px 110px;">
+											<?php	echo format_text($body->value, "", $crispformatoptions); ?>
+										</div>
+						<?php				
+								}
+						?>							
+
+						<div class="bodytexts row-fluid">
+							<div class="forsupport span4">
+								<div class="icons">
+									<a target="_blank" href="<?php echo $CFG->wwwroot.'/info-dintev/manuales.php';?>">
+										<div id="ico-1" class="container"></div>
+									</a>
+									<div class="heads">
+										<p><b>Soporte</b></p>
+									</div>
+									<div class="texts">
+										<ul class='lista-iconos-principales'>
+											
+											<li><i class="fa fa-plus" aria-hidden="true"></i><a href='<?php echo $CFG->wwwroot.'/login/forgot_password.php';?>' target="_blank">Recuperar la contraseña</a></li>
+											<li><i class="fa fa-plus" aria-hidden="true"></i><a href='<?php echo $CFG->wwwroot.'/info-dintev/instruccion-inscripciones-cursos.php';?>' target="_blank">Inscribir cursos</a></li>
+											<li><i class="fa fa-plus" aria-hidden="true"></i><a href='https://docs.moodle.org/all/es/Gu%C3%ADa_r%C3%A1pida_del_profesor' target="_blank">Guía rápida de Moodle 3.4</a></li>
+											<li><i class="fa fa-plus" aria-hidden="true"></i><a href="http://cuse.univalle.edu.co/tutoriales" target="_blank">Tutoriales realizados por Fac. Admón.</a></li>
+										</ul>
+										<hr id="hr-uv">
+											<p id="">Edificio E18 (317) Oficina 2004
+											<br>3182653 / 2649
+											<span style='color: #d51b23'>campusvirtual@correounivalle.edu.co</span>
+											<br>Solicite una cita personalizada:
+											<br>lunes, miércoles y  viernes de 10 a.m. a 12 m.<br>
+											martes y jueves de 2 a 4 p.m.
+										</p>										
+									</div>
+								</div> <!-- end of forsupport -->
+							</div>
+							<div class="forcourses span4">
+								<div class="icons">
+									<a href="<?php echo $CFG->wwwroot.'/info-dintev/cursospublicos.php';?>">
+										<div id="ico-2" class="container"></div>
+									</a>	
+								</div>
+								<div class="heads">
+									<p><b>Cursos abiertos</b></p>
+								</div>
+								<div class="texts">
+                                    <ul class='lista-iconos-principales'>
+										
+										<li><i class="fa fa-plus" aria-hidden="true"></i><a href="https://campusvirtual.univalle.edu.co/moodle/course/view.php?id=38135" target="_blank">Recordando las Ciencias Naturales del Colegio</a></li>
+										<li><i class="fa fa-plus" aria-hidden="true"></i><a href="https://campusvirtual.univalle.edu.co/moodle/course/view.php?id=38136" target="_blank">Recordando el Español del Colegio</a></li>
+                                        <li><i class="fa fa-plus" aria-hidden="true"></i><a href='https://campusvirtual.univalle.edu.co/moodle/course/view.php?id=34259' target="_blank">Recordando las matemáticas del colegio</a></li>
+                                        <li><i class="fa fa-plus" aria-hidden="true"></i><a href='https://campusvirtual.univalle.edu.co/moodle/course/view.php?id=34258' target="_blank">Fortaleciendo las matemáticas en la Universidad</a></li>
+                                        <li><i class="fa fa-plus" aria-hidden="true"></i><a href='https://campusvirtual.univalle.edu.co/moodle/course/view.php?id=29266' target="_blank">Comprensión producción de textos cátedra UNESCO</a></li>
+                                        <li><i class="fa fa-plus" aria-hidden="true"></i><a href='https://campusvirtual.univalle.edu.co/moodle/course/view.php?id=34855' target="_blank">Fortaleciendo la lectura crítica en la Universidad</a></li>
+                                    </ul>
+                                </div>
+							</div>  <!-- end of forcourses -->
+							<div class="forforum span4">
+								<div class="icons">
+									<a href="<?php echo $CFG->wwwroot.'/info-dintev/cursos-demo.php';?>">
+										<div id="ico-3" class="container"></div>
+									</a>
+								</div>
+								<div class="heads">
+                    				<p><b>¿Sabías que...?</b></p>
+								</div>
+								<div class="texts">
+										 <div id="owl-slide2" class="owl-carousel owl-theme">
+
+										    	<div class="item">
+										    		<a class="video" href="https://www.youtube.com/watch?v=3lzc2WMQz48"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme?>/pix/sabias1.jpg"></a>
+										    	</div>
+										    	<div class="item">
+										    		<a class="video" href="https://www.youtube.com/watch?v=gkkLl7mhicI"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme?>/pix/sabias2.jpg"></a>
+										    	</div>
+										    	<div class="item">
+										    		<a class="video" href="https://www.youtube.com/watch?v=_gccI-ij0_k"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme?>/pix/sabias3.jpg"></a>
+										    	</div>
+										    	<div class="item">
+										    		<a class="video" href="https://www.youtube.com/watch?v=TojD-rGmzbE"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme?>/pix/sabias4.jpg"></a>
+										    	</div>
+
+										  </div>
+								</div>
+							</div> <!-- end of forforum -->
+						</div>
+					</div>
+					<!--
+					<div class="row-fluid">
+						<div class="span12" id="box-slide2">
+							<div class="span3 hidden-phone text-second-slide">						
+								<p>¿Sabías<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;qué...?</p>
+							</div>
+							
+						    <div id="owl-slide2" class="span9">
+
+						    	<div class="item">
+						    		<a class="video" href="https://www.youtube.com/watch?v=0rEsVp5tiDQ"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme?>/pix/Sabiasque_foros.png"></a>
+						    	</div>
+						    	<div class="item">
+						    		<a class="video" href="https://www.youtube.com/watch?v=FEtbPI9Pu6I"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme?>/pix/Sabiasque_mobile.png"></a>
+						    	</div>
+						    	<div class="item">
+						    		<a class="video" href="https://www.youtube.com/watch?v=0rEsVp5tiDQ"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme?>/pix/Sabiasque_tema.png"></a>
+						    	</div>
+						    	<div class="item">
+						    		<a class="video" href="https://www.youtube.com/watch?v=0rEsVp5tiDQ"><img src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme?>/pix/Sabiasque_foros.png"></a>
+						    	</div>
+
+
+						    </div>
+						</div> 
+					</div> -->
+					<div id="contenedor3" class="row-fluid">
+						<div class="span12" id='banner-pestanas'>
+							<ul class="nav nav-tabs ul_uv">
+								<li class="tab_uv_title">
+									<a href="#main" class="ref_uv_main" data-toggle="tab">Licencias y Software Especializado</a>
+									<div id="ico-tabs" class="container"></div></li>
+								<li class="tab_uv"><a style="color:#121D41;" class="ref_uv" href="#profile" data-toggle="tab">ClarityEnglish</a></li>
+								<li class="tab_uv"><a style="color:#121D41;" class="ref_uv" href="#messages" data-toggle="tab">WOLFRAM 11</a></li>
+								<li class="tab_uv"><a style="color:#121D41;" class="ref_uv" href="#settings" data-toggle="tab">Adobe Cloud</a></li>
+							</ul>
+							<div class="tab-content tabcontent-uv">
+								<div class="tab-pane active" id="main">
+                                    <a target="blank" href='https://sites.google.com/a/correounivalle.edu.co/clarityenglish/'><img class="img_uv" src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme?>/pix/Licencias_Slider1.jpg"/></a>
+                                </div>
+                                <div class="tab-pane" id="profile">
+                                    <a target="blank" href='https://sites.google.com/a/correounivalle.edu.co/clarityenglish/'><img class="img_uv" src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme?>/pix/Licencias_Clarity.jpg"/></a>
+                                </div>
+                                <div class="tab-pane" id="messages">
+                                    <a target="blank" href='https://sites.google.com/a/correounivalle.edu.co/mathematica/mathematica'><img class="img_uv" src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme?>/pix/Licencias_Wolfram.jpg"/></a>
+                                </div>
+                                <div class="tab-pane" id="settings">
+                                    <a target="blank" href='http://dintev.univalle.edu.co/2-uncategorised/83-licencia-adobe.html'><img class="img_uv" src="<?php echo $CFG->wwwroot?>/theme/<?php echo $CFG->theme?>/pix/Licencias_AdobeCloud.jpg"/></a>
+                                </div>
+                            </div>
+						</div>
+					</div>
+					<script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous"></script>
+				<?php
+					
+					$PAGE->requires->js('/lib/jquery/jquery-3.2.1.min.js');
+					$PAGE->requires->js('/theme/'.$CFG->theme.'/javascript/owl.carousel.min.js');
+					$PAGE->requires->js_call_amd('theme_crisp/slide','init');
+					$PAGE->requires->js('/theme/'.$CFG->theme.'/amd/src/tabs.js','init');
+					$PAGE->requires->js_call_amd('theme_crisp/popupvideo','init');
+					
+
+				?>
+
+
+							
+				
+			</div> <!-- end of bodydetails -->
+		</div> <!-- end of span12 -->
+	</div>  <!-- end of row-fluid -->
+	
+
+				<div id="bodymaincontent" class="row-fluid">
+				<?php
+					echo $OUTPUT->main_content();
+				?>
+				</div>
+			</section>
+		</div>
+	</div>
+
+	<?php 
+	require('footer.php');
+	?>

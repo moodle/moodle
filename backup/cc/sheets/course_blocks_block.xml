@@ -1,0 +1,12 @@
+      <BLOCK>
+        <ID>[#block_id#]</ID>
+        <NAME>[#block_name#]</NAME>
+        <PAGEID>2</PAGEID>
+        <PAGETYPE>course-view</PAGETYPE>
+        <POSITION>[#block_position#]</POSITION>
+        <WEIGHT>[#block_weight#]</WEIGHT>
+        <VISIBLE>1</VISIBLE>
+        <CONFIGDATA>Tjs=</CONFIGDATA>
+        <ROLES_OVERRIDES></ROLES_OVERRIDES>
+        <ROLES_ASSIGNMENTS></ROLES_ASSIGNMENTS>
+      </BLOCK>

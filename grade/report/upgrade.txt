@@ -1,0 +1,41 @@
+This files describes API changes in /grade/report/*,
+information provided here is intended especially for developers.
+
+=== 3.2 ===
+* External function gradereport_user_external::get_grades_table now has an optional groupid parameter.
+Is recommended to use this parameter in courses with separate groups or when the user requesting the report is in more than one group.
+
+=== 2.9 ===
+* Deprecating grade_report_grader:get_collapsing_icon.
+* A new web service function gradereport_user_get_grades_table has been added which will allow external system to retrieve grade information ready to be formatted as a table similar to the gradebook user report one.
+
+=== 2.8.2 ===
+* gradereport_singleview::__construct doesn't need groupid parameter anymore, so it was renamed to $unused.
+
+=== 2.6.5, 2.7.2 ===
+
+* The callback function grade_report_*_profilereport now takes one more parameter $viewasuser. This parameter
+  is set to true when the report must be viewed as the user whose grades are being displayed. For instance,
+  when a mentor/parent is viewing the report, they should see the same grades, not more, not less. When the
+  setting is set to false (default), the capability checks, visibility and access levels are using the
+  currently logged in user.
+
+=== 2.6 ===
+* grade_report_grader::get_toggles_html() and grade_report_grader::print_toggle()
+  can not be used any more
+* class grade_report get_numusers($groups = true, $users = false)
+  An extra parameter has been added to restrict count to those users being
+displayed
+* class grade_report_grader get_left_rows($displayaverages)
+  A parameter has been added to indicate whether averages are applicable and
+should be displayed on the report
+* class grade_report_grader get_right_rows($displayaverages)
+  A parameter has been added to indicate whether averages are applicable and
+should be displayed on the report
+* class grade_report_grader get_grade_table($displayaverages = false)
+  A parameter has been added to indicate whether averages are applicable and
+should be displayed on the report
+
+=== 2.3.5, 2.4.2 ===
+* class_grade_report::showtotalsifcontainhidden has been switched from a single integer value to an array.
+The array keys are course IDs while the array values are the value of the course setting "report_overview_showtotalsifcontainhidden".

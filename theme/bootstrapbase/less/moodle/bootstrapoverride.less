@@ -1,0 +1,101 @@
+/**
+ * bootstrapoverride.less
+ *
+ * This file is meant to contain rules which specifically override
+ * rules defined in Bootstrap.
+*/
+
+// Create missing variables.
+@wellBorder: darken(@wellBackground, 7%);
+
+// Update warning text colour for accessibility.
+@warningText:    #8a6d3b;
+
+// Headings.
+h1 {
+    font-size: round(@baseFontSize * 2.30); // ~32px
+}
+
+h2 {
+    font-size: round(@baseFontSize * 2.00); // ~28px
+}
+
+h3 {
+    font-size: round(@baseFontSize * 1.70); // ~24px
+}
+
+h4 {
+    font-size: round(@baseFontSize * 1.40); // ~20px
+}
+
+h5 {
+    font-size: round(@baseFontSize * 1.15); // ~16px
+}
+
+h6 {
+    font-size: round(@baseFontSize * 0.85); // ~12px
+}
+
+h1 small {
+    font-size: round(@baseFontSize * 1.70); // ~24px
+}
+
+h2 small {
+    font-size: round(@baseFontSize * 1.40); // ~20px
+}
+
+h3 small {
+    font-size: round(@baseFontSize * 1.15); // ~16px
+}
+
+h4 small {
+    font-size: round(@baseFontSize * 0.85); // ~12px
+}
+
+// Printing.
+@media print {
+    a[href]:after {
+        content: "";
+    }
+}
+
+// Bootstrap's calculation of blocks within a fluid grid. Copied from their grid code.
+.fluid-span (@columns) {
+    .fluid-span-full(@columns, @fluidGridColumnWidth, @fluidGridGutterWidth);
+}
+
+// TODO: MDL-55142 remove browser these brwoser hacks:
+/* stylelint-disable declaration-block-no-duplicate-properties */
+.fluid-span-full (@columns, @columnWidth, @gutterWidth) {
+    width: (@columnWidth * @columns) + (@gutterWidth * (@columns - 1));
+    *width: (@columnWidth * @columns) + (@gutterWidth * (@columns - 1)) - (.5 / @gridRowWidth * 100 * 1%);
+}
+/* stylelint-enable */
+
+/**
+ * Implement missing variables, or faulty ones, in Bootstrap rules.
+ *
+ * Those are minimal overrides of Bootstrap rules to introduce the usage
+ * of a variable, or to fix a variable being used.
+ */
+legend {
+    border-bottom-color: @tableBorder;
+    color: @textColor;
+}
+.breadcrumb {
+    background-color: @wellBackground;
+}
+.well {
+    border-color: @wellBorder;
+}
+
+// Subscript and superscript - required to prevent bugs in contenteditable divs.
+sup {
+    vertical-align: super;
+}
+sub {
+    vertical-align: sub;
+}
+.dropdown-backdrop {
+    position: static;
+}

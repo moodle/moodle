@@ -1,0 +1,11 @@
+{
+  "moodle-question-preview": {
+    "requires": [
+        "base",
+        "dom",
+        "event-delegate",
+        "event-key",
+        "core_question_engine"
+    ]
+  }
+}

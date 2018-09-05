@@ -1,0 +1,7 @@
+name,idnumber,description,category,visible
+cohort name 1,cohortid1,first description,,
+cohort name 2,cohortid2,,,
+cohort name 3,cohortid3,,Miscellaneous,no
+cohort name 4,cohortid4,,CAT1,yes
+cohort name 5,cohortid5,,CAT2,0
+cohort name 6,cohortid6,,CAT3,1

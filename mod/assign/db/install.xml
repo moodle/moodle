@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/assign/db" VERSION="20140724" COMMENT="XMLDB file for Moodle mod/assign"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="assign" COMMENT="This table saves information about an instance of mod_assign in a course.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the instance of the assignment. Displayed at the top of each page."/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The description of the assignment. This field is used by feature MOD_INTRO."/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field of the assignment. This field is used by feature MOD_INTRO."/>
+        <FIELD NAME="alwaysshowdescription" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If false the assignment intro will only be displayed after the allowsubmissionsfrom date. If true it will always be displayed."/>
+        <FIELD NAME="nosubmissions" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="This field is a cache for is_any_submission_plugin_enabled() which allows Moodle pages to distinguish offline assignment types without loading the assignment class."/>
+        <FIELD NAME="submissiondrafts" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, assignment submissions will be considered drafts until the student clicks on the submit assignmnet button."/>
+        <FIELD NAME="sendnotifications" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allows the disabling of email notifications in the assign module."/>
+        <FIELD NAME="sendlatenotifications" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allows separate enabling of notifications for late assignment submissions."/>
+        <FIELD NAME="duedate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The due date for the assignment. Displayed to students."/>
+        <FIELD NAME="allowsubmissionsfromdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If set, submissions will only be accepted after this date."/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The maximum grade for this assignment. Can be negative to indicate the use of a scale."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the settings for this assign module instance were last modified."/>
+        <FIELD NAME="requiresubmissionstatement" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Forces the student to accept a submission statement when submitting an assignment"/>
+        <FIELD NAME="completionsubmit" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If this field is set to 1, then the activity will be automatically marked as 'complete' once the user submits their assignment."/>
+        <FIELD NAME="cutoffdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The final date after which submissions will no longer be accepted for this assignment without an extensions."/>
+        <FIELD NAME="gradingduedate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The expected date for marking the submissions."/>
+        <FIELD NAME="teamsubmission" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Do students submit in teams?"/>
+        <FIELD NAME="requireallteammemberssubmit" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If enabled, a submission will not be accepted until all team members have submitted it."/>
+        <FIELD NAME="teamsubmissiongroupingid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="A grouping id to get groups for team submissions"/>
+        <FIELD NAME="blindmarking" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Hide student/grader identities until the reveal identities action is performed"/>
+        <FIELD NAME="revealidentities" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Show identities for a blind marking assignment"/>
+        <FIELD NAME="attemptreopenmethod" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="none" SEQUENCE="false" COMMENT="How to determine when students are allowed to open a new submission. Valid options are none, manual, untilpass"/>
+        <FIELD NAME="maxattempts" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="-1" SEQUENCE="false" COMMENT="What is the maximum number of student attempts allowed for this assignment? -1 means unlimited."/>
+        <FIELD NAME="markingworkflow" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If enabled, marking workflow features will be used in this assignment."/>
+        <FIELD NAME="markingallocation" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If enabled, marking allocation features will be used in this assignment"/>
+        <FIELD NAME="sendstudentnotifications" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Default for send student notifications checkbox when grading."/>
+        <FIELD NAME="preventsubmissionnotingroup" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If enabled a user will be unable to make a submission unless they are a member of a group."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="The unique id for this assignment instance."/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course" COMMENT="The course this assignment instance belongs to."/>
+        <INDEX NAME="teamsubmissiongroupingid" UNIQUE="false" FIELDS="teamsubmissiongroupingid" COMMENT="The grouping id for team submissions"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="assign_submission" COMMENT="This table keeps information about student interactions with the mod/assign. This is limited to metadata about a student submission but does not include the submission itself which is stored by plugins.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="assignment" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time of the first student submission to this assignment."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The last time this assignment submission was modified by a student."/>
+        <FIELD NAME="status" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The status of this assignment submission. The current statuses are DRAFT and SUBMITTED."/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The group id for team submissions"/>
+        <FIELD NAME="attemptnumber" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Used to track attempts for an assignment"/>
+        <FIELD NAME="latest" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Greatly simplifies queries wanting to know information about only the latest attempt."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="The unique id for this assignment submission."/>
+        <KEY NAME="assignment" TYPE="foreign" FIELDS="assignment" REFTABLE="assign" REFFIELDS="id" COMMENT="The instance of mod_assign this submission belongs to."/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="attemptnumber" UNIQUE="false" FIELDS="attemptnumber"/>
+        <INDEX NAME="uniqueattemptsubmission" UNIQUE="true" FIELDS="assignment, userid, groupid, attemptnumber"/>
+        <INDEX NAME="latestattempt" UNIQUE="false" FIELDS="assignment, userid, groupid, latest" COMMENT="Speed up queries for the latest attempt."/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="assign_grades" COMMENT="Grading information about a single assignment submission.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="assignment" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the assignment submission was first modified by a grader."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The most recent modification time for the assignment submission by a grader."/>
+        <FIELD NAME="grader" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The numerical grade for this assignment submission. Can be determined by scales/advancedgradingforms etc but will always be converted back to a floating point number."/>
+        <FIELD NAME="attemptnumber" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The attempt number that this grade relates to"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="The unique id for this grade."/>
+        <KEY NAME="assignment" TYPE="foreign" FIELDS="assignment" REFTABLE="assign" REFFIELDS="id" COMMENT="The assignment instance this grade belongs to."/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" COMMENT="The userid for the submission relating to this grade."/>
+        <INDEX NAME="attemptnumber" UNIQUE="false" FIELDS="attemptnumber"/>
+        <INDEX NAME="uniqueattemptgrade" UNIQUE="true" FIELDS="assignment, userid, attemptnumber" COMMENT="This is a grade for a unique attempt."/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="assign_plugin_config" COMMENT="Config data for an instance of a plugin in an assignment.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="assignment" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="plugin" TYPE="char" LENGTH="28" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="subtype" TYPE="char" LENGTH="28" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="28" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The value of the config setting. Stored as text but can be interpreted by the plugin however it likes."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Unique id to identify this plugin setting value."/>
+        <KEY NAME="assignment" TYPE="foreign" FIELDS="assignment" REFTABLE="assign" REFFIELDS="id" COMMENT="The assignment instance this config value relates to."/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="plugin" UNIQUE="false" FIELDS="plugin" COMMENT="The type of this plugin."/>
+        <INDEX NAME="subtype" UNIQUE="false" FIELDS="subtype" COMMENT="The subtype of this plugin (assign_submission or assign_feedback)."/>
+        <INDEX NAME="name" UNIQUE="false" FIELDS="name" COMMENT="The name of this plugin setting."/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="assign_user_mapping" COMMENT="Map an assignment specific id number to a user">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="assignment" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Unique ID for this user/assignment combination."/>
+        <KEY NAME="assignment" TYPE="foreign" FIELDS="assignment" REFTABLE="assign" REFFIELDS="id" COMMENT="The assignment instance"/>
+        <KEY NAME="user" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="The user to map to an id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="assign_user_flags" COMMENT="List of flags that can be set for a single user in a single assignment.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The id of the user these flags apply to."/>
+        <FIELD NAME="assignment" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The assignment these flags apply to."/>
+        <FIELD NAME="locked" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Student cannot make any changes to their submission if this flag is set."/>
+        <FIELD NAME="mailed" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Has the student been sent a notification about this grade update?"/>
+        <FIELD NAME="extensionduedate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="An extension date assigned to an individual student."/>
+        <FIELD NAME="workflowstate" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="The current workflow state of the grade"/>
+        <FIELD NAME="allocatedmarker" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The allocated marker to this submission"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="The id field of the user table."/>
+        <KEY NAME="assignment" TYPE="foreign" FIELDS="assignment" REFTABLE="assign" REFFIELDS="id" COMMENT="The assignment id these flags apply to."/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="mailed" UNIQUE="false" FIELDS="mailed" COMMENT="Has this user been mailed yet?"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="assign_overrides" COMMENT="The overrides to assign settings.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="assignid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references assign.id"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Foreign key references groups.id.  Can be null if this is a per-user override."/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Foreign key references user.id.  Can be null if this is a per-group override."/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"  COMMENT="Rank for sorting overrides."/>
+        <FIELD NAME="allowsubmissionsfromdate" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time at which students may start attempting this assign. Can be null, in which case the assign default is used."/>
+        <FIELD NAME="duedate" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time by which students must have completed their attempt.  Can be null, in which case the assign default is used."/>
+        <FIELD NAME="cutoffdate" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time by which students must have completed their attempt.  Can be null, in which case the assign default is used."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="assignid" TYPE="foreign" FIELDS="assignid" REFTABLE="assign" REFFIELDS="id"/>
+        <KEY NAME="groupid" TYPE="foreign" FIELDS="groupid" REFTABLE="groups" REFFIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

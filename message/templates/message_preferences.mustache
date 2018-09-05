@@ -1,0 +1,101 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/message_preferences
+
+    The message preferences page
+
+    Classes required for JS:
+    * None
+
+    Data attibutes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * userid The logged in user id
+    * disableall If the user has disabled notifications
+    * components The list of notification components
+
+    Example context (json):
+    {
+        "userid": 1,
+        "disableall": 0,
+        "components": [
+            {
+                "notifications": [
+                    {
+                        "displayname": "Notices about minor problems",
+                        "preferencekey": "message_provider_moodle_notices",
+                        "onlinehelphtml": "<p>some help HTML</p>",
+                        "offlinehelphtml": "<p>some help HTML</p>",
+                        "processors": [
+                            {
+                                "displayname": "Popup notification",
+                                "name": "popup",
+                                "locked": 0,
+                                "userconfigured": 1,
+                                "loggedin": {
+                                    "name": "loggedin",
+                                    "displayname": "When I'm logged in",
+                                    "checked": 0,
+                                    "disableall": 0
+                                },
+                                "loggedoff": {
+                                    "name": "loggedoff",
+                                    "displayname": "When I'm offline",
+                                    "checked": 0,
+                                    "disableall": 0
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}}
+<div class="preferences-page-container" data-region="preferences-page-container">
+    <h2>{{#str}} messagepreferences, message {{/str}}</h2>
+    <div class="checkbox-container" data-region="block-non-contacts-container">
+        <input id="block-non-contacts"
+                type="checkbox"
+                data-user-id="{{userid}}"
+                data-block-non-contacts
+                data-preference-key="message_blocknoncontacts"
+                {{#blocknoncontacts}}checked{{/blocknoncontacts}} />
+        <label for="block-non-contacts">{{#str}} blocknoncontacts, message {{/str}}</label>
+        {{> core/loading }}
+    </div>
+    <div class="preferences-container {{#disableall}}disabled{{/disableall}}"
+        data-user-id="{{userid}}"
+        data-region="preferences-container">
+        <table class="table table-hover preference-table" data-region="preference-table">
+            <tbody>
+                {{#components}}
+                    {{> message/message_preferences_component }}
+                {{/components}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{#js}}
+require(['jquery', 'core_message/message_preferences'],
+    function($, MessagePreferences) {
+
+    new MessagePreferences($('[data-region="preferences-page-container"]'));
+});
+{{/js}}

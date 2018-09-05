@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/workshop/form/numerrors/db" VERSION="20120122" COMMENT="XMLDB file for Moodle Number of errors subplugin"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="workshopform_numerrors" COMMENT="The assessment dimensions definitions of Number of errors grading strategy forms">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Workshop ID"/>
+        <FIELD NAME="sort" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Defines the dimension order within the assessment form"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the dimension"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field"/>
+        <FIELD NAME="descriptiontrust" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="grade0" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="The word describing the negative evaluation (like Poor, Missing, Absent, etc.). If NULL, it defaults to a translated string False"/>
+        <FIELD NAME="grade1" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="A word for possitive evaluation (like Good, Present, OK etc). If NULL, it defaults to a translated string True"/>
+        <FIELD NAME="weight" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="Weight of this dimension"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshopform_numerrors_map" COMMENT="This maps the number of errors to a percentual grade for submission">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the workshop"/>
+        <FIELD NAME="nonegative" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Number of negative responses given by the reviewer"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="5" COMMENT="Percentual grade 0..100 for this number of negative responses"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id"/>
+        <KEY NAME="nonegative_uq" TYPE="unique" FIELDS="workshopid, nonegative" COMMENT="Number of negative must be unique within the given workshop"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

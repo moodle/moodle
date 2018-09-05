@@ -1,0 +1,554 @@
+/**
+ * Moodle forms HTML isn't changeable via renderers (yet?) so this
+ * .less file imports styles from the bootstrap @variables file and
+ * adds them to the existing Moodle form CSS ids and classes.
+ *
+ */
+
+form {
+    margin: 0;
+}
+.mform fieldset .advancedbutton {
+    text-align: right;
+}
+.jsenabled .mform .containsadvancedelements .advanced {
+    display: none;
+}
+.mform .containsadvancedelements .advanced.show {
+    display: block;
+}
+.mform fieldset.group {
+    margin-bottom: 0;
+}
+.mform fieldset.error {
+    border: 1px solid @errorText;
+}
+.mform span.error,
+#adminsettings span.error {
+    display: inline-block;
+    border: 1px solid @errorBorder;
+    border-radius: 4px;
+    background-color: @errorBackground;
+    padding: 4px;
+    margin-bottom: 4px;
+}
+.mform fieldset.collapsible legend a.fheader {
+    padding: 0 5px 0 20px;
+    margin-left: -20px;
+    background: url([[pix:t/expanded]]) left center no-repeat;
+}
+.mform fieldset.collapsed legend a.fheader {
+    /*rtl:raw:
+    background-image: url([[pix:t/collapsed_rtl]]);
+    */
+    /*rtl:remove*/
+    background-image: url([[pix:t/collapsed]]);
+}
+.jsenabled .mform .collapsed .fcontainer {
+    display: none;
+}
+
+.mform .fitem .fitemtitle div {
+    display: inline;
+}
+#adminsettings .error,
+.loginpanel .error,
+.mform .error {
+    color: @errorText;
+}
+.mform .fdescription.required {
+    margin-left: @horizontalComponentOffset;
+    & > .icon {
+        width: 8px;
+        height: 12px;
+    }
+}
+.mform .fpassword .unmask {
+    display: inline-block;
+    margin-left: 0.5em;
+    & > input {
+        margin: 0;
+    }
+    & > label {
+        display: inline-block;
+    }
+}
+.mform label {
+    display: inline-block;
+}
+
+.mform .iconhelp {
+    margin-left: 4px;
+}
+.mform .ftextarea #id_alltext {
+    width: 100%;
+}
+.mform ul.file-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.mform label .req,
+.mform label .adv {
+    cursor: help;
+    & > .icon {
+        width: 8px;
+        height: 12px;
+        margin-left: 3px;
+    }
+}
+.mform .fcheckbox input {
+    margin-left: 0;
+}
+.mform .fcheckbox > span,
+.mform .fradio > span,
+.mform .fgroup > span,
+.mform .fadvcheckbox > span {
+    display: inline-block;
+    margin-top: 5px;
+}
+.mform .fitem fieldset.fgroup label,
+.mform fieldset.fdate_selector label {
+    display: inline;
+    float: none;
+}
+.mform .helplink img {
+    margin: 0 .45em;
+    padding: 0;
+}
+.mform legend .helplink img {
+    margin: 0 .2em;
+}
+.singleselect label {
+    margin-right: .3em;
+}
+
+.custom-select {
+    max-width: 100%;
+}
+
+// Make the submit button align with the .custom-select element.
+.custom-select + input[type="submit"] {
+    margin: 0 0 0 5px;
+}
+
+#portfolio-add-button {
+    display: inline;
+}
+
+// Copying in Bootstrap styles.
+.form-item,
+.mform .fitem {
+    .form-horizontal .control-group;
+    margin-bottom: 10px;
+    // Theres's a mysterious extra 10px inside this item,
+    // so reduce margin by 10px from 20px standard to compensate.
+}
+.form-item .form-label,
+.mform .fitem div.fitemtitle {
+    .form-horizontal .control-label
+}
+.form-defaultinfo,
+.form-label .form-shortname {
+    .muted;
+}
+.form-label .form-shortname {
+    font-size: @fontSizeMini;
+    display: block;
+}
+.form-item .form-setting,
+.form-item .form-description,
+.mform .fitem .felement,
+#page-mod-forum-search .c1 {
+    .form-horizontal .controls
+}
+.form-inline label:not(.sr-only):not(.accesshide) + select {
+    margin-left: 0.5rem;
+}
+
+.formsettingheading {
+    .form-horizontal .help-block
+}
+// Moodle doesn't differentiate between what Bootstrap calls
+// .uneditable-inputs and form help text. Styling them both as
+// uneditable looks ugly, styling both as form help is fairly
+// subtle in it's impact. Going for the latter as the best option.
+.form-item .form-description,
+.felement.fstatic {
+    .help-block;
+    padding-top: 5px;
+}
+.form-item .form-description {
+    padding-top: 0;
+}
+.fitem .fstaticlabel {
+    font-weight: bold;
+}
+
+// Pale grey container for submit buttons.
+table#form td.submit,
+.form-buttons,
+.path-admin .buttons,
+#fitem_id_submitbutton,
+.fp-content-center form + div,
+div.backup-section + form,
+#fgroup_id_buttonar {
+    .form-actions;
+    padding-left: 0;
+}
+.path-admin .buttons,
+.form-buttons { // Add back the padding it would usually get from being inside a .form-horizontal.
+    padding-left: @horizontalComponentOffset;
+}
+.form-item .form-setting .form-checkbox.defaultsnext {
+    // Need to specify .defaultsnext and the .form-checkbox class
+    // is somewhat randomly re-used on various actual checkboxes
+    // throughout the admin forms, instead of on the wrapper div.
+    margin-top: 5px; // Push down checkboxes to align.
+    display: inline-block; // So above style sticks.
+}
+
+#adminsettings h3 {
+    // Copied from bootstrap/forms.less tag legend.
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin-bottom: @baseLineHeight;
+    font-size: @baseFontSize * 1.5;
+    line-height: @baseLineHeight * 2;
+    color: @grayDark;
+    border: 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+.mform legend a,
+.mform legend a:hover {
+    color: @textColor;
+    text-decoration: none;
+}
+
+#page-grade-edit-outcome-course .courseoutcomes {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+#page-grade-edit-outcome-course .courseoutcomes td {
+    text-align: center;
+}
+
+.mdl-right > label {
+    // Workaround for repository pop-up because the : are outside the label,
+    // can/should be fixed in filemanager renderers.
+    display: inline-block;
+}
+
+// Checkbox labels. Bootstrap puts the associated checkbox inside the label.
+// Moodle puts it beside the label, so we need to make it inline-block
+// to keep it on the same horizontal level.
+input[type="radio"] + label,
+input[type="checkbox"] + label {
+    display: inline;
+    padding-left: 0.2em;
+}
+input[type="radio"],
+input[type="checkbox"] {
+    margin-top: -4px; // Dodgy hack, must be better way.
+    margin-right: 7px;
+}
+.singleselect {
+    display: inline-block;
+    form,
+    select {
+        margin: 0;
+    }
+}
+.form-item .form-label label {
+    margin-bottom: 0;
+}
+.felement.ffilepicker {
+    margin-top: 5px;
+}
+div#dateselector-calendar-panel {
+    z-index: 3100; /* Set higher than the z-index of the filemanager - see MDL-39047. */
+}
+
+fieldset.coursesearchbox label {
+    display: inline;
+}
+
+/**
+ * Show the labels above text editors and file managers except on wide screens.
+ */
+#region-main .mform:not(.unresponsive) .fitem .fitemtitle label {
+    font-weight: bold;
+}
+.makeFormsVertical() {
+    &:not(.unresponsive) {
+        .fitem {
+            .fitemtitle {
+                display: block;
+                margin-top: 4px;
+                margin-bottom: 4px;
+                text-align: left;
+                width: 100%;
+            }
+            .felement {
+                margin-left: 0;
+                width: 100%;
+                float: left;
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .fstatic:empty {
+                display: none;
+            }
+            .fcheckbox > span,
+            .fradio > span,
+            .fgroup > span {
+                margin-top: 4px;
+            }
+
+        }
+        .femptylabel {
+            .fitemtitle {
+                display: inline-block;
+                width: auto;
+                margin-right: 8px;
+            }
+            .felement {
+                display: inline-block;
+                margin-top: 4px;
+                padding-top: 5px;
+            }
+        }
+        .fitem_fcheckbox {
+            .fitemtitle,
+            .felement {
+                display: inline-block;
+                width: auto;
+            }
+            .felement {
+                padding: 6px;
+            }
+        }
+    }
+}
+
+/**
+ * Forms marked as vertical always display this way;
+ */
+.mform.full-width-labels {
+    .makeFormsVertical;
+}
+
+/**
+ * Make forms vertical when the screen is less than 1200px;
+ */
+@media (max-width: 1199px) {
+    body #region-main .mform {
+        .makeFormsVertical;
+    }
+}
+
+
+/**
+ * Make forms vertical when the screen is less than 1474px AND both side-pre and side-post contain blocks.
+ * This is an extra special media rule.
+ * It causes forms to show vertically when the screen size is calculated as:
+ * 1199px + (1199px * 23%)
+ * Where 23% is the width of span3
+ * Full calculation is:
+ *   @maxWidthForVerticalForms: 1199px * (unit(((@fluidGridColumnWidth1200 * 3) +
+ *    (@fluidGridGutterWidth * (3 - 1)))) / 100) + 1199px;
+ */
+@maxWidthForVerticalForms: 1474px;
+
+@media (max-width: @maxWidthForVerticalForms) {
+    .used-region-side-pre.used-region-side-post #region-main .mform {
+        .makeFormsVertical;
+    }
+}
+
+/* Section and module editing forms contain special JS components for the
+   availability system (if enabled). */
+#id_availabilityconditionsjson[aria-hidden=true],
+.availability-field [aria-hidden=true] {
+    display: none;
+}
+.availability-eye,
+.availability-delete {
+    margin-right: 8px;
+}
+/* Eye icons in front of child lists are aligned specially. */
+.availability-list > .availability-eye img {
+    vertical-align: top;
+    margin-top: 12px;
+}
+.availability-plugincontrols {
+    min-height: 40px;
+    padding: 2px 0 0 4px;
+    background: none repeat scroll 0% 0% @wellBackground;
+    border: 1px solid @grayLighter;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 8px;
+    select {
+        width: auto;
+        max-width: 200px;
+    }
+}
+.availability-field .availability-plugincontrols .availability-group select {
+    max-width: 12rem;
+}
+/* Nested section is grey. */
+.availability-childlist > .availability-inner {
+    display: inline-block;
+    background: @wellBackground;
+    border: 1px solid @grayLighter;
+    border-radius: 4px;
+    padding: 6px;
+    margin-bottom: 6px;
+}
+/* Second (and more) levels of nested sections are white. */
+.availability-childlist .availability-childlist > .availability-inner {
+    background: white;
+}
+/* Default form styling colours all text red. With availability conditions
+   this looks excessive as we show 'Invalid' markers in specific places. */
+.mform .error .availability-field {
+    color: @textColor;
+}
+
+/* This dialogue is used to add an availability condition. */
+.availability-dialogue {
+    .moodle-dialogue .moodle-dialogue-bd {
+        padding-left: 0;
+        padding-right: 0;
+        padding-bottom: 2px;
+    }
+    ul {
+        display: block;
+        margin: 0;
+    }
+    li {
+        display: block;
+        list-style-type: none;
+        padding: 0 0 4px;
+        clear: both;
+        border-bottom: 1px solid @grayLighter;
+        margin-bottom: 4px;
+    }
+    ul button {
+        float: left;
+        margin-left: 1em;
+        min-width: 140px;
+        margin-top: 4px;
+    }
+    label {
+        margin-left: 170px;
+        margin-right: 1em;
+        margin-bottom: 0;
+    }
+    .availability-buttons button {
+        margin-left: 1em;
+        margin-right: 1em;
+        margin-top: 4px;
+    }
+}
+
+/* Revert to the non-fixed width where a textarea has the number of columns
+   specified, or an input has it's size specified. */
+textarea[cols],
+input[size] {
+    width: auto;
+}
+
+/* Custom styles for autocomplete form element */
+
+[data-fieldtype=autocomplete] select,
+[data-fieldtype=tags] select,
+select.form-autocomplete-original-select {
+    visibility: hidden;
+    overflow: hidden;
+    width: 15rem;
+    height: 3 * @baseLineHeight + @baseFontSize / 2;
+    margin: 0;
+    margin-bottom: 0.2em;
+    padding: 0;
+    border: 0;
+    vertical-align: top;
+}
+.form-autocomplete-container {
+    display: inline-block;
+    min-height: 4.2rem;
+}
+.form-autocomplete-selection {
+    margin: 0.2em;
+    min-height: @baseLineHeight + @baseFontSize / 2;
+}
+.form-autocomplete-multiple [role=listitem] {
+    cursor: pointer;
+}
+
+.form-autocomplete-suggestions {
+    position: absolute;
+    background-color: white;
+    border: 2px solid @grayLighter;
+    border-radius: 3px;
+    min-width: 206px;
+    max-height: 20em;
+    overflow: auto;
+    margin: 0;
+    padding: 0;
+    margin-top: -0.2em;
+    z-index: 1;
+}
+.form-autocomplete-suggestions li {
+    list-style-type: none;
+    padding: 0.2em;
+    margin: 0;
+    cursor: pointer;
+    color: @textColor;
+}
+.form-autocomplete-suggestions li:hover {
+    background-color: lighten(@dropdownLinkBackgroundActive, 15%);
+    color: @dropdownLinkColorActive;
+}
+.form-autocomplete-suggestions li[aria-selected=true] {
+    background-color: darken(@navbarBackground, 5%);
+    color: @gray;
+}
+
+.form-autocomplete-downarrow {
+    color: @textColor;
+    position: relative;
+    top: -0.3em;
+    left: -1.5em;
+    cursor: pointer;
+}
+
+.form-autocomplete-selection:focus {
+    outline: none;
+}
+.form-autocomplete-selection [data-active-selection=true] {
+    padding: 0.5em;
+    font-size: large;
+}
+
+textarea[data-auto-rows] {
+    overflow-x: hidden;
+}
+
+div[data-passwordunmask="wrapper"] {
+    height: 30px;
+    line-height: 30px;
+    margin-bottom: 10px;
+}
+
+// Styles for the JS file types browser provided by the "filetypes" element.
+[data-filetypesbrowserbody] {
+    [aria-expanded="false"] > [role="group"],
+    [aria-expanded="false"] [data-filetypesbrowserfeature="hideifcollapsed"],
+    [aria-expanded="true"] [data-filetypesbrowserfeature="hideifexpanded"] {
+        display: none;
+    }
+}

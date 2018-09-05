@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>amd/src/video-lazy.js</location>
+        <name>VideoJS</name>
+        <license>Apache</license>
+        <version>6.3.2</version>
+        <licenseversion>2.0</licenseversion>
+    </library>
+    <library>
+        <location>amd/src/Youtube-lazy.js</location>
+        <name>YouTube Playback Technology for Video.js</name>
+        <license>MIT</license>
+        <version>2.4.0</version>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>videojs</location>
+        <name>VideoJS support files</name>
+        <license>Apache</license>
+        <version>6.3.2</version>
+        <licenseversion>2.0</licenseversion>
+    </library>
+    <library>
+        <location>amd/src/videojs-flash-lazy.js</location>
+        <name>The Flash tech for video.js </name>
+        <license>Apache</license>
+        <version>2.0.0</version>
+        <licenseversion>2.0</licenseversion>
+    </library>
+    <library>
+        <location>videojs/video-js.swf</location>
+        <name>Custom Flash Player for VideoJS</name>
+        <license>Apache</license>
+        <version>5.4.1</version>
+        <licenseversion>2.0</licenseversion>
+    </library>
+</libraries>

@@ -1,0 +1,117 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_langimport/langimport
+
+    Template for the language import page.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * sesskey string The session key.
+    * uninstallurl string The URL for the uninstall action.
+    * updateurl string The URL for the update-language-packs action.
+    * installurl string The URL for the install action.
+    * installedoptions array The list of languages installed.
+    * toinstalloptions array The list of languages to be installed.
+    * caninstall boolean Flag to indicate if there are language packs that can be installed.
+
+    Example context (json):
+    {
+        "sesskey": "sesskey",
+        "uninstallurl": "#",
+        "updateurl": "#",
+        "installurl": "#",
+        "installedoptions": [
+            {
+                "value": "en",
+                "text": "English",
+                "selected": true
+            }
+        ],
+        "toinstalloptions": [
+            {
+                "value": "ja",
+                "text": "Japanese"
+            },
+            {
+                "value": "fr",
+                "text": "French"
+            },
+            {
+                "value": "es",
+                "text": "Spanish"
+            }
+        ],
+        "caninstall": true
+    }
+}}
+<div class="container-fluid langimport">
+    <div class="row row-fluid rtl-compatible">
+        <div class="col-md-{{#caninstall}}6{{/caninstall}}{{^caninstall}}12{{/caninstall}} span{{#caninstall}}6{{/caninstall}}{{^caninstall}}12{{/caninstall}} m-b-1">
+            <form id="uninstallform" action="{{uninstallurl}}" method="post">
+                <fieldset>
+                    <div class="form-group">
+                        <label for="menuuninstalllang">{{#str}}installedlangs, tool_langimport{{/str}}</label>
+                        <select size="15" multiple="multiple" id="menuuninstalllang" class="form-control input-block-level" name="uninstalllang[]">
+                            {{#installedoptions}}
+                                <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{{text}}}‎</option>
+                            {{/installedoptions}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" name="sesskey" value="{{sesskey}}">
+                        <input id="languninstallbutton" type="submit" value="{{#str}}uninstall, tool_langimport{{/str}}" class="btn btn-default">
+                    </div>
+                </fieldset>
+            </form>
+            {{#updateurl}}
+                <div>
+                    <form id="updateform" action="{{updateurl}}" method="post">
+                        <fieldset>
+                            <input type="submit" value="{{#str}}updatelangs, tool_langimport{{/str}}" class="btn btn-default">
+                        </fieldset>
+                    </form>
+                </div>
+            {{/updateurl}}
+        </div>
+        {{#caninstall}}
+            <div class="col-md-6 span6 m-b-1">
+                <form id="installform" action="{{installurl}}" method="post">
+                    <fieldset>
+                        <div class="form-group">
+                            <label for="menupack">{{#str}}availablelangs, install{{/str}}</label>
+                            <select size="15" multiple="multiple" class="form-control input-block-level" id="menupack" name="pack[]">
+                                {{#toinstalloptions}}
+                                    <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{{text}}}‎</option>
+                                {{/toinstalloptions}}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" name="sesskey" value="{{sesskey}}">
+                            <input type="submit" value="{{#str}}install, tool_langimport{{/str}}" class="btn btn-default">
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        {{/caninstall}}
+    </div>
+</div>

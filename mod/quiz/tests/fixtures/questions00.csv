@@ -1,0 +1,10 @@
+slot,type,which,cat,mark
+1,random,,rand,1
+,shortanswer,,rand,1
+,numerical,,rand,1
+2,calculatedsimple,sumwithvariants,maincat,1
+3,match,,maincat,1
+4,truefalse,,maincat,1
+5,multichoice,two_of_four,maincat,1
+6,multichoice,one_of_four,maincat,1
+7,multianswer,,maincat,1

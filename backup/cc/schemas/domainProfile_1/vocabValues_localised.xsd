@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--*************************************************************************-->
+<!--** This schema has been modified from the original base schema named - **-->
+<!--** vocabValues.xsd                                                     **-->
+<!--** using the IMS SchemaProf tool. This tool is based on software from  **-->
+<!--** the TELCERT Project which was funded in part by the European        **-->
+<!--** Commission under contract IST-507128                                **-->
+<!--*************************************************************************-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ltsc.ieee.org/xsd/imscc/LOM" targetNamespace="http://ltsc.ieee.org/xsd/imscc/LOM" elementFormDefault="qualified" version="IEEE LTSC LOM XML 1.0 localised_Schema_2008_6_30">
+
+   <xs:annotation>
+      <xs:documentation>
+         This work is licensed under the Creative Commons Attribution-ShareAlike
+         License.  To view a copy of this license, see the file license.txt,
+         visit http://creativecommons.org/licenses/by-sa/2.0 or send a letter to
+         Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
+      </xs:documentation>
+
+      <xs:documentation>
+         This component schema definition provides global type declarations for the standard
+         LOMv1.0 vocabulary tokens for those LOM data elements whose values are taken from
+         a Vocabulary data type.
+
+         This component schema defintion defines the stanard vocabulary value
+         declarations as defined in the LOMv1.0 base schema.  These vocabulary
+         value declarations are used in conjunction with both vocab/custom.xsd and
+         vocab/loose.xsd.
+      </xs:documentation>
+      <xs:documentation>
+         This file has been modified by the Knowledge Media Institute of the 
+         University Koblenz-Landau (http://iwm.uni-koblenz.de). It contains the
+         following changes:
+         1) Instead of "unique/strict.xsd" the schema "unique/loose.xsd" is imported 
+            because this reflects what is said in 1484.12.3-2005, page 35 (section C.1.3)
+         2) In all component XSDs the schemaLocation attribute was amended to the 
+            xs:import and xs:include statements. This enables the usage of the schemas
+            with tools which don't deal well with missing schemaLocation informations.
+            
+         This file is available at "http://iwm.uni-koblenz.de/xsd/IEEE-LOM/loose"
+      </xs:documentation>
+   </xs:annotation>
+
+   <!-- LOMv1.0 base schema vocabulary source and value declarations -->
+
+   <!-- Source -->
+   <xs:simpleType name="sourceValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="LOMv1.0" />
+      </xs:restriction>
+   </xs:simpleType>
+
+
+   <!-- 1.7 Structure -->
+   <xs:simpleType name="structureValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="atomic" />
+         <xs:enumeration value="collection" />
+         <xs:enumeration value="networked" />
+         <xs:enumeration value="hierarchical" />
+         <xs:enumeration value="linear" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 1.8 Aggregation Level -->
+   <xs:simpleType name="aggregationLevelValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="1" />
+         <xs:enumeration value="2" />
+         <xs:enumeration value="3" />
+         <xs:enumeration value="4" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 2.2 Status -->
+   <xs:simpleType name="statusValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="draft" />
+         <xs:enumeration value="final" />
+         <xs:enumeration value="revised" />
+         <xs:enumeration value="unavailable" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 2.3.1 Role -->
+   <xs:simpleType name="roleValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="author" />
+         <xs:enumeration value="publisher" />
+         <xs:enumeration value="unknown" />
+         <xs:enumeration value="initiator" />
+         <xs:enumeration value="terminator" />
+         <xs:enumeration value="validator" />
+         <xs:enumeration value="editor" />
+         <xs:enumeration value="graphical designer" />
+         <xs:enumeration value="technical implementer" />
+         <xs:enumeration value="content provider" />
+         <xs:enumeration value="technical validator" />
+         <xs:enumeration value="educational validator" />
+         <xs:enumeration value="script writer" />
+         <xs:enumeration value="instructional designer" />
+         <xs:enumeration value="subject matter expert" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 3.2.1 Role -->
+   <xs:simpleType name="roleMetaValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="creator" />
+         <xs:enumeration value="validator" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 4.4.1.1 Type -->
+   <xs:simpleType name="typeValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="operating system" />
+         <xs:enumeration value="browser" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 4.4.1.2 Name -->
+   <xs:simpleType name="nameValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="pc-dos" />
+         <xs:enumeration value="ms-windows" />
+         <xs:enumeration value="macos" />
+         <xs:enumeration value="unix" />
+         <xs:enumeration value="multi-os" />
+         <xs:enumeration value="none" />
+         <xs:enumeration value="any" />
+         <xs:enumeration value="netscape communicator" />
+         <xs:enumeration value="ms-internet explorer" />
+         <xs:enumeration value="opera" />
+         <xs:enumeration value="amaya" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 5.1 Interactivity Type -->
+   <xs:simpleType name="interactivityTypeValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="active" />
+         <xs:enumeration value="expositive" />
+         <xs:enumeration value="mixed" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 5.2 Learning Resource Type -->
+   <xs:simpleType name="learningResourceTypeValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="exercise" />
+         <xs:enumeration value="simulation" />
+         <xs:enumeration value="questionnaire" />
+         <xs:enumeration value="diagram" />
+         <xs:enumeration value="figure" />
+         <xs:enumeration value="graph" />
+         <xs:enumeration value="index" />
+         <xs:enumeration value="slide" />
+         <xs:enumeration value="table" />
+         <xs:enumeration value="narrative text" />
+         <xs:enumeration value="exam" />
+         <xs:enumeration value="experiment" />
+         <xs:enumeration value="problem statement" />
+         <xs:enumeration value="self assessment" />
+         <xs:enumeration value="lecture" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 5.3 Interactivity Level -->
+   <xs:simpleType name="interactivityLevelValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="very low" />
+         <xs:enumeration value="low" />
+         <xs:enumeration value="medium" />
+         <xs:enumeration value="high" />
+         <xs:enumeration value="very high" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 5.4 Semantic Density -->
+   <xs:simpleType name="semanticDensityValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="very low" />
+         <xs:enumeration value="low" />
+         <xs:enumeration value="medium" />
+         <xs:enumeration value="high" />
+         <xs:enumeration value="very high" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 5.5 Intended End User Role -->
+   <xs:simpleType name="intendedEndUserRoleValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="teacher" />
+         <xs:enumeration value="author" />
+         <xs:enumeration value="learner" />
+         <xs:enumeration value="manager" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 5.6 Context -->
+   <xs:simpleType name="contextValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="school" />
+         <xs:enumeration value="higher education" />
+         <xs:enumeration value="training" />
+         <xs:enumeration value="other" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 5.8 Difficulty -->
+   <xs:simpleType name="difficultyValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="very easy" />
+         <xs:enumeration value="easy" />
+         <xs:enumeration value="medium" />
+         <xs:enumeration value="difficult" />
+         <xs:enumeration value="very difficult" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 6.1 Cost -->
+   <xs:simpleType name="costValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="yes" />
+         <xs:enumeration value="no" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 6.2 Copyright and Other Restrictions -->
+   <xs:simpleType name="copyrightAndOtherRestrictionsValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="yes" />
+         <xs:enumeration value="no" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 7.1 Kind -->
+   <xs:simpleType name="kindValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="ispartof" />
+         <xs:enumeration value="haspart" />
+         <xs:enumeration value="isversionof" />
+         <xs:enumeration value="hasversion" />
+         <xs:enumeration value="isformatof" />
+         <xs:enumeration value="hasformat" />
+         <xs:enumeration value="references" />
+         <xs:enumeration value="isreferencedby" />
+         <xs:enumeration value="isbasedon" />
+         <xs:enumeration value="isbasisfor" />
+         <xs:enumeration value="requires" />
+         <xs:enumeration value="isrequiredby" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- 9.1 Purpose -->
+   <xs:simpleType name="purposeValues">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="discipline" />
+         <xs:enumeration value="idea" />
+         <xs:enumeration value="prerequisite" />
+         <xs:enumeration value="educational objective" />
+         <xs:enumeration value="accessibility restrictions" />
+         <xs:enumeration value="educational level" />
+         <xs:enumeration value="skill level" />
+         <xs:enumeration value="security level" />
+         <xs:enumeration value="competency" />
+      </xs:restriction>
+   </xs:simpleType>
+
+</xs:schema>

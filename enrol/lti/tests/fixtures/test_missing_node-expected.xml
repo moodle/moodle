@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <firstnode>Content 1</firstnode>
+    <parentnode>
+        <childnode/>
+    </parentnode>
+    <ambiguous id="0"/>
+    <ambiguous id="1"/>
+</root>

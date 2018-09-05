@@ -1,0 +1,1 @@
+_bsa_go({"ads":[{"active":"1","height":"0","longimp":"T4KXSFPBTTTTTTH3EN5MWTTTTTTPD3KRZVTTTTTTW447BNETTTTTT","noincrement":"1","rendering":"default","statimp":"//srv.buysellads.com/ads/imp/x/GTND42QLCT7ITK7MC67LYKQMCVYD627LFTYD4Z3JCW7DTKJUCVADTKQKC6BI6K3LCA7DEK3EHJWNBADLKM7UCBZG2Y","timestamp":"1520274470","width":"0","zoneid":"30777","zonekey":"CKYD527U"},{}]});

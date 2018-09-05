@@ -1,0 +1,339 @@
+This files describes API changes in /theme/* themes,
+information provided here is intended especially for theme designer.
+
+=== 3.4 ===
+
+* There was a mustache template login.mustache in /lib/templates/ rendering the login form
+  and a template with the same name in /theme/boost/templates/ rendering the pagelayout "login".
+  To prevent misunderstanding when overriding one of these templates in a Boost child theme,
+  the first one was renamed to loginform.mustache - see MDL-58970.
+* The Boost flat navigation nodes now have several data-attributes which let plugin developers
+  access properties from the underlying navigation nodes in the browser - see MDL-59425.
+* Navigation between activities via a previous and next link was added to Boost, Clean and Bootstrapbase. This
+  is made possible by a new function core_renderer->activity_navigation().
+* Theme designers may now place the Reset tour on this page link where required by adding an empty
+  container (e.g. <div class="tool_usertours-resettourcontainer"></div>) to their layouts.
+
+=== 3.3 ===
+
+* As boost-based themes no longer use the moodle-core-popuphelp help popups, the javascript
+  setup for this module have been moved from core standard_head_html to the bootstrapbase
+  renderer. If your theme needs this javascript you will need to ensure the bootstrap renderer
+  is called, or require the JS yourself
+
+=== 3.2 ===
+
+* Removed themes: base, canvas
+  During the upgrade process the themes will be uninstalled and all their settings will be deleted.
+  If you wish to keep your theme and its settings, download it from moodle.org and put it back in
+  the theme/ directory BEFORE UPGRADING.
+* Bootstrap 4 was added as part of a the new theme 'boost'.
+* Some backwards and forwards compatibility has been added for different bootstrap versions.
+  This is to allow the same markup to work in "clean" and "boost" themes a lot of the time.
+  It is also to allow user text with bootstrap classes to keep working in the new theme.
+* Using .dir-rtl for RTL styling is deprecated and should not be used any more. From now
+  the styles are automatically flipped when the language is right-to-left. However,
+  as this is not always perfect, you can define exceptions. Please refer to the documentation
+  of the tool RTLCSS-PHP for more information: https://github.com/moodlehq/rtlcss-php
+* Themes can now automatically compile SCSS on the fly. This works the same way as it
+  does compiling LESS on the fly, effecitvely adding $THEME->scss to your config. The
+  latter can either be the name a SCSS file (without extension) in your theme's scss/ folder,
+  or a Closure which will return the main SCSS content.
+* Two new callbacks allow themes to inject SCSS code before and after the content provided
+  by the SCSS file $THEME->scss. See $THEME->prescsscallback and $THEME->extrascsscallback.
+* A new callback can be defined to post process the CSS using an object representation
+  of the CSS tree ($THEME->csstreepostprocess). This gives a lot more flexibility than a
+  simple find and replace. Refer to 'boost' for an example, and to PHP-CSS-Parser.
+  (https://github.com/sabberworm/PHP-CSS-Parser) for the API.
+* A new core setting now enables admins to upload the logos of their site. Using the
+  following methods, themers can instantly support branding logos without the need
+  to implement specific theme settings:
+  * $OUTPUT->get_logo_url($maxwidth, $maxheight);
+  * $OUTPUT->get_compact_logo_url($maxwidth, $maxheight);
+* The class .dir-ltr should not be used any more. To force LTR styles use the directive
+  to remove the rule when the language is RTL. See RTLCSS-PHP for more information.
+* A new class .text-ltr may be used to force the direction to LTR. This is especially useful
+  for forms fields (numbers, emails, URLs must not be RTL'd), and for displaying code
+  snippets or configuration samples.
+* A new theme config 'requiredblocks' allows a theme to define which blocks are deletable.
+* You may no longer override the following core_course_renderer methods.
+  See course/upgrade.txt for more information:
+  - course_modchooser_module_types
+  - course_modchooser_module
+  - course_modchooser_title
+* The question chooser now uses a renderable and a template, the following methods
+  have been deprecated in favour of core_question_bank_renderer::render_qbank_chooser().
+  - qbank_chooser
+  - qbank_chooser_types
+  - qbank_chooser_qtype
+  - qbank_chooser_title
+* The 'css optimiser' has been removed. Developers are encouraged to use tools such as stylelint
+  to help optimise their css. Some functions and classes in lib/csslib.php (which was not for public use)
+  have been deprecated:
+  - css_is_colour
+  - css_is_width
+  - css_sort_by_count
+  - class css_optimiser no longer does anything.
+* CLI svgtool.php has moved from theme/base/cli to admin/cli and paths should be relative to the new location.
+* mod_chat will now display the 'course theme' option for all themes (previously it was only displayed on
+  bootstrap2 based themes).
+* Theme can choose how to display "Add a block" control in $THEME->addblockposition, default value is
+  BLOCK_ADDBLOCK_POSITION_DEFAULT that displays it as a fake block in editing mode.
+
+=== 3.1 ===
+
+* A new search box for global search has been added to bootstrap and clean layout files, if
+  your theme is overwriting columns1.php, columns2.php or columns3.php you will need to add a
+  call to core_renderer::search_box to display it.
+* Notification templates have been renamed to better suit types of alert
+  rather than uses. The following changes have been made:
+  * notification_problem.mustache => notification_error.mustache
+  * notification_message          => notification_info
+  * notification_redirect         => notification_warning
+* Method core_course_renderer::course_section_cm_name() is split into two methods, custom themes that override
+  this method must be modified or otherwise editing functionality may become broken. This method is now also used by
+  social activities block and site menu block to display activities names.
+
+=== 3.0 ===
+
+* The renderer function core_availability_renderer::multiple_messages was changed to
+  render_core_availability_multiple_messages, requiring a parameter of the new
+  \core_availability\multiple_messages type.
+* Meta description is now included in standard_head_html for homepage in bootstrapbase.
+  If your theme includes a meta description directly in a layout for the frontpage,
+  you will need to remove it or override the standard_head_html instead.
+* Themes Clean and More have been updated to use a new navbar_button function, which shows the
+  hamburguer icon (responsive menu) or not depending on custom and language menus settings;
+  themes extending bootstrapbase and overriding its layouts can call replace their "a.btn-navbar"
+  node for a call to this function.
+* Themes Clean and More page header logo only displays on front page and login page.
+* A new function navbar_home has been added to theme_clean and theme_more to display the navigation bar link
+  to the site home. Two new settings have been added to control if the link should be a small logo image, text
+  or both. It defaults to the current behaviour, only a text link.
+
+=== 2.9 ===
+
+* Themes Bootstrapbase, Clean and More have undergone some changes for RTL layouts see - MDL-48160.
+
+* Themes Clean amd More page header background logo, if loaded, no longer links to the home page.
+* Themes Clean and More have been updated to use the renderer full_header(). This renderer (when in a user context) displays a message button
+  and consequently the link to message users have been removed from various pages. It is recommended that theme developers use this
+  renderer to ensure that they do not suffer from a reduction in access to this feature.
+* $OUTPUT->context_header() has been introduced to produce headers similar to what full_header() creates. This renderer is used for creating
+  subsequent headers in a page. If provided with user information, this render will also display a message button like full_header().
+
+=== 2.8 ===
+
+* Themes Base and Canvas layout/embedded.php has changed.
+  The div id="content" has been changed to id="page-content" - see MDL-47915.
+* All mod_assign CSS selectors have been qualified with ".path-mod-assign". This means any custom CSS
+  rules for mod_assign in a theme may need to be updated.
+* The following render methods were renamed, if you have overridden any of these you will need to update your renderer:
+  - report_log_renderer::render_report_log_renderable         => report_log_renderer::render_report_log
+  - report_loglive_renderer::render_report_loglive_renderable => report_loglive_renderer::render_report_log
+* On calendar view screen the course selector and new event button have been swapped, custom CSS for .path-calendar might be affected.
+* The functions search_listing() and search_pagination() in the core_course_management_renderer class take the searched string
+  as an extra parameter - see MDL-46902.
+* Themes with non-fixed headers must have the .navbar class in their navbar in order for floating headers in the grader report to work - see MDL-46658.
+* To accomodate the new gradebook, use of overflow: hidden or overflow-x: hidden CSS rules on DOM elements containing the
+  #user-grades table, visible at [Course administration -> Grades] is not recommended. Please use overflow: auto or
+  overflow: scroll instead, as this will handle medium to large courses with multiple activities better (more information available at https://docs.moodle.org/dev/Theme_upgrade_notes ).
+* The new user menu can be added to themes by calling $OUTPUT->user_menu(); we recommend doing so in a backwards-compatible way (see https://docs.moodle.org/dev/Theme_upgrade_notes for more information).
+
+=== 2.7 ===
+
+* CSS related functions in theme class and csslib.php were refactored, addons that are
+  using this private API need to be updated
+* Please update your css to use 'tr:nth-of-type(odd/even)' instead of '.r0/.r1' to apply tr specific css for various tables.
+  These classes are deprecated now and will be removed in Moodle 2.9. This has done to better support styling tables that will be altered by JavaScript.
+  Here is an example to update your css:
+  Old code:
+    table.generaltable .r0 {background-color: #F0F0F0;}
+    table.generaltable .r1 {background-color: #F0F0F0;}
+  New code:
+    table.generaltable > tbody > tr:nth-of-type(even) {background-color: #F0F0F0;}
+    table.generaltable > tbody > tr:nth-of-type(odd) {background-color: #F0F0F0;}
+
+Removed themes:
+* afterburner, anomaly, arialist, binarius, boxxie, brick, formal_white, formfactor, fusion, leatherbound,
+  magazine, nimble, nonzero, overlay, serenity, sky_high, splash, standard and standardold have been removed.
+  During the upgrade process the themes will be uninstalled and all their settings will be deleted.
+  If you wish to keep your theme and its settings, download it from moodle.org and put it back in
+  the theme/ directory BEFORE UPGRADING.
+
+Notes:
+* z-index on #dock has been adjusted from 11000 to 5000 to prevent overlapping issues with fullscreen TinyMCE in Base theme.
+
+=== 2.6 ===
+
+Removed themes:
+* "My Mobile" theme has been removed (see MDL-40874).
+  During the upgrade process "My Mobile" theme will be uninstalled and all its settings will be deleted.
+  "My Mobile" theme and its extending themes will fallback to the mobile friendly "Clean" theme.
+  If you wish to keep "My Mobile" theme and its settings, BEFORE UPGRADING you can copy the files from the
+  unmaintained plugin into theme/mymobile.
+  The unmaintained plugin can be downloaded at https://moodle.org/plugins/pluginversion.php?id=4563
+Notes:
+* There have been several changes made to the classes used on headings throughout Moodle.
+  This was done as per the Moodle HTML guidelines. h1 and h2 elements should have no classes, h3 and lower headings
+  may have descriptive classes only (any classes must properly describe the relation between the header and its content).
+* The parameters value for the following functions have been modified: core_renderer::heading() and core_renderer::heading_with_help().
+  This means that headings using the default options will no longer have the class "main" which was the previous default.
+* The file picker and activity chooser have been converted to use M.core.dialogue. This means the styles
+  for these elements have changed in the base and bootstrapbase themes and you will need to copy the new styles
+  if you are not inheriting from either one of these themes.
+* For the themes based on bootstrapbase please also read theme/bootstrapbase/upgrade.txt
+* A new component action_menu is now used to display editing icons for courses and blocks within a drop down. If you have a theme that doesn't
+  extend base, canvas, or clean then you will need to style for this new component within your theme.
+* The maintenance layout now has a special renderer that extends the core_renderer in order to prevent some methods from interacting
+  with the database. Please be aware that for the maintenance layout some methods now always return an empty string.
+  This has been done because it is important that during maintenance routines we don't show any links, interact with the database,
+  or interact with caches as doing so may lead to errors,
+  Please see the maintenance renderer notes below for details on the functions affected.
+
+Renderer changes:
+* core_course_renderer::course_section_cm_edit_actions has two new optional arguments and now uses and action_menu component.
+* core_course_renderer::course_section_cm has been altered to call core_course_renderer::course_section_cm_edit_actions with the two new arguments.
+* core_renderer::block_controls has a new optional argument (the block id) and has been altered to use the new action_menu component.
+* core_renderer::block_header has been altered to give core_renderer::block_controls the new second argument, the block id.
+* core_renderer::action_link has a new argument, and optional icon that can be rendererd into the link.
+
+Selector changes:
+* Changes to the classes given to the header produced when rendering a single section within a course.
+  .section-navigation.header.headingblock => .section-navigation.navigationtitle
+* Changes to the classes used when producing the course information box that lists courses.
+  The name (h3|div} of both courses and categories used to have .name, for courses in the list this was changed to .coursename and for categories in the list this was changed to .categoryname.
+* Classes ".header and .headingblock" were removed from all front page content headings.
+* Classes ".headingblock .header .tag-header" were removed from the tag index page
+
+Maintenance renderer notes:
+When the maintenance layout is being used $OUTPUT will be an instance of core_renderer_maintenance.
+This renderer mimics the core_renderer except that the following functions always return an empty string.
+* core_renderer_maintenance::block
+* core_renderer_maintenance::blocks
+* core_renderer_maintenance::blocks_for_regions
+* core_renderer_maintenance::course_header
+* core_renderer_maintenance::course_footer
+* core_renderer_maintenance::course_content_header
+* core_renderer_maintenance::course_content_footer
+* core_renderer_maintenance::custom_menu
+* core_renderer_maintenance::file_picker
+* core_renderer_maintenance::htmllize_file_tree
+* core_renderer_maintenance::lang_menu
+* core_renderer_maintenance::login_info
+* core_renderer_maintenance::user_picture
+
+If you have overridden methods of the core_renderer in your theme and want those changes to be shown during times of maintenance you
+will also need to override the core_renderer_maintenance and copy your customisations from the core_renderer to that.
+
+=== 2.5.1 ===
+
+Notes:
+* Block drag and drop functionality has been improved so that it works regardless of what block regions you use
+  or how many block regions you have. In order to benefit from this improvement you must convert your calls from
+  $OUTPUT->blocks_for_region() to $OUTPUT->blocks.
+
+Optional changes:
+* Theme config can nominate block regions to swap if the user is using a rtl languages such as Hebrew.
+  $THEME->blockrtlmanipulations should be an associative array, the key is the original block region, and the
+  value should be where the blocks in that region should be displayed.
+* New $OUTPUT methods to replace code that was previously using $PAGE. Converting to these methods is optional
+  but highly recommended. Refer to the bootstrapbase layouts for examples.
+  - $OUTPUT->body_attributes() returns a string you can use for the body id and classes.
+  - $OUTPUT->blocks() returns HTML to display a block region and all of its blocks. This adds data attributes
+    that ensure drag and drop of blocks will work no matter what block regions or how many you have.
+  - $OUTPUT->page_heading() returns the page heading. Replaces $PAGE->heading.
+  - $OUTPUT->page_heading_button() returns the button to display with the heading. Replaces $page->button.
+  - $OUTPUT->page_doc_link() returns the link to moodle docs for the page. Replaces page_doc_link().
+  - $OUTPUT->page_heading_menu() returns the heading menu for the page. Replaces $PAGE->headingmenu.
+  - $OUTPUT->page_title() Returns the title to use for the head section.
+  - $OUTPUT->favicon() returns the URL to the favicon.
+
+Renderer changes:
+* core_renderer::navbar now returns an empty string if there are no navigation items to display.
+* core_renderer::custom_menu now adds a class "custom_menu" to the div that contains the HTML for the custom menu.
+
+=== 2.5 ===
+
+required changes:
+* Functions core_course_renderer::course_category_tree() and course_category_tree_category()
+  are deprecated
+* Significant changes in rendering of courses and categories listings, lots of CSS classes changed,
+  several functions such as print_courses(), print_whole_category_list(), print_category_info()
+  are moved to course renderer.
+  See http://docs.moodle.org/dev/Courses_lists_upgrade_to_2.5
+
+DOM changes:
+* changed the h1 title in the help popup to a h2.
+* new setting $THEME->yuicssmodules = array('cssreset', 'cssfonts', 'cssgrids', 'cssbase'); which
+  allows themes to use different CSS reset normalisers such as cssnormalize YUI module.
+* Re-wrote the user profile views to definition lists.
+* Re-wrote the table for the course completion status block to use html_table - added some CSS classes to
+  the table in the process (see MDL-35608).
+* Cancel buttons have the class btn-cancel.
+* Added a z-index for the div#dateselector-calendar-panel so that the calendar pop-up renders above
+  the filemanager when they overlap, ie. the course settings page (see MDL-39047).
+* Trivial change of CSS selectors used to display plugin status at the plugins overview
+  screen (#plugins-control-panel).
+
+Renderer changes:
+* Mymobile theme changed to support more verbose move-block-here descriptions.
+
+=== 2.4 ===
+
+required changes:
+* output course and course content header/footer that may be returned by course format (see MDL-36048)
+* span.completionprogress has been changed to a <div> and is not a float by default any more.
+
+deprecation:
+* i/roles: Use t/assignroles instead
+* t/manual_item: Use i/manual_item instead
+* t/unlock_gray: Use t/locked instead
+* t/userblue: Previously used to unblock a user, use t/unblock.
+* c/course: Use i/courseevent instead
+* c/group: Use i/groupevent instead
+* c/site: Use i/siteevent instead
+* c/user: Use i/userevent instead
+* t/clear: Use t/check instead
+* i/cross_red_big: Use i/invalid or i/grade_incorrect
+* i/tick_green_big: Use i/valid or i/grade_correct
+* i/tick_amber_big: Use i/caution or i/grade_partiallycorrect
+* No more small versions of i/cross_red_small, i/tick_green_small and i/tick_amber_small, use their big equivalent.
+* t/addgreen: Use t/add instead.
+* i/approve: Use t/approve instead
+
+optional changes:
+* new optional boolean parameter $withlinks for public function login_info() in lib/outputrenderers.php (MDL-31365)
+* new layout option "nologinlinks" and new page layout "secure" e.g. for safebrowser and securewindow (MDL-31365)
+* new class 'iconlarge' for 24x24 icons.
+* new icons i/export and i/import (sized 16x16). Previously export and import actions used i/backup and i/restore.
+* new icon i/assignroles (sized 16x16), to prevent the use of i/roles which is 12x12.
+* new icon i/switchrole (sized 16x16), was previously using i/roles. Now is a copy of the new i/assignroles icon.
+* new icons i/enrolusers and t/enrolusers, previsouly i/users was used.
+* new icon t/cohorts (sized 12x12), to prevent the use of i/cohorts which is 16x16.
+* new icons t/sort_asc, t/sort_desc to use for ordering in table headers.
+* new class 'iconsort' for icons used for ordering in table headers.
+* new icons t/locked and t/unlocked (12x12) which should be used when there is no action associated to the icon.
+* new icons i/folder (16x16), monochrome equivalent to f/folder.
+* new icons t/addcontact, t/removecontact and t/messages, previously t/addgreen, t/delete and t/log were used in messaging.
+* new icons t/unblock and i/twoway.
+* new icons i/courseevent, i/groupevent, i/siteevent and i/userevent (16x16) instead of c/* for calendar events.
+* new icon t/markasread (12x12) to replace t/clear used in forums.
+* new icon t/check (12x12) to replace t/clear which name does not reflect the icon meaning.
+* new classes 'icon-pre' and 'icon-post' supposedly to be used when the icon is positioned before or after the text. This is not really used yet, but it's a start towards some standardisation of the icon selectors.
+* new icons i/valid, i/caution and i/invalid for generic statuses.
+* new icons i/grade_correct, i/grade_partiallycorrect and i/grade_incorrect for grades.
+* new icon t/approve (12x12).
+* new icon t/contextmenu (12x12) for a monochrome version of i/menu.
+
+=== 2.3 ===
+
+optional changes:
+* add new u/f3.png image when theme contains customised f1 and f2 default user images
+
+=== 2.2 ===
+
+required changes:
+* use new page content placeholder "echo $OUTPUT->main_content()" instead of "echo core_renderer::MAIN_CONTENT_TOKEN"
+  see git commit: 3b3f302855d7621405a8b93e49bd399d67a998d7
+* upgrade report selectors: search for "-course-report-" and replace with "-report-"

@@ -1,0 +1,17 @@
+This files describes API changes in /mod/workshop - activity modules,
+information provided here is intended especially for developers.
+
+=== 3.4 ===
+
+* workshop_strategy::get_dimensions_info now returns also the scale items (if scales are being used).
+
+=== 3.3.2 ===
+
+* workshop_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
+  now optionally takes the module instance object or ID, and the course module object or ID. Please try to send the full
+  objects instead of the ids to save DB calls.
+
+=== 2.7 ===
+
+* The method workshop::log() has been deprecated in the workshop module. Please use the event classes instead
+  (mod/workshop/classes/event).

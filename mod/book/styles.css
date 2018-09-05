@@ -1,0 +1,114 @@
+.path-mod-book .navtop img.icon,
+.path-mod-book .navbottom img.icon {
+    margin-right: 4px;
+    margin-left: 4px;
+    border: 0;
+    padding: 0;
+}
+
+.path-mod-book .navbottom,
+.path-mod-book .navtop {
+    text-align: right;
+}
+
+.path-mod-book .navtop {
+    margin-bottom: 0.5em;
+}
+
+.path-mod-book .navbottom {
+    margin-top: 0.5em;
+}
+
+/* == Fake toc block == */
+
+.path-mod-book .block_book_toc ul {
+    margin: 0 0 0 5px;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.path-mod-book .block_book_toc li {
+    clear: both;
+    list-style: none;
+    margin-top: .5em;
+}
+
+.path-mod-book .block_book_toc li li {
+    list-style: none;
+}
+
+.path-mod-book .block_book_toc .action-list {
+    float: right;
+}
+
+.path-mod-book .block_book_toc .action-list img.smallicon {
+    margin: 0 3px;
+}
+
+.path-mod-book .book_toc_none ul ul {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/*toc style BULLETS */
+.path-mod-book .book_toc_bullets ul ul {
+    margin-left: 20px;
+}
+
+.path-mod-book .book_toc_bullets li li {
+    list-style: circle;
+}
+
+.path-mod-book .book_toc_bullets li li:before {
+    display: none;
+}
+
+/* toc style INDENTED*/
+.path-mod-book .book_toc_indented ul {
+    margin-left: 5px;
+}
+
+.path-mod-book .book_toc_indented ul ul {
+    margin-left: 15px;
+}
+
+.path-mod-book .book_toc_indented li li {
+    list-style: none;
+}
+
+/* Text style links */
+.navtop.navtext .chaptername,
+.navbottom.navtext .chaptername {
+    font-weight: bolder;
+}
+
+.navtop.navtext a,
+.navbottom.navtext a {
+    display: inline-block;
+    max-width: 45%;
+}
+
+.navtop.navtext a.bookprev,
+.navbottom.navtext a.bookprev {
+    float: left;
+    text-align: left;
+}
+
+@media (max-width: 480px) {
+    .path-mod-book .navbottom,
+    .path-mod-book .navtop {
+        text-align: center;
+    }
+
+    .navtop.navtext a,
+    .navbottom.navtext a {
+        display: block;
+        max-width: 100%;
+        margin: auto;
+    }
+
+    .navtop.navtext a.bookprev,
+    .navbottom.navtext a.bookprev {
+        float: none;
+    }
+}

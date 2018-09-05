@@ -1,0 +1,118 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/courses-view
+
+    This template renders the courses view for the myoverview block.
+
+    Example context (json):
+    {}
+}}
+<div id="courses-view-{{uniqid}}" data-region="courses-view">
+    {{#hascourses}}
+    <div class="row text-center">
+        <div class="btn-group m-b-1" role="group" data-toggle="btns">
+            <a class="btn btn-default active" href="#myoverview_courses_view_in_progress" data-toggle="tab">
+                {{#str}} inprogress, block_myoverview {{/str}}
+            </a>
+            <a class="btn btn-default" href="#myoverview_courses_view_future" data-toggle="tab">
+                {{#str}} future, block_myoverview {{/str}}
+            </a>
+            <a class="btn btn-default" href="#myoverview_courses_view_past" data-toggle="tab">
+                {{#str}} past, block_myoverview {{/str}}
+            </a>
+        </div>
+    </div>
+    <div class="tab-content">
+        <div class="tab-pane active fade in" id="myoverview_courses_view_in_progress">
+            {{#inprogress}}
+                {{< block_myoverview/courses-view-by-status }}
+                    {{$id}}courses-view-in-progress{{/id}}
+                    {{$status}}1{{/status}}
+                    {{$pagingbarid}}pb-for-in-progress{{/pagingbarid}}
+                    {{$pagingcontentid}}pc-for-in-progress{{/pagingcontentid}}
+                {{/ block_myoverview/courses-view-by-status }}
+            {{/inprogress}}
+            {{^inprogress}}
+                <div class="text-xs-center text-center m-t-3">
+                    <img class="empty-placeholder-image-lg"
+                         src="{{urls.nocourses}}"
+                         alt="{{#str}} nocoursesinprogress, block_myoverview {{/str}}"
+                         role="presentation">
+                    <p class="text-muted m-t-1">{{#str}} nocoursesinprogress, block_myoverview {{/str}}</p>
+                </div>
+            {{/inprogress}}
+        </div>
+        <div class="tab-pane fade" id="myoverview_courses_view_future">
+            {{#future}}
+                {{< block_myoverview/courses-view-by-status }}
+                    {{$id}}courses-view-future{{/id}}
+                    {{$status}}2{{/status}}
+                    {{$pagingbarid}}pb-for-future{{/pagingbarid}}
+                    {{$pagingcontentid}}pc-for-in-progress{{/pagingcontentid}}
+                {{/ block_myoverview/courses-view-by-status }}
+            {{/future}}
+            {{^future}}
+                <div class="text-xs-center text-center m-t-3">
+                    <img class="empty-placeholder-image-lg"
+                         src="{{urls.nocourses}}"
+                         alt="{{#str}} nocoursesfuture, block_myoverview {{/str}}"
+                         role="presentation">
+                    <p class="text-muted m-t-1">{{#str}} nocoursesfuture, block_myoverview {{/str}}</p>
+                </div>
+            {{/future}}
+        </div>
+        <div class="tab-pane fade" id="myoverview_courses_view_past">
+            {{#past}}
+                {{< block_myoverview/courses-view-by-status }}
+                    {{$id}}courses-view-past{{/id}}
+                    {{$status}}0{{/status}}
+                    {{$pagingbarid}}pb-for-past{{/pagingbarid}}
+                    {{$pagingcontentid}}pc-for-in-progress{{/pagingcontentid}}
+                {{/ block_myoverview/courses-view-by-status }}
+            {{/past}}
+            {{^past}}
+                <div class="text-xs-center text-center m-t-3">
+                    <img class="empty-placeholder-image-lg"
+                         src="{{urls.nocourses}}"
+                         alt="{{#str}} nocoursespast, block_myoverview {{/str}}"
+                         role="presentation">
+                    <p class="text-muted m-t-1">{{#str}} nocoursespast, block_myoverview {{/str}}</p>
+                </div>
+            {{/past}}
+        </div>
+    </div>
+    {{/hascourses}}
+    {{^hascourses}}
+    <div class="text-xs-center text-center m-t-3">
+        <img class="empty-placeholder-image-lg"
+             src="{{urls.nocourses}}"
+             alt="{{#str}} nocourses, block_myoverview {{/str}}">
+        <p class="text-muted m-t-1">{{#str}} nocourses, block_myoverview {{/str}}</p>
+    </div>
+    {{/hascourses}}
+</div>
+{{#js}}
+require(['jquery', 'core/custom_interaction_events'], function($, customEvents) {
+    var root = $('#courses-view-{{uniqid}}');
+    customEvents.define(root, [customEvents.events.activate]);
+    root.on(customEvents.events.activate, '[data-toggle="btns"] > .btn', function(e) {
+        root.find('.btn.active').removeClass('active');
+        $(e.target).closest('.btn').addClass('active');
+    });
+});
+{{/js}}

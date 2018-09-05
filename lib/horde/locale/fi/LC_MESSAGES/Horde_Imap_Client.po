@@ -1,0 +1,259 @@
+# Finnish translations for Horde_Imap_Client package.
+# Copyright 2012-2017 Horde LLC (http://www.horde.org/)
+# This file is distributed under the same license as the Horde_Imap_Client package.
+# Leena Heino <liinu@uta.fi>, 2011-2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Horde_Imap_Client \n"
+"Report-Msgid-Bugs-To: dev@lists.horde.org\n"
+"POT-Creation-Date: 2012-11-06 16:40+0100\n"
+"PO-Revision-Date: 2012-11-07 17:24:08+0200\n"
+"Last-Translator: Leena Heino <liinu@uta.fi>\n"
+"Language-Team: Finnish <i18n@lists.horde.org>\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/Horde/Imap/Client/Exception/NoSupportPop3.php:25
+#, php-format
+msgid "%s not supported on POP3 servers."
+msgstr "%s ei ole tuettu POP3-palvelimille."
+
+#: lib/Horde/Imap/Client/Socket.php:4380
+msgid "Authentication credentials have expired."
+msgstr "Autentikointitiedot ovat vanhentuneet."
+
+#: lib/Horde/Imap/Client/Socket.php:4364
+msgid "Authentication failed."
+msgstr "Autentikointi epäonnistui."
+
+#: lib/Horde/Imap/Client/Auth/DigestMD5.php:149
+msgid "Authentication failure."
+msgstr "Autentikointivirhe."
+
+#: lib/Horde/Imap/Client/Socket.php:4372
+msgid "Authentication was successful, but authorization failed."
+msgstr "Autentikointi epäonnistui, mutta autorisointi epäonnistui."
+
+#: lib/Horde/Imap/Client/Interaction/Server/Tagged.php:34
+msgid "Bad tagged response."
+msgstr "Virheellinen tagätty vastaus."
+
+#: lib/Horde/Imap/Client/Exception/SearchCharset.php:36
+msgid "Cannot convert search query text to new charset"
+msgstr "Ei voida muuntaa hakulauseen tekstiä uuteen merkistöön"
+
+#: lib/Horde/Imap/Client/Base.php:1899 lib/Horde/Imap/Client/Base.php:1958
+msgid "Cannot expunge read-only mailbox."
+msgstr ""
+"Ei voida tyhjentää poistetuja vain lukuun tarkoitetusta postilaatikosta."
+
+#: lib/Horde/Imap/Client/Socket.php:4165
+msgid "Charset used in search query is not supported on the mail server."
+msgstr "Palvelin ei tue haussa käytettyä merkistöä."
+
+#: lib/Horde/Imap/Client/Socket.php:931
+#, php-format
+msgid "Could not open mailbox \"%s\"."
+msgstr "Ei voitu aukaista postilaatikkoa \"%s\"."
+
+#: lib/Horde/Imap/Client/Socket.php:335
+msgid "Could not open secure TLS connection to the IMAP server."
+msgstr "Ei voitu aukaista salattua TLS-yhteyttä IMAP-palvelimelle."
+
+#: lib/Horde/Imap/Client/Socket/Pop3.php:189
+#: lib/Horde/Imap/Client/Socket/Pop3.php:201
+msgid "Could not open secure connection to the POP3 server."
+msgstr "Ei voitu aukaista salattua yhteyttä POP3-palvelimelle"
+
+#: lib/Horde/Imap/Client/Socket.php:4265
+msgid "Could not save message data because it is too large."
+msgstr "Liian suuren tietomäärän takia viestin tietoja ei voitu talentaa."
+
+#: lib/Horde/Imap/Client/Socket.php:4256
+msgid "Could not save message on server."
+msgstr "Viestiä ei voi tallentaa palvelimelle."
+
+#: lib/Horde/Imap/Client/Socket/Pop3.php:280
+msgid "Error connecting to POP3 server."
+msgstr "Virhetilanne yhdistettäessä POP3-palvelimelle."
+
+#: lib/Horde/Imap/Client/Socket.php:504
+msgid "Error connecting to mail server."
+msgstr "Virhetilanne yhdistettäessä postipalvelimelle."
+
+#: lib/Horde/Imap/Client/Utf7imap.php:117
+#: lib/Horde/Imap/Client/Utf7imap.php:142
+#: lib/Horde/Imap/Client/Utf7imap.php:146
+#: lib/Horde/Imap/Client/Utf7imap.php:205
+#: lib/Horde/Imap/Client/Utf7imap.php:222
+#: lib/Horde/Imap/Client/Utf7imap.php:226
+#: lib/Horde/Imap/Client/Utf7imap.php:234
+#: lib/Horde/Imap/Client/Utf7imap.php:240
+msgid "Error converting UTF7-IMAP string."
+msgstr "Virhetilanne muunnettaessa UTF7-IMAP merkkijonoa."
+
+#: lib/Horde/Imap/Client/Socket.php:3683 lib/Horde/Imap/Client/Socket.php:3964
+msgid "Error when communicating with the mail server."
+msgstr "Virhetilanne liikennöinnissä postipalvelimelle. "
+
+#: lib/Horde/Imap/Client/Socket.php:3838
+msgid "IMAP Server closed the connection."
+msgstr "IMAP-palvelin sulki yhteyden."
+
+#: lib/Horde/Imap/Client/Socket.php:3823 lib/Horde/Imap/Client/Socket.php:3854
+msgid "IMAP error reported by server."
+msgstr "IMAP-palvelimen antama virhe."
+
+#: lib/Horde/Imap/Client/Socket.php:3389
+#, php-format
+msgid "Invalid METADATA entry: \"%s\"."
+msgstr "Epäkelpo METADATA tieto: \"%s\"."
+
+#: lib/Horde/Imap/Client/Socket.php:3476
+#, php-format
+msgid "Invalid METADATA value type \"%s\"."
+msgstr "Epäkelpo METADATA arvotyyppi: \"%s\"."
+
+#: lib/Horde/Imap/Client/Socket.php:3890
+msgid "Mail server closed the connection unexpectedly."
+msgstr "Postipalvelin sulki yhteyden odottamatta."
+
+#: lib/Horde/Imap/Client/Socket.php:395
+msgid "Mail server denied authentication."
+msgstr "Postipalvelin esti autentikoinnin."
+
+#: lib/Horde/Imap/Client/Socket.php:1812 lib/Horde/Imap/Client/Socket.php:2483
+#: lib/Horde/Imap/Client/Socket.php:2504 lib/Horde/Imap/Client/Socket.php:2933
+#: lib/Horde/Imap/Client/Socket.php:2988
+msgid "Mailbox does not support mod-sequences."
+msgstr "Postilaatikko ei tue mod-sequences -piirrettä."
+
+#: lib/Horde/Imap/Client/Socket.php:378
+msgid "No supported IMAP authentication method could be found."
+msgstr "Tuettua IMAP-autentikointitapaa ei löytynyt."
+
+#: lib/Horde/Imap/Client/Socket.php:4388
+msgid "Operation failed due to a lack of a secure connection."
+msgstr "Toiminto epäonnistui salatut yhteydet eivät ole käytettävissä."
+
+#: lib/Horde/Imap/Client/Socket/Pop3.php:1096
+msgid "POP3 Server closed the connection unexpectedly."
+msgstr "POP3-palvelin katkaisi yhteyden yllättäen."
+
+#: lib/Horde/Imap/Client/Socket/Pop3.php:1156
+msgid "POP3 error reported by server."
+msgstr "POP3-palvelimen antama virhe."
+
+#: lib/Horde/Imap/Client/Socket/Pop3.php:240
+msgid "POP3 server denied authentication."
+msgstr "POP3-palvelin esti autentikoinnin."
+
+#: lib/Horde/Imap/Client/Socket.php:4356
+msgid "Remote server is temporarily unavailable."
+msgstr "Etäpalvelin on väliakaisesti saavuttamattomissa."
+
+#: lib/Horde/Imap/Client/Socket.php:323
+msgid "Server does not support TLS connections."
+msgstr "Palvelin ei tue TLS-yhteyksiä."
+
+#: lib/Horde/Imap/Client/Socket/Pop3.php:189
+msgid "Server does not support secure connections."
+msgstr "Palvelin ei tue salattuja yhteyksiä."
+
+#: lib/Horde/Imap/Client/Socket.php:527
+msgid "Server rejected connection."
+msgstr "Palvelin hylkäsi yhteyden."
+
+#: lib/Horde/Imap/Client/Socket.php:3748
+msgid "Server write error."
+msgstr "Palvelimen kirjoitusvirhe."
+
+#: lib/Horde/Imap/Client/Socket.php:4309
+msgid "The comparison algorithm was not recognized by the server."
+msgstr "Palvelin ei tunnista vertailualgoritmiä."
+
+#: lib/Horde/Imap/Client/Socket.php:536
+msgid "The mail server does not support IMAP4rev1 (RFC 3501)."
+msgstr "Postipalvelin ei tue toimintoa IMAP4rev1 (RFC 3501)."
+
+#: lib/Horde/Imap/Client/Socket.php:4435
+msgid "The mail server has denied the request."
+msgstr "Postipalvelin esti pyynnön."
+
+#: lib/Horde/Imap/Client/Socket.php:4419
+msgid "The mail server is reporting corrupt data in your mailbox."
+msgstr ""
+"Postipalvelin raportoi, että postilaatikossa on korruptoituneita tietoja."
+
+#: lib/Horde/Imap/Client/Socket.php:4177 lib/Horde/Imap/Client/Socket.php:4222
+msgid "The mail server was unable to parse the contents of the mail message."
+msgstr "Postipalvelin ei pystynyt käsittelemään viestin tietoja."
+
+#: lib/Horde/Imap/Client/Socket.php:4327
+msgid "The metadata item could not be saved because it is too large."
+msgstr "Metadata tietoja ei voitu tallentaa, koska se oli liian suuri."
+
+#: lib/Horde/Imap/Client/Socket.php:4345
+msgid ""
+"The metadata item could not be saved because the maximum number of "
+"annotations has been exceeded."
+msgstr ""
+"Metadata tietoa ei voi tallentaa, koska lisätietojen suurin sallittu määrä "
+"on ylittynyt."
+
+#: lib/Horde/Imap/Client/Socket.php:4336
+msgid ""
+"The metadata item could not be saved because the server does not support "
+"private annotations."
+msgstr ""
+"Metadata tietoja ei voitu tallentaa, koska palvelin ei tue yksilökohtaisten "
+"lisätietojen tallennusta."
+
+#: lib/Horde/Imap/Client/Socket.php:4453
+msgid "The object could not be created because it already exists."
+msgstr "Objektia ei voitu luoda, koska se on jo olemassa."
+
+#: lib/Horde/Imap/Client/Socket.php:4462
+msgid "The object could not be deleted because it does not exist."
+msgstr "Objektia ei voitu poistaa, koska sitä ei ole olemassa."
+
+#: lib/Horde/Imap/Client/Socket.php:4444
+msgid ""
+"The operation failed because the quota has been exceeded on the mail server."
+msgstr "Operaatio epäonnistui, koska kiintiö on ylittynyt postipalvelimella."
+
+#: lib/Horde/Imap/Client/Exception/NoSupportExtension.php:36
+#, php-format
+msgid "The server does not support the %s extension."
+msgstr "Palvelin ei tue laajennusta %s."
+
+#: lib/Horde/Imap/Client/Socket.php:4471
+msgid "The special-use attribute requested for the mailbox is not supported."
+msgstr "Postilaatikon erikoiskäyttö atribuutti ei ole tuettu."
+
+#: lib/Horde/Imap/Client/Socket.php:4405
+msgid ""
+"There was a temporary issue when attempting this operation. Please try again "
+"later."
+msgstr ""
+"Väliaikainen ongelmatilanne yritettäessä tätä operaatiota. Yritä myöhemmin "
+"uudestaan."
+
+#: lib/Horde/Imap/Client/Socket.php:604
+#: lib/Horde/Imap/Client/Socket/Pop3.php:334
+msgid "Unexpected response from server when authenticating."
+msgstr "Odottamaton vastaus palvelimelta autentikoinnin aikana."
+
+#: lib/Horde/Imap/Client/Socket.php:648
+#: lib/Horde/Imap/Client/Socket/Pop3.php:374
+#, php-format
+msgid "Unknown authentication method: %s"
+msgstr "Tuntematon autentikointimetori: %s"
+
+#: lib/Horde/Imap/Client/Socket.php:4396
+msgid "You do not have adequate permissions to carry out this operation."
+msgstr "Sinulla ei ole riittäviä oikeuksia tämän toiminnon suorittamiseen."

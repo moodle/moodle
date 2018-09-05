@@ -1,0 +1,14 @@
+{
+    "moodle-core-dragdrop": {
+        "requires": [
+            "base",
+            "node",
+            "io",
+            "dom",
+            "dd",
+            "event-key",
+            "event-focus",
+            "moodle-core-notification"
+        ]
+    }
+}

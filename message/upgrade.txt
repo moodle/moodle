@@ -1,0 +1,89 @@
+This files describes API changes in /message/ messaging system,
+information provided here is intended especially for developers.
+
+=== 3.5 ===
+
+* Changed the database structure so there are no longer two tables for messages, with the only
+  difference being that one stores read messages. The 'message' and 'message_read' tables are
+  still present in core but will no longer be populated by core APIs. The data will be
+  transferred to the new database structure via an ad-hoc task. Please be patient. This can
+  take time.
+  The new database structure is as follows -
+  'messages' - Stores the messages with a 'useridfrom' field specifying the user who sent the
+               message and a 'conversationid' field specifying which conversation it is for.
+  'message_conversations' - The list of conversations.
+  'message_conversation_members' - The list of users in each conversation.
+  'message_user_actions' - The list of user actions against a message, eg. read/deleted.
+  'notifications' - This has a very similar structure to the old table 'message' and still
+                    has a one-to-one relation between users.
+  Due to these huge differences the events message_sent, message_deleted and message_viewed
+  have changed quite a lot. Please, if you have any observers or are triggering these events
+  in your code you will have to make some changes!
+* The webservice external function 'core_message_mark_message_read' now only marks messages as
+  read, and not notifications. A new external function 'core_message_mark_notification_read' was
+  added to mark notifications as read.
+* Deprecated the following functions.
+  - message_move_userfrom_unread2read
+  - message_get_blocked_users
+  - message_get_contacts
+  - message_mark_message_read
+  - message_can_delete_message
+  - message_delete_message
+  - \core_message\api::mark_all_read_for_user
+  Please see their declaration in lib/deprecatedlib.php to view their alternatives (if applicable).
+* Final deprecation of the following functions.
+  - message_get_recent_notifications
+  - message_search
+  - message_get_history
+  - message_get_recent_conversations
+* Added new events for when a notification is sent and viewed.
+* Removed the database table 'message_working'. The 'message_working' table was introduced when
+  the messaging system was first introduced in Moodle, so, a long time ago. It was never necessary.
+* Replaced the usage of the table 'message_popup' to a new table 'message_popup_notifications'.
+
+=== 3.2 ===
+
+* Removed all message_print_* functions as well as the files search.html, search_advanced.html and
+  send_form.php due to messaging UI rehaul.
+* Deprecated the following functions as they are no longer used.
+    - message_get_course_contexts
+    - message_remove_url_params
+    - message_count_messages
+    - message_count_blocked_users
+    - message_contact_link
+    - message_get_recent_notifications
+    - message_history_link
+    - message_search
+    - message_shorten_message
+    - message_get_fragment
+    - message_get_history
+    - message_get_contact_add_remove_link
+    - message_get_contact_block_link
+    - message_mark_messages_read
+    - message_page_type_list
+    - message_can_post_message
+    - message_is_user_non_contact_blocked
+    - message_is_user_blocked
+
+=== 3.1 ===
+* get_message_processors accepts an addition parameter for testing, which will just reset processor and exit.
+* Deprecated method message_current_user_is_involved() has been removed.
+
+=== 2.9 ===
+* Renderer method \core_message_renderer::manage_messagingoptions now accepts a user id parameter as well.
+
+=== 2.6 ===
+* Message processor extending message_output, should return true in can_send_to_any_users()
+  if it supports message sending to internal (noreply/support) users.
+* Message API has been changed to allow attachments. Message processors that can support
+  attachments can now use additional parameter as a part of $eventdata. To send attachments,
+  $eventdata should contain properties called "attachment" (must be stored_file) and
+  "attachname" (string). Currently, email message processor is the only one to support
+  attachments.
+
+=== 2.2 ===
+
+required changes:
+* lib/messagelib.php message_send($eventdata)
+  $eventdata->userto should contain a property called "emailstop", $eventdata->userto->emailstop
+  If it is absent it will be retrieved from the user table causing an additional database query

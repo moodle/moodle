@@ -1,0 +1,1749 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GLOSSARY>
+  <INFO>
+    <NAME>&lt;b&gt;TeX Filter Reference English en_20040328_SR02&lt;/b&gt;</NAME>
+    <INTRO>
+&lt;br /&gt;&lt;span style=&quot;color: rgb(128, 0, 0);&quot;&gt;Find entries by searching for (partial) words or symbols. Enable &lt;b&gt;&amp;quot;search full text&amp;quot;&lt;/b&gt; to search not only in the &amp;quot;concept field&amp;quot; but also in the description / definition field.
+
+Are you &lt;b&gt;new to the TeX Filter or to TeX?&lt;/b&gt; Then you might want to read step by step through the different categories, starting with category &lt;b&gt;&amp;quot;01 Getting started&amp;quot;&lt;/b&gt;.&lt;/span&gt;&lt;br /&gt;
+&lt;p style=&quot;font-size: 8pt;&quot;&gt;&lt;u&gt;Test your TeX-Syntax:&lt;/u&gt;&lt;br /&gt;
+&lt;a href=&quot;http://moodle.org/filter/tex/texdebug.php&quot; target=&quot;_new&quot;&gt;Test your syntax interactively here&lt;/a&gt;. This Link is also available on each moodle site itself: &amp;quot;&lt;i&gt;../filter/tex/texdebug.php&lt;/i&gt;&amp;quot;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;font-size: 8pt;&quot;&gt;&lt;u&gt;About the TeX filter:&lt;/u&gt;&lt;br /&gt;The TeX filter for Moodle has been implemented by &lt;a href=&quot;mailto:fiedorow@math.ohio-state.edu&quot;&gt;Zbigniew Fiedorow&lt;/a&gt;. It is based on &lt;a href=&quot;http://www.forkosh.com&quot; target=&quot;_new&quot;&gt;John Forkosh's mimeTeX&lt;/a&gt; 1.40.&lt;br /&gt;&lt;u&gt;Contacts:&lt;/u&gt;&lt;br /&gt;For suggestions, critics, help etc. about &lt;i&gt;this reference&lt;/i&gt; visit the &lt;a href=&quot;http://emathpool.net&quot;&gt;eMathPool&lt;/a&gt; website or &lt;a href=&quot;mailto:andreas.leiser@emathpool.net&quot;&gt;send me&lt;/a&gt; an email.&lt;br /&gt;For any other information about the TeX filter or about moodle, please visit the &lt;a href=&quot;http://moodle.org&quot;&gt;moodle&lt;/a&gt; website.&lt;br /&gt;
+&lt;u&gt;Contributions by:&lt;/u&gt;
+Andreas Leiser, Mark Burnet&lt;/p&gt;</INTRO>
+    <STUDENTCANPOST>1</STUDENTCANPOST>
+    <ALLOWDUPLICATEDENTRIES>0</ALLOWDUPLICATEDENTRIES>
+    <DISPLAYFORMAT>2</DISPLAYFORMAT>
+    <SHOWSPECIAL>1</SHOWSPECIAL>
+    <SHOWALPHABET>1</SHOWALPHABET>
+    <SHOWALL>1</SHOWALL>
+    <ALLOWCOMMENTS>1</ALLOWCOMMENTS>
+    <USEDYNALINK>0</USEDYNALINK>
+    <DEFAULTAPPROVAL>0</DEFAULTAPPROVAL>
+    <GLOBALGLOSSARY>0</GLOBALGLOSSARY>
+    <ENTBYPAGE>5</ENTBYPAGE>
+    <ENTRIES>
+      <ENTRY>
+        <CONCEPT>\small</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;\small &lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\small~3x$$$ gives $$\small~3x$$&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>font size,</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>03  Font Styles</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>\normalsize</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Everthing following the \normalsize command will be output in the smallest predefined font size until the system encounters another font size command. &lt;/li&gt;&lt;li&gt;\normalsize is the default font size, i.e. the size automatically chosen if there is no font size command&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\normalsize~3x$$$ gives $$\normalsize~3x$$&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>font size,</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>03  Font Styles</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>\hspace{n}</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;inserts a space of n pixels&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$f(x)\hspace{6}=\hspace{6}0$$$ gives $$f(x)\hspace{6}=\hspace{6}0$$ &lt;/li&gt;&lt;li&gt;can be combined with the preceding command \unitlength{m}(default: m=1px) , which defines the applied unit&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\unitlength{20}a\hspace{2}b$$$ gives $$\unitlength{20}a\hspace{2}b$$ , i.e. a space of 20x2=40px&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>math spaces</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>05  Spaces</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>\tiny</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Everthing following the \tiny command will be output in the smallest predefined font size until the system encounters another font size command.&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\tiny~3x$$$ gives $$\tiny~3x$$&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>font size,</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>03  Font Styles</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>\_  (where _ is blank)</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Ordinary whitespace to be used after a dot not denoting the end of a sentence&lt;/li&gt;&lt;li&gt;After commands without parameters use \~ (tilde) instead in order to avoid browser specific problems&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>math spaces, whitespace, blank space</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>05  Spaces</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>\/  (backslash slash)</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;\/ (backslash slash) avoids ligatures &lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$V\/A$$$ gives $$V\/A$$ in contrast to $$$VA$$$ which gives $$VA$$&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>math spaces, ligature</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>05  Spaces</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>\quad</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;inserts a space of current character set size&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$a\quad~b$$$ gives $$a\quad~b$$&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>math spaces</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>05  Spaces</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>\;</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;\; (backslash semicolon) inserts the third smallest predefined space in a formula &lt;/li&gt;&lt;li&gt;Equivalent: \hspace{6} &lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$a\;b$$$ gives $$a\;b$$ &lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$a~\hspace{6}~b$$$ gives also $$a~\hspace{6}~b$$&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>math spaces</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>05  Spaces</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>\:</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;\: inserts the second smallest predefined space in a formula &lt;/li&gt;&lt;li&gt;Equivalent: \hspace{4}&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$a\:b$$$ gives $$a\:b$$ &lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$a~\hspace{4}~b$$$ gives also $$a~\hspace{4}~b$$&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>math spaces</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>05  Spaces</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>\,</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;\, inserts the smallest predefined space in a formula&lt;/li&gt;&lt;li&gt;Equivalent: \hspace{2}&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$a\,b$$$ gives $$a\,b$$&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$a~\hspace{2}~b$$$ gives also $$a~\hspace{2}~b$$&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>math spaces</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>05  Spaces</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>math spaces</CONCEPT>
+        <DEFINITION>&lt;p&gt;List of predefined spaces:&lt;/p&gt;&lt;p&gt;&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;1&quot; width=&quot;100%&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;activitylabel&quot;&gt;&lt;table cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; width=&quot;100%&quot; align=&quot;left&quot; border=&quot;1&quot;&gt;&lt;tbody&gt;&lt;tr style=&quot;COLOR: #ffffff; BACKGROUND-COLOR: #aaaaaa&quot; width=&quot;33%&quot;&gt;&lt;td valign=&quot;top&quot; width=&quot;100%&quot; colspan=&quot;3&quot;&gt;&lt;strong&gt;Math Spaces&lt;/strong&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&quot;BACKGROUND-COLOR: #dddddd&quot; width=&quot;33%&quot;&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;strong&gt;Command&lt;/strong&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;strong&gt;Result&lt;/strong&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\, (smallest predefined)&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$a\,b$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$a\,b$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\:  (second smallest predefined)&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$a\:b$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$a\:b$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\;  (third smallest predefined)&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$a\;b$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$a\;b$$ &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\/  (avoiding ligatures)&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$V\/A$$$ instead of $$$VA$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$V\/A$$ instead of $$VA$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\quad  (space of current character set size)&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$a\quad~b$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$a\quad~b$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\qquad  (double space of current character set size)&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$a\qquad~b$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$a\qquad~b$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\_ &lt;em&gt;(where _ is blank!)&lt;/em&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;p&gt;$$$a\ b$$$&lt;/p&gt;&lt;p&gt;&lt;font color=&quot;#ff0000&quot;&gt;(whereas $$$a\b$$$ is &lt;em&gt;not&lt;/em&gt; a valid filter expression since the blank space is missing; it is recommended to use the tilde ~ instead of the simple whitespace)&lt;/font&gt;&lt;/p&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;p&gt;$$a\ b$$&lt;/p&gt;&lt;p /&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;/td /&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\hspace{n} ,where n positive integer (= n Pixels)&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;p&gt;$$$a~\hspace{30}~b$$$&lt;/p&gt;&lt;p&gt;$$$a~\hspace{15}~b$$$&lt;/p&gt;&lt;p&gt;$$$a~\hspace{2}~b$$$&lt;/p&gt;&lt;p&gt;$$$a~\hspace{1}~b$$$&lt;/p&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;p&gt;$$a~\hspace{30}~b$$&lt;/p&gt;&lt;p&gt;$$a~\hspace{15}~b$$&lt;/p&gt;&lt;p&gt;$$a~\hspace{2}~b$$&lt;/p&gt;&lt;p&gt;$$a~\hspace{1}~b$$&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\unitlength{m}\hspace{n}, changes the default unit length (m=1px) to be applied&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;p&gt;$$$a~\hspace{2}~b\unitlength{10}~\hspace{2}~c$$$&lt;/p&gt;&lt;p&gt;&lt;em&gt;(second space is 10x2=20px)&lt;/em&gt;&lt;/p&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$a~\hspace{2}~b\unitlength{10}~\hspace{2}~c$$&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Simple blank spaces and tildes (~) are ignored by the TeX filter and don't produce any space. You must use one of the defined math spaces to get a visible (extra) space.&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>spaces in formulas, predefined spaces</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>05  Spaces</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>\~</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;In order to prevent some browser specific problems with whitespaces, it is advisable to use ~ (tilde) as the whitespace instead of the normal blank key (in places where whitespaces are mandatory, e.g. after commands).&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\frac~xy$$$ to produce $$\frac~xy$$&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\sqrt~n$$$ to produce $$\sqrt~n$$&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>blank space, blank key, required whitespace</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>05  Spaces</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>contour integral</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;General syntax for symbols with a kind of lower and upper limits:&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;\&lt;em&gt;symbolname&lt;/em&gt;_{&lt;em&gt;lowerexpression&lt;/em&gt;}^{&lt;em&gt;upperexpression&lt;/em&gt;}&lt;/p&gt;&lt;ul&gt;&lt;li&gt;In general, there are two ways how these lower and upper expressions can be placed: centered below and above the symbol or in a subscript / superscript manner. In the first case the symbol name is preceded by the word &amp;quot;big&amp;quot;, in the second there is no prefix. &lt;/li&gt;&lt;li&gt;Syntax for the contour integral symbol:&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$$\bigoint_{0}^{\infty}$$$   gives   &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$\bigoint_{0}^{\infty}$$ &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;and&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$$\oint_{0}^{\infty}$$$   gives &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$\oint_{0}^{\infty}$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;div align=&quot;left&quot;&gt;Use font size commands for a nicer picture:&lt;/div&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;left&quot; /&gt;&lt;p align=&quot;center&quot;&gt;$$$\LARGE\bigoint_{\small0}^{\small\infty}$$$   gives   &lt;/p&gt;&lt;p /&gt;&lt;p align=&quot;center&quot;&gt;$$\LARGE\bigoint_{\small0}^{\small\infty}$$ &lt;/p&gt;&lt;p align=&quot;left&quot; /&gt;&lt;p align=&quot;center&quot;&gt;and&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$$\large\oint_{\small0}^{\small\infty}$$$   gives &lt;/p&gt;&lt;p /&gt;&lt;p align=&quot;center&quot;&gt;$$\large\oint_{\small0}^{\small\infty}$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>sum (summation)</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;General syntax for symbols with a kind of lower and upper limits:&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;\&lt;em&gt;symbolname&lt;/em&gt;_{&lt;em&gt;lowerexpression&lt;/em&gt;}^{&lt;em&gt;upperexpression&lt;/em&gt;}&lt;/p&gt;&lt;ul&gt;&lt;li&gt;In general, there are two ways how these lower and upper expressions can be placed: centered below and above the symbol or in a subscript / superscript manner. In the first case the symbol name is preceded by the word &amp;quot;big&amp;quot;, in the second there is no prefix.&lt;/li&gt;&lt;li&gt;Syntax for summation symbol:&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$$\bigsum_{i=k}^{n}$$$   gives   &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$\bigsum_{i=k}^{n}$$ &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;and&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$$\sum_{i=k}^{n}$$$   gives &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$\sum_{i=k}^{n}$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;div align=&quot;left&quot;&gt;Use font size commands for a nicer picture:&lt;/div&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;left&quot; /&gt;&lt;p align=&quot;center&quot;&gt;$$$\LARGE\bigsum_{\small{i=1}}^{\small{n}}$$$   gives   &lt;/p&gt;&lt;p /&gt;&lt;p align=&quot;center&quot;&gt;$$\LARGE\bigsum_{\small{i=1}}^{\small{n}}$$ &lt;/p&gt;&lt;p align=&quot;left&quot; /&gt;&lt;p align=&quot;center&quot;&gt;and&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$$\large\sum_{\small{i=1}}^{\small{n}}$$$   gives &lt;/p&gt;&lt;p /&gt;&lt;p align=&quot;center&quot;&gt;$$\large\sum_{\small{i=1}}^{\small{n}}$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>big sum</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>smiley</CONCEPT>
+        <DEFINITION>$$$~\unitlength{.6}~\picture(100){~~(50,50){\circle(99)}~ ~(20,55;50,0;2){+1$\hat\bullet}~~(50,40){\bullet}~~(50,35){\circle(50,25;34)}~ ~(50,35){\circle(50,45;34)}}$$$  is $$~\unitlength{.6}~\picture(100){~~(50,50){\circle(99)}~ ~(20,55;50,0;2){+1$\hat\bullet}~~(50,40){\bullet}~~(50,35){\circle(50,25;34)}~ ~(50,35){\circle(50,45;34)}}$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>smiley</NAME>
+          </ALIAS>
+        </ALIASES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>formula box</CONCEPT>
+        <DEFINITION>&lt;p&gt;$$$\fbox{x=\frac{1}{2}}$$$  gives &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$\fbox{x=\frac{1}{2}}$$ &lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>fbox</NAME>
+          </ALIAS>
+        </ALIASES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>infinity</CONCEPT>
+        <DEFINITION>&lt;p&gt;$$$\infty$$$  gives $$\infty$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>infinity</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>mathematics expression</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;A valid expression inside the $'s is rendered as mathematics in an inserted gif image.&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$x=y^2$$$ creates  &lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$x=y^2$$ &lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>mathematics expression</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>01  Getting started</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>subscript</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;The command character &amp;quot;_&amp;quot; triggers subscription of the following expression(s).&lt;/li&gt;&lt;li&gt;For more than one subscripted character put them in braces {...}.&lt;/li&gt;&lt;li&gt;Use font sizing commands for appropriate sizing.&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt;$$$x_1$$$ gives &lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;TEXT-ALIGN: center&quot;&gt;$$x_1$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt;$$$a_{m+2n}$$$ gives &lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;TEXT-ALIGN: center&quot;&gt;$$a_{m+2n}$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;u&gt;Ex. (with specific sizing):&lt;/u&gt;  $$$x_{\small1}=a_{\small{m+2n}}$$$ gives&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;TEXT-ALIGN: center&quot;&gt;$$x_{\small1}=a_{\small{m+2n}}$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Combine subscripting with superscripting (command character &amp;quot;^&amp;quot;). &lt;br /&gt;Syntax: Expr_{subExpr}^{supExpr}.&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$A_{\small{i,j,k}}^{\small{-n+2}}$$$ gives&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;TEXT-ALIGN: center&quot;&gt;$$A_{\small{i,j,k}}^{\small{-n+2}}$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>02  Arithmetic expressions, sub-/superscripts, roots</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>less than</CONCEPT>
+        <DEFINITION>&lt;p&gt;$$$&amp;lt;$$$   gives&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$&amp;lt;$$ &lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>less than</NAME>
+          </ALIAS>
+          <ALIAS>
+            <NAME>&lt;</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>07  Relations</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>not equal</CONCEPT>
+        <DEFINITION>&lt;p&gt;$$$x\neq~y$$$ gives &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$x\neq~y$$ &lt;/p&gt;&lt;p align=&quot;left&quot;&gt;&lt;font color=&quot;#ff0000&quot;&gt;&lt;strong&gt;note:&lt;/strong&gt;&lt;/font&gt; \neg produces the logical negation, i.e. $$$\neg~A$$$ gives &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$\neg~A$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>&lt;&gt;</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>07  Relations</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>beta  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\beta$$$ gives $$\beta$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>superscript</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;The command character &amp;quot;^&amp;quot; triggers superscription of the following expression(s).&lt;/li&gt;&lt;li&gt;For more than one superscripted character put them in braces {...}.&lt;/li&gt;&lt;li&gt;Use font sizing commands for appropriate sizing.&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$x^2$$$ gives &lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;TEXT-ALIGN: center&quot;&gt;$$x^2$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$a^{m+2n}$$$ gives &lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;TEXT-ALIGN: center&quot;&gt;$$a^{m+2n}$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;u&gt;Ex. (with specific sizing):&lt;/u&gt; $$$x^{\small2}=a^{\small{m+2n}}$$$ gives&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;TEXT-ALIGN: center&quot;&gt;$$x^{\small2}=a^{\small{m+2n}}$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Combine superscripting with subscripting (command character &amp;quot;_&amp;quot;). &lt;br /&gt;Syntax: Expr_{subExpr}^{supExpr}.&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$A_{\small{i,j,k}}^{\small{-n+2}}$$$ gives&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;TEXT-ALIGN: center&quot;&gt;$$A_{\small{i,j,k}}^{\small{-n+2}}$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>02  Arithmetic expressions, sub-/superscripts, roots</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>greater than</CONCEPT>
+        <DEFINITION>&lt;p&gt;$$$x&amp;gt;y$$$  gives &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$x&amp;gt;y$$ &lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>&gt;</NAME>
+          </ALIAS>
+          <ALIAS>
+            <NAME>greater than</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>07  Relations</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>square root</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;$$$\sqrt{a}$$$ or $$$\sqrt~a$$$ gives $$\sqrt~a$$&lt;/li&gt;&lt;li&gt;Use braces for terms with more than one character: $$$\sqrt{x+y}$$$ gives&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$\sqrt{x+y}$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>02  Arithmetic expressions, sub-/superscripts, roots</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>triangle</CONCEPT>
+        <DEFINITION>$$$\triangle~abc$$$ gives $$\triangle~abc$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>triangle</NAME>
+          </ALIAS>
+        </ALIASES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>Learning Formula</CONCEPT>
+        <DEFINITION>$$\frac{success}{problem}=~\unitlength{.6}~\picture(100){~~(50,50){\circle(99)}~ ~(20,55;50,0;2){+1$\hat\bullet}~~(50,40){\bullet}~~(50,35){\circle(50,25;34)}~ ~(50,35){\circle(50,45;34)}}$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>learning formula</NAME>
+          </ALIAS>
+        </ALIASES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>delta (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\delta$$$ gives $$\delta $$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>delta</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>TeX</CONCEPT>
+        <DEFINITION>$$TeX$$  notation allows for the expression of ASCII characters to generate formatted graphics output </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>TeX</NAME>
+          </ALIAS>
+        </ALIASES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>array</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Syntax for an n-dimensional array: &lt;br /&gt;\begin{array}a&lt;sub&gt;1&lt;/sub&gt;&amp;amp;...&amp;amp;a&lt;sub&gt;n&lt;/sub&gt;\end{array}&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\(\begin{array}a_{\fs{0}1}\fs{3},&amp;amp;a_{\fs{0}2}\fs{3},&amp;amp;a_{\fs{0}3}\end{array}\)$$$ gives&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$(\begin{array}a_{\fs{0}1}\fs{3},&amp;amp;a_{\fs{0}2}\fs{3},&amp;amp;a_{\fs{0}3}\end{array})$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>array, vector, matrix</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>09  Structures</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>triggering the TeX filter</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Two double $'s embracing a valid math expression trigger the filter to generate and insert the formula gif. &lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt;  $$$a^2$$$ produces $$a^2$$&lt;br /&gt;&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>1</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>trigger, TeX filter, start filter</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>01  Getting started</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>escaping the TeX filter</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;With two triple $'s embracing an expression you can make the filter to escape and the code itself is shown (with two embracing double $'s). &lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$$a^2$$$$ produces $$$a^2$$$, i.e. prevents the filter to render it as a formula gif.&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>escape; suppress filter; prevent from filtering</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>01  Getting started</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>\large (all lower case letters)</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Everthing following the \large command will be output in the large font size until the system encounters another font size command. &lt;/li&gt;&lt;li&gt;Note: This command is case sensitive, since large, Large and LARGE are different sizes! &lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\large~3x$$$ gives $$\large~3x$$&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>font size, fs{3}</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>03  Font Styles</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>\Large  (L capital letter)</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Everthing following the \Large command will be output in the second largest font size until the system encounters another font size command. &lt;/li&gt;&lt;li&gt;Note: This command is case sensitive, since large, Large and LARGE are different sizes!  &lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\Large~3x$$$ gives $$\Large~3x$$&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>font size,</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>03  Font Styles</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>\LARGE  (all capital letters)</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Everthing following the \LARGE command will be output in the largest predefined font size until the system encounters another font size command. &lt;/li&gt;&lt;li&gt;Note: This command is case sensitive, since large, Large and LARGE are different sizes!  &lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\LARGE~3x$$$ gives $$\LARGE~3x$$&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>font size,</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>03  Font Styles</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>absolute font sizes (overview)</CONCEPT>
+        <DEFINITION>&lt;p&gt;&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;1&quot; width=&quot;100%&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;activitylabel&quot;&gt;&lt;table cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; width=&quot;100%&quot; align=&quot;left&quot; border=&quot;1&quot;&gt;&lt;tbody&gt;&lt;tr style=&quot;COLOR: #ffffff; BACKGROUND-COLOR: #aaaaaa&quot; width=&quot;33%&quot;&gt;&lt;td valign=&quot;top&quot; width=&quot;100%&quot; colspan=&quot;3&quot;&gt;&lt;strong&gt;Absolute Font Sizes&lt;/strong&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&quot;BACKGROUND-COLOR: #dddddd&quot; width=&quot;33%&quot;&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;strong&gt;Command&lt;/strong&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;strong&gt;Result&lt;/strong&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\tiny&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\tiny 3x$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\tiny 3x$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\small&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\small 3x$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\small 3x$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\normalsize &lt;em&gt;(default)&lt;/em&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\normalsize 3x$$$ or just $$$3x$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\normalsize 3x$$ &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\large&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\large 3x$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\large 3x$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\Large&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\Large 3x$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\Large 3x$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\LARGE&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\LARGE 3x$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\LARGE 3x$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt; &lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt; &lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt; &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;/td /&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;p&gt;&lt;font color=&quot;#000000&quot;&gt;\huge and \Huge are &lt;em&gt;not&lt;/em&gt; supported by the mimeTeX filter&lt;/font&gt;&lt;/p&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt; &lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt; &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/p&gt;&lt;p /&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>03  Font Styles</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>\qquad</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;inserts a double space of current character set size&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$a\qquad~b$$$ gives $$a\qquad~b$$&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>math space</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>05  Spaces</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>parentheses</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Syntax: \left(...\right) or \(...\)&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$2a\left(b+c\right)$$$ gives &lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$2a\left(b+c\right)$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>04  Delimiters (parentheses, braces,...)</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>braces</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Syntax: \left{...\right}&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$M=\left{a, b, c\right}$$$ gives &lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$M=\left{a, b, c\right}$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>04  Delimiters (parentheses, braces,...)</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>square bracket</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Synatx: \left[...\right] &lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\left[a,b\right]$$$ gives $$\left[a,b\right]$$&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>04  Delimiters (parentheses, braces,...)</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>angle bracket</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Syntax: \left&amp;lt;...\right&amp;gt;&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\left&amp;lt;f,g\right&amp;gt;$$$ gives &lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$\left&amp;lt;f,g\right&amp;gt;$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>04  Delimiters (parentheses, braces,...)</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>vertical line (absolute value, determinant, ...etc. symbol)</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Syntax: \left|...\right| &lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\left|b-a\right|$$$ gives $$\left|b-a\right|$$ &lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$${\rm~det}\left|\begin{array}{cc}a&amp;amp;b\\c&amp;amp;d \end{array}\right|$$$ gives  &lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$${\rm~det}\left|\begin{array}{cc}a&amp;amp;b\\c&amp;amp;d \end{array}\right|$$ &lt;/p&gt;&lt;p align=&quot;left&quot;&gt; &lt;br /&gt;(&amp;quot;\rm~something&amp;quot; renders &amp;quot;something&amp;quot; in roman style)&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>absolute value symbol, determinant symbol</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>04  Delimiters (parentheses, braces,...)</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>double vertical line  (norm symbol)</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Syntax: \left\|...\right\| &lt;/li&gt;&lt;li&gt;&lt;u&gt;Exp.:&lt;/u&gt; $$$\left\|af\right\| = \left|a\right|\left\|f\right\|$$$ gives &lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$\left\|af\right\| = \left|a\right|\left\|f\right\|$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>norm</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>04  Delimiters (parentheses, braces,...)</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>left only brace</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Syntax: \left{...\right.  &lt;em&gt;&lt;font color=&quot;#ff0000&quot;&gt;(note the dot at the end!)&lt;/font&gt;&lt;/em&gt;&lt;/li&gt;&lt;li&gt;&lt;font color=&quot;#000000&quot;&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$f(x)=\left{{x^2, \rm~if x&amp;gt;-1\atop~0, \rm~else}\right.$$$ gives &lt;/font&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;&lt;font color=&quot;#000000&quot;&gt;$$f(x)=\left{{x^2, \rm~if x&amp;gt;-1\atop~0, \rm~else}\right.$$&lt;/font&gt;&lt;/p&gt;&lt;p&gt;(\rm~something switches to roman style)&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>04  Delimiters (parentheses, braces,...)</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>right only brace</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Syntax: \left.{...\right}  &lt;em&gt;&lt;font color=&quot;#ff0000&quot;&gt;(note the dot!)&lt;/font&gt;&lt;/em&gt;&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\left.{{\rm~term1\atop\rm~term2}\right}=y$$$ gives &lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$\left.{{\rm~term1\atop\rm~term2}\right}=y$$&lt;/p&gt;&lt;p&gt;(\rm~something switches to roman style)&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>04  Delimiters (parentheses, braces,...)</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>delimiters  (overview)</CONCEPT>
+        <DEFINITION>&lt;p&gt;&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;1&quot; width=&quot;100%&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;activitylabel&quot;&gt;&lt;table cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; width=&quot;100%&quot; align=&quot;left&quot; border=&quot;1&quot;&gt;&lt;tbody&gt;&lt;tr style=&quot;COLOR: #ffffff; BACKGROUND-COLOR: #aaaaaa&quot; width=&quot;33%&quot;&gt;&lt;td valign=&quot;top&quot; width=&quot;100%&quot; colspan=&quot;3&quot;&gt;&lt;strong&gt;Delimiters (parentheses, braces, brackets. ...)&lt;/strong&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&quot;BACKGROUND-COLOR: #dddddd&quot; width=&quot;33%&quot;&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;strong&gt;Command&lt;/strong&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;strong&gt;Result&lt;/strong&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;p&gt;\left(... \right)&lt;/p&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$2\left(a+b\right)$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$2~\left(a+b\right)$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\left[... \right]&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\left[a^2+b^2~\right]$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\left[a^2+b^2~\right]$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\left{... \right}&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\left{x^2, x^3, x^4,... \right}$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\left{x^2, x^3, x^4,... \right}$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\left\langle... \right\rangle&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\left\langle a,b~\right\rangle$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\left\langle a,b~\right\rangle$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\left| ... \right| &lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\det\left|\array{a&amp;amp;b\\c&amp;amp;d}\right| $$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\det\left|\array{a&amp;amp;b\\c&amp;amp;d}\right| $$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\left\| ... \right\| &lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\left\|f~\right\|$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\left\|f~\right\|$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;p&gt;\left{ ... \right&lt;strong&gt;.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;font color=&quot;#ff0000&quot;&gt;&lt;em&gt;(note the dot!)&lt;/em&gt;&lt;/font&gt;&lt;/p&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;p&gt;$$$f(x)=\left{{x^2, \rm~if x&amp;gt;-1\atop~0, \rm~else}\right.$$$&lt;/p&gt;&lt;p&gt;(\rm switches to roman style)&lt;/p&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;p&gt;$$f(x)=\left{{x^2, \rm~if x&amp;gt;-1\atop~0, \rm~else}\right.$$&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;/td /&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;p&gt;\left&lt;strong&gt;.&lt;/strong&gt;{ ... \right\}&lt;/p&gt;&lt;p&gt;&lt;font color=&quot;#ff0000&quot;&gt;&lt;em&gt;(note the dot!)&lt;/em&gt;&lt;/font&gt;&lt;/p&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\left.{{\rm~term1\atop\rm~term2}\right}=y$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\left.{{\rm~term1\atop \rm~term2}\right}=y$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; The delimiters are automatically sizes.&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>04  Delimiters (parentheses, braces,...)</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>matrix</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;An (m,n)-matrix is considered as an array of m*n elements, where the elements of a column are separated by &amp;quot;&amp;amp;&amp;quot; and the rows by &amp;quot;\\&amp;quot;.&lt;/li&gt;&lt;/ul&gt;&lt;ul&gt;&lt;li&gt;Syntax for an (m,n)-matrix: &lt;br /&gt;\begin{array}{&lt;em&gt;colformat}&lt;/em&gt;a&lt;sub&gt;11&lt;/sub&gt;&amp;amp;...&amp;amp;a&lt;sub&gt;1n&lt;/sub&gt;\\a&lt;sub&gt;21&lt;/sub&gt;&amp;amp;...&amp;amp;a&lt;sub&gt;2n&lt;/sub&gt;\\... \\a&lt;sub&gt;m1&lt;/sub&gt;&amp;amp;...&amp;amp;a&lt;sub&gt;mn &lt;/sub&gt;\end{array}&lt;p dir=&quot;ltr&quot; style=&quot;MARGIN-RIGHT: 0px&quot;&gt;where&lt;br /&gt;&lt;em&gt;colformat&lt;/em&gt; defines the format of each of the n columns: l for left, r for right and c for center (hence {ccccc} defines for a (m,5)-matrix in which all columns are centered)&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\left(\begin{array}{lcr}a_{\tiny1}+d &amp;amp; a_{\tiny2}+d &amp;amp; a_{\tiny3}+d \\ b_{\tiny1}&amp;amp; b_{\tiny2}&amp;amp; b_{\tiny3} \\ c_{\tiny1} &amp;amp; c_{\tiny2} &amp;amp; c_{\tiny3} \end{array}\right)$$$ gives&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$\left(\begin{array}{lcr}a_{\tiny1}+d &amp;amp; a_{\tiny2}+d &amp;amp; a_{\tiny3}+d \\ b_{\tiny1}&amp;amp; b_{\tiny2}&amp;amp; b_{\tiny3} \\ c_{\tiny1} &amp;amp; c_{\tiny2} &amp;amp; c_{\tiny3} \end{array}\right)$$&lt;/p&gt;&lt;p align=&quot;left&quot;&gt;Note in the example above that &amp;quot;lcr&amp;quot; has the effect that column 1 is left aligned, column 2 centered and colums 3 right aligned.&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>matrix, array</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>09  Structures</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>constants</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Numbers in formulas are interpreted as constants and they are rendered in non-italic roman font face, which is a widely used convention.&lt;/li&gt;&lt;li&gt;Following this convention, variables are shown in italic.&lt;/li&gt;&lt;li&gt;&lt;u&gt;Exp.:&lt;/u&gt; $$$f(x)=3a+x$$$ gives&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;TEXT-ALIGN: center&quot;&gt;$$f(x)=3a+x$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>02  Arithmetic expressions, sub-/superscripts, roots</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>variables</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Variables in formulas are rendered in italic roman font face, which is a widely used convention.&lt;/li&gt;&lt;li&gt;Following this convention, constants are shown as non-italic.&lt;/li&gt;&lt;li&gt;&lt;u&gt;Exp.:&lt;/u&gt; $$$f(x)=3a+x$$$ gives&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;TEXT-ALIGN: center&quot;&gt;$$f(x)=3a+x$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>02  Arithmetic expressions, sub-/superscripts, roots</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>arithmetic operations</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Type arithmetic operations and &amp;quot;=&amp;quot; as usual.&lt;/li&gt;&lt;li&gt;&lt;u&gt;Exp.:&lt;/u&gt; $$$f(x)=x-2b+(3a/c)$$$ gives&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;TEXT-ALIGN: center&quot;&gt;$$f(x)=x-2b+(3a/c)$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;See also keyword &amp;quot;fraction&amp;quot; for extended capabilities.&lt;/li&gt;&lt;/ul&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>02  Arithmetic expressions, sub-/superscripts, roots</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>fraction</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Syntax: \frac{numerator}{denominator}&lt;/li&gt;&lt;li&gt;Use font sizing commands for specific sizing if you don't want the predefined one to be taken.&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex. (with predefined sizing):&lt;/u&gt; $$$f(x,y)=\frac{2a}{x+y}$$$ gives &lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;TEXT-ALIGN: center&quot;&gt;$$f(x,y)=\frac{2a}{x+y}$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;u&gt;Ex. (with specific sizing):&lt;/u&gt; $$$f(x,y)=\frac{\fs{2}2a}{\fs{2}x+y}$$$ gives &lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;TEXT-ALIGN: center&quot;&gt;$$f(x,y)=\frac{\fs{2}2a}{\fs{2}x+y}$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;You may nest fractions as much as you want.&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex. (nested fractions):&lt;/u&gt; $$$\frac{\frac{a}{x-y}+\frac{b}{x+y}}{1+\frac{a-b}{a+b}}$$$ gives &lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;TEXT-ALIGN: center&quot;&gt;$$\frac{\frac{a}{x-y}+\frac{b}{x+y}}{1+\frac{a-b}{a+b}}$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>02  Arithmetic expressions, sub-/superscripts, roots</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>root</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;Syntax: \sqrt[n]{arg} or simply  \sqrt{arg} for \sqrt[2]{arg}&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\sqrt[3]{8}$$$ gives&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$\sqrt[3]{8}$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\sqrt{-1}$$$ gives&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$\sqrt{-1}$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Nesting of roots (and combining with fractions, ...etc.) are possible.&lt;/li&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\sqrt[n]{\frac{x^n-y^n}{1+u^{2n}}}$$$ gives&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$\sqrt[n]{\frac{x^n-y^n}{1+u^{2n}}}$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;u&gt;Ex.:&lt;/u&gt; $$$\sqrt[3]{-q+\sqrt{q^2+p^3}}$$$ gives&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$\sqrt[3]{-q+\sqrt{q^2+p^3}}$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>square root</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>02  Arithmetic expressions, sub-/superscripts, roots</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>greater than or equal</CONCEPT>
+        <DEFINITION>&lt;p&gt;$$$x\ge~y$$$ or $$$x\geq~y$$$ gives &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$x\ge~y$$ &lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>&gt;=</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>07  Relations</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>less than or equal</CONCEPT>
+        <DEFINITION>&lt;p&gt;$$$x\le~y$$$ or $$$x\leq~y$$$ gives &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$x\le~y$$ &lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>&lt;=</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>07  Relations</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>greek letters  (overview)</CONCEPT>
+        <DEFINITION>&lt;p&gt;Simply write \&lt;em&gt;greekletter&lt;/em&gt; for lower case and \&lt;em&gt;Greekletter&lt;/em&gt; for upper case&lt;em&gt;.&lt;/em&gt;&lt;/p&gt;&lt;p&gt;Here's a list of all known greek letters (Note: not all &lt;em&gt;upper case&lt;/em&gt; greek letters are known):&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Lower Case Greek Letters:&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;table cellspacing=&quot;1&quot; cellpadding=&quot;5&quot; width=&quot;100%&quot; border=&quot;1&quot;&gt;&lt;tbody&gt;&lt;tr style=&quot;FONT-WEIGHT: bold; BACKGROUND: #dddddd&quot;&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;Command&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;Filter Expression&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;Result&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\alpha&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\alpha$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\alpha$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\beta&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\beta$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\beta$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\gamma&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\gamma$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\gamma$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\delta&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\delta$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\delta$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\epsilon&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\epsilon$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\epsilon$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\varepsilon&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\varepsilon$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\varepsilon$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\zeta&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\zeta$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\zeta$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\eta&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\eta$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\eta$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\theta&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\theta$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\theta$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\vartheta&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\vartheta$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\vartheta$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\iota&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\iota$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\iota$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\kappa&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\kappa$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\kappa$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\lambda&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\lambda$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\lambda$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\mu&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\mu$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\mu$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\nu&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\nu$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\nu$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\xi&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\xi$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\xi$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;o  &lt;font color=&quot;#ff0000&quot;&gt;(!)&lt;/font&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$o$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$o$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\pi&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\pi$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\pi$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\varpi&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\varpi$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\varpi$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\rho&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\rho$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\rho$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\varrho&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\varrho$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\varrho$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\sigma&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\sigma$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\sigma$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\varsigma&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\varsima$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\varsigma$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\tau&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\tau$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\tau$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\upsilon&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\upsilon$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\upsilon$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\phi&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\phi$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\phi$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\varphi&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\varphi$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\varphi$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\chi&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\chi$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\chi$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\psi&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\psi$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\psi$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\omega&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\omega$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\omega$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/p&gt;&lt;p /&gt;&lt;p&gt;&lt;b&gt;Upper Case Greek Letters:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;table cellspacing=&quot;1&quot; cellpadding=&quot;5&quot; width=&quot;100%&quot; border=&quot;1&quot;&gt;&lt;tbody&gt;&lt;tr style=&quot;FONT-WEIGHT: bold; BACKGROUND: #dddddd&quot;&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;Command&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;Filter Expression&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;Result&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\Gamma&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\Gamma$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\Gamma$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\Delta&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\Delta$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\Delta$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\Theta&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\Theta$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\Theta$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\Lambda&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\Lambda$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\Lambda$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\Xi&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\Xi$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\Xi$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\Pi&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\Pi$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\Pi$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\Sigma&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\Sigma$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\Sigma$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\Upsilon&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\Upsilon$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\Upsilon$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\Phi&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\Phi$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\Phi$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\Psi&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\Psi$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\Psi$$&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;\Omega&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$$\Omega$$$&lt;/td&gt;&lt;td valign=&quot;top&quot; width=&quot;33%&quot;&gt;$$\Omega$$&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/p&gt;&lt;p /&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>integral</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;General syntax for symbols with a kind of lower and upper limits:&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;\&lt;em&gt;symbolname&lt;/em&gt;_{&lt;em&gt;lowerexpression&lt;/em&gt;}^{&lt;em&gt;upperexpression&lt;/em&gt;}&lt;/p&gt;&lt;ul&gt;&lt;li&gt;In general, there are two ways how these lower and upper expressions can be placed: centered below and above the symbol or in a subscript / superscript manner. In the first case the symbol name is preceded by the word &amp;quot;big&amp;quot;, in the second there is no prefix. &lt;/li&gt;&lt;li&gt;Syntax for integral symbol:&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$$\bigint_{0}^{\infty}$$$   gives   &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$\bigint_{0}^{\infty}$$ &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;and&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$$\int_{0}^{\infty}$$$   gives &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$\int_{0}^{\infty}$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;div align=&quot;left&quot;&gt;Use font size commands for a nicer picture:&lt;/div&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;left&quot; /&gt;&lt;p align=&quot;center&quot;&gt;$$$\LARGE\bigint_{\small0}^{\small\infty}$$$   gives   &lt;/p&gt;&lt;p /&gt;&lt;p align=&quot;center&quot;&gt;$$\LARGE\bigint_{\small0}^{\small\infty}$$ &lt;/p&gt;&lt;p align=&quot;left&quot; /&gt;&lt;p align=&quot;center&quot;&gt;and&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$$\large\int_{\small0}^{\small\infty}$$$   gives &lt;/p&gt;&lt;p /&gt;&lt;p align=&quot;center&quot;&gt;$$\large\int_{\small0}^{\small\infty}$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>int</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>product</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;General syntax for symbols with a kind of lower and upper limits:&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;\&lt;em&gt;symbolname&lt;/em&gt;_{&lt;em&gt;lowerexpression&lt;/em&gt;}^{&lt;em&gt;upperexpression&lt;/em&gt;}&lt;/p&gt;&lt;ul&gt;&lt;li&gt;In general, there are two ways how these lower and upper expressions can be placed: centered below and above the symbol or in a subscript / superscript manner. In the first case the symbol name is preceded by the word &amp;quot;big&amp;quot;, in the second there is no prefix. &lt;/li&gt;&lt;li&gt;Syntax for product symbol:&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$$\bigprod_{i=k}^{n}$$$   gives   &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$\bigprod_{i=k}^{n}$$ &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;and&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$$\prod_{i=k}^{n}$$$   gives &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$\prod_{i=k}^{n}$$&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;div align=&quot;left&quot;&gt;Use font size commands for a nicer picture:&lt;/div&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;left&quot; /&gt;&lt;p align=&quot;center&quot;&gt;$$$\LARGE\bigprod_{\tiny{i=k}}^{\tiny{n}}$$$   gives   &lt;/p&gt;&lt;p /&gt;&lt;p align=&quot;center&quot;&gt;$$\LARGE\bigprod_{\tiny{i=k}}^{\tiny{n}}$$  &lt;/p&gt;&lt;p align=&quot;left&quot; /&gt;&lt;p align=&quot;center&quot;&gt;and&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$$\large\prod_{\small{i=k}}^{\small{n}}$$$   gives &lt;/p&gt;&lt;p /&gt;&lt;p align=&quot;center&quot;&gt;$$\large\prod_{\small{i=k}}^{\small{n}}$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>coproduct</CONCEPT>
+        <DEFINITION>&lt;ul&gt;&lt;li&gt;General syntax for symbols with a kind of lower and upper limits:&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;\&lt;em&gt;symbolname&lt;/em&gt;_{&lt;em&gt;lowerexpression&lt;/em&gt;}^{&lt;em&gt;upperexpression&lt;/em&gt;}&lt;/p&gt;&lt;ul&gt;&lt;li&gt;In general, there are two ways how these lower and upper expressions can be placed: centered below and above the symbol or in a subscript / superscript manner. In the first case the symbol name is preceded by the word &amp;quot;big&amp;quot;, in the second there is no prefix. &lt;/li&gt;&lt;li&gt;&lt;font color=&quot;#ff0000&quot;&gt;&lt;strong&gt;Note:&lt;/strong&gt; mimeTeX seems currently only to support the \bigcoprod command.&lt;/font&gt;&lt;/li&gt;&lt;li&gt;Syntax for coproduct symbol: &lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;center&quot;&gt;$$$\bigcoprod_{i=k}^{n}$$$   gives   &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;$$\bigcoprod_{i=k}^{n}$$ &lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;div align=&quot;left&quot;&gt;Use font size commands for a nicer picture:&lt;/div&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p align=&quot;left&quot; /&gt;&lt;p align=&quot;center&quot;&gt;$$$\LARGE\bigcoprod_{\small{i=k}}^{\small~n}$$$   gives   &lt;/p&gt;&lt;p /&gt;&lt;p align=&quot;center&quot;&gt;$$\LARGE\bigcoprod_{\small{i=k}}^{\small~n}$$&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>coprod</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>alpha  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\alpha$$$ gives $$\alpha$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>gamma  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\gamma$$$ gives $$\gamma$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>epsilon  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\epsilon$$$ gives $$\epsilon$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>varepsilon  (special lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\varepsilon$$$ gives $$\varepsilon$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>zeta  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\zeta$$$ gives $$\zeta$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>eta  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\eta$$$ gives $$\eta$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>theta  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\theta$$$ gives $$\theta$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>vartheta  (special lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\vartheta$$$ gives $$\vartheta$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>iota  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\iota$$$ gives $$\iota$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>kappa</CONCEPT>
+        <DEFINITION>$$$\kappa$$$ gives $$\kappa$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>lambda  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\lambda$$$ gives $$\lambda$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>mu  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\mu$$$ gives $$\mu$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>nu  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\nu$$$ gives $$\nu$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>xi  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\xi$$$ gives $$\xi$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>omikron  (lower case greek letter)</CONCEPT>
+        <DEFINITION>&lt;p&gt;&lt;font color=&quot;#ff0000&quot;&gt;$$$o$$$&lt;/font&gt; gives $$o$$ &lt;/p&gt;&lt;p&gt;&lt;em&gt;(note this exceptional syntax!)&lt;/em&gt;&lt;/p&gt;</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>pi  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\pi$$$ gives $$\pi$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>varpi  (special lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\varpi$$$ gives $$\varpi$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>rho  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\rho$$$ gives $$\rho$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>varrho  (special lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\varrho$$$ gives $$\varrho$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>sigma  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\sigma$$$ gives $$\sigma$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>varsigma  (special lower greek letter)</CONCEPT>
+        <DEFINITION>$$$\varsigma$$$ gives $$\varsigma$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>tau  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\tau$$$ gives $$\tau$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>upsilon  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\upsilon$$$ gives $$\upsilon$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>phi  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\phi$$$ gives $$\phi$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>varphi (special lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\varphi$$$ gives $$\varphi$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>chi  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\chi$$$ gives $$\chi$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>psi  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\psi$$$ gives $$\psi$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>omega  (lower case greek letter)</CONCEPT>
+        <DEFINITION>$$$\omega$$$ gives $$\omega$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>Gamma  (upper case greek letter)</CONCEPT>
+        <DEFINITION>$$$\Gamma$$$ gives $$\Gamma$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>Delta  (upper case greek letter)</CONCEPT>
+        <DEFINITION>$$$\Delta$$$ gives $$\Delta$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>Theta  (upper case greek letter)</CONCEPT>
+        <DEFINITION>$$$\Theta$$$ gives $$\Theta$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>Lambda  (upper case greek letter)</CONCEPT>
+        <DEFINITION>$$$\Lambda$$$ gives $$\Lambda$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>Xi  (upper case greek letter)</CONCEPT>
+        <DEFINITION>$$$\Xi$$$ gives $$\Xi$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>Pi  (upper case greek letter)</CONCEPT>
+        <DEFINITION>$$$\Pi$$$ gives $$\Pi$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>Sigma  (upper case greek letter)</CONCEPT>
+        <DEFINITION>$$$\Sigma$$$ gives $$\Sigma$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>Upsilon  (upper case greek letter)</CONCEPT>
+        <DEFINITION>$$$\Upsilon$$$ gives $$\Upsilon$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>Phi  (upper case greek letter)</CONCEPT>
+        <DEFINITION>$$$\Phi$$$ gives $$\Phi$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>Psi  (upper case greek letter)</CONCEPT>
+        <DEFINITION>$$$\Psi$$$ gives $$\Psi$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>Omega  (upper case greek letter)</CONCEPT>
+        <DEFINITION>$$$\Omega$$$ gives $$\Omega$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>plus minus</CONCEPT>
+        <DEFINITION>$$$a\pm~b$$$ gives $$a\pm~b$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>minus plus</CONCEPT>
+        <DEFINITION>$$$\mp~a$$$ gives $$\mp~a$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>times</CONCEPT>
+        <DEFINITION>$$$a\times~b$$$ gives $$a\times~b$$</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>div (division)</CONCEPT>
+        <DEFINITION>$$$x\div~y$$$ gives $$x\div~y$$</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>cdot (multiplication)</CONCEPT>
+        <DEFINITION>$$$a\cdot~b$$$ gives $$a\cdot~b$$</DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>06  Symbols</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+      <ENTRY>
+        <CONCEPT>multiplication (with cdot)</CONCEPT>
+        <DEFINITION>$$$a\cdot~b$$$ gives $$a\cdot~b$$ </DEFINITION>
+        <FORMAT>1</FORMAT>
+        <USEDYNALINK>0</USEDYNALINK>
+        <CASESENSITIVE>0</CASESENSITIVE>
+        <FULLMATCH>0</FULLMATCH>
+        <TEACHERENTRY>1</TEACHERENTRY>
+        <ALIASES>
+          <ALIAS>
+            <NAME>cdot</NAME>
+          </ALIAS>
+        </ALIASES>
+        <CATEGORIES>
+          <CATEGORY>
+            <NAME>02  Arithmetic expressions, sub-/superscripts, roots</NAME>
+            <USEDYNALINK>1</USEDYNALINK>
+          </CATEGORY>
+        </CATEGORIES>
+      </ENTRY>
+    </ENTRIES>
+  </INFO>
+</GLOSSARY>

@@ -1,0 +1,673 @@
+/* modules.less */
+
+// The home for small tweaks to modules that don't require
+// changes drastic enough to pull in the full module css
+// and replace it completely
+// Plus some misc. odds and ends
+
+select {
+    width: auto;
+}
+
+// Choice module
+
+.path-mod-choice {
+    .horizontal .choices .option {
+        display: inline-block;
+    }
+}
+
+.path-mod-feedback .feedback_form .col-form-label {
+    display: block !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// Feedback module
+.path-mod-feedback .itemactions {
+    float: right;
+}
+.path-mod-feedback .itemhandle {
+    position: absolute;
+    right: 1rem;
+}
+
+// Forum module
+
+.path-mod-forum .forumsearch {
+    input,
+    .helptooltip {
+        margin: 0 3px;
+    }
+}
+
+.path-mod-forum .forumheaderlist,
+.path-mod-forum .forumheaderlist td {
+    border: none;
+}
+
+.path-mod-forum {
+    .forumheaderlist {
+        thead .header,
+        tbody .discussion td {
+            white-space: normal;
+            vertical-align: top;
+            padding-left: 0.5em;
+            padding-right: 0.5em;
+        }
+
+        thead .header {
+            white-space: normal;
+            vertical-align: top;
+        }
+
+        thead .header.replies {
+            text-align: center;
+        }
+
+        thead .header.lastpost {
+            text-align: right;
+        }
+
+        thead .header th,
+        tbody .discussion td {
+            &.discussionsubscription {
+                width: 16px;
+                padding-left: 0.5em;
+                padding-right: 0.5em;
+            }
+        }
+
+        .discussion {
+            .replies,
+            .lastpost {
+                white-space: normal;
+            }
+
+            .discussionsubscription,
+            .replies {
+                text-align: center;
+            }
+
+            .topic,
+            .discussionsubscription,
+            .topic.starter,
+            .replies,
+            .lastpost {
+                vertical-align: top;
+            }
+        }
+    }
+
+    // Style for the forum subscription mode node.
+    .subscriptionmode {
+        color: $body-color;
+    }
+
+    // Style for the currently selected subscription mode.
+    .activesetting {
+        color: $body-color;
+        font-weight: bold;
+    }
+}
+
+.forumpost {
+    border: $border-width solid $border-color;
+    display: block;
+    padding: 6px;
+
+    .header {
+        margin-bottom: 3px;
+    }
+
+    .picture img {
+        margin: 3px;
+
+        &.userpicture {
+            margin-left: 3px;
+            margin-right: 10px;
+        }
+    }
+
+    .content {
+        .posting.fullpost {
+            margin-top: 8px;
+        }
+    }
+
+    .row {
+        display: block;
+        .topic,
+        .content-mask,
+        .options {
+            margin-left: 48px;
+        }
+
+        &.side {
+            clear: both;
+        }
+    }
+}
+
+.forumpost .row .left {
+    width: 48px;
+}
+
+.forumpost .options .commands {
+    margin-left: 0;
+}
+
+.forumpost .subject {
+    font-weight: bold;
+}
+
+// Override hardcoded forum modules styling
+.forumsearch input[type=text] {
+    margin-bottom: 0;
+}
+
+#page-mod-forum-discuss .discussioncontrols {
+    width: auto;
+    margin: 0;
+
+    .form-inline input {
+        margin-top: -1px;
+    }
+}
+
+.maincalendar .calendarmonth td,
+.maincalendar .calendarmonth th {
+    border: 1px dotted $table-border-color;
+}
+
+.path-grade-report-grader h1 {
+    text-align: inherit;
+}
+
+#page-mod-chat-gui_basic input#message {
+    max-width: 100%;
+}
+
+#page-mod-data-view #singleimage {
+    width: auto;
+}
+
+.path-mod-data form {
+    margin-top: 10px;
+}
+
+.template_heading {
+    margin-top: 10px;
+}
+
+.breadcrumb-button {
+    margin-top: 4px;
+}
+
+.breadcrumb-button .singlebutton {
+    float: left;
+    margin-left: 4px;
+}
+
+.ie .row-fluid .desktop-first-column {
+    margin-left: 0;
+}
+
+.langmenu form {
+    margin: 0;
+}
+// contributed by Paul Hibbitts, see http://msdn.microsoft@mixin com/en-us/library/ie/jj583807(v=vs.85).aspx
+canvas {
+    -ms-touch-action: auto;
+}
+
+div#dock {
+    display: none;
+}
+
+// Choice module
+
+// Lesson module
+
+/** General styles (scope: all of lesson) **/
+.path-mod-lesson .invisiblefieldset.fieldsetfix {
+    display: block;
+}
+.path-mod-lesson .answeroption .checkbox label p {
+    display: inline;
+}
+.path-mod-lesson .form-inline label.form-check-label {
+    display: inline-block;
+}
+.path-mod-lesson .slideshow {
+    overflow: auto;
+    padding: 15px;
+}
+#page-mod-lesson-view .branchbuttoncontainer .singlebutton button[type="submit"] {
+    white-space: normal;
+}
+#page-mod-lesson-view {
+    .vertical .singlebutton {
+        display: block;
+        + .singlebutton {
+            margin-left: 0;
+            margin-top: 1rem;
+        }
+    }
+}
+.path-mod-lesson .generaltable td {
+    vertical-align: middle;
+    label {
+        margin-bottom: 0;
+    }
+    .highlight {
+        display: inline-block;
+        margin-left: 0.25rem;
+    }
+    input[type="checkbox"] {
+        display: block;
+    }
+}
+
+.path-mod-wiki .wiki_headingtitle,
+.path-mod-wiki .midpad,
+.path-mod-wiki .wiki_headingtime {
+    text-align: inherit;
+}
+
+.path-mod-wiki .wiki_contentbox {
+    width: 100%;
+}
+
+// Survey module
+
+.path-mod-survey {
+    .surveytable {
+        > tbody > tr:nth-of-type(odd) {
+            background-color: $table-bg;
+        }
+
+        > tbody > tr:nth-of-type(even) {
+            background-color: $table-bg-accent;
+        }
+
+        .rblock label {
+            text-align: center;
+        }
+    }
+
+}
+
+.nav .caret {
+    margin-left: 4px;
+}
+
+// Dividers
+.nav {
+    .divider {
+        overflow: hidden;
+        width: 0;
+    }
+}
+
+// Usermenu
+.usermenu {
+    .login {
+        line-height: 2.25rem;
+
+        a {
+            color: $link-color;
+            &:hover,
+            &:focus {
+                color: $link-hover-color;
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.userloggedinas,
+.userswitchedrole,
+.loginfailures {
+    .usermenu {
+        .usertext {
+            float: left;
+            text-align: right;
+            margin-right: $spacer / 2;
+            height: 35px;
+            .meta {
+                display: block;
+                font-size: $font-size-sm;
+            }
+        }
+        .avatar {
+            img {
+                margin: 0;
+            }
+        }
+    }
+}
+
+.userloggedinas .usermenu {
+    .userbutton .avatars {
+        position: relative;
+        display: inline-block;
+        .avatar {
+            &.current {
+                display: inline-block;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                img {
+                    vertical-align: baseline;
+                }
+            }
+            img {
+                width: inherit;
+                height: inherit;
+            }
+        }
+        .realuser {
+            width: 35px;
+            height: 35px;
+            display: inline-block;
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .usertext {
+        display: none;
+    }
+}
+
+// Quiz module
+.path-mod-quiz .mod-quiz-edit-content {
+    // Force the quiz edit page to always be large enough to prevent scrolling when accessing the menu.
+    margin-bottom: 10rem;
+}
+
+#page-mod-quiz-mod #id_reviewoptionshdr .col-md-3,
+#page-mod-quiz-mod #id_reviewoptionshdr .col-md-9 {
+    width: auto;
+    max-width: none;
+}
+#page-mod-quiz-mod #id_reviewoptionshdr .form-group {
+    float: left;
+    width: 20rem;
+    display: inline-block;
+    min-height: 12rem;
+}
+
+#page-mod-quiz-mod #id_reviewoptionshdr .btn-link {
+    line-height: 1.5;
+    vertical-align: bottom;
+}
+#page-mod-quiz-mod #id_reviewoptionshdr .form-inline {
+    float: left;
+    clear: left;
+}
+#page-mod-quiz-mod #id_reviewoptionshdr .form-check {
+    width: 90%;
+    height: 22px;
+    justify-content: flex-start;
+}
+
+// Question navigation block.
+.path-mod-quiz #mod_quiz_navblock {
+    .qnbutton {
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: normal;
+        background-color: $card-bg;
+        background-image: none;
+        height: 40px;
+        width: 30px;
+        border-radius: 3px;
+        border: 0;
+        overflow: visible;
+        margin: 0 6px 6px 0;
+    }
+
+    span.qnbutton {
+        cursor: default;
+        background-color: $input-bg-disabled;
+        color: $gray;
+    }
+
+    a.qnbutton:hover,
+    a.qnbutton:active,
+    a.qnbutton:focus {
+        text-decoration: underline;
+    }
+
+    .qnbutton .thispageholder {
+        border: 1px solid;
+        border-radius: 3px;
+        z-index: 1;
+    }
+
+    .qnbutton.thispage .thispageholder {
+        border-width: 3px;
+    }
+
+    .allquestionsononepage .qnbutton.thispage .thispageholder {
+        border-width: 1px;
+    }
+
+    .qnbutton.flagged .thispageholder {
+        background: transparent url([[pix:theme|mod/quiz/flag-on]]) 15px 0 no-repeat;
+    }
+
+    .qnbutton .trafficlight {
+        border: 0;
+        background: $card-bg none center / 10px no-repeat scroll;
+        height: 20px;
+        margin-top: 20px;
+        border-radius: 0 0 3px 3px;
+    }
+
+    .qnbutton.notyetanswered .trafficlight,
+    .qnbutton.invalidanswer .trafficlight {
+        background-color: $card-bg;
+    }
+
+    .qnbutton.invalidanswer .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/warningtriangle]]);
+    }
+
+    .qnbutton.correct .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/checkmark]]);
+        background-color: $state-success-text;
+    }
+
+    .qnbutton.blocked .trafficlight {
+        background-image: url([[pix:core|t/locked]]);
+        background-color: $input-bg-disabled;
+    }
+
+    .qnbutton.notanswered .trafficlight,
+    .qnbutton.incorrect .trafficlight {
+        background-color: $state-danger-text;
+    }
+
+    .qnbutton.partiallycorrect .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/whitecircle]]);
+        background-color: $state-warning-text;
+    }
+
+    .qnbutton.complete .trafficlight,
+    .qnbutton.answersaved .trafficlight,
+    .qnbutton.requiresgrading .trafficlight {
+        background-color: $gray-light;
+    }
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer form input {
+    height: 1.4em;
+    vertical-align: middle;
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
+    padding: 0;
+    margin: 0 0.4em;
+}
+
+// Assign.
+.path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
+    top: auto;
+}
+.path-mod-assign .no-overflow {
+    overflow: initial;
+}
+
+// This section removes the responsiveness from the form in the grading panel
+$popout-header-font-size: 1.5 * $font-size-base;
+// This can't be calculated from modal-title-padding because we are mixing px and rem units.
+$popout-header-height: 4rem;
+
+.path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fcontainer .fitem.popout .felement {
+    height: calc(100% - #{$popout-header-height});
+}
+
+.path-mod-assign [data-region="grade-panel"] {
+    padding-top: $spacer;
+}
+.path-mod-assign [data-region="grade-panel"] .fitem > .col-md-3,
+.path-mod-assign [data-region="grade-panel"] .fitem > .col-md-9 {
+    width: 100%;
+    padding: 0;
+    max-width: 100%;
+    flex: none;
+}
+.path-mod-assign [data-region="grade-panel"] fieldset,
+.path-mod-assign [data-region="grade-panel"] .fitem.row {
+    margin: 0;
+}
+
+.path-mod-assign [data-region="grade-panel"] .fitem > .col-md-3 > .pull-xs-right {
+    float: none !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felement {
+    width: 100%;
+}
+
+.path-mod-assign [data-region="grade-panel"] .mform .fitem .felement {
+    width: auto;
+}
+
+// Now styles for the popout sections.
+
+.path-mod-assign [data-region="grade-panel"] .popout {
+    background-color: $modal-content-bg;
+}
+
+.path-mod-assign [data-region="grade-panel"] .fitem.has-popout {
+    background-color: $card-bg;
+    @include border-radius($card-border-radius);
+    border: $card-border-width solid $card-border-color;
+    padding: $card-spacer-x;
+    margin-bottom: $spacer;
+}
+.path-mod-assign [data-region="grade-panel"] .has-popout .col-md-3 {
+    border-bottom: $hr-border-width solid $hr-border-color;
+    margin-bottom: $spacer;
+}
+
+
+.path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 {
+    @extend .modal-header;
+    font-size: $popout-header-font-size;
+}
+
+.path-mod-assign [data-region="grade-panel"] .popout [data-region="popout-button"] {
+    margin-top: 0;
+}
+
+// Now style the fixed header elements.
+
+.path-mod-assign [data-region="assignment-info"] {
+    overflow-y: hidden;
+}
+
+.path-mod-assign [data-region="grading-navigation"] {
+    padding: 6px;
+}
+
+.path-mod-assign [data-region="grade-actions"] {
+    padding: 10px;
+}
+
+.path-mod-assign [data-region="user-info"] .img-rounded {
+    margin-top: 0;
+}
+
+.path-mod-assign [data-region="grading-navigation-panel"] {
+    height: 85px;
+}
+
+@media (max-width: 767px) {
+    .path-mod-assign [data-region="grading-navigation-panel"] {
+        height: auto;
+    }
+    .path-mod-assign [data-region="user-info"] {
+        margin-top: 1rem;
+    }
+}
+
+.path-mod-assign [data-region="grading-navigation"] [data-region="input-field"] input {
+    width: auto;
+    display: inline-block;
+}
+
+/**
+ * Assign feedback.
+ */
+.assignfeedback_editpdf_widget * {
+    box-sizing: content-box;
+}
+
+.assignfeedback_editpdf_widget button {
+    box-sizing: border-box;
+}
+
+.assignfeedback_editpdf_widget .commentcolourbutton img {
+    border-width: 0;
+}
+
+.assignfeedback_editpdf_widget .label {
+    @extend .tag;
+    @extend .tag-info;
+}
+
+.assignfeedback_editpdf_menu {
+    padding: 0;
+}
+
+.path-mod-assign [data-region="grade-panel"] .gradingform_guide .remark .commentchooser {
+    float: none;
+}
+.path-mod-assign [data-region="grade-panel"] .gradingform_guide .markingguideremark {
+    width: 100%;
+}
+.path-mod-assign [data-region="grade-panel"] .mform .fitem .felement[data-fieldtype="grading"] {
+    padding-left: $spacer;
+    padding-right: $spacer;
+}
+.path-mod-assign [data-region="grade-panel"] .showmarkerdesc,
+.path-mod-assign [data-region="grade-panel"] .showstudentdesc {
+    background-color: $card-bg;
+}
+
+/**
+ * Mod LTI.
+ */
+.path-admin-mod-lti {
+    .btn .loader img,
+    #tool-list-loader-container .loader img {
+        height: auto;
+    }
+}

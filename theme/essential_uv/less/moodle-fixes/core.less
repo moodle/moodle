@@ -1,0 +1,28 @@
+// @package     theme_essential.
+// @copyright   2016 Gareth J Barnard.
+// @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
+
+/* Moodle fixes core begin */
+
+/* Only set these options if we're showing the js container */
+.jschooser .choosercontainer #chooseform .alloptions {
+    .option {
+        .typename {
+            display: inline;
+        }
+    }
+}
+
+.loginbox .signuppanel {
+    h2, .subcontent {
+        text-align: left;
+    }
+}
+
+// Accessibility: Skip block link, for keyboard-only users.
+a.skip-block,
+a.skip {
+    left: -1000em;
+}
+
+/* Moodle fixes core end */

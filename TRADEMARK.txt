@@ -1,0 +1,48 @@
+MOODLE TRADEMARKS POLICY
+========================
+
+The word "Moodle" is trademarked in many countries around the world. The word
+was originally an acronym: Modular Object-Oriented Dynamic Learning
+Environment. The trademark is owned by Martin Dougiamas, Founder and Director
+of Moodle.
+
+The law obligates trademark owners to police their marks and prevent the use of
+confusingly similar names by third parties. Through this policy we’d like to
+make it clear how Moodle-related projects, organisations, and people can use
+the Moodle trademark. We’d also like to be clear about how use of the word is
+restricted when used to promote commercial Moodle services. We do this to
+protect the very business model that allows us to continue developing Moodle
+for you.
+
+Allowed uses
+------------
+
+The following uses don’t require any permission at all:
+
+* Referring to the software or the Moodle project.
+* Describing your own Moodle implementation (including within corporate
+  settings).
+* Describing a Moodle-based community hub.
+* Describing some software you’ve made that integrates with Moodle
+  (eg a Moodle integration feature on another system).
+
+Restricted uses
+---------------
+
+The following uses are generally prohibited without explicit and direct
+permission being granted to you by Moodle Pty Ltd. We do this to protect the
+Moodle project from software and sites which could confuse people. Please
+contact us to ask for permission in writing.
+
+* You can’t use "Moodle" in the name of your software (including Mobile apps)
+* You can’t use "Moodle" in your company name
+* You can’t use "Moodle" in your domain name
+* You can’t use "Moodle" in advertising-related keywords (such as Adsense)
+* You can’t use "Moodle" to describe services around Moodle (such as hosting,
+  training, support, consulting, course creation services, theme development,
+  customisation, installation, integration and certification). This applies
+  even if you do not charge for the services. Note that usually only Moodle
+  Partners have this permission.
+
+For information about the Moodle Partner Certification Mark as well as for how
+to contact us, please see <https://moodle.com/trademarks/>.

@@ -1,0 +1,14 @@
+      <QUESTION_CATEGORY>
+        <ID>[#quiz_id#]</ID>
+        <NAME>Quiz Bank '[#quiz_name#]'</NAME>
+        <INFO>Questions in quiz '[#quiz_name#]'.</INFO>
+        <CONTEXT>
+          <LEVEL>course</LEVEL>
+        </CONTEXT>
+        <STAMP>[#quiz_stamp#]</STAMP>
+        <PARENT>0</PARENT>
+        <SORTORDER>999</SORTORDER>
+        <QUESTIONS>
+          [#node_course_question_categories_question_category_questions#]
+        </QUESTIONS>
+      </QUESTION_CATEGORY>

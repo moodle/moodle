@@ -1,0 +1,272 @@
+/* @group Breadcrumb Button */
+@import "../fontawesome/variables";
+
+.breadcrumb-button {
+    margin-top: 0;
+    .@{fa-css-prefix} {
+        vertical-align: middle;
+        color: inherit;
+        &:hover {
+            color: inherit;
+        }
+    }
+    input[type="submit"] {
+        text-shadow: none;
+        border-width: 1px;
+        border-style: solid;
+        margin: 0;
+
+        > .singlebutton > form > div {
+            margin: 0;
+        }
+    }
+    .singlebutton {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .singlebutton,
+    a {
+        float: right;
+    }
+}
+/* @end */
+
+/* @group Breadcrumb */
+
+.breadcrumb {
+    background-color: transparent;
+}
+
+.breadcrumb-nav {
+    margin: 0;
+
+    /* @group Breadcrumb Style None */
+    ul.breadcrumb.style {
+        background-color: transparent;
+    }
+    /* @end */
+
+
+    /* @group Breadcrumb Style Fancy */
+
+    ul.breadcrumb.style1 {
+        background-color: transparent;
+        display: block;
+        overflow: hidden;
+        padding: 0;
+        text-overflow: clip;
+        width: 100%;
+        word-wrap: break-word;
+        li {
+            display: block;
+            height: 28px;
+            line-height: 28px;
+            margin-bottom: 4px;
+            position: relative;
+            text-shadow: none;
+            a {
+                text-decoration: none;
+                overflow: hidden;
+            }
+            .dimmed_text {
+                font-style: italic;
+            }
+        }
+        li:after {
+            border-top: 14px solid transparent;
+            border-bottom: 14px solid transparent;
+            content: " ";
+            display: block;
+            height: 0;
+            margin-top: -14px;
+            position: absolute;
+            top: 50%;
+            width: 0;
+            z-index: 1;
+        }
+        li:before {
+            border-top: 14px solid transparent;
+            border-bottom: 14px solid transparent;
+            content: " ";
+            display: block;
+            height: 0;
+            margin-top: -14px;
+            position: absolute;
+            top: 50%;
+            width: 0;
+            z-index: 1;
+        }
+        li:first-of-type {
+            a:before {
+                content: "\f015";
+                display: inline-block;
+                font-family: FontAwesome;
+                text-decoration: none;
+            }
+        }
+        .last:before,
+        .last:after,
+        li:last-of-type:before,
+        li:last-of-type:after {
+            content: '';
+            display: none;
+        }
+        li:hover {
+            .dimmed_text {
+                text-decoration: none;
+            }
+        }
+    }
+
+    /* @end */
+
+    /* @group Breadcrumb Style Simple */
+
+    ul.breadcrumb.style2 {
+        background-color: transparent;
+        display: block;
+        overflow: hidden;
+        padding: 0;
+        text-overflow: clip;
+        width: 100%;
+        word-wrap: break-word;
+        li {
+            border-radius: 0;
+            display: block;
+            height: 20px;
+            padding: 2px;
+            text-shadow: none;
+        }
+        li:after {
+            font-family: FontAwesome;
+            padding: 5px;
+            line-height: 20px;
+            vertical-align: top;
+        }
+    }
+
+    /* @end */
+
+    /* @group Breadcrumb Style Thin */
+
+    ul.breadcrumb.style3 {
+        background-color: transparent;
+        display: block;
+        overflow: hidden;
+        padding: 0;
+        text-overflow: clip;
+        width: 100%;
+        word-wrap: break-word;
+        li {
+            background-color: transparent;
+            display: block;
+            font-size: 12px;
+            line-height: 12px;
+            text-transform: uppercase;
+        }
+        li:after {
+            content: "\f105";
+            font-family: FontAwesome;
+            padding: 2px;
+            vertical-align: top;
+        }
+        li:last-child:after {
+            content: "";
+        }
+    }
+
+    /* @end */
+}
+
+.breadcrumb-nav {
+    ul.breadcrumb.style1 {
+        float: left;
+        margin-right: -@baseBorderRadius;
+        li {
+            padding: 0 0 0 20px;
+            float: left;
+            a {
+                padding-right: 3px;
+            }
+            span {
+                margin-right: 4px;
+            }
+        }
+        li:after {
+            border-left-style: solid;
+            border-left-width: 14px;
+            left: 100%;
+        }
+        li:before {
+            border-left-style: solid;
+            border-left-width: 14px;
+            left: 100%;
+            margin-left: 1px;
+        }
+        li:first-of-type {
+            border-bottom-left-radius: @baseBorderRadius;
+            border-top-left-radius: @baseBorderRadius;
+            padding-left: 34px;
+            a {
+                margin-left: -25px;
+            }
+            a:before {
+                margin-right: 5px;
+            }
+        }
+        .last,
+        li:last-of-type {
+            border-bottom-right-radius: @baseBorderRadius;
+            border-top-right-radius: @baseBorderRadius;
+            padding-right: 10px;
+        }
+    }
+    /* @end */
+
+    /* @group Breadcrumb Style Simple */
+    ul.breadcrumb.style2 {
+        li {
+            float: left;
+            a {
+                margin-right: 3px;
+            }
+        }
+        li:first-of-type {
+            border-bottom-left-radius: 4px;
+            border-top-left-radius: 4px;
+            a {
+                padding-left: 5px;
+            }
+        }
+        li:after {
+            /*rtl:raw:
+            content: "\f137";
+            */
+            /*rtl:remove*/
+            content: "\f138";
+        }
+        li:last-child:after {
+            content: "";
+            padding-right: 5px;
+        }
+        li:last-of-type {
+            border-bottom-right-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+    }
+
+    /* @end */
+
+    /* @group Breadcrumb Style Thin */
+
+    ul.breadcrumb.style3 {
+        li {
+            float: left;
+        }
+    }
+
+    /* @end */
+}
+
+
+/* @end */

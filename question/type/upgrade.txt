@@ -1,0 +1,177 @@
+This files describes API changes for question type plugins.
+
+=== 3.5 ===
+  + Added new classes backup_qtype_extrafields_plugin and restore_qtype_extrafields_plugin
+   in order to use extra fields method in backup/restore question type. Require and inherit new classes for using it. See
+   backup_qtype_shortanswer_plugin and restore_qtype_shortanswer_plugin for an example of using this.
+  + The declaration of is_gradable_response has been moved from question_automatically_gradable to
+   question_manually_gradable.
+  + The default implementation of is_gradable_response has been moved from question_graded_automatically to
+   question_with_responses.
+  + Note that format_text() is no longer applied to the results of
+   qtype_elements_embedded_in_question_text_renderer::embedded_element(). If question type overrides
+   this method make sure you apply format_text() to any text that came from a user.
+
+=== 3.1.5, 3.2.2, 3.3 ===
+
+* If you are using check_combined_feedback_file_access in your check_file_access method,
+  then you must now pass $args as the 4th argument, so the correct permission checks
+  can be performed. If you don't, you will get a developer debug notice.
+
+=== 3.1 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-51580 for more info:
+    - qtype_essay_convert_to_html()
+
+=== 2.7 ===
+  + We have added a new method to the question_type base class 'break_down_stats_and_response_analysis_by_variant'. By default it
+   returns true. If your question type does not have variants of question instances then you can ignore this method as it only
+   applies to question types that have variants. If a question type does have variants the default action is to break down
+   response analysis and question stats by variant. But for some question types there might be an almost infinite quantity of
+   variants for the question, in this case you can suppress break down by variant by returning false from this method. See for
+   example the non-core question type varnumeric or the slightly more complex stack question type.
+  + We have added a pair of methods to the question_definition class 'prepare_simulated_post_data' and
+  'get_student_response_values_for_simulation'. You may want to override these methods in question.php in your question type plug
+   -in. These methods are used to convert data from a csv file of simulated step data into the simulated post data that is fed
+   to the question engine. These csv files can be used for unit testing or manual testing the use of your question type within the
+   quiz module.  You  can use the simulate quiz report for manual testing and also to easily generate csv test files. You can
+   run a number of students through a test and then download a csv file representing their interaction with the quiz. For most
+   question types the default of just passing csv data as post data, directly from the csv file will probably work fine. But for
+   certain question types where the meaning of the post data is deliberately obfuscated it might be necessary to convert from a
+   human friendly format in the csv file to response data expected by the question type using 'prepare_simulated_post_data' and
+   to convert back from a question type response array to values for download in a csv file using
+   'get_student_response_values_for_simulation'.
+=== 2.6 ===
+  + The changes in MDL-32750 were reverted in favour of the new pdw toggle toolbars
+    plugin for TinyMCE. The get_non_collapsible_editor_options method has been deprecated.
+
+=== 2.5 ===
+
+* There have been some tweaks to the helper class that is used to write
+  walkthrough tests. You should not have to change your code, but you might
+  like to take a look at some of the new helper methods available. In particular,
+  if you had any code that did
+  $this->process_submission(array('-finish' => 1));
+  you should change that to
+  $this->finish();
+
+* There have been lots of usability improvements to the question editing forms.
+  MDL-37417 links to all the changes. There are only a few API changes that
+  *require* you to upgrade your question type, but you are strongly recommended
+  to make similar usability improvements in your own question types.
+
+  + Some of the ids used in the form HTML have had ‘id_’ added at the front.
+    Take care if you refer to these in your JavasSript or CSS.
+
+  + MDL-32750 The HTML editing tools are now collapsed. This is applied by default
+    to all HTML editors except question text and general feedback. If you want to
+    add more exceptions, see the get_non_collabsible_editor_options method.
+
+  + Form fields have been grouped onto one line where appropriate, to reduce
+    the height of the form. qtype_numerical is a good example of this.
+
+  + Where elements are in groups, we have changed the normal accesshide CSS, so
+    that their labels are visible. If you were using grouped elements in the past
+    with static elements to lable the fields, then you will need to remove the statics.
+
+  + All the choices / answers have been merged into a single section of the form.
+    This works better with the new 'shortforms' MDL-30637. Also the
+    "Add blanks for more ..." buttons are now inside that section. This probably
+    requries that you remove any headings from your per-answer fields, and change
+    some of the labels.
+
+  + Having merged all the elements into one form section, we then used CSS to
+    visually group the fields for one choice, answer, etc.
+
+  + When editing an existing question, we only show as many repeats are are
+    actually needed until the user clicks the "Add blanks for more ..." button.
+    Where you have your own repeat elements, you may need to change the
+    number of repeats calculation.
+
+  + As with all forms, setType() is now required for all text form elements.
+
+  + A good example of a question type being upgraded to take account of all these
+    changes is
+    https://github.com/moodleou/moodle-qtype_pmatch/commit/9d8e1beb9f780246416a0f3a7622f700b8fa90c8
+
+
+=== 2.3.5 / 2.4.2 / 2.5 ===
+
+* The special value question_attempt::PARAM_CLEANHTML_FILES that could be used
+  in the get_expected_data method was renamed to question_attempt::PARAM_RAW_FILES
+  in order to fix a bug. We failed to think this throught, and so did not realised
+  that this might break some question types. If this affected your question type,
+  please accept our apologies. Details in MDL-37847.
+
+
+=== 2.3 ===
+
+* Support for backwards-compatible string names dropped. MDL-30120. (See under 2.2 below.)
+* If you are overriding export_to_xml and import_from_xml to provide Moodle XML format
+  import and export, then you will probably get PHP strict syntax notices in developer
+  debug mode until you change the method signature to include qformat_xml $format.
+  That is, you need to specify the argument type.
+* qtype_xxx_pluginfile() is now given the 7th parameter (hopefully the last
+  one) that contains additional options for the file serving. The array should
+  be re-passed to question_pluginfile() as is.
+
+
+=== 2.2 ===
+
+* The XML import/export base class has had some minor API changes. The
+  - write_combined_feedback method now requires that you pass the questionid and
+    contextid. (MDL-29058)
+  - calls to the import_hints and import_answer methods now should pass the question
+    text format as the last argument, to be used as a default if necessary. (MDL-29739)
+  If you do not upgrade your code, it will not break, but there will be PHP
+  warnings, and it the export will not work 100% correctly.
+
+* The old
+    public function requires_qtypes()
+method is no more. Instead use the ->dependencies facility in version.php. E.g.
+$plugin->dependencies = array(
+    'qtype_numerical' => 2011102700,
+);
+
+* The plugin name and related strings used to be defined in language strings
+called the same thing as the format, for example:
+
+$string['addingdescription'] = 'Adding a Description';
+$string['description'] = 'Description';
+$string['description_help'] = 'A description is not really a question type. It simply enables text to be displayed without requiring any answers, similar to a label on the course page.
+$string['description_link'] = 'A description is not really a question type. It simply enables text to be displayed without requiring any answers, similar to a label on the course page.
+$string['descriptionsummary'] = 'This is not actually a question. Instead it is a way to add some instructions, rubric or other content to the activity. This is similar to the way that labels can be used to add content to the course page.';
+$string['editingdescription'] = 'Editing a Description';
+
+All these need to be changed to use the standard string name pluginname, as for
+other plugin types, and similar for the other strings.
+
+$string['pluginname'] = 'Description';
+$string['pluginname_help'] = 'A description is not really a question type. It simply enables text to be displayed without requiring any answers, similar to a label on the course page.
+$string['pluginname_link'] = 'A description is not really a question type. It simply enables text to be displayed without requiring any answers, similar to a label on the course page.
+$string['pluginnameadding'] = 'Adding a Description';
+$string['pluginnameediting'] = 'Editing a Description';
+$string['pluginnamesummary'] = 'This is not actually a question. Instead it is a way to add some instructions, rubric or other content to the activity. This is similar to the way that labels can be used to add content to the course page.';
+
+The old strings will continue to work, but only until Moodle 2.3 is released.
+
+* If you are using the facilities provided by overriding the extra_answer_fields
+  or questionid_column_name methods, then you must change these to be public
+  methods. (This is required so that backup and restore can be made to work
+  automatically. MDL-24408, MDL-25617, MDL-30562)
+
+
+=== 2.1 ===
+
+* Lots of API changes due to the new question engine. See
+http://docs.moodle.org/dev/Developing_a_Question_Type#Converting_a_Moodle_2.0_question_type
+
+
+=== 2.0 ===
+
+* Lots of changes due to all the API changes in Moodle 2.0.
+
+* This plugin type now supports cron in the standard way. If required, Create a
+  lib.php file containing
+function qtype_mypluginname_cron() {};

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="moodle_database" type="databaseType" />
+    <xs:complexType name="databaseType">
+    	<xs:sequence>
+    		<xs:element maxOccurs="unbounded" name="table"
+    			type="tableType" />
+    	</xs:sequence>
+    	<xs:attribute name="version" type="xs:float" use="required" />
+        <xs:attribute name="release" type="xs:string"></xs:attribute>
+        <xs:attribute name="timestamp" type="xs:dateTime"
+    		use="required" />
+    	<xs:attribute name="comment" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="tableType">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="record" type="recordType" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:NCName" use="required" />
+        <xs:attribute name="schemaHash" type="xs:string" use="required" />
+    </xs:complexType>
+    <xs:complexType name="recordType">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="field" type="fieldType" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="fieldType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name" type="xs:string" use="required" />
+                <xs:attribute default="content" name="value" use="optional">
+                    <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="content" />
+                        <xs:enumeration value="null" />
+                    </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>

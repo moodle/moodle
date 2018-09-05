@@ -1,0 +1,144 @@
+This files describes API changes in the assign code.
+
+=== 3.5.2 ===
+* The function can_grade() now has optional $user parameter.
+
+=== 3.5.1 ===
+* The mod_assign_base_testcase unit test base class has been deprecated.
+  It encouraged poor unit test design and led to significant performance issues with unit tests. See MDL-55609 for
+  further information.
+
+=== 3.5 ===
+* Functions assign:get_assign_grading_summary_renderable, assign:can_view_submission, assign:count_submissions_with_status,
+  assign:count_submissions_need_grading and mod_assign_external::get_submission_status now admit an additional group parameter.
+  This parameter can be used to force those functions to retrieve data only for the given group.
+
+=== 3.4 ===
+* assign::add_attempt requires that set_most_recent_team_submission() be called if attempting to use this function with a team
+  submission.
+
+=== 3.3.2 ===
+* assign_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
+  now optionally takes the module instance object or ID, and the course module object or ID. Please try to send the full
+  objects instead of the ids to save DB calls.
+
+=== 3.3 ===
+* All pluginfile file serving functions now pass through the options to send_stored_file() (all assignment plugins should do
+  the same).
+* Fixed calendar event types for overridden due dates from 'close' to 'due'.
+* Removed calendar event type of 'open', since mod_assign only has the 'due' event type. No point in creating an override event
+for an event type that does not exist.
+
+=== 3.2 ===
+* External function mod_assign_external::get_assignments now returns additional optional fields:
+   - preventsubmissionnotingroup: Prevent submission not in group.
+   - submissionstatement and submissionstatementformat: When there is a submission statement defined.
+* Proper checking for empty submissions
+* Submission modification time checking - this will help students working in groups not clobber each others'
+  submissions
+* External functions that were returning file information now return the following file fields:
+  filename, filepath, mimetype, filesize, timemodified and fileurl.
+  Those fields are now marked as VALUE_OPTIONAL for backwards compatibility.
+  Please, note that previously the filename was part of the filepath field, now they are separated.
+* Submission and feedback plugins can now specify file areas related to their configuration data,
+  which will then be included in backup and restore; see assign_plugin::get_config_file_areas().
+* Submission and feedback plugins must now return the specific list of configs available for external functions,
+  this can be done implementing the new assign plugin method get_config_for_external()
+* Webservice function mod_assign_get_submissions returns a new field 'gradingstatus' from each submission.
+
+=== 3.1 ===
+* The feedback plugins now need to implement the is_feedback_modified() method. The default is to return true
+  for backwards compatibiltiy.
+* When downloading all submissions as a zip each students' files are in a separate folder, are no longer renamed
+  and the folder structure is kept intact.
+
+=== 3.0 ===
+* assign_submission_status renderable now requires $usergroups in its constructor
+* External function mod_assign_external::get_assignments now have a new optional parameter: includenotenrolledcourses.
+  Its default value is false, setting it to true will return assignments for courses a user can see even if it's not enroled.
+
+=== 2.9 ===
+* External parameter now returns PARAM_RAW instead of PARAM_TEXT for webservices using feedback comments.
+* External function mod_assign_external::get_assignments now returns additional optional fields:
+   - intro: Assignment intro.
+   - introformat: Intro format.
+   - introattachments: Intro attachments files.
+
+=== 2.8 ===
+* Some DB changes were made to simplify the SQL required to query the latest attempt.
+  - The assign_submission table now has a column "latest" which is set to 1 for the latest submission attempt.
+  - There will always be a submission row if there is a grade (so the latest grade can be found by joining with the submission)
+  - There is a new submission status "new" for a submission that has never been attempted by a student (but the record exists purely
+    to mark the latest attempt number as 0). The function get_user_submission will create a record with the status set to "new"
+    by default (the previous default was "draft").
+
+=== 2.7 ===
+
+* Added setting sendstudentnotifications to assign DB table with admin defaults. This sets the default value for the
+  "Notify students" option on the grading forms. This setting can be retrieved via webservices.
+
+* Web service function mod_assign_save_grade has an additional optional parameter $advancedgradingdata which allows
+  advanced grading data to be used.
+* A new web service function mod_assign_save_grades has been added which allows multiple grades to be processed.
+* The event submission_updated() [mod/assign/classes/event/submission_updated.php] has been altered to now be an abstract class
+  for submission events in the submission plug-ins.
+
+=== 2.6.1 ===
+
+* format_text() is no longer used for formating assignment content to be used in events (assign_submission_onlinetext::save()) or
+  the word count (assign_submission_onlinetext::format_for_log()) in mod/assign/submission/onlinetext/locallib.php. format_text()
+  should only be used when displaying information to the screen. It was being used incorrectly before in these areas. Plugins using
+  the event assessable_uploaded() should use file_rewrite_pluginfile_urls() to translate the text back to the desired output.
+
+=== 2.6 ===
+* To see submission/grades of inactive users, user should have moodle/course:viewsuspendedusers capability.
+* count_* functions will return only active participants.
+* assign_submission_plugin->lock and unlock methods have an additional parameter for user flags. A user will not
+  always have a submission record when the submission is locked/unlocked.
+* Submission and feedback plugins can now participate in webservices. The plugin must implement get_external_parameters()
+  to describe the parameters it is expecting from the mod_assign_save_grade or mod_assign_save_submission functions. The
+  plugin will then handle the webservice via it's normal save() method with the extra data supplied in the $data argument.
+
+=== 2.5 ===
+
+* New feature - Attempt History
+
+    This adds settings so that a student can have build up a history of separate submission attempts and grades for the same
+    assignment.
+
+    Extra settings on the assign table are:
+    attemptreopenmethod - The way attempts can be reopened. One of:
+                            ASSIGN_ATTEMPT_REOPEN_METHOD_NONE - Attempts cannot be reopened (default)
+                            ASSIGN_ATTEMPT_REOPEN_METHOD_UNTIL_PASS - Attempts are reopened on grading until the gradebook
+                                                                      indicates this student has passed.
+                            ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL - Attempts are reopened on manually by the grader.
+    maxattempts - The maximum allowed number of attempts per student for this assign instance.
+
+    Extra settings on the submission and grade records:
+    attemptnumber - Starting from 0 until the latest attempt.
+
+    New table assign_user_flags holds user specific flags that were stored in the assign_grade table.  (contains assignment,
+    userid, extensionduedate, mailed and locked)
+
+    assign changes:
+        "get_user_grade" function has an extra optional parameter to retrieve a specific attempt number.
+        "get_user_submission" function has an extra optional parameter to retrieve a specific attempt number.
+        "get_group_submission" function has an extra optional parameter to retrieve a specific attempt number.
+        new "get_user_flags" function can retrieve the user flags for a specific user (extensionduedate, mailed and locked).
+        new "update_user_flags" function can update the user flags for a specific user (extensionduedate, mailed and locked).
+
+    assign_submission_plugin changes:
+        "precheck_submission" function now takes a submission record so you can determine which submission is being checked.
+        "submit_for_grading" function now takes a submission record so you can determine which submission is being submitted.
+        new function "copy_submission" can be implemented to copy submission data from one submission to a new one.
+
+    New renderable object "assign_attempt_history" for rendering the list of previous submissions.
+    New renderable object "assign_gradingmessage" for rendering a generic grading message.
+
+    assign_grading_table changes:
+        get_group_and_submission is now protected and should not be called from outside this class.
+
+
+=== Earlier changes ===
+
+* Were not documented in this way. Sorry.

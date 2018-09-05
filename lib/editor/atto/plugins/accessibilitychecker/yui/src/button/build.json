@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_accessibilitychecker-button",
+  "builds": {
+    "moodle-atto_accessibilitychecker-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}

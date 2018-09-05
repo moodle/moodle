@@ -1,0 +1,66 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_tag/tagcloud
+
+    Displays a tag cloud
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+    "tags": [
+        {"id":1,"name":"Cats","viewurl":"http://moodle.org/tag/index.php?tag=Cats","isstandard":"1","count":12,"size":20,"flag":0},
+        {"id":1,"name":"Dogs","viewurl":"http://moodle.org/tag/index.php?tag=Dogs","isstandard":"0","size":2,"flag":1},
+        {"id":1,"name":"Mice","viewurl":"http://moodle.org/tag/index.php?tag=Mice","isstandard":"0","count":4,"size":8,"flag":0}
+    ],
+        "tagscount": 3,
+        "totalcount": 5,
+        "overflow": 1
+    }
+
+}}
+{{#tagscount}}
+    <div class="tag_cloud">
+    <ul class="inline-list">
+        {{#tags}}
+            <li>
+                <a href="{{viewurl}}" class="{{#isstandard}}standardtag{{/isstandard}} s{{size}}"
+                    {{#count}}title="{{#str}}numberofentries, blog, {{count}}{{/str}}{{/count}}">
+                        {{#flag}}
+                            <span class="flagged-tag">{{name}}</span></a>
+                        {{/flag}}
+                        {{^flag}}
+                            {{name}}</a>
+                        {{/flag}}
+            </li>
+        {{/tags}}
+    </ul>
+    {{#overflow}}
+        <p class="tag_overflow">
+            {{#str}} showingfirsttags, core_tag, {{tagscount}} {{/str}}
+        </p>
+    {{/overflow}}
+    </div>
+{{/tagscount}}

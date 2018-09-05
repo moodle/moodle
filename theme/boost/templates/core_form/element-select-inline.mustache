@@ -1,0 +1,30 @@
+{{< core_form/element-template-inline }}
+    {{$element}}
+        {{^element.frozen}}
+    <select class="{{^element.multiple}}custom-select{{/element.multiple}}
+                   {{#element.multiple}}form-control{{/element.multiple}}
+                   {{#error}}is-invalid{{/error}}"
+        name="{{element.name}}"
+        id="{{element.id}}"
+        {{#element.multiple}}multiple size="{{element.size}}"{{/element.multiple}}
+        {{#error}}
+            autofocus aria-describedby="id_error_{{element.name}}"
+        {{/error}}
+        {{{element.attributes}}} >
+        {{#element.options}}
+        <option value="{{value}}" {{#selected}}selected{{/selected}} {{#disabled}}disabled{{/disabled}} {{{optionattributes}}}>{{{text}}}</option>
+        {{/element.options}}
+    </select>
+        {{/element.frozen}}
+        {{#element.frozen}}
+            {{#element.options}}
+                {{#selected}}
+                    {{{text}}}
+                    {{^element.hardfrozen}}
+                        <input type="hidden" name="{{element.name}}" value="{{value}}" id="{{element.id}}">
+                    {{/element.hardfrozen}}
+                {{/selected}}
+            {{/element.options}}
+        {{/element.frozen}}
+    {{/element}}
+{{/ core_form/element-template-inline }}

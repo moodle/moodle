@@ -1,0 +1,8 @@
+name,idnumber,description,category,category_id,category_idnumber,category_path
+Specify category as name,cohortid1,,Miscellaneous,,,
+Specify category as idnumber,cohortid2,,CAT1,,,
+Specify category as id,cohortid3,,1,,,
+Specify category as path,cohortid4,,Cat 1 / Cat 3,,,
+Specify category_id,cohortid5,,,1,,
+Specify category_idnumber,cohortid6,,,,CAT1,
+Specify category_path,cohortid7,,,,,Cat 1 / Cat 3

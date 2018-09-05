@@ -1,0 +1,34 @@
+This files describes API changes in /portfolio/ portfolio system,
+information provided here is intended especially for developers.
+
+=== 3.1 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-51580 for more info:
+    - portfolio_picasa_admin_upgrade_notification()
+    - portfolio_googledocs_admin_upgrade_notification()
+    - portfolio_boxnet_admin_upgrade_notification()
+
+=== 2.4 ===
+
+The set_callback_options function's third parameter has been changed from a file path
+to the component name - see MDL-33791. However, if any existing code passes a file path
+Moodle will attempt to obtain the component name from the file path provided. Also, the
+callback class should be located in the module's locallib.php file.
+
+Example of change:
+
+This:
+
+$button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'fileid' => $file->get_id()), '/mod/assignment/locallib.php');
+
+Now becomes:
+
+$button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'fileid' => $file->get_id()), 'mod_assignment');
+
+=== 2.3 ===
+
+required changes:
+* The following methods must now be declared static for php5 compatibility:
+    - admin_config_form
+    - admin_config_validation

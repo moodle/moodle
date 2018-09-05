@@ -1,0 +1,167 @@
+/*
+ * @package   theme_essential
+ * @author    Franc Pombal
+ * @modified  Julian Ridden
+ * @modified  Gareth J Barnard, David Bezemer
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* @group Category Icons */
+@import "../fontawesome/variables";
+
+.categoryicons {
+    .course_category_tree .subcategories {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .course_category_tree .collapsible-actions {
+        display: none;
+    }
+
+    // Set the position on the frontpage.
+    .frontpage-category-names .collapsible-actions,
+    #frontpage-category-combo .collapsible-actions {
+        display: none;
+    }
+
+    // Adjust line height for tiles that include course count.
+    .frontpage-category-names.course_category_tree .category > .info > .categoryname,
+    .frontpage-category-names.course_category_tree .category.with_children > .info > .categoryname {
+        line-height: 15px;
+    }
+
+    .category-browse {
+        overflow: auto;
+        width: 100%;
+    }
+
+    // Hide icon 'collapsed' because it makes no sense here.
+    .course_category_tree {
+        .category.with_children.collapsed > .info > .categoryname,
+        .category.with_children > .info > .categoryname,
+        .category > .info > .categoryname {
+            background-image: none !important; // important for RTL version.
+            padding: 0;
+            margin: 0;
+        }
+        .category.dimmed_category {
+            border-color: @grayLight;
+            .@{fa-css-prefix} {
+                color: inherit;
+            }
+        }
+        .category[data-categoryid].dimmed_category:hover {
+            background-color: @grayLight;
+            > .info > .categoryname a {
+                background-color: @grayLight;
+            }
+        }
+        .category {
+            margin: 0 5px 10px 5px;
+            .numberofcourse {
+                background: @gray;
+                color: @white;
+                padding: 5px;
+                border-radius: 12px;
+                position: relative;
+                top: 8px;
+                text-align: center;
+                min-width: 24px;
+                font-weight: 600;
+                font-size: 1em;
+                -moz-box-shadow: 1px 1px 5px 0 #ccc;
+                -webkit-box-shadow: 1px 1px 5px 0 #ccc;
+                box-shadow: 1px 1px 5px 0 #ccc;
+                border: 2px solid @white;
+            }
+            .content {
+                display: none;
+            }
+            .info {
+                .name {
+                    padding: 0;
+                    text-align: center;
+                }
+            }
+        }
+        .category > .info,
+        .category > .info > .categoryname {
+            background-color: transparent;
+            border: 0 none;
+            text-align: center;
+            box-shadow: none;
+            margin: 0;
+            a {
+                display: block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 176px;
+                > .@{fa-css-prefix} {
+                    font-size: 140px;
+                    padding-top: 8px;
+                    width: 100%;
+                }
+                > .categoryimage {
+                    line-height: 140px;
+                    padding-top: 8px;
+                    > img {
+                        max-height: 140px;
+                    }
+                }
+                > span {
+                    font-size: 18px;
+                }
+            }
+        }
+        .category[data-categoryid] {
+            border: 1px solid @grayLightish;
+            border-radius: 5px;
+            border-bottom-width: 3px;
+        }
+        .category[data-categoryid]:hover {
+            -webkit-transition: all 0.3s ease;
+            -moz-transition: all 0.3s ease;
+            -o-transition: all 0.3s ease;
+            transition: all 0.3s ease;
+        }
+        .category[data-categoryid] > .info > .categoryname {
+            a {
+                line-height: 30px;
+            }
+            a:hover {
+                text-decoration: none;
+            }
+        }
+        .content {
+            .teachers .@{fa-css-prefix} {
+                display: inline;
+                font-size: inherit;
+            }
+        }
+    }
+
+    // Hide buttons to expand and collapse.
+    .jsenabled .course_category_tree .controls {
+        display: none;
+    }
+
+    // Clear course list with subcategory icons above.
+    .subcategories + .category-browse {
+        clear: both;
+    }
+}
+
+.categoryicons {
+    .course_category_tree {
+        .category {
+            float: left;
+            .numberofcourse {
+                right: 8px;
+                float: right;
+            }
+        }
+    }
+}
+
+/* @end */

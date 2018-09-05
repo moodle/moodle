@@ -1,0 +1,216 @@
+This files describes API changes in /mod/* - activity modules,
+information provided here is intended especially for developers.
+
+=== 3.5.2 ===
+
+* Now, when mod_<modname>_core_calendar_is_event_visible or mod_<modname>_core_calendar_provide_event_action callback functions
+  are called, the userid of the requesting user is also passed to them.
+
+=== 3.5 ===
+
+* There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR
+  compliant. Activity modules use this API to report what information they store or process regarding users, and provide
+  ability to export and delete personal data. See https://docs.moodle.org/dev/Privacy_API for guidelines on how to
+  implement the privacy API in your activity module.
+* Backup directory now can be outside of temp directory. Use make_backup_temp_directory($name) instead of
+  make_temp_directory('/backup/'.$name)
+* Modules that provide their own interactive content and call cm_info::set_content() from [MODULENAME]_cm_info_view()
+  callback should format all user input and call set_content() with parameter $isformatted=true . Otherwise
+  scripts will be cleaned on the course page in case of $CFG->forceclean=1. See example in mod_folder.
+
+=== 3.4 ===
+
+* Navigation between activities via a previous and next link was added to Boost, Clean and Bootstrapbase. This
+  was made possible by a new function core_renderer->activity_navigation(). However, there was an issue when linking
+  to the mod_resource and mod_url view.php pages where it would automatically download the file, or redirect to
+  the URL. It was noticed that this was not the case when editing the module and clicking 'Save and display' which would
+  take you to the pages without downloading the file or redirecting to a link. The reason this worked was because of the
+  hard-coded check 'if (strpos(get_local_referer(false), 'modedit.php') === false) {' in the view.php files. This check
+  has been removed in favour of an optional_param('forceview'). If you are using the above hard-coded check in your
+  plugin it is recommended to remove it and use the optional param as it will prevent the navigation from working as
+  expected.
+
+=== 3.3 ===
+
+* External functions that were returning file information now return the following additional file fields:
+  - mimetype (the file mime type)
+  - isexternalfile (if is a file reference to a external repository)
+  - repositorytype (the repository name in case is a external file)
+  Those fields are VALUE_OPTIONAL for backwards compatibility.
+* The block_course_overview has been removed and the related core module *_print_overview functions have been deprecated.
+* The block_myoverview has replaced block_course_overview to provide better information to students. To support this,
+  actions can now be attached to calendar events. Documentation for the following new API callbacks introduced in
+  MDL-55611 can be found at https://docs.moodle.org/dev/Calendar_API. The 3 new callbacks are:
+  - mod_<modname>_core_calendar_is_event_visible
+  - mod_<modname>_core_calendar_provide_event_action
+  - mod_<modname>_core_calendar_event_action_shows_item_count
+* Changes to the moodleform_mod class and its usage (MDL-58138):
+  - the get_data() method has been overriden. The implementation calls parent::get_data() and a new data_postprocessing() method
+  - new data_postprocessing() method added. Mods can override this in their mod_form subclass to modify the submit data. Previously
+    mods could only modify submitted data by overriding get_data() in the mod_form subclass. data_postprocessing() is now the way to
+    do this correctly.
+  - completion: \core_completion\manager calls the overriden mod_x_mod_form->data_postprocessing() to allow mods to modify their
+    completion data before saving the bulk completion form. If you've overriden get_data() to modify submit data for completion in
+    the past, you should now override the data_postprocessing() method in your mod_form and move your code there, so bulk completion
+    editing will be properly supported for your plugin.
+=== 3.2 ===
+
+* Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted
+* update_module_button() and core_renderer::update_module_button() have been deprecated and should not be used anymore.
+  Activity modules should not add the edit module button, the link is already available in the Administration block.
+  Themes can choose to display the link in the buttons row consistently for all module types.
+* New callback check_updates_since available. Check if the module has any update that affects the current user since the given time.
+  Please refer to mod/assign/lib.php, mod/forum/lib.php or mod/quiz/lib.php for sample code.
+
+=== 3.1 ===
+
+* Old /mod/MODULENAME/pix/icon.gif and enrol/paypal/pix/icon.gif GIF icons have been removed. Please use pix_icon
+  renderable instead.
+* Callback get_types() is deprecated, instead activity modules can define callback get_shortcuts().
+  See source code for get_module_metadata().
+
+=== 3.0 ===
+
+* Dropped support for the $module in mod/xxx/version.php files (deprecated
+  since 2.7). All activity modules must use the $plugin syntax now. See
+  https://docs.moodle.org/dev/version.php for details (MDL-43896).
+* Modules using rating component must implement a callback mod_x_rating_can_see_item_ratings(). Refer
+  to mod_forum_rating_can_see_item_ratings() for example.
+
+=== 2.9 ===
+
+* Added Grade to pass field to mod_form for activities that support grading.
+* The method moodleform_mod::add_intro_editor() used in mod_form.php form
+  definitions has been deprecated. Replace it with the new
+  moodleform_mod::standard_intro_elements() method that takes the new site
+  configuration requiremodintro into account (MDL-49101).
+
+=== 2.8 ===
+
+* Constant FEATURE_GROUPMEMBERSONLY is deprecated. Modules should remove this
+  constant from their module_supports() API function.
+* $CFG->enablegroupmembersonly no longer exists.
+
+=== 2.7 ===
+
+* modgrade form element has been redesigned and allows setting the maximum grade point higher than 100.
+* The usage of $module in mod/xxx/version.php files is now deprecated. Please use
+  $plugin instead. The support for the legacy notation will be dropped in Moodle 2.10.
+* xxx_get_view_actions() and xxx_get_post_actions() will be ignored by new logging system for
+  participation report. view_action and post_action will be detected by event's crud and edulevel.
+* The functions xxx_user_outline() and xxx_user_complete() have been removed from the majority of core modules (see MDL-41286),
+  except for those that require unique functionality. These functions are used by the outline report, but now if they no longer
+  exist, the default behaviour is chosen, which supports the legacy and standard log storages introduced in 2.7 (see MDL-41266).
+  It is highly recommended you remove these functions from your module if they are simply performing the default behaviour.
+
+=== 2.6 ===
+
+* Modules using the question bank MUST now declare their use of it with the xxx_supports()
+  flag FEATURE_USES_QUESTIONS.
+* xxx_get_types() module callback can now return subtypes that have
+  a custom help text set. Also instead of array it can now return
+  MOD_SUBTYPE_NO_CHILDREN. This is optional and still defaults to prior
+  behavior. See get_module_metadata() in course/lib.php for details.
+* shift_course_mod_dates() has been modified to accept optional mod instance id. If mod instance id is passed then
+  dates changed will happen only on specific module instance and not on all instances of that module in course.
+
+=== 2.5 ===
+
+* support for 'mod/*' filters was removed
+
+=== 2.4 ===
+
+new features:
+
+* mod/xxx/adminlib.php may now include 'plugininfo_yoursubplugintype' class definition
+  used by plugin_manager; it is recommended to store extra admin settings classes in this file
+
+optional - no changes needed:
+
+* mod_lesson_renderer::header() now accepts an additional parameter $extrapagetitle
+
+* mod/data/lib.php data_get_all_recordids() now has two new optional variables:  $selectdata and $params.
+
+=== 2.3 ===
+
+required changes in code:
+
+* define the capability mod/xxx:addinstance (and the corresponding lang string)
+  (unless your mod is a MOD_ARCHETYPE_SYSTEM).
+* xxx_pluginfile() is now given the 7th parameter (hopefully the last one) that
+  contains additional options for the file serving. The array should be re-passed
+  to send_stored_file().
+
+* most resourcelib_embed_* functions are replaced with core_media_renderer;
+  for an example, see mod/resource/locallib.php, resource_display_embed()
+
+optional - no changes needed:
+
+* add support for handling course drag and drop types - functions
+  xxx_dndupload_register() and xxx_dndupload_handle($uploadinfo) see:
+  http://docs.moodle.org/dev/Implementing_Course_drag_and_drop_upload_support_in_a_module
+
+=== 2.2 ===
+
+required changes in code:
+* fix missing parameter types in optional_param() and required_param()
+* use new optional_param_array(), required_param_array() or clean_param_array() when dealing with array parameters
+* core_text::asort() replaced by specialized core_collator::asort()
+* use new make_temp_directory() and make_cache_directory()
+
+
+=== 2.1 ===
+
+required changes in code:
+* add new support for basic restore from 1.9
+
+
+=== 2.0 ===
+
+required changes in code:
+* use new DML syntax everywhere
+  (http://docs.moodle.org/dev/DML_functions)
+* use new DDL syntax in db/upgrade.php
+  (http://docs.moodle.org/dev/DDL_functions)
+* replace defaults.php by settings.php and db/install.php
+* replace STATEMENTS section in db/install.xml with PHP code db/install.php or db/log.php
+* move post installation code from lib.php into db/install.php
+* move uninstallation code from lib.php to db/uninstall.php
+* new mandatory naming of intro and introformat table fields in module tables,
+  the presence of these fields is indicated in xxx_plugin_supports()
+* completely rewrite file handling
+  (http://docs.moodle.org/dev/File_API)
+* rewrite backup/restore
+  (not finished yet)
+* rewrite trusttext support - new db table columns needed
+* migrate all module features from mod_edit.php form to lib.php/modulename_supports() function
+* implement new gradebook support (legacy 1.8.x grading not supported anymore)
+* migrate custom resource module subtypes into separate modules,
+  necessary only for custom plugins in mod/resource/
+* use new $PAGE and $OUTPUT instead of old weblib functions
+* theme changes: move plugin styles into mod/xxx/styles.css and use new css markers for images,
+                 move all images into new mod/xxx/pix/ directory and use new outputlib api
+                 move module icon to mod/xxx/pix/icon.gif
+                 old global $THEME is fully replaced by $OUTPUT
+                 create plugin renderers
+  (http://docs.moodle.org/dev/Theme_changes_in_2.0)
+* migrate all javascript new coding style using YUI3+YUI2
+  (http://docs.moodle.org/dev/JavaScript_usage_guide)
+* remove '_utf8' from lang pack names, use new {a} syntax
+* replace helps with new 'xxx_hlp' strings
+* please note the $plugin->requires in version.php has to be bigger than 2010000000,
+  otherwise the plugin is marked as outdated and upgrade is interrupted
+
+optional - no changes needed in older code:
+* settingstree.php replaced by settings.php - just unset the $settings if you want to make custom part of settings admin tree
+* support for new mforms editor element and embedded files
+  (not finished yet)
+* portfolio support
+  (http://docs.moodle.org/dev/Portfolio_API)
+* course completion tracking support
+* new navigation features
+* new comments API
+  (http://docs.moodle.org/dev/Comments_2.0)
+* new ratings API
+  (http://docs.moodle.org/dev/Ratings_2.0)
+

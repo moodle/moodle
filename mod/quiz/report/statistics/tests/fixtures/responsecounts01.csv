@@ -1,0 +1,73 @@
+slot,randq,variant,subpart,modelresponse,actualresponse,count1,count2,count3,count4,count5,totalcount
+1,shortanswer,1,1,frog,,0,0,0,0,0,0
+1,shortanswer,1,1,toad,toad,2,1,1,0,0,4
+1,shortanswer,1,1,*,butterfly,1,0,0,0,0,1
+1,shortanswer,1,1,*,dog,1,1,0,0,0,2
+1,shortanswer,1,1,*,chicken,0,0,1,0,0,1
+1,shortanswer,1,1,*,Tod,1,0,0,0,0,1
+1,shortanswer,1,1,*,Tony,0,1,0,0,0,1
+1,shortanswer,1,1,*,Sharon,0,0,1,0,0,1
+1,shortanswer,1,1,*,snake,1,1,0,0,0,2
+1,shortanswer,1,1,*,snakes,0,0,1,0,0,1
+1,shortanswer,1,1,*,Snakes,0,0,0,1,0,1
+1,shortanswer,1,1,*,SnakeS,0,0,0,0,1,1
+1,shortanswer,1,1,*,goat,1,0,0,0,0,1
+1,shortanswer,1,1,*,"Mexican burrowing caecilian",0,1,1,0,0,2
+1,shortanswer,1,1,*,newt,0,0,0,1,0,1
+1,shortanswer,1,1,*,human,0,0,0,0,1,1
+1,shortanswer,1,1,*,eggs,1,0,0,0,0,1
+1,shortanswer,1,1,"[No response]",,0,0,0,0,0,0
+1,numerical,1,1,3.14 (3.14..3.14),3.14,2,0,0,0,0,2
+1,numerical,1,1,3.142 (3.142..3.142),,0,0,0,0,0,0
+1,numerical,1,1,3.1 (3.1..3.1),3.1,1,0,0,0,0,1
+1,numerical,1,1,3 (3..3),,0,0,0,0,0,0
+1,numerical,1,1,*,2,1,0,0,0,0,1
+1,numerical,1,1,*,20,0,1,0,0,0,1
+1,numerical,1,1,*,34,0,0,1,0,0,1
+1,numerical,1,1,[No response],,0,0,0,0,0,0
+2,,1,1,{a} + {b} (±0.01 Relative),9.9,0,0,0,0,1,1
+2,,1,1,[Did not match any answer],23,1,0,0,0,0,1
+2,,1,1,[Did not match any answer],22,0,1,0,0,0,1
+2,,1,1,[Did not match any answer],21,0,0,1,0,0,1
+2,,1,1,[Did not match any answer],9,0,0,0,1,0,1
+2,,1,1,[No response],,0,0,0,0,0,0
+2,,2,1,{a} + {b} (±0.01 Relative),8.5,1,0,0,0,1,2
+2,,2,1,"[Did not match any answer]",19.4,1,1,0,0,0,2
+2,,2,1,[Did not match any answer],4.5,1,0,0,0,0,1
+2,,2,1,"[Did not match any answer]",8,1,1,1,1,0,4
+2,,2,1,[No response],,0,0,0,0,0,0
+2,,3,1,{a} + {b} (±0.01 Relative),3.3,0,1,0,0,0,1
+2,,3,1,[Did not match any answer],19.4,1,0,0,0,0,1
+2,,3,1,[No response],,0,0,0,0,0,0
+2,,4,1,{a} + {b} (±0.01 Relative),19.4,2,0,0,0,0,2
+2,,4,1,{a} + {b} (±0.01 Relative),19.3,1,0,0,0,0,1
+2,,4,1,[Did not match any answer],,0,0,0,0,0,0
+2,,4,1,[No response],,0,0,0,0,0,0
+2,,6,1,"{a} + {b} (±0.01 Relative)",9.4,1,0,0,0,0,1
+2,,6,1,"[Did not match any answer]",,0,0,0,0,0,0
+2,,6,1,"[No response]",,0,0,0,0,0,0
+2,,9,1,"{a} + {b} (±0.01 Relative)",,0,0,0,0,0,0
+2,,9,1,"[Did not match any answer]",7,1,0,0,0,0,1
+2,,9,1,"[No response]",,0,0,0,0,0,0
+2,,10,1,"{a} + {b} (±0.01 Relative)",,0,0,0,0,0,0
+2,,10,1,"[Did not match any answer]",555,1,0,0,0,0,1
+2,,10,1,"[Did not match any answer]",44,0,1,0,0,0,1
+2,,10,1,"[Did not match any answer]",22,0,0,1,0,0,1
+2,,10,1,"[Did not match any answer]",11,0,0,0,1,0,1
+2,,10,1,"[Did not match any answer]",12,0,0,0,0,1,1
+2,,10,1,"[No response]",,0,0,0,0,0,0
+3,,1,1,"frog: amphibian",amphibian,8,2,3,3,0,16
+3,,1,1,frog: mammal,mammal,0,0,0,1,1,2
+3,,1,1,"frog: insect",insect,4,4,2,1,0,11
+3,,1,1,[No response],,0,0,0,0,0,0
+3,,1,2,"cat: amphibian",amphibian,8,1,2,1,1,13
+3,,1,2,cat: mammal,mammal,0,1,1,2,0,4
+3,,1,2,"cat: insect",insect,4,4,2,2,0,12
+3,,1,2,[No response],,0,0,0,0,0,0
+3,,1,3,"newt: amphibian",amphibian,6,4,4,3,1,18
+3,,1,3,"newt: mammal",mammal,3,0,1,2,0,6
+3,,1,3,newt: insect,insect,3,2,0,0,0,5
+3,,1,3,[No response],,0,0,0,0,0,0
+4,,1,1,False,,3,0,0,0,0,3
+4,,1,1,True,,9,0,0,0,0,9
+4,,1,1,[No response],,0,0,0,0,0,0

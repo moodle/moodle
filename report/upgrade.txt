@@ -1,0 +1,46 @@
+This files describes API changes in /report/* - plugins,
+information provided here is intended especially for developers.
+
+=== 3.2 ===
+* Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted
+* The report_log_print_graph signature and behaviour has changed to generate charts using
+  the new Chart API. The third argument has been renamed to $typeormode and it accepts
+  the type (usercourse.png, userday.png) or the mode (today, all).
+
+=== 2.7 ===
+* How to migrate reports accessing table 'log':
+  http://docs.moodle.org/dev/Migrating_log_access_in_reports
+* All reports that use logstores must implement a callback report_reportname_supports_logstore($storeinstance) in lib.php of the
+  report. Refer MDL-44596 for details.
+
+=== 2.2 ===
+
+API changes:
+* reports were moved from /admin/report/ to /report/
+* new support for report settings
+
+
+How to migrate existing admin reports:
+# move all files to new /report/yourplugin/ location
+# if settings.php exists add $settings=null;
+# if settings.php does not exist create it and link the report, index.php is not linked automatically any more
+# update require('../../config.php'); - remove one ../
+# update all others includes and requires
+# update all links to report pages by removing /admin/ or /$CFG->admin/
+# add language pack with at least 'pluginname' string
+# update CSS selectors
+
+How to migrate existing course reports (optional):
+# move all files to new /report/yourplugin/ location
+# update require('../../config.php'); - remove one ../
+# update all others includes and requires
+# update all links to report pages by removing /course/ part
+# update all language strings (use 'report_yourplugin' instead of 'coursereport_yourplugin') - use AMOS hints in commit message
+# update all capability names
+# grep the plugin codebase and look for any remaining 'coursereport' occurrences
+# add new navigation hooks in lib.php - ex: report_stats_extend_navigation_course(), report_stats_extend_navigation_user()
+# add new page types in lib.php
+# create db/install.php migration script - delete old settings and capabilities (see converted plugins for examples)
+# update CSS selectors
+
+See http://docs.moodle.org/dev/General_report_plugins for more details and explanation.

@@ -1,0 +1,6 @@
+name,idnumber,description,context
+Specify context as id (system),cohortid8,,1
+Specify context as name (system),cohortid9,,System
+Specify context as category name only,cohortid10,,Cat 1
+Specify context as category path,cohortid12,,Cat 1 / Cat 3
+Specify context as category idnumber,cohortid13,,CAT2

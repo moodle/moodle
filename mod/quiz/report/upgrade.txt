@@ -1,0 +1,69 @@
+This files describes API changes for quiz report plugins.
+
+Overview of this plugin type at http://docs.moodle.org/dev/Quiz_reports
+
+=== 3.2 ===
+
+* A code refactoring based on new sql functions in MDL-31243 and removing
+get_users_by_capability from the quiz reports in MDL-27072. The class
+quiz_attempts_report is now initialised to return \core\dml\sql_join (joins,
+wheres, params) rather than arrays of userids. This allows the use of joins
+in quiz report queries and is very important when there
+are larger numbers of enrolled users. The signature of many quiz report
+methods now includes '$studentsjoins', rather than '$students' and similar
+for '$groupstudentsjoins', '$allowedjoins' and '$usersjoins'. For clear
+examples of the use of these changes please see attemptsreport_table.php
+base_sql() or almost any function in overview/report.php. The protected
+function quiz_attempts_report::load_relevant_students is deprecated,
+please use quiz_attempts_report::get_students_joins() instead.
+
+=== 2.6 ===
+
+* Improving the display page and heading levels to have a proper nesting.
+We are reducing the amount of white spaces for the top report by making
+'separate group' options and attempts to be displayed inline.
+In grading report, we are changing 'no questions' from using heading to
+notification message. (MDL-41615)
+
+=== 2.3 ===
+
+* Support for the old way of doing cron in a separate cron.php file has been removed.
+Instead, you need a lib.php file inside the plugin with a cron function
+called quiz_myreportname_cron(). The statistics report is an example of how
+it should be done.
+
+* There was a big refactor of the quiz reports, in issues MDL-32300, MDL-32322 and MDL-3030.
+It is difficult to explain the changes. Probably the best way to understand what
+happened is to look at
+    git log mod/quiz/report/overview
+    git log mod/quiz/report/responses
+and so on. Here are some notes on a few of the changes:
+
+The class quiz_attempt_report was renamed to quiz_attempts_report (with an extra s).
+
+Some globally defined constants with the prefix QUIZ_REPORT_ATTEMPTS_ moved into
+the quiz_attempts_report class. Specifically
+
+quiz_attempts_report::ALL_WITH         replaces QUIZ_REPORT_ATTEMPTS_ALL
+quiz_attempts_report::ENROLLED_ALL     replaces QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS
+quiz_attempts_report::ENROLLED_WITH    replaces QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH
+quiz_attempts_report::ENROLLED_WITHOUT replaces QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO
+
+Your if you have a table class, it needs to be renamed like
+quiz_report_myreportname_table -> quiz_myreportname_table. That is, all the
+class names in your plugin should start with the frankenstyle plugin name
+quiz_myreportname.
+
+
+=== 2.2 ===
+
+* Plugins should be converted to implement cron in the standard way. In lib.php,
+define a
+function quiz_myreportname_cron() {};
+This replaces the old way of having a separate cron.php file. Also, the cron
+frequency should be defined in version.php, not in the quiz_reports table.
+
+
+=== earlier versions ===
+
+* ... API changes were not documented properly. Sorry. (There weren't many!)

@@ -1,0 +1,105 @@
+This files describes API changes in /repository/ repository system,
+information provided here is intended especially for developers. Full
+details of the repository API are available on Moodle docs:
+http://docs.moodle.org/dev/Repository_API
+
+=== 3.4 ===
+Repositories should no longer directly call file_system#add_file_to_pool or file_system#add_string_to_pool
+instead they should call the stored_file method, set_synchronised_content_from_file or set_synchronised_content_from_string
+
+=== 3.3 ===
+The skydrive repository is deprecated - please migrate to the newer onedrive repository.
+
+=== 3.2 ===
+
+* The method repository::uses_post_requests() has been deprecated and must not be used anymore.
+* The alfresco repository has been moved to the plugins database. It was
+  using an older version of the Alfresco SDK which is not compatible with recent versions of Alfresco.
+
+=== 3.1 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-51580 for more info:
+    - repository_picasa_admin_upgrade_notification()
+    - repository_googledocs_admin_upgrade_notification()
+    - repository_boxnet_admin_upgrade_notification()
+    - repository_alfresco_admin_security_key_notice()
+* The prepare_file() function will now return a file in a per-request directory which will
+  be automatically cleaned at the end of the request.
+  No modifications should be required as a result of this change.
+
+=== 2.8 ===
+
+* Repositories working with Moodle files must replace serialize() with json_encode() in the
+  attribute 'source' returned by get_listing(). If repository overrides file_is_accessible(),
+  get_file_reference() or get_file_source_info() they need to be changed too. See MDL-45616.
+
+=== 2.6 ===
+
+* get_option() now always return null when the first parameter ($config) is not empty, and
+  no value was found for this $config. Previously this could sometimes return an empty array().
+
+* The function repository_attach_id() was removed, it was never used and was not useful.
+
+* New functions send_relative_file() and supports_relative_file() to allow sending relative linked
+  files - see filesystem repository for example.
+
+* DB fields files.referencelifetime, files.referencelastsync and files_reference.lifetime
+  are deleted. The last synchronization time is stored only in files_reference.lastsync
+  and lifetime is not stored in DB any more, each repository must decide for itself
+  when to synchronize the file in function repository::sync_reference().
+
+* The following methods in class repository are deprecated: sync_external_file(),
+  get_file_by_reference(), get_reference_file_lifetime(), sync_individual_file() and
+  reset_caches(). Instead there is one method repository::sync_reference() - this simplifies
+  the repositories API and reduces the number of DB queries.
+
+* Deprecated const GETFILE_TIMEOUT, SYNCFILE_TIMEOUT and SYNCIMAGE_TIMEOUT and replaced them with
+  config variables repositorygetfiletimeout, repositorysyncfiletimeout and repositorysyncimagetimeout.
+
+=== 2.5 ===
+
+* repository::append_suffix() has been deprecated, use repository::get_unused_filename() if you need
+  to get a file name which has not yet been used in the draft area.
+
+* contains_private_data() is a new method to determine if a user 'logged in as' another user
+  can access the content of the repository. The default is to return True (no access).
+
+* get_typename() returns the type of repository: dropbox, googledocs, etc...
+
+* can_be_edited_by_user() encapsulates all the tests to make sure that the current user
+  has the rights to edit the instance of this repository.
+
+* repository::get_instances() (used by filepicker and texteditor to populate the
+  list of available repositories) now calls repository constructor specifying the
+  context where repository will be used.
+  When checking permissions inside repository class use:
+  $this->instance->contextid - to find the context where repository was created;
+  $this->context - to find the current context where repository is used.
+  This also means that the same repository instance may now have different names when
+  called from different contexts.
+  Avoid calling repository::get_instance(), use repository::get_repository_by_id() instead.
+
+=== 2.4 ===
+
+* copy_to_area() can receive a new parameter called $areamaxbytes which controls the maximum
+  size of the area the files will be stored in.
+
+* the repositories using the upload() method should implement a check for $areamaxbytes,
+  see repository/upload/lib.php upload() and process_upload() for an example on how handling it.
+
+=== 2.3 ===
+
+* instance_config_form() must now be declared static for php5.4 compatibility.
+
+* get_listing() and search() file metadata details are now now more prominently
+  displayed in the interface. Dates and timestamos are now able to be sorted on in
+  the filepicker interface so plugin authors are asked to ensure:
+    - Dates are defined as UNIX timestamps
+    - Filesize is an integer in bytes
+
+* It is recomended to define function get_file_source_info() to provide more rich
+  infromation about the source of a file.
+
+* The API was extended to allow repositories can now support external references, please
+  see http://docs.moodle.org/dev/Repository_API for further details.

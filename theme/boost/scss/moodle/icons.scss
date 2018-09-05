@@ -1,0 +1,69 @@
+// The only class we need for icons is .icon
+// Standardize the size, padding and alignment for all icons in Moodle.
+
+// Size of default icons.
+$icon-width: 16px;
+$icon-height: 16px;
+// Size of big icons.
+$icon-big-width: 64px;
+$icon-big-height: 64px;
+
+.icon {
+    font-size: $icon-height;
+    width: $icon-width;
+    height: $icon-height;
+    // vertical-align: middle;
+    margin: 0;
+    padding: 0;
+    box-sizing: content-box;
+    margin-right: 0.5rem;
+
+    &.spacer {
+        margin-right: 0;
+    }
+
+    &.iconsize-big {
+        width: $icon-big-width;
+        height: $icon-big-height;
+        font-size: $icon-big-height;
+    }
+}
+
+.navbar-dark a .icon {
+    color: $navbar-dark-color !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.action-menu-item a:first-of-type > .icon {
+    margin-left: 0.5rem;
+}
+
+// YUI 2 Tree View icons must not have a margin left.
+.ygtvcell .icon {
+    margin-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// In the navigation, tree icons should not have margins.
+.block_navigation,
+.block_settings {
+    .tree_item .icon {
+        margin-left: 0;
+    }
+}
+
+[data-action=toggle-drawer] .icon {
+    margin: 0;
+}
+
+// Apply in special cases where the default icons styles does not work properly. Eg file picker buttons.
+.icon-no-spacing a > .icon {
+    margin: 0;
+}
+
+.icon-large > .icon {
+    width: ($icon-width * 2);
+    height: ($icon-height * 2);
+}
+
+.helplink .icon {
+    margin-left: 0.5rem;
+}

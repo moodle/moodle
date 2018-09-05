@@ -1,0 +1,66 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/notification_preferences_processor
+
+    The list of notifications for the message preferences page
+
+    Classes required for JS:
+    * None
+
+    Data attibutes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * displayname   The display name for the processor
+    * name          The name of the processor
+    * hassettings   If the processor has settings to configure
+    * userid        The current user id
+    * contextid     The current context id
+
+    Example context (json):
+    {
+        "displayname": "Popup notification",
+        "name": "popup",
+        "hassettings": 1,
+        "userid": 3,
+        "contextid": 3
+    }
+}}
+<th {{^userconfigured}}class="unconfigured"{{/userconfigured}} data-processor-name="{{name}}">
+    {{#hassettings}}
+        <a href="#"
+            data-processor-setting
+            data-user-id="{{userid}}"
+            data-context-id="{{contextid}}"
+            data-name="{{name}}">
+
+            {{< core/hover_tooltip }}
+                {{$anchor}}
+                    <span class="config-warning" title="{{#str}} requiresconfiguration, message {{/str}}">
+                        {{#pix}} i/risk_xss, core {{/pix}}
+                    </span>
+                {{/anchor}}
+                {{$tooltip}}{{#str}} requiresconfiguration, message {{/str}}{{/tooltip}}
+            {{/ core/hover_tooltip }}
+            {{displayname}} {{#pix}} i/settings {{/pix}}
+        </a>
+    {{/hassettings}}
+    {{^hassettings}}
+        {{displayname}}
+    {{/hassettings}}
+</th>

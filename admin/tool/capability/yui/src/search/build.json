@@ -1,0 +1,10 @@
+{
+    "name": "moodle-tool_capability-search",
+    "builds": {
+        "moodle-tool_capability-search": {
+            "jsfiles": [
+                "search.js"
+            ]
+        }
+    }
+}

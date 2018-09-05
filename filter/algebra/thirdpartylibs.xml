@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+      <location>AlgParser.pm</location>
+      <name>WeBWorK</name>
+      <license>GPL</license>
+      <version>2.4.9+</version>
+      <licenseversion>2.0+</licenseversion>
+  </library>
+</libraries>

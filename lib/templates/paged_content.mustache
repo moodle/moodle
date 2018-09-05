@@ -1,0 +1,81 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/paged_content
+
+    This template renders each of the content regions for a paginated
+    content section.
+
+    Example context (json):
+    {
+        "pagingbar": {
+            "itemsperpage": 1,
+            "previous": true,
+            "next": true,
+            "first": true,
+            "last": true,
+            "pages": [
+                {
+                    "page": "1",
+                    "active": true
+                },
+                {
+                    "url": "#",
+                    "page": "2"
+                }
+            ]
+        },
+        "pages": [
+            {
+                "active": true,
+                "page": 1,
+                "content": "<p>Some page 1 content</p>"
+            },
+            {
+                "page": 2,
+                "content": "<p>Some page 2 content</p>"
+            }
+        ]
+    }
+}}
+<div id="paged-content-container-{{uniqid}}" data-region="paged-content-container">
+    {{#pagingbar}}
+        {{> core/paged_content_paging_bar }}
+    {{/pagingbar}}
+    {{#pagingdropdown}}
+        {{> core/paged_content_paging_dropdown }}
+    {{/pagingdropdown}}
+    {{> core/paged_content_pages }}
+</div>
+{{^skipjs}}
+{{#js}}
+require(
+[
+    'jquery',
+    'core/paged_content_pages'
+],
+function(
+    $,
+    PagedContent
+) {
+    var container = $("#paged-content-container-{{uniqid}}");
+    var pagingContent = container.find(PagedContent.rootSelector);
+
+    PagedContent.init(pagingContent, container);
+});
+{{/js}}
+{{/skipjs}}

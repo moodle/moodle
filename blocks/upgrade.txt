@@ -1,0 +1,82 @@
+This files describes API changes in /blocks/* - activity modules,
+information provided here is intended especially for developers.
+
+=== 3.4 ===
+
+* The block_instances table now contains fields timecreated and timemodified. If third-party code
+  creates or updates these rows (without using the standard API), it should be modified to set
+  these fields as appropriate.
+* Blocks can now be included in Moodle global search, with some limitations (at present, the search
+  works only for blocks located directly on course pages or site home page). See the HTML block for
+  an example.
+* Block block_messages is no longer a part of core.
+
+=== 3.3 ===
+
+* block_manager::get_required_by_theme_block_types() is no longer static.
+* The plugin block_course_overview has been removed from core and is being replaced by block_myoverview.
+  During the upgrade process the block_course_overview block will be uninstalled and all its settings will be deleted.
+  If you wish to keep the block_course_overview block and its settings, download it from moodle.org and put it back in
+  the blocks/ directory BEFORE UPGRADING.
+
+=== 3.1 ===
+
+* The collapsed class was removed from the navigation block to make it compatible with aria.
+* New aria attributes were added on the navigation block [aria-expanded="false"].
+* The tree JS handling were moved from YUI to AMD module (Jquery).
+
+=== 2.9 ===
+
+* The obsolete method preferred_width() was removed (it was not doing anything)
+* Deprecated block_base::config_save as is not called anywhere and should not be used.
+* Added instance_copy() function to the block_base class. This function allows for block
+  specific data to be copied when a block is copied.
+
+=== 2.8 ===
+
+* The instance_config_print() function was removed. It was deprecated in
+  Moodle 2.0, but without debugging notices. Since it was no longer a part
+  of the code path, debugging notices would not have been displayed.
+* Deprecated functions were removed from the block_base class:
+** _print_block()
+** _print_shadow()
+** _title_html()
+** _add_edit_controls()
+** config_print()
+
+=== 2.6 ===
+
+* Deprecated /admin/block.php was removed, make sure blocks are using settings.php instead.
+
+=== 2.4 ===
+
+Created new capability 'blocks/xxx:myaddinstance' that determines whether a user can add
+a specific block to their My Home page. This capability was only defined for blocks where
+the applicable_formats function does not include "'my' => false" in the returned array,
+allowing it be added to the My Home page.
+
+=== 2.3 ===
+
+required changes in code:
+* block_xxx_pluginfile() is now given the 7th parameter (hopefully the last one) that
+  contains additional options for the file serving. The array should be re-passed
+  to send_stored_file().
+
+=== 2.0 ===
+
+required changes in code:
+* use new DML syntax everywhere
+* use new DDL syntax in db/upgrade.php
+* replace defaults.php by settings.php and db/install.php
+* replace STATEMENTS section in db/install.xml by db/install.php
+* move post instalation code from install() method into db/install.php
+* completely rewrite file handling
+* rewrite backup/restore
+* theme changes: move plugin styles into blocks/xxx/styles.css and use new css markers for images,
+                 move all images into new blocks/xxx/pix/ directory and use new outputlib api
+                 old global $THEME is fully replaced by $OUTPUT
+* remove '_utf8' from language pack names, use new {$a} syntax in language packs
+* use 'pluginname' lang pack identifier instead of 'blockname'
+* move cron and version number into standard version.php
+* removed support for old config_global.html, use settings.php
+

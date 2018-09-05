@@ -1,0 +1,58 @@
+/* @group Fixes */
+
+// XML DB Editor - Issue #90.
+a[name="lastused"] {
+    padding-top: 50px;
+}
+
+// Overlays - Issues #131 & #388.
+.yui3-overlay,
+.user-enroller-panel {
+    z-index: 300;
+}
+
+// Fix opacity for hidden block menu - MDL-42634
+.editing .block.invisible {
+    .opacity(100);
+    background: rgba(255, 255, 255, 0.4);
+}
+
+// Fix for image height in Moodle 2.5
+.path-mod-feedback .generalbox div table tbody img {
+    height: 35px;
+}
+
+// Solve overflowing table issue: https://moodle.org/mod/forum/discuss.php?d=279883 - related to: https://moodle.org/mod/forum/discuss.php?d=274915 - which might be too - code comes from: https://github.com/gjb2048/moodle-theme_shoehorn/issues/5
+table {
+    th,
+    td {
+        word-wrap: break-word;
+    }
+}
+
+// Add in when move to BS3.
+//table.flexible, .generaltable {
+//max-width: 100%;
+//}
+
+fieldset {
+    min-width: 0;
+}
+
+// https://gist.github.com/larrybotha/7881691 - ish!
+body.ie {
+    img.defaultuserpic {
+        height: 100%;
+    }
+}
+
+audio {
+    max-width: 100%;
+}
+
+// MDL-55185.
+img[style*="margin: 0 .5em;"] {
+    margin: 0 !important;
+}
+
+/* @end */

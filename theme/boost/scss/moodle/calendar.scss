@@ -1,0 +1,429 @@
+/* calendar.less */
+
+// Calendar colour variables defined.
+$calendarEventCategoryColor: #d8bfd8 !default; // Pale purple.
+$calendarEventCourseColor: #ffd3bd !default; // Pale red.
+$calendarEventGlobalColor: #d6f8cd !default; // Pale green.
+$calendarEventGroupColor: #fee7ae !default; // Pale yellow.
+$calendarEventUserColor: #dce7ec !default; // Pale blue.
+
+// Calendar event background colours defined.
+.calendar_event_category {
+    background-color: $calendarEventCategoryColor;
+}
+.calendar_event_course {
+    background-color: $calendarEventCourseColor;
+}
+
+.calendar_event_site {
+    background-color: $calendarEventGlobalColor;
+}
+
+.calendar_event_group {
+    background-color: $calendarEventGroupColor;
+}
+
+.calendar_event_user {
+    background-color: $calendarEventUserColor;
+}
+
+// Calendar restyling.
+.path-calendar {
+    .calendartable {
+        width: 100%;
+        table-layout: fixed;
+
+        th,
+        td {
+            width: 14%;
+            vertical-align: top;
+            text-align: center;
+            border: 0;
+        }
+    }
+
+    .calendar-controls {
+        .previous,
+        .next,
+        .current {
+            display: block;
+            float: left;
+            width: 12%;
+        }
+
+        .previous {
+            text-align: left;
+            border: 1px solid transparent;
+        }
+
+        .current {
+            text-align: center;
+            width: 76%;
+        }
+
+        .next {
+            text-align: right;
+            border: 1px solid transparent;
+        }
+
+        .drop-target {
+            box-sizing: border-box;
+            border: 1px dashed $brand-primary;
+        }
+    }
+
+    .filters {
+        table {
+            border-collapse: separate;
+            border-spacing: 2px;
+            width: 100%;
+        }
+    }
+
+    .maincalendar {
+        vertical-align: top;
+        padding: 0;
+
+        .bottom {
+            text-align: center;
+            padding: 5px 0 0 0;
+        }
+
+        .heightcontainer {
+            height: 100%;
+            position: relative;
+        }
+
+        .calendarmonth {
+            width: 98%;
+            margin: 10px auto;
+
+            ul {
+                margin: 0;
+                padding: 0;
+
+                li {
+                    list-style-type: none;
+
+                    > a {
+                        @include text-truncate;
+                        max-width: 100%;
+                        display: inline-block;
+
+                        &:hover {
+                            text-decoration: $link-decoration;
+
+                            .eventname {
+                                text-decoration: $link-hover-decoration;
+                            }
+                        }
+                    }
+
+                    .icon {
+                        margin-left: 0.25em;
+                        margin-right: 0.25em;
+                        vertical-align: initial;
+                    }
+
+                    .badge {
+                        &.badge-circle {
+                            width: 12px;
+                            height: 12px;
+                            border-radius: 6px;
+                            vertical-align: middle;
+
+                            &.calendar_event_category {
+                                background-color: $calendarEventCategoryColor;
+                            }
+                            &.calendar_event_course {
+                                background-color: $calendarEventCourseColor;
+                            }
+
+                            &.calendar_event_site {
+                                background-color: $calendarEventGlobalColor;
+                            }
+
+                            &.calendar_event_group {
+                                background-color: $calendarEventGroupColor;
+                            }
+
+                            &.calendar_event_user {
+                                background-color: $calendarEventUserColor;
+                            }
+                        }
+                    }
+                }
+            }
+
+            td {
+                height: 5em;
+            }
+
+            .clickable:hover {
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
+            }
+        }
+
+        .calendar-controls {
+            .previous,
+            .next {
+                width: 30%;
+            }
+
+            .current {
+                width: 39.95%;
+            }
+        }
+
+        .controls {
+            width: 98%;
+            margin: 10px auto;
+        }
+
+        .calendar_event_category,
+        .calendar_event_course,
+        .calendar_event_site,
+        .calendar_event_group,
+        .calendar_event_user {
+            &:hover {
+                a {
+                    color: $link-hover-color;
+                    text-decoration: $link-hover-decoration;
+                }
+            }
+        }
+
+        .calendar_event_category {
+            border-color: $calendarEventCategoryColor;
+        }
+
+        .calendar_event_course {
+            border-color: $calendarEventCourseColor;
+        }
+
+        .calendar_event_site {
+            border-color: $calendarEventGlobalColor;
+        }
+
+        .calendar_event_group {
+            border-color: $calendarEventGroupColor;
+        }
+
+        .calendar_event_user {
+            border-color: $calendarEventUserColor;
+        }
+
+        .calendar-controls {
+            .current {
+                @extend .h2;
+            }
+        }
+
+        .calendartable {
+            td,
+            li {
+                padding: 0 4px 4px 4px;
+            }
+
+            li {
+                text-align: left;
+            }
+        }
+
+        .header {
+            overflow: hidden;
+
+            .buttons {
+                float: right;
+            }
+        }
+
+        .event .card-header img {
+            vertical-align: baseline;
+        }
+
+    }
+}
+
+// Calendar export.
+#page-calendar-export {
+    .indent {
+        padding-left: 20px;
+    }
+}
+
+// Block minicalendar.
+.block {
+    .minicalendar {
+        max-width: 280px;
+        margin: 0 auto;
+        width: 100%;
+
+        th,
+        td {
+            padding: 2px;
+            font-size: 0.8em;
+            text-align: center;
+        }
+
+        td {
+            &.weekend {
+                @extend .text-muted;
+            }
+
+            a {
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
+
+            &.duration_global {
+                border-top: 1px solid $calendarEventGlobalColor;
+                border-bottom: 1px solid $calendarEventGlobalColor;
+
+                &.duration_finish {
+                    background-color: $calendarEventGlobalColor;
+                }
+            }
+
+            &.duration_category {
+                border-top: 1px solid $calendarEventCategoryColor;
+                border-bottom: 1px solid $calendarEventCategoryColor;
+
+                &.duration_finish {
+                    background-color: $calendarEventCategoryColor;
+                }
+            }
+
+            &.duration_course {
+                border-top: 1px solid $calendarEventCourseColor;
+                border-bottom: 1px solid $calendarEventCourseColor;
+
+                &.duration_finish {
+                    background-color: $calendarEventCourseColor;
+                }
+            }
+
+            &.duration_group {
+                border-top: 1px solid $calendarEventGroupColor;
+                border-bottom: 1px solid $calendarEventGroupColor;
+
+                &.duration_finish {
+                    background-color: $calendarEventGroupColor;
+                }
+            }
+
+            &.duration_user {
+                border-top: 1px solid $calendarEventUserColor;
+                border-bottom: 1px solid $calendarEventUserColor;
+
+                &.duration_finish {
+                    background-color: $calendarEventUserColor;
+                }
+            }
+        }
+
+        caption {
+            font-size: inherit;
+            font-weight: inherit;
+            line-height: inherit;
+            text-align: center;
+        }
+    }
+
+    .calendar-controls {
+        .previous,
+        .current,
+        .next {
+            display: block;
+            float: left;
+        }
+
+        .previous {
+            text-align: left;
+            width: 12%;
+        }
+
+        .current {
+            text-align: center;
+            width: 76%;
+        }
+
+        .next {
+            text-align: right;
+            width: 12%;
+        }
+    }
+
+    .calendar_filters {
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 0.2em;
+
+            span {
+                img {
+                    padding: 0 0.2em;
+                    margin: 0;
+                }
+            }
+            .icon {
+                vertical-align: initial;
+                margin: 0 0.1rem 0 0.4rem;
+            }
+
+            > a {
+                &:hover {
+                    text-decoration: $link-decoration;
+
+                    .eventname {
+                        text-decoration: $link-hover-decoration;
+                    }
+                }
+            }
+        }
+    }
+
+    .content {
+        h3 {
+            &.eventskey {
+                margin-top: 0.5em;
+            }
+        }
+    }
+}
+
+/* Display month name above the calendar */
+table.calendartable caption {
+    caption-side: top;
+}
+
+@media (min-width: 768px) {
+    #page-calender-view {
+        .container-fluid {
+            min-width: 1024px;
+        }
+    }
+}
+
+.calendarwrapper {
+    position: relative;
+}
+
+.day-popover-content {
+    &:empty + .day-popover-alternate {
+        display: block;
+    }
+}
+
+.summary-modal-container {
+    .description-content {
+        > p {
+            margin: 0;
+        }
+    }
+}

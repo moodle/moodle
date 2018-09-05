@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<activity id="1" moduleid="5" modulename="glossary" contextid="26">
+  <glossary id="1">
+    <name>One glossary</name>
+    <intro>&lt;p&gt;One simple glossary to test backup &amp;amp; restore. Here it's the standard image:&lt;/p&gt;
+&lt;p&gt;&lt;img src="@@PLUGINFILE@@/88_31.png" alt="pwd by moodle" width="88" height="31" /&gt;&lt;/p&gt;</intro>
+    <allowduplicatedentries>0</allowduplicatedentries>
+    <displayformat>dictionary</displayformat>
+    <mainglossary>0</mainglossary>
+    <showspecial>1</showspecial>
+    <showalphabet>1</showalphabet>
+    <showall>1</showall>
+    <allowcomments>0</allowcomments>
+    <allowprintview>1</allowprintview>
+    <usedynalink>1</usedynalink>
+    <defaultapproval>1</defaultapproval>
+    <globalglossary>0</globalglossary>
+    <entbypage>10</entbypage>
+    <editalways>0</editalways>
+    <rsstype>0</rsstype>
+    <rssarticles>0</rssarticles>
+    <assessed>1</assessed>
+    <assesstimestart>0</assesstimestart>
+    <assesstimefinish>0</assesstimefinish>
+    <scale>10</scale>
+    <timecreated>1275638215</timecreated>
+    <timemodified>1275639747</timemodified>
+    <entries>
+      <entry id="1">
+        <userid>2</userid>
+        <concept>dog</concept>
+        <definition>&lt;p&gt;Traditional enemies of cats&lt;/p&gt;</definition>
+        <definitionformat>1</definitionformat>
+        <definitiontrust>0</definitiontrust>
+        <attachment></attachment>
+        <timecreated>1275638279</timecreated>
+        <timemodified>1275638279</timemodified>
+        <teacherentry>1</teacherentry>
+        <sourceglossaryid>0</sourceglossaryid>
+        <usedynalink>1</usedynalink>
+        <casesensitive>0</casesensitive>
+        <fullmatch>0</fullmatch>
+        <approved>1</approved>
+        <aliases>
+          <alias id="1">
+            <alias_text>dogs</alias_text>
+          </alias>
+        </aliases>
+        <ratings>
+          <rating id="2">
+            <scaleid>10</scaleid>
+            <value>6</value>
+            <userid>5</userid>
+            <timecreated>1275639785</timecreated>
+            <timemodified>1275639797</timemodified>
+          </rating>
+        </ratings>
+      </entry>
+      <entry id="2">
+        <userid>2</userid>
+        <concept>cat</concept>
+        <definition>&lt;p&gt;traditional enemies of dogs&lt;/p&gt;</definition>
+        <definitionformat>1</definitionformat>
+        <definitiontrust>0</definitiontrust>
+        <attachment></attachment>
+        <timecreated>1275638304</timecreated>
+        <timemodified>1275638304</timemodified>
+        <teacherentry>1</teacherentry>
+        <sourceglossaryid>0</sourceglossaryid>
+        <usedynalink>1</usedynalink>
+        <casesensitive>0</casesensitive>
+        <fullmatch>0</fullmatch>
+        <approved>1</approved>
+        <aliases>
+          <alias id="2">
+            <alias_text>cats</alias_text>
+          </alias>
+          <alias id="3">
+            <alias_text>felines</alias_text>
+          </alias>
+        </aliases>
+        <ratings>
+          <rating id="1">
+            <scaleid>10</scaleid>
+            <value>5</value>
+            <userid>5</userid>
+            <timecreated>1275639779</timecreated>
+            <timemodified>1275639779</timemodified>
+          </rating>
+        </ratings>
+      </entry>
+    </entries>
+    <categories>
+    </categories>
+    <onetest>
+      <name>1</name>
+      <value>1</value>
+    </onetest>
+    <onetest>
+      <name>2</name>
+      <value>2</value>
+    </onetest>
+    <othertest>
+      <name>3</name>
+      <value>3</value>
+      <name>4</name><!-- Only last will be processed. We don't allow repeated final tags in our parser -->
+      <value>4</value>
+      <value>5</value><!-- Only last will be processed. We don't allow repeated final tags in our parser -->
+      <value>
+
+      </value><!-- If one tag already is set and the repeated is empty, the original value is kept -->
+    </othertest>
+  </glossary>
+</activity>

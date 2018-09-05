@@ -1,0 +1,8 @@
+{
+    "moodle-atto_accessibilitychecker-button": {
+        "requires": [
+            "color-base",
+            "moodle-editor_atto-plugin"
+        ]
+    }
+}

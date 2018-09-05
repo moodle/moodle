@@ -1,0 +1,9 @@
+{
+  "moodle-core-actionmenu": {
+    "requires": [
+        "base",
+        "event",
+        "node-event-simulate"
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+This files describes API changes in /course/*,
+information provided here is intended especially for developers.
+
+=== 3.5 ===
+ * There is a new capability 'moodle/course:setforcedlanguage' to control which users can force the course
+   language; create_course and update_course functions delegate access control to the caller code; if you
+   are calling those functions you may be interested in checking if the logged in user has 'moodle/course:setforcedlanguage' capability.
+
+=== 3.3 ===
+
+ * External function core_course_external::get_courses_by_field now returns the course filters list and status.
+ * External function core_course_external::get_courses_by_field now returns the end date of the course.
+ * External function core_course_external::get_course_contents now return the following additional file fields:
+   - mimetype (the file mime type)
+   - isexternalfile (if is a file reference to a external repository)
+   - repositorytype (the repository name in case is a external file)
+   Those fields are VALUE_OPTIONAL for backwards compatibility.
+ * External function core_course_external::get_course_contents now return the following fields for section and modules:
+   - uservisible (whether the section or module is visible by the user)
+   - availabilityinfo (availability information if the course or module has any access restriction set
+
+=== 3.2 ===
+
+ * External function core_course_external::get_course_contents now returns the section's number in the course (new section field).
+ * External function core_course_external::get_course_contents now returns if a section is hidden in the course format.
+ * External functions that were returning file information now return the following file fields:
+   filename, filepath, mimetype, filesize, timemodified and fileurl.
+   Those fields are now marked as VALUE_OPTIONAL for backwards compatibility.
+ * The modchooser now uses a renderable and a template, thus its associated renderer
+   methods have been deprecated. Note that the call to core_course_render::course_modchooser,
+   is still required. Deprecated methods:
+   - core_course_renderer::course_modchooser_module_types
+   - core_course_renderer::course_modchooser_module
+   - core_course_renderer::course_modchooser_title
+ * You can now specify a course end date when calling core_course_external::create_courses and core_course_external::update_courses
+   external functions. core_course_external::get_courses external function is now returning courses end date values.

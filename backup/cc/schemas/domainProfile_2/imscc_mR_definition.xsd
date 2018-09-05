@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:voc="http://ltsc.ieee.org/xsd/LOM/vocab" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ltsc.ieee.org/xsd/LOM" targetNamespace="http://ltsc.ieee.org/xsd/LOM">
+<xs:import namespace="http://ltsc.ieee.org/xsd/LOM/vocab" schemaLocation="vocab/loose.xsd"/>
+  <!--****************************************************************************************-->
+  <!--** Definition document - this document holds AP defined simpleType elements that have **-->
+  <!--** been referenced through a type attribute in one of the modified, resultant schema. **-->
+  <!--****************************************************************************************-->
+  <xs:simpleType name="RolesValues">
+    <xs:restriction base="voc:intendedEndUserRole">
+      <xs:whiteSpace value="preserve" />
+      <xs:enumeration value="Learner" />
+      <xs:enumeration value="Instructor" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="RoleVocab">
+    <xs:restriction base="voc:source">
+      <xs:whiteSpace value="preserve" />
+      <xs:enumeration value="IMSGLC_CC_Rolesv1p0" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="HEContext">
+    <xs:restriction base="voc:context">
+      <xs:whiteSpace value="preserve" />
+      <xs:enumeration value="higher education" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="SourceIEELOM">
+    <xs:restriction base="voc:source">
+      <xs:whiteSpace value="preserve" />
+      <xs:enumeration value="LOMv1.0" />
+    </xs:restriction>
+  </xs:simpleType>
+</xsd:schema>
+

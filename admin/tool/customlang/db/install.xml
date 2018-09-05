@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/customlang/db" VERSION="20120122" COMMENT="XMLDB file for Moodle admin/tool/customlang"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="tool_customlang" COMMENT="Contains the working checkout of all strings and their customization">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="lang" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The code of the language this string belongs to. Like en, cs or es"/>
+        <FIELD NAME="componentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the component"/>
+        <FIELD NAME="stringid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The identifier of the string"/>
+        <FIELD NAME="original" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" COMMENT="English original of the string"/>
+        <FIELD NAME="master" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Master translation of the string as is distributed in the official lang pack, null if not translated"/>
+        <FIELD NAME="local" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Local customization of the string, null if not customized"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp of when the original or master was recently modified"/>
+        <FIELD NAME="timecustomized" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp of when the value of the local translation was recently modified, null if not customized yet"/>
+        <FIELD NAME="outdated" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Either the English original or the master translation changed and the customization may be outdated"/>
+        <FIELD NAME="modified" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Has the string been modified via the translator?"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_component" TYPE="foreign" FIELDS="componentid" REFTABLE="tool_customlang_components" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="uq_lang_component_string" UNIQUE="true" FIELDS="lang, componentid, stringid" COMMENT="For a given language and component, string identifiers must be unique"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_customlang_components" COMMENT="Contains the list of all installed plugins that provide their own language pack">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The normalized name of the plugin"/>
+        <FIELD NAME="version" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The checked out version of the plugin, null if the version is unknown"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="lib/phpunit/phpunit.xsd"
+        bootstrap="lib/phpunit/bootstrap.php"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        processIsolation="false"
+        backupGlobals="false"
+        backupStaticAttributes="false"
+        stopOnError="false"
+        stopOnFailure="false"
+        stopOnIncomplete="false"
+        stopOnSkipped="false"
+        beStrictAboutTestsThatDoNotTestAnything="false"
+        beStrictAboutOutputDuringTests="true"
+        printerClass="Hint_ResultPrinter"
+        testSuiteLoaderClass="phpunit_autoloader"
+        >
+
+    <php>
+        <!--<const name="PHPUNIT_LONGTEST" value="1"/> uncomment to execute also slow or otherwise expensive tests-->
+        <const name="PHPUNIT_SEQUENCE_START" value=""/>
+
+        <!--Following constants instruct tests to fetch external test files from alternative location or skip tests if empty, clone https://github.com/moodlehq/moodle-exttests to local web server-->
+        <!--<const name="TEST_EXTERNAL_FILES_HTTP_URL" value="http://download.moodle.org/unittest"/> uncomment and alter to fetch external test files from alternative location-->
+        <!--<const name="TEST_EXTERNAL_FILES_HTTPS_URL" value="https://download.moodle.org/unittest"/> uncomment and alter to fetch external test files from alternative location-->
+    </php>
+
+<!--All core suites need to be manually added here-->
+
+    <testsuites>
+        <testsuite name="core_phpunit_testsuite">
+            <directory suffix="_test.php">lib/phpunit/tests</directory>
+        </testsuite>
+        <testsuite name="core_test_testsuite">
+            <directory suffix="_test.php">lib/testing/tests</directory>
+        </testsuite>
+        <testsuite name="core_ddl_testsuite">
+            <directory suffix="_test.php">lib/ddl/tests</directory>
+        </testsuite>
+        <testsuite name="core_dml_testsuite">
+            <directory suffix="_test.php">lib/dml/tests</directory>
+        </testsuite>
+        <testsuite name="core_testsuite">
+            <directory suffix="_test.php">lib/tests</directory>
+            <directory suffix="_test.php">lib/ajax/tests</directory>
+        </testsuite>
+        <testsuite name="core_form_testsuite">
+            <directory suffix="_test.php">lib/form/tests</directory>
+        </testsuite>
+        <testsuite name="core_files_testsuite">
+            <directory suffix="_test.php">lib/filestorage/tests</directory>
+            <directory suffix="_test.php">lib/filebrowser/tests</directory>
+            <directory suffix="_test.php">files/tests</directory>
+        </testsuite>
+        <testsuite name="core_filter_testsuite">
+            <directory suffix="_test.php">filter/tests</directory>
+        </testsuite>
+        <testsuite name="core_role_testsuite">
+            <directory suffix="_test.php">admin/roles/tests</directory>
+        </testsuite>
+        <testsuite name="core_cohort_testsuite">
+            <directory suffix="_test.php">cohort/tests</directory>
+        </testsuite>
+        <testsuite name="core_grade_testsuite">
+            <directory suffix="_test.php">lib/grade/tests</directory>
+            <directory suffix="_test.php">grade/tests</directory>
+            <directory suffix="_test.php">grade/grading/tests</directory>
+            <directory suffix="_test.php">grade/import/csv/tests</directory>
+        </testsuite>
+        <testsuite name="core_analytics_testsuite">
+            <directory suffix="_test.php">analytics/tests</directory>
+        </testsuite>
+        <testsuite name="core_availability_testsuite">
+            <directory suffix="_test.php">availability/tests</directory>
+        </testsuite>
+        <testsuite name="core_backup_testsuite">
+            <directory suffix="_test.php">backup/controller/tests</directory>
+            <directory suffix="_test.php">backup/converter/moodle1/tests</directory>
+            <directory suffix="_test.php">backup/moodle2/tests</directory>
+            <directory suffix="_test.php">backup/tests</directory>
+            <directory suffix="_test.php">backup/util</directory>
+        </testsuite>
+        <testsuite name="core_badges_testsuite">
+            <directory suffix="_test.php">badges/tests</directory>
+        </testsuite>
+        <testsuite name="core_blog_testsuite">
+            <directory suffix="_test.php">blog/tests</directory>
+        </testsuite>
+        <testsuite name="core_iplookup_testsuite">
+            <directory suffix="_test.php">iplookup/tests</directory>
+        </testsuite>
+        <testsuite name="core_course_testsuite">
+            <directory suffix="_test.php">course/tests</directory>
+        </testsuite>
+        <testsuite name="core_privacy_testsuite">
+            <directory suffix="_test.php">privacy/tests</directory>
+        </testsuite>
+        <testsuite name="core_question_testsuite">
+            <directory suffix="_test.php">question/engine/tests</directory>
+            <directory suffix="_test.php">question/tests</directory>
+            <directory suffix="_test.php">question/type/tests</directory>
+            <directory suffix="_test.php">question/engine/upgrade/tests</directory>
+        </testsuite>
+        <testsuite name="core_cache_testsuite">
+            <directory suffix="_test.php">cache/tests</directory>
+        </testsuite>
+        <testsuite name="core_calendar_testsuite">
+            <directory suffix="_test.php">calendar/tests</directory>
+        </testsuite>
+        <testsuite name="core_enrol_testsuite">
+            <directory suffix="_test.php">enrol/tests</directory>
+        </testsuite>
+        <testsuite name="core_group_testsuite">
+            <directory suffix="_test.php">group/tests</directory>
+        </testsuite>
+        <testsuite name="core_external_testsuite">
+            <directory suffix="_test.php">lib/external/tests</directory>
+        </testsuite>
+        <testsuite name="core_message_testsuite">
+            <directory suffix="_test.php">message/tests</directory>
+        </testsuite>
+        <testsuite name="core_notes_testsuite">
+            <directory suffix="_test.php">notes/tests</directory>
+        </testsuite>
+        <testsuite name="core_tag_testsuite">
+            <directory suffix="_test.php">tag/tests</directory>
+        </testsuite>
+        <testsuite name="core_rating_testsuite">
+            <directory suffix="_test.php">rating/tests</directory>
+        </testsuite>
+        <testsuite name="core_repository_testsuite">
+            <directory suffix="_test.php">repository/tests</directory>
+        </testsuite>
+        <testsuite name="core_userkey_testsuite">
+            <directory suffix="_test.php">lib/userkey/tests</directory>
+        </testsuite>
+        <testsuite name="core_user_testsuite">
+            <directory suffix="_test.php">user/tests</directory>
+        </testsuite>
+        <testsuite name="core_webservice_testsuite">
+            <directory suffix="_test.php">webservice/tests</directory>
+        </testsuite>
+        <testsuite name="core_mnet_testsuite">
+            <directory suffix="_test.php">mnet/tests</directory>
+        </testsuite>
+        <testsuite name="core_completion_testsuite">
+            <directory suffix="_test.php">completion/tests</directory>
+        </testsuite>
+        <testsuite name="core_comment_testsuite">
+            <directory suffix="_test.php">comment/tests</directory>
+        </testsuite>
+        <testsuite name="core_search_testsuite">
+            <directory suffix="_test.php">search/tests</directory>
+        </testsuite>
+        <testsuite name="core_competency_testsuite">
+            <directory suffix="_test.php">competency/tests</directory>
+        </testsuite>
+        <testsuite name="core_my_testsuite">
+            <directory suffix="_test.php">my/tests</directory>
+        </testsuite>
+        <testsuite name="core_auth_testsuite">
+            <directory suffix="_test.php">auth/tests</directory>
+        </testsuite>
+        <testsuite name="core_block_testsuite">
+            <directory suffix="_test.php">blocks/tests</directory>
+        </testsuite>
+        <testsuite name="core_login_testsuite">
+            <directory suffix="_test.php">login/tests</directory>
+        </testsuite>
+        <testsuite name="core_plagiarism_testsuite">
+            <directory suffix="_test.php">plagiarism/tests</directory>
+        </testsuite>
+        <testsuite name="core_portfolio_testsuite">
+            <directory suffix="_test.php">portfolio/tests</directory>
+        </testsuite>
+        <testsuite name="core_editor_testsuite">
+            <directory suffix="_test.php">lib/editor/tests</directory>
+        </testsuite>
+        <testsuite name="core_rss_testsuite">
+            <directory suffix="_test.php">rss/tests</directory>
+        </testsuite>
+
+        <!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from phpunit.xml.dist with up-to-date list of plugins in current install-->
+<!--@plugin_suites_start@-->
+<!--@plugin_suites_end@-->
+
+    </testsuites>
+
+</phpunit>

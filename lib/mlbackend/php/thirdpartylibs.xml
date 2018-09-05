@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>phpml</location>
+    <name>PHP-ML</name>
+    <license>MIT</license>
+    <version>0.4.1+</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

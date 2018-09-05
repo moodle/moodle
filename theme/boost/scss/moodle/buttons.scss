@@ -1,0 +1,48 @@
+.singlebutton {
+    display: inline-block;
+
+    + .singlebutton {
+        margin-left: $spacer / 2;
+    }
+}
+
+.continuebutton {
+    text-align: center;
+}
+
+p.arrow_button {
+    margin-top: 5em;
+    text-align: center;
+
+    #remove {
+        margin: 3em auto 5em;
+    }
+
+    input {
+        @extend .btn-block;
+    }
+}
+
+#addcontrols {
+    // This is displayed in a column between 2 20 row multi-selects. This should be just short of half way.
+    margin-top: 8 * $line-height-base * $font-size-base;
+    text-align: center;
+    margin-bottom: 3em;
+
+    label {
+        display: inline;
+    }
+}
+
+#addcontrols,
+#removecontrols {
+    input {
+        @extend .btn-block;
+        margin: auto;
+    }
+}
+
+.btn-lineup {
+    margin: 0 0 10px 5px;
+}
+

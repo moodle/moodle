@@ -1,0 +1,122 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    User evidence page template.
+
+    Data attributes required for JS:
+    * data-action = link-competency
+    * data-action = delete-competency-link
+    * data-region = user-evidence-page
+    * data-id = user evidence ID, or competency ID
+    * data-userid = user evidence user ID
+
+    Context variables required for this template:
+    * userevidence - The user evidence
+    * pluginbaseurl - The plugin base URL
+}}
+{{#userevidence}}
+<div data-region="user-evidence-page" data-id="{{id}}" data-userid="{{userid}}">
+    <h2>
+        {{{name}}}
+        {{#canmanage}}
+            <a href="{{pluginbaseurl}}/user_evidence_edit.php?id={{id}}&amp;userid={{userid}}">{{#pix}}t/edit, core, {{#str}}editthisuserevidence, tool_lp{{/str}}{{/pix}}</a>
+        {{/canmanage}}
+    </h2>
+    {{#canmanage}}
+    <div data-region="actions" class="clearfix">
+        <div class="pull-left">
+            {{#userhasplan}}
+                <button class="btn btn-secondary m-b-1" data-action="link-competency">{{#pix}}t/add{{/pix}} {{#str}}linkcompetencies, tool_lp{{/str}}</button>
+            {{/userhasplan}}
+        </div>
+    </div>
+    {{/canmanage}}
+
+    <div data-region="user-evidence-summary">
+        {{#description}}
+            <div>
+                {{{description}}}
+            </div>
+        {{/description}}
+        <ul class="user-evidence-documents">
+            {{#url}}
+                <li>{{#pix}}url, tool_lp{{/pix}} <a href="{{url}}" title="{{url}}">{{urlshort}}</a></li>
+            {{/url}}
+            {{#files}}
+                <li>{{#pix}}{{icon}}{{/pix}} <a href="{{url}}">{{filename}}</a></li>
+            {{/files}}
+        </ul>
+    </div>
+
+    <div data-region="user-evidence-competencies">
+        <h3>{{#str}}linkedcompetencies, tool_lp{{/str}}</h3>
+        <table class="generaltable fullwidth">
+            <thead>
+                <tr>
+                    <th scope="col">{{#str}}shortname, tool_lp{{/str}}</th>
+                    <th scope="col">{{#str}}status, tool_lp{{/str}} / {{#str}}reviewer, tool_lp{{/str}}</th>
+                    {{#canmanage}}
+                        <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
+                    {{/canmanage}}
+                </tr>
+            </thead>
+            <tbody>
+                {{#usercompetencies}}
+                <tr data-id="{{competency.id}}">
+                    <td>
+                        <a href="{{pluginbaseurl}}/user_competency.php?id={{usercompetency.id}}" data-id="{{usercompetency.id}}">{{{competency.shortname}}}</a>
+                    </td>
+                     <td>
+                        {{usercompetency.statusname}} {{#usercompetency.reviewer.fullname}} / {{usercompetency.reviewer.fullname}}{{/usercompetency.reviewer.fullname}}
+                    </td>
+                    {{#userevidence.canmanage}}
+                        <td>
+                            <div class="pull-left">
+                                <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
+                            </div>
+                        </td>
+                    {{/userevidence.canmanage}}
+                </tr>
+                {{/usercompetencies}}
+            </tbody>
+        </table>
+        {{^usercompetencies}}
+            <p class="alert alert-info">
+                {{#str}}nocompetenciesinevidence, tool_lp{{/str}}
+            </p>
+        {{/usercompetencies}}
+    </div>
+</div>
+
+{{#canmanage}}
+{{#js}}
+require(['tool_lp/user_evidence_actions'], function(UserEvidenceActions) {
+
+    var uea = new UserEvidenceActions('evidence');
+    uea.registerEvents();
+
+});
+{{/js}}
+{{/canmanage}}
+
+{{#js}}
+require(['tool_lp/competencydialogue'], function(Compdialogue) {
+    Compdialogue.init();
+});
+{{/js}}
+
+{{/userevidence}}

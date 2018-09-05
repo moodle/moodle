@@ -1,0 +1,49 @@
+This files describes API changes in /calendar/* ,
+information provided here is intended especially for developers.
+
+=== 3.5.2 ===
+* calendar_get_default_courses() function now has optional $userid parameter.
+* calendar_set_filters() function now has optional $user parameter.
+* The core_calendar\local\event\container class now provides two new helper methods for getting and setting the requesting user:
+  set_requesting_user() and get_requesting_user().
+
+=== 3.5 ===
+* core_calendar_external::get_calendar_events now returns the categoryid for category events.
+
+=== 3.4 ===
+* calendar_get_mini, and calendar_get_upcoming have been deprecated. Please update to use the new exporters and renderers.
+* added core_calendar_get_valid_event_timestart_range and core_calendar_event_timestart_updated callbacks for module events
+  when the update_event_start_day function is used in the local api.
+
+=== 3.3 ===
+* calendar_event_hook() has been removed. Developers should be using the Moodle events system to achieve this behaviour,
+  rather than using a hacky calendar specific implementation.
+* calendar_wday_name() is deprecated and no longer used in core.
+* calendar_get_block_upcoming() is deprecated, please use block_calendar_upcoming::get_upcoming_content() instead.
+* calendar_print_month_selector() is deprecated and no longer used in core.
+* calendar_cron() is deprecated and should not be used. Please use the core\task\calendar_cron_task instead.
+
+=== 3.2 ===
+* calendar_preferences_button() is now deprecated. Calendar preferences have been moved to the user preferences page.
+
+=== 2.9 ===
+default values changes in code:
+* core_calendar_external::get_calendar_events_parameters() 'timeend' default option changed; now, by default,
+  all events are returned, not only the past ones.
+* calendar types need to be updated to be compatible with standard PHP date/time code
+
+=== 2.5 ===
+required changes in code:
+* calendar_add_icalendar_event() now requires a valid subscriptionid
+* calendar_process_subscription_row() throws exception for invalid subscriptionid
+* calendar_update_subscription_events() now throws a dml_exception instead of moodle_exception for bad subscriptions
+* calendar_get_mini() function now has optional $placement and $courseid paramaters.
+
+optional - no changes needed:
+* calendar_update_subscription() should now be used to update Ical subscriptions.
+
+=== 2.4 ===
+
+required changes in code:
+
+* calendar_get_popup() function now just returns id, instead of the string "id=$id"

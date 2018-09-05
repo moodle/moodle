@@ -1,0 +1,10 @@
+{
+    "name": "moodle-question-qbankmanager",
+    "builds": {
+        "moodle-question-qbankmanager": {
+            "jsfiles": [
+                "qbankmanager.js"
+            ]
+        }
+    }
+}

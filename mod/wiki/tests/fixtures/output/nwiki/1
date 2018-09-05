@@ -1,0 +1,11 @@
+<h3><a name="toc-1"></a>Header 1</h3>
+<p>First paragraph with no formats.</p>
+<p><strong>This paragraph has bold text.</strong></p>
+<p>== False header =</p>
+<p><em>This part of the paragraph is italicized.</em> But not this part.</p>
+<h4><a name="toc-2"></a>Header 2</h4>
+<p>Some mix of <em>italics</em> and <strong>bold</strong>, and some <em><strong>italics & bold</strong></em>.</p>
+<p>And that <em>italics and <strong>both</strong></em>.</p>
+<p>And this: <em>italics and</em> <em><strong>both</strong></em>.</p>
+<hr />
+<hr />

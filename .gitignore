@@ -1,0 +1,38 @@
+# This file specifies intentionally untracked files that all Moodle git
+# repositories should ignore. It is recommended not to modify this file in your
+# local clone. Instead, use .git/info/exclude and add new records there as
+# needed.
+#
+# Example: if you deploy a contributed plugin mod/foobar into your site, put
+# the following line into .git/info/exclude file in your Moodle clone:
+# /mod/foobar/
+#
+# See gitignore(5) man page for more details
+#
+/config.php
+/lib/editor/tinymce/extra/tools/temp/
+*~
+*.swp
+/tags
+/TAGS
+/cscope.*
+/.patches/
+/.idea/
+/nbproject/
+CVS
+.DS_Store
+/.settings/
+/.project
+/.buildpath
+/.cache
+phpunit.xml
+# Composer support. Do not ignore composer.json, or composer.lock. These should be shipped by us.
+composer.phar
+/vendor/
+/behat.yml
+*/yui/build/*/*-coverage.js
+/lib/yuilib/*/build/*/*-coverage.js
+# lib/yuilib/version/module/module-coverage.js
+/lib/yuilib/*/*/*-coverage.js
+atlassian-ide-plugin.xml
+/node_modules/

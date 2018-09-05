@@ -1,0 +1,411 @@
+// General block styles.
+.block {
+    .well;
+    padding: 8px 0;
+
+    .header {
+        h2 {
+            .nav-header;
+            font-size: 1.1em;
+            word-wrap: break-word;
+            margin: 0;
+        }
+        .block_action {
+            padding: 3px 15px;
+            float: right;
+            > * {
+                margin-left: 3px;
+            }
+            .block-hider-show,
+            .block-hider-hide {
+                cursor: pointer;
+            }
+            .block-hider-show {
+                display: none;
+            }
+        }
+    }
+    .content {
+        padding: 4px 14px;
+        word-wrap: break-word;
+
+        h3 {
+            .nav-header;
+            font-size: 1.1em;
+        }
+        hr {
+            margin: 5px 0;
+        }
+        .userpicture {
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+        }
+        .list {
+            li.listentry {
+                clear: both;
+            }
+            .c0 {
+                display: inline;
+            }
+            .c1 {
+                margin-left: 5px;
+                display: inline;
+            }
+        }
+        p {
+            &.hasicon {
+                img {
+                    &.icon {
+                        padding-right: 0;
+                    }
+                }
+            }
+        }
+    }
+    .footer {
+        margin-bottom: 4px;
+        display: block;
+        padding: 3px 5px;
+    }
+    &.beingmoved {
+        border-width: 2px;
+        border-style: dashed;
+    }
+    &.invisible {
+        .header h2 {
+            .opacity(50);
+        }
+    }
+
+    &.hidden .header .block_action {
+        .block-hider-hide {
+            display: none;
+        }
+        .block-hider-show {
+            display: inline;
+        }
+    }
+    &.list_block .unlist > li > .column {
+        display: inline-block;
+        .ie7-inline-block();
+    }
+}
+.editing {
+    .block {
+        .header {
+            .commands {
+                clear: both;
+                text-align: right;
+                display: block;
+                padding: 3px 15px;
+
+                > a {
+                    margin: 0 3px;
+                }
+                .icon img {
+                    width: 12px;
+                    height: 12px;
+                }
+                img.actionmenu {
+                    width: auto;
+                }
+            }
+        }
+    }
+}
+
+// Hide the block content when the block has been minimised.
+.jsenabled .block.hidden .content {
+    display: none;
+}
+
+// Style the div used as a move target for non-drag+drop block moves.
+.blockmovetarget {
+    border-width: 2px;
+    border-style: dashed;
+    display: block;
+    height: 1em;
+    margin-bottom: 20px;
+}
+
+// Style the div that contains the cancel link for moving a block with JS disabled.
+.blockannotation {
+    // Blocks have a bottom margin of 20px, to associate this link with the block being moved
+    // we move it up 10px, and then give it a bottom margin of 10px giving it a better visual association
+    position: relative;
+    top: -10px;
+    margin-bottom: 10px;
+}
+
+// Styles for the blog menu block.
+.block_blog_menu #blogsearchquery {
+    max-width: 92%;
+}
+
+// Styles for the admin block.
+.block_settings {
+    #adminsearchquery {
+        max-width: 92%;
+    }
+}
+
+// Styles for the search forums block.
+.block_search_forums {
+    #searchform_search {
+        width: auto;
+        max-width: 92%;
+    }
+}
+
+// Styles for the Calendar Upcoming block.
+.block_calendar_upcoming {
+    .content {
+        .date {
+            padding-left: 22px;
+        }
+        .footer {
+            margin-top: .5em;
+            padding-top: 10px;
+            padding-left: 0;
+        }
+    }
+}
+
+// Styles for the RSS client block.
+.block_rss_client {
+    .content li {
+        margin-bottom: 10px;
+        padding: 5px;
+        border: 1px solid @tableBorder;
+        .border-radius(@baseBorderRadius);
+        .link {
+            font-weight: inherit;
+        }
+    }
+    .list li:first-child {
+        border-top-width: 1px; // undo the style provided by the block's styles.css
+    }
+}
+
+// Styles for the news items block.
+.block_news_items .content {
+    .newlink {
+        padding-bottom: 10px;
+    }
+    ul li {
+        border-top: 1px rgba(0, 0, 0, 0.05) solid;
+        padding: 2px;
+        display: table;
+        width: 100%;
+        .info {
+            display: table-header-group;
+        }
+        .date {
+            font-size: @fontSizeSmall;
+            display: inline;
+        }
+        .name {
+            font-size: @fontSizeSmall;
+            padding-left: 1ex;
+            display: inline;
+        }
+    }
+    .footer {
+        padding-top: 10px;
+        padding-left: 0;
+    }
+}
+
+// Overide for login block.
+.block_login {
+    input#login_username,
+    input#login_password {
+        width: 95%;
+    }
+    .content {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 280px;
+    }
+    input[type="submit"] {
+        margin: 10px 0;
+    }
+}
+
+// Styles for the special "Add block" block shown while editing.
+.block_adminblock {
+    .content {
+        display: block;
+        margin: 0 10px;
+        padding: 3px 5px;
+        width: auto;
+    }
+    .singleselect {
+        display: block;
+        select.singleselect {
+            display: block;
+            width: 100%;
+        }
+    }
+}
+
+@chart-size: 70px;
+@doughnut-border-size: 15px;
+@doughnut-dasharray: 173;
+@doughnut-empty-colour: @grayLighter;
+@doughnut-fill-colour: @orange;
+
+.generate-percents(@i: 1) when (@i =< 100) {
+    &.percent-@{i} {
+        stroke-dashoffset: @doughnut-dasharray - (@i / 100 * @doughnut-dasharray);
+    }
+
+    .generate-percents((@i + 1));
+}
+
+.progress-chart-container {
+    height: @chart-size;
+    width: @chart-size;
+
+    .progress-doughnut {
+        position: relative;
+        height: @chart-size;
+        width: @chart-size;
+        background-clip: padding-box;
+        border: @doughnut-border-size solid @doughnut-empty-colour;
+        border-radius: 50%;
+        box-sizing: border-box;
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            /*rtl:ignore*/
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: @doughnut-empty-colour;
+
+            &.has-percent {
+                color: @doughnut-fill-colour;
+            }
+        }
+
+        .progress-indicator {
+            position: absolute;
+            top: (@doughnut-border-size * -1);
+            left: (@doughnut-border-size * -1);
+            height: @chart-size;
+            width: @chart-size;
+
+            svg {
+                position: relative;
+                height: 100%;
+                width: 100%;
+
+                .circle {
+                    stroke-width: @doughnut-border-size;
+                    stroke: @doughnut-fill-colour;
+                    fill: none;
+                    stroke-dasharray: @doughnut-dasharray;
+                    stroke-dashoffset: @doughnut-dasharray;
+                    transform: rotate(-90deg);
+                    transform-origin: center center;
+
+                    .generate-percents();
+                }
+            }
+        }
+    }
+
+    .no-progress {
+        height: @chart-size;
+        width: @chart-size;
+        background-color: @doughnut-empty-colour;
+        border-radius: 50%;
+        position: relative;
+
+        .icon,
+        .smallicon {
+            position: absolute;
+            top: 50%;
+            /*rtl:ignore*/
+            left: 50%;
+            margin: 0;
+            padding: 0;
+            transform: translate(-45%, -45%);
+            color: #fff;
+            height: (@chart-size / 2);
+            width: (@chart-size / 2);
+        }
+    }
+}
+
+.block_myoverview {
+    background-color: transparent;
+
+    .row-fluid [class*="span"] {
+        margin-left: 0;
+    }
+
+    .event-list-item {
+        border-bottom: 1px solid @tableBorder;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+
+        &:last-of-type {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .event-icon {
+            vertical-align: middle;
+
+            &::before {
+                content: '';
+                display: inline-block;
+                height: 100%;
+                vertical-align: middle;
+            }
+        }
+
+        .event-name-container {
+            vertical-align: middle;
+            max-width: ~"calc(100% - 50px)";
+
+            .event-name {
+                display: block;
+            }
+        }
+    }
+
+    .empty-placeholder-image-sm {
+        height: 50px;
+    }
+
+    .empty-placeholder-image-lg {
+        height: 125px;
+    }
+
+    .courses-view-course-item {
+        height: 220px;
+        overflow-y: hidden;
+    }
+
+    h4 {
+        font-weight: normal;
+    }
+
+    .well {
+        background-color: @white;
+        box-shadow: none;
+        margin: 0 5px 10px;
+    }
+    .myoverviewimg {
+        height: 150px;
+        &.courseimage {
+            background-position: center;
+            background-size: cover;
+        }
+    }
+}

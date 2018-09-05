@@ -1,0 +1,92 @@
+This files describes API changes in tagging, information provided
+here is intended especially for developers.
+
+=== 3.1 ===
+
+* Each plugin must define the tag areas it uses in plugindir/db/tag.php
+  See https://docs.moodle.org/dev/Tag_API for more details.
+* When adding a 'tags' form element the component and itemtype must be specified
+  in the element attributes.
+* Tag name is no longer a unique field in 'tag' table, tags may be separated in
+  tag collections
+* Specifying component is also required when retrieving item tags. This will allow
+  different components to add tags to the same table (for example blog and forum
+  posts) and even suggest alternative tagging for the same items.
+* All tag_* functions were deprecated because they now require either tag
+  collection id or component, some were moved to the new class core_tag_tag and
+  some - to the renderers or templates. As usual, the deprecated function code
+  and debugging message will provide you with the suggestions of the alternative.
+  Please note that all deprecated functions will be removed after several major releases.
+  - tag_type_set
+  - tag_description_set
+  - tag_get_tags
+  - tag_get_tags_array
+  - tag_get_tags_csv
+  - tag_get_tags_ids
+  - tag_get_id
+  - tag_rename
+  - tag_delete_instance
+  - tag_find_records
+  - tag_add
+  - tag_assign
+  - tag_record_count
+  - tag_record_tagged_with
+  - tag_set_flag
+  - tag_unset_flag
+  - tag_print_cloud
+  - tag_print_description_box
+  - tag_print_management_box
+  - tag_print_search_box
+  - tag_print_search_results
+  - tag_print_tagged_users_table
+  - tag_print_user_box
+  - tag_print_user_list
+  - tag_display_name
+  - tag_normalize
+  - tag_get_related_tags_csv
+  - tag_set
+  - tag_set_add
+  - tag_set_delete
+  - tag_get
+  - tag_get_related_tags
+  - tag_delete
+  - tag_delete_instances
+  - tag_cleanup
+  - tag_bulk_delete_instances
+  - tag_compute_correlations
+  - tag_process_computed_correlation
+  - tag_cron
+  - tag_find_tags
+  - tag_get_name
+  - tag_get_correlated
+  - tag_cloud_sort
+* Char field 'tagtype' in database table 'tag' is replaced with int (0 or 1) field 'isstandard'.
+
+=== 3.0 ===
+
+* Tagging courses is now implemented without user id - through course edit form or
+  special "Course tags" form. All coursetag_* functions in /tag/coursetagslib.php
+  were deprecated without replacement and related JS code was removed. Config variable
+  $CFG->block_tags_showcoursetags was removed.
+
+=== 2.7 ===
+
+* The functions tag_set, tag_set_add, tag_set_delete and tag_assign now expect the component
+and contextid of the item being tagged.
+
+=== 2.6 ===
+
+More cleanup was done to tag cloud sorting which involved some API changes, see MDL_39800
+* tag_print_cloud() arguments were changed.
+* coursetag_get_tags() arguments were changed.
+* coursetag_get_all_tags() arguments were changed.
+* coursetag_sort() was removed.
+
+=== 2.4 ===
+
+Significant cleanup was done to course tags which involved some API
+changes, see MDL-15471
+* tag_print_cloud() arguments were changed
+* coursetag_print_cloud() was removed.
+* coursetag_get_official_keywords() was removed
+* coursetag_rss_feeds() was removed

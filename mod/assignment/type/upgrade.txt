@@ -1,0 +1,6 @@
+This file describes changes in the assignment type API and DB structures.
+Information provided here is intended especially for developers.
+
+=== 2.7 ===
+
+mod_assignment has been deleted. Do not use it.

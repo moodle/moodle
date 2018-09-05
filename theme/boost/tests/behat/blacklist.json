@@ -1,0 +1,8 @@
+{
+    "features": [
+        "lib/tests/behat/action_menu.feature",
+        "course/tests/behat/activities_edit_with_block_dock.feature",
+        "blocks/tests/behat/hide_blocks.feature",
+        "blocks/tests/behat/move_blocks.feature"
+    ]
+}

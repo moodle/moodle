@@ -1,0 +1,60 @@
+.path-grade-report-user #graded_users_selector {
+    float: right;
+    margin-bottom: 5px;
+}
+
+.path-grade-report-user .view_users_selector {
+    clear: both;
+    float: right;
+    margin-bottom: 5px;
+}
+
+.path-grade-report-user #graded_users_selector .singleselect label,
+.path-grade-report-user .view_users_selector .singleselect label {
+    display: inline-block;
+}
+
+.path-grade-report-user .user-grade {
+    width: 100%;
+    border: 1px solid;
+}
+
+.path-grade-report-user .user-grade thead th {
+    vertical-align: bottom;
+}
+
+.path-grade-report-user .user-grade th {
+    text-align: left;
+}
+
+.path-grade-report-user .user-grade td {
+    min-width: 4.5em;
+    vertical-align: top;
+}
+
+.path-grade-report-user .user-grade .b1l {
+    padding: 0;
+    width: 24px;
+    min-width: 24px;
+}
+
+.path-grade-report-user .user-grade tbody .column-itemname {
+    padding-left: 0;
+    padding-right: 8px;
+}
+
+.path-grade-report-user .user-grade .column-itemname.item,
+.path-grade-report-user .user-grade .gradeitemdescription {
+    font-weight: normal;
+    padding-left: 24px;
+}
+
+.path-grade-report-user .user-grade .column-itemname.baggt,
+.path-grade-report-user .user-grade .column-itemname.baggb {
+    padding-left: 24px;
+}
+
+.path-grade-report-user .user-grade .baggt,
+.path-grade-report-user .user-grade .baggb {
+    font-weight: bold;
+}

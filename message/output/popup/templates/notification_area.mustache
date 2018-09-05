@@ -1,0 +1,81 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template message_popup/notification_area
+
+    This template will render the notification area on the notifications
+    page.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * userid The logged in user id
+    * offset The offset amound of the notification list
+    * limit The limit amount for the notification list
+    * notificationid The specific notification to select
+
+    Example context (json):
+    {
+        "userid":3
+    }
+
+}}
+<div class="notification-area" data-region="notification-area" data-user-id="{{userid}}">
+    <div class="control-area" data-region="control-area">
+        <div class="header"></div>
+        <div class="content" data-region="content"></div>
+        <div class="empty-text">{{#str}} nonotifications, message {{/str}}</div>
+        {{> core/loading }}
+    </div>
+    <div class="content-area" data-region="content-area">
+        <div class="toggle-mode">
+            <button class="btn btn-link" data-action="toggle-mode">{{#str}} back {{/str}}</button>
+        </div>
+        <div class="header" data-region="header"></div>
+        <div class="content" data-region="content"></div>
+        <div class="empty-text">{{#str}} selectnotificationtoview, message {{/str}}</div>
+        <div class="footer" data-region="footer"></div>
+    </div>
+</div>
+{{#js}}
+require(['jquery', 'message_popup/notification_area_control_area', 'message_popup/notification_area_content_area'],
+    function($, ControlArea, ContentArea) {
+
+    var userId = {{userid}};
+    var controlArea = new ControlArea($('[data-region="control-area"]'), userId);
+    {{#offset}}
+    controlArea.setOffset({{.}});
+    {{/offset}}
+    {{#limit}}
+    controlArea.setLimit({{.}});
+    {{/limit}}
+    {{#notificationid}}
+    controlArea.loadMoreNotifications().done(function() {
+        controlArea.showNotification({{.}});
+    });
+    {{/notificationid}}
+    {{^notificationid}}
+    controlArea.loadMoreNotifications();
+    {{/notificationid}}
+
+    new ContentArea($('[data-region="content-area"]'), userId);
+});
+{{/js}}

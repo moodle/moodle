@@ -1,0 +1,59 @@
+@font-face {
+  font-family: 'h5p-reporting-icons';
+  src:  url('../fonts/h5p-reporting-icons.eot?xscgrg');
+  src:  url('../fonts/h5p-reporting-icons.eot?xscgrg#iefix') format('embedded-opentype'),
+  url('../fonts/h5p-reporting-icons.ttf?xscgrg') format('truetype'),
+  url('../fonts/h5p-reporting-icons.woff?xscgrg') format('woff'),
+  url('../fonts/h5p-reporting-icons.svg?xscgrg#h5p-reporting-icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.h5p-reporting-container {
+  height: auto;
+  border: solid 1px #C9C9C9;
+  margin: auto;
+  padding: 30px 50px 30px 50px;
+  background: #fff;
+  font-size: 15px;
+  color: #5C5C5C;
+  box-shadow: 0 0 20px 0 rgba(0,0,0,0.12);
+  overflow: visible;
+}
+
+.h5p-reporting-description {
+  display: inline-block;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.h5p-reporting-score-wrapper,
+.h5p-reporting-scaled-container,
+.h5p-reporting-score-container {
+  display: inline-block;
+}
+
+.h5p-reporting-score-wrapper {
+  font-size: 0.95em;
+  float: right;
+
+  background-color: #f3f3f3;
+  border-bottom: solid 1px #dfdfdf;
+  padding: 0.4em 1em;
+}
+
+.h5p-reporting-score-wrapper {
+  font-weight: bold;
+}
+
+.h5p-reporting-scaled-label,
+.h5p-reporting-score-label {
+  font-weight: normal;
+}
+
+.h5p-reporting-scaled-label,
+.h5p-reporting-score,
+.h5p-reporting-scaled-score {
+  margin-left: 0.4em;
+}

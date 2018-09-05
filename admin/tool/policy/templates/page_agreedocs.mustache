@@ -1,0 +1,128 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_policy/page_agreedocs
+
+    Template for showing to the user the policy docs to agree.
+
+    Classes required for JS:
+    * policyactions
+
+    Data attributes required for JS:
+    -
+
+    Context variables required for this template:
+    * pluginbaseurl
+    * myurl
+    * sesskey
+    * policies - policy array
+    * behalfuser - If behalfid is defined and valid, full name of the behalf user with a link to his/her profile; null otherwise
+
+
+    Example context (json):
+    {
+        "myurl": "/admin/tool/policy/index.php",
+        "sesskey": "123456",
+        "behalfuser": "Sam Student",
+        "policies": [
+            {
+                "id": 1,
+                "name": "Terms &amp; conditions",
+                "policymodal": "<a href=\"#\">Terms &amp; conditions</a>",
+                "summary": "Policy <u>summary</u>",
+                "versionagreed": false,
+                "versionlangsagreed": "Agreed",
+                "versionbehalfsagreed": ""
+            }
+        ]
+    }
+
+}}
+
+{{#messages}}{{{.}}}{{/messages}}
+
+<form id="agreedocsform" method="post" action="{{myurl}}">
+    <input type="hidden" name="sesskey" value="{{sesskey}}">
+
+{{#behalfuser}}
+<div class="clearfix">
+    <div class="pull-right m-b-2">
+        {{# str }} viewconsentpageforuser, tool_policy, {{{ . }}} {{/ str }}
+    </div>
+</div>
+{{/behalfuser}}
+
+<div class="clearfix">
+    <div class="pull-left">
+        <h2>{{# str }}consentpagetitle, tool_policy{{/ str }}</h2>
+    </div>
+</div>
+
+<div class="clearfix m-t-2">
+    <h3>{{# str }}agreepolicies, tool_policy {{/ str }}</h3>
+</div>
+<hr>
+
+
+{{#policies}}
+
+<div class="agreedoc-policy clearfix m-t-2 m-b-1">
+    <h3>{{{name}}}</h3>
+    <div class="agreedoc-content">
+        <div class="agreedoc-summary m-b-2">
+          {{{summary}}}
+        </div>
+        <div class="agreedoc-msg">
+            {{# str }}refertofullpolicytext, tool_policy, {{{policymodal}}} {{/ str }}
+        </div>
+        <div class="agreedoc-form m-t-1">
+            <div class="agreedoc-checkbox">
+                <label>
+                    <input value="{{id}}" name="agreedoc[]" {{#versionagreed}}checked="{{.}}"{{/versionagreed}} type="checkbox">
+                    <strong>{{# str }}iagree, tool_policy, {{{name}}} {{/ str }}</strong>
+                    <i class="icon fa fa-exclamation-circle text-danger fa-fw" title="{{# str }} required {{/ str }}" ></i>
+                </label>
+            </div>
+            <ul class="agreedoc-msg list-unstyled">
+                    {{#versionlangsagreed}}
+                        <li><small>{{{.}}}</small></li>
+                    {{/versionlangsagreed}}
+                    {{#versionbehalfsagreed}}
+                        <li><small>{{{.}}}</small></li>
+                    {{/versionbehalfsagreed}}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{{/policies}}
+
+{{# str }}somefieldsrequired, form, <i class="icon fa fa-exclamation-circle text-danger fa-fw" title="{{# str }} required {{/ str }}" ></i>{{/ str }}
+<hr>
+
+<input type="submit" class="btn btn-primary" name="submit" value={{#quote}}{{#str}} next {{/str}}{{/quote}}>
+{{#cancancel}}
+<input type="submit" class="btn btn-secondary" name="cancel" value={{#quote}}{{#str}} cancel {{/str}}{{/quote}}>
+{{/cancancel}}
+</form>
+
+{{#js}}
+// Initialise the JS for the modal window which displays the policy versions.
+require(['tool_policy/policyactions'], function(ActionsMod) {
+    ActionsMod.init();
+});
+{{/js}}
