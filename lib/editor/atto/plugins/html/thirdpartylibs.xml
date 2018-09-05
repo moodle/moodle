@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>yui/src/codemirror</location>
+    <name>codemirror</name>
+    <license>MIT</license>
+    <version>5.37.0</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>yui/src/beautify</location>
+    <name>jsbeautify</name>
+    <license>MIT</license>
+    <version>1.7.5</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

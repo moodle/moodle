@@ -1,0 +1,21 @@
+{
+    "name": "moodle-atto_html-codemirror",
+    "builds": {
+        "moodle-atto_html-codemirror": {
+            "jsfiles": [
+                "wrapper.js",
+                "codemirror.js",
+                "wrapper-mid.js",
+                "htmlmixed.js",
+                "xml.js",
+                "javascript.js",
+                "css.js",
+                "wrapper-end.js"
+            ],
+            "skinnable": true
+        }
+    },
+    "shifter": {
+        "lint": false
+    }
+}

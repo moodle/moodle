@@ -1,7 +1,10 @@
 {
     "moodle-atto_html-button": {
         "requires": [
+            "promise",
             "moodle-editor_atto-plugin",
+            "moodle-atto_html-beautify",
+            "moodle-atto_html-codemirror",
             "event-valuechange"
         ]
     }
