@@ -6,11 +6,20 @@ Feature: Deleting users
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | user1 | User | One   | one@example.com |
-      | user2 | User | Two   | two@example.com |
-      | user3 | User | Three | three@example.com |
-      | user4 | User | Four  | four@example.com |
+      | username | firstname | lastname | email             |
+      | user1    | User      | One      | one@example.com   |
+      | user2    | User      | Two      | two@example.com   |
+      | user3    | User      | Three    | three@example.com |
+      | user4    | User      | Four     | four@example.com  |
+    And the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | user1    | C1     | student        |
+      | user2    | C1     | student        |
+      | user3    | C1     | student        |
+      | user4    | C1     | student        |
 
   @javascript
   Scenario: Deleting one user at a time

@@ -2516,9 +2516,17 @@ function xmldb_main_upgrade($oldversion) {
             set_config('messagingallusers', false);
         } else {
             // When $CFG->keepmessagingallusersenabled is set to true, $CFG->messagingallusers is set to true.
-            // When $CFG->messagingallusers = true, the default user preference is MESSAGE_PRIVACY_SITE
-            // (contacted by all users site).
             set_config('messagingallusers', true);
+
+            // When $CFG->messagingallusers = true, the default user preference is MESSAGE_PRIVACY_SITE
+            // (contacted by all users site). So we need to set existing values from 0 (MESSAGE_PRIVACY_COURSEMEMBER)
+            // to 2 (MESSAGE_PRIVACY_SITE).
+            $DB->set_field(
+                'user_preferences',
+                'value',
+                \core_message\api::MESSAGE_PRIVACY_SITE,
+                array('name' => 'message_blocknoncontacts', 'value' => 0)
+            );
         }
 
         // Main savepoint reached.

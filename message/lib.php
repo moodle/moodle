@@ -716,10 +716,26 @@ function core_message_can_edit_message_profile($user) {
  * @return array
  */
 function core_message_user_preferences() {
-
     $preferences = [];
-    $preferences['message_blocknoncontacts'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 0,
-        'choices' => array(0, 1));
+    $preferences['message_blocknoncontacts'] = array(
+        'type' => PARAM_INT,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => 0,
+        'choices' => array(
+            \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS,
+            \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER,
+            \core_message\api::MESSAGE_PRIVACY_SITE
+        ),
+        'cleancallback' => function ($value) {
+            global $CFG;
+
+            // When site-wide messaging between users is disabled, MESSAGE_PRIVACY_SITE should be converted.
+            if (empty($CFG->messagingallusers) && $value === \core_message\api::MESSAGE_PRIVACY_SITE) {
+                return \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER;
+            }
+            return $value;
+        }
+    );
     $preferences['/^message_provider_([\w\d_]*)_logged(in|off)$/'] = array('isregex' => true, 'type' => PARAM_NOTAGS,
         'null' => NULL_NOT_ALLOWED, 'default' => 'none',
         'permissioncallback' => function ($user, $preferencename) {

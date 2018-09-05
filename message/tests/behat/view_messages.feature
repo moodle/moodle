@@ -6,10 +6,18 @@ Feature: View messages
 
   Scenario: View messages from multiple users
     Given the following "users" exist:
-      | username | firstname | lastname | email            |
+      | username | firstname | lastname | email                |
       | user1    | User      | 1        | user1@example.com    |
       | user2    | User      | 2        | user2@example.com    |
       | user3    | User      | 3        | user3@example.com    |
+    And the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | user1    | C1     | student        |
+      | user2    | C1     | student        |
+      | user3    | C1     | student        |
     And I log in as "user2"
     And I send "User 2 to User 1" message to "User 1" user
     And I log out

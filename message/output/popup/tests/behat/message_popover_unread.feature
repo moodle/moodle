@@ -6,9 +6,16 @@ Feature: Message popover unread messages
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email |
+      | username | firstname | lastname | email       |
       | student1 | Student | 1 | student1@example.com |
       | student2 | Student | 2 | student2@example.com |
+    And the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
     And I log in as "student2"
     And I send "Test message" message to "Student 1" user
     And I log out
