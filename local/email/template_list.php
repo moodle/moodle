@@ -48,7 +48,7 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+$PAGE->set_heading($linktext);
 
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
@@ -61,7 +61,7 @@ if (!empty($SESSION->currenteditingcompany)) {
 } else if (!iomad::has_capability('local/email:list', context_system::instance())) {
     print_error('There has been a configuration error, please contact the site administrator');
 } else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'),
+    redirect(new moodle_url('/my'),
                             'Please select a company from the dropdown first');
 }
 

@@ -234,7 +234,7 @@ if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
 
     echo $OUTPUT->single_button(new moodle_url('company_edit_form.php'),
                                                 get_string('addnewcompany', 'block_iomad_company_admin'), 'get');
-    echo $OUTPUT->single_button(new moodle_url('/local/iomad_dashboard/index.php'), get_string('cancel'), 'get');
+    echo $OUTPUT->single_button(new moodle_url('/my'), get_string('cancel'), 'get');
 
     echo '</div>';
 }

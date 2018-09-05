@@ -477,7 +477,7 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+$PAGE->set_heading(get_string('myhome') . " - $linktext");
 
 // get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
@@ -591,7 +591,7 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
     if ($returnurl) {
         redirect($returnurl);
     } else {
-        redirect(new moodle_url('/local/iomad_dashboard/index.php'));
+        redirect(new moodle_url('/my'));
     }
 } else {
     if ($licenseid > 0) {

@@ -28,6 +28,7 @@ $string['companysearchfields'] = 'Company search fields';
 $string['crontask'] = 'Iomad Cron';
 $string['emailfilter'] = 'Email address contains';
 $string['firstnamefilter'] = 'First name contains';
+$string['iomad'] = 'Iomad';
 $string['lastnamefilter'] = 'Last name contains';
 $string['missingaccesstocourse'] = 'You\'re not allowed to that.';
 $string['nopermissions'] = 'The Iomad administrator has not given you permission to do this.';

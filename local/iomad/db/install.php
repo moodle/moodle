@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// This script is run after the dashboard has been installed.
 
 function xmldb_local_iomad_install() {
     global $CFG, $DB;
@@ -113,7 +112,6 @@ function xmldb_local_iomad_install() {
 
     // Add capabilities to above.
     $clientadministratorcaps = array(
-        'local/iomad_dashboard:view',
         'block/iomad_company_admin:assign_company_manager',
         'block/iomad_company_admin:assign_department_manager',
         'block/iomad_company_admin:company_add',
@@ -140,7 +138,6 @@ function xmldb_local_iomad_install() {
     }
     $companydepartmentmanagercaps = array(
         'block/iomad_reports:view',
-        'local/iomad_dashboard:view',
         'block/iomad_onlineusers:viewlist',
         'block/iomad_link:view',
         'block/iomad_company_admin:view_licenses',
@@ -188,7 +185,6 @@ function xmldb_local_iomad_install() {
     }
 
     $companymanagercaps = array(
-        'local/iomad_dashboard:view',
         'block/iomad_onlineusers:viewlist',
         'block/iomad_link:view',
         'block/iomad_company_admin:view_licenses',

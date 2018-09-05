@@ -31,7 +31,7 @@ iomad::require_capability('local/report_scorm_overview:view', $context);
 // Url stuff.
 $url = new moodle_url('/local/report_scorm_overview/index.php',
                       array('courseid' => $courseid));
-$dashboardurl = new moodle_url('/local/iomad_dashboard/index.php');
+$dashboardurl = new moodle_url('/my');
 
 // Page stuff:.
 $strcompletion = get_string('pluginname', 'local_report_scorm_overview');

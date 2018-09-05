@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// This script is run after the dashboard has been installed.
-
 // In case we ever want to switch back to ordinary certificates
 define('CERTIFICATE', 'iomadcertificate');
 

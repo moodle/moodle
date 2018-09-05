@@ -247,7 +247,7 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
     if ($returnurl) {
         redirect($returnurl);
     } else {
-        redirect(new moodle_url('/local/iomad_dashboard/index.php'));
+        redirect(new moodle_url('/my'));
     }
 } else {
     if ($companyid > 0) {

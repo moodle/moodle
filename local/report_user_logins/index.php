@@ -156,7 +156,7 @@ if (!empty($fieldnames)) {
 
 // Url stuff.
 $url = new moodle_url('/local/report_user_logins/index.php');
-$dashboardurl = new moodle_url('/local/iomad_dashboard/index.php');
+$dashboardurl = new moodle_url('/my');
 
 // Page stuff:.
 $strcompletion = get_string('pluginname', 'local_report_user_logins');

@@ -20,7 +20,7 @@
 // relied upon
 
 if (is_null($ADMIN->locate('iomad'))) {
-    $ADMIN->add( 'root', new admin_category( 'iomad', get_string('iomad', 'local_iomad_dashboard')));
+    $ADMIN->add( 'root', new admin_category( 'iomad', get_string('iomad', 'local_iomad')));
 }
 
 if (is_null($ADMIN->locate('IomadReports'))) {

@@ -186,6 +186,6 @@ function company_admin_fix_breadcrumb(&$PAGE, $linktext, $linkurl) {
 
     $PAGE->navbar->ignore_active();
     $PAGE->navbar->add(get_string('administrationsite'));
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url('/local/iomad_dashboard/index.php'));
+    $PAGE->navbar->add(get_string('myhome'), new moodle_url('/my'));
     $PAGE->navbar->add($linktext, $linkurl);
 }

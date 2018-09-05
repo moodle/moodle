@@ -508,7 +508,6 @@ function xmldb_local_iomad_upgrade($oldversion) {
             'block/iomad_company_admin:assign_department_manager',
             'block/iomad_company_admin:company_manager',
             'block/iomad_company_admin:allocate_licenses',
-            'local/iomad_dashboard:view'
         );
 
         if ($DB->get_records('role_capabilities', array('roleid' => $companydepartmentmanagerid))) {
@@ -542,7 +541,6 @@ function xmldb_local_iomad_upgrade($oldversion) {
             'block/iomad_company_admin:company_manager',
             'block/iomad_company_admin:company_user_profiles',
             'block/iomad_company_admin:createcourse',
-            'local/iomad_dashboard:view'
 
         );
 
@@ -888,7 +886,6 @@ function xmldb_local_iomad_upgrade($oldversion) {
         if ($companymanager = $DB->get_record( 'role', array( 'shortname' => 'companymanager') )) {
             $companymanagerid = $companymanager->id;
             $companymanagercaps = array(
-                'local/iomad_dashboard:view',
                 'block/iomad_reports:view',
                 'local_report_attendance:view',
                 'local_report_completion:view',
@@ -906,7 +903,6 @@ function xmldb_local_iomad_upgrade($oldversion) {
                                          array( 'shortname' => 'companydepartmentmanager'))) {
             $companydepartmentmanagerid = $companydepartmentmanager->id;
             $companydepartmentmanagercaps = array(
-                'local/iomad_dashboard:view',
                 'block/iomad_reports:view',
                 'local_report_attendance:view',
                 'local_report_completion:view',
@@ -924,7 +920,6 @@ function xmldb_local_iomad_upgrade($oldversion) {
                                                      array('shortname' => 'clientadministrator'))) {
             $clientadministratorid = $clientadministrator->id;
             $clientadministratorcaps = array(
-                'local/iomad_dashboard:view',
                 'block/iomad_reports:view',
                 'local_report_attendance:view',
                 'local_report_completion:view',

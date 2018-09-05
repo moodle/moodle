@@ -105,7 +105,7 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+$PAGE->set_heading(get_string('myhome') . " - $linktext");
 
 $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
@@ -389,8 +389,7 @@ if (!$companies) {
                                             $linkparams);
                 $suspendbutton = "<a class='btn btn-primary' href='$suspendurl'>$strsuspend</a>";
             }
-            $manageurl = new moodle_url($CFG->wwwroot . "/local/iomad_dashboard/index.php",
-                                        array('company' => $company->id));
+            $manageurl = new moodle_url('/my', array('company' => $company->id));
             $managebutton = "<a class='btn btn-primary' href='$manageurl'>$strmanage</a>";
 
             if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context)) {

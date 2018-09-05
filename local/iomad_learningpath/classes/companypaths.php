@@ -220,7 +220,7 @@ class companypaths {
 
         $PAGE->navbar->ignore_active();
         $PAGE->navbar->add(get_string('administrationsite'));
-        $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new \moodle_url('/local/iomad_dashboard/index.php'));
+        $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new \moodle_url('/my'));
         $PAGE->navbar->add(get_string('managetitle', 'local_iomad_learningpath'), new \moodle_url('/local/iomad_learningpath/manage.php'));
         if ($linktext) {
             $PAGE->navbar->add($linktext, $linkurl);

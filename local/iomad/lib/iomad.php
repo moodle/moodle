@@ -42,7 +42,7 @@ class iomad {
         } else if (self::is_company_user()) {
             $companyid = self::companyid();
         } else if (self::has_capability('block/iomad_company_admin:edit_departments', $context) && $required) {
-            redirect(new moodle_url('/local/iomad_dashboard/index.php'),
+            redirect(new moodle_url('/my'),
                                      get_string('pleaseselect', 'block_iomad_company_admin'));
         } else {
             $companyid = 0;

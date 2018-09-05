@@ -76,7 +76,7 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+$PAGE->set_heading(get_string('myhome') . " - $linktext");
 
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
@@ -411,7 +411,7 @@ if (!empty($courses)) {
 }
 
 // exit button
-$link = new moodle_url('/local/iomad_dashboard/index.php');
+$link = new moodle_url('/my');
 echo '<a class="btn btn-primary" href="' . $link . '">' . get_string('todashboard', 'block_iomad_company_admin') . '</a>';
 
 echo $OUTPUT->footer();

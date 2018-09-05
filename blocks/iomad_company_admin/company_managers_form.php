@@ -527,7 +527,7 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+$PAGE->set_heading(get_string('myhome') . " - $linktext");
 
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
@@ -617,7 +617,7 @@ if ($managersform->is_cancelled()) {
     if ($returnurl) {
         redirect($returnurl);
     } else {
-        redirect(new moodle_url('company_list/local/iomad_dashboard/index.php'));
+        redirect(new moodle_url('/my'));
     }
 } else {
     $managersform->process($departmentid, $roleid);

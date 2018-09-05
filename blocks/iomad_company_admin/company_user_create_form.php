@@ -391,14 +391,14 @@ $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
 }
-$companylist = new moodle_url('/local/iomad_dashboard/index.php', $urlparams);
+$companylist = new moodle_url('/my', $urlparams);
 
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('createuser', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_user_create_form.php');
-$dashboardurl = new moodle_url('/local/iomad_dashboard/index.php');
+$dashboardurl = new moodle_url('/my');
 
 // Print the page header.
 $PAGE->set_context($context);
@@ -407,7 +407,7 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+$PAGE->set_heading(get_string('myhome') . " - $linktext");
 
 $PAGE->requires->jquery();
 
