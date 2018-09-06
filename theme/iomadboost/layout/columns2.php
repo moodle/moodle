@@ -51,17 +51,6 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu)
 ];
 
-// Add Iomad link
-$systemcontext = context_system::instance();
-if (has_capability('local/iomad_dashboard:view', $systemcontext)) {
-    $url = new moodle_url('/local/iomad_dashboard/index.php');
-    $iomaddashboard = navigation_node::create(get_string('iomaddashboard', 'theme_iomadboost'), $url);
-    $flat = new flat_navigation_node($iomaddashboard, 0);
-    $flat->set_showdivider(true);
-    $flat->key = 'iomad';
-    $PAGE->flatnav->add($flat);
-}
-
 $templatecontext['flatnavigation'] = $PAGE->flatnav;
 
 echo $OUTPUT->render_from_template('theme_boost/columns2', $templatecontext);
