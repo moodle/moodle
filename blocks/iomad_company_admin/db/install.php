@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 // This script is run after the dashboard has been installed.
 
-function xmldb_block_iomad_company_admin__install() {
+function xmldb_block_iomad_company_admin_install() {
     global $SITE;
     global $DB;
 
@@ -31,4 +31,6 @@ function xmldb_block_iomad_company_admin__install() {
         'content' => array('iomad_company_admin'),
         );
     $page->blocks->add_blocks($defaultblocks);
+
+    return $true;
 }
