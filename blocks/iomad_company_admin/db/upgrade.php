@@ -158,5 +158,24 @@ function xmldb_block_iomad_company_admin_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017090309, 'block', 'iomad_company_admin');
     }
 
+    // Remove Iomad Dashboard (stuff moves to core dashboard)
+    if ($oldversion < 2018090600) {
+
+        // Update default block instance of iomad_company_admin
+        if ($instance = $DB->get_record('block_instances', ['blockname' => 'iomad_company_admin', 'pagetypepattern' => 'local-iomad-dashboard-index'])) {
+            $instance->pagetypepattern = 'my-index';
+            $DB->update_record('block_instances', $instance);
+        }
+
+        // Remove any remaining iomad dashboard instances
+        $instances = $DB->get_records('block_instances', ['pagetypepattern' => 'local-iomad-dashboard-index']);
+        foreach ($instances as $instance) {
+            blocks_delete_instance($instance);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2018090600, 'block', 'iomad_company_admin');
+    }
+
     return true;
 }

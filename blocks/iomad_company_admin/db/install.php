@@ -13,8 +13,22 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// This script is run after the dashboard has been installed.
 
-$plugin->version  = 2018090600;   // The (date) version of this plugin.
-$plugin->requires = 2018051700;   // Requires this Moodle version.
-$plugin->cron = 300;              // Minimum number of seconds between executions of the cron function.
-$plugin->component  = 'block_iomad_company_admin';
+function xmldb_block_iomad_company_admin__install() {
+    global $SITE;
+    global $DB;
+
+    // Add admin block to default dashboard
+    // yes, I know this isn't really what this is for!!
+    $systemcontext = context_system::instance();
+    $page = new moodle_page();
+    $page->set_context( $systemcontext );
+    $page->set_pagetype( 'my-index' );
+    $page->set_pagelayout( 'mydashboard' );
+    $page->blocks->add_region('content');
+    $defaultblocks = array(
+        'content' => array('iomad_company_admin'),
+        );
+    $page->blocks->add_blocks($defaultblocks);
+}
