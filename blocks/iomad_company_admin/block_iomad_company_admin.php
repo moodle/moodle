@@ -15,7 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once('lib.php');
-require_once($CFG->dirroot.'/local/iomad_dashboard/menu.php');
 
 /**
  * Company / User Admin Block
@@ -77,6 +76,43 @@ class block_iomad_company_admin extends block_base {
         return $menus;
     }
 
+    /**
+     * Check company status when accessing this block
+     */
+    private function check_company_status() {
+        global $SESSION, $DB;
+
+        // Get parameters.
+        $edit = optional_param( 'edit', null, PARAM_BOOL );
+        $company = optional_param('company', 0, PARAM_INT);
+        $showsuspendedcompanies = optional_param('showsuspendedcompanies', false, PARAM_BOOL);
+        $noticeok = optional_param('noticeok', '', PARAM_CLEAN);
+        $noticefail = optional_param('noticefail', '', PARAM_CLEAN);
+
+        $SESSION->showsuspendedcompanies = $showsuspendedcompanies;
+
+        // Set the session to a user if they are editing a company other than their own.
+        if (!empty($company) && ( iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext) 
+            || $DB->get_record('company_users', array('managertype' => 1, 'companyid' => $company, 'userid' => $USER->id)))) {
+            $SESSION->currenteditingcompany = $company;
+        }
+
+        // Check if there are any companies.
+        if (!$companycount = $DB->count_records('company')) {
+
+            // If not redirect to create form.
+            redirect(new moodle_url('/blocks/iomad_company_admin/company_edit_form.php', ['createnew' => 1]));
+        }
+
+    // If there is only one company, make that the current one
+    if ($companycount == 1) {
+        $companies = $DB->get_records('company');
+        $firstcompany = reset($companies);
+        $SESSION->currenteditingcompany = $firstcompany->id;
+        $company = $firstcompany->id;
+        }
+    }
+
     public function get_content() {
         global $OUTPUT, $CFG, $SESSION, $USER;
 
@@ -85,6 +121,9 @@ class block_iomad_company_admin extends block_base {
         if ($this->content !== null) {
             return $this->content;
         }
+
+        // Get params and session stuff
+        $this->check_company_status();
 
         $context = context_system::instance();
 
@@ -138,8 +177,6 @@ class block_iomad_company_admin extends block_base {
         $this->content->text .= $tabhtml;
 
         // Build content for selected tab (from menu array).
-        $adminmenu = new iomad_admin_menu();
-        //$menus = $adminmenu->getmenu();
         $menus = $this->get_menu();
         $html = '<div class="iomadlink_container clearfix">';
         foreach ($menus as $key => $menu) {
@@ -346,7 +383,7 @@ class block_iomad_company_admin extends block_base {
 
         // Get a list of companies.
         $companylist = company::get_companies_select($showsuspendedcompanies);
-        $select = new iomad_company_select_form(new moodle_url('/local/iomad_dashboard/index.php'), $companylist, $selectedcompany);
+        $select = new iomad_company_select_form(new moodle_url('/my'), $companylist, $selectedcompany);
         $select->set_data(array('company' => $selectedcompany, 'showsuspendedcompanies' => $showsuspendedcompanies));
         $content = $OUTPUT->container_start('companyselect');
         if (!empty($SESSION->currenteditingcompany)) {
@@ -357,11 +394,11 @@ class block_iomad_company_admin extends block_base {
         }
         $content .= $select->render();
         if (!$showsuspendedcompanies) {
-            $content .= $OUTPUT->single_button(new moodle_url('/local/iomad_dashboard/index.php',
+            $content .= $OUTPUT->single_button(new moodle_url('/my',
                                                array('showsuspendedcompanies' => true)),
                                                get_string("show_suspended_companies", 'block_iomad_company_admin'));
         } else {
-            $content .= $OUTPUT->single_button(new moodle_url('/local/iomad_dashboard/index.php',
+            $content .= $OUTPUT->single_button(new moodle_url('/my',
                                                array('showsuspendedcompanies' => false)),
                                                get_string("hide_suspended_companies", 'block_iomad_company_admin'));
         }

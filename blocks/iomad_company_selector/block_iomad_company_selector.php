@@ -74,7 +74,7 @@ class block_iomad_company_selector extends block_base {
 
         // Get a list of companies.
         $companylist = company::get_companies_select();
-        $select = new single_select(new moodle_url('/local/iomad_dashboard/index.php'), 'company', $companylist, $selectedcompany);
+        $select = new single_select(new moodle_url('/my/index.php'), 'company', $companylist, $selectedcompany);
         $select->label = get_string('selectacompany', 'block_iomad_company_selector');
         $select->formid = 'choosecompany';
         $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_company_selector'));

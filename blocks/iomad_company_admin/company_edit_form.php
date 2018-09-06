@@ -633,7 +633,7 @@ $PAGE->set_title($linktext);
 
 // Set the page heading.
 // Set the page heading.
-$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+$PAGE->set_heading(get_string('myhome') . " - $linktext");
 
 
 // Build the nav bar.
@@ -668,7 +668,7 @@ if (!$new) {
         // Can this user manage this parentid?
         if (!iomad::has_capability('block/iomad_company_admin:company_add', $context) &&
             !$DB->get_record('company_users', array('companyid' => $parentid, 'userid' => $USER->id, 'managertype' => 1))) {
-            print_error(get_string('invalidcompany', 'block_iomad_company_admin'), 'error', new moodle_url('/local/iomad_dashboard/index.php'));
+            print_error(get_string('invalidcompany', 'block_iomad_company_admin'), 'error', new moodle_url('/my'));
             die;
         }
 
@@ -701,7 +701,7 @@ $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
 }
-$companylist = new moodle_url('/local/iomad_dashboard/index.php', $urlparams);
+$companylist = new moodle_url('/my', $urlparams);
 
 // Get the company logo.
 $draftcompanylogoid = file_get_submitted_draft_itemid('companylogo');

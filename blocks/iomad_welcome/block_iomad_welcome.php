@@ -46,7 +46,7 @@ class block_iomad_welcome extends block_base {
         }
 
         $message = get_string('message', 'block_iomad_welcome');
-        $dashboardlink = new moodle_url('/local/iomad_dashboard/index.php');
+        $dashboardlink = new moodle_url('/my');
         $dashboardtext = get_string('dashboardtext', 'block_iomad_welcome');
         $this->content->text = '<p><center>' . $message . '</center></p>';
         $this->content->text .= '<p><center><a href="' . $dashboardlink . '">' . $dashboardtext . '</a></center></p>';
