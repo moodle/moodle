@@ -306,6 +306,80 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         $this->assertEquals('expired', array_keys($warnings)[0]);
     }
 
+    /*
+     * The choice's event should not be shown to a user when the user cannot view the choice activity at all.
+     */
+    public function test_choice_core_calendar_provide_event_action_in_hidden_section() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a student.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create a choice.
+        $choice = $this->getDataGenerator()->create_module('choice', array('course' => $course->id,
+                'timeopen' => time() - DAYSECS, 'timeclose' => time() + DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $choice->id, CHOICE_EVENT_TYPE_OPEN);
+
+        // Set sections 0 as hidden.
+        set_section_visible($course->id, 0, 0);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for the student.
+        $actionevent = mod_choice_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        // Confirm the event is not shown at all.
+        $this->assertNull($actionevent);
+    }
+
+    /*
+     * The choice's event should not be shown to a user who does not have permission to view the choice.
+     */
+    public function test_choice_core_calendar_provide_event_action_for_non_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a choice.
+        $choice = $this->getDataGenerator()->create_module('choice', array('course' => $course->id,
+                'timeopen' => time() - DAYSECS, 'timeclose' => time() + DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $choice->id, CHOICE_EVENT_TYPE_OPEN);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_choice_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event is not shown at all.
+        $this->assertNull($actionevent);
+    }
+
     public function test_choice_core_calendar_provide_event_action_open() {
         $this->resetAfterTest();
 
