@@ -98,12 +98,6 @@ border-radius: 10px;
     left: 3px;
 }
 
-.block_iomad_company_admin .nav-tabs {
-    clear:both;
-    position: relative;
-    top: -30px;
-}
-
 .fitem .singleselect label {
     font-weight: normal;
     float: left;
@@ -233,3 +227,6 @@ border-radius: 10px;
   bottom: 0;
 }
 
+#dashboardheader {
+    color: #f75701;
+}

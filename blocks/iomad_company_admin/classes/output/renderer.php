@@ -236,4 +236,12 @@ class renderer extends plugin_renderer_base {
         return $html;
     }
 
+    /**
+     * Render admin block
+     * @param main $main
+     */
+    public function render_adminblock(adminblock $adminblock) {
+        return $this->render_from_template('block_iomad_company_admin/adminblock', $adminblock->export_for_template($this));
+    }
+
 }

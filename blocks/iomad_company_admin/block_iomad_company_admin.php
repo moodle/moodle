@@ -122,6 +122,9 @@ class block_iomad_company_admin extends block_base {
             return $this->content;
         }
 
+        // Renderer
+        $renderer = $this->page->get_renderer('block_iomad_company_admin');
+
         // Get params and session stuff
         $this->check_company_status();
 
@@ -139,9 +142,6 @@ class block_iomad_company_admin extends block_base {
             $selectedtab = 1;
         }
 
-        // Title.
-        $this->content = new stdClass();
-        $this->content->text = $this->company_selector();
 
         // If no selected company no point showing tabs.
         if (!iomad::get_my_companyid(context_system::instance(), false)) {
@@ -173,8 +173,6 @@ class block_iomad_company_admin extends block_base {
             $tabs[7] = ['fa-bar-chart-o', get_string('reports', 'block_iomad_company_admin')];
         }
         $tabhtml = $this->gettabs($tabs, $selectedtab);
-
-        $this->content->text .= $tabhtml;
 
         // Build content for selected tab (from menu array).
         $menus = $this->get_menu();
@@ -232,11 +230,18 @@ class block_iomad_company_admin extends block_base {
             $html .= '</a>';
         }
         $html .= '</div>';
-        $this->content->text .= $html;
+        $menu = $html;
 
-        // A clearfix for the floated linked.
-        $this->content->text .= '<div class="clearfix"></div>';
+        // Logo.
+        $logourl = $renderer->image_url('iomadlogo', 'block_iomad_company_admin');
 
+        // Company selector
+        $companyselect = $this->company_selector();
+
+        // Render block.
+        $adminblock = new block_iomad_company_admin\output\adminblock($logourl, $companyselect, $tabhtml, $menu);
+        $this->content = new stdClass();
+        $this->content->text = $renderer->render($adminblock);
         return $this->content;
     }
 

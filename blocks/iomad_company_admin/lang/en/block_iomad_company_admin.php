@@ -255,6 +255,7 @@ $string['invalidnumber'] = 'Invalid number';
 $string['invaliduser'] = 'Invalid user';
 $string['invalidstartdate'] = 'The license start date is not valid';
 $string['iomadcapabilities_boiler'] = 'Please be aware that the capabilities for the Iomad system are fairly complex and disabling one of these may not completely take away the capability from the role you are editing.  You are advised to <b>test</b> any role changes you make to ensure that they work as you expect.';
+$string['iomaddashboard'] = 'Iomad dashboard';
 $string['iomad_company_admin:addinstance'] = 'Add a new Iomad company admin block';
 $string['iomad_company_admin:assign_groups'] = 'Assign users to company groups';
 $string['iomad_company_admin:assign_company_manager'] = 'Assign a company manager';
