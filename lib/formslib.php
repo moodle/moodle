@@ -171,12 +171,12 @@ abstract class moodleform {
         global $CFG, $FULLME;
         // no standard mform in moodle should allow autocomplete with the exception of user signup
         if (empty($attributes)) {
-            $attributes = array('autocomplete'=>'off');
+            $attributes = array('autocomplete'=>'on');
         } else if (is_array($attributes)) {
-            $attributes['autocomplete'] = 'off';
+            $attributes['autocomplete'] = 'on';
         } else {
             if (strpos($attributes, 'autocomplete') === false) {
-                $attributes .= ' autocomplete="off" ';
+                $attributes .= ' autocomplete="on" ';
             }
         }
 
