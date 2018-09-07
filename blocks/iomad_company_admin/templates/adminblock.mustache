@@ -8,7 +8,21 @@
 </div>
 
 <div class="row">
-   {{{ companyselect }}}
+   {{# companyselect.onecompany }}
+       <div class="col">
+           {{ companyselect.companyname }}
+       </div>
+   {{/ companyselect.onecompany }}
+   {{^ companyselect.onecompany }}
+       <div class="row">
+           <div class="col">
+               {{{ companyselect.selectform }}}
+           </div>
+           <div class="col">
+               {{{ companyselect.suspended }}}
+           </div>
+       </div>
+   {{/ companyselect.onecompany }}
 </div>
 
 <div class="row m-t-2">

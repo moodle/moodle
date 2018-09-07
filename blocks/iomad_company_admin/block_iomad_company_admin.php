@@ -344,18 +344,22 @@ class block_iomad_company_admin extends block_base {
     public function company_selector() {
         global $USER, $CFG, $DB, $OUTPUT, $SESSION;
 
+        $selector = new \stdClass;
+
         // Only display if you have the correct capability, or you are not in more than one company.
         // Just display name of current company if no choice. 
         if (!iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
             if ($DB->count_records('company_users', array('userid' => $USER->id)) <= 1 ) {
                 $companyuser = $DB->get_record('company_users', array('userid' => $USER->id), '*', MUST_EXIST);
                 $company = $DB->get_record('company', array('id' => $companyuser->companyid), '*', MUST_EXIST);
-                $html = $OUTPUT->container_start(array('companyselect', 'clearfix'));
-                $html .= '<div class="alert alert-info">' . get_string('currentcompany', 'block_iomad_company_admin', $company->name) . '</div>';
-                $html .= $OUTPUT->container_end();
-                return $html;
+                $selector->companyname = $companyname;
+                $selector->onecompany = true;
+                return $selector;
             }
         }
+
+        // Possibly more than one company
+        $selector->onecompany = false;
 
         $content = '';
 
@@ -390,26 +394,18 @@ class block_iomad_company_admin extends block_base {
         $companylist = company::get_companies_select($showsuspendedcompanies);
         $select = new iomad_company_select_form(new moodle_url('/my'), $companylist, $selectedcompany);
         $select->set_data(array('company' => $selectedcompany, 'showsuspendedcompanies' => $showsuspendedcompanies));
-        $content = $OUTPUT->container_start('companyselect');
-        if (!empty($SESSION->currenteditingcompany)) {
-            //$content .= '<h3>'. get_string('currentcompany', 'block_iomad_company_selector').
-            //                        ' - '.$companyname .'</h3>';
-        } else {
-            //$content .= '<label label-warning>'. get_string('nocurrentcompany', 'block_iomad_company_selector').'</label>';
-        }
-        $content .= $select->render();
+        $selector->selectform = $select->render();
         if (!$showsuspendedcompanies) {
-            $content .= $OUTPUT->single_button(new moodle_url('/my',
+            $selector->suspended = $OUTPUT->single_button(new moodle_url('/my',
                                                array('showsuspendedcompanies' => true)),
                                                get_string("show_suspended_companies", 'block_iomad_company_admin'));
         } else {
-            $content .= $OUTPUT->single_button(new moodle_url('/my',
+            $selector->suspended = $OUTPUT->single_button(new moodle_url('/my',
                                                array('showsuspendedcompanies' => false)),
                                                get_string("hide_suspended_companies", 'block_iomad_company_admin'));
         }
-        $content .= $OUTPUT->container_end();
 
-        return $content;
+        return $selector;
     }
 
     /**
