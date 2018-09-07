@@ -49,7 +49,8 @@ class block_calendar_month extends block_base {
         $this->content->footer = '';
 
         $courseid = $this->page->course->id;
-        $categoryid = ($this->page->context->contextlevel === CONTEXT_COURSECAT) ? $this->page->category->id : null;
+        $categoryid = ($this->page->context->contextlevel === CONTEXT_COURSECAT && !empty($this->page->category)) ?
+            $this->page->category->id : null;
         $calendar = \calendar_information::create(time(), $courseid, $categoryid);
         list($data, $template) = calendar_get_view($calendar, 'mini', isloggedin(), isloggedin());
 
