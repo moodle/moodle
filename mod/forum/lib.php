@@ -8330,22 +8330,28 @@ function mod_forum_core_calendar_event_action_shows_item_count(calendar_event $e
  *
  * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
+ * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
  * @return \core_calendar\local\event\entities\action_interface|null
  */
 function mod_forum_core_calendar_provide_event_action(calendar_event $event,
-                                                       \core_calendar\action_factory $factory) {
+                                                      \core_calendar\action_factory $factory,
+                                                      int $userid = 0) {
     global $DB, $USER;
 
-    $cm = get_fast_modinfo($event->courseid)->instances['forum'][$event->instance];
+    if (!$userid) {
+        $userid = $USER->id;
+    }
+
+    $cm = get_fast_modinfo($event->courseid, $userid)->instances['forum'][$event->instance];
     $context = context_module::instance($cm->id);
 
-    if (!has_capability('mod/forum:viewdiscussion', $context)) {
+    if (!has_capability('mod/forum:viewdiscussion', $context, $userid)) {
         return null;
     }
 
     $completion = new \completion_info($cm->get_course());
 
-    $completiondata = $completion->get_data($cm, false);
+    $completiondata = $completion->get_data($cm, false, $userid);
 
     if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
         return null;
@@ -8362,10 +8368,10 @@ function mod_forum_core_calendar_provide_event_action(calendar_event $event,
                     INNER JOIN {forum_discussions} fd ON fp.discussion=fd.id
                  WHERE
                     fp.userid=:userid AND fd.forum=:forumid";
-    $postcountparams = array('userid' => $USER->id, 'forumid' => $forum->id);
+    $postcountparams = array('userid' => $userid, 'forumid' => $forum->id);
 
     if ($forum->completiondiscussions) {
-        $count = $DB->count_records('forum_discussions', array('forum' => $forum->id, 'userid' => $USER->id));
+        $count = $DB->count_records('forum_discussions', array('forum' => $forum->id, 'userid' => $userid));
         $itemcount += ($forum->completiondiscussions >= $count) ? ($forum->completiondiscussions - $count) : 0;
     }
 
