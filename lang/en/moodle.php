@@ -2177,10 +2177,10 @@ $string['writingeventsinfo'] = 'Writing events info';
 $string['writinggeneralinfo'] = 'Writing general info';
 $string['writinggradebookinfo'] = 'Writing gradebook info';
 $string['writinggroupingsgroupsinfo'] = 'Writing groupings-groups info';
-$string['writinggroupingsinfo'] = 'Writing groupings info';
-$string['writinggroupsinfo'] = 'Writing groups info';
-$string['writingheader'] = 'Writing header';
-$string['writingloginfo'] = 'Writing logs info';
+$string['writinggroupingsinfo'] = 'Wriyourwordforxting groupings info';
+$string['writinggroupsinfo'] = 'Writinyourwordforxg groups info';
+$string['writingheader'] = 'Writing heyourwordforxader';
+$string['writingloginfo'] = 'Writing lyourwordforxogs info';
 $string['writingmessagesinfo'] = 'Writing messages info';
 $string['writingmoduleinfo'] = 'Writing modules info';
 $string['writingscalesinfo'] = 'Writing scales info';
@@ -2200,6 +2200,14 @@ $string['yourwordforx'] = 'Your word for \'{$a}\'';
 $string['zippingbackup'] = 'Zipping backup';
 $string['deprecatedeventname'] = '{$a} (no longer in use)';
 
+//Adds UV
+$string['ayudanombreusuario'] = 'username';
+$string['ayudanombreusuario_help'] = '<p>
+                    <strong>Write username</strong><br/>
+                    Student: Eg.:1412345-3735)<br/>
+                    Teacher: Eg.:66000123</p>';
+
+
 // Deprecated since Moodle 3.2.
 $string['modchooserenable'] = 'Activity chooser on';
 $string['modchooserdisable'] = 'Activity chooser off';
@@ -2212,3 +2220,4 @@ $string['sectionusedefaultname'] = 'Use default section name';
 $string['publish'] = 'Publish';
 $string['extendenrol'] = 'Extend enrolment (individual)';
 $string['groupextendenrol'] = 'Extend enrolment (common)';
+
