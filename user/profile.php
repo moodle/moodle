@@ -214,6 +214,7 @@ if ($user->description && !isset($hiddenfields['description'])) {
 echo $OUTPUT->custom_block_region('content');
 
 // Render custom blocks.
+echo "<h1>".$user->firstname." ".$user->lastname."</h1>";
 $renderer = $PAGE->get_renderer('core_user', 'myprofile');
 $tree = core_user\output\myprofile\manager::build_tree($user, $currentuser);
 echo $renderer->render($tree);
