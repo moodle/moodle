@@ -537,7 +537,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                     switch (action) {
                         case 'moveleft':
                         case 'moveright':
-                        case 'delete':
+                        //case 'delete':
                         case 'duplicate':
                         case 'hide':
                         case 'stealth':

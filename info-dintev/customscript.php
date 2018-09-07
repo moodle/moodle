@@ -22,16 +22,25 @@
         	$programas = $DB->get_records_sql($sql_programas);
         	
         	foreach ($programas as $programa) {
+				//No adicionar prefijo facultad a los institutos
+				if (strpos($programa->facultad, 'INSTITUTO') !== false) {
+					$facultad = '';
+				}else{
+					$facultad = ' Facultad de ';
+				}
+
+				//Cadena para llenar el campo departamento
         		$str_strtolower = mb_strtolower($programa->facultad,'UTF-8'); //Convertir a minúsculas
         		$str_ucwords = ucwords($str_strtolower, " "); //Primera mayúscula
 
         		$update_user = new StdClass;
     			$update_user->id = $usuario->id;
-    			$update_user->department = ' Facultad de '.$str_ucwords;
-
+    			$update_user->department = $facultad.$str_ucwords;
+				
     			if ($DB->update_record('user', $update_user)) {
-					echo $conta.' El usuario '.$usuario->username.' se ha actualizado el departamento a Facultad de '.$str_ucwords.'</br>';
+					echo $conta.' El usuario '.$usuario->username.' se ha actualizado el departamento a '.$facultad.$str_ucwords.'</br>';
 				}
+
 	        	break;
         	}
         }
