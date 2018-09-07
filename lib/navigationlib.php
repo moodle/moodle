@@ -430,15 +430,16 @@ class navigation_node implements renderable {
      *
      * @param flat_navigation $nodes List of the found flat navigation nodes.
      * @param boolean $showdivider Show a divider before the first node.
+     * @param string $label A label for the collection of navigation links.
      */
-    public function build_flat_navigation_list(flat_navigation $nodes, $showdivider = false) {
+    public function build_flat_navigation_list(flat_navigation $nodes, $showdivider = false, $label = '') {
         if ($this->showinflatnavigation) {
             $indent = 0;
             if ($this->type == self::TYPE_COURSE || $this->key === self::COURSE_INDEX_PAGE) {
                 $indent = 1;
             }
             $flat = new flat_navigation_node($this, $indent);
-            $flat->set_showdivider($showdivider);
+            $flat->set_showdivider($showdivider, $label);
             $nodes->add($flat);
         }
         foreach ($this->children as $child) {
@@ -914,6 +915,12 @@ class navigation_node_collection implements IteratorAggregate, Countable {
     protected $count = 0;
 
     /**
+     * Label for collection of nodes.
+     * @var string
+     */
+    protected $collectionlabel = '';
+
+    /**
      * Adds a navigation node to the collection
      *
      * @param navigation_node $node Node to add
@@ -986,6 +993,24 @@ class navigation_node_collection implements IteratorAggregate, Countable {
             $keys[] = $node->key;
         }
         return $keys;
+    }
+
+    /**
+     * Set a label for this collection.
+     *
+     * @param string $label
+     */
+    public function set_collectionlabel($label) {
+        $this->collectionlabel = $label;
+    }
+
+    /**
+     * Return a label for this collection.
+     *
+     * @return string
+     */
+    public function get_collectionlabel() {
+        return $this->collectionlabel;
     }
 
     /**
@@ -3770,6 +3795,9 @@ class flat_navigation_node extends navigation_node {
     /** @var $showdivider bool Show a divider before this element */
     private $showdivider = false;
 
+    /** @var $collectionlabel string Label for a group of nodes */
+    private $collectionlabel = '';
+
     /**
      * A proxy constructor
      *
@@ -3789,6 +3817,31 @@ class flat_navigation_node extends navigation_node {
             throw new coding_exception('Not a valid flat_navigation_node');
         }
         $this->indent = $indent;
+    }
+
+    /**
+     * Setter, a label is required for a flat navigation node that shows a divider.
+     *
+     * @param string $label
+     */
+    public function set_collectionlabel($label) {
+        $this->collectionlabel = $label;
+    }
+
+    /**
+     * Getter, get the label for this flat_navigation node, or it's parent if it doesn't have one.
+     *
+     * @return string
+     */
+    public function get_collectionlabel() {
+        if (!empty($this->collectionlabel)) {
+            return $this->collectionlabel;
+        }
+        if ($this->parent && ($this->parent instanceof flat_navigation_node || $this->parent instanceof flat_navigation)) {
+            return $this->parent->get_collectionlabel();
+        }
+        debugging('Navigation region requires a label', DEBUG_DEVELOPER);
+        return '';
     }
 
     /**
@@ -3828,9 +3881,15 @@ class flat_navigation_node extends navigation_node {
     /**
      * Setter for "showdivider"
      * @param $val boolean
+     * @param $label string Label for the group of nodes
      */
-    public function set_showdivider($val) {
+    public function set_showdivider($val, $label = '') {
         $this->showdivider = $val;
+        if ($this->showdivider && empty($label)) {
+            debugging('Navigation region requires a label', DEBUG_DEVELOPER);
+        } else {
+            $this->set_collectionlabel($label);
+        }
     }
 
     /**
@@ -3848,7 +3907,6 @@ class flat_navigation_node extends navigation_node {
     public function set_indent($val) {
         $this->indent = $val;
     }
-
 }
 
 /**
@@ -3903,6 +3961,7 @@ class flat_navigation extends navigation_node_collection {
                 format_string($course->fullname, true, array('context' => $coursecontext));
 
             $flat = new flat_navigation_node(navigation_node::create($coursename, $url), 0);
+            $flat->set_collectionlabel($coursename);
             $flat->key = 'coursehome';
             $flat->icon = new pix_icon('i/course', '');
 
@@ -3930,9 +3989,9 @@ class flat_navigation extends navigation_node_collection {
                 }
             }
 
-            $this->page->navigation->build_flat_navigation_list($this, true);
+            $this->page->navigation->build_flat_navigation_list($this, true, get_string('site'));
         } else {
-            $this->page->navigation->build_flat_navigation_list($this, false);
+            $this->page->navigation->build_flat_navigation_list($this, false, get_string('site'));
         }
 
         $admin = $PAGE->settingsnav->find('siteadministration', navigation_node::TYPE_SITE_ADMIN);
@@ -3942,7 +4001,7 @@ class flat_navigation extends navigation_node_collection {
         }
         if ($admin) {
             $flat = new flat_navigation_node($admin, 0);
-            $flat->set_showdivider(true);
+            $flat->set_showdivider(true, get_string('sitesettings'));
             $flat->key = 'sitesettings';
             $flat->icon = new pix_icon('t/preferences', '');
             $this->add($flat);
@@ -3956,7 +4015,7 @@ class flat_navigation extends navigation_node_collection {
             $url = new moodle_url($PAGE->url, ['bui_addblock' => '', 'sesskey' => sesskey()]);
             $addablock = navigation_node::create(get_string('addblock'), $url);
             $flat = new flat_navigation_node($addablock, 0);
-            $flat->set_showdivider(true);
+            $flat->set_showdivider(true, get_string('blocksaddedit'));
             $flat->key = 'addblock';
             $flat->icon = new pix_icon('i/addblock', '');
             $this->add($flat);
@@ -3969,6 +4028,26 @@ class flat_navigation extends navigation_node_collection {
         }
     }
 
+
+    /**
+     * Override the parent so we can set a label for this collection if it has not been set yet.
+     *
+     * @param navigation_node $node Node to add
+     * @param string $beforekey If specified, adds before a node with this key,
+     *   otherwise adds at end
+     * @return navigation_node Added node
+     */
+    public function add(navigation_node $node, $beforekey=null) {
+        $result = parent::add($node, $beforekey);
+        // Extend the parent to get a name for the collection of nodes if required.
+        if (empty($this->collectionlabel)) {
+            if ($node instanceof flat_navigation_node) {
+                $this->set_collectionlabel($node->get_collectionlabel());
+            }
+        }
+
+        return $result;
+    }
 }
 
 /**
