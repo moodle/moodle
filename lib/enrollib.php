@@ -1505,7 +1505,7 @@ function count_enrolled_users(context $context, $withcapability = '', $groupid =
     $capjoin = get_enrolled_with_capabilities_join(
             $context, '', $withcapability, $groupid, $onlyactive);
 
-    $sql = "SELECT count(u.id)
+    $sql = "SELECT COUNT(DISTINCT u.id)
               FROM {user} u
             $capjoin->joins
              WHERE $capjoin->wheres AND u.deleted = 0";
