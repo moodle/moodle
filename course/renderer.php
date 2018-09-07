@@ -1730,6 +1730,9 @@ class core_course_renderer extends plugin_renderer_base {
         } else {
             print_course_request_buttons($context);
         }
+        $output .= ob_get_contents();
+        ob_end_clean();
+        $output .= $this->container_end();
 
         // Display course category tree.
         $output .= $this->coursecat_tree($chelper, $coursecat);
