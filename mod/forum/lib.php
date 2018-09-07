@@ -8343,6 +8343,12 @@ function mod_forum_core_calendar_provide_event_action(calendar_event $event,
     }
 
     $cm = get_fast_modinfo($event->courseid, $userid)->instances['forum'][$event->instance];
+
+    if (!$cm->uservisible) {
+        // The module is not visible to the user for any reason.
+        return null;
+    }
+
     $context = context_module::instance($cm->id);
 
     if (!has_capability('mod/forum:viewdiscussion', $context, $userid)) {
