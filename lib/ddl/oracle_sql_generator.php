@@ -131,6 +131,61 @@ class oracle_sql_generator extends sql_generator {
         return $tablename;
     }
 
+    public function getCreateIndexSQL($xmldb_table, $xmldb_index) {
+        if ($error = $xmldb_index->validateDefinition($xmldb_table)) {
+            throw new coding_exception($error);
+        }
+
+        $indexfields = $this->getEncQuoted($xmldb_index->getFields());
+
+        $unique = '';
+        $suffix = 'ix';
+        if ($xmldb_index->getUnique()) {
+            $unique = ' UNIQUE';
+            $suffix = 'uix';
+
+            $nullablefields = $this->get_nullable_fields_in_index($xmldb_table, $xmldb_index);
+            if ($nullablefields) {
+                // If this is a unique index with nullable fields, then we have to
+                // apply the work-around from https://community.oracle.com/message/9518046#9518046.
+                //
+                // For example if you have a unique index on the three columns
+                // (required, option1, option2) where the first one is non-null,
+                // and the others nullable, then the SQL will end up as
+                //
+                // CREATE UNIQUE INDEX index_name ON table_name (
+                // CASE WHEN option1 IS NOT NULL AND option2 IS NOT NULL THEN required ELSE NULL END,
+                // CASE WHEN option1 IS NOT NULL AND option2 IS NOT NULL THEN option1 ELSE NULL END,
+                // CASE WHEN option1 IS NOT NULL AND option2 IS NOT NULL THEN option2 ELSE NULL END)
+                //
+                // Basically Oracle behaves according to the standard if either
+                // none of the columns are NULL or all columns contain NULL. Therefore,
+                // if any column is NULL, we treat them all as NULL for the index.
+                $conditions = [];
+                foreach ($nullablefields as $fieldname) {
+                    $conditions[] = $this->getEncQuoted($fieldname) .
+                            ' IS NOT NULL';
+                }
+                $condition = implode(' AND ', $conditions);
+
+                $updatedindexfields = [];
+                foreach ($indexfields as $fieldname) {
+                    $updatedindexfields[] = 'CASE WHEN ' . $condition . ' THEN ' .
+                            $fieldname . ' ELSE NULL END';
+                }
+                $indexfields = $updatedindexfields;
+            }
+
+        }
+
+        $index = 'CREATE' . $unique . ' INDEX ';
+        $index .= $this->getNameForObject($xmldb_table->getName(), implode(', ', $xmldb_index->getFields()), $suffix);
+        $index .= ' ON ' . $this->getTableName($xmldb_table);
+        $index .= ' (' . implode(', ', $indexfields) . ')';
+
+        return array($index);
+    }
+
     /**
      * Given one correct xmldb_table, returns the SQL statements
      * to create temporary table (inside one array).
