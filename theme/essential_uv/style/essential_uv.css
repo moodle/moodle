@@ -20094,7 +20094,8 @@ body:not(.tabletdevice).empty-region-side-post.used-region-side-pre #main-and-pr
 }
 .regionname{
 	  display: none !important;
-	}
+  }
+  
 .editing .block-region .regionname span {
   background-color: rgba(255, 255, 255, 0.5);
   border-radius: 4px;

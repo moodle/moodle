@@ -200,6 +200,15 @@ class participants_table extends \table_sql {
             $columns[] = 'lastaccess';
         }
 
+        // Agregar columna último acceso al CVUV
+        if (!isset($hiddenfields['lastaccess'])) {
+            if ($courseid != SITEID) {
+                $headers[] = get_string('lastaccess')." CV";
+                $columns[] = 'ultimo_acceso';
+            }
+        }
+
+
         $canreviewenrol = has_capability('moodle/course:enrolreview', $context);
         if ($canreviewenrol && $courseid != SITEID) {
             $columns[] = 'status';
@@ -351,6 +360,19 @@ class participants_table extends \table_sql {
             return format_time(time() - $data->lastaccess);
         }
 
+        return get_string('never');
+    }
+
+     /**
+    * Contenido para la columna de último acceso.
+    *
+    * @param \stdClass $data
+    * @return string
+    */
+    public function col_ultimo_acceso($data) {
+        if ($data->lastaccess) {
+            return format_time(time() - $data->ultimo_acceso);
+        }
         return get_string('never');
     }
 
