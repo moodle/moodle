@@ -26,8 +26,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 class core_ddl_testcase extends database_driver_testcase {
+    /** @var xmldb_table[] keys are table name. Created in setUp. */
     private $tables = array();
-    private $records= array();
+    /** @var array table name => array of stdClass test records loaded into that table. Created in setUp. */
+    private $records = array();
 
     protected function setUp() {
         parent::setUp();

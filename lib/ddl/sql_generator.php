@@ -1129,7 +1129,7 @@ abstract class sql_generator {
      * if it's a reserved word
      *
      * @param string|array $input String to quote.
-     * @return string Quoted string.
+     * @return string|array Quoted string.
      */
     public function getEncQuoted($input) {
 
