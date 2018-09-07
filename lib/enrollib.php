@@ -868,6 +868,8 @@ function enrol_user_sees_own_courses($user = null) {
 
     // Now the slow way.
     $courses = enrol_get_all_users_courses($userid, true);
+    $courses = order_courses_univalle($courses);
+
     foreach($courses as $course) {
         if ($course->visible) {
             return true;
@@ -880,6 +882,24 @@ function enrol_user_sees_own_courses($user = null) {
     }
 
     return false;
+}
+
+/**
+*create by hernan
+*funcion que organiza la lista de cursos del mas actual al mas antiguo
+**/
+function order_courses_univalle($courses){
+    $array_tmp=array();
+    foreach ($courses as $course) {
+        $fecha= substr($course->shortname,14,9);
+        //echo $fecha."</br>";
+        $array_tmp[]=$fecha;
+    }
+    //ordenamos los cursos con base en el array qe contiene las fechas
+    array_multisort($array_tmp, $courses);
+    
+    return $courses;
+  
 }
 
 /**

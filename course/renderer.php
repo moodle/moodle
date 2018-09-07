@@ -1711,6 +1711,26 @@ class core_course_renderer extends plugin_renderer_base {
         // Add course search form.
         $output .= $this->course_search_form();
 
+        // Add action buttons
+        // Add button addnewcourse at the top of course category tree
+        $output .= $this->container_start('buttons');
+        $context = get_category_or_system_context($coursecat->id);
+        if (has_capability('moodle/course:create', $context)) {
+            // Print link to create a new course, for the 1st available category.
+            if ($coursecat->id) {
+                $url = new moodle_url('/course/edit.php', array('category' => $coursecat->id, 'returnto' => 'category'));
+            } else {
+                $url = new moodle_url('/course/edit.php', array('category' => $CFG->defaultrequestcategory, 'returnto' => 'topcat'));
+            }
+            $output .= $this->single_button($url, get_string('addnewcourse'), 'get');
+        }
+        ob_start();
+        if (coursecat::count_all() == 1) {
+            print_course_request_buttons(context_system::instance());
+        } else {
+            print_course_request_buttons($context);
+        }
+
         // Display course category tree.
         $output .= $this->coursecat_tree($chelper, $coursecat);
 
