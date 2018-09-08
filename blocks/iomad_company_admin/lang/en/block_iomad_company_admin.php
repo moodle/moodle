@@ -422,6 +422,7 @@ $string['missinglicensename'] = 'Missing license identifier';
 $string['missingroletemplatename'] = 'Missing the name for the role template';
 $string['missingshortnamedepartment'] = 'Missing department shortname';
 $string['missingstartdate'] = 'Missing license start date';
+$string['missingvalidlength'] = 'Missing License valid for days';
 $string['movedepartment'] = 'Department is being moved.';
 $string['movedepartmentcheckfull'] = 'You are moving this department to another place in the tree.  Are you sure you want to move {$a->current} under {$a->newparent}?';
 $string['newcourse'] = 'New course';
