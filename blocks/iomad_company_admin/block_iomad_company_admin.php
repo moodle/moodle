@@ -82,7 +82,7 @@ class block_iomad_company_admin extends block_base {
     private function check_company_status() {
         global $SESSION, $DB;
 
-        // Get parameters.
+	// Get parameters.
         $edit = optional_param( 'edit', null, PARAM_BOOL );
         $company = optional_param('company', 0, PARAM_INT);
         $showsuspendedcompanies = optional_param('showsuspendedcompanies', false, PARAM_BOOL);
@@ -104,12 +104,12 @@ class block_iomad_company_admin extends block_base {
             redirect(new moodle_url('/blocks/iomad_company_admin/company_edit_form.php', ['createnew' => 1]));
         }
 
-    // If there is only one company, make that the current one
-    if ($companycount == 1) {
-        $companies = $DB->get_records('company');
-        $firstcompany = reset($companies);
-        $SESSION->currenteditingcompany = $firstcompany->id;
-        $company = $firstcompany->id;
+        // If there is only one company, make that the current one
+        if ($companycount == 1) {
+            $companies = $DB->get_records('company');
+            $firstcompany = reset($companies);
+            $SESSION->currenteditingcompany = $firstcompany->id;
+            $company = $firstcompany->id;
         }
     }
 
@@ -377,7 +377,7 @@ class block_iomad_company_admin extends block_base {
         }
 
         //  Check users session current show suspended setting.
-        if (!empty($SESSION->showsuspendedcompanies)) {
+	if (!empty($SESSION->showsuspendedcompanies)) {
             $showsuspendedcompanies = $SESSION->showsuspendedcompanies;
         } else {
             $showsuspendedcompanies = false;
@@ -396,11 +396,11 @@ class block_iomad_company_admin extends block_base {
         $select->set_data(array('company' => $selectedcompany, 'showsuspendedcompanies' => $showsuspendedcompanies));
         $selector->selectform = $select->render();
         if (!$showsuspendedcompanies) {
-            $selector->suspended = $OUTPUT->single_button(new moodle_url('/my',
+            $selector->suspended = $OUTPUT->single_button(new moodle_url('/my/index.php',
                                                array('showsuspendedcompanies' => true)),
                                                get_string("show_suspended_companies", 'block_iomad_company_admin'));
         } else {
-            $selector->suspended = $OUTPUT->single_button(new moodle_url('/my',
+            $selector->suspended = $OUTPUT->single_button(new moodle_url('/my/index.php',
                                                array('showsuspendedcompanies' => false)),
                                                get_string("hide_suspended_companies", 'block_iomad_company_admin'));
         }
