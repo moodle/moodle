@@ -178,7 +178,8 @@ class block_iomad_company_admin extends block_base {
 
         // Build content for selected tab (from menu array).
         $menus = $this->get_menu();
-        $html = '<div class="iomadlink_container clearfix">';
+	$html = '<div class="iomadlink_container clearfix">';
+	$somethingtodisplay = false;
         foreach ($menus as $key => $menu) {
 
             // If it's the wrong tab then move on.
@@ -189,7 +190,8 @@ class block_iomad_company_admin extends block_base {
             // If no capability then move on.
             if (!iomad::has_capability($menu['cap'], $context)) {
                 continue;
-            }
+	    }
+	    $somethingtodisplay = true;
 
             // Build correct url.
             if (substr($menu['url'], 0, 1) == '/') {
@@ -232,7 +234,14 @@ class block_iomad_company_admin extends block_base {
             $html .= '</a>';
         }
         $html .= '</div>';
-        $menu = $html;
+	$menu = $html;
+
+	// If there are no menu items to show this user...
+	if (!$somethingtodisplay) {
+            $this->content = new stdClass;
+	    $this->content->text = '';
+	    return $this->content;
+        }		
 
         // Logo.
         $logourl = $renderer->image_url('iomadlogo', 'block_iomad_company_admin');
@@ -354,7 +363,7 @@ class block_iomad_company_admin extends block_base {
             if ($DB->count_records('company_users', array('userid' => $USER->id)) <= 1 ) {
                 $companyuser = $DB->get_record('company_users', array('userid' => $USER->id), '*', MUST_EXIST);
                 $company = $DB->get_record('company', array('id' => $companyuser->companyid), '*', MUST_EXIST);
-                $selector->companyname = $companyname;
+                $selector->companyname = $company->name;
                 $selector->onecompany = true;
                 return $selector;
             }
