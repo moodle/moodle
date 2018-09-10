@@ -1,0 +1,91 @@
+{{!-- Geographic tab--}}
+<div class="tab-pane" id="geographic_tab">
+  {{#view_geographic_config_sp}}
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label for="latitude" class="col-sm-3">Latitud</label>
+                <div class="col-sm-9">
+                    <input type="number" class="form-control" id="latitude" name="latitude" value={{latitude}} placeholder="Digite latitud" disabled/>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <div class="form-group">
+                <label for="select_neighborhood" class="col-sm-6">Barrio residencia</label>
+                <div class="col-sm-6">
+                    <select class="form-control" name="select_neighborhood" id="select_neighborhood" disabled>
+                    {{{select_neighborhoods}}}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            {{#update_geographic_tab_sp}}
+            <div class="form-group" id="div_edit_button">
+                <button type="button" class="button btn-danger" id="button_edit_geographic">Editar</button>
+            </div>
+            {{/update_geographic_tab_sp}}
+            <div class="form-group" id="div_save_buttons" hidden>
+                <button type="button" class="button btn-success" id="button_save_geographic">Aceptar</button>
+                <button type="button" class="button btn-danger" id="button_cancel_geographic">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label for="longitude" class="col-sm-3">Longitud</label>
+                <div class="col-sm-9">
+                    <input type="number" class="form-control" id="longitude" name="longitude" value={{longitude}} placeholder="Digite longitud" disabled/>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <div class="form-group">
+                <label for="select_geographic_risk" class="col-sm-6">Riesgo geográfico</label>
+                <div class="col-sm-6">
+                    <select class="form-control" name="geographic_risk" id="select_geographic_risk" disabled>
+                    {{{select_geographic_risk}}}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/view_geographic_config_sp}}
+
+    <div class="row">
+        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11 geographic_track_container">
+
+                <!--
+                    + Histórico de riesgo, Alerta si es alto
+                 -->
+                 {{#geographic_trackings_sp}}
+                <div id="accordion_geo_tab" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-default" id="panelGeo">
+                           <div class="panel-heading" role="tab" id="headingGeo">
+                              <h4 class="panel-title">
+                                 <a class="collapsed" data-toggle="collapse" data-parent="#accordion_geo_tab" href="#collapseGeo" aria-expanded="false" aria-controls="collapseGeo">
+                                      Seguimiento geográfico
+                                 </a>
+                              </h4>
+                           </div>
+                           <div id="collapseGeo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingGeo" aria-expanded="false">
+                                {{#registro_seguimiento_geografico}}
+                                <button type="button" id="button_add_geographic_track" class="btn-primary">
+                                    Registrar seguimiento
+                                </button>
+                                {{/registro_seguimiento_geografico}}
+                                {{#actualizar_seguimiento_geografico}}
+                                <button type="button" id="button_update_geographic_track" data-record-id="{{id_seguimiento_geografico}}" class="btn-primary">
+                                    Ver/Actualizar seguimiento
+                                </button>
+                                {{/actualizar_seguimiento_geografico}}
+                            </div>
+                        </div>
+                </div>
+                {{/geographic_trackings_sp}}
+        </div>
+    </div>
+</div>
+{{!-- End geographic tab --}}

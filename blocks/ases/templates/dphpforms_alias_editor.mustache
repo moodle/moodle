@@ -1,0 +1,37 @@
+{{#data}}
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-group">
+                <h2>Administrador de Alias</h2>
+                <hr>   
+                    <a id="dphpforms-redirect-adm-forms" href="javascript:void(0)" class="btn btn-sm btn-default">Administrador de formularios</a>
+                    <a id="dphpforms-redirect-new-form" href="javascript:void(0)" class="btn btn-sm btn-default">Crear/registrar nuevo formulario</a>
+                <hr>   
+                <p><i>Un <strong>Alias</strong> es una cadena asociada a una pregunta que pertenece a un formulario, cuyo fin es servir de apuntador, de tal manera que cuando se va a consultar por una pregunta específica, no sea necesario usar el identificador de la misma, sino el alias referente.</i></p>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <h4>Lista de alias registrados</h4>
+                <hr>
+                <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"><strong>#ID</strong></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><strong>#ID pregunta</strong></div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><strong>Alias</strong></div>
+                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"><strong>Opciones</strong></div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><hr></div>
+                {{#alias}}
+                <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">{{id}}</div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">{{id_pregunta}}</div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">{{alias}}</div>
+                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"><!--<span class="btn btn-default btn-xs glyphicon glyphicon-pencil"></span>--> <span data-form-id="{{id}}" data-form-alias="{{alias}}" class="btn-remove-alias btn btn-danger btn-xs glyphicon glyphicon-remove"></span></div>
+                {{^last}}
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><hr></div>
+                {{/last}}
+                {{/alias}}
+            </div>
+        </div>
+    </div>
+</body>
+{{/data}}

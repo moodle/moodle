@@ -1,0 +1,754 @@
+{
+    "datos_formulario": {
+        "nombre": "Primer acercamiento",
+        "descripcion": "Formulario para registro del primer acercamiento",
+        "method": "POST",
+        "action": "procesador.php",
+        "enctype": null,
+        "alias": "primer_acercamiento"
+    },
+    "preguntas": [
+        {
+            "id_temporal": "cmp_0",
+            "enunciado": "Fecha (mm/dd/aaaa)*",
+            "tipo_campo": "DATE",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "maxlength": "10",
+                "class": "col-xs-12 col-sm-12 col-md-12 col-lg-12 date_field primer_acerca_fecha_field",
+                "inputclass":"primer_acerca_fecha_ajuste",
+                "name": "date",
+                "required": "true",
+                "local_alias": "pa_fecha"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        },
+        {
+            "id_temporal": "cmp_1",
+            "enunciado": "Motivo de orientación *",
+            "tipo_campo": "TEXTAREA",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "maxlength": "5000",
+                "class": "col-xs-12 col-sm-12 col-md-12 col-lg-12 primer_acerca_motivo_field",
+                "name": "motivo",
+                "required": "true",
+                "local_alias": "pa_motivo"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        },
+        {
+            "id_temporal": "cmp_2",
+            "enunciado": "Dimensión individual",
+            "tipo_campo": "TEXTAREA",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "maxlength": "5000",
+                "class": "col-xs-12 col-sm-12 col-md-12 col-lg-12 primer_acerca_dim_individual_field",
+                "name": "dim_idividual",
+                "required": "false",
+                "local_alias": "pa_dim_individual"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        },
+        {
+            "id_temporal": "cmp_3",
+            "enunciado": "Dimensión familiar",
+            "tipo_campo": "TEXTAREA",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "maxlength": "5000",
+                "class": "col-xs-12 col-sm-12 col-md-12 col-lg-12 primer_acerca_dim_familiar_field",
+                "name": "dim_familiar",
+                "required": "false",
+                "local_alias": "pa_dim_familiar"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        },
+        {
+            "id_temporal": "cmp_4",
+            "enunciado": "Dimensión académica",
+            "tipo_campo": "TEXTAREA",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "maxlength": "5000",
+                "class": "col-xs-12 col-sm-12 col-md-12 col-lg-12 primer_acerca_dim_academica_field",
+                "name": "dim_academica",
+                "required": "false",
+                "local_alias": "pa_dim_academica"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        },
+        {
+            "id_temporal": "cmp_5",
+            "enunciado": "Dimensión económica",
+            "tipo_campo": "TEXTAREA",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "maxlength": "5000",
+                "class": "col-xs-12 col-sm-12 col-md-12 col-lg-12 primer_acerca_dim_economica_field",
+                "name": "dim_economica",
+                "required": "false",
+                "local_alias": "pa_dim_economica"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        },
+        {
+            "id_temporal": "cmp_6",
+            "enunciado": "Dimensión vida universitaria y ciudad",
+            "tipo_campo": "TEXTAREA",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "maxlength": "5000",
+                "class": "col-xs-12 col-sm-12 col-md-12 col-lg-12 primer_acerca_dim_vidauni_ciudad_field",
+                "name": "dim_vidauni_ciudad",
+                "required": "false",
+                "local_alias": "pa_dim_vidauni_ciudad"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        },
+        {
+            "id_temporal": "cmp_7",
+            "enunciado": "Observaciones",
+            "tipo_campo": "TEXTAREA",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "maxlength": "5000",
+                "class": "col-xs-12 col-sm-12 col-md-12 col-lg-12 primer_acerca_observaciones_field",
+                "name": "pa_observaciones",
+                "required": "false",
+                "local_alias": "pa_observaciones"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        },
+        {
+            "id_temporal": "cmp_8",
+            "enunciado": "id_creado_por",
+            "tipo_campo": "TEXTFIELD",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "class": "oculto primer_acerca_id_creado_por_field",
+                "name": "pa_id_creado_por",
+                "required": "false",
+                "local_alias": "pa_id_creado_por"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        },
+        {
+            "id_temporal": "cmp_9",
+            "enunciado": "id_estudiante",
+            "tipo_campo": "TEXTFIELD",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "class": "oculto primer_acerca_id_estudiante_field",
+                "name": "pa_id_estudiante",
+                "required": "true",
+                "local_alias": "pa_id_estudiante"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        }
+    ],
+    "disparadores": [],
+    "reglas": [],
+    "campos_busqueda": [
+        {
+            "alias": "primer_acercamiento_id_creado_por",
+            "id_campo": "cmp_8"
+        },
+        {
+            "alias": "primer_acercamiento_id_estudiante",
+            "id_campo": "cmp_9"
+        }
+    ],
+    "actualizador_orden":[]
+}

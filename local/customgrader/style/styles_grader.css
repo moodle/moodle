@@ -107,6 +107,14 @@ th{
     font-size: 40px !important;
 }
 
+.tutorial-link{
+    position: relative;
+    margin-left: 320px;
+    bottom: -18px;  
+    display: unset !important;
+
+}
+
 input{
     text-align: center;
 }

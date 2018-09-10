@@ -1,0 +1,65 @@
+{{#data}}
+<body>
+    <div id="dphpforms-reports-preguntas" style="display:none;">{{{preguntas}}}</div>
+    <div id="dphpforms-instance-id" data-instance-id="{{dphpforms_instance_id}}" style="display:none;"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <h2>
+                    Reportes de formularios dinámicos
+                </h2>
+                <hr>
+            </div>
+        </div>
+        <!--<div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <span><strong>Filtro:</strong>&nbsp;</span>
+                <select name="" id="" disabled>
+                    <option value="" disabled>Seleccione un alias de pregunta</option>
+                    {{#alias_preguntas_globales}}
+                        {{#.}}
+                    <option value="{{id_pregunta}}">{{alias}}</option>
+                        {{/.}}
+                    {{/alias_preguntas_globales}}
+                </select>
+                <hr>
+            </div>
+        </div>-->
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="form-group col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                    <label for="">Fecha de inicio</label>
+                    <input type="date" name="" id="start_date" class="form-control ajuste_fecha">
+                </div>
+                <div class="form-group col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                    <label for="">Fecha de finalización</label>
+                    <input type="date" name="" id="end_date" class="form-control ajuste_fecha">
+                </div>
+                <div class="form-group">
+                    <button id="btn-generar-reporte" type="submit" class="btn btn-default">Generar</button>
+                </div>
+                <div>
+                    <!--<table id="dphpform_datatable"></table>-->
+                </div>
+                <div id="progress_group" class="form-group" style="display:none;">
+                    <hr>
+                    <div id="message"></div><br>
+                    <span><strong>Progreso:</strong></span>
+                    <h3>Descargando datos:</h3>
+                    <div id="progress-download" class="progress">
+                        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                          0%
+                        </div>
+                    </div>
+                    <h3>Generando CSV:</h3>
+                    <div id="progress-custom" class="progress">
+                        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                          0%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{{/data}}

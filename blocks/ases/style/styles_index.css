@@ -1,0 +1,74 @@
+.wrapper {
+	overflow: hidden;
+}
+.wrapper div{
+	padding: 10px;
+}
+
+@media screen and (max-width: 400px) {
+	#nav-panel {
+		float: none;
+		margin-right: 0;
+		width: auto;
+	}
+}
+
+#nav-panel h4 {
+	display: block;	
+	width: 200px;	
+	padding: 7px;
+	border: 1px solid #999999;
+	background: #DDDDDD;
+	text-align: center;
+	border-radius: 10px;
+	background: -webkit-linear-gradient(top, #FFFFFF, #DDDDDD);	
+	background: -moz-linear-gradient(top, #FFFFFF, #DDDDDD);
+}
+
+#nav-panel a {
+	color: #373a3d;
+}
+
+#frame {
+	position: absolute;
+	width: 80%;
+	min-height: 55%;
+}
+
+/*
+#panel-container {
+	display: table;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	table-layout: fixed;
+	border-spacing: 10px;
+}
+*/
+
+
+#frame {
+	position: absolute;
+	width: 82%;
+	height: 70%;
+}
+
+#nav-panel {
+	float: left;
+	margin-right: 100px;
+	width: 140px;
+	/*display: table-cell;*/
+	/*position: absolute;*/
+	padding-top: 2%;
+}
+
+#show-panel {
+	overflow: hidden;
+	margin: 10px;	
+	/*display: table-cell;*/
+	overflow: hidden;
+	margin: 10px;
+	width: 80%;
+	height: 100%;
+	
+}

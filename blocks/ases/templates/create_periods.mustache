@@ -1,0 +1,39 @@
+<div class="panel panel-default">
+   {{!-- begin new panel--}}   
+   <div class="panel-heading">
+      <h4 class="panel-title">
+         <a data-toggle="collapse" href="#collapse3">Creación de períodos</a>
+      </h4>
+   </div>
+   {{!--end panel-heading--}}   
+   <div id="collapse3" class="panel-collapse collapse">
+      <div class="panel-body">
+         <form class="form-pilos" id="role_man_form">
+            <div class="col-md-6">
+               <ul>
+                  <li class="new_assignment_li"> 
+                     <label for="new_semester_name">Nombre del semestre: </label>
+                     <input type="text" id="new_semester_name" name="new_semester_name"/>
+                  </li>
+                  <li class="new_assignment_li">
+                     <label for="new_beginning_date">Fecha de Inicio (yyyy-mm-dd): </label>
+                     <input class="period_date" type="text" maxlength="10" id="new_beginning_date" name="new_beginning_date"/>
+                  </li>
+                  <li class="new_assignment_li">
+                     <label for="new_ending_date">Fecha de Finalización (yyyy-mm-dd): </label>
+                     <input class="period_date" type="text" maxlength="10" id="new_ending_date" name="new_ending_date"/>
+                  </li>
+               </ul>
+            </div>
+            {{!--end col-md-6--}}          
+            <div class="col-md-3 col-md-offset-5 new_assignment_li">
+               <button class="submit btn-form" type="button" id="save-button">Guardar</button>
+               <button class="submit btn-form" type="button" id="cancel-save-button">Cancelar</button>
+            </div>
+            {{!--end div buttons--}}  
+         </form>
+      </div>
+      {{!--end panel-body--}}   
+   </div>
+   {{!--end panel-collapse3--}}
+</div>

@@ -1,0 +1,22 @@
+{{#data}}   
+{{> block_ases/side_menu}}
+<div class="container">
+<div class="row">
+   <h2>REPORTES DE HISTÓRICOS ICETEX</h2>   
+  <hr/>
+  {{{message}}}   
+   <div class="panel-group">
+      {{#view_resolution_students_hir}}
+      {{> block_ases/view_resolution_students}}
+      {{/view_resolution_students_hir}}
+      {{#view_resolutions_report_hir}}
+      {{> block_ases/view_resolutions_report}}
+      {{/view_resolutions_report_hir}}
+      {{#view_icetex_summary_hir}}
+      {{> block_ases/view_icetex_summary}}
+      {{/view_icetex_summary_hir}}
+   </div>
+   {{/data}}
+   <!--end panel-group-->
+</div>
+</div>

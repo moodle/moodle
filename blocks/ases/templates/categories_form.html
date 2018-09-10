@@ -1,0 +1,34 @@
+<html>
+        <!-- nombres de las columnas -->
+          <form>
+              <div id="divTipeE" class="div1">
+               <select id="tipoItem" name="tipoItem" class="tipoItem">
+                 <option id="inicio">Tipo elemento a crear</option>
+                 <option >CATEGORÍA</option>
+                 <option>ÍTEM</option>
+                 <option>PARCIAL</option>
+               </select>
+             </div>
+             <div id="divName" class="div1">
+               <input type="text" id="inputNombre" name="inputNombre" class="inputNombre" placeholder="Nombre Categoria o Item">
+             </div>
+             <div id="divPeso"  class="div1" hidden>
+               <input type="text" diabled="true" id="inputValor" name="inputValor" class="inputValor" placeholder="peso %"></input>
+             </div>
+            <div id="divTipeC"  class="div1" hidden>
+               <select id="tipoCalificacion" name="tipoCalificacion" class="selectTipo">
+                 <option id="inicio">Tipo de Calificación</option>
+                 <option>Promedio Simple</option>
+                 <option>Promedio Ponderado</option>
+               </select>
+             </div>
+            <div><span class = "btn btn-acept" title="Cancelar" id = "cancel">
+                <img src="../templates/exit.png" />
+            </span>
+            <span class = "btn btn-acept" title="Guardar elemento" id = "save">
+                <img src="../templates/acept.png" />
+            </span></div> 
+
+          </form>
+        <!-- form end -->
+</html>

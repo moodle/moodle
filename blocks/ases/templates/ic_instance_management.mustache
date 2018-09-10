@@ -1,0 +1,39 @@
+<div class="panel panel-default">
+    <div class="panel panel-default">
+        <!--Panel heading-->
+        <div class="panel-heading">
+            <h4 class="panel-title" id="list-users-panel">
+                <a data-toggle="collapse" id="setup_instance" href="#div_setup_instance">Configuración de la instancia</a>
+            </h4>
+        </div>
+        <!--End panel heading-->
+        <div id="div_setup_instance" class="panel-collapse collapse">
+            <!--Panel body-->
+            <div class="panel-body">
+                <form class="form-inline">
+
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="input_idnumber">Idnumber:</label>
+                            <input type="text" class="form-control" id="input_idnumber" value={{idnumber}}>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="input_description">Descripción:</label>
+                            <input type="text" class="form-control" id="input_description" value={{description}}>
+                        </div>
+                    </div>
+                    
+                    <div class="col-sm-4">
+                        <button type="button" class="btn btn-danger" id="button_update_instance">Actualizar</button>
+                    </div>
+                    
+                </form>
+            </div>
+            <!--End panel heading-->
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,26 @@
+
+    .div1{
+      float:left;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .centrarCabecera
+    {
+      text-align:center;
+    }
+    
+    #inputValor
+    {
+      width : 30px !important;
+    }
+    
+    #tipoCalificacion
+    {
+      width : 120px !important;
+    }
+    
+    #catPadre
+    {
+      width: 220px!important;
+    }

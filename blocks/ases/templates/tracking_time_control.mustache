@@ -1,0 +1,55 @@
+{{#data}} {{> block_ases/side_menu}}
+<div class="container">
+<div class="row">
+<h2>REPORTE DE HORAS EN SEGUIMIENTOS</h2>
+<hr/>
+{{{message}}} {{#view_invested_hours}}
+<div class="panel-group">
+   <div class="panel panel-default">
+      <div class="panel panel-default">
+         <div class="panel-heading">
+            <h4 class="panel-title" id="list-users-panel">
+               <a data-toggle="collapse" href="#collapse1">Ver reporte por fechas</a>
+            </h4>
+         </div>
+         {{!--end panel-heading--}}
+         <div id="collapse1" class="panel-collapse collapse">
+            <div class="container">
+               <div class=" col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 equalize text-center" style="height: 204.746px;" name="conteo_principal">
+                  <h3> Monitor : </h3>
+                  <br> 
+                  <h2><strong><span id="monitor_name">{{monitor}}</span></strong></h2>
+                  <hr>
+               </div>
+               <div class="row">
+                  <div class="form-pilos">
+                     <div class="col-lg-6">
+                        <div class="input-group">
+                           <label for="beginning_date">Fecha inicio: </label>
+                           <input class="period_date" type="text" maxlength="10" id="beginning_date" name="beginning_date"/>
+                        </div>
+                     </div>
+                     <div class="col-lg-6">
+                        <div class="input-group">
+                           <label for="ending_date">Fecha final: </label>
+                           <input class="period_date" type="text" maxlength="10" id="ending_date" name="ending_date"/>  
+                        </div>
+                        <span class="btn btn-danger" id="consult" type="button">Consultar</span> 
+                     </div>
+                  </div>
+               </div>
+               <div class="row">
+                  <br/>
+                  <div class="container">
+                     <div id="div_hours">
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      {{!--end panel-group--}} 
+   </div>
+   {{!--end panel-group--}} {{/view_invested_hours}}
+</div>
+{{/data}}

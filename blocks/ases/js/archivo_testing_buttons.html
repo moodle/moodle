@@ -1,0 +1,64 @@
+<html>
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog" >
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+      
+      <!-- header -->
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Categorias e Items</h4>
+        </div>
+
+        <!-- body -->
+        <div class="modal-body">
+        <!-- nombres de las columnas -->
+          <form>
+              <div id="div1" class="div1">
+               <label type="text" class="centrarCabecera">Tipo item      </label>
+               <select id="tipoItem" name="tipoItem" class="tipoItem">
+                 <option id="inicio">Elemento a crear</option>
+                 <option >Categoria</option>
+                 <option>Item</option>
+               </select>
+             </div>
+             <div id="div1" class="div1">
+               <label type="text" class="centrarCabecera">Nombre Item    </label>
+               <input type="text" id="inputNombre" name="inputNombre" class="inputNombre" placeholder="Nombre Categoria o Item">
+             </div>
+             <div id="div1"  class="div1">
+               <label type="text" class="centrarCabecera">Categoria Padre     </label>
+               <select id="divCategoriaPadre" name="catPadre" class="selectPadre">
+                 <option id="inicio">Seleccione categoria padre...</option>
+               </select>
+             </div>
+             <div id="div1"  class="div1">
+               <label type="text" class="centrarCabecera">Tipo calificacion     </label>
+               <select id="tipoCalificacion" name="tipoCalificacion" class="selectTipo" disabled="true">
+                 <option id="inicio">Promedio Simple</option>
+                 <option>Promedio Ponderado</option>
+               </select>
+             </div>
+             <div id="div1"  class="div1">
+               <label type="text" id="Lvalor" class="centrarCabecera" >valor    </label>
+               <input type="text" diabled="true" id="inputValor" name="inputValor" class="inputValor" placeholder="valor" disabled="true">
+             </div>
+           
+          </form>
+        <!-- fin body -->
+        </div>          
+          
+        <!-- footer -->
+        <div class="modal-footer">
+            <span type="button" formmethod='post' id = "acept" class="btn btn-default" >Guardar y Crear Nuevo</span>
+            <span type="button" formmethod='post' id = "acepsalir" class="btn btn-default" data-dismiss="modal">Guardar y Salir</span>
+          <span type="button" formmethod='post' id = "close" class="btn btn-default" data-dismiss="modal">Close</span>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+</html>

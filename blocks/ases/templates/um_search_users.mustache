@@ -1,0 +1,82 @@
+<div class="panel panel-default">
+   <div class="panel-heading">
+      <h4 class="panel-title">
+         <a data-toggle="collapse" href="#collapse1">Asignación y actualización de roles</a>
+      </h4>
+   </div>
+   {{!--end panel-heading--}}
+   <div id="collapse1" class="panel-collapse collapse">
+      <div class="panel-body">
+         <form class="form-pilos" id="role_man_form">
+            <div class="col-md-6 col-sm-6">
+               <ul>
+                  <li>
+                     <label for="username_input">Nombre de usuario:</label> 
+                     <select name="users" id="users">
+                        {{{table}}}
+                     </select>
+                     <button class="submit" type="button" id="search_button">Buscar</button> 
+                  </li>
+                  <li class="assignment_li"> 
+                     <label for="name_lastname">Nombre completo: </label>
+                     <input type="text" id="name_lastname" name="name_lastname" disabled />
+                     <input type="text" class="hide" id="user_id" name="user_id"/>
+                  </li>
+                  <li class="assignment_li">
+                     <label for="role_select">Rol</label>
+                     <select name="role_select" id="role_select">
+                        <option value="ninguno" selected>Ninguno</option>
+                     </select>
+                  </li>
+                  <li class="assignment_li" style="display:none;" id="boss_li">
+                     <label for="boss_select">Jefe</label>
+                     <select name="boss_select" id="boss_select">
+                     </select>
+                  </li>
+                  <li class="" style="display:none;" id="academic_program_li">
+                    <label for="academic_program_select">Programa académico</label>
+                    <select class="form-control" name="academic_program_select" id="academic_program_select">
+                        {{{academic_program_select}}}
+                    </select>
+                  </li>
+               </ul>
+            </div>
+            {{!--end col-md-6--}}
+            <div class="col-md-6" id="form_mon_student" style="display:none;">
+               <h2>Asignación de estudiantes a monitor</h2>
+               <div id="contenedor_add_fields">
+                  <div class="added_add_fields">
+                     <input type="text"  class="inputs_students" name="array_students[]" id="campo_1" placeholder="Estudiante 1"/>
+                     <a href="#" class="eliminar_add_fields"><img src="../icon/ico_wrong.png"></a>
+                  </div>
+               </div>
+               {{#update_role_um}}
+               <a id="agregarCampo" class="btn_add_fields btn-info_add_fields" href="#">Agregar Estudiante</a>
+               {{/update_role_um}}
+            </div>
+            {{!--end form_mon_estudiante--}}
+            <div class="col-md-6" id="form_prof_type" style="display:none;">
+               <h3>Tipo de profesional</h3>
+               <label for="select_prof_type">Tipo de profesional</label>
+               <select name="select_prof_type" id="select_prof_type">
+                  <option value="no_asignado">No asignado</option>
+                  <option value="psicologo">Psicologo(a)</option>
+                  <option value="terapeuta_ocupacional">Terapeuta ocupacional</option>
+                  <option value="trabajador_social">Trabajador(a) Social</option>
+               </select>
+            </div>
+            {{!--end form_prof_type--}}
+            <div class="col-md-3 col-md-offset-5 assignment_li">
+               {{#update_role_um}}
+               <button class="submit btn-form" type="button" id="ok-button">Aceptar</button>
+               {{/update_role_um}}
+               <button class="submit btn-form" type="button" id="cancel-button">Cancelar</button>
+            </div>
+            {{!--end div buttons --}}
+      </div>
+      {{!--end panel-body--}}
+      </form>
+   </div>
+   {{!--end panel-collapse1--}}        
+</div>
+{{!--end panel-group--}}

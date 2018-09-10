@@ -1,0 +1,46 @@
+<div class="panel panel-default">
+<div class="panel-heading">
+   <h4 class="panel-title">
+      <a data-toggle="collapse" href="#collapse1">Actualización de períodos</a>
+   </h4>
+</div>
+{{!--end panel-heading--}}
+<div id="collapse1" class="panel-collapse collapse">
+   <div class="panel-body">
+      <form class="form-pilos" id="role_man_form">
+         <div class="col-md-6">
+            <ul>
+               <li>
+                  <label for="periods_input">Períodos: </label> 
+                  <select name="periods" id="periods">
+                  {{{table}}}
+                  </select>
+                  <button class="submit" type="button" id="search_button">Buscar</button> 
+               </li>
+               <li class="assignment_li"> 
+                  <label for="semester_name">Semestre: </label>
+                  <input type="text" id="semester_name" name="semester_name"/>
+               </li>
+               <li class="assignment_li">
+                  <label for="beginning_date">Fecha de Inicio (yyyy-mm-dd): </label>
+                  <input class="period_date" type="text" maxlength="10" id="beginning_date" name="beginning_date"/>
+               </li>
+               <li class="assignment_li">
+                  <label for="ending_date">Fecha de Finalización (yyyy-mm-dd): </label>
+                  <input class="period_date" type="text" maxlength="10" id="ending_date" name="ending_date"/>
+               </li>
+            </ul>
+         </div>
+         {{!--end col-md-6--}}
+         <div class="col-md-3 col-md-offset-5 assignment_li">
+            {{#update_periods_pm}} 
+            <button class="submit btn-form" type="button" id="ok-button">Guardar</button>
+            {{/update_periods_pm}}
+            <button class="submit btn-form" type="button" id="cancel-button">Cancelar</button>
+         </div>
+         {{!--end div buttons --}}
+   </form>
+   </div>
+   {{!--end panel-body--}}
+</div>
+{{!--end panel-collapse1--}}

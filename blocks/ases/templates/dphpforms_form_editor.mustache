@@ -1,0 +1,37 @@
+{{#data}}
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-group">
+                <h2>Administrador de formularios</h2>
+                <hr>   
+                    <a id="dphpforms-redirect-new-form" href="javascript:void(0)" class="btn btn-sm btn-default">Crear/registrar nuevo formulario</a>
+                    <a id="dphpforms-redirect-adm-alias" href="javascript:void(0)" class="btn btn-sm btn-default">Administrar alias de preguntas</a>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <h4>Lista de formularios registrados</h4>
+                <hr>
+                <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"><strong>#ID</strong></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-3"><strong>Nombre</strong></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-3"><strong>Alias</strong></div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-4"><strong>Fecha y hora de registro</strong></div>
+                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-1"><strong>Opciones</strong></div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><hr></div>
+                {{#forms}}
+                <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">{{id}}</div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-3">{{nombre}}</div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-3">{{alias}}</div>
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-4">{{fecha_hora_registro}}</div>
+                <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"><span data-form-id="{{id}}" class="btn-editor btn-editor-form btn btn-default btn-xs glyphicon glyphicon-pencil"></span> <span data-form-id="{{id}}" data-form-name="{{nombre}}" class="btn-remove-form btn btn-danger btn-xs glyphicon glyphicon-remove"></span></div>
+                {{^last}}
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><hr></div>
+                {{/last}}
+                {{/forms}}
+            </div>
+        </div>
+    </div>
+</body>
+{{/data}}
