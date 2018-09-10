@@ -101,8 +101,9 @@ class enrol_manual_enrol_users_form extends moodleform {
             'enrolid' => $instance->id
         );
         $mform->addElement('autocomplete', 'userlist', get_string('selectusers', 'enrol_manual'), array(), $options);
-        // $mform->addHelpButton('userlist', 'ayudanombreusuario');
+        $mform->addHelpButton('userlist', 'ayudanombreusuario');
         
+        /*
         // Confirm the user can search for cohorts before displaying select.
         if (has_capability('moodle/cohort:manage', $context) || has_capability('moodle/cohort:view', $context)) {
             // Check to ensure there is at least one visible cohort before displaying the select box.
@@ -121,6 +122,7 @@ class enrol_manual_enrol_users_form extends moodleform {
                 $mform->addElement('cohort', 'cohortlist', get_string('selectcohorts', 'enrol_manual'), $options);
             }
         }
+        */
 
         $roles = get_assignable_roles($context);
         $mform->addElement('select', 'roletoassign', get_string('assignrole', 'enrol_manual'), $roles);

@@ -26,3 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['config_default_title'] = 'Barra de Progreso';
+
+
+
