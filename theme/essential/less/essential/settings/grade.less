@@ -1,0 +1,44 @@
+/* @group Grade */
+
+.path-grade-report-user .user-grade,
+.path-grade-edit-tree .setup-grades {
+    &.generaltable > tbody {
+        > tr:nth-child(odd) > th,
+        > tr:nth-child(odd) > td {
+            &.leveleven,
+            &.levelodd {
+                color: ~"[[setting:themetextcolor]]";
+                a:not(.btn):not([role="menuitem"]),
+                a:not(.btn):not([role="menuitem"]):visited,
+                a.toggle-display,
+                a.toggle-display:visited {
+                    color: ~"[[setting:themeurlcolor]]";
+                }
+                a:not(.btn):not([role="menuitem"]):hover,
+                a:not(.btn):not([role="menuitem"]):focus,
+                a:not(.btn):not([role="menuitem"]):active,
+                a.toggle-display:hover,
+                a.toggle-display:focus,
+                a.toggle-display:active {
+                    color: ~"[[setting:themehovercolor]]";
+                }
+            }
+        }
+        tr:hover > td,
+        tr:hover > td > h3,
+        tr:hover > th {
+            color: ~"[[setting:themetextcolor]]";
+        }
+        tr:hover > td a:not(.btn):not([role="menuitem"]),
+        tr:hover > td a:not(.btn):not([role="menuitem"]):visited {
+            color: ~"[[setting:themeurlcolor]]";
+        }
+        tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+        tr:hover > td a:not(.btn):not([role="menuitem"]):focus,
+        tr:hover > td a:not(.btn):not([role="menuitem"]):active {
+            color: ~"[[setting:themehovercolor]]";
+        }
+    }
+}
+
+/* @end */

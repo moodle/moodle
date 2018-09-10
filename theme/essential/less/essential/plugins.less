@@ -1,0 +1,22 @@
+/* @group Contributed Plugins */
+
+/* @group Collapsed Topics */
+
+// A more specific selector than Collapsed Topics styles so will override without 'important' regardless of style inclusion order.
+body.format-topcoll {
+    .course-content ul.ctopics li.section {
+        &.main {
+            padding-bottom: 20px;
+        }
+        .content .toggle a h3 {
+            color: inherit;
+            &:hover {
+                color: inherit;
+            }
+        }
+    }
+}
+
+/* @group End Collapsed Topics */
+
+/* @group End Contributed Plugins */

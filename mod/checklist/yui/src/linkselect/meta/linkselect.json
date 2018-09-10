@@ -1,0 +1,8 @@
+{
+    "moodle-mod_checklist-linkselect": {
+        "requires": [
+            "node",
+            "event-valuechange"
+        ]
+    }
+}

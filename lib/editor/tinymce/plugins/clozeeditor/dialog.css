@@ -1,0 +1,21 @@
+td.table_value_throttle {
+    width: 60px;
+    display: none;
+}
+
+td.table_value_throttle input {
+    width: 40px;
+}
+
+span.helplink {
+    float: right;
+}
+
+span.helplink img {
+    border: none;
+}
+
+* {
+    font-size: 11pt;
+    font-family: Calibri;
+}

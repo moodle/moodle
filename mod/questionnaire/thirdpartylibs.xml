@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>javascript/RGraph</location>
+        <name>RGraph</name>
+        <version>?</version>
+        <license>MIT</license>
+        <licenseversion>?</licenseversion>
+    </library>
+</libraries>

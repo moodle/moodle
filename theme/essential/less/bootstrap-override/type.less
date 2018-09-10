@@ -1,0 +1,23 @@
+.muted,
+a.muted:hover,
+a.muted:focus {
+    color: inherit;
+    font-style: italic;
+}
+
+// Make important as no way to easily say 'exclude' / 'encapsulate' in CSS for an 'object'.
+.text-warning        { color: @warningText !important; }
+a.text-warning:hover,
+a.text-warning:focus { color: darken(@warningText, 10%) !important; }
+
+.text-error          { color: @errorText !important; }
+a.text-error:hover,
+a.text-error:focus   { color: darken(@errorText, 10%) !important; }
+
+.text-info           { color: @infoText !important; }
+a.text-info:hover,
+a.text-info:focus    { color: darken(@infoText, 10%) !important; }
+
+.text-success        { color: @successText !important; }
+a.text-success:hover,
+a.text-success:focus { color: darken(@successText, 10%) !important; }

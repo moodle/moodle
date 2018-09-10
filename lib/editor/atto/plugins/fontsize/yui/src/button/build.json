@@ -1,0 +1,10 @@
+{
+    "name": "moodle-atto_fontsize-button",
+    "builds": {
+        "moodle-atto_fontsize-button": {
+            "jsfiles": [
+                "button.js"
+            ]
+        }
+    }
+}

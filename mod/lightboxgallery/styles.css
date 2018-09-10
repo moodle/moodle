@@ -1,0 +1,162 @@
+.lightbox-gallery .lightbox-gallery-image-container {
+    display: inline-block;
+    margin: 10px;
+
+}
+.dir-rtl .lightbox-gallery .lightbox-gallery-image-container {
+    display: inline-block;
+    margin: 10px;
+}
+
+.lightbox-gallery .lightbox-gallery-image-frame {
+    -webkit-transition: box-shadow 150ms, border-color 150ms, background-color 150ms, color 150ms;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    color: #696969;
+    display: inline-block;
+    margin: 10px auto;
+    text-align: center;
+    transition: box-shadow 150ms, border-color 150ms, background-color 150ms, color 150ms;
+    width: 174px;
+}
+
+.lightbox-gallery .lightbox-gallery-image-container .lightbox-gallery-image-frame:hover {
+    -webkit-box-shadow: 0 0 15px #ccc;
+    background-color: #f6f6f6;
+    border-color: #999;
+    box-shadow: 0 0 15px #ccc;
+    color: #333;
+    text-decoration: none;
+    transition: box-shadow 150ms, border-color 150ms;
+}
+
+.lightbox-gallery .lightbox-gallery-image-container .lightbox-gallery-image-frame:active {
+    -webkit-box-shadow: 0 0 15px #666;
+    box-shadow: 0 0 15px #666;
+}
+
+.lightbox-gallery .lightbox-gallery-image-thumbnail {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    display: block;
+    margin: 5px 5px 2px;
+    vertical-align: middle;
+    width: 95%;
+}
+
+.lightbox-gallery .lightbox-gallery-image-caption,
+.lightbox-gallery .lightbox-gallery-image-extinfo {
+    font-family: 'Verdana', 'Lucida Grande', sans-serif;
+    font-size: 11px;
+    margin-bottom: 3px;
+    text-decoration: none;
+}
+
+.lightbox-gallery .lightbox-gallery-image-caption {
+    font-weight: bold;
+    word-wrap: break-word;
+}
+
+.lightbox-gallery .lightbox-gallery-image-caption.top {
+    margin-bottom: -3px;
+}
+
+#mod-lightboxgallery-view .generalbox,
+#mod-lightboxgallery-search .generalbox {
+    overflow: auto;
+}
+
+#mod-lightboxgallery-view .thumb,
+#mod-lightboxgallery-search .thumb {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    margin: 2px;
+    padding: 3px;
+    position: relative;
+    text-align: center;
+    z-index: 5;
+}
+
+#mod-lightboxgallery-view .thumb .image,
+#mod-lightboxgallery-search .thumb .image {
+    background-color: #000;
+    border: 1px solid #ccc;
+    height: 105px;
+    margin-bottom: 2px;
+    position: relative;
+    width: 120px;
+    z-index: 10;
+}
+
+#mod-lightboxgallery-view .thumb .overlay img,
+#mod-lightboxgallery-search .thumb .overlay img {
+    border: 0;
+}
+
+#mod-lightboxgallery-view .lightbox-edit-select {
+    margin: 12px;
+}
+
+#mod-lightboxgallery-imageedit .generaltable img,
+#mod-lightboxgallery-imageadd .generaltable img {
+    border: 1px solid #ddd;
+}
+
+#mod-lightboxgallery-imageedit .menubar {
+    margin-top: 14px;
+    text-align: center;
+}
+
+#mod-lightboxgallery-imageedit .tag-head {
+    background-color: #f9fafa;
+    border-bottom: 1px solid #ddd;
+    display: block;
+    margin: 3px 1px;
+    padding: 2px 0;
+}
+
+#mod-lightboxgallery-imageedit .tag-exists {
+    color: #aaa;
+    text-decoration: line-through;
+}
+
+#mod-lightboxgallery-imageedit .tag-exists input {
+    display: none;
+}
+
+#mod-lightboxgallery-imageadd #messages {
+    margin: 0 6px 0 12px;
+    padding: 0;
+}
+
+#mod-lightboxgallery-search .generalbox {
+    margin-bottom: 10px;
+}
+
+#page-mod-lightboxgallery-view #overlay {
+    z-index: 4032;
+}
+
+#page-mod-lightboxgallery-view #lightbox {
+    z-index: 4033;
+}
+
+#page-mod-lightboxgallery-view #imageData #bottomNavDownload {
+    background: url([[pix:lightboxgallery|download]]) no-repeat;
+    float: right;
+    height: 22px;
+    margin-right: .5em;
+    padding-bottom: 0.7em;
+    padding-right: 0.5em;
+    width: 104px;
+}
+
+#page-mod-lightboxgallery-view #imageData #imageDetails {
+    width: 65%;
+}
+
+#page-mod-lightboxgallery-view #outerImageContainer,
+#page-mod-lightboxgallery-view #imageDataContainer {
+    min-width: 200px;
+}
