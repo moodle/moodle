@@ -33,9 +33,11 @@ use moodle_recordset;
 use stdClass;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\helper;
 use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
 /**
@@ -48,6 +50,7 @@ use core_privacy\local\request\writer;
  */
 class provider implements
     \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\plugin\provider {
 
     /**
@@ -121,6 +124,33 @@ class provider implements
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!is_a($context, \context_module::class)) {
+            return;
+        }
+
+        $params = [
+            'instanceid'    => $context->instanceid,
+            'modulename'    => 'chat',
+        ];
+
+        $sql = "SELECT chm.userid
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
+                  JOIN {chat} c ON c.id = cm.instance
+                  JOIN {chat_messages} chm ON chm.chatid = c.id
+                 WHERE cm.id = :instanceid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -219,6 +249,28 @@ class provider implements
         list($insql, $inparams) = $DB->get_in_or_equal($chatids, SQL_PARAMS_NAMED);
         $sql = "chatid $insql AND userid = :userid";
         $params = array_merge($inparams, ['userid' => $userid]);
+
+        $DB->delete_records_select('chat_messages', $sql, $params);
+        $DB->delete_records_select('chat_messages_current', $sql, $params);
+        $DB->delete_records_select('chat_users', $sql, $params);
+    }
+
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        $cm = $DB->get_record('course_modules', ['id' => $context->instanceid]);
+        $chat = $DB->get_record('chat', ['id' => $cm->instance]);
+
+        list($userinsql, $userinparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+        $params = array_merge(['chatid' => $chat->id], $userinparams);
+        $sql = "chatid = :chatid AND userid {$userinsql}";
 
         $DB->delete_records_select('chat_messages', $sql, $params);
         $DB->delete_records_select('chat_messages_current', $sql, $params);
