@@ -442,6 +442,7 @@ $cache = '.var_export($cache, true).';
             'edufields'   => null,
             'enrol'       => $CFG->dirroot.'/enrol',
             'error'       => null,
+            'favourites'  => $CFG->dirroot . '/favourites',
             'filepicker'  => null,
             'fileconverter' => $CFG->dirroot.'/files/converter',
             'files'       => $CFG->dirroot.'/files',
