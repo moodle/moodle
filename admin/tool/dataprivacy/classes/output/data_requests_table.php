@@ -62,6 +62,12 @@ class data_requests_table extends table_sql {
     /** @var \tool_dataprivacy\data_request[] Array of data request persistents. */
     protected $datarequests = [];
 
+    /** @var int The number of data request to be displayed per page. */
+    protected $perpage;
+
+    /** @var int[] The available options for the number of data request to be displayed per page. */
+    protected $perpageoptions = [25, 50, 100, 250];
+
     /**
      * data_requests_table constructor.
      *
@@ -79,7 +85,13 @@ class data_requests_table extends table_sql {
         $this->types = $types;
         $this->manage = $manage;
 
+        $checkboxattrs = [
+            'title' => get_string('selectall'),
+            'data-action' => 'selectall'
+        ];
+
         $columnheaders = [
+            'select' => html_writer::checkbox('selectall', 1, false, null, $checkboxattrs),
             'type' => get_string('requesttype', 'tool_dataprivacy'),
             'userid' => get_string('user', 'tool_dataprivacy'),
             'timecreated' => get_string('daterequested', 'tool_dataprivacy'),
@@ -91,7 +103,26 @@ class data_requests_table extends table_sql {
 
         $this->define_columns(array_keys($columnheaders));
         $this->define_headers(array_values($columnheaders));
-        $this->no_sorting('actions');
+        $this->no_sorting('select', 'actions');
+    }
+
+    /**
+     * The select column.
+     *
+     * @param stdClass $data The row data.
+     * @return string
+     */
+    public function col_select($data) {
+        if ($data->status == \tool_dataprivacy\api::DATAREQUEST_STATUS_AWAITING_APPROVAL) {
+            $stringdata = [
+                'username' => $data->foruser->fullname,
+                'requesttype' => \core_text::strtolower($data->typenameshort)
+            ];
+
+            return \html_writer::checkbox('requestids[]', $data->id, false, '',
+                    ['class' => 'selectrequests', 'title' => get_string('selectuserdatarequest',
+                    'tool_dataprivacy', $stringdata)]);
+        }
     }
 
     /**
@@ -289,5 +320,73 @@ class data_requests_table extends table_sql {
      */
     protected function show_hide_link($column, $index) {
         return '';
+    }
+
+    /**
+     * Override the table's wrap_html_finish method in order to render the bulk actions and
+     * records per page options.
+     */
+    public function wrap_html_finish() {
+        global $OUTPUT;
+
+        $data = new stdClass();
+        $data->options = [
+            [
+                'value' => 0,
+                'name' => ''
+            ],
+            [
+                'value' => \tool_dataprivacy\api::DATAREQUEST_ACTION_APPROVE,
+                'name' => get_string('approve', 'tool_dataprivacy')
+            ],
+            [
+                'value' => \tool_dataprivacy\api::DATAREQUEST_ACTION_REJECT,
+                'name' => get_string('deny', 'tool_dataprivacy')
+            ]
+        ];
+
+        $perpageoptions = array_combine($this->perpageoptions, $this->perpageoptions);
+        $perpageselect = new \single_select(new moodle_url(''), 'perpage',
+                $perpageoptions, get_user_preferences('tool_dataprivacy_request-perpage'), null, 'selectgroup');
+        $perpageselect->label = get_string('perpage', 'moodle');
+        $data->perpage = $OUTPUT->render($perpageselect);
+
+        echo $OUTPUT->render_from_template('tool_dataprivacy/data_requests_bulk_actions', $data);
+    }
+
+    /**
+     * Set the number of data request records to be displayed per page.
+     *
+     * @param int $perpage The number of data request records.
+     */
+    public function set_requests_per_page(int $perpage) {
+        $this->perpage = $perpage;
+    }
+
+    /**
+     * Get the number of data request records to be displayed per page.
+     *
+     * @return int The number of data request records.
+     */
+    public function get_requests_per_page() : int {
+        return $this->perpage;
+    }
+
+    /**
+     * Set the available options for the number of data request to be displayed per page.
+     *
+     * @param array $perpageoptions The available options for the number of data request to be displayed per page.
+     */
+    public function set_requests_per_page_options(array $perpageoptions) {
+        $this->$perpageoptions = $perpageoptions;
+    }
+
+    /**
+     * Get the available options for the number of data request to be displayed per page.
+     *
+     * @return array The available options for the number of data request to be displayed per page.
+     */
+    public function get_requests_per_page_options() : array {
+        return $this->perpageoptions;
     }
 }
