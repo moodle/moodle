@@ -1,9 +1,0 @@
-{
-   "extends": "../../.jshintrc",
-   "globals": {
-       "$": false,
-       "console": false,
-       "Modernizr": false,
-       "Headroom": false
-       }
-}
