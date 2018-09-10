@@ -55,9 +55,9 @@ class tool_uploadcourse_base_form extends moodleform {
         $mform->setExpanded('importoptionshdr', true);
 
         $choices = array(
+            tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE => get_string('createorupdate', 'tool_uploadcourse'),
             tool_uploadcourse_processor::MODE_CREATE_NEW => get_string('createnew', 'tool_uploadcourse'),
             tool_uploadcourse_processor::MODE_CREATE_ALL => get_string('createall', 'tool_uploadcourse'),
-            tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE => get_string('createorupdate', 'tool_uploadcourse'),
             tool_uploadcourse_processor::MODE_UPDATE_ONLY => get_string('updateonly', 'tool_uploadcourse')
         );
         $mform->addElement('select', 'options[mode]', get_string('mode', 'tool_uploadcourse'), $choices);

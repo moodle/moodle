@@ -889,18 +889,65 @@ function enrol_user_sees_own_courses($user = null) {
 *funcion que organiza la lista de cursos del mas actual al mas antiguo
 **/
 function order_courses_univalle($courses){
+    $courses = separated_by_type_course($courses);
+    $presenciales = $courses[0];
+    $otros = $courses[1];
+
     $array_tmp=array();
-    foreach ($courses as $course) {
-        $fecha= substr($course->shortname,14,9);
-        //echo $fecha."</br>";
-        $array_tmp[]=$fecha;
+    foreach ($presenciales as $course) {
+        
+        //verificar si codigo posee M o no
+        $codigo= substr($course->shortname,9,1);
+        
+        if ($codigo=="M") {
+            $fecha= substr($course->shortname,14,9);
+        }
+        else{
+            $fecha= substr($course->shortname,13,9); 
+             
+        }
+        
+         $array_tmp[]=$fecha;
     }
-    //ordenamos los cursos con base en el array qe contiene las fechas
-    array_multisort($array_tmp, $courses);
-    
+    //ordenamos los cursos con base en el array que contiene las fechas
+    array_multisort($array_tmp,SORT_DESC, $presenciales);
+    //juntamos los cursos presenciales organizados y de último los no presenciales
+    $courses = array_merge($presenciales,$otros);
     return $courses;
   
 }
+
+/**
+* separated_by_type_course
+* recibe los cursos de un usuario y devuelve dos array con los cursos separados por presencial 
+* y no presenciales.
+* @author Hernán
+* @param array $courses
+* @return array(array,array) $courses
+*
+*/
+function separated_by_type_course($courses){
+    
+    $cursos_presenciales = array();
+    $cursos_otros = array();
+
+    foreach ($courses as $course) {
+        
+        
+        //si pertenece a la categoría presencial añadimos un cero para que sea ordenado de primero
+        if($course->category >= 30000){
+            $cursos_presenciales[] = $course;
+        }
+        else{
+            $cursos_otros[]=$course;
+        }
+                
+    }
+
+    $courses = [$cursos_presenciales,$cursos_otros];
+      
+    return $courses;
+} 
 
 /**
  * Returns list of courses user is enrolled into without performing any capability checks.
