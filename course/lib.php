@@ -3469,6 +3469,9 @@ function duplicate_module($course, $cm) {
         $newcm = get_fast_modinfo($cm->course)->get_cm($newcmid);
         $event = \core\event\course_module_created::create_from_cm($newcm);
         $event->trigger();
+
+        // Add ' (copy)' to duplicates.
+        set_coursemodule_name($newcm->id, get_string('duplicatedmodule', 'moodle', $newcm->name));
     }
 
     return isset($newcm) ? $newcm : null;
