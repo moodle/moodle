@@ -1,0 +1,3 @@
+﻿encoding=es_utf8
+exit=Salir
+keyboardletters=2:ABC2ÁªÀÇ#3:DEF3ÉÈ#4:GHI4ÍÌ#5:JKL5#6:MNÑO6ÓÒº#7:PQRS7#8:TUV8ÚÜÙ#9:WXYZ9#

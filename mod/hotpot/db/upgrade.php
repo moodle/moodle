@@ -1019,6 +1019,19 @@ function xmldb_hotpot_upgrade($oldversion) {
         upgrade_mod_savepoint(true, "$newversion", 'hotpot');
     }
 
+    $newversion = 2018091029;
+    if ($oldversion < $newversion) {
+        // clear cache for HotPots that use Moodle messaging
+        require_once($CFG->dirroot.'/mod/hotpot/locallib.php');
+        $params = array('studentfeedback' => hotpot::FEEDBACK_MOODLEMESSAGING);
+        if ($ids = $DB->get_records('hotpot', $params, 'id', 'id,studentfeedback')) {
+            $ids = array_keys($ids);
+            list($select, $params) = $DB->get_in_or_equal($ids);
+            $DB->delete_records_select('hotpot_cache', "hotpotid $select", $params);
+        }
+        upgrade_mod_savepoint(true, "$newversion", 'hotpot');
+    }
+
     if ($empty_cache) {
         $DB->delete_records('hotpot_cache');
     }

@@ -1,0 +1,21 @@
+// @package     theme_essential.
+// @copyright   2017 Gareth J Barnard.
+// @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
+
+/* Moodle fixes mod-assign begin */
+
+.path-mod-assign .gradingtable tr.selectedrow td,
+.path-mod-assign .gradingtable tr.unselectedrow td {
+    color: inherit;
+}
+
+.path-mod-assign .gradingtable {
+    .generaltable>tbody tr:hover > td a:not(.btn):not([role="menuitem"]),
+    table.flexible>tbody tr:hover > td a:not(.btn):not([role="menuitem"]),
+    .generaltable>tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+    table.flexible>tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover {
+        background-color: inherit;
+    }
+}
+
+/* Moodle fixes mod-assign end */

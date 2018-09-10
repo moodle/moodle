@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>yui/lightbox</location>
+    <name>YUI 3 Gallery</name>
+    <license>BSD</license>
+    <version>2011.01.12</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>assets</location>
+    <name>YUI 3 Gallery skins</name>
+    <license>BSD</license>
+    <version>2011.01.12</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

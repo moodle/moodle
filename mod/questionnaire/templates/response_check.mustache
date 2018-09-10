@@ -1,0 +1,62 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_questionnaire/response_check
+
+    Template which defines a check type question survey display.
+
+    Classes required for JS:
+    * /mod/questionnaire/module.js
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+
+    Example context (json):
+    {
+        "choices": [
+            {
+                "selected": "1",
+                "name": "choice1",
+                "content": "HTML for choice 1",
+                "othercontent": "HTML for other content"
+            },
+            {
+                "selected": "",
+                "name": "choice2",
+                "content": "HTML for choice 2"
+            }
+        ]
+    }
+    }}
+<!-- Begin HTML generated from response_check template. -->
+<div class="questionnaire_response questionnaire_check">
+{{#choices}}
+    {{#selected}}
+    <span class="selected"><input type="checkbox" name="{{name}}" checked="checked" onclick="this.checked=true;" />
+        {{{content}}}</span>
+    {{#othercontent}}<span class="response text">{{{.}}}</span>{{/othercontent}}
+    {{/selected}}
+    {{^selected}}
+    <span class="unselected"><input type="checkbox" name="{{name}}" onclick="this.checked=true;" />
+        {{{content}}}</span>
+    {{/selected}}
+    <br />
+{{/choices}}
+</div>
+<!-- End HTML generated from response_check template. -->

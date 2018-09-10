@@ -1,0 +1,125 @@
+/*This Code is a sole propritary of
+Husain Limdiyawala(MSc IT DA-IICT)
+Any Duplication of this code should be avoided*/
+
+.blocks {
+    font-family: Arial, Helvetica, sans-serif;
+    margin-left: 5px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding: 0;
+    float: left;
+    height: 52px;
+    width: 52px;
+    display: block;
+    position: relative;
+    background-image: url(../square52.png);
+}
+
+.nodis {
+    list-style-type: none;
+}
+
+#cont {
+    position: relative;
+    display: none;
+}
+
+#diceimg {
+    display: none;
+    width: 45px;
+    height: 44px;
+}
+
+.img1 {
+    position: absolute;
+    display: none;
+}
+
+body {
+    background: #ccc;
+}
+
+#player {
+    display: none;
+    z-index: 5;
+    position: absolute;
+}
+
+#players {
+    margin-top: 0.3em;
+    margin-bottom: 1em;
+}
+
+#dicecont {
+    float: right;
+    width: 170px;
+    background-image: url(../images/meter.png);
+    background-repeat: repeat;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    color: #fff;
+    border: 0.5em solid #333;
+    top: 30px;
+    position: absolute;
+    right: 880px;
+}
+
+#playbtn {
+    margin-left: 0.5em;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    color: #000;
+    background-color: #fc0;
+    padding: 1em;
+}
+
+/*-- from modal window coding --*/
+
+#fade { /*--Transparent background layer--*/
+    display: none; /*--hidden by default--*/
+    background: #000;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .80;
+    z-index: 9999;
+}
+
+.popup_block {
+    display: none; /*--hidden by default--*/
+    background: #fff;
+    padding: 20px;
+    border: 20px solid #ddd;
+    float: left;
+    font-size: 1.2em;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 99999;
+    /*--CSS3 Box Shadows--*/
+    -webkit-box-shadow: 0 0 20px #000;
+    -moz-box-shadow: 0 0 20px #000;
+    box-shadow: 0 0 20px #000;
+    /*--CSS3 Rounded Corners--*/
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+
+img.btn_close {
+    float: right;
+    margin: -55px -55px 0 0;
+    border: 0;
+}
+
+/*--Making IE6 Understand Fixed Positioning--*/
+*html #fade {
+    position: absolute;
+}
+
+*html .popup_block {
+    position: absolute;
+}

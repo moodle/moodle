@@ -1,0 +1,82 @@
+/* @group Forms */
+
+select,
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
+.uneditable-input,
+.form-item .form-description,
+.form-defaultinfo,
+.form-label .form-shortname,
+.mform legend,
+.mform legend a {
+    color: ~"[[setting:themetextcolor]]";
+
+    // Focus state.
+    &:focus {
+        border-color: ~"[[setting:inputfocusbordercolor]]";
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px ~"[[setting:inputfocusshadowcolor]]";
+        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px ~"[[setting:inputfocusshadowcolor]]";
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px ~"[[setting:inputfocusshadowcolor]]";
+    }
+}
+
+#page {
+    form {
+        .form-buttons,
+        table#form td.submit,
+        .path-admin .buttons,
+        #fitem_id_submitbutton,
+        .fp-content-center
+        form+div,
+        div.backup-section + form,
+        #fgroup_id_buttonar,
+        fieldset:last-of-type.hidden {
+            #fgroup_id_buttonar {
+                background-color: ~"[[setting:themecolor]]";
+            }
+        }
+        #fitem_id_submitbutton {
+            background-color: ~"[[setting:themecolor]]";
+        }
+    }
+}
+
+#page,
+#region-main {
+    form {
+        .form-buttons,
+        #fgroup_id_buttonar {
+            background-color: ~"[[setting:themecolor]]";
+            border-top: 1px solid ~"[[setting:themeiconcolor]]";
+        }
+    }
+}
+
+body {
+    &#page-grade-grading-pick {
+        #region-main {
+            form {
+                #fgroup_id_buttonar {
+                    label {
+                        color: ~"[[setting:themenavcolor]]";
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* @end */

@@ -1,0 +1,2143 @@
+/*
+ * @package     theme_essential
+ * @copyright   2014 Gareth J Barnard, David Bezemer
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+/*! Essential lint disable */
+/* Disabling as already linted in the LESS. */
+/* @group Alerts */
+.alert .fa-info {
+  background-color: #3a87ad;
+}
+.alert .fa-warning {
+  background-color: #b94a48;
+}
+.alert .fa-bullhorn {
+  background-color: #468847;
+}
+.alert .fa-info,
+.alert .fa-warning,
+.alert .fa-bullhorn {
+  color: [[setting:themenavcolor]];
+}
+.alert .fa-info:hover,
+.alert .fa-warning:hover,
+.alert .fa-bullhorn:hover,
+.alert .fa-info:focus,
+.alert .fa-warning:focus,
+.alert .fa-bullhorn:focus {
+  color: [[setting:themenavcolor]];
+}
+.alert.alert-info .close .fa {
+  color: #3a87ad;
+}
+.alert.alert-info .close:hover .fa,
+.alert.alert-info .close:focus .fa {
+  color: #3a87ad;
+}
+.alert.alert-error .close .fa {
+  color: #b94a48;
+}
+.alert.alert-error .close:hover .fa,
+.alert.alert-error .close:focus .fa {
+  color: #b94a48;
+}
+.alert.alert-success .close .fa {
+  color: #468847;
+}
+.alert.alert-success .close:hover .fa,
+.alert.alert-success .close:focus .fa {
+  color: #468847;
+}
+/* @end */
+/* @group Autocomplete */
+.ui-autocomplete {
+  background-color: #fff;
+  border-color: [[setting:themecolor]];
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+.ui-autocomplete-loading {
+  background: white url('[[pix:i/loading_small]]') right center no-repeat;
+}
+.ui-autocomplete .ui-menu-item {
+  color: [[setting:themetextcolor]];
+}
+.ui-autocomplete .ui-menu-item:hover,
+.ui-autocomplete .ui-menu-item:focus {
+  color: [[setting:themenavcolor]];
+  background-color: [[setting:themecolor]];
+}
+/* @end */
+/* @group Backup-Restore */
+.backup-restore .backup-section > h2.header,
+.backup-restore .backup-section .backup-sub-section h3 {
+  color: [[setting:themetextcolor]];
+}
+/* @end */
+/* @group Blocks */
+.block .icon {
+  color: [[setting:themeiconcolor]];
+}
+.block .menu a.menu-action {
+  color: [[setting:themeurlcolor]];
+}
+.block .menu a.menu-action:hover {
+  color: [[setting:themehovercolor]];
+}
+.block .header .title h2,
+.block h3.main {
+  color: [[setting:themetextcolor]];
+}
+#block-region-side-pre .block {
+  background-color: [[setting:themesidepreblockbackgroundcolour]];
+  color: [[setting:themesidepreblocktextcolour]];
+}
+#block-region-side-pre .block p.tree_item.branch {
+  color: [[setting:themesidepreblocktextcolour]];
+}
+#block-region-side-pre .block a,
+#block-region-side-pre .block a:visited,
+#block-region-side-pre .block .fa {
+  color: [[setting:themesidepreblockurlcolour]];
+}
+#block-region-side-pre .block a:focus,
+#block-region-side-pre .block a:hover,
+#block-region-side-pre .block .fa:focus,
+#block-region-side-pre .block .fa:hover {
+  color: [[setting:themesidepreblockhovercolour]];
+}
+#block-region-side-pre .block .header .title h2 {
+  color: [[setting:themesidepreblocktextcolour]];
+}
+#block-region-side-pre .block.block_flat_navigation {
+  background-color: transparent;
+}
+#block-region-side-pre .block.block_flat_navigation .list-group-item {
+  background-color: [[setting:themesidepreblockbackgroundcolour]];
+  color: [[setting:themesidepreblocktextcolour]];
+}
+#block-region-side-pre .block.block_flat_navigation .list-group-item a,
+#block-region-side-pre .block.block_flat_navigation .list-group-item a:visited {
+  color: [[setting:themesidepreblockurlcolour]];
+}
+#block-region-side-pre .block.block_flat_navigation .list-group-item a:focus,
+#block-region-side-pre .block.block_flat_navigation .list-group-item a:hover {
+  color: [[setting:themesidepreblockhovercolour]];
+}
+p.tree_item.leaf a > .fa {
+  color: [[setting:themeiconcolor]];
+}
+p.tree_item.leaf a:hover,
+p.tree_item.leaf a:focus {
+  color: [[setting:themehovercolor]];
+}
+p.tree_item.leaf a:hover > .fa,
+p.tree_item.leaf a:focus > .fa {
+  color: inherit;
+}
+p.tree_item.branch {
+  color: [[setting:themeurlcolor]];
+}
+p.tree_item.branch:before {
+  color: [[setting:themeiconcolor]];
+}
+p.tree_item.branch:hover,
+p.tree_item.branch:focus {
+  color: [[setting:themehovercolor]];
+}
+p.tree_item.branch:hover:before,
+p.tree_item.branch:focus:before {
+  color: inherit;
+}
+p.tree_item.branch:hover a,
+p.tree_item.branch:focus a {
+  color: inherit;
+}
+p.tree_item.branch.emptybranch:before {
+  color: [[setting:themeiconcolor]];
+}
+p.tree_item.branch.emptybranch:hover:before,
+p.tree_item.branch.emptybranch:focus:before {
+  color: [[setting:themehovercolor]];
+}
+.collapsed .tree_item.branch:before {
+  color: [[setting:themeiconcolor]];
+}
+.editing #page .block-region.yui3-dd-drop-active-valid {
+  border-color: [[setting:themecolor]];
+}
+.editing #page-footer .block-region.yui3-dd-drop-active-valid {
+  border-color: [[setting:footertextcolor]];
+}
+/* @end */
+/* @group Breadcrumb Button */
+.breadcrumb-button input[type="submit"] {
+  color: [[setting:themenavcolor]];
+  background-color: [[setting:themecolor]];
+  background-image: none;
+  border-color: [[setting:themecolor]];
+}
+.breadcrumb-button input[type="submit"]:focus,
+.breadcrumb-button input[type="submit"]:hover,
+.breadcrumb-button input[type="submit"]:active {
+  color: [[setting:themecolor]];
+  background-color: [[setting:themenavcolor]];
+  background-image: none;
+}
+.breadcrumb-button .fa {
+  color: inherit;
+}
+/* @end */
+/* @group Breadcrumb */
+.breadcrumb-nav {
+  /* @group Breadcrumb Style Fancy */
+}
+.breadcrumb-nav ul.breadcrumb.style1 li {
+  color: [[setting:themenavcolor]];
+  background-color: [[setting:themecolor]];
+  border-color: [[setting:themecolor]];
+  border-width: 1px;
+  border-style: solid;
+}
+.breadcrumb-nav ul.breadcrumb.style1 li:before {
+  border-left-color: [[setting:themenavcolor]];
+}
+.breadcrumb-nav ul.breadcrumb.style1 li a {
+  color: inherit;
+}
+.breadcrumb-nav ul.breadcrumb.style1 li:after {
+  border-left-color: [[setting:themecolor]];
+}
+.breadcrumb-nav ul.breadcrumb.style1 li:first-of-type a:before {
+  color: [[setting:themenavcolor]];
+}
+.breadcrumb-nav ul.breadcrumb.style1 li:hover,
+.breadcrumb-nav ul.breadcrumb.style1 li:focus {
+  background-color: [[setting:themenavcolor]];
+}
+.breadcrumb-nav ul.breadcrumb.style1 li:hover:before,
+.breadcrumb-nav ul.breadcrumb.style1 li:focus:before {
+  border-left-color: [[setting:themecolor]];
+}
+.breadcrumb-nav ul.breadcrumb.style1 li:hover span,
+.breadcrumb-nav ul.breadcrumb.style1 li:focus span,
+.breadcrumb-nav ul.breadcrumb.style1 li:hover a,
+.breadcrumb-nav ul.breadcrumb.style1 li:focus a,
+.breadcrumb-nav ul.breadcrumb.style1 li:hover a:before,
+.breadcrumb-nav ul.breadcrumb.style1 li:focus a:before {
+  color: [[setting:themecolor]];
+}
+.breadcrumb-nav ul.breadcrumb.style1 li:hover:after {
+  border-left-color: [[setting:themenavcolor]];
+}
+.breadcrumb-nav ul.breadcrumb.style1 li:hover:after a {
+  color: [[setting:themecolor]];
+}
+/* @end */
+/* @group Breadcrumb Style Simple */
+ul.breadcrumb.style2 li a {
+  color: [[setting:themeurlcolor]];
+}
+ul.breadcrumb.style2 li a:hover {
+  color: [[setting:themehovercolor]];
+}
+/* @end */
+/* @end */
+/* @group Buttons */
+body button,
+body .btn-default,
+body a.btn-default,
+body button.btn-cancel,
+body input.form-submit,
+body input[type="button"],
+body input[type="submit"],
+body input[type="reset"],
+body #notice .singlebutton + .singlebutton input,
+body .submit.buttons input[name=cancel] {
+  color: [[setting:themedefaultbuttontextcolour]];
+  text-shadow: none;
+  background-color: [[setting:themedefaultbuttonbackgroundcolour]];
+  background-image: -moz-linear-gradient(bottom, [[setting:themedefaultbuttonbackgroundcolourimage]], [[setting:themedefaultbuttonbackgroundcolourrgba]]);
+  background-image: -webkit-gradient(linear, 0 100%, 0 0, from([[setting:themedefaultbuttonbackgroundcolourimage]]), to([[setting:themedefaultbuttonbackgroundcolourrgba]]));
+  background-image: -webkit-linear-gradient(bottom, [[setting:themedefaultbuttonbackgroundcolourimage]], [[setting:themedefaultbuttonbackgroundcolourrgba]]);
+  background-image: -o-linear-gradient(bottom, [[setting:themedefaultbuttonbackgroundcolourimage]], [[setting:themedefaultbuttonbackgroundcolourrgba]]);
+  background-image: linear-gradient(to top, [[setting:themedefaultbuttonbackgroundcolourimage]], [[setting:themedefaultbuttonbackgroundcolourrgba]]);
+}
+body button .fa,
+body .btn-default .fa,
+body a.btn-default .fa,
+body button.btn-cancel .fa,
+body input.form-submit .fa,
+body input[type="button"] .fa,
+body input[type="submit"] .fa,
+body input[type="reset"] .fa,
+body #notice .singlebutton + .singlebutton input .fa,
+body .submit.buttons input[name=cancel] .fa {
+  color: [[setting:themedefaultbuttontextcolour]];
+}
+body button:hover,
+body .btn-default:hover,
+body a.btn-default:hover,
+body button.btn-cancel:hover,
+body input.form-submit:hover,
+body input[type="button"]:hover,
+body input[type="submit"]:hover,
+body input[type="reset"]:hover,
+body #notice .singlebutton + .singlebutton input:hover,
+body .submit.buttons input[name=cancel]:hover,
+body button:focus,
+body .btn-default:focus,
+body a.btn-default:focus,
+body button.btn-cancel:focus,
+body input.form-submit:focus,
+body input[type="button"]:focus,
+body input[type="submit"]:focus,
+body input[type="reset"]:focus,
+body #notice .singlebutton + .singlebutton input:focus,
+body .submit.buttons input[name=cancel]:focus,
+body button:active,
+body .btn-default:active,
+body a.btn-default:active,
+body button.btn-cancel:active,
+body input.form-submit:active,
+body input[type="button"]:active,
+body input[type="submit"]:active,
+body input[type="reset"]:active,
+body #notice .singlebutton + .singlebutton input:active,
+body .submit.buttons input[name=cancel]:active,
+body button.active,
+body .btn-default.active,
+body a.btn-default.active,
+body button.btn-cancel.active,
+body input.form-submit.active,
+body input[type="button"].active,
+body input[type="submit"].active,
+body input[type="reset"].active,
+body #notice .singlebutton + .singlebutton input.active,
+body .submit.buttons input[name=cancel].active,
+body button.disabled,
+body .btn-default.disabled,
+body a.btn-default.disabled,
+body button.btn-cancel.disabled,
+body input.form-submit.disabled,
+body input[type="button"].disabled,
+body input[type="submit"].disabled,
+body input[type="reset"].disabled,
+body #notice .singlebutton + .singlebutton input.disabled,
+body .submit.buttons input[name=cancel].disabled,
+body button[disabled],
+body .btn-default[disabled],
+body a.btn-default[disabled],
+body button.btn-cancel[disabled],
+body input.form-submit[disabled],
+body input[type="button"][disabled],
+body input[type="submit"][disabled],
+body input[type="reset"][disabled],
+body #notice .singlebutton + .singlebutton input[disabled],
+body .submit.buttons input[name=cancel][disabled] {
+  color: [[setting:themedefaultbuttontexthovercolour]];
+  text-shadow: 0 1px 1px rgba(64, 64, 64, 0.75);
+  background-color: [[setting:themedefaultbuttonbackgroundhovercolour]];
+  background-image: -moz-linear-gradient(bottom, [[setting:themedefaultbuttonbackgroundhovercolourimage]], [[setting:themedefaultbuttonbackgroundhovercolourrgba]]);
+  background-image: -webkit-gradient(linear, 0 100%, 0 0, from([[setting:themedefaultbuttonbackgroundhovercolourimage]]), to([[setting:themedefaultbuttonbackgroundhovercolourrgba]]));
+  background-image: -webkit-linear-gradient(bottom, [[setting:themedefaultbuttonbackgroundhovercolourimage]], [[setting:themedefaultbuttonbackgroundhovercolourrgba]]);
+  background-image: -o-linear-gradient(bottom, [[setting:themedefaultbuttonbackgroundhovercolourimage]], [[setting:themedefaultbuttonbackgroundhovercolourrgba]]);
+  background-image: linear-gradient(to top, [[setting:themedefaultbuttonbackgroundhovercolourimage]], [[setting:themedefaultbuttonbackgroundhovercolourrgba]]);
+}
+body button:hover .fa,
+body .btn-default:hover .fa,
+body a.btn-default:hover .fa,
+body button.btn-cancel:hover .fa,
+body input.form-submit:hover .fa,
+body input[type="button"]:hover .fa,
+body input[type="submit"]:hover .fa,
+body input[type="reset"]:hover .fa,
+body #notice .singlebutton + .singlebutton input:hover .fa,
+body .submit.buttons input[name=cancel]:hover .fa,
+body button:focus .fa,
+body .btn-default:focus .fa,
+body a.btn-default:focus .fa,
+body button.btn-cancel:focus .fa,
+body input.form-submit:focus .fa,
+body input[type="button"]:focus .fa,
+body input[type="submit"]:focus .fa,
+body input[type="reset"]:focus .fa,
+body #notice .singlebutton + .singlebutton input:focus .fa,
+body .submit.buttons input[name=cancel]:focus .fa,
+body button:active .fa,
+body .btn-default:active .fa,
+body a.btn-default:active .fa,
+body button.btn-cancel:active .fa,
+body input.form-submit:active .fa,
+body input[type="button"]:active .fa,
+body input[type="submit"]:active .fa,
+body input[type="reset"]:active .fa,
+body #notice .singlebutton + .singlebutton input:active .fa,
+body .submit.buttons input[name=cancel]:active .fa,
+body button.active .fa,
+body .btn-default.active .fa,
+body a.btn-default.active .fa,
+body button.btn-cancel.active .fa,
+body input.form-submit.active .fa,
+body input[type="button"].active .fa,
+body input[type="submit"].active .fa,
+body input[type="reset"].active .fa,
+body #notice .singlebutton + .singlebutton input.active .fa,
+body .submit.buttons input[name=cancel].active .fa,
+body button.disabled .fa,
+body .btn-default.disabled .fa,
+body a.btn-default.disabled .fa,
+body button.btn-cancel.disabled .fa,
+body input.form-submit.disabled .fa,
+body input[type="button"].disabled .fa,
+body input[type="submit"].disabled .fa,
+body input[type="reset"].disabled .fa,
+body #notice .singlebutton + .singlebutton input.disabled .fa,
+body .submit.buttons input[name=cancel].disabled .fa,
+body button[disabled] .fa,
+body .btn-default[disabled] .fa,
+body a.btn-default[disabled] .fa,
+body button.btn-cancel[disabled] .fa,
+body input.form-submit[disabled] .fa,
+body input[type="button"][disabled] .fa,
+body input[type="submit"][disabled] .fa,
+body input[type="reset"][disabled] .fa,
+body #notice .singlebutton + .singlebutton input[disabled] .fa,
+body .submit.buttons input[name=cancel][disabled] .fa {
+  color: [[setting:themedefaultbuttontexthovercolour]];
+}
+a.marketing-button,
+a.marketing-button:visited {
+  color: [[setting:themenavcolor]];
+  background-color: [[setting:themecolor]];
+}
+a.marketing-button:hover {
+  color: [[setting:themenavcolor]];
+  background-color: [[setting:themehovercolor]];
+}
+/* @end */
+/* @group Carousel */
+#essentialCarousel.carousel .carousel-inner .carousel-caption {
+  background-color: [[setting:slidecaptionbackgroundcolor]];
+}
+#essentialCarousel.carousel .carousel-inner .carousel-caption .carousel-caption-inner {
+  max-width: [[setting:pagewidth]];
+}
+#essentialCarousel.carousel .carousel-inner .carousel-caption h4,
+#essentialCarousel.carousel .carousel-inner .carousel-caption div {
+  color: [[setting:slidecaptiontextcolor]];
+}
+#essentialCarousel.carousel .carousel-inner.pagebackground .the-side-caption-content {
+  background-color: [[setting:slidecaptionbackgroundcolor]];
+}
+#essentialCarousel.carousel .carousel-inner.pagebackground .the-side-caption-content h4,
+#essentialCarousel.carousel .carousel-inner.pagebackground .the-side-caption-content div {
+  color: [[setting:slidecaptiontextcolor]];
+}
+#essentialCarousel.carousel .carousel-control {
+  color: [[setting:slidebuttoncolor]];
+}
+#essentialCarousel.carousel .carousel-control .fa {
+  color: inherit;
+}
+#essentialCarousel.carousel .carousel-control:hover,
+#essentialCarousel.carousel .carousel-control:focus {
+  color: [[setting:slidebuttonhovercolor]];
+}
+#essentialCarousel.carousel .carousel-control:hover .fa,
+#essentialCarousel.carousel .carousel-control:focus .fa {
+  color: inherit;
+}
+#essentialCarousel.carousel .carousel-indicators {
+  box-shadow: 0px 0px 8px [[setting:slidebuttoncolor]];
+}
+#essentialCarousel.carousel .carousel-indicators li {
+  background-color: [[setting:slidebuttoncolor]];
+}
+#essentialCarousel.carousel .carousel-indicators .active {
+  background-color: [[setting:slidebuttonhovercolor]];
+}
+/* @end */
+/*
+ * @package   theme_essential
+ * @author    Franc Pombal
+ * @modified  Julian Ridden
+ * @modified  Gareth J Barnard, David Bezemer
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+/* @group Category Icons */
+.categoryicons .course_category_tree .category[data-categoryid]:hover {
+  background-color: [[setting:themecolor]];
+}
+.categoryicons .course_category_tree .category[data-categoryid]:hover > .info > .categoryname a {
+  color: [[setting:themenavcolor]];
+}
+.categoryicons .course_category_tree .category[data-categoryid]:hover > .info > .categoryname a .fa {
+  color: inherit;
+}
+/* @end */
+/* @group Core */
+img.userpicture,
+img.profilepicture {
+  border-color: [[setting:themecolor]];
+  border-radius: [[setting:userimageborderradius]]px;
+  box-shadow: 0 0 3px [[setting:themecolor]];
+}
+.moodle-actionmenu[data-enhanced].show .menu {
+  background-color: #fff;
+}
+.moodle-actionmenu[data-enhanced].show .menu a {
+  color: [[setting:themeurlcolor]];
+}
+.moodle-actionmenu[data-enhanced].show .menu a:hover {
+  color: #fff;
+  background-color: [[setting:themeurlcolor]];
+}
+.moodle-actionmenu[data-enhanced].show .menu a:hover .fa:before {
+  color: #fff;
+}
+.moodle-actionmenu[data-enhanced].show .menu a:hover img {
+  background-color: #fff;
+  border-radius: 4px;
+}
+/* @end */
+/* @group Course */
+.listitem-category .icon {
+  color: [[setting:themeiconcolor]];
+}
+/* @group Course Footer */
+.section-navigation {
+  color: [[setting:themetextcolor]];
+}
+.nav_guide {
+  color: [[setting:themetextcolor]];
+}
+.nav_icon {
+  color: [[setting:themecolor]];
+}
+.nav_icon:hover {
+  color: [[setting:themehovercolor]];
+}
+/* @end */
+/* @end */
+/* @group Dock */
+body.has_dock #dock {
+  background-color: [[setting:themecolor]];
+}
+body.has_dock #dock .dockedtitle h2 {
+  color: [[setting:themetextcolor]];
+}
+body.has_dock #dock .dockedtitle:hover,
+body.has_dock #dock .dockedtitle:focus,
+body.has_dock #dock .dockedtitle:active,
+body.has_dock #dock .dockedtitle.active,
+body.has_dock #dock .dockedtitle.disabled,
+body.has_dock #dock .dockedtitle[disabled] {
+  background-color: [[setting:themehovercolor]];
+}
+body.has_dock.essential-colours-alternative1 #dock {
+  background-color: [[setting:alternativethemecolor1]];
+}
+body.has_dock.essential-colours-alternative1 #dock .dockedtitle h2,
+body.has_dock.essential-colours-alternative1 #dock .dockeditempanel_hd h2 {
+  color: [[setting:alternativethemetextcolor1]];
+}
+body.has_dock.essential-colours-alternative1 #dock .dockedtitle h2:before,
+body.has_dock.essential-colours-alternative1 #dock .dockeditempanel_hd h2:before {
+  color: [[setting:alternativethemecolor1]];
+}
+body.has_dock.essential-colours-alternative1 #dock .dockedtitle:hover,
+body.has_dock.essential-colours-alternative1 #dock .dockedtitle:focus,
+body.has_dock.essential-colours-alternative1 #dock .dockedtitle:active,
+body.has_dock.essential-colours-alternative1 #dock .dockedtitle.active,
+body.has_dock.essential-colours-alternative1 #dock .dockedtitle.disabled,
+body.has_dock.essential-colours-alternative1 #dock .dockedtitle[disabled] {
+  background-color: [[setting:alternativethemehovercolor1]];
+}
+body.has_dock.essential-colours-alternative2 #dock {
+  background-color: [[setting:alternativethemecolor2]];
+}
+body.has_dock.essential-colours-alternative2 #dock .dockedtitle h2,
+body.has_dock.essential-colours-alternative2 #dock .dockeditempanel_hd h2 {
+  color: [[setting:alternativethemetextcolor2]];
+}
+body.has_dock.essential-colours-alternative2 #dock .dockedtitle h2:before,
+body.has_dock.essential-colours-alternative2 #dock .dockeditempanel_hd h2:before {
+  color: [[setting:alternativethemecolor2]];
+}
+body.has_dock.essential-colours-alternative2 #dock .dockedtitle:hover,
+body.has_dock.essential-colours-alternative2 #dock .dockedtitle:focus,
+body.has_dock.essential-colours-alternative2 #dock .dockedtitle:active,
+body.has_dock.essential-colours-alternative2 #dock .dockedtitle.active,
+body.has_dock.essential-colours-alternative2 #dock .dockedtitle.disabled,
+body.has_dock.essential-colours-alternative2 #dock .dockedtitle[disabled] {
+  background-color: [[setting:alternativethemehovercolor2]];
+}
+body.has_dock.essential-colours-alternative3 #dock {
+  background-color: [[setting:alternativethemecolor3]];
+}
+body.has_dock.essential-colours-alternative3 #dock .dockedtitle h2,
+body.has_dock.essential-colours-alternative3 #dock .dockeditempanel_hd h2 {
+  color: [[setting:alternativethemetextcolor3]];
+}
+body.has_dock.essential-colours-alternative3 #dock .dockedtitle h2:before,
+body.has_dock.essential-colours-alternative3 #dock .dockeditempanel_hd h2:before {
+  color: [[setting:alternativethemecolor3]];
+}
+body.has_dock.essential-colours-alternative3 #dock .dockedtitle:hover,
+body.has_dock.essential-colours-alternative3 #dock .dockedtitle:focus,
+body.has_dock.essential-colours-alternative3 #dock .dockedtitle:active,
+body.has_dock.essential-colours-alternative3 #dock .dockedtitle.active,
+body.has_dock.essential-colours-alternative3 #dock .dockedtitle.disabled,
+body.has_dock.essential-colours-alternative3 #dock .dockedtitle[disabled] {
+  background-color: [[setting:alternativethemehovercolor3]];
+}
+body.has_dock.essential-colours-alternative4 #dock {
+  background-color: [[setting:alternativethemecolor4]];
+}
+body.has_dock.essential-colours-alternative4 #dock .dockedtitle h2,
+body.has_dock.essential-colours-alternative4 #dock .dockeditempanel_hd h2 {
+  color: [[setting:alternativethemetextcolor4]];
+}
+body.has_dock.essential-colours-alternative4 #dock .dockedtitle h2:before,
+body.has_dock.essential-colours-alternative4 #dock .dockeditempanel_hd h2:before {
+  color: [[setting:alternativethemecolor4]];
+}
+body.has_dock.essential-colours-alternative4 #dock .dockedtitle:hover,
+body.has_dock.essential-colours-alternative4 #dock .dockedtitle:focus,
+body.has_dock.essential-colours-alternative4 #dock .dockedtitle:active,
+body.has_dock.essential-colours-alternative4 #dock .dockedtitle.active,
+body.has_dock.essential-colours-alternative4 #dock .dockedtitle.disabled,
+body.has_dock.essential-colours-alternative4 #dock .dockedtitle[disabled] {
+  background-color: [[setting:alternativethemehovercolor4]];
+}
+/* @end */
+/* @group Edit Buttons */
+.menu a.menu-action > .fa,
+.course-item-actions a > .fa,
+.actions a > .fa {
+  color: [[setting:themeiconcolor]];
+}
+.menu a.menu-action:hover > .fa,
+.course-item-actions a:hover > .fa,
+.actions a:hover > .fa {
+  color: [[setting:themehovercolor]];
+}
+/* @end */
+/* @Group Editor */
+#tinymce {
+  color: [[setting:themetextcolor]];
+  font-family: [[setting:bodyfont]];
+}
+#tinymce .container-fluid {
+  max-width: [[setting:pagewidth]];
+}
+#tinymce h1,
+#tinymce h2 {
+  font-family: [[setting:headingfont]];
+}
+#tinymce h1,
+#tinymce h2,
+#tinymce h3,
+#tinymce h4,
+#tinymce h5,
+#tinymce h6,
+#tinymce #adminsettings h3 {
+  color: [[setting:themetextcolor]];
+}
+#tinymce a,
+#tinymce a:visited,
+#tinymce .btn-link,
+#tinymce .btn-link:visited {
+  color: [[setting:themeurlcolor]];
+}
+#tinymce a:hover,
+#tinymce a:focus,
+#tinymce .btn-link:hover,
+#tinymce .btn-link:focus {
+  color: [[setting:themehovercolor]];
+}
+#tinymce a:hover:before,
+#tinymce a:focus:before,
+#tinymce .btn-link:hover:before,
+#tinymce .btn-link:focus:before {
+  color: [[setting:themehovercolor]];
+}
+#tinymce a:before {
+  color: [[setting:themeiconcolor]];
+  display: inline-block;
+  text-decoration: none;
+}
+#tinymce .color {
+  color: [[setting:themecolor]];
+}
+body .editor_atto_content_wrap,
+div.editor_atto_toolbar button .icon {
+  color: [[setting:themetextcolor]];
+}
+/* @end */
+/* @group Filemanger */
+.filemanager a,
+.file-picker a,
+.filemanager a:visited,
+.file-picker a:visited {
+  color: [[setting:themeurlcolor]];
+}
+.filemanager a:hover,
+.file-picker a:hover,
+.filemanager a:visited:hover,
+.file-picker a:visited:hover,
+.filemanager a:focus,
+.file-picker a:focus,
+.filemanager a:visited:focus,
+.file-picker a:visited:focus {
+  color: [[setting:themehovercolor]];
+}
+.filemanager a:hover:before,
+.file-picker a:hover:before,
+.filemanager a:visited:hover:before,
+.file-picker a:visited:hover:before,
+.filemanager a:focus:before,
+.file-picker a:focus:before,
+.filemanager a:visited:focus:before,
+.file-picker a:visited:focus:before {
+  color: [[setting:themehovercolor]];
+}
+/* @end */
+/* @group Forms */
+select,
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
+.uneditable-input,
+.form-item .form-description,
+.form-defaultinfo,
+.form-label .form-shortname,
+.mform legend,
+.mform legend a {
+  color: [[setting:themetextcolor]];
+}
+select:focus,
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus,
+.uneditable-input:focus,
+.form-item .form-description:focus,
+.form-defaultinfo:focus,
+.form-label .form-shortname:focus,
+.mform legend:focus,
+.mform legend a:focus {
+  border-color: [[setting:inputfocusbordercolor]];
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px [[setting:inputfocusshadowcolor]];
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px [[setting:inputfocusshadowcolor]];
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px [[setting:inputfocusshadowcolor]];
+}
+#page form .form-buttons #fgroup_id_buttonar,
+#page form table#form td.submit #fgroup_id_buttonar,
+#page form .path-admin .buttons #fgroup_id_buttonar,
+#page form #fitem_id_submitbutton #fgroup_id_buttonar,
+#page form .fp-content-center form + div #fgroup_id_buttonar,
+#page form div.backup-section + form #fgroup_id_buttonar,
+#page form #fgroup_id_buttonar #fgroup_id_buttonar,
+#page form fieldset:last-of-type.hidden #fgroup_id_buttonar {
+  background-color: [[setting:themecolor]];
+}
+#page form #fitem_id_submitbutton {
+  background-color: [[setting:themecolor]];
+}
+#page form .form-buttons,
+#region-main form .form-buttons,
+#page form #fgroup_id_buttonar,
+#region-main form #fgroup_id_buttonar {
+  background-color: [[setting:themecolor]];
+  border-top: 1px solid [[setting:themeiconcolor]];
+}
+body#page-grade-grading-pick #region-main form #fgroup_id_buttonar label {
+  color: [[setting:themenavcolor]];
+}
+/* @end */
+/* @group Frontpage */
+/* @group Marketing Spots */
+#marketing-spots {
+  overflow: hidden;
+}
+#marketing-spots .marketing-spot h5 {
+  color: [[setting:themecolor]];
+}
+#marketing-spots .marketing-spot #marketing-image1 {
+  background-image: [[setting:marketing1image]];
+}
+#marketing-spots .marketing-spot #marketing-image2 {
+  background-image: [[setting:marketing2image]];
+}
+#marketing-spots .marketing-spot #marketing-image3 {
+  background-image: [[setting:marketing3image]];
+}
+#marketing-spots .marketing-spot .marketing-image {
+  height: [[setting:marketingimageheight]];
+  background-repeat: no-repeat;
+}
+#marketing-spots.withimage .marketing-spot {
+  min-height: [[setting:marketingheightwithimage]];
+}
+#marketing-spots.withimage.withbutton .marketing-spot {
+  min-height: [[setting:marketingheightwithimagewithbutton]];
+}
+#marketing-spots.noimages .marketing-spot {
+  min-height: [[setting:marketingheight]];
+}
+#marketing-spots.noimages.withbutton .marketing-spot {
+  min-height: [[setting:marketingheightwithbutton]];
+}
+/* @end */
+/* @end */
+/* @group Grade */
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.leveleven,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.leveleven,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.leveleven,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.leveleven,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.levelodd,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.levelodd,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.levelodd,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.levelodd {
+  color: [[setting:themetextcolor]];
+}
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.leveleven a:not(.btn):not([role="menuitem"]),
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.leveleven a:not(.btn):not([role="menuitem"]),
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.leveleven a:not(.btn):not([role="menuitem"]),
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.leveleven a:not(.btn):not([role="menuitem"]),
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.levelodd a:not(.btn):not([role="menuitem"]),
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.levelodd a:not(.btn):not([role="menuitem"]),
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.levelodd a:not(.btn):not([role="menuitem"]),
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.levelodd a:not(.btn):not([role="menuitem"]),
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.leveleven a:not(.btn):not([role="menuitem"]):visited,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.leveleven a:not(.btn):not([role="menuitem"]):visited,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.leveleven a:not(.btn):not([role="menuitem"]):visited,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.leveleven a:not(.btn):not([role="menuitem"]):visited,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.levelodd a:not(.btn):not([role="menuitem"]):visited,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.levelodd a:not(.btn):not([role="menuitem"]):visited,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.levelodd a:not(.btn):not([role="menuitem"]):visited,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.levelodd a:not(.btn):not([role="menuitem"]):visited,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.leveleven a.toggle-display,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.leveleven a.toggle-display,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.leveleven a.toggle-display,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.leveleven a.toggle-display,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.levelodd a.toggle-display,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.levelodd a.toggle-display,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.levelodd a.toggle-display,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.levelodd a.toggle-display,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.leveleven a.toggle-display:visited,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.leveleven a.toggle-display:visited,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.leveleven a.toggle-display:visited,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.leveleven a.toggle-display:visited,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.levelodd a.toggle-display:visited,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.levelodd a.toggle-display:visited,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.levelodd a.toggle-display:visited,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.levelodd a.toggle-display:visited {
+  color: [[setting:themeurlcolor]];
+}
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.leveleven a:not(.btn):not([role="menuitem"]):hover,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.leveleven a:not(.btn):not([role="menuitem"]):hover,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.leveleven a:not(.btn):not([role="menuitem"]):hover,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.leveleven a:not(.btn):not([role="menuitem"]):hover,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.levelodd a:not(.btn):not([role="menuitem"]):hover,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.levelodd a:not(.btn):not([role="menuitem"]):hover,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.levelodd a:not(.btn):not([role="menuitem"]):hover,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.levelodd a:not(.btn):not([role="menuitem"]):hover,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.leveleven a:not(.btn):not([role="menuitem"]):focus,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.leveleven a:not(.btn):not([role="menuitem"]):focus,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.leveleven a:not(.btn):not([role="menuitem"]):focus,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.leveleven a:not(.btn):not([role="menuitem"]):focus,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.levelodd a:not(.btn):not([role="menuitem"]):focus,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.levelodd a:not(.btn):not([role="menuitem"]):focus,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.levelodd a:not(.btn):not([role="menuitem"]):focus,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.levelodd a:not(.btn):not([role="menuitem"]):focus,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.leveleven a:not(.btn):not([role="menuitem"]):active,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.leveleven a:not(.btn):not([role="menuitem"]):active,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.leveleven a:not(.btn):not([role="menuitem"]):active,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.leveleven a:not(.btn):not([role="menuitem"]):active,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.levelodd a:not(.btn):not([role="menuitem"]):active,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.levelodd a:not(.btn):not([role="menuitem"]):active,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.levelodd a:not(.btn):not([role="menuitem"]):active,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.levelodd a:not(.btn):not([role="menuitem"]):active,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.leveleven a.toggle-display:hover,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.leveleven a.toggle-display:hover,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.leveleven a.toggle-display:hover,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.leveleven a.toggle-display:hover,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.levelodd a.toggle-display:hover,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.levelodd a.toggle-display:hover,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.levelodd a.toggle-display:hover,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.levelodd a.toggle-display:hover,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.leveleven a.toggle-display:focus,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.leveleven a.toggle-display:focus,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.leveleven a.toggle-display:focus,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.leveleven a.toggle-display:focus,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.levelodd a.toggle-display:focus,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.levelodd a.toggle-display:focus,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.levelodd a.toggle-display:focus,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.levelodd a.toggle-display:focus,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.leveleven a.toggle-display:active,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.leveleven a.toggle-display:active,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.leveleven a.toggle-display:active,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.leveleven a.toggle-display:active,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > th.levelodd a.toggle-display:active,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > th.levelodd a.toggle-display:active,
+.path-grade-report-user .user-grade.generaltable > tbody > tr:nth-child(odd) > td.levelodd a.toggle-display:active,
+.path-grade-edit-tree .setup-grades.generaltable > tbody > tr:nth-child(odd) > td.levelodd a.toggle-display:active {
+  color: [[setting:themehovercolor]];
+}
+.path-grade-report-user .user-grade.generaltable > tbody tr:hover > td,
+.path-grade-edit-tree .setup-grades.generaltable > tbody tr:hover > td,
+.path-grade-report-user .user-grade.generaltable > tbody tr:hover > td > h3,
+.path-grade-edit-tree .setup-grades.generaltable > tbody tr:hover > td > h3,
+.path-grade-report-user .user-grade.generaltable > tbody tr:hover > th,
+.path-grade-edit-tree .setup-grades.generaltable > tbody tr:hover > th {
+  color: [[setting:themetextcolor]];
+}
+.path-grade-report-user .user-grade.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]),
+.path-grade-edit-tree .setup-grades.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]),
+.path-grade-report-user .user-grade.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited,
+.path-grade-edit-tree .setup-grades.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited {
+  color: [[setting:themeurlcolor]];
+}
+.path-grade-report-user .user-grade.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+.path-grade-edit-tree .setup-grades.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+.path-grade-report-user .user-grade.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus,
+.path-grade-edit-tree .setup-grades.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus,
+.path-grade-report-user .user-grade.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active,
+.path-grade-edit-tree .setup-grades.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active {
+  color: [[setting:themehovercolor]];
+}
+/* @end */
+/* @group Header */
+#page-header {
+  color: [[setting:headertextcolor]];
+}
+#page-header .logo-container {
+  width: [[setting:logomobilewidth]]%;
+}
+#page-header h1#title {
+  color: [[setting:headertextcolor]];
+}
+#page-header h1#smalltitle {
+  color: [[setting:headertextcolor]];
+}
+#page-header h2#subtitle {
+  color: [[setting:headertextcolor]];
+}
+#page-header #headerlogo {
+  color: [[setting:themeiconcolor]];
+}
+#page-header .btn-icon .icon-bar {
+  background-color: [[setting:themecolor]];
+}
+#page-header div.titlearea {
+  border-left: 1px dotted [[setting:themecolor]];
+}
+@media (min-width: 980px) {
+  #page-header .logo-container {
+    width: [[setting:logodesktopwidth]]%;
+  }
+}
+/* @end */
+/* @group Social Buttons */
+button.website:hover,
+button.website:focus {
+  background-color: [[setting:themecolor]];
+}
+.socials {
+  margin: 0;
+}
+.socials p {
+  color: [[setting:headertextcolor]];
+}
+#mobileapps {
+  border-right: 1px dotted [[setting:themecolor]];
+}
+/* @end */
+/* @group Navbar */
+.navbar .navbar-inner .brand {
+  color: [[setting:themenavcolor]];
+}
+.navbar .navbar-inner .btn-navbar .icon-bar {
+  background-color: [[setting:themecolor]];
+}
+.navbar .navbar-inner .dropdown-menu {
+  border: 1px solid [[setting:themecolor]];
+}
+.navbar .navbar-inner .nav > li.dropdown a,
+.navbar .navbar-inner .nav > li > a,
+.navbar .navbar-inner .search-input-wrapper > div .fa {
+  color: [[setting:themenavcolor]];
+}
+.navbar .navbar-inner .nav > li.dropdown a:hover,
+.navbar .navbar-inner .nav > li > a:hover,
+.navbar .navbar-inner .search-input-wrapper > div .fa:hover,
+.navbar .navbar-inner .nav > li.dropdown a:focus,
+.navbar .navbar-inner .nav > li > a:focus,
+.navbar .navbar-inner .search-input-wrapper > div .fa:focus {
+  color: [[setting:themecolor]];
+  background-color: [[setting:themenavcolor]];
+}
+.navbar .navbar-inner #custom_menu_courses .dropdown-menu li > a > span.onlyenrolled {
+  background-color: [[setting:mycoursesorderenrolbackcolour]];
+}
+.navbar .navbar-inner .nav > li.dropdown .dropdown-menu li > a {
+  color: [[setting:themeurlcolor]];
+}
+.navbar .navbar-inner .nav > li.dropdown .dropdown-menu li > a:hover {
+  color: #fff;
+  background-color: [[setting:themeurlcolor]];
+}
+.navbar .navbar-inner .nav > li.dropdown .dropdown-menu li > a:focus,
+.navbar .navbar-inner .nav > li.dropdown .dropdown-menu li > a.open {
+  color: #fff;
+  background-color: [[setting:themeurlcolor]];
+}
+.navbar .navbar-inner .nav > li.dropdown .dropdown-menu li > a:focus .fa,
+.navbar .navbar-inner .nav > li.dropdown .dropdown-menu li > a.open .fa {
+  color: #fff;
+}
+.navbar .navbar-inner .nav > li.dropdown .dropdown-menu li > a:hover .dimmed_text {
+  color: #eee;
+}
+.navbar .navbar-inner .nav > li.dropdown .dropdown-menu li.dropdown-submenu:hover > a {
+  color: #fff;
+  background-color: [[setting:themeurlcolor]];
+}
+.navbar .navbar-inner .nav > li.dropdown .dropdown-menu li.dropdown-submenu:hover > a .fa {
+  color: inherit;
+}
+.navbar .navbar-inner .nav li.dropdown.open > .dropdown-toggle,
+.navbar .navbar-inner .nav li.dropdown.active > .dropdown-toggle,
+.navbar .navbar-inner .nav li.dropdown.open.active > .dropdown-toggle {
+  color: #fff;
+  background-color: [[setting:themehovercolor]];
+}
+.navbar .navbar-inner .usermenu .dropdown img.userpicture {
+  border-radius: [[setting:usermenuuserimageborderradius]]px;
+}
+.navbar .navbar-inner .usermenu .dropdown .dropdown-menu {
+  border: 1px solid [[setting:themecolor]];
+}
+.navbar .navbar-inner .usermenu .dropdown .dropdown-menu hr.sep {
+  border-bottom: 1px dotted [[setting:themecolor]];
+}
+.navbar .navbar-inner .popover-region-toggle {
+  color: [[setting:themenavcolor]];
+}
+.navbar .navbar-inner .popover-region-toggle:hover,
+.navbar .navbar-inner .popover-region-toggle:focus {
+  color: [[setting:themecolor]];
+  background-color: [[setting:themenavcolor]];
+}
+.dropdown-submenu > a:after {
+  border-left-color: [[setting:themeiconcolor]];
+}
+.dropdown-submenu:focus > a:after,
+.dropdown-submenu:hover > a:after {
+  border-left-color: [[setting:themenavcolor]];
+}
+.navbar .navbar-inner .usermenu .dropdown .dropdown-submenu > a:after {
+  border-right-color: [[setting:themeiconcolor]];
+}
+.navbar .navbar-inner .usermenu .dropdown .dropdown-submenu:focus > a:after,
+.navbar .navbar-inner .usermenu .dropdown .dropdown-submenu:hover > a:after {
+  border-right-color: [[setting:themenavcolor]];
+}
+@media (max-width: 979px) {
+  .navbar .nav-collapse.in .nav .dropdown-submenu .dropdown-toggle:after,
+  .navbar .nav-collapse.in .nav .dropdown-menu .dropdown-submenu .dropdown-toggle:after {
+    border-top-color: [[setting:themeiconcolor]];
+  }
+  .navbar .nav-collapse.in .nav .dropdown-submenu:focus .dropdown-toggle:after,
+  .navbar .nav-collapse.in .nav .dropdown-menu .dropdown-submenu:focus .dropdown-toggle:after,
+  .navbar .nav-collapse.in .nav .dropdown-submenu:hover .dropdown-toggle:after,
+  .navbar .nav-collapse.in .nav .dropdown-menu .dropdown-submenu:hover .dropdown-toggle:after {
+    border-top-color: [[setting:themenavcolor]];
+  }
+  .navbar .nav-collapse.in .nav .dropdown-submenu.open > a,
+  .navbar .nav-collapse.in .nav .dropdown-menu .dropdown-submenu.open > a,
+  .navbar .nav-collapse.in .nav .dropdown-submenu:hover.open > a,
+  .navbar .nav-collapse.in .nav .dropdown-menu .dropdown-submenu:hover.open > a {
+    color: [[setting:themenavcolor]];
+    background-color: [[setting:themecolor]];
+  }
+  .navbar .nav-collapse.in .nav .dropdown-submenu.open > a.dropdown-toggle:after,
+  .navbar .nav-collapse.in .nav .dropdown-menu .dropdown-submenu.open > a.dropdown-toggle:after,
+  .navbar .nav-collapse.in .nav .dropdown-submenu:hover.open > a.dropdown-toggle:after,
+  .navbar .nav-collapse.in .nav .dropdown-menu .dropdown-submenu:hover.open > a.dropdown-toggle:after {
+    border-top-color: [[setting:themenavcolor]];
+  }
+  .navbar .nav-collapse.in .nav .dropdown-submenu .dropdown-toggle:after,
+  .navbar .nav-collapse.in .nav .dropdown-menu .dropdown-submenu .dropdown-toggle:after {
+    border-left-color: transparent;
+  }
+}
+.dropdownmenuscroll div.dropdown-menu > ul,
+.dropdownsubmenuscroll li.dropdown-submenu > ul {
+  max-height: [[setting:dropdownmenumaxheight]]px;
+}
+/* @end */
+/* @group Print Styling */
+@media print {
+  .navbar .sep {
+    color: [[setting:themecolor]];
+  }
+}
+/* @end */
+/* @group Quiz */
+body.path-mod-quiz .submitbtns form[action$="processattempt.php"] input[type="submit"] {
+  color: [[setting:themequizsubmittextcolour]];
+  text-shadow: none;
+  background-color: [[setting:themequizsubmitbackgroundcolour]];
+  background-image: -moz-linear-gradient(bottom, [[setting:themequizsubmitbackgroundcolourimage]], [[setting:themequizsubmitbackgroundcolourrgba]]);
+  background-image: -webkit-gradient(linear, 0 100%, 0 0, from([[setting:themequizsubmitbackgroundcolourimage]]), to([[setting:themequizsubmitbackgroundcolourrgba]]));
+  background-image: -webkit-linear-gradient(bottom, [[setting:themequizsubmitbackgroundcolourimage]], [[setting:themequizsubmitbackgroundcolourrgba]]);
+  background-image: -o-linear-gradient(bottom, [[setting:themequizsubmitbackgroundcolourimage]], [[setting:themequizsubmitbackgroundcolourrgba]]);
+  background-image: linear-gradient(to top, [[setting:themequizsubmitbackgroundcolourimage]], [[setting:themequizsubmitbackgroundcolourrgba]]);
+}
+body.path-mod-quiz .submitbtns form[action$="processattempt.php"] input[type="submit"]:hover,
+body.path-mod-quiz .submitbtns form[action$="processattempt.php"] input[type="submit"]:focus,
+body.path-mod-quiz .submitbtns form[action$="processattempt.php"] input[type="submit"]:active,
+body.path-mod-quiz .submitbtns form[action$="processattempt.php"] input[type="submit"].active,
+body.path-mod-quiz .submitbtns form[action$="processattempt.php"] input[type="submit"].disabled,
+body.path-mod-quiz .submitbtns form[action$="processattempt.php"] input[type="submit"][disabled] {
+  color: [[setting:themequizsubmittexthovercolour]];
+  text-shadow: 0 1px 1px rgba(64, 64, 64, 0.75);
+  background-color: [[setting:themequizsubmitbackgroundhovercolour]];
+  background-image: -moz-linear-gradient(bottom, [[setting:themequizsubmitbackgroundhovercolourimage]], [[setting:themequizsubmitbackgroundhovercolourrgba]]);
+  background-image: -webkit-gradient(linear, 0 100%, 0 0, from([[setting:themequizsubmitbackgroundhovercolourimage]]), to([[setting:themequizsubmitbackgroundhovercolourrgba]]));
+  background-image: -webkit-linear-gradient(bottom, [[setting:themequizsubmitbackgroundhovercolourimage]], [[setting:themequizsubmitbackgroundhovercolourrgba]]);
+  background-image: -o-linear-gradient(bottom, [[setting:themequizsubmitbackgroundhovercolourimage]], [[setting:themequizsubmitbackgroundhovercolourrgba]]);
+  background-image: linear-gradient(to top, [[setting:themequizsubmitbackgroundhovercolourimage]], [[setting:themequizsubmitbackgroundhovercolourrgba]]);
+}
+/* @end Quiz */
+/* @group Responsive */
+@media (max-width: 979px) {
+  .navbar .navbar-inner .nav-collapse .nav > li.dropdown .dropdown-menu li > a {
+    color: [[setting:themecolor]];
+  }
+  .navbar .navbar-inner .nav-collapse .nav > li.dropdown .dropdown-menu li > a:hover,
+  .navbar .navbar-inner .nav-collapse .nav > li.dropdown .dropdown-menu li > a.open {
+    color: [[setting:themenavcolor]];
+    background-color: [[setting:themecolor]];
+  }
+  .navbar .navbar-inner .nav-collapse .nav > li.dropdown .dropdown-menu li > a:hover .fa,
+  .navbar .navbar-inner .nav-collapse .nav > li.dropdown .dropdown-menu li > a.open .fa {
+    color: inherit;
+  }
+  .navbar .navbar-inner .nav-collapse .nav li.dropdown .dropdown-menu {
+    background-color: [[setting:themenavcolor]];
+    color: [[setting:themecolor]];
+  }
+}
+/* @end */
+/* @group Tables */
+.path-grade-report .gradeparent tr:nth-of-type(even) .cell,
+.path-grade-report .gradeparent .floater .cell,
+.path-grade-report .gradeparent .avg {
+  color: [[setting:themestripetextcolour]];
+  background-color: [[setting:themestripebackgroundcolour]];
+}
+.path-grade-report .gradeparent tr:nth-of-type(even) .cell a,
+.path-grade-report .gradeparent .floater .cell a,
+.path-grade-report .gradeparent .avg a,
+.path-grade-report .gradeparent tr:nth-of-type(even) .cell a:hover,
+.path-grade-report .gradeparent .floater .cell a:hover,
+.path-grade-report .gradeparent .avg a:hover,
+.path-grade-report .gradeparent tr:nth-of-type(even) .cell a:focus,
+.path-grade-report .gradeparent .floater .cell a:focus,
+.path-grade-report .gradeparent .avg a:focus,
+.path-grade-report .gradeparent tr:nth-of-type(even) .cell a:visited,
+.path-grade-report .gradeparent .floater .cell a:visited,
+.path-grade-report .gradeparent .avg a:visited,
+.path-grade-report .gradeparent tr:nth-of-type(even) .cell .fa,
+.path-grade-report .gradeparent .floater .cell .fa,
+.path-grade-report .gradeparent .avg .fa {
+  color: [[setting:themestripeurlcolour]];
+}
+#page-grade-report-grader-index .gradeparent div.floater:first-of-type .cell:nth-child(even) {
+  color: [[setting:themestripetextcolour]];
+}
+#page-grade-report-grader-index .gradeparent div.floater:first-of-type .cell:nth-child(even) a,
+#page-grade-report-grader-index .gradeparent div.floater:first-of-type .cell:nth-child(even) a:hover,
+#page-grade-report-grader-index .gradeparent div.floater:first-of-type .cell:nth-child(even) a:focus,
+#page-grade-report-grader-index .gradeparent div.floater:first-of-type .cell:nth-child(even) a:visited {
+  color: [[setting:themestripeurlcolour]];
+}
+#page-grade-report-grader-index .gradeparent div.floater:first-of-type .cell:nth-child(odd) a,
+#page-grade-report-grader-index .gradeparent div.floater:first-of-type .cell:nth-child(odd) a:visited {
+  color: [[setting:themeurlcolor]];
+}
+#page-grade-report-grader-index .gradeparent div.floater:first-of-type .cell:nth-child(odd) a:hover,
+#page-grade-report-grader-index .gradeparent div.floater:first-of-type .cell:nth-child(odd) a:focus {
+  color: [[setting:themehovercolor]];
+}
+.path-grade-report .gradeparent .avg.lastrow,
+#page-grade-report-grader-index .gradeparent div.floater.floating.lastrow .cell {
+  color: [[setting:themetextcolor]];
+}
+.path-grade-report-grader .gradeparent .user.cell .userpicture {
+  background-color: #fff;
+}
+table#explaincaps tbody > tr:nth-child(odd) > td,
+table#defineroletable tbody > tr:nth-child(odd) > td,
+table.grading-report tbody > tr:nth-child(odd) > td,
+table#listdirectories tbody > tr:nth-child(odd) > td,
+table.rolecaps tbody > tr:nth-child(odd) > td,
+table.userenrolment tbody > tr:nth-child(odd) > td,
+table#form tbody > tr:nth-child(odd) > td,
+form#movecourses table tbody > tr:nth-child(odd) > td,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td,
+.forumheaderlist tbody > tr:nth-child(odd) > td,
+table.flexible tbody > tr:nth-child(odd) > td,
+.generaltable tbody > tr:nth-child(odd) > td,
+table#explaincaps tbody > tr:nth-child(odd) > th,
+table#defineroletable tbody > tr:nth-child(odd) > th,
+table.grading-report tbody > tr:nth-child(odd) > th,
+table#listdirectories tbody > tr:nth-child(odd) > th,
+table.rolecaps tbody > tr:nth-child(odd) > th,
+table.userenrolment tbody > tr:nth-child(odd) > th,
+table#form tbody > tr:nth-child(odd) > th,
+form#movecourses table tbody > tr:nth-child(odd) > th,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > th,
+.forumheaderlist tbody > tr:nth-child(odd) > th,
+table.flexible tbody > tr:nth-child(odd) > th,
+.generaltable tbody > tr:nth-child(odd) > th {
+  color: [[setting:themestripetextcolour]];
+  background-color: [[setting:themestripebackgroundcolour]];
+}
+table#explaincaps tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]),
+table#defineroletable tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]),
+table.grading-report tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]),
+table#listdirectories tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]),
+table.rolecaps tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]),
+table.userenrolment tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]),
+table#form tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]),
+form#movecourses table tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]),
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]),
+.forumheaderlist tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]),
+table.flexible tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]),
+.generaltable tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]),
+table#explaincaps tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]),
+table#defineroletable tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]),
+table.grading-report tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]),
+table#listdirectories tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]),
+table.rolecaps tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]),
+table.userenrolment tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]),
+table#form tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]),
+form#movecourses table tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]),
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]),
+.forumheaderlist tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]),
+table.flexible tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]),
+.generaltable tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]),
+table#explaincaps tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):hover,
+table#defineroletable tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):hover,
+table.grading-report tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):hover,
+table#listdirectories tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):hover,
+table.rolecaps tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):hover,
+table.userenrolment tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):hover,
+table#form tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):hover,
+form#movecourses table tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):hover,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):hover,
+.forumheaderlist tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):hover,
+table.flexible tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):hover,
+.generaltable tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):hover,
+table#explaincaps tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):hover,
+table#defineroletable tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):hover,
+table.grading-report tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):hover,
+table#listdirectories tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):hover,
+table.rolecaps tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):hover,
+table.userenrolment tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):hover,
+table#form tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):hover,
+form#movecourses table tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):hover,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):hover,
+.forumheaderlist tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):hover,
+table.flexible tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):hover,
+.generaltable tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):hover,
+table#explaincaps tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):focus,
+table#defineroletable tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):focus,
+table.grading-report tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):focus,
+table#listdirectories tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):focus,
+table.rolecaps tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):focus,
+table.userenrolment tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):focus,
+table#form tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):focus,
+form#movecourses table tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):focus,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):focus,
+.forumheaderlist tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):focus,
+table.flexible tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):focus,
+.generaltable tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):focus,
+table#explaincaps tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):focus,
+table#defineroletable tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):focus,
+table.grading-report tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):focus,
+table#listdirectories tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):focus,
+table.rolecaps tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):focus,
+table.userenrolment tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):focus,
+table#form tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):focus,
+form#movecourses table tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):focus,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):focus,
+.forumheaderlist tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):focus,
+table.flexible tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):focus,
+.generaltable tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):focus,
+table#explaincaps tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):visited,
+table#defineroletable tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):visited,
+table.grading-report tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):visited,
+table#listdirectories tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):visited,
+table.rolecaps tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):visited,
+table.userenrolment tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):visited,
+table#form tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):visited,
+form#movecourses table tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):visited,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):visited,
+.forumheaderlist tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):visited,
+table.flexible tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):visited,
+.generaltable tbody > tr:nth-child(odd) > td a:not(.btn):not([role="menuitem"]):visited,
+table#explaincaps tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):visited,
+table#defineroletable tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):visited,
+table.grading-report tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):visited,
+table#listdirectories tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):visited,
+table.rolecaps tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):visited,
+table.userenrolment tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):visited,
+table#form tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):visited,
+form#movecourses table tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):visited,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):visited,
+.forumheaderlist tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):visited,
+table.flexible tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):visited,
+.generaltable tbody > tr:nth-child(odd) > th a:not(.btn):not([role="menuitem"]):visited,
+table#explaincaps tbody > tr:nth-child(odd) > td a.toggle-display,
+table#defineroletable tbody > tr:nth-child(odd) > td a.toggle-display,
+table.grading-report tbody > tr:nth-child(odd) > td a.toggle-display,
+table#listdirectories tbody > tr:nth-child(odd) > td a.toggle-display,
+table.rolecaps tbody > tr:nth-child(odd) > td a.toggle-display,
+table.userenrolment tbody > tr:nth-child(odd) > td a.toggle-display,
+table#form tbody > tr:nth-child(odd) > td a.toggle-display,
+form#movecourses table tbody > tr:nth-child(odd) > td a.toggle-display,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td a.toggle-display,
+.forumheaderlist tbody > tr:nth-child(odd) > td a.toggle-display,
+table.flexible tbody > tr:nth-child(odd) > td a.toggle-display,
+.generaltable tbody > tr:nth-child(odd) > td a.toggle-display,
+table#explaincaps tbody > tr:nth-child(odd) > th a.toggle-display,
+table#defineroletable tbody > tr:nth-child(odd) > th a.toggle-display,
+table.grading-report tbody > tr:nth-child(odd) > th a.toggle-display,
+table#listdirectories tbody > tr:nth-child(odd) > th a.toggle-display,
+table.rolecaps tbody > tr:nth-child(odd) > th a.toggle-display,
+table.userenrolment tbody > tr:nth-child(odd) > th a.toggle-display,
+table#form tbody > tr:nth-child(odd) > th a.toggle-display,
+form#movecourses table tbody > tr:nth-child(odd) > th a.toggle-display,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > th a.toggle-display,
+.forumheaderlist tbody > tr:nth-child(odd) > th a.toggle-display,
+table.flexible tbody > tr:nth-child(odd) > th a.toggle-display,
+.generaltable tbody > tr:nth-child(odd) > th a.toggle-display,
+table#explaincaps tbody > tr:nth-child(odd) > td a.toggle-display:visited,
+table#defineroletable tbody > tr:nth-child(odd) > td a.toggle-display:visited,
+table.grading-report tbody > tr:nth-child(odd) > td a.toggle-display:visited,
+table#listdirectories tbody > tr:nth-child(odd) > td a.toggle-display:visited,
+table.rolecaps tbody > tr:nth-child(odd) > td a.toggle-display:visited,
+table.userenrolment tbody > tr:nth-child(odd) > td a.toggle-display:visited,
+table#form tbody > tr:nth-child(odd) > td a.toggle-display:visited,
+form#movecourses table tbody > tr:nth-child(odd) > td a.toggle-display:visited,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td a.toggle-display:visited,
+.forumheaderlist tbody > tr:nth-child(odd) > td a.toggle-display:visited,
+table.flexible tbody > tr:nth-child(odd) > td a.toggle-display:visited,
+.generaltable tbody > tr:nth-child(odd) > td a.toggle-display:visited,
+table#explaincaps tbody > tr:nth-child(odd) > th a.toggle-display:visited,
+table#defineroletable tbody > tr:nth-child(odd) > th a.toggle-display:visited,
+table.grading-report tbody > tr:nth-child(odd) > th a.toggle-display:visited,
+table#listdirectories tbody > tr:nth-child(odd) > th a.toggle-display:visited,
+table.rolecaps tbody > tr:nth-child(odd) > th a.toggle-display:visited,
+table.userenrolment tbody > tr:nth-child(odd) > th a.toggle-display:visited,
+table#form tbody > tr:nth-child(odd) > th a.toggle-display:visited,
+form#movecourses table tbody > tr:nth-child(odd) > th a.toggle-display:visited,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > th a.toggle-display:visited,
+.forumheaderlist tbody > tr:nth-child(odd) > th a.toggle-display:visited,
+table.flexible tbody > tr:nth-child(odd) > th a.toggle-display:visited,
+.generaltable tbody > tr:nth-child(odd) > th a.toggle-display:visited,
+table#explaincaps tbody > tr:nth-child(odd) > td a.toggle-display:hover,
+table#defineroletable tbody > tr:nth-child(odd) > td a.toggle-display:hover,
+table.grading-report tbody > tr:nth-child(odd) > td a.toggle-display:hover,
+table#listdirectories tbody > tr:nth-child(odd) > td a.toggle-display:hover,
+table.rolecaps tbody > tr:nth-child(odd) > td a.toggle-display:hover,
+table.userenrolment tbody > tr:nth-child(odd) > td a.toggle-display:hover,
+table#form tbody > tr:nth-child(odd) > td a.toggle-display:hover,
+form#movecourses table tbody > tr:nth-child(odd) > td a.toggle-display:hover,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td a.toggle-display:hover,
+.forumheaderlist tbody > tr:nth-child(odd) > td a.toggle-display:hover,
+table.flexible tbody > tr:nth-child(odd) > td a.toggle-display:hover,
+.generaltable tbody > tr:nth-child(odd) > td a.toggle-display:hover,
+table#explaincaps tbody > tr:nth-child(odd) > th a.toggle-display:hover,
+table#defineroletable tbody > tr:nth-child(odd) > th a.toggle-display:hover,
+table.grading-report tbody > tr:nth-child(odd) > th a.toggle-display:hover,
+table#listdirectories tbody > tr:nth-child(odd) > th a.toggle-display:hover,
+table.rolecaps tbody > tr:nth-child(odd) > th a.toggle-display:hover,
+table.userenrolment tbody > tr:nth-child(odd) > th a.toggle-display:hover,
+table#form tbody > tr:nth-child(odd) > th a.toggle-display:hover,
+form#movecourses table tbody > tr:nth-child(odd) > th a.toggle-display:hover,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > th a.toggle-display:hover,
+.forumheaderlist tbody > tr:nth-child(odd) > th a.toggle-display:hover,
+table.flexible tbody > tr:nth-child(odd) > th a.toggle-display:hover,
+.generaltable tbody > tr:nth-child(odd) > th a.toggle-display:hover,
+table#explaincaps tbody > tr:nth-child(odd) > td a.toggle-display:focus,
+table#defineroletable tbody > tr:nth-child(odd) > td a.toggle-display:focus,
+table.grading-report tbody > tr:nth-child(odd) > td a.toggle-display:focus,
+table#listdirectories tbody > tr:nth-child(odd) > td a.toggle-display:focus,
+table.rolecaps tbody > tr:nth-child(odd) > td a.toggle-display:focus,
+table.userenrolment tbody > tr:nth-child(odd) > td a.toggle-display:focus,
+table#form tbody > tr:nth-child(odd) > td a.toggle-display:focus,
+form#movecourses table tbody > tr:nth-child(odd) > td a.toggle-display:focus,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td a.toggle-display:focus,
+.forumheaderlist tbody > tr:nth-child(odd) > td a.toggle-display:focus,
+table.flexible tbody > tr:nth-child(odd) > td a.toggle-display:focus,
+.generaltable tbody > tr:nth-child(odd) > td a.toggle-display:focus,
+table#explaincaps tbody > tr:nth-child(odd) > th a.toggle-display:focus,
+table#defineroletable tbody > tr:nth-child(odd) > th a.toggle-display:focus,
+table.grading-report tbody > tr:nth-child(odd) > th a.toggle-display:focus,
+table#listdirectories tbody > tr:nth-child(odd) > th a.toggle-display:focus,
+table.rolecaps tbody > tr:nth-child(odd) > th a.toggle-display:focus,
+table.userenrolment tbody > tr:nth-child(odd) > th a.toggle-display:focus,
+table#form tbody > tr:nth-child(odd) > th a.toggle-display:focus,
+form#movecourses table tbody > tr:nth-child(odd) > th a.toggle-display:focus,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > th a.toggle-display:focus,
+.forumheaderlist tbody > tr:nth-child(odd) > th a.toggle-display:focus,
+table.flexible tbody > tr:nth-child(odd) > th a.toggle-display:focus,
+.generaltable tbody > tr:nth-child(odd) > th a.toggle-display:focus,
+table#explaincaps tbody > tr:nth-child(odd) > td a.toggle-display:active,
+table#defineroletable tbody > tr:nth-child(odd) > td a.toggle-display:active,
+table.grading-report tbody > tr:nth-child(odd) > td a.toggle-display:active,
+table#listdirectories tbody > tr:nth-child(odd) > td a.toggle-display:active,
+table.rolecaps tbody > tr:nth-child(odd) > td a.toggle-display:active,
+table.userenrolment tbody > tr:nth-child(odd) > td a.toggle-display:active,
+table#form tbody > tr:nth-child(odd) > td a.toggle-display:active,
+form#movecourses table tbody > tr:nth-child(odd) > td a.toggle-display:active,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td a.toggle-display:active,
+.forumheaderlist tbody > tr:nth-child(odd) > td a.toggle-display:active,
+table.flexible tbody > tr:nth-child(odd) > td a.toggle-display:active,
+.generaltable tbody > tr:nth-child(odd) > td a.toggle-display:active,
+table#explaincaps tbody > tr:nth-child(odd) > th a.toggle-display:active,
+table#defineroletable tbody > tr:nth-child(odd) > th a.toggle-display:active,
+table.grading-report tbody > tr:nth-child(odd) > th a.toggle-display:active,
+table#listdirectories tbody > tr:nth-child(odd) > th a.toggle-display:active,
+table.rolecaps tbody > tr:nth-child(odd) > th a.toggle-display:active,
+table.userenrolment tbody > tr:nth-child(odd) > th a.toggle-display:active,
+table#form tbody > tr:nth-child(odd) > th a.toggle-display:active,
+form#movecourses table tbody > tr:nth-child(odd) > th a.toggle-display:active,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > th a.toggle-display:active,
+.forumheaderlist tbody > tr:nth-child(odd) > th a.toggle-display:active,
+table.flexible tbody > tr:nth-child(odd) > th a.toggle-display:active,
+.generaltable tbody > tr:nth-child(odd) > th a.toggle-display:active {
+  color: [[setting:themestripeurlcolour]];
+}
+table#explaincaps tbody > tr:nth-child(odd) > td .fa,
+table#defineroletable tbody > tr:nth-child(odd) > td .fa,
+table.grading-report tbody > tr:nth-child(odd) > td .fa,
+table#listdirectories tbody > tr:nth-child(odd) > td .fa,
+table.rolecaps tbody > tr:nth-child(odd) > td .fa,
+table.userenrolment tbody > tr:nth-child(odd) > td .fa,
+table#form tbody > tr:nth-child(odd) > td .fa,
+form#movecourses table tbody > tr:nth-child(odd) > td .fa,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td .fa,
+.forumheaderlist tbody > tr:nth-child(odd) > td .fa,
+table.flexible tbody > tr:nth-child(odd) > td .fa,
+.generaltable tbody > tr:nth-child(odd) > td .fa,
+table#explaincaps tbody > tr:nth-child(odd) > td .fa:hover,
+table#defineroletable tbody > tr:nth-child(odd) > td .fa:hover,
+table.grading-report tbody > tr:nth-child(odd) > td .fa:hover,
+table#listdirectories tbody > tr:nth-child(odd) > td .fa:hover,
+table.rolecaps tbody > tr:nth-child(odd) > td .fa:hover,
+table.userenrolment tbody > tr:nth-child(odd) > td .fa:hover,
+table#form tbody > tr:nth-child(odd) > td .fa:hover,
+form#movecourses table tbody > tr:nth-child(odd) > td .fa:hover,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td .fa:hover,
+.forumheaderlist tbody > tr:nth-child(odd) > td .fa:hover,
+table.flexible tbody > tr:nth-child(odd) > td .fa:hover,
+.generaltable tbody > tr:nth-child(odd) > td .fa:hover,
+table#explaincaps tbody > tr:nth-child(odd) > td .fa:focus,
+table#defineroletable tbody > tr:nth-child(odd) > td .fa:focus,
+table.grading-report tbody > tr:nth-child(odd) > td .fa:focus,
+table#listdirectories tbody > tr:nth-child(odd) > td .fa:focus,
+table.rolecaps tbody > tr:nth-child(odd) > td .fa:focus,
+table.userenrolment tbody > tr:nth-child(odd) > td .fa:focus,
+table#form tbody > tr:nth-child(odd) > td .fa:focus,
+form#movecourses table tbody > tr:nth-child(odd) > td .fa:focus,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td .fa:focus,
+.forumheaderlist tbody > tr:nth-child(odd) > td .fa:focus,
+table.flexible tbody > tr:nth-child(odd) > td .fa:focus,
+.generaltable tbody > tr:nth-child(odd) > td .fa:focus {
+  color: [[setting:themestripetextcolour]];
+}
+table#explaincaps tbody > tr:nth-child(odd) > td a[role="menuitem"] .fa,
+table#defineroletable tbody > tr:nth-child(odd) > td a[role="menuitem"] .fa,
+table.grading-report tbody > tr:nth-child(odd) > td a[role="menuitem"] .fa,
+table#listdirectories tbody > tr:nth-child(odd) > td a[role="menuitem"] .fa,
+table.rolecaps tbody > tr:nth-child(odd) > td a[role="menuitem"] .fa,
+table.userenrolment tbody > tr:nth-child(odd) > td a[role="menuitem"] .fa,
+table#form tbody > tr:nth-child(odd) > td a[role="menuitem"] .fa,
+form#movecourses table tbody > tr:nth-child(odd) > td a[role="menuitem"] .fa,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td a[role="menuitem"] .fa,
+.forumheaderlist tbody > tr:nth-child(odd) > td a[role="menuitem"] .fa,
+table.flexible tbody > tr:nth-child(odd) > td a[role="menuitem"] .fa,
+.generaltable tbody > tr:nth-child(odd) > td a[role="menuitem"] .fa,
+table#explaincaps tbody > tr:nth-child(odd) > td .fa:hover,
+table#defineroletable tbody > tr:nth-child(odd) > td .fa:hover,
+table.grading-report tbody > tr:nth-child(odd) > td .fa:hover,
+table#listdirectories tbody > tr:nth-child(odd) > td .fa:hover,
+table.rolecaps tbody > tr:nth-child(odd) > td .fa:hover,
+table.userenrolment tbody > tr:nth-child(odd) > td .fa:hover,
+table#form tbody > tr:nth-child(odd) > td .fa:hover,
+form#movecourses table tbody > tr:nth-child(odd) > td .fa:hover,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td .fa:hover,
+.forumheaderlist tbody > tr:nth-child(odd) > td .fa:hover,
+table.flexible tbody > tr:nth-child(odd) > td .fa:hover,
+.generaltable tbody > tr:nth-child(odd) > td .fa:hover,
+table#explaincaps tbody > tr:nth-child(odd) > td .fa:focus,
+table#defineroletable tbody > tr:nth-child(odd) > td .fa:focus,
+table.grading-report tbody > tr:nth-child(odd) > td .fa:focus,
+table#listdirectories tbody > tr:nth-child(odd) > td .fa:focus,
+table.rolecaps tbody > tr:nth-child(odd) > td .fa:focus,
+table.userenrolment tbody > tr:nth-child(odd) > td .fa:focus,
+table#form tbody > tr:nth-child(odd) > td .fa:focus,
+form#movecourses table tbody > tr:nth-child(odd) > td .fa:focus,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td .fa:focus,
+.forumheaderlist tbody > tr:nth-child(odd) > td .fa:focus,
+table.flexible tbody > tr:nth-child(odd) > td .fa:focus,
+.generaltable tbody > tr:nth-child(odd) > td .fa:focus {
+  color: inherit;
+}
+table#explaincaps tbody > tr > td img.userpicture,
+table#defineroletable tbody > tr > td img.userpicture,
+table.grading-report tbody > tr > td img.userpicture,
+table#listdirectories tbody > tr > td img.userpicture,
+table.rolecaps tbody > tr > td img.userpicture,
+table.userenrolment tbody > tr > td img.userpicture,
+table#form tbody > tr > td img.userpicture,
+form#movecourses table tbody > tr > td img.userpicture,
+#page-admin-course-index .editcourse tbody > tr > td img.userpicture,
+.forumheaderlist tbody > tr > td img.userpicture,
+table.flexible tbody > tr > td img.userpicture,
+.generaltable tbody > tr > td img.userpicture,
+table#explaincaps tbody > tr > td img.profilepicture,
+table#defineroletable tbody > tr > td img.profilepicture,
+table.grading-report tbody > tr > td img.profilepicture,
+table#listdirectories tbody > tr > td img.profilepicture,
+table.rolecaps tbody > tr > td img.profilepicture,
+table.userenrolment tbody > tr > td img.profilepicture,
+table#form tbody > tr > td img.profilepicture,
+form#movecourses table tbody > tr > td img.profilepicture,
+#page-admin-course-index .editcourse tbody > tr > td img.profilepicture,
+.forumheaderlist tbody > tr > td img.profilepicture,
+table.flexible tbody > tr > td img.profilepicture,
+.generaltable tbody > tr > td img.profilepicture {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+table#explaincaps tbody > tr:nth-child(odd) > td h3,
+table#defineroletable tbody > tr:nth-child(odd) > td h3,
+table.grading-report tbody > tr:nth-child(odd) > td h3,
+table#listdirectories tbody > tr:nth-child(odd) > td h3,
+table.rolecaps tbody > tr:nth-child(odd) > td h3,
+table.userenrolment tbody > tr:nth-child(odd) > td h3,
+table#form tbody > tr:nth-child(odd) > td h3,
+form#movecourses table tbody > tr:nth-child(odd) > td h3,
+#page-admin-course-index .editcourse tbody > tr:nth-child(odd) > td h3,
+.forumheaderlist tbody > tr:nth-child(odd) > td h3,
+table.flexible tbody > tr:nth-child(odd) > td h3,
+.generaltable tbody > tr:nth-child(odd) > td h3 {
+  color: inherit;
+}
+table#explaincaps tbody > tr.dimmed_text > td a,
+table#defineroletable tbody > tr.dimmed_text > td a,
+table.grading-report tbody > tr.dimmed_text > td a,
+table#listdirectories tbody > tr.dimmed_text > td a,
+table.rolecaps tbody > tr.dimmed_text > td a,
+table.userenrolment tbody > tr.dimmed_text > td a,
+table#form tbody > tr.dimmed_text > td a,
+form#movecourses table tbody > tr.dimmed_text > td a,
+#page-admin-course-index .editcourse tbody > tr.dimmed_text > td a,
+.forumheaderlist tbody > tr.dimmed_text > td a,
+table.flexible tbody > tr.dimmed_text > td a,
+.generaltable tbody > tr.dimmed_text > td a {
+  color: inherit;
+}
+.submissionsummarytable .generaltable table.ygtvtable tbody > tr:nth-child(odd) > td {
+  color: inherit;
+}
+.submissionsummarytable .generaltable table.ygtvtable tbody > tr:nth-child(odd) > td .ygtvspacer {
+  background-color: inherit;
+}
+#page-admin-plugins #plugins-control-panel tbody > tr:nth-child(odd) > td.displayname .plugindir,
+#plugins-check-page #plugins-check tbody > tr:nth-child(odd) > td.displayname .plugindir,
+#page-admin-plugins #plugins-control-panel tbody > tr:hover > td.displayname .plugindir,
+#plugins-check-page #plugins-check tbody > tr:hover > td.displayname .plugindir,
+#page-admin-plugins #plugins-control-panel tbody > tr:nth-child(odd) > td.notes .requiredby,
+#plugins-check-page #plugins-check tbody > tr:nth-child(odd) > td.notes .requiredby,
+#page-admin-plugins #plugins-control-panel tbody > tr:hover > td.notes .requiredby,
+#plugins-check-page #plugins-check tbody > tr:hover > td.notes .requiredby,
+#page-admin-plugins #plugins-control-panel tbody > tr:nth-child(odd) > td.pluginname .componentname,
+#plugins-check-page #plugins-check tbody > tr:nth-child(odd) > td.pluginname .componentname,
+#page-admin-plugins #plugins-control-panel tbody > tr:hover > td.pluginname .componentname,
+#plugins-check-page #plugins-check tbody > tr:hover > td.pluginname .componentname,
+#page-admin-plugins #plugins-control-panel tbody > tr:nth-child(odd) > td.requires .requires-ok,
+#plugins-check-page #plugins-check tbody > tr:nth-child(odd) > td.requires .requires-ok,
+#page-admin-plugins #plugins-control-panel tbody > tr:hover > td.requires .requires-ok,
+#plugins-check-page #plugins-check tbody > tr:hover > td.requires .requires-ok,
+#page-admin-plugins #plugins-control-panel tbody > tr:nth-child(odd) > td.version .versionnumber,
+#plugins-check-page #plugins-check tbody > tr:nth-child(odd) > td.version .versionnumber,
+#page-admin-plugins #plugins-control-panel tbody > tr:hover > td.version .versionnumber,
+#plugins-check-page #plugins-check tbody > tr:hover > td.version .versionnumber {
+  color: [[setting:themestripetextcolour]];
+}
+#page-admin-plugins #plugins-control-panel tbody > tr:nth-child(odd) > td.settings a,
+#plugins-check-page #plugins-check tbody > tr:nth-child(odd) > td.settings a,
+#page-admin-plugins #plugins-control-panel tbody > tr:hover > td.settings a,
+#plugins-check-page #plugins-check tbody > tr:hover > td.settings a,
+#page-admin-plugins #plugins-control-panel tbody > tr:nth-child(odd) > td.uninstall a,
+#plugins-check-page #plugins-check tbody > tr:nth-child(odd) > td.uninstall a,
+#page-admin-plugins #plugins-control-panel tbody > tr:hover > td.uninstall a,
+#plugins-check-page #plugins-check tbody > tr:hover > td.uninstall a {
+  color: [[setting:themestripeurlcolour]];
+}
+#categoryquestions > tbody > tr:nth-of-type(even) {
+  color: [[setting:themestripetextcolour]];
+  background-color: [[setting:themestripebackgroundcolour]];
+}
+.user-enroller-panel .uep-search-results .users > tbody tr:hover > td,
+.user-enroller-panel .uep-search-results .cohorts > tbody tr:hover > td,
+table.grading-report > tbody tr:hover > td,
+.forumheaderlist > tbody tr:hover > td,
+.generaltable > tbody tr:hover > td,
+table.flexible > tbody tr:hover > td,
+.category_subcategories > tbody tr:hover > td,
+table#modules > tbody tr:hover > td,
+table#permissions > tbody tr:hover > td,
+.user-enroller-panel .uep-search-results .users > tbody tr:hover > td > h3,
+.user-enroller-panel .uep-search-results .cohorts > tbody tr:hover > td > h3,
+table.grading-report > tbody tr:hover > td > h3,
+.forumheaderlist > tbody tr:hover > td > h3,
+.generaltable > tbody tr:hover > td > h3,
+table.flexible > tbody tr:hover > td > h3,
+.category_subcategories > tbody tr:hover > td > h3,
+table#modules > tbody tr:hover > td > h3,
+table#permissions > tbody tr:hover > td > h3,
+.user-enroller-panel .uep-search-results .users > tbody tr:hover > th,
+.user-enroller-panel .uep-search-results .cohorts > tbody tr:hover > th,
+table.grading-report > tbody tr:hover > th,
+.forumheaderlist > tbody tr:hover > th,
+.generaltable > tbody tr:hover > th,
+table.flexible > tbody tr:hover > th,
+.category_subcategories > tbody tr:hover > th,
+table#modules > tbody tr:hover > th,
+table#permissions > tbody tr:hover > th {
+  color: [[setting:themestripetextcolour]];
+  background-color: [[setting:themestripebackgroundcolour]];
+}
+.user-enroller-panel .uep-search-results .users > tbody tr:hover > td a:not(.btn):not([role="menuitem"]),
+.user-enroller-panel .uep-search-results .cohorts > tbody tr:hover > td a:not(.btn):not([role="menuitem"]),
+table.grading-report > tbody tr:hover > td a:not(.btn):not([role="menuitem"]),
+.forumheaderlist > tbody tr:hover > td a:not(.btn):not([role="menuitem"]),
+.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]),
+table.flexible > tbody tr:hover > td a:not(.btn):not([role="menuitem"]),
+.category_subcategories > tbody tr:hover > td a:not(.btn):not([role="menuitem"]),
+table#modules > tbody tr:hover > td a:not(.btn):not([role="menuitem"]),
+table#permissions > tbody tr:hover > td a:not(.btn):not([role="menuitem"]),
+.user-enroller-panel .uep-search-results .users > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited,
+.user-enroller-panel .uep-search-results .cohorts > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited,
+table.grading-report > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited,
+.forumheaderlist > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited,
+.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited,
+table.flexible > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited,
+.category_subcategories > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited,
+table#modules > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited,
+table#permissions > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited,
+.user-enroller-panel .uep-search-results .users > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+.user-enroller-panel .uep-search-results .cohorts > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+table.grading-report > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+.forumheaderlist > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+table.flexible > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+.category_subcategories > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+table#modules > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+table#permissions > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+.user-enroller-panel .uep-search-results .users > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus,
+.user-enroller-panel .uep-search-results .cohorts > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus,
+table.grading-report > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus,
+.forumheaderlist > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus,
+.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus,
+table.flexible > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus,
+.category_subcategories > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus,
+table#modules > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus,
+table#permissions > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus,
+.user-enroller-panel .uep-search-results .users > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active,
+.user-enroller-panel .uep-search-results .cohorts > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active,
+table.grading-report > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active,
+.forumheaderlist > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active,
+.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active,
+table.flexible > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active,
+.category_subcategories > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active,
+table#modules > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active,
+table#permissions > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active {
+  color: [[setting:themestripeurlcolour]];
+  background-color: [[setting:themestripebackgroundcolour]];
+}
+.user-enroller-panel .uep-search-results .users > tbody tr:hover > td a:not(.btn):not([role="menuitem"]) .fa,
+.user-enroller-panel .uep-search-results .cohorts > tbody tr:hover > td a:not(.btn):not([role="menuitem"]) .fa,
+table.grading-report > tbody tr:hover > td a:not(.btn):not([role="menuitem"]) .fa,
+.forumheaderlist > tbody tr:hover > td a:not(.btn):not([role="menuitem"]) .fa,
+.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]) .fa,
+table.flexible > tbody tr:hover > td a:not(.btn):not([role="menuitem"]) .fa,
+.category_subcategories > tbody tr:hover > td a:not(.btn):not([role="menuitem"]) .fa,
+table#modules > tbody tr:hover > td a:not(.btn):not([role="menuitem"]) .fa,
+table#permissions > tbody tr:hover > td a:not(.btn):not([role="menuitem"]) .fa,
+.user-enroller-panel .uep-search-results .users > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited .fa,
+.user-enroller-panel .uep-search-results .cohorts > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited .fa,
+table.grading-report > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited .fa,
+.forumheaderlist > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited .fa,
+.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited .fa,
+table.flexible > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited .fa,
+.category_subcategories > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited .fa,
+table#modules > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited .fa,
+table#permissions > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):visited .fa,
+.user-enroller-panel .uep-search-results .users > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover .fa,
+.user-enroller-panel .uep-search-results .cohorts > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover .fa,
+table.grading-report > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover .fa,
+.forumheaderlist > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover .fa,
+.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover .fa,
+table.flexible > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover .fa,
+.category_subcategories > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover .fa,
+table#modules > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover .fa,
+table#permissions > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):hover .fa,
+.user-enroller-panel .uep-search-results .users > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus .fa,
+.user-enroller-panel .uep-search-results .cohorts > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus .fa,
+table.grading-report > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus .fa,
+.forumheaderlist > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus .fa,
+.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus .fa,
+table.flexible > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus .fa,
+.category_subcategories > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus .fa,
+table#modules > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus .fa,
+table#permissions > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):focus .fa,
+.user-enroller-panel .uep-search-results .users > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active .fa,
+.user-enroller-panel .uep-search-results .cohorts > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active .fa,
+table.grading-report > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active .fa,
+.forumheaderlist > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active .fa,
+.generaltable > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active .fa,
+table.flexible > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active .fa,
+.category_subcategories > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active .fa,
+table#modules > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active .fa,
+table#permissions > tbody tr:hover > td a:not(.btn):not([role="menuitem"]):active .fa {
+  color: inherit;
+}
+/* @end */
+/* @group Settings */
+/* @group Core */
+*,
+p {
+  font-family: [[setting:bodyfont]];
+}
+body {
+  color: [[setting:themetextcolor]];
+  font-family: [[setting:bodyfont]];
+  background-image: [[setting:pagebackground]];
+  background-attachment: [[setting:backgroundattach]];
+  background-repeat: [[setting:backgroundrepeat]];
+  background-size: [[setting:backgroundsize]];
+}
+body .fa {
+  color: [[setting:themeiconcolor]];
+}
+body .fa:focus,
+body .fa:hover {
+  color: [[setting:themehovercolor]];
+}
+body .fa-inverse {
+  color: #fff;
+}
+body .dimmed .fa {
+  color: inherit;
+}
+body .dimmed .fa:focus,
+body .dimmed .fa:hover {
+  color: inherit;
+}
+body.loginbackground {
+  background-image: [[setting:loginbackground]];
+  background-size: [[setting:loginbackgroundstyle]];
+}
+body.loginbackground #page-header {
+  background-image: none;
+}
+body.loginbackground #page-content {
+  opacity: [[setting:loginbackgroundopacity]];
+}
+.container-fluid {
+  max-width: [[setting:pagewidth]];
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+#adminsettings h3 {
+  color: [[setting:themetextcolor]];
+}
+a,
+a:visited,
+.btn-link,
+.btn-link:visited {
+  color: [[setting:themeurlcolor]];
+}
+a:hover,
+a:focus,
+.btn-link:hover,
+.btn-link:focus {
+  color: [[setting:themehovercolor]];
+}
+a:hover:before,
+a:focus:before,
+.btn-link:hover:before,
+.btn-link:focus:before {
+  color: [[setting:themehovercolor]];
+}
+a:before {
+  color: [[setting:themeiconcolor]];
+  display: inline-block;
+  text-decoration: none;
+}
+a:before:hover {
+  color: [[setting:themehovercolor]];
+}
+a.dimmed:before {
+  color: inherit;
+}
+.color {
+  color: [[setting:themecolor]];
+}
+/* @group Custom */
+.bor {
+  background-image: url([[pix:theme|bg/dot]]);
+  background-repeat: repeat-x;
+}
+/* @end */
+/* @end */
+/* @group Theme Colours Menu */
+a .colours-default {
+  color: [[setting:themecolor]] !important;
+}
+a .colours-alternative1 {
+  color: [[setting:alternativethemecolor1]] !important;
+}
+a .colours-alternative2 {
+  color: [[setting:alternativethemecolor2]] !important;
+}
+a .colours-alternative3 {
+  color: [[setting:alternativethemecolor3]] !important;
+}
+a .colours-alternative4 {
+  color: [[setting:alternativethemecolor4]] !important;
+}
+/* @end */
+/* @group Navbar */
+.navbar,
+.navbar-inner {
+  background-color: [[setting:themecolor]];
+}
+/* @end */
+/* @group Course */
+.course-content ul li.section.main {
+  background: url([[pix:theme|bg/dot]]) bottom repeat-x;
+}
+.course-content ul li.section.main.current {
+  box-shadow: 4px 4px 8px 2px [[setting:themecolor]];
+  border-style: solid;
+  border-width: 1px;
+}
+h2.pagetitle {
+  background: url([[pix:theme|bg/dot]]) left center repeat-x;
+}
+.firstword {
+  color: [[setting:themetextcolor]] !important;
+}
+/* @end */
+/* @group Forums */
+.forumpost .subject {
+  color: [[setting:themetextcolor]];
+}
+/* @end */
+/* @group Blocks */
+.block .header .title h2:before,
+.block.block_iconic_html .header .title h2 .fa:before {
+  color: [[setting:themeiconcolor]];
+}
+.jsenabled .block_settings .block_tree .tree_item.branch.loadingbranch:before {
+  color: [[setting:themeiconcolor]];
+}
+.block_rss_client .footer a {
+  background-color: [[setting:themecolor]];
+}
+.block_rss_client .footer a:hover {
+  background-color: [[setting:themehovercolor]];
+}
+.block_login .content form input[type="submit"] {
+  background-color: [[setting:themecolor]];
+  font-family: [[setting:bodyfont]];
+}
+/* @end */
+/* @group Frontpage */
+#site-news-forum,
+#frontpage-course-list,
+#frontpage-category-combo,
+#frontpage-category-names {
+  background: url([[pix:theme|bg/dot]]) left top repeat-x;
+}
+#page-site-index h2.headingblock:before {
+  color: [[setting:themetextcolor]];
+}
+/* @end */
+/* @group Home News Boxes */
+.service .fa {
+  color: [[setting:themecolor]];
+}
+/* @end */
+/* @group Footer */
+#page-footer {
+  background-color: [[setting:footercolor]];
+  color: [[setting:footertextcolor]];
+  border-top: 2px solid [[setting:themecolor]];
+  border-bottom: 3px solid [[setting:themecolor]];
+}
+#page-footer a,
+#page-footer a > .fa {
+  color: [[setting:footerurlcolor]];
+}
+#page-footer a:hover,
+#page-footer a:hover > .fa {
+  color: [[setting:footerhovercolor]];
+}
+#page-footer .footnote {
+  color: [[setting:footertextcolor]];
+}
+#page-footer .footnote a,
+#page-footer .footnote a:visited {
+  color: [[setting:footerurlcolor]];
+}
+#page-footer .footnote a:hover {
+  color: [[setting:footerhovercolor]];
+}
+#page-footer hr {
+  border-top: 1px solid [[setting:footersepcolor]];
+}
+#page-footer h4 {
+  border-bottom: 1px solid [[setting:footersepcolor]];
+  color: [[setting:footerheadingcolor]];
+}
+#page-footer .tree_item.branch:before {
+  color: [[setting:themeiconcolor]];
+}
+/* @group Footer Block Formatting */
+#page-footer .block {
+  background-color: [[setting:footerblockbackgroundcolour]];
+  color: [[setting:footerblocktextcolour]];
+}
+#page-footer .block a,
+#page-footer .block a > .fa {
+  color: [[setting:footerblockurlcolour]];
+}
+#page-footer .block a:hover,
+#page-footer .block a:hover > .fa {
+  color: [[setting:footerblockhovercolour]];
+}
+#page-footer .block .icon {
+  color: [[setting:footerblockurlcolour]];
+}
+#page-footer .block .header {
+  border-bottom: 1px solid [[setting:footersepcolor]];
+}
+#page-footer .block .header h2 {
+  color: inherit;
+}
+#page-footer .header .title h2:before,
+#page-footer.block_iconic_html .header .title h2 span.fa:before {
+  color: inherit;
+}
+#page-footer .block_html ul li:before,
+#page-footer #greyboxright ul li:before {
+  background-color: [[setting:themecolor]];
+}
+#page-footer .block_login input[type="submit"] {
+  background-color: [[setting:themecolor]];
+}
+#page-footer .block_login input[type="submit"]:hover {
+  background-color: [[setting:themehovercolor]];
+}
+#page-footer .block_rss_client .content a {
+  color: [[setting:themeurlcolor]];
+}
+/* @end */
+/* @end */
+/* @group Profile Image */
+.socials img:hover {
+  box-shadow: 0 0 10px 0 [[setting:themecolor]];
+}
+/* @end */
+/* @group Tabs */
+.nav-tabs > li > a {
+  color: [[setting:themenavcolor]];
+  background-color: [[setting:themecolor]];
+}
+.nav-tabs > li > a:hover,
+.nav-tabs > li > a:focus {
+  color: [[setting:themecolor]];
+  background-color: [[setting:themenavcolor]];
+}
+.nav-tabs > li.active > a {
+  color: [[setting:themetextcolor]];
+  background-color: #fff;
+}
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+  color: inherit;
+  background-color: inherit;
+}
+@media (max-width: 979px) {
+  .nav-collapse {
+    background-color: [[setting:themecolor]];
+  }
+  .nav-collapse .nav > li a:hover,
+  .nav-collapse .dropdown-menu a:hover,
+  .nav-collapse .nav > li a:focus,
+  .nav-collapse .dropdown-menu a:focus {
+    color: [[setting:themecolor]];
+    background-color: [[setting:themenavcolor]];
+  }
+}
+/* @end */
+/* @group Performance Information */
+.performanceinfo {
+  background-color: [[setting:footerblockbackgroundcolour]];
+  color: [[setting:footerblocktextcolour]];
+  border: 1px solid #e3e3e3;
+}
+.performanceinfo var {
+  background-color: [[setting:themecolor]];
+  color: [[setting:themenavcolor]];
+}
+.performanceinfo .span12 {
+  border-bottom-color: [[setting:footersepcolor]];
+}
+.performanceinfo h2 {
+  color: [[setting:footerblocktextcolour]];
+  border-bottom-color: #eee;
+}
+.performanceinfo h2:before {
+  color: [[setting:themeiconcolor]];
+}
+.performanceinfo span {
+  color: [[setting:footerblocktextcolour]];
+}
+.performanceinfo #cache:before,
+.performanceinfo #load:before,
+.performanceinfo #memory:before,
+.performanceinfo #peakmemory:before,
+.performanceinfo #session:before,
+.performanceinfo #included:before,
+.performanceinfo #dbqueries:before,
+.performanceinfo #dbtime:before {
+  color: [[setting:themenavcolor]];
+}
+/* @end */
+/* @group Quiz */
+#page-mod-quiz-edit .questionbankwindow.block div.header {
+  background-color: [[setting:themecolor]];
+  border: 1px solid [[setting:themeiconcolor]];
+}
+#page-mod-quiz-edit .questionbankwindow.block div.header div.title h2 {
+  color: [[setting:themenavcolor]];
+}
+#page-mod-quiz-edit .questionbankwindow.block div.header div.title h2 a#showbankcmd,
+#page-mod-quiz-edit .questionbankwindow.block div.header div.title h2 a#hidebankcmd {
+  color: [[setting:themenavcolor]];
+}
+#page-mod-quiz-edit .questionbankwindow.block div.header div.title h2 a#showbankcmd:hover,
+#page-mod-quiz-edit .questionbankwindow.block div.header div.title h2 a#hidebankcmd:hover {
+  color: [[setting:themenavcolor]];
+}
+#page-mod-quiz-edit .questionbankwindow.block div.header div.title h2:before {
+  color: [[setting:themenavcolor]];
+}
+/* @end */
+/* @group Gradebook */
+table#user-grades th.item,
+table#user-grades th.categoryitem,
+table#user-grades th.courseitem {
+  border-bottom-color: [[setting:themecolor]];
+}
+.path-grade-report-grader table#fixed_column th {
+  border-right-color: [[setting:themecolor]];
+}
+.path-grade-report-grader .grade_icons img {
+  background-color: #fff;
+  padding: 3px;
+  border-radius: 3px;
+}
+/* @end */
+/* @group Back To Top */
+.back-to-top a {
+  color: [[setting:themecolor]] !important;
+}
+.back-to-top a:hover {
+  color: [[setting:themehovercolor]] !important;
+}
+/* @end */
+/* @group Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.back-to-top,
+.socials p,
+.socialheading,
+.forumpost .subject,
+.block_login label {
+  font-family: [[setting:headingfont]];
+}
+h1 span,
+h2 span,
+h3 span,
+h4 span,
+h5 span,
+h6 span {
+  font-family: inherit;
+}
+/* @end */
+/* @group Chat */
+#chat-input-area table.generaltable td.cell {
+  background-color: [[setting:themecolor]] !important;
+}
+/* @end */
+/* @end */
+/*! Essential lint enable */
