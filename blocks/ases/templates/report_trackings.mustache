@@ -1,0 +1,135 @@
+{{#data}}
+<div id="dphpforms_role_support" data-info="{{rol}}" style="display:none;"></div>
+{{> block_ases/side_menu}} 
+<div id="loading">
+<img id="loading-image" src="../icon/load.gif" height="162" width="162"><div class="container">
+</div>
+   <h2>SEGUIMIENTO PILOS</h2>
+   <hr/>
+   {{{message}}}
+</div>
+<form>
+   {{#data}}
+   <div class="row">
+      <label class="col-md-offset-12" id="titulo"></label>
+   </div>
+   <div class="row">
+
+      {{#view_trackings_rt}}
+      <div data-spy="scroll" data-target=".navbar" data-offset="50" class="well col-md-12  reporte-seguimiento">
+         {{{table_periods}}}
+      </div>
+      <div id='loadingmessage'>
+      <div class="well col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 equalize text-center" id="div-header-info" style="height: 204.746px;" name="main_counting">
+
+     {{{counting}}}
+    </div>
+
+    <div data-spy="scroll" data-target=".navbar" data-offset="50" class="well col-md-10 col-md-offset-1 reporte-seguimiento " id="reemplazarToogle" name="reemplazarToogle">
+         {{{table}}}
+
+      {{/view_trackings_rt}}
+   </div>
+   {{/data}}
+</form>
+
+  <!-- MODALES DE SEGUIMIENTO -->
+  <div class="mymodal" id="modal_v2_peer_tracking" name="modal_v2_pares">
+    <div class="outside" ></div>
+    <div class="mymodal-content">
+      <div class="mymodal-header col-sm-12">
+        <div class="col-sm-11">
+          <h4 class="" id="myModalLabel">Nuevo registro</h4>
+        </div>
+        <div class="col-sm-1">
+          <span id="mymodal-v2-close" class="mymodal-close" aria-hidden="true">&times;</span>
+        </div>
+      </div>
+      <div class="mymodal-body mymodal-body_v2 col-sm-12">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            {{{form_seguimientos}}}
+          </div>
+        </div>
+      </div>
+      <div class="mymodal-footer">
+          .
+      </div>
+    </div>
+  </div>
+
+  <div class="mymodal" id="modal_v2_edit_peer_tracking" name="modal_edit_v2_pares">
+    <div class="outside" ></div>
+    <div class="mymodal-content">
+      <div class="mymodal-header col-sm-12">
+        <div class="col-sm-11">
+          <h4 class="" id="myModalLabel">Visualización/Edición</h4>
+        </div>
+        <div class="col-sm-1">
+          <span id="mymodal-v2-close" class="mymodal-close" aria-hidden="true">&times;</span>
+        </div>
+      </div>
+      <div class="mymodal-body mymodal-body_v2 col-sm-12">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div id="body_editor"></div>
+          </div>
+        </div>
+      </div>
+      <div class="mymodal-footer">
+          .
+      </div>
+    </div>
+  </div>
+  <!-- FIN MODALES SEGUIMIENTO V2 -->
+
+  <!-- MODALES DE SEGUIMIENTO GRUPAL NUEVO -->
+<div class="mymodal" id="modal_v2_groupal_tracking" name="modal_v2_pares">
+  <div class="outside" ></div>
+   <div class="mymodal-content">
+      <div class="mymodal-header col-sm-12">
+         <div class="col-sm-11">
+            <h4 class="" id="myModalLabel">Nuevo registro</h4>
+         </div>
+         <div class="col-sm-1">
+            <span id="mymodal-v2-close" class="mymodal-close" aria-hidden="true">&times;</span>
+         </div>
+      </div>
+      <div class="mymodal-body mymodal-body_v2 col-sm-12">
+         <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+               {{{form_seguimientos_grupales}}}
+            </div>
+         </div>
+      </div>
+      <div class="mymodal-footer">
+         .
+      </div>
+   </div>
+</div>
+<div class="mymodal" id="modal_v2_edit_groupal_tracking" name="modal_edit_v2_pares">
+  <div class="outside"></div>
+   <div class="mymodal-content">
+      <div class="mymodal-header col-sm-12">
+         <div class="col-sm-11">
+            <h4 class="" id="myModalLabel">Visualización/Edición</h4>
+         </div>
+         <div class="col-sm-1">
+            <span id="mymodal-v2-close" class="mymodal-close" aria-hidden="true">&times;</span>
+         </div>
+      </div>
+      <div class="mymodal-body mymodal-body_v2 col-sm-12">
+         <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+               <div id="body_editor"></div>
+            </div>
+         </div>
+      </div>
+      <div class="mymodal-footer">
+         .
+      </div>
+   </div>
+</div>
+<!-- FIN MODALES SEGUIMIENTO V2 -->
+
+{{/data}}

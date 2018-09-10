@@ -1,0 +1,124 @@
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-group">
+                <h2>Diseñador de formularios</h2>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-group">
+                <span>Opción #1: </span>
+                <label>Crear formulario desde un JSON</label>
+                <textarea id="opt1-textarea-json" class="form-control"></textarea>
+                <hr>
+                <div class="form-group">
+                    <button id="json-store-form" class="btn btn-sm btn-danger btn-dphpforms-builder">Registrar formulario desde JSON</button>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class ="row">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                <span>Opción #2: </span>
+                <label>Construir</label>
+                <div class="form-group">
+                    <div class="form-group">
+                        <label for="titulo-formulario">Título del formulario: </label>
+                        <input id="titulo-formulario" type="text" class="form-control" name="titulo-formulario">
+                    </div>
+                    <div class="form-group">
+                        <textarea id="desc-formulario" name="" id="" class="form-control" placeholder="Descripción"></textarea>
+                    </div>
+                    <div class="form-group verOpcionesAvanzadas">
+                        <a id="verOpcionesAvanzadas" class="btn btn-sm btn-default" href="javascript:void(0);">Ver opciones avanzadas</a>
+                    </div>
+                    <div style="display:none;" id="opcionesAvanzadas">
+                        <div class="form-group">
+                            <label for="">Método: ( POST | GET )</label>
+                            <input id="metodo-formulario" type="text" class="form-control" value="POST">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Procesador del formulario</label>
+                            <input id="procesador-formulario" type="text" class="form-control" value="procesador.php">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Formateo de los datos enviados: [ <a href="https://www.w3schools.com/tags/att_form_enctype.asp" target="_blank" >Ayuda</a> ]</label>
+                            <label for="">( vacio | application/x-www-form-urlencoded | multipart/form-data | text/plain )</label>
+                            <input id="enctype-formulario" type="text" class="form-control" value="">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="">Seleccione el campo que desea adicionar:</label>
+                    <ul>
+                        <li id="caja-texto">Caja de texto</li>
+                        <li id="caja-parrafo">Caja de párrafo</li>
+                        <li id="caja-fecha">Fecha</li>
+                        <li id="caja-hora">Hora</li>
+                        <li id="caja-radio">Radiobutton</li>
+                        <li id="caja-checkbox">Checkbox</li>
+                    </ul>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <h4>Reglas</h4>
+                    <hr>
+                    <div class="col-sm-12">
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                            <select id="campoA" class="form-control" name=""></select>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <select id="selector-reglas" class="form-control" name="" id="">
+                                <option value=">">Mayor que ></option>
+                                <option value="<">Menor que <</option>
+                                <option value="EQUAL">Igual que</option>
+                                <option value="DIFFERENT">Diferente que</option>
+                                <option value="BOUND">Depende de</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                            <select id="campoB" class="form-control" name=""></select>
+                        </div>
+                        <div id="registrar-regla" class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                            <a id="btn-registro-regla" href="javascript:void(0);" class="btn btn-sm btn-default">Registrar</a>
+                        </div>
+                        <hr>
+                        <div clas="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <hr>
+                            <h4>Reglas registradas</h4>
+                            <div id="contenedor-reglas">
+                                
+                            </div>
+                            <hr>
+                        </div>
+                        <hr>
+                        <div clas="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <hr>
+                            <h4>Disparadores de permisos</h4>
+                            Condiciones: ( vacio | marcado )
+                            <pre id="JSON-condiciones">
+                                
+                            </pre>
+                            <textarea id="disparadores" name="" id="" rows="10" class="form-control"></textarea>
+                            <hr>
+                        </div>
+                    </div>
+                </div><br>
+                <hr>
+                <div class="form-group">
+                    <button id="generarFormulario" class="btn btn-sm btn-danger btn-dphpforms-builder">Registrar formulario</button>
+                </div>
+                
+            </div>
+            <div id="form-preview" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                <h3>Previsualización del formulario</h3>
+                <hr>
+                <h2></h2>
+                <hr>
+            </div>
+            <hr>
+        </div>
+    </div>
+</body>

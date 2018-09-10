@@ -1,0 +1,62 @@
+<div class="panel panel-default">
+   <div class="panel-heading">
+      <h4 class="panel-title">
+         <a data-toggle="collapse" href="#collapse2">Acciones</a>
+      </h4>
+   </div>
+   {{!--end panel-heading--}}
+   <div id="collapse2" class="panel-collapse collapse">
+      <div class="panel-body">
+         <div class="container">
+            <form id="formAction">
+               {{#data}}
+               <div class="form-pilos">
+                  <label class="col-sm-2 control-label">Nombre :</label>
+                  <div class="col-sm-10">
+                     <input type="text" class="form-pilos" id="nombre" name="nombre" placeholder="Nombre de la accion">
+                  </div>
+               </div>
+               <div class="form-pilos">
+                  <label class="col-sm-2 control-label">Descripcion</label>
+                  <div class="col-sm-10">
+                     <input type="text" class="form-pilos" id="descripcion" name="descripcion" placeholder="Descripcion de la accion, sea espefico">
+                  </div>
+               </div>
+               <div class="form-pilos">
+                  <label class="col-sm-2 control-label">Funcionalidad</label>
+                  <div class="col-sm-10" id="funct1">
+                     {{{functions_table}}}
+                  </div>
+               </div>
+               <div class="col-md-9 col-md-offset-4"
+               <div class="form-pilos">
+                  <button type="submit" id="add_accion" class="submit" data-toggle="modal" data-target="#myModal">
+                  Crear acción
+                  </button>
+               </div>
+         </div>
+         {{/data}}
+         </form>
+      </div>
+      <div class="panel-heading">
+         <h3 data-toggle="collapse" data-target="#collapseactions"><i class="glyphicon glyphicon-chevron-right   Try it
+            "></i>Lista de acciones</h3>
+      </div>
+      <outer-element id="collapseactions" class="collapse">
+         <div class="col-md-8 col-md-offset-2" id="div_actions">
+         </div>
+         <div id="some-other-id" class="collapse">
+            <!-- Bordered Table -->
+            <table class="table table-bordered">
+               <!--table element -->
+            </table>
+         </div>
+      </outer-element>
+      <div class="col-md-6">
+      </div>
+      {{!--end col-md-6--}}
+   </div>
+   {{!--end panel-body--}}
+   </form>
+</div>
+{{!--end panel-group--}}

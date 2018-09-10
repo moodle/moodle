@@ -1,0 +1,877 @@
+{{#data}} {{> block_ases/side_menu}} {{{message}}}
+
+<div class="container">
+  {{#sistemas}}
+  <div id="dphpforms_role_support" data-info="sistemas" style="display:none;"></div>{{/sistemas}} {{#dir_socioeducativo}}
+  <div id="dphpforms_role_support" data-info="dir_socioeducativo" style="display:none;"></div>{{/dir_socioeducativo}} {{#monitor_ps}}
+  <div id="dphpforms_role_support" data-info="monitor_ps" style="display:none;"></div>{{/monitor_ps}}
+  <div id="dphpforms_ases_student_code" data-info="{{ases_student_code}}" style="display:none;"></div>
+  <div id="dphpforms_block_instance" data-info="{{instance}}" style="display:none;"></div>
+  <div id="dphpforms_monitor_id" data-info="{{monitor_id}}" style="display:none;"></div>
+  <div id="dphpforms_practicing_id" data-info="{{practicing_id}}" style="display:none;"></div>
+  <div id="dphpforms_professional_id" data-info="{{professional_id}}" style="display:none;"></div>
+  <input type="text" class="hide" id="current_user_id" value="{{id_dphpforms_creado_por}}" />
+
+  <form id="ficha_estudiante">
+
+    <input type="text" class="hide" id="id_ases" name="id_ases" value="{{id_ases}}" />
+    <input type="text" class="hide" id="id_moodle" name="id_moodle" value="{{id_moodle}}" />
+
+    <div class="row" id="div-header-profile">
+      <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10 " id="div-header-info">
+
+        <!-- Select student -->   
+        <div class="row" id="div-code-student">
+
+          <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11" id="div_select_student">
+            {{{code}}}
+          </div>
+
+          <div class="col-sm-1" id="div-instance-icon">
+            <span class="glyphicon glyphicon-ok {{#ases_status_t}}i-tracking-t{{/ases_status_t}}{{#ases_status_f}}i-tracking-f{{/ases_status_f}}{{#ases_status_n}}i-tracking-n{{/ases_status_n}} tooltip-v1 col-sm-6"
+              {{#update_ases_status_sp}} id="icon-tracking" {{/update_ases_status_sp}} data-toggle="tooltip" data-placement="top"
+              title="{{ases_status_description}}"></span>
+            <input type="hidden" id="input_status_ases" value="{{ases_status_t}}{{ases_status_f}}{{ases_status_n}}">
+            <span>ASES</span>
+          </div>
+
+
+        </div>
+        <!-- End select student -->
+
+        <div class="row" id="row-general-fields">
+
+          <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 div_general_fields" id="div_doc_type">
+            <select name="tipo_doc" class="form-control" id="tipo_doc" name="tipo_doc" disabled>
+              {{#document_type}}
+              <option value="{{nombre}}" {{selected}}>{{nombre}}</option>
+              {{/document_type}}
+            </select>
+          </div>
+
+          <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 div_general_fields" id="div_input_cc">
+            <input type="text" class="form-control" name="num_doc" id="num_doc" value="{{num_doc}}" size="12" maxlength="12" readonly>
+          </div>
+
+          <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 div-general-fields">
+            <span id="age">{{age}} años</span>
+          </div>
+
+          <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 div-general-fields">
+            <span id="email">{{email_moodle}}</span>
+          </div>
+
+          <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 div-general-fields">
+            <span id="span-icetex-status">ICETEX</span>
+          </div>
+
+          <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 div-general-fields" id="div_icetex_status">
+            {{#update_icetex_status_sp}}
+            <select id="icetex_status" class="form-control" disabled>
+              {{{options_status_icetex}}}
+            </select>
+            {{/update_icetex_status_sp}} {{^update_icetex_status_sp}}
+            <span class="col-sm-2 tooltip-v1" id="span-icetex-name" ; data-toggle="tooltip" data-placement="top" title="{{icetex_status_name}}">
+              {{icetex_status_description}}
+            </span>
+            {{/update_icetex_status_sp}}
+          </div>
+        </div>
+
+        <div class="row" id="div-hr">
+          <hr class="hr-general-fields">
+        </div>
+
+        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8" id="div_academic_programs">
+          <h4>Programas académicos</h4>
+          <table class="table table-hover borderless">
+            <tbody>
+              {{#academic_programs}}
+              <tr id="tr-{{id_moodle_user}}">
+                <td class="col-sm-8 td-middle" id="{{academic_program_id}}">
+                  {{cod_univalle}} - {{nombre_programa}}
+                </td>
+                <td class="col-sm-3">
+                  {{#update_program_status_sp}}
+                  <select class="select_statuses_program" id="select-{{academic_program_id}}">
+                    {{/update_program_status_sp}} {{^update_program_status_sp}}
+                    <select class="select_statuses_program" id="select-{{academic_program_id}}" disabled>
+                      {{#statuses}}
+                      <option value={{id}} {{selected}}>{{nombre}}</option>
+                      {{/statuses}}
+                    </select>
+                    {{/update_program_status_sp}}
+                </td>
+                <td class="col-sm-1 td-middle">
+                  {{#update_tracking_status_sp}}
+                  <label class="switch">
+                    <input class="input-tracking" type="checkbox" id="div_flags_{{academic_program_id}}" disabled>
+                    <div class="slider round"></div>
+                  </label>
+                  {{/update_tracking_status_sp}}
+                </td>
+              </tr>
+              {{/academic_programs}}
+            </tbody>
+          </table>
+          {{^academic_programs}} No registra programas académicos. {{/academic_programs}}
+        </div>
+
+        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3" id="div_cohorts">
+          <h4>Cohortes</h4>
+          <table class="table table-sm table-hover borderless">
+            <tbody>
+              {{#student_cohorts}}
+              <tr>
+                <td class="col-xs-12 col-sm-12 td-middle">
+                  {{name}}
+                </td>
+              </tr>
+              {{/student_cohorts}}
+            </tbody>
+          </table>
+          {{^student_cohorts}} No registra cohortes asociadas. {{/student_cohorts}}
+        </div>
+        {{#update_general_tab_sp}}
+
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1" id="div-icon-edit">
+          <span class="col-sm-12 tooltip-v1" id="span-icon-edit" data-toggle="tooltip" data-placement="top" title="Editar ficha">
+          </span>
+
+          <span class="col-sm-6 tooltip-v1" id="span-icon-save-profile" data-toggle="tooltip" data-placement="top" title="Guardar cambios"
+            hidden>
+          </span>
+
+          <span class="col-sm-6 tooltip-v1" id="span-icon-cancel-edit" data-toggle="tooltip" data-placement="top" title="Cancelar edición"
+            hidden>
+          </span>
+        </div>
+        {{/update_general_tab_sp}}
+
+      </div>
+      <!-- Profile image html, see $OUTPUT->user_picture -->
+      <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2  {{#show_html_elements_update_user_profile_image}}profile-image-can-update{{/show_html_elements_update_user_profile_image}} profile-image">
+        {{{html_profile_image}}}
+        {{#show_html_elements_update_user_profile_image}}
+        <div class="open-profile-image">
+         <button type=button id="view_form_update_profile_image" class="open-button"> Cambiar imágen de perfil </button>
+        </div>
+        {{/show_html_elements_update_user_profile_image}}
+      </div>
+    </div>
+
+    <!-- Semaforo de riestos -->
+    <div class="row div_risk">
+      <div class="col-sm-1 no-padding-left">
+        <div id="div_title_risk">
+          <b>RIESGOS:</b>
+        </div>
+      </div>
+      <div class="col-sm-9 no-padding-left" id="div_bar_risks">
+        <div class="{{individual_class}} col-sm-2" data-risk-level="{{level_individual}}" id="individual_risk">
+          <span><b>INDIVIDUAL</b></span>
+        </div>
+        <div hidden>{{individual_risk}}</div>
+        <div class="{{familiar_class}} col-sm-2" data-risk-level="{{level_familiar}}" id="familiar_risk">
+          <b> <span>FAMILIAR</span></b>
+        </div>
+        <div hidden>{{familiar_risk}}</div>
+        <div class="{{academic_class}} col-sm-2" data-risk-level="{{level_academic}}" id="academic_risk">
+          <b><span>ACADÉMICO</span></b>
+        </div>
+        <div hidden>{{academic_risk}}</div>
+        <div class="{{economic_class}} col-sm-2" data-risk-level="{{level_economic}}" id="economic_risk">
+          <b><span>ECONÓMICO</span></b>
+        </div>
+        <div hidden>{{economic_risk}}</div>
+        <div class="{{life_class}} col-sm-2" data-risk-level="{{level_life}}" id="life_risk">
+          <b>VIDA UNIV.</b>
+        </div>
+        <div hidden>{{life_risk}}</div>
+        <div class="{{geographic_class}} col-sm-2" id="geo_risk">
+          <b><span>GEOGRÁFICO</span></b>
+        </div>
+        <div hidden>{{geographic_risk}}</div>
+      </div>
+      <div class="col-sm-2" id="div_buttons_risk">
+        <button class="risk_graph_button col-sm-6" type="button" id="view_graph_radial_button">Radial</button>
+        <button class="risk_graph_button col-sm-6" type="button" id="view_graphic_risk_button">Trayectoria</button>
+      </div>
+    </div>
+
+    <div class="row cabecera" id="container_profile">
+      <!-- Pestañas ficha -->
+      <div id="exTab1" class="col-sm-12">
+        <ul class="nav nav-tabs">
+          {{#view_general_tab_sp}}
+          <li id="general_li" class="active">
+            <a href="#general_tab" data-toggle="tab">GENERAL</a>
+          </li>
+          {{/view_general_tab_sp}} {{#view_socioed_tab_sp}}
+          <li id="socioed_li">
+            <a href="#socioed_tab" data-toggle="tab">SOCIOEDUCATIVO</a>
+          </li>
+          {{/view_socioed_tab_sp}} {{#view_academic_tab_sp}}
+          <li id="academic_li">
+            <a href="#academic_tab" data-toggle="tab">ACADÉMICO</a>
+          </li>
+          {{/view_academic_tab_sp}} {{#view_geographic_tab_sp}}
+          <li id="geographic_li">
+            <a href="#geographic_tab" data-toggle="tab">GEOGRÁFICO</a>
+          </li>{{/view_geographic_tab_sp}}
+        </ul>
+        <div class="tab-content clearfix ">
+          {{#view_general_tab_sp}} {{> block_ases/view_general_tab_sp}} {{/view_general_tab_sp}} {{#view_socioed_tab_sp}} {{> block_ases/view_socioed_tab_sp}}
+          {{/view_socioed_tab_sp}} {{#view_academic_tab_sp}}
+          <!--academic tab-->
+          <div class="tab-pane" id="academic_tab">
+
+            <div class="accordion" role="tablist" aria-multiselectable="true">
+              <div class="row" style="padding: 0px 10px 15px ">
+                <div class="col-md-3">Promedio Ponderado:
+                  <p class="prom" style="display: inline">
+                    <b>{{promedio}}</b>
+                  </p>
+                </div>
+                <div class="col-md-3">Estimulos academicos:
+                  <p class="est" style="display: inline">
+                    <b>{{estimulos}}</b>
+                  </p>
+                </div>
+                <div class="col-md-3">Bajos rendimientos:
+                  <p class="baj" style="display: inline">
+                    <b>{{bajos}}</b>
+                  </p>
+                </div>
+              </div>
+              <div class="panel panel-default" id="panelActual">
+                <div class="academic panel-heading" role="tab" id="headingOne">
+                  <h4 class="panel-title">
+                    <a id="sem_act_title" class="" data-toggle="collapse" data-parent="#accordion" href="#collapseAct" aria-expanded="true" aria-controls="collapseAct">
+                      Semestre Actual
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseAct" class="panel-collapse form-pilos in" role="tabpanel" aria-labelledby="headingOne">
+                  <div class="panel-group" id="accordion_academic">
+                    {{{academic_semester_act}}}
+                  </div>
+                </div>
+              </div>
+              {{{historic_academic}}}
+            </div>
+          </div>
+          {{/view_academic_tab_sp}}
+
+          <!-- End academic tab -->
+
+          {{#view_geographic_tab_sp}} {{> block_ases/view_geographic_tab_sp}} {{/view_geographic_tab_sp}}
+
+        </div>
+      </div>
+
+  </form>
+  </div>
+
+  <!-- MODALES DE SEGUIMIENTO -->
+  <div class="mymodal" id="modal_v2_peer_tracking" name="modal_v2_pares">
+    <div class="outside"></div>
+    <div class="mymodal-content">
+
+      <div class="mymodal-header col-sm-12">
+        <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+          <h4 class="" id="myModalLabel">Nuevo registro</h4>
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+          <div data-info="seguimiento" class="btn-inasistencia open-inasistencia btn btn-md btn-default">
+            Registrar inasistencia
+          </div>
+        </div>
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+          <span id="mymodal-v2-close" class="mymodal-close" aria-hidden="true">&times;</span>
+        </div>
+      </div>
+      <div class="mymodal-body mymodal-body_v2 col-sm-12">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            {{{form_seguimientos}}}
+          </div>
+        </div>
+      </div>
+      <div class="mymodal-footer">
+        .
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="mymodal" id="modal_v2_edit_peer_tracking" name="modal_edit_v2_pares">
+  <div class="outside"></div>
+  <div class="mymodal-content">
+
+    <div class="mymodal-header col-sm-12">
+      <div class="col-sm-11">
+        <h4 class="" id="myModalLabel">Visualización/Edición</h4>
+      </div>
+      <div class="col-sm-1">
+        <span id="mymodal-v2-close" class="mymodal-close" aria-hidden="true">&times;</span>
+      </div>
+    </div>
+    <div class="mymodal-body mymodal-body_v2 col-sm-12">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div id="body_editor"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mymodal-footer">
+      .
+    </div>
+  </div>
+
+</div>
+</div>
+<!-- FIN MODALES SEGUIMIENTO V2 -->
+
+<!-- MODALES DE INASISTENCIAS -->
+<div class="mymodal" id="modal_inasistencia" name="modal_inasistencia">
+  <div class="outside"></div>
+  <div class="mymodal-content">
+
+    <div class="mymodal-header col-sm-12">
+      <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+        <h4 class="" id="myModalLabel">Nuevo registro</h4>
+      </div>
+      <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+        <div data-info="inasistencia" class="btn-inasistencia open-inasistencia btn btn-md btn-default">
+          Regresar a seguimiento
+        </div>
+      </div>
+      <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+        <span id="mymodal-v2-close" class="mymodal-close" aria-hidden="true">&times;</span>
+      </div>
+    </div>
+    <div class="mymodal-body mymodal-body_v2 col-sm-12">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          {{{form_inasistencia}}}
+        </div>
+      </div>
+    </div>
+    <div class="mymodal-footer">
+      .
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="mymodal" id="modal_edit_inasistencia" name="modal_edit_inasistencia">
+  <div class="outside"></div>
+  <div class="mymodal-content">
+
+    <div class="mymodal-header col-sm-12">
+      <div class="col-sm-11">
+        <h4 class="" id="myModalLabel">Visualización/Edición</h4>
+      </div>
+      <div class="col-sm-1">
+        <span id="mymodal-v2-close" class="mymodal-close" aria-hidden="true">&times;</span>
+      </div>
+    </div>
+    <div class="mymodal-body mymodal-body_v2 col-sm-12">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div id="body_editor"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mymodal-footer">
+      .
+    </div>
+  </div>
+
+</div>
+</div>
+<!-- FIN MODALES SEGUIMIENTO V2 -->
+
+<!-- Modal primer acercamiento -->
+<div class="mymodal" id="modal_primer_acercamiento" name="modal_primer_acercamiento_name">
+  <div class="outside"></div>
+  <div class="mymodal-content">
+    <div class="mymodal-header col-sm-12">
+      <div class="col-sm-11">
+        <h4 class="" id="myModalLabel">Visualización/Edición</h4>
+      </div>
+      <div class="col-sm-1">
+        <span id="mymodal-v2-close" class="mymodal-close" aria-hidden="true">&times;</span>
+      </div>
+    </div>
+    <div class="mymodal-body mymodal-body_v2 col-sm-12">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div id="primer_acercamiento_form">{{{primer_acercamiento}}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="mymodal-footer">
+      .
+    </div>
+  </div>
+
+</div>
+</div>
+<!-- end primer acercamiento -->
+
+<!-- Modal seguimiento geográfico -->
+<div class="mymodal" id="modal_seguimiento_geografico" name="modal_seguimiento_geografico_name">
+  <div class="outside"></div>
+  <div class="mymodal-content">
+    <div class="mymodal-header col-sm-12">
+      <div class="col-sm-11">
+        <h4 class="" id="myModalLabel">Nuevo registro</h4>
+      </div>
+      <div class="col-sm-1">
+        <span id="mymodal-v2-close" class="mymodal-close" aria-hidden="true">&times;</span>
+      </div>
+    </div>
+    <div class="mymodal-body mymodal-body_v2 col-sm-12">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div id="seguimiento_geografico_form">{{{form_seguimientos_geograficos}}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="mymodal-footer">
+      .
+    </div>
+  </div>
+</div>
+<!-- end primer acercamiento -->
+
+<!-- Modal Seguimiento pares-->
+<div class="mymodal" id="modal_peer_tracking" name="modal_pares">
+  <div class="mymodal-content">
+    <div class="mymodal-header col-sm-12">
+      <div class="col-sm-11">
+        <h4 class="" id="myModalLabel">Seguimiento de pares</h4>
+      </div>
+      <div class="col-sm-1">
+        <span class="mymodal-close" aria-hidden="true">&times;</span>
+      </div>
+    </div>
+    <div class="mymodal-body col-sm-12">
+      <form class="form-horizontal" id="tracking_peer_form" role="form">
+
+        <input type="text" id="id_tracking_peer" name="id_tracking_peer" class="hide" />
+
+        <div class="row form-legend">
+          <h4>Datos generales</h4>
+        </div>
+        <!-- Fecha Lugar-->
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="date" class="col-sm-3">Fecha (aaaa-mm-dd)
+                <b style="color:red;">*</b>
+              </label>
+              <div class="col-sm-9">
+                <input type="text" maxlength="10" class="form-control" id="date" name="date" />
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="place" class="col-sm-3">Lugar
+                <b style="color:red;">*</b>
+              </label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="place" name="place">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hora inicio - Hora finalización-->
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="h_ini" class="col-sm-3">Hora de inicio
+                <b style="color:red;">*</b>
+              </label>
+              <div class="col-sm-3">
+                <select class="form-control" id="h_ini" name="h_ini"></select>
+              </div>
+              <label class="col-sm-1" for="m_ini">:</label>
+              <div class="col-sm-3">
+                <select class="form-control" id="m_ini" name="m_ini"></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="h_fin" class="col-sm-3">Hora de finalización
+                <b style="color:red;">*</b>
+              </label>
+              <div class="col-sm-3">
+                <select class="form-control" id="h_fin" name="h_fin"></select>
+              </div>
+              <span class="col-sm-1">:</span>
+              <div class="col-sm-3">
+                <select class="form-control" id="m_fin" name="m_fin"></select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tema - Objetivos-->
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="tema" class="col-sm-12">Tema
+                <b style="color:red;">*</b>
+              </label>
+              <div class="col-sm-12">
+                <textarea class="form-control" id="topic_textarea" name="tema" maxlength="1000"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="objetivos" class="col-sm-12">Objetivos
+                <b style="color:red;">*</b>
+              </label>
+              <div class="col-md-12">
+                <textarea class="form-control" id="objetivos" name="objetivos" maxlength="1000"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--<div class="row hide" id="infomonitor">-->
+        <!--  <label for="monitor" class="form-control-label col-xs-2 col-sm-2">Monitor guía</label>-->
+        <!--  <span class="col-sm-4" id="monitor"></span>-->
+        <!--</div>-->
+
+        <div class="row form-legend">
+          <h4>Actividades</h4>
+        </div>
+
+        <!-- Individual - Familiar -->
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="individual" class="col-sm-12">Individual</label>
+              <div class="col-sm-12">
+                <textarea class="form-control" id="individual" name="individual" maxlength="5000"></textarea>
+              </div>
+            </div>
+            <div class="form-group" id="riesgo_ind_div">
+              <div class="col-sm-10" id="radio_div">
+                <label class="radio-inline">
+                  <input type="radio" name="riesgo_ind" value="1">Bajo
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" name="riesgo_ind" value="2">Medio
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" id="high_individual_risk" name="riesgo_ind" value="3" />Alto
+                </label>
+                <label class="radio-inline">
+                  <span style="color:gray;" class="glyphicon glyphicon-erase" id="clean_individual_risk"></span>
+                </label>
+                <label class="radio-inline">
+                  <input type='radio' id='no_value_individual' name='riesgo_ind' value='0' checked/>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="familiar" class="col-sm-12">Familiar</label>
+              <div class="col-sm-12">
+                <textarea class="form-control small" id="familiar" name="familiar" maxlength="5000"></textarea>
+              </div>
+            </div>
+            <div class="form-group" id="riesgo_familia_div">
+              <div class="col-sm-10" id="radio_div">
+                <label class="radio-inline" id="1">
+                  <input type="radio" name="riesgo_familiar" value="1">Bajo
+                </label>
+                <label class="radio-inline" id="3">
+                  <input type="radio" name="riesgo_familiar" value="2">Medio
+                </label>
+                <label class="radio-inline" id="5">
+                  <input type='radio' id='high_familiar_risk' name='riesgo_familiar' value="3">Alto
+                </label>
+                <label class="radio-inline">
+                  <span style="color:gray;" class="glyphicon glyphicon-erase" id="clean_familiar_risk"></span>
+                </label>
+                <label class="radio-inline">
+                  <input type='radio' id='no_value_familiar' name='riesgo_familiar' value='0' checked/>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Académico - Económico -->
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="academico" class="col-sm-12">Académico</label>
+              <div class="col-sm-12">
+                <textarea class="form-control small" id="academico" name="academico" maxlength="5000"></textarea>
+              </div>
+            </div>
+            <div class="form-group" id="riesgo_aca_div">
+              <div class="col-sm-10" id="radio_div">
+                <label class="radio-inline" id="1">
+                  <input type="radio" name="riesgo_aca" value="1">Bajo
+                </label>
+                <label class="radio-inline" id="2">
+                  <input type="radio" name="riesgo_aca" value="2">Medio
+                </label>
+                <label class="radio-inline" id="3">
+                  <input type='radio' id='high_academic_risk' name='riesgo_aca' value="3">Alto
+                </label>
+                <label class="radio-inline">
+                  <span style="color:gray;" class="glyphicon glyphicon-erase" id="clean_academic_risk"></span>
+                </label>
+                <label class="radio-inline">
+                  <input type='radio' id='no_value_academic' name='riesgo_aca' value='0' checked />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="economico" class="col-sm-12">Económico</label>
+              <div class="col-sm-12">
+                <textarea class="form-control small" id="economico" name="economico" maxlength="5000"></textarea>
+              </div>
+            </div>
+            <div class="form-group" id="riesgo_econom_div">
+              <div class="col-sm-10" id="radio_div">
+                <label class="radio-inline" id="1">
+                  <input type="radio" name="riesgo_econom" value="1">Bajo
+                </label>
+                <label class="radio-inline" id="2">
+                  <input type="radio" name="riesgo_econom" value="2">Medio
+                </label>
+                <label class="radio-inline" id="3">
+                  <input type='radio' id='high_economic_risk' name='riesgo_econom' value="3">Alto
+                </label>
+                <label class="radio-inline">
+                  <span style="color:gray;" class="glyphicon glyphicon-erase" id="clean_economic_risk"></span>
+                </label>
+                <label class="radio-inline">
+                  <input type='radio' id='no_value_economic' name='riesgo_econom' value='0' checked/>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vida universitaria -->
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="vida_uni" class="col-sm-12">Vida universitaria y ciudad</label>
+              <div class="col-sm-12">
+                <textarea class="form-control small" id="vida_uni" name="vida_uni" maxlength="5000"></textarea>
+              </div>
+            </div>
+            <div class="form-group" id="riesgo_uni_div">
+              <div class="col-sm-10" id="radio_div">
+                <label class="radio-inline" id="1">
+                  <input type="radio" name="riesgo_uni" value="1">Bajo
+                </label>
+                <label class="radio-inline" id="2">
+                  <input type="radio" name="riesgo_uni" value="2">Medio
+                </label>
+                <label class="radio-inline" id="3">
+                  <input type='radio' id='high_life_risk' name='riesgo_uni' value="3">Alto
+                </label>
+                <label class="radio-inline">
+                  <span style="color:gray;" class="glyphicon glyphicon-erase" id="clean_life_risk"></span>
+                </label>
+                <label class="radio-inline">
+                  <input type='radio' id='no_value_life' name='riesgo_uni' value='0' checked/>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End row -->
+        <hr />
+
+        <div class="row">
+          <div class="col-sm-12 form-group">
+            <label for="vida_uni" class="col-sm-12">Observaciones</label>
+            <div class="col-sm-12" align="center">
+              <textarea class="form-control" id="observaciones" name="observaciones" maxlength="5000"></textarea>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="mymodal-footer">
+      <button type="button" class="btn-primary" id="save_tracking_btn">Guardar cambios</button>
+      <button type="button" class="btn-primary" id="cancel_peer_tracking">Cancelar</button>
+    </div>
+  </div>
+</div>
+<!-- End modal Seguimiento pares-->
+
+<!-- Graphics Modal -->
+<div class="mymodal" id="modal_radial_graph">
+  <div class="mymodal-content" id="modal-content-radial-graph">
+    <div class="mymodal-header col-sm-12">
+      <div class="col-sm-11">
+        <h4 class="" id="myModalLabel">Gráfica radial</h4>
+      </div>
+      <div class="col-sm-1">
+        <span id="mymodal-v2-close" class="mymodal-close" aria-hidden="true">&times;</span>
+      </div>
+    </div>
+    <div class="mymodal-body" id="modal_risk_body">
+      <div id="div_graph_radial">
+        <canvas id="canvas_radial_graph"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End graphics Modal -->
+
+
+<!-- End modal Seguimiento pares-->
+
+{{#show_html_elements_update_user_profile_image}}
+<!-- Profile image update Modal -->
+
+<div class="mymodal update-profile-image-modal" id="profile_image_update">
+  <div class="mymodal-content" id="modal-content-radial-graph">
+    <div class="mymodal-header col-sm-12">
+      <div class="col-sm-11">
+        <h4 class="" id="myModalLabel">Cambiar imagen del usuario</h4>
+      </div>
+      <div class="col-sm-1">
+        <span class="mymodal-close" aria-hidden="true">&times;</span>
+      </div>
+    </div>
+    <div class="mymodal-body update-profile-image-modal-body" id="modal_risk_body">
+      {{{update_profile_image_form}}}
+    </div>
+  </div>
+</div>
+<!-- End Profile image update  Modal -->
+{{/show_html_elements_update_user_profile_image}}
+
+
+<!-- Modal retiro ASES-->
+<div class="mymodal" id="modal_dropout" name="modal_dropout">
+  <div class="mymodal-content">
+    <div class="mymodal-header col-sm-12">
+      <div class="col-sm-11">
+        <h4 class="" id="myModalLabel">Motivo del retiro</h4>
+      </div>
+      <div class="col-sm-1">
+        <span class="mymodal-close" aria-hidden="true">&times;</span>
+      </div>
+    </div>
+    <div class="mymodal-body col-sm-12">
+      <form class="form-horizontal" id="retiroForm" role="form">
+        <div class="form-group">
+          <label for="motivo" class="col-sm-2">Motivo</label>
+          <div class="col-sm-10">
+            <select name="reasons_select" id="reasons_select">
+              {{{reasons_options}}}
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="description_dropout" class="col-sm-2">Observación</label>
+          <div class="col-sm-10">
+            <textarea class="form-control medium-inline" id="description_dropout" name="detalle" maxlength="1000"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="mymodal-footer">
+      <button type="button" class="btn-primary" id="save_changes_dropout">Continuar</button>
+      <button type="button" class="btn-primary" id="goback_backdrop">Cancelar</button>
+    </div>
+  </div>
+</div>
+<!-- End modal retiro-->
+
+<!-- Modal gráfica de riesgos-->
+<div class="mymodal" id="modal_riesgos" name="modal_dropout">
+  <div class="mymodal-content">
+    <div class="mymodal-header col-sm-12">
+      <div class="col-sm-11">
+        <h4 class="" id="myModalLabel">Histórico de riesgo para el periodo: {{{nombrePeriodoSeguimiento}}}</h4>
+      </div>
+      <div class="col-sm-1">
+        <span id="mymodal-riesgo-close" class="mymodal-close" aria-hidden="true">&times;</span>
+      </div>
+    </div>
+    <div class="mymodal-body col-sm-12">
+      <div class="graficaHistoricoDimensional" width="900" height="110">
+        <span>Dimensión: Individual</span>
+        <canvas id="myChart_individual" width="900" height="110"></canvas>
+      </div>
+      <br>
+      <div class="graficaHistoricoDimensional" width="900" height="110">
+        <span>Dimensión: Familiar</span>
+        <canvas id="myChart_familiar" width="900" height="110"></canvas>
+      </div>
+      <br>
+      <div class="graficaHistoricoDimensional" width="900" height="110">
+        <span>Dimensión: Academica</span>
+        <canvas id="myChart_academico" width="900" height="110"></canvas>
+      </div>
+      <br>
+      <div class="graficaHistoricoDimensional" width="900" height="110">
+        <span>Dimensión: Económica</span>
+        <canvas id="myChart_economico" width="900" height="110"></canvas>
+      </div>
+      <br>
+      <div class="graficaHistoricoDimensional" width="900" height="110">
+        <span>Dimensión: Vida universitaria</span>
+        <canvas id="myChart_vida_universitaria" width="900" height="110"></canvas>
+      </div>
+      <!--</div> -->
+    </div>
+    <div class="mymodal-footer">.</div>
+  </div>
+</div>
+<!-- End modal retiro-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.min.js"></script>-->
+<span style="display:none;" id="datos">{ "informacion":[ {"dimension":"individual", "datos":[ {{#datosSeguimientoEstudianteIndividual}}
+  {{#datos}} {"fecha":"{{fecha}}","color":"{{color}}","riesgo":"{{riesgo}}", "end":"false"}, {{/datos}} {{/datosSeguimientoEstudianteIndividual}}
+  {"end":"true"} ]}, {"dimension":"familiar", "datos":[ {{#datosSeguimientoEstudianteFamiliar}} {{#datos}} {"fecha":"{{fecha}}","color":"{{color}}","riesgo":"{{riesgo}}",
+  "end":"false"}, {{/datos}} {{/datosSeguimientoEstudianteFamiliar}} {"end":"true"} ]}, {"dimension":"academico", "datos":[
+  {{#datosSeguimientoEstudianteAcademico}} {{#datos}} {"fecha":"{{fecha}}","color":"{{color}}","riesgo":"{{riesgo}}", "end":"false"},
+  {{/datos}} {{/datosSeguimientoEstudianteAcademico}} {"end":"true"} ]}, {"dimension":"economico", "datos":[ {{#datosSeguimientoEstudianteEconomico}}
+  {{#datos}} {"fecha":"{{fecha}}","color":"{{color}}","riesgo":"{{riesgo}}", "end":"false"}, {{/datos}} {{/datosSeguimientoEstudianteEconomico}}
+  {"end":"true"} ]}, {"dimension":"vidaUniversitaria", "datos":[ {{#datosSeguimientoEstudianteVidaUniversitaria}} {{#datos}}
+  {"fecha":"{{fecha}}","color":"{{color}}","riesgo":"{{riesgo}}", "end":"false"}, {{/datos}} {{/datosSeguimientoEstudianteVidaUniversitaria}}
+  {"end":"true"} ]} ] }
+</span>
+<script>
+
+  var ctx_individual = document.getElementById("myChart_individual").getContext('2d');
+  var ctx_familiar = document.getElementById("myChart_familiar").getContext('2d');
+  var ctx_academico = document.getElementById("myChart_academico").getContext('2d');
+  var ctx_economico = document.getElementById("myChart_economico").getContext('2d');
+  var ctx_vida_universitaria = document.getElementById("myChart_vida_universitaria").getContext('2d');
+  var datos = JSON.parse(document.getElementById("datos").innerText);
+  var datosGraficables = [];
+
+</script> {{/data}}

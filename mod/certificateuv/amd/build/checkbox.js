@@ -1,0 +1,1 @@
+define(["jquery"],function(i){return{init:function(t){i(".checkoption").change(function(){var t=i(this).attr("certificateid"),e=i(this).attr("userid"),n="";n=i(this).is(":checked")?"insert":"delete",i.post("assign_permission.php",{userid:e,certificateid:t,option:n},function(t){i(".result").html(t)})})}}});

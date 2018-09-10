@@ -1,0 +1,75 @@
+{{#data}}
+{{> block_ases/side_menu}}            
+<div class="container">
+   <div class="col-sm-6">
+      <h2>CARGA DE DATOS</h2>
+      <hr />
+      {{{message}}}
+      {{#upload_files_uf}}  
+      <div class="row">
+         <form class="form-horizontal" id="upload_data_form">
+            <div class="form-group">
+               <label class="col-sm-4" for="input_csv_file">Seleccione un archivo</label>
+               <div class="col-sm-8">
+                  <input class="" type="file" name="csv_file" id="input_csv_file" required/>
+               </div>
+            </div>
+            <div class="form-group">
+               <label class="col-sm-4" for="typefile_select">Seleccione la tabla a cargar</label>
+               <div class="col-sm-8">
+                  <select id="typefile_select" name="typefile_select">
+                     <option value="Academica">Académica</option>
+                     <option value="Accion">Acción</option>
+                     <option value="user">Actualizar usuario campus</option>
+                     <option value="Barrios">Barrios</option>
+                     <option value="cursos">Cursos</option>
+                     <option value="Departamento">Departamento</option>
+                     <option value="Discapacidad">Discapacidad</option>
+                     <option value="Enfasis">Enfasis</option>
+                     <option value="Facultad">Facultad</option>
+                     <option value="Financiera">Financiera</option>
+                     <option value="Funcionalidad">Funcionalidad</option>
+                     <option value="Geolocalizacion">Geolocalización</option>
+                     <option value="materias">Materias Criticas</option>
+                     <option value="Municipio">Municipio</option>
+                     <option value="Permisos">Permisos</option>
+                     <option value="Permisos-Rol">Permisos/Rol</option>
+                     <option value="profesional">Profesional</option>
+                     <option value="Programa">Programa</option>
+                     <option value="Retiro">Retiro</option>
+                     <option value="Roles">Roles usuario pilos</option>
+                     <option value="Sede">Sede</option>
+                     <option value="Semestre">Semestre</option>
+                     <option value="Usuario">Usuario</option>
+                     <option value="Vocacional">Vocacional</option>
+                  </select>
+               </div>
+            </div>
+            <div class="row">
+               <div class="bar col-sm-10 col-sm-offset-1">
+                  <div class="blue_bar" id="status_bar">
+                     <span></span>
+                  </div>
+               </div>
+            </div>
+            <hr />
+            <div class="form-group">
+               <button type="button" class="btn-primary col-sm-2 col-sm-offset-3" id="load_button">Cargar</button>
+               <button type="button" class="btn-primary col-sm-2 col-sm-offset-1" id="goback_button">Atrás</button>
+            </div>
+         </form>
+      </div>
+   </div>
+   <div class="col-sm-6">
+      <div id="response_div" hidden="hidden">
+         <h2>Respuesta del servidor</h2>
+         <hr />
+         <div class="col-sm-12" id="response_span"></div>
+      </div>
+   </div>
+</div>
+<div class="container">
+   <!-- Espacio para mostrar los archivos ya cargados -->
+</div>
+{{/upload_files_uf}}
+{{/data}}

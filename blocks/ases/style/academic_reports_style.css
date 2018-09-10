@@ -1,0 +1,23 @@
+.lastC{
+    cursor: pointer;
+}
+
+#students tr:nth-child(odd) {
+    background-color: rgb(249, 249, 249);
+}
+
+#students tr:hover {
+    background-color: #f5f5f5;
+}
+
+#courses tr{
+    cursor: pointer;
+}
+
+#courses tr:nth-child(odd) {
+    background-color: rgb(249, 249, 249);
+}
+
+#courses tr:hover {
+    background-color: #f5f5f5;
+}

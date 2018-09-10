@@ -1,0 +1,15 @@
+{{#data}}
+{{> block_ases/side_menu}}
+<div class="container">
+<div class="row">
+<h2>GESTIÓN DE USUARIOS</h2>
+<hr/>
+{{{message}}}
+   {{#search_user_um}}
+    {{> block_ases/um_search_users}}
+   {{/search_user_um}}
+   {{#view_users_um}}
+    {{> block_ases/um_view_users}}
+   {{/view_users_um}}
+</div>
+{{/data}}

@@ -1,0 +1,33 @@
+<body name="finalgrade_report">
+    {{#data}} 
+    {{> block_ases/side_menu}} 
+    {{{message}}}
+    <div>
+        {{#view_students_finalgrade_reports_sfr}}
+        <div class='title' style="top: 5px !important; width: 350px !important; ">
+            <b>REPORTE DE NOTAS FINALES PARCIALES</b>
+        </div>
+
+        <div class = "count_items">
+
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="background-color: #D0C4C4;">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" href="#collapse01">
+                                Reporte de notas finales parciales 
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="div_table_report">
+                    </div>
+                </div>
+
+            </div>
+            {{/view_students_finalgrade_reports_sfr}} 
+        </div>
+        
+    </div>
+    <!-- end wrapper -->
+    {{/data}}
+</body>

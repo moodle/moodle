@@ -1,0 +1,32 @@
+{{#data}}
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-group">
+                <h2>Creador de pregunta</h2>
+                <hr>   
+                    <a id="dphpforms-redirect-adm-forms" href="javascript:void(0)" class="btn btn-sm btn-default">Administrar formularios</a>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="alert alert-info">
+                    <strong>Importante!</strong> Las reglas asociadas a las preguntas, deben registrarse con el editor de reglas.<br>
+                    <strong>Importante!</strong> Los comportamientos asociados a disparadores deben ser adicionados con el editor de disparadores.<br>
+                    <strong>Importante!</strong> Las nuevas preguntas quedan asignadas a la última posición del formulario, para cambiar esto, puede correr un JSON de ordenamiento en el editor del formulario.
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label for="">JSON pregunta:</label>
+                    <textarea id="json_pregunta" rows="10" class="form-control"></textarea>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <a id="registrar-pregunta" href="javascript:void(0)" class="btn btn-danger btn-dphpforms btn-dphpforms-univalle" data-form-id="{{form_id}}">Registrar pregunta</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{{/data}}

@@ -1,0 +1,19 @@
+<body>
+{{#data}}
+	{{{message}}}
+	{{#view_dashboard}}
+	<div class="wrapper">
+		<div id="nav-panel">
+			<h4><a href="user_management.php{{params}}" target="viewFrame"> Manejo de Usuarios</a></h4>
+			<h4><a href="upload_files_form.php{{params}}" target="viewFrame"> Carga de Archivos</a></h4>
+			<h4><a href="instance_configuration.php{{params}}" target="viewFrame"> Configuración de Instancia</a></h4>			
+			<h4><a href="instance_configuration.php{{params}}" target="viewFrame"> Configuración de Instancia</a></h4>
+		</div>
+		<div id="show-panel">
+			<iframe id="frame" name="viewFrame">
+    	</iframe>
+		</div>
+	</div>
+	{{/view_dashboard}}
+{{/data}}
+</body>

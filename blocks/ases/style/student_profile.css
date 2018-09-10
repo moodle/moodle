@@ -1,0 +1,414 @@
+#div-header-info{
+    background: #D4D4D4;
+}
+
+#div-header-profile{
+    margin-bottom: 10px;
+    margin-top: 10px;
+    display: flex;
+    display: -ms-flex;
+	display: -webkit-flex;
+    align-items: center;
+}
+
+#div-instance-name{
+    background: #D4D4D4;
+    height: 30px;
+}
+
+
+
+.select2.select2-container.select2-container--default{
+    width: 100% !important;
+    font-size: 200%;
+    border-radius: 0 0 0px 0px;
+
+}
+
+.select2-container .select2-selection--single{
+    height: 40px;
+    border-radius: 0 0 0px 0px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered{
+    line-height: 40px;
+    font-weight: bold;
+    border-radius: 0 0 0px 0px;
+}
+
+/* Controles datos generales */
+.div_general_fields{
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.div_fields_general_tab{
+    padding: 0px 0px 0px 0px;
+    height: 24px;
+}
+
+.input_fields_general_tab{
+    position: relative !important;
+    height: 22px !important;
+    width: 100% !important;
+    padding: 0px 0px 0px 0px !important;
+    border-radius: 0 0 0px 0px !important;
+}
+
+.label_fields_general_tab{
+    text-align: left;
+}
+
+#div_input_cc{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+#div_doc_type{
+    padding-right: 4px;
+}
+
+#tipo_doc{
+    padding: 0px 0px 0px 6px;
+    height: 100%;
+    position: relative;
+    border-radius: 0 0 0px 0px;
+}
+
+#div-instance-icon{
+    padding-right: 5px;
+    align-self: center;
+}
+
+#div_select_student{
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+#div-code-student{
+    margin-top: 15px;
+    padding-left: 15px;
+    padding-bottom: 0px;
+}
+
+#div-hr{
+    padding: 0px 15px 2px 15px;
+}
+
+.hr-general-fields{
+    margin-top: 10px;
+    margin-bottom: 0px;
+    border-color: gray;
+}
+
+.hr-general-tab-fields{
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-top: 0px;
+    padding-bottom: 10px;
+    border-color: gray;
+}
+
+#num_doc{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    padding: 6px 0px 0px 5px;
+    border-radius: 0 0 0px 0px;
+}
+
+#div_icetex_status{
+    padding-left: 0px;
+    padding-right: 15px;
+}
+
+#row-general-fields{
+    height: 30px;
+    margin-top: 5px;
+}
+
+#div-select-student{
+    padding-top: 20px;
+}
+
+#icetex_status{
+    padding: 0px 0px 0px 6px;
+    height: 100%;
+    position: relative;
+    border-radius: 0 0 0px 0px;
+}
+
+#icon-tracking{
+    position: relative;
+    font-size: 30px; 
+    cursor: pointer;
+    padding-left: 0px;
+}
+
+#div-icon-tracking{
+    padding: 3px 15px 0px 0px;
+}
+
+#div-icon-edit{
+    padding: 0px 0px 0px 0px;
+    height: 90px;
+}
+
+#div-icon-edit > #span-icon-edit,
+#div-icon-edit > #span-icon-cancel-edit{ 
+    position: absolute; 
+    right: 0; 
+    bottom: 0;
+}
+
+#div-icon-edit > #span-icon-save-profile{
+    position: absolute; 
+    right: 31; 
+    bottom: 0;
+}
+
+#span-icon-edit{
+    background: url("images/edit.png") no-repeat;
+    background-size: 30px 30px;
+    height: 30px;
+    width: 30px;
+    position: relative;
+    cursor: pointer;
+}
+
+#span-icon-edit:hover{
+    filter: opacity(.7);
+}
+
+#span-icon-save-profile{
+    background: url("images/save.png") no-repeat;
+    background-size: 25px 25px;
+    height: 25px;
+    width: 25px;
+    margin-left: 0px;
+    margin-right: 3px;
+    margin-top: 6px;
+    position: relative;
+    cursor: pointer;
+}
+
+#span-icon-save-profile:hover{
+    filter: opacity(.7);
+}
+
+#span-icon-cancel-edit{
+    background: url("images/cancel.png") no-repeat;
+    background-size: 25px 25px;
+    height: 25px;
+    width: 25px;
+    position: relative;
+    cursor: pointer;
+    margin-top: 6px;
+    margin-left: 3px;
+    margin-right: 0px;
+}
+
+#span-icon-cancel-edit:hover{
+    filter: opacity(.7);
+}
+
+.i-tracking-t{
+    color: green !important;
+    font-size: 12px;
+    position: relative;
+    transition:all .5s ease-in-out;
+}
+
+.i-tracking-f{
+    color: rgb(128, 186, 128) !important;
+    font-size: 12px;
+    position: relative;
+    transition:all .5s ease-in-out;
+}
+
+.i-tracking-n{
+    color: gray !important;
+    font-size: 12px;
+    position: relative;
+    transition:all .5s ease-in-out;
+}
+
+#icon-tracking:hover{
+    filter: opacity(.4);
+    
+}
+
+#h-student-info{
+    margin-top: 0px;
+    padding-top: 10px;
+}
+
+.h-sections-general-tab{
+    margin-bottom: 0px;
+}
+
+.div-general-fields>input{
+    border: 1px;
+}
+
+.span-staff-ps{
+    padding-left: 0px;
+}
+
+.div-span-staff-ps{
+    padding-left: 0px;
+}
+
+.div_fields_general_tab-general-fields>input,
+.div-general-fields>select,
+.div-general-fields>span{
+    height:100%;
+    position: absolute;
+}
+
+.select_statuses_program{
+    border-radius: 0px;
+}
+
+#age,
+#email,
+#span-icetex-status,
+#span-icetex-name{
+    padding-top: 7px;
+}
+
+.borderless td, .borderless th {
+    border: none !important;
+}
+
+.td-middle{
+    vertical-align: middle !important;
+}
+
+.is-active{
+    background-color: #93B793;
+}
+
+
+/*Tool tip*/
+
+.tooltip-v1 + .tooltip > .tooltip-inner {
+    background-color: #73AD21; 
+    color: #FFFFFF; 
+    border: 1px solid green; 
+    padding: 15px;
+    font-size: 12px;
+}
+/* Tooltip on top */
+.tooltip-v1 + .tooltip.top > .tooltip-arrow {
+    border-top: 5px solid green;
+}
+/* Tooltip on bottom */
+.tooltip-v1 + .tooltip.bottom > .tooltip-arrow {
+    border-bottom: 5px solid blue;
+}
+/* Tooltip on left */
+.tooltip-v1 + .tooltip.left > .tooltip-arrow {
+    border-left: 5px solid red;
+}
+/* Tooltip on right */
+.tooltip-v1 + .tooltip.right > .tooltip-arrow {
+    border-right: 5px solid black;
+}
+
+/* Risks styles */
+
+#modal_riesgos > .mymodal-content{
+    padding: 0px !important;
+
+}
+
+#div_graph_radial{
+    position: relative;
+    margin-top: 5% !important;
+}
+
+#modal-content-radial-graph{
+    margin-top: 10% !important;
+    
+}
+
+.risk_graph_button,
+.risk_graph_button:active{
+  width: 45% !important;
+  background-color: #337ab7;
+  border-bottom: 1px solid #337ab7;
+  border-radius: 0px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  -ms-border-radius: 0px;
+  -o-border-radius: 0px;
+  box-shadow: inset 0 1px 0 0 #337ab7;
+  -webkit-box-shadow: 0 1px 0 0 #337ab7 inset;
+  -moz-box-shadow: 0 1px 0 0 #337ab7 inset;
+  -ms-box-shadow: 0 1px 0 0 #337ab7 inset;
+  -o-box-shadow: 0 1px 0 0 #337ab7 inset;
+  color: white; font-weight: bold;
+  text-align: center;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+.risk_graph_button:hover{
+  color: #fff;
+  background-color: #286090;
+  border-color: #204d74;
+  cursor: pointer;
+}
+
+
+/* Profile image */
+
+.profile-image > img {
+    width: 100%;
+}
+.profile-image > a > img {
+    width: 100%;
+}
+.profile-image > .open-profile-image > a {
+    text-decoration: none;
+    color: white;
+}
+.profile-image > .open-profile-image > a:hover {
+    color: white;
+}
+.profile-image-can-update:hover img {
+    opacity: 0.3;
+}
+.profile-image-can-update:hover .open-profile-image {
+opacity: 1;
+}
+
+.open-profile-image {
+    transition: .2s ease;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+}
+.profile-image > .userpicture {
+    border-radius: 0;
+}
+.open-profile-image > .open-button {
+background-color: red;
+color: white;
+cursor: pointer;
+}
+/* -> Update user image */
+
+.update-profile-image-modal-body > form > fieldset{
+    min-width: 200;
+}
+.update-profile-image-modal-body > form > fieldset > div > .fitem > .fitemtitle {
+    text-align: left;
+}

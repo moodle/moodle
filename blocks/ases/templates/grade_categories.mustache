@@ -1,0 +1,17 @@
+ <body>
+  {{#data}}
+  {{> block_ases/side_menu}}
+  {{{message}}}  
+  {{#view_grade_categories_gc}}
+  <div id = 'courses_info' hidden>
+    {{{courses_info}}}
+  </div>
+  <h2 class = 'title'>DOCENTES</h2>
+  <div class = 'tabla_docentes'>
+      {{{teachersTable}}}
+  </div>
+
+  {{/view_grade_categories_gc}}
+
+{{/data}}
+ </body>
