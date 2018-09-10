@@ -106,13 +106,11 @@ class block_iomad_company_admin extends block_base {
             redirect(new moodle_url('/blocks/iomad_company_admin/company_edit_form.php', ['createnew' => 1]));
         }
 
-        // If there is only one company, make that the current one
-        if ($companycount == 1) {
-            $companies = $DB->get_records('company');
-            $firstcompany = reset($companies);
-            $SESSION->currenteditingcompany = $firstcompany->id;
-            $company = $firstcompany->id;
-        }
+        // Otherwise, make the first (or only) company the current one
+        $companies = $DB->get_records('company');
+        $firstcompany = reset($companies);
+        $SESSION->currenteditingcompany = $firstcompany->id;
+        $company = $firstcompany->id;
     }
 
     public function get_content() {
@@ -122,7 +120,8 @@ class block_iomad_company_admin extends block_base {
 
         if ($this->content !== null) {
             return $this->content;
-        }
+	}
+	$this->content = new stdClass;
 
         // Renderer
         $renderer = $this->page->get_renderer('block_iomad_company_admin');
@@ -147,7 +146,7 @@ class block_iomad_company_admin extends block_base {
 
         // If no selected company no point showing tabs.
         if (!iomad::get_my_companyid(context_system::instance(), false)) {
-            $this->content->text .= '<div class="alert alert-warning">' . get_string('nocompanyselected', 'block_iomad_company_admin') . '</div>';
+            $this->content->text = '<div class="alert alert-warning">' . get_string('nocompanyselected', 'block_iomad_company_admin') . '</div>';
             return $this->content;
         }
 

@@ -193,8 +193,6 @@ class company_license_form extends company_moodleform {
             $mform->addElement('text', 'validlength', get_string('licenseduration', 'block_iomad_company_admin'),
                                'maxlength="254" size="50"');
 	    $mform->addHelpButton('validlength', 'licenseduration', 'block_iomad_company_admin');
-	    $mform->addRule('validlength', get_string('missingvalidlength', 'block_iomad_company_admin'),
-                'required', null, 'client');
             $mform->setType('validlength', PARAM_INTEGER);
         } else {
             $mform->addElement('hidden', 'type', $this->parentlicense->type);
@@ -314,8 +312,12 @@ class company_license_form extends company_moodleform {
         }
 
         // Is the value for length appropriate?
-        if (empty($data['type']) && $data['validlength'] < 1 ) {
-            $errors['validlength'] = get_string('invalidnumber', 'block_iomad_company_admin');
+	if (empty($data['type']) && $data['validlength'] < 1 ) {
+            if (empty($data['validlength'])) {
+	        $errors['validlength'] = get_string('missingvalidlength', 'block_iomad_company_admin');
+	    } else {
+                $errors['validlength'] = get_string('invalidnumber', 'block_iomad_company_admin');
+	    }
         }
 
         // Did we get passed any courses?
