@@ -1,0 +1,80 @@
+.atto_morefontcolors_button .dropdown-menu {
+    min-width: inherit;
+}
+
+.atto_morefontcolors_button #atto_morefontcolors_customicon {
+    background-image: url('[[pix:i/edit]]');
+    background-size: 20px 20px;
+}
+
+/** HSL Color Picker **/
+#atto_morefontcolors_dialogue .picker {
+    padding: 15px;
+    background: #efefef;
+    border: 1px solid #ddd;
+}
+
+#atto_morefontcolors_dialogue .yui3-slider {
+    background-image: url('[[pix:atto_morefontcolors|e/rail-x]]');
+    background-repeat: repeat-x;
+}
+
+#atto_morefontcolors_dialogue #atto_morefontcolors_dialogue_hue-dial, #atto_morefontcolors_dialogue .sliders, #atto_morefontcolors_dialogue .color {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    vertical-align: middle;
+}
+
+#atto_morefontcolors_dialogue #atto_morefontcolors_dialogue_hue-dial .yui3-dial-ring {
+    background: url('[[pix:atto_morefontcolors|e/colorwheel]]') -25px -25px no-repeat;
+}
+
+#atto_morefontcolors_dialogue .sliders {
+    margin: 0 30px;
+}
+
+#atto_morefontcolors_dialogue .sliders strong {
+    font-weight: 600;
+    display: block;
+}
+#atto_morefontcolors_dialogue .sliders strong span {
+    font-weight: 300;
+}
+#atto_morefontcolors_dialogue .sliders div + div {
+    margin-top: 1em;
+}
+
+#atto_morefontcolors_dialogue .color {
+    width: 100px;
+    height: 100px;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.3);
+    box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.3);
+}
+
+/** Output Styles **/
+#atto_morefontcolors_dialogue .picker-output {
+    padding: 20px 10px 10px;
+    background: #efefef;
+    border: 1px solid #ddd;
+    border-top: none;
+    -webkit-box-shadow: inset 0px 6px 10px -5px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: inset 0px 6px 10px -5px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0px 6px 10px -5px rgba(0, 0, 0, 0.3);
+}
+
+#atto_morefontcolors_dialogue .picker-output strong {
+    font-weight: bold;
+    display: block;
+}
+
+.atto_morefontcolors_button .atto_menuentry {
+    list-style-type: none;
+}
+
+.atto_morefontcolors_button .atto_menuentry a[role="menuitem"]{
+    display: flex;
+    display: -webkit-flex;
+}
+

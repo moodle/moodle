@@ -1,0 +1,66 @@
+language: php
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+php:
+ - 5.6
+ - 7.0
+ - 7.1
+ - 7.2
+
+addons:
+  postgresql: "9.3"
+
+dist: precise
+
+env:
+ matrix:
+  - DB=pgsql MOODLE_BRANCH=MOODLE_31_STABLE
+  - DB=pgsql MOODLE_BRANCH=MOODLE_32_STABLE
+  - DB=pgsql MOODLE_BRANCH=MOODLE_33_STABLE
+  - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
+  - DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
+  - DB=mysqli MOODLE_BRANCH=master
+  - DB=pgsql MOODLE_BRANCH=master
+ 
+matrix:
+ exclude:
+  - env: DB=pgsql MOODLE_BRANCH=MOODLE_31_STABLE
+    php: 7.1
+  - env: DB=pgsql MOODLE_BRANCH=MOODLE_31_STABLE
+    php: 7.2
+  - env: DB=pgsql MOODLE_BRANCH=MOODLE_32_STABLE
+    php: 7.2
+  - env: DB=pgsql MOODLE_BRANCH=MOODLE_33_STABLE
+    php: 7.2
+  - env: DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
+    php: 5.6
+  - env: DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
+    php: 5.6
+  - env: DB=pgsql MOODLE_BRANCH=master
+    php: 5.6
+  - env: DB=mysqli MOODLE_BRANCH=master
+    php: 5.6
+
+before_install:
+  - phpenv config-rm xdebug.ini
+  - cd ../..
+  - composer selfupdate
+  - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^1
+  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+
+install:
+  - moodle-plugin-ci install
+
+script:
+  - moodle-plugin-ci phplint
+  - moodle-plugin-ci phpcpd
+  - moodle-plugin-ci phpmd
+  - moodle-plugin-ci csslint
+  - moodle-plugin-ci shifter
+  - moodle-plugin-ci phpunit
+  - moodle-plugin-ci behat

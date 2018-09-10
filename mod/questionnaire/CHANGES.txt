@@ -1,0 +1,12 @@
+Release Notes
+
+Version 3.5.0 (Build - 2018061900)
+
+New features:
+This is an early release providing the GDPR Privacy API implementation.
+
+Bug fixes:
+CONTRIB-7187 - Fixed preview mode with dependencies bug and added tests to verify.
+CONTRIB-7300 - Removed database columns from install.xml and readded the upgrade step for them.
+
+(see CHANGES.TXT in release 3.4 for earlier changes.)

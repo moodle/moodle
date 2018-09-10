@@ -1,0 +1,10 @@
+{
+    "name": "moodle-block_messageteacher-form",
+    "builds": {
+        "moodle-block_messageteacher-form": {
+            "jsfiles": [
+                "messageteacher.js"
+            ]
+        }
+    }
+}

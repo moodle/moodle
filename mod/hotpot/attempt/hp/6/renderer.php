@@ -2007,7 +2007,7 @@ class mod_hotpot_attempt_hp_6_renderer extends mod_hotpot_attempt_hp_renderer {
                     $teachers = '';
                 }
                 if ($teachers) {
-                    $feedback[0] = "'$CFG->httpswwwroot/message/discussion.php?id='";
+                    $feedback[0] = "'$CFG->httpswwwroot/message/index.php?user2='";
                     $feedback[1] = $teachers;
                     $feedback[4] = 400; // width
                     $feedback[5] = 500; // height

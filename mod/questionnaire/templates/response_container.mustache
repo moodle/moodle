@@ -1,0 +1,100 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_questionnaire/response_container
+
+    Template which defines a survey response display.
+
+    Classes required for JS:
+    * /mod/questionnaire/module.js
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+
+    Example context (json):
+    {
+        "fieldset": {
+            "id": "7",
+            "class": "responseclass"
+        },
+        "qnum": "7",
+        "required": "<div>*</div>",
+        "skippedclass": "skippedclass",
+        "qcontent": "HTML for the response content",
+        "responses": [
+            {
+                "respdate": "Friday, 19 December 2014, 5:58pm",
+                "fieldset": {
+                    "id": "10",
+                    "class": "fieldsetclass"
+                },
+                "required": "required html",
+                "skippedclass": "skippedclass",
+                "qcontent": "HTML for the response content",
+                "qformelement": "<div>HTML for the question form element</div>"
+            }
+        ]
+    }
+    }}
+<!-- Begin fieldset generated from response_container template. -->
+<div class="box individualresp">
+<fieldset id="{{fieldset.id}}" class="{{fieldset.class}}">
+    {{#qnum}}
+    <legend class="accesshide">{{# str }}questionnum, mod_questionnaire{{/ str}}{{{qnum}}}</legend>
+    <div class="qn-legend">
+        <div class="qn-info">
+            <h2 class="qn-number">{{{.}}}</h2>
+        </div>
+        {{{required}}}
+    </div>
+    {{/qnum}}
+    <div class="qn-content">
+        <div class="qn-question {{skippedclass}}">
+            {{#label}}<label for="{{label.for}}">{{/label}}
+            {{{qcontent}}}
+            {{#label}}</label>{{/label}}
+        </div>
+        <div class="qn-answer">
+            {{#responses}}
+            {{#respdate}}<div class="respdate">{{respdate}}</div>{{/respdate}}
+            <fieldset id="{{fieldset.id}}" class="{{fieldset.class}}">
+                <legend class="accesshide">{{# str }}questionnum, mod_questionnaire{{/ str}}</legend>
+                <div class="qn-legend">
+                    <div class="qn-info">
+                        <div class="accesshide">{{# str }}questionnum, mod_questionnaire{{/ str}}</div>
+                    </div>
+                    {{{required}}}
+                </div>
+                <div class="qn-content">
+                    <div class="qn-question {{skippedclass}}">
+                        {{#label}}<label for="{{label.for}}">{{/label}}
+                        {{{qcontent}}}
+                        {{#label}}</label>{{/label}}
+                    </div>
+                    <div class="qn-answer">
+                    {{{qformelement}}}
+                    </div>
+                </div>
+            </fieldset>
+            {{/responses}}
+        </div>
+    </div>
+</fieldset>
+</div>
+<!-- End fieldset generated from response_container template. -->
