@@ -71,6 +71,8 @@ information provided here is intended especially for developers.
     - I navigate to "PATH > ITEM" in site administration
     - I navigate to course participants
     - I navigate to "TAB1 > TAB2" in the course gradebook
+* The core\session\util class has been removed. This contained one function only used by the memcached class which has
+  been moved there instead (connection_string_to_memcache_servers).
 
   If some items are not available without Navigation block at all, one can use combination of:
     - I add the "Navigation" block if not present
