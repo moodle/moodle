@@ -141,9 +141,9 @@ class admin_uploaduser_form2 extends moodleform {
 
         if (!empty($CFG->allowaccountssameemail)) {
             $mform->addElement('selectyesno', 'uunoemailduplicates', get_string('uunoemailduplicates', 'tool_uploaduser'));
-            $mform->setDefault('uunoemailduplicates', 1);
+            $mform->setDefault('uunoemailduplicates', 0);
         } else {
-            $mform->addElement('hidden', 'uunoemailduplicates', 1);
+            $mform->addElement('hidden', 'uunoemailduplicates', 0);
         }
         $mform->setType('uunoemailduplicates', PARAM_BOOL);
 
