@@ -47,6 +47,9 @@ class helper {
     /** The request filters preference key. */
     const PREF_REQUEST_FILTERS = 'tool_dataprivacy_request-filters';
 
+    /** The number of data request records per page preference key. */
+    const PREF_REQUEST_PERPAGE = 'tool_dataprivacy_request-perpage';
+
     /**
      * Retrieves the human-readable text value of a data request type.
      *
