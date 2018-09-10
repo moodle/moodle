@@ -35,8 +35,6 @@ if ($action == 'newon') {
 
 admin_externalpage_setup($pagename);
 
-require_capability('moodle/site:config', context_system::instance());
-
 $baseurl    = "$CFG->wwwroot/$CFG->admin/portfolio.php";
 $sesskeyurl = "$CFG->wwwroot/$CFG->admin/portfolio.php?sesskey=" . sesskey();
 $configstr  = get_string('manageportfolios', 'portfolio');

@@ -39,7 +39,6 @@ $previewrows = optional_param('previewrows', 10, PARAM_INT);
 core_php_time_limit::raise(60*60); // 1 hour should be enough
 raise_memory_limit(MEMORY_HUGE);
 
-require_login();
 admin_externalpage_setup('tooluploaduser');
 require_capability('moodle/site:uploadusers', context_system::instance());
 

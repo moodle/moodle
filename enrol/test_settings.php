@@ -32,9 +32,6 @@ if (!core_component::is_valid_plugin_name('enrol', $enrol)) {
     $enrol = '';
 }
 
-require_login();
-require_capability('moodle/site:config', context_system::instance());
-
 navigation_node::override_active_url(new moodle_url('/admin/settings.php', array('section'=>'manageenrols')));
 admin_externalpage_setup('enroltestsettings');
 

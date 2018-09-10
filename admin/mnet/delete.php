@@ -34,10 +34,8 @@ $step   = optional_param('step', 'verify', PARAM_ALPHA);
 $hostid = required_param('hostid', PARAM_INT);
 
 
-require_login();
 
 $context = context_system::instance();
-require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 
 $mnet = get_mnet_environment();
 

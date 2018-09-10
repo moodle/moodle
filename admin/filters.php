@@ -28,10 +28,6 @@ require_once($CFG->libdir . '/adminlib.php');
 $action = optional_param('action', '', PARAM_ALPHA);
 $filterpath = optional_param('filterpath', '', PARAM_PLUGIN);
 
-require_login();
-$systemcontext = context_system::instance();
-require_capability('moodle/site:config', $systemcontext);
-
 admin_externalpage_setup('managefilters');
 
 // Clean up bogus filter states first.

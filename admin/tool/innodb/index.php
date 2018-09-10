@@ -32,8 +32,6 @@ admin_externalpage_setup('toolinnodb');
 
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-require_login();
-require_capability('moodle/site:config', context_system::instance());
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Convert all MySQL tables from MYISAM to InnoDB');

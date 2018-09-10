@@ -35,9 +35,6 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/course/request_form.php');
 
-require_login();
-require_capability('moodle/site:approvecourse', context_system::instance());
-
 $approve = optional_param('approve', 0, PARAM_INT);
 $reject = optional_param('reject', 0, PARAM_INT);
 

@@ -30,11 +30,8 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/mnet/services_form.php');
 $mnet = get_mnet_environment();
 
-require_login();
 admin_externalpage_setup('mnetpeers');
 
-$context = context_system::instance();
-require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 
 $hostid = required_param('hostid', PARAM_INT);
 

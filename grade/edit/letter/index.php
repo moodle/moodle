@@ -48,7 +48,6 @@ $returnurl = null;
 $editparam = null;
 if ($context->contextlevel == CONTEXT_SYSTEM or $context->contextlevel == CONTEXT_COURSECAT) {
     require_once $CFG->libdir.'/adminlib.php';
-    require_login();
 
     admin_externalpage_setup('letters');
 

@@ -33,7 +33,6 @@ $status = optional_param('status', 0, PARAM_BOOL);
 
 // Validate course id.
 if (empty($courseid)) {
-    require_login();
     $context = context_system::instance();
     $coursename = format_string($SITE->fullname, true, array('context' => $context));
     $PAGE->set_context($context);

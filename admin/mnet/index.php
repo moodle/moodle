@@ -6,12 +6,10 @@
     require_once($CFG->libdir.'/adminlib.php');
     include_once($CFG->dirroot.'/mnet/lib.php');
 
-    require_login();
     admin_externalpage_setup('net');
 
     $context = context_system::instance();
 
-    require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 
     $site = get_site();
     $mnet = get_mnet_environment();

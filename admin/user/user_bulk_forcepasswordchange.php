@@ -9,7 +9,6 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-require_login();
 admin_externalpage_setup('userbulk');
 require_capability('moodle/user:update', context_system::instance());
 

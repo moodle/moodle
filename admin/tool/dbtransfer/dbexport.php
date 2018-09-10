@@ -28,7 +28,6 @@ require('../../../config.php');
 require_once('locallib.php');
 require_once('database_export_form.php');
 
-require_login();
 admin_externalpage_setup('tooldbexport');
 
 // Create form.

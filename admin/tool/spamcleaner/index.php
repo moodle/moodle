@@ -41,7 +41,6 @@ $ignore = optional_param('ignore', '', PARAM_RAW);
 $reset = optional_param('reset', '', PARAM_RAW);
 $id = optional_param('id', '', PARAM_INT);
 
-require_login();
 admin_externalpage_setup('toolspamcleaner');
 
 // Delete one user

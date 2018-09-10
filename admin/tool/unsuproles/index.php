@@ -29,9 +29,7 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 
-$syscontext = context_system::instance();
 
-require_login();
 admin_externalpage_setup('toolunsuproles'); // checks permissions specified in settings.php
 
 if ($action === 'delete') {

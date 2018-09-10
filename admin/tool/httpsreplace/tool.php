@@ -32,9 +32,6 @@ admin_externalpage_setup('toolhttpsreplace');
 
 $context = context_system::instance();
 
-require_login();
-require_capability('moodle/site:config', $context);
-
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/admin/tool/httpsreplace/index.php'));
 $PAGE->set_title(get_string('pageheader', 'tool_httpsreplace'));

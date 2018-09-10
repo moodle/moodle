@@ -25,9 +25,6 @@
 require_once('../../../../../config.php');
 require_once($CFG->dirroot . '/lib/adminlib.php');
 
-require_login();
-$context = context_system::instance();
-require_capability('moodle/site:config', $context);
 require_sesskey();
 
 navigation_node::override_active_url(new moodle_url('/admin/settings.php', array('section' => 'logsettingdatabase')));

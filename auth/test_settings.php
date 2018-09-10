@@ -32,9 +32,6 @@ if (!core_component::is_valid_plugin_name('auth', $auth)) {
     $auth = '';
 }
 
-require_login();
-require_capability('moodle/site:config', context_system::instance());
-
 navigation_node::override_active_url(new moodle_url('/admin/settings.php', array('section'=>'manageauths')));
 admin_externalpage_setup('authtestsettings');
 
