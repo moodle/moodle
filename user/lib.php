@@ -1284,7 +1284,7 @@ function user_get_tagged_users($tag, $exclusivemode = false, $fromctx = 0, $ctx 
  */
 function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $roleid = 0, $enrolid = 0, $statusid = -1,
                                    $search = '', $additionalwhere = '', $additionalparams = array()) {
-    global $DB, $USER;
+    global $DB, $USER, $CFG;
 
     // Get the context.
     $context = \context_course::instance($courseid, MUST_EXIST);
@@ -1396,6 +1396,27 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
                 $params[$userid2] = $USER->id;
             }
             $conditions[] = $idnumber;
+
+            if (!empty($CFG->showuseridentity)) {
+                // Search all user identify fields.
+                $extrasearchfields = explode(',', $CFG->showuseridentity);
+                foreach ($extrasearchfields as $extrasearchfield) {
+                    if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
+                        // Already covered above. Search by country not supported.
+                        continue;
+                    }
+                    $param = $searchkey3 . $extrasearchfield;
+                    $condition = $DB->sql_like($extrasearchfield, ':' . $param, false, false);
+                    $params[$param] = "%$keyword%";
+                    if (!in_array($extrasearchfield, $userfields)) {
+                        // User cannot see this field, but allow match if their own account.
+                        $userid3 = 'userid' . $index . '3' . $extrasearchfield;
+                        $condition = "(". $condition . " AND u.id = :$userid3)";
+                        $params[$userid3] = $USER->id;
+                    }
+                    $conditions[] = $condition;
+                }
+            }
 
             // Search by middlename.
             $middlename = $DB->sql_like('middlename', ':' . $searchkey4, false, false);
