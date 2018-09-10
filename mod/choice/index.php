@@ -53,7 +53,7 @@
     if ($usesections) {
         $strsectionname = get_string('sectionname', 'format_'.$course->format);
         $table->head  = array ($strsectionname, get_string("question"), get_string("answer"));
-        $table->align = array ("center", "left", "left");
+        $table->align = array ("left", "left", "left");
     } else {
         $table->head  = array (get_string("question"), get_string("answer"));
         $table->align = array ("left", "left");
