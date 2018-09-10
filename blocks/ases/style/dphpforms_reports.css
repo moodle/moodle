@@ -1,0 +1,15 @@
+#btn-generar-reporte{
+    color: #FFF;
+}   
+
+#btn-generar-reporte:hover{
+    color: #000;
+}   
+
+/*.ajuste_fecha{
+    height: 34px !important;
+}*/
+
+input{
+    height: 34px !important;
+}

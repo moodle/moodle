@@ -1,0 +1,10 @@
+{
+    "name": "moodle-mod_attendance-groupfilter",
+    "builds": {
+        "moodle-mod_attendance-groupfilter": {
+            "jsfiles": [
+                "groupfilter.js"
+            ]
+        }
+    }
+}

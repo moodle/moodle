@@ -1,0 +1,30 @@
+img.icon{
+    display: none !important;
+}
+
+*[id*="grade_"]	{
+    width: 50px !important;
+}
+
+.gradeparent{
+    border: solid thin black;
+    width: -moz-max-content;    /* Firefox/Gecko */
+    width: -webkit-max-content; 
+}
+
+#page-blocks-ases-view-global_grade_book{
+    width: 100% !important;    
+}
+
+.highlightable{
+    width: 50px;
+    word-wrap: break-word;
+}
+
+.range{
+    display:none !important;
+}
+
+#padre{
+    width: 400px;
+}

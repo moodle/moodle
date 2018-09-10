@@ -1,0 +1,49 @@
+{{#data}}
+{{> block_ases/side_menu}}            
+{{/data}}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-lg-offset-3">
+            <h2>CARGA DE ARCHIVOS HISTÓRICOS</h2>
+            <hr />
+            {{#data}}
+            {{{message}}}
+            {{/data}}
+        </div>
+    </div>
+    <div class="row">
+    {{#data}}
+        {{#upload_historical_files_uhf}}
+            <div id="respuesta" class="col-lg-6 col-md-6 col-lg-offset-3">
+                <form id='form' class="form-inline" role="form" >
+                  <div class="form-group">
+                     <input type="file" name="archivo" id="archivo" required/>
+                  </div>
+                  <hr />
+                  <div class="form-group">
+                      <label>Selecione la operacion</label>
+                      <select class="selectpicker" name="selector" id="selector" required >
+                          <option value="academic">Histórico académico semestres</option>
+                          <option value="materias">Histórico académico materias</option>
+                          <option value="icetex">Histórico ICETEX</option>
+                          <option value="resolution">Resolución</option>
+                       </select>
+                   </div>
+                  <hr />
+                  <div class="form-group">
+                      {{!--<input type="submit" id="boton_subir" value="Subir" class="btn btn-success col-md-3" />--}}
+                      <button class="submit btn-form col-md-9" type="button" id="boton_subir">Subir</button>
+                      <div class="col-md-3" id="response"></div>
+                  </div>
+                 
+               </form>
+               <hr />
+
+             <div class="hide">
+                 
+             </div>
+        </div>
+        {{/upload_historical_files_uhf}}
+    {{/data}}
+    </div> 
+    <div class="row col-lg-6 col-md-6 col-lg-offset-3" id="informacion" style="overflow:auto; height:200px;">

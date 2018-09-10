@@ -1,0 +1,223 @@
+{{#data}}
+{{> block_ases/side_menu}}            
+<div class="container">
+   <h2>SEGUIMIENTOS GRUPALES</h2>
+   <hr/>
+   {{{message}}}
+   <input type="text" class="hide" id="current_user_id" value="{{id_dphpforms_creado_por}}" />
+</div>
+<form>
+   {{#view_groupal_trackings_gt}}
+   <div class="row">
+      <label class="col-md-offset-3" >Lista de Estudiantes a Cargo</label>
+   </div>
+   <div class="row">
+      <div data-spy="scroll" data-target=".navbar" data-offset="50" class="well col-md-7 col-md-offset-3" id="list_grupal_seg" name="list_grupal_seg">
+         <table id="mytable" class="table table-striped">
+            <thead>
+               <tr>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Apellido</th>
+               </tr>
+            </thead>
+            <tbody></tbody>
+         </table>
+      </div>
+   </div>
+   <div class="row">
+      <label class="col-md-offset-3">Lista de seguimientos
+      <label>
+   </div>
+   <div class="row">
+   <div class="ScrollStyle well col-md-7 col-md-offset-3" id="list_grupal" name="list_grupal">
+   {{{seguimiento_grupal}}}
+   </div>
+   </div>                           
+   <hr>
+   <!-- Button trigger modal -->
+   <div class="row">
+   {{/view_groupal_trackings_gt}}
+   {{#add_groupal_tracking_gt}}
+   <span class="btn btn-info col-md-offset-3" id="go_back">Regresar</span>
+   <button type="button" id="button_add_groupal_track" class="btn-primary">
+   Nuevo seguimiento
+   </button>
+   <span class="btn btn-danger oculto" id="socioedu_add_grupal" data-toggle="modal" data-target="#myModal">
+   Adicionar nuevo
+   </span>
+   {{/add_groupal_tracking_gt}}
+   </div>
+
+</form>
+
+
+<!-- MODALES DE SEGUIMIENTO GRUPAL NUEVO -->
+<div class="mymodal" id="modal_v2_groupal_tracking" name="modal_v2_pares">
+    <div class="outside" ></div>
+   <div class="mymodal-content">
+      <div class="mymodal-header col-sm-12">
+         <div class="col-sm-11">
+            <h4 class="" id="myModalLabel">Nuevo registro</h4>
+         </div>
+         <div class="col-sm-1">
+            <span id="mymodal-v2-close" class="mymodal-close" aria-hidden="true">&times;</span>
+         </div>
+      </div>
+      <div class="mymodal-body mymodal-body_v2 col-sm-12">
+         <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+               {{{form_seguimientos_grupales}}}
+            </div>
+         </div>
+      </div>
+      <div class="mymodal-footer">
+         .
+      </div>
+   </div>
+</div>
+<div class="mymodal" id="modal_v2_edit_groupal_tracking" name="modal_edit_v2_pares">
+    <div class="outside" ></div>
+   <div class="mymodal-content">
+      <div class="mymodal-header col-sm-12">
+         <div class="col-sm-11">
+            <h4 class="" id="myModalLabel">Visualización/Edición</h4>
+         </div>
+         <div class="col-sm-1">
+            <span id="mymodal-v2-close" class="mymodal-close" aria-hidden="true">&times;</span>
+         </div>
+      </div>
+      <div class="mymodal-body mymodal-body_v2 col-sm-12">
+         <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+               <div id="body_editor"></div>
+            </div>
+         </div>
+      </div>
+      <div class="mymodal-footer">
+         .
+      </div>
+   </div>
+</div>
+<!-- FIN MODALES SEGUIMIENTO V2 -->
+{{/data}}
+
+
+
+<!-- MODAL ANTIGUO-->
+<div class="modal modal_pilos" id="myModal" name="seguimiento" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Seguimiento</h4>
+         </div>
+         <div class="modal-body">
+            <form class="form-horizontal" id = "seguimiento" role="form">
+               <div class= "form-group hide" id="div_created">
+                  <div class="col-md-4">
+                     <label type="text" class="" id="created_date" name="created_daydate"></label>
+                  </div>
+               </div>
+               <div class= "form-group">
+                  <div class="col-md-4">
+                     <label for="date" class="form-control-label col-md-3">Fecha (aaaa-mm-dd)</label>
+                     <div class="col-md-9">
+                        <input type="date" class="form-control" id="date" name="date" >
+                        </input>
+                     </div>
+                  </div>
+                  <div class="col-md-4">
+                     <label for="place" class="form-control-label col-md-2">Lugar</label>
+                     <div class="col-md-10">
+                        <input type="text" maxlength = "20" size="20" class="form-control" id="place" name="place" >
+                     </div>
+                  </div>
+               </div>
+               <hr>
+               <div class= "form-group">
+                  <div data-spy="scroll" data-target=".navbar" data-offset="50" class="well col-md-7 col-md-offset-3" id="list_grupal_seg_consult" name="list_grupal_seg_consult">
+                     <table id="mytable_consult" class="table table-striped">
+                        <thead>
+                           <tr>
+                              <th>Código</th>
+                              <th>Nombre</th>
+                              <th>Apellido</th>
+                              <th>Presente</th>
+                           </tr>
+                        </thead>
+                        <tbody id="mytbody"></tbody>
+                     </table>
+                  </div>
+               </div>
+               <div class= "form-group">
+                  <div class="col-md-6">
+                     <label for="h_ini" class="form-control-label col-xs-3 col-sm-3">Hora de Inicio</label>
+                     <div class="col-xs-4 col-sm-3">
+                        <select  class="form-control" id="h_ini" name="h_ini" ></select>
+                     </div>
+                     <label class="col-xs-1 col-sm-1" for="m_ini">:</label>
+                     <div class="col-xs-4 col-sm-3">
+                        <select class="form-control" id="m_ini"  name="m_ini"></select>
+                     </div>
+                  </div>
+                  <div class="col-md-6">
+                     <label for="h_fin" class="form-control-label col-xs-3 col-sm-3">Hora finalización</label>
+                     <div class="col-xs-4 col-sm-3">
+                        <select class="form-control" id="h_fin" name="h_fin"></select>
+                     </div>
+                     <label class="col-xs-1 col-sm-1" for="m_fin">:</label>
+                     <div class="col-xs-4 col-sm-3">
+                        <select class="form-control" id="m_fin" name="m_fin" ></select>
+                     </div>
+                  </div>
+               </div>
+               <div class="form-group" id="infomonitor">
+                  <label for="monitor" class="form-control-label col-xs-2 col-sm-2">Monitor guía</label>
+                  <span class="col-sm-4" id="monitor"></span>
+               </div>
+               <hr>
+               <hr>
+               <div class= "form-group">
+                  <label for="tema" class="form-control-label col-md-6">Tema</label>
+                  <label for="objetivos" class="form-control-label col-md-6">Objetivos</label>
+                  <div class="col-md-6">
+                     <div class="col-md-10">
+                        <textarea  class="form-control small" id="tema" name="tema" maxlength="1000"></textarea>
+                     </div>
+                  </div>
+                  <div class="col-md-6">
+                     <div class="col-md-10">
+                        <textarea class="form-control small" id="objetivos" name="objetivos" maxlength="1000"></textarea>
+                     </div>
+                  </div>
+               </div>
+               <hr>
+               <div class= "form-group">
+                  <label for="actividades" class="form-control-label col-md-6">Actividades</label>
+                  <label for="observaciones" class="form-control-label col-md-6">Observaciones</label>
+                  <div class="col-md-6">
+                     <div class="col-md-10">
+                        <textarea  class="form-control long" id="actividades" name="actividades" maxlength="5000"></textarea>
+                     </div>
+                  </div>
+                  <div class="col-md-6">
+                     <div class="col-md-10">
+                        <textarea class="form-control long" id="observaciones" name="observaciones" maxlength="5000"></textarea>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="button btn btn-secondary" data-dismiss="modal" id="close_seg">Cerrar</button>
+            <button type="button" class="button btn btn-primary hide" id="save_seg">Guardar</button>
+            <button type="button" class="button btn btn-primary hide" id="upd_seg">Editar</button>
+            <button type="button" class="button btn btn-primary hide" id="edit_seg">Actualizar</button>
+         </div>
+      </div>
+   </div>
+</div>
+<!--FIN  MODAL ANTIGUO-->

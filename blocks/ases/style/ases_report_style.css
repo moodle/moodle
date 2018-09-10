@@ -1,0 +1,51 @@
+#div_cohorts{
+    padding-top: 20px;
+}
+
+#div_table{
+    margin-bottom:20px !important;
+}
+
+.panel.no-border-radius {
+    border-radius: 0;
+}
+
+.summary-title{
+    cursor: pointer;
+    padding: 10px 0px 0px 0px;
+}
+
+.summary-body{
+    position: relative;
+    padding: 0px 0px 0px 0px;
+    width: 100%;
+}
+
+.no-padding-col [class*="col-"] {
+    padding: 0;
+}
+
+.no-padding{
+    padding: 0;
+}
+
+.hr-summary{
+    margin: 0px 0px 5px 0px;;
+}
+
+.panel-heading-summary{
+    cursor: pointer;
+    background-color: #d6e9c6;
+    border-color: #ffffff;
+    margin-bottom: 10px;
+    
+}
+
+.icon-group-cohort{
+    padding: 0px;
+    
+}
+
+.div-icon-group-cohort{
+    width: 20px !important;
+}

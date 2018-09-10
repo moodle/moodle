@@ -1,0 +1,33 @@
+body {
+    font-family: "Lato", sans-serif;
+}
+
+.top_menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #d51b23;
+    /*position: absolute;*/
+    /*top: -60px;*/
+    left: -115px;
+    /*width: 1500px;*/   
+    margin-top: -10px;
+    
+}
+
+#menu_div li {
+    float: left;
+}
+
+#menu_div li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+#menu_div li a:hover {
+    background-color: #b6161e;
+}

@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="correct-xmldb-format.xslt"?>
+  <XMLDB PATH="blocks/talentospilos/db" VERSION="20160711" COMMENT="XMLDB file for Moodle blocks/configurable_reports"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+  >
+    <TABLES>
+      <TABLE NAME="talentospilos_departamento" COMMENT="Tomado de www.dian.gov.co">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="codigodivipola" />
+          <FIELD NAME="codigodivipola" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" NEXT="nombre" PREVIOUS="id" /> <!--codigo de division poblacional-->
+          <FIELD NAME="nombre" TYPE="char" LENGTH="100" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="codigodivipola" />
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="XMLDB primary key 'primary'" />
+          <KEY NAME = "unique_pk" TYPE = "unique" FIELDS = "codigodivipola" PREVIOUS="primary" COMMENT="XMLDB UNIQUE key 'unique_pk'" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_municipio" COMMENT="Tomado de www.dian.gov.co">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="codigodivipola"/>
+          <FIELD NAME="codigodivipola" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="cod_depto"/><!--codigo de division poblacional-->
+          <FIELD NAME="cod_depto" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="codigodivipola" NEXT="nombre"/>
+          <FIELD NAME="nombre" TYPE="char" LENGTH="500" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="cod_depto" /> <!--id del departamento al que pertenece el municipio-->
+        </FIELDS>
+        <KEYS>
+           <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="municipio_fk" COMMENT="XMLDB primary key 'primary'" />
+           <KEY NAME="municipio_fk" TYPE="foreign" FIELDS="cod_depto" REFTABLE="talentospilos_departamento" REFFIELDS="id" PREVIOUS="primary" COMMENT="XMLDB foreign key 'municipio_fk'" />
+           <KEY NAME = "unique" TYPE = "unique" FIELDS = "codigodivipola" PREVIOUS="municipio_fk" COMMENT="XMLDB UNIQUE key 'unique_pk'" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_facultad" COMMENT="Info tomada del Sistema de Registro Academico Univalle (SRA)">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="cod_univalle" />
+          <FIELD NAME="cod_univalle" TYPE="char" LENGTH="2" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="nombre" />
+          <FIELD NAME="nombre" TYPE="char" LENGTH="100" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="cod_univalle"/>
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="XMLDB primary key 'primary'" />
+          <KEY NAME = "unique" TYPE = "unique" FIELDS = "cod_univalle" PREVIOUS="primary" COMMENT="XMLDB UNIQUE key 'unique'" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_sede" COMMENT="Info tomada del Sistema de Registro Academico Univalle (SRA)">
+          <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_ciudad"/>
+            <FIELD NAME="id_ciudad" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="cod_depto"/>
+            <FIELD NAME="cod_univalle" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_ciudad" NEXT="nombre"/>
+            <FIELD NAME="nombre" TYPE="char" LENGTH="500" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="cod_univalle" />
+          </FIELDS>
+          <KEYS>
+            <KEY NAME="primary" TYPE="primary" NEXT="sede_fk" FIELDS="id"/>
+            <KEY NAME="sede_fk" TYPE="foreign" FIELDS="id_ciudad" REFTABLE="talentospilos_municipio" REFFIELDS="id" PREVIOUS="primary" COMMENT="XMLDB foreign key 'sede_fk'" />
+            <KEY NAME = "unique" TYPE = "unique" FIELDS = "cod_univalle" PREVIOUS="sede_fk" COMMENT="XMLDB UNIQUE key 'unique'" />
+          </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_programa" COMMENT="Programas académicos de la univaersidad del valle">
+          <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="codigosnies"/>
+            <FIELD NAME="codigosnies" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="cod_univalle"/> <!--codigo registrado en el SNIES(Sistema Nacional de Informacion de la Educación Superior)-->
+            <FIELD NAME="cod_univalle" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="codigosnies" NEXT="nombre"/>
+            <FIELD NAME="nombre" TYPE="char" LENGTH="500" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="cod_univalle" NEXT="id_sede" />
+            <FIELD NAME="id_sede" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="nombre" />
+            <FIELD NAME="jornada" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="id_sede"/> <!-- jornada a la cual se encuentra registrado -->
+          	<FIELD NAME="id_facultad" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="jornada"/> <!-- sede a la cual se encuentra registrado -->
+          </FIELDS>
+          <KEYS>
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <KEY NAME = "unique" TYPE = "unique" FIELDS = "cod_univalle, id_sede, jornada" PREVIOUS="primary" NEXT="programa_fk" COMMENT="XMLDB foreign key 'unique'" />
+            <KEY NAME="programa_fk" TYPE="foreign" FIELDS="id_sede" REFTABLE="talentospilos_sede" REFFIELDS="id" PREVIOUS="unique" NEXT="programa_fk2" COMMENT="XMLDB foreign key 'programa_fk'" />
+            <KEY NAME="programa_fk2" TYPE="foreign" FIELDS="id_facultad" REFTABLE="talentospilos_facultad" REFFIELDS="id" PREVIOUS="programa_fk" COMMENT="XMLDB foreign key 'programa_fk2'" />
+          </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_discap_men" COMMENT="Tabla que representa la información relacionada al formato expedido por el Ministerio de Educación">
+          <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="cod_snies"/>
+            <FIELD NAME="codigo_men" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="cod_univalle"/> <!-- codigo registrado en el SNIES -->
+            <FIELD NAME="nombre" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="cod_univalle" NEXT="ayuda_discap"/>
+          </FIELDS>
+          <KEYS>
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <KEY NAME = "unique" TYPE = "unique" FIELDS = "codigo_men" PREVIOUS="primary" NEXT="programa_fk" COMMENT="XMLDB foreign key 'unique'" />
+          </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_usuario" COMMENT="Tabla relacionada a la descripción detallada del usuario estudiante del Plan talentos Pilos">
+          <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="tipo_doc_ini"/> 
+            <FIELD NAME="tipo_doc_ini" TYPE="char" LENGTH="4" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="num_doc_ini"/> <!--tipo de documento con el que ingresó el estudiante -->
+            <FIELD NAME="num_doc_ini" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="tipo_doc_ini" NEXT="tipo_doc"/> <!--Número de documento con el que ingresó el estudiante -->
+            <FIELD NAME="tipo_doc" TYPE="char" LENGTH="4" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="nom_doc_ini" NEXT="num_doc"/> <!--Tipo de documento actual del estudiante -->
+            <FIELD NAME="num_doc" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="tipo_doc" NEXT="dir_ini"/> <!--numero de documento actual del estudiante -->
+            <FIELD NAME="dir_ini" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="num_doc" NEXT="barrio_ini"/> <!--direccion de procedencia o inicial del estudiante-->
+            <FIELD NAME="barrio_ini" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="dir_ini" NEXT="id_ciudad_ini" /> <!--barrio de procedencia o incial del estudiante -->
+            <FIELD NAME="id_ciudad_ini" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="barrio_ini" NEXT="tel_ini"/> <!-- id de la ciudad de procedencia o inical del estudiante-->
+            <FIELD NAME="tel_ini" TYPE="char" LENGTH="15" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="id_ciudad_ini" NEXT="direccion_res"/> <!--telefono de procedencia del estudiante -->
+            <FIELD NAME="direccion_res" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="tel_ini" NEXT="barrio_res"/> <!--direccion de residencia actual del estudiante -->
+            <FIELD NAME="barrio_res" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="direccion_res" NEXT="id_ciudad_res"/> <!-- barrio de residencia actual del estudiante -->
+            <FIELD NAME="id_ciudad_res" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="barrio_res" NEXT="tel_res"/> <!--id de la ciudad de residencia actual del estudiante -->
+            <FIELD NAME="tel_res" TYPE="char" LENGTH="15" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="id_ciudad_res" NEXT="celular"/> <!--telefono de la residencia actual del estudiante -->
+            <FIELD NAME="celular" TYPE="char" LENGTH="15" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="tel_res" NEXT="emailpilos"/> <!-- telefono celular actual del estudiante -->
+            <FIELD NAME="emailpilos" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="celular" NEXT="acudiente"/> 
+            <FIELD NAME="acudiente" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="email" NEXT="tel_acudiente"/><!-- Nombres y apellidos de un acudiente del estudiante -->
+            <FIELD NAME="tel_acudiente" TYPE="char" LENGTH="15" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="acudiente" NEXT="fecha_nac"/><!--telefono de contacto con el acudiente --> 
+            <FIELD NAME="fecha_nac" TYPE="datetime" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="tel_acudiente" NEXT="id_ciudad_nac"/> <!--fecha de nacimiento del estudiante -->
+            <FIELD NAME="id_ciudad_nac" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="fecha_nac" NEXT="sexo"/> <!-- Id de la ciudad del naciemiento del estudiante -->
+            <FIELD NAME="sexo" TYPE="char" LENGTH="1" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_ciudad_nac" NEXT="colegio"/>
+            <FIELD NAME="colegio" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="sexo" NEXT="estamento"/><!-->Nombre del colegio de procedencia del estudiante-->
+            <FIELD NAME="estamento" TYPE="char" LENGTH="15" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="colegio" NEXT="nota"/><!--estamento del colegio (publico/privado)-->
+            <FIELD NAME="observacion" TYPE="char" LENGTH="1000" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="estamento" NEXT="estado"/> <!---->
+            <FIELD NAME="estado" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"  ENUM="false"  PREVIOUS="observacion" NEXT="grupo"/> <!--estado actual del estudiante dentro del plan activo/inactivo-->
+            <FIELD NAME="grupo" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="estado" NEXT="id_discapacidad"/><!--grupo en el plan al que pertenece el estduiante-->
+            <FIELD NAME="id_discapacidad" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="grupo"/> <!-- id de la discapacidad reportada por el estudiante-->
+            <FIELD NAME="ayuda_disc" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false"  PREVIOUS="id_discapacidad"/><!-- ayuda discapacidad -->
+          </FIELDS>
+          <KEYS>
+            <KEY NAME="primary" TYPE="primary" NEXT="usuario_fk1" FIELDS="id"/>
+            <KEY NAME="usuario_fk1" TYPE="foreign" FIELDS="id_ciudad_ini" REFTABLE="talentospilos_municipio" REFFIELDS="id" PREVIOUS="primary" NEXT="usuario_fk2" COMMENT="XMLDB foreign key 'usuario_fk1'" />
+            <KEY NAME="usuario_fk2" TYPE="foreign" FIELDS="id_ciudad_res" REFTABLE="talentospilos_municipio" REFFIELDS="id" PREVIOUS="usuario_fk1" NEXT="usuario_fk3" COMMENT="XMLDB foreign key 'usuario_fk2'" />
+            <KEY NAME="usuario_fk3" TYPE="foreign" FIELDS="id_ciudad_nac" REFTABLE="talentospilos_municipio" REFFIELDS="id" PREVIOUS="usuario_fk2" NEXT="usuario_fk4" COMMENT="XMLDB foreign key 'usuario_fk3'" />
+            <KEY NAME="usuario_fk4" TYPE="foreign" FIELDS="id_discapacidad" REFTABLE="talentospilos_discap_men" REFFIELDS="id" PREVIOUS="usuario_fk3" COMMENT="XMLDB foreign key 'usuario_fk4'" />
+            <KEY NAME = "unique_doc_in" TYPE = "unique" FIELDS = "num_doc_ini" PREVIOUS="usuario_fk4" NEXT="unique_doc" COMMENT="XMLDB foreign key 'unique_doc_in'" />
+            <KEY NAME = "unique_doc" TYPE = "unique" FIELDS = "num_doc" PREVIOUS="unique_doc_in" COMMENT="XMLDB foreign key 'unique_doc'" />
+          </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_semestre" COMMENT="Tabla donde se registra loss periodos académicos">
+          <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="nombre"/>
+            <FIELD NAME="nombre" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="fecha_inicio"/> <!--formato que identifica el semestres (AAAA-I ó AAAA-II)-->
+            <FIELD NAME="fecha_inicio" TYPE="datetime" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="nombre" NEXT="fecha_fin"><!-- Indica la fecha de inicio del semestre -->
+            <FIELD NAME="fecha_fin" TYPE="datetime" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="tel_acudiente"/> <!--Indica la fecha de finalización del semestre -->
+          </FIELDS>
+          <KEYS>
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+          </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_academica" COMMENT="Registra la información académica de un estudiante"> <!--revisar!!!!!!!! -->
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="id_semestre" />
+          <FIELD NAME="id_semestre" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id"  NEXT="id_estudiante"/>
+          <FIELD NAME="id_estudiante" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id_semestre"  NEXT="semestre_act"/>
+          <FIELD NAME="semestre_act" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id_estudiante"  NEXT="num_asign_inscritas"/>
+          <FIELD NAME="num_asign_inscritas" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="semestre_act"  NEXT="num_asign_canceladas"/><!--Número de asignaturas inscritas-->
+          <FIELD NAME="num_asign_canceladas" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="num_asign_inscritas"  NEXT="num_asign_perdidas"/><!--Número de asignaturas canceladas-->
+          <FIELD NAME="num_asign_perdidas" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="num_asign_canceladas"  NEXT="promedio_semestre_pasado"/>
+          <FIELD NAME="promedio_semestre_pasado" TYPE="number" LENGTH="4" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="num_asign_perdidas"  NEXT="promedio_acumulado"/>
+          <FIELD NAME="promedio_acumulado" TYPE="number" LENGTH="4" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="promedio_semestre_pasado"  NEXT="condicion_alerta"/>
+          <FIELD NAME="condicion_alerta" TYPE="char" LENGTH="5" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="promedio_acumulado"  />
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="unique"/>
+          <KEY NAME = "unique" TYPE = "unique" FIELDS = "id_semestre, id_estudiante" PREVIOUS="primary" NEXT="academica_fk1" COMMENT="XMLDB foreign key 'unique_doc'" />
+          <KEY NAME="academica_fk1" TYPE="foreign" FIELDS="id_semestre" REFTABLE="talentospilos_semestre" REFFIELDS="id" PREVIOUS="primary" NEXT="academica_fk2" COMMENT="XMLDB foreign key 'academica_fk1'" />
+          <KEY NAME="academica_fk2" TYPE="foreign" FIELDS="id_estudiante" REFTABLE="talentospilos_usuario" REFFIELDS="id" PREVIOUS="academica_fk1" COMMENT="XMLDB foreign key 'academica_fk2'" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_retiro" COMMENT="registra la información relacionada al proceso de retiro de un estudiante">
+          <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_ciudad"/>
+            <FIELD NAME="id_estudiante" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="motivo"/>
+            <FIELD NAME="motivo" TYPE="char" LENGTH="150" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="id_estudiante" NEXT="seguimiento"/>
+            <FIELD NAME="seguimiento" TYPE="char" LENGTH="150" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="motivo" NEXT="id_semestre" />
+            <FIELD NAME="id_semestre" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="seguimiento" />
+          </FIELDS>
+          <KEYS>
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <KEY NAME="retiro_fk1" TYPE="foreign" FIELDS="id_estudiante" REFTABLE="talentospilos_usuario" REFFIELDS="id" PREVIOUS="primary" NEXT="retiro_fk2" COMMENT="XMLDB foreign key 'retiro_fk1'" />
+            <KEY NAME="retiro_fk2" TYPE="foreign" FIELDS="id_semestre" REFTABLE="talentospilos_semestre" REFFIELDS="id" PREVIOUS="retiro_fk1" COMMENT="XMLDB foreign key 'retiro_fk2'" />
+          </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_financiera" COMMENT="Registra lainformación relacionada a la situacion finaciera de un estudiante">
+          <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_semestre"/>
+            <FIELD NAME="id_semestre" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="id_estudiante"/>
+            <FIELD NAME="id_estudiante" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_semestre" NEXT="id_renovacion_icetex"/> 
+            <FIELD NAME="id_renovacion_icetex" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_estudiante" NEXT="recibo_apoyo_icetex" /> <!--informacion proporcionadad por icetex-->
+            <FIELD NAME="recibo_apoyo_icetex" TYPE="char" LENGTH="1" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_renovacion_icetex" NEXT="tipo_apoyo_icetex" /> <!--informacion proporcionada por icetex-->
+            <FIELD NAME="tipo_apoyo_icetex" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="recibo_apoyo_icetex" NEXT="jea_m" /><!--informacion proporcionada por icetex-->
+            <FIELD NAME="jea_m" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="tipo_apoyo_icetex" NEXT="jea_p" /><!--informcacion proporcionada por el Snies de acuerdo a si recibió el giro por concepto de incentivo de matrícula correspondiente al Programa Jóvenes en Acción. -->
+            <FIELD NAME="jea_p" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="jea_p" /><!--informcacion proporcionada por el Snies de acuerdo a si recibió el giro por concepto de incentivo de permanencia correspondiente al Programa Jóvenes en Acción. -->
+          </FIELDS>
+          <KEYS>
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <KEY NAME="financiera_fk1" TYPE="foreign" FIELDS="id_semestre" REFTABLE="talentospilos_semestre" REFFIELDS="id" PREVIOUS="primary" NEXT="financiera_fk1" COMMENT="XMLDB foreign key 'financiera_fk1'" />
+            <KEY NAME="financiera_fk2" TYPE="foreign" FIELDS="id_estudiante" REFTABLE="talentospilos_usuario" REFFIELDS="id" PREVIOUS="financier_fk1" COMMENT="XMLDB foreign key 'finaciera_fk2'" />
+          </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_permisos" COMMENT="Registra los permisos">
+          <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="permiso"/>
+            <FIELD NAME="permiso" TYPE="char" LENGTH="1" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="descripcion"/>
+            <FIELD NAME="descripcion" TYPE="char" LENGTH="150" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="descripcion"/> 
+          </FIELDS>
+          <KEYS>
+            <KEY NAME="primary" TYPE="primary" NEXT="unique" FIELDS="id"/>
+            <KEY NAME = "unique" TYPE = "unique" FIELDS = "permiso" PREVIOUS="primary" COMMENT="XMLDB foreign key 'unique'" />
+          </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_rol" COMMENT="Registra los roles">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="nombre_rol"/>
+          <FIELD NAME="nombre_rol" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="descripcion"/>
+          <FIELD NAME="descripcion" TYPE="char" LENGTH="150" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="descripcion"/> 
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="unique" FIELDS="id"/>
+          <KEY NAME = "unique" TYPE = "unique" FIELDS = "nombre_rol" PREVIOUS="primary" COMMENT="XMLDB unique key 'unique'" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_funcionalidad" COMMENT="Registra las funcionaldiades de la extensión">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="nombre_func"/>
+          <FIELD NAME="nombre_func" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="descripcion"/>
+          <FIELD NAME="descripcion" TYPE="char" LENGTH="150" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="nombre_func"/> 
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="unique" FIELDS="id"/>
+           <KEY NAME = "unique" TYPE = "unique" FIELDS = "nombre_func" PREVIOUS="primary" COMMENT="XMLDB UNIQUE key 'unique'" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_permisos_rol" COMMENT="Registra los permisos asociados a un rol">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_rol"/>
+          <FIELD NAME="id_rol" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="id_permiso"/>
+          <FIELD NAME="id_permiso" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_rol" NEXT="id_funcionalidad"/>
+          <FIELD NAME="id_funcionalidad" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_permiso"/> 
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="permisosr_upk" FIELDS="id"/>
+          <KEY NAME="permisosr_upk" TYPE="unique" FIELDS="id_rol,id_permiso,id_funcionalidad" PREVIOUS="primary" NEXT="permisosr_fk1" COMMENT="XMLDB unique key 'permisosr_upk'" />
+          <KEY NAME="permisosr_fk1" TYPE="foreign" FIELDS="id_rol" REFTABLE="talentospilos_rol" REFFIELDS="id" PREVIOUS="permisosr_upk" NEXT="permisos_fk2" COMMENT="XMLDB foreign key 'permisosr_fk1'" />
+          <KEY NAME="permisosr_fk2" TYPE="foreign" FIELDS="id_permiso" REFTABLE="talentospilos_permisos" REFFIELDS="id" PREVIOUS="permisosr_fk1" NEXT="permisosr_fk3" COMMENT="XMLDB foreign key 'permisosr_fk2'" />
+          <KEY NAME="permisosr_fk3" TYPE="foreign" FIELDS="id_funcionalidad" REFTABLE="talentospilos_funcionalidad" REFFIELDS="id" PREVIOUS="permisosr_fk2" COMMENT="XMLDB foreign key 'permisosr_fk3'" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_user_rol" COMMENT="Registra los usuarios asociados a un rol">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_rol"/>
+          <FIELD NAME="id_rol" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="id_usuario"/>
+          <FIELD NAME="id_usuario" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_rol" NEXT="estado"/>
+          <FIELD NAME="estado" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_usuario" NEXT="id_semestre"/>
+          <FIELD NAME="id_semestre" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="estado" NEXT="id_jefe"/>
+          <FIELD NAME="id_jefe" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="id_semestre"/>
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="tpur_upk" FIELDS="id"/>
+          <KEY NAME="tpur_upk" TYPE="unique" FIELDS="id_rol,id_usuario, id_semestre" PREVIOUS="primary" NEXT="tpur_fk1" COMMENT="XMLDB foreign key 'tpur_upk'" />
+          <KEY NAME="tpur_fk1" TYPE="foreign" FIELDS="id_rol" REFTABLE="talentospilos_rol" REFFIELDS="id" PREVIOUS="tpur_upk" NEXT="tpur_fk2" COMMENT="XMLDB foreign key 'tpur_fk1'" />
+          <KEY NAME="tpur_fk2" TYPE="foreign" FIELDS="id_usuario" REFTABLE="user" REFFIELDS="id" PREVIOUS="tpur_fk1" NEXT="tpur_fk3" COMMENT="XMLDB foreign key 'tpur_fk2'" />
+          <KEY NAME="tpur_fk3" TYPE="foreign" FIELDS="id_semestre" REFTABLE="talentospilos_semestre" REFFIELDS="id" PREVIOUS="tpur_fk2" NEXT="tpur_fk3" COMMENT="XMLDB foreign key 'tpur_fk3'" />
+          <KEY NAME="tpur_fk4" TYPE="foreign" FIELDS="id_jefe" REFTABLE="user" REFFIELDS="id" PREVIOUS="tpur_fk3" COMMENT="XMLDB foreign key 'tpur_fk4'" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_enfasis" COMMENT="Registra los enfasis que ofrece el plan">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="nombre"/>
+          <FIELD NAME="nombre" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="descripcion"/>
+          <FIELD NAME="descripcion" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="nombre"/>
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="enfasis_pk" FIELDS="id"/>
+          <KEY NAME="enfasis_upk" TYPE="unique" FIELDS="nombre" PREVIOUS="primary" NEXT="tpur_fk1" COMMENT="XMLDB foreign key 'tpur_upk'" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_vocacional" COMMENT="Registra los enfasis y programas por los que determinado estudiante se encuentra inclinado">
+        <FIELDS>
+        	<!--preguntar acerca de valores nulos-->
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_estudiante"/>
+          <FIELD NAME="id_estudiante" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="opc1_enfasis"/>
+          <FIELD NAME="opc1_enfasis" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_estudiante" NEXT="opc2_enfasis"/>
+        	<FIELD NAME="opc2_enfasis" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="opc1_enfasis" NEXT="opc3_enfasis"/>
+        	<FIELD NAME="opc3_enfasis" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="opc2_enfasis" NEXT="opc1_programa"/>
+        	<FIELD NAME="opc1_programa" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="opc3_enfasis" NEXT="opc3_enfasis"/>
+        	<FIELD NAME="opc2_programa" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="opc1_programa" NEXT="opc3_programa"/>
+        	<FIELD NAME="opc3_programa" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="opc2_programa" NEXT="final_enfasis"/>
+        	<FIELD NAME="final_enfasis" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="opc3_programa" NEXT="final_programa"/>
+        	<FIELD NAME="final_programa" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="final_enfasis"/>
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="tpur_upk" FIELDS="id"/>
+          <KEY NAME="voca_upk" TYPE="unique" FIELDS="id_estudiante" PREVIOUS="primary" NEXT="voca_fk1" COMMENT="XMLDB uniquee key 'voca_upk'" />
+          <KEY NAME="voca_fk1" TYPE="foreign" FIELDS="id_estudiante" REFTABLE="talentospilos_usuario" REFFIELDS="id" PREVIOUS="voca_upk" NEXT="voca_fk2" COMMENT="XMLDB foreign key 'voca_fk1'" />
+          <KEY NAME="voca_fk2" TYPE="foreign" FIELDS="opc1_enfasis" REFTABLE="talentospilos_enfasis" REFFIELDS="id" PREVIOUS="voca_fk1" NEXT="voca_fk3" COMMENT="XMLDB foreign key 'voca_fk2'" />
+        	<KEY NAME="voca_fk3" TYPE="foreign" FIELDS="opc2_enfasis" REFTABLE="talentospilos_enfasis" REFFIELDS="id" PREVIOUS="voca_fk2" NEXT="voca_fk4" COMMENT="XMLDB foreign key 'voca_fk3'" />
+        	<KEY NAME="voca_fk4" TYPE="foreign" FIELDS="opc3_enfasis" REFTABLE="talentospilos_enfasis" REFFIELDS="id" PREVIOUS="voca_fk3" NEXT="voca_fk5" COMMENT="XMLDB foreign key 'voca_fk4'" />
+        	<KEY NAME="voca_fk5" TYPE="foreign" FIELDS="opc1_programa" REFTABLE="talentospilos_programa" REFFIELDS="id" PREVIOUS="voca_fk4" NEXT="voca_fk6" COMMENT="XMLDB foreign key 'voca_fk5'" />
+        	<KEY NAME="voca_fk6" TYPE="foreign" FIELDS="opc2_programa" REFTABLE="talentospilos_programa" REFFIELDS="id" PREVIOUS="voca_fk5" NEXT="voca_fk7" COMMENT="XMLDB foreign key 'voca_fk6'" />
+        	<KEY NAME="voca_fk7" TYPE="foreign" FIELDS="opc3_programa" REFTABLE="talentospilos_programa" REFFIELDS="id" PREVIOUS="voca_fk6" NEXT="voca_fk8" COMMENT="XMLDB foreign key 'voca_fk7'" />
+        	<KEY NAME="voca_fk8" TYPE="foreign" FIELDS="final_enfasis" REFTABLE="talentospilos_enfasis" REFFIELDS="id" PREVIOUS="voca_fk7" NEXT="voca_fk9" COMMENT="XMLDB foreign key 'voca_fk8'" />
+        	<KEY NAME="voca_fk9" TYPE="foreign" FIELDS="final_programa" REFTABLE="talentospilos_programa" REFFIELDS="id" PREVIOUS="voca_fk8" COMMENT="XMLDB foreign key 'voca_fk9'" />
+        </KEYS>
+      </TABLE>
+      <!-- Tabla que relaciona los cursos con el semestre en el cual se impartieron -->
+      <TABLE NAME="talentospilos_cursos" COMMENT="Relaciona los cursos con el semestre en el cual fueron impartidos">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_curso" />
+          <FIELD NAME="id_curso" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="id_semestre" PREVIOUS="id"/>
+          <FIELD NAME="id_semestre" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="id_semestre" PREVIOUS="id_course"/>
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="cur_pk1" FIELDS="id"/>
+          <KEY NAME="cur_pk1" TYPE="foreign" FIELDS="id_semestre" REFTABLE="talentospilos_semestre" REFFIELDS="id" PREVIOUS="primary" NEXT="cur_upk" COMMENT="XMLDB foreign key 'cur_fk1'"/>
+          <KEY NAME="cur_upk" TYPE="unique" FIELDS="id_curso, id_semestre" PREVIOUS="cur_pk1" COMMENT="XMLDB unique key 'cur_upk'"/>
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_monitor_estud" COMMENT="Relaciona los monitores con sus estudiantes a cargo">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_monitor" />
+          <FIELD NAME="id_monitor" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="id_estudiante" PREVIOUS="id"/>
+          <FIELD NAME="id_estudiante" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_monitor"/>
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="mon_est_pk1" FIELDS="id"/>
+          <KEY NAME="mon_est_pk1" TYPE="foreign" FIELDS="id_monitor" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="mon_est_pk2" COMMENT="XMLDB foreign key 'mon_est_fk1'"/>
+          <KEY NAME="mon_est_pk2" TYPE="foreign" FIELDS="id_estudiante" REFTABLE="talentospilos_usuario" REFFIELDS="id" PREVIOUS="mon_est_pk1" NEXT="mon_est_un" COMMENT="XMLDB foreign key 'mon_est_fk2'"/>
+          <KEY NAME="mon_est_un" TYPE="unique" FIELDS="id_monitor, id_estudiante" PREVIOUS="mon_est_pk2" COMMENT="XMLDB unique key 'mon_est_un'"/>
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_seguimiento" COMMENT="describe un seguimiento hecho por un monitor">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_monitor" />
+          <FIELD NAME="id_monitor" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="fecha" PREVIOUS="id"/>
+          <FIELD NAME="created" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_monitor" NEXT="hora_ini"/>
+          <FIELD NAME="fecha" TYPE="int" LENGTH="20" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_monitor" NEXT="hora_ini"/>
+          <FIELD NAME="hora_ini" TYPE="char" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="fecha" NEXT="hora_fin"/>
+          <FIELD NAME="hora_fin" TYPE="char" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="hora_ini" NEXT="descripcion"/>
+          <FIELD NAME="lugar" TYPE="char" LENGTH="100" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="lugar" PREVIOUS="descripcion"/>
+          <FIELD NAME="descripcion" TYPE="char" LENGTH="500" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="tema" PREVIOUS="hora_fin"/>
+          <FIELD NAME="tema" TYPE="char" LENGTH="500" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="objetivos" PREVIOUS="descripcion"/>
+          <FIELD NAME="objetivos" TYPE="char" LENGTH="500" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="actividades" PREVIOUS="tema"/>
+          <FIELD NAME="actividades" TYPE="char" LENGTH="1000" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="observaciones" PREVIOUS="objetivos"/>
+          <FIELD NAME="observaciones" TYPE="char" LENGTH="1000" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="tipo" PREVIOUS="actividades"/>
+          <FIELD NAME="tipo" TYPE="char" LENGTH="6" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="actividades" NEXT="status"/>
+          <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="tipo"/>
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="seguim_moni_pk1" FIELDS="id"/>
+          <KEY NAME="seguim_moni_fk1" TYPE="foreign" FIELDS="id_monitor" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"  COMMENT="XMLDB foreign key 'seguim_moni_fk1'"/>
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_primer_acerca" COMMENT="decribe el primer acercamiento del profesional con el estudiante de talentos">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_monitor" />
+          <FIELD NAME="id_profesionalps" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="id_estudiante" PREVIOUS="id"/>
+          <FIELD NAME="id_estudiante" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="created" PREVIOUS="id_profesionalps"/>
+          <FIELD NAME="created" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_estudiante" NEXT="comp_familiar"/>
+          <FIELD NAME="comp_familiar" TYPE="char" LENGTH="200" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="created" NEXT="motivo"/>
+          <FIELD NAME="motivo" TYPE="char" LENGTH="200" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="comp_familiar" NEXT="observaciones"/>
+          <FIELD NAME="observaciones" TYPE="char" LENGTH="1000" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="motivo" NEXT="status"/>
+          <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="observaciones"/>
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="seguim_moni_pk1" FIELDS="id"/>
+          <KEY NAME="pri_acer_fk1" TYPE="foreign" FIELDS="id_profesionalps" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"  COMMENT="XMLDB foreign key 'pri_acer_fk1'"/>
+          <KEY NAME="pri_acer_fk2" TYPE="foreign" FIELDS="id_estudiante" REFTABLE="talentospilos_usuario" REFFIELDS="id" PREVIOUS="pri_acer_fk1"  COMMENT="XMLDB foreign key 'pri_acer_fk2'"/>
+          <KEY NAME = "unique_pk" TYPE = "unique" FIELDS = "id_profesionalps,id_estudiante" PREVIOUS="pri_acer_fk2" COMMENT="XMLDB UNIQUE key 'unique_pk'" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_economia" COMMENT="decribe ingresos y egresos">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_monitor" />
+          <FIELD NAME="id_estudiante" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="created" PREVIOUS="id_profesionalps"/>
+          <FIELD NAME="concepto" TYPE="char" LENGTH="200" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_estudiante" NEXT="monto"/>
+          <FIELD NAME="monto" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="concepto" NEXT="tipo"/>
+          <FIELD NAME="tipo" TYPE="char" LENGTH="1000" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="monto"/>
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="seguim_moni_pk1" FIELDS="id"/>
+          <KEY NAME="pri_acer_fk1" TYPE="foreign" FIELDS="id_estudiante" REFTABLE="talentospilos_usuario" REFFIELDS="id" PREVIOUS="pri_acer_fk1"  COMMENT="XMLDB foreign key 'pri_acer_fk2'"/>
+          <!--<KEY NAME = "unique_pk" TYPE = "unique" FIELDS = "id_estudiante" PREVIOUS="pri_acer_fk1" COMMENT="XMLDB UNIQUE key 'unique_pk'" />-->
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_familia" COMMENT="decribe la informacion de cada pariente de un estudiante">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_monitor" />
+          <FIELD NAME="id_estudiante" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="created" PREVIOUS="id_profesionalps"/>
+          <FIELD NAME="nombre_pariente" TYPE="char" LENGTH="50" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_estudiante" NEXT="parentesco"/>
+          <FIELD NAME="parentesco" TYPE="char" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="nombre_pariente" NEXT="ocupacion"/>
+          <FIELD NAME="ocupacion" TYPE="char" LENGTH="50" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="parentesco" NEXT="ocupacion"/>
+          <FIELD NAME="telefono" TYPE="int" LENGTH="15" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="ocupacion"/>
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="seguim_moni_pk1" FIELDS="id"/>
+          <KEY NAME="familia_fk1" TYPE="foreign" FIELDS="id_estudiante" REFTABLE="talentospilos_usuario" REFFIELDS="id" PREVIOUS="pri_acer_fk1"  COMMENT="XMLDB foreign key 'familia_fk1'"/>
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_seg_soc_educ" COMMENT="seguimiento_socioeducativo">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_monitor" />
+          <FIELD NAME="id_estudiante" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="created" PREVIOUS="id_profesionalps"/>
+          <FIELD NAME="created" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_estudiante" NEXT="motivo"/>
+          <FIELD NAME="fecha" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="created" NEXT="hora"/>
+          <FIELD NAME="hora" TYPE="char" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="fecha" NEXT="motivo"/>
+          <FIELD NAME="motivo" TYPE="char" LENGTH="500" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="hora" NEXT="seguimiento"/>
+          <FIELD NAME="seguimiento" TYPE="char" LENGTH="500" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="motivo" NEXT="status"/>
+          <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="seguimiento"/>
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="seguim_moni_pk1" FIELDS="id"/>
+          <KEY NAME="pri_acer_fk2" TYPE="foreign" FIELDS="id_estudiante" REFTABLE="talentospilos_usuario" REFFIELDS="id" PREVIOUS="pri_acer_fk1"  COMMENT="XMLDB foreign key 'pri_acer_fk2'"/>
+          <KEY NAME = "unique_pk" TYPE = "unique" FIELDS = "id_estudiante" PREVIOUS="pri_acer_fk2" COMMENT="XMLDB UNIQUE key 'unique_pk'" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_socioeducativo" COMMENT="seguimiento_socioeducativo">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_monitor" />
+          <FIELD NAME="id_estudiante" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="id_profesionalps" PREVIOUS="id_profesionalps"/>
+          <FIELD NAME="id_profesionalps" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="created" PREVIOUS="id_estudiante"/>
+          <FIELD NAME="created" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_estudiante" NEXT="motivo"/>
+          <FIELD NAME="fecha" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="created" NEXT="hora"/>
+          <FIELD NAME="hora" TYPE="char" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="fecha" NEXT="motivo"/>
+          <FIELD NAME="motivo" TYPE="char" LENGTH="500" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="hora" NEXT="seguimiento"/>
+          <FIELD NAME="antecedente_psicosocial" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="motivo" NEXT="antecedente_tsocial"/>
+          <FIELD NAME="antecedente_tsocial" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="antecedente_psicosocial" NEXT="antecedente_terapiao"/>
+          <FIELD NAME="antecedente_terapiao" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="antecedente_tsocial" NEXT="descripcion_antecedente"/>
+          <FIELD NAME="descripcion_antecedente" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="antecedente_terapiao" NEXT="composicion_familiar"/>
+          <FIELD NAME="comp_familiar" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="descripcion_antecedente" NEXT="dinamica_familiar"/>
+          <FIELD NAME="dinamica_familiar" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="compo_familiar" NEXT="red_familiar"/>
+          <FIELD NAME="red_familiar" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="dinamica_familiar" NEXT="red_edu"/>
+          <FIELD NAME="red_edu" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="red_familiar" NEXT="red_social"/>
+          <FIELD NAME="red_social" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="red_edu" NEXT="fr_spa"/>
+          <FIELD NAME="fr_spa" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="red_social" NEXT="fr_embarazo"/>
+          <FIELD NAME="fr_embarazo" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="fr_spa" NEXT="fr_maltrato"/>
+          <FIELD NAME="fr_maltrato" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="fr_embarazo" NEXT="fr_abusosexual"/>
+          <FIELD NAME="fr_abusosexual" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="fr_maltrato" NEXT="fr_otros"/>
+          <FIELD NAME="fr_otros" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="fr_abusosexual" NEXT="fr_spa_observaciones"/>
+          <FIELD NAME="fr_spa_observaciones" TYPE="char" LENGTH="500" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="fr_otros" NEXT="fr_embarazo_observaciones"/>
+          <FIELD NAME="fr_embarazo_observaciones" TYPE="char" LENGTH="500" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="fr_spa_observaciones" NEXT="fr_maltrato_observaciones"/>
+          <FIELD NAME="fr_maltrato_observaciones" TYPE="char" LENGTH="500" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="fr_embarazo_observaciones" NEXT="fr_abusosexual_observaciones"/>
+          <FIELD NAME="fr_abusosexual_observaciones" TYPE="char" LENGTH="500" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="fr_maltrato_observaciones" NEXT="fr_otros_observaciones"/>
+          <FIELD NAME="fr_otros_observaciones" TYPE="char" LENGTH="500" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="fr_abusosexual_observaciones" NEXT="observaciones"/>
+          <FIELD NAME="observaciones" TYPE="char" LENGTH="1000" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="fr_otros_observaciones" NEXT="acuerdos"/>
+          <FIELD NAME="acuerdos" TYPE="char" LENGTH="1000" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="observaciones" NEXT="seguimiento"/>
+          <FIELD NAME="seguimiento" TYPE="char" LENGTH="1000" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="acuerdos" NEXT="status"/>
+          <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="seguimiento"/>
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="seguim_moni_pk1" FIELDS="id"/>
+          <KEY NAME="pri_acer_fk1" TYPE="foreign" FIELDS="id_profesionalps" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"  COMMENT="XMLDB foreign key 'pri_acer_fk1'"/>
+          <KEY NAME="pri_acer_fk2" TYPE="foreign" FIELDS="id_estudiante" REFTABLE="talentospilos_usuario" REFFIELDS="id" PREVIOUS="pri_acer_fk1"  COMMENT="XMLDB foreign key 'pri_acer_fk2'"/>
+          <KEY NAME = "unique_pk" TYPE = "unique" FIELDS = "id_profesionalps,id_estudiante" PREVIOUS="pri_acer_fk2" COMMENT="XMLDB UNIQUE key 'unique_pk'" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_seg_estudiante" COMMENT="seguimiento_socioeducativo">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_monitor" />
+          <FIELD NAME="id_estudiante" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" NEXT="created" PREVIOUS="id_profesionalps"/>
+          <FIELD NAME="id_seguimiento" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_estudiante" NEXT="motivo"/>
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="seg_est_fk1" FIELDS="id"/>
+          <KEY NAME="seg_est_fk1" TYPE="foreign" FIELDS="id_estudiante" REFTABLE="talentospilos_usuario" REFFIELDS="id" PREVIOUS="pri_acer_fk1"  COMMENT="XMLDB foreign key 'seg_est_fk2'"/>
+          <KEY NAME="seg_est_fk2" TYPE="foreign" FIELDS="id_seguimiento" REFTABLE="talentospilos_seguimiento" REFFIELDS="id" PREVIOUS="pri_acer_fk1"  COMMENT="XMLDB foreign key 'seg_est_fk2'"/>
+          <KEY NAME = "unique_pk" TYPE = "unique" FIELDS = "id_estudiante, id_seguimiento" PREVIOUS="seg_est_fk2" COMMENT="XMLDB UNIQUE key 'unique_pk'" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_profesional" COMMENT="tipos de profesional">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="nombre_profesional" />
+          <FIELD NAME="nombre_profesional" TYPE="char" LENGTH="50" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" />
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_usuario_prof" COMMENT="Relaciona usuario con el tipo de profesional">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_usuario" />
+          <FIELD NAME="id_usuario" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="" />
+          <FIELD NAME="id_profesional" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_usuario" />
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="usuario_prof_fk1" FIELDS="id" />
+          <KEY NAME="usuario_prof_fk1" TYPE="foreign" FIELDS="id_usuario" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="usuario_prof_fk2" COMMENT="XMLDB foreign key 'usuario_prof_fk1'" />
+          <KEY NAME="usuario_prof_fk2" TYPE="foreign" FIELDS="id_profesional" REFTABLE="talentospilos_profesional" REFFIELDS="id" PREVIOUS="usuario_prof_fk1" COMMENT="XMLDB foreign key 'usuario_prof_fk2'" />
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="talentospilos_dir_programa" COMMENT="Relaciona usuario con el tipo de profesional">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="id_usuario" />
+          <FIELD NAME="id_usuario" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="id_programa" />
+          <FIELD NAME="id_programa" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_usuario" />
+          <FIELD NAME="id_semestre" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id_usuario" />
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" NEXT="usuario_prof_fk1" FIELDS="id" />
+          <KEY NAME="usuario_prof_fk1" TYPE="foreign" FIELDS="id_usuario" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="usuario_prof_fk2" COMMENT="XMLDB foreign key 'usuario_prof_fk1'" />
+          <KEY NAME="usuario_prof_fk2" TYPE="foreign" FIELDS="id_programa" REFTABLE="talentospilos_programa" REFFIELDS="id" PREVIOUS="usuario_prof_fk1" NEXT="usuario_prof_fk3" COMMENT="XMLDB foreign key 'usuario_prof_fk2'" />
+          <KEY NAME="usuario_prof_fk3" TYPE="foreign" FIELDS="id_semestre" REFTABLE="talentospilos_semestre" REFFIELDS="id" PREVIOUS="usuario_prof_fk2"  COMMENT="XMLDB foreign key 'usuario_prof_fk3'" />
+          <KEY NAME = "unique_pk" TYPE = "unique" FIELDS = "id_usuario, id_semestre, id_programa" PREVIOUS="seg_est_fk2" COMMENT="XMLDB UNIQUE key 'unique_pk'" />
+        </KEYS>
+      </TABLE>
+    </TABLES>
+  </XMLDB>

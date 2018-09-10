@@ -1,0 +1,99 @@
+/** Styles included in topics course format */
+
+.format-onetopic .jumpmenu {
+    text-align: center;
+}
+
+.format-onetopic .course-content div.single-section .tabtree .tabrow0 li {
+    line-height: 28px;
+    display: inline-block;
+}
+
+.format-onetopic .course-content div.single-section .tabtree .tabrow0 li.here .empty {
+    bottom: 3px;
+    display: block;
+    height: 1px;
+    left: 0;
+    right: 0;
+}
+
+.format-onetopic .course-content div.single-section .tabtree {
+    margin-bottom: 0;
+}
+
+.format-onetopic .tab_content {
+    white-space: nowrap;
+}
+
+.format-onetopic .tab_content.marker {
+    font-weight: bold;
+}
+
+.format-onetopic .utilities-separator {
+    clear: both;
+    margin-top: 15px;
+}
+
+.format-onetopic ul.nav-tabs li a .tab_content.dimmed {
+    color: #999;
+    opacity: 0.5;
+}
+
+.format-onetopic .subtopic-increase-sections {
+    margin-right: 10px;
+}
+
+.format-onetopic li.sublevel {
+    padding-left: 20px;
+}
+
+.format-onetopic .onetopic .nav-tabs > li > a {
+    padding: 0;
+}
+
+.format-onetopic .onetopic .tab_content {
+    padding: 8px 12px;
+}
+
+.format-onetopic .onetopic_hideicons .activityicon {
+    display: none;
+}
+
+.format-onetopic .availability_info_box {
+    display: inline;
+}
+
+.format-onetopic .summary img.activityicon {
+    margin-right: 3px;
+    vertical-align: text-bottom;
+}
+
+.format-onetopic #course_format_onetopic_config_movesection .form-item {
+    border-bottom: 1px solid #999;
+    padding: 10px;
+}
+
+.format-onetopic #course_format_onetopic_config_movesection .form-label {
+    font-weight: bold;
+}
+
+.format-onetopic #course_format_onetopic_config_movesection .form-setting {
+    padding-left: 20px;
+}
+
+.format-onetopic #course_format_onetopic_config_movesection .form-description {
+    padding-left: 50px;
+    font-style: italic;
+}
+
+.format-onetopic #course_format_onetopic_config_movesection #changenumsections {
+    text-align: left;
+}
+
+.format-onetopic .onetopic .content > .summary .quickeditlink {
+    display: none;
+}
+
+.format-onetopic .onetopic .content > .summary .iconhelp {
+    cursor: pointer;
+}

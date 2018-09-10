@@ -1,0 +1,36 @@
+<div class="panel panel-default">
+    <div class="panel panel-default">
+        <!--Panel heading-->
+        <div class="panel-heading">
+            <h4 class="panel-title" id="list-users-panel">
+                <a data-toggle="collapse" id="listadministradores" href="#div_assign_cohorts">Asignación de cohortes</a>
+            </h4>
+        </div>
+        <!--End panel heading-->
+        <div id="div_assign_cohorts" class="panel-collapse collapse">
+            <!--Panel body-->
+            <div class="panel-body">
+                <div class="col-sm-6">
+                    <form id="cohort_assignment_form">
+                        <div class="form-group" id="div_select_cohorts">
+                            <label for="">Cohorte</label>
+                            <select name="select_cohorts" id="select_cohorts" class="form-control">
+                                {{{select_cohorts}}}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-danger" type="button" id="button_assign_cohort">Asignar cohorte</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-6" id="div_cohorts_table">
+                    <table id="cohorts_table">
+
+                    </table>
+                </div>
+            </div>
+            <!--End panel heading-->
+        </div>
+    </div>
+</div>
+

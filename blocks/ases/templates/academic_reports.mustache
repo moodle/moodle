@@ -1,0 +1,54 @@
+
+<body name="general_reports">
+{{#data}}
+{{> block_ases/side_menu}}
+{{{message}}}
+<div>
+        <div class = 'title'><b>REPORTES ACADÉMICOS</b></div>
+
+        <div data-spy="scroll" data-target=".navbar" data-offset="50" class="well col-md-10 col-md-offset-1 reporte-seguimiento" id="reemplazarToogle" name="reemplazarToogle">
+            {{#view_students_report_ar}}
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="background-color: #D0C4C4;">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" href="#collapse01">
+                                Reporte de ítems perdidos por estudiante
+                            </a>
+                        </h4>
+                    </div>
+                    <div id = "collapse01" class="panel-collapse collapse">
+                        {{{tableStudents}}}
+                    </div>
+                </div>
+
+            </div>
+            {{/view_students_report_ar}}
+
+
+            {{#view_courses_report_ar}}
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="background-color: #D0C4C4;">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" href="#collapse03">
+                                Reporte por cursos
+                            </a>
+                        </h4>
+                    </div>
+                    <div id = "collapse03" class="panel-collapse collapse">
+                        {{{tableCourses}}}
+                    </div>
+                </div>
+
+            </div>
+            {{/view_courses_report_ar}}
+
+        </div>
+       
+
+       
+    </div>
+    <!-- end wrapper -->
+    {{/data}}
+</body>

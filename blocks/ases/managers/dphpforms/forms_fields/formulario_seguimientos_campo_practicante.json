@@ -1,0 +1,106 @@
+{
+    "id_temporal": "cmp_xx",
+    "enunciado": "id_practicante",
+    "tipo_campo": "TEXTFIELD",
+    "opciones_campo": null,
+    "atributos_campo": {
+        "maxlength": "1000",
+        "class": "col-xs-12 col-sm-12 col-md-12 col-lg-12 oculto",
+        "name": "id_practicante",
+        "required": "false",
+        "local_alias": "id_practicante"
+    },
+    "permisos_campo": [
+        {
+            "rol": "administrativo",
+            "permisos": [
+                "lectura",
+                "escritura"
+            ]
+        },
+        {
+            "rol": "reportes",
+            "permisos": [
+                "lectura",
+                "escritura"
+            ]
+        },
+        {
+            "rol": "profesional_ps",
+            "permisos": [
+                "lectura",
+                "escritura"
+            ]
+        },
+        {
+            "rol": "monitor_ps",
+            "permisos": [
+                "lectura",
+                "escritura"
+            ]
+        },
+        {
+            "rol": "estudiante_t",
+            "permisos": [
+                "lectura",
+                "escritura"
+            ]
+        },
+        {
+            "rol": "sistemas",
+            "permisos": [
+                "lectura",
+                "escritura"
+            ]
+        },
+        {
+            "rol": "practicante_ps",
+            "permisos": [
+                "lectura",
+                "escritura"
+            ]
+        },
+        {
+            "rol": "geografo",
+            "permisos": [
+                "lectura",
+                "escritura"
+            ]
+        },
+        {
+            "rol": "academico",
+            "permisos": [
+                "lectura",
+                "escritura"
+            ]
+        },
+        {
+            "rol": "director_prog",
+            "permisos": [
+                "lectura",
+                "escritura"
+            ]
+        },
+        {
+            "rol": "geografico",
+            "permisos": [
+                "lectura",
+                "escritura"
+            ]
+        },
+        {
+            "rol": "dir_socioeducativo",
+            "permisos": [
+                "lectura",
+                "escritura"
+            ]
+        },
+        {
+            "rol": "financiero",
+            "permisos": [
+                "lectura",
+                "escritura"
+            ]
+        }
+    ]
+}

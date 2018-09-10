@@ -1,0 +1,189 @@
+/* === Remove input autofocus webkit === */
+*:focus {
+    outline: none;
+}
+
+/* === Form Typography === */
+body {
+    font: 14px/21px "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+
+}
+
+.form-pilos h2, .form-pilos label {
+    font-family: Helvetica, Inherit, "Times New Roman", serif;
+
+
+}
+
+
+
+
+.select-pilos{
+     margin-bottom: 10px;
+}
+
+.form-select-pilos{
+    height: 30px;
+    padding: 5px 8px;
+    margin: 20px;
+    width: 70%;
+}
+
+.form_hint, .required_notification {
+    font-size: 11px;
+}
+
+/* === List Styles === */
+.form-pilos ul {
+    width: 550px;
+    list-style-type: none;
+    list-style-position: outside;
+    margin: 0px;
+    padding: 0px; }
+
+.form-pilos li {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    position: relative;
+}
+
+.form-pilos li:first-child, .form-pilos li:last-child {
+    border-bottom: 1px solid #777;
+
+}
+
+/* === Form Elements === */
+.form-pilos label {
+    width: 180px;
+    margin-top: 3px;
+    display: inline-block;
+    float: left;
+    padding: 3px;
+    font-size: 16px;
+}
+
+.form-pilos input {
+    height: 30px;
+    min-width: 420px;
+    max-width: 500px;
+    padding: 5px 8px;
+}
+
+.form-pilos textarea {
+    padding: 8px;
+    width: 300px;
+}
+
+.form-pilos button {
+    margin-left: 10px;
+}
+
+.btn-form{
+    margin-top: 10px;
+}
+
+/* form element visual styles */
+.form-pilos input, .form-pilos textarea {
+    border: 1px solid #aaa;
+    box-shadow: 0px 0px 3px #ccc, 0 10px 15px #eee inset;
+    border-radius: 2px;
+    padding-right: 30px;
+    -moz-transition: padding .25s;
+    -webkit-transition: padding .25s;
+    -o-transition: padding .25s;
+    transition: padding .25s; }
+
+.form-pilos input:focus, .form-pilos textarea:focus {
+    background: #fff;
+    border: 1px solid #555;
+    box-shadow: 0 0 3px #aaa;
+    padding-right: 70px;
+}
+
+/* === HTML5 validation styles === */
+.form-pilos input:required, .form-pilos textarea:required {
+    background: #fff url(../icon/ico_asterisc_red.png) no-repeat 98% center;
+}
+
+.form-pilos input:required:valid, .form-pilos textarea:required:valid {
+    background: #fff url(../icon/ico_valid.png) no-repeat 98% center;
+    box-shadow: 0 0 5px #5cd053; border-color: #28921f;
+}
+
+.form-pilos input:focus:invalid, .form-pilos textarea:focus:invalid {
+    background: #fff url(../icon/ico_wrong.png) no-repeat 98% center;
+    box-shadow: 0 0 5px #d45252; border-color: #b03535;
+}
+
+/* === Form hints === */
+.form_hint {
+    background: #d45252;
+    border-radius: 3px 3px 3px 3px;
+    color: white; margin-left: 8px;
+    padding: 1px 6px; z-index: 999;
+    /* hints stay above all other elements */
+    position: absolute;
+    /* allows proper formatting if hint is two lines */
+    display: none;
+}
+.form_hint::before {
+    content: "\25C0";
+    color: #d45252; position: absolute;
+    top: 1px;
+    left: -6px;
+}
+
+
+.form-pilos input:focus + .form_hint {
+    display: inline;
+}
+
+.form-pilos input:required:valid + .form_hint {
+    background: #28921f;
+}
+
+.form-pilos input:required:valid + .form_hint::before {
+    color: #28921f;
+}
+
+/* === Button Style === */
+
+button.submit {
+    background-color: #D51B23;
+    background: -webkit-gradient(linear, left top, left bottom, from(#D51B23), to(#D51B23));
+    background: -webkit-linear-gradient(top, #D51B23, #D51B23);
+    background: -moz-linear-gradient(top, #D51B23, #D51B23);
+    background: -ms-linear-gradient(top, #D51B23, #D51B23);
+    background: -o-linear-gradient(top, #D51B23, #D51B23);
+    background: linear-gradient(top, #D51B23, #D51B23);
+    border: 1px solid #D51B23;
+    border-bottom: 1px solid #D51B23;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+    box-shadow: inset 0 1px 0 0 #D51B23;
+    -webkit-box-shadow: 0 1px 0 0 #D51B23 inset;
+    -moz-box-shadow: 0 1px 0 0 #D51B23 inset;
+    -ms-box-shadow: 0 1px 0 0 #D51B23 inset;
+    -o-box-shadow: 0 1px 0 0 #D51B23 inset;
+    color: white; font-weight: bold;
+    padding: 6px 20px;
+    text-align: center;
+    text-shadow: 0 -1px 0 #396715;
+}
+
+button.submit:hover {
+    opacity: .85;
+    cursor: pointer;
+}
+
+button.submit:active {
+    border: 1px solid #20911e;
+    box-shadow: 0 0 10px 5px #356b0b inset;
+    -webkit-box-shadow: 0 0 10px 5px #356b0b inset;
+    -moz-box-shadow: 0 0 10px 5px #356b0b inset;
+    -ms-box-shadow: 0 0 10px 5px #356b0b inset;
+    -o-box-shadow: 0 0 10px 5px #356b0b inset;
+}

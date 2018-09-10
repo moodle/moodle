@@ -1,0 +1,28 @@
+
+<body name="general_reports">
+{{#data}}
+    <div  id="wrapper">
+        <!-- Sidebar -->
+        <div  style="width: 500px !important;height: 100%" id="sidebar-wrapper">
+            <ul style="width: 500px !important;height: 100%" class="sidebar-nav">
+                <li style="font-size: 25px" class="sidebar-brand">
+                    Gestión de reportes
+                </li>
+                <li>
+                    <a style="font-size: 18px" href="#" id="academics">Reportes Academicos</a>
+                </li>
+                <li>
+                    <a style="font-size: 18px" href="#" id="general">Reporte general de estudiantes</a>
+                </li>
+                <li>
+                    <a style="font-size: 18px" href="#" id="seguimientos">Reporte de Seguimientos</a>
+                </li>
+            </ul>
+        </div>
+       
+    </div>
+    <!-- end wrapper -->
+    <script type="text/javascript" src="../amd/require-setup.js"></script>
+    <script data-main="../amd/src/general_reports/amd_general_reports" src="../amd/scripts/require.js"></script>
+    {{/data}}
+</body>

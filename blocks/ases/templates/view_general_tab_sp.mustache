@@ -1,0 +1,84 @@
+{{!-- General tab --}}
+<div class="tab-pane active p-t-100" id="general_tab">
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <h3 class="h-sections-general-tab" id="h-student-info">INFORMACIÓN DEL ESTUDIANTE</h3>
+            <hr class="hr-general-tab-fields">
+
+            <div class="row">
+                <label for="input-dir-res" class="col-xs-3 col-sm-3 col-md-3 col-lg-3 label_fields_general_tab">Dirección residencia</label>
+                <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 div_fields_general_tab" id="div-input-dir-res">
+                    <input type="text" class="input_fields_general_tab" name="direccion_res" id="direccion_res" value="{{res_address}}" maxlength="100" readonly>
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="tel_res" class="col-xs-3 col-sm-3 col-md-3 col-lg-3 label_fields_general_tab">Teléfono residencia</label>
+                <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 div_fields_general_tab" id="div-input-tel-res">
+                    <input type="tel" class="input_fields_general_tab" name="tel_res" id="tel_res" readonly value="{{res_tel}}" maxlength="15">
+                </div>
+            </div>
+            <div class="row">
+                <label for="tel3" class="col-xs-3 col-sm-3 col-md-3 col-lg-3 label_fields_general_tab">Celular</label>
+                <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 div_fields_general_tab" id="div-input-cellphone">
+                    <input type="tel" class="input_fields_general_tab" name="celular" id="celular" readonly value="{{cell_phone}}" maxlength="15">
+                </div>
+            </div>
+            <div class="row">
+                <label for="email_alt" class="col-xs-3 col-sm-3 col-md-3 col-lg-3 label_fields_general_tab">Email alternativo</label>
+                <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 div_fields_general_tab" id="div-input-email-alt">
+                    <input type="email" class="input_fields_general_tab" name="emailpilos" id="emailpilos" readonly value="{{emailpilos}}" maxlength="100" required />
+                </div>
+            </div>
+
+            <h3 class="h-sections-general-tab">INFORMACIÓN DEL ACUDIENTE</h3>
+            <hr class="hr-general-tab-fields">
+
+            <div class="row">
+                <label for="nombre_acudiente" class="col-xs-3 col-sm-3 col-md-3 col-lg-3 label_fields_general_tab">Nombre completo</label>
+                <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 div_fields_general_tab" id="div-input-email-alt">
+                    <input type="text" class="input_fields_general_tab" name="acudiente" id="acudiente" value="{{attendant}}" maxlength="100" readonly/>
+                </div>
+            </div>
+            <div class="row">
+                <label for="tel4" class="col-xs-3 col-sm-3 col-md-3 col-lg-3 label_fields_general_tab">Teléfono</label>
+                <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 div_fields_general_tab">
+                    <input type="tel" class="input_fields_general_tab" name="tel_acudiente" id="tel_acudiente" value="{{attendant_tel}}" maxlength="15" readonly/>
+                </div>
+            </div>
+            
+            <h3 class="h-sections-general-tab">INFORMACIÓN PROFESIONAL Y MONITOR</h3>
+            <hr class="hr-general-tab-fields">
+
+            <div class="row">
+                <label for="profesional_ps" class="col-xs-3 col-sm-3 col-md-3 col-lg-3 label_fields_general_tab">Profesional</label>
+                <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 div_fields_general_tab">
+                    <span class="span-staff-ps">{{professional_fullname}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="practicante_ps" class="col-xs-3 col-sm-3 col-md-3 col-lg-3 label_fields_general_tab">Practicante</label>
+                <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 div_fields_general_tab">
+                    <span class="span-staff-ps">{{trainee_fullname}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="monitor_ps" class="col-xs-3 col-sm-3 col-md-3 col-lg-3 label_fields_general_tab">Monitor</label>
+                <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 div_fields_general_tab">
+                    <span class="span-staff-ps">{{monitor_fullname}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <iframe class="col-xs-12 col-sm-12 col-md-12 col-lg-12" height="396" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyAoE-aPVfruphY4V4BbE8Gdwi93x-5tBTM&origin={{latitude}},{{longitude}}&destination=3.3759493,-76.5355789&mode=transit"
+            allowfullscreen> </iframe>
+            <div class="col-sm-12">
+                <label for="observaciones" class="col-md-12">Observaciones</label>
+                <textarea name="observacion" id="observacion" class="col-sm-12" readonly></textarea>
+                <textarea name="" id="observaciones_anteriores" class="col-md-12" readonly>{{observations}}</textarea>
+            </div>
+        </div>
+    </div>
+
+</div>
+{{!-- End general tab --}}

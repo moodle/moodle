@@ -1,0 +1,9 @@
+.graficaHistoricoDimensional > span {
+    font-size: 1.3em;
+    margin-bottom: 0.4em;
+}
+
+.btn-grafico-riesgo{
+    color: #FFF;
+    margin-top: 5px;
+}

@@ -1,0 +1,27 @@
+{{#data}}
+{{> block_ases/side_menu}}
+<div class="container">
+    <div class="row">
+    <h2>CONFIGURACIÓN DE LA INSTANCIA</h2>
+    <hr/>
+    {{{message}}}
+    <div class="panel-group">
+
+        {{#instance_setup_ic}}
+        {{> block_ases/ic_instance_management}}
+        {{/instance_setup_ic}}
+
+        {{#cohort_assignment_ic}}
+        {{> block_ases/ic_cohort_assignment}}
+        {{/cohort_assignment_ic}}
+
+        {{#admin_assignment_ic}}
+        {{> block_ases/ic_admin_assignment}}
+        {{/admin_assignment_ic}}
+    </div>
+    {{#status}}
+        {{> block_ases/restricted_access}}
+    {{/status}}
+    {{!--end panel-group--}}
+</div>
+{{/data}}

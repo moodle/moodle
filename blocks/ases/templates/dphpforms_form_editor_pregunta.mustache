@@ -1,0 +1,53 @@
+{{#data}}
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-group">
+                <h2>Editor de pregunta</h2>
+                <hr>   
+                    <a id="dphpforms-redirect-adm-forms" href="javascript:void(0)" class="btn btn-sm btn-default">Administrar formularios</a>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="alert alert-danger">
+                    <strong>Importante!</strong> Tenga especial cuidado al modificar las clases asociadas a las preguntas, en muchos casos, estas sirven de identificadores para los scripts personalizados que actuan sobre el formulario.
+                </div>
+                <hr>
+                {{#pregunta}}
+                <div class="form-group">
+                    #ID: <strong>{{id}}</strong>
+                </div>
+
+                <div class="form-group">
+                    Enunciado: <strong>{{enunciado}}</strong>
+                    <input id="enunciado" class="form-control" value="{{enunciado}}"/>
+                </div>
+                <div class="form-group">
+                    <a id="actualizar-enunciado" href="javascript:void(0)" class="btn btn-danger btn-sm btn-dphpforms btn-dphpforms-univalle" data-pregunta-id="{{id}}">Actualizar enunciado</a>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label for="">Atributos:</label>
+                    <textarea id="atributos" rows="5" class="form-control">{{atributos_campo}}</textarea>
+                </div>
+                <div class="form-group">
+                    <a id="actualizar-atributos" href="javascript:void(0)" class="btn btn-danger btn-sm btn-dphpforms btn-dphpforms-univalle" data-pregunta-id="{{id}}">Actualizar atributos</a>
+                </div>
+                {{#radio_or_check}}
+                <hr>
+                <div class="form-group">
+                    <label for="">Opciones:</label>
+                    <textarea id="opciones" rows="5" class="form-control">{{opciones_campo}}</textarea>
+                </div>
+                <div class="form-group">
+                    <a id="actualizar-opciones" href="javascript:void(0)" class="btn btn-danger btn-sm btn-dphpforms btn-dphpforms-univalle" data-pregunta-id="{{id}}">Actualizar opciones</a>
+                </div>
+                {{/radio_or_check}}
+                {{/pregunta}}
+            </div>
+        </div>
+    </div>
+</body>
+{{/data}}

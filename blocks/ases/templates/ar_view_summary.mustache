@@ -1,0 +1,199 @@
+
+<div class="row">
+    {{#summary_spp_cohorts}}
+    <div class="col-sm-6" id="div-summary-spp">
+        <div class="panel panel-success no-border-radius">
+            <div class="panel-heading col-sm-12 no-padding-col panel-heading-summary" data-target="#panel-body-spp">
+                <div class="col-sm-1 div-icon-group-cohort"><span class="glyphicon glyphicon-chevron-right icon-group-cohort"></span></div>
+                <div class="col-sm-4"><b>Ser Pilo Paga</b></div>
+                <div class="col-sm-3"><b>Seguimiento:</b> {{total_tracking}}</div>
+                <div class="col-sm-2"><b>SRA:</b> {{total_sra}}</div>
+                <div class="col-sm-2"><b>Total:</b> {{total_students}}</div>
+            </div>
+
+            <div class="panel-body" id="panel-body-spp" hidden>
+                {{#cohorts}}
+                <div class="summary-title col-sm-12 no-padding-col" data-target="#info-spp-{{id}}" data-icon="#icon-spp-{{id}}">
+                    <div class="col-sm-1 div-icon-group-cohort"><span class="glyphicon glyphicon-chevron-right" id="icon-spp-{{id}}"></span></div>
+                    <div class="col-sm-4"><b>{{name}}</b></div>
+                    <div class="col-sm-3"><b>Seguimiento:</b> {{total_ases}}</div>
+                    <div class="col-sm-2"><b>SRA:</b> {{total_sra}}</div>
+                    <div class="col-sm-2"><b>Total:</b> {{total_gen}}</div>
+                    
+                </div> 
+                    
+                <div class="summary-content col-sm-12 no-padding-col" id="info-spp-{{id}}" hidden>
+                    <hr class="no-padding hr-summary">
+                    <div class="col-sm-6 no-padding-col">
+                        {{#summary_sra}}
+                        <div class="col-sm-12 no-padding-col">
+                            <div class="col-sm-6">{{name}}</div>
+                            <div class="col-sm-6">{{total}}</div>
+                        </div>
+                        {{/summary_sra}}
+                    </div>
+                    <div class="col-sm-6 no-padding-col">
+                        {{#summary_ases}}
+                        <div class="col-sm-12">
+                            <div class="col-sm-6">{{name}}</div>
+                            <div class="col-sm-6">{{total}}</div>
+                        </div>
+                        {{/summary_ases}}
+                    </div>
+                </div>
+                               
+                {{/cohorts}}
+            </div>
+        </div>
+    </div>
+    {{/summary_spp_cohorts}}
+
+    {{#summary_spe_cohorts}}
+    <div class="col-sm-6" id="div-summary-spe">
+        <div class="panel panel-success no-border-radius">
+            <div class="panel-heading col-sm-12 no-padding-col panel-heading-summary" data-target="#panel-body-spe">
+                <div class="col-sm-1 div-icon-group-cohort"><span class="glyphicon glyphicon-chevron-right icon-group-cohort"></span></div>
+                <div class="col-sm-4"><b>Condición de excepción</b></div>
+                <div class="col-sm-3"><b>Seguimiento:</b> {{total_tracking}}</div>
+                <div class="col-sm-2"><b>SRA:</b> {{total_sra}}</div>
+                <div class="col-sm-2"><b>Total:</b> {{total_students}}</div>
+            </div>
+
+            <div class="panel-body" id="panel-body-spe" hidden>
+                {{#cohorts}}
+                <div class="summary-title col-sm-12 no-padding-col" data-target="#info-spp-{{id}}" data-icon="#icon-spp-{{id}}">
+                    <div class="col-sm-1 div-icon-group-cohort"><span class="glyphicon glyphicon-chevron-right" id="icon-spp-{{id}}"></span></div>
+                    <div class="col-sm-4"><b>{{name}}</b></div>
+                    <div class="col-sm-3"><b>Seguimiento:</b> {{total_ases}}</div>
+                    <div class="col-sm-2"><b>SRA:</b> {{total_sra}}</div>
+                    <div class="col-sm-2"><b>Total:</b> {{total_gen}}</div>
+                </div> 
+                    
+                <div class="summary-content col-sm-12 no-padding-col" id="info-spp-{{id}}" hidden>
+                    <hr class="no-padding hr-summary">
+                    <div class="col-sm-6 no-padding-col">
+                        {{#summary_sra}}
+                        <div class="col-sm-12 no-padding-col">
+                            <div class="col-sm-6">{{name}}</div>
+                            <div class="col-sm-6">{{total}}</div>
+                        </div>
+                        {{/summary_sra}}
+                    </div>
+                    <div class="col-sm-6 no-padding-col">
+                        {{#summary_ases}}
+                        <div class="col-sm-12">
+                            <div class="col-sm-6">{{name}}</div>
+                            <div class="col-sm-6">{{total}}</div>
+                        </div>
+                        {{/summary_ases}}
+                    </div>
+                </div>
+                               
+                {{/cohorts}}
+            </div>
+        </div>
+    </div>
+    {{/summary_spe_cohorts}}
+</div>
+
+<div class="row">
+
+    {{#summary_3740_cohorts}}
+    <div class="col-sm-6" id="div-summary-3740">
+        <div class="panel panel-success no-border-radius">
+            <div class="panel-heading col-sm-12 no-padding-col panel-heading-summary" data-target="#panel-body-3740">
+                <div class="col-sm-1 div-icon-group-cohort"><span class="glyphicon glyphicon-chevron-right icon-group-cohort"></span></div>
+                <div class="col-sm-4"><b>Ingeniería topográfica</b></div>
+                <div class="col-sm-3"><b>Seguimiento:</b> {{total_tracking}}</div>
+                <div class="col-sm-2"><b>SRA:</b> {{total_sra}}</div>
+                <div class="col-sm-2"><b>Total:</b> {{total_students}}</div>
+            </div>
+
+            <div class="panel-body" id="panel-body-3740" hidden>
+                {{#cohorts}}
+                <div class="summary-title col-sm-12 no-padding-col" data-target="#info-spp-{{id}}" data-icon="#icon-spp-{{id}}">
+                    <div class="col-sm-1 div-icon-group-cohort"><span class="glyphicon glyphicon-chevron-right" id="icon-spp-{{id}}"></span></div>
+                    <div class="col-sm-4"><b>{{name}}</b></div>
+                    <div class="col-sm-3"><b>Seguimiento:</b> {{total_ases}}</div>
+                    <div class="col-sm-2"><b>SRA:</b> {{total_sra}}</div>
+                    <div class="col-sm-2"><b>Total:</b> {{total_gen}}</div>
+                </div> 
+                    
+                <div class="summary-content col-sm-12 no-padding-col" id="info-spp-{{id}}" hidden>
+                    <hr class="no-padding hr-summary">
+                    
+                    <div class="col-sm-6 no-padding-col">
+                    {{#summary_sra}}
+                        <div class="col-sm-12 no-padding-col">
+                            <div class="col-sm-6">{{name}}</div>
+                            <div class="col-sm-6">{{total}}</div>
+                        </div>
+                    {{/summary_sra}}
+                    </div>
+
+                    <div class="col-sm-6 no-padding-col">
+                        {{#summary_ases}}
+                        <div class="col-sm-12">
+                            <div class="col-sm-6">{{name}}</div>
+                            <div class="col-sm-6">{{total}}</div>
+                        </div>
+                        {{/summary_ases}}
+                    </div>
+                </div>
+                               
+                {{/cohorts}}
+            </div>
+        </div>
+    </div>
+    {{/summary_3740_cohorts}}
+
+    {{#summary_oa_cohorts}}
+    <div class="col-sm-6" id="div-summary-oa">
+        <div class="panel panel-success no-border-radius">
+            <div class="panel-heading col-sm-12 no-padding-col panel-heading-summary" data-target="#panel-body-oa">
+                <div class="col-sm-1 div-icon-group-cohort"><span class="glyphicon glyphicon-chevron-right icon-group-cohort"></span></div>
+                <div class="col-sm-4 no-padding"><b>Otros ASES</b></div>
+                <div class="col-sm-3"><b>Seguimiento:</b> {{total_tracking}}</div>
+                <div class="col-sm-2"><b>SRA:</b> {{total_sra}}</div>
+                <div class="col-sm-2"><b>Total:</b> {{total_students}}</div>
+            </div>
+
+            <div class="panel-body" id="panel-body-oa" hidden>
+                {{#cohorts}}
+                <div class="summary-title col-sm-12 no-padding-col" data-target="#info-spp-{{id}}" data-icon="#icon-spp-{{id}}">
+                    <div class="col-sm-1 div-icon-group-cohort"><span class="glyphicon glyphicon-chevron-right" id="icon-spp-{{id}}"></span></div>
+                    <div class="col-sm-4"><b>{{name}}</b></div>
+                    <div class="col-sm-3"><b>Seguimiento:</b> {{total_ases}}</div>
+                    <div class="col-sm-2"><b>SRA:</b> {{total_sra}}</div>
+                    <div class="col-sm-2"><b>Total:</b> {{total_gen}}</div>
+                </div> 
+                    
+                <div class="summary-content col-sm-12 no-padding-col" id="info-spp-{{id}}" hidden>
+                    <hr class="no-padding hr-summary">
+                    <div class="col-sm-6 no-padding-col">
+                        {{#summary_sra}}
+                        <div class="col-sm-12 no-padding-col">
+                            <div class="col-sm-6">{{name}}</div>
+                            <div class="col-sm-6">{{total}}</div>
+                        </div>
+                        {{/summary_sra}}
+                    </div>
+                    <div class="col-sm-6 no-padding-col">
+                        {{#summary_ases}}
+                        <div class="col-sm-12">
+                            <div class="col-sm-6">{{name}}</div>
+                            <div class="col-sm-6">{{total}}</div>
+                        </div>
+                        {{/summary_ases}}
+                    </div>
+                </div>
+                               
+                {{/cohorts}}
+            </div>
+        </div>
+    </div>
+    {{/summary_oa_cohorts}}
+</div>
+
+
+    
