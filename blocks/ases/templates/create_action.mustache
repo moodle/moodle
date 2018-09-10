@@ -1,0 +1,207 @@
+{{#data}} {{> block_ases/side_menu}}
+<div class="container">
+<div class="row">
+<h2>GESTIÓN DE PERMISOS</h2>
+<hr/>
+{{{message}}} {{#manage_action_ca}}
+<div class="panel-group">
+   <div class="panel panel-default">
+      <div class="panel panel-default">
+         <div class="panel-heading">
+            <h4 class="panel-title" id="list-users-panel">
+               <a data-toggle="collapse" href="#collapse1">Funcionalidades</a>
+            </h4>
+         </div>
+         {{!--end panel-heading--}}
+         <div id="collapse1" class="panel-collapse collapse">
+            <div class="panel-body">
+               <div class="container">
+                  <form id="formFuncion">
+                     <div class="form-pilos">
+                        <label class="col-sm-2 control-label">Nombre :</label>
+                        <div class="col-sm-10">
+                           <input type="text" class="form-pilos" id="nombre_funcionalidad" name="nombre_funcionalidad" placeholder="Nombre funcionalidad">
+                        </div>
+                     </div>
+                     <div class="form-pilos">
+                        <label class="col-sm-2 control-label">Descripción</label>
+                        <div class="col-sm-10">
+                           <input type="text" class="form-pilos" id="descripcion_funcionalidad" name="descripcion_funcionalidad" placeholder="Descripcion funcionalidad, sea espefico">
+                        </div>
+                     </div>
+                     <div class="col-md-9 col-md-offset-4"
+                     <div class="form-pilos">
+                        <button type="submit" id="add_function" class="submit" data-toggle="modal" data-target="#myModal">
+                        Crear funcionalidad
+                        </button>
+                        <div class="invisible">
+                           <button type="submit" id="mod_function" class="submit" data-toggle="modal" data-target="#myModal">
+                           Modificar funcionalidad
+                           </button>
+                        </div>
+                     </div>
+               </div>
+               </form>
+               <div class="panel-heading">
+                  <h3 data-toggle="collapse" data-target="#collapse-function">
+                     <i class="glyphicon glyphicon-chevron-right   Try it
+                        "></i>Lista de funcionalidades
+                  </h3>
+               </div>
+               <outer-element id="collapse-function" class="collapse">
+                  <div class="col-md-8 col-md-offset-2" id="div_functions">
+                  </div>
+                  <div id="some-other-id" class="collapse">
+                     <!-- Bordered Table -->
+                     <table class="table table-bordered">
+                        <!--table element -->
+                     </table>
+                  </div>
+               </outer-element>
+               <div class="col-md-6">
+               </div>
+               {{!--end col-md-6--}}
+            </div>
+            {{!--end panel-body--}}
+            </form>
+         </div>
+      </div>
+   </div>
+   {{!--end panel-group--}} {{> block_ases/manage_action}}
+   <div class="panel panel-default">
+      <div class="panel panel-default">
+         <div class="panel-heading">
+            <h4 class="panel-title" id="list-users-panel">
+               <a data-toggle="collapse" href="#collapse4">Roles</a>
+            </h4>
+         </div>
+         {{!--end panel-heading--}}
+         <div id="collapse4" class="panel-collapse collapse">
+            <div class="panel-body">
+               <div class="container">
+                  <form id="formPerfil">
+                     <div class="form-pilos">
+                        <label class="col-sm-2 control-label">Nombre :</label>
+                        <div class="col-sm-10">
+                           <input type="text" class="form-pilos" id="nombre_perfil" name="nombre_perfil" placeholder="Nombre del rol">
+                        </div>
+                     </div>
+                     <div class="form-pilos">
+                        <label class="col-sm-2 control-label">Descripción</label>
+                        <div class="col-sm-10">
+                           <input type="text" class="form-pilos" id="descripcion_perfil" name="descripcion_perfil" placeholder="Descripcion del rol, sea espefico">
+                        </div>
+                     </div>
+                     <div class="col-md-9 col-md-offset-4"
+                     <div class="form-pilos">
+                        <button type="submit" id="add_profile" class="submit" data-toggle="modal" data-target="#myModal">
+                        Crear rol
+                        </button>
+                     </div>
+               </div>
+               </form>
+               <div class="panel-heading">
+                  <h3 data-toggle="collapse" data-target="#collapse-profile">
+                     <i class="glyphicon glyphicon-chevron-right   Try it
+                        "></i>Lista de roles
+                  </h3>
+               </div>
+               <outer-element id="collapse-profile" class="collapse">
+                  <div class="col-md-8 col-md-offset-2" id="div_profiles">
+                  </div>
+                  <div id="some-other-id" class="collapse">
+                     <!-- Bordered Table -->
+                     <table class="table table-bordered">
+                        <!--table element -->
+                     </table>
+                  </div>
+               </outer-element>
+               <div class="col-md-6">
+               </div>
+               {{!--end col-md-6--}}
+            </div>
+            {{!--end panel-body--}}
+            </form>
+         </div>
+      </div>
+   </div>
+   {{!--end panel-group--}} {{!--end panel-group--}}
+   <div class="panel panel-default">
+      <div class="panel panel-default">
+         <div class="panel-heading">
+            <h4 class="panel-title" id="list-users-panel">
+               <a data-toggle="collapse" href="#collapse6">Gestionar permisos y roles</a>
+            </h4>
+         </div>
+         {{!--end panel-heading--}}
+         <div id="collapse6" class="panel-collapse collapse">
+            <div class="panel-body">
+               {{#data}}
+               <form id="formPerfil">
+                  <div class="row">
+                     <label class="col-sm-3 control-label">Escoja el rol :</label>
+                     <div class="col-sm-12" id="userol">
+                        {{{roles_table_user}}}
+                     </div>
+                  </div>
+                  <div class="row top-buffer" id="lista_funcionalidades">
+                     {{{general_table}}}
+                  </div>
+                  <div class="col-md-10 col-md-offset-5">
+                     <div class="form-pilos">
+                        <button type="submit" id="assign_user_profile" class="submit" data-toggle="modal" data-target="#myModal">
+                        Guardar
+                        </button>
+                     </div>
+                  </div>
+               </form>
+               {{/data}}
+               <div class="col-md-6">
+               </div>
+               {{!--end col-md-6--}}
+            </div>
+            {{!--end panel-body--}}
+         </div>
+      </div>
+   </div>
+   {{!--end panel-group--}} {{/manage_action_ca}}
+</div>
+{{!-- Modal --}}
+<div id="edit" class="modal modal_pilos" role="dialog">
+<div class="modal-dialog">
+   <!-- Modal content-->
+   <div class="modal-content">
+      <div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal">&times;</button>
+         <h4 class="modal-title">Permisos</h4>
+      </div>
+      <div class="modal-body">
+         <form id="form_editar">
+            <div class="form-pilos">
+               <label class="col-sm-2 control-label">Nombre :</label>
+               <div class="col-sm-10">
+                  <input type="text" class="form-pilos" id="nombre_editar" name="nombre_editar">
+               </div>
+               <div class="form-pilos">
+                  <label class="col-sm-2 control-label">Descripción :</label>
+                  <div class="col-sm-10">
+                     <input type="text" class="form-pilos" id="descripcion_editar" name="descripcion_editar">
+                  </div>
+               </div>
+               <div class="form-pilos func hide">
+                  <label class="col-sm-2 control-label">Funcionalidad</label>
+                  <div class="col-sm-10" id="funct2">
+                     {{{functions}}}
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+      <div class="modal-footer">
+         <button type="button" class="button btn btn-secondary" data-dismiss="modal" id="close_seg">Cerrar</button>
+         <button type="button" class="button btn btn-primary" id="save_seg">Guardar</button>
+      </div>
+   </div>
+</div>
+{{!-- End Modal --}}
+ {{/data}}

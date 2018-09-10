@@ -1,0 +1,19 @@
+{
+  "name": "ases",
+  "version": "0.0.0",
+  "description": "Testing...",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sistemasases/moduloases.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sistemasases/moduloases/issues"
+  },
+  "homepage": "https://github.com/sistemasases/moduloases#readme"
+}

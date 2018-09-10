@@ -1,0 +1,33 @@
+{{#data}}
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-group">
+                <h2>Editor de permisos</h2>
+                <hr>   
+                    <a id="dphpforms-redirect-adm-forms" href="javascript:void(0)" class="btn btn-sm btn-default">Administrar formularios</a>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <h4>Permiso</h4>
+                <hr>
+                {{#permiso}}
+                <div class="form-group">
+                    #ID del permiso: <strong>{{id}}</strong>
+                </div>
+
+                <div class="form-group">
+                    <textarea id="permisos" rows="5" class="form-control">{{permisos}}</textarea>
+                </div>
+                <br>
+                <div class="form-group">
+                    <a id="actualizar-permiso" href="javascript:void(0)" class="btn btn-danger btn-dphpforms btn-dphpforms-univalle" data-permiso-id="{{id}}">Actualizar permiso</a>
+                </div>
+                {{/permiso}}
+            </div>
+        </div>
+    </div>
+</body>
+{{/data}}

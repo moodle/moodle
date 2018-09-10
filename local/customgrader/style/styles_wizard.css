@@ -1,0 +1,209 @@
+
+@font-face {
+  font-family: 'Glyphicons Halflings';
+
+  src: url('../fonts/glyphicons-halflings-regular.eot');
+  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+.glyphicon {
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.glyphicon-remove-sign:before {
+  content: "\e083";
+}
+
+.glyphicon-plus-sign:before {
+  content: "\e081";
+}
+
+.glyphicon-pencil:before {
+  content: "\270f";
+}
+
+.glyphicon-trash:before {
+  content: "\e020";
+}
+
+.glyphicon-plus:before {
+  content: "\002b";
+}
+
+.glyphicon-new-window:before {
+  content: "\e164";
+}
+
+.glyphicon-list:before {
+  content: "\e056";
+}
+
+.glyphicon-edit:before {
+  content: "\e065";
+}
+
+.glyphicon-list{
+  font-size: 40px;
+}
+
+.level1{
+  padding-left: 10px !important;
+}
+
+.level2{
+  padding-left: 40px !important;
+}
+
+.level3{
+  padding-left: 70px !important;
+}
+
+.level4{
+  padding-left: 100px !important;
+}
+
+.level5{
+  padding-left: 130px !important;
+}
+
+.level6{
+  padding-left: 160px !important;
+}
+
+.generaltable{
+  width: 95%;
+  margin-left: 20px;
+}
+
+/* Rules for modals */
+
+/* The Modal (background) */
+.mymodal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 2; /* Sit on top */
+  left: 0;
+  top: 0;
+  margin-top: 0px;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  overflow: auto;
+}
+
+/* Modal Content/Box */
+.mymodal-content {
+  background-color: white;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  margin-bottom: 20px;
+  margin-top: 15%;
+}
+
+/* The Close Button */
+.mymodal-close {
+  color: white;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.mymodal-close:hover,
+.mymodal-close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Modal Header */
+.mymodal-header {
+  margin-top: 0px;
+  border-radius: 10px;
+  margin-right: 10px;
+  background-color: #8cb8e2;
+  color: white;
+  height: 40px;
+  padding: 5px 10px;
+
+}
+
+/* Modal Body */
+.mymodal-body {
+margin-top: 30px;
+}
+
+/* Modal Footer */
+.mymodal-footer {
+  padding: 0px;
+  margin-top: 2px;
+  background-color: #FAFAFA;
+  color: black;
+}
+
+
+.fondo{
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  background-color: rgba(72, 68, 68, 0.83);
+}
+
+.div1{
+  float:left;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#content-edit{
+  width: 400px;
+}
+#content-create{
+  width: 800px;
+}
+
+.btn-wizard{
+  background: #8cb8e0;
+}
+
+.btn-cats{
+  font-weight: bold; 
+  width: 400px;
+  height: 60px;
+  font-size: 25px;
+  text-align: left;
+  line-height: 50px;
+  border-radius: 8px;
+  transition: 0.5s all;
+}
+
+.inputValor{
+  width: 45px !important;
+  text-align: right;
+}
+
+.divForm{
+  margin-bottom: 50px;
+  margin-right: 8px;
+  transition: 0.5s all;
+}
+
+.generaltable th{
+  padding: 0px;
+  line-height: 36px;
+}
+
+*[id*="fixed_user_"]:hover{
+  background: #e5e5e5;
+}

@@ -1,0 +1,56 @@
+<div class="panel panel-default">
+   <div class="panel panel-default">
+      <div class="panel-heading">
+         <h4 class="panel-title" id="list-users-panel">
+            <a data-toggle="collapse" href="#collapse4">Roles</a>
+         </h4>
+      </div>
+      {{!--end panel-heading--}}
+      <div id="collapse4" class="panel-collapse collapse">
+         <div class="panel-body">
+            <div class="container">
+               <form id="formPerfil">
+                  <div class="form-pilos">
+                     <label class="col-sm-2 control-label">Nombre :</label>
+                     <div class="col-sm-10">
+                        <input type="text" class="form-pilos" id="nombre_perfil" name="nombre_perfil" placeholder="Nombre del rol">
+                     </div>
+                  </div>
+                  <div class="form-pilos">
+                     <label class="col-sm-2 control-label">Descripción</label>
+                     <div class="col-sm-10">
+                        <input type="text" class="form-pilos" id="descripcion_perfil" name="descripcion_perfil" placeholder="Descripcion del rol, sea espefico">
+                     </div>
+                  </div>
+                  <div class="col-md-9 col-md-offset-4"
+                  <div class="form-pilos">
+                     <button type="submit" id="add_profile" class="submit" data-toggle="modal" data-target="#myModal">
+                     Crear rol
+                     </button>
+                  </div>
+            </div>
+            </form>
+            <div class="panel-heading">
+               <h3 data-toggle="collapse" data-target="#collapse-profile"><i class="glyphicon glyphicon-chevron-right   Try it
+                  "></i>Lista de roles</h3>
+            </div>
+            <outer-element id="collapse-profile" class="collapse">
+               <div class="col-md-8 col-md-offset-2" id="div_profiles">
+               </div>
+               <div id="some-other-id" class="collapse">
+                  <!-- Bordered Table -->
+                  <table class="table table-bordered">
+                     <!--table element -->
+                  </table>
+               </div>
+            </outer-element>
+            <div class="col-md-6">
+            </div>
+            {{!--end col-md-6--}}
+         </div>
+         {{!--end panel-body--}}
+         </form>
+      </div>
+   </div>
+</div>
+{{!--end panel-group--}}

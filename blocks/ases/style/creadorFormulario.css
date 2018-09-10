@@ -1,0 +1,337 @@
+li{
+    cursor:pointer;
+}
+li:hover{
+    color:gray;
+}
+.div-box-preview{
+    background-color:#fff9db;
+    padding: 1.5rem;
+    border-radius:5px;
+    border: 2px dotted #000;
+}
+.div-box-preview hr{
+    border-color:#8888;
+}
+.btn-eliminar-campo{
+    margin-top: 0.5rem;
+}
+.enunciado{
+    margin-bottom:0.5rem;
+}
+.identificador-temporal{
+    width: 100%;
+    margin-bottom: 0.5em;
+    border-top: 1px solid #444;
+    border-bottom: 1px solid #444;
+    background-color: rgba(16, 204, 6, 0.5);
+}
+.regla{
+    padding: 0.7em;
+    font-weight: bold;
+    text-align: center;
+    background-color: #fff9db;
+    border: 1px solid #444;
+    border-radius: 3px;
+    margin-bottom: 0.5em;
+}
+
+.eliminar-regla{
+    float: right;
+}
+
+pre, code {
+    white-space: pre-line;
+}
+.btn-dphpforms-builder, .btn-dphpforms-univalle{
+    font-weight: bold;
+    background-color: #d51b23;
+    border-radius: 0px;
+}
+
+.btn-card{
+    border-radius: 0px;
+    width: 100%;
+    background-color: #E5E5E5;
+    color: black;
+    text-align: left;
+    border-color: #ddd !important;
+    padding: 10px 15px 10px 15px;
+    font-size: 16px;
+}
+
+.btn-card:hover{
+    color: white;
+    font-weight: bold;
+    background-color: #D51B23;
+}
+
+.peer-tracking-record{
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 0.4em;
+    font-size: 1.1em;
+    margin-bottom: 0.4em;
+    background-color: #f5f5f5;
+    border-radius: 3px;
+}
+
+.peer-tracking-record-review{
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 0.4em;
+    font-size: 1.1em;
+    margin-bottom: 0.4em;
+    background-color: #999999;
+    border-radius: 3px;
+}
+
+
+
+.peer-tracking-record:first-child{
+    margin-top: 20px;
+}
+
+.peer-tracking-record:last-child{
+    margin-bottom: 20px;
+}
+
+.peer-tracking-record:hover{
+    cursor: pointer;
+    color: #000;
+    border-color: #333;
+    box-shadow: 0px 0px 15px -3px #888888;
+}
+
+
+
+.groupal-tracking-record{
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 0.4em;
+    font-size: 1.1em;
+    margin-bottom: 0.4em;
+    background-color: #f5f5f5;
+    border-radius: 3px;
+}
+
+
+.groupal-tracking-record:first-child{
+    margin-top: 20px;
+}
+
+.groupal-tracking-record:last-child{
+    margin-bottom: 20px;
+}
+
+.groupal-tracking-record:hover{
+    cursor: pointer;
+    color: #000;
+    border-color: #333;
+    box-shadow: 0px 0px 15px -3px #888888;
+}
+
+.card_v2{
+    padding: 0px !important;
+    border-width: 0px;
+    margin: -15px 0px 0px 0;
+}
+
+.card-header_v2{
+    padding: 0px;
+}
+
+.collapse_v2{
+    padding: 0px 20px 0px 20px;
+    background-color: white;
+}
+
+.well_v2{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.mymodal-body_v2{
+    margin-top: 0px;
+}
+
+#modal_v2_edit_peer_tracking > .mymodal-content, 
+#modal_v2_peer_tracking > .mymodal-content, 
+#modal_seguimiento_geografico > .mymodal-content,
+#modal_primer_acercamiento > .mymodal-content,
+#modal_v2_groupal_tracking > .mymodal-content,
+#modal_v2_edit_groupal_tracking > .mymodal-content,
+#modal_inasistencia > .mymodal-content{
+    width: 80%;
+    padding: 0px;
+}
+
+.mymodal-close{
+    margin-top: 10px;
+}
+
+
+.big_textarea{
+    min-height: 7em !important;
+}
+
+.peer_trackings_v2{
+    margin-bottom: 10px;
+}
+
+.ajuste_limpiar{
+    display: inline;
+    margin-right: 3em;
+}
+
+/*Definición de los estilos para los formularios que dependen de dphpforms*/
+
+/*Inicio de definición de estilos para el formulario de seguimientos*/
+.limpiar{
+    /*float: right;
+    margin-right: 50%;*/
+    margin-bottom: 0.9em;
+    margin-top: 0.5em;
+}
+
+.comentarios_individual{
+    border-top: 1px rgb(116, 116, 116) solid;
+    margin-top: 2em;
+    padding-top: 2em;
+}
+
+.separador_superior{
+    border-top: 1px rgb(116, 116, 116) solid;
+    margin-top: 2em;
+    padding-top: 2em;
+}
+.separador_inferior{
+    border-bottom: 1px rgb(116, 116, 116) solid;
+    margin-bottom: 2em;
+    padding-bottom: 2em;
+}
+
+.ajuste_tematicas{
+    border-bottom: 1px rgb(116, 116, 116) solid;
+    margin-bottom: 2em;
+    padding-bottom: 2em;
+}
+
+.dphpforms-updater > .ajuste_tematicas > .checkbox:nth-child(5){
+    margin-top: 10px;
+}
+
+.dphpforms-updater > .ajuste_tematicas > .checkbox:nth-child(4){
+    margin-top: 10px;
+}
+
+.dphpforms-response > .ajuste_tematicas > .checkbox:nth-child(2){
+    margin-top: 10px;
+}
+
+.dphpforms-response > .ajuste_tematicas > .checkbox:nth-child(3){
+    margin-top: 10px;
+}
+
+.dphpforms-response > .ajuste_tematicas > .checkbox:nth-child(4){
+    margin-top: 10px;
+}
+
+.ajuste_tematicas > label{
+    width: 100%;
+}
+
+.date_field input{
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 0px;
+ 
+}
+
+.time_field input{
+    display: block;
+    max-width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+}
+
+.content_field textarea{
+    width: 100%;
+    border: none;
+    background: none;
+}
+
+.oculto {
+    display: none;
+}
+
+.ajuste_radio_seguimientos{
+    margin-top: 0px;
+}
+
+.outside{
+    position: absolute;
+    width: calc( 100% - 20px );
+    height: 100%;
+    /*background-color: rgba(78, 12, 185, 0.3);*/
+    position: fixed;
+    margin-right: 20px;
+}
+
+.btn-inasistencia{
+    padding-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+/*Finalización de definición de estilos para el formulario de seguimientos*/
+
+/* Inicio definición de estilos para primer acercamiento */
+.primer_acerca_fecha_ajuste{
+    width: 50% !important;
+}
+/* Finalización de definición de estilos para el formulario de perimer acercamient */
+
+/* Inicio de definición de estilos para seguimientos geográficos */
+
+.geographic_track_container{
+    padding: 20px;
+}
+
+.ajuste_origen{
+    margin-top: 2em;
+}
+
+.regla_incumplida{
+    border: 1px solid #D51B23;
+    border-radius: 3px;
+    margin-top: 0.2em;
+}
+
+/* Finalización de definición de estilos para seguimientos geográficos */
+
+/* Clases para los listados formularios existentes de la forma class-alias*/
+.class-seguimiento_pares{
+
+}
+
+.class-inasistencia{
+    background-color:#FFF;
+}

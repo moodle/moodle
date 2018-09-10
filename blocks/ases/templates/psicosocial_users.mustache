@@ -1,0 +1,99 @@
+<link href="../style/styles_pilos.css" rel="stylesheet">
+<link href="../style/bootstrap_pilos.css" rel="stylesheet">
+<link href="../style/sweetalert.css" rel="stylesheet">
+
+<meta http-equiv="Expires" content="0" />
+<meta http-equiv="Pragma" content="no-cache" />
+
+<body name="psicosocial_users">
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        Gestión de usuarios
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="a_assignment">Asignación</a>
+                </li>
+                <li>
+                    <a href="#" id="a_reports">Reportes</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid form-pilos" id="div_assignment">
+                <div class="row">
+                    <!-- div search user-->
+                    <div class="col-sm-12" id="div_search_user_assignment">
+                        <h1>Asignación</h1>
+                        <hr>
+                        <label class="label_pilos" for="input_user_code">Nombre de usuario</label>
+                        <input id="input_user_code" type="text"  placeholder="Digite nombre usuario" />
+                        <button class="submit" type="button" id="search_button">Buscar</button> 
+                    </div>
+                    <!-- end div search user-->
+                    <div class="col-sm-12"><hr></div>
+                    <!-- div info user-->
+                    <div class="container-fluid" id="div_info_user" hidden>
+                        <div class="col-sm-2">
+                            <img id="photo" class="img-rounded" src="../icon/default-user-image.png" style="width:150px; height:180px">
+                        </div>
+                        <div class="col-sm-5">
+                            <div>
+                                <label class="label_pilos" for="input_full_name">Nombre completo</label>
+                                <input id="input_full_name" type="text" size="50" readonly/>
+                            </div>
+                            <div>
+                                <label class="label_pilos" for="input_email">Correo electrónico</label>
+                                <input id="input_email" type="text" size="60" readonly/>
+                            </div>
+                            <div>
+                                <label class="label_pilos" for="input_boss">Jefe</label>
+                                <input id="input_boss" type="text" size="60" readonly/>
+                            </div>
+                            <div>
+                                <label class="label_pilos" for="select_role">Rol asignado</label>
+                                <select name="select_role" id="select_role" disabled>
+                                    <option value="ninguno" id="option_ninguno" selected>Sin rol asignado</option>
+                                    <option value="monitor_ps" id="option_monitor_ps">Monitor psicosocial</option>
+                                    <option value="practicante_ps" id="option_practicante_ps">Practicante psicosocial</option>
+                                </select>
+                            </div>
+                            <div id="div_buttons">
+                                <br>
+                                <button class="button_blue" type="button" id="button_edit_role" style="margin-left: 0px">Editar rol</button> 
+                                <button class="button_green" type="button" id="button_save" style="margin-left: 0px" hidden>Guardar</button> 
+                                <button class="button_gray" type="button" id="button_cancel" style="margin-left: 0px" hidden>Cancelar</button> 
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <input id="input_id_user" type"text" hidden />
+                        </div>
+                    </div>
+                    <!-- end div info user-->
+                    <!-- div list assignments-->
+                    <div class="container-fluid" id="div_list_assignments" hidden>
+                        <div class="col-sm-12"><hr></div>
+
+                    </div>
+                    <!-- end div list assignments-->
+                </div>
+            </div>
+            <div class="container-fluid" id="div_reports">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h1>Reportes</h1>
+                        <hr>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+    </div>
+    <!-- end wrapper -->
+</body>

@@ -1,0 +1,33 @@
+<body name="teachers_reports">
+    {{#data}} 
+    {{> block_ases/side_menu}} 
+    {{{message}}}
+    <div>
+        {{#view_teachers_reports_tr}}
+        <div class='title' style="top: 5px !important; width: 350px !important; ">
+            <b>REPORTE POR DOCENTES</b>
+        </div>
+
+        <div class = "count_items">
+
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="background-color: #D0C4C4;">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" href="#collapse01">
+                                Reporte de ítems por docente 
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="div_table_report">
+                    </div>
+                </div>
+
+            </div>
+            {{/view_teachers_reports_tr}} 
+        </div>
+        
+    </div>
+    <!-- end wrapper -->
+    {{/data}}
+</body>

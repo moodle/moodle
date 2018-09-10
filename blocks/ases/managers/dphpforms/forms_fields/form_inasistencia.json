@@ -1,0 +1,544 @@
+{
+    "datos_formulario": {
+        "nombre": "Inasistencia",
+        "descripcion": "Formulario para registro de inasistencias en los seguimientos de pares",
+        "method": "POST",
+        "action": "procesador.php",
+        "enctype": null,
+        "alias": "inasistencia"
+    },
+    "preguntas": [
+        {
+            "id_temporal": "cmp_0",
+            "enunciado": "Fecha *",
+            "tipo_campo": "DATE",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "maxlength": "10",
+                "class": "col-xs-6 col-sm-6 col-md-6 col-lg-6 date_field inasistencia_date_field",
+                "inputclass":"inasistencia_fecha",
+                "name": "in_name_date",
+                "required": "true",
+                "local_alias": "in_fecha",
+                "max": "today()"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": [
+                        "lectura"
+                    ]
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        },
+        {
+            "id_temporal": "cmp_1",
+            "enunciado": "Lugar",
+            "tipo_campo": "TEXTFIELD",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "class": "col-xs-6 col-sm-6 col-md-6 col-lg-6 inasistencia_lugar_field",
+                "required": "false",
+                "name": "in_name_place",
+                "local_alias": "in_lugar"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": [
+                        "lectura"
+                    ]
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        },
+        {
+            "id_temporal": "cmp_2",
+            "enunciado": "Observaciones *",
+            "tipo_campo": "TEXTAREA",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "class": "col-xs-12 col-sm-12 col-md-12 col-lg-12 inasistencia_observaciones_field",
+                "name": "in_name_observaciones",
+                "required": "true",
+                "maxlength": "5000",
+                "inputclass":"big_textarea",
+                "local_alias": "in_observaciones"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": [
+                        "lectura"
+                    ]
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        },
+        {
+            "id_temporal": "cmp_3",
+            "enunciado": "id_instancia",
+            "tipo_campo": "TEXTFIELD",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "maxlength": "1000",
+                "class": "col-xs-12 col-sm-12 col-md-12 col-lg-12 oculto inasistencia_id_instancia",
+                "name": "in_name_id_instancia",
+                "required": "true",
+                "local_alias": "in_id_instancia"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "academico",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                }
+            ]
+        },
+        {
+            "id_temporal": "cmp_4",
+            "enunciado": "id_creado_por",
+            "tipo_campo": "TEXTFIELD",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "class": "col-xs-12 col-sm-12 col-md-12 col-lg-12 oculto inasistencia_id_creado_por",
+                "required": "true",
+                "name": "in_name_id_creado_por",
+                "local_alias": "in_id_creado_por"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": [
+                        "lectura"
+                    ]
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        },
+        {
+            "id_temporal": "cmp_5",
+            "enunciado": "id_estudiante",
+            "tipo_campo": "TEXTFIELD",
+            "opciones_campo": null,
+            "atributos_campo": {
+                "class": "col-xs-12 col-sm-12 col-md-12 col-lg-12 oculto inasistencia_id_estudiante",
+                "name": "in_name_id_estudiante",
+                "required": "true",
+                "local_alias": "in_id_estudiante"
+            },
+            "permisos_campo": [
+                {
+                    "rol": "administrativo",
+                    "permisos": []
+                },
+                {
+                    "rol": "reportes",
+                    "permisos": []
+                },
+                {
+                    "rol": "profesional_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "monitor_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "estudiante_t",
+                    "permisos": []
+                },
+                {
+                    "rol": "sistemas",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "practicante_ps",
+                    "permisos": [
+                        "lectura",
+                        "escritura"
+                    ]
+                },
+                {
+                    "rol": "geografo",
+                    "permisos": []
+                },
+                {
+                    "rol": "academico",
+                    "permisos": []
+                },
+                {
+                    "rol": "director_prog",
+                    "permisos": []
+                },
+                {
+                    "rol": "geografico",
+                    "permisos": []
+                },
+                {
+                    "rol": "dir_socioeducativo",
+                    "permisos": [
+                        "lectura"
+                    ]
+                },
+                {
+                    "rol": "financiero",
+                    "permisos": []
+                }
+            ]
+        }
+    ],
+    "disparadores": [],
+    "reglas": [],
+    "campos_busqueda": [
+        {
+            "alias": "inasistencia_id_creado_por",
+            "id_campo": "cmp_4"
+        },
+        {
+            "alias": "inasistencia_id_estudiante",
+            "id_campo": "cmp_5"
+        },
+        {
+            "alias": "inasistencia_id_instancia",
+            "id_campo": "cmp_3"
+        },
+        {
+            "alias": "inasistencia_fecha",
+            "id_campo": "cmp_0"
+        }
+    ],
+    "actualizador_orden":[]
+}
