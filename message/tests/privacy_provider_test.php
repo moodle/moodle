@@ -509,8 +509,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be two conversation members.
         $this->assertEquals(2, $DB->count_records('message_conversation_members'));
 
-        // There should be two notifications.
-        $this->assertEquals(2, $DB->count_records('notifications'));
+        // There should be two notifications + one for the contact request.
+        $this->assertEquals(3, $DB->count_records('notifications'));
 
         provider::delete_data_for_all_users_in_context($systemcontext);
 
@@ -585,8 +585,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be two conversation members.
         $this->assertEquals(2, $DB->count_records('message_conversation_members'));
 
-        // There should be three notifications.
-        $this->assertEquals(3, $DB->count_records('notifications'));
+        // There should be three notifications + two for the contact requests.
+        $this->assertEquals(5, $DB->count_records('notifications'));
 
         $systemcontext = \context_system::instance();
         $contextlist = new \core_privacy\local\request\approved_contextlist($user1, 'core_message',
@@ -631,8 +631,14 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $mcm = reset($mcms);
         $this->assertEquals($user2->id, $mcm->userid);
 
-        $this->assertCount(1, $notifications);
-        $notification = reset($notifications);
+        $this->assertCount(2, $notifications);
+        ksort($notifications);
+
+        $notification = array_shift($notifications);
+        $this->assertEquals($user2->id, $notification->useridfrom);
+        $this->assertEquals($user4->id, $notification->useridto);
+
+        $notification = array_shift($notifications);
         $this->assertEquals($user2->id, $notification->useridfrom);
         $this->assertEquals($user3->id, $notification->useridto);
     }

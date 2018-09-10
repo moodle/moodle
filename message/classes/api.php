@@ -1324,6 +1324,31 @@ class api {
         $request->timecreated = time();
 
         $DB->insert_record('message_contact_requests', $request);
+
+        // Send a notification.
+        $userfrom = \core_user::get_user($userid);
+        $userfromfullname = fullname($userfrom);
+        $userto = \core_user::get_user($requesteduserid);
+        $url = new \moodle_url('/message/pendingcontactrequests.php');
+
+        $subject = get_string('messagecontactrequestsnotificationsubject', 'core_message', $userfromfullname);
+        $fullmessage = get_string('messagecontactrequestsnotification', 'core_message', $userfromfullname);
+
+        $message = new \core\message\message();
+        $message->courseid = SITEID;
+        $message->component = 'moodle';
+        $message->name = 'messagecontactrequests';
+        $message->notification = 1;
+        $message->userfrom = $userfrom;
+        $message->userto = $userto;
+        $message->subject = $subject;
+        $message->fullmessage = text_to_html($fullmessage);
+        $message->fullmessageformat = FORMAT_HTML;
+        $message->fullmessagehtml = $fullmessage;
+        $message->smallmessage = '';
+        $message->contexturl = $url->out(false);
+
+        message_send($message);
     }
 
 
