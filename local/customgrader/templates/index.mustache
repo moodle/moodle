@@ -1,0 +1,103 @@
+<body>
+ {{{students}}}
+  
+
+  <button id='wizard_button' type='button' class="btn-cats">Gestionar categorias/items                     
+    <i class="glyphicon glyphicon-list" style="float: right;"></i>
+  </button>
+
+  <div class="tutorial-link">
+    <a href="https://www.youtube.com/watch?v=8Bm_obAFBYo">VER TUTORIAL</a>    
+  </div>
+
+  <div class="reload btn btn-primary act-notas first">
+    <i class="glyphicon glyphicon-edit"></i>
+    ACTUALIZAR NOTAS TOTALES
+  </div>
+{{{table}}}
+  <div class="reload btn btn-primary act-notas">
+    <i class="glyphicon glyphicon-edit"></i>
+    ACTUALIZAR NOTAS TOTALES
+  </div>
+<hr>
+  <div class="alert alert-error alert-block fade in " role="alert">
+    <a class="reload">La calificación total de las categorias no será calculada hasta recargar la página.</a>
+  </div>
+  <!-- Modals -->
+  <!-- Modal Creacion -->
+  <div class='fondo' hidden> </div>
+  <div class="mymodal" id="modalCategories" role="dialog">
+    <div class="mymodal-dialog">
+      <!-- Modal content-->
+      <div class="mymodal-content" id="content-create">
+        <!-- header -->
+        <div class="mymodal-header col-sm-12">
+          <div class="col-sm-11">
+            <span class="mymodal-close" aria-hidden="true" style="float: right;">&times;</span>
+            <h4 class="" id="myModalLabel">Creacion de Categorías e ítems</h4>
+          </div>
+        </div>
+        <!-- body -->
+        <div id='mymodalbody' class="mymodal-body col-sm-12">
+          {{{info_wizard}}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Edicion -->
+  <div id="edit" class="mymodal" role="dialog">
+    <div class="mymodal-dialog">
+
+      <!-- Modal content-->
+      <div class="mymodal-content" id="content-edit">
+        <div class="mymodal-header col-sm-12">
+          <div class="col-sm-11">
+            <span type="button" class="close" data-dismiss="modal">&times;</span>
+            <h4 id="titulo">Editar Categoría o Ítem</h4>
+          </div>
+        </div>
+        <div class="mymodal-body">
+          <form id="form_editar">
+            <div class="form-pilos">
+              <label class="col-sm-2 control-label" id="label_nombre">Nombre :</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-pilos" id="nombre_editar" name="nombre_editar" />
+              </div>
+              <div class="form-pilos" id="div_padres">
+                <label class="col-sm-2 control-label">Categoria Padre :</label>
+                <div class="col-sm-10">
+                  <select id="padre">
+
+                  </select>
+                </div>
+              </div>
+              <div class="form-pilos " id='peso'>
+                <label class="col-sm-2 control-label maxweight-edit">Peso :</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-pilos" id="peso_editar" name="peso_editar" />
+                </div>
+              </div>
+              <div class="form-pilos hide" id="type_cal">
+                <label class="col-sm-2 control-label">Tipo de Calificación</label>
+                <div class="col-sm-10" id="funct2">
+                  <select id="calific">
+                    <option value='0'>Promedio Simple</option>
+                    <option value='10'>Promedio Ponderado</option>
+                    <option id="alta" value='6'>Calificación mas alta</option>
+                    <option id="otro" hidden value="99">Otro tipo de calificación</option>
+                  </select>
+                </div>
+              </div>
+
+            </div>
+          </form>
+        </div>
+        <div class="mymodal-footer">
+          <button type="button" class="button btn-wizard " id="save_edit">Guardar</button>
+          <button type="button" class="button btn-wizard " data-dismiss="modal" id="close_seg">Cancelar</button>
+        </div>
+
+      </div>
+    </div>
+
+</body>
