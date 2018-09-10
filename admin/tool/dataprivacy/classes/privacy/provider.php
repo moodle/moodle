@@ -76,6 +76,8 @@ class provider implements
 
         $collection->add_user_preference(tool_helper::PREF_REQUEST_FILTERS,
             'privacy:metadata:preference:tool_dataprivacy_request-filters');
+        $collection->add_user_preference(tool_helper::PREF_REQUEST_PERPAGE,
+            'privacy:metadata:preference:tool_dataprivacy_request-perpage');
 
         return $collection;
     }
@@ -199,6 +201,12 @@ class provider implements
             $values = implode(', ', $filters);
             $descriptionstext = implode(', ', $descriptions);
             writer::export_user_preference('tool_dataprivacy', tool_helper::PREF_REQUEST_FILTERS, $values, $descriptionstext);
+        }
+
+        $prefperpage = get_user_preferences(tool_helper::PREF_REQUEST_PERPAGE, null, $userid);
+        if ($prefperpage !== null) {
+            writer::export_user_preference('tool_dataprivacy', tool_helper::PREF_REQUEST_PERPAGE, $prefperpage,
+                get_string('privacy:metadata:preference:tool_dataprivacy_request-perpage', 'tool_dataprivacy'));
         }
     }
 }

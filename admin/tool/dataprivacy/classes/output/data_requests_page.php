@@ -86,7 +86,7 @@ class data_requests_page implements renderable, templatable {
         $data->filter = $filter->export_for_template($output);
 
         ob_start();
-        $this->table->out(helper::DEFAULT_PAGE_SIZE, true);
+        $this->table->out($this->table->get_requests_per_page(), true);
         $requests = ob_get_contents();
         ob_end_clean();
 
