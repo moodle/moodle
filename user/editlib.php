@@ -291,7 +291,7 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
                 . get_string('emailchangecancel', 'auth') . '</a>';
         $mform->addElement('static', 'emailpending', get_string('email'), $notice);
     } else {
-        $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');
+        $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="60"');
         $mform->addRule('email', $strrequired, 'required', null, 'client');
         $mform->setType('email', PARAM_RAW_TRIMMED);
     }
