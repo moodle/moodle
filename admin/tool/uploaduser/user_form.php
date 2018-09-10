@@ -48,7 +48,7 @@ class admin_uploaduser_form1 extends moodleform {
         if (array_key_exists('cfg', $choices)) {
             $mform->setDefault('delimiter_name', 'cfg');
         } else if (get_string('listsep', 'langconfig') == ';') {
-            $mform->setDefault('delimiter_name', 'semicolon');
+            $mform->setDefault('delimiter_name', 'comma');
         } else {
             $mform->setDefault('delimiter_name', 'comma');
         }
@@ -114,9 +114,10 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->disabledIf('uupasswordold', 'uuupdatetype', 'eq', 0);
         $mform->disabledIf('uupasswordold', 'uuupdatetype', 'eq', 3);
 
-        $choices = array(UU_PWRESET_WEAK => get_string('usersweakpassword', 'tool_uploaduser'),
+        $choices = array(UU_PWRESET_ALL  => get_string('all'),
                          UU_PWRESET_NONE => get_string('none'),
-                         UU_PWRESET_ALL  => get_string('all'));
+                         UU_PWRESET_WEAK => get_string('usersweakpassword', 'tool_uploaduser'));
+                         
         if (empty($CFG->passwordpolicy)) {
             unset($choices[UU_PWRESET_WEAK]);
         }
@@ -341,6 +342,8 @@ class admin_uploaduser_form2 extends moodleform {
             // password resetting makes sense only if password specified in csv file
             if ($mform->elementExists('uuforcepasswordchange')) {
                 $mform->removeElement('uuforcepasswordchange');
+            }else{
+                $mform->addElement('uuforcepasswordchange');
             }
         }
     }

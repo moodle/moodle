@@ -122,7 +122,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
     }
 
     // Contact details.
-    if (has_capability('moodle/user:viewhiddendetails', $courseorusercontext)) {
+    if (has_capability('moodle/user:viewhiddendetails', $courseorusercontext) || $USER->id == $user->id) {
         $hiddenfields = array();
     } else {
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
@@ -230,6 +230,10 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
     if (!isset($hiddenfields['mycourses'])) {
         $showallcourses = optional_param('showallcourses', 0, PARAM_INT);
         if ($mycourses = enrol_get_all_users_courses($user->id, true, null)) {
+            
+            // Función añadida para el Campus Virtual Univalle  
+            $mycourses = order_courses_univalle($mycourses);
+
             $shown = 0;
             $courselisting = html_writer::start_tag('ul');
             foreach ($mycourses as $mycourse) {

@@ -3389,12 +3389,12 @@ EOD;
         }
 
         // User login failures.
-        if (!empty($opts->metadata['userloginfail'])) {
-            $usertextcontents .= html_writer::span(
-                $opts->metadata['userloginfail'],
-                'meta loginfailures'
-            );
-        }
+        // if (!empty($opts->metadata['userloginfail'])) {
+        //     $usertextcontents .= html_writer::span(
+        //         $opts->metadata['userloginfail'],
+        //         'meta loginfailures'
+        //     );
+        // }
 
         // MNet.
         if (!empty($opts->metadata['asmnetuser'])) {
@@ -3406,7 +3406,7 @@ EOD;
         }
 
         $returnstr .= html_writer::span(
-            html_writer::span($usertextcontents, 'usertext mr-1') .
+            html_writer::span($usertextcontents, 'usertext') .
             html_writer::span($avatarcontents, $avatarclasses),
             /*html_writer::span($avatarcontents, $avatarclasses) .
             html_writer::span($usertextcontents, 'usertext'),*/
