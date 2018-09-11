@@ -1072,7 +1072,7 @@ class external extends external_api {
      */
     public static function set_context_defaults_parameters() {
         return new external_function_parameters([
-            'contextlevel' => new external_value(PARAM_INT, 'Expired context record ID', VALUE_REQUIRED),
+            'contextlevel' => new external_value(PARAM_INT, 'The context level', VALUE_REQUIRED),
             'category' => new external_value(PARAM_INT, 'The default category for the given context level', VALUE_REQUIRED),
             'purpose' => new external_value(PARAM_INT, 'The default purpose for the given context level', VALUE_REQUIRED),
             'activity' => new external_value(PARAM_PLUGIN, 'The plugin name of the activity', VALUE_DEFAULT, null),
@@ -1165,23 +1165,12 @@ class external extends external_api {
         self::validate_context($context);
 
         $categories = api::get_categories();
+        $options = data_registry_page::category_options($categories, $includenotset, $includeinherit);
         $categoryoptions = [];
-        if ($includeinherit) {
+        foreach ($options as $id => $name) {
             $categoryoptions[] = [
-                'id' => context_instance::INHERIT,
-                'name' => get_string('inherit', 'tool_dataprivacy'),
-            ];
-        }
-        if ($includenotset) {
-            $categoryoptions[] = [
-                'id' => context_instance::NOTSET,
-                'name' => get_string('notset', 'tool_dataprivacy'),
-            ];
-        }
-        foreach ($categories as $category) {
-            $categoryoptions[] = [
-                'id' => $category->get('id'),
-                'name' => $category->get('name'),
+                'id' => $id,
+                'name' => $name,
             ];
         }
 
@@ -1243,23 +1232,12 @@ class external extends external_api {
         self::validate_context($context);
 
         $purposes = api::get_purposes();
+        $options = data_registry_page::purpose_options($purposes, $includenotset, $includeinherit);
         $purposeoptions = [];
-        if ($includeinherit) {
+        foreach ($options as $id => $name) {
             $purposeoptions[] = [
-                'id' => context_instance::INHERIT,
-                'name' => get_string('inherit', 'tool_dataprivacy'),
-            ];
-        }
-        if ($includenotset) {
-            $purposeoptions[] = [
-                'id' => context_instance::NOTSET,
-                'name' => get_string('notset', 'tool_dataprivacy'),
-            ];
-        }
-        foreach ($purposes as $purpose) {
-            $purposeoptions[] = [
-                'id' => $purpose->get('id'),
-                'name' => $purpose->get('name'),
+                'id' => $id,
+                'name' => $name,
             ];
         }
 
@@ -1320,15 +1298,15 @@ class external extends external_api {
 
         // Get activity module plugin info.
         $pluginmanager = \core_plugin_manager::instance();
-        $modplugins = $pluginmanager->get_plugins_of_type('mod');
+        $modplugins = $pluginmanager->get_enabled_plugins('mod');
         $modoptions = [];
 
         // Get the module-level defaults. data_registry::get_defaults falls back to this when there are no activity defaults.
         list($levelpurpose, $levelcategory) = data_registry::get_defaults(CONTEXT_MODULE);
-        foreach ($modplugins as $plugin) {
+        foreach ($modplugins as $name) {
             // Check if we have default purpose and category for this module if we want don't want to fetch everything.
             if ($nodefaults) {
-                list($purpose, $category) = data_registry::get_defaults(CONTEXT_MODULE, $plugin->name);
+                list($purpose, $category) = data_registry::get_defaults(CONTEXT_MODULE, $name);
                 // Compare this with the module-level defaults.
                 if ($purpose !== $levelpurpose || $category !== $levelcategory) {
                     // If the defaults for this activity has been already set, there's no need to add this in the list of options.
@@ -1336,9 +1314,10 @@ class external extends external_api {
                 }
             }
 
+            $displayname = $pluginmanager->plugin_name('mod_' . $name);
             $modoptions[] = (object)[
-                'name' => $plugin->name,
-                'displayname' => $plugin->displayname
+                'name' => $name,
+                'displayname' => $displayname
             ];
         }
 

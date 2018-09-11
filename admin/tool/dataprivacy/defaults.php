@@ -42,18 +42,20 @@ $otherdefaults = [];
 if ($mode == CONTEXT_MODULE) {
     // Get activity module plugin info.
     $pluginmanager = core_plugin_manager::instance();
-    $modplugins = $pluginmanager->get_plugins_of_type('mod');
+    $modplugins = $pluginmanager->get_enabled_plugins('mod');
 
-    foreach ($modplugins as $plugin) {
-        list($purposevar, $categoryvar) = \tool_dataprivacy\data_registry::var_names_from_context($classname, $plugin->name);
+    foreach ($modplugins as $name) {
+        list($purposevar, $categoryvar) = \tool_dataprivacy\data_registry::var_names_from_context($classname, $name);
         $plugincategory = get_config('tool_dataprivacy', $categoryvar);
         $pluginpurpose = get_config('tool_dataprivacy', $purposevar);
         if ($plugincategory === false && $pluginpurpose === false) {
             // If no purpose and category has been set for this plugin, then there's no need to show this on the list.
             continue;
         }
-        $otherdefaults[$plugin->name] = (object)[
-            'name' => $plugin->displayname,
+
+        $displayname = $pluginmanager->plugin_name('mod_' . $name);
+        $otherdefaults[$name] = (object)[
+            'name' => $displayname,
             'category' => $plugincategory,
             'purpose' => $pluginpurpose,
         ];

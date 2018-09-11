@@ -1216,11 +1216,13 @@ class api {
             $sql = implode("\n", $statements);
 
             // Get the context records matching our query.
-            $contextinstances = $DB->get_records_sql($sql, $params);
+            $contextids = $DB->get_fieldset_sql($sql, $params);
 
-            // Delete the matching context instances by passing an instance record without the purpose and instance.
-            foreach ($contextinstances as $instance) {
-                self::set_context_instance($instance);
+            // Delete the matching context instances.
+            foreach ($contextids as $contextid) {
+                if ($instance = context_instance::get_record_by_contextid($contextid, false)) {
+                    self::unset_context_instance($instance);
+                }
             }
         }
 
