@@ -1,0 +1,170 @@
+/*
+ * @package     theme_essential
+ * @copyright   2017 Gareth J Barnard
+ * @copyright   2016 Gareth J Barnard
+ * @copyright   2014 Gareth J Barnard, David Bezemer
+ * @copyright   2013 Julian Ridden
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+// Import the bootstrap variables.
+//@import "../../bootstrapbase/less/moodle.less";
+
+// Moodle less without Font-awesome so that we can update quicker than core.
+
+// Import the bootstrap variables.
+@import "../../bootstrapbase/less/bootstrap/variables.less";
+//@import "fontawesome/font-awesome";
+//@import "fontawesome/moodle-path";
+
+// Old Moodle stuff from base theme.
+// Massive, needs broken up.
+@import "../../bootstrapbase/less/moodle/core";
+@import "../../bootstrapbase/less/moodle/admin";
+@import "../../bootstrapbase/less/moodle/calendar";
+@import "../../bootstrapbase/less/moodle/course";
+@import "../../bootstrapbase/less/moodle/filemanager";
+@import "../../bootstrapbase/less/moodle/message";
+@import "../../bootstrapbase/less/moodle/question";
+@import "../../bootstrapbase/less/moodle/user";
+@import "../../bootstrapbase/less/moodle/search";
+@import "../../bootstrapbase/less/moodle/popover_region";
+
+
+// Upstream Bootstrap.
+@import "../../bootstrapbase/less/bootstrap/bootstrap";
+
+// Override Bootstrap defaults.
+@import "../../bootstrapbase/less/moodle/bootstrapoverride";
+
+// Set image location.
+@iconSpritePath:          ~"[[pix:theme|glyphicons-halflings]]";
+@iconWhiteSpritePath:     ~"[[pix:theme|glyphicons-halflings-white]]";
+
+// Increase form label width.
+@horizontalComponentOffset: 200px;
+// On Wider screens.
+@horizontalComponentOffset980: 220px;
+@horizontalComponentOffset1200: 265px;
+
+// We need to darken the link colour as its contrast is too low for accessibility tests.
+// Bootstrap defines - @linkColor: #08c;
+// We only need to darken this ever so slightly - so 7%;
+// Calculated with => @linkColor: darken(#08c, 7%);
+@linkColor:             #0070a8;
+@linkColorHover:        darken(@linkColor, 15%);
+
+// Roll back nameclashes.
+@import "../../bootstrapbase/less/moodle/undo";
+
+// Extra padding for fixed nav.
+// Needs to be between bootstrap/bootstrap and
+// bootstrap/responsive.
+body {
+    padding-top: 60px;
+}
+
+// New Moodle stuff that builds on Bootstrap.
+@import "../../bootstrapbase/less/moodle/blocks";
+@import "../../bootstrapbase/less/moodle/forms";
+@import "../../bootstrapbase/less/moodle/modal";
+@import "../../bootstrapbase/less/moodle/modules";
+@import "../../bootstrapbase/less/moodle/chat";
+@import "../../bootstrapbase/less/moodle/reports";
+@import "../../bootstrapbase/less/moodle/backup-restore";
+@import "../../bootstrapbase/less/moodle/tables";
+@import "../../bootstrapbase/less/moodle/buttons";
+@import "../../bootstrapbase/less/moodle/grade";
+@import "../../bootstrapbase/less/moodle/dock";
+@import "../../bootstrapbase/less/moodle/tool_usertours";
+
+// Styles for mustache templates.
+@import "../../bootstrapbase/less/moodle/templates";
+
+// Anything below this line is considered expendable,
+// so it doesn't matter if it doesn't show up in ie < 9
+// though at current time (2013-03-13) the whole file is
+// picked up in IE8, and IE9 fails at some point during the
+// responsive section, cutting off the last 400 selectors.
+
+// The following responsive imports are copied in
+// from "bootstrap/responsive".
+@import "../../bootstrapbase/less/bootstrap/responsive-utilities.less";
+@import "../../bootstrapbase/less/bootstrap/responsive-1200px-min.less";
+@import "../../bootstrapbase/less/bootstrap/responsive-768px-979px.less";
+@import "../../bootstrapbase/less/bootstrap/responsive-767px-max.less";
+@import "../../bootstrapbase/less/bootstrap/responsive-navbar.less";
+@import "../../bootstrapbase/less/moodle/responsive";
+@import "../../bootstrapbase/less/moodle/debug";
+@import "../../bootstrapbase/less/moodle/expendable";
+@import "../../bootstrapbase/less/moodle/bs4-compat";
+// Moodle less end.
+
+@import "bootstrap-override/variables";
+@import "bootstrap-override/carousel";
+@import "bootstrap-override/type";
+
+// Moodle fixes.
+@import "moodle-fixes/moodle-fixes";
+
+// Set image location.  Now in bootstrap-override/sprites.less included in bootstrap-pix.less.
+@iconSpritePath: ~"none";
+@iconWhiteSpritePath: ~"none";
+
+// Increase form label width.
+@horizontalComponentOffset: 200px;
+// On Wider screens.
+@horizontalComponentOffset980: 220px;
+@horizontalComponentOffset1200: 265px;
+
+// We need to darken the link colour as its contrast is too low for accessibility tests.
+// Bootstrap defines - @linkColor: #08c;
+// We only need to darken this ever so slightly - so 7%;
+// Calculated with => @linkColor: darken(#08c, 7%);
+@linkColor: #0070a8;
+@linkColorHover: darken(@linkColor, 15%);
+
+// Essential styles.
+@import "essential/variables";
+// Start with core.
+@import "essential/core";
+// Import the essential styles.
+@import "essential/accessibility";
+@import "essential/admin";
+@import "essential/alert";
+@import "essential/assign";
+@import "essential/autocomplete";
+@import "essential/blocks";
+@import "essential/breadcrumb";
+@import "essential/button";
+@import "essential/calendar";
+@import "essential/carousel";
+@import "essential/categories";
+@import "essential/chat";
+@import "essential/course";
+@import "essential/dock";
+@import "essential/editicons";
+@import "essential/footer";
+@import "essential/form";
+@import "essential/forum";
+@import "essential/frontpage";
+@import "essential/grade";
+@import "essential/greybox";
+@import "essential/header";
+@import "essential/message";
+@import "essential/navigation";
+@import "essential/plugins";
+@import "essential/question";
+@import "essential/search";
+@import "essential/tabs";
+@import "essential/user";
+// Load as last for potential overwrites.
+@import "essential/print";
+@import "essential/responsive";
+@import "essential/fixes";
+
+// Selected Bootstrap3 styles.
+@import "bootstrap3/variables";
+@import "bootstrap3/list-group";
+
+/* Essential placeholder */

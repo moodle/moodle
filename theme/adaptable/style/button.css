@@ -1,0 +1,298 @@
+/*
+* This file is part of Moodle - http://moodle.org/
+*
+* Moodle is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Moodle is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+*
+*
+* Adaptable Buttons Style sheet
+*
+* Version details
+*
+* @package    theme_adaptable
+* @copyright  2015 Jeremy Hopkins (Coventry University)
+* @copyright  2015-2018 Fernando Acedo (3-bits.com)
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*
+*/
+
+
+/* Default style for all the buttons */
+.path-mod-workshop .assessment-summary.graded .singlebutton input[type="submit"],
+.path-mod-workshop .example-summary.graded .singlebutton input[type="submit"],
+.btn-link,
+.btn-default,
+[data-role="next"],
+[data-role="previous"],
+input[type="submit"],
+input[type="button"],
+#searchform_button,
+a.submit,
+#notice .singlebutton + .singlebutton input,
+#page-login-index2 .forgetpass a,
+input.form-submit,
+input#id_submitbutton,
+input#id_submitbutton2,
+.path-admin .buttons input[type="submit"],
+td.submit input {
+    font-family: [[setting:fontname]], sans-serif !important;
+    background-image: none;
+    background-color: [[setting:buttoncolor]];
+    background-size: 100% 200%;
+    text-shadow: none;
+    box-shadow: 0 [[setting:buttondropshadow]] 0 0 rgba(0, 0, 0, 0.5) inset;
+    border: 0;
+    -webkit-border-radius: [[setting:buttonradius]];
+    -moz-border-radius: [[setting:buttonradius]];
+    border-radius: [[setting:buttonradius]];
+    color: [[setting:buttontextcolor]] !important;
+    cursor: pointer;
+    padding: 8px 15px 8px;
+    -webkit-transition: background .2s ease-out;
+    -moz-transition: background .2s ease-out;
+    -ie-transition: background .2s ease-out;
+    -o-transition: background .2s ease-out;
+    transition: background .2s ease-out;
+}
+
+.btn,
+.btn a {
+    display: inline-block;
+    margin-bottom: 0;
+    font-size: 14px;
+    line-height: 20px;
+    color: [[setting:buttontextcolor]] !important;
+    text-align: center;
+    text-shadow: none;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+    border-bottom-color: #b3b3b3;
+    border-radius: [[setting:buttonradius]];
+    box-shadow: 0 [[setting:buttondropshadow]] 0 0 rgba(0, 0, 0, 0.5) inset;
+    padding: 8px 15px 8px;
+}
+
+/* Secondary button */
+.btn-secondary {
+    border-color: #cccccc !important;
+    color: #292b2c !important;
+}
+
+/* Child buttons */
+.btn:first-child {
+    background-color: [[setting:buttoncolor]];
+    color: [[setting:buttontextcolor]] !important;
+}
+
+#notice .singlebutton + .singlebutton input,
+.submit.buttons input[name="cancel"] {
+    background-color: [[setting:editoffbk]] !important;
+    text-shadow: none;
+}
+
+input[type="submit"]:hover,
+input[type="button"]:hover,
+#searchform_button:hover,
+a.submit:hover,
+#notice .singlebutton + .singlebutton input:hover,
+.submit.buttons input[name="cancel"]:hover,
+#page-login-index2 .forgetpass a:hover,
+.submitbutton:hover,
+.btn:hover,
+.btn:active {
+    background: none;
+    background-position: 0 -100%;
+    background-color: [[setting:buttonhovercolor]];
+    text-decoration: none !important;
+    color: [[setting:buttontextcolor]] !important;
+}
+
+input[type="submit"]:focus,
+input[type="button"]:focus,
+#searchform_button:focus,
+a.submit:focus, #notice .singlebutton + .singlebutton input:focus,
+.submit.buttons input[name="cancel"]:focus,
+#page-login-index2 .forgetpass a:focus,
+.btn:focus {
+    background-color: [[setting:buttonhovercolor]];
+    background-position: 0 -100%;
+    text-decoration: none !important;
+    color: [[setting:buttontextcolor]] !important;
+}
+
+button.close {
+    text-shadow: none !important;
+    color: #cc0000;    /* Red hardcoded. */
+    opacity: 1 !important;
+    box-shadow: none !important;
+}
+
+#edittingbutton .btn {
+    color: [[setting:editfont]] !important;
+}
+
+.path-mod-workshop .assessment-summary.graded .singlebutton input[type="submit"]:hover,
+.path-mod-workshop .example-summary.graded .singlebutton input[type="submit"]:hover,
+.btn-link:hover,
+.btn-default:hover,
+input.form-submit:hover,
+input#id_submitbutton:hover,
+input#id_submitbutton2:hover,
+.path-admin .buttons input[type="submit"]:hover,
+td.submit input:hover,
+input.form-submit:focus,
+input#id_submitbutton:focus,
+input#id_submitbutton2:focus,
+.path-admin .buttons input[type="submit"]:focus,
+td.submit input:focus,
+input.form-submit:active,
+input#id_submitbutton:active,
+input#id_submitbutton2:active,
+.path-admin .buttons input[type="submit"]:active,
+td.submit input:active,
+input.form-submit.active,
+input#id_submitbutton.active,
+input#id_submitbutton2.active,
+.path-admin .buttons input[type="submit"].active,
+td.submit input.active, input.form-submit.disabled,
+input#id_submitbutton.disabled,
+input#id_submitbutton2.disabled,
+.path-admin .buttons input[type="submit"].disabled,
+td.submit input.disabled,
+input.form-submit[disabled],
+input#id_submitbutton[disabled],
+input#id_submitbutton2[disabled],
+.path-admin .buttons input[type="submit"][disabled],
+td.submit input[disabled] {
+    background-image: none;
+    background-color: [[setting:buttonhovercolor]];
+    color: [[setting:buttontextcolor]] !important;
+    box-shadow: 0 [[setting:buttondropshadow]] 0 0 rgba(0, 0, 0, 0.5) inset;
+}
+
+#edittingbutton .btn,
+#edittingbutton input[type="submit"],
+#edittingbutton a
+{
+    background-image: none;
+    background-color: [[setting:editonbk]];
+    color: [[setting:editfont]] !important;
+    margin-top: [[setting:edittopmargin]];
+    padding: [[setting:editverticalpadding]] [[setting:edithorizontalpadding]];
+    border-radius: [[setting:buttonradius]];
+    box-shadow: 0 [[setting:buttondropshadow]] 0 0 rgba(0, 0, 0, 0.5) inset;
+}
+
+
+.editing #edittingbutton .btn,
+.editing #edittingbutton input[type="submit"],
+.editing #edittingbutton a:hover,
+.purgecaches a {
+    color: [[setting:editfont]];
+    background-image: none;
+    background-color: [[setting:editoffbk]];
+    margin-top: [[setting:edittopmargin]];
+    padding: [[setting:editverticalpadding]] [[setting:edithorizontalpadding]];
+    text-decoration: none;
+}
+
+/* Set Cancel button to a link instead a button to improve usability */
+.submit.buttons input[name="cancel"],
+[data-role="end"],
+[data-role="cancel"],
+.cancel a,
+#id_cancel,
+input[name="addcancel"],
+button[name="resetbutton"]
+{
+    font-family: [[setting:fontname]], sans-serif !important;
+    font-size: 14px;
+    line-height: 20px;
+    height: 36px;
+    cursor: pointer;
+    color: [[setting:buttoncancelcolor]] !important;
+    background-image: none !important;
+    background-color: [[setting:buttoncancelbackgroundcolor]] !important;
+    box-shadow: none;
+    border: none;
+}
+
+/* Set Cancel hover to a link with the same colour that Cancel but underlined */
+.cancel a:hover,
+[data-role="end"]:hover,
+[data-role="cancel"]:hover,
+input[name="addcancel"]:hover,
+button[name="resetbutton"]:hover,
+#id_cancel:hover {
+    color: [[setting:editoffbk]] !important;
+    text-decoration: underline !important;
+}
+
+/* Disabled button hardcoded to grey. */
+.btn-primary.disabled,
+.btn-primary[disabled] {
+    background-image: none;
+    background-color: #e0e0e0;
+    color: #bdbdbd;
+}
+
+#notice .singlebutton + .singlebutton input,
+.submit.buttons input[name="cancel"] {
+    color: [[setting:editfont]] !important;
+    background-image: none;
+    background-color: [[setting:editoffbk]] !important;
+    text-shadow: none;
+}
+
+.btn-login {
+    background-image: none;
+    background-color: [[setting:buttonlogincolor]];
+    border: none;
+    border-radius: [[setting:buttonradius]];
+    box-shadow: 0 [[setting:buttondropshadow]] 0 0 rgba(0, 0, 0, 0.5) inset;
+    color: [[setting:buttonlogintextcolor]];
+    cursor: pointer;
+    padding: [[setting:buttonloginpadding]] 15px;
+    text-shadow: none;
+    transition: background 0.2s ease-out 0s;
+    margin-top: [[setting:buttonloginmargintop]];
+    margin-right:2px;
+    height:[[setting:buttonloginheight]];
+}
+
+.btn-login:hover {
+    background-image: none;
+    background-color: [[setting:buttonloginhovercolor]];
+    color: [[setting:buttonlogintextcolor]];
+    text-decoration: none;
+}
+
+.continuebutton {
+    margin: 10px 0;
+}
+
+/* Complete activity button */
+.path-course-view li.activity span.autocompletion img,
+.path-course-view li.activity form.togglecompletion .btn {
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+/* Caret */
+.btn .caret {
+    border-top-color: [[setting:buttontextcolor]] !important;
+}

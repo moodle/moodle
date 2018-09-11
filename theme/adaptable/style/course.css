@@ -1,0 +1,763 @@
+/*
+* This file is part of Moodle - http://moodle.org/
+*
+* Moodle is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Moodle is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+*
+*
+* Adaptable Style sheet for courses format
+*
+* @package    theme_adaptable
+* @copyright  2015-2016 Jeremy Hopkins (Coventry University)
+* @copyright  2015-2017 Fernando Acedo (3-bits.com)
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*
+*/
+
+/* ****************** */
+/* Common settings    */
+/* ****************** */
+
+
+#completionprogressid {
+    display: [[setting:showyourprogress]];
+}
+
+
+/* ************************ */
+/* Topics / Weekly format   */
+/* ************************ */
+
+.course-content ul.topics li.section {
+    padding-bottom: 0;
+}
+
+#page .course-content ul li.section.main {
+    background-color: [[setting:coursesectionbgcolor]];
+    border: [[setting:coursesectionborderwidth]] [[setting:coursesectionborderstyle]] [[setting:coursesectionbordercolor]];
+    margin-bottom: 10px;
+    border-radius: [[setting:coursesectionborderradius]];
+}
+
+.site-topic ul.section, .course-content ul.section {
+    margin: 0em 1em;
+}
+
+#newdiscussionform {
+    text-align: center;
+}
+
+#searchforums {
+    margin: 5px 0 5px 5px;
+}
+
+.course-content .current {
+    background-color: transparent;
+    border-left: 0px solid #ccc;
+    border-right: 0px dashed #ccc;
+    margin-top: 0px !important;
+}
+
+.panel-body {
+    overflow: hidden;
+}
+
+.panel-body .courseimage img {
+    float: right;
+    margin-bottom: 10px;
+    max-width: 60px;
+    margin-left: 5px;
+}
+
+.course-content ul li.section .side {
+    display: none;
+}
+
+.editing .course-content ul li.section .side {
+    display: inherit;
+}
+
+.course-content ul.topics li.section .content,
+.course-content ul.weeks li.section .content {
+    margin: 0;
+}
+
+.editing .course-content ul.topics li.section .content,
+.editing .course-content ul.weeks li.section .content {
+    margin: 0;
+}
+
+.section-handle {
+    margin: 0;
+    position: relative;
+    top: 12px;
+}
+
+.course-content ul.topics li.section .left {
+    padding-top: 2px;
+    text-align: right;
+}
+
+.course-content ul li.section.main {
+    margin: 0;
+}
+
+.sectionname {
+    background-color: [[setting:coursesectionheaderbg]] !important;
+    color: [[setting:sectionheadingcolor]] !important;
+    font-size: 20px;
+    margin-bottom: 20px;
+    padding: 3px 10px;
+    border-bottom: [[setting:coursesectionheaderborderstyle]] [[setting:coursesectionheaderbordercolor]] [[setting:coursesectionheaderborderwidth]];
+    border-radius: [[setting:coursesectionheaderborderradiustop]];
+    border-bottom-right-radius: [[setting:coursesectionheaderborderradiusbottom]];
+    border-bottom-left-radius: [[setting:coursesectionheaderborderradiusbottom]];
+}
+
+
+/* Alter nav on single-section for better onetopic course format support */
+.single-section .nav {
+    margin-bottom: 0;
+}
+
+.single-section .nav-tabs {
+    border-bottom: none;
+}
+
+.path-course-view .completionprogress {
+    color: #666;
+    float: none;
+    font-size: 90%;
+    padding: 0 0 10px;
+}
+
+.path-course-view .section .summary {
+    padding: 10px 0 0 20px;
+}
+
+#gridshadebox_content .content .summary,
+#gridshadebox_content .content ul.section {
+    padding: 0 20px;
+}
+
+.course-content .current  .content .sectionname {
+    background: [[setting:currentcolor]];
+}
+
+.course-content ul li.section.hidden .sectionname,
+.course-content ul li.section.hidden .content > div {
+    margin-right: 40px;
+}
+
+/* Course Tiles */
+.courses .coursebox.even,
+.courses .coursebox {
+  background-color: #fafafa !important;
+  border-radius: 6px;
+}
+
+.courses .coursebox.even {
+  background-color: #eee !important;
+}
+
+.coursebox > .info > .coursename a {
+  font-weight: normal;
+  font-size: 80%;
+}
+
+.coursebox > .info > h3.name,
+.course_category_tree .category > .info .name {
+    font-size: 120%;
+    font-weight: normal;
+    margin: 0;
+}
+
+.coursebox .content {
+    clear: none;
+}
+
+.coursebox {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+}
+
+#page .covtiles.panel {
+    background: transparent !important;
+    border: 0;
+    position: relative;
+}
+
+#page .covtiles.panel .panel-body {
+    border: 1px solid #e4e4e4;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px #c1c1c1;
+    padding: 5px;
+    position: relative;
+}
+
+#marketblocks.covtiles {
+    overflow: visible;
+}
+
+#marketblocks .covtiles {
+    border-radius: 2px;
+    box-shadow: 0 1px 2px #c1c1c1;
+    position: relative;
+    border: 5px solid #fff;
+}
+
+#page .covtiles.panel:hover .panel-body {
+    background-color: transparent !important;
+}
+
+#marketblocks.covtiles .internalmarket {
+    background-color: transparent;
+    border: 0;
+    padding: 10px 5px;
+    text-align: left;
+    position: relative;
+}
+
+#marketblocks.covtiles h3 {
+    margin-bottom: 0;
+}
+
+#marketblocks.covtiles a.submit {
+    margin-top: 10px;
+    display: inline-block;
+}
+
+#page .covtiles.panel .cimbox {
+    background-position: 50% 0 !important;
+    background-size: cover !important;
+    height: 200px;
+    overflow: hidden;
+}
+
+#page .covtiles.panel .cimbox,
+#page .covtiles.panel:hover .cimbox,
+#page .covtiles.panel:hover {
+    opacity: 1;
+}
+
+.covtiles.coursebox.panel.hover .panel-body .coursebox-content h3,
+#marketblocks.covtiles h4 {
+    background: [[setting:covbkcolor]];
+    border: 5px solid #fff;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    color: [[setting:covfontcolor]] !important;
+    font-size: 18px;
+    font-weight: 800;
+    left: -5px;
+    margin: 0;
+    padding: 5px 10px;
+    text-align: left;
+    width: auto;
+    max-width: 100%;
+}
+
+.covtiles.coursebox.panel.hover .panel-body .coursebox-content h3 a,
+#marketblocks.covtiles h4 a,
+.covtiles.coursebox.panel.hover .panel-body .coursebox-content h3 a:hover,
+#marketblocks.covtiles h4 a:hover {
+    color: [[setting:covfontcolor]] !important;
+}
+
+.covtiles .coursebox-content {
+    position: relative;
+    padding: 0 0;
+}
+
+.coursebox.hover.covtiles2 .summary {
+    display: block !important;
+    background: [[setting:covbkcolor]];
+    bottom: 0;
+    left: 0;
+    padding: 0;
+    right: 0;
+    top: inherit;
+    width: 98%;
+    height: 0;
+    min-height: 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 1;
+    transition: max-height 1.0s !important;
+}
+
+.coursebox.hover.covtiles2:hover .summary {
+    height: auto;
+    min-height: 30px;
+    padding: 10px 1%;
+    max-height: 1000px;
+    opacity: 1;
+    transition: max-height 1.0s !important;
+}
+
+.covtiles.panel.hover .coursebtn.submit.btn {
+    display: block;
+    margin-top: 10px;
+}
+
+.coursebox.hover.covtiles .summary {
+    background: [[setting:covbkcolor]];
+    color: [[setting:covfontcolor]] !important;
+    display: block;
+    position: relative;
+    text-align: left;
+    min-width: auto;
+}
+
+#page .covtiles.panel .panel-body {
+    padding-bottom: 38px;
+}
+
+.covtiles .coursebox-content {
+    bottom: 5px;
+    left: 5px;
+    right: 4px;
+    height: 38px;
+    position: absolute;
+    width: auto;
+    transition: all .5s ease-in-out;
+    overflow: hidden;
+    background-color: [[setting:covbkcolor]];
+}
+
+.covtiles .coursebox-content:hover {
+    height: 80%;
+    position: absolute;
+    width: auto;
+    background-color: [[setting:covbkcolor]];
+    transition: all .5s ease-in-out;
+}
+
+/* ************* */
+/* Social Wall   */
+/* ************* */
+
+/* All sections--------------------------------------------------------------------------- */
+/* Add padding, background, and word-wrap on all sections*/
+.format-socialwall .topics {
+    padding: 2em;
+    border-radius: [[setting:socialwallsectionradius]];
+    background-color: [[setting:socialwallbackgroundcolor]];
+    word-wrap: break-word;
+    font-family: [[setting:fontname]], sans-serif;
+}
+
+/*Add padding, background, and border to all sections */
+.format-socialwall .section.main.clearfix#section-0,
+.format-socialwall .section.main.clearfix#section-2,
+.format-socialwall .topics > form,
+.format-socialwall #counttotalpost,
+.format-socialwall .topics .tl-post,
+.format-socialwall .tl-post .tl-post-actionarea {
+    padding: 1em;
+    background: #fff;
+    border: [[setting:socialwallborderwidth]] [[setting:socialwallbordertopstyle]] [[setting:socialwallbordercolor]];
+    border-radius: [[setting:socialwallsectionradius]];
+}
+
+/* Section 0 ------------------------------------------------------------------------------- */
+/* Combine section 0, section 2, search form, and post count */
+.format-socialwall .section.main.clearfix#section-0 {
+    border-bottom: 0;
+    margin-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.format-socialwall .section.main.clearfix#section-2 {
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom: 0;
+    margin-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.format-socialwall .topics > form {
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.format-socialwall #counttotalpost {
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+/* Make title background white */
+.format-socialwall .section.main.clearfix#section-0 h3.sectionname {
+    background: #fff;
+}
+
+/* Section 2------------------------------------------------------------------------------- */
+/* Make activity/resource link inactive */
+.format-socialwall #postform input#sw-addactivitylink {
+    pointer-events: none;
+}
+
+/* Text area resizing--------------------------------------------------------------------- */
+/* Allow the comment starting text area to expand to the width of the parent element */
+.format-socialwall div.felement.ftextarea {
+    max-width: 100%;
+}
+/* Set the starting text areas of post and comment to the maximum width, and stop them from expanding futher than their parent element */
+.format-socialwall .sw-texarea, .format-socialwall .tl-commentform .tl-commenttext {
+    box-sizing: border-box;
+    min-width: 100%;
+    max-width: 100%;
+}
+
+/* Post----------------------------------------------------------------------------------- */
+/* Add space between post text and author, and post text and attached files */
+.format-socialwall .tl-posttext .text_to_html {
+    padding: 2em 0 1.5em;
+}
+
+/* Remove border between post author picture and post */
+.format-socialwall .tl-text {
+    border-left: 0;
+}
+
+/* Resize, re-align, and recolour post time edited ago */
+.format-socialwall .tl-edited-wrapper {
+    font-size: 0.8em;
+    text-align: right;
+    color: [[setting:fontcolor]];
+    background: #fff;
+}
+
+/* Comment--------------------------------------------------------------------------------- */
+/* Add space at the bottom of each comment */
+.format-socialwall .tl-comment {
+    padding-bottom: 1em;
+}
+
+/* Add space between comment author name and comment text */
+.format-socialwall .tl-text .tl-authorname {
+    padding-bottom: 1.5em;
+}
+
+/* Add space between comment text and time ago */
+.format-socialwall .tl-comment .tl-text div:nth-child(2) {
+    padding-bottom: 1.5em;
+}
+
+/* Remove space at the bottom of replywrapper */
+.format-socialwall .tl-comment-replywrapper {
+    padding-bottom: 0;
+}
+
+/* Moves the required text to the right */
+div.fdescription.required {
+    float: right;
+}
+
+/* Post attachment------------------------------------------------------------------------- */
+/* Add space between attached files and post text or post author, and space between attached files and post action area */
+.format-socialwall ul.section.tl-postattachment {
+    padding: 2em 0 2.5em;
+    margin: 0;
+}
+
+/* Present attached files horizontally */
+.format-socialwall ul.section.tl-postattachment div {
+    float: left;
+}
+
+/* Post action area------------------------------------------------------------------------ */
+/* Add space around post counts and timeago */
+.format-socialwall .tl-counts, .format-socialwall .tl-timeago {
+    font-size: 0.8em;
+    color: [[setting:fontcolor]];
+    padding: 1em 0 1.5em;
+}
+
+/* Add space after each count (likes and comments) */
+.format-socialwall .tl-counts span {
+    padding-right: 1.5em;
+}
+
+/* Add space at the end of action area and remove right, bottom, left border */
+.format-socialwall .tl-post .tl-post-actionarea {
+    padding: 0 0 1em;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+/* Post action links---------------------------------------------------------------------- */
+/* Make the color of action link grey */
+.format-socialwall .tl-actionlink a {
+    color: [[setting:socialwallactionlinkcolor]];
+}
+
+/* Add space after like */
+.format-socialwall .tl-actionlink a.like {
+    padding-right: 3em;
+}
+
+/* Add space after likenomore and change color to light blue */
+.format-socialwall .tl-actionlink a.likenomore {
+    padding-right: 3em;
+    font-weight: bold;
+}
+
+/* Change color on hover over to all action link from grey to light blue */
+.format-socialwall .tl-actionlink a:hover {
+    font-weight: bold;
+    color: [[setting:socialwallactionlinkhovercolor]];
+    text-decoration: none;
+}
+
+/* Before the like action link----------------------------------------------------- */
+/* Add a hollow thumbs up icon before like */
+.format-socialwall .like:before {
+    font-family: FontAwesome;
+    content: "\f087";
+    position: relative;
+    padding-right: .15em;
+}
+
+/* Add a full thumbs up icon before like */
+.format-socialwall .likenomore:before {
+    font-family: FontAwesome;
+    content: "\f164";
+    position: relative;
+    padding-right: .15em;
+}
+
+/* Add a hollow comment icon before like */
+.format-socialwall .tl-actionlink a:nth-child(3):before {
+    font-family: FontAwesome;
+    content: "\f0e5";
+    position: relative;
+    padding-right: .15em;
+}
+
+/* Profile picture------------------------------------------------------------------ */
+/* Make the profile picture circular */
+.format-socialwall img.userpicture {
+    border: 0.25em solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0.05em 0.05em rgba(0,0,0,0.05);
+}
+
+.section_footer {
+  margin-top: 2em;
+  padding: 1em 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  clear: both;
+  display: block;
+}
+
+.section_footer .prevnext {
+  font-style: normal;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+}
+
+@media screen and (min-width: 768px) {
+  .section_footer .previous_section,
+  .section_footer .next_section {
+    width: 50%;
+    vertical-align: top;
+  }
+
+}
+
+.section_footer > .jumpmenu {
+  width: 100%;
+}
+
+.next_section {
+  text-align: right;
+  min-height: 1px;
+}
+
+.jumpnav > .jumpmenu {
+  text-align: center;
+  margin-top: 1em;
+}
+
+.previous_section {
+  min-height: 1px;
+}
+
+.nav_icon {
+  padding: .3em;
+  text-align: center;
+  font-size: 1.5em;
+  line-height: 2em;
+  display: table-cell;
+  min-width: 50px;
+}
+
+.previous_section .nav_icon {
+  margin-right: .3em;
+  border-right: 1px solid #eee;
+}
+.previous_section .text {
+  padding-left: 9px;
+}
+.next_section .nav_icon {
+  margin-left: .3em;
+  border-left: 1px solid #eee;
+}
+.next_section .text {
+  padding-right: 9px;
+}
+
+.section_footer .text {
+  display: table-cell;
+  width: 10007px;
+  vertical-align: top;
+  padding-top: 9px;
+  color: #565656;
+}
+
+.nav_guide {
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-style: normal;
+}
+
+/* Activity styling */
+.block_site_main_menu .mod-indent .activity,
+.block_site_main_menu .main-menu-content .activity {
+    padding: 5px 0px 5px 0px;
+}
+
+.section-modchooser {
+    padding: 5px 10px;
+}
+
+.section li.modtype_assign div.activity-wrapper {
+    -webkit-box-shadow: -[[setting:coursesectionactivityleftborderwidth]] 0 0 0 [[setting:coursesectionactivityassignleftbordercolor]];
+    box-shadow: -[[setting:coursesectionactivityleftborderwidth]] 0 0 0 [[setting:coursesectionactivityassignleftbordercolor]];
+    border-bottom: [[setting:coursesectionactivityborderwidth]] [[setting:coursesectionactivityborderstyle]] [[setting:coursesectionactivitybordercolor]];
+    background-color: [[setting:coursesectionactivityassignbgcolor]];
+}
+
+.section li.modtype_forum div.activity-wrapper {
+    -webkit-box-shadow: -[[setting:coursesectionactivityleftborderwidth]] 0 0 0 [[setting:coursesectionactivityforumleftbordercolor]];
+    box-shadow: -[[setting:coursesectionactivityleftborderwidth]] 0 0 0 [[setting:coursesectionactivityforumleftbordercolor]];
+    border-bottom: [[setting:coursesectionactivityborderwidth]] [[setting:coursesectionactivityborderstyle]] [[setting:coursesectionactivitybordercolor]];
+    background-color: [[setting:coursesectionactivityforumbgcolor]];
+}
+
+.section li.modtype_quiz div.activity-wrapper {
+    -webkit-box-shadow: -[[setting:coursesectionactivityleftborderwidth]] 0 0 0 [[setting:coursesectionactivityquizleftbordercolor]];
+    box-shadow: -[[setting:coursesectionactivityleftborderwidth]] 0 0 0 [[setting:coursesectionactivityquizleftbordercolor]];
+    border-bottom: [[setting:coursesectionactivityborderwidth]] [[setting:coursesectionactivityborderstyle]] [[setting:coursesectionactivitybordercolor]];
+    background-color: [[setting:coursesectionactivityquizbgcolor]];
+}
+
+/* Label Info */
+.section .activity .availabilityinfo {
+    margin-left: 30px;
+    margin-top: 1em;
+}
+
+.availabilityinfo .label-info {
+    background-color: [[setting:alertbackgroundcolorinfo]];
+    border-color: [[setting:alertbordercolorinfo]];
+    color: [[setting:alertcolorinfo]];
+    font-size: 14px;
+    padding: 10px;
+}
+
+.availabilityinfo .label-info a,
+.availabilityinfo .label-info a:hover {
+    color: [[setting:alertcolorinfo]] !important;
+}
+
+
+/* Activity further information styling */
+.activity-meta-container {
+    padding: 5px 0 0 0;
+    margin: 0px 10px 0 30px;
+}
+
+span.activity-due-date {
+    background-color: #555555;
+    color: #ffffff;
+    padding: 7px;
+    margin: 0 10px 0 0;
+    line-height: 3em;
+    border-radius: 0.5em;
+    font-size: 0.9em;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+span.activity-due-date a {
+    color: #ffffff !important;
+ }
+
+span.activity-mod-feedback {
+    padding: 5px 0;
+}
+
+span.activity-mod-feedback i {
+    font-size: 1.1em;
+}
+
+span.activity-date-overdue {
+    background-color: #ee0000;
+}
+
+span.activity-date-submitted {
+    background-color: #00cc00;
+}
+
+span.activity-date-nearly-due {
+    background-color: #f79100;
+}
+
+span.activity-mod-feedback i, .activity-mod-engagement i, span.activity-due-date i {
+    font-size: 1.1em;
+}
+
+li.activity div.actions-right {
+    float: right; padding: 5px;
+}
+
+div.activity-wrapper {
+    margin: [[setting:coursesectionactivitymargintop]] 0 [[setting:coursesectionactivitymarginbottom]] 0;
+    padding: 5px 10px 5px 10px;
+}
+
+.section .activity .mod-indent-outer {
+    width: 100%;
+}
+
+.section .activity .actions-right .actions {
+    position: absolute;
+    right: 17px;
+    top: 15px;
+}

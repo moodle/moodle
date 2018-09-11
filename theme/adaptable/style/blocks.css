@@ -1,0 +1,535 @@
+/*
+* This file is part of Moodle - http://moodle.org/
+*
+* Moodle is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Moodle is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+*
+*
+* Adaptable Blocks Style sheet
+*
+* Version details
+*
+* @package    theme_adaptable
+* @copyright  2015 Jeremy Hopkins (Coventry University)
+* @copyright  2015 Fernando Acedo (3-bits.com)
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*
+*/
+
+.block-region-front .block {
+    border: none;
+}
+
+.block-region-front .block .header {
+    border: none;
+}
+
+.block .content a.dimmed {
+    font-style: italic;
+}
+
+/* Reset border values */
+.block {
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+}
+
+/* Block titles */
+.block .header,
+#dockeditempanel .dockeditempanel_hd {
+    border-width: [[setting:blockheaderbordertop]] [[setting:blockheaderborderright]] [[setting:blockheaderborderbottom]] [[setting:blockheaderborderleft]];
+    border-color: [[setting:blockbordercolor]];
+    border-style: [[setting:blockheaderbordertopstyle]];
+    padding: 10px 10px;
+    background: [[setting:blockheaderbackgroundcolor]];
+    border-radius: [[setting:blockheadertopradius]] [[setting:blockheadertopradius]] [[setting:blockheaderbottomradius]] [[setting:blockheaderbottomradius]];
+}
+
+.block .header {
+    padding-right: 0;
+}
+
+/* Block header */
+.block .header .title h2 {
+    margin: 0;
+    padding: 0;
+    text-transform: none;
+    font-size: [[setting:fontblockheadersize]];
+    color: [[setting:fontblockheadercolor]];
+    font-weight: [[setting:fontblockheaderweight]];
+    text-shadow: none;
+    line-height: 40px;
+}
+
+.block .header .block_action {
+    margin: 0;
+    margin-top: -5px;
+}
+
+/* Block content */
+.block > .content,
+#dockeditempanel .dockeditempanel_bd {
+    border-width: [[setting:blockmainbordertop]] [[setting:blockmainborderright]] [[setting:blockmainborderbottom]] [[setting:blockmainborderleft]];
+    border-color: [[setting:blockbordercolor]];
+    border-style: [[setting:blockmainbordertopstyle]];
+    padding: 10px 10px;
+    font-weight: normal;
+    background: [[setting:blockbackgroundcolor]];
+    border-radius: [[setting:blockmaintopradius]] [[setting:blockmaintopradius]] [[setting:blockmainbottomradius]] [[setting:blockmainbottomradius]];
+}
+
+.block .content a,
+.block .content li a,
+.block .content td a {
+    color: [[setting:linkcolor]];
+}
+
+.block .content a:hover,
+.block .content li a:hover,
+.block .content td a:hover {
+    color: [[setting:linkhovercolor]];
+    text-decoration: none !important;
+}
+
+.block .block-hider-show,
+.block .block-hider-hide {
+    width: 18px;
+}
+
+/** Some specific block styles for calendar block, login block, my profile block, etc. **/
+
+/* Navigation block */
+.jsenabled .block_settings .block_tree .tree_item.branch,
+.block_navigation .block_tree .tree_item.branch {
+    color: [[setting:linkcolor]] !important;
+}
+
+/* Fix wrong indentation */
+.block_navigation .block_tree p.hasicon img {
+    padding-right: 0;
+}
+
+/* Course Overview block */
+.block .content .block-myoverview a:active,
+.block .content .block-myoverview li a:active,
+.block .content .block-myoverview td a:active,
+.block .content .block-myoverview a:focus,
+.block .content .block-myoverview li a:focus,
+.block .content .block-myoverview td a:focus {
+    color: [[setting:buttontextcolor]] !important;
+    background-color: [[setting:buttoncolor]] !important;
+}
+
+.block .content .block-myoverview a:hover,
+.block .content .block-myoverview li a:hover,
+.block .content .block-myoverview td a:hover {
+    color: [[setting:buttontextcolor]] !important;
+    background-color: [[setting:buttonhovercolor]] !important;
+}
+
+
+/* Login block */
+.block_login label {
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    color: #666;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    font-weight: 400;
+}
+
+.block_login .username label:before {
+    content: "\f007";
+    font-family: FontAwesome;
+    margin-right: 5px;
+    color: #999;
+}
+
+.block_login .password label:before {
+    content: "\f084";
+    font-family: FontAwesome;
+    margin-right: 5px;
+    color: #999;
+}
+
+.block_login2 .btn,
+.block_login2 .content .footer a {
+    background-image: none;
+    background-color: #5cb85c;
+    border-color: #30ADD1;
+    border-image: none;
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: none;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    padding: 4px 12px;
+    text-align: center;
+    text-shadow: none;
+    vertical-align: middle;
+    margin: 10px 0;
+    transition: 0.25s;
+    width: 100%;
+}
+
+.block_login2 .btn:hover {
+    background-color: #388f9d !important;
+}
+
+#page-login-index2 #loginbtn {
+    background-color: #4f9e4f;
+    text-shadow: none;
+}
+
+.block_login2 .content .footer div:nth-child(1) a,
+#page-login-index2 .forgetpass a {
+    color: #fff;
+    text-align: center;
+    background-color: #ee981e;
+    border-color: #ee981e;
+    background-image: none !important;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+}
+
+#page-login-index2 .forgetpass a {
+    display: block;
+    margin-bottom: 10px;
+    margin-left: 5px;
+    margin-top: 10px;
+    max-width: 260px;
+    text-shadow: none;
+}
+
+
+#page-login-index2 .forgetpass {
+    clear: both;
+    float: right;
+    text-align: left;
+    width: 66%;
+}
+
+.loginbox .loginpanel .desc {
+    clear: both;
+}
+
+.block_login .content {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+}
+
+.block_login .c1.btn input {
+    display: block;
+    text-align: center;
+    width: 96%;
+}
+
+.loginbox .loginform .form-input input {
+    width: 50%;
+}
+
+.loginbox .loginform .form-input {
+    float: right;
+    width: 66%;
+}
+
+.loginbox .loginform .form-label {
+  width: 33%;
+}
+
+/* Admin block */
+.block_adminblock .content {
+    margin: 0 auto;
+}
+
+/* Course block */
+.block_course_overview .content {
+    margin: 0;
+}
+
+/* Calendar block */
+.block_calendar_month table.minicalendar.calendartable td,
+.block_calendar_month table.minicalendar.calendartable th {
+    border: none !important;
+}
+
+.block_calendar_month table.minicalendar {
+    margin-bottom: 0 !important;
+}
+
+.block_calendar_month table.minicalendar.calendartable th abbr {
+    border: none !important;
+    text-decoration: none;
+}
+
+/* Comments block */
+.block_comments div.content li {
+    list-style-type: none;
+}
+
+.block_tree_box hr {
+    background: transparent;
+    border: none;
+    border-top: 1px solid #eee;
+}
+
+/* Site Info block */
+.site-info-container {
+    background-color: [[setting:maincolor]];
+    padding: 5px 10px;
+    height: 120px
+}
+
+.site-info-value {
+    color: #ffffff;
+    font-size: 48px;
+    display: block;
+    text-align: right;
+}
+
+.site-info-label {
+    color: #ffffff;
+    font-size: 18px;
+    display: block;
+    text-align: right;
+}
+
+/* Server Info block */
+.server-info-container {
+    background-color: #39c121;
+    padding: 5px 10px;
+    height: 120px
+}
+
+/* Quiz editing block header */
+.questionbankwindow.block {
+    padding: 0;
+}
+
+#page-mod-quiz-edit .questionbankwindow div.header {
+    background-color: #eee;
+    color: inherit;
+}
+
+#page-mod-quiz-edit .questionbankwindow div.header a {
+    color: inherit;
+}
+
+#mod_quiz_navblock input {
+    white-space: normal;
+}
+
+/* Hidden blocks */
+.block.hidden .header {
+    border-bottom: 0;
+}
+
+.block.invisible:hover {
+    opacity: 1;
+}
+
+.block .block-hider-show, .block .block-hider-hide {
+    width: 12px;
+}
+
+body.has_dock div#dock {
+    z-index: 3;
+}
+
+/* Squared dot */
+.block_settings .block_tree li.item_with_icon > p img {
+    left: 3px;
+    top: 2px;
+}
+
+/* Add or hide block icons */
+.showblockicons .block .header .title h2:before {
+    font-family: FontAwesome;
+    font-size: [[setting:blockiconsheadersize]];
+    margin-right: 0.3em;
+    content: "\f0c9";
+    font-weight: normal;
+}
+
+/* Block Icons */
+.showblockicons .block_news_items .header .title h2:before {
+    content: "\f0a1";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_navigation .header .title h2:before {
+    content: "\f0e8";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_calendar_upcoming .header .title h2:before,
+.showblockicons .block_calendar_month .header .title h2:before {
+    content: "\f073";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_course_list .header .title h2:before {
+    content: "\f108";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_completionstatus .header .title h2:before,
+.showblockicons .block_selfcompletion .header .title h2:before {
+    content: "\f0e4";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_blog_menu .header .title h2:before {
+    content: "\f02d";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_quiz_results .header .title h2:before {
+    content: "\f080";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_quiz_navblock .header .title h2:before {
+    content: "\f126";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_glossary_random .header .title h2:before {
+    content: "\f0eb";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_book_toc .header .title h2:before {
+    content: "\f02d";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_participants .header .title h2:before,
+.showblockicons .block_online_users .header .title h2:before {
+    content: "\f0c0";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_html .header .title h2:before {
+    content: "\f022";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_section_links .header .title h2:before {
+    content: "\f02e";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_activity_modules .header .title h2:before {
+    content: "\f12e";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_comments .header .title h2:before {
+    content: "\f075";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_settings .header .title h2:before {
+    content: "\f085";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_admin_bookmarks .header .title h2:before {
+    content: "\f02e";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_blog_tags .header .title h2:before,
+.showblockicons .block_tags .header .title h2:before {
+    content: "\f02c";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_private_files .header .title h2:before {
+    content: "\f114";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_block_mentees .header .title h2:before {
+    content: "\f0c0";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_messages .header .title h2:before {
+    content: "\f0e0";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_community .header .title h2:before {
+    content: "\f0ac";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_recent_activity .header .title h2:before {
+    content: "\f017";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_rss_client .header .title h2:before {
+    content: "\f09e";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_search_forums .header .title h2:before {
+    content: "\f0e6";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_myprofile .header .title h2:before {
+    content: "\f007";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_adminblock .header .title h2:before {
+    content: "\f009";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_feedback .header .title h2:before {
+    content: "\f087";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_flickr .header .title h2:before {
+    content: "\f03e";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_youtube .header .title h2:before {
+    content: "\f145";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_course_badges .header .title h2:before,
+.showblockicons .block_badges .header .title h2:before {
+    content: "\f0a3";
+    font-family: FontAwesome;
+}
+
+.showblockicons .block_twitter_search .header .title h2:before {
+    content: "\f099";
+    font-family: FontAwesome;
+}

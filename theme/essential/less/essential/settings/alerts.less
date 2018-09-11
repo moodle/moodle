@@ -1,0 +1,58 @@
+/* @group Alerts */
+@import "../../fontawesome/variables";
+
+.alert {
+    .@{fa-css-prefix}-info {
+        background-color: @infoText;
+    }
+    .@{fa-css-prefix}-warning {
+        background-color: @errorText;
+    }
+    .@{fa-css-prefix}-bullhorn {
+        background-color: @successText;
+    }
+    .@{fa-css-prefix}-info,
+    .@{fa-css-prefix}-warning,
+    .@{fa-css-prefix}-bullhorn {
+        color: ~"[[setting:themenavcolor]]";
+        &:hover,
+        &:focus {
+            color: ~"[[setting:themenavcolor]]";
+        }
+    }
+    &.alert-info .close {
+        .@{fa-css-prefix} {
+            color: @infoText;
+        }
+        &:hover,
+        &:focus {
+            .@{fa-css-prefix} {
+                color: @infoText;
+            }
+        }
+    }
+    &.alert-error .close {
+        .@{fa-css-prefix} {
+            color: @errorText;
+        }
+        &:hover,
+        &:focus {
+            .@{fa-css-prefix} {
+                color: @errorText;
+            }
+        }
+    }
+    &.alert-success .close {
+        .@{fa-css-prefix} {
+            color: @successText;
+        }
+        &:hover,
+        &:focus {
+            .@{fa-css-prefix} {
+                color: @successText;
+            }
+        }
+    }
+}
+
+/* @end */

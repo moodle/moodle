@@ -1,0 +1,627 @@
+/*
+* This file is part of Moodle - http://moodle.org/
+* Moodle is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Moodle is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+*
+*
+* Adaptable Responsive Style sheet
+*
+* @package    theme_adaptable
+* @copyright  2015-2016 Jeremy Hopkins (Coventry University)
+* @copyright  2015-2017 Fernando Acedo (3-bits.com)
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*
+=====================================================
+Default Bootstrap 2.3.2 Media Queries
+
+Only screen and (max-width : 1200px)
+Only screen and (max-width : 979px)
+Only screen and (max-width : 767px)
+Only screen and (max-width : 480px)
+=======================================================
+*/
+
+/*=====================================================
+1200px
+======================================================= */
+
+@media only screen and (max-width: 1200px) {
+    .zoomdesc {
+        display: none;
+    }
+}
+
+/*=====================================================
+979px
+======================================================= */
+@media only screen and (max-width: 979px) {
+    .langdesc {
+        display: inline;
+    }
+    .slidestyle2 .flex-caption {
+        right: -800px;
+    }
+    .slidestyle2 .flex-active-slide .flex-caption {
+        right: 0;
+        transition: all 1s ease;
+    }
+    .slidestyle2 .flex-caption h3 {
+        max-width: 970px;
+    }
+    .slidestyle2 .flex-caption br {
+        display: none;
+    }
+    .slidestyle2 .flex-caption {
+        top: 25%;
+    }
+    .slidestyle2 .flex-direction-nav {
+        display: none;
+    }
+    .slidestyle2 .flex-caption h4 {
+        font-size: 23px;
+        line-height: 30px;
+    }
+    .slidestyle2 .flex-caption a.submit {
+        font-size: 14px;
+        float: none;
+        white-space: normal;
+        width: auto;
+    }
+
+    .navbar {
+        float: none !important;
+    }
+
+    .navbar .pull-right {
+        float: none;
+    }
+
+    .navbar .nav > li > a {
+        margin: 0 10px 0 0 !important;
+    }
+
+    .flex-direction-nav .flex-next {
+        right: 0 !important;
+    }
+
+    .flex-direction-nav .flex-prev {
+        left: 0 !important;
+    }
+
+/* Header */
+    /* Logo */
+    #logocontainer {
+        display: block !important;
+        margin: 5px 0;
+        padding: 0;
+        clear:both;
+        width: 100%;
+        height: auto;
+    }
+
+    #logo img {
+        display: block;
+        margin: 0 auto;
+    }
+
+    /* Site title */
+    #sitetitle {
+        clear: both;
+        display: block;
+        margin: 5px 0;
+        max-width: 100%;
+        text-align: center;
+        padding: 0;
+        height: auto;
+        top: 0;
+        left: 0;
+    }
+
+    /* Social Icons */
+    .socialbox {
+        display: table;
+        padding: 5px;
+        float: none;
+        clear: both;
+        margin: 0 auto;
+    }
+
+    .coursebox .panel-body p {
+        font-size: 90%;
+        line-height: 130%;
+    }
+
+    .enrolmenticons {
+        display: none;
+    }
+
+    #edittingbutton a,
+    #edittingbutton .btn {
+        margin-left: 10px !important;
+    }
+
+    .searchbox {
+        padding-bottom: 5px;
+    }
+
+    .search-box, .searchbox {
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    #search-1 {
+        width: calc(100% - 39px);
+    }
+
+    .hbl, .sbl, .hbll, .sbll {
+        display: none !important;
+    }
+
+    .navbar .dropdown-toggle {
+        height: 38px;
+    }
+
+    .nav-collapse .nav {
+        width: 100%;
+        margin-left: 0 !important;
+    }
+
+    #navwrap {
+        border-bottom: 0;
+    }
+
+    #page-header a img {
+        margin: 0 auto;
+        float: none;
+        display: block;
+    }
+
+    .nav .dropdown-menu li a {
+        color: [[setting:menufontcolor]];
+    }
+
+    .nav-collapse.active {
+        background-color: [[setting:mobilemenubkcolor]];
+        height: auto;
+        top: 6px;
+        padding-bottom: 4px;
+    }
+
+    .nav-collapse.active > .nav > li > a,
+    .nav-collapse.active > .nav .dropdown-menu li > a {
+        color:[[setting:mobilemenufontcolor]] !important;
+    }
+
+    #edittingbutton {
+        margin-left: 10px;
+    }
+
+    .menutitle {
+        float: none;
+    }
+
+    /* Messages / Notifications dropdown */
+    .popover-region-container {
+        height: 600px;
+        float: left;
+        left: -100px;
+        top: 30px;
+        width: 300px;
+    }
+    .navbar .nav .dropdown-menu, .headermenu .dropdown-menu, .langmenu .dropdown-menu {
+        min-width: 150px;
+    }
+
+.icon {
+    height: 48px;
+    width:  48px;
+}
+
+}
+
+/*=====================================================
+767px
+======================================================= */
+@media only screen and (max-width: 767px) {
+    #page-login-index2 .forgetpass {
+        clear: both;
+        float: none;
+        margin: 0 auto;
+        text-align: center;
+        width: 50%;
+        min-width: 200px;
+    }
+
+    #ticker-announce {
+        float: none;
+        margin: 0;
+        text-align: center;
+    }
+
+    #ticker-wrap #newscontent {
+        max-width: inherit;
+        overflow: inherit;
+        white-space: normal;
+        padding: 10px 10px 10px;
+        line-height: normal;
+    }
+
+    #ticker-wrap #newscontent #news {
+        white-space: normal;
+    }
+
+    #ticker-wrap #controls {
+        display: none;
+    }
+
+    .slidestyle2 .flex-caption {
+        position: relative;
+        top: auto;
+        left: 0;
+        background-color: transparent !important;
+    }
+
+    .slidestyle2 .flex-caption .span6 {
+        margin-left: 0;
+    }
+
+    .slidestyle2 .flex-caption a.submit {
+        margin: 0;
+        float: none;
+        width: auto;
+        text-align: center;
+    }
+
+    .slidestyle2 .flex-caption h3 {
+        margin-left: 0;
+        background: #000;
+        margin: 0 !important;
+    }
+
+    .slidestyle2 .flex-caption h4 {
+        font-size: 18px;
+        line-height: 22px;
+        padding: 10px 0;
+    }
+
+    .coursebox .coursebtn {
+        right: 22%;
+        width: auto;
+    }
+
+    #page-site-index a.submit {
+        display: block;
+        margin: 5px auto;
+        text-align: center;
+        white-space: normal;
+        width: auto;
+    }
+
+    #region-main {
+        padding: 0;
+    }
+
+    #page-header {
+        min-height: [[setting:pageheaderheight]];
+    }
+
+    .row-fluid .span3 {
+        width: 100%;
+    }
+
+    .headermenu2 {
+        float: none;
+        padding: 10px 0;
+        text-align: center;
+        clear: both;
+    }
+
+    .flex-caption {
+        width: 100% !important;
+        padding: 5px 0 !important;
+        font-size: 90% !important;
+    }
+
+    .flex-caption p {
+        font-size: 90% !important;
+        margin: 0 5px !important;
+        margin-bottom: 5px !important;
+        line-height: 1.4em;
+    }
+
+    .flex-caption h3 {
+        font-size: 1.1em !important;
+        line-height: 2em;
+        margin: 0 5px !important;
+    }
+
+    a.submit {
+        width: 80%;
+        display: block;
+        margin: 5px auto;
+        text-align: center;
+    }
+
+    .block .header {
+        margin: 0 !important;
+    }
+
+    #page-footer {
+        margin: 50px 0;
+    }
+
+    #edittingbutton a,
+    #edittingbutton .btn {
+        margin-left: -10px !important;
+    }
+
+    .navbar .nav > li > a {
+        margin: 0 10px 0 4px !important;
+    }
+
+    .nav .dropdown-menu li a:hover,
+    .navbar .nav > li > a:hover {
+        background-color: #000;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: [[setting:fontcolor]] !important;
+    }
+
+    div.navbar {
+        margin-left: auto;
+    }
+
+    #social-connect, .left-col.size2of16.span2 {
+        clear: both;
+        float: none;
+        width: auto;
+    }
+
+    .socialbox a {
+        color: [[setting:headertextcolor2]];
+        font-size: [[setting:socialsizemobile]];
+        padding-left: 10px;
+    }
+
+    .message .contactselector {
+        float: none;
+        width: auto;
+    }
+
+    .message .messagearea {
+        border-left: none;
+        float: none;
+        min-height: 200px;
+        padding-left: 1%;
+        width: auto;
+    }
+
+    .navbar .nav-collapse.in > .nav > li > a {
+        border-radius: 0;
+        padding-left: 0 !important;
+    }
+
+    #page-navbar.span12 {
+        background-color: transparent;
+    }
+
+    .dropdown-toggle a {
+        height: 38px !important;
+    }
+
+    .userhead {
+        height: 20px;
+    }
+
+    .userprofile dl.list dt {
+        width: 110px !important;
+    }
+
+    .userprofile dl.list dd {
+        margin-left: 120px !important;
+    }
+
+    .newmenu1,
+    .newmenu2,
+    .newmenu3,
+    .newmenu4,
+    .newmenu5,
+    .newmenu6,
+    .newmenu7,
+    .newmenu8,
+    .newmenu9,
+    .newmenu10,
+    .newmenu11,
+    .newmenu12,
+    .newmenu13,
+    .newmenu14,
+    .newmenu15,
+    .newmenu16[[setting:hidepagefootermobile]][[setting:hidebreadcrumbmobile]][[setting:hidealertsmobile]][[setting:hidesocialmobile]][[setting:hideheadermobile]][[setting:hidecoursetitlemobile]] {
+        display: none;
+    }
+
+    /* Links and Language menu, hide text on small screens. */
+#above-header .langdesc,
+#above-header .linksdesc {
+        display: none;
+    }
+
+}
+
+/*=====================================================
+480px
+======================================================= */
+@media only screen and (max-width: 480px) {
+    .dropdown-menu.usermen {
+        left: 35%;
+        top: 15px;
+    }
+
+    .flex-caption {
+        width: auto !important;
+        padding: 5px 0 !important;
+        position: relative !important;
+        margin-top: -1px !important;
+        background-color: #000 !important;
+    }
+
+    #page-content {
+        padding: 0;
+        width: auto;
+    }
+
+    #page-header .userimg {
+        display: none;
+    }
+
+    #coursesearchbox2 {
+        display: none;
+    }
+
+    #above-header .headermenu .dropdown-menu {
+        margin-top: 15px;
+    }
+
+}
+
+
+/*=====================================================
+Other.
+======================================================= */
+@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait) {
+    #coursesearchbox2 {
+        min-width: 140px;
+        margin-top: 5px;
+    }
+}
+
+/* Dropdown */
+@media only screen and (min-width: 481px) {
+    /* On hover only for large screens adjusted to exclude ipad portrait.
+       min-width changed to 481 to avoid problems with dropdown menus in tablets and some mobiles (resolutions under 1024px)
+       probably the best option is remove min-width after testing in several screen resolutions.
+    */
+    .dropdown-menu .sub-menu {
+        left: 100%;
+        position: absolute;
+        top: -10px;
+        visibility: hidden;
+        margin-top: -1px;
+    }
+
+    .newmenus .dropdown-menu {
+        left: 0;
+        position: absolute;
+        visibility: hidden;
+        margin-top: 0;
+    }
+
+    .dropdown-submenu>.dropdown-menu {
+        display: none;
+    }
+
+    .dropdown-menu li:hover .sub-menu,
+    .newmenus:hover .dropdown-menu {
+        visibility: visible;
+    }
+
+    .dropdown:hover>.dropdown-menu {
+        display: block;
+    }
+    /*end on hover hack */
+
+}
+
+@media (min-width: 481px) {
+
+    /* Activity chooser styling. Desktop styling. */
+    .jsenabled .choosercontainer #chooseform .alloptions {
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-width: 50%;
+        max-height: -webkit-calc(100vh - 15em) !important;
+        max-height: calc(100vh - 15em) !important;
+    }
+
+    .jsenabled .choosercontainer #chooseform .instruction,
+    .jsenabled .choosercontainer #chooseform .typesummary {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 50%;
+        margin: 0;
+        padding: 1.8em;
+        background-color: #fff;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    /* Selected option settings */
+    .jsenabled .choosercontainer #chooseform .instruction {
+        display: block;
+        font-size: 1.2em;
+    }
+
+    .choosercontainer #chooseform .selected .typesummary,
+    .choosercontainer #chooseform .selected .instruction {
+        display: block;
+        font-size: 1.1em;
+    }
+
+    .choosercontainer #chooseform .selected {
+        background-color: #fff;
+    }
+
+    /* Styling for overall activity chooser box */
+
+    .moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd,
+    .moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
+        padding: 20px;
+        padding-right: 30px;
+        text-align: center;
+        font-size: 36px;
+        min-height: 40px;
+    }
+
+    .moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
+        margin-top: 10px;
+        margin-right: 10px;
+    }
+    .moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons button.yui3-button.closebutton {
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        background-color: #fff;
+        opacity: 0.4;
+        filter: alpha(opacity=40);
+    }
+
+    .moodle-dialogue-base .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons button.yui3-button.closebutton:hover {
+        opacity: 1;
+        filter: alpha(opacity=100);
+    }
+
+    .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-bd {
+        padding: 0;
+        border-bottom-right-radius: 0px;
+        border-bottom-left-radius: 0px;
+    }
+
+    /* End Activity chooser styling. */
+
+}
+
+@media only screen and (min-width: 768px) {
+    #above-header .linksmenu {
+        margin-left: 0px;
+    }
+}
