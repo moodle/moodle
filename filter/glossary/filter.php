@@ -33,12 +33,8 @@ defined('MOODLE_INTERNAL') || die();
  * NOTE: multilang glossary entries are not compatible with this filter.
  */
 class filter_glossary extends moodle_text_filter {
-    /** @var int $cachecourseid cache invalidation flag in case content from multiple courses displayed. */
-    protected $cachecourseid = null;
-    /** @var int $cacheuserid cache invalidation flag in case user is switched. */
-    protected $cacheuserid = null;
-    /** @var array $cacheconceptlist page level filter cache, this should be always faster than MUC */
-    protected $cacheconceptlist = null;
+    /** @var null|cache_store cache used to store the terms for this course. */
+    protected $cache = null;
 
     public function setup($page, $context) {
         if ($page->requires->should_create_one_time_item_now('filter_glossary_autolinker')) {
@@ -58,6 +54,10 @@ class filter_glossary extends moodle_text_filter {
     protected function get_all_concepts() {
         global $CFG, $USER;
 
+        if ($this->cache === null) {
+            $this->cache = cache::make_from_params(cache_store::MODE_REQUEST, 'filter', 'glossary');
+        }
+
         // Try to get current course.
         $coursectx = $this->context->get_course_context(false);
         if (!$coursectx) {
@@ -67,22 +67,25 @@ class filter_glossary extends moodle_text_filter {
             $courseid = $coursectx->instanceid;
         }
 
-        if ($this->cachecourseid != $courseid or $this->cacheuserid != $USER->id) {
+        $cached = $this->cache->get('concepts');
+        if ($cached !== false && ($cached->cachecourseid != $courseid || $cached->cacheuserid != $USER->id)) {
             // Invalidate the page cache.
-            $this->cacheconceptlist = null;
+            $cached = false;
         }
 
-        if (is_array($this->cacheconceptlist)) {
-            return $this->cacheconceptlist;
+        if ($cached !== false && is_array($cached->cacheconceptlist)) {
+            return $cached->cacheconceptlist;
         }
 
         list($glossaries, $allconcepts) = \mod_glossary\local\concept_cache::get_concepts($courseid);
 
         if (!$allconcepts) {
-            $this->cacheuserid = $USER->id;
-            $this->cachecourseid = $courseid;
-            $this->cacheconcepts = array();
-            return $this->cacheconceptlist;
+            $tocache = new stdClass();
+            $tocache->cacheuserid = $USER->id;
+            $tocache->cachecourseid = $courseid;
+            $tocache->cacheconceptlist = [];
+            $this->cache->set('concepts', $tocache);
+            return [];
         }
 
         $conceptlist = array();
@@ -127,12 +130,18 @@ class filter_glossary extends moodle_text_filter {
             }
         }
 
+        // We sort longest first, so that when we replace the terms,
+        // the longest ones are replaced first. This does the right thing
+        // when you have two terms like 'Moodle' and 'Moodle 3.5'. You want the longest match.
         usort($conceptlist, 'filter_glossary::sort_entries_by_length');
 
-        $this->cacheuserid = $USER->id;
-        $this->cachecourseid = $courseid;
-        $this->cacheconceptlist = $conceptlist;
-        return $this->cacheconceptlist;
+        $tocache = new stdClass();
+        $tocache->cacheuserid = $USER->id;
+        $tocache->cachecourseid = $courseid;
+        $tocache->cacheconceptlist = $conceptlist;
+        $this->cache->set('concepts', $tocache);
+
+        return $conceptlist;
     }
 
     public function filter($text, array $options = array()) {
