@@ -1,0 +1,70 @@
+/**
+ * POPUP CONTAINER STYLES
+ */
+#popupMask {
+    position: absolute;
+    z-index: 200;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .4;
+    filter: alpha(opacity=50);
+    /* this hack is so it works in IE
+     * I find setting the color in the css gives me more flexibility
+        * than the PNG solution.
+    */
+    background-color: #333;
+    /* this hack is for opera support
+     * you can uncomment the background-image if you don't care about opera.
+     * this gives you the flexibility to use any bg color that you want, instead of the png
+     */
+    background-image: none;
+    background-repeat: repeat;
+    display: none;
+}
+
+#popupContainer {
+    position: absolute;
+    z-index: 201;
+    top: 0;
+    left: 0;
+    display: none;
+    padding: 0;
+}
+#popupInner {
+    border: 2px solid #000;
+    background-color: #fff;
+}
+
+#popupFrame {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 202;
+}
+
+#popupTitleBar {
+    background-color: #090;
+    color: #000;
+    font-weight: bold;
+    height: 1.3em;
+    padding: 5px;
+    border-bottom: 2px solid #000;
+    border-top: 1px solid #7878a3f2;
+    border-left: 1px solid #7878a3f2;
+    border-right: 1px solid #204095;
+    position: relative;
+    z-index: 203;
+}
+
+#popupTitle {
+    float: left;
+    font-size: 1.1em;
+}
+
+#popupControls {
+    float: right;
+    cursor: hand;
+}

@@ -1,0 +1,78 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_questionnaire/completepage
+
+    Template which defines a questionnaire completion page.
+
+    Classes required for JS:
+    * /mod/questionnaire/module.js
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template: (Note sections have been used to allow non-inclusion)
+    * notifications - string: HTML of any notifications loaded.
+    * respondentinfo - string: HTML of any specific response/respondent information.
+    * title - string: Text title of the questionnaire.
+    * printblank - string: HTML of optional print blank questionnaire control.
+    * subtitle - string: Optional text subtitle.
+    * addinfo - string: Optional HTML additional information.
+    * message - string: Any message HTML text.
+    * formstart - string: Form start HTML.
+    * questions - array: Array of questions HTML.
+    * pageinfo - string: Page navigation HTML if present.
+    * controlbuttons - string: Questionnaire response management control HTML.
+    * formend - string: Form end HTML.
+
+    Example context (json):
+    {
+        "notifications": "<div>Notification one</div>",
+        "respondentinfo": "<div>This is respondent information</div>",
+        "title": "Test Questionnaire",
+        "subtitle": "This is a subtitle",
+        "addinfo": "<div>This is additional information.</div>",
+        "message": "<div>This is a message.</div>",
+        "formstart": "<form id=\"formid\" method=\"post\" action=\"index.php\">",
+        "questions": [
+            "<div>Question 1 HTML</div>",
+            "<div>Question 2 HTML</div>"
+        ],
+        "pageinfo": "<div>This is the page information.</div>",
+        "controlbuttons": "<div>control button HTML</div>",
+        "formend": "</form>"
+    }
+    }}
+<div class="mod_questionnaire_completepage generalbox">
+    {{#notifications}}{{{.}}}{{/notifications}}
+    {{{respondentinfo}}}
+    {{#title}}<h3 class="surveyTitle">{{.}}</h3>{{/title}}{{{printblank}}}
+    {{#subtitle}}<h4 class="surveySubTitle">{{.}}</h4>{{/subtitle}}
+    {{#addinfo}}<div class="addInfo">{{{.}}}</div>{{/addinfo}}
+    {{#message}}<div class="message">{{{.}}}</div>{{/message}}
+    <div class="generalbox">
+        {{{formstart}}}
+        {{#questions}}{{{.}}}{{/questions}}
+        {{#pageinfo}}{{{.}}}{{/pageinfo}}
+        <div class="notice" style="padding: 0.5em 0 0.5em 0.2em;">
+            <div class="buttons">
+                {{{controlbuttons}}}
+            </div>
+        </div>
+        {{{formend}}}
+    </div>
+</div>

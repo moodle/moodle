@@ -1,0 +1,10 @@
+{
+    "name": "remotelearner/moodle-mod_questionnaire",
+    "type": "moodle-mod",
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "extra": {
+        "installer-name": "questionnaire"
+    }
+}

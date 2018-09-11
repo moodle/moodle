@@ -23,6 +23,24 @@ define(['jquery', 'local_customgrader/bootstrap', 'local_customgrader/sweetalert
                 $('.fondo').show();
             });
 
+
+            $(document).on('click', '#tutorial-button', function (){
+                $('#video-frame').attr('src', 'https://www.youtube.com/embed/8Bm_obAFBYo');
+                $("#tutorialModal").modal({
+                    backdrop: false
+                });
+                $('.fondo').show();
+                
+            });
+
+            $(document).on('click', '#close-tutorial', function() {                
+                $('.fondo').hide();
+            });
+
+            $('#tutorialModal').on('hidden.bs.modal', function (e) {
+                $('#video-frame').attr('src', '');
+            });
+
             /**
              * Event to close modal
              */

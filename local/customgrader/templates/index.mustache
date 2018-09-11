@@ -6,9 +6,11 @@
     <i class="glyphicon glyphicon-list" style="float: right;"></i>
   </button>
 
-  <div class="tutorial-link">
-    <a href="https://www.youtube.com/watch?v=8Bm_obAFBYo">VER TUTORIAL</a>    
-  </div>
+
+  <button type="button" class="btn btn-link" 
+          id="tutorial-button" 
+          >VER TUTORIAL    
+  </button>
 
   <div class="reload btn btn-primary act-notas first">
     <i class="glyphicon glyphicon-edit"></i>
@@ -99,5 +101,25 @@
 
       </div>
     </div>
+
+  </div>
+
+      <!-- Modal Video Tutorial -->
+      <div class="mymodal fade" id="tutorialModal" role="dialog">
+        <div class="mymodal-dialog">
+            <div class="mymodal-content">
+                <div class="mymodal-header" id="tutorial-modal-header">
+                    <h4 id="title-modal-tutorial">Tutorial Calificador Personalizado</h4>
+                    <span type="button" id="close-tutorial" class="close" data-dismiss="modal" aria-hidden="true">&times;</span>               
+                </div>
+                <div class="mymodal-body">  
+                  <iframe id="video-frame" width="750" height="350" src="" frameborder="0" allowfullscreen></iframe>
+                </div>
+              </div>
+            </div>
+        </div>
+
+      
+
 
 </body>

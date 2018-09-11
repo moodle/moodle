@@ -1,0 +1,17 @@
+{
+    "name": "netspotau/moodle-mod_lightboxgallery",
+    "type": "moodle-mod",
+    "description": "Lightbox gallery activity for Moodle",
+    "homepage": "https://github.com/netspotau/moodle-mod_lightboxgallery",
+    "license": "GPL-3.0+",
+    "require": {
+        "composer/installers": "*"
+    },
+    "extra": {
+        "installer-name": "lightboxgallery"
+    },
+    "support": {
+        "issues": "https://github.com/netspotau/moodle-mod_lightboxgallery/issues",
+        "source": "https://github.com/netspotau/moodle-mod_lightboxgallery"
+    }
+}

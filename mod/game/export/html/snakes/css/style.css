@@ -1,0 +1,17 @@
+body {
+    background-color: #efefef;
+}
+
+body,
+html,
+input {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    color: #333;
+}
+
+.info {
+    font-style: italic;
+    font-size: 0.9em;
+    color: #666;
+}

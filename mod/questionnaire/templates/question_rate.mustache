@@ -1,0 +1,150 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_questionnaire/question_rate
+
+    Template which defines a rate type question survey display.
+
+    Classes required for JS:
+    * /mod/questionnaire/module.js
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+
+    Example context (json):
+    {
+        "qelements": [
+            {
+                "twidth": "100%",
+                "headerrow": {
+                    "col1width": "100%",
+                    "colnya": 1,
+                    "cols": [
+                        {
+                            "colwidth": "100%",
+                            "coltext": "<div>Header 1</div>"
+                        },
+                        {
+                            "colwidth": "100%",
+                            "coltext": "<div>Header 1</div>"
+                        }
+                    ]
+                },
+                "rows": [
+                    {
+                        "cols": [
+                            {
+                                "colstyle": "columnstyle",
+                                "colclass": "columnclass",
+                                "coltitle": "columntitle",
+                                "coltext": "<div>HTML of column text.</div>",
+                                "colhiddentext": "<div>HTML of column hidden text.",
+                                "colinput": {
+                                    "name": "input1",
+                                    "id": "id1",
+                                    "checked": 1,
+                                    "disabled": 0,
+                                    "onclick": "dosomething()",
+                                    "label": "<div>HTML of label</div>"
+                                }
+                            },
+                            {
+                                "colstyle": "columnstyle",
+                                "colclass": "columnclass",
+                                "coltitle": "columntitle",
+                                "coltext": "<div>HTML of column text.</div>",
+                                "colhiddentext": "<div>HTML of column hidden text.",
+                                "colinput": {
+                                    "name": "input2",
+                                    "id": "id2",
+                                    "checked": 1,
+                                    "disabled": 0,
+                                    "onclick": "dosomething()",
+                                    "label": "<div>HTML of label</div>"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "cols": [
+                            {
+                                "colstyle": "columnstyle",
+                                "colclass": "columnclass",
+                                "coltitle": "columntitle",
+                                "coltext": "<div>HTML of column text.</div>",
+                                "colhiddentext": "<div>HTML of column hidden text.",
+                                "colinput": {
+                                    "name": "input3",
+                                    "id": "id3",
+                                    "checked": 1,
+                                    "disabled": 0,
+                                    "onclick": "dosomething()",
+                                    "label": "<div>HTML of label</div>"
+                                }
+                            },
+                            {
+                                "colstyle": "columnstyle",
+                                "colclass": "columnclass",
+                                "coltitle": "columntitle",
+                                "coltext": "<div>HTML of column text.</div>",
+                                "colhiddentext": "<div>HTML of column hidden text.",
+                                "colinput": {
+                                    "name": "input4",
+                                    "id": "id4",
+                                    "checked": 1,
+                                    "disabled": 0,
+                                    "onclick": "dosomething()",
+                                    "label": "<div>HTML of label</div>"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+    }}
+<!-- Begin HTML generated from question_rate template. -->
+{{#qelements}}
+<table style="width:{{qelements.twidth}}">
+  <tbody>
+    {{#qelements.headerrow}}
+    <tr>
+      <td style="width:{{col1width}}"></td>
+      {{#colnya}}<td title="nya"></td>{{/colnya}}
+      {{#cols}}
+      <td style="width:{{colwidth}}; text-align:center;" class="smalltext">{{{coltext}}}</td>
+      {{/cols}}
+    {{/qelements.headerrow}}
+    {{#qelements.rows}}
+    <tr class="raterow">
+      {{#cols}}
+      <td {{#colstyle}}style="{{.}}"{{/colstyle}}{{#colclass}} class="{{.}}"{{/colclass}}{{#coltitle}} title="{{.}}"{{/coltitle}}>
+        {{#coltext}}{{{.}}}{{/coltext}}
+        {{#colhiddentext}}<span class="accesshide">{{{.}}}</span>{{/colhiddentext}}
+        {{#colinput}}<input type="radio" name="{{name}}" id="{{id}}" value="{{value}}"{{#checked}} checked="checked"{{/checked}}{{#disabled}} disabled="disabled"{{/disabled}}{{#onclick}} onclick="{{.}}"{{/onclick}}>
+        {{#label}}<label for="{{id}}" class="accesshide">{{{.}}}</label>{{/label}}{{/colinput}}
+      </td>
+      {{/cols}}
+    </tr>
+    {{/qelements.rows}}
+  </tbody>
+</table>
+{{/qelements}}
+<!-- End HTML generated from question_rate template. -->

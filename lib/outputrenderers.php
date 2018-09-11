@@ -3355,8 +3355,8 @@ EOD;
 
         $avatarclasses = "avatars";
         $avatarcontents = html_writer::span($opts->metadata['useravatar'], 'avatar current');
-        $usertextcontents = $user->firstname; 
-        // $usertextcontents = $opts->metadata['userfullname'];
+        //$usertextcontents = $opts->metadata['userfullname'];
+        $usertextcontents = $user->firstname;
 
         // Other user.
         if (!empty($opts->metadata['asotheruser'])) {
@@ -3408,6 +3408,8 @@ EOD;
         $returnstr .= html_writer::span(
             html_writer::span($usertextcontents, 'usertext') .
             html_writer::span($avatarcontents, $avatarclasses),
+            /*html_writer::span($avatarcontents, $avatarclasses) .
+            html_writer::span($usertextcontents, 'usertext'),*/
             'userbutton'
         );
 

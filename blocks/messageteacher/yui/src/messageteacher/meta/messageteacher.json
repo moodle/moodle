@@ -1,0 +1,12 @@
+{
+    "moodle-block_messageteacher-form": {
+        "requires" : [
+            "base",
+            "io",
+            "io-form",
+            "node",
+            "json",
+            "moodle-core-notification"           
+        ]
+    }
+}

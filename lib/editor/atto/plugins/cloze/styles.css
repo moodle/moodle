@@ -1,0 +1,37 @@
+.atto_cloze_col0 {
+    padding-right: 1em;
+    float: right;
+}
+
+.atto_cloze_answers {
+    height: 300px;
+    overflow: auto;
+}
+
+.atto_cloze_qtype {
+    overflow: auto;
+    position: relative;
+}
+
+.atto_cloze_qtype .atto_cloze_summary {
+    display: none;
+    left: 175px;
+    position: absolute;
+    top: 0;
+}
+
+.atto_cloze_qtype input[type="radio"]:checked + label .atto_cloze_summary {
+    display: inline;
+}
+
+input.atto_cloze_marks {
+    width: 4em;
+}
+
+.atto_cloze_answers li:first-child .atto_cloze_up {
+    display: none;
+}
+
+.atto_cloze_answers li:last-child .atto_cloze_down {
+    display: none;
+}

@@ -1,0 +1,10 @@
+{
+    "name": "moodle-mod_checklist-linkselect",
+    "builds": {
+        "moodle-mod_checklist-linkselect": {
+            "jsfiles": [
+                "linkselect.js"
+            ]
+        }
+    }
+}

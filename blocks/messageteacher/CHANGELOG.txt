@@ -1,0 +1,33 @@
+New in 2.4.1
+* Refactored form and exception code to classes
+* Updated behat tests for Moodle 3.3+ compatibility
+* Small bug fixes
+
+New in 2.4
+* Support for user images and groups
+
+New in 2.3
+* More tests
+* Custom messaging form
+* Option to include page URL in messages sent
+* User is sent back to the page they were on after sending a message
+* With Javascript enabled, messages can be sent without even leaving the page! 
+* Moodle 2.5 now required
+
+New in 2.2.2
+* Lots of tests
+* Fixed upgrade bug
+* Compatible with Moodle 2.4+
+
+New in 2.2.1
+* Integrated bugfix correcting config display from dtgillis
+
+New in 2.2
+* More secure and PHP Strict-compliant code
+* New option to allow users teachers from the course category to be displayed as well
+
+New in 2.1
+* User images: There is now a setting to display teachers' images alongside their names
+* Group Support: There is now a setting to restrict the teachers displayed to those within the current user's groups, if there are groups on the course.
+* Development of these features was sponsored by by Proud Photography (http://www.ProudPhotography.com) – Online Photography School.
+

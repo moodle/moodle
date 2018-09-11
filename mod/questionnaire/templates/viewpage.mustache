@@ -1,0 +1,56 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_questionnaire/viewpage
+
+    Template which defines a questionnaire view page.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * questionnairename - string: The name of the questionnaire (no HTML).
+    * intro - string: The intro text (may have HTML).
+    * message - string: Any message text.
+    * complete - string: The text and link to complete the questionnaire.
+    * guestuser - string: Any content for a guest user.
+    * yourresponse - string: Content for responses by you.
+    * allresponses - string: Content for responses by other users.
+
+    Example context (json):
+    {
+        "questionnairename": "Questionnaire One",
+        "intro": "HTML of the intro text.",
+        "message": "HTML of the message text.",
+        "complete": "HTML of the completion notice and link.",
+        "guestuser": "HTML of guest user content.",
+        "yourresponse": "HTML for your responses link.",
+        "allresponses": "HTML for all responses link."
+    }
+    }}
+<div class="mod_questionnaire_viewpage">
+    <h2>{{questionnairename}}</h2>
+    {{#intro}}<div class="intro">{{{intro}}}</div>{{/intro}}
+    {{#message}}<div class="message">{{{message}}}</div>{{/message}}
+    {{#complete}}<div class="complete">{{{complete}}}</div>{{/complete}}
+    {{#guestuser}}<div class="guestuser">{{{guestuser}}}</div>{{/guestuser}}
+    {{#yourresponse}}<div class="yourresponse">{{{yourresponse}}}</div>{{/yourresponse}}
+    {{#allresponses}}<div class="allresponses">{{{allresponses}}}</div>{{/allresponses}}
+</div>
