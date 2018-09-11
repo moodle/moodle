@@ -80,9 +80,11 @@ class metadata_registry {
                 // Check if the interface is deprecated.
                 if (!$manager->is_empty_subsystem($component)) {
                     $classname = $manager->get_provider_classname_for_component($component);
-                    $componentclass = new $classname();
-                    if ($componentclass instanceof \core_privacy\local\deprecated) {
-                        $internaldata['deprecated'] = true;
+                    if (class_exists($classname)) {
+                        $componentclass = new $classname();
+                        if ($componentclass instanceof \core_privacy\local\deprecated) {
+                            $internaldata['deprecated'] = true;
+                        }
                     }
                 }
 
