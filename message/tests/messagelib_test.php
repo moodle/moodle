@@ -271,6 +271,18 @@ class core_message_messagelib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test message_count_unread_messages with sent messages.
+     */
+    public function test_message_count_unread_messages_with_sent_messages() {
+        $userfrom = $this->getDataGenerator()->create_user();
+        $userto = $this->getDataGenerator()->create_user();
+
+        $this->send_fake_message($userfrom, $userto);
+
+        $this->assertEquals(0, message_count_unread_messages($userfrom));
+    }
+
+    /**
      * Test message_add_contact.
      */
     public function test_message_add_contact() {
