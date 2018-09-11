@@ -28,3 +28,7 @@ dd a.contactdpo {
 [data-region="data-requests-table"] .moodle-actionmenu {
     min-width: 150px;
 }
+
+.context-level-view {
+    margin: 1em;
+}

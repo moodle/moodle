@@ -426,7 +426,7 @@ class data_registry_page implements renderable, templatable {
     /**
      * From a list of purpose persistents to a list of id => name purposes.
      *
-     * @param \tool_dataprivacy\purpose $purposes
+     * @param \tool_dataprivacy\purpose[] $purposes
      * @param bool $includenotset
      * @param bool $includeinherit
      * @return string[]
@@ -443,7 +443,7 @@ class data_registry_page implements renderable, templatable {
     /**
      * From a list of category persistents to a list of id => name categories.
      *
-     * @param \tool_dataprivacy\category $categories
+     * @param \tool_dataprivacy\category[] $categories
      * @param bool $includenotset
      * @param bool $includeinherit
      * @return string[]

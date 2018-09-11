@@ -24,6 +24,7 @@
 namespace tool_dataprivacy\output;
 defined('MOODLE_INTERNAL') || die();
 
+use action_menu_link_primary;
 use coding_exception;
 use moodle_exception;
 use moodle_url;
@@ -32,7 +33,8 @@ use renderer_base;
 use stdClass;
 use templatable;
 use tool_dataprivacy\data_registry;
-use tool_dataprivacy\local\helper;
+use tool_dataprivacy\external\category_exporter;
+use tool_dataprivacy\external\purpose_exporter;
 
 /**
  * Class containing data for the data registry defaults.
@@ -122,23 +124,48 @@ class defaults_page implements renderable, templatable {
 
         // Set default category.
         $data->categoryid = $this->category;
-        $data->category = helper::get_category_name($this->category);
+        $data->category = category_exporter::get_name($this->category);
 
         // Set default purpose.
         $data->purposeid = $this->purpose;
-        $data->purpose = helper::get_purpose_name($this->purpose);
+        $data->purpose = purpose_exporter::get_name($this->purpose);
 
         // Set other defaults.
         $otherdefaults = [];
+        $url = new moodle_url('#');
         foreach ($this->otherdefaults as $pluginname => $values) {
             $defaults = [
-                'activityname' => $pluginname,
                 'name' => $values->name,
-                'categoryid' => $values->category,
-                'category' => helper::get_category_name($values->category),
-                'purposeid' => $values->purpose,
-                'purpose' => helper::get_purpose_name($values->purpose),
+                'category' => category_exporter::get_name($values->category),
+                'purpose' => purpose_exporter::get_name($values->purpose),
             ];
+            if ($this->canedit) {
+                $actions = [];
+                // Edit link.
+                $editattrs = [
+                    'data-action' => 'edit-activity-defaults',
+                    'data-contextlevel' => $this->mode,
+                    'data-activityname' => $pluginname,
+                    'data-category' => $values->category,
+                    'data-purpose' => $values->purpose,
+                ];
+                $editlink = new action_menu_link_primary($url, new \pix_icon('t/edit', get_string('edit')),
+                    get_string('edit'), $editattrs);
+                $actions[] = $editlink->export_for_template($output);
+
+                // Delete link.
+                $deleteattrs = [
+                    'data-action' => 'delete-activity-defaults',
+                    'data-contextlevel' => $this->mode,
+                    'data-activityname' => $pluginname,
+                    'data-activitydisplayname' => $values->name,
+                ];
+                $deletelink = new action_menu_link_primary($url, new \pix_icon('t/delete', get_string('delete')),
+                    get_string('delete'), $deleteattrs);
+                $actions[] = $deletelink->export_for_template($output);
+
+                $defaults['actions'] = $actions;
+            }
             $otherdefaults[] = (object)$defaults;
         }
         $data->otherdefaults = $otherdefaults;
