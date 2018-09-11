@@ -147,4 +147,4 @@ $templatecontext = [
 ];
 
 $templatecontext['flatnavigation'] = $PAGE->flatnav;
-$footerlayout = $OUTPUT->render_from_template('theme_klass/footer', $templatecontext);
+echo $OUTPUT->render_from_template('theme_klass/footer', $templatecontext);

@@ -1,0 +1,264 @@
+body.coursepresentation-cover {
+    #page {
+        padding-top: 280px;
+    }
+    .headerbkg {
+        margin-top: 48px;
+        height: 340px;
+        background-position: center;
+        background-size: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+}
+
+#page-course-view-topics {
+    &.editing {
+        .course-content .topics .section {
+            width: calc(100% - 20px);
+        }
+    }
+
+    .section .activity .contentwithoutlink > a,
+    .section .activity .activityinstance > a {
+        display: initial;
+    }
+
+    .course-content {
+        .topics {
+            #section-0 {
+                border: none;
+            }
+
+            .section {
+                border: none;
+
+                .activity.label {
+                    margin: 0;
+
+                    .mod-indent-outer {
+                        padding-left: 0;
+                        display: block;
+                    }
+                }
+
+                &:last-child {
+                    border-bottom: 1px;
+                }
+
+                .card {
+                    display: block;
+
+                    .pgr-img {
+                        margin: 0;
+                        width: 90px;
+                        height: 90px;
+                        background-color: $brand-primary;
+                        border-radius: 100%;
+                        text-align: center;
+                        padding: 20px;
+                        display: inline-block;
+                        vertical-align: top;
+
+                        i {
+                            font-size: 48px;
+                            color: #fff;
+                        }
+                    }
+
+                    .pgr-content {
+                        display: inline-block;
+                        width: calc(100% - 90px);
+
+                        .left.side {
+                            padding: 0;
+                        }
+
+                        .section-title {
+                            margin-left: 12px;
+                        }
+                    }
+                }
+
+                .activity-count {
+                    margin-left: 12px;
+                }
+
+                .progress {
+                    height: 20px;
+                    margin-bottom: 20px;
+                    overflow: hidden;
+                    background-color: $body-bg;
+                    margin-left: 12px;
+                    width: inherit;
+
+                    .progress-bar {
+                        float: left;
+                        width: 0;
+                        height: 100%;
+                        font-size: 12px;
+                        line-height: 20px;
+                        color: #fff;
+                        text-align: center;
+                        background-color: $brand-primary;
+                        overflow: hidden;
+                    }
+                }
+            }
+        }
+
+        .single-section .sectionname,
+        .section .sectionname {
+            border-color: $body-bg;
+            border-style: solid;
+            border-width: 5px 5px 5px 0;
+            background: #fff;
+            margin: 0 0 0 -25px;
+            padding: 12px 15px 5px 15px;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: $brand-primary;
+            font-weight: 700;
+            text-align: center;
+        }
+    }
+
+    .section-navigation.mdl-bottom {
+        .larrow,
+        .rarrow {
+            font-size: 2em;
+            padding: .3em;
+            text-align: center;
+        }
+
+        .larrow .icon-arrow-left,
+        .rarrow .icon-arrow-right {
+            display: block;
+            height: 1em;
+            width: 1em;
+            margin: .1em auto;
+        }
+
+        .larrow {
+            float: left;
+            border-right: 1px solid #eee;
+            margin-right: .3em;
+
+            .icon-arrow-left {
+                background: transparent url('[[pix:theme|left-arrow]]') no-repeat 50% 50%;
+            }
+        }
+
+        .rarrow {
+            float: right;
+            border-left: 1px solid #eee;
+            margin-left: .3em;
+
+            .icon-arrow-right {
+                background: transparent url('[[pix:theme|right-arrow]]') no-repeat 50% 50%;
+            }
+        }
+
+        .mdl-left .text .nav_guide,
+        .mdl-right .text .nav_guide {
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            font-style: normal;
+            color: #565656;
+        }
+
+        .mdl-left .text {
+            float: right;
+        }
+
+        .mdl-right .text {
+            float: left;
+        }
+    }
+}
+
+.contentwithoutlink {
+    padding-right: 0;
+
+    .labelbar {
+        margin: 1em 0;
+        padding: 0.5em 0 0.2em 0.5em;
+        border: 1px solid #dadada;
+        border-top-width: .2em;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        font-style: normal;
+        font-size: 1.4rem;
+
+        i {
+            margin-right: 10px;
+        }
+    }
+
+    .labelbar.primary {
+        border-top-color: $brand-primary;
+        color: $brand-primary;
+    }
+
+    .labelbar.green {
+        border-top-color: #8bc34a;
+        color: #8bc34a;
+    }
+
+    .labelbar.orange {
+        border-top-color: #f39c12;
+        color: #f39c12;
+    }
+
+    .labelbar.red {
+        border-top-color: #c0392b;
+        color: #c0392b;
+    }
+
+    .labelbar.purple {
+        border-top-color: #9b59b6;
+        color: #9b59b6;
+    }
+
+    .labelbar.asphalt {
+        border-top-color: #34495e;
+        color: #34495e;
+    }
+
+    .labelbar.turquoise {
+        border-top-color: #1abc9c;
+        color: #1abc9c;
+    }
+
+    .labelbar.emerald {
+        border-top-color: #2ecc71;
+        color: #2ecc71;
+    }
+
+    .labelbar.peterriver {
+        border-top-color: #3498db;
+        color: #3498db;
+    }
+
+    .labelbar.amethyst {
+        border-top-color: #9b59b6;
+        color: #9b59b6;
+    }
+
+    .labelbar.carrot {
+        border-top-color: #e67e22;
+        color: #e67e22;
+    }
+
+    .labelbar.alizarin {
+        background-color: #e74c3c;
+        color: #e74c3c;
+    }
+
+    .labelbar.concrete {
+        background-color: #95a5a6;
+        color: #95a5a6;
+    }
+}

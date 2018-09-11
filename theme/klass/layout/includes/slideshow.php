@@ -80,74 +80,10 @@ if ($numberofslides) { ?>
 
     </div>
 
-      <a class="left carousel-control carousel-control-prev" href="#home-page-carousel" data-slide="prev"></a>
-      <a class="right carousel-control carousel-control-next" href="#home-page-carousel" data-slide="next"></a>
+      <a class="left carousel-control" href="#home-page-carousel" data-slide="prev"></a>
+      <a class="right carousel-control" href="#home-page-carousel" data-slide="next"></a>
 
   </div>
-
 </div>
-<style>
-
-.carousel-item-next.carousel-item-left,
-.carousel-item-prev.carousel-item-right {
-  -webkit-transform: translateX(0);
-  transform: translateX(0);
-}
-
-@supports ((-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)) {
-  .carousel-item-next.carousel-item-left,
-  .carousel-item-prev.carousel-item-right {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-.carousel-item-next,
-.active.carousel-item-right {
-  -webkit-transform: translateX(100%);
-  transform: translateX(100%);
-}
-
-@supports ((-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)) {
-  .carousel-item-next,
-  .active.carousel-item-right {
-    -webkit-transform: translate3d(100%, 0, 0);
-    transform: translate3d(100%, 0, 0);
-  }
-}
-
-.carousel-item-prev,
-.active.carousel-item-left {
-  -webkit-transform: translateX(-100%);
-  transform: translateX(-100%);
-}
-
-@supports ((-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)) {
-  .carousel-item-prev,
-  .active.carousel-item-left {
-    -webkit-transform: translate3d(-100%, 0, 0);
-    transform: translate3d(-100%, 0, 0);
-  }
-}
-
-.carousel-fade .carousel-item {
-  opacity: 0;
-  transition-duration: .6s;
-  transition-property: opacity;
-}
-
-
-@supports ((-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)) {
-  .carousel-fade .carousel-item-next,
-  .carousel-fade .carousel-item-prev,
-  .carousel-fade .carousel-item.active,
-  .carousel-fade .active.carousel-item-left,
-  .carousel-fade .active.carousel-item-prev {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-</style>
 <!--E.O.Slider-->
 <?php }

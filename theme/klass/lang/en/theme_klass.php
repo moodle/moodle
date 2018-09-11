@@ -76,12 +76,14 @@ Moodle free support|https://moodle.org/support
 Moodle Docs|http://docs.moodle.org|Moodle Docs
 Moodle.com|http://moodle.com/';
 $string['infolink_desc'] = 'You can configure a custom Info Links here to be shown by themes. Each line consists of some menu text, a link URL (optional), a tooltip title (optional) and a language code or comma-separated list of codes (optional, for displaying the line to users of the specified language only), separated by pipe characters.For example:
-<pre> Moodle community|https://moodle.org
+<pre>
+Moodle community|https://moodle.org
 Moodle free support|https://moodle.org/support
 Moodle development|https://moodle.org/development
 Moodle Docs|http://docs.moodle.org|Moodle Docs
 German Moodle Docs|http://docs.moodle.org/de|Documentation in German|de
-Moodle.com|http://moodle.com/ </pre>';
+Moodle.com|http://moodle.com/
+</pre>';
 $string['logo'] = 'Logo';
 $string['logodesc'] = 'Please upload your custom logo here if you want to add it to the header. <br>The image should be 50px high and any reasonable width (minimum:235px) that suits.';
 $string['newcourses'] = 'New courses';

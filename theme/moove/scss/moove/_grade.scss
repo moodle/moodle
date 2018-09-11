@@ -1,0 +1,14 @@
+.path-grade-report-grader {
+  #region-main {
+    min-width: 100%;
+    width: auto;
+    & > .card {
+      width: auto;
+      overflow-x: initial;
+    }
+  }
+  [data-region="blocks-column"] {
+    width: 280px;
+    clear: both;
+  }
+}

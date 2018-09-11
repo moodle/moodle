@@ -1,5 +1,5 @@
 {{#footerall}}
-<footer id="footer" class="py-1 bg-inverse">
+<footer id="footer" class="p-y-1 bg-inverse">
    <div class="footer-main">
         <div class="container">
             <div class="row">
@@ -8,26 +8,26 @@
                     <div class="infoarea">
                         <div class="footer-logo">
                             <a href="{{config.wwwroot}}/?redirect=0">
-                            {{# logourl_footer}}
+							{{# logourl_footer}}
                                 <img src="{{logourl_footer}}" alt="klass">
-                            {{/ logourl_footer}}
+							{{/ logourl_footer}}
                             </a>
                         </div>
                         {{{footnote}}}
                      </div>
                 </div>
                 {{/block1}}
-                {{# infolink}}
+				{{# infolink}}
                 <div class="{{colclass}}">
                     <div class="foot-links">
                         <h5>{{s_info}}</h5>
-                        <ul>
+						<ul>
                            {{{infolink}}}
-                         </ul>
+						 </ul>
                    </div>
                 </div>
-                {{/ infolink}}
-                 {{# contact}}
+				{{/ infolink}}
+				 {{# contact}}
                 <div class="{{colclass}}">
                     <div class="contact-info">
                         <h5 class="nopadding">{{s_contact_us}}</h5>
@@ -40,8 +40,8 @@
                         {{/ emailid}}
                     </div>
                 </div>
-                {{/ contact}}
-            {{# url }}
+				{{/ contact}}
+			{{# url }}
                 <div class="{{colclass}}">
                     <div class="social-media">
                     <h5>{{s_get_social}}</h5>
@@ -80,7 +80,7 @@
                         </ul>
                     </div>
                 </div>
-            {{/ url }}
+			{{/ url }}
             </div>
         </div>
     </div>
@@ -91,7 +91,6 @@
             {{/ copyright_footer}}
         </div>
     </div>
-
 </footer>
 {{/footerall}}
 

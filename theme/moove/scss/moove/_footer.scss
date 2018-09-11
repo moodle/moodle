@@ -1,0 +1,101 @@
+#top-footer {
+    background-repeat: repeat-x;
+    background-position: center bottom;
+    padding: 40px 15px;
+    color: $headings-color;
+
+    h3 {
+        color: $brand-primary;
+    }
+
+    ul {
+        list-style: none;
+    }
+
+    .contact ul li {
+        font-size: 1.2rem;
+        margin-bottom: 4px;
+
+        i {
+            margin-right: 3px;
+            min-width: 20px;
+            text-align: center;
+        }
+    }
+
+    .social {
+        text-align: right;
+        ul li {
+            display: inline;
+            font-size: 2.4rem;
+
+            a {
+                text-decoration: none;
+
+                &.facebook {
+                    color: $m-facebook-color;
+                }
+
+                &.twitter {
+                    color: $m-twitter-color;
+                }
+
+                &.googleplus {
+                    color: $m-googleplus-color;
+                }
+
+                &.linkedin {
+                    color: $m-linkedin-color;
+                }
+
+                &.youtube {
+                    color: $m-youtube-color;
+                }
+
+                &.instagram {
+                    color: $m-instagram-color;
+                }
+
+                &:hover {
+                    color: $brand-primary;
+                }
+            }
+        }
+    }
+
+    .plugins_standard_footer_html {
+        .mobilefooter a.btn {
+            white-space: inherit;
+        }
+    }
+}
+
+#page-footer {
+    background-color: $m-moodle-color;
+    text-align: center;
+    min-height: inherit;
+    color: #fff;
+
+    .madewithmoodle {
+        margin-bottom: .5rem;
+        p {
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 0;
+            display: inline-block;
+        }
+
+        img {
+            max-width: 100px;
+            margin-top: -12px;
+        }
+    }
+    .madeby {
+        font-size: 14px;
+
+        a {
+            color: #fff;
+        }
+    }
+}
