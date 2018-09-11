@@ -134,6 +134,8 @@ class mod_imscp_lib_testcase extends advanced_testcase {
     }
 
     public function test_imscp_core_calendar_provide_event_action_for_user() {
+        global $CFG;
+
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -151,6 +153,7 @@ class mod_imscp_lib_testcase extends advanced_testcase {
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Now log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
         $this->setUser();
 
         // Create an action factory.
@@ -165,6 +168,70 @@ class mod_imscp_lib_testcase extends advanced_testcase {
         $this->assertInstanceOf('moodle_url', $actionevent->get_url());
         $this->assertEquals(1, $actionevent->get_item_count());
         $this->assertTrue($actionevent->is_actionable());
+    }
+
+    public function test_imscp_core_calendar_provide_event_action_as_non_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course();
+        $imscp = $this->getDataGenerator()->create_module('imscp', array('course' => $course->id));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $imscp->id,
+                \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Now log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_imscp_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event is not shown at all.
+        $this->assertNull($actionevent);
+    }
+
+    public function test_imscp_core_calendar_provide_event_action_in_hidden_section() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a student.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create the activity.
+        $imscp = $this->getDataGenerator()->create_module('imscp', array('course' => $course->id));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $imscp->id,
+                \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Set sections 0 as hidden.
+        set_section_visible($course->id, 0, 0);
+
+        // Now log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for the student.
+        $actionevent = mod_imscp_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        // Confirm the event is not shown at all.
+        $this->assertNull($actionevent);
     }
 
     public function test_imscp_core_calendar_provide_event_action_already_completed() {
