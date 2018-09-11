@@ -85,15 +85,13 @@ class filter_glossary extends moodle_text_filter {
             return $this->cacheconceptlist;
         }
 
-        $strcategory = get_string('category', 'glossary');
-
         $conceptlist = array();
 
         foreach ($allconcepts as $concepts) {
             foreach ($concepts as $concept) {
                 if ($concept->category) { // Link to a category.
-                    // TODO: Fix this string usage.
-                    $title = $glossaries[$concept->glossaryid] . ': ' . $strcategory . ' ' . $concept->concept;
+                    $title = get_string('glossarycategory', 'filter_glossary',
+                            ['glossary' => $glossaries[$concept->glossaryid], 'category' => $concept->concept]);
                     $link = new moodle_url('/mod/glossary/view.php', array('g' => $concept->glossaryid, 'mode' => 'cat', 'hook' => $concept->id));
                     $attributes = array(
                         'href'  => $link,
@@ -102,7 +100,8 @@ class filter_glossary extends moodle_text_filter {
                     $conceptid = 0;
 
                 } else { // Link to entry or alias
-                    $title = $glossaries[$concept->glossaryid] . ': ' . $concept->concept;
+                    $title = get_string('glossaryconcept', 'filter_glossary',
+                            ['glossary' => $glossaries[$concept->glossaryid], 'concept' => $concept->concept]);
                     // Hardcoding dictionary format in the URL rather than defaulting
                     // to the current glossary format which may not work in a popup.
                     // for example "entry list" means the popup would only contain
@@ -122,7 +121,7 @@ class filter_glossary extends moodle_text_filter {
                 $href_tag_begin = html_writer::start_tag('a', $attributes);
 
                 $filterobj = new filterobject($concept->concept, $href_tag_begin, '</a>',
-                        $concept->casesensitive, $concept->fullmatch);;
+                        $concept->casesensitive, $concept->fullmatch);
                 $filterobj->conceptid = $conceptid;
                 $conceptlist[] = $filterobj;
             }
