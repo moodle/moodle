@@ -133,6 +133,40 @@ class mod_imscp_lib_testcase extends advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
+    public function test_imscp_core_calendar_provide_event_action_for_user() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a student.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create the activity.
+        $imscp = $this->getDataGenerator()->create_module('imscp', array('course' => $course->id));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $imscp->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Now log out.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for the student.
+        $actionevent = mod_imscp_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('view'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
     public function test_imscp_core_calendar_provide_event_action_already_completed() {
         global $CFG;
 
@@ -162,6 +196,45 @@ class mod_imscp_lib_testcase extends advanced_testcase {
 
         // Decorate action event.
         $actionevent = mod_imscp_core_calendar_provide_event_action($event, $factory);
+
+        // Ensure result was null.
+        $this->assertNull($actionevent);
+    }
+
+    public function test_imscp_core_calendar_provide_event_action_already_completed_for_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $CFG->enablecompletion = 1;
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+
+        // Create a student.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create the activity.
+        $imscp = $this->getDataGenerator()->create_module('imscp', array('course' => $course->id),
+            array('completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS));
+
+        // Get some additional data.
+        $cm = get_coursemodule_from_instance('imscp', $imscp->id);
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $imscp->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Mark the activity as completed.
+        $completion = new completion_info($course);
+        $completion->set_module_viewed($cm, $student->id);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for the student.
+        $actionevent = mod_imscp_core_calendar_provide_event_action($event, $factory, $student->id);
 
         // Ensure result was null.
         $this->assertNull($actionevent);
