@@ -1,0 +1,10 @@
+{
+    "name": "gjb2048/moodle-theme_essential",
+    "type": "moodle-theme",
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "extra": {
+        "installer-name": "essential"
+    }
+}

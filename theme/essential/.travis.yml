@@ -1,0 +1,57 @@
+language: php
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+matrix:
+ allow_failures:
+ fast_finish: true
+ include:
+ - php: 7.0
+   env: DB=mysqli
+ - php: 7.0
+   env: DB=pgsql
+   addons:
+      postgresql: 9.3
+ - php: 7.1
+   env: DB=mysqli
+ - php: 7.1
+   env: DB=pgsql
+   addons:
+      postgresql: 9.3
+env:
+ global:
+  - MOODLE_BRANCH=MOODLE_35_STABLE
+  - IGNORE_PATHS=amd/build,amd/src/carousel.js,amd/src/fitvids.js,amd/src/jBreadCrumb.js
+  # Ignore custom.css until CSSlint can be instructed to ignore lines for '[[setting:customcss]]'.
+  # Also ignore generated CSS files.
+  - IGNORE_NAMES=*.txt,custom.css,b*.css,e*.css,f*.css,m*.css
+
+before_install:
+# This disables XDebug which should speed up the build.  One reason to remove this
+# line is if you are trying to generate code coverage with PHPUnit.
+  - phpenv config-rm xdebug.ini
+# Currently we are inside of the clone of your repository.  We move up two
+# directories to build the project.
+  - cd ../..
+# Update Composer.
+  - composer selfupdate
+# Install this project into a directory called "ci".
+  - composer create-project -n --no-dev moodlerooms/moodle-plugin-ci ci ^1
+# Update the $PATH so scripts from this project can be called easily.
+  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+
+install:
+  - moodle-plugin-ci install
+
+script:
+  - moodle-plugin-ci phplint
+  - moodle-plugin-ci phpcpd
+  - moodle-plugin-ci phpmd
+  - moodle-plugin-ci codechecker
+  - moodle-plugin-ci csslint
+  - moodle-plugin-ci jshint
+  - moodle-plugin-ci phpunit

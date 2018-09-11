@@ -1,0 +1,69 @@
+/* @group Quiz */
+
+#page-mod-quiz-edit {
+    .reorder div.question div.content .questionpreview .@{fa-css-prefix} {
+        vertical-align: middle;
+    }
+    .questionbank select.menucategory {
+        width: 100%;
+    }
+
+    ul.slots li.section li.activity img.iconsmall {
+        display: none;
+    }
+}
+
+#page-mod-quiz-edit {
+    .pagecontrols .singlebutton {
+        margin-left: 1.4em;
+    }
+    .addpage {
+        margin-right: 0;
+    }
+}
+
+#page-question-preview {
+    h1 {
+        font-size: 1.5em;
+    }
+}
+
+.formulation input[type="text"],
+.formulation select {
+    max-width: 100%;
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+    #page-mod-quiz-edit ul.slots {
+        li.section li.activity .activityinstance {
+            width: 80%;
+        }
+        .activityinstance span.instancename {
+            width: 90%;
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    #page-mod-quiz-edit ul.slots {
+        li.section li.activity .activityinstance {
+            width: 80%;
+        }
+        .activityinstance span.instancename {
+            width: 70%;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    #page-mod-quiz-edit ul.slots {
+        li.section li.activity .activityinstance {
+            width: 80%;
+        }
+        .activityinstance span.instancename {
+            width: 40%;
+        }
+    }
+}
+
+/* @end Quiz */

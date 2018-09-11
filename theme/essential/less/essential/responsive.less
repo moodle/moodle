@@ -1,0 +1,216 @@
+/* @group Responsive */
+
+@media (min-width: 1200px) {
+    #page-mod-quiz-edit ul.slots {
+        li.section li.activity .activityinstance {
+            width: 90%;
+        }
+        .activityinstance span.instancename {
+            width: 90%;
+        }
+    }
+}
+
+@media (max-width: @navbarCollapseWidth) {
+    #page-header {
+        h1#smalltitle {
+            font-size: 1.8em;
+            line-height: 16px;
+            padding-top: 10px;
+        }
+        h2#subtitle {
+            line-height: 16px;
+            padding-top: 4px;
+        }
+        #headerlogo {
+            margin-left: 10px;
+        }
+    }
+    .navbar-inner {
+        .brand {
+            display: none;
+        }
+        .nav-collapse {
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+            display: block;
+            margin-left: -10px;
+            margin-right: -10px;
+            width: 100%;
+            z-index: 10; // Get on top of slider.
+            .navbar-text {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            .custom_menu {
+                clear: both;
+                vertical-align: top;
+                width: 100%;
+            }
+            &.collapse.in[style*="height: auto"] {
+                min-height: 40px;
+                overflow: visible;  // Update: Very odd, seems to be ok when combined with 'min-height'.  Was killing the complete() function (line: 157 in bootstrap.js) being fired at the end of the transition.
+            }
+            &.in .nav {
+                .divider {
+                    width: 100%;
+                }
+            }
+            .nav > li > a {
+                border-radius: 0;
+                margin-bottom: 0;
+            }
+            .nav > li > .dropdown-menu {
+                &:before {
+                    border-left: 7px solid transparent;
+                    border-right: 7px solid transparent;
+                    border-bottom-color: @dropdownBorder;
+                    content: '';
+                    display: inline-block;
+                    position: absolute;
+                    top: -7px;
+                }
+                &:after {
+                    border-left: 6px solid transparent;
+                    border-right: 6px solid transparent;
+                    border-bottom: 6px solid @dropdownBackground;
+                    content: '';
+                    display: inline-block;
+                    position: absolute;
+                    top: -6px;
+                }
+            }
+            .open > .dropdown-menu {
+                display: block;
+            }
+            .dropdown-menu {
+                .border-radius(@borderRadiusLarge);
+                border: 1px solid rgba(0, 0, 0, .2);
+                display: none;
+                min-width: 160px;
+                padding: 5px 0;
+                position: absolute;
+                top: 100%;
+                z-index: @zindexDropdown;
+            }
+        }
+    }
+    .navbar-inner {
+        .nav-collapse {
+            float: left;
+            .nav > li {
+                float: left;
+            }
+            .nav > li > .dropdown-menu {
+                &:before {
+                    left: 9px;
+                }
+                &:after {
+                    left: 10px;
+                }
+            }
+            .dropdown-menu {
+                left: 0;
+                float: left;
+            }
+        }
+    }
+
+    #page-message-index {
+        #region-main {
+            .message {
+                .contactselector,
+                .messagearea {
+                    width: 100%;
+                }
+                .messagearea {
+                    border-left: transparent;
+                }
+            }
+        }
+    }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+    body {
+        font-size: 13px !important;
+        line-height: 18px;
+    }
+    #page-header {
+        h1#smalltitle {
+            font-size: 1.5em;
+            line-height: 14px;
+        }
+    }
+    .row-fluid .desktop-first-column {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 768px) {
+    #marketing-spots {
+        > div {
+            display: flex;
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    body {
+        font-size: 12px !important;
+        font-weight: 500;
+        line-height: 16px;
+    }
+    .row-fluid .desktop-first-column {
+        clear: right;
+    }
+
+    #page.container-fluid {
+        padding: 5px;
+    }
+
+    #page-header {
+        height: auto;
+        h1#smalltitle {
+            font-size: 1.2em;
+            line-height: 14px;
+            padding-top: 8px;
+        }
+        h2#subtitle {
+            line-height: 14px;
+            padding-top: 2px;
+        }
+        #essentialicons {
+            float: right;
+            overflow: hidden;
+            position: relative;
+            right: 50px;
+            top: 0;
+        }
+        .btn-icon {
+            display: block;
+        }
+    }
+
+    #marketing-spots {
+        .marketing-spot {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            .button {
+                text-align: right;
+                .marketing-button.responsive {
+                    display: inline !important;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    #page-header {
+        h1#title {
+            font-size: 2em;
+        }
+    }
+}
+/* @end */

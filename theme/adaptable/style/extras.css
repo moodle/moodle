@@ -1,0 +1,1273 @@
+/*
+* This file is part of Moodle - http://moodle.org/
+* Moodle is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Moodle is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+*
+*
+* Adaptable extra elements style sheet
+*
+* @package    theme_adaptable
+* @copyright  2015-2016 Jeremy Hopkins (Coventry University)
+* @copyright  2015-2017 Fernando Acedo (3-bits.com)
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*
+*/
+
+a.back-to-top {
+    background-color: #000;
+    background-color: rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+    box-shadow: 0 0 1px #fff;
+    color: #fff;
+    display: none;
+    padding: 5px 12px;
+    position: fixed;
+    right: 3px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    top: 85%;
+    transition: all 0.3s ease 0s;
+    font-size: 1.1em;
+}
+
+.coursebox.panel {
+    border-radius: 2px;
+    position: relative;
+    background-color: #fafafa !important;
+    border: 1px solid #f5f5f5;
+    height: 210px;
+    margin-bottom: 20px;
+}
+
+.gradereport-grader-table img {
+    max-width: none;
+}
+
+.singleselect {
+    display: inline-block;
+    max-width: 100%;
+    width: 100%;
+}
+
+.panel-heading {
+    border-bottom: 1px solid #000;
+    padding: 12px 15px 10px;
+    background-color: #f3f3f3;
+    border-color: #e8eaeb;
+    color: #555;
+}
+
+.panel-heading a {
+    font-size: 110%;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80%;
+    display: inline-block;
+}
+
+.panel-body {
+    padding: 15px;
+}
+
+ul.teachers {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-size: 90%;
+}
+
+.coursebox .boxfooter {
+    clear: both;
+    margin-bottom: 30px;
+}
+
+.btn.btn-info {
+    background-image: none !important;
+    color: #fff;
+    padding: 8px 15px;
+    text-shadow: none;
+}
+
+.coursebox .coursebtn {
+    bottom: 10px;
+    position: absolute;
+    right: 28%;
+    width: 30%;
+}
+
+/* Messages */
+.messaging-area-container .messaging-area .contacts-area .contacts .contact.selected {
+    background-color: #e9ebeb;
+    color: #333;
+}
+
+.messaging-area-container .messaging-area .contacts-area .contacts .contact.selected .information .lastmessage {
+    color: #333;
+}
+
+.messaging-area-container .messaging-area .contacts-area .contacts .contact:hover .information .lastmessage {
+    color: #333;
+}
+
+.messaging-area-container .messaging-area .contacts-area .tabs .tab.selected {
+    color: [[setting:linkcolor]] !important;
+
+}
+
+.messaging-area-container .messaging-area .contacts-area .tabs .tab {
+    background-color: transparent;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages .message .content.right {
+    background-color: #dcf8c6;
+    border-radius: 5px;
+    border: 1px solid #c0c0c0;
+    box-shadow: 2px 2px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.messaging-area-container .messaging-area .messages-area .messages .message .content.left {
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #c0c0c0;
+    box-shadow: 2px 2px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.messaging-area-container .messaging-area .contacts-area .contacts .contact:hover {
+    background-color: #e9ebeb;
+    color: #333;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages .message .content .text p {
+    font-size: 1.2em;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages .message .content .timesent {
+    color: #808080;
+    float: right;
+    font-size: 1em;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages {
+    background-color: [[setting:messagingbackgroundcolor]];
+}
+
+.messaging-area-container .messaging-area .messages-area .response {
+    padding: 0 10px 9px;
+}
+
+.information .lastmessage,
+.information .lastmessage:hover {
+    color: #e9ebeb;
+}
+
+.msg-title,
+.msg-sender,
+.msg-time {
+    color: [[setting:fontcolor]];
+}
+
+.msg-time {
+    float: right;
+    font-size: 1em;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages-header .name-container .status {
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 16px;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages-header .btn {
+    height: 25px;
+    line-height: 25px;
+    padding: 0 5px;
+    width: auto;
+    color: [[setting:linkcolor]] !important;
+    background: none !important;
+    border: 0;
+    box-shadow: none;
+    font-size: 18px;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages-header .btn .messages-delete,
+.messaging-area-container .messaging-area .messages-area .messages-header .btn .cancel-messages-delete {
+    height: 25px;
+    line-height: 25px;
+    padding: 0 5px;
+    width: auto;
+    font-size: 14px;
+}
+
+.messaging-area-container .messaging-area .messages-area .response {
+    border-top: none;
+}
+
+.messaging-area-container .messaging-area .messages-area .messages .blocktime {
+    color: [[setting:maincolor]];
+    font-weight: bold;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 4px;
+}
+
+.messaging-area-container .messaging-area .contacts-area .tabs .tab {
+    color: [[setting:linkcolor]];
+}
+
+.messaging-area-container .messaging-area .contacts-area .tabs .tab:hover {
+    color: [[setting:linkhover]];
+}
+
+.messaging-area-container .messaging-area .messages-area .messages-header .actions {
+    font-weight: normal;
+    padding-right: 15px;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.messaging-area-container .status .online-text {
+    color: #51666C;
+}
+
+.messages-area .actions a:hover {
+    text-decoration: none;
+}
+
+/* Messages Pop-Up (moodle 3.2+) */
+#newmessageoverlay {
+    width: 276px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1010;
+    display: none;
+    max-width: 276px;
+    padding: 1px;
+    text-align: left;
+    background-color: #ffffff;
+    background-clip: padding-box;
+    border-radius: 6px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    white-space: normal;
+    position: fixed;
+    top: inherit;
+    left: inherit;
+    bottom: 5px;
+    right: 5px;
+    display: block;
+}
+
+#newmessageoverlay.top {
+    margin-top: -10px;
+}
+
+#newmessageoverlay.right {
+    margin-left: 10px;
+}
+
+#newmessageoverlay.bottom {
+    margin-top: 10px;
+}
+
+#newmessageoverlay.left {
+    margin-left: -10px;
+}
+
+#newmessageoverlay.top > .arrow {
+    left: 50%;
+    margin-left: -11px;
+    border-bottom-width: 0;
+    border-top-color: #999;
+    border-top-color: rgba(0, 0, 0, 0.25);
+    bottom: -11px;
+}
+
+#newmessageoverlay.top > .arrow:after {
+    content: " ";
+    bottom: 1px;
+    margin-left: -10px;
+    border-bottom-width: 0;
+    border-top-color: #fff;
+}
+
+#newmessageoverlay.right > .arrow {
+    top: 50%;
+    left: -11px;
+    margin-top: -11px;
+    border-left-width: 0;
+    border-right-color: #999;
+    border-right-color: rgba(0, 0, 0, 0.25);
+}
+
+#newmessageoverlay.right > .arrow:after {
+    content: " ";
+    left: 1px;
+    bottom: -10px;
+    border-left-width: 0;
+    border-right-color: #fff;
+}
+
+#newmessageoverlay.bottom > .arrow {
+    left: 50%;
+    margin-left: -11px;
+    border-top-width: 0;
+    border-bottom-color: #999;
+    border-bottom-color: rgba(0, 0, 0, 0.25);
+    top: -11px;
+}
+
+#newmessageoverlay.bottom > .arrow:after {
+    content: " ";
+    top: 1px;
+    margin-left: -10px;
+    border-top-width: 0;
+    border-bottom-color: #fff;
+}
+
+#newmessageoverlay.left > .arrow {
+    top: 50%;
+    right: -11px;
+    margin-top: -11px;
+    border-right-width: 0;
+    border-left-color: #999999;
+    border-left-color: rgba(0, 0, 0, 0.25);
+}
+
+#newmessageoverlay.left > .arrow:after {
+    content: " ";
+    right: 1px;
+    border-right-width: 0;
+    border-left-color: #ffffff;
+    bottom: -10px;
+}
+
+#newmessageoverlay a {
+    text-decoration: underline;
+}
+
+#newmessageoverlay #newmessagetext {
+    margin: 0;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 18px;
+}
+
+#newmessageoverlay #usermessage {
+    padding: 9px 14px;
+    border: 1px dotted rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    margin-top: 5px;
+    background-color: #ffffff;
+}
+
+#newmessageoverlay #newmessagelinks {
+    margin: 5px 14px;
+}
+
+.box.message .messagearea .messagehistory .box.center table.message_user_pictures td#user1,
+.box.message .messagearea .messagehistory .box.center table.message_user_pictures td#user2 {
+    display: block;
+    height: 160px;
+}
+
+.box.message .messagearea .messagehistory .box.center table.message_user_pictures td#user1 img.userpicture,
+.box.message .messagearea .messagehistory .box.center table.message_user_pictures td#user2 img.userpicture {
+    border-radius: 50%;
+}
+
+.box.message .messagearea .messagehistory .box.center table.message_user_pictures td#user1 img.userpicture {
+    border: 3px solid #d6e9c6;
+}
+
+.box.message .messagearea .messagehistory .box.center table.message_user_pictures td#user2 img.userpicture {
+    border: 3px solid #bce8f1;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype {
+    color: #fff;
+    padding: 5px 15px;
+    border-bottom: 1px solid #ddd;
+    border: 0;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype > li {
+    float: left;
+    margin-bottom: -1px;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype > li > a {
+    margin-right: 2px;
+    line-height: 1.42857143;
+    border: 1px solid transparent;
+    border-radius: 4px 4px 0 0;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype > li > a:hover {
+    border-color: #eee #eee #ddd;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype > li.active > a,
+.box.message .messagearea .messagehistory .messagehistorytype > li.active > a:hover,
+.box.message .messagearea .messagehistory .messagehistorytype > li.active > a:focus {
+    color: #555;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+    cursor: default;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype.nav-justified {
+    width: 100%;
+    padding: 10px 0 0 0;
+    border-bottom: 0;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype.nav-justified > li {
+    float: none;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype.nav-justified > li > a {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.box.message .messagearea .messagehistory .messagehistorytype.nav-justified > .dropdown .dropdown-menu {
+    top: auto;
+    left: auto;
+}
+
+/* Forum */
+.forumpost .maincontent .left {
+    padding: 0 10px 0 10px;
+}
+
+.forumpost .row .left {
+    width: auto;
+}
+
+.forumpost .options .commands {
+    margin-left: 0;
+}
+
+.forumpost .subject {
+    font-weight: bold;
+}
+
+.forumsearch input[type=text] {
+    margin-bottom: 0 !important;
+}
+
+/* Further styling for forum block. */
+.forumpost .userpicture {
+    width: 50px!important;
+    height: 50px!important;
+    display: inline;
+    padding: 1px;
+    margin: 0 10px 0 0;
+    background-color: #fff;
+    border-radius: 50%;
+    border: 5px solid #fff;
+}
+
+.forumpost .picture img.userpicture {
+    margin: 0px 10px 0px 10px;
+}
+
+.forumpost .header .topic {
+    margin: 0px 0px 10px 10px;
+}
+
+.forumpost {
+    background-color: [[setting:forumbodybackgroundcolor]];
+}
+
+.forumpost .header {
+    padding: 10px 0px 10px 0px;
+    background-color: [[setting:forumheaderbackgroundcolor]];
+    border-radius: 0 0 0 0;
+}
+
+.showblockicons .block_sitenews .header .title h2:before {
+    content: "\f1ea";
+    font-family: FontAwesome;
+}
+
+/* Lesson Activity */
+#page-mod-lesson-edit .singleselect {
+    width: auto;
+}
+
+.path-mod-lesson .answeroption .fcheckbox label,
+.path-mod-lesson .mform .fitem.answeroptiongroup fieldset.fgroup label {
+    float: left;
+    padding-left: 40px;
+}
+
+.lessonbutton a {
+    background-color: [[setting:buttoncolor]];
+    color: [[setting:buttontextcolor]] !important;
+    padding: 5px;
+    margin: 10px;
+    box-shadow: 0 -2px 0 0 rgba(0, 0, 0, 0.5) inset;
+    border: 0;
+    border-radius: [[setting:buttonradius]];
+    cursor: pointer;
+    padding: 8px 15px 8px;
+    transition: background .2s ease-out;
+}
+
+.lessonbutton a:hover {
+    background-image: none;
+    background-color: [[setting:buttonhovercolor]];
+    color: [[setting:buttontextcolor]] !important;
+    box-shadow: 0 -2px 0 0 rgba(0, 0, 0, 0.5) inset;
+}
+
+.box {
+    margin-top: 15px;
+}
+
+
+/* Forum Activity */
+#page-mod-forum-discuss .discussioncontrol.displaymode {
+    text-align: left;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol {
+    float: none;
+    width: 100%;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect {
+    width: 100%;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect {
+    display: block;
+    width: auto;
+    height: 38px;
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect:focus {
+    border-color: #66afe9;
+    outline: 0;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect::-moz-placeholder {
+    color: #999;
+    opacity: 1;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect:-ms-input-placeholder {
+    color: #999;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect::-webkit-input-placeholder {
+    color: #999;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect[disabled],
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect[readonly],
+fieldset[disabled] #page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect {
+    cursor: not-allowed;
+    background-color: #eee;
+    opacity: 1;
+}
+
+textarea#page-mod-forum-discuss .discussioncontrols .discussioncontrol .singleselect select.singleselect {
+    height: auto;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion {
+    margin-top: 5px;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect {
+    display: block;
+    width: 100%;
+    height: 38px;
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-image: none;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    width: auto;
+    float: left;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect:focus {
+    border-color: #66afe9;
+    outline: 0;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect::-moz-placeholder {
+    color: #999;
+    opacity: 1;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect:-ms-input-placeholder {
+    color: #999;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect::-webkit-input-placeholder {
+    color: #999;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect[disabled],
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect[readonly],
+fieldset[disabled] #page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect {
+    cursor: not-allowed;
+    background-color: #eee;
+    opacity: 1;
+}
+
+textarea#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion select.urlselect {
+    height: auto;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol.movediscussion.movediscussion {
+    float: left;
+}
+
+#page-mod-forum-discuss .forumpost .row .left.picture img,
+#page-site-index .forumpost .row .left.picture img {
+    border: 5px solid #fff;
+    border-radius: 270px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    height: 50px;
+    padding: 1px;
+    vertical-align: middle;
+    width: 50px;
+    margin-right: 10px;
+}
+
+.forumpost .subject {
+    font-size: 1.8em;
+    line-height: normal;
+    font-weight: 400;
+    padding: 15px 0 10px;
+}
+
+.forumpost .content {
+    clear: both;
+    padding: 0 15px;
+}
+
+.forumpost .row.maincontent .left {
+    float: none;
+}
+
+#page-mod-forum-discuss .forumpost .row .options .commands {
+    color: #fafafa;
+    display: inline-block;
+    float: right;
+}
+
+#page-mod-forum-discuss .forumpost .row .options .commands a {
+    font-size: 12px;
+    border: 1px solid #b4b4b7;
+    background-color: #ecedf0;
+    color: #000000 !important;
+    padding: 9px 12px 9px;
+    line-height: 22px;
+    text-decoration: none;
+    border-radius: 3px;
+    transition: 0.25s;
+}
+
+#page-mod-forum-discuss .forumpost .row .options .commands a:hover {
+    background: #1990d5;
+    color: #ffffff !important;
+    font-weight: 400;
+}
+
+.options.clearfix {
+    padding: 15px 5px;
+}
+
+/* User Menu */
+.dropdown-menu.usermen {
+    top: 23px;
+    margin-left: -54px;
+    left: -65px;
+}
+
+.usermen li {
+    text-align: left;
+}
+
+.usermen {
+    padding: 10px 0;
+}
+
+.usermen i {
+    padding-right: 5px;
+}
+
+.dropdown-menu.usermen > li > a:hover,
+.dropdown-menu.usermen > li > a:active {
+    background: none;
+    background-color: #eee;
+}
+
+.signuppanel .row .btn {
+    display: none;
+}
+
+.coursebox.panel ul.teachers li {
+    display: [[setting:tilesshowallcontacts]];
+}
+
+.coursebox.panel ul.teachers li:first-child {
+    display: block;
+}
+
+#changenumsections .smallicon {
+    width: 24px;
+}
+
+#id_category,
+#id_parent {
+    width: 100%;
+    max-width: 100%;
+}
+
+.coursebox .panel-heading {
+    padding: 12px 10px 10px;
+}
+
+.coursebox .panel-heading a {
+    font-size: 105%;
+}
+
+/* News Ticker */
+#ticker,
+#ticker_container {
+    font-size: 16px;
+}
+
+#ticker-wrap {
+    position: relative;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    background: #eee;
+    line-height: 40px;
+    [[setting:tickerwidth]]
+}
+
+#page-site-index #ticker-wrap {
+    display: block;
+}
+
+#ticker-announce {
+    background-color: [[setting:maincolor]];
+    padding: 0 15px;
+    color: #eee;
+    margin-right: 15px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+#ticker-wrap #controls {
+    padding-right: 15px;
+}
+
+#ticker-wrap #controls a {
+    color: [[setting:maincolor]];
+}
+
+#ticker-wrap #newscontent {
+    max-width: 75%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#ticker-wrap #newscontent #news {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#play_trigger a, #pause_trigger a {
+    color: [[setting:maincolor]] !important;
+}
+
+/* Slider */
+/* Browser Resets */
+.flex-container a:active,
+.flexslider a:active,
+.flex-container a:focus,
+.flexslider a:focus {
+    outline: none;
+}
+
+.slides,
+.flex-control-nav,
+.flex-direction-nav {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* IMPORTANT! FlexSlider Necessary Styles */
+.flexslider {
+    margin: 0;
+    padding: 0;
+}
+
+.flexslider .slides > li {
+    display: none;
+    -webkit-backface-visibility: hidden;
+}
+
+/* Hide the slides before the JS is loaded. Avoids image jumping */
+.flexslider .slides img {
+    width: 100%;
+    display: block;
+}
+
+.flex-pauseplay span {
+    text-transform: capitalize;
+}
+
+/* Clearfix for the .slides element */
+.slides:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+html[xmlns] .slides {
+    display: block;
+}
+
+* html .slides {
+    height: 1%;
+}
+
+/* No JavaScript Fallback */
+/* If you are not using another script, such as Modernizr, make sure you  * include js that eliminates this class on page load */
+.no-js .slides > li:first-child {
+    display: block;
+}
+
+/* FlexSlider Default Theme *********************************/
+.flexslider {
+    margin: 0;
+    background: #fff;
+    position: relative;
+    zoom: 1;
+}
+.flex-viewport {
+    max-height: 2000px;
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    transition: all 1s ease;
+}
+.dir-rtl .flex-viewport {
+    direction: ltr;
+    max-height: 2000px;
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    transition: all 1s ease;
+}
+.loading .flex-viewport {
+    max-height: 300px;
+}
+.flexslider .slides {
+    zoom: 1;
+}
+
+/* Direction Nav */
+.flex-direction-nav a {
+    width: 30px;
+    height: 30px;
+    display: block;
+    position: absolute;
+    top: 50%;
+    cursor: pointer;
+    text-indent: -9999px;
+    opacity: 0;
+    -webkit-transition: all .3s ease;
+    margin: 0 10px;
+}
+
+.flex-direction-nav .flex-next {
+    background: #333 url([[pix:theme|next]]) no-repeat 50% 50%;
+    right: 0;
+    opacity: .2;
+}
+
+.flex-direction-nav .flex-prev {
+    background: #333 url([[pix:theme|previous]]) no-repeat 50% 50%;
+    left: 0;
+    opacity: .2;
+}
+
+.flexslider:hover .flex-next {
+    opacity: 1;
+}
+
+.flexslider:hover .flex-prev {
+    opacity: 1;
+}
+
+.flex-direction-nav .disabled {
+    opacity: 0.3 !important;
+    filter: alpha(opacity=30);
+    cursor: default;
+}
+
+/* Direction Nav (Blog Slider) */
+.image-slider .flex-direction-nav a {
+    opacity: 0;
+}
+
+.image-slider .flex-direction-nav .flex-next {
+    background: #333 url([[pix:theme|next]]) no-repeat 50% 50%;
+    right: 0;
+}
+
+.image-slider .flex-direction-nav .flex-prev {
+    background: #333 url([[pix:theme|previous]]) no-repeat 50% 50%;
+    left: 0;
+}
+
+.image-slider:hover .flex-next {
+    opacity: 0.3;
+}
+
+.image-slider:hover .flex-prev {
+    opacity: 0.3;
+}
+
+/* Control Nav */
+.flex-control-nav {
+    width: 100%;
+    position: absolute;
+    bottom: 10px;
+    text-align: center;
+}
+
+.flex-control-nav li {
+    margin: 0 4px;
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
+}
+
+.flex-control-paging li a {
+    width: 8px;
+    height: 8px;
+    display: block;
+    background: #666;
+    background: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    text-indent: -9999px;
+    border-radius: 20px;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
+}
+
+.flex-control-paging li a:hover {
+    background: #333;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.flex-control-paging li a.flex-active {
+    background-color: #000;
+    cursor: default;
+}
+
+.flex-control-thumbs {
+    margin: 5px 0 0;
+    position: static;
+    overflow: hidden;
+}
+
+.flex-control-thumbs li {
+    width: 25%;
+    float: left;
+    margin: 0;
+}
+
+.flex-control-thumbs img {
+    width: 100%;
+    display: block;
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.flex-control-thumbs img:hover {
+    opacity: 1;
+}
+
+.flex-control-thumbs .active {
+    opacity: 1;
+    cursor: default;
+}
+
+/* Caption style */
+/* IE rgba() hack */
+.flex-caption {
+    background: none;
+    -ms-filter: progid: DXImageTransform.Microsoft.gradient(startColorstr=#4C000000, endColorstr=#4C000000);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr=#4C000000, endColorstr=#4C000000);
+    zoom: 1;
+}
+
+.flex-caption {
+    bottom: 0px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    margin: 0;
+    padding: 25px 25px 25px 30px;
+    position: absolute;
+    right: 0;
+    width: 50%;
+}
+
+.flex-caption h3 {
+    color: [[setting:sliderh3color]];
+    letter-spacing: 1px;
+    margin-bottom: 0px;
+    text-transform: uppercase;
+    font-size: 1.5em;
+}
+
+.flex-caption h4 {
+    color: [[setting:sliderh4color]];
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    font-size: 1em;
+}
+
+.flex-caption p {
+    margin: 0 0 15px;
+}
+
+.flex-caption .submit {
+    margin-right: 10px;
+    float: right;
+    color: [[setting:slidersubmitcolor]] !important;
+    background: [[setting:slidersubmitbgcolor]]
+}
+
+#main-slider {
+    margin: 0 0 10px;
+}
+
+.slides li {
+    position: relative;
+}
+
+.flex-control-nav {
+    margin-bottom: -40px;
+}
+
+/*new slider style */
+/* Direction Nav */
+.slidestyle2 .flex-direction-nav a {
+    width: 30px;
+    height: 100%;
+    display: block;
+    position: absolute;
+    top: 0%;
+    cursor: pointer;
+    text-indent: -9999px;
+    opacity: 0;
+    -webkit-transition: all .3s ease;
+}
+
+.slidestyle2 .flex-direction-nav .flex-next {
+    height: 35px;
+    width: 30px;
+    top: 46%;
+    background: [[setting:slideroption2a]] url(/adaptable2/theme/image.php?theme=adaptable&component=theme&image=next) no-repeat 50% 50%;
+    right: 15px;
+    opacity: 1;
+    background-size: auto 24px;
+}
+
+.slidestyle2 .flex-direction-nav .flex-prev {
+    height: 35px;
+    width: 30px;
+    top: 46%;
+    background: [[setting:slideroption2a]] url(/adaptable2/theme/image.php?theme=adaptable&component=theme&image=previous) no-repeat 50% 50%;
+    left: 15px;
+    opacity: 1;
+    background-size: auto 24px;
+}
+
+/* Caption style */
+/* IE rgba() hack */
+.slidestyle2 .flex-caption {
+    background: none;
+    -ms-filter: progid: DXImageTransform.Microsoft.gradient(startColorstr=#4C000000, endColorstr=#4C000000);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr=#4C000000, endColorstr=#4C000000);
+    zoom: 1;
+}
+
+.slidestyle2 .flex-caption {
+    top: 35%;
+    color: inherit;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    width: 100%;
+    text-align: center;
+    transition: all 1s ease-in-out;
+}
+
+.slidestyle2 .flex-caption .span6 {
+    margin-left: 6%;
+}
+
+/*CSS transitions on larger screens */
+.slidestyle2 .flex-caption h3 {
+    background: [[setting:slider2h3bgcolor]];
+    color: [[setting:slider2h3color]];
+    display: block;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 20px;
+    margin: 0;
+    margin-left: 30px;
+    padding: 5px 15px;
+    float: left;
+    text-transform: uppercase;
+    max-width: 1170px;
+    clear: both;
+}
+
+.slidestyle2 .flex-caption h4 {
+    font-size: 22px;
+    line-height: 32px;
+    background-color: [[setting:slider2h4bgcolor]];
+    clear: both;
+    padding: 15px;
+    text-align: left;
+    margin-bottom: 0;
+    color: [[setting:slider2h4color]];
+    font-weight: normal;
+    text-decoration: none !important;
+}
+
+.slidestyle2 a:hover .flex-caption h4,
+.slidestyle2 a:hover .flex-caption h3,
+.slidestyle2 a:hover h4,
+.slidestyle2 *:hover {
+    text-decoration: none !important;
+}
+
+.slidestyle2 .flex-caption p {
+    margin: 0 0 15px;
+    color: #333;
+}
+
+.slidestyle2 .flex-caption a.submit {
+    display: block;
+    font-size: 16px;
+    margin: 0;
+    margin-left: 30px;
+    float: right;
+    padding: 8px 15px;
+    text-transform: uppercase;
+    text-align: left;
+    border: 0px solid #ab3423;
+    background: [[setting:slideroption2color]] !important;
+    color: [[setting:slideroption2submitcolor]] !important;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.slidestyle2 .flex-direction-nav {
+    display: inherit;
+}
+
+.slidestyle2 .flex-control-nav.flex-control-paging {
+    display: none;
+}
+
+.slidestyle2 #main-slider {
+    margin: 0;
+}
+
+/* Fullscreen button */
+.fullin .container {
+    width: [[setting:fullscreenwidth]];
+}
+
+.sbll {
+    display: none;
+}
+
+.fullin .sbll {
+    display: inherit;
+}
+
+.fullin .hbll {
+    display: none;
+}
+
+.zoomin #block-region-side-post {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    margin-left: 0;
+    display: none;
+}
+
+.zoomin #region-main,
+.zoomin #region-bs-main-and-pre {
+    width: 100%;
+    margin-left: 0;
+}
+
+.sbl {
+    display: none;
+}
+
+.zoomin .sbl {
+    display: inherit;
+}
+
+.zoomin .hbl {
+    display: none;
+}

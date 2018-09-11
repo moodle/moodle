@@ -1,0 +1,352 @@
+/*
+* This file is part of Moodle - http://moodle.org/
+*
+* Moodle is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Moodle is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+*
+*
+* Adaptable Menu Style sheet
+*
+* @package    theme_adaptable
+* @copyright  2015-2016 Jeremy Hopkins (Coventry University)
+* @copyright  2015-2017 Fernando Acedo (3-bits.com)
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*
+*/
+
+#navwrap {
+    clear: both;
+    border-bottom: 3px solid [[setting:menubordercolor]];
+}
+
+#navwrap.affix {
+    top: 0;
+    width: 100%;
+    z-index: 1010;
+}
+
+.navbar {
+    clear: none;
+    float: none;
+    margin-bottom: 0;
+    min-width: 40%;
+    margin-top: 0;
+    margin-left: -20px;
+}
+
+.navbar-inner {
+    background-color: transparent;
+    background-image: none;
+    background-repeat: repeat-x;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    min-height: 40px;
+    padding-left: 0;
+    padding-right: 0;
+    filter: none;
+    border-top: 0;
+    border-bottom: 0;
+    box-shadow: none;
+}
+
+.navbar .nav > li > a {
+    color: [[setting:menufontcolor]] !important;
+    line-height: 40px;
+    float: none;
+    padding: 0 [[setting:menufontpadding]] 0 [[setting:menufontpadding]];
+    text-decoration: none;
+    text-shadow: none;
+    font-weight: 400;
+    font-size: [[setting:menufontsize]];
+    text-transform: none;
+    border-right: 0;
+    background-color: transparent !important;
+}
+
+.navbar .nav > li > a:hover {
+    color: [[setting:menufontcolor]];
+    background-color: [[setting:menuhovercolor]] !important;
+    text-decoration: none;
+}
+
+.navbar .dropdown-submenu .dropdown-toggle{
+    height: 28px;
+}
+
+.navbar .nav li.dropdown.open > .dropdown-toggle,
+.navbar .nav li.dropdown.active > .dropdown-toggle,
+.navbar .nav li.dropdown.open.active > .dropdown-toggle {
+    background-color: transparent;
+    color: #fff;
+    font-size: [[setting:menufontsize]];
+}
+
+.navbar .btn-navbar,
+.navbar .btn-navbar:hover,
+.navbar .btn-navbar:active {
+    background-color: #001e3c;
+    background: #001e3c !important;
+}
+
+.navbar .pull-right a {
+    padding: 4px 15px;
+    border-left: 0;
+}
+
+.navbar .nav > li > .dropdown-menu:before, .navbar .nav > li > .dropdown-menu:after {
+    display: none;
+}
+
+.dropdown-toggle a {
+    height: 38px !important;
+}
+
+.dropdown-menu {
+    border: 1px solid #c0c0c0;
+    border-radius: 0;
+    font-size: [[setting:menufontsize]];
+    top: 40px;
+    background-clip: padding-box;
+    background-color: #fff;
+    display: block;
+    float: right;
+    list-style: outside none none;
+    margin: 2px 0;
+    padding: 5px 0;
+    position: absolute;
+    right: 0;
+    min-width: 250px;
+    top: 26px;
+    z-index: 1000;
+    border-radius: [[setting:navbardropdownborderradius]];
+
+}
+
+/* If another dropdown menu is added, please check the below two as definitions may need to be added
+   to ensure dropdown is hidden and displayed appropriately. */
+.navbar .nav .dropdown-menu, .headermenu .dropdown-menu, .langmenu .dropdown-menu  {
+    max-height: 0;
+
+    visibility:hidden;
+    -webkit-transition: all [[setting:navbardropdowntransitiontime]];
+    -moz-transition: all [[setting:navbardropdowntransitiontime]];
+    -ms-transition: all [[setting:navbardropdowntransitiontime]];
+    -o-transition: all [[setting:navbardropdowntransitiontime]];
+    transition: all [[setting:navbardropdowntransitiontime]];
+
+    overflow: hidden;
+    opacity: 0;
+}
+
+.navbar .dropdown:hover .dropdown-menu, .headermenu .dropdown:hover .dropdown-menu,
+.langmenu:hover .dropdown-menu {
+    max-height: 800px;
+    opacity: 1;
+    overflow: visible;
+    visibility: visible;
+}
+
+#above-header .nav li.dropdown {
+    line-height: 24px;
+}
+
+.navbar .nav .dropdown-menu {
+    margin-top: 14px !important;
+}
+
+.navbar .nav .dropdown .dropdown-menu .dropdown-submenu .dropdown-menu {
+    margin-top: 2px !important;
+}
+
+.nav .dropdown-menu .icon-time{
+    margin-left: 4px;
+    background-position: -48px -24px;
+}
+
+.nav .dropdown-menu li a {
+    color: [[setting:linkcolor]] !important;
+    font-size: 13px;
+    font-weight: 400;
+    padding: 6px 10px;
+    border-bottom: 1px !important;
+}
+
+.navbar .nav > li > a:hover {
+    background-color: #fff;
+    color: #333;
+}
+
+.nav .dropdown-menu li a:hover {
+    background-color: [[setting:navbardropdownhovercolor]];
+    color: #333;
+}
+
+.dropdown-submenu:hover > a, .dropdown-submenu:focus > a {
+    background-color: #fff;
+}
+
+.dropdown-submenu>.dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    border-radius: [[setting:navbardropdownborderradius]];
+}
+
+.nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu {
+    margin-top: 0;
+}
+
+.navbar .nav > li:last-child > a {
+    border-right: 0 !important;
+}
+
+.dropdown .fa.fa-briefcase {
+    padding-right: 4px;
+}
+
+.navbar .btn-group {
+    margin-top: 3px;
+}
+
+
+/* New menus styles */
+
+.newmenus {
+    position: relative;
+    margin-left: 20px;
+    font-size: [[setting:topmenufontsize]];
+    height: 26px;
+}
+
+.newmenus .dropdown-menu .dropdown-menu {
+    left: 100%;
+}
+
+.newmenus .dropdown-toggle {
+    color: [[setting:headertextcolor]] !important;
+    background-color: transparent !important;
+}
+
+.newmenus .dropdown-menu li a {
+    color: [[setting:maincolor]] !important;
+    font-size: 13px;
+    font-weight: 400;
+    padding: 3px 10px;
+}
+
+.newmenus .dropdown-menu li:hover a {
+    background-color: #eee;
+}
+
+.newmenus .dropdown-toggle:hover, .newmenus .dropdown-toggle:active, .pull-left .usermenu2.nav a:hover {
+    background-color: transparent !important;
+}
+
+.newmenus .dropdown-toggle::after {
+    font-family:FontAwesome;
+    margin-left:5px;
+    content:"\f107";
+    font-weight: normal;
+    color: [[setting:headertextcolor]];
+}
+
+.newmenus .dropdown-menu .dropdown-toggle::after {
+    color: transparent;
+}
+
+.container-fluid {
+    max-width: 100%;
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.menutitle {
+    height: 100%;
+}
+
+/* The Overlay (background) */
+.overlaymenu {
+    height: 0;
+    width: 100%;
+    position: fixed;
+    z-index: 1090;
+    left: 0;
+    top: 0;
+    background-color: rgb(0,0,0); /* Black fallback color */
+    background-color: rgba(0,0,0, 0.9); /* Black w/opacity */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    transition: 0.5s; /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
+}
+.overlaymenu.open {
+    height: 100%;
+}
+
+.overlaymenu .overlayclosebtn {
+    position: absolute;
+    top: 20px;
+    right: 45px;
+}
+
+.overlay-content {
+    position: relative;
+    top: 5%;
+    width: 100%;
+    margin-top: 30px;
+}
+
+.overlay-content li > a {
+    padding: 8px;
+    text-decoration: none;
+    font-size: 1.5em;
+    color: #ffffff !important;
+    display: block;
+    transition: 0.3s; /* Transition effects on hover (color) */
+}
+
+.overlay-content li > a:hover {
+    color: [[setting:linkhover]] !important;
+}
+
+.overlay-content ul.overlaylist {
+    list-style: none;
+    text-align: left;
+    max-width: 90%;
+    margin: 0 auto 30px;
+}
+
+.overlay-content ul.overlaylist .level-0 a {
+    font-size: 2em;
+    margin-bottom: 1em;
+}
+
+.overlay-content ul.overlaylist .level-2 a:before {
+    content: "-";
+    margin-right: 15px;
+}
+.overlay-content ul.overlaylist .level-3 a:before {
+    content: ".";
+    margin-right: 15px;
+    margin-left: 15px;
+}
+
+/* When the height of the screen is less than 450 pixels, change the font-size of the links and position the close button again, so they don't overlap */
+@media screen and (max-height: 450px) {
+    .overlaymenu a {font-size: 20px}
+    .overlaymenu .closebtn {
+        font-size: 40px;
+        top: 15px;
+        right: 35px;
+    }
+}

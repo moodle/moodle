@@ -1,0 +1,1496 @@
+/*!
+ * @package     theme_essential
+ * @copyright   2015 Gareth J Barnard
+ * @copyright   2014 Gareth J Barnard, David Bezemer
+ * @copyright   2013 Julian Ridden
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+/*! Essential lint disable */
+/*! Disabling as already linted in the LESS. */
+// Import the bootstrap we need.
+@import "../../bootstrapbase/less/bootstrap/variables";
+@import "bootstrap-override/variables";
+@import "essential/variables";
+@import "fontawesome/variables";
+@import "../../bootstrapbase/less/bootstrap/mixins";
+
+// Opacity
+.opacity(@opacity) {
+    opacity: @opacity / 100;
+    filter: ~"alpha(opacity=@{opacity})";
+}
+
+// Import the essential variables.
+@import "essential/settings/variables";
+
+.navbar
+.navbar-inner #custom_menu_themecolours .dropdown-menu li > a.default {
+    &:hover, &:focus {
+        color: ~"[[setting:themenavcolor]]";
+        background-color: ~"[[setting:themecolor]]";
+        background-image: none;
+    }
+}
+
+#essential {
+    .alternative(@numberOfAlternatives) {
+        .alternativeX(@index) when (@index > 0) {
+
+            /* @group Alternative colours @{index} */
+
+            .essential-colours-alternative@{index} {
+                color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                h1,
+                h2,
+                h3,
+                h4,
+                h5,
+                h6,
+                #adminsettings h3,
+                .color,
+                #page-header h1#title,
+                #page-header h1#smalltitle,
+                #page-header h2#subtitle,
+                select,
+                textarea,
+                input[type="text"],
+                input[type="password"],
+                input[type="datetime"],
+                input[type="datetime-local"],
+                input[type="date"],
+                input[type="month"],
+                input[type="time"],
+                input[type="week"],
+                input[type="number"],
+                input[type="email"],
+                input[type="url"],
+                input[type="search"],
+                input[type="tel"],
+                input[type="color"],
+                .uneditable-input,
+                .form-item .form-description,
+                .form-defaultinfo,
+                .form-label .form-shortname,
+                .mform legend,
+                .mform legend a,
+                .backup-restore .backup-section > h2.header,
+                .backup-restore .backup-section .backup-sub-section h3 {
+                    color: ~"[[setting:alternativethemetextcolor@{index}]]";
+
+                    // Focus state.
+                    &:focus {
+                        border-color: ~"[[setting:alternativethemeinputfocusbordercolor@{index}]]";
+                        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px ~"[[setting:alternativethemeinputfocusshadowcolor@{index}]]";
+                        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px ~"[[setting:alternativethemeinputfocusshadowcolor@{index}]]";
+                        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px ~"[[setting:alternativethemeinputfocusshadowcolor@{index}]]";
+                    }
+                }
+
+                .breadcrumb-nav {
+                    // Some breadcrumb style.
+                    ul.breadcrumb.style1 {
+                        li {
+                            color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                            background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                            border-color: ~"[[setting:alternativethemecolor@{index}]]";
+                            &:before {
+                                border-left-color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                            }
+                            a {
+                                color: inherit;
+                                &:before {
+                                    color: inherit;
+                                }
+                            }
+                            &:after {
+                                border-left-color: ~"[[setting:alternativethemecolor@{index}]]";
+                            }
+                            &:first-of-type {
+                                a:before {
+                                    color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                                }
+                            }
+                            &:hover,
+                            &:focus {
+                                background-color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                                &:before {
+                                    border-left-color: ~"[[setting:alternativethemecolor@{index}]]";
+                                }
+                                span,
+                                a,
+                                a:before {
+                                    color: ~"[[setting:alternativethemecolor@{index}]]";
+                                }
+                            }
+                            &:hover:after {
+                                border-left-color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                            }
+                        }
+                    }
+
+                    ul.breadcrumb.style2 {
+                        li {
+                            a {
+                                color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                                &:hover {
+                                    color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                                }
+                            }
+                        }
+                    }
+                }
+
+                a,
+                a:visited {
+                    color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                }
+
+                a:focus,
+                a:hover {
+                    color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                }
+
+                .@{fa-css-prefix} {
+                    color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                    &:focus,
+                    &:hover {
+                        color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                    }
+                    &.@{fa-css-prefix}-warning {
+                        color: inherit;
+                    }
+                }
+                .dimmed .@{fa-css-prefix} {
+                    color: inherit;
+                    &:focus,
+                    &:hover {
+                        color: inherit;
+                    }
+                }
+                button {
+                    &.socialicon {
+                        background-color: #bbb;
+                        background-image: none;
+                        .@{fa-css-prefix} {
+                            color: @white;
+                        }
+                        &:hover,
+                        &:focus {
+                            background-image: none;
+                        }
+                    }
+                    &.facebook:hover,
+                    &.facebook:focus {
+                        background-color: #4a6ea9;
+                    }
+                    &.skype:hover,
+                    &.skype:focus {
+                        background-color: #00adf7;
+                    }
+                    &.instagram:hover,
+                    &.instagram:focus {
+                        background-color: #a5674a;
+                    }
+                    &.ios:hover,
+                    &.ios:focus {
+                        background-color: #000;
+                    }
+                    &.windows:hover,
+                    &.windows:focus {
+                        background-color: #008a00;
+                    }
+                    &.winphone:hover,
+                    &.winphone:focus {
+                        background-color: #9b4f96;
+                    }
+                    &.android:hover,
+                    &.android:focus {
+                        background-color: #98cd32;
+                    }
+                    &.vk:hover,
+                    &.vk:focus {
+                        background-color: #4a6ea9;
+                    }
+                    &.twitter:hover,
+                    &.twitter:focus {
+                        background-color: #00aced;
+                    }
+                    &.googleplus:hover,
+                    &.googleplus:focus {
+                        background-color: #f42941;
+                    }
+                    &.flickr:hover,
+                    &.flickr:focus {
+                        background-color: #ff3096;
+                    }
+                    &.instagram:hover,
+                    a.instagram:focus {
+                        background-color: #b99c6b;
+                    }
+                    &.youtube:hover,
+                    &.youtube:focus {
+                        background-color: #f42941;
+                    }
+                    &.pinterest:hover,
+                    &.pinterest:focus {
+                        background-color: #f42941;
+                    }
+                    &.linkedin:hover,
+                    &.linkedin:focus {
+                        background-color: #4a9cc9;
+                    }
+                }
+
+                a {
+                    &:before {
+                        color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                    }
+                    &:hover:before {
+                        color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                    }
+                    &.dimmed:before {
+                        color: inherit;
+                    }
+                }
+
+                .filemanager,
+                .file-picker {
+                    a, a:visited {
+                        color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                        &:hover,
+                        &:focus {
+                            color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                            &:before {
+                                color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                            }
+                        }
+                    }
+                }
+
+                #page-header {
+                    h1#title {
+                        color: ~"[[setting:alternativethemecolor@{index}]]";
+                    }
+                    #headerlogo {
+                        color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                    }
+                    .btn-icon {
+                        .icon-bar {
+                            background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                        }
+                    }
+                }
+
+                #page-header {
+                    div.titlearea {
+                        border-left: 1px dotted ~"[[setting:alternativethemecolor@{index}]]";
+                    }
+                }
+
+                #mobileapps {
+                    border-right: 1px dotted ~"[[setting:alternativethemecolor@{index}]]";
+                }
+
+                #headerlogo {
+                    border-right-color: ~"[[setting:alternativethemecolor@{index}]]";
+                }
+
+                .breadcrumb-button {
+                    .@{fa-css-prefix} {
+                        vertical-align: middle;
+                        color: inherit;
+                        &:hover {
+                            color: inherit;
+                        }
+                    }
+                    input[type="submit"] {
+                        color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                        background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                        background-image: none;
+                        border-color: ~"[[setting:alternativethemecolor@{index}]]";
+                        &:focus,
+                        &:hover,
+                        &:active {
+                            color: ~"[[setting:alternativethemecolor@{index}]]";
+                            background-color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                            background-image: none;
+                        }
+                    }
+                }
+
+                a.website {
+                    &:hover,
+                    &:focus {
+                        background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                    }
+                }
+
+                img.userpicture,
+                img.profilepicture {
+                    border-color: ~"[[setting:alternativethemecolor@{index}]]";
+                    box-shadow: 0 0 3px ~"[[setting:alternativethemecolor@{index}]]";
+                }
+
+                .navbar {
+                    background-color: ~"[[setting:alternativethemecolor@{index}]]" !important;
+
+                    .navbar-inner {
+                        border-top-color: ~"[[setting:alternativethemecolor@{index}]]" !important;
+                        border-bottom: 1px solid ~"[[setting:alternativethemecolor@{index}]]" !important;
+                        background-color: ~"[[setting:alternativethemecolor@{index}]]" !important;
+
+                        .btn-navbar {
+                            .icon-bar {
+                                background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                            }
+                        }
+
+                        .dropdown-menu {
+                            border: 1px solid ~"[[setting:alternativethemecolor@{index}]]";
+                        }
+
+                        .nav > li.dropdown a,
+                        .nav > li > a,
+                        .search-input-wrapper > div .@{fa-css-prefix} {
+                            color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                            &:focus,
+                            &:hover {
+                                color: ~"[[setting:alternativethemecolor@{index}]]";
+                                background-color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                            }
+                        }
+
+                        .nav .dropdown-menu {
+                            .dropdown-submenu {
+                                .dropdown-toggle:after {
+                                    border-left-color: inherit;
+                                }
+                                &:focus, &:hover {
+                                    .dropdown-toggle:after {
+                                        border-left-color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                                    }
+                                }
+                            }
+                        }
+
+                        .usermenu .nav .dropdown-menu {
+                            .dropdown-submenu {
+                                .dropdown-toggle:after {
+                                    border-right-color: inherit;
+                                }
+                                &:focus,
+                                &:hover {
+                                    .dropdown-toggle:after {
+                                        border-right-color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                                    }
+                                }
+                            }
+                        }
+
+                        #custom_menu_courses {
+                            .dropdown-menu li > a > span.onlyenrolled {
+                                background-color: ~"[[setting:alternativethememycoursesorderenrolbackcolour@{index}]]";
+                            }
+                        }
+
+                        .nav {
+                            border-right-color: ~"[[setting:alternativethemecolor@{index}]]";
+                            > li > a {
+                                color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                                border-left-color: ~"[[setting:alternativethemecolor@{index}]]";
+                                .@{fa-css-prefix} {
+                                    color: inherit;
+                                }
+                                &:focus,
+                                &:hover {
+                                    color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                                    background-color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                                }
+                            }
+                            > li.dropdown .dropdown-menu {
+                                li > a {
+                                    color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                                    &:hover {
+                                        color: @white; // TODO: Page background colour needs to be a setting.
+                                        background-color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                                    }
+                                    &:focus,
+                                    &.open {
+                                        color: @white; // TODO: Page background colour needs to be a setting.
+                                        background-color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                                        .@{fa-css-prefix} {
+                                            color: @white; // TODO: Page background colour needs to be a setting.
+                                        }
+                                    }
+                                }
+                                li.dropdown-submenu:hover > a {
+                                    background-color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                                }
+                            }
+                        }
+
+                        .dropdown-menu li > a:hover,
+                        .dropdown-menu li > a:focus,
+                        .dropdown-submenu:hover > a,
+                        .dropdown-submenu:focus > a {
+                            color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                            background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                        }
+
+                        .brand {
+                            color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                        }
+                    }
+
+                    .nav-collapse {
+                        border-color: ~"[[setting:alternativethemecolor@{index}]]";
+                    }
+
+                    .nav .active > a,
+                    .nav .active > a:hover,
+                    .nav .active > a:focus {
+                        color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                        background-color: ~"[[setting:alternativethemecolor@{index}]]" !important;
+                    }
+                    .nav {
+                        li.dropdown {
+                            &.open > .dropdown-toggle,
+                            &.active > .dropdown-toggle,
+                            &.open.active > .dropdown-toggle {
+                                color: @white; // TODO: Page background colour needs to be a setting.
+                                background-color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                            }
+                        }
+                    }
+
+                    .navbar-inner .usermenu {
+                        .dropdown {
+                            img.userpicture {
+                                border-color: transparent;
+                            }
+                            .dropdown-menu {
+                                border: 1px solid ~"[[setting:alternativethemecolor@{index}]]";
+                                hr.sep {
+                                    border-bottom: 1px dotted ~"[[setting:alternativethemecolor@{index}]]";
+                                }
+                            }
+                        }
+                    }
+
+                   .popover-region-toggle {
+                        color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                        &:hover,
+                        &:focus {
+                            color: ~"[[setting:alternativethemecolor@{index}]]";
+                            background-color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                        }
+                    }
+
+                }
+
+                .course-content ul li.section.main.current {
+                    box-shadow: 4px 4px 8px 2px ~"[[setting:alternativethemecolor@{index}]]";
+                }
+
+                .firstword {
+                    color: ~"[[setting:alternativethemetextcolor@{index}]]" !important;
+                }
+
+                .forumpost {
+                    .picture img {
+                        box-shadow: 0 0 3px ~"[[setting:alternativethemecolor@{index}]]";
+                    }
+                    .subject {
+                        color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                    }
+                }
+
+                button,
+                .btn-default,
+                a.btn-default,
+                button.btn-cancel,
+                input.form-submit,
+                input[type="button"],
+                input[type="submit"],
+                input[type="reset"],
+                #notice .singlebutton + .singlebutton input,
+                .submit.buttons input[name=cancel] {
+                    color: ~"[[setting:alternativethemedefaultbuttontextcolour@{index}]]";
+                    .@{fa-css-prefix} {
+                        color: ~"[[setting:alternativethemedefaultbuttontextcolour@{index}]]";
+                    }
+
+                    text-shadow: none;
+                    background-color: ~"[[setting:alternativethemedefaultbuttonbackgroundcolour@{index}]]";
+                    background-image: -moz-linear-gradient(bottom, ~"[[setting:alternativethemedefaultbuttonbackgroundcolourimage@{index}]]", ~"[[setting:alternativethemedefaultbuttonbackgroundcolourrgba@{index}]]"); // FF 3.6+
+                    background-image: -webkit-gradient(linear, 0 100%, 0 0, from(~"[[setting:alternativethemedefaultbuttonbackgroundcolourimage@{index}]]"), to(~"[[setting:alternativethemedefaultbuttonbackgroundcolourrgba@{index}]]")); // Safari 4+, Chrome 2+
+                    background-image: -webkit-linear-gradient(bottom, ~"[[setting:alternativethemedefaultbuttonbackgroundcolourimage@{index}]]", ~"[[setting:alternativethemedefaultbuttonbackgroundcolourrgba@{index}]]"); // Safari 5.1+, Chrome 10+
+                    background-image: -o-linear-gradient(bottom, ~"[[setting:alternativethemedefaultbuttonbackgroundcolourimage@{index}]]", ~"[[setting:alternativethemedefaultbuttonbackgroundcolourrgba@{index}]]"); // Opera 11.10
+                    background-image: linear-gradient(to top, ~"[[setting:alternativethemedefaultbuttonbackgroundcolourimage@{index}]]", ~"[[setting:alternativethemedefaultbuttonbackgroundcolourrgba@{index}]]"); // Standard, IE10
+
+                    &:hover,
+                    &:focus,
+                    &:active,
+                    &.active,
+                    &.disabled,
+                    &[disabled] {
+                        color: ~"[[setting:alternativethemedefaultbuttontexthovercolour@{index}]]";
+                        text-shadow: 0 1px 1px rgba(64, 64, 64, .75);
+                        background-color: ~"[[setting:alternativethemedefaultbuttonbackgroundhovercolour@{index}]]";
+                        background-image: -moz-linear-gradient(bottom, ~"[[setting:alternativethemedefaultbuttonbackgroundhovercolourimage@{index}]]", ~"[[setting:alternativethemedefaultbuttonbackgroundhovercolourrgba@{index}]]"); // FF 3.6+
+                        background-image: -webkit-gradient(linear, 0 100%, 0 0, from(~"[[setting:alternativethemedefaultbuttonbackgroundhovercolourimage@{index}]]"), to(~"[[setting:alternativethemedefaultbuttonbackgroundhovercolourrgba@{index}]]")); // Safari 4+, Chrome 2+
+                        background-image: -webkit-linear-gradient(bottom, ~"[[setting:alternativethemedefaultbuttonbackgroundhovercolourimage@{index}]]", ~"[[setting:alternativethemedefaultbuttonbackgroundhovercolourrgba@{index}]]"); // Safari 5.1+, Chrome 10+
+                        background-image: -o-linear-gradient(bottom, ~"[[setting:alternativethemedefaultbuttonbackgroundhovercolourimage@{index}]]", ~"[[setting:alternativethemedefaultbuttonbackgroundhovercolourrgba@{index}]]"); // Opera 11.10
+                        background-image: linear-gradient(to top, ~"[[setting:alternativethemedefaultbuttonbackgroundhovercolourimage@{index}]]", ~"[[setting:alternativethemedefaultbuttonbackgroundhovercolourrgba@{index}]]"); // Standard, IE10
+                        .@{fa-css-prefix} {
+                            color: ~"[[setting:alternativethemedefaultbuttontexthovercolour@{index}]]";
+                        }
+                    }
+                }
+
+                button.close {
+                    background: transparent;
+                }
+
+                .btn {
+                    .buttonBackground(@btnBackground, @btnBackgroundHighlight, @grayDark, 0 1px 1px rgba(255,255,255,.75));
+                    &:hover,
+                    &:focus {
+                        background-image: none;
+                    }
+
+                    &.active,
+                    &:active {
+                        background-image: none;
+                        outline: 0;
+                        .box-shadow(~"inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05)");
+                    }
+
+                    &.disabled,
+                    &[disabled] {
+                        cursor: default;
+                        background-image: none;
+                        .opacity(65);
+                        .box-shadow(none);
+                    }
+                }
+                .btn-primary {
+                    .buttonBackground(@btnPrimaryBackground, @btnPrimaryBackgroundHighlight);
+                }
+                .btn-warning {
+                    .buttonBackground(@btnWarningBackground, @btnWarningBackgroundHighlight);
+                }
+                .btn-danger {
+                    .buttonBackground(@btnDangerBackground, @btnDangerBackgroundHighlight);
+                }
+                .btn-success {
+                    .buttonBackground(@btnSuccessBackground, @btnSuccessBackgroundHighlight);
+                }
+                .btn-info {
+                    .buttonBackground(@btnInfoBackground, @btnInfoBackgroundHighlight);
+                }
+                .btn-inverse {
+                    .buttonBackground(@btnInverseBackground, @btnInverseBackgroundHighlight);
+                }
+                .btn-link,
+                .btn-link:active,
+                .btn-link:visited,
+                .btn-link[disabled] {
+                    color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                    background-color: transparent;
+                    background-image: none;
+                    .box-shadow(none);
+                }
+                .btn-link {
+                    border-color: transparent;
+                }
+                .btn-link:hover,
+                .btn-link:focus {
+                    color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                    text-decoration: underline;
+                    background-color: transparent;
+                }
+                .btn-link[disabled]:hover,
+                .btn-link[disabled]:focus {
+                    color: @grayDark;
+                    text-decoration: none;
+                }
+
+                a.btn {
+                    &.btn-primary {
+                        .btn-primary;
+                    }
+                }
+
+                // Atto.
+                div.editor_atto_toolbar button {
+                    background: none;
+                }
+                .editor_atto_content_wrap,
+                div.editor_atto_toolbar button .icon {
+                    color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                }
+                .moodle-dialogue-base .closebutton:hover {
+                    background-image: url(~"[[pix:theme|sprite]]");
+                }
+
+                #tinymce {
+                    color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                    font-family: ~"[[setting:bodyfont]]";
+                    .container-fluid {
+                        max-width: ~"[[setting:pagewidth]]";
+                    }
+                    h1,
+                    h2 {
+                        font-family: ~"[[setting:headingfont]]";
+                    }
+                    h1,
+                    h2,
+                    h3,
+                    h4,
+                    h5,
+                    h6,
+                    #adminsettings h3 {
+                        color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                    }
+
+                    a,
+                    a:visited {
+                        color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                    }
+
+                    a:hover {
+                        color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                        &:before {
+                            color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                        }
+                    }
+
+                    a:before {
+                        color: @icon-colour;
+                        display: inline-block;
+                        text-decoration: none;
+                    }
+
+                    .color {
+                        color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                    }
+                }
+                .editor_atto_content_wrap {
+                    color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                }
+
+                a.marketing-button,
+                a.marketing-button:visited {
+                    color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                    background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                }
+
+                a.marketing-button:hover {
+                    color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                    background-color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                }
+
+                .alert {
+                    .@{fa-css-prefix}-info,
+                    .@{fa-css-prefix}-warning,
+                    .@{fa-css-prefix}-bullhorn {
+                        color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                        &:hover,
+                        &:focus {
+                            color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                        }
+                    }
+                }
+
+                .ui-autocomplete {
+                    border-color: ~"[[setting:alternativethemecolor@{index}]]";
+                }
+
+                .ui-autocomplete {
+                    .ui-menu-item {
+                        color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                        &:hover,
+                        &:focus {
+                            color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                            background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                        }
+                    }
+                }
+
+                #essentialCarousel.carousel {
+                    .carousel-inner {
+                        // Caption for text below images.
+                        .carousel-caption {
+                            background-color: ~"[[setting:alternativethemeslidecaptionbackgroundcolor@{index}]]";
+                            .opacity(75);
+                            h4,
+                            p {
+                                color: ~"[[setting:alternativethemeslidecaptiontextcolor@{index}]]";
+                            }
+                        }
+                        // Caption for text when there is a background image.
+                        &.pagebackground {
+                            .the-side-caption-content {
+                                background-color: ~"[[setting:alternativethemeslidecaptionbackgroundcolor@{index}]]";
+                                h4,
+                                div {
+                                    color: ~"[[setting:alternativethemeslidecaptiontextcolor@{index}]]";
+                                }
+                            }
+                        }
+                    }
+                    // Left/right controls for nav.
+                    .carousel-control {
+                        color: ~"[[setting:alternativethemeslidebuttoncolor@{index}]]";
+
+                        // Hover/focus state.
+                        &:hover,
+                        &:focus {
+                            color: ~"[[setting:alternativethemeslidebuttonhovercolor@{index}]]";
+                        }
+                        .@{fa-css-prefix} {
+                            color: ~"[[setting:alternativethemeslidebuttoncolor@{index}]]";
+                            &:hover,
+                            &:focus {
+                                color: ~"[[setting:alternativethemeslidebuttonhovercolor@{index}]]";
+                            }
+                        }
+                    }
+
+                    // Carousel indicator pips.
+                    .carousel-indicators {
+                        box-shadow: 0 0 8px ~"[[setting:alternativethemeslidebuttoncolor@{index}]]";
+                        li {
+                            background-color: ~"[[setting:alternativethemeslidebuttoncolor@{index}]]";
+                            .opacity(75);
+                        }
+                        .active {
+                            background-color: ~"[[setting:alternativethemeslidebuttonhovercolor@{index}]]";
+                        }
+                    }
+                }
+
+                .block {
+                    .header .title h2 {
+                        color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                        &:before {
+                            color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                        }
+                    }
+                    .icon {
+                        color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                    }
+                }
+
+                #block-region-side-pre .block {
+                    background-color: ~"[[setting:alternativethemesidepreblockbackgroundcolour@{index}]]";
+                    color: ~"[[setting:alternativethemesidepreblocktextcolour@{index}]]";
+                    p.tree_item.branch {
+                        color: ~"[[setting:alternativethemesidepreblocktextcolour@{index}]]";
+                    }
+                    a,
+                    a:visited,
+                    .@{fa-css-prefix} { // Compromise with icon colour.
+                        color: ~"[[setting:alternativethemesidepreblockurlcolour@{index}]]";
+                    }
+                    a:focus,
+                    a:hover,
+                    .@{fa-css-prefix}:focus,
+                    .@{fa-css-prefix}:hover {
+                        color: ~"[[setting:alternativethemesidepreblockhovercolour@{index}]]";
+                    }
+                    .header .title h2 {
+                        color: ~"[[setting:alternativethemesidepreblocktextcolour@{index}]]";
+                    }
+                    &.block_flat_navigation {
+                        background-color: transparent;
+                        .list-group-item {
+                            background-color: ~"[[setting:alternativethemesidepreblockbackgroundcolour@{index}]]";
+                            color: ~"[[setting:alternativethemesidepreblocktextcolour@{index}]]";
+                            a,
+                            a:visited {
+                                color: ~"[[setting:alternativethemesidepreblockurlcolour@{index}]]";
+                            }
+                            a:focus,
+                            a:hover {
+                                color: ~"[[setting:alternativethemesidepreblockhovercolour@{index}]]";
+                            }
+                        }
+                    }
+                }
+
+                &.editing {
+                    #page .block-region.yui3-dd-drop-active-valid {
+                        border-color: ~"[[setting:alternativethemecolor@{index}]]";
+                    }
+                    #page-footer .block-region.yui3-dd-drop-active-valid {
+                        border-color: ~"[[setting:alternativethemefootertextcolor@{index}]]";
+                    }
+                }
+
+                &.jsenabled .block_settings .block_tree .tree_item.branch.loadingbranch:before {
+                    color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                }
+
+                .block_rss_client {
+                    .footer a {
+                        background-color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                        &:hover {
+                            background-color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                        }
+                    }
+                }
+
+                .block_login {
+                    .footer a {
+                        background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                        &:hover {
+                            background-color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                        }
+                    }
+                }
+
+                #page-site-index h2.headingblock:before {
+                    color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                }
+
+                .service .@{fa-css-prefix} {
+                    color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                }
+
+                #page-footer {
+                    .footnote {
+                        a,
+                        a:visited {
+                            color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                        }
+                    }
+                    .block_html ul li:before,
+                    #greyboxright ul li:before {
+                        background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                    }
+                    .block_login input[type="submit"] {
+                        background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                        &:hover {
+                            background-color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                        }
+                    }
+                    .block_rss_client .content a {
+                        color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                    }
+                }
+
+                #page-footer {
+                    background-color: ~"[[setting:alternativethemefootercolor@{index}]]";
+                    color: ~"[[setting:alternativethemefootertextcolor@{index}]]";
+                    border-top: 2px solid ~"[[setting:alternativethemefootercolor@{index}]]";
+                    border-bottom: 3px solid ~"[[setting:alternativethemefootercolor@{index}]]";
+                    a,
+                    a > .@{fa-css-prefix} {
+                        color: ~"[[setting:alternativethemefooterurlcolor@{index}]]";
+                    }
+                    a:hover,
+                    a:hover > .@{fa-css-prefix} {
+                        color: ~"[[setting:alternativethemefooterhovercolor@{index}]]";
+                    }
+                    .footnote {
+                        color: ~"[[setting:alternativethemefootertextcolor@{index}]]";
+                        a,
+                        a:visited {
+                            color: ~"[[setting:alternativethemefooterurlcolor@{index}]]";
+                        }
+                        a:hover {
+                            color: ~"[[setting:alternativethemefooterhovercolor@{index}]]";
+                        }
+                    }
+                    hr {
+                        border-top: 1px solid ~"[[setting:alternativethemefootersepcolor@{index}]]";
+                    }
+                    h4 {
+                        border-bottom: 1px solid ~"[[setting:alternativethemefootersepcolor@{index}]]";
+                        color: ~"[[setting:alternativethemefooterheadingcolor@{index}]]";
+                    }
+                    .tree_item.branch:before {
+                        color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                    }
+                }
+
+                /* @group Footer Block Formatting */
+
+                #page-footer {
+                    .block {
+                        background-color: ~"[[setting:alternativethemefooterblockbackgroundcolour@{index}]]";
+                        color: ~"[[setting:alternativethemefooterblocktextcolour@{index}]]";
+                        a,
+                        a > .@{fa-css-prefix} {
+                            color: ~"[[setting:alternativethemefooterblockurlcolour@{index}]]";
+                        }
+                        a:hover,
+                        a:hover > .@{fa-css-prefix} {
+                            color: ~"[[setting:alternativethemefooterblockhovercolour@{index}]]";
+                        }
+                        .icon {
+                            color: ~"[[setting:alternativethemefooterblockurlcolour@{index}]]";
+                        }
+                    }
+                    .block .header {
+                        border-bottom: 1px solid ~"[[setting:alternativethemefootersepcolor@{index}]]";
+                        h2 {
+                            color: inherit;
+                        }
+                    }
+                    .header .title h2:before,
+                    &.block_iconic_html .header .title h2 span.@{fa-css-prefix}:before {
+                        color: inherit;
+                    }
+                    .block_html ul li:before,
+                    #greyboxright ul li:before {
+                        background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                    }
+                    .block_login input[type="submit"] {
+                        background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                        &:hover {
+                            background-color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                        }
+                    }
+                    .block_rss_client .content a {
+                        color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                    }
+                }
+
+                p.tree_item {
+                    &.leaf a {
+                        > .@{fa-css-prefix} {
+                            color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                        }
+                        &:hover,
+                        &:focus {
+                            color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                            > .@{fa-css-prefix} {
+                                color: inherit;
+                            }
+                        }
+                    }
+                    &.branch {
+                        color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                        &:before {
+                            color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                        }
+                        &:hover,
+                        &:focus {
+                            color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                            &:before {
+                                color: inherit;
+                            }
+                            a {
+                                color: inherit;
+                            }
+                        }
+                        &.emptybranch {
+                            &:before {
+                                color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                            }
+                            &:hover,
+                            &:focus {
+                                &:before {
+                                    color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .afeature:hover {
+                    border-color: ~"[[setting:alternativethemecolor@{index}]]";
+                }
+
+                .afmatter .@{fa-css-prefix} {
+                    color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                }
+
+                .myprofileitem.picture:hover {
+                    border-color: ~"[[setting:alternativethemecolor@{index}]]";
+                }
+
+                .socials {
+                    p {
+                        color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                    }
+                    img:hover {
+                        box-shadow: 0 0 10px 0 ~"[[setting:alternativethemecolor@{index}]]";
+                    }
+                }
+
+                .nav-tabs > li {
+                    > a {
+                        color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                        background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                        &:hover,
+                        &:focus {
+                            color: ~"[[setting:alternativethemecolor@{index}]]";
+                            background-color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                        }
+                    }
+                    &.active > a {
+                        color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                        background-color: @white;  // TODO: Pagecolour.
+                    }
+                }
+
+                .performanceinfo {
+                    background-color: ~"[[setting:alternativethemefooterblockbackgroundcolour@{index}]]";
+                    color: ~"[[setting:alternativethemefooterblocktextcolour@{index}]]";
+                    var {
+                        background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                        color: ~"[[setting:alternativethemenavcolour@{index}]]";
+                    }
+                    .span12 {
+                        border-bottom-color: ~"[[setting:alternativethemefootersepcolor@{index}]]";
+                    }
+                    h2 {
+                        color: ~"[[setting:alternativethemefooterblocktextcolour@{index}]]";
+                        &:before {
+                            color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                        }
+                    }
+                    span {
+                        color: ~"[[setting:alternativethemefooterblocktextcolour@{index}]]";
+                    }
+                    #cache:before,
+                    #load:before,
+                    #memory:before,
+                    #peakmemory:before,
+                    #session:before,
+                    #included:before,
+                    #dbqueries:before,
+                    #dbtime:before {
+                        color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                    }
+                    span.@{fa-css-prefix} {
+                        color: inherit;
+                        &:hover,
+                        &:focus {
+                            color: inherit;
+                        }
+                    }
+                }
+
+                #page-mod-quiz-edit .questionbankwindow.block div.header {
+                    background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                }
+
+                table#user-grades {
+                    th.item,
+                    th.categoryitem,
+                    th.courseitem {
+                        border-bottom-color: ~"[[setting:alternativethemecolor@{index}]]";
+                    }
+                }
+
+                table#user-grades td.controls,
+                .path-grade-report-grader table tr.avg .cell,
+                .path-grade-report-grader table tr.range .cell {
+                    background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                }
+
+                .path-grade-report-grader table#fixed_column th {
+                    border-right-color: ~"[[setting:alternativethemecolor@{index}]]";
+                }
+
+                .back-to-top {
+                    color: ~"[[setting:alternativethemecolor@{index}]]";
+                }
+
+                &.categoryicons .course_category_tree .category[data-categoryid] {
+                    &:hover {
+                        background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                        > .info > .categoryname a {
+                            color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                            .@{fa-css-prefix} {
+                                color: inherit;
+                            }
+                        }
+                    }
+                    &.dimmed_category:hover {
+                        background-color: @grayLight;
+                        > .info > .categoryname a {
+                            background-color: @grayLight;
+                        }
+                    }
+                }
+
+                .commands {
+                    color: ~"[[setting:alternativethemecolor@{index}]]";
+                    a:hover {
+                        color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                    }
+                }
+
+                .drag-handle::before {
+                    color: ~"[[setting:alternativethemecolor@{index}]]";
+                    a {
+                        color: ~"[[setting:alternativethemecolor@{index}]]";
+                    }
+                }
+
+                #section_footer {
+                    color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                }
+
+                .nav_icon {
+                    color: ~"[[setting:alternativethemecolor@{index}]]";
+                    &:hover {
+                        color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                    }
+                }
+
+                .moodle-actionmenu[data-enhanced].show {
+                    .menu {
+                        background-color: @white; // TODO: Page background colour needs to be a setting.
+                        a {
+                            color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                            &:hover {
+                                color: @white; // TODO: Page background colour needs to be a setting.
+                                background-color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                                .@{fa-css-prefix}:before {
+                                    color: @white; // TODO: Page background colour needs to be a setting.
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .moodle-core-dragdrop-draghandle a {
+                    color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                }
+                .menu a.menu-action,
+                .course-item-actions a,
+                .actions a {
+                    > .@{fa-css-prefix} {
+                        color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                    }
+                    &:hover {
+                        > .@{fa-css-prefix} {
+                            color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                        }
+                    }
+                }
+
+                #page {
+                    form {
+                        .form-buttons,
+                        table#form td.submit,
+                        .path-admin .buttons,
+                        #fitem_id_submitbutton,
+                        .fp-content-center
+                        form + div,
+                        div.backup-section + form,
+                        #fgroup_id_buttonar,
+                        fieldset:last-of-type.hidden {
+                            #fgroup_id_buttonar {
+                                background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                            }
+                        }
+                        #fitem_id_submitbutton {
+                            background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                        }
+                    }
+                }
+
+                #page,
+                #region-main {
+                    form {
+                        .form-buttons,
+                        #fgroup_id_buttonar {
+                            background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                        }
+                    }
+                }
+                &#page-grade-grading-pick {
+                    #region-main {
+                        form {
+                            #fgroup_id_buttonar {
+                                label {
+                                    color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                                }
+                            }
+                        }
+                    }
+                }
+                &.path-admin .buttons input[type="submit"] {
+                    background-image: inherit;
+                }
+
+                &.path-grade-report .gradeparent {
+                    tr:nth-of-type(even) .cell,
+                    .floater .cell,
+                    .avg {
+                        color: ~"[[setting:alternativethemestripetextcolour@{index}]]";
+                        background-color: ~"[[setting:alternativethemestripebackgroundcolour@{index}]]";
+                        a,
+                        a:hover,
+                        a:focus,
+                        a:visited,
+                        .@{fa-css-prefix} {
+                            color: ~"[[setting:alternativethemestripeurlcolour@{index}]]";
+                        }
+                    }
+                }
+
+                &#page-grade-report-grader-index .gradeparent div.floater:first-of-type .cell:nth-child(even) {
+                    color: ~"[[setting:alternativethemestripetextcolour@{index}]]";
+                    a,
+                    a:hover,
+                    a:focus,
+                    a:visited {
+                        color: ~"[[setting:alternativethemestripeurlcolour@{index}]]";
+                    }
+                }
+
+                &#page-grade-report-grader-index .gradeparent div.floater:first-of-type .cell:nth-child(odd) {
+                    a,
+                    a:visited {
+                        color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                    }
+                    a:hover,
+                    a:focus {
+                        color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                    }
+                }
+
+                &.path-grade-report .gradeparent .avg.lastrow,
+                &#page-grade-report-grader-index .gradeparent div.floater.floating.lastrow .cell {
+                    color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                }
+
+                &.path-grade-report-grader .gradeparent .user.cell .userpicture {
+                    background-color: @white;
+                }
+
+                table#explaincaps,
+                table#defineroletable,
+                table.grading-report,
+                table#listdirectories,
+                table.rolecaps,
+                table.userenrolment,
+                table#form,
+                form#movecourses table,
+                #page-admin-course-index .editcourse,
+                .forumheaderlist,
+                table.flexible,
+                .generaltable {
+                    tbody {
+                        > tr:nth-child(odd) > td,
+                        > tr:nth-child(odd) > th {
+                            color: ~"[[setting:alternativethemestripetextcolour@{index}]]";
+                            background-color: ~"[[setting:alternativethemestripebackgroundcolour@{index}]]";
+                            a:not(.btn),
+                            > a:not(.btn):hover,
+                            > a:not(.btn):focus,
+                            > a:not(.btn):visited,
+                            a.toggle-display,
+                            a.toggle-display:hover,
+                            a.toggle-display:focus,
+                            a.toggle-display:visited {
+                                color: ~"[[setting:alternativethemestripeurlcolour@{index}]]";
+                            }
+                        }
+                        > tr:nth-child(odd) > td {
+                            .@{fa-css-prefix},
+                            .@{fa-css-prefix}:hover,
+                            .@{fa-css-prefix}:focus {
+                                color: ~"[[setting:alternativethemestripetextcolour@{index}]]";
+                            }
+                        }
+                    }
+                }
+
+                &.path-grade-report-user .user-grade,
+                &.path-grade-edit-tree .setup-grades {
+                    &.generaltable > tbody {
+                        > tr:nth-child(odd) > th,
+                        > tr:nth-child(odd) > td {
+                            &.leveleven,
+                            &.levelodd {
+                                color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                                a:not(.btn):not([role="menuitem"]),
+                                a:not(.btn):not([role="menuitem"]):visited,
+                                a.toggle-display,
+                                a.toggle-display:visited {
+                                    color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                                }
+                                a:not(.btn):not([role="menuitem"]):hover,
+                                a:not(.btn):not([role="menuitem"]):focus,
+                                a:not(.btn):not([role="menuitem"]):active,
+                                a.toggle-display:hover,
+                                a.toggle-display:focus,
+                                a.toggle-display:active {
+                                    color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                                }
+                            }
+                        }
+                        tr:hover > td,
+                        tr:hover > td > h3,
+                        tr:hover > th {
+                            color: ~"[[setting:alternativethemetextcolor@{index}]]";
+                        }
+                        tr:hover > td a:not(.btn):not([role="menuitem"]),
+                        tr:hover > td a:not(.btn):not([role="menuitem"]):visited {
+                            color: ~"[[setting:alternativethemeurlcolor@{index}]]";
+                        }
+                        tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+                        tr:hover > td a:not(.btn):not([role="menuitem"]):focus,
+                        tr:hover > td a:not(.btn):not([role="menuitem"]):active {
+                            color: ~"[[setting:alternativethemehovercolor@{index}]]";
+                        }
+                    }
+                }
+
+                &#page-admin-plugins #plugins-control-panel,
+                &#plugins-check-page #plugins-check {
+                    tbody {
+                        > tr:nth-child(odd) > td,
+                        > tr:hover > td {
+                            &.displayname .plugindir,
+                            &.notes .requiredby,
+                            &.pluginname .componentname,
+                            &.requires .requires-ok,
+                            &.version .versionnumber {
+                                color: ~"[[setting:alternativethemestripetextcolour@{index}]]";
+                            }
+                            &.settings a,
+                            &.uninstall a {
+                                color: ~"[[setting:alternativethemestripeurlcolour@{index}]]";
+                            }
+                        }
+                    }
+                }
+
+                #categoryquestions > tbody > tr:nth-of-type(even) {
+                    color: ~"[[setting:alternativethemestripetextcolour@{index}]]";
+                    background-color: ~"[[setting:alternativethemestripebackgroundcolour@{index}]]";
+                }
+
+                .user-enroller-panel .uep-search-results .users,
+                .user-enroller-panel .uep-search-results .cohorts,
+                table.grading-report,
+                .forumheaderlist,
+                .generaltable,
+                table.flexible,
+                .category_subcategories,
+                table#modules,
+                table#permissions {
+                    > tbody {
+                        tr:hover > td,
+                        tr:hover > td > h3,
+                        tr:hover > th {
+                            color: ~"[[setting:alternativethemestripetextcolour@{index}]]";
+                            background-color: ~"[[setting:alternativethemestripebackgroundcolour@{index}]]";
+                        }
+                        tr:hover > td a:not(.btn):not([role="menuitem"]),
+                        tr:hover > td a:not(.btn):not([role="menuitem"]):visited,
+                        tr:hover > td a:not(.btn):not([role="menuitem"]):hover,
+                        tr:hover > td a:not(.btn):not([role="menuitem"]):focus,
+                        tr:hover > td a:not(.btn):not([role="menuitem"]):active {
+                            color: ~"[[setting:alternativethemestripeurlcolour@{index}]]";
+                            background-color: ~"[[setting:alternativethemestripebackgroundcolour@{index}]]";
+                        }
+                    }
+                }
+
+                &.path-mod-quiz .submitbtns form[action$="processattempt.php"] input[type="submit"] {
+                    color: ~"[[setting:alternativethemequizsubmittextcolour@{index}]]";
+
+                    text-shadow: none;
+                    background-color: ~"[[setting:alternativethemequizsubmitbackgroundcolour@{index}]]";
+                    background-image: -moz-linear-gradient(bottom, ~"[[setting:alternativethemequizsubmitbackgroundcolourimage@{index}]]", ~"[[setting:alternativethemequizsubmitbackgroundcolourrgba@{index}]]"); // FF 3.6+
+                    background-image: -webkit-gradient(linear, 0 100%, 0 0, from(~"[[setting:alternativethemequizsubmitbackgroundcolourimage@{index}]]"), to(~"[[setting:alternativethemequizsubmitbackgroundcolourrgba@{index}]]")); // Safari 4+, Chrome 2+
+                    background-image: -webkit-linear-gradient(bottom, ~"[[setting:alternativethemequizsubmitbackgroundcolourimage@{index}]]", ~"[[setting:alternativethemequizsubmitbackgroundcolourrgba@{index}]]"); // Safari 5.1+, Chrome 10+
+                    background-image: -o-linear-gradient(bottom, ~"[[setting:alternativethemequizsubmitbackgroundcolourimage@{index}]]", ~"[[setting:alternativethemequizsubmitbackgroundcolourrgba@{index}]]"); // Opera 11.10
+                    background-image: linear-gradient(to top, ~"[[setting:alternativethemequizsubmitbackgroundcolourimage@{index}]]", ~"[[setting:alternativethemequizsubmitbackgroundcolourrgba@{index}]]"); // Standard, IE10
+
+                    &:hover, &:focus, &:active, &.active, &.disabled, &[disabled] {
+                        color: ~"[[setting:alternativethemequizsubmittexthovercolour@{index}]]";
+                        text-shadow: 0 1px 1px rgba(64, 64, 64, .75);
+                        background-color: ~"[[setting:alternativethemequizsubmitbackgroundhovercolour@{index}]]";
+                        background-image: -moz-linear-gradient(bottom, ~"[[setting:alternativethemequizsubmitbackgroundhovercolourimage@{index}]]", ~"[[setting:alternativethemequizsubmitbackgroundhovercolourrgba@{index}]]"); // FF 3.6+
+                        background-image: -webkit-gradient(linear, 0 100%, 0 0, from(~"[[setting:alternativethemequizsubmitbackgroundhovercolourimage@{index}]]"), to(~"[[setting:alternativethemequizsubmitbackgroundhovercolourrgba@{index}]]")); // Safari 4+, Chrome 2+
+                        background-image: -webkit-linear-gradient(bottom, ~"[[setting:alternativethemequizsubmitbackgroundhovercolourimage@{index}]]", ~"[[setting:alternativethemequizsubmitbackgroundhovercolourrgba@{index}]]"); // Safari 5.1+, Chrome 10+
+                        background-image: -o-linear-gradient(bottom, ~"[[setting:alternativethemequizsubmitbackgroundhovercolourimage@{index}]]", ~"[[setting:alternativethemequizsubmitbackgroundhovercolourrgba@{index}]]"); // Opera 11.10
+                        background-image: linear-gradient(to top, ~"[[setting:alternativethemequizsubmitbackgroundhovercolourimage@{index}]]", ~"[[setting:alternativethemequizsubmitbackgroundhovercolourrgba@{index}]]"); // Standard, IE10
+                    }
+                }
+            }
+
+            @media (max-width: @navbarCollapseWidth) {
+                .essential-colours-alternative@{index} {
+                    .nav-collapse {
+                        background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                        .dropdown-menu li > a,
+                        .dropdown-menu li > a:visited {
+                            color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                        }
+                    }
+                    .navbar {
+                        .nav-collapse.in {
+                            .nav,
+                            .nav .dropdown-menu {
+                                .dropdown-submenu {
+                                    .dropdown-toggle:after {
+                                        border-left-color: transparent;
+                                        border-top-color: ~"[[setting:alternativethemeiconcolor@{index}]]";
+                                    }
+                                    &:focus,
+                                    &:hover {
+                                        .dropdown-toggle:after {
+                                            border-top-color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                                        }
+                                    }
+                                }
+                                .dropdown-submenu,
+                                .dropdown-submenu:hover {
+                                    &.open {
+                                        > a {
+                                            color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                                            background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                                            &.dropdown-toggle:after {
+                                                border-top-color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            /* @end */
+
+            .navbar .navbar-inner #custom_menu_themecolours .dropdown-menu li > a.alternative@{index} {
+                &:hover,
+                &:focus {
+                    color: ~"[[setting:alternativethemenavcolor@{index}]]";
+                    background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                    background-image: -moz-linear-gradient(top, ~"[[setting:alternativethemetextcolor@{index}]]", ~"[[setting:alternativethemecolor@{index}]]");
+                    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(~"[[setting:alternativethemetextcolor@{index}]]"), to(~"[[setting:alternativethemecolor@{index}]]"));
+                    background-image: -webkit-linear-gradient(top, ~"[[setting:alternativethemetextcolor@{index}]]", ~"[[setting:alternativethemecolor@{index}]]");
+                    background-image: -o-linear-gradient(top, ~"[[setting:alternativethemetextcolor@{index}]]", ~"[[setting:alternativethemecolor@{index}]]");
+                    background-image: linear-gradient(to bottom, ~"[[setting:alternativethemetextcolor@{index}]]", ~"[[setting:alternativethemecolor@{index}]]");
+                }
+                i {
+                    background-color: ~"[[setting:alternativethemecolor@{index}]]";
+                }
+            }
+
+            .alternativeX(@index - 1);
+        }
+        .alternativeX (0) {}
+        .alternativeX (@numberOfAlternatives);
+    }
+}
+
+// Generate all of the alternatives.
+#essential > .alternative(4);
+
+/*! Essential lint enable */

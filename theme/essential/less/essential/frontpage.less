@@ -1,0 +1,182 @@
+/* @group Frontpage */
+@import "../fontawesome/variables";
+
+#site-news-forum,
+#frontpage-course-list,
+#frontpage-category-combo,
+#frontpage-category-names {
+    background-size: 4px 20px;
+    padding-top: 25px;
+}
+
+.headingblock.header {
+    color: #777;
+    font-size: 1.8em;
+    line-height: 35px;
+    margin: 0;
+    padding: 0;
+}
+
+#page-site-index h2.headingblock:before {
+    content: "\f0b1";
+    display: block;
+    float: left;
+    font-family: FontAwesome;
+    font-size: .85em;
+    height: 1.3em;
+    margin-right: .2em;
+    text-align: center;
+    width: 1.5em;
+}
+
+#page-site-index #site-news-forum h2.headingblock:before {
+    content: "\f0a1";
+}
+
+#frontpage-category-names h2.headingblock:before {
+    content: "\f07c";
+}
+
+.coursebox .content .courseimage img {
+    border-radius: 5px;
+    border: 3px solid @white;
+}
+
+.courses .coursebox {
+    background: @white;
+    border-radius: 10px;
+    border: 1px solid #e1e1e1 !important;
+    padding: 10px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.courses .coursebox.even,
+.courses .coursebox.odd {
+    background: @white;
+    margin-bottom: 5px;
+}
+
+.frontpagecontent {
+    border: 1px solid darken(@wellBackground, 7%);
+    .border-radius(@borderRadiusLarge);
+    background-color: @white;
+    padding: @paddingSmall;
+    margin-bottom: 10px;
+}
+
+/* @group Alerts */
+.useralerts .close {
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+
+.useralerts [class^="fa-stack"] {
+    margin-right: 5px;
+}
+
+.useralerts .title {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+/* @end */
+
+/* @group Back to Top */
+
+.back-to-top {
+    -webkit-transition: all .3s ease .5s;
+    -moz-transition: all .3s ease .5s;
+    -o-transition: all .3s ease .5s;
+    background-color: #000;
+    background-color: rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 0 0 1px @white;
+    -moz-box-shadow: 0 0 1px @white;
+    box-shadow: 0 0 1px @white;
+    color: @white;
+    display: none;
+    font: 9px;
+    padding: 5px 12px;
+    position: fixed;
+    right: 15px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    top: 85%;
+    [class^="icon-"] {
+        font-size: 3em;
+    }
+    &:hover {
+        text-decoration: none;
+    }
+    a,
+    a:visited {
+        color: @white !important;
+    }
+}
+/* @end */
+
+/* @group Marketing Spots */
+
+#marketing-spots {
+    overflow: hidden;
+    .marketing-spot {
+        background: @white;
+        border-radius: 5px;
+        border: 1px solid @grayBright;
+        padding: 0;
+        .title {
+            border-bottom: 1px solid @grayBright;
+            padding: 3px 0 8px;
+            text-transform: uppercase;
+        }
+        .@{fa-css-prefix} {
+            font-size: 1.2em;
+            margin-right: 8px;
+            margin-top: 3px;
+        }
+        .marketing-image-container {
+            padding-top: 2px;
+            padding-bottom: 2px;
+            .marketing-image {
+                background-size: contain !important;
+                background-position: center top !important;
+                width: 100%;
+            }
+        }
+        .content {
+            padding: 2px;
+            position: relative;
+            &.withbutton {
+                padding-bottom: 32px;
+            }
+        }
+        .content,
+        .title {
+            margin: 3px 8px 4px;
+        }
+        .marketing-buttons {
+            bottom: 2px;
+            position: absolute;
+            right: 2px;
+            a.marketing-button {
+                border-radius: 3px;
+                border: 1px solid #d3d3d3;
+                cursor: pointer;
+                display: inline-block;
+                font-size: 14px;
+                line-height: 20px;
+                margin-left: 2px;
+                margin-right: 2px;
+                padding: 4px 12px;
+                vertical-align: middle;
+                &.responsive {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+/* @end */
+
+/* @end */

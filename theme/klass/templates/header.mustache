@@ -1,0 +1,65 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Page header.
+}}
+
+{{>theme_klass/navbar}}
+
+<div class="header-main">
+    <div class="header-main-content">
+        <div class="container">
+
+            <div class="navbar">
+                <div class="navbar-inner">
+                <div id="logo">
+                    <a href="{{{ config.wwwroot }}}/?redirect=0" class="navbar-brand {{# logourl }}has-logo{{/ logourl }}
+                {{^ logourl }}
+                    hidden-sm-down
+                {{/ logourl }}
+                    ">
+                {{# logourl }}
+                    <span class="logo">
+                        <img src="{{logourl}}" alt="{{sitename}}">
+                    </span>
+                {{/ logourl }}
+                {{^ logourl }}
+                    <span class="site-name hidden-sm-down">{{{ sitename }}}</span>
+                {{/ logourl }}
+                    </a>
+                </div>
+
+                <button class="navbar-toggler hidden-lg-up" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"></button>
+
+                <div class="collapse navbar-toggleable-md" id="navbarResponsive">
+
+                <div class="infoarea ">
+
+                    <!-- custom_menu -->
+                    {{{ output.custom_menu }}}
+                    <!-- page_heading_menu -->
+
+                </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+       </div>
+    </div>
+</div>
