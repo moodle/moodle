@@ -1052,13 +1052,11 @@ class grade_grade extends grade_object {
 
         // We only support feedback files for modules atm.
         if ($this->grade_item && $this->grade_item->is_external_item()) {
-            $cm = get_coursemodule_from_instance($this->grade_item->itemmodule, $this->grade_item->iteminstance,
-                0, false, MUST_EXIST);
-            $modulecontext = context_module::instance($cm->id);
-            $this->copy_feedback_files($modulecontext, GRADE_FEEDBACK_FILEAREA, $this->id);
+            $context = $this->get_context();
+            $this->copy_feedback_files($context, GRADE_FEEDBACK_FILEAREA, $this->id);
 
             if (empty($CFG->disablegradehistory)) {
-                $this->copy_feedback_files($modulecontext, GRADE_HISTORY_FILEAREA, $historyid);
+                $this->copy_feedback_files($context, GRADE_HISTORY_FILEAREA, $historyid);
             }
         }
 
@@ -1103,17 +1101,15 @@ class grade_grade extends grade_object {
 
         // We only support feedback files for modules atm.
         if ($this->grade_item && $this->grade_item->is_external_item()) {
-            $cm = get_coursemodule_from_instance($this->grade_item->itemmodule, $this->grade_item->iteminstance,
-                0, false, MUST_EXIST);
-            $modulecontext = context_module::instance($cm->id);
+            $context = $this->get_context();
 
             $fs = new file_storage();
-            $fs->delete_area_files($modulecontext->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA, $this->id);
+            $fs->delete_area_files($context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA, $this->id);
 
-            $this->copy_feedback_files($modulecontext, GRADE_FEEDBACK_FILEAREA, $this->id);
+            $this->copy_feedback_files($context, GRADE_FEEDBACK_FILEAREA, $this->id);
 
             if (empty($CFG->disablegradehistory)) {
-                $this->copy_feedback_files($modulecontext, GRADE_HISTORY_FILEAREA, $historyid);
+                $this->copy_feedback_files($context, GRADE_HISTORY_FILEAREA, $historyid);
             }
         }
 
@@ -1246,5 +1242,15 @@ class grade_grade extends grade_object {
                 }
             }
         }
+    }
+
+    /**
+     * Determine the correct context for this grade_grade.
+     *
+     * @return context
+     */
+    public function get_context() {
+        $this->load_grade_item();
+        return $this->grade_item->get_context();
     }
 }

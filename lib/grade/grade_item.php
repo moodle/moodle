@@ -2480,4 +2480,19 @@ class grade_item extends grade_object {
             \availability_grade\callbacks::grade_item_changed($this->courseid);
         }
     }
+
+    /**
+     * Helper function to get the accurate context for this grade column.
+     *
+     * @return context
+     */
+    public function get_context() {
+        if ($this->itemtype == 'mod') {
+            $cm = get_fast_modinfo($this->courseid)->instances[$this->itemmodule][$this->iteminstance];
+            $context = \context_module::instance($cm->id);
+        } else {
+            $context = \context_course::instance($this->courseid);
+        }
+        return $context;
+    }
 }
