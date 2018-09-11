@@ -309,8 +309,8 @@ class data_registry {
      * Returns the effective default purpose and category for a context level.
      *
      * @param int $contextlevel
-     * @param bool $forcedpurposevalue Use this value as if this was this context level purpose.
-     * @param bool $forcedcategoryvalue Use this value as if this was this context level category.
+     * @param int|bool $forcedpurposevalue Use this value as if this was this context level purpose.
+     * @param int|bool $forcedcategoryvalue Use this value as if this was this context level category.
      * @param string $activity The plugin name of the activity.
      * @return int[]
      */

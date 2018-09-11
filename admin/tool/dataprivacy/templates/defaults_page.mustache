@@ -69,8 +69,6 @@
         ]
     }
 }}
-
-
 <div class="card">
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
@@ -88,7 +86,7 @@
             </li>
         </ul>
     </div>
-    <div class="card-body">
+    <div class="card-body context-level-view">
         <div class="alert alert-primary" role="alert">
             {{#str}}defaultsinfo, tool_dataprivacy{{/str}}
         </div>
@@ -127,12 +125,9 @@
                         <td>{{purpose}}</td>
                         {{#canedit}}
                             <td>
-                                <a href="#" role="button" data-action="edit-activity-defaults" data-contextlevel="{{contextlevel}}" data-activityname="{{activityname}}" data-category="{{categoryid}}" data-purpose="{{purposeid}}">
-                                    {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}
-                                </a>
-                                <a href="#" role="button" data-action="delete-activity-defaults" data-contextlevel="{{contextlevel}}" data-activityname="{{activityname}}" data-activitydisplayname="{{name}}">
-                                    {{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}
-                                </a>
+                                {{#actions}}
+                                    {{> core/action_menu_link}}
+                                {{/actions}}
                             </td>
                         {{/canedit}}
                     </tr>
