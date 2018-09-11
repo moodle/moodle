@@ -1,0 +1,48 @@
+#nav-drawer {
+  .metismenu {
+    .collapse {
+      display: none;
+    }
+
+    .collapse.in {
+      display: block;
+    }
+
+    .collapsing {
+      position: relative;
+      height: 0;
+      overflow: hidden;
+      transition-timing-function: ease;
+      transition-duration: .35s;
+      transition-property: height, visibility;
+    }
+
+    .has-arrow {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .has-arrow::after {
+      position: absolute;
+      content: '';
+      width: .5em;
+      height: .5em;
+      border-width: 1px 0 0 1px;
+      border-style: solid;
+      border-color: initial;
+      right: 1em;
+      -webkit-transform: rotate(-45deg) translate(0, -50%);
+      transform: rotate(-45deg) translate(0, -50%);
+      -webkit-transform-origin: top;
+      transform-origin: top;
+      top: 50%;
+      transition: all .3s ease-out;
+    }
+
+    .active > .has-arrow::after,
+    .has-arrow[aria-expanded="true"]::after {
+      -webkit-transform: rotate(-135deg) translate(0, -50%);
+      transform: rotate(-135deg) translate(0, -50%);
+    }
+  }
+}

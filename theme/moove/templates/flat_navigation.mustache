@@ -1,0 +1,95 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_moove/flat_navigation
+
+    Display the flat navigation for the moove theme
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * flatnavigation - array of flat_navigation_nodes
+      * showdivider - boolean
+      * action - string
+      * isactive - boolean
+      * get_indent - integer
+      * is_section - boolean
+      * text - HTML
+
+    Example context (json):
+    {
+        "flatnavigation" : [
+            {
+                "showdivider": false,
+                "action": "#",
+                "isactive": true,
+                "get_indent": 1,
+                "is_section": false,
+                "text": "First"
+            },{
+                "showdivider": true,
+                "action": "#",
+                "isactive": false,
+                "get_indent": 0,
+                "is_section": true,
+                "text": "Last &amp; Second"
+            }
+        ]
+    }
+}}
+<ul class="list-group metismenu">
+{{# flatnavigation }}
+    {{#showdivider}}
+        </ul>
+        <ul class="list-group metismenu">
+    {{/showdivider}}
+    {{#action}}
+        {{^is_section}}
+                <li class="list-group-item list-group-item-action {{#isactive}}active font-weight-bold{{/isactive}}" data-key="{{key}}">
+                    <a href="{{{action}}}">
+                        <span class="text m-l-{{get_indent}}">{{{text}}}</span>
+                    </a>
+                </li>
+        {{/is_section}}
+    {{/action}}
+    {{^action}}
+            <li class="list-group-item" data-key="{{key}}">
+                <a class="m-l-{{get_indent}} has-arrow" href="javascript:void(0);">
+                    {{#is_section}}
+                        {{#pix}}i/folder{{/pix}}
+                    {{/is_section}}
+                    <span class="text">{{{text}}}</span>
+                </a>
+                <ul>
+                    {{#children}}
+                        {{^is_section}}
+                            <li class="list-group-item list-group-item-action {{#isactive}}active font-weight-bold{{/isactive}}" data-key="{{key}}">
+                                <a class="list-group-item list-group-item-action {{#isactive}}active font-weight-bold{{/isactive}}" href="{{{action}}}">
+                                    <span class="text">{{{text}}}</span>
+                                </a>
+                            </li>
+                        {{/is_section}}
+                    {{/children}}
+                </ul>
+            </li>
+    {{/action}}
+{{/ flatnavigation }}
+</ul>

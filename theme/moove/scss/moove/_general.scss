@@ -1,0 +1,84 @@
+/*******************
+Bodys
+*******************/
+body#page-enrol-index {
+    #region-main {
+        .generalbox {
+            float: left;
+            width: 30%;
+        }
+        .generalbox:last-of-type {
+            width: 70%;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+    }
+}
+
+body.pagelayout-popup {
+    margin-left: 0;
+}
+/*******************
+Pages
+*******************/
+#page {
+    margin-top: 40px;
+
+    &.container-fluid {
+        padding: 2rem 2rem 0 2rem;
+    }
+}
+
+#page-admin-index.pagelayout-maintenance {
+    margin-left: 0;
+
+    #page-wrapper::after {
+        min-height: inherit;
+    }
+}
+
+/*******************
+Card
+*******************/
+.card {
+    border-color: $card-border-color;
+    border-radius: $card-border-radius;
+    -webkit-box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+
+    &.card-block,
+    .card-block,
+    .card-body {
+        padding: $m-card-padding;
+    }
+}
+
+/*******************
+Headings
+*******************/
+h1,
+.h1,
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4,
+h5,
+.h5,
+h6,
+.h6 {
+    color: $headings-color;
+    font-family: "Poppins", sans-serif;
+    font-weight: $headings-font-weight;
+}
+
+/* Third party plugins compatibility. */
+/* Course format grid */
+#gridshadebox_content {
+    top: 80px !important;
+}
+
+.popover .arrow {
+    bottom: -8px;
+}

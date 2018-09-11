@@ -39,9 +39,7 @@ echo $OUTPUT->doctype() ?>
 
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
-<?php  require_once(dirname(__FILE__) . '/includes/header.php');
-    echo $headerlayout;
-?>
+<?php  require_once(dirname(__FILE__) . '/includes/header.php');  ?>
 
 <div id="page" class="container">
 
@@ -63,9 +61,7 @@ echo $OUTPUT->doctype() ?>
 
 </div>
 
-<?php
-require_once(dirname(__FILE__) . '/includes/footer.php');
-echo $footerlayout;
-?>
+<?php  require_once(dirname(__FILE__) . '/includes/footer.php');  ?>
+
 </body>
 </html>

@@ -1,0 +1,49 @@
+<div class="card-body">
+    <h3>{{#str}}platform_access, theme_moove{{/str}}</h3>
+    <form class="signup-form" action="{{{ config.wwwroot }}}/login/index.php" method="POST" role="form">
+        <label for="username">
+            {{^canloginbyemail}}
+                {{#str}}username{{/str}}
+            {{/canloginbyemail}}
+            {{#canloginbyemail}}
+                {{#str}}usernameemail{{/str}}
+            {{/canloginbyemail}}
+        </label>
+        <div class="input-group">
+            <div class="input-group-addon"><i class="fa fa-envelope add-on"></i></div>
+            <input type="text" class="form-control" id="username" name="username" placeholder="{{#str}}username{{/str}}" required />
+        </div>
+
+        <label for="password">{{#str}}password{{/str}}</label>
+        <div class="input-group">
+            <div class="input-group-addon"><i class="fa fa-lock add-on"></i></div>
+            <input type="password" class="form-control" id="password" name="password" placeholder="{{#str}}password{{/str}}" required />
+        </div>
+
+        <div class="sign-up-btn">
+            <button type="submit" class="btn btn-primary">{{#str}}login{{/str}}</button>
+        </div>
+    </form>
+
+    {{#output.has_identity_providers}}
+        <h5 class="m-t-2">{{#str}} potentialidps, auth {{/str}}</h5>
+        <div class="potentialidplist" class="m-t-1">
+            {{#output.get_identity_providers}}
+                <div class="potentialidp">
+                    <a href="{{{url}}}" title={{#quote}}{{name}}{{/quote}} class="btn btn-secondary btn-block">
+                    {{#iconurl}}
+                        <img src="{{iconurl}}" alt="" width="24" height="24"/>
+                    {{/iconurl}}
+                    {{name}}
+                    </a>
+                </div>
+            {{/output.get_identity_providers}}
+        </div>
+    {{/output.has_identity_providers}}
+
+    <p><a href="{{{ config.wwwroot }}}/login/forgot_password.php">{{#str}}forgotten{{/str}}</a></p>
+
+    {{#cansignup}}
+        <a class="btn btn-register btn-primary" href="{{{ config.wwwroot }}}/login/signup.php?">{{#str}}newaccount{{/str}}</a>
+    {{/cansignup}}
+</div>

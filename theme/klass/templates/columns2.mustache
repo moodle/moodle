@@ -15,11 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template theme_boost/columns2
+    @template theme_klass/columns2
 
     Admin time setting template.
 
-    Boost 2 column layout template.
+    Klass 2 column layout template.
 
     Context variables required for this template:
     * sitename - The name of the site
@@ -48,7 +48,14 @@
         "hasregionmainsettingsmenu": false
     }
 }}
-{{> theme_boost/head }}
+{{{ output.doctype }}}
+<html {{{ output.htmlattributes }}}>
+<head>
+    <title>{{{ output.page_title }}}</title>
+    <link rel="shortcut icon" href="{{{ output.favicon }}}" />
+    {{{ output.standard_head_html }}}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 
 <body {{{ bodyattributes }}}>
 
@@ -58,31 +65,29 @@
 
     {{>theme_klass/header}}
 
-    <div id="page" class="container-fluid">
+    <div id="page" class="container">
         {{{ output.full_header }}}
 
         <div id="page-content" class="row">
-            <div id="region-main-box" class="col-12">
+            <div id="region-main-box" class="col-xs-12">
                 {{#hasregionmainsettingsmenu}}
-                <div id="region-main-settings-menu" class="d-print-none {{#hasblocks}}has-blocks{{/hasblocks}}">
+                <div id="region-main-settings-menu" class="hidden-print {{#hasblocks}}has-blocks{{/hasblocks}}">
                     <div> {{{ output.region_main_settings_menu }}} </div>
                 </div>
                 {{/hasregionmainsettingsmenu}}
-                <section id="region-main" {{#hasblocks}}class="has-blocks mb-3"{{/hasblocks}}>
-                    <div class="card">
-                        <div class="card-body">
-                            {{#hasregionmainsettingsmenu}}
-                                <div class="region_main_settings_menu_proxy"></div>
-                            {{/hasregionmainsettingsmenu}}
-                            {{{ output.course_content_header }}}
-                            {{{ output.main_content }}}
-                            {{{ output.activity_navigation }}}
-                            {{{ output.course_content_footer }}}
-                        </div>
+                <section id="region-main" {{#hasblocks}}class="has-blocks"{{/hasblocks}}>
+                    <div class="card card-block">
+                    {{#hasregionmainsettingsmenu}}
+                        <div class="region_main_settings_menu_proxy"></div>
+                    {{/hasregionmainsettingsmenu}}
+                    {{{ output.course_content_header }}}
+                    {{{ output.main_content }}}
+                    {{{ output.activity_navigation }}}
+                    {{{ output.course_content_footer }}}
                     </div>
                 </section>
                 {{#hasblocks}}
-                <section data-region="blocks-column" class="d-print-none">
+                <section data-region="blocks-column" class="hidden-print">
                     {{{ sidepreblocks }}}
                 </section>
                 {{/hasblocks}}
@@ -91,7 +96,4 @@
     </div>
     {{> theme_boost/nav-drawer }}
 </div>
-
-{{> theme_klass/footer }}
-
-
+{{> theme_klass/footer}}

@@ -1,23 +1,30 @@
 {{!
-    This file is part of Moodle - http://moodle.org/
+    // This file is part of Moodle - http://moodle.org/
+    //
+    // Moodle is free software: you can redistribute it and/or modify
+    // it under the terms of the GNU General Public License as published by
+    // the Free Software Foundation, either version 3 of the License, or
+    // (at your option) any later version.
+    //
+    // Moodle is distributed in the hope that it will be useful,
+    // but WITHOUT ANY WARRANTY; without even the implied warranty of
+    // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    // GNU General Public License for more details.
+    //
+    // You should have received a copy of the GNU General Public License
+    // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-    Moodle is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Moodle is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+    /**
+     * @package    theme_klass
+     * @copyright  2015 onwards LMSACE Dev Team (http://www.lmsace.com)
+     * @author    LMSACE Dev Team
+     * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+     */
 }}
 {{!
-    @template theme_boost/maintenance
+    @template theme_klass/maintenance
 
-    Boost maintenance layout template.
+    klass maintenance layout template.
 
     Context variables required for this template:
     * output - The core renderer for the page
@@ -47,16 +54,16 @@
 
     {{{ output.standard_top_of_body_html }}}
 
-    <div id="page" class="container card card-body">
+    <div id="page" class="container card card-block">
 
         <div class="row">
-            <div class="col-12 py-3">
+            <div class="col-xs-12 p-y-1">
                 {{{ output.page_heading }}}
             </div>
         </div>
 
         <div id="page-content" class="row">
-            <section id="region-main" class="col-12">
+            <section id="region-main" class="col-xs-12">
                 {{{ output.main_content }}}
             </section>
         </div>
@@ -64,7 +71,7 @@
     </div>
 </div>
 
-<footer id="page-footer" class="py-3 bg-dark text-light">
+<footer id="page-footer" class="p-y-1 bg-inverse">
     <div class="container">
         {{{ output.standard_footer_html }}}
         {{{ output.standard_end_of_body_html }}}
@@ -76,3 +83,13 @@
 {{#js}}
 require(['theme_boost/loader']);
 {{/js}}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+</body>
+</html>

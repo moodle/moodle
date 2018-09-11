@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template theme_boost/columns1
+    @template theme_klass/columns1
 
-    Boost 1 column layout template.
+    Klass 1 column layout template.
 
     Context variables required for this template:
     * sitename - The name of the site
@@ -36,32 +36,39 @@
          "bodyattributes":""
     }
 }}
-{{> theme_boost/head }}
+{{{ output.doctype }}}
+<html {{{ output.htmlattributes }}}>
+<head>
+    <title>{{{ output.page_title }}}</title>
+    <link rel="shortcut icon" href="{{{ output.favicon }}}" />
+    {{{ output.standard_head_html }}}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 
 <body {{{ bodyattributes }}}>
 
 <div id="page-wrapper">
 
+    {{>theme_klass/header}}
     {{{ output.standard_top_of_body_html }}}
 
-    <div id="page" class="container-fluid">
+
+    <div id="page" class="container">
         <div id="page-content" class="row">
-            <div id="region-main-box" class="col-12">
+            <div id="region-main-box" class="col-xs-12">
                 <section id="region-main">
-                    <div class="card">
-                        <div class="card-body">
-                            {{{ output.course_content_header }}}
-                            {{{ output.main_content }}}
-                            {{{ output.activity_navigation }}}
-                            {{{ output.course_content_footer }}}
-                        </div>
+                    <div class="card card-block">
+                    {{{ output.course_content_header }}}
+                    {{{ output.main_content }}}
+                    {{{ output.activity_navigation }}}
+                    {{{ output.course_content_footer }}}
                     </div>
                 </section>
             </div>
         </div>
     </div>
 </div>
-{{{ output.standard_end_of_body_html }}}
+{{>theme_klass/footer}}
 </body>
 </html>
 {{#js}}

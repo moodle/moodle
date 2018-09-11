@@ -1,0 +1,121 @@
+// Calendar event background colours defined.
+.clickable {
+    cursor: copy;
+}
+
+.path-calendar .maincalendar .calendarmonth {
+    .header {
+        background-color: #f2f7f8;
+        color: #99abb4;
+        font-size: 1.2rem;
+        font-weight: 300;
+        line-height: 20px;
+        padding: 7px 0;
+        text-transform: uppercase;
+    }
+    tbody td {
+        border: 1px solid #ececec;
+    }
+    ul {
+        li {
+            margin-bottom: 3px;
+            padding: 8px 2px 0 4px;
+
+            > a {
+                color: #fff;
+
+                &:hover {
+                    color: #fff;
+                }
+
+                .icon {
+                    color: #fff;
+                }
+            }
+        }
+    }
+}
+
+.path-calendar .maincalendar .calendar_event_category:hover a,
+.path-calendar .maincalendar .calendar_event_course:hover a,
+.path-calendar .maincalendar .calendar_event_site:hover a,
+.path-calendar .maincalendar .calendar_event_group:hover a,
+.path-calendar .maincalendar .calendar_event_user:hover a {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.path-calendar .maincalendar,
+.block .calendar_filters {
+    .fa {
+        font-family: 'simple-line-icons';
+        speak: none;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    .fa-cubes::before {
+        content: "\e034";
+    }
+
+    .fa-globe::before {
+        content: "\e037";
+    }
+
+    .fa-user::before {
+        content: "\e005";
+    }
+
+    .fa-university::before {
+        content: "\e019";
+    }
+
+    .fa-group::before {
+        content: "\e001";
+    }
+
+    .fa-eye::before {
+        content: "\e087";
+    }
+
+    .fa-eye-slash::before {
+        content: "\e07c";
+    }
+
+    .fa-spinner {
+        font-family: 'FontAwesome';
+    }
+}
+
+.block {
+    .minicalendar {
+        .hasevent {
+            > a {
+                color: #fff;
+
+                &:hover {
+                    color: #fff;
+                }
+            }
+        }
+    }
+
+    .calendar_filters {
+        li {
+            span {
+                padding-top: .4rem;
+                padding-bottom: 0.2rem;
+
+                .icon {
+                    color: #fff;
+                    margin-right: .2rem;
+                }
+            }
+        }
+    }
+}

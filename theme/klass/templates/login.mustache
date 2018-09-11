@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template theme_boost/login
+    @template theme_klass/login
 
     Login page template
 
@@ -29,7 +29,14 @@
         }
     }
 }}
-{{> theme_boost/head }}
+{{{ output.doctype }}}
+<html {{{ output.htmlattributes }}}>
+<head>
+    <title>{{{ output.page_title }}}</title>
+    <link rel="shortcut icon" href="{{{ output.favicon }}}" />
+    {{{ output.standard_head_html }}}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 
 <body {{{ bodyattributes }}}>
 
@@ -37,12 +44,10 @@
 
     {{{ output.standard_top_of_body_html }}}
 
-    {{{headerlayout}}}
-
-    <div id="page" class="container-fluid mt-0">
+    <div id="page" class="container">
         <div id="page-content" class="row">
-            <div id="region-main-box" class="col-12">
-                <section id="region-main" class="col-12">
+            <div id="region-main-box">
+                <section id="region-main" class="col-xs-12">
                     {{{ output.course_content_header }}}
                     {{{ output.main_content }}}
                     {{{ output.course_content_footer }}}

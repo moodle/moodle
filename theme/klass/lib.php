@@ -285,8 +285,11 @@ function theme_klass_get_html_for_settings(renderer_base $output, moodle_page $p
  */
 function theme_klass_set_fontwww() {
     global $CFG, $PAGE;
-
-    $themewww = $CFG->wwwroot."/theme";
+    if (empty($CFG->themewww)) {
+        $themewww = $CFG->wwwroot."/theme";
+    } else {
+        $themewww = $CFG->themewww;
+    }
     $theme = theme_config::load('klass');
     $fontwww = '$fontwww: "'. $themewww.'/klass/fonts/"'.";\n";
     return $fontwww;
@@ -299,8 +302,11 @@ function theme_klass_set_fontwww() {
  */
 function theme_klass_pre_css_set_fontwww($css) {
     global $CFG, $PAGE;
-
-    $themewww = $CFG->wwwroot."/theme";
+    if (empty($CFG->themewww)) {
+        $themewww = $CFG->wwwroot."/theme";
+    } else {
+        $themewww = $CFG->themewww;
+    }
     $tag = '[[setting:fontwww]]';
     $theme = theme_config::load('klass');
     $css = str_replace($tag, $themewww.'/klass/fonts/', $css);
@@ -328,7 +334,7 @@ if (!function_exists('get_logo_url')) {
             $logo = empty($logo) ? $OUTPUT->image_url('home/logo', 'theme') : $logo;
         } else if ($type == "footer") {
             $logo = $theme->setting_file_url('footerlogo', 'footerlogo');
-            $logo = empty($logo) ? '' : $logo;
+            $logo = empty($logo) ? $OUTPUT->image_url('home/footerlogo', 'theme') : $logo;
         }
         return $logo;
     }

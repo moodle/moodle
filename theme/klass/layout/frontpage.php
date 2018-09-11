@@ -48,9 +48,7 @@ echo $OUTPUT->doctype() ?>
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <?php
-require_once(dirname(__FILE__) . '/includes/header.php');
-echo $headerlayout;
- ?>
+require_once(dirname(__FILE__) . '/includes/header.php');  ?>
 <!--Custom theme header-->
 <div class="">
     <?php
@@ -109,11 +107,7 @@ echo $headerlayout;
     </div>
     <?php echo (isset($flatnavbar)) ? $flatnavbar : ""; ?>
 </div>
-<?php
-    require_once(dirname(__FILE__) . '/includes/footer.php');
-    echo $footerlayout;
-
-?>
+<?php  require_once(dirname(__FILE__) . '/includes/footer.php');  ?>
 <!--Custom theme footer-->
 
 </body>
