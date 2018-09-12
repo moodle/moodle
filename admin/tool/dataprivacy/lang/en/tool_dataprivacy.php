@@ -219,6 +219,7 @@ $string['requestdenied'] = 'The request has been denied';
 $string['requestemailintro'] = 'You have received a data request:';
 $string['requestfor'] = 'Requesting for';
 $string['requestmarkedcomplete'] = 'The request has been marked as complete';
+$string['requestorigin'] = 'Request origin';
 $string['requeststatus'] = 'Status';
 $string['requestsubmitted'] = 'Your request has been submitted to the privacy officer';
 $string['requesttype'] = 'Type';
