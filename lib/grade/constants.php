@@ -273,3 +273,8 @@ define('GRADE_FILE_COMPONENT', 'grade');
  * The file area to store grade feedback files.
  */
 define('GRADE_FEEDBACK_FILEAREA', 'feedback');
+
+/**
+ * The file area to store grade history files.
+ */
+define('GRADE_HISTORY_FILEAREA', 'history');

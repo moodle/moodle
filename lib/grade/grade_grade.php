@@ -1045,7 +1045,7 @@ class grade_grade extends grade_object {
             $data->source       = $source;
             $data->timemodified = time();
             $data->loggeduser   = $USER->id;
-            $DB->insert_record($this->table.'_history', $data);
+            $historyid = $DB->insert_record($this->table.'_history', $data);
         }
 
         $this->notify_changed(false);
@@ -1055,7 +1055,11 @@ class grade_grade extends grade_object {
             $cm = get_coursemodule_from_instance($this->grade_item->itemmodule, $this->grade_item->iteminstance,
                 0, false, MUST_EXIST);
             $modulecontext = context_module::instance($cm->id);
-            $this->copy_feedback_files($modulecontext, $this->id);
+            $this->copy_feedback_files($modulecontext, GRADE_FEEDBACK_FILEAREA, $this->id);
+
+            if (empty($CFG->disablegradehistory)) {
+                $this->copy_feedback_files($modulecontext, GRADE_HISTORY_FILEAREA, $historyid);
+            }
         }
 
         return $this->id;
@@ -1092,7 +1096,7 @@ class grade_grade extends grade_object {
             $data->source       = $source;
             $data->timemodified = time();
             $data->loggeduser   = $USER->id;
-            $DB->insert_record($this->table.'_history', $data);
+            $historyid = $DB->insert_record($this->table.'_history', $data);
         }
 
         $this->notify_changed(false);
@@ -1106,7 +1110,11 @@ class grade_grade extends grade_object {
             $fs = new file_storage();
             $fs->delete_area_files($modulecontext->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA, $this->id);
 
-            $this->copy_feedback_files($modulecontext, $this->id);
+            $this->copy_feedback_files($modulecontext, GRADE_FEEDBACK_FILEAREA, $this->id);
+
+            if (empty($CFG->disablegradehistory)) {
+                $this->copy_feedback_files($modulecontext, GRADE_HISTORY_FILEAREA, $historyid);
+            }
         }
 
         return true;
@@ -1211,12 +1219,13 @@ class grade_grade extends grade_object {
     }
 
     /**
-     * Handles copying feedback files to the gradebook feedback area.
+     * Handles copying feedback files to a specified gradebook file area.
      *
      * @param context $context
+     * @param string $filearea
      * @param int $itemid
      */
-    private function copy_feedback_files(context $context, int $itemid) {
+    private function copy_feedback_files(context $context, string $filearea, int $itemid) {
         if ($this->feedbackfiles) {
             $filestocopycontextid = $this->feedbackfiles['contextid'];
             $filestocopycomponent = $this->feedbackfiles['component'];
@@ -1230,7 +1239,7 @@ class grade_grade extends grade_object {
                     $destination = [
                         'contextid' => $context->id,
                         'component' => GRADE_FILE_COMPONENT,
-                        'filearea' => GRADE_FEEDBACK_FILEAREA,
+                        'filearea' => $filearea,
                         'itemid' => $itemid
                     ];
                     $fs->create_file_from_storedfile($destination, $filetocopy);
