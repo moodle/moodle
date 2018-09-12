@@ -2328,5 +2328,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018083100.01);
     }
 
+    if ($oldversion < 2018091200.00) {
+        if (!file_exists($CFG->dirroot.'/cache/stores/memcache/settings.php')) {
+            unset_all_config_for_plugin('cachestore_memcache');
+        }
+
+        upgrade_main_savepoint(true, 2018091200.00);
+    }
+
     return true;
 }
