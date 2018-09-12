@@ -31,6 +31,8 @@
     * string requestedby The one making the request.
     * string requesttype The request type.
     * string requestdate The date the request was made.
+    * string requestorigin The name of the site the request originates from.
+    * string requestoriginurl The homepage of the site the request originates from.
     * string requestcomments Additional details regarding the request.
     * bool forself Whether the request has been made on behalf of another user or not.
     * string datarequestsurl The URL to the data requests page.
@@ -42,6 +44,8 @@
         "requestedby": "Angus Zhang",
         "requesttype": "Export user data",
         "requestdate": "31 January 2018",
+        "requestorigin": "My Amazing Site",
+        "requestoriginurl": "https://www.bestmoodlesiteever.com",
         "requestcomments": "Dear admin,<br/> I would like to request a copy of my son's user data. Thanks!",
         "forself": true,
         "datarequestsurl": "#"
@@ -90,6 +94,14 @@
                     </td>
                 </tr>
             {{/forself}}
+            <tr>
+                <th scope="row">
+                    {{#str}}requestorigin, tool_dataprivacy{{/str}}
+                </th>
+                <td>
+                    <a href="{{requestoriginurl}}">{{{requestorigin}}}</a>
+                </td>
+            </tr>
             <tr>
                 <th scope="row">
                     {{#str}}requestcomments, tool_dataprivacy{{/str}}
