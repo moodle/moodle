@@ -228,14 +228,6 @@ EDITOR.prototype = {
     collapsecomments: true,
 
     /**
-     * Check if passive option is supported
-     * @property isPassiveSupported
-     * @type Boolean
-     * @public
-     */
-    isPassiveSupported : false,
-
-    /**
      * Called during the initialisation process of the object.
      * @method initializer
      */
@@ -781,8 +773,7 @@ EDITOR.prototype = {
         if (this.get('readonly')) {
             return;
         }
-        // Check if passive option is supported for event listener
-        this.check_passive_supported();
+        this.disable_touch_scroll();
 
         // Setup the tool buttons.
         Y.each(TOOLSELECTOR, function(selector, tool) {
@@ -876,15 +867,6 @@ EDITOR.prototype = {
 
         if (tool !== "comment" && tool !== "select" && tool !== "drag" && tool !== "stamp") {
             this.lastannotationtool = tool;
-        }
-
-        var useragent = navigator.userAgent;
-        if (useragent.includes("Safari")) {
-            if (tool === "drag") {
-                this.enable_touch_scroll();
-            } else {
-                this.disable_touch_scroll();
-            }
         }
 
         this.refresh_button_state();
@@ -1434,43 +1416,41 @@ EDITOR.prototype = {
     },
 
     /**
-     * Check if Passive option is support
+     * Test the browser support for options objects on event listeners.
+     * @return Boolean
      */
-    check_passive_supported : function() {
+    event_listener_options_supported: function() {
+        var passivesupported = false,
+            options,
+            testeventname = "testpassiveeventoptions";
+
+        // Options support testing example from:
+        // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+
         try {
-            var options = Object.defineProperty && Object.defineProperty({}, 'passive', {
+            options = Object.defineProperty({}, "passive", {
                 get: function() {
-                    this.isPassiveSupported = true;
-                }.bind(this)
+                    passivesupported = true;
+                }
             });
 
-            document.addEventListener('touchmove', options, options);
-            document.removeEventListener('touchmove', options, options);
-
-        } catch (err) {
-            this.isPassiveSupported = false;
+            // We use an event name that is not likely to conflict with any real event.
+            document.addEventListener(testeventname, options, options);
+            // We remove the event listener as we have tested the options already.
+            document.removeEventListener(testeventname, options, options);
+        } catch(err) {
+            // It's already false.
+            passivesupported = false;
         }
+        return passivesupported;
     },
 
     /**
      * Disable Touch Move scrolling
      */
-    disable_touch_scroll : function() {
-        var drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
-        drawingregion.setStyle('overflow', 'hidden');
-        if (this.isPassiveSupported) {
+    disable_touch_scroll: function() {
+        if (this.event_listener_options_supported()) {
             document.addEventListener('touchmove', this.stop_touch_scroll, {passive: false});
-        }
-    },
-
-    /**
-     * Enable Touch Move scrolling
-     */
-    enable_touch_scroll : function() {
-        var drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
-        drawingregion.setStyle('overflow', 'auto');
-        if (this.isPassiveSupported) {
-            document.removeEventListener('touchmove', this.stop_touch_scroll, {passive: false});
         }
     },
 
@@ -1478,7 +1458,7 @@ EDITOR.prototype = {
      * Stop Touch Scrolling
      * @param {Object} e
      */
-    stop_touch_scroll : function(e) {
+    stop_touch_scroll: function(e) {
         e.stopPropagation();
         e.preventDefault();
     }
