@@ -1328,14 +1328,15 @@ function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagscl
             continue;
         }
 
-        // This only has to be done it it hasn't been done before.
-        if ($linkobject->workreplacementphrase === null) {
-            filter_prepare_phrase_for_replacement($linkobject);
-        }
+        // Do our highlighting.
+        $resulttext = preg_replace_callback($linkobject->workregexp,
+                function ($matches) use ($linkobject) {
+                    if ($linkobject->workreplacementphrase === null) {
+                        filter_prepare_phrase_for_replacement($linkobject);
+                    }
 
-        // Finally we do our highlighting.
-        $resulttext = preg_replace($linkobject->workregexp,
-                $linkobject->workreplacementphrase, $text, $pregreplacelimit);
+                    return str_replace('$1', $matches[1], $linkobject->workreplacementphrase);
+                }, $text, $pregreplacelimit);
 
         // If the text has changed we have to look for links again.
         if ($resulttext != $text) {
