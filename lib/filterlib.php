@@ -461,42 +461,51 @@ abstract class moodle_text_filter {
 /**
  * This is just a little object to define a phrase and some instructions
  * for how to process it.  Filters can create an array of these to pass
- * to the filter_phrases function below.
+ * to the @{link filter_phrases()} function below.
+ *
+ * Note that although the fields here are public, you almost certainly should
+ * never use that. All that is supported is contructing new instances of this
+ * class, and then passing an array of them to filter_phrases.
  *
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class filterobject {
-    /** @var string */
+    /** @var string this is the phrase that should be matched. */
     public $phrase;
-    /** @var bool whether to only recognise full word matches. */
+
+    /** @var bool whether to match complete words. If true, 'T' won't be matched in 'Tim'. */
     public $fullmatch;
 
-    public $hreftagbegin;
-    public $hreftagend;
-    /** @var bool */
+    /** @var bool whether the match needs to be case sensitive. */
     public $casesensitive;
+
+    /** @var string HTML to insert before any match. */
+    public $hreftagbegin;
+    /** @var string HTML to insert after any match. */
+    public $hreftagend;
+
+    /** @var null|string replacement text to go inside begin and end. If not set,
+     * the body of the replacement will be the original phrase.
+     */
+    public $replacementphrase;
 
     /** @var null|string once initialised, holds the regexp for matching this phrase. */
     public $workregexp = null;
 
-    /** @var mixed */
-    public $replacementphrase;
-    public $work_hreftagbegin;
-    public $work_hreftagend;
-    public $work_replacementphrase;
-    /** @var bool */
-    public $work_calculated;
+    /** @var null|string once initialised, holds the mangled HTML to replace the regexp with. */
+    public $workreplacementphrase = null;
 
     /**
      * Constructor.
      *
-     * @param string $phrase
-     * @param string $hreftagbegin
-     * @param string $hreftagend
-     * @param bool $casesensitive
-     * @param bool $fullmatch
-     * @param mixed $replacementphrase
+     * @param string $phrase this is the phrase that should be matched.
+     * @param string $hreftagbegin HTML to insert before any match. Default '<span class="highlight">'.
+     * @param string $hreftagend HTML to insert after any match. Default '</span>'.
+     * @param bool $casesensitive whether the match needs to be case sensitive
+     * @param bool $fullmatch whether to match complete words. If true, 'T' won't be matched in 'Tim'.
+     * @param mixed $replacementphrase replacement text to go inside begin and end. If not set,
+     * the body of the replacement will be the original phrase.
      */
     public function __construct($phrase, $hreftagbegin = '<span class="highlight">',
                                    $hreftagend = '</span>',
@@ -510,8 +519,6 @@ class filterobject {
         $this->casesensitive     = !empty($casesensitive);
         $this->fullmatch         = !empty($fullmatch);
         $this->replacementphrase = $replacementphrase;
-        $this->work_calculated   = false;
-
     }
 }
 
@@ -1321,37 +1328,14 @@ function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagscl
             continue;
         }
 
-        // All this work has to be done ONLY it it hasn't been done before.
-        if (!$linkobject->work_calculated) {
-            if (!isset($linkobject->hreftagbegin) or !isset($linkobject->hreftagend)) {
-                $linkobject->work_hreftagbegin = '<span class="highlight"';
-                $linkobject->work_hreftagend   = '</span>';
-            } else {
-                $linkobject->work_hreftagbegin = $linkobject->hreftagbegin;
-                $linkobject->work_hreftagend   = $linkobject->hreftagend;
-            }
-
-            // Double up chars to protect true duplicates
-            // be cleared up before returning to the user.
-            $linkobject->work_hreftagbegin = preg_replace('/([#*%])/', '\1\1', $linkobject->work_hreftagbegin);
-
-            // Set the replacement phrase properly.
-            if ($linkobject->replacementphrase) {    // We have specified a replacement phrase.
-                // Strip tags.
-                $linkobject->work_replacementphrase = strip_tags($linkobject->replacementphrase);
-            } else {                                 // The replacement is the original phrase as matched below.
-                $linkobject->work_replacementphrase = '$1';
-            }
-
-            // Work calculated.
-            $linkobject->work_calculated = true;
+        // This only has to be done it it hasn't been done before.
+        if ($linkobject->workreplacementphrase === null) {
+            filter_prepare_phrase_for_replacement($linkobject);
         }
 
         // Finally we do our highlighting.
         $resulttext = preg_replace($linkobject->workregexp,
-                                  $linkobject->work_hreftagbegin.
-                                  $linkobject->work_replacementphrase.
-                                  $linkobject->work_hreftagend, $text, $pregreplacelimit);
+                $linkobject->workreplacementphrase, $text, $pregreplacelimit);
 
         // If the text has changed we have to look for links again.
         if ($resulttext != $text) {
@@ -1436,6 +1420,32 @@ function filter_prepare_phrases_for_filtering(array $linkarray) {
     $linkarray['__preparedmarker'] = 1;
 
     return $linkarray;
+}
+
+/**
+ * Fill in the remaining ->work... fields, that would be needed to replace the phrase.
+ *
+ * @param filterobject $linkobject the link object on which to set additional fields.
+ */
+function filter_prepare_phrase_for_replacement(filterobject $linkobject) {
+    if (!isset($linkobject->hreftagbegin) or !isset($linkobject->hreftagend)) {
+        $linkobject->hreftagbegin = '<span class="highlight"';
+        $linkobject->hreftagend   = '</span>';
+    }
+
+    // Double up chars to protect true duplicates
+    // be cleared up before returning to the user.
+    $hreftagbeginmangled = preg_replace('/([#*%])/', '\1\1', $linkobject->hreftagbegin);
+
+    // Set the replacement phrase properly.
+    if ($linkobject->replacementphrase) {    // We have specified a replacement phrase.
+        $linkobject->workreplacementphrase = strip_tags($linkobject->replacementphrase);
+    } else {                                 // The replacement is the original phrase as matched below.
+        $linkobject->workreplacementphrase = '$1';
+    }
+
+    $linkobject->workreplacementphrase = $hreftagbeginmangled .
+            $linkobject->workreplacementphrase . $linkobject->hreftagend;
 }
 
 /**
