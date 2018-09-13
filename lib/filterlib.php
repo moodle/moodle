@@ -506,19 +506,30 @@ class filterobject {
      * @param bool $fullmatch whether to match complete words. If true, 'T' won't be matched in 'Tim'.
      * @param mixed $replacementphrase replacement text to go inside begin and end. If not set,
      * the body of the replacement will be the original phrase.
+     * @param callback $replacementcallback if set, then this will be called just before
+     * $hreftagbegin, $hreftagend and $replacementphrase are needed, so they can be computed only if required.
+     * The call made is
+     * list($linkobject->hreftagbegin, $linkobject->hreftagend, $linkobject->replacementphrase) =
+     *         call_user_func_array($linkobject->replacementcallback, $linkobject->replacementcallbackdata);
+     * so the return should be an array [$hreftagbegin, $hreftagend, $replacementphrase], the last of which may be null.
+     * @param array $replacementcallbackdata data to be passed to $replacementcallback (optional).
      */
     public function __construct($phrase, $hreftagbegin = '<span class="highlight">',
-                                   $hreftagend = '</span>',
-                                   $casesensitive = false,
-                                   $fullmatch = false,
-                                   $replacementphrase = null) {
+            $hreftagend = '</span>',
+            $casesensitive = false,
+            $fullmatch = false,
+            $replacementphrase = null,
+            $replacementcallback = null,
+            array $replacementcallbackdata = null) {
 
-        $this->phrase            = $phrase;
-        $this->hreftagbegin      = $hreftagbegin;
-        $this->hreftagend        = $hreftagend;
-        $this->casesensitive     = !empty($casesensitive);
-        $this->fullmatch         = !empty($fullmatch);
-        $this->replacementphrase = $replacementphrase;
+        $this->phrase                  = $phrase;
+        $this->hreftagbegin            = $hreftagbegin;
+        $this->hreftagend              = $hreftagend;
+        $this->casesensitive           = !empty($casesensitive);
+        $this->fullmatch               = !empty($fullmatch);
+        $this->replacementphrase       = $replacementphrase;
+        $this->replacementcallback     = $replacementcallback;
+        $this->replacementcallbackdata = $replacementcallbackdata;
     }
 }
 
@@ -1429,6 +1440,11 @@ function filter_prepare_phrases_for_filtering(array $linkarray) {
  * @param filterobject $linkobject the link object on which to set additional fields.
  */
 function filter_prepare_phrase_for_replacement(filterobject $linkobject) {
+    if ($linkobject->replacementcallback !== null) {
+        list($linkobject->hreftagbegin, $linkobject->hreftagend, $linkobject->replacementphrase) =
+                call_user_func_array($linkobject->replacementcallback, $linkobject->replacementcallbackdata);
+    }
+
     if (!isset($linkobject->hreftagbegin) or !isset($linkobject->hreftagend)) {
         $linkobject->hreftagbegin = '<span class="highlight"';
         $linkobject->hreftagend   = '</span>';
