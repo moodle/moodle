@@ -61,6 +61,7 @@ $string['contextlevelname80'] = 'Blocks';
 $string['contextpurposecategorysaved'] = 'Purpose and category saved.';
 $string['contactdpoviaprivacypolicy'] = 'Please contact the privacy officer as described in the privacy policy.';
 $string['createcategory'] = 'Create data category';
+$string['createnewdatarequest'] = 'Create a new data request';
 $string['createpurpose'] = 'Create data purpose';
 $string['datadeletion'] = 'Data deletion';
 $string['datadeletionpagehelp'] = 'Data for which the retention period has expired are listed here. Please review and confirm data deletion, which will then be executed by the "Delete expired contexts" scheduled task.';
