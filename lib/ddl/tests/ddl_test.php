@@ -2168,7 +2168,7 @@ class core_ddl_testcase extends database_driver_testcase {
      * This is a test for sql_generator::getEncQuoted().
      *
      * @dataProvider test_get_enc_quoted_provider
-     * @param string $reserved Whether the column name is reserved or not.
+     * @param bool $reserved Whether the column name is reserved or not.
      * @param string $columnname The column name to be quoted, according to the value of $reserved.
      **/
     public function test_get_enc_quoted($reserved, $columnname) {
@@ -2192,6 +2192,98 @@ class core_ddl_testcase extends database_driver_testcase {
                 case 'sqlite':
                 default:
                     $this->assertSame('"' . $columnname . '"', $gen->getEncQuoted($columnname));
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Data provider for test_sql_generator_get_rename_field_sql().
+     *
+     * @return array The type-old-new tuple fixture.
+     */
+    public function test_sql_generator_get_rename_field_sql_provider() {
+        return array(
+            // Reserved: an example from SQL-92.
+            // Both names should be reserved.
+            [true, 'from', 'where'],
+            // Not reserved.
+            [false, 'my_old_column_name', 'my_awesome_column_name']
+        );
+    }
+
+    /**
+     * This is a unit test for sql_generator::getRenameFieldSQL().
+     *
+     * @dataProvider test_sql_generator_get_rename_field_sql_provider
+     * @param bool $reserved Whether the column name is reserved or not.
+     * @param string $oldcolumnname The column name to be renamed.
+     * @param string $newcolumnname The new column name.
+     **/
+    public function test_sql_generator_get_rename_field_sql($reserved, $oldcolumnname, $newcolumnname) {
+        $DB = $this->tdb;
+        $gen = $DB->get_manager()->generator;
+        $prefix = $DB->get_prefix();
+
+        $tablename = 'test_get_rename_field_sql';
+        $table = new xmldb_table($tablename);
+        $field = new xmldb_field($oldcolumnname, XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null, null, '0', 'previous');
+
+        $dbfamily = $DB->get_dbfamily();
+        if (!$reserved) {
+            // No need to quote the column name.
+            switch ($dbfamily) {
+                case 'mysql':
+                    $this->assertSame(
+                        [ "ALTER TABLE {$prefix}$tablename CHANGE $oldcolumnname $newcolumnname BIGINT(11) NOT NULL" ],
+                        $gen->getRenameFieldSQL($table, $field, $newcolumnname)
+                    );
+                    break;
+                case 'sqlite':
+                    // Skip it, since the DB is not supported yet.
+                    // BTW renaming a column name is already covered by the integration test 'testRenameField'.
+                    break;
+                case 'mssql': // The Moodle connection runs under 'QUOTED_IDENTIFIER ON'.
+                    $this->assertSame(
+                        [ "sp_rename '{$prefix}$tablename.[$oldcolumnname]', '$newcolumnname', 'COLUMN'" ],
+                        $gen->getRenameFieldSQL($table, $field, $newcolumnname)
+                    );
+                    break;
+                case 'oracle':
+                case 'postgres':
+                default:
+                    $this->assertSame(
+                        [ "ALTER TABLE {$prefix}$tablename RENAME COLUMN $oldcolumnname TO $newcolumnname" ],
+                        $gen->getRenameFieldSQL($table, $field, $newcolumnname)
+                    );
+                    break;
+            }
+        } else {
+            // Column name should be quoted.
+            switch ($dbfamily) {
+                case 'mysql':
+                    $this->assertSame(
+                        [ "ALTER TABLE {$prefix}$tablename CHANGE `$oldcolumnname` `$newcolumnname` BIGINT(11) NOT NULL" ],
+                        $gen->getRenameFieldSQL($table, $field, $newcolumnname)
+                    );
+                    break;
+                case 'sqlite':
+                    // Skip it, since the DB is not supported yet.
+                    // BTW renaming a column name is already covered by the integration test 'testRenameField'.
+                break;
+                case 'mssql': // The Moodle connection runs under 'QUOTED_IDENTIFIER ON'.
+                    $this->assertSame(
+                        [ "sp_rename '{$prefix}$tablename.[$oldcolumnname]', '$newcolumnname', 'COLUMN'" ],
+                        $gen->getRenameFieldSQL($table, $field, $newcolumnname)
+                    );
+                    break;
+                case 'oracle':
+                case 'postgres':
+                default:
+                    $this->assertSame(
+                        [ "ALTER TABLE {$prefix}$tablename RENAME COLUMN \"$oldcolumnname\" TO \"$newcolumnname\"" ],
+                        $gen->getRenameFieldSQL($table, $field, $newcolumnname)
+                    );
                     break;
             }
         }
