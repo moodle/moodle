@@ -92,7 +92,8 @@ $currentmembersoptions = '';
 $currentmemberscount = 0;
 if ($currentmembers) {
     foreach($currentmembers as $group) {
-        $currentmembersoptions .= '<option value="'.$group->id.'.">'.format_string($group->name).'</option>';
+        $currentmembersoptions .= '<option value="' . $group->id . '." title="' . format_string($group->name) . '">' .
+                format_string($group->name) . '</option>';
         $currentmemberscount ++;
     }
 
@@ -112,7 +113,8 @@ $potentialmembersoptions = '';
 $potentialmemberscount = 0;
 if ($potentialmembers) {
     foreach($potentialmembers as $group) {
-        $potentialmembersoptions .= '<option value="'.$group->id.'.">'.format_string($group->name).'</option>';
+        $potentialmembersoptions .= '<option value="' . $group->id . '." title="' . format_string($group->name) . '">' .
+                format_string($group->name) . '</option>';
         $potentialmemberscount ++;
     }
 } else {
