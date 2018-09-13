@@ -135,6 +135,8 @@ class filter_glossary extends moodle_text_filter {
         // when you have two terms like 'Moodle' and 'Moodle 3.5'. You want the longest match.
         usort($conceptlist, 'filter_glossary::sort_entries_by_length');
 
+        $conceptlist = filter_prepare_phrases_for_filtering($conceptlist);
+
         $tocache = new stdClass();
         $tocache->cacheuserid = $USER->id;
         $tocache->cachecourseid = $courseid;
@@ -155,7 +157,7 @@ class filter_glossary extends moodle_text_filter {
 
         if (!empty($GLOSSARY_EXCLUDEENTRY)) {
             foreach ($conceptlist as $key => $filterobj) {
-                if ($filterobj->conceptid == $GLOSSARY_EXCLUDEENTRY) {
+                if (is_object($filterobj) && $filterobj->conceptid == $GLOSSARY_EXCLUDEENTRY) {
                     unset($conceptlist[$key]);
                 }
             }
