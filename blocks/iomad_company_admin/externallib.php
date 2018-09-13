@@ -295,7 +295,8 @@ class block_iomad_company_admin_external extends external_api {
     public static function get_companies_returns() {
         return new external_single_structure(
             array('companies' => new external_multiple_structure(
-                       array(
+                    new external_single_structure(
+                        array(
                          'id' => new external_value(PARAM_INT, 'Companid ID'),
                          'name' => new external_value(PARAM_TEXT, 'Company long name'),
                          'shortname' => new external_value(PARAM_TEXT, 'Compay short name'),
@@ -314,9 +315,9 @@ class block_iomad_company_admin_external extends external_api {
                          'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
                          'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0)
                          )
-                    ),
-                     array('warnings' => new external_warnings('always set to \'key\'', 'faulty key name')
-                    )
+                     )
+                 ),
+                'warnings' => new external_warnings('always set to \'key\'', 'faulty key name')
             )
         );
     }
@@ -552,24 +553,21 @@ class block_iomad_company_admin_external extends external_api {
      * @return external_description
      */
     public static function get_departments_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'departments' => new external_multiple_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'Department ID'),
-                            'name' => new external_value(PARAM_TEXT, 'Department name'),
-                            'shortname' => new external_value(PARAM_TEXT, 'Department short name'),
-                            'company' => new external_value(PARAM_INT, 'Company ID'),
-                            'parent' => new external_value(PARAM_INT, 'Department parent id'),
-                        ),
-                        array(
-                            'warnings' => new external_warnings('always set to \'key\'', 'faulty key name')
-                        )
+        return new external_single_structure(
+                array('departments' => new external_multiple_structure(
+                        new external_single_structure(
+                            array(
+                                'id' => new external_value(PARAM_INT, 'Department ID'),
+                                'name' => new external_value(PARAM_TEXT, 'Department name'),
+                                'shortname' => new external_value(PARAM_TEXT, 'Department short name'),
+                                'company' => new external_value(PARAM_INT, 'Company ID'),
+                                'parent' => new external_value(PARAM_INT, 'Department parent id'),
+                                )
+                            )
+                       ),
+                      'warnings' => new external_warnings('always set to \'key\'', 'faulty key name')
                     )
-                )
-            )
-        );
+                );
     }
 
     // User handling
@@ -1260,19 +1258,20 @@ class block_iomad_company_admin_external extends external_api {
     public static function get_license_info_returns() {
         return new external_single_structure(
             array('licenses' => new external_multiple_structure(
-                    array(
-                         'id' => new external_value(PARAM_INT, 'license ID'),
-                         'name' => new external_value(PARAM_TEXT, 'License name'),
-                         'allocation' => new external_value(PARAM_INT, 'Number of license slots'),
-                         'validlength' => new external_value(PARAM_INT, 'Course access length (days)'),
-                         'expirydate' => new external_value(PARAM_INT, 'License expiry date'),
-                         'used' => new external_value(PARAM_INT, 'Number allocated'),
-                         'companyid' => new external_value(PARAM_INT, 'Company id'),
-                         'parentid' => new external_value(PARAM_INT, 'Parent license id'),
+                    new external_single_structure(
+                        array(
+                              'id' => new external_value(PARAM_INT, 'license ID'),
+                              'name' => new external_value(PARAM_TEXT, 'License name'),
+                              'allocation' => new external_value(PARAM_INT, 'Number of license slots'),
+                              'validlength' => new external_value(PARAM_INT, 'Course access length (days)'),
+                              'expirydate' => new external_value(PARAM_INT, 'License expiry date'),
+                              'used' => new external_value(PARAM_INT, 'Number allocated'),
+                              'companyid' => new external_value(PARAM_INT, 'Company id'),
+                              'parentid' => new external_value(PARAM_INT, 'Parent license id'),
                          )
-                    ),
-                     array('warnings' => new external_warnings('always set to \'key\'', 'faulty key name')
-                )
+                     )
+                 ),
+                'warnings' => new external_warnings('always set to \'key\'', 'faulty key name')
             )
         );
     }
