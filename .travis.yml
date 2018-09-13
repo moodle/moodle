@@ -263,7 +263,9 @@ script:
         grunt ;
         # Add all files to the git index and then run diff --cached to see all changes.
         # This ensures that we get the status of all files, including new files.
+        # We ignore npm-shrinkwrap.json to make the tasks immune to npm changes.
         git add . ;
+        git reset -- npm-shrinkwrap.json ;
         git diff --cached --exit-code ;
       fi
 
