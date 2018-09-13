@@ -74,6 +74,43 @@ class filter_glossary_filter_testcase extends advanced_testcase {
         $this->assertEquals($glossary->name . ': second alias', $matches[2][2]);
     }
 
+    public function test_longest_link_used() {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        // Enable glossary filter at top level.
+        filter_set_global_state('glossary', TEXTFILTER_ON);
+        $CFG->glossary_linkentries = 1;
+
+        // Create a test course.
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        // Create a glossary.
+        $glossary = $this->getDataGenerator()->create_module('glossary',
+                array('course' => $course->id, 'mainglossary' => 1));
+
+        // Create two entries with ampersands and one normal entry.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $shorter = $generator->create_content($glossary, array('concept' => 'Tim'));
+        $longer = $generator->create_content($glossary, array('concept' => 'Time'));
+
+        // Format text with all three entries in HTML.
+        $html = '<p>Time will tell</p>';
+        $filtered = format_text($html, FORMAT_HTML, array('context' => $context));
+
+        // Find all the glossary links in the result.
+        $matches = array();
+        preg_match_all('~eid=([0-9]+).*?title="(.*?)"~', $filtered, $matches);
+
+        // There should be 1 glossary link to Time, not Tim.
+        $this->assertEquals(1, count($matches[1]));
+        $this->assertEquals($longer->id, $matches[1][0]);
+
+        // Check text of title attribute.
+        $this->assertEquals($glossary->name . ': Time',   $matches[2][0]);
+    }
+
     public function test_link_to_category() {
         global $CFG;
         $this->resetAfterTest(true);
