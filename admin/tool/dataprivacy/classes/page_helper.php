@@ -47,7 +47,7 @@ class page_helper {
      */
     public static function setup(moodle_url $url, $title, $attachtoparentnode = '',
                                  $requiredcapability = 'tool/dataprivacy:managedataregistry') {
-        global $PAGE;
+        global $PAGE, $SITE;
 
         $context = context_system::instance();
 
@@ -65,7 +65,7 @@ class page_helper {
         $PAGE->set_context($context);
         $PAGE->set_pagelayout('admin');
         $PAGE->set_title($title);
-        $PAGE->set_heading($title);
+        $PAGE->set_heading($SITE->fullname);
 
         // If necessary, override the settings navigation to add this page into the breadcrumb navigation.
         if ($attachtoparentnode) {
