@@ -348,11 +348,11 @@ class company {
      **/
     public static function get_company_byuserid($userid) {
         global $DB;
-        $companies = $DB->get_record_sql("SELECT c.* FROM {company_users} cu
-                                          INNER JOIN {company} c ON cu.companyid = c.id
-                                          WHERE cu.userid = :userid
-                                          ORDER BY cu.id",
-                                          array('userid' => $userid), 0, 1);
+        $companies = (array) $DB->get_record_sql("SELECT c.* FROM {company_users} cu
+                                                  INNER JOIN {company} c ON cu.companyid = c.id
+                                                  WHERE cu.userid = :userid
+                                                  ORDER BY cu.id",
+                                                  array('userid' => $userid), 0, 1);
         return array_shift($companies);
     }
 
@@ -2957,16 +2957,11 @@ class company {
                 // Add the user to the appropriate course group.
                 if (!empty($course->groupmode)) {
                     $userlicense = $DB->get_record('companylicense_users', array('id' => $userlicid));
-                    self::add_user_to_shared_course($instance->courseid, $user->id, $license->companyid, $userlicense->groupid);
+                    self::add_user_to_shared_course($instance->courseid, $user->id, $licenserecord->companyid, $userlicense->groupid);
                 }
 
                 // Update the userlicense record to mark it as in use.
                 $DB->set_field('companylicense_users', 'isusing', 1, array('id' => $userlicense->id));
-
-                // Send welcome.
-                if ($instance->customint4) {
-                    $enrol->email_welcome_message($instance, $user);
-                }
             }
         }
 
