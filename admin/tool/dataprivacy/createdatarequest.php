@@ -78,8 +78,8 @@ if ($data = $mform->get_data()) {
     redirect($returnurl, $redirectmessage);
 }
 
-$title = get_string('contactdataprotectionofficer', 'tool_dataprivacy');
-$PAGE->set_heading($title);
+$title = get_string('createnewdatarequest', 'tool_dataprivacy');
+$PAGE->set_heading($SITE->fullname);
 $PAGE->set_title($title);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);

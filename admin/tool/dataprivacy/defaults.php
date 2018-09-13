@@ -66,5 +66,6 @@ $defaultspage = new \tool_dataprivacy\output\defaults_page($mode, $category, $pu
 
 $output = $PAGE->get_renderer('tool_dataprivacy');
 echo $output->header();
+echo $output->heading($title);
 echo $output->render_from_template('tool_dataprivacy/defaults_page', $defaultspage->export_for_template($output));
 echo $output->footer();

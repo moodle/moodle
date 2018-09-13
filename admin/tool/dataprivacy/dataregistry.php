@@ -37,6 +37,7 @@ $title = get_string('dataregistry', 'tool_dataprivacy');
 
 $output = $PAGE->get_renderer('tool_dataprivacy');
 echo $output->header();
+echo $OUTPUT->heading($title);
 
 if (\tool_dataprivacy\api::is_site_dpo($USER->id)) {
     $dataregistry = new tool_dataprivacy\output\data_registry_page($contextlevel, $contextid);
