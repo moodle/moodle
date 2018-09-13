@@ -469,18 +469,21 @@ abstract class moodle_text_filter {
 class filterobject {
     /** @var string */
     public $phrase;
+    /** @var bool whether to only recognise full word matches. */
+    public $fullmatch;
+
     public $hreftagbegin;
     public $hreftagend;
     /** @var bool */
     public $casesensitive;
-    public $fullmatch;
+
+    /** @var null|string once initialised, holds the regexp for matching this phrase. */
+    public $workregexp = null;
+
     /** @var mixed */
     public $replacementphrase;
-    public $work_phrase;
     public $work_hreftagbegin;
     public $work_hreftagend;
-    public $work_casesensitive;
-    public $work_fullmatch;
     public $work_replacementphrase;
     /** @var bool */
     public $work_calculated;
@@ -504,8 +507,8 @@ class filterobject {
         $this->phrase            = $phrase;
         $this->hreftagbegin      = $hreftagbegin;
         $this->hreftagend        = $hreftagend;
-        $this->casesensitive     = $casesensitive;
-        $this->fullmatch         = $fullmatch;
+        $this->casesensitive     = !empty($casesensitive);
+        $this->fullmatch         = !empty($fullmatch);
         $this->replacementphrase = $replacementphrase;
         $this->work_calculated   = false;
 
@@ -1240,7 +1243,7 @@ function filter_context_may_have_filter_settings($context) {
  * Process phrases intelligently found within a HTML text (such as adding links).
  *
  * @param string $text            the text that we are filtering
- * @param array $linkarray       an array of filterobjects
+ * @param filterobject[] $linkarray an array of filterobjects
  * @param array $ignoretagsopen   an array of opening tags that we should ignore while filtering
  * @param array $ignoretagsclose  an array of corresponding closing tags
  * @param bool $overridedefaultignore True to only use tags provided by arguments
@@ -1251,10 +1254,14 @@ function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagscl
 
     global $CFG;
 
-    static $usedphrases;
+    // Used if $CFG->filtermatchoneperpage is on. Array with keys being the workregexp
+    // for things that have already been matched on this page.
+    static $usedphrases = [];
 
     $ignoretags = array();  // To store all the enclosig tags to be completely ignored.
     $tags = array();        // To store all the simple tags to be ignored.
+
+    $linkarray = filter_prepare_phrases_for_filtering($linkarray);
 
     if (!$overridedefaultignore) {
         // A list of open/close tags that we should not replace within.
@@ -1281,12 +1288,6 @@ function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagscl
         }
     }
 
-    // Invalid prefixes and suffixes for the fullmatch searches.
-    // Every "word" character, but the underscore, is a invalid suffix or prefix.
-    // (nice to use this because it includes national characters (accents...) as word characters.
-    $filterinvalidprefixes = '([^\W_])';
-    $filterinvalidsuffixes = '([^\W_])';
-
     // Double up some magic chars to avoid "accidental matches".
     $text = preg_replace('/([#*%])/', '\1\1', $text);
 
@@ -1296,18 +1297,21 @@ function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagscl
     // Remove tags from $text.
     filter_save_tags($text, $tags);
 
+    // Prepare the limit for preg_match calls.
+    if (!empty($CFG->filtermatchonepertext) || !empty($CFG->filtermatchoneperpage)) {
+        $pregreplacelimit = 1;
+    } else {
+        $pregreplacelimit = -1; // No limit.
+    }
+
     // Time to cycle through each phrase to be linked.
     foreach ($linkarray as $linkobject) {
-
-        // Set some defaults if certain properties are missing.
-        // Properties may be missing if the filterobject class has not been used to construct the object.
-        if (empty($linkobject->phrase)) {
+        if ($linkobject->workregexp === null) {
             continue;
         }
 
-        // Avoid integers < 1000 to be linked. See bug 1446.
-        $intcurrent = intval($linkobject->phrase);
-        if (!empty($intcurrent) && strval($intcurrent) == $linkobject->phrase && $intcurrent < 1000) {
+        // If $CFG->filtermatchoneperpage, avoid previously matched linked phrases.
+        if (!empty($CFG->filtermatchoneperpage) && isset($usedphrases[$linkobject->workregexp])) {
             continue;
         }
 
@@ -1325,24 +1329,6 @@ function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagscl
             // be cleared up before returning to the user.
             $linkobject->work_hreftagbegin = preg_replace('/([#*%])/', '\1\1', $linkobject->work_hreftagbegin);
 
-            if (empty($linkobject->casesensitive)) {
-                $linkobject->work_casesensitive = false;
-            } else {
-                $linkobject->work_casesensitive = true;
-            }
-            if (empty($linkobject->fullmatch)) {
-                $linkobject->work_fullmatch = false;
-            } else {
-                $linkobject->work_fullmatch = true;
-            }
-
-            // Strip tags out of the phrase.
-            $linkobject->work_phrase = strip_tags($linkobject->phrase);
-
-            // Double up chars that might cause a false match -- the duplicates will
-            // be cleared up before returning to the user.
-            $linkobject->work_phrase = preg_replace('/([#*%])/', '\1\1', $linkobject->work_phrase);
-
             // Set the replacement phrase properly.
             if ($linkobject->replacementphrase) {    // We have specified a replacement phrase.
                 // Strip tags.
@@ -1351,54 +1337,15 @@ function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagscl
                 $linkobject->work_replacementphrase = '$1';
             }
 
-            // Quote any regular expression characters and the delimiter in the work phrase to be searched.
-            $linkobject->work_phrase = preg_quote($linkobject->work_phrase, '/');
-
             // Work calculated.
             $linkobject->work_calculated = true;
         }
 
-        // If $CFG->filtermatchoneperpage, avoid previously (request) linked phrases.
-        if (!empty($CFG->filtermatchoneperpage)) {
-            if (!empty($usedphrases) && in_array($linkobject->work_phrase, $usedphrases)) {
-                continue;
-            }
-        }
-
-        // Regular expression modifiers.
-        $modifiers = ($linkobject->work_casesensitive) ? 's' : 'isu'; // Works in unicode mode!
-
-        // Do we need to do a fullmatch?
-        // If yes then go through and remove any non full matching entries.
-        if ($linkobject->work_fullmatch) {
-            $notfullmatches = array();
-            $regexp = '/'.$filterinvalidprefixes.'('.$linkobject->work_phrase.')|('.
-                    $linkobject->work_phrase.')'.$filterinvalidsuffixes.'/'.$modifiers;
-
-            preg_match_all($regexp, $text, $listofnotfullmatches);
-
-            if ($listofnotfullmatches) {
-                foreach (array_unique($listofnotfullmatches[0]) as $key => $value) {
-                    $notfullmatches['<*'.$key.'*>'] = $value;
-                }
-                if (!empty($notfullmatches)) {
-                    $text = str_replace($notfullmatches, array_keys($notfullmatches), $text);
-                }
-            }
-        }
-
         // Finally we do our highlighting.
-        if (!empty($CFG->filtermatchonepertext) || !empty($CFG->filtermatchoneperpage)) {
-            $resulttext = preg_replace('/('.$linkobject->work_phrase.')/'.$modifiers,
-                                      $linkobject->work_hreftagbegin.
-                                      $linkobject->work_replacementphrase.
-                                      $linkobject->work_hreftagend, $text, 1);
-        } else {
-            $resulttext = preg_replace('/('.$linkobject->work_phrase.')/'.$modifiers,
-                                      $linkobject->work_hreftagbegin.
-                                      $linkobject->work_replacementphrase.
-                                      $linkobject->work_hreftagend, $text);
-        }
+        $resulttext = preg_replace($linkobject->workregexp,
+                                  $linkobject->work_hreftagbegin.
+                                  $linkobject->work_replacementphrase.
+                                  $linkobject->work_hreftagend, $text, $pregreplacelimit);
 
         // If the text has changed we have to look for links again.
         if ($resulttext != $text) {
@@ -1409,14 +1356,8 @@ function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagscl
             filter_save_tags($text, $tags);
             // If $CFG->filtermatchoneperpage, save linked phrases to request.
             if (!empty($CFG->filtermatchoneperpage)) {
-                $usedphrases[] = $linkobject->work_phrase;
+                $usedphrases[$linkobject->workregexp] = 1;
             }
-        }
-
-        // Replace the not full matches before cycling to next link object.
-        if (!empty($notfullmatches)) {
-            $text = str_replace(array_keys($notfullmatches), $notfullmatches, $text);
-            unset($notfullmatches);
         }
     }
 
@@ -1437,6 +1378,60 @@ function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagscl
     $text = filter_add_javascript($text);
 
     return $text;
+}
+
+/**
+ * Prepare a list of link for processing with {@link filter_phrases()}.
+ *
+ * @param filterobject[] $linkarray the links that will be passed to filter_phrases().
+ * @return filterobject[] the updated list of links with necessary pre-processing done.
+ */
+function filter_prepare_phrases_for_filtering(array $linkarray) {
+    // Time to cycle through each phrase to be linked.
+    foreach ($linkarray as $linkobject) {
+
+        // Set some defaults if certain properties are missing.
+        // Properties may be missing if the filterobject class has not been used to construct the object.
+        if (empty($linkobject->phrase)) {
+            continue;
+        }
+
+        // Avoid integers < 1000 to be linked. See bug 1446.
+        $intcurrent = intval($linkobject->phrase);
+        if (!empty($intcurrent) && strval($intcurrent) == $linkobject->phrase && $intcurrent < 1000) {
+            continue;
+        }
+
+        // Strip tags out of the phrase.
+        $linkobject->workregexp = strip_tags($linkobject->phrase);
+
+        if (!$linkobject->casesensitive) {
+            $linkobject->workregexp = core_text::strtolower($linkobject->workregexp);
+        }
+
+        // Double up chars that might cause a false match -- the duplicates will
+        // be cleared up before returning to the user.
+        $linkobject->workregexp = preg_replace('/([#*%])/', '\1\1', $linkobject->workregexp);
+
+        // Quote any regular expression characters and the delimiter in the work phrase to be searched.
+        $linkobject->workregexp = preg_quote($linkobject->workregexp, '/');
+
+        if ($linkobject->fullmatch) {
+            $linkobject->workregexp = '\b' . $linkobject->workregexp . '\b';
+        }
+
+        $linkobject->workregexp = '/(' . $linkobject->workregexp . ')/s';
+
+        if (!$linkobject->casesensitive) {
+            $linkobject->workregexp .= 'iu';
+        }
+    }
+
+    return $linkarray;
+}
+
+function filter_prepare_phrases_for_replacement() {
+
 }
 
 /**
