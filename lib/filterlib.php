@@ -1261,7 +1261,9 @@ function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagscl
     $ignoretags = array();  // To store all the enclosig tags to be completely ignored.
     $tags = array();        // To store all the simple tags to be ignored.
 
-    $linkarray = filter_prepare_phrases_for_filtering($linkarray);
+    if (!isset($linkarray['__preparedmarker'])) {
+        $linkarray = filter_prepare_phrases_for_filtering($linkarray);
+    }
 
     if (!$overridedefaultignore) {
         // A list of open/close tags that we should not replace within.
@@ -1305,7 +1307,11 @@ function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagscl
     }
 
     // Time to cycle through each phrase to be linked.
-    foreach ($linkarray as $linkobject) {
+    foreach ($linkarray as $key => $linkobject) {
+        if ($key === '__preparedmarker') {
+            continue;
+        }
+
         if ($linkobject->workregexp === null) {
             continue;
         }
@@ -1427,11 +1433,9 @@ function filter_prepare_phrases_for_filtering(array $linkarray) {
         }
     }
 
+    $linkarray['__preparedmarker'] = 1;
+
     return $linkarray;
-}
-
-function filter_prepare_phrases_for_replacement() {
-
 }
 
 /**
