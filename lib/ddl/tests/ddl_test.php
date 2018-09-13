@@ -1512,11 +1512,44 @@ class core_ddl_testcase extends database_driver_testcase {
         $field = new xmldb_field('type');
         $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'general', 'course');
 
+        // 1. Rename the 'type' field into a generic new valid name.
+        // This represents the standard use case.
         $dbman->rename_field($table, $field, 'newfieldname');
 
         $columns = $DB->get_columns('test_table0');
 
         $this->assertArrayNotHasKey('type', $columns);
+        $this->assertArrayHasKey('newfieldname', $columns);
+        $field->setName('newfieldname');
+
+        // 2. Rename the 'newfieldname' field into a reserved word, for testing purposes.
+        // This represents a questionable use case: we should support it but discourage the use of it on peer reviewing.
+        $dbman->rename_field($table, $field, 'where');
+
+        $columns = $DB->get_columns('test_table0');
+
+        $this->assertArrayNotHasKey('newfieldname', $columns);
+        $this->assertArrayHasKey('where', $columns);
+
+        // 3. Create a table with a column name named w/ a reserved word and get rid of it.
+        // This represents a "recovering" use case: a field name could be a reserved word in the future, at least for a DB type.
+        $table = new xmldb_table('test_table_res_word');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('where', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+        $dbman->create_table($table);
+        $dbman->table_exists('test_table_res_word');
+
+        $columns = $DB->get_columns('test_table_res_word');
+        $this->assertArrayHasKey('where', $columns);
+        $field = $table->getField('where');
+
+        $dbman->rename_field($table, $field, 'newfieldname');
+
+        $columns = $DB->get_columns('test_table_res_word');
+
+        $this->assertArrayNotHasKey('where', $columns);
         $this->assertArrayHasKey('newfieldname', $columns);
     }
 
