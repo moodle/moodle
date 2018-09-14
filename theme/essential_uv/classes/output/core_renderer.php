@@ -1453,6 +1453,20 @@ class core_renderer extends \core_renderer {
         return parent::render_user_picture($userpicture);
     }
 
+    /*****************Nav Bar buttons*******************/
+
+    public function custom_home_button(){
+        $homemenu = html_writer::start_tag('ul', array('class' => 'nav'));
+        $homemenu .= html_writer::start_tag('li', array('class' => 'dropdown'));
+        
+        
+
+        $homemenu .= html_writer::end_tag('li');
+        $homemenu .= html_writer::end_tag('ul');
+
+        return $homemenu;
+    }
+
     /**
      * Outputs the user menu.
      * @return string Rendered custom menu.
@@ -1465,6 +1479,12 @@ class core_renderer extends \core_renderer {
 
         global $USER, $CFG, $DB;
         $loginurl = get_login_url();
+        $username = parent::user_picture($USER, array('link' => false, 'size' => 64));
+        if (!empty($USER->alternatename)) {
+            $username .= $USER->alternatename;
+        } else {
+            $username .= $USER->firstname;
+        }
 
         $usermenu = html_writer::start_tag('ul', array('class' => 'nav'));
         $usermenu .= html_writer::start_tag('li', array('class' => 'dropdown'));
