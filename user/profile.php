@@ -198,18 +198,18 @@ profile_view($user, $usercontext);
 echo $OUTPUT->header();
 echo '<div class="userprofile">';
 
-if ($user->description && !isset($hiddenfields['description'])) {
-    echo '<div class="description">';
-    if (!empty($CFG->profilesforenrolledusersonly) && !$currentuser &&
-        !$DB->record_exists('role_assignments', array('userid' => $user->id))) {
-        echo get_string('profilenotshown', 'moodle');
-    } else {
-        $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user',
-                                                          'profile', null);
-        echo format_text($user->description, $user->descriptionformat);
-    }
-    echo '</div>';
-}
+// if ($user->description && !isset($hiddenfields['description'])) {
+//     echo '<div class="description">';
+//     if (!empty($CFG->profilesforenrolledusersonly) && !$currentuser &&
+//         !$DB->record_exists('role_assignments', array('userid' => $user->id))) {
+//         echo get_string('profilenotshown', 'moodle');
+//     } else {
+//         $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user',
+//                                                           'profile', null);
+//         echo format_text($user->description, $user->descriptionformat);
+//     }
+//     echo '</div>';
+// }
 
 echo $OUTPUT->custom_block_region('content');
 
@@ -217,6 +217,7 @@ echo $OUTPUT->custom_block_region('content');
 
 $renderer = $PAGE->get_renderer('core_user', 'myprofile');
 $tree = core_user\output\myprofile\manager::build_tree($user, $currentuser);
+
 echo $renderer->render($tree);
 
 echo '</div>';  // Userprofile class.
