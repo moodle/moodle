@@ -426,7 +426,7 @@ class moodle_content_writer_test extends advanced_testcase {
     public function test_export_file($filearea, $itemid, $filepath, $filename, $content) {
         $this->resetAfterTest();
         $context = \context_system::instance();
-        $filenamepath = '/' . $filearea . '/' . ($itemid ?: '') . $filepath . $filename;
+        $filenamepath = '/' . $filearea . '/' . ($itemid ? '_' . $itemid : '') . $filepath . $filename;
 
         $filerecord = array(
             'contextid' => $context->id,
@@ -989,7 +989,7 @@ class moodle_content_writer_test extends advanced_testcase {
         $fileroot = $this->fetch_exported_content($writer);
 
         $contextpath = $this->get_context_path($context, $subcontext, 'data.json');
-        $expectedpath = "System {$context->id}/{$expected}/data.json";
+        $expectedpath = "System _.{$context->id}/{$expected}/data.json";
         $this->assertEquals($expectedpath, $contextpath);
 
         $json = $fileroot->getChild($contextpath)->getContent();
@@ -1019,7 +1019,7 @@ class moodle_content_writer_test extends advanced_testcase {
         $fileroot = $this->fetch_exported_content($writer);
 
         $contextpath = $this->get_context_path($context, $subcontext, 'name.json');
-        $expectedpath = "System {$context->id}/{$expected}/name.json";
+        $expectedpath = "System _.{$context->id}/{$expected}/name.json";
         $this->assertEquals($expectedpath, $contextpath);
 
         $json = $fileroot->getChild($contextpath)->getContent();
@@ -1049,7 +1049,7 @@ class moodle_content_writer_test extends advanced_testcase {
         $fileroot = $this->fetch_exported_content($writer);
 
         $contextpath = $this->get_context_path($context, $subcontext, 'metadata.json');
-        $expectedpath = "System {$context->id}/{$expected}/metadata.json";
+        $expectedpath = "System _.{$context->id}/{$expected}/metadata.json";
         $this->assertEquals($expectedpath, $contextpath);
 
         $json = $fileroot->getChild($contextpath)->getContent();
@@ -1077,7 +1077,7 @@ class moodle_content_writer_test extends advanced_testcase {
             core_filetypes::add_type('json', 'application/json', 'archive', [], '', 'JSON file archive');
         }
         $context = \context_system::instance();
-        $expectedpath = "System {$context->id}/User preferences/{$expected}.json";
+        $expectedpath = "System _.{$context->id}/User preferences/{$expected}.json";
 
         $component = $longtext;
 
@@ -1206,20 +1206,354 @@ class moodle_content_writer_test extends advanced_testcase {
                 'intro',
                 0,
                 '<p><img src="@@PLUGINFILE@@/hello.gif" /></p>',
-                '<p><img src="_files/intro/hello.gif" /></p>',
+                '<p><img src="System _.1/_files/intro/hello.gif" /></p>',
             ],
             'nonzeroitemid' => [
                 'submission_content',
                 34,
                 '<p><img src="@@PLUGINFILE@@/first.png" alt="First" /></p>',
-                '<p><img src="_files/submission_content/34/first.png" alt="First" /></p>',
+                '<p><img src="System _.1/_files/submission_content/_34/first.png" alt="First" /></p>',
             ],
             'withfilepath' => [
                 'post_content',
                 9889,
                 '<a href="@@PLUGINFILE@@/embedded/docs/muhehe.exe">Click here!</a>',
-                '<a href="_files/post_content/9889/embedded/docs/muhehe.exe">Click here!</a>',
+                '<a href="System _.1/_files/post_content/_9889/embedded/docs/muhehe.exe">Click here!</a>',
             ],
         ];
+    }
+
+    public function test_export_html_functions() {
+        $this->resetAfterTest();
+
+        $data = (object) ['key' => 'value'];
+
+        $context = \context_system::instance();
+        $subcontext = [];
+
+        $writer = $this->get_writer_instance()
+            ->set_context($context)
+            ->export_data($subcontext, (object) $data);
+
+        $writer->set_context($context)->export_data(['paper'], $data);
+
+        $coursecategory = $this->getDataGenerator()->create_category();
+        $categorycontext = \context_coursecat::instance($coursecategory->id);
+        $course = $this->getDataGenerator()->create_course();
+        $misccoursecxt = \context_coursecat::instance($course->category);
+        $coursecontext = \context_course::instance($course->id);
+        $cm = $this->getDataGenerator()->create_module('chat', ['course' => $course->id]);
+        $modulecontext = \context_module::instance($cm->cmid);
+
+        $writer->set_context($modulecontext)->export_data([], $data);
+        $writer->set_context($coursecontext)->export_data(['grades'], $data);
+        $writer->set_context($categorycontext)->export_data([], $data);
+        $writer->set_context($context)->export_data([get_string('privacy:path:logs', 'tool_log'), 'Standard log'], $data);
+
+        // Add a file.
+        $fs = get_file_storage();
+        $file = (object) [
+            'component' => 'core_privacy',
+            'filearea' => 'tests',
+            'itemid' => 0,
+            'path' => '/',
+            'name' => 'a.txt',
+            'content' => 'Test file 0',
+        ];
+        $record = [
+            'contextid' => $context->id,
+            'component' => $file->component,
+            'filearea'  => $file->filearea,
+            'itemid'    => $file->itemid,
+            'filepath'  => $file->path,
+            'filename'  => $file->name,
+        ];
+
+        $file->namepath = '/' . $file->filearea . '/' . ($file->itemid ?: '') . $file->path . $file->name;
+        $file->storedfile = $fs->create_file_from_string($record, $file->content);
+        $writer->set_context($context)->export_area_files([], 'core_privacy', 'tests', 0);
+
+        list($tree, $treelist, $indexdata) = phpunit_util::call_internal_method($writer, 'prepare_for_export', [],
+                '\core_privacy\local\request\moodle_content_writer');
+
+        $expectedtreeoutput = [
+            'System _.1' => [
+                'data.json',
+                'paper' => 'data.json',
+                'Category Miscellaneous _.' . $misccoursecxt->id => [
+                    'Course Test course 1 _.' . $coursecontext->id => [
+                        'Chat Chat 1 _.' . $modulecontext->id => 'data.json',
+                        'grades' => 'data.json'
+                    ]
+                ],
+                'Category Course category 1 _.' . $categorycontext->id => 'data.json',
+                '_files' => [
+                    'tests' => 'a.txt'
+                ],
+                'Logs' => [
+                    'Standard log' => 'data.json'
+                ]
+            ]
+        ];
+        $this->assertEquals($expectedtreeoutput, $tree);
+
+        $expectedlistoutput = [
+            'System _.1/data.json' => 'data_file_1',
+            'System _.1/paper/data.json' => 'data_file_2',
+            'System _.1/Category Miscellaneous _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
+                    $coursecontext->id . '/Chat Chat 1 _.' . $modulecontext->id . '/data.json'   => 'data_file_3',
+            'System _.1/Category Miscellaneous _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
+                    $coursecontext->id . '/grades/data.json'   => 'data_file_4',
+            'System _.1/Category Course category 1 _.' . $categorycontext->id . '/data.json' => 'data_file_5',
+            'System _.1/_files/tests/a.txt' => 'No var',
+            'System _.1/Logs/Standard log/data.json' => 'data_file_6'
+        ];
+        $this->assertEquals($expectedlistoutput, $treelist);
+
+        $expectedindex = [
+            'data_file_1' => 'System _.1/data.js',
+            'data_file_2' => 'System _.1/paper/data.js',
+            'data_file_3' => 'System _.1/Category Miscellaneous _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
+                    $coursecontext->id . '/Chat Chat 1 _.' . $modulecontext->id . '/data.js',
+            'data_file_4' => 'System _.1/Category Miscellaneous _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
+                    $coursecontext->id . '/grades/data.js',
+            'data_file_5' => 'System _.1/Category Course category 1 _.' . $categorycontext->id . '/data.js',
+            'data_file_6' => 'System _.1/Logs/Standard log/data.js'
+        ];
+        $this->assertEquals($expectedindex, $indexdata);
+
+        $richtree = phpunit_util::call_internal_method($writer, 'make_tree_object', [$tree, $treelist],
+                '\core_privacy\local\request\moodle_content_writer');
+
+        // This is a big one.
+        $expectedrichtree = [
+            'System _.1' => (object) [
+                'itemtype' => 'treeitem',
+                'name' => 'System ',
+                'context' => \context_system::instance(),
+                'children' => [
+                    (object) [
+                        'name' => 'data.json',
+                        'itemtype' => 'item',
+                        'datavar' => 'data_file_1'
+                    ],
+                    'paper' => (object) [
+                        'itemtype' => 'treeitem',
+                        'name' => 'paper',
+                        'children' => [
+                            'data.json' => (object) [
+                                'name' => 'data.json',
+                                'itemtype' => 'item',
+                                'datavar' => 'data_file_2'
+                            ]
+                        ]
+                    ],
+                    'Category Miscellaneous _.' . $misccoursecxt->id => (object) [
+                        'itemtype' => 'treeitem',
+                        'name' => 'Category Miscellaneous ',
+                        'context' => $misccoursecxt,
+                        'children' => [
+                            'Course Test course 1 _.' . $coursecontext->id => (object) [
+                                'itemtype' => 'treeitem',
+                                'name' => 'Course Test course 1 ',
+                                'context' => $coursecontext,
+                                'children' => [
+                                    'Chat Chat 1 _.' . $modulecontext->id => (object) [
+                                        'itemtype' => 'treeitem',
+                                        'name' => 'Chat Chat 1 ',
+                                        'context' => $modulecontext,
+                                        'children' => [
+                                            'data.json' => (object) [
+                                                'name' => 'data.json',
+                                                'itemtype' => 'item',
+                                                'datavar' => 'data_file_3'
+                                            ]
+                                        ]
+                                    ],
+                                    'grades' => (object) [
+                                        'itemtype' => 'treeitem',
+                                        'name' => 'grades',
+                                        'children' => [
+                                            'data.json' => (object) [
+                                                'name' => 'data.json',
+                                                'itemtype' => 'item',
+                                                'datavar' => 'data_file_4'
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    'Category Course category 1 _.' . $categorycontext->id => (object) [
+                        'itemtype' => 'treeitem',
+                        'name' => 'Category Course category 1 ',
+                        'context' => $categorycontext,
+                        'children' => [
+                            'data.json' => (object) [
+                                'name' => 'data.json',
+                                'itemtype' => 'item',
+                                'datavar' => 'data_file_5'
+                            ]
+                        ]
+                    ],
+                    '_files' => (object) [
+                        'itemtype' => 'treeitem',
+                        'name' => '_files',
+                        'children' => [
+                            'tests' => (object) [
+                                'itemtype' => 'treeitem',
+                                'name' => 'tests',
+                                'children' => [
+                                    'a.txt' => (object) [
+                                        'name' => 'a.txt',
+                                        'itemtype' => 'item',
+                                        'url' => new \moodle_url('System _.1/_files/tests/a.txt')
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    'Logs' => (object) [
+                        'itemtype' => 'treeitem',
+                        'name' => 'Logs',
+                        'children' => [
+                            'Standard log' => (object) [
+                                'itemtype' => 'treeitem',
+                                'name' => 'Standard log',
+                                'children' => [
+                                    'data.json' => (object) [
+                                        'name' => 'data.json',
+                                        'itemtype' => 'item',
+                                        'datavar' => 'data_file_6'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $this->assertEquals($expectedrichtree, $richtree);
+
+        // The phpunit_util::call_internal_method() method doesn't allow for referenced parameters so we have this joyful code
+        // instead to do the same thing, but with references working obviously.
+        $funfunction = function($object, $data) {
+            return $object->sort_my_list($data);
+        };
+
+        $funfunction = Closure::bind($funfunction, null, $writer);
+        $funfunction($writer, $richtree);
+
+        // This is a big one.
+        $expectedsortedtree = [
+            'System _.1' => (object) [
+                'itemtype' => 'treeitem',
+                'name' => 'System ',
+                'context' => \context_system::instance(),
+                'children' => [
+                    'Category Miscellaneous _.' . $misccoursecxt->id => (object) [
+                        'itemtype' => 'treeitem',
+                        'name' => 'Category Miscellaneous ',
+                        'context' => $misccoursecxt,
+                        'children' => [
+                            'Course Test course 1 _.' . $coursecontext->id => (object) [
+                                'itemtype' => 'treeitem',
+                                'name' => 'Course Test course 1 ',
+                                'context' => $coursecontext,
+                                'children' => [
+                                    'Chat Chat 1 _.' . $modulecontext->id => (object) [
+                                        'itemtype' => 'treeitem',
+                                        'name' => 'Chat Chat 1 ',
+                                        'context' => $modulecontext,
+                                        'children' => [
+                                            'data.json' => (object) [
+                                                'name' => 'data.json',
+                                                'itemtype' => 'item',
+                                                'datavar' => 'data_file_3'
+                                            ]
+                                        ]
+                                    ],
+                                    'grades' => (object) [
+                                        'itemtype' => 'treeitem',
+                                        'name' => 'grades',
+                                        'children' => [
+                                            'data.json' => (object) [
+                                                'name' => 'data.json',
+                                                'itemtype' => 'item',
+                                                'datavar' => 'data_file_4'
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    'Category Course category 1 _.' . $categorycontext->id => (object) [
+                        'itemtype' => 'treeitem',
+                        'name' => 'Category Course category 1 ',
+                        'context' => $categorycontext,
+                        'children' => [
+                            'data.json' => (object) [
+                                'name' => 'data.json',
+                                'itemtype' => 'item',
+                                'datavar' => 'data_file_5'
+                            ]
+                        ]
+                    ],
+                    '_files' => (object) [
+                        'itemtype' => 'treeitem',
+                        'name' => '_files',
+                        'children' => [
+                            'tests' => (object) [
+                                'itemtype' => 'treeitem',
+                                'name' => 'tests',
+                                'children' => [
+                                    'a.txt' => (object) [
+                                        'name' => 'a.txt',
+                                        'itemtype' => 'item',
+                                        'url' => new \moodle_url('System _.1/_files/tests/a.txt')
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    'Logs' => (object) [
+                        'itemtype' => 'treeitem',
+                        'name' => 'Logs',
+                        'children' => [
+                            'Standard log' => (object) [
+                                'itemtype' => 'treeitem',
+                                'name' => 'Standard log',
+                                'children' => [
+                                    'data.json' => (object) [
+                                        'name' => 'data.json',
+                                        'itemtype' => 'item',
+                                        'datavar' => 'data_file_6'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    'paper' => (object) [
+                        'itemtype' => 'treeitem',
+                        'name' => 'paper',
+                        'children' => [
+                            'data.json' => (object) [
+                                'name' => 'data.json',
+                                'itemtype' => 'item',
+                                'datavar' => 'data_file_2'
+                            ]
+                        ]
+                    ],
+                    (object) [
+                        'name' => 'data.json',
+                        'itemtype' => 'item',
+                        'datavar' => 'data_file_1'
+                    ]
+                ]
+            ]
+        ];
+        $this->assertEquals($expectedsortedtree, $richtree);
     }
 }
