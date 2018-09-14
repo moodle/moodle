@@ -63,7 +63,7 @@ class user_filtering {
         }
 
         if (empty($fieldnames)) {
-            $fieldnames = array('username' => 0, 'email' => 0, 'realname' => 0, 'lastname' => 1, 'firstname' => 1, 'city' => 1, 'country' => 1,
+            $fieldnames = array('username' => 0, 'realname' => 0, 'email' => 0, 'lastname' => 1, 'firstname' => 1, 'city' => 1, 'country' => 1,
                                 'confirmed' => 1, 'suspended' => 1, 'profile' => 1, 'courserole' => 1, 'systemrole' => 1,
                                 'cohort' => 1, 'firstaccess' => 1, 'lastaccess' => 1, 'neveraccessed' => 1, 'timemodified' => 1,
                                 'nevermodified' => 1, 'auth' => 1, 'mnethostid' => 1, 'idnumber' => 1);

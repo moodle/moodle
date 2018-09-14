@@ -7470,7 +7470,10 @@ body.path-question-type .mform fieldset.hidden {
   margin-top: 5px;
 }
 #page-user-profile .node_category .editprofile,
-.path-user .node_category .editprofile,
+.path-user .node_category .editprofile{
+  text-align: left;
+}
+
 #page-user-profile .node_category .viewmore,
 .path-user .node_category .viewmore {
   text-align: right;

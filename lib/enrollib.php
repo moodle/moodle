@@ -884,9 +884,12 @@ function enrol_user_sees_own_courses($user = null) {
     return false;
 }
 
-/**
-*create by hernan
-*funcion que organiza la lista de cursos del mas actual al mas antiguo
+ /**
+* order_courses_univalle
+* funcion que organiza la lista de cursos del mas actual al mas antiguo dando prioridad a los presenciales
+* @author Hernán
+* @param array $courses
+* @return array $courses
 **/
 function order_courses_univalle($courses){
     $courses = separated_by_type_course($courses);
@@ -901,10 +904,8 @@ function order_courses_univalle($courses){
         
         if ($codigo=="M") {
             $fecha= substr($course->shortname,14,9);
-        }
-        else{
+        }else{
             $fecha= substr($course->shortname,13,9); 
-             
         }
         
          $array_tmp[]=$fecha;
@@ -916,6 +917,39 @@ function order_courses_univalle($courses){
     return $courses;
   
 }
+
+
+/**
+* separated_by_type_course
+* recibe los cursos de un usuario y devuelve dos array con los cursos separados por presencial 
+* y no presenciales.
+* @author Hernán
+* @param array $courses
+* @return array(array,array) $courses
+*
+*/
+function separated_by_type_course($courses){
+    
+    $cursos_presenciales = array();
+    $cursos_otros = array();
+
+    foreach ($courses as $course) {
+        
+        
+        //si pertenece a la categoría presencial añadimos un cero para que sea ordenado de primero
+        if($course->category >= 30000){
+            $cursos_presenciales[] = $course;
+        }else{
+            $cursos_otros[]=$course;
+        }
+                
+    }
+
+    $courses = [$cursos_presenciales,$cursos_otros];
+      
+    return $courses;
+} 
+
 
 /**
 * separated_by_type_course
