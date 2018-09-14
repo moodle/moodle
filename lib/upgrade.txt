@@ -135,6 +135,16 @@ the groupid field.
   - message_contact_unblocked
   The reason for this is because you can now block/unblock users without them necessarily being a contact. These events
   have been replaced with message_user_blocked and message_user_unblocked respectively.
+* The gradebook now supports the ability to accept files as feedback. This can be achieved by adding
+  'feedbackfiles' to the $grades parameter passed to grade_update().
+    For example -
+        $grades['feedbackfiles'] = [
+            'contextid' => 1,
+            'component' => 'mod_xyz',
+            'filearea' => 'mod_xyz_feedback',
+            'itemid' => 2
+        ];
+  These files will be then copied to the gradebook file area.
 
 === 3.5 ===
 

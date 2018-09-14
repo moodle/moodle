@@ -263,3 +263,13 @@ define('GRADE_MIN_MAX_FROM_GRADE_ITEM', 1);
  * GRADE_MIN_MAX_FROM_GRADE_GRADE - Get the grade min/max from the grade grade.
  */
 define('GRADE_MIN_MAX_FROM_GRADE_GRADE', 2);
+
+/**
+ * The component to store grade files.
+ */
+define('GRADE_FILE_COMPONENT', 'grade');
+
+/**
+ * The file area to store grade feedback files.
+ */
+define('GRADE_FEEDBACK_FILEAREA', 'feedback');

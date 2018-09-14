@@ -173,6 +173,22 @@ class grade_grade extends grade_object {
     public $aggregationweight = null;
 
     /**
+     * Feedback files to copy.
+     *
+     * Example -
+     *
+     * [
+     *     'contextid' => 1,
+     *     'component' => 'mod_xyz',
+     *     'filearea' => 'mod_xyz_feedback',
+     *     'itemid' => 2
+     * ];
+     *
+     * @var array
+     */
+    public $feedbackfiles = [];
+
+    /**
      * Returns array of grades for given grade_item+users
      *
      * @param grade_item $grade_item
@@ -1004,9 +1020,45 @@ class grade_grade extends grade_object {
      * @return int The new grade_grade ID if successful, false otherwise
      */
     public function insert($source=null) {
+        global $USER, $CFG, $DB;
         // TODO: dategraded hack - do not update times, they are used for submission and grading (MDL-31379)
         //$this->timecreated = $this->timemodified = time();
-        return parent::insert($source);
+
+        if (!empty($this->id)) {
+            debugging("Grade object already exists!");
+            return false;
+        }
+
+        $data = $this->get_record_data();
+
+        $this->id = $DB->insert_record($this->table, $data);
+
+        // Set all object properties from real db data.
+        $this->update_from_db();
+
+        $data = $this->get_record_data();
+
+        if (empty($CFG->disablegradehistory)) {
+            unset($data->timecreated);
+            $data->action       = GRADE_HISTORY_INSERT;
+            $data->oldid        = $this->id;
+            $data->source       = $source;
+            $data->timemodified = time();
+            $data->loggeduser   = $USER->id;
+            $DB->insert_record($this->table.'_history', $data);
+        }
+
+        $this->notify_changed(false);
+
+        // We only support feedback files for modules atm.
+        if ($this->grade_item && $this->grade_item->is_external_item()) {
+            $cm = get_coursemodule_from_instance($this->grade_item->itemmodule, $this->grade_item->iteminstance,
+                0, false, MUST_EXIST);
+            $modulecontext = context_module::instance($cm->id);
+            $this->copy_feedback_files($modulecontext, $this->id);
+        }
+
+        return $this->id;
     }
 
     /**
@@ -1017,11 +1069,47 @@ class grade_grade extends grade_object {
      * @return bool success
      */
     public function update($source=null) {
+        global $USER, $CFG, $DB;
+
         $this->rawgrade    = grade_floatval($this->rawgrade);
         $this->finalgrade  = grade_floatval($this->finalgrade);
         $this->rawgrademin = grade_floatval($this->rawgrademin);
         $this->rawgrademax = grade_floatval($this->rawgrademax);
-        return parent::update($source);
+
+        if (empty($this->id)) {
+            debugging('Can not update grade object, no id!');
+            return false;
+        }
+
+        $data = $this->get_record_data();
+
+        $DB->update_record($this->table, $data);
+
+        if (empty($CFG->disablegradehistory)) {
+            unset($data->timecreated);
+            $data->action       = GRADE_HISTORY_UPDATE;
+            $data->oldid        = $this->id;
+            $data->source       = $source;
+            $data->timemodified = time();
+            $data->loggeduser   = $USER->id;
+            $DB->insert_record($this->table.'_history', $data);
+        }
+
+        $this->notify_changed(false);
+
+        // We only support feedback files for modules atm.
+        if ($this->grade_item && $this->grade_item->is_external_item()) {
+            $cm = get_coursemodule_from_instance($this->grade_item->itemmodule, $this->grade_item->iteminstance,
+                0, false, MUST_EXIST);
+            $modulecontext = context_module::instance($cm->id);
+
+            $fs = new file_storage();
+            $fs->delete_area_files($modulecontext->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA, $this->id);
+
+            $this->copy_feedback_files($modulecontext, $this->id);
+        }
+
+        return true;
     }
 
     /**
@@ -1120,5 +1208,34 @@ class grade_grade extends grade_object {
     function get_aggregation_hint() {
         return array('status' => $this->get_aggregationstatus(),
                      'weight' => $this->get_aggregationweight());
+    }
+
+    /**
+     * Handles copying feedback files to the gradebook feedback area.
+     *
+     * @param context $context
+     * @param int $itemid
+     */
+    private function copy_feedback_files(context $context, int $itemid) {
+        if ($this->feedbackfiles) {
+            $filestocopycontextid = $this->feedbackfiles['contextid'];
+            $filestocopycomponent = $this->feedbackfiles['component'];
+            $filestocopyfilearea = $this->feedbackfiles['filearea'];
+            $filestocopyitemid = $this->feedbackfiles['itemid'];
+
+            $fs = new file_storage();
+            if ($filestocopy = $fs->get_area_files($filestocopycontextid, $filestocopycomponent, $filestocopyfilearea,
+                    $filestocopyitemid)) {
+                foreach ($filestocopy as $filetocopy) {
+                    $destination = [
+                        'contextid' => $context->id,
+                        'component' => GRADE_FILE_COMPONENT,
+                        'filearea' => GRADE_FEEDBACK_FILEAREA,
+                        'itemid' => $itemid
+                    ];
+                    $fs->create_file_from_storedfile($destination, $filetocopy);
+                }
+            }
+        }
     }
 }
