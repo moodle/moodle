@@ -42,7 +42,6 @@ defined('MOODLE_INTERNAL') || die;
                         <?php echo $OUTPUT->get_title('navbar'); ?>
                     <div class="pull-right">
                         <div class="usermenu navbarrightitem">
-                            <?php echo $OUTPUT->custom_home_button();?>
                             <?php echo $OUTPUT->custom_menu_user(); ?>
                         </div>
                         <div class="messagemenu navbarrightitem">
