@@ -431,6 +431,9 @@ function upgrade_stale_php_files_present() {
 
     $someexamplesofremovedfiles = array(
         // Removed in 3.6.
+        '/lib/classes/session/memcache.php',
+        '/lib/eventslib.php',
+        '/lib/form/submitlink.php',
         '/lib/medialib.php',
         '/lib/password_compat/lib/password.php',
         // Removed in 3.5.
