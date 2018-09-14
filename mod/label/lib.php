@@ -370,6 +370,11 @@ function mod_label_core_calendar_provide_event_action(calendar_event $event,
                                                       int $userid = 0) {
     $cm = get_fast_modinfo($event->courseid, $userid)->instances['label'][$event->instance];
 
+    if (!$cm->uservisible) {
+        // The module is not visible to the user for any reason.
+        return null;
+    }
+
     $completion = new \completion_info($cm->get_course());
 
     $completiondata = $completion->get_data($cm, false, $userid);
