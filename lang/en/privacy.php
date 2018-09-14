@@ -22,6 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['broughtbymoodle'] = 'This data export provided by Moodle';
+$string['exportfrom'] = 'Exported from {$a}';
+$string['exporttime'] = 'Exported on {$a}';
+$string['exportuser'] = 'Data for {$a}';
 $string['privacy:metadata'] = 'The privacy subsystem does not store any data of its own and is designed to act as a channel between components and the interface used to describe, export, and remove their data.';
 $string['trace:done'] = 'Complete';
 $string['trace:exportcomplete'] = 'Export complete';
@@ -32,4 +36,6 @@ $string['trace:processingcomponent'] = 'Processing {$a->component} ({$a->progres
 $string['trace:fetchcomponents'] = 'Fetching {$a->total} components ({$a->datetime})';
 $string['trace:deletingapproved'] = 'Performing removal of approved {$a->total} contexts ({$a->datetime})';
 $string['trace:deletingcontext'] = 'Performing removal of context from {$a->total} components ({$a->datetime})';
+$string['navigation'] = 'Navigation';
 $string['privacy:subsystem:empty'] = 'This subsystem does not store any data.';
+$string['viewdata'] = 'Click on a link in the navigation to view data.';
