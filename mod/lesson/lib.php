@@ -1667,6 +1667,12 @@ function mod_lesson_core_calendar_provide_event_action(calendar_event $event,
     }
 
     $cm = get_fast_modinfo($event->courseid, $userid)->instances['lesson'][$event->instance];
+
+    if (!$cm->uservisible) {
+        // The module is not visible to the user for any reason.
+        return null;
+    }
+
     $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
 
     if ($lesson->count_user_retries($userid)) {
