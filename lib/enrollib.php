@@ -952,38 +952,6 @@ function separated_by_type_course($courses){
 
 
 /**
-* separated_by_type_course
-* recibe los cursos de un usuario y devuelve dos array con los cursos separados por presencial 
-* y no presenciales.
-* @author Hernán
-* @param array $courses
-* @return array(array,array) $courses
-*
-*/
-function separated_by_type_course($courses){
-    
-    $cursos_presenciales = array();
-    $cursos_otros = array();
-
-    foreach ($courses as $course) {
-        
-        
-        //si pertenece a la categoría presencial añadimos un cero para que sea ordenado de primero
-        if($course->category >= 30000){
-            $cursos_presenciales[] = $course;
-        }
-        else{
-            $cursos_otros[]=$course;
-        }
-                
-    }
-
-    $courses = [$cursos_presenciales,$cursos_otros];
-      
-    return $courses;
-} 
-
-/**
  * Returns list of courses user is enrolled into without performing any capability checks.
  *
  * The $fields param is a list of field names to ADD so name just the fields you really need,
