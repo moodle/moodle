@@ -1,0 +1,272 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Testing the service layer within core_favourites.
+ *
+ * @package    core_favourites
+ * @category   test
+ * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Test class covering the user_favourites_service within the service layer of favourites.
+ *
+ * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class user_favourites_service_testcase extends advanced_testcase {
+
+    public function setUp() {
+        $this->resetAfterTest();
+    }
+
+    // Basic setup stuff to be reused in most tests.
+    protected function setup_users_and_courses() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user1context = \context_user::instance($user1->id);
+        $user2 = self::getDataGenerator()->create_user();
+        $user2context = \context_user::instance($user2->id);
+        $course1 = self::getDataGenerator()->create_course();
+        $course2 = self::getDataGenerator()->create_course();
+        $course1context = context_course::instance($course1->id);
+        $course2context = context_course::instance($course2->id);
+        return [$user1context, $user2context, $course1context, $course2context];
+    }
+
+    /**
+     * Generates an in-memory repository for testing, using an array store for CRUD stuff.
+     *
+     * @param array $mockstore
+     * @return \PHPUnit\Framework\MockObject\MockObject
+     */
+    protected function get_mock_repository(array $mockstore) {
+        // This mock will just store data in an array.
+        $mockrepo = $this->getMockBuilder(\core_favourites\local\ifavourites_repository::class)
+            ->setMethods([])
+            ->getMock();
+        $mockrepo->expects($this->any())
+            ->method('add')
+            ->will($this->returnCallback(function(\stdclass $favourite) use (&$mockstore) {
+                // Mock implementation of repository->add(), where an array is used instead of the DB.
+                // Duplicates are confirmed via the unique key, and exceptions thrown just like a real repo.
+                $key = $favourite->userid . $favourite->component . $favourite->itemtype . $favourite->itemid
+                    . $favourite->contextid;
+
+                // Check the objects for the unique key.
+                foreach ($mockstore as $item) {
+                    if ($item->uniquekey == $key) {
+                        throw new \moodle_exception('Favourite already exists');
+                    }
+                }
+                $index = count($mockstore);     // Integer index.
+                $favourite->uniquekey = $key;   // Simulate the unique key constraint.
+                $favourite->id = $index;
+                $mockstore[$index] = $favourite;
+                return $mockstore[$index];
+            })
+        );
+        $mockrepo->expects($this->any())
+            ->method('find_by')
+            ->will($this->returnCallback(function(array $criteria) use (&$mockstore) {
+                // Check the mockstore for all objects with properties matching the key => val pairs in $criteria.
+                foreach ($mockstore as $index => $mockrow) {
+                    $mockrowarr = (array)$mockrow;
+                    if (array_diff($criteria, $mockrowarr) == []) {
+                        $returns[$index] = $mockrow;
+                    }
+                }
+                return $returns;
+            })
+        );
+        $mockrepo->expects($this->any())
+            ->method('find_favourite')
+            ->will($this->returnCallback(function(int $userid, string $comp, string $type, int $id, int $ctxid) use (&$mockstore) {
+                // Check the mockstore for all objects with properties matching the key => val pairs in $criteria.
+                $crit = ['userid' => $userid, 'component' => $comp, 'itemtype' => $type, 'itemid' => $id, 'contextid' => $ctxid];
+                foreach ($mockstore as $fakerow) {
+                    $fakerowarr = (array)$fakerow;
+                    if (array_diff($crit, $fakerowarr) == []) {
+                        return $fakerow;
+                    }
+                }
+                throw new \moodle_exception("Item not found");
+            })
+        );
+        $mockrepo->expects($this->any())
+            ->method('find')
+            ->will($this->returnCallback(function(int $id) use (&$mockstore) {
+                return $mockstore[$id];
+            })
+        );
+        $mockrepo->expects($this->any())
+            ->method('exists')
+            ->will($this->returnCallback(function(int $id) use (&$mockstore) {
+                return array_key_exists($id, $mockstore);
+            })
+        );
+        $mockrepo->expects($this->any())
+            ->method('delete')
+            ->will($this->returnCallback(function(int $id) use (&$mockstore) {
+                foreach ($mockstore as $mockrow) {
+                    if ($mockrow->id == $id) {
+                        unset($mockstore[$id]);
+                    }
+                }
+            })
+        );
+        return $mockrepo;
+    }
+
+    /**
+     * Test getting a user_favourites_service from the static locator.
+     */
+    public function test_get_service_for_user_context() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+        $userservice = \core_favourites\services::get_service_for_user_context($user1context);
+        $this->assertInstanceOf(\core_favourites\local\user_favourites_service::class, $userservice);
+    }
+
+    /**
+     * Test confirming an item can be favourited only once.
+     */
+    public function test_create_favourite_basic() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+
+        // Get a user_favourites_service for a user.
+        $repo = $this->get_mock_repository([]); // Mock repository, using the array as a mock DB.
+        $user1service = new \core_favourites\local\user_favourites_service($user1context, $repo);
+
+        // Favourite a course.
+        $favourite1 = $user1service->create_favourite('core_course', 'course', $course1context->instanceid, $course1context);
+        $this->assertObjectHasAttribute('id', $favourite1);
+
+        // Try to favourite the same course again.
+        $this->expectException('moodle_exception');
+        $user1service->create_favourite('core_course', 'course', $course1context->instanceid, $course1context);
+    }
+
+    /**
+     * Test confirming that an exception is thrown if trying to favourite an item for a non-existent component.
+     */
+    public function test_create_favourite_nonexistent_component() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+
+        // Get a user_favourites_service for the user.
+        $repo = $this->get_mock_repository([]); // Mock repository, using the array as a mock DB.
+        $user1service = new \core_favourites\local\user_favourites_service($user1context, $repo);
+
+        // Try to favourite something in a non-existent component.
+        $this->expectException('moodle_exception');
+        $user1service->create_favourite('core_cccourse', 'my_area', $course1context->instanceid, $course1context);
+    }
+
+    /**
+     * Test fetching favourites for single user, by area.
+     */
+    public function test_find_favourites_by_type_single_user() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+
+        // Get a user_favourites_service for the user.
+        $repo = $this->get_mock_repository([]); // Mock repository, using the array as a mock DB.
+        $service = new \core_favourites\local\user_favourites_service($user1context, $repo);
+
+        // Favourite 2 courses, in separate areas.
+        $fav1 = $service->create_favourite('core_course', 'course', $course1context->instanceid, $course1context);
+        $fav2 = $service->create_favourite('core_course', 'anothertype', $course2context->instanceid, $course2context);
+
+        // Verify we can get favourites by area.
+        $favourites = $service->find_favourites_by_type('core_course', 'course');
+        $this->assertInternalType('array', $favourites);
+        $this->assertCount(1, $favourites); // We only get favourites for the 'core_course/course' area.
+        $this->assertAttributeEquals($fav1->id, 'id', $favourites[$fav1->id]);
+
+        $favourites = $service->find_favourites_by_type('core_course', 'anothertype');
+        $this->assertInternalType('array', $favourites);
+        $this->assertCount(1, $favourites); // We only get favourites for the 'core_course/course' area.
+        $this->assertAttributeEquals($fav2->id, 'id', $favourites[$fav2->id]);
+    }
+
+    /**
+     * Make sure the find_favourites_by_type() method only returns favourites for the scoped user.
+     */
+    public function test_find_favourites_by_type_multiple_users() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+
+        // Get a user_favourites_service for 2 users.
+        $repo = $this->get_mock_repository([]);
+        $user1service = new \core_favourites\local\user_favourites_service($user1context, $repo);
+        $user2service = new \core_favourites\local\user_favourites_service($user2context, $repo);
+
+        // Now, as each user, favourite the same course.
+        $fav1 = $user1service->create_favourite('core_course', 'course', $course1context->instanceid, $course1context);
+        $fav2 = $user2service->create_favourite('core_course', 'course', $course1context->instanceid, $course1context);
+
+        // Verify find_favourites_by_type only returns results for the user to which the service is scoped.
+        $user1favourites = $user1service->find_favourites_by_type('core_course', 'course');
+        $this->assertInternalType('array', $user1favourites);
+        $this->assertCount(1, $user1favourites); // We only get favourites for the 'core_course/course' area for $user1.
+        $this->assertAttributeEquals($fav1->id, 'id', $user1favourites[$fav1->id]);
+
+        $user2favourites = $user2service->find_favourites_by_type('core_course', 'course');
+        $this->assertInternalType('array', $user2favourites);
+        $this->assertCount(1, $user2favourites); // We only get favourites for the 'core_course/course' area for $user2.
+        $this->assertAttributeEquals($fav2->id, 'id', $user2favourites[$fav2->id]);
+    }
+
+    /**
+     * Test confirming that an exception is thrown if trying to get favourites for a non-existent component.
+     */
+    public function test_find_favourites_by_type_nonexistent_component() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+
+        // Get a user_favourites_service for the user.
+        $repo = $this->get_mock_repository([]);
+        $service = new \core_favourites\local\user_favourites_service($user1context, $repo);
+
+        // Verify we get an exception if we try to search for favourites in an invalid component.
+        $this->expectException('moodle_exception');
+        $service->find_favourites_by_type('cccore_notreal', 'something');
+    }
+
+    /**
+     * Test confirming the basic deletion behaviour.
+     */
+    public function test_delete_favourite_basic() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+
+        // Get a user_favourites_service for the user.
+        $repo = $this->get_mock_repository([]);
+        $service = new \core_favourites\local\user_favourites_service($user1context, $repo);
+
+        // Favourite a course.
+        $fav1 = $service->create_favourite('core_course', 'course', $course1context->instanceid, $course1context);
+        $this->assertTrue($repo->exists($fav1->id));
+
+        // Delete the favourite.
+        $service->delete_favourite('core_course', 'course', $course1context->instanceid, $course1context);
+
+        // Verify the favourite doesn't exist.
+        $this->assertFalse($repo->exists($fav1->id));
+
+        // Try to delete a favourite which we know doesn't exist.
+        $this->expectException(\moodle_exception::class);
+        $service->delete_favourite('core_course', 'course', $course1context->instanceid, $course1context);
+    }
+}
