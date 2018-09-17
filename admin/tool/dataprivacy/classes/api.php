@@ -24,7 +24,7 @@
 namespace tool_dataprivacy;
 
 use coding_exception;
-use context_course;
+use context_helper;
 use context_system;
 use core\invalid_persistent_exception;
 use core\message\message;
@@ -1140,5 +1140,92 @@ class api {
         }
 
         return $approvedcollection;
+    }
+
+    /**
+     * Updates the default category and purpose for a given context level (and optionally, a plugin).
+     *
+     * @param int $contextlevel The context level.
+     * @param int $categoryid The ID matching the category.
+     * @param int $purposeid The ID matching the purpose record.
+     * @param int $activity The name of the activity that we're making a defaults configuration for.
+     * @param bool $override Whether to override the purpose/categories of existing instances to these defaults.
+     * @return boolean True if set/unset config succeeds. Otherwise, it throws an exception.
+     */
+    public static function set_context_defaults($contextlevel, $categoryid, $purposeid, $activity = null, $override = false) {
+        global $DB;
+
+        self::check_can_manage_data_registry();
+
+        // Get the class name associated with this context level.
+        $classname = context_helper::get_class_for_level($contextlevel);
+        list($purposevar, $categoryvar) = data_registry::var_names_from_context($classname, $activity);
+
+        // Check the default category to be set.
+        if ($categoryid == context_instance::INHERIT) {
+            unset_config($categoryvar, 'tool_dataprivacy');
+
+        } else {
+            // Make sure the given category ID exists first.
+            $categorypersistent = new category($categoryid);
+            $categorypersistent->read();
+
+            // Then set the new default value.
+            set_config($categoryvar, $categoryid, 'tool_dataprivacy');
+        }
+
+        // Check the default purpose to be set.
+        if ($purposeid == context_instance::INHERIT) {
+            // If the defaults is set to inherit, just unset the config value.
+            unset_config($purposevar, 'tool_dataprivacy');
+
+        } else {
+            // Make sure the given purpose ID exists first.
+            $purposepersistent = new purpose($purposeid);
+            $purposepersistent->read();
+
+            // Then set the new default value.
+            set_config($purposevar, $purposeid, 'tool_dataprivacy');
+        }
+
+        // Unset instances that have been assigned with custom purpose and category, if override was specified.
+        if ($override) {
+            // We'd like to find context IDs that we want to unset.
+            $statements = ["SELECT c.id as contextid FROM {context} c"];
+            // Based on this context level.
+            $params = ['contextlevel' => $contextlevel];
+
+            if ($contextlevel == CONTEXT_MODULE) {
+                // If we're deleting module context instances, we need to make sure the instance ID is in the course modules table.
+                $statements[] = "JOIN {course_modules} cm ON cm.id = c.instanceid";
+                // And that the module is listed on the modules table.
+                $statements[] = "JOIN {modules} m ON m.id = cm.module";
+
+                if ($activity) {
+                    // If we're overriding for an activity module, make sure that the context instance matches that activity.
+                    $statements[] = "AND m.name = :modname";
+                    $params['modname'] = $activity;
+                }
+            }
+            // Make sure this context instance exists in the tool_dataprivacy_ctxinstance table.
+            $statements[] = "JOIN {tool_dataprivacy_ctxinstance} tdc ON tdc.contextid = c.id";
+            // And that the context level of this instance matches the given context level.
+            $statements[] = "WHERE c.contextlevel = :contextlevel";
+
+            // Build our SQL query by gluing the statements.
+            $sql = implode("\n", $statements);
+
+            // Get the context records matching our query.
+            $contextids = $DB->get_fieldset_sql($sql, $params);
+
+            // Delete the matching context instances.
+            foreach ($contextids as $contextid) {
+                if ($instance = context_instance::get_record_by_contextid($contextid, false)) {
+                    self::unset_context_instance($instance);
+                }
+            }
+        }
+
+        return true;
     }
 }
