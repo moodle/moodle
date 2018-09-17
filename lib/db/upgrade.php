@@ -2329,11 +2329,27 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2018091200.00) {
-        if (!file_exists($CFG->dirroot.'/cache/stores/memcache/settings.php')) {
+        if (!file_exists($CFG->dirroot . '/cache/stores/memcache/settings.php')) {
             unset_all_config_for_plugin('cachestore_memcache');
         }
 
         upgrade_main_savepoint(true, 2018091200.00);
+    }
+
+    if ($oldversion < 2018091400.01) {
+        if (!isset($CFG->messagingallusers)) {
+            // For existing instances, $CFG->messagingallusers would be same value $CFG->messaging has.
+            if (isset($CFG->messaging)) {
+                set_config('messagingallusers', $CFG->messaging);
+            } else {
+                // When $CFG->messaging is not set, default value for $CFG->messaging should be true,
+                // so $CFG->messagingallusers value should be true as well.
+                set_config('messagingallusers', 1);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018091400.01);
     }
 
     return true;
