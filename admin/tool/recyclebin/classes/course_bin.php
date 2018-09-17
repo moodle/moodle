@@ -112,6 +112,9 @@ class course_bin extends base_bin {
             return;
         }
 
+        $CFG->forced_plugin_settings['backup']['backup_general_users'] = 1;
+        $CFG->forced_plugin_settings['backup']['backup_general_groups'] = 1;
+
         // Backup the activity.
         $user = get_admin();
         $controller = new \backup_controller(
@@ -228,6 +231,10 @@ class course_bin extends base_bin {
             $user->id,
             \backup::TARGET_EXISTING_ADDING
         );
+
+        // Make sure to restore user data.
+        $controller->get_plan()->get_setting('users')->set_value(1);
+        $controller->get_plan()->get_setting('groups')->set_value(1);
 
         // Prechecks.
         if (!$controller->execute_precheck()) {

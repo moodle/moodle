@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/mod/assign/tests/fixtures/testable_assign.php');
+
 /**
  * Recycle bin course tests.
  *
@@ -172,5 +175,58 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
         $this->assertEquals(1, count($items));
         $deletedbook = reset($items);
         $this->assertEquals($book->name, $deletedbook->name);
+    }
+
+    /**
+     * Tests that user data is restored when module is restored.
+     */
+    public function test_userdata_restore() {
+        set_config('backup_general_users', 0, 'backup');
+        set_config('restore_general_users', 0, 'restore');
+
+        // Create assignment and user submission.
+        $student = $this->getDataGenerator()->create_and_enrol($this->course, 'student');
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $instance = $generator->create_instance([
+                'assignsubmission_onlinetext_enabled' => true,
+                'course' => $this->course->id
+            ]);
+        $cm = get_coursemodule_from_instance('assign', $instance->id);
+        $context = context_module::instance($cm->id);
+        $assign = new mod_assign_testable_assign($context, $cm, $this->course);
+        $this->setUser($student->id);
+        $submission = $assign->get_user_submission($student->id, true);
+        $data = (object) [
+            'onlinetext_editor' => [
+                'itemid' => file_get_unused_draft_itemid(),
+                'text' => 'Submission text',
+                'format' => FORMAT_PLAIN,
+            ],
+        ];
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        // Verify that user submission exists.
+        $submission = $assign->get_user_submission($student->id, false);
+        $this->assertNotFalse($submission);
+
+        // Delete assignment.
+        course_delete_module($cm->id);
+        phpunit_util::run_all_adhoc_tasks();
+
+        // Restore assignment.
+        $recyclebin = new \tool_recyclebin\course_bin($this->course->id);
+        foreach ($recyclebin->get_items() as $item) {
+            $recyclebin->restore_item($item);
+        }
+
+        // Verify that user submission exists.
+        $assignments = get_coursemodules_in_course('assign', $this->course->id);
+        $this->assertEquals(1, count($assignments));
+        $cm = array_pop($assignments);
+        $context = context_module::instance($cm->id);
+        $assign = new mod_assign_testable_assign($context, $cm, $this->course);
+        $submission = $assign->get_user_submission($student->id, false);
+        $this->assertNotFalse($submission);
     }
 }
