@@ -29,6 +29,7 @@ use core\external\persistent_exporter;
 use DateInterval;
 use Exception;
 use renderer_base;
+use tool_dataprivacy\context_instance;
 use tool_dataprivacy\purpose;
 
 /**
@@ -142,5 +143,26 @@ class purpose_exporter extends persistent_exporter {
         $values['formattedretentionperiod'] = $formattedtime;
 
         return $values;
+    }
+
+    /**
+     * Utility function that fetches a purpose name from the given ID.
+     *
+     * @param int $purposeid The purpose ID. Could be INHERIT (false, -1), NOT_SET (0), or the actual ID.
+     * @return string The purpose name.
+     */
+    public static function get_name($purposeid) {
+        global $PAGE;
+        if ($purposeid === false || $purposeid == context_instance::INHERIT) {
+            return get_string('inherit', 'tool_dataprivacy');
+        } else if ($purposeid == context_instance::NOTSET) {
+            return get_string('notset', 'tool_dataprivacy');
+        } else {
+            $purpose = new purpose($purposeid);
+            $output = $PAGE->get_renderer('tool_dataprivacy');
+            $exporter = new self($purpose, ['context' => \context_system::instance()]);
+            $data = $exporter->export($output);
+            return $data->name;
+        }
     }
 }
