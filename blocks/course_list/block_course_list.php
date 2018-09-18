@@ -96,7 +96,6 @@ class block_course_list extends block_list {
             } else {                          // Just print course names of single category
                 $category = array_shift($categories);
                 $courses = get_courses($category->id);
-                $courses = order_courses_univalle($courses);
                 if ($courses) {
                     foreach ($courses as $course) {
                         $coursecontext = context_course::instance($course->id);
@@ -146,7 +145,6 @@ class block_course_list extends block_list {
         if ($courses = get_my_remotecourses()) {
             $this->content->items[] = get_string('remotecourses','mnet');
             $this->content->icons[] = '';
-            $courses = order_courses_univalle($courses);
             foreach ($courses as $course) {
                 $this->content->items[]="<a title=\"" . format_string($course->shortname, true) . "\" ".
                     "href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$course->hostid}&amp;wantsurl=/course/view.php?id={$course->remoteid}\">"
