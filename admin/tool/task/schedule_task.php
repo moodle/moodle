@@ -88,7 +88,8 @@ echo html_writer::start_tag('pre');
 $CFG->mtrace_wrapper = 'tool_task_mtrace_wrapper';
 
 // Run the specified task (this will output an error if it doesn't exist).
-cron_run_single_task($task);
+\tool_task\run_from_cli::execute($task);
+
 echo html_writer::end_tag('pre');
 
 $output = $PAGE->get_renderer('tool_task');

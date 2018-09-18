@@ -867,6 +867,11 @@ $CFG->admin = 'admin';
 // and 'gsdll32.dll' to a new folder without a space in the path)
 //      $CFG->pathtogs = '/usr/bin/gs';
 //
+// Path to PHP CLI.
+// Probably something like /usr/bin/php. If you enter this, cron scripts can be
+// executed from admin web interface.
+// $CFG->pathtophp = '';
+//
 // Path to du.
 // Probably something like /usr/bin/du. If you enter this, pages that display
 // directory contents will run much faster for directories with a lot of files.
