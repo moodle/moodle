@@ -422,6 +422,85 @@ class external extends external_api {
     }
 
     /**
+     * Parameter description for bulk_approve_data_requests().
+     *
+     * @since Moodle 3.5
+     * @return external_function_parameters
+     */
+    public static function bulk_approve_data_requests_parameters() {
+        return new external_function_parameters([
+            'requestids' => new external_multiple_structure(
+                new external_value(PARAM_INT, 'The request ID', VALUE_REQUIRED)
+            )
+        ]);
+    }
+
+    /**
+     * Bulk approve bulk data request.
+     *
+     * @since Moodle 3.5
+     * @param array $requestids Array consisting the request ID's.
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     * @throws moodle_exception
+     */
+    public static function bulk_approve_data_requests($requestids) {
+        $warnings = [];
+        $result = false;
+        $params = external_api::validate_parameters(self::bulk_approve_data_requests_parameters(), [
+            'requestids' => $requestids
+        ]);
+        $requestids = $params['requestids'];
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('tool/dataprivacy:managedatarequests', $context);
+
+        foreach ($requestids as $requestid) {
+            // Ensure the request exists.
+            $requestexists = data_request::record_exists($requestid);
+
+            if ($requestexists) {
+                api::approve_data_request($requestid);
+            } else {
+                $warnings[] = [
+                    'item' => $requestid,
+                    'warningcode' => 'errorrequestnotfound',
+                    'message' => get_string('errorrequestnotfound', 'tool_dataprivacy')
+                ];
+            }
+        }
+
+        if (empty($warnings)) {
+            $result = true;
+            // Add notification in the session to be shown when the page is reloaded on the JS side.
+            notification::success(get_string('requestsapproved', 'tool_dataprivacy'));
+        }
+
+        return [
+            'result' => $result,
+            'warnings' => $warnings
+        ];
+    }
+
+    /**
+     * Parameter description for bulk_approve_data_requests().
+     *
+     * @since Moodle 3.5
+     * @return external_description
+     */
+    public static function bulk_approve_data_requests_returns() {
+        return new external_single_structure([
+            'result' => new external_value(PARAM_BOOL, 'The processing result'),
+            'warnings' => new external_warnings()
+        ]);
+    }
+
+    /**
      * Parameter description for deny_data_request().
      *
      * @since Moodle 3.5
@@ -487,6 +566,85 @@ class external extends external_api {
      * @return external_description
      */
     public static function deny_data_request_returns() {
+        return new external_single_structure([
+            'result' => new external_value(PARAM_BOOL, 'The processing result'),
+            'warnings' => new external_warnings()
+        ]);
+    }
+
+    /**
+     * Parameter description for bulk_deny_data_requests().
+     *
+     * @since Moodle 3.5
+     * @return external_function_parameters
+     */
+    public static function bulk_deny_data_requests_parameters() {
+        return new external_function_parameters([
+            'requestids' => new external_multiple_structure(
+                new external_value(PARAM_INT, 'The request ID', VALUE_REQUIRED)
+            )
+        ]);
+    }
+
+    /**
+     * Bulk deny data requests.
+     *
+     * @since Moodle 3.5
+     * @param array $requestids Array consisting of request ID's.
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     * @throws moodle_exception
+     */
+    public static function bulk_deny_data_requests($requestids) {
+        $warnings = [];
+        $result = false;
+        $params = external_api::validate_parameters(self::bulk_deny_data_requests_parameters(), [
+            'requestids' => $requestids
+        ]);
+        $requestids = $params['requestids'];
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('tool/dataprivacy:managedatarequests', $context);
+
+        foreach ($requestids as $requestid) {
+            // Ensure the request exists.
+            $requestexists = data_request::record_exists($requestid);
+
+            if ($requestexists) {
+                api::deny_data_request($requestid);
+            } else {
+                $warnings[] = [
+                    'item' => $requestid,
+                    'warningcode' => 'errorrequestnotfound',
+                    'message' => get_string('errorrequestnotfound', 'tool_dataprivacy')
+                ];
+            }
+        }
+
+        if (empty($warnings)) {
+            $result = true;
+            // Add notification in the session to be shown when the page is reloaded on the JS side.
+            notification::success(get_string('requestsdenied', 'tool_dataprivacy'));
+        }
+
+        return [
+            'result' => $result,
+            'warnings' => $warnings
+        ];
+    }
+
+    /**
+     * Parameter description for bulk_deny_data_requests().
+     *
+     * @since Moodle 3.5
+     * @return external_description
+     */
+    public static function bulk_deny_data_requests_returns() {
         return new external_single_structure([
             'result' => new external_value(PARAM_BOOL, 'The processing result'),
             'warnings' => new external_warnings()
