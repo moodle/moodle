@@ -40,12 +40,38 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
      * @type {{DENY_REQUEST: string}}
      * @type {{VIEW_REQUEST: string}}
      * @type {{MARK_COMPLETE: string}}
+     * @type {{CHANGE_BULK_ACTION: string}}
+     * @type {{CONFIRM_BULK_ACTION: string}}
+     * @type {{SELECT_ALL: string}}
      */
     var ACTIONS = {
         APPROVE_REQUEST: '[data-action="approve"]',
         DENY_REQUEST: '[data-action="deny"]',
         VIEW_REQUEST: '[data-action="view"]',
-        MARK_COMPLETE: '[data-action="complete"]'
+        MARK_COMPLETE: '[data-action="complete"]',
+        CHANGE_BULK_ACTION: '[id="bulk-action"]',
+        CONFIRM_BULK_ACTION: '[id="confirm-bulk-action"]',
+        SELECT_ALL: '[data-action="selectall"]'
+    };
+
+    /**
+     * List of available bulk actions.
+     *
+     * @type {{APPROVE: number}}
+     * @type {{DENY: number}}
+     */
+    var BULK_ACTIONS = {
+        APPROVE: 1,
+        DENY: 2
+    };
+
+    /**
+     * List of selectors.
+     *
+     * @type {{SELECT_REQUEST: string}}
+     */
+    var SELECTORS = {
+        SELECT_REQUEST: '.selectrequests'
     };
 
     /**
@@ -103,12 +129,12 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
             }).then(function(modal) {
                 // Handle approve event.
                 modal.getRoot().on(DataPrivacyEvents.approve, function() {
-                    showConfirmation(DataPrivacyEvents.approve, requestId);
+                    showConfirmation(DataPrivacyEvents.approve, approveEventWsData(requestId));
                 });
 
                 // Handle deny event.
                 modal.getRoot().on(DataPrivacyEvents.deny, function() {
-                    showConfirmation(DataPrivacyEvents.deny, requestId);
+                    showConfirmation(DataPrivacyEvents.deny, denyEventWsData(requestId));
                 });
 
                 // Handle send event.
@@ -137,34 +163,158 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
             e.preventDefault();
 
             var requestId = $(this).data('requestid');
-            showConfirmation(DataPrivacyEvents.approve, requestId);
+            showConfirmation(DataPrivacyEvents.approve, approveEventWsData(requestId));
         });
 
         $(ACTIONS.DENY_REQUEST).click(function(e) {
             e.preventDefault();
 
             var requestId = $(this).data('requestid');
-            showConfirmation(DataPrivacyEvents.deny, requestId);
+            showConfirmation(DataPrivacyEvents.deny, denyEventWsData(requestId));
         });
 
         $(ACTIONS.MARK_COMPLETE).click(function(e) {
             e.preventDefault();
-            showConfirmation(DataPrivacyEvents.complete, $(this).data('requestid'));
+
+            var requestId = $(this).data('requestid');
+            showConfirmation(DataPrivacyEvents.complete, completeEventWsData(requestId));
+        });
+
+        $(ACTIONS.CONFIRM_BULK_ACTION).click(function() {
+            var requestIds = [];
+            var actionEvent = '';
+            var wsdata = {};
+            var bulkActionKeys = [
+                {
+                    key: 'selectbulkaction',
+                    component: 'tool_dataprivacy'
+                },
+                {
+                    key: 'selectdatarequests',
+                    component: 'tool_dataprivacy'
+                },
+                {
+                    key: 'ok'
+                }
+            ];
+
+            var bulkaction = parseInt($('#bulk-action').val());
+
+            if (bulkaction != BULK_ACTIONS.APPROVE && bulkaction != BULK_ACTIONS.DENY) {
+                Str.get_strings(bulkActionKeys).done(function(langStrings) {
+                    Notification.alert('', langStrings[0], langStrings[2]);
+                }).fail(Notification.exception);
+
+                return;
+            }
+
+            $(".selectrequests:checked").each(function() {
+                requestIds.push($(this).val());
+            });
+
+            if (requestIds.length < 1) {
+                Str.get_strings(bulkActionKeys).done(function(langStrings) {
+                    Notification.alert('', langStrings[1], langStrings[2]);
+                }).fail(Notification.exception);
+
+                return;
+            }
+
+            switch (bulkaction) {
+                case BULK_ACTIONS.APPROVE:
+                    actionEvent = DataPrivacyEvents.bulkApprove;
+                    wsdata = bulkApproveEventWsData(requestIds);
+                    break;
+                case BULK_ACTIONS.DENY:
+                    actionEvent = DataPrivacyEvents.bulkDeny;
+                    wsdata = bulkDenyEventWsData(requestIds);
+            }
+
+            showConfirmation(actionEvent, wsdata);
+        });
+
+        $(ACTIONS.SELECT_ALL).change(function(e) {
+            e.preventDefault();
+
+            var selectAll = $(this).is(':checked');
+            $(SELECTORS.SELECT_REQUEST).prop('checked', selectAll);
         });
     };
+
+    /**
+     * Return the webservice data for the approve request action.
+     *
+     * @param {Number} requestId The ID of the request.
+     * @return {Object}
+     */
+    function approveEventWsData(requestId) {
+        return {
+            'wsfunction': 'tool_dataprivacy_approve_data_request',
+            'wsparams': {'requestid': requestId}
+        };
+    }
+
+    /**
+     * Return the webservice data for the bulk approve request action.
+     *
+     * @param {Array} requestIds The array of request ID's.
+     * @return {Object}
+     */
+    function bulkApproveEventWsData(requestIds) {
+        return {
+            'wsfunction': 'tool_dataprivacy_bulk_approve_data_requests',
+            'wsparams': {'requestids': requestIds}
+        };
+    }
+
+    /**
+     * Return the webservice data for the deny request action.
+     *
+     * @param {Number} requestId The ID of the request.
+     * @return {Object}
+     */
+    function denyEventWsData(requestId) {
+        return {
+            'wsfunction': 'tool_dataprivacy_deny_data_request',
+            'wsparams': {'requestid': requestId}
+        };
+    }
+
+    /**
+     * Return the webservice data for the bulk deny request action.
+     *
+     * @param {Array} requestIds The array of request ID's.
+     * @return {Object}
+     */
+    function bulkDenyEventWsData(requestIds) {
+        return {
+            'wsfunction': 'tool_dataprivacy_bulk_deny_data_requests',
+            'wsparams': {'requestids': requestIds}
+        };
+    }
+
+    /**
+     * Return the webservice data for the complete request action.
+     *
+     * @param {Number} requestId The ID of the request.
+     * @return {Object}
+     */
+    function completeEventWsData(requestId) {
+        return {
+            'wsfunction': 'tool_dataprivacy_mark_complete',
+            'wsparams': {'requestid': requestId}
+        };
+    }
 
     /**
      * Show the confirmation dialogue.
      *
      * @param {String} action The action name.
-     * @param {Number} requestId The request ID.
+     * @param {Object} wsdata Object containing ws data.
      */
-    function showConfirmation(action, requestId) {
+    function showConfirmation(action, wsdata) {
         var keys = [];
-        var wsfunction = '';
-        var params = {
-            'requestid': requestId
-        };
+
         switch (action) {
             case DataPrivacyEvents.approve:
                 keys = [
@@ -177,7 +327,18 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
                         component: 'tool_dataprivacy'
                     }
                 ];
-                wsfunction = 'tool_dataprivacy_approve_data_request';
+                break;
+            case DataPrivacyEvents.bulkApprove:
+                keys = [
+                    {
+                        key: 'bulkapproverequests',
+                        component: 'tool_dataprivacy'
+                    },
+                    {
+                        key: 'confirmbulkapproval',
+                        component: 'tool_dataprivacy'
+                    }
+                ];
                 break;
             case DataPrivacyEvents.deny:
                 keys = [
@@ -190,7 +351,18 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
                         component: 'tool_dataprivacy'
                     }
                 ];
-                wsfunction = 'tool_dataprivacy_deny_data_request';
+                break;
+            case DataPrivacyEvents.bulkDeny:
+                keys = [
+                    {
+                        key: 'bulkdenyrequests',
+                        component: 'tool_dataprivacy'
+                    },
+                    {
+                        key: 'confirmbulkdenial',
+                        component: 'tool_dataprivacy'
+                    }
+                ];
                 break;
             case DataPrivacyEvents.complete:
                 keys = [
@@ -203,7 +375,6 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
                         component: 'tool_dataprivacy'
                     }
                 ];
-                wsfunction = 'tool_dataprivacy_mark_complete';
                 break;
         }
 
@@ -221,7 +392,7 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
 
             // Handle save event.
             modal.getRoot().on(ModalEvents.save, function() {
-                handleSave(wsfunction, params);
+                handleSave(wsdata.wsfunction, wsdata.wsparams);
             });
 
             // Handle hidden event.
