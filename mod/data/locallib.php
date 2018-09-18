@@ -1156,7 +1156,7 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
             $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)."
                               OR ".$DB->sql_like('u.firstname', ':search2', false)."
                               OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
-            $params['search1'] = "%$search%";
+            $params['search1'] = "%".implode('%', explode(' ', $search))."%";
             $params['search2'] = "%$search%";
             $params['search3'] = "%$search%";
         } else {
@@ -1195,7 +1195,7 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
             $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)." OR
                 ".$DB->sql_like('u.firstname', ':search2', false)." OR
                 ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
-            $params['search1'] = "%$search%";
+            $params['search1'] = "%".implode('%', explode(' ', $search))."%";
             $params['search2'] = "%$search%";
             $params['search3'] = "%$search%";
         } else {
