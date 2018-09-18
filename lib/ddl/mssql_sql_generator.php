@@ -283,8 +283,16 @@ class mssql_sql_generator extends sql_generator {
             return array();
         }
 
-        // Call to standard (parent) getRenameFieldSQL() function
-        $results = array_merge($results, parent::getRenameFieldSQL($xmldb_table, $xmldb_field, $newname));
+        // We can't call to standard (parent) getRenameFieldSQL() function since it would enclose the field name
+        // with improper quotes in MSSQL: here, we use a stored procedure to rename the field i.e. a column object;
+        // we need to take care about how this stored procedure expects parameters to be "qualified".
+        $rename = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->rename_column_sql);
+        // Qualifying the column object could require brackets: use them, regardless the column name not being a reserved word.
+        $rename = str_replace('OLDFIELDNAME', '[' . $xmldb_field->getName() . ']', $rename);
+        // The new field name should be passed as the actual name, w/o any quote.
+        $rename = str_replace('NEWFIELDNAME', $newname, $rename);
+
+        $results[] = $rename;
 
         return $results;
     }
