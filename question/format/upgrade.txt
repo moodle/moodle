@@ -5,12 +5,12 @@ This files describes API changes for question import/export format plugins.
 * Saving question category descriptions (info) is now supported in Moodle XML import/export format.
 New xml-structure snippet for a question category:
 <question type="category">
-	<category>
-		<text>${$contexttypename}$/{$category_path}</text>
-	</category>
-	<info format="{$format}">
-		<text>{$info_categorydescription}</text>
-	</info>
+    <category>
+        <text>${$contexttypename}$/{$category_path}</text>
+    </category>
+    <info format="{$format}">
+        <text>{$info_categorydescription}</text>
+    </info>
 </question>
 * The method importprocess() in question/format.php no longer accepts $category as a parameter.
 If required in a plugin then please override this method.
