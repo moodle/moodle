@@ -260,3 +260,37 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And "Admin User" "link" should exist in the "User One" "table_row"
     And "Consent received from a parent" "text" should exist in the "User One" "table_row"
     And "Consent not given" "icon" should exist in the "User Two" "table_row"
+
+  @javascript
+  Scenario: Bulk agree on behalf of another users as a manager, multiple policies, javascript on
+    Given I log in as "admin"
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
+    And I open the action menu in "This privacy policy" "table_row"
+    And I click on "Set status to \"Active\"" "link" in the "This privacy policy" "table_row"
+    And I press "Activate"
+    And I set the following system permissions of "Manager" role:
+      | capability | permission |
+      | tool/policy:acceptbehalf | Allow |
+    And I log out
+    When I log in as "manager"
+    And I press "Next"
+    And I press "Next"
+    And I set the field "I agree to the This site policy" to "1"
+    And I set the field "I agree to the This privacy policy" to "1"
+    And I press "Next"
+    And I navigate to "Users > Privacy and policies > User agreements" in site administration
+    And I click on "Select" "checkbox" in the "User One" "table_row"
+    And I press "Consent"
+    And I should see "Give consent on behalf of user(s)"
+    And I should see "One"
+    And I press "Cancel"
+    And I should not see "Give consent on behalf of user(s)"
+    And I click on "Select" "checkbox" in the "User Two" "table_row"
+    And I press "Consent"
+    And I should see "Give consent on behalf of user(s)"
+    And I should see "User One, User Two"
+    When I press "Give consent"
+    Then "Consent given on behalf of user" "icon" should exist in the "User One" "table_row"
+    And I should see "2 of 2" in the "User One" "table_row"
+    And "Consent given on behalf of user" "icon" should exist in the "User Two" "table_row"
+    And I should see "2 of 2" in the "User Two" "table_row"
