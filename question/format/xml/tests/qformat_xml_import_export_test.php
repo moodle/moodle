@@ -61,33 +61,36 @@ class qformat_xml_import_export_test extends advanced_testcase {
 
         return $qformat;
     }
+
     /**
      * Check xml for compliance.
      * @param string $expectedxml with correct string.
      * @param string $xml you want to check.
      */
     public function assert_same_xml($expectedxml, $xml) {
-        $this->assertEquals(preg_replace('/( +)/', "", str_replace("\n", "",
-                    str_replace("\r\n", "\n", str_replace("\t", "\n", $expectedxml)))),
-            preg_replace('/( +)/', "", str_replace("\n", "",
-                    str_replace( "\r\n", "\n", str_replace( "\t", "\n", $xml)))));
+        $this->assertEquals($this->normalise_xml($expectedxml),
+                $this->normalise_xml($xml));
     }
 
     /**
-     * Check xml for compliance.
-     * @param string $expectedxml with correct string.
-     * @param string $xml you want to check.
+     * Clean up some XML to remove irrelevant differences, before it is compared.
+     * @param string $xml some XML.
+     * @return string cleaned-up XML.
      */
-    public function assert_same_xml_random_category($expectedxml, $xml) {
-        $str1 = preg_replace('/( +)/', "",
-                str_replace("\n", "", str_replace("\r\n", "\n",
-                        str_replace("\t", "\n", $expectedxml))));
+    protected function normalise_xml($xml) {
+        // Normalise line endings.
+        $xml = str_replace("\r\n", "\n", $xml);
+        $xml = preg_replace("~\n$~", "", $xml); // Strip final newline in file.
 
-        $str2 = preg_replace('/( +)/', "", str_replace("\n", "",
-                str_replace( "\r\n", "\n", str_replace( "\t", "\n", $xml))));
+        // Replace all numbers in question id comments with 0.
+        $xml = preg_replace('~(?<=<!-- question: )([0-9]+)(?=  -->)~', '0', $xml);
 
-        $str1 = str_replace("unknownhost+" + '/[0-9]+/' + "+", "", $str1);
-        $this->assertEquals($str1, $str2);
+        // Deal with how different databases output numbers. Only match when only thing in a tag.
+        $xml = preg_replace("~>.0000000<~", '>0<', $xml); // How Oracle outputs 0.0000000.
+        $xml = preg_replace("~(\.(:?[0-9]*[1-9])?)0*<~", '$1<', $xml); // Other cases of trailing 0s
+        $xml = preg_replace("~([0-9]).<~", '$1<', $xml); // Stray . in 1. after last step.
+
+        return $xml;
     }
 
     /**
@@ -248,8 +251,8 @@ class qformat_xml_import_export_test extends advanced_testcase {
                 'sortorder' => '999']);
         $question = $generator->create_question('truefalse', null, [
                 'category' => $category->id,
-                'name' => 'AlphaQuestion',
-                'questiontext' => ['format' => '1', 'text' => '<p>TestingAlphaQuestion</p>'],
+                'name' => 'Alpha Question',
+                'questiontext' => ['format' => '1', 'text' => '<p>Testing Alpha Question</p>'],
                 'generalfeedback' => ['format' => '1', 'text' => ''],
                 'correctanswer' => '1',
                 'feedbacktrue' => ['format' => '1', 'text' => ''],
@@ -257,10 +260,8 @@ class qformat_xml_import_export_test extends advanced_testcase {
                 'penalty' => '1']);
         $qformat->setCategory($category);
 
-        $xml = preg_replace('/(<!-- question: )([0-9]+)(  -->)/', '', $qformat->exportprocess());
-        $file = preg_replace('/(<!-- question: )([0-9]+)(  -->)/', '',
-            file_get_contents(__DIR__ . '/fixtures/export_category.xml'));
-        $this->assert_same_xml($file, $xml);
+        $expectedxml = file_get_contents(__DIR__ . '/fixtures/export_category.xml');
+        $this->assert_same_xml($expectedxml, $qformat->exportprocess());
     }
 
     /**
@@ -312,10 +313,8 @@ class qformat_xml_import_export_test extends advanced_testcase {
         $qformat->setCategory($categoryepsilon);
         $qformat->setCategory($categoryzeta);
 
-        $xml = preg_replace('/(<!-- question: )([0-9]+)(  -->)/', '', $qformat->exportprocess());
-        $file = preg_replace('/(<!-- question: )([0-9]+)(  -->)/', '',
-            file_get_contents(__DIR__ . '/fixtures/nested_categories.xml'));
-        $this->assert_same_xml($file, $xml);
+        $expectedxml = file_get_contents(__DIR__ . '/fixtures/nested_categories.xml');
+        $this->assert_same_xml($expectedxml, $qformat->exportprocess());
     }
 
     /**
@@ -419,9 +418,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
                 'penalty' => '1']);
         $qformat->setCategory($categoryiota);
 
-        $xml = preg_replace('/(<!-- question: )([0-9]+)(  -->)/', '', $qformat->exportprocess());
-        $file = preg_replace('/(<!-- question: )([0-9]+)(  -->)/', '',
-            file_get_contents(__DIR__ . '/fixtures/nested_categories_with_questions.xml'));
-        $this->assert_same_xml($file, $xml);
+        $expectedxml = file_get_contents(__DIR__ . '/fixtures/nested_categories_with_questions.xml');
+        $this->assert_same_xml($expectedxml, $qformat->exportprocess());
     }
 }

@@ -3,30 +3,30 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-        <text>$course$/Delta</text>
+      <text>$course$/Delta</text>
     </category>
     <info format="plain_text">
-        <text>This is Delta category for test</text>
+      <text>This is Delta category for test</text>
     </info>
   </question>
 
 <!-- question: 0  -->
   <question type="category">
     <category>
-        <text>$course$/Delta/Epsilon</text>
+      <text>$course$/Delta/Epsilon</text>
     </category>
     <info format="markdown">
-        <text>This is Epsilon category for test</text>
+      <text>This is Epsilon category for test</text>
     </info>
   </question>
 
 <!-- question: 0  -->
   <question type="category">
     <category>
-        <text>$course$/Delta/Epsilon/Zeta</text>
+      <text>$course$/Delta/Epsilon/Zeta</text>
     </category>
     <info format="moodle_auto_format">
-        <text>This is Zeta category for test</text>
+      <text>This is Zeta category for test</text>
     </info>
   </question>
 
@@ -57,4 +57,5 @@
       </feedback>
     </answer>
   </question>
+
 </quiz>
