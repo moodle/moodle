@@ -20,12 +20,13 @@ Feature: Duplicate activities
       | Name | Test database name |
       | Description | Test database description |
     And I duplicate "Test database name" activity
+    And I should see "Test database name (copy)"
     And I wait until section "1" is available
     And I click on "Edit settings" "link" in the "Test database name" activity
     And I set the following fields to these values:
       | Name | Original database name |
     And I press "Save and return to course"
-    And I click on "Edit settings" "link" in the "Test database name" activity
+    And I click on "Edit settings" "link" in the "Test database name (copy)" activity
     And I set the following fields to these values:
       | Name | Duplicated database name |
       | Description | Duplicated database description |
