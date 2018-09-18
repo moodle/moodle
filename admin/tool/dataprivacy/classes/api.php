@@ -94,6 +94,12 @@ class api {
     /** Data delete request completed, account is removed. */
     const DATAREQUEST_STATUS_DELETED = 10;
 
+    /** Approve data request. */
+    const DATAREQUEST_ACTION_APPROVE = 1;
+
+    /** Reject data request. */
+    const DATAREQUEST_ACTION_REJECT = 2;
+
     /**
      * Determines whether the user can contact the site's Data Protection Officer via Moodle.
      *
