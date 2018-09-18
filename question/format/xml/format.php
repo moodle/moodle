@@ -1189,10 +1189,10 @@ class qformat_xml extends qformat_default {
             $infoformat = $this->format($question->infoformat);
             $expout .= "  <question type=\"category\">\n";
             $expout .= "    <category>\n";
-            $expout .= "        {$categorypath}";
+            $expout .= "      {$categorypath}";
             $expout .= "    </category>\n";
             $expout .= "    <info {$infoformat}>\n";
-            $expout .= "        {$categoryinfo}";
+            $expout .= "      {$categoryinfo}";
             $expout .= "    </info>\n";
             $expout .= "  </question>\n";
             return $expout;

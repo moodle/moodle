@@ -3,10 +3,10 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-        <text>$course$/Iota</text>
+      <text>$course$/Iota</text>
     </category>
     <info format="plain_text">
-        <text>This is Iota category for test</text>
+      <text>This is Iota category for test</text>
     </info>
   </question>
 
@@ -41,14 +41,14 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-        <text>$course$/Iota/Kappa</text>
+      <text>$course$/Iota/Kappa</text>
     </category>
     <info format="markdown">
-        <text>This is Kappa category for test</text>
+      <text>This is Kappa category for test</text>
     </info>
   </question>
 
-  <!-- question: 106  -->
+<!-- question: 106  -->
   <question type="essay">
     <name>
       <text>Kappa Essay Question</text>
@@ -106,10 +106,10 @@
 <!-- question: 0  -->
   <question type="category">
     <category>
-        <text>$course$/Iota/Kappa/Lambda</text>
+      <text>$course$/Iota/Kappa/Lambda</text>
     </category>
     <info format="moodle_auto_format">
-        <text>This is Lambda category for test</text>
+      <text>This is Lambda category for test</text>
     </info>
   </question>
 
@@ -141,7 +141,7 @@
     </answer>
   </question>
 
-  <!-- question: 0  -->
+<!-- question: 0  -->
   <question type="category">
     <category>
       <text>$course$/Iota/Mu</text>
@@ -151,7 +151,7 @@
     </info>
   </question>
 
-  <!-- question: 99  -->
+<!-- question: 99  -->
   <question type="truefalse">
     <name>
       <text>Mu Question</text>
@@ -178,4 +178,5 @@
       </feedback>
     </answer>
   </question>
+
 </quiz>
