@@ -45,6 +45,7 @@
                 "typetext": "Site policy",
                 "audiencetext": "All users",
                 "statustext": "Active",
+                "optionaltext": "Optional",
                 "revision": "1.0",
                 "timemodified": 1521531208,
                 "acceptancescounturl": "#",
@@ -56,6 +57,7 @@
                 "typetext": "Site policy",
                 "audiencetext": "All users",
                 "statustext": "Draft",
+                "optionaltext": "Compulsory",
                 "revision": "2.0",
                 "timemodified": 1521531208,
                 "acceptancescounttext": "N/A"
@@ -85,7 +87,6 @@
             <th scope="col">{{#str}} policydocname, tool_policy {{/str}}</th>
             <th scope="col">{{#str}} status, tool_policy {{/str}}</th>
             <th scope="col">{{#str}} policydocrevision, tool_policy {{/str}}</th>
-            <th scope="col">{{#str}} lastmodified, core {{/str}}</th>
             {{#canviewacceptances}}
             <th scope="col">{{#str}} usersaccepted, tool_policy {{/str}}</th>
             {{/canviewacceptances}}
@@ -105,7 +106,7 @@
                 {{/indented}}
                 <div {{#indented}}style="margin-left: 24px" {{/indented}}>
                     <div>{{{name}}}</div>
-                    <div class="text-muted, muted"><small>{{{typetext}}}, {{{audiencetext}}}</small></div>
+                    <div class="text-muted, muted"><small>{{{typetext}}}, {{{audiencetext}}}, {{{optionaltext}}}</small></div>
                 </div>
             </td>
             <td>
@@ -113,9 +114,13 @@
             </td>
             <td>
                 {{revision}}
-            </td>
-            <td>
-                {{#userdate}} {{timemodified}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}
+                <div class="text-muted, muted">
+                    <small>
+                        <time title="{{#str}} lastmodified, core {{/str}}" datetime="{{#userdate}} {{timemodified}}, %Y-%m-%dT%T%z {{/userdate}}">
+                            {{#userdate}} {{timemodified}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}
+                        </time>
+                    </small>
+                </div>
             </td>
             {{#canviewacceptances}}
             <td>
