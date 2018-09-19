@@ -30,9 +30,11 @@ use context;
 use context_user;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use \core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\helper;
 use core_privacy\local\request\transform;
+use \core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use dml_exception;
 use stdClass;
@@ -49,6 +51,9 @@ use tool_dataprivacy\local\helper as tool_helper;
 class provider implements
         // This tool stores user data.
         \core_privacy\local\metadata\provider,
+
+        // This plugin is capable of determining which users have data within it.
+        \core_privacy\local\request\core_userlist_provider,
 
         // This tool may provide access to and deletion of user data.
         \core_privacy\local\request\plugin\provider,
@@ -98,6 +103,32 @@ class provider implements
         $contextlist->set_component('tool_dataprivacy');
         $contextlist->add_from_sql($sql, ['userid' => $userid, 'contextlevel' => CONTEXT_USER]);
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     *
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!is_a($context, \context_user::class)) {
+            return;
+        }
+
+        $params = [
+            'contextlevel' => CONTEXT_USER,
+            'contextid' => $context->id,
+        ];
+
+        $sql = "SELECT instanceid AS userid
+                  FROM {context}
+                 WHERE id = :contextid
+                       AND contextlevel = :contextlevel";
+
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -170,6 +201,15 @@ class provider implements
      * @param   approved_contextlist $contextlist The approved contexts and user information to delete information for.
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist    $userlist The approved context and user information to delete information for.
+     *
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
     }
 
     /**
