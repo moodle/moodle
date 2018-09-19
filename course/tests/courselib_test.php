@@ -2853,6 +2853,10 @@ class core_course_courselib_testcase extends advanced_testcase {
                 // Ignore obviously different properties.
                 continue;
             }
+            if ($prop == 'name') {
+                // We expect ' (copy)' to be added to the original name since MDL-59227.
+                $value = get_string('duplicatedmodule', 'moodle', $value);
+            }
             $this->assertEquals($value, $newcm->$prop);
         }
     }

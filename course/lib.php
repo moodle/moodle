@@ -3453,11 +3453,18 @@ function duplicate_module($course, $cm) {
     // right below the original one. otherwise it will stay at the
     // end of the section.
     if ($newcmid) {
+        // Proceed with activity renaming before everything else. We don't use APIs here to avoid
+        // triggering a lot of create/update duplicated events.
+        $newcm = get_coursemodule_from_id($cm->modname, $newcmid, $cm->course);
+        // Add ' (copy)' to duplicates. Note we don't cleanup or validate lengths here. It comes
+        // from original name that was valid, so the copy should be too.
+        $newname = get_string('duplicatedmodule', 'moodle', $newcm->name);
+        $DB->set_field($cm->modname, 'name', $newname, ['id' => $newcm->instance]);
+
         $section = $DB->get_record('course_sections', array('id' => $cm->section, 'course' => $cm->course));
         $modarray = explode(",", trim($section->sequence));
         $cmindex = array_search($cm->id, $modarray);
         if ($cmindex !== false && $cmindex < count($modarray) - 1) {
-            $newcm = get_coursemodule_from_id($cm->modname, $newcmid, $cm->course);
             moveto_module($newcm, $section, $modarray[$cmindex + 1]);
         }
 
@@ -3469,9 +3476,6 @@ function duplicate_module($course, $cm) {
         $newcm = get_fast_modinfo($cm->course)->get_cm($newcmid);
         $event = \core\event\course_module_created::create_from_cm($newcm);
         $event->trigger();
-
-        // Add ' (copy)' to duplicates.
-        set_coursemodule_name($newcm->id, get_string('duplicatedmodule', 'moodle', $newcm->name));
     }
 
     return isset($newcm) ? $newcm : null;
