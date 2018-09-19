@@ -1644,7 +1644,7 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
             $discussionurl->set_anchor('p'. $post->id);
         }
         $post->subject = break_up_long_words(format_string($post->subject, true));
-        $list .= html_writer::link($discussionurl, $post->subject);
+        $list .= html_writer::link($discussionurl, $post->subject, ['rel' => 'bookmark']);
         $list .= html_writer::end_div(); // Info.
         $list .= html_writer::end_tag('li');
     }
@@ -3159,8 +3159,12 @@ function forum_print_post_start($post, $return = false) {
     $output = '';
 
     if (forum_should_start_post_nesting($post->id)) {
-        $output .= html_writer::start_tag('article');
-        $output .= html_writer::tag('a', '', array('id' => 'p'.$post->id));
+        $attributes = [
+            'id' => 'p'.$post->id,
+            'tabindex' => -1,
+            'class' => 'relativelink'
+        ];
+        $output .= html_writer::start_tag('article', $attributes);
     }
     if ($return) {
         return $output;
@@ -3300,7 +3304,8 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
             $output .= html_writer::start_tag('div', array('class' => 'topic starter'));
         }
         $output .= html_writer::tag('div', get_string('forumsubjecthidden','forum'), array('class' => 'subject',
-                                                                                           'role' => 'header')); // Subject.
+                                                                                           'role' => 'header',
+                                                                                           'id' => ('headp' . $post->id))); // Subject.
         $authorclasses = array('class' => 'author');
         $output .= html_writer::tag('address', get_string('forumauthorhidden', 'forum'), $authorclasses); // Author.
         $output .= html_writer::end_tag('div');
@@ -3347,6 +3352,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         $output .= html_writer::tag('div', get_string('forumsubjectdeleted', 'forum'), [
                 'class' => 'subject',
                 'role' => 'header',
+                'id' => ('headp' . $post->id)
             ]);
 
         // Author.
@@ -3408,14 +3414,13 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     // Determine if we need to shorten this post
     $shortenpost = ($link && (strlen(strip_tags($post->message)) > $CFG->forum_longpost));
 
-
     // Prepare an array of commands
     $commands = array();
 
     // Add a permalink.
     $permalink = new moodle_url($discussionlink);
     $permalink->set_anchor('p' . $post->id);
-    $commands[] = array('url' => $permalink, 'text' => get_string('permalink', 'forum'));
+    $commands[] = array('url' => $permalink, 'text' => get_string('permalink', 'forum'), 'attributes' => ['rel' => 'bookmark']);
 
     // SPECIAL CASE: The front page can display a news item post to non-logged in users.
     // Don't display the mark read / unread controls in this case.
@@ -3431,7 +3436,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         } else {
             $url->set_anchor('p'.$post->id);
         }
-        $commands[] = array('url'=>$url, 'text'=>$text);
+        $commands[] = array('url'=>$url, 'text'=>$text, 'attributes' => ['rel' => 'bookmark']);
     }
 
     // Zoom in to the parent specifically
@@ -3442,7 +3447,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         } else {
             $url->set_anchor('p'.$post->parent);
         }
-        $commands[] = array('url'=>$url, 'text'=>$str->parent);
+        $commands[] = array('url'=>$url, 'text'=>$str->parent, 'attributes' => ['rel' => 'bookmark']);
     }
 
     // Hack for allow to edit news posts those are not displayed yet until they are displayed
@@ -3547,7 +3552,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     if (empty($post->subjectnoformat)) {
         $postsubject = format_string($postsubject);
     }
-    $output .= html_writer::div($postsubject, 'subject', ['role' => 'heading', 'aria-level' => '1']);
+    $output .= html_writer::div($postsubject, 'subject', ['role' => 'heading', 'aria-level' => '1', 'id' => ('headp' . $post->id)]);
 
     if ($authorhidden) {
         $bytext = userdate_htmltime($post->created);
@@ -3639,7 +3644,11 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $commandhtml = array();
     foreach ($commands as $command) {
         if (is_array($command)) {
-            $commandhtml[] = html_writer::link($command['url'], $command['text'], array('class' => 'nav-item nav-link'));
+            $attributes = ['class' => 'nav-item nav-link'];
+            if (isset($command['attributes'])) {
+                $attributes = array_merge($attributes, $command['attributes']);
+            }
+            $commandhtml[] = html_writer::link($command['url'], $command['text'], $attributes);
         } else {
             $commandhtml[] = $command;
         }
