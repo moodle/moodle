@@ -1265,10 +1265,12 @@ function filter_context_may_have_filter_settings($context) {
  * @param array $ignoretagsopen   an array of opening tags that we should ignore while filtering
  * @param array $ignoretagsclose  an array of corresponding closing tags
  * @param bool $overridedefaultignore True to only use tags provided by arguments
+ * @param bool $linkarrayalreadyprepared True to say that filter_prepare_phrases_for_filtering
+ *      has already been called for $linkarray. Default false.
  * @return string
  */
 function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagsclose = null,
-        $overridedefaultignore = false) {
+        $overridedefaultignore = false, $linkarrayalreadyprepared = false) {
 
     global $CFG;
 
@@ -1279,7 +1281,7 @@ function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagscl
     $ignoretags = array();  // To store all the enclosig tags to be completely ignored.
     $tags = array();        // To store all the simple tags to be ignored.
 
-    if (!isset($linkarray['__preparedmarker'])) {
+    if (!$linkarrayalreadyprepared) {
         $linkarray = filter_prepare_phrases_for_filtering($linkarray);
     }
 
@@ -1326,11 +1328,9 @@ function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagscl
 
     // Time to cycle through each phrase to be linked.
     foreach ($linkarray as $key => $linkobject) {
-        if ($key === '__preparedmarker') {
-            continue;
-        }
-
         if ($linkobject->workregexp === null) {
+            // This is the case if, when preparing the phrases for filtering,
+            // we decided that this was not a suitable phrase to match.
             continue;
         }
 
@@ -1428,8 +1428,6 @@ function filter_prepare_phrases_for_filtering(array $linkarray) {
             $linkobject->workregexp .= 'iu';
         }
     }
-
-    $linkarray['__preparedmarker'] = 1;
 
     return $linkarray;
 }
