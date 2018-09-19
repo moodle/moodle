@@ -168,9 +168,8 @@ class filter_glossary extends moodle_text_filter {
 
         if (!empty($GLOSSARY_EXCLUDEENTRY)) {
             foreach ($conceptlist as $key => $filterobj) {
-                if (!is_object($filterobj)) {
-                    continue;
-                }
+                // The original concept object was stored here in when $filterobj was constructed in
+                // get_all_concepts(). Get it back out now so we can check to see if it is excluded.
                 $concept = $filterobj->replacementcallbackdata[0];
                 if (!$concept->category && $concept->id == $GLOSSARY_EXCLUDEENTRY) {
                     unset($conceptlist[$key]);
@@ -182,7 +181,7 @@ class filter_glossary extends moodle_text_filter {
             return $text;
         }
 
-        return filter_phrases($text, $conceptlist);   // Actually search for concepts!
+        return filter_phrases($text, $conceptlist, null, null, false, true);
     }
 
     /**
