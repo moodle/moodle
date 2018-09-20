@@ -42,6 +42,10 @@ if (!$certificate = $DB->get_record('certificateuv', array('id'=> $cm->instance)
     print_error('course module is incorrect');
 }
 
+$certificate->nameteacher = "Teacher testing";
+
+print_r($certificate);
+
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 
@@ -173,9 +177,9 @@ if (empty($action)) { // Not displaying PDF
 } else { // Output to pdf
 
     // No debugging here, sorry.
-    $CFG->debugdisplay = 0;
-    @ini_set('display_errors', '0');
-    @ini_set('log_errors', '1');
+    // $CFG->debugdisplay = 0;
+    // @ini_set('display_errors', '0');
+    // @ini_set('log_errors', '1');
 
     $filename = certificateuv_get_certificate_filename($certificate, $cm, $course) . '.pdf';
 
@@ -195,6 +199,6 @@ if (empty($action)) { // Not displaying PDF
     } elseif ($certificate->delivery == 2) {
         certificateuv_email_student($course, $certificate, $certrecord, $context, $filecontents, $filename);
         // Open in browser after sending email.
-        send_file($filecontents, $filename, 0, 0, true, false, 'application/pdf');
+        // send_file($filecontents, $filename, 0, 0, true, false, 'application/pdf');
     }
 }

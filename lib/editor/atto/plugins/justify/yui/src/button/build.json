@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_justify-button",
+  "builds": {
+    "moodle-atto_justify-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}
