@@ -46,14 +46,15 @@ class manager {
     public static function build_tree($user, $iscurrentuser, $course = null) {
         global $CFG;
         $tree = new tree();
-
+        
         // Add core nodes.
 
         require_once($CFG->libdir . "/myprofilelib.php");
         core_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-
+        
         // Core components.
         $components = \core_component::get_core_subsystems();
+
         foreach ($components as $component => $directory) {
             if (empty($directory)) {
                 continue;
@@ -67,7 +68,7 @@ class manager {
                 }
             }
         }
-
+        
         // Plugins.
         $pluginswithfunction = get_plugins_with_function('myprofile_navigation', 'lib.php');
         foreach ($pluginswithfunction as $plugins) {
@@ -75,8 +76,11 @@ class manager {
                 $function($tree, $user, $iscurrentuser, $course);
             }
         }
+        
 
         $tree->sort_categories();
+
+        
         return $tree;
     }
 }

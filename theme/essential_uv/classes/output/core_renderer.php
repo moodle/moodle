@@ -45,6 +45,7 @@ use pix_icon;
 use stdClass;
 
 require_once($CFG->dirroot."/course/format/lib.php");
+require_once($CFG->dirroot.'/theme/essential_uv/classes/output/core_user/myprofile/renderer.php');
 
 class core_renderer extends \core_renderer {
     use core_renderer_toolbox;
@@ -2553,9 +2554,9 @@ class core_renderer extends \core_renderer {
                 get_string('versionalerttext1', 'theme_essential_uv').'<br />'.
                 get_string('versionalerttext2', 'theme_essential_uv');
             $result .= '</div>';
-if(get_string('versionalerttext1', 'theme_essential_uv') == 'Theme not designed for Moodle version.'){
-    $result = '';
-}
+    if(get_string('versionalerttext1', 'theme_essential_uv') == 'Theme not designed for Moodle version.'){
+        $result = '';
+    }
 
         }
 
@@ -2575,3 +2576,4 @@ if(get_string('versionalerttext1', 'theme_essential_uv') == 'Theme not designed 
         }
     }
 }
+

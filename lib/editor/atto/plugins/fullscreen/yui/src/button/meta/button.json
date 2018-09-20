@@ -1,0 +1,8 @@
+{
+    "moodle-atto_fullscreen-button": {
+        "requires": [
+            "event-resize",
+            "moodle-editor_atto-plugin"
+        ]
+    }
+}

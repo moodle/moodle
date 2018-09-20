@@ -1,0 +1,15 @@
+version 2015122006
+
+Add support for Privacy API
+Compatible with Boost 3.5 theme
+
+version 20151220
+
+Enable better compatibility with htmlplus plugin. htmlplus window is
+dynamically resized and does not deactivate plugin.
+
+version 20150513
+
+Add a setting to require the capablity to arrange activities. The function
+is to prevent the fullscreen option being available to students to keep
+the toolbar more minimal.

@@ -1,0 +1,94 @@
+{{#data}}
+<div class="container">
+    <ul class="nav nav-pills">
+        <li class="active">
+            <a data-toggle="pill" href="#attendance_tab">Asistencias</a>
+        </li>
+        <!--
+        <li>
+            <a data-toggle="pill" href="#grades_tab">Calificaciones</a>
+        </li>
+        -->
+    </ul>
+
+    <div class="tab-content">
+        <div id="attendance_tab" class="tab-pane fade in active">
+            <h2>Reporte de Asistencias</h2>
+            <hr class="col-sm-12">
+
+            <form class="form-inline">
+                <div class="col-sm-6 col-lg-3 col-md-3">
+                    <label for="academic_period_select" class="col-sm-4">Periodo: </label>
+                    <select name="academic_period_select" class="col-sm-8" id="academic_period_select">
+                        {{{academic_periods}}}
+                        <option value="">2018-1</option>
+                        <option value="">2018-2</option>
+                        <option value="">2018-3</option>
+                        <option value="">2019-1</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <label for="program_select" class="col-sm-5">Programa: </label>
+                    <select name="program_select" id="program_select" class="col-sm-7">
+                        {{{programs}}}
+                    </select>
+                </div>
+
+                <div class="col-sm-6 col-md-4 col-lg-4">
+                    <label for="course_select" class="col-sm-4">Curso: </label>
+                    <select name="course_select" id="course_select" class="col-sm-8">
+                        {{{courses}}}
+                    </select>
+                </div>
+
+                <div class="col-sm-2">
+                    <button id="btn_filter_attendance" type="button" class="col-sm-10 col-sm-offset-1 btn-primary">Filtrar</button>
+                </div>
+            </form>
+            <div class="col-sm-12 col-md-12 col-lg-12" id="div_table">
+            </div>
+        </div>
+    
+        <div id="grades_tab" class="tab-pane fade">
+            <h2>Reporte de Calificaciones</h2>
+            <hr class="col-sm-12">
+
+            <form class="form-inline">
+                <div class="col-sm-6 col-lg-3 col-md-3">
+                    <label for="academic_period_select" class="col-sm-4">Periodo: </label>
+                    <select name="academic_period_select" class="col-sm-8" id="academic_period_select">
+                        {{{academic_periods}}}
+                        <option value="20181">2018-1</option>
+                        <option value="20182">2018-2</option>
+                        <option value="20183">2018-3</option>
+                        <option value="20191">2019-1</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <label for="program_select" class="col-sm-5">Programa: </label>
+                    <select name="program_select" class="col-sm-7" id="program_select">
+                        {{{programs}}}
+                    </select>
+                </div>
+
+                <div class="col-sm-6 col-md-4 col-lg-4">
+                    <label for="course_select" class="col-sm-4">Curso: </label>
+                    <select name="course_select" class="col-sm-8" id="course_select">
+                        {{{courses}}}
+                    </select>
+                </div>
+
+                <div class="col-sm-2">
+                    <button id="btn_filter_grades" type="button" class="col-sm-10 col-sm-offset-1 btn-primary">Filtrar</button>
+                </div>
+            </form>
+
+            <div class="col-sm-12" id="div_grader">
+
+            </div>
+        </div>
+    </div>
+</div>
+{{/data}}
