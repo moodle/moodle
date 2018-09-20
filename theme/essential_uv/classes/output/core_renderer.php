@@ -1466,6 +1466,12 @@ class core_renderer extends \core_renderer {
 
         global $USER, $CFG, $DB;
         $loginurl = get_login_url();
+        /*//$username = parent::user_picture($USER, array('link' => false, 'size' => 64));
+        if (!empty($USER->alternatename)) {
+            $username .= $USER->alternatename;
+        } else {
+            $username .= $USER->firstname;
+        }*/
 
         $usermenu = html_writer::start_tag('ul', array('class' => 'nav'));
         $usermenu .= html_writer::start_tag('li', array('class' => 'dropdown'));
