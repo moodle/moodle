@@ -244,14 +244,6 @@ class api {
             if (self::is_site_dpo($requestinguser)) {
                 // The user making the request is a DPO. Should be fine.
                 $datarequest->set('dpo', $requestinguser);
-            } else {
-                // If not a DPO, only users with the capability to make data requests for the user should be allowed.
-                // (e.g. users with the Parent role, etc).
-                if (!self::can_create_data_request_for_user($foruser)) {
-                    $forusercontext = \context_user::instance($foruser);
-                    throw new required_capability_exception($forusercontext,
-                            'tool/dataprivacy:makedatarequestsforchildren', 'nopermissions', '');
-                }
             }
         }
         // The user making the request.
@@ -664,14 +656,29 @@ class api {
     /**
      * Checks whether a non-DPO user can make a data request for another user.
      *
-     * @param int $user The user ID of the target user.
-     * @param int $requester The user ID of the user making the request.
-     * @return bool
-     * @throws coding_exception
+     * @param   int     $user The user ID of the target user.
+     * @param   int     $requester The user ID of the user making the request.
+     * @return  bool
      */
     public static function can_create_data_request_for_user($user, $requester = null) {
         $usercontext = \context_user::instance($user);
+
         return has_capability('tool/dataprivacy:makedatarequestsforchildren', $usercontext, $requester);
+    }
+
+    /**
+     * Require that the current user can make a data request for the specified other user.
+     *
+     * @param   int     $user The user ID of the target user.
+     * @param   int     $requester The user ID of the user making the request.
+     * @return  bool
+     */
+    public static function require_can_create_data_request_for_user($user, $requester = null) {
+        $usercontext = \context_user::instance($user);
+
+        require_capability('tool/dataprivacy:makedatarequestsforchildren', $usercontext, $requester);
+
+        return true;
     }
 
     /**
@@ -729,8 +736,6 @@ class api {
      * @return \tool_dataprivacy\purpose.
      */
     public static function create_purpose(stdClass $record) {
-        self::check_can_manage_data_registry();
-
         $purpose = new purpose(0, $record);
         $purpose->create();
 
@@ -744,8 +749,6 @@ class api {
      * @return \tool_dataprivacy\purpose.
      */
     public static function update_purpose(stdClass $record) {
-        self::check_can_manage_data_registry();
-
         if (!isset($record->sensitivedatareasons)) {
             $record->sensitivedatareasons = '';
         }
@@ -765,8 +768,6 @@ class api {
      * @return bool
      */
     public static function delete_purpose($id) {
-        self::check_can_manage_data_registry();
-
         $purpose = new purpose($id);
         if ($purpose->is_used()) {
             throw new \moodle_exception('Purpose with id ' . $id . ' can not be deleted because it is used.');
@@ -780,8 +781,6 @@ class api {
      * @return \tool_dataprivacy\purpose[]
      */
     public static function get_purposes() {
-        self::check_can_manage_data_registry();
-
         return purpose::get_records([], 'name', 'ASC');
     }
 
@@ -792,8 +791,6 @@ class api {
      * @return \tool_dataprivacy\category.
      */
     public static function create_category(stdClass $record) {
-        self::check_can_manage_data_registry();
-
         $category = new category(0, $record);
         $category->create();
 
@@ -807,8 +804,6 @@ class api {
      * @return \tool_dataprivacy\category.
      */
     public static function update_category(stdClass $record) {
-        self::check_can_manage_data_registry();
-
         $category = new category($record->id);
         $category->from_record($record);
 
@@ -824,8 +819,6 @@ class api {
      * @return bool
      */
     public static function delete_category($id) {
-        self::check_can_manage_data_registry();
-
         $category = new category($id);
         if ($category->is_used()) {
             throw new \moodle_exception('Category with id ' . $id . ' can not be deleted because it is used.');
@@ -839,8 +832,6 @@ class api {
      * @return \tool_dataprivacy\category[]
      */
     public static function get_categories() {
-        self::check_can_manage_data_registry();
-
         return category::get_records([], 'name', 'ASC');
     }
 
@@ -851,8 +842,6 @@ class api {
      * @return \tool_dataprivacy\context_instance
      */
     public static function set_context_instance($record) {
-        self::check_can_manage_data_registry($record->contextid);
-
         if ($instance = context_instance::get_record_by_contextid($record->contextid, false)) {
             // Update.
             $instance->from_record($record);
@@ -879,7 +868,6 @@ class api {
      * @return null
      */
     public static function unset_context_instance(context_instance $instance) {
-        self::check_can_manage_data_registry($instance->get('contextid'));
         $instance->delete();
     }
 
@@ -892,9 +880,6 @@ class api {
      */
     public static function set_contextlevel($record) {
         global $DB;
-
-        // Only manager at system level can set this.
-        self::check_can_manage_data_registry();
 
         if ($record->contextlevel != CONTEXT_SYSTEM && $record->contextlevel != CONTEXT_USER) {
             throw new \coding_exception('Only context system and context user can set a contextlevel ' .
@@ -927,7 +912,6 @@ class api {
      * @return category|false
      */
     public static function get_effective_context_category(\context $context, $forcedvalue=false) {
-        self::check_can_manage_data_registry($context->id);
         if (!data_registry::defaults_set()) {
             return false;
         }
@@ -943,7 +927,6 @@ class api {
      * @return purpose|false
      */
     public static function get_effective_context_purpose(\context $context, $forcedvalue=false) {
-        self::check_can_manage_data_registry($context->id);
         if (!data_registry::defaults_set()) {
             return false;
         }
@@ -959,7 +942,6 @@ class api {
      * @return category|false
      */
     public static function get_effective_contextlevel_category($contextlevel, $forcedvalue=false) {
-        self::check_can_manage_data_registry(\context_system::instance()->id);
         if (!data_registry::defaults_set()) {
             return false;
         }
@@ -975,7 +957,6 @@ class api {
      * @return purpose|false
      */
     public static function get_effective_contextlevel_purpose($contextlevel, $forcedvalue=false) {
-        self::check_can_manage_data_registry(\context_system::instance()->id);
         if (!data_registry::defaults_set()) {
             return false;
         }
@@ -990,8 +971,6 @@ class api {
      * @return \tool_dataprivacy\expired_context
      */
     public static function create_expired_context($contextid) {
-        self::check_can_manage_data_registry();
-
         $record = (object)[
             'contextid' => $contextid,
             'status' => expired_context::STATUS_EXPIRED,
@@ -1009,8 +988,6 @@ class api {
      * @return bool True on success.
      */
     public static function delete_expired_context($id) {
-        self::check_can_manage_data_registry();
-
         $expiredcontext = new expired_context($id);
         return $expiredcontext->delete();
     }
@@ -1023,8 +1000,6 @@ class api {
      * @return null
      */
     public static function set_expired_context_status(expired_context $expiredctx, $status) {
-        self::check_can_manage_data_registry();
-
         $expiredctx->set('status', $status);
         $expiredctx->save();
     }
