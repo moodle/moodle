@@ -1006,6 +1006,7 @@ function enrol_get_all_users_courses($userid, $onlyactive = false, $fields = nul
         }
         $sort = 'c.'.implode(',c.', $sorts);
         //$orderby = "ORDER BY $sort";
+        $orderby = "ORDER BY id";
     }
 
     $params = array('siteid'=>SITEID);
