@@ -912,24 +912,17 @@ function order_courses_univalle($courses){
 *
 */
 function separated_by_type_course($courses){
-    
     $cursos_presenciales = array();
     $cursos_otros = array();
-
     foreach ($courses as $course) {
-        
-        
         //si pertenece a la categoría presencial añadimos un cero para que sea ordenado de primero
         if($course->category >= 30000){
             $cursos_presenciales[] = $course;
         }else{
             $cursos_otros[]=$course;
-        }
-                
+        }          
     }
-
-    $courses = [$cursos_presenciales,$cursos_otros];
-      
+    $courses = [$cursos_presenciales,$cursos_otros];  
     return $courses;
 } 
 
