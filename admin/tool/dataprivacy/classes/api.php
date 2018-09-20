@@ -929,7 +929,7 @@ class api {
      * @param int $forcedvalue Use this purposeid value as if this was this context instance purpose.
      * @return purpose|false
      */
-    public static function get_effective_context_purpose(\context $context, $forcedvalue=false) {
+    public static function get_effective_context_purpose(\context $context, $forcedvalue = false) {
         if (!data_registry::defaults_set()) {
             return false;
         }
@@ -965,34 +965,6 @@ class api {
         }
 
         return data_registry::get_effective_contextlevel_value($contextlevel, 'purpose', $forcedvalue);
-    }
-
-    /**
-     * Creates an expired context record for the provided context id.
-     *
-     * @param int $contextid
-     * @return \tool_dataprivacy\expired_context
-     */
-    public static function create_expired_context($contextid) {
-        $record = (object)[
-            'contextid' => $contextid,
-            'status' => expired_context::STATUS_EXPIRED,
-        ];
-        $expiredctx = new expired_context(0, $record);
-        $expiredctx->save();
-
-        return $expiredctx;
-    }
-
-    /**
-     * Deletes an expired context record.
-     *
-     * @param int $id The tool_dataprivacy_ctxexpire id.
-     * @return bool True on success.
-     */
-    public static function delete_expired_context($id) {
-        $expiredcontext = new expired_context($id);
-        return $expiredcontext->delete();
     }
 
     /**

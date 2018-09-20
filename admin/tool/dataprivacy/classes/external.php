@@ -1024,7 +1024,6 @@ class external extends external_api {
             $contextlevel = api::set_contextlevel($validateddata);
         } else if ($errors = $mform->is_validated()) {
             $warnings[] = json_encode($errors);
-            throw new moodle_exception('generalerror');
         }
 
         if ($contextlevel) {
@@ -1079,8 +1078,9 @@ class external extends external_api {
             'jsonformdata' => $jsonformdata
         ]);
 
-        // Extra permission checkings are delegated to api::set_context_instance.
+        // Validate context and access to manage the registry.
         self::validate_context(\context_system::instance());
+        api::check_can_manage_data_registry();
 
         $serialiseddata = json_decode($params['jsonformdata']);
         $data = array();
@@ -1232,24 +1232,27 @@ class external extends external_api {
                 $expiredcontext = new expired_context($id);
                 $targetcontext = context_helper::instance_by_id($expiredcontext->get('contextid'));
 
-                // Fetch this context's child contexts. Make sure that all of the child contexts are flagged for deletion.
-                $childcontexts = $targetcontext->get_child_contexts();
-                foreach ($childcontexts as $child) {
-                    if ($expiredchildcontext = expired_context::get_record(['contextid' => $child->id])) {
-                        // Add this child context to the list for approval.
-                        $expiredcontextstoapprove[] = $expiredchildcontext;
-                    } else {
-                        // This context has not yet been flagged for deletion.
-                        $result = false;
-                        $message = get_string('errorcontexthasunexpiredchildren', 'tool_dataprivacy',
-                            $targetcontext->get_context_name(false));
-                        $warnings[] = [
-                            'item' => 'tool_dataprivacy_ctxexpired',
-                            'warningcode' => 'errorcontexthasunexpiredchildren',
-                            'message' => $message
-                        ];
-                        // Exit the process.
-                        break 2;
+                if (!$targetcontext instanceof \context_user) {
+                    // Fetch this context's child contexts. Make sure that all of the child contexts are flagged for deletion.
+                    // User context children do not need to be considered.
+                    $childcontexts = $targetcontext->get_child_contexts();
+                    foreach ($childcontexts as $child) {
+                        if ($expiredchildcontext = expired_context::get_record(['contextid' => $child->id])) {
+                            // Add this child context to the list for approval.
+                            $expiredcontextstoapprove[] = $expiredchildcontext;
+                        } else {
+                            // This context has not yet been flagged for deletion.
+                            $result = false;
+                            $message = get_string('errorcontexthasunexpiredchildren', 'tool_dataprivacy',
+                                $targetcontext->get_context_name(false));
+                            $warnings[] = [
+                                'item' => 'tool_dataprivacy_ctxexpired',
+                                'warningcode' => 'errorcontexthasunexpiredchildren',
+                                'message' => $message
+                            ];
+                            // Exit the process.
+                            break 2;
+                        }
                     }
                 }
 
