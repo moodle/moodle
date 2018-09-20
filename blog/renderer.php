@@ -246,3 +246,4 @@ class core_blog_renderer extends plugin_renderer_base {
         return $this->output->container($o, $class);
     }
 }
+
