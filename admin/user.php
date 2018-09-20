@@ -189,12 +189,7 @@
 
         }
 
-        // Validación para concatenar la cadena "(Sede)" en el título de la columna Ciudad
-        if($column == "city"){
-            $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir\">".$string[$column]." (Sede)</a>$columnicon";
-        }else{
-            $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir\">".$string[$column]."</a>$columnicon";
-        }        
+        $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir\">".$string[$column]."</a>$columnicon";
     }
 
     // We need to check that alternativefullnameformat is not set to '' or language.
