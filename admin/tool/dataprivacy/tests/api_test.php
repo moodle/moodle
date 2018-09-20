@@ -1321,53 +1321,6 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests the deletion of expired contexts.
-     *
-     * @return null
-     */
-    public function test_expired_context_deletion() {
-        global $DB;
-
-        $this->setAdminUser();
-
-        list($purposes, $categories, $courses, $modules) = $this->add_purposes_and_categories();
-
-        $course0context = \context_course::instance($courses[0]->id);
-        $course1context = \context_course::instance($courses[1]->id);
-
-        $expiredcontext0 = api::create_expired_context($course0context->id);
-        $this->assertEquals(1, $DB->count_records('tool_dataprivacy_ctxexpired'));
-        $expiredcontext1 = api::create_expired_context($course1context->id);
-        $this->assertEquals(2, $DB->count_records('tool_dataprivacy_ctxexpired'));
-
-        api::delete_expired_context($expiredcontext0->get('id'));
-        $this->assertEquals(1, $DB->count_records('tool_dataprivacy_ctxexpired'));
-    }
-
-    /**
-     * Tests the status of expired contexts.
-     *
-     * @return null
-     */
-    public function test_expired_context_status() {
-        global $DB;
-
-        $this->setAdminUser();
-
-        list($purposes, $categories, $courses, $modules) = $this->add_purposes_and_categories();
-
-        $course0context = \context_course::instance($courses[0]->id);
-
-        $expiredcontext = api::create_expired_context($course0context->id);
-
-        // Default status.
-        $this->assertEquals(expired_context::STATUS_EXPIRED, $expiredcontext->get('status'));
-
-        api::set_expired_context_status($expiredcontext, expired_context::STATUS_APPROVED);
-        $this->assertEquals(expired_context::STATUS_APPROVED, $expiredcontext->get('status'));
-    }
-
-    /**
      * Creates test purposes and categories.
      *
      * @return null
