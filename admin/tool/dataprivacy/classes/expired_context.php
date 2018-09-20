@@ -159,4 +159,51 @@ class expired_context extends \core\persistent {
 
         return $DB->count_records_sql($sql, $params);
     }
+
+    /**
+     * Create a new expired_context based on the context, and expiry_info object.
+     *
+     * @param   \context        $context
+     * @param   expiry_info     $info
+     * @return  expired_context
+     */
+    public static function create_from_expiry_info(\context $context, expiry_info $info) : expired_context {
+        $record = (object) [
+            'contextid' => $context->id,
+            'status' => self::STATUS_EXPIRED,
+        ];
+
+        $expiredcontext = new static(0, $record);
+        $expiredcontext->save();
+
+        return $expiredcontext;
+    }
+
+    /**
+     * Update the expired_context from an expiry_info object which relates to this context.
+     *
+     * @param   expiry_info     $info
+     * @return  $this
+     */
+    public function update_from_expiry_info(expiry_info $info) : expired_context {
+        return $this;
+    }
+
+    /**
+     * Check whether this expired_context record is in a state ready for deletion to actually take place.
+     *
+     * @return  bool
+     */
+    public function can_process_deletion() : bool {
+        return ($this->get('status') == self::STATUS_APPROVED);
+    }
+
+    /**
+     * Check whether this expired_context record has already been cleaned.
+     *
+     * @return  bool
+     */
+    public function is_complete() : bool {
+        return ($this->get('status') == self::STATUS_CLEANED);
+    }
 }
