@@ -191,4 +191,39 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
         $select = "userid = :userid AND component = :component $areasql $itemsql AND contextid $insql";
         $DB->delete_records_select('comments', $select, $params);
     }
+
+    /**
+     * Deletes all records for a context from a list of approved users.
+     *
+     * @param  \core_privacy\local\request\approved_userlist $userlist Contains the list of users and
+     * a context to be deleted from.
+     * @param  string $component Component to delete from.
+     * @param  string $commentarea Area to delete from.
+     * @param  int $itemid The item id to delete from.
+     */
+    public static function delete_comments_for_users(\core_privacy\local\request\approved_userlist $userlist,
+            string $component, string $commentarea = null, int $itemid = null) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        $params = [
+            'contextid' => $context->id,
+            'component' => $component,
+        ];
+        $areasql = '';
+        if (isset($commentarea)) {
+            $params['commentarea'] = $commentarea;
+            $areasql = 'AND commentarea = :commentarea';
+        }
+        $itemsql = '';
+        if (isset($itemid)) {
+            $params['itemid'] = $itemid;
+            $itemsql = 'AND itemid = :itemid';
+        }
+        list($insql, $inparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+        $params += $inparams;
+
+        $select = "contextid = :contextid AND component = :component {$areasql} {$itemsql} AND userid {$insql}";
+        $DB->delete_records_select('comments', $select, $params);
+    }
 }
