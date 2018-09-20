@@ -894,7 +894,7 @@ function enrol_user_sees_own_courses($user = null) {
 function order_courses_univalle($courses){
     /****Ordenar los cursos porque están en forma ascendente*****/
     $courses = array_reverse($courses, true);
-    $separated_courses = separated_by_type_course($courses);
+    $separated_courses = separated_courses_by_category($courses);
     $presenciales = $separated_courses[0];
     $otros = $separated_courses[1];
     $courses = array_merge($presenciales,$otros);
@@ -924,7 +924,22 @@ function separated_by_type_course($courses){
     }
     $courses = [$cursos_presenciales,$cursos_otros];  
     return $courses;
-} 
+}
+
+function separated_courses_by_category($courses){
+    $cursos_presenciales = array();
+    $cursos_otros = array();
+    foreach ($courses as $course) {
+        //si pertenece a la categoría presencial añadimos un cero para que sea ordenado de primero
+        if($course->category >= 30000){
+            $cursos_presenciales[] = $course;
+        }else{
+            $cursos_otros[]=$course;
+        }          
+    }
+    $courses = [$cursos_presenciales,$cursos_otros];  
+    return $courses;
+}
 
 
 /**
