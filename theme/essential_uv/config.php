@@ -54,6 +54,7 @@ if (get_config('theme_essential_uv', 'customscrollbars')) {
 }
 
 $THEME->sheets[] = 'custom';
+$THEME->sheets[] = 'uv_requirements';
 
 $THEME->supportscssoptimisation = false;
 

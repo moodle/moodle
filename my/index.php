@@ -161,6 +161,8 @@ if (empty($CFG->forcedefaultmymoodle) && $PAGE->user_allowed_editing()) {
     $USER->editing = $edit = 0;
 }
 
+
+
 echo $OUTPUT->header();
 
 echo $OUTPUT->custom_block_region('content');
