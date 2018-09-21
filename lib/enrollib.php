@@ -903,7 +903,7 @@ function order_courses_univalle($courses){
 
 
 /**
-* separated_by_type_course
+* separated_courses_by_category
 * recibe los cursos de un usuario y devuelve dos array con los cursos separados por presencial 
 * y no presenciales.
 * @author Hernán
@@ -911,21 +911,6 @@ function order_courses_univalle($courses){
 * @return array(array,array) $courses
 *
 */
-function separated_by_type_course($courses){
-    $cursos_presenciales = array();
-    $cursos_otros = array();
-    foreach ($courses as $course) {
-        //si pertenece a la categoría presencial añadimos un cero para que sea ordenado de primero
-        if($course->category >= 30000){
-            $cursos_presenciales[] = $course;
-        }else{
-            $cursos_otros[]=$course;
-        }          
-    }
-    $courses = [$cursos_presenciales,$cursos_otros];  
-    return $courses;
-}
-
 function separated_courses_by_category($courses){
     $cursos_presenciales = array();
     $cursos_otros = array();

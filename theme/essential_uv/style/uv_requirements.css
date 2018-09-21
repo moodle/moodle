@@ -1,0 +1,45 @@
+/**
+* Hoja de estilos para personalizar los requerimientos
+* del campus virtual de la universidad del valle
+**/
+
+
+
+
+
+
+
+
+
+/**
+* modulo delete_course_old 
+**/
+#page-my-index .alert.alert-warning h3{
+    font-size: 1.2rem !important;
+}
+#page-course-delete_course_old-index .alert.alert-warning h3{
+    font-size: 1.2rem !important;
+}
+#page-course-delete_course_old-index .generaltable{
+    margin-left: auto;
+    margin-right: auto;
+    width:90% !important;
+}
+
+#page-course-delete_course_old-index .modal-backdrop.fade.in{
+    opacity: 0.8;
+    z-index: 0;
+}
+
+#page-course-delete_course_old-index tbody .eliminar_modal:hover{
+    background-color: white !important;
+}
+
+
+#page-course-delete_course_old-index tbody i.fa.fa-trash{
+    color: white !important;
+}
+
+#page-course-delete_course_old-index tbody i.fa.fa-trash:hover{
+    color: #2c4252 !important;
+}
