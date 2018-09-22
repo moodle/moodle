@@ -218,6 +218,9 @@ preferences,moodle|/user/preferences.php|t/preferences',
     // coursecontact is the person responsible for course - usually manages enrolments, receives notification, etc.
     $temp = new admin_settingpage('coursecontact', new lang_string('courses'));
     $temp->add(new admin_setting_special_coursecontact());
+    $temp->add(new admin_setting_configcheckbox('coursecontactduplicates',
+            new lang_string('coursecontactduplicates', 'admin'),
+            new lang_string('coursecontactduplicates_desc', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('courselistshortnames',
             new lang_string('courselistshortnames', 'admin'),
             new lang_string('courselistshortnames_desc', 'admin'), 0));
