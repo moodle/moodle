@@ -28,6 +28,7 @@ $string['pluginname_link'] = 'question/type/ordering';
 $string['pluginnameadding'] = 'Adding an Ordering question';
 $string['pluginnameediting'] = 'Editing an Ordering question';
 $string['pluginnamesummary'] = 'Put jumbled items into a meaningful order.';
+$string['privacy:metadata'] = 'The ordering question type plugin does not store any personal data.';
 
 $string['editingordering'] = 'Editing ordering question';
 $string['addingordering'] = 'Adding a Ordering question';
