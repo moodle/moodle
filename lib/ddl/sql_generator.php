@@ -1129,7 +1129,7 @@ abstract class sql_generator {
      * if it's a reserved word
      *
      * @param string|array $input String to quote.
-     * @return string Quoted string.
+     * @return string|array Quoted string.
      */
     public function getEncQuoted($input) {
 
@@ -1407,5 +1407,45 @@ abstract class sql_generator {
         $s = str_replace("\0","\\\0", $s);
         $s = str_replace("'",  "\\'", $s);
         return $s;
+    }
+
+    /**
+     * Get the fields from an index definition that might be null.
+     * @param xmldb_table $xmldb_table the table
+     * @param xmldb_index $xmldb_index the index
+     * @return array list of fields in the index definition that might be null.
+     */
+    public function get_nullable_fields_in_index($xmldb_table, $xmldb_index) {
+        global $DB;
+
+        // If we don't have the field info passed in, we need to query it from the DB.
+        $fieldsfromdb = null;
+
+        $nullablefields = [];
+        foreach ($xmldb_index->getFields() as $fieldname) {
+            if ($field = $xmldb_table->getField($fieldname)) {
+                // We have the field details in the table definition.
+                if ($field->getNotNull() !== XMLDB_NOTNULL) {
+                    $nullablefields[] = $fieldname;
+                }
+
+            } else {
+                // We don't have the table definition loaded. Need to
+                // inspect the database.
+                if ($fieldsfromdb === null) {
+                    $fieldsfromdb = $DB->get_columns($xmldb_table->getName(), false);
+                }
+                if (!isset($fieldsfromdb[$fieldname])) {
+                    throw new coding_exception('Unknown field ' . $fieldname .
+                            ' in index ' . $xmldb_index->getName());
+                }
+
+                if (!$fieldsfromdb[$fieldname]->not_null) {
+                    $nullablefields[] = $fieldname;
+                }
+            }
+        }
+
+        return $nullablefields;
     }
 }

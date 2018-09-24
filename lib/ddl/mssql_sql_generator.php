@@ -140,6 +140,36 @@ class mssql_sql_generator extends sql_generator {
         return $tablename;
     }
 
+    public function getCreateIndexSQL($xmldb_table, $xmldb_index) {
+        list($indexsql) = parent::getCreateIndexSQL($xmldb_table, $xmldb_index);
+
+        // Unique indexes need to work-around non-standard SQL server behaviour.
+        if ($xmldb_index->getUnique()) {
+            // Find any nullable columns. We need to add a
+            // WHERE field IS NOT NULL to the index definition for each one.
+            //
+            // For example if you have a unique index on the three columns
+            // (required, option1, option2) where the first one is non-null,
+            // and the others nullable, then the SQL will end up as
+            //
+            // CREATE UNIQUE INDEX index_name ON table_name (required, option1, option2)
+            // WHERE option1 IS NOT NULL AND option2 IS NOT NULL
+            //
+            // The first line comes from parent calls above. The WHERE is added below.
+            $extraconditions = [];
+            foreach ($this->get_nullable_fields_in_index($xmldb_table, $xmldb_index) as $fieldname) {
+                $extraconditions[] = $this->getEncQuoted($fieldname) .
+                        ' IS NOT NULL';
+            }
+
+            if ($extraconditions) {
+                $indexsql .= ' WHERE ' . implode(' AND ', $extraconditions);
+            }
+        }
+
+        return [$indexsql];
+    }
+
     /**
      * Given one correct xmldb_table, returns the SQL statements
      * to create temporary table (inside one array).

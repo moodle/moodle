@@ -26,8 +26,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 class core_ddl_testcase extends database_driver_testcase {
+    /** @var xmldb_table[] keys are table name. Created in setUp. */
     private $tables = array();
-    private $records= array();
+    /** @var array table name => array of stdClass test records loaded into that table. Created in setUp. */
+    private $records = array();
 
     protected function setUp() {
         parent::setUp();
@@ -2287,6 +2289,28 @@ class core_ddl_testcase extends database_driver_testcase {
                     break;
             }
         }
+    }
+
+    public function test_get_nullable_fields_in_index() {
+        $DB = $this->tdb;
+        $gen = $DB->get_manager()->generator;
+
+        $indexwithoutnulls = $this->tables['test_table0']->getIndex('type-name');
+        $this->assertSame([], $gen->get_nullable_fields_in_index(
+                $this->tables['test_table0'], $indexwithoutnulls));
+
+        $indexwithnulls = new xmldb_index('course-grade', XMLDB_INDEX_UNIQUE, ['course', 'grade']);
+        $this->assertSame(['grade'], $gen->get_nullable_fields_in_index(
+                $this->tables['test_table0'], $indexwithnulls));
+
+        $this->create_deftable('test_table0');
+
+        // Now test using a minimal xmldb_table, to ensure we get the data from the DB.
+        $table = new xmldb_table('test_table0');
+        $this->assertSame([], $gen->get_nullable_fields_in_index(
+                $table, $indexwithoutnulls));
+        $this->assertSame(['grade'], $gen->get_nullable_fields_in_index(
+                $table, $indexwithnulls));
     }
 
     // Following methods are not supported == Do not test.
