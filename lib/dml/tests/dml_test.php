@@ -2426,6 +2426,9 @@ class core_dml_testcase extends database_driver_testcase {
         // Insert one record. Should be OK (no exception).
         $DB->insert_record($tablename, (object) ['notnull1' => 1, 'nullable1' => 1, 'nullable2' => 1]);
 
+        $this->assertEquals(1, $DB->count_records($table->getName()));
+        $this->assertEquals(1, $DB->count_records($table->getName(), ['nullable1' => 1]));
+
         // Inserting a duplicate should fail.
         try {
             $DB->insert_record($tablename, (object) ['notnull1' => 1, 'nullable1' => 1, 'nullable2' => 1]);
@@ -2434,15 +2437,32 @@ class core_dml_testcase extends database_driver_testcase {
             $this->assertInstanceOf('dml_write_exception', $e);
         }
 
+        $this->assertEquals(1, $DB->count_records($table->getName()));
+        $this->assertEquals(1, $DB->count_records($table->getName(), ['nullable1' => 1]));
+
         // Inserting a record with nulls in the nullable columns should work.
         $DB->insert_record($tablename, (object) ['notnull1' => 1, 'nullable1' => null, 'nullable2' => null]);
+
+        $this->assertEquals(2, $DB->count_records($table->getName()));
+        $this->assertEquals(1, $DB->count_records($table->getName(), ['nullable1' => 1]));
 
         // And it should be possible to insert a duplicate.
         $DB->insert_record($tablename, (object) ['notnull1' => 1, 'nullable1' => null, 'nullable2' => null]);
 
+        $this->assertEquals(3, $DB->count_records($table->getName()));
+        $this->assertEquals(1, $DB->count_records($table->getName(), ['nullable1' => 1]));
+
         // Same, but with only one of the nullable columns being null.
         $DB->insert_record($tablename, (object) ['notnull1' => 1, 'nullable1' => 1, 'nullable2' => null]);
+
+        $this->assertEquals(4, $DB->count_records($table->getName()));
+        $this->assertEquals(2, $DB->count_records($table->getName(), ['nullable1' => 1]));
+
         $DB->insert_record($tablename, (object) ['notnull1' => 1, 'nullable1' => 1, 'nullable2' => null]);
+
+        $this->assertEquals(5, $DB->count_records($table->getName()));
+        $this->assertEquals(3, $DB->count_records($table->getName(), ['nullable1' => 1]));
+
     }
 
     public function test_import_record() {
