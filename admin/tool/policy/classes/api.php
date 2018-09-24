@@ -309,8 +309,8 @@ class api {
             return true;
         }
 
-        // Users have access to all the policies they have ever accepted.
-        if (static::is_user_version_accepted($userid, $policy->id)) {
+        // Users have access to all the policies they have ever accepted/declined.
+        if (static::is_user_version_accepted($userid, $policy->id) !== null) {
             return true;
         }
 
@@ -719,20 +719,22 @@ class api {
     }
 
     /**
-     * Returns version acceptance for this user.
+     * Did the user accept the given policy version?
      *
      * @param int $userid User identifier.
      * @param int $versionid Policy version identifier.
-     * @param array|null $acceptances Iist of policy version acceptances indexed by versionid.
-     * @return bool True if this user has accepted this policy version; false otherwise.
+     * @param array|null $acceptances Pre-loaded list of policy version acceptances indexed by versionid.
+     * @return bool|null True/false if this user accepted/declined the policy; null otherwise.
      */
     public static function is_user_version_accepted($userid, $versionid, $acceptances = null) {
+
         $acceptance = static::get_user_version_acceptance($userid, $versionid, $acceptances);
+
         if (!empty($acceptance)) {
-            return $acceptance->status;
+            return (bool) $acceptance->status;
         }
 
-        return false;
+        return null;
     }
 
     /**

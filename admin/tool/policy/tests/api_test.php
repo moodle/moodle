@@ -632,4 +632,27 @@ class tool_policy_api_testcase extends advanced_testcase {
 
         require_login(null, false, null, false, true);
     }
+
+    /**
+     * Test the three-state logic of the value returned by {@link api::is_user_version_accepted()}.
+     */
+    public function test_is_user_version_accepted() {
+
+        $preloadedacceptances = [
+            4 => (object) [
+                'policyversionid' => 4,
+                'mainuserid' => 13,
+                'status' => 1,
+            ],
+            6 => (object) [
+                'policyversionid' => 6,
+                'mainuserid' => 13,
+                'status' => 0,
+            ],
+        ];
+
+        $this->assertTrue(api::is_user_version_accepted(13, 4, $preloadedacceptances));
+        $this->assertFalse(api::is_user_version_accepted(13, 6, $preloadedacceptances));
+        $this->assertNull(api::is_user_version_accepted(13, 5, $preloadedacceptances));
+    }
 }
