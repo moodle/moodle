@@ -1006,7 +1006,7 @@ class api {
      * @param \core\event\user_created $event
      */
     public static function create_acceptances_user_created(\core\event\user_created $event) {
-        global $CFG, $DB;
+        global $USER, $CFG, $DB;
 
         // Do nothing if not set as the site policies handler.
         if (empty($CFG->sitepolicyhandler) || $CFG->sitepolicyhandler !== 'tool_policy') {
@@ -1020,29 +1020,35 @@ class api {
         if (!$user->policyagreed) {
             return;
         }
-        // Remove the presignup cache after the user account is created.
+
+        // Cleanup our bits in the presignup cache (we can not rely on them at this stage any more anyway).
         $cache = \cache::make('core', 'presignup');
         $cache->delete('tool_policy_userpolicyagreed');
         $cache->delete('tool_policy_viewedpolicies');
+        $cache->delete('tool_policy_policyversionidsagreed');
 
-        // Get all active policies.
-        $currentpolicyversions = static::get_current_versions_ids(policy_version::AUDIENCE_LOGGEDIN);
-        // Save active policies as accepted by the user.
-        if (!empty($currentpolicyversions)) {
+        // Mark all compulsory policies as implicitly accepted during the signup.
+        if ($policyversions = static::list_current_versions(policy_version::AUDIENCE_LOGGEDIN)) {
             $acceptances = array();
-            foreach ($currentpolicyversions as $policy) {
+            $now = time();
+            foreach ($policyversions as $policyversion) {
+                if ($policyversion->optional == policy_version::AGREEMENT_OPTIONAL) {
+                    continue;
+                }
                 $acceptances[] = array(
-                    'policyversionid' => $policy,
+                    'policyversionid' => $policyversion->id,
                     'userid' => $userid,
                     'status' => 1,
                     'lang' => $lang,
-                    'usermodified' => 0,
-                    'timecreated' => time(),
-                    'timemodified' => time()
+                    'usermodified' => isset($USER->id) ? $USER->id : 0,
+                    'timecreated' => $now,
+                    'timemodified' => $now,
                 );
             }
             $DB->insert_records('tool_policy_acceptances', $acceptances);
         }
+
+        static::update_policyagreed($userid);
     }
 
     /**

@@ -92,6 +92,9 @@
     {{#accepturl}}
         <a role="button" href="{{accepturl}}" class="btn btn-primary">{{#str}} iagree, tool_policy, {{{policy.name}}} {{/str}}</a>
     {{/accepturl}}
+    {{#declineurl}}
+        <a role="button" href="{{declineurl}}" class="btn btn-link">{{#str}} idontagree, tool_policy, {{{policy.name}}} {{/str}}</a>
+    {{/declineurl}}
 
     <div class="pull-right">
         <a href="#top">

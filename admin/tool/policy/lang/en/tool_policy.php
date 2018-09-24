@@ -79,6 +79,7 @@ $string['filterpolicy'] = 'Policy: {$a}';
 $string['guestconsent:continue'] = 'Continue';
 $string['guestconsentmessage'] = 'If you continue browsing this website, you agree to our policies:';
 $string['iagree'] = 'I agree to the {$a}';
+$string['idontagree'] = 'No thanks, I do not agree';
 $string['iagreetothepolicy'] = 'Give consent';
 $string['inactivate'] = 'Set status to "Inactive"';
 $string['inactivating'] = 'Inactivating a policy';
