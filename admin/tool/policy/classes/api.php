@@ -849,15 +849,41 @@ class api {
     }
 
     /**
-     * Accepts the current revisions of all policies that the user has not yet accepted
+     * Mark the given policy versions as accepted by the user.
      *
-     * @param array|int $policyversionid
-     * @param int|null $userid
-     * @param string|null $note
-     * @param string|null $lang
+     * @param array|int $policyversionid Policy version id(s) to set acceptance status for.
+     * @param int|null $userid Id of the user accepting the policy version, defaults to the current one.
+     * @param string|null $note Note to be recorded.
+     * @param string|null $lang Language in which the policy was shown, defaults to the current one.
      */
     public static function accept_policies($policyversionid, $userid = null, $note = null, $lang = null) {
+        static::set_acceptances_status($policyversionid, $userid, $note, $lang, 1);
+    }
+
+    /**
+     * Mark the given policy versions as declined by the user.
+     *
+     * @param array|int $policyversionid Policy version id(s) to set acceptance status for.
+     * @param int|null $userid Id of the user accepting the policy version, defaults to the current one.
+     * @param string|null $note Note to be recorded.
+     * @param string|null $lang Language in which the policy was shown, defaults to the current one.
+     */
+    public static function decline_policies($policyversionid, $userid = null, $note = null, $lang = null) {
+        static::set_acceptances_status($policyversionid, $userid, $note, $lang, 0);
+    }
+
+    /**
+     * Mark the given policy versions as accepted or declined by the user.
+     *
+     * @param array|int $policyversionid Policy version id(s) to set acceptance status for.
+     * @param int|null $userid Id of the user accepting the policy version, defaults to the current one.
+     * @param string|null $note Note to be recorded.
+     * @param string|null $lang Language in which the policy was shown, defaults to the current one.
+     * @param int $status The acceptance status, defaults to 1 = accepted
+     */
+    protected static function set_acceptances_status($policyversionid, $userid = null, $note = null, $lang = null, $status = 1) {
         global $DB, $USER;
+
         // Validate arguments and capabilities.
         if (empty($policyversionid)) {
             return;
@@ -873,12 +899,16 @@ class api {
         list($sql, $params) = $DB->get_in_or_equal($policyversionid, SQL_PARAMS_NAMED);
         $sql = "SELECT v.id AS versionid, a.*
                   FROM {tool_policy_versions} v
-                  LEFT JOIN {tool_policy_acceptances} a ON a.userid = :userid AND a.policyversionid = v.id
-                  WHERE (a.id IS NULL or a.status <> 1) AND v.id " . $sql;
-        $needacceptance = $DB->get_records_sql($sql, ['userid' => $userid] + $params);
+             LEFT JOIN {tool_policy_acceptances} a ON a.userid = :userid AND a.policyversionid = v.id
+                 WHERE v.id $sql AND (a.id IS NULL OR a.status <> :status)";
+
+        $needacceptance = $DB->get_records_sql($sql, $params + [
+            'userid' => $userid,
+            'status' => $status,
+        ]);
 
         $realuser = manager::get_realuser();
-        $updatedata = ['status' => 1, 'lang' => $lang ?: current_language(),
+        $updatedata = ['status' => $status, 'lang' => $lang ?: current_language(),
             'timemodified' => time(), 'usermodified' => $realuser->id, 'note' => $note];
         foreach ($needacceptance as $versionid => $currentacceptance) {
             unset($currentacceptance->versionid);
@@ -913,23 +943,30 @@ class api {
             $user = $DB->get_record('user', ['id' => $user], 'id, policyagreed');
         }
 
-        $sql = "SELECT d.id, a.status
+        $sql = "SELECT d.id, v.optional, a.status
                   FROM {tool_policy} d
-                  INNER JOIN {tool_policy_versions} v ON v.policyid = d.id AND v.id = d.currentversionid
-                  LEFT JOIN {tool_policy_acceptances} a ON a.userid = :userid AND a.policyversionid = v.id
-                  WHERE (v.audience = :audience OR v.audience = :audienceall)";
+            INNER JOIN {tool_policy_versions} v ON v.policyid = d.id AND v.id = d.currentversionid
+             LEFT JOIN {tool_policy_acceptances} a ON a.userid = :userid AND a.policyversionid = v.id
+                 WHERE (v.audience = :audience OR v.audience = :audienceall)";
+
         $params = [
             'audience' => policy_version::AUDIENCE_LOGGEDIN,
             'audienceall' => policy_version::AUDIENCE_ALL,
             'userid' => $user->id
         ];
-        $policies = $DB->get_records_sql_menu($sql, $params);
-        $acceptedpolicies = array_filter($policies);
-        $policyagreed = (count($policies) == count($acceptedpolicies)) ? 1 : 0;
 
-        if ($user->policyagreed != $policyagreed) {
-            $user->policyagreed = $policyagreed;
-            $DB->set_field('user', 'policyagreed', $policyagreed, ['id' => $user->id]);
+        $allresponded = true;
+        foreach ($DB->get_records_sql($sql, $params) as $policyacceptance) {
+            if ($policyacceptance->optional == policy_version::AGREEMENT_COMPULSORY && empty($policyacceptance->status)) {
+                $allresponded = false;
+            } else if ($policyacceptance->optional == policy_version::AGREEMENT_OPTIONAL && $policyacceptance->status === null) {
+                $allresponded = false;
+            }
+        }
+
+        if ($user->policyagreed != $allresponded) {
+            $user->policyagreed = $allresponded;
+            $DB->set_field('user', 'policyagreed', $allresponded, ['id' => $user->id]);
         }
     }
 

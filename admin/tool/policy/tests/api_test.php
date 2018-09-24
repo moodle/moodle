@@ -471,15 +471,22 @@ class tool_policy_api_testcase extends advanced_testcase {
         api::make_current($policy1->id);
         $policy2 = $this->add_policy()->to_record();
         api::make_current($policy2->id);
+        $policy3 = $this->add_policy(['optional' => true])->to_record();
+        api::make_current($policy3->id);
 
         // Accept policy on behalf of somebody else.
         $user1 = $this->getDataGenerator()->create_user();
         $this->assertEquals(0, $DB->get_field('user', 'policyagreed', ['id' => $user1->id]));
 
+        // Accepting just compulsory policies is not enough, we want to hear explicitly about the optional one, too.
         api::accept_policies([$policy1->id, $policy2->id], $user1->id);
+        $this->assertEquals(0, $DB->get_field('user', 'policyagreed', ['id' => $user1->id]));
+
+        // Optional policy does not need to be accepted, but it must be answered explicitly.
+        api::decline_policies([$policy3->id], $user1->id);
         $this->assertEquals(1, $DB->get_field('user', 'policyagreed', ['id' => $user1->id]));
 
-        // Now revoke.
+        // Revoke previous agreement to a compulsory policy.
         api::revoke_acceptance($policy1->id, $user1->id);
         $this->assertEquals(0, $DB->get_field('user', 'policyagreed', ['id' => $user1->id]));
 
@@ -493,6 +500,12 @@ class tool_policy_api_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->get_field('user', 'policyagreed', ['id' => $user2->id]));
 
         api::accept_policies([$policy2->id]);
+        $this->assertEquals(0, $DB->get_field('user', 'policyagreed', ['id' => $user2->id]));
+
+        api::decline_policies([$policy3->id]);
+        $this->assertEquals(1, $DB->get_field('user', 'policyagreed', ['id' => $user2->id]));
+
+        api::accept_policies([$policy3->id]);
         $this->assertEquals(1, $DB->get_field('user', 'policyagreed', ['id' => $user2->id]));
     }
 
