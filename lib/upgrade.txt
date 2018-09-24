@@ -121,13 +121,11 @@ information provided here is intended especially for developers.
   - phone1
   - phone2
   - address
-* New function \context->delete_capabilities() correctly handles caching when deleting all of a context's capabilities.
 * New function mark_user_dirty() must be called after changing data that gets cached in user sessions. Examples:
   - Assigning roles to users.
   - Unassigning roles from users.
-  - Enroling users into courses.
-  - Unenroling users from courses.
-* New function \context->get_parent_context_paths() efficiently returns all parent context paths for a context.
+  - Enrolling users into courses.
+  - Unenrolling users from courses.
 
 === 3.5 ===
 
