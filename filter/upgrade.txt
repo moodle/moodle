@@ -13,7 +13,7 @@ information provided here is intended especially for developers.
 
   To understand how to use this, see the comment on filterobject::__construct and
   look at the filter_glossary changes as an example:
-  https://github.com/timhunt/moodle/commit/0b9220b527b1d70d2a2fad46c71f1cf2928f8759
+  https://github.com/moodle/moodle/commit/5a8c44d000ecc5669db26aefebe447f688e8f2ce
 
 === 3.0 ===
 
