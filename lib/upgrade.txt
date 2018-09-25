@@ -119,6 +119,8 @@ information provided here is intended especially for developers.
   - phone1
   - phone2
   - address
+* Added $CFG->conversionattemptlimit setting to config.php allowing a maximum number of retries before giving up conversion
+  of a given document by the assignfeedback_editpdf\task\convert_submissions task. Default value: 3.
 
 === 3.5 ===
 
