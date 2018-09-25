@@ -3050,6 +3050,7 @@ function forum_get_course_forum($courseid, $type) {
         case "news":
             $forum->name  = get_string("namenews", "forum");
             $forum->intro = get_string("intronews", "forum");
+            $forum->introformat = FORMAT_HTML;
             $forum->forcesubscribe = FORUM_FORCESUBSCRIBE;
             $forum->assessed = 0;
             if ($courseid == SITEID) {
@@ -3060,12 +3061,14 @@ function forum_get_course_forum($courseid, $type) {
         case "social":
             $forum->name  = get_string("namesocial", "forum");
             $forum->intro = get_string("introsocial", "forum");
+            $forum->introformat = FORMAT_HTML;
             $forum->assessed = 0;
             $forum->forcesubscribe = 0;
             break;
         case "blog":
             $forum->name = get_string('blogforum', 'forum');
             $forum->intro = get_string('introblog', 'forum');
+            $forum->introformat = FORMAT_HTML;
             $forum->assessed = 0;
             $forum->forcesubscribe = 0;
             break;
