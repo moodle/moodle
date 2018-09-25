@@ -92,6 +92,10 @@ class event_exporter extends event_exporter_base {
         }
         $values['url'] = $url->out(false);
 
+        // Override default formatted time to make sure the date portion of the time is always rendered.
+        $legacyevent = container::get_event_mapper()->from_event_to_legacy_event($event);
+        $values['formattedtime'] = calendar_format_event_time($legacyevent, time(), null, false);
+
         if ($event instanceof action_event_interface) {
             $actionrelated = [
                 'context' => $context,
