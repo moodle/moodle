@@ -70,8 +70,8 @@ class convert_submissions extends scheduled_task {
 
             // Record that we're attempting the conversion ahead of time.
             // We can't do this afterwards as its possible for the conversion process to crash the script entirely.
-            $record->attemptedconversions++;
-            $DB->update_record('assignfeedback_editpdf_queue', $record);
+            $DB->set_field('assignfeedback_editpdf_queue', 'attemptedconversions',
+                    $record->attemptedconversions + 1, ['id' => $record->id]);
 
             $assignmentid = $submission->assignment;
             $attemptnumber = $record->submissionattempt;
