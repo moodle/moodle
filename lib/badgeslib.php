@@ -1054,7 +1054,7 @@ function badges_bake($hash, $badgeid, $userid = 0, $pathhash = false) {
 
     $fs = get_file_storage();
     if (!$fs->file_exists($user_context->id, 'badges', 'userbadge', $badge->id, '/', $hash . '.png')) {
-        if ($file = $fs->get_file($badge_context->id, 'badges', 'badgeimage', $badge->id, '/', 'f1.png')) {
+        if ($file = $fs->get_file($badge_context->id, 'badges', 'badgeimage', $badge->id, '/', 'f3.png')) {
             $contents = $file->get_content();
 
             $filehandler = new PNG_MetaDataHandler($contents);
