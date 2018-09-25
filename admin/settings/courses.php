@@ -44,6 +44,12 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         )
     );
     $ADMIN->add('courses',
+        new admin_externalpage('addnewcourse', new lang_string('addnewcourse'),
+            new moodle_url('/course/edit.php', array('category' => 0)),
+            array('moodle/category:manage')
+        )
+    );
+    $ADMIN->add('courses',
         new admin_externalpage('restorecourse', new lang_string('restorecourse', 'admin'),
             new moodle_url('/backup/restorefile.php', array('contextid' => context_system::instance()->id)),
             array('moodle/restore:restorecourse')

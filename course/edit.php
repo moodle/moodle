@@ -103,8 +103,13 @@ if ($id) {
     $PAGE->set_context($catcontext);
 
 } else {
+    // Creating new course in default category.
+    $course = null;
     require_login();
-    print_error('needcoursecategroyid');
+    $category = core_course_category::get_default();
+    $catcontext = context_coursecat::instance($category->id);
+    require_capability('moodle/course:create', $catcontext);
+    $PAGE->set_context($catcontext);
 }
 
 // Prepare course and the editor.
