@@ -8179,6 +8179,15 @@ function admin_search_settings_html($query) {
             continue;
         }
 
+        // Locate the page in the admin root and populate its visiblepath attribute.
+        $path = array();
+        $located = $adminroot->locate($page->name, true);
+        if ($located) {
+            foreach ($located->visiblepath as $pathitem) {
+                array_unshift($path, (string) $pathitem);
+            }
+        }
+
         $sectionsettings = [];
         if (!empty($settings)) {
             foreach ($settings as $setting) {
@@ -8198,6 +8207,7 @@ function admin_search_settings_html($query) {
 
         $tpldata->results[] = (object) [
             'title' => $heading,
+            'path' => $path,
             'url' => $headingurl->out(false),
             'settings' => $sectionsettings
         ];

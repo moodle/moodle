@@ -858,3 +858,26 @@ img.iconsmall {
 #page-admin-registration-index form .mark {
     background-color: @warningBackground;
 }
+
+#page-admin-search {
+    .adminpagetitle {
+        margin-bottom: 0;
+        border-bottom: none;
+    }
+    .adminpagepath {
+        list-style: none;
+        margin: 0 0 10px 0;
+        li {
+            .muted;
+            display: inline;
+            font-size: @fontSizeSmall;
+            + li:before {
+                content: "◀\00a0";
+                /*rtl:remove*/
+                content: "▶\00a0"; /* stylelint-disable-line declaration-block-no-duplicate-properties */
+                color: #ccc;
+                font-size: @fontSizeSmall;
+            }
+        }
+    }
+}

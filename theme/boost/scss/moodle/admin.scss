@@ -804,3 +804,26 @@
 #overriderolestable .overriddenpermission {
     @extend .table-warning;
 }
+
+#page-admin-search {
+    .adminpagetitle {
+        margin-bottom: 0;
+        border-bottom: none;
+    }
+    .adminpagepath {
+        display: flex;
+        flex-wrap: wrap;
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1.5rem 0;
+        li {
+            @extend .text-muted;
+            @extend .small;
+            + li:before {
+                padding-right: 0.5rem;
+                padding-left: 0.5rem;
+                content: "#{$breadcrumb-divider}";
+            }
+        }
+    }
+}

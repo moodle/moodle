@@ -5575,6 +5575,27 @@ img.iconsmall {
 #page-admin-registration-index form .mark {
   background-color: #fcf8e3;
 }
+#page-admin-search .adminpagetitle {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+#page-admin-search .adminpagepath {
+  list-style: none;
+  margin: 0 0 10px 0;
+}
+#page-admin-search .adminpagepath li {
+  color: #999;
+  display: inline;
+  font-size: 11.9px;
+}
+#page-admin-search .adminpagepath li + li:before {
+  content: "◀\00a0";
+  /*rtl:remove*/
+  content: "▶\00a0";
+  /* stylelint-disable-line declaration-block-no-duplicate-properties */
+  color: #ccc;
+  font-size: 11.9px;
+}
 /* calendar.less */
 .calendar_event_category {
   background-color: #d8bfd8;
