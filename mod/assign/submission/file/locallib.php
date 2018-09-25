@@ -67,11 +67,13 @@ class assign_submission_file extends assign_submission_plugin {
     public function get_settings(MoodleQuickForm $mform) {
         global $CFG, $COURSE;
 
-        $defaultmaxfilesubmissions = $this->get_config('maxfilesubmissions');
-        $defaultmaxsubmissionsizebytes = $this->get_config('maxsubmissionsizebytes');
         if ($this->assignment->has_instance()) {
+            $defaultmaxfilesubmissions = $this->get_config('maxfilesubmissions');
+            $defaultmaxsubmissionsizebytes = $this->get_config('maxsubmissionsizebytes');
             $defaultfiletypes = $this->get_config('filetypeslist');
         } else {
+            $defaultmaxfilesubmissions = get_config('assignsubmission_file', 'maxfiles');
+            $defaultmaxsubmissionsizebytes = get_config('assignsubmission_file', 'maxbytes');
             $defaultfiletypes = get_config('assignsubmission_file', 'filetypes');
         }
         $defaultfiletypes = (string)$defaultfiletypes;
