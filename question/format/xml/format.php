@@ -236,6 +236,8 @@ class qformat_xml extends qformat_default {
             $qo->questiontext .= ' <img src="@@PLUGINFILE@@/' . $filename . '" />';
         }
 
+        $qo->idnumber = $this->getpath($question, ['#', 'idnumber', 0, '#'], null);
+
         // Restore files in generalfeedback.
         $generalfeedback = $this->import_text_with_files($question,
                 array('#', 'generalfeedback', 0), $qo->generalfeedback, $this->get_format($qo->questiontextformat));
@@ -1217,6 +1219,7 @@ class qformat_xml extends qformat_default {
         }
         $expout .= "    <penalty>{$question->penalty}</penalty>\n";
         $expout .= "    <hidden>{$question->hidden}</hidden>\n";
+        $expout .= "    <idnumber>{$question->idnumber}</idnumber>\n";
 
         // The rest of the output depends on question type.
         switch($question->qtype) {

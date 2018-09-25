@@ -2360,5 +2360,44 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018091700.01);
     }
 
+    // Add idnumber fields to question and question_category tables.
+    // This is done in four parts to aid error recovery during upgrade, should that occur.
+    if ($oldversion < 2018092100.01) {
+        $table = new xmldb_table('question');
+        $field = new xmldb_field('idnumber', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'modifiedby');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_main_savepoint(true, 2018092100.01);
+    }
+
+    if ($oldversion < 2018092100.02) {
+        $table = new xmldb_table('question');
+        $index = new xmldb_index('categoryidnumber', XMLDB_INDEX_UNIQUE, array('category, idnumber'));
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        upgrade_main_savepoint(true, 2018092100.02);
+    }
+
+    if ($oldversion < 2018092100.03) {
+        $table = new xmldb_table('question_categories');
+        $field = new xmldb_field('idnumber', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'sortorder');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_main_savepoint(true, 2018092100.03);
+    }
+
+    if ($oldversion < 2018092100.04) {
+        $table = new xmldb_table('question_categories');
+        $index = new xmldb_index('contextididnumber', XMLDB_INDEX_UNIQUE, array('contextid, idnumber'));
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018092100.04);
+    }
+
     return true;
 }

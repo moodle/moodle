@@ -63,6 +63,10 @@ class question_category_edit_form extends moodleform {
         $mform->setDefault('info', '');
         $mform->setType('info', PARAM_RAW);
 
+        $mform->addElement('text', 'idnumber', get_string('idnumber', 'question'), 'maxlength="100"  size="10"');
+        $mform->addHelpButton('idnumber', 'idnumber', 'question');
+        $mform->setType('idnumber', PARAM_RAW);
+
         $this->add_action_buttons(false, get_string('addcategory', 'question'));
 
         $mform->addElement('hidden', 'id', 0);
@@ -80,5 +84,34 @@ class question_category_edit_form extends moodleform {
             $current['info'] = array('text' => '', 'infoformat' => FORMAT_HTML);
         }
         parent::set_data($current);
+    }
+
+    /**
+     * Validation.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array the errors that were found
+     */
+    public function validation($data, $files) {
+        global $DB;
+
+        $errors = parent::validation($data, $files);
+
+        // Add field validation check for duplicate idnumber.
+        list($parentid, $contextid) = explode(',', $data['parent']);
+        if (((string) $data['idnumber'] !== '') && !empty($contextid)) {
+            $conditions = 'contextid = ? AND idnumber = ?';
+            $params = [$contextid, $data['idnumber']];
+            if (!empty($data['id'])) {
+                $conditions .= ' AND id <> ?';
+                $params[] = $data['id'];
+            }
+            if ($DB->record_exists_select('question_categories', $conditions, $params)) {
+                $errors['idnumber'] = get_string('idnumbertaken', 'error');
+            }
+        }
+
+        return $errors;
     }
 }
