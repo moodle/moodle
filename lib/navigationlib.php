@@ -687,6 +687,15 @@ class navigation_node implements renderable {
     }
 
     /**
+     * Used to easily determine if this link in the breadcrumbs is hidden.
+     *
+     * @return boolean
+     */
+    public function is_hidden() {
+        return $this->hidden;
+    }
+
+    /**
      * Gets the CSS class to add to this node to describe its type
      *
      * @return string
