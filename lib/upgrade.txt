@@ -126,6 +126,9 @@ information provided here is intended especially for developers.
   - Unassigning roles from users.
   - Enrolling users into courses.
   - Unenrolling users from courses.
+* New optional parameter $context for the groups_get_members_join() function and ability to filter users that are not members of
+any group. Besides, groups_get_members_ids_sql, get_enrolled_sql and get_enrolled_users now accepts -1 (USERSWITHOUTGROUP) for
+the groupid field.
 
 === 3.5 ===
 
