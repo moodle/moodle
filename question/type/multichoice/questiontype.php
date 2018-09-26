@@ -60,7 +60,7 @@ class qtype_multichoice extends question_type {
             }
         }
         if ($answercount < 2) { // Check there are at lest 2 answers for multiple choice.
-            $result->notice = get_string('notenoughanswers', 'qtype_multichoice', '2');
+            $result->error = get_string('notenoughanswers', 'qtype_multichoice', '2');
             return $result;
         }
 
