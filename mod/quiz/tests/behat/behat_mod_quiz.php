@@ -595,7 +595,7 @@ class behat_mod_quiz extends behat_question_base {
      * @Given /^user "([^"]*)" has attempted "([^"]*)" with responses:$/
      */
     public function user_has_attempted_with_responses($username, $quizname, TableNode $attemptinfo) {
-        global $DB, $USER;
+        global $DB;
 
         /** @var mod_quiz_generator $quizgenerator */
         $quizgenerator = behat_util::get_data_generator()->get_plugin_generator('mod_quiz');
@@ -627,15 +627,14 @@ class behat_mod_quiz extends behat_question_base {
             }
         }
 
-        $saveduser = $USER; // TODO there is probably a better way to do this. If not, there should be.
-        $USER = $user;
+        $this->set_user($user);
 
         $attempt = $quizgenerator->create_attempt($quizid, $user->id,
                 $forcedrandomquestions, $forcedvariants);
 
         $quizgenerator->submit_responses($attempt->id, $responses, true);
 
-        $USER = $saveduser;
+        $this->set_user();
     }
 
     /**
@@ -650,19 +649,16 @@ class behat_mod_quiz extends behat_question_base {
      * @Given /^user "([^"]*)" has started an attempt at quiz "([^"]*)"$/
      */
     public function user_has_started_an_attempt_at_quiz($username, $quizname) {
-        global $DB, $USER;
+        global $DB;
 
         /** @var mod_quiz_generator $quizgenerator */
         $quizgenerator = behat_util::get_data_generator()->get_plugin_generator('mod_quiz');
 
         $quizid = $DB->get_field('quiz', 'id', ['name' => $quizname], MUST_EXIST);
         $user = $DB->get_record('user', ['username' => $username], '*', MUST_EXIST);
-
-        $saveduser = $USER; // TODO there is probably a better way to do this. If not, there should be.
-        $USER = $user;
-
+        $this->set_user($user);
         $quizgenerator->create_attempt($quizid, $user->id);
-        $USER = $saveduser;
+        $this->set_user();
     }
 
     /**
@@ -671,10 +667,11 @@ class behat_mod_quiz extends behat_question_base {
      * @param string $quizname the name of the quiz the user will attempt.
      * @param string $username the username of the user that will attempt.
      * @param TableNode $attemptinfo information about the questions to add, as above.
+     * @throws \Behat\Mink\Exception\ExpectationException
      * @Given /^user "([^"]*)" has submitted answers in their attempt at quiz "([^"]*)":$/
      */
     public function user_has_submitted_answers_in_their_attempt_at_quiz($username, $quizname, TableNode $attemptinfo) {
-        global $DB, $USER;
+        global $DB;
 
         /** @var mod_quiz_generator $quizgenerator */
         $quizgenerator = behat_util::get_data_generator()->get_plugin_generator('mod_quiz');
@@ -705,45 +702,36 @@ class behat_mod_quiz extends behat_question_base {
             }
         }
 
-        $saveduser = $USER; // TODO there is probably a better way to do this. If not, there should be.
-        $USER = $user;
+        $this->set_user($user);
+
         foreach (quiz_get_user_attempts($quizid, $user->id, 'unfinished', true) as $attemptid => $attemptobj) {
             $quizgenerator->submit_responses($attemptid, $responses, false);
             break;
         }
 
-        $USER = $saveduser;
-        $saveduser = $USER; // TODO there is probably a better way to do this. If not, there should be.
-        $USER = $user;
-
-        $USER = $saveduser;
+        $this->set_user();
     }
 
     /**
-     * Finish a quiz attempt.
+     * Finish an existing quiz attempt.
      *
      * @param string $quizname the name of the quiz the user will attempt.
      * @param string $username the username of the user that will attempt.
      * @Given /^user "([^"]*)" has finished an attempt at quiz "([^"]*)"$/
      */
     public function user_has_finished_an_attempt_at_quiz($username, $quizname) {
-        global $DB, $USER;
-
-        /** @var mod_quiz_generator $quizgenerator */
-        $quizgenerator = behat_util::get_data_generator()->get_plugin_generator('mod_quiz');
+        global $DB;
 
         $quizid = $DB->get_field('quiz', 'id', ['name' => $quizname], MUST_EXIST);
         $user = $DB->get_record('user', ['username' => $username], '*', MUST_EXIST);
 
-        $saveduser = $USER; // TODO there is probably a better way to do this. If not, there should be.
-        $USER = $user;
+        $this->set_user($user);
 
         foreach (quiz_get_user_attempts($quizid, $user->id, 'unfinished', true) as $attemptid => $attemptobj) {
             $attemptobj = quiz_attempt::create($attemptid);
             $attemptobj->process_finish(time(), true);
             break;
         }
-
-        $USER = $saveduser;
+        $this->set_user();
     }
 }
