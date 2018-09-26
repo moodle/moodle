@@ -59,39 +59,67 @@ class qformat_aiken extends qformat_default {
 
     public function readquestions($lines) {
         $questions = array();
-        $question = $this->defaultquestion();
+        $question = null;
         $endchar = chr(13);
+        $linenumber = 0;
         foreach ($lines as $line) {
             $stp = strpos($line, $endchar, 0);
             $newlines = explode($endchar, $line);
             $linescount = count($newlines);
             for ($i=0; $i < $linescount; $i++) {
+                $linenumber++;
                 $nowline = trim($newlines[$i]);
                 // Go through the array and build an object called $question
                 // When done, add $question to $questions.
                 if (strlen($nowline) < 2) {
                     continue;
                 }
-                if (preg_match('/^[A-Z][).][ \t]/', $nowline)) {
+                if (preg_match('/^[A-Z][).][ \t]?/', $nowline)) {
+                    if (is_null($question)) {
+                        // We have a response line, but we aren't currently in a question.
+                        $this->error(get_string('questionnotstarted', 'qformat_aiken', $linenumber));
+                        continue;
+                    }
+
                     // A choice. Trim off the label and space, then save.
                     $question->answer[] = $this->text_field(
                             htmlspecialchars(trim(substr($nowline, 2)), ENT_NOQUOTES));
                     $question->fraction[] = 0;
                     $question->feedback[] = $this->text_field('');
                 } else if (preg_match('/^ANSWER:/', $nowline)) {
+                    if (is_null($question)) {
+                        // We have an answer line, but we aren't currently in a question.
+                        $this->error(get_string('questionnotstarted', 'qformat_aiken', $linenumber));
+                        continue;
+                    }
+
                     // The line that indicates the correct answer. This question is finised.
                     $ans = trim(substr($nowline, strpos($nowline, ':') + 1));
                     $ans = substr($ans, 0, 1);
                     // We want to map A to 0, B to 1, etc.
                     $rightans = ord($ans) - ord('A');
+
+                    if (count($question->answer) < 2) {
+                        // The multichoice question requires at least 2 answers, or there will be a failure later.
+                        $this->error(get_string('questionmissinganswers', 'qformat_aiken', $linenumber), '', $question->name);
+                        $question = null;
+                        continue;
+                    }
+
                     $question->fraction[$rightans] = 1;
                     $questions[] = $question;
 
-                    // Clear array for next question set.
-                    $question = $this->defaultquestion();
+                    // Clear variable for next question set.
+                    $question = null;
                     continue;
                 } else {
                     // Must be the first line of a new question, since no recognised prefix.
+                    if (!is_null($question)) {
+                        // In this case, there was already an open question that we didn't complete. It is being discarded.
+                        $this->error(get_string('questionnotcomplete', 'qformat_aiken', $linenumber), '', $question->name);
+                    }
+
+                    $question = $this->defaultquestion();
                     $question->qtype = 'multichoice';
                     $question->name = $this->create_default_question_name($nowline, get_string('questionname', 'question'));
                     $question->questiontext = htmlspecialchars(trim($nowline), ENT_NOQUOTES);
