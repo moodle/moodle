@@ -51,6 +51,7 @@ class behat_tool_policy extends behat_base {
      * - Type: 0 - site policy, 1 - privacy policy, 2 - third party policy, 99 - other.
      * - Summary: Policy summary text.
      * - Content: Policy full text.
+     * - Agreement style (agreementstyle): 0 - On the consent page, 1 - On its own page
      *
      * @param TableNode $data
      */
@@ -69,6 +70,7 @@ class behat_tool_policy extends behat_base {
             'type',
             'content',
             'summary',
+            'agreementstyle',
         ];
 
         // Associative array "policy identifier" => id in the database .

@@ -92,6 +92,7 @@
         <div class="agreedoc-form m-t-1">
             <div class="agreedoc-checkbox">
                 <label>
+                    <input value="{{id}}" name="listdoc[]" type="hidden" >
                     <input value="{{id}}" name="agreedoc[]" {{#versionagreed}}checked="{{.}}"{{/versionagreed}} type="checkbox">
                     <strong>{{# str }}iagree, tool_policy, {{{name}}} {{/ str }}</strong>
                     <i class="icon fa fa-exclamation-circle text-danger fa-fw" title="{{# str }} required {{/ str }}" ></i>

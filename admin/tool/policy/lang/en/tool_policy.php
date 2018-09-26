@@ -129,6 +129,7 @@ $string['policydoctype2'] = 'Third parties policy';
 $string['policydoctype99'] = 'Other policy';
 $string['policydocuments'] = 'Policy documents';
 $string['policynamedversion'] = 'Policy {$a->name} (version {$a->revision} - {$a->id})';
+$string['policypriorityagreement'] = 'Show policy before showing other policies';
 $string['policyversionacceptedinbehalf'] = 'Consent for this policy has been given on your behalf.';
 $string['policyversionacceptedinotherlang'] = 'Consent for this policy version has been given in a different language.';
 $string['previousversions'] = '{$a} previous versions';

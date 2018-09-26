@@ -18,7 +18,8 @@
  * Show a user the policy documents to be agreed to.
  *
  * Script parameters:
- *  agreedoc=<array> Policy version id which have been accepted by the user.
+ *  listdoc=<array> List of policy version ids that were displayed to the user to accept.
+ *  agreedoc=<array> List of policy version ids that were accepted by the user.
  *  behalfid=<id> The user id to view the policy version as (such as child's id).
  *
  * @package     tool_policy
@@ -37,13 +38,18 @@ require(__DIR__.'/../../../config.php');
 
 $submit = optional_param('submit', null, PARAM_NOTAGS);
 $cancel = optional_param('cancel', null, PARAM_NOTAGS);
-$agreedocs = optional_param_array('agreedoc', null, PARAM_INT);
+$listdocs = optional_param_array('listdoc', [], PARAM_INT);
+$agreedocs = optional_param_array('agreedoc', [], PARAM_INT);
 $behalfid = optional_param('userid', null, PARAM_INT);
 
 $PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('standard');
 $PAGE->set_url('/admin/tool/policy/index.php');
 $PAGE->set_popup_notification_allowed(false);
+
+if (array_diff($agreedocs, $listdocs)) {
+    throw new moodle_exception('invalidaccessparameter');
+}
 
 if (isloggedin() && !isguestuser()) {
     // Existing user.
@@ -61,7 +67,7 @@ if (!$haspermissionagreedocs) {
     if (!$behalfid && \core\session\manager::is_loggedinas()) {
         $behalfid = $USER->id;
     }
-    $outputpage = new \tool_policy\output\page_agreedocs($agreedocs, $behalfid, $submit);
+    $outputpage = new \tool_policy\output\page_agreedocs($listdocs, $agreedocs, $behalfid, $submit);
 }
 
 $output = $PAGE->get_renderer('tool_policy');
