@@ -65,7 +65,7 @@ class qbehaviour_interactive extends question_behaviour_with_multiple_tries {
     /**
      * @return bool are we are currently in the try_again state.
      */
-    protected function is_try_again_state() {
+    public function is_try_again_state() {
         $laststep = $this->qa->get_last_step();
         return $this->qa->get_state()->is_active() && $laststep->has_behaviour_var('submit') &&
                 $laststep->has_behaviour_var('_triesleft');

@@ -44,19 +44,17 @@ Feature: Basic use of the Responses report
 
   @javascript
   Scenario: Report works when there are attempts
-    Given I log in as "student1"
-    And user "student1" has started an attempt at quiz "Quiz 1"
-    And user "student1" has submitted answers in their attempt at quiz "Quiz 1":
+    Given user "student1" has started an attempt at quiz "Quiz 1"
+    And user "student1" has checked answers in their attempt at quiz "Quiz 1":
       | slot | response |
       |   1  | 1.0      |
-    And user "student1" has submitted answers in their attempt at quiz "Quiz 1":
+    And user "student1" has checked answers in their attempt at quiz "Quiz 1":
       | slot | response |
       |   1  | 3.0      |
-    And user "student1" has submitted answers in their attempt at quiz "Quiz 1":
+    And user "student1" has checked answers in their attempt at quiz "Quiz 1":
       | slot | response |
       |   1  | 3.14     |
     And user "student1" has finished an attempt at quiz "Quiz 1"
-    And I log out
     When I log in as "teacher"
     And I am on "Course 1" course homepage
     And I follow "Quiz 1"

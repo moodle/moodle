@@ -121,8 +121,8 @@ class mod_quiz_generator extends testing_module_generator {
                     'be able to create one attempt for each user. (This should be fixed.)');
         }
 
-        return quiz_prepare_and_start_new_attempt($quizobj, 1, null,
-                $offlineattempt = false, $forcedrandomquestions = [], $forcedvariants);
+        return quiz_prepare_and_start_new_attempt($quizobj, 1, null, false,
+                $forcedrandomquestions, $forcedvariants);
     }
 
     /**
@@ -134,6 +134,8 @@ class mod_quiz_generator extends testing_module_generator {
      * @param int $attemptid the id of the attempt which is being
      * @param array $responses array responses to submit. See description on
      *      {@link core_question_generator::get_simulated_post_data_for_questions_in_usage()}.
+     * @param bool $checkbutton if simulate a click on the check button for each question, else simulate save.
+     *      This should only be used with behaviours that have a check button.
      * @param bool $finishattempt if true, the attempt will be submitted.
      */
     public function submit_responses($attemptid, array $responses, $checkbutton, $finishattempt) {
@@ -142,9 +144,27 @@ class mod_quiz_generator extends testing_module_generator {
         $attemptobj = quiz_attempt::create($attemptid);
 
         $postdata = $questiongenerator->get_simulated_post_data_for_questions_in_usage(
-                $attemptobj->get_question_usage(), $responses);
+                $attemptobj->get_question_usage(), $responses, $checkbutton);
 
         $attemptobj->process_submitted_actions(time(), false, $postdata);
+
+        // Bit if a hack for interactive behaviour.
+        // TODO handle this in a more plugin-friendly way.
+        if ($checkbutton) {
+            $postdata = [];
+            foreach ($responses as $slot => $notused) {
+                $qa = $attemptobj->get_question_attempt($slot);
+                if ($qa->get_behaviour() instanceof qbehaviour_interactive && $qa->get_behaviour()->is_try_again_state()) {
+                    $postdata[$qa->get_control_field_name('sequencecheck')] = (string)$qa->get_sequence_check_count();
+                    $postdata[$qa->get_flag_field_name()] = (string)(int)$qa->is_flagged();
+                    $postdata[$qa->get_behaviour_field_name('tryagain')] = 1;
+                }
+            }
+
+            if ($postdata) {
+                $attemptobj->process_submitted_actions(time(), false, $postdata);
+            }
+        }
 
         if ($finishattempt) {
             $attemptobj->process_finish(time(), false);

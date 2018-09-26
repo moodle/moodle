@@ -563,6 +563,60 @@ class behat_mod_quiz extends behat_question_base {
     }
 
     /**
+     * Helper used by user_has_attempted_with_responses,
+     * user_has_started_an_attempt_at_quiz_with_details, etc.
+     *
+     * @param TableNode $attemptinfo data table from the Behat step
+     * @return array with two elements, $forcedrandomquestions, $forcedvariants,
+     *      that can be passed to $quizgenerator->create_attempt.
+     */
+    protected function extract_forced_randomisation_from_attempt_info(TableNode $attemptinfo) {
+        global $DB;
+
+        $forcedrandomquestions = [];
+        $forcedvariants = [];
+        foreach ($attemptinfo->getHash() as $slotinfo) {
+            if (empty($slotinfo['slot'])) {
+                throw new ExpectationException('When simulating a quiz attempt, ' .
+                        'the slot column is required.', $this->getSession());
+            }
+
+            if (!empty($slotinfo['actualquestion'])) {
+                $forcedrandomquestions[$slotinfo['slot']] = $DB->get_field('question', 'id',
+                        ['name' => $slotinfo['actualquestion']], MUST_EXIST);
+            }
+
+            if (!empty($slotinfo['variant'])) {
+                $forcedvariants[$slotinfo['slot']] = (int) $slotinfo['variant'];
+            }
+        }
+        return [$forcedrandomquestions, $forcedvariants];
+    }
+
+    /**
+     * Helper used by user_has_attempted_with_responses, user_has_checked_answers_in_their_attempt_at_quiz,
+     * user_has_input_answers_in_their_attempt_at_quiz, etc.
+     *
+     * @param TableNode $attemptinfo data table from the Behat step
+     * @return array of responses that can be passed to $quizgenerator->submit_responses.
+     */
+    protected function extract_responses_from_attempt_info(TableNode $attemptinfo) {
+        $responses = [];
+        foreach ($attemptinfo->getHash() as $slotinfo) {
+            if (empty($slotinfo['slot'])) {
+                throw new ExpectationException('When simulating a quiz attempt, ' .
+                        'the slot column is required.', $this->getSession());
+            }
+            if (!array_key_exists('response', $slotinfo)) {
+                throw new ExpectationException('When simulating a quiz attempt, ' .
+                        'the response column is required.', $this->getSession());
+            }
+            $responses[$slotinfo['slot']] = $slotinfo['response'];
+        }
+        return $responses;
+    }
+
+    /**
      * Attempt a quiz.
      *
      * The first row should be column names:
@@ -603,36 +657,16 @@ class behat_mod_quiz extends behat_question_base {
         $quizid = $DB->get_field('quiz', 'id', ['name' => $quizname], MUST_EXIST);
         $user = $DB->get_record('user', ['username' => $username], '*', MUST_EXIST);
 
-        $forcedrandomquestions = [];
-        $forcedvariants = [];
-        $responses = [];
-        foreach ($attemptinfo->getHash() as $slotinfo) {
-            if (empty($slotinfo['slot'])) {
-                throw new ExpectationException('When simulating a quiz attempt, ' .
-                        'the slot column is required.', $this->getSession());
-            }
-            if (!array_key_exists('response', $slotinfo)) {
-                throw new ExpectationException('When simulating a quiz attempt, ' .
-                        'the response column is required.', $this->getSession());
-            }
-            $responses[$slotinfo['slot']] = $slotinfo['response'];
-
-            if (!empty($slotinfo['actualquestion'])) {
-                $forcedrandomquestions[$slotinfo['slot']] = $DB->get_field('question', 'id',
-                        ['name' => $slotinfo['actualquestion']], MUST_EXIST);
-            }
-
-            if (!empty($slotinfo['variant'])) {
-                $forcedvariants[$slotinfo['slot']] = (int) $slotinfo['variant'];
-            }
-        }
+        list($forcedrandomquestions, $forcedvariants) =
+                $this->extract_forced_randomisation_from_attempt_info($attemptinfo);
+        $responses = $this->extract_responses_from_attempt_info($attemptinfo);
 
         $this->set_user($user);
 
         $attempt = $quizgenerator->create_attempt($quizid, $user->id,
                 $forcedrandomquestions, $forcedvariants);
 
-        $quizgenerator->submit_responses($attempt->id, $responses, true);
+        $quizgenerator->submit_responses($attempt->id, $responses, false, true);
 
         $this->set_user();
     }
@@ -662,15 +696,18 @@ class behat_mod_quiz extends behat_question_base {
     }
 
     /**
-     * Submit answers to an existing quiz attempt.
+     * Start a quiz attempt without answers.
      *
-     * @param string $username the username of the user that will attempt.
+     * The supplied data table for have a row for each slot where you want
+     * to force either which random question was chose, or which random variant
+     * was used, as for {@link user_has_attempted_with_responses()} above.
+     *
      * @param string $quizname the name of the quiz the user will attempt.
+     * @param string $username the username of the user that will attempt.
      * @param TableNode $attemptinfo information about the questions to add, as above.
-     * @throws \Behat\Mink\Exception\ExpectationException
-     * @Given /^user "([^"]*)" has submitted answers in their attempt at quiz "([^"]*)":$/
+     * @Given /^user "([^"]*)" has started an attempt at quiz "([^"]*) randomised as follows:"$/
      */
-    public function user_has_submitted_answers_in_their_attempt_at_quiz($username, $quizname, TableNode $attemptinfo) {
+    public function user_has_started_an_attempt_at_quiz_with_details($username, $quizname, TableNode $attemptinfo) {
         global $DB;
 
         /** @var mod_quiz_generator $quizgenerator */
@@ -679,30 +716,84 @@ class behat_mod_quiz extends behat_question_base {
         $quizid = $DB->get_field('quiz', 'id', ['name' => $quizname], MUST_EXIST);
         $user = $DB->get_record('user', ['username' => $username], '*', MUST_EXIST);
 
-        $forcedvariants = [];
-        $responses = [];
-        foreach ($attemptinfo->getHash() as $slotinfo) {
-            if (empty($slotinfo['slot'])) {
-                throw new ExpectationException('When simulating a quiz attempt, ' .
-                    'the slot column is required.', $this->getSession());
-            }
-            if (!array_key_exists('response', $slotinfo)) {
-                throw new ExpectationException('When simulating a quiz attempt, ' .
-                    'the response column is required.', $this->getSession());
-            }
-            $responses[$slotinfo['slot']] = $slotinfo['response'];
-
-            if (!empty($slotinfo['variant'])) {
-                $forcedvariants[$slotinfo['slot']] = (int) $slotinfo['variant'];
-            }
-        }
+        list($forcedrandomquestions, $forcedvariants) =
+                $this->extract_forced_randomisation_from_attempt_info($attemptinfo);
 
         $this->set_user($user);
 
-        foreach (quiz_get_user_attempts($quizid, $user->id, 'unfinished', true) as $attemptid => $attemptobj) {
-            $quizgenerator->submit_responses($attemptid, $responses, false);
-            break;
-        }
+        $quizgenerator->create_attempt($quizid, $user->id,
+                $forcedrandomquestions, $forcedvariants);
+
+        $this->set_user();
+    }
+
+    /**
+     * Input answers to particular questions an existing quiz attempt, without
+     * simulating a click of the 'Check' button, if any.
+     *
+     * Then there should be a number of rows of data, with two columns slot and response,
+     * as for {@link user_has_attempted_with_responses()} above.
+     * There is no need to supply answers to all questions. If so, other questions will be
+     * left unanswered.
+     *
+     * @param string $username the username of the user that will attempt.
+     * @param string $quizname the name of the quiz the user will attempt.
+     * @param TableNode $attemptinfo information about the questions to add, as above.
+     * @throws \Behat\Mink\Exception\ExpectationException
+     * @Given /^user "([^"]*)" has input answers in their attempt at quiz "([^"]*)":$/
+     */
+    public function user_has_input_answers_in_their_attempt_at_quiz($username, $quizname, TableNode $attemptinfo) {
+        global $DB;
+
+        /** @var mod_quiz_generator $quizgenerator */
+        $quizgenerator = behat_util::get_data_generator()->get_plugin_generator('mod_quiz');
+
+        $quizid = $DB->get_field('quiz', 'id', ['name' => $quizname], MUST_EXIST);
+        $user = $DB->get_record('user', ['username' => $username], '*', MUST_EXIST);
+
+        $responses = $this->extract_responses_from_attempt_info($attemptinfo);
+
+        $this->set_user($user);
+
+        $attempts = quiz_get_user_attempts($quizid, $user->id, 'unfinished', true);
+        $quizgenerator->submit_responses(key($attempts), $responses, false, false);
+
+        $this->set_user();
+    }
+
+    /**
+     * Submit answers to questions an existing quiz attempt, with a simulated click on the 'Check' button.
+     *
+     * This step should only be used with question behaviours that have have
+     * a 'Check' button. Those include Interactive with multiple tires, Immediate feedback
+     * and Immediate feedback with CBM.
+     *
+     * Then there should be a number of rows of data, with two columns slot and response,
+     * as for {@link user_has_attempted_with_responses()} above.
+     * There is no need to supply answers to all questions. If so, other questions will be
+     * left unanswered.
+     *
+     * @param string $quizname the name of the quiz the user will attempt.
+     * @param string $username the username of the user that will attempt.
+     * @param TableNode $attemptinfo information about the questions to add, as above.
+     * @throws \Behat\Mink\Exception\ExpectationException
+     * @Given /^user "([^"]*)" has checked answers in their attempt at quiz "([^"]*)":$/
+     */
+    public function user_has_checked_answers_in_their_attempt_at_quiz($username, $quizname, TableNode $attemptinfo) {
+        global $DB;
+
+        /** @var mod_quiz_generator $quizgenerator */
+        $quizgenerator = behat_util::get_data_generator()->get_plugin_generator('mod_quiz');
+
+        $quizid = $DB->get_field('quiz', 'id', ['name' => $quizname], MUST_EXIST);
+        $user = $DB->get_record('user', ['username' => $username], '*', MUST_EXIST);
+
+        $responses = $this->extract_responses_from_attempt_info($attemptinfo);
+
+        $this->set_user($user);
+
+        $attempts = quiz_get_user_attempts($quizid, $user->id, 'unfinished', true);
+        $quizgenerator->submit_responses(key($attempts), $responses, true, false);
 
         $this->set_user();
     }
@@ -722,11 +813,9 @@ class behat_mod_quiz extends behat_question_base {
 
         $this->set_user($user);
 
-        foreach (quiz_get_user_attempts($quizid, $user->id, 'unfinished', true) as $attemptid => $attemptobj) {
-            $attemptobj = quiz_attempt::create($attemptid);
-            $attemptobj->process_finish(time(), true);
-            break;
-        }
+        $attempts = quiz_get_user_attempts($quizid, $user->id, 'unfinished', true);
+        $attemptobj = quiz_attempt::create(key($attempts));
+        $attemptobj->process_finish(time(), true);
 
         $this->set_user();
     }
