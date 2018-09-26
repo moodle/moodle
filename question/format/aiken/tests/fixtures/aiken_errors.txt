@@ -1,0 +1,21 @@
+A question with too few answers
+A) Only answer
+ANSWER: A
+
+A) Question not started
+
+ANSWER: Question not started
+
+A good question
+A) Correct
+B) Incorrect
+ANSWER: A
+
+A question started but not finished
+A) Correct-ish
+B) Incorrect-ish
+
+A second good question
+A)Incorrect (No space)
+B)Correct (No space)
+ANSWER: B
