@@ -4063,7 +4063,7 @@ function course_classify_for_timeline($course, $user = null, $completioninfo = n
 
     $today = time();
     // End date past.
-    if (!empty($course->enddate) && $course->enddate < $today) {
+    if (!empty($course->enddate) && (course_classify_end_date($course) < $today)) {
         return COURSE_TIMELINE_PAST;
     }
 
@@ -4077,12 +4077,40 @@ function course_classify_for_timeline($course, $user = null, $completioninfo = n
     }
 
     // Start date not reached.
-    if (!empty($course->startdate) && $course->startdate > $today) {
+    if (!empty($course->startdate) && (course_classify_start_date($course) > $today)) {
         return COURSE_TIMELINE_FUTURE;
     }
 
     // Everything else is in progress.
     return COURSE_TIMELINE_INPROGRESS;
+}
+
+/**
+ * This function calculates the end date to use for display classification purposes,
+ * incorporating the grace period, if any.
+ *
+ * @param stdClass $course The course record.
+ * @return int The new enddate.
+ */
+function course_classify_end_date($course) {
+    global $CFG;
+    $coursegraceperiodafter = (empty($CFG->coursegraceperiodafter)) ? 0 : $CFG->coursegraceperiodafter;
+    $enddate = (new \DateTimeImmutable())->setTimestamp($course->enddate)->modify("+{$coursegraceperiodafter} days");
+    return $enddate->getTimestamp();
+}
+
+/**
+ * This function calculates the start date to use for display classification purposes,
+ * incorporating the grace period, if any.
+ *
+ * @param stdClass $course The course record.
+ * @return int The new startdate.
+ */
+function course_classify_start_date($course) {
+    global $CFG;
+    $coursegraceperiodbefore = (empty($CFG->coursegraceperiodbefore)) ? 0 : $CFG->coursegraceperiodbefore;
+    $startdate = (new \DateTimeImmutable())->setTimestamp($course->startdate)->modify("-{$coursegraceperiodbefore} days");
+    return $startdate->getTimestamp();
 }
 
 /**
