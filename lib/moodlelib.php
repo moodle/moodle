@@ -9435,6 +9435,12 @@ function get_performance_info() {
     $info['html'] .= '<li class="dbqueries col-sm-4">DB reads/writes: '.$info['dbqueries'].'</li> ';
     $info['txt'] .= 'db reads/writes: '.$info['dbqueries'].' ';
 
+    if ($DB->want_read_slave()) {
+        $info['dbreads_slave'] = $DB->perf_get_reads_slave();
+        $info['html'] .= '<li class="dbqueries col-sm-4">DB reads from slave: '.$info['dbreads_slave'].'</li> ';
+        $info['txt'] .= 'db reads from slave: '.$info['dbreads_slave'].' ';
+    }
+
     $info['dbtime'] = round($DB->perf_get_queries_time(), 5);
     $info['html'] .= '<li class="dbtime col-sm-4">DB queries time: '.$info['dbtime'].' secs</li> ';
     $info['txt'] .= 'db queries time: ' . $info['dbtime'] . 's ';

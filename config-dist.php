@@ -79,6 +79,29 @@ $CFG->dboptions = array(
                                 // set to zero if you are using pg_bouncer in
                                 // 'transaction' mode (it is fine in 'session'
                                 // mode).
+    // 'connecttimeout' => null, // Set connect timeout in seconds. Not all drivers support it.
+    // 'readonly' => [      // Set to read-only slave details, to get safe reads
+                            // from there instead of the master node.
+                            // Needs a db driver that supports the feature.
+        // 'instance' => [
+            // [
+                // 'dbhost' => 'slave.db',
+                // 'dbport' => '',         \\ Defaults to master port
+                // 'dbuser' => '',         \\ Defaults to master user
+                // 'dbpass' => '',         \\ Defaults to master password
+            // ],
+            // [...],
+        // ],
+    // Instance(s) can alternatively be specified as:
+        // 'instance' => 'slave.db',
+        // 'instance' => ['slave.db1', 'slave.db2'],
+        // 'instance' => ['dbhost' => 'slave.db', 'dbport' => '', 'dbuser' => '', 'dbpass' => ''],
+        //
+        // 'connecttimeout' => 2, // Set read-only slave connect timeout in seconds. See above.
+        // 'latency' => 0.5,      // Set read-only slave sync latency, delay
+                                  // after update when it is deemed safe to read from the dbhost_readonly.
+        // 'exclude_tables' => ['table1', 'table2'], // Tables to exclude from read-only slave feature.
+    // ]
 );
 
 
