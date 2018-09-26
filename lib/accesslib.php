@@ -1019,7 +1019,9 @@ function reload_all_capabilities() {
     foreach ($sw as $path => $roleid) {
         if ($record = $DB->get_record('context', array('path'=>$path))) {
             $context = context::instance_by_id($record->id);
-            role_switch($roleid, $context);
+            if (has_capability('moodle/role:switchroles', $context)) {
+                role_switch($roleid, $context);
+            }
         }
     }
 }
