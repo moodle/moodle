@@ -228,6 +228,7 @@ class expired_contexts_manager {
 
     /**
      * Get the full nested set of expiry data given appropriate SQL.
+     * Only contexts which have expired will be included.
      *
      * @param   string      $sql The SQL used to select the nested information.
      * @param   array       $params The params required by the SQL.
@@ -316,9 +317,31 @@ class expired_contexts_manager {
 
             if (!$shouldskip) {
                 $courses = enrol_get_users_courses($context->instanceid, false, ['enddate']);
+                $requireenddate = self::require_all_end_dates_for_user_deletion();
+
                 foreach ($courses as $course) {
-                    if (empty($course->enddate) || $course->enddate >= time()) {
-                        // This user still has an active enrolment.
+                    if (empty($course->enddate)) {
+                        // This course has no end date.
+                        if ($requireenddate) {
+                            // Course end dates are required, and this course has no end date.
+                            $shouldskip = true;
+                            break;
+                        }
+
+                        // Course end dates are not required. The subsequent checks are pointless at this time so just
+                        // skip them.
+                        continue;
+                    }
+
+                    if ($course->enddate >= time()) {
+                        // This course is still in the future.
+                        $shouldskip = true;
+                        break;
+                    }
+
+                    // This course has an end date which is in the past.
+                    if (!self::is_course_expired($course)) {
+                        // This course has not expired yet.
                         $shouldskip = true;
                         break;
                     }
@@ -477,6 +500,17 @@ class expired_contexts_manager {
     }
 
     /**
+     * Whether end dates are required on all courses in order for a user to be expired from them.
+     *
+     * @return bool
+     */
+    protected static function require_all_end_dates_for_user_deletion() {
+        $requireenddate = get_config('tool_dataprivacy', 'requireallenddatesforuserdeletion');
+
+        return !empty($requireenddate);
+    }
+
+    /**
      * Check that the requirements to start deleting contexts are satisified.
      *
      * @return bool
@@ -614,6 +648,19 @@ class expired_contexts_manager {
         }
 
         return $expiredctx;
+    }
+
+    /**
+     * Check whether the course has expired.
+     *
+     * @param   \stdClass   $course
+     * @return  bool
+     */
+    protected static function is_course_expired(\stdClass $course) {
+        $context = \context_course::instance($course->id);
+        $expiryrecords = self::get_nested_expiry_info_for_courses($context->path);
+
+        return !empty($expiryrecords[$context->path]) && $expiryrecords[$context->path]->info->is_fully_expired();
     }
 
     /**
