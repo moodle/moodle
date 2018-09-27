@@ -53,15 +53,10 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
 
     public function js_call() {
         global $PAGE;
-        $maxsizes = new stdClass();
-        $maxsizes->bgimage = new stdClass();
-        $maxsizes->bgimage->width = QTYPE_DDMARKER_BGIMAGE_MAXWIDTH;
-        $maxsizes->bgimage->height = QTYPE_DDMARKER_BGIMAGE_MAXHEIGHT;
+        $maxsize = ['width' => QTYPE_DDMARKER_BGIMAGE_MAXWIDTH,
+            'height' => QTYPE_DDMARKER_BGIMAGE_MAXHEIGHT];
 
-        $params = array('maxsizes' => $maxsizes,
-                        'topnode' => 'fieldset#id_previewareaheader');
-
-        $PAGE->requires->js_call_amd('qtype_ddmarker/form', 'init', [$params]);
+        $PAGE->requires->js_call_amd('qtype_ddmarker/form', 'init', [$maxsize]);
     }
 
 
@@ -103,8 +98,6 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
     }
 
     protected function drop_zone($mform, $imagerepeats) {
-        $dropzoneitem = array();
-
         $grouparray = array();
         $shapearray = qtype_ddmarker_shape::shape_options();
         $grouparray[] = $mform->createElement('select', 'shape',
@@ -226,7 +219,6 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
             $errors["bgimage"] = get_string('formerror_nobgimage', 'qtype_ddmarker');
         }
 
-        $allchoices = array();
         for ($i = 0; $i < $data['nodropzone']; $i++) {
             $choice = $data['drops'][$i]['choice'];
             $choicepresent = ($choice !== '0');
