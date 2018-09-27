@@ -1,6 +1,10 @@
 This files describes API changes in /blocks/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+
+* The timeline view from block_myoverview has been split out into block_timeline.
+
 === 3.4 ===
 
 * The block_instances table now contains fields timecreated and timemodified. If third-party code

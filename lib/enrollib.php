@@ -557,9 +557,10 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
  * @param int $limit max number of courses
  * @param array $courseids the list of course ids to filter by
  * @param bool $allaccessible Include courses user is not enrolled in, but can access
+ * @param int $offset Offset the result set by this number
  * @return array
  */
-function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $courseids = [], $allaccessible = false) {
+function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $courseids = [], $allaccessible = false, $offset = 0) {
     global $DB, $USER, $CFG;
 
     if ($sort === null) {
@@ -714,7 +715,7 @@ function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $coursei
              WHERE $wheres
           $orderby";
 
-    $courses = $DB->get_records_sql($sql, $params, 0, $limit);
+    $courses = $DB->get_records_sql($sql, $params, $offset, $limit);
 
     // preload contexts and check visibility
     foreach ($courses as $id=>$course) {

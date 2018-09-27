@@ -44,8 +44,8 @@
     data-region="paging-dropdown-container">
 
     <button class="btn btn-secondary dropdown-toggle"
+        id="paging-dropdown-menu-button-{{uniqid}}"
         type="button"
-        id="dropdown-menu-button-{{uniqid}}"
         data-region="dropdown-toggle"
         data-toggle="dropdown"
         aria-haspopup="true"
@@ -57,7 +57,7 @@
             {{/active}}
         {{/options}}
     </button>
-    <div class="dropdown-menu" aria-labelledby="dropdown-menu-button-{{uniqid}}">
+    <div class="dropdown-menu" aria-labelledby="paging-dropdown-menu-button-{{uniqid}}">
         {{#options}}
             {{> core/paged_content_paging_dropdown_item }}
         {{/options}}
@@ -67,9 +67,3 @@
         {{/ core/paged_content_paging_dropdown_item }}
     </div>
 </div>
-{{#js}}
-require(['jquery', 'core/paged_content_paging_dropdown'], function($, PagingControl) {
-    var root = $('#paging-dropdown-{{uniqid}}');
-    PagingControl.init(root);
-});
-{{/js}}

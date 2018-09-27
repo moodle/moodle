@@ -58,6 +58,7 @@ define('MOD_CLASS_RESOURCE', 1);
 define('COURSE_TIMELINE_PAST', 'past');
 define('COURSE_TIMELINE_INPROGRESS', 'inprogress');
 define('COURSE_TIMELINE_FUTURE', 'future');
+define('COURSE_DB_QUERY_LIMIT', 1000);
 
 function make_log_url($module, $url) {
     switch ($module) {
@@ -4111,6 +4112,126 @@ function course_classify_start_date($course) {
     $coursegraceperiodbefore = (empty($CFG->coursegraceperiodbefore)) ? 0 : $CFG->coursegraceperiodbefore;
     $startdate = (new \DateTimeImmutable())->setTimestamp($course->startdate)->modify("-{$coursegraceperiodbefore} days");
     return $startdate->getTimestamp();
+}
+
+/**
+ * Group a list of courses into either past, future, or in progress.
+ *
+ * The return value will be an array indexed by the COURSE_TIMELINE_* constants
+ * with each value being an array of courses in that group.
+ * E.g.
+ * [
+ *      COURSE_TIMELINE_PAST => [... list of past courses ...],
+ *      COURSE_TIMELINE_FUTURE => [],
+ *      COURSE_TIMELINE_INPROGRESS => []
+ * ]
+ *
+ * @param array $courses List of courses to be grouped.
+ * @return array
+ */
+function course_classify_courses_for_timeline(array $courses) {
+    return array_reduce($courses, function($carry, $course) {
+        $classification = course_classify_for_timeline($course);
+        array_push($carry[$classification], $course);
+
+        return $carry;
+    }, [
+        COURSE_TIMELINE_PAST => [],
+        COURSE_TIMELINE_FUTURE => [],
+        COURSE_TIMELINE_INPROGRESS => []
+    ]);
+}
+
+/**
+ * Get the list of enrolled courses for the current user.
+ *
+ * This function returns a Generator. The courses will be loaded from the database
+ * in chunks rather than a single query.
+ *
+ * @param int $limit Restrict result set to this amount
+ * @param int $offset Skip this number of records from the start of the result set
+ * @param string|null $sort SQL string for sorting
+ * @param string|null $fields SQL string for fields to be returned
+ * @param int $dbquerylimit The number of records to load per DB request
+ * @return Generator
+ */
+function course_get_enrolled_courses_for_logged_in_user(
+    int $limit = 0,
+    int $offset = 0,
+    string $sort = null,
+    string $fields = null,
+    int $dbquerylimit = COURSE_DB_QUERY_LIMIT
+) : Generator {
+
+    $haslimit = !empty($limit);
+    $recordsloaded = 0;
+    $querylimit = (!$haslimit || $limit > $dbquerylimit) ? $dbquerylimit : $limit;
+
+    while ($courses = enrol_get_my_courses($fields, $sort, $querylimit, [], false, $offset)) {
+        yield from $courses;
+
+        $recordsloaded += $querylimit;
+
+        if (count($courses) < $querylimit) {
+            break;
+        }
+        if ($haslimit && $recordsloaded >= $limit) {
+            break;
+        }
+
+        $offset += $querylimit;
+    }
+}
+
+/**
+ * Search the given $courses for any that match the given $classification up to the specified
+ * $limit.
+ *
+ * This function will return the subset of courses that match the classification as well as the
+ * number of courses it had to process to build that subset.
+ *
+ * It is recommended that for larger sets of courses this function is given a Generator that loads
+ * the courses from the database in chunks.
+ *
+ * @param array|Traversable $courses List of courses to process
+ * @param string $classification One of the COURSE_TIMELINE_* constants
+ * @param int $limit Limit the number of results to this amount
+ * @return array First value is the filtered courses, second value is the number of courses processed
+ */
+function course_filter_courses_by_timeline_classification(
+    $courses,
+    string $classification,
+    int $limit = 0
+) : array {
+
+    if (!in_array($classification, [COURSE_TIMELINE_PAST, COURSE_TIMELINE_INPROGRESS, COURSE_TIMELINE_FUTURE])) {
+        $message = 'Classification must be one of COURSE_TIMELINE_PAST, '
+            . 'COURSE_TIMELINE_INPROGRESS or COURSE_TIMELINE_FUTURE';
+        throw new moodle_exception($message);
+    }
+
+    $filteredcourses = [];
+    $numberofcoursesprocessed = 0;
+    $filtermatches = 0;
+
+    foreach ($courses as $course) {
+        $numberofcoursesprocessed++;
+
+        if ($classification == course_classify_for_timeline($course)) {
+            $filteredcourses[] = $course;
+            $filtermatches++;
+        }
+
+        if ($limit && $filtermatches >= $limit) {
+            // We've found the number of requested courses. No need to continue searching.
+            break;
+        }
+    }
+
+    // Return the number of filtered courses as well as the number of courses that were searched
+    // in order to find the matching courses. This allows the calling code to do some kind of
+    // pagination.
+    return [$filteredcourses, $numberofcoursesprocessed];
 }
 
 /**

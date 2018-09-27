@@ -146,7 +146,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'inbound', $user->id);
 
         // Set an unrelated preference.
-        set_user_preference('block_myoverview_last_tab', 'courses', $USER->id);
+        set_user_preference('some_unrelated_preference', 'courses', $USER->id);
 
         provider::export_user_preferences($USER->id);
 
