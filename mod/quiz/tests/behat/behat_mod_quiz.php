@@ -592,9 +592,9 @@ class behat_mod_quiz extends behat_question_base {
      * @param string $quizname the name of the quiz the user will attempt.
      * @param string $username the username of the user that will attempt.
      * @param TableNode $attemptinfo information about the questions to add, as above.
-     * @Given /^I attempt quiz "([^"]*)" as "([^"]*)" with the following responses:$/
+     * @Given /^user "([^"]*)" has attempted "([^"]*)" with responses:$/
      */
-    public function i_attempt_quiz_as_user_setting_the_following_responses($quizname, $username, TableNode $attemptinfo) {
+    public function user_has_attempted_with_responses($username, $quizname, TableNode $attemptinfo) {
         global $DB, $USER;
 
         /** @var mod_quiz_generator $quizgenerator */

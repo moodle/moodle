@@ -35,11 +35,9 @@ Feature: Set a quiz to be marked complete when the student passes
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And the "Test quiz name" "quiz" activity with "auto" completion should be marked as not complete
-    And I follow "Test quiz name"
-    And I press "Attempt quiz now"
-    And I set the field "True" to "1"
-    And I press "Finish attempt ..."
-    And I press "Submit all and finish"
+    And user "student1" has attempted "Test quiz name" with responses:
+      | slot | response |
+      |   1  | True     |
     And I am on "Course 1" course homepage
     Then "Completed: Test quiz name" "icon" should exist in the "li.modtype_quiz" "css_element"
     And I log out
