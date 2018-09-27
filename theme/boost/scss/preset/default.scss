@@ -100,7 +100,7 @@ body {
 
 // Reset the default styling back to the bootstrap defaults for
 // the secondary outline button because gray-200 is much too light
-// for an outline button. 
+// for an outline button.
 .btn-outline-secondary {
     @include button-outline-variant($gray-600);
     border-color: $border-color;

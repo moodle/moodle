@@ -1,5 +1,5 @@
 @block @block_timeline @javascript
-Feature: The timeline block allows users to see upcoming activities
+Feature: The timeline block allows users to see upcoming courses
   In order to enable the timeline block
   As a student
   I can add the timeline block to my dashboard
