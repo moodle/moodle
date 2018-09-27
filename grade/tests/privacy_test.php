@@ -404,6 +404,9 @@ class core_grades_privacy_testcase extends provider_testcase {
 
     public function test_delete_data_for_all_users_in_context() {
         global $DB;
+
+        $fs = new file_storage();
+
         $dg = $this->getDataGenerator();
 
         $c1 = $dg->create_course();
@@ -414,20 +417,117 @@ class core_grades_privacy_testcase extends provider_testcase {
         $c1ctx = context_course::instance($c1->id);
         $c2ctx = context_course::instance($c2->id);
 
-        // Create some stuff.
-        $gi1a = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi1b = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi2a = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
-        $gi2b = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+        $a1 = $dg->create_module('assign', ['course' => $c1->id]);
+        $a2 = $dg->create_module('assign', ['course' => $c1->id]);
+        $a3 = $dg->create_module('assign', ['course' => $c2->id]);
+        $a4 = $dg->create_module('assign', ['course' => $c2->id]);
 
-        $gi1a->update_final_grade($u1->id, 1, 'test');
-        $gi1a->update_final_grade($u2->id, 1, 'test');
-        $gi1b->update_final_grade($u1->id, 1, 'test');
-        $gi2a->update_final_grade($u1->id, 1, 'test');
-        $gi2a->update_final_grade($u2->id, 1, 'test');
-        $gi2b->update_final_grade($u1->id, 1, 'test');
-        $gi2b->update_final_grade($u2->id, 1, 'test');
+        $a1context = context_module::instance($a1->cmid);
+        $a2context = context_module::instance($a2->cmid);
+        $a3context = context_module::instance($a3->cmid);
+        $a4context = context_module::instance($a4->cmid);
+
+        // Create some stuff.
+        $gi1a = new grade_item($dg->create_grade_item(
+            [
+                'courseid' => $c1->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $a1->id
+            ]
+        ), false);
+        $gi1b = new grade_item($dg->create_grade_item(
+            [
+                'courseid' => $c1->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $a2->id
+            ]
+        ), false);
+        $gi2a = new grade_item($dg->create_grade_item(
+            [
+                'courseid' => $c2->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $a3->id
+            ]
+        ), false);
+        $gi2b = new grade_item($dg->create_grade_item(
+            [
+                'courseid' => $c2->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $a4->id
+            ]
+        ), false);
+
+        $this->add_feedback_file_to_copy();
+
+        $grades['feedback'] = 'Nice feedback!';
+        $grades['feedbackformat'] = FORMAT_MOODLE;
+        $grades['feedbackfiles'] = [
+            'contextid' => 1,
+            'component' => 'test',
+            'filearea' => 'testarea',
+            'itemid' => 1
+        ];
+
+        $grades['userid'] = $u1->id;
+        grade_update('mod/assign', $gi1a->courseid, $gi1a->itemtype, $gi1a->itemmodule, $gi1a->iteminstance,
+            $gi1a->itemnumber, $grades);
+
+        $grades['userid'] = $u2->id;
+        grade_update('mod/assign', $gi1a->courseid, $gi1a->itemtype, $gi1a->itemmodule, $gi1a->iteminstance,
+            $gi1a->itemnumber, $grades);
+
+        $grades['userid'] = $u1->id;
+        grade_update('mod/assign', $gi1b->courseid, $gi1b->itemtype, $gi1b->itemmodule, $gi1b->iteminstance,
+            $gi1b->itemnumber, $grades);
+
+        $grades['userid'] = $u1->id;
+        grade_update('mod/assign', $gi2a->courseid, $gi2a->itemtype, $gi2a->itemmodule, $gi2a->iteminstance,
+            $gi2a->itemnumber, $grades);
+
+        $grades['userid'] = $u2->id;
+        grade_update('mod/assign', $gi2a->courseid, $gi2a->itemtype, $gi2a->itemmodule, $gi2a->iteminstance,
+            $gi2a->itemnumber, $grades);
+
+        $grades['userid'] = $u1->id;
+        grade_update('mod/assign', $gi2b->courseid, $gi2b->itemtype, $gi2b->itemmodule, $gi2b->iteminstance,
+            $gi2b->itemnumber, $grades);
+
+        $grades['userid'] = $u2->id;
+        grade_update('mod/assign', $gi2b->courseid, $gi2b->itemtype, $gi2b->itemmodule, $gi2b->iteminstance,
+            $gi2b->itemnumber, $grades);
         $gi2b->delete();
+
+        // Feedback file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(4, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(4, count($files));
+
+        // Grade item 2 was deleted, so the associated files were as well.
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        // History file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(4, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(4, count($files));
+
+        // Grade item 2 was deleted, so the associated files were as well.
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
 
         $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi1a->id]));
         $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi1a->id]));
@@ -446,20 +546,107 @@ class core_grades_privacy_testcase extends provider_testcase {
         $this->assertTrue($DB->record_exists('grade_grades_history', ['userid' => $u1->id, 'itemid' => $gi2b->id]));
         $this->assertTrue($DB->record_exists('grade_grades_history', ['userid' => $u2->id, 'itemid' => $gi2b->id]));
 
+        // Feedback file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(4, count($files));
+
+        // Grade item 2 was deleted, so the associated files were as well.
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        // History file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(4, count($files));
+
+        // Grade item 2 was deleted, so the associated files were as well.
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
         provider::delete_data_for_all_users_in_context($u1ctx);
         $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi2a->id]));
         $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi2a->id]));
         $this->assertFalse($DB->record_exists('grade_grades_history', ['userid' => $u1->id, 'itemid' => $gi2b->id]));
         $this->assertTrue($DB->record_exists('grade_grades_history', ['userid' => $u2->id, 'itemid' => $gi2b->id]));
 
+        // Feedback file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        // The user context is only reported when there are orphan historical grades, so we only delete those files.
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(4, count($files));
+
+        // Grade item 2 was deleted, so the associated files were as well.
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        // History file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        // User 2 still has historical files.
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        // Grade item 2 was deleted, so the associated files were as well.
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
         provider::delete_data_for_all_users_in_context($c2ctx);
         $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi2a->id]));
         $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi2a->id]));
         $this->assertTrue($DB->record_exists('grade_grades_history', ['userid' => $u2->id, 'itemid' => $gi2b->id]));
+
+        // Feedback file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        // History file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
     }
 
     public function test_delete_data_for_user() {
         global $DB;
+
+        $fs = new file_storage();
+
         $dg = $this->getDataGenerator();
 
         $c1 = $dg->create_course();
@@ -471,19 +658,88 @@ class core_grades_privacy_testcase extends provider_testcase {
         $c1ctx = context_course::instance($c1->id);
         $c2ctx = context_course::instance($c2->id);
 
-        // Create some stuff.
-        $gi1a = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi1b = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi2a = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
-        $gi2b = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+        $a1 = $dg->create_module('assign', ['course' => $c1->id]);
+        $a2 = $dg->create_module('assign', ['course' => $c1->id]);
+        $a3 = $dg->create_module('assign', ['course' => $c2->id]);
+        $a4 = $dg->create_module('assign', ['course' => $c2->id]);
 
-        $gi1a->update_final_grade($u1->id, 1, 'test');
-        $gi1a->update_final_grade($u2->id, 1, 'test');
-        $gi1b->update_final_grade($u1->id, 1, 'test');
-        $gi2a->update_final_grade($u1->id, 1, 'test');
-        $gi2a->update_final_grade($u2->id, 1, 'test');
-        $gi2b->update_final_grade($u1->id, 1, 'test');
-        $gi2b->update_final_grade($u2->id, 1, 'test');
+        $a1context = context_module::instance($a1->cmid);
+        $a2context = context_module::instance($a2->cmid);
+        $a3context = context_module::instance($a3->cmid);
+        $a4context = context_module::instance($a4->cmid);
+
+        // Create some stuff.
+        $gi1a = new grade_item($dg->create_grade_item(
+            [
+                'courseid' => $c1->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $a1->id
+            ]
+        ), false);
+        $gi1b = new grade_item($dg->create_grade_item(
+            [
+                'courseid' => $c1->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $a2->id
+            ]
+        ), false);
+        $gi2a = new grade_item($dg->create_grade_item(
+            [
+                'courseid' => $c2->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $a3->id
+            ]
+        ), false);
+        $gi2b = new grade_item($dg->create_grade_item(
+            [
+                'courseid' => $c2->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $a4->id
+            ]
+        ), false);
+
+        $this->add_feedback_file_to_copy();
+
+        $grades['feedback'] = 'Nice feedback!';
+        $grades['feedbackfiles'] = [
+            'contextid' => 1,
+            'component' => 'test',
+            'filearea' => 'testarea',
+            'itemid' => 1
+        ];
+
+        $grades['userid'] = $u1->id;
+        grade_update('mod/assign', $gi1a->courseid, $gi1a->itemtype, $gi1a->itemmodule, $gi1a->iteminstance,
+            $gi1a->itemnumber, $grades);
+
+        $grades['userid'] = $u2->id;
+        grade_update('mod/assign', $gi1a->courseid, $gi1a->itemtype, $gi1a->itemmodule, $gi1a->iteminstance,
+            $gi1a->itemnumber, $grades);
+
+        $grades['userid'] = $u1->id;
+        grade_update('mod/assign', $gi1b->courseid, $gi1b->itemtype, $gi1b->itemmodule, $gi1b->iteminstance,
+            $gi1b->itemnumber, $grades);
+
+        $grades['userid'] = $u1->id;
+        grade_update('mod/assign', $gi2a->courseid, $gi2a->itemtype, $gi2a->itemmodule, $gi2a->iteminstance,
+            $gi2a->itemnumber, $grades);
+
+        $grades['userid'] = $u2->id;
+        grade_update('mod/assign', $gi2a->courseid, $gi2a->itemtype, $gi2a->itemmodule, $gi2a->iteminstance,
+            $gi2a->itemnumber, $grades);
+
+        $grades['userid'] = $u1->id;
+        grade_update('mod/assign', $gi2b->courseid, $gi2b->itemtype, $gi2b->itemmodule, $gi2b->iteminstance,
+            $gi2b->itemnumber, $grades);
+
+        $grades['userid'] = $u2->id;
+        grade_update('mod/assign', $gi2b->courseid, $gi2b->itemtype, $gi2b->itemmodule, $gi2b->iteminstance,
+            $gi2b->itemnumber, $grades);
+
         $gi2b->delete();
 
         $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi1a->id]));
@@ -494,6 +750,34 @@ class core_grades_privacy_testcase extends provider_testcase {
         $this->assertTrue($DB->record_exists('grade_grades_history', ['userid' => $u1->id, 'itemid' => $gi2b->id]));
         $this->assertTrue($DB->record_exists('grade_grades_history', ['userid' => $u2->id, 'itemid' => $gi2b->id]));
 
+        // Feedback file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(4, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(4, count($files));
+
+        // Grade item 2 was deleted, so the associated files were as well.
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        // History file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(4, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(4, count($files));
+
+        // Grade item 2 was deleted, so the associated files were as well.
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
         provider::delete_data_for_user(new approved_contextlist($u1, 'core_grades', [$c1ctx->id]));
         $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi1a->id]));
         $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi1a->id]));
@@ -502,6 +786,34 @@ class core_grades_privacy_testcase extends provider_testcase {
         $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi2a->id]));
         $this->assertTrue($DB->record_exists('grade_grades_history', ['userid' => $u1->id, 'itemid' => $gi2b->id]));
         $this->assertTrue($DB->record_exists('grade_grades_history', ['userid' => $u2->id, 'itemid' => $gi2b->id]));
+
+        // Feedback file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(4, count($files));
+
+        // Grade item 2 was deleted, so the associated files were as well.
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        // History file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(4, count($files));
+
+        // Grade item 2 was deleted, so the associated files were as well.
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
 
         provider::delete_data_for_user(new approved_contextlist($u1, 'core_grades', [$u1ctx->id]));
         $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi1a->id]));
@@ -512,6 +824,34 @@ class core_grades_privacy_testcase extends provider_testcase {
         $this->assertFalse($DB->record_exists('grade_grades_history', ['userid' => $u1->id, 'itemid' => $gi2b->id]));
         $this->assertTrue($DB->record_exists('grade_grades_history', ['userid' => $u2->id, 'itemid' => $gi2b->id]));
 
+        // Feedback file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(4, count($files));
+
+        // Grade item 2 was deleted, so the associated files were as well.
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        // History file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        // Grade item 2 was deleted, so the associated files were as well.
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
         provider::delete_data_for_user(new approved_contextlist($u1, 'core_grades', [$u2ctx->id, $c2ctx->id]));
         $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi1a->id]));
         $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi1a->id]));
@@ -520,6 +860,34 @@ class core_grades_privacy_testcase extends provider_testcase {
         $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi2a->id]));
         $this->assertFalse($DB->record_exists('grade_grades_history', ['userid' => $u1->id, 'itemid' => $gi2b->id]));
         $this->assertTrue($DB->record_exists('grade_grades_history', ['userid' => $u2->id, 'itemid' => $gi2b->id]));
+
+        // Feedback file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        // Grade item 2 was deleted, so the associated files were as well.
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        // History file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        $files = $fs->get_area_files($a2context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        $files = $fs->get_area_files($a3context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        // Grade item 2 was deleted, so the associated files were as well.
+        $files = $fs->get_area_files($a4context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
     }
 
     /**
@@ -597,7 +965,6 @@ class core_grades_privacy_testcase extends provider_testcase {
     }
 
     public function test_export_data_for_user_about_grades_and_history() {
-        global $DB;
         $dg = $this->getDataGenerator();
 
         $c1 = $dg->create_course();
@@ -626,17 +993,83 @@ class core_grades_privacy_testcase extends provider_testcase {
         grade_category::fetch_course_category($c2->id);
         $ci2 = grade_item::fetch_course_item($c2->id);
 
+        $this->add_feedback_file_to_copy();
+
+        $grades['feedbackfiles'] = [
+            'contextid' => 1,
+            'component' => 'test',
+            'filearea' => 'testarea',
+            'itemid' => 1
+        ];
+
+        $a1 = $dg->create_module('assign', ['course' => $c1->id]);
+
         // Create data that will sit in the user context because we will delete the grate item.
-        $gi1 = new grade_item($dg->create_grade_item(['courseid' => $c1->id, 'aggregationcoef2' => 1]), false);
-        $gi1->update_final_grade($ug1->id, 100, 'test', 'Well done!', FORMAT_PLAIN, $ua2->id);
-        $gi1->update_final_grade($ug1->id, 1, 'test', 'Hi', FORMAT_PLAIN, $ua2->id);
-        $gi1->update_final_grade($ug3->id, 12, 'test', 'Hello', FORMAT_PLAIN, $ua2->id);
+        $gi1 = new grade_item($dg->create_grade_item(
+            [
+                'courseid' => $c1->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $a1->id,
+                'aggregationcoef2' => 1
+            ]
+        ), false);
+
+        $grades['feedback'] = 'Well done!';
+        $grades['feedbackformat'] = FORMAT_PLAIN;
+        $grades['userid'] = $ug1->id;
+        $grades['usermodified'] = $ua2->id;
+        $grades['rawgrade'] = 100;
+        grade_update('mod/assign', $gi1->courseid, $gi1->itemtype, $gi1->itemmodule, $gi1->iteminstance,
+            $gi1->itemnumber, $grades);
+
+        $grades['feedback'] = 'Hi';
+        $grades['userid'] = $ug1->id;
+        $grades['usermodified'] = $ua2->id;
+        $grades['rawgrade'] = 1;
+        grade_update('mod/assign', $gi1->courseid, $gi1->itemtype, $gi1->itemmodule, $gi1->iteminstance,
+            $gi1->itemnumber, $grades);
+
+        $grades['feedback'] = 'Hello';
+        $grades['userid'] = $ug3->id;
+        $grades['usermodified'] = $ua2->id;
+        $grades['rawgrade'] = 12;
+        grade_update('mod/assign', $gi1->courseid, $gi1->itemtype, $gi1->itemmodule, $gi1->iteminstance,
+            $gi1->itemnumber, $grades);
 
         // Create another set for another user.
-        $gi2a = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
-        $gi2a->update_final_grade($ug1->id, 15, 'test', '', FORMAT_PLAIN, $ua2->id);
-        $gi2b = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
-        $gi2b->update_final_grade($ug1->id, 30, 'test', 'Well played!', FORMAT_PLAIN, $ua2->id);
+        $a2 = $dg->create_module('assign', ['course' => $c2->id]);
+        $a3 = $dg->create_module('assign', ['course' => $c2->id]);
+        $gi2a = new grade_item($dg->create_grade_item(
+            [
+                'courseid' => $c2->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $a2->id
+            ]
+        ), false);
+        $gi2b = new grade_item($dg->create_grade_item(
+            [
+                'courseid' => $c2->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $a3->id
+            ]
+        ), false);
+
+        $grades['feedback'] = '';
+        $grades['userid'] = $ug1->id;
+        $grades['usermodified'] = $ua2->id;
+        $grades['rawgrade'] = 15;
+        grade_update('mod/assign', $gi2a->courseid, $gi2a->itemtype, $gi2a->itemmodule, $gi2a->iteminstance,
+            $gi2a->itemnumber, $grades);
+
+        $grades['feedback'] = 'Well played!';
+        $grades['userid'] = $ug1->id;
+        $grades['usermodified'] = $ua2->id;
+        $grades['rawgrade'] = 30;
+        grade_update('mod/assign', $gi2b->courseid, $gi2b->itemtype, $gi2b->itemmodule, $gi2b->iteminstance,
+            $gi2b->itemnumber, $grades);
 
         // Export action user 1 everywhere.
         provider::export_user_data(new approved_contextlist($ua1, 'core_grades', [$ug1ctx->id, $ug2ctx->id,
@@ -667,6 +1100,17 @@ class core_grades_privacy_testcase extends provider_testcase {
         $this->assertEquals('Hello', $data->grades[1]['feedback']);
         $this->assertEquals(transform::yesno(true), $data->grades[1]['created_or_modified_by_you']);
 
+        $pathtofiles = [
+            get_string('grades', 'core_grades'),
+            get_string('feedbackfiles', 'core_grades')
+        ];
+        $file = writer::with_context($gi1->get_context())->get_files($pathtofiles)['feedback1.txt'];
+
+        $this->assertInstanceOf('stored_file', $file);
+        $this->assertEquals('feedback1.txt', $file->get_filename());
+
+        $relatedtomepath = array_merge($rootpath, [get_string('privacy:path:relatedtome', 'core_grades')]);
+
         // Here we are testing the export of history of grades that we've changed.
         $data = writer::with_context($c1ctx)->get_related_data($relatedtomepath, 'grades_history');
         $this->assertCount(3, $data->modified_records);
@@ -692,6 +1136,15 @@ class core_grades_privacy_testcase extends provider_testcase {
         $this->assertEquals(transform::yesno(false), $grade['logged_in_user_was_you']);
         $this->assertEquals(transform::yesno(true), $grade['author_of_change_was_you']);
 
+        $pathtofiles = [
+            get_string('grades', 'core_grades'),
+            get_string('feedbackhistoryfiles', 'core_grades')
+        ];
+        $file = writer::with_context($gi1->get_context())->get_files($pathtofiles)['feedback1.txt'];
+
+        $this->assertInstanceOf('stored_file', $file);
+        $this->assertEquals('feedback1.txt', $file->get_filename());
+
         // Create a history record with logged user.
         $this->setUser($ua3);
         $gi1->update_final_grade($ug3->id, 50, 'test', '...', FORMAT_PLAIN, $ua2->id);
@@ -712,11 +1165,11 @@ class core_grades_privacy_testcase extends provider_testcase {
         provider::export_user_data(new approved_contextlist($ug1, 'core_grades', [$c1ctx->id]));
         $data = writer::with_context($c1ctx)->get_data($rootpath);
         $this->assert_context_has_no_data($c2ctx);
-        $this->assertCount(2, $data->grades);
+        $this->assertCount(3, $data->grades);
         $grade = $data->grades[0];
         $this->assertEquals($ci1->get_name(), $grade['item']);
         $this->assertEquals(1, $grade['grade']);
-        $grade = $data->grades[1];
+        $grade = $data->grades[2];
         $this->assertEquals($gi1->get_name(), $grade['item']);
         $this->assertEquals(1, $grade['grade']);
         $this->assertEquals('Hi', $grade['feedback']);
@@ -726,24 +1179,24 @@ class core_grades_privacy_testcase extends provider_testcase {
         provider::export_user_data(new approved_contextlist($ug1, 'core_grades', [$ug1ctx->id, $c1ctx->id, $c2ctx->id]));
         $this->assert_context_has_no_data($ug1ctx);
         $data = writer::with_context($c1ctx)->get_data($rootpath);
-        $this->assertCount(2, $data->grades);
+        $this->assertCount(3, $data->grades);
         $grade = $data->grades[0];
         $this->assertEquals($ci1->get_name(), $grade['item']);
         $this->assertEquals(1, $grade['grade']);
-        $grade = $data->grades[1];
+        $grade = $data->grades[2];
         $this->assertEquals($gi1->get_name(), $grade['item']);
         $this->assertEquals(1, $grade['grade']);
         $this->assertEquals('Hi', $grade['feedback']);
 
         $data = writer::with_context($c2ctx)->get_data($rootpath);
-        $this->assertCount(3, $data->grades);
+        $this->assertCount(5, $data->grades);
         $grade = $data->grades[0];
         $this->assertEquals($ci2->get_name(), $grade['item']);
-        $grade = $data->grades[1];
+        $grade = $data->grades[3];
         $this->assertEquals($gi2a->get_name(), $grade['item']);
         $this->assertEquals(15, $grade['grade']);
         $this->assertEquals('', $grade['feedback']);
-        $grade = $data->grades[2];
+        $grade = $data->grades[4];
         $this->assertEquals($gi2b->get_name(), $grade['item']);
         $this->assertEquals(30, $grade['grade']);
         $this->assertEquals('Well played!', $grade['feedback']);
@@ -756,10 +1209,10 @@ class core_grades_privacy_testcase extends provider_testcase {
         writer::reset();
         provider::export_user_data(new approved_contextlist($ug1, 'core_grades', [$ug1ctx->id, $c1ctx->id, $c2ctx->id]));
         $data = writer::with_context($c1ctx)->get_data($rootpath);
-        $this->assertCount(1, $data->grades);
+        $this->assertCount(2, $data->grades);
         $this->assertEquals($ci1->get_name(), $data->grades[0]['item']);
         $data = writer::with_context($c2ctx)->get_data($rootpath);
-        $this->assertCount(3, $data->grades);
+        $this->assertCount(5, $data->grades);
         $data = writer::with_context($ug1ctx)->get_related_data($rootpath, 'history');
         $this->assertCount(3, $data->grades);
         $grade = $data->grades[0];
@@ -1130,5 +1583,22 @@ class core_grades_privacy_testcase extends provider_testcase {
             $data = writer::with_context($context)->get_related_data($relatedtomepath, $file);
             $this->assertEmpty($data);
         }
+    }
+
+    /**
+     * Creates a feedback file to copy to the gradebook area.
+     */
+    private function add_feedback_file_to_copy() {
+        $dummy = array(
+            'contextid' => 1,
+            'component' => 'test',
+            'filearea' => 'testarea',
+            'itemid' => 1,
+            'filepath' => '/',
+            'filename' => 'feedback1.txt'
+        );
+
+        $fs = get_file_storage();
+        $fs->create_file_from_string($dummy, '');
     }
 }
