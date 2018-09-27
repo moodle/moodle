@@ -505,10 +505,20 @@ interface question_manually_gradable {
 
     /**
      * Produce a plain text summary of a response.
-     * @param $response a response, as might be passed to {@link grade_response()}.
+     * @param array $response a response, as might be passed to {@link grade_response()}.
      * @return string a plain text summary of that response, that could be used in reports.
      */
     public function summarise_response(array $response);
+
+    /**
+     * If possible, construct a response that could have lead to the given
+     * response summary. This is basically the opposite of {@link summarise_response()}
+     * but it is intended only to be used for testing.
+     *
+     * @param string $summary a string, which might have come from summarise_response
+     * @return array a response that could have lead to that.
+     */
+    public function un_summarise_response(string $summary);
 
     /**
      * Categorise the student's response according to the categories defined by
@@ -640,6 +650,11 @@ abstract class question_with_responses extends question_definition
 
     public function is_gradable_response(array $response) {
         return $this->is_complete_response($response);
+    }
+
+    public function un_summarise_response(string $summary) {
+        throw new coding_exception('This question type (' . get_class($this) .
+                ' does not implement the un_summarise_response testing method.');
     }
 }
 

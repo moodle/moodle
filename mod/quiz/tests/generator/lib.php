@@ -95,4 +95,60 @@ class mod_quiz_generator extends testing_module_generator {
 
         return parent::create_instance($record, (array)$options);
     }
+
+    /**
+     * Create a quiz attempt for a particular user at a particular course.
+     *
+     * Currently this method can only create a first attempt for each
+     * user at each quiz. TODO remove this limitation.
+     *
+     * @param int $quizid the quiz id (from the mdl_quit table, not cmid).
+     * @param int $userid the user id.
+     * @param array $forcedrandomquestions slot => questionid. Optional,
+     *      used with random questions, to control which one is 'randomly' selected in that slot.
+     * @param array $forcedvariants slot => variantno. Optional. Optional,
+     *      used with question where get_num_variants is > 1, to control which
+     *      variants is 'randomly' selected.
+     * @return stdClass the new attempt.
+     */
+    public function create_attempt($quizid, $userid, array $forcedrandomquestions = [],
+            array $forcedvariants = []) {
+        // Build quiz object and load questions.
+        $quizobj = quiz::create($quizid, $userid);
+
+        if (quiz_get_user_attempts($quizid, $userid, 'all', true)) {
+            throw new coding_exception('mod_quiz_generator is currently limited to only ' .
+                    'be able to create one attempt for each user. (This should be fixed.)');
+        }
+
+        return quiz_prepare_and_start_new_attempt($quizobj, 1, null,
+                $offlineattempt = false, $forcedrandomquestions = [], $forcedvariants);
+    }
+
+    /**
+     * Submit responses to a quiz attempt.
+     *
+     * To be realistic, you should ensure that $USER is set to the user whose attempt
+     * it is before calling this.
+     *
+     * @param int $attemptid the id of the attempt which is being
+     * @param array $responses array responses to submit. See description on
+     *      {@link core_question_generator::get_simulated_post_data_for_questions_in_usage()}.
+     * @param bool $finishattempt of true, the attempt will be submitted.
+     */
+    public function submit_responses($attemptid, array $responses, $finishattempt) {
+        /** @var $questiongenerator core_question_generator */
+        $questiongenerator = $this->datagenerator->get_plugin_generator('core_question');
+
+        $attemptobj = quiz_attempt::create($attemptid);
+
+        $postdata = $questiongenerator->get_simulated_post_data_for_questions_in_usage(
+                $attemptobj->get_question_usage(), $responses);
+
+        $attemptobj->process_submitted_actions(time(), false, $postdata);
+
+        if ($finishattempt) {
+            $attemptobj->process_finish(time(), false);
+        }
+    }
 }
