@@ -85,6 +85,20 @@ class qtype_numerical_question extends question_graded_automatically {
         return $resp;
     }
 
+    public function un_summarise_response(string $response) {
+        if (!empty($response)) {
+            $resp = $response;
+        } else {
+            $resp = null;
+        }
+
+        if ($this->has_separate_unit_field() && !empty($response)) {
+            $resp = $this->ap->add_unit($resp, $response);
+        }
+
+        return $resp;
+    }
+
     public function is_gradable_response(array $response) {
         return array_key_exists('answer', $response) &&
                 ($response['answer'] || $response['answer'] === '0' || $response['answer'] === 0);
