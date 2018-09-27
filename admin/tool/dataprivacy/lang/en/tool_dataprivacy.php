@@ -244,6 +244,15 @@ $string['requesttypeexport'] = 'Export all of my personal data';
 $string['requesttypeexportshort'] = 'Export';
 $string['requesttypeothers'] = 'General inquiry';
 $string['requesttypeothersshort'] = 'Message';
+$string['requireallenddatesforuserdeletion'] = 'Consider courses without end date as active';
+$string['requireallenddatesforuserdeletion_desc'] = 'When calculating user expiry, several factors are considered:
+
+* the user\'s last login time is compared against the retention period for users; and
+* whether the user is actively enrolled in any courses.
+
+When checking the active enrolment of a corse, if the course has no end date then this setting is used to determine whether that course is considered active or not.
+
+If the course has no end date, and this setting is enabled, then the user cannot be deleted.';
 $string['requiresattention'] = 'Requires attention.';
 $string['requiresattentionexplanation'] = 'This plugin does not implement the Moodle privacy API. If this plugin stores any personal data it will not be able to be exported or deleted through Moodle\'s privacy system.';
 $string['resultdeleted'] = 'You recently requested to have your account and personal data in {$a} to be deleted. This process has been completed and you will no longer be able to log in.';

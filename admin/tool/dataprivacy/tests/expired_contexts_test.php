@@ -218,16 +218,19 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
     }
 
     /**
-     * Ensure that a user with a lastaccess in the past and no active enrolments is flagged for deletion.
+     * Ensure that a user with a lastaccess in the past and expired enrolments.
      */
-    public function test_flag_user_past_lastaccess_enrol_expired() {
+    public function test_flag_user_past_lastaccess_unexpired_past_enrolment() {
         $this->resetAfterTest();
 
-        $this->setup_basics('PT1H', 'PT1H', 'P5Y');
+        $this->setup_basics('PT1H', 'PT1H', 'P1Y');
 
         $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
-        $course = $this->getDataGenerator()->create_course(['startdate' => time() - (YEARSECS * 2), 'enddate' => time() - DAYSECS]);
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - WEEKSECS]);
         $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $otheruser = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($otheruser->id, $course->id, 'student');
 
         $this->setUser($user);
         $block = $this->create_user_block('Title', 'Content', FORMAT_PLAIN);
@@ -238,7 +241,98 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $manager = new \tool_dataprivacy\expired_contexts_manager();
         list($flaggedcourses, $flaggedusers) = $manager->flag_expired_contexts();
 
-        // Although there is a block in the user context, everything in the user context is regarded as one.
+        $this->assertEquals(0, $flaggedcourses);
+        $this->assertEquals(0, $flaggedusers);
+    }
+
+    /**
+     * Ensure that a user with a lastaccess in the past and expired enrolments.
+     */
+    public function test_flag_user_past_lastaccess_expired_enrolled() {
+        $this->resetAfterTest();
+
+        $this->setup_basics('PT1H', 'PT1H', 'PT1H');
+
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - WEEKSECS]);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $otheruser = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($otheruser->id, $course->id, 'student');
+
+        $this->setUser($user);
+        $block = $this->create_user_block('Title', 'Content', FORMAT_PLAIN);
+        $context = \context_block::instance($block->instance->id);
+        $this->setUser();
+
+        // Flag all expired contexts.
+        $manager = new \tool_dataprivacy\expired_contexts_manager();
+        list($flaggedcourses, $flaggedusers) = $manager->flag_expired_contexts();
+
+        $this->assertEquals(1, $flaggedcourses);
+        $this->assertEquals(1, $flaggedusers);
+    }
+
+    /**
+     * Ensure that a user with a lastaccess in the past and enrolments without a course end date are respected
+     * correctly.
+     */
+    public function test_flag_user_past_lastaccess_missing_enddate_required() {
+        $this->resetAfterTest();
+
+        $this->setup_basics('PT1H', 'PT1H', 'PT1H');
+
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $otheruser = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($otheruser->id, $course->id, 'student');
+
+        $this->setUser($user);
+        $block = $this->create_user_block('Title', 'Content', FORMAT_PLAIN);
+        $context = \context_block::instance($block->instance->id);
+        $this->setUser();
+
+        // Ensure that course end dates are not required.
+        set_config('requireallenddatesforuserdeletion', 1, 'tool_dataprivacy');
+
+        // Flag all expired contexts.
+        $manager = new \tool_dataprivacy\expired_contexts_manager();
+        list($flaggedcourses, $flaggedusers) = $manager->flag_expired_contexts();
+
+        $this->assertEquals(0, $flaggedcourses);
+        $this->assertEquals(0, $flaggedusers);
+    }
+
+    /**
+     * Ensure that a user with a lastaccess in the past and enrolments without a course end date are respected
+     * correctly when the end date is not required.
+     */
+    public function test_flag_user_past_lastaccess_missing_enddate_not_required() {
+        $this->resetAfterTest();
+
+        $this->setup_basics('PT1H', 'PT1H', 'PT1H');
+
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $otheruser = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($otheruser->id, $course->id, 'student');
+
+        $this->setUser($user);
+        $block = $this->create_user_block('Title', 'Content', FORMAT_PLAIN);
+        $context = \context_block::instance($block->instance->id);
+        $this->setUser();
+
+        // Ensure that course end dates are required.
+        set_config('requireallenddatesforuserdeletion', 0, 'tool_dataprivacy');
+
+        // Flag all expired contexts.
+        $manager = new \tool_dataprivacy\expired_contexts_manager();
+        list($flaggedcourses, $flaggedusers) = $manager->flag_expired_contexts();
+
         $this->assertEquals(0, $flaggedcourses);
         $this->assertEquals(1, $flaggedusers);
     }
@@ -1283,31 +1377,31 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->assertEquals(0, $flaggedusers);
 
         // Ensure that the record currently exists.
-        $expiredcontext =  expired_context::get_record(['contextid' => $context->id]);
+        $expiredcontext = expired_context::get_record(['contextid' => $context->id]);
         $this->assertNotFalse($expiredcontext);
 
         // Approve it.
         $expiredcontext->set('status', expired_context::STATUS_APPROVED)->save();
 
-        // Process deletions
+        // Process deletions.
         list($processedcourses, $processedusers) = $manager->process_approved_deletions();
 
         $this->assertEquals(1, $processedcourses);
         $this->assertEquals(0, $processedusers);
 
         // Ensure that the record still exists.
-        $expiredcontext =  expired_context::get_record(['contextid' => $context->id]);
+        $expiredcontext = expired_context::get_record(['contextid' => $context->id]);
         $this->assertNotFalse($expiredcontext);
 
         // Remove the actual course.
         delete_course($course->id, false);
 
         // The record will still exist until we flag it again.
-        $expiredcontext =  expired_context::get_record(['contextid' => $context->id]);
+        $expiredcontext = expired_context::get_record(['contextid' => $context->id]);
         $this->assertNotFalse($expiredcontext);
 
         list($flaggedcourses, $flaggedusers) = $manager->flag_expired_contexts();
-        $expiredcontext =  expired_context::get_record(['contextid' => $context->id]);
+        $expiredcontext = expired_context::get_record(['contextid' => $context->id]);
         $this->assertFalse($expiredcontext);
     }
 
