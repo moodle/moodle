@@ -47,6 +47,8 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\mod_ass
      * @return array   Feedback plugin object and the grade object.
      */
     protected function create_feedback($assign, $student, $teacher, $submissiontext, $feedbacktext) {
+        global $CFG;
+
         $submission = new \stdClass();
         $submission->assignment = $assign->get_instance()->id;
         $submission->userid = $student->id;
@@ -62,11 +64,33 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\mod_ass
 
         $this->setUser($teacher);
 
+        $context = context_user::instance($teacher->id);
+
+        $draftitemid = file_get_unused_draft_itemid();
+        file_prepare_draft_area($draftitemid, $context->id, ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            ASSIGNFEEDBACK_COMMENTS_FILEAREA, $grade->id);
+
+        $dummy = array(
+            'contextid' => $context->id,
+            'component' => 'user',
+            'filearea' => 'draft',
+            'itemid' => $draftitemid,
+            'filepath' => '/',
+            'filename' => 'feedback1.txt'
+        );
+
+        $fs = get_file_storage();
+        $fs->create_file_from_string($dummy, $feedbacktext);
+
+        $feedbacktext = $feedbacktext .
+            " <img src='{$CFG->wwwroot}/draftfile.php/{$context->id}/user/draft/{$draftitemid}/feedback1.txt.png>";
+
         $plugin = $assign->get_feedback_plugin_by_type('comments');
         $feedbackdata = new \stdClass();
         $feedbackdata->assignfeedbackcomments_editor = [
             'text' => $feedbacktext,
-            'format' => 1
+            'format' => FORMAT_HTML,
+            'itemid' => $draftitemid
         ];
 
         $plugin->save($grade, $feedbackdata);
@@ -109,12 +133,24 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\mod_ass
         // The student should be able to see the teachers feedback.
         $exportdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign, $grade, [], $user1);
         \assignfeedback_comments\privacy\provider::export_feedback_user_data($exportdata);
-        $this->assertEquals($feedbacktext, $writer->get_data(['Feedback comments'])->commenttext);
+        $this->assertContains($feedbacktext, $writer->get_data(['Feedback comments'])->commenttext);
+
+        $filespath = [];
+        $filespath[] = 'Feedback comments';
+        $feedbackfile = $writer->get_files($filespath)['feedback1.txt'];
+
+        $this->assertInstanceOf('stored_file', $feedbackfile);
+        $this->assertEquals('feedback1.txt', $feedbackfile->get_filename());
 
         // The teacher should also be able to see the feedback that they provided.
         $exportdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign, $grade, [], $user2);
         \assignfeedback_comments\privacy\provider::export_feedback_user_data($exportdata);
-        $this->assertEquals($feedbacktext, $writer->get_data(['Feedback comments'])->commenttext);
+        $this->assertContains($feedbacktext, $writer->get_data(['Feedback comments'])->commenttext);
+
+        $feedbackfile = $writer->get_files($filespath)['feedback1.txt'];
+
+        $this->assertInstanceOf('stored_file', $feedbackfile);
+        $this->assertEquals('feedback1.txt', $feedbackfile->get_filename());
     }
 
     /**
@@ -147,6 +183,12 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\mod_ass
         $feedbackcomments = $plugin1->get_feedback_comments($grade2->id);
         $this->assertNotEmpty($feedbackcomments);
 
+        $fs = new file_storage();
+        $files = $fs->get_area_files($assign->get_context()->id, ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            ASSIGNFEEDBACK_COMMENTS_FILEAREA);
+        // 4 including directories.
+        $this->assertEquals(4, count($files));
+
         // Delete all comments for this context.
         $requestdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign);
         assignfeedback_comments\privacy\provider::delete_feedback_for_context($requestdata);
@@ -156,6 +198,12 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\mod_ass
         $this->assertEmpty($feedbackcomments);
         $feedbackcomments = $plugin1->get_feedback_comments($grade2->id);
         $this->assertEmpty($feedbackcomments);
+
+        $fs = new file_storage();
+        $files = $fs->get_area_files($assign->get_context()->id, ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            ASSIGNFEEDBACK_COMMENTS_FILEAREA);
+        $this->assertEquals(0, count($files));
+
     }
 
     /**
@@ -188,6 +236,12 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\mod_ass
         $feedbackcomments = $plugin1->get_feedback_comments($grade2->id);
         $this->assertNotEmpty($feedbackcomments);
 
+        $fs = new file_storage();
+        $files = $fs->get_area_files($assign->get_context()->id, ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            ASSIGNFEEDBACK_COMMENTS_FILEAREA);
+        // 4 including directories.
+        $this->assertEquals(4, count($files));
+
         // Delete all comments for this grade object.
         $requestdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign, $grade1, [], $user1);
         assignfeedback_comments\privacy\provider::delete_feedback_for_grade($requestdata);
@@ -199,5 +253,18 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\mod_ass
         // These comments should not.
         $feedbackcomments = $plugin1->get_feedback_comments($grade2->id);
         $this->assertNotEmpty($feedbackcomments);
+
+        $fs = new file_storage();
+        $files = $fs->get_area_files($assign->get_context()->id, ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            ASSIGNFEEDBACK_COMMENTS_FILEAREA);
+        // 2 files that were not deleted.
+        $this->assertEquals(2, count($files));
+
+        array_shift($files);
+        $file = array_shift($files);
+
+        $this->assertInstanceOf('stored_file', $file);
+        $this->assertEquals('feedback1.txt', $file->get_filename());
+        $this->assertEquals($grade2->id, $file->get_itemid());
     }
 }

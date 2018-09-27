@@ -58,6 +58,8 @@ class provider implements metadataprovider, assignfeedback_provider {
             'commenttext' => 'privacy:metadata:commentpurpose'
         ];
         $collection->add_database_table('assignfeedback_comments', $data, 'privacy:metadata:tablesummary');
+        $collection->link_subsystem('core_files', 'privacy:metadata:filepurpose');
+
         return $collection;
     }
 
@@ -91,13 +93,29 @@ class provider implements metadataprovider, assignfeedback_provider {
         // Get that comment information and jam it into that exporter.
         $assign = $exportdata->get_assign();
         $plugin = $assign->get_plugin_by_type('assignfeedback', 'comments');
-        $comments = $plugin->get_feedback_comments($exportdata->get_pluginobject()->id);
+        $gradeid = $exportdata->get_pluginobject()->id;
+        $comments = $plugin->get_feedback_comments($gradeid);
         if ($comments && !empty($comments->commenttext)) {
-            $data = (object)['commenttext' => format_text($comments->commenttext, $comments->commentformat,
-                    ['context' => $exportdata->get_context()])];
-            writer::with_context($exportdata->get_context())
-                    ->export_data(array_merge($exportdata->get_subcontext(),
-                            [get_string('privacy:commentpath', 'assignfeedback_comments')]), $data);
+            $comments->commenttext = writer::with_context($assign->get_context())->rewrite_pluginfile_urls(
+                [],
+                ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+                ASSIGNFEEDBACK_COMMENTS_FILEAREA,
+                $gradeid,
+                $comments->commenttext
+            );
+
+            $currentpath = array_merge(
+                $exportdata->get_subcontext(),
+                [get_string('privacy:commentpath', 'assignfeedback_comments')]
+            );
+            $data = (object)
+            [
+                'commenttext' => format_text($comments->commenttext, $comments->commentformat,
+                    ['context' => $exportdata->get_context()])
+            ];
+            writer::with_context($exportdata->get_context())->export_data($currentpath, $data);
+            writer::with_context($exportdata->get_context())->export_area_files($currentpath,
+                ASSIGNFEEDBACK_COMMENTS_COMPONENT, ASSIGNFEEDBACK_COMMENTS_FILEAREA, $gradeid);
         }
     }
 
@@ -108,6 +126,10 @@ class provider implements metadataprovider, assignfeedback_provider {
      */
     public static function delete_feedback_for_context(assign_plugin_request_data $requestdata) {
         $assign = $requestdata->get_assign();
+        $fs = get_file_storage();
+        $fs->delete_area_files($requestdata->get_context()->id, ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            ASSIGNFEEDBACK_COMMENTS_FILEAREA);
+
         $plugin = $assign->get_plugin_by_type('assignfeedback', 'comments');
         $plugin->delete_instance();
     }
@@ -119,6 +141,11 @@ class provider implements metadataprovider, assignfeedback_provider {
      */
     public static function delete_feedback_for_grade(assign_plugin_request_data $requestdata) {
         global $DB;
+
+        $fs = new \file_storage();
+        $fs->delete_area_files($requestdata->get_context()->id, ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            ASSIGNFEEDBACK_COMMENTS_FILEAREA, $requestdata->get_pluginobject()->id);
+
         $DB->delete_records('assignfeedback_comments', ['assignment' => $requestdata->get_assign()->get_instance()->id,
                 'grade' => $requestdata->get_pluginobject()->id]);
     }
