@@ -336,8 +336,10 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
                         $OUTPUT->pix_icon('t/hide', get_string('hidechapter', 'mod_book', $title)),
                         array('title' => get_string('hidechapter', 'mod_book', $titleunescaped)));
             }
+
+            $buttontitle = get_string('addafterchapter', 'mod_book', ['title' => $ch->title]);
             $toc .= html_writer::link(new moodle_url('edit.php', array('cmid' => $cm->id, 'pagenum' => $ch->pagenum, 'subchapter' => $ch->subchapter)),
-                                            $OUTPUT->pix_icon('add', get_string('addafter', 'mod_book'), 'mod_book'), array('title' => get_string('addafter', 'mod_book')));
+                                            $OUTPUT->pix_icon('add', $buttontitle, 'mod_book'), array('title' => $buttontitle));
             $toc .= html_writer::end_tag('div');
 
             if (!$ch->subchapter) {

@@ -26,24 +26,24 @@ Feature: Book activity chapter visibility management
       | Chapter title | First chapter |
       | Content | First chapter |
     And I press "Save changes"
-    And I click on "a[href*='pagenum=1']" "css_element"
+    And I click on "Add new chapter after \"First chapter\"" "link"
     And I set the following fields to these values:
       | Chapter title | Second chapter |
       | Content | Second chapter |
     And I press "Save changes"
-    And I click on "a[href*='pagenum=2']" "css_element"
+    And I click on "Add new chapter after \"Second chapter\"" "link"
     And I set the following fields to these values:
       | Chapter title | Sub chapter |
       | subchapter | 1 |
       | Content | Sub chapter |
     And I press "Save changes"
-    And I click on "a[href*='pagenum=3']" "css_element"
+    And I click on "Add new chapter after \"Sub chapter\"" "link"
     And I set the following fields to these values:
       | Chapter title | Third chapter |
       | subchapter | 0 |
       | Content | Third chapter |
     And I press "Save changes"
-    And I click on "a[href*='pagenum=4']" "css_element"
+    And I click on "Add new chapter after \"Third chapter\"" "link"
     And I set the following fields to these values:
       | Chapter title | Fourth chapter |
       | Content | Fourth chapter |

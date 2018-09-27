@@ -25,24 +25,24 @@ Feature: In a book, chapters and subchapters can be rearranged
       | Chapter title | Originally first chapter |
       | Content | #1 chapter content |
     And I press "Save changes"
-    And I click on "a[href*='pagenum=1']" "css_element"
+    And I click on "Add new chapter after \"Originally first chapter\"" "link"
     And I set the following fields to these values:
       | Chapter title | A great second chapter |
       | Content | #2 chapter content |
     And I press "Save changes"
-    And I click on "a[href*='pagenum=2']" "css_element"
+    And I click on "Add new chapter after \"A great second chapter\"" "link"
     And I set the following fields to these values:
       | Chapter title | Second chapter, subchapter 1 |
       | Content | #21 subchapter content |
       | Subchapter | 1 |
     And I press "Save changes"
-    And I click on "a[href*='pagenum=3']" "css_element"
+    And I click on "Add new chapter after \"Second chapter, subchapter 1\"" "link"
     And I set the following fields to these values:
       | Chapter title | Second chapter, subchapter 2 |
       | Content | #22 subchapter content |
       | Subchapter | 1 |
     And I press "Save changes"
-    And I click on "a[href*='pagenum=4']" "css_element"
+    And I click on "Add new chapter after \"Second chapter, subchapter 2\"" "link"
     And I set the following fields to these values:
       | Chapter title | There aren't 2 without 3 |
       | Content | #3 subchapter content |
