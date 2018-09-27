@@ -42,12 +42,17 @@ Feature: Basic use of the Responses report
     And I set the field "Attempts from" to "enrolled users who have not attempted the quiz"
     And I press "Show report"
     And "Student One" row "State" column of "responses" table should contain "-"
-    And user "student1" has attempted "Quiz 1" with responses:
+    And user "student1" has started an attempt at quiz "Quiz 1"
+    And user "student1" has submitted answers in their attempt at quiz "Quiz 1":
       | slot | response |
-      |   1  | 1.0     |
-      |   1  | 3.0    |
-      |   1  | 3.14    |
-    And I reload the page
+      |   1  | 1.0      |
+    And user "student1" has submitted answers in their attempt at quiz "Quiz 1":
+      | slot | response |
+      |   1  | 3.0      |
+    And user "student1" has submitted answers in their attempt at quiz "Quiz 1":
+      | slot | response |
+      |   1  | 3.14     |
+    And user "student1" has finished an attempt at quiz "Quiz 1"
     Then I should see "Attempts: 1"
     And I should see "Student One"
     And I should not see "Student Two"
