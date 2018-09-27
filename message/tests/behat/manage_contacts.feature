@@ -16,6 +16,20 @@ Feature: Manage contacts
     And I view the "User 3" contact in the message area
     And I click on "Add contact" "link"
     And I log out
+    # Approve the contact request for user2
+    And I log in as "user2"
+    And I open the notification popover
+    And I click on "View full notification" "link" in the "#nav-notification-popover-container" "css_element"
+    And I click on "Go to" "link" in the "[data-region=footer]" "css_element"
+    And I click on "Approve" "link" in the "User 1" "table_row"
+    And I log out
+    # Approve the contact request for user3
+    And I log in as "user3"
+    And I open the notification popover
+    And I click on "View full notification" "link" in the "#nav-notification-popover-container" "css_element"
+    And I click on "Go to" "link" in the "[data-region=footer]" "css_element"
+    And I click on "Approve" "link" in the "User 1" "table_row"
+    And I log out
 
   Scenario: Add contact shows in contacts tab
     When I log in as "user1"
