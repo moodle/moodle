@@ -134,10 +134,9 @@ class mod_quiz_generator extends testing_module_generator {
      * @param int $attemptid the id of the attempt which is being
      * @param array $responses array responses to submit. See description on
      *      {@link core_question_generator::get_simulated_post_data_for_questions_in_usage()}.
-     * @param bool $finishattempt of true, the attempt will be submitted.
+     * @param bool $finishattempt if true, the attempt will be submitted.
      */
-    public function submit_responses($attemptid, array $responses, $finishattempt) {
-        /** @var $questiongenerator core_question_generator */
+    public function submit_responses($attemptid, array $responses, $checkbutton, $finishattempt) {
         $questiongenerator = $this->datagenerator->get_plugin_generator('core_question');
 
         $attemptobj = quiz_attempt::create($attemptid);

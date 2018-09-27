@@ -91,7 +91,7 @@ class qtype_essay_question extends question_with_responses {
 
     public function un_summarise_response(string $summary) {
         if (!empty($summary)) {
-            return ['answer' => $summary];
+            return ['answer' => text_to_html($summary)];
         } else {
             return [];
         }

@@ -37,12 +37,12 @@ Feature: Basic use of the Grades report
       | TF2      | 1    | 3.0     |
     And user "student1" has attempted "Quiz 1" with responses:
       | slot | response |
-      |   1  | True    |
+      |   1  | True     |
       |   2  | False    |
     And user "student2" has attempted "Quiz 1" with responses:
       | slot | response |
-      |   1  | True    |
-      |   2  | True    |
+      |   1  | True     |
+      |   2  | True     |
 
     # Basic check of the Grades report
     When I log in as "teacher1"

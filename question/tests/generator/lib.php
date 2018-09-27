@@ -190,7 +190,7 @@ class core_question_generator extends component_generator_base {
      * are passed to the un_summarise_response method of the question to decode.
      *
      * @param question_attempt $qa the question attempt for which we are generating POST data.
-     * @param $responsesummary a textual summary of the resonse, as described above.
+     * @param string $responsesummary a textual summary of the resonse, as described above.
      * @return array the sumulated post data that can be passed to $quba->process_all_actions.
      */
     public function get_simulated_post_data_for_question_attempt(

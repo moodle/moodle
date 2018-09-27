@@ -1833,7 +1833,6 @@ class quiz_attempt {
             } else {
                 $simulatedpostdata = $simulatedresponses;
             }
-
         } else {
             $simulatedpostdata = null;
         }

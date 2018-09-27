@@ -21,14 +21,14 @@ Feature: Basic use of the Manual grading report
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name       | questiontext        | answer 1 | grade |
-      | Test questions   | shortanswer | Short answer 001 | Where is the capital city of France? | Paris | 100% |
+      | questioncategory | qtype       | name             | questiontext                         | answer 1 | grade |
+      | Test questions   | shortanswer | Short answer 001 | Where is the capital city of France? | Paris    | 100%  |
     And the following "activities" exist:
       | activity   | name   | course | idnumber |
       | quiz       | Quiz 1 | C1     | quiz1    |
     And quiz "Quiz 1" contains the following questions:
-      | question   | page |
-      | Short answer 001 | 1    |
+      | question          | page |
+      | Short answer 001  | 1    |
 
     # Check report shows nothing when there are no attempts.
     When I log in as "teacher1"

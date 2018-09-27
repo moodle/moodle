@@ -32,7 +32,7 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
       | First question | 1    |
     And user "student1" has attempted "Test quiz name" with responses:
       | slot | response |
-      |   1  | False     |
+      |   1  | False    |
 
   Scenario: student1 uses up both attempts without passing
     When I log in as "student1"

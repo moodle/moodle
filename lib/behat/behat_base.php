@@ -948,9 +948,11 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
     /**
      * Set current $USER, reset access cache.
-     * @static
+     *
+     * In some cases, behat will execute the code as admin but in many cases we need to set an specific user as some
+     * API's might rely on the logged user to take some action.
+     *
      * @param null|int|stdClass $user user record, null or 0 means non-logged-in, positive integer means userid
-     * @return void
      */
     public static function set_user($user = null) {
         global $DB;
@@ -961,13 +963,13 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             // Assign valid data to admin user (some generator-related code needs a valid user).
             $user = $DB->get_record('user', array('username' => 'admin'));
         } else {
-            $user = $DB->get_record('user', array('id'=> $user));
+            $user = $DB->get_record('user', array('id' => $user));
         }
         unset($user->description);
         unset($user->access);
         unset($user->preference);
 
-        // Enusre session is empty, as it may contain caches and user specific info.
+        // Ensure session is empty, as it may contain caches and user specific info.
         \core\session\manager::init_empty_session();
 
         \core\session\manager::set_user($user);

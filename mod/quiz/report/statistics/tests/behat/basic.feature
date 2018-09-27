@@ -48,14 +48,14 @@ Feature: Basic use of the Statistics report
     And "Show chart data" "link" should not exist
     When user "student1" has attempted "Quiz 1" with responses:
       | slot | response |
-      |   1  | True    |
+      |   1  | True     |
       |   2  | False    |
       |   3  | False    |
     And user "student2" has attempted "Quiz 1" with responses:
       | slot | response |
-      |   1  | True    |
-      |   2  | True    |
-      |   3  | True    |
+      |   1  | True     |
+      |   2  | True     |
+      |   3  | True     |
     And user "student3" has attempted "Quiz 1" with responses:
       | slot | response |
       |   1  | False    |
