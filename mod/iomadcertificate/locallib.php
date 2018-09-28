@@ -926,14 +926,32 @@ function iomadcertificate_get_grade($iomadcertificate, $course, $userid = null, 
     }
 
     if ($iomadcertificate->printgrade > 0) {
-        if ($iomadcertificate->printgrade == 1) {
+        // Check we want to add a prefix to the grade.
+        $strprefix = '';
+        if (!$valueonly) {
+            $strprefix = get_string('coursegrade', 'iomadcertificate') . ': ';
+        }
+
+        if (!empty($iomadcertificate->finalscore)) {
             if ($course_item = grade_item::fetch_course_item($course->id)) {
-                // Check we want to add a prefix to the grade.
-                $strprefix = '';
-                if (!$valueonly) {
-                    $strprefix = get_string('coursegrade', 'iomadcertificate') . ': ';
+                $course_item->gradetype = GRADE_TYPE_VALUE;
+                $coursegrade = new stdClass;
+                $coursegrade->points = grade_format_gradevalue($iomadcertificate->finalscore, $course_item, true, GRADE_DISPLAY_TYPE_REAL, $decimals = 2);
+                $coursegrade->percentage = grade_format_gradevalue($iomadcertificate->finalscore, $course_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE, $decimals = 2);
+                $coursegrade->letter = grade_format_gradevalue($iomadcertificate->finalscore, $course_item, true, GRADE_DISPLAY_TYPE_LETTER, $decimals = 0);
+
+                if ($iomadcertificate->gradefmt == 1) {
+                    $grade = $strprefix . $coursegrade->percentage;
+                } else if ($iomadcertificate->gradefmt == 2) {
+                    $grade = $strprefix . $coursegrade->points;
+                } else if ($iomadcertificate->gradefmt == 3) {
+                    $grade = $strprefix . $coursegrade->letter;
                 }
 
+                return $grade;
+            }
+        } else if ($iomadcertificate->printgrade == 1) {
+            if ($course_item = grade_item::fetch_course_item($course->id)) {
                 $grade = new grade_grade(array('itemid' => $course_item->id, 'userid' => $userid));
                 $course_item->gradetype = GRADE_TYPE_VALUE;
                 $coursegrade = new stdClass;
