@@ -306,32 +306,6 @@ class all_calculated_for_qubaid_condition {
     }
 
     /**
-     * From a number of calculated instances find the three instances with min, median and maximum facility index values.
-     *
-     * @param calculated[] $questionstats The stats from which to find the ones with minimum, median and maximum facility index.
-     * @return calculated[] 3 stat objects with minimum, median and maximum facility index.
-     */
-    protected function find_min_median_and_max_facility_stats_objects($questionstats) {
-        $facilities = array();
-        foreach ($questionstats as $key => $questionstat) {
-            $facilities[$key] = (float)$questionstat->facility;
-        }
-        asort($facilities);
-        $facilitykeys = array_keys($facilities);
-        $keyformin = $facilitykeys[0];
-        $keyformedian = $facilitykeys[(int)(round(count($facilitykeys) / 2) - 1)];
-        $keyformax = $facilitykeys[count($facilitykeys) - 1];
-        $toreturn = array();
-        foreach (array($keyformin => 'minimumfacility',
-                       $keyformedian => 'medianfacility',
-                       $keyformax => 'maximumfacility') as $key => $stringid) {
-            $questionstats[$key]->minmedianmaxnotice = $stringid;
-            $toreturn[] = $questionstats[$key];
-        }
-        return $toreturn;
-    }
-
-    /**
      * Return all stats for variants of question in slot $slot.
      *
      * @param int $slot The slot no.
@@ -401,24 +375,20 @@ class all_calculated_for_qubaid_condition {
 
                 if ($subqvariantstats = $this->all_subq_variants_for_one_slot($slot)) {
                     // There are some variants from randomly selected questions.
-                    $subqvariantfacilitystats = $this->find_min_median_and_max_facility_stats_objects($subqvariantstats);
-
                     // If we're showing a limited view of the statistics then add a question summary stat
                     // rather than a stat for each subquestion.
                     $summarystat = $this->make_new_calculated_question_summary_stat($randomquestioncalculated, $subqvariantstats);
 
-                    $toreturn = array_merge($toreturn, [$summarystat], $subqvariantfacilitystats);
+                    $toreturn = array_merge($toreturn, [$summarystat]);
                 }
 
                 if ($subqstats = $this->all_subqs_for_one_slot($slot)) {
                     // There are some randomly selected questions.
-                    $subqfacilitystats = $this->find_min_median_and_max_facility_stats_objects($subqstats);
-
                     // If we're showing a limited view of the statistics then add a question summary stat
                     // rather than a stat for each subquestion.
                     $summarystat = $this->make_new_calculated_question_summary_stat($randomquestioncalculated, $subqstats);
 
-                    $toreturn = array_merge($toreturn, [$summarystat], $subqfacilitystats);
+                    $toreturn = array_merge($toreturn, [$summarystat]);
                 }
 
                 foreach ($toreturn as $index => $calculated) {
@@ -442,13 +412,12 @@ class all_calculated_for_qubaid_condition {
             $variantstats = $this->all_variant_stats_for_one_slot($slot);
             if ($limited && $variantstats) {
                 $variantquestioncalculated = $this->for_slot($slot);
-                $variantfacilitystats = $this->find_min_median_and_max_facility_stats_objects($variantstats);
 
                 // If we're showing a limited view of the statistics then add a question summary stat
                 // rather than a stat for each variation.
                 $summarystat = $this->make_new_calculated_question_summary_stat($variantquestioncalculated, $variantstats);
 
-                return array_merge([$summarystat], $variantfacilitystats);
+                return [$summarystat];
             } else {
                 return $variantstats;
             }
