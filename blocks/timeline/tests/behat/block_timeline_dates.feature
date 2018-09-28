@@ -64,7 +64,7 @@ Feature: The timeline block allows users to see upcoming activities
     And I should see "Test feedback 3 closes" in the "Timeline" "block"
     And I should not see "Test choice 2 closes" in the "Timeline" "block"
     And I should not see "Test feedback 2 closes" in the "Timeline" "block"
-    And I click on "[data-region='paging-bar'] [data-control='next']" "css_element" in the "Timeline" "block"
+    And I click on "[data-region='paging-bar'] [data-control='next'] [data-region='page-link']" "css_element" in the "Timeline" "block"
     And I should see "Test feedback 2 closes" in the "Timeline" "block"
     And I should not see "Test assign 1 is due" in the "Timeline" "block"
     And I should not see "Test feedback 1 closes" in the "Timeline" "block"
