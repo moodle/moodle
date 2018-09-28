@@ -913,8 +913,14 @@ class api {
         if ($sender !== null && isset($sender->id)) {
             $senderid = $sender->id;
         }
+
+        $systemcontext = \context_system::instance();
+        if (has_capability('moodle/site:readallmessages', $systemcontext, $senderid)) {
+            return true;
+        }
+
         // The recipient has specifically blocked this sender.
-        if (self::is_user_blocked($recipient->id, $senderid)) {
+        if (self::is_blocked($recipient->id, $senderid)) {
             return false;
         }
 
@@ -959,12 +965,16 @@ class api {
      * Note: This function will always return false if the sender has the
      * readallmessages capability at the system context level.
      *
+     * @deprecated since 3.6
      * @param int $recipientid User ID of the recipient.
      * @param int $senderid User ID of the sender.
      * @return bool true if $sender is blocked, false otherwise.
      */
     public static function is_user_blocked($recipientid, $senderid = null) {
-        global $USER, $DB;
+        debugging('\core_message\api::is_user_blocked is deprecated and should not be used.',
+            DEBUG_DEVELOPER);
+
+        global $USER;
 
         if (is_null($senderid)) {
             // The message is from the logged in user, unless otherwise specified.
@@ -1551,9 +1561,6 @@ class api {
 
     /**
      * Checks if a user is already blocked.
-     *
-     * This is different than self::is_user_blocked() as it does not check any capabilities.
-     * It simply checks if an entry exists in the DB.
      *
      * @param int $userid
      * @param int $blockeduserid

@@ -1388,16 +1388,19 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // User shouldn't be blocked.
         $this->assertFalse(\core_message\api::is_user_blocked($user1->id, $user2->id));
+        $this->assertDebuggingCalled();
 
         // Block the user.
         \core_message\api::block_user($user1->id, $user2->id);
 
         // User should be blocked.
         $this->assertTrue(\core_message\api::is_user_blocked($user1->id, $user2->id));
+        $this->assertDebuggingCalled();
 
         // Unblock the user.
         \core_message\api::unblock_user($user1->id, $user2->id);
         $this->assertFalse(\core_message\api::is_user_blocked($user1->id, $user2->id));
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -1418,6 +1421,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // As the admin you should still be able to send messages to the user.
         $this->assertFalse(\core_message\api::is_user_blocked($user1->id));
+        $this->assertDebuggingCalled();
     }
 
     /*
