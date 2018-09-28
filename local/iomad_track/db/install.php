@@ -18,6 +18,7 @@
 define('CERTIFICATE', 'iomadcertificate');
 
 require_once($CFG->dirroot . '/mod/' . CERTIFICATE . '/lib.php');
+require_once($CFG->dirroot . '/mod/' . CERTIFICATE . '/locallib.php');
 
 
 function xmldb_local_iomad_track_install() {
@@ -93,6 +94,7 @@ function xmldb_local_iomad_track_create_certificate($certificate, $user, $cm, $c
     $certificate_name = CERTIFICATE;
     $$certificate_name = $certificate;
     $certrecord = $certissue;
+    $iomadcertificate = $certificate;
 
     // Load certificate template (magically creates $pdf variable. Grrrrrr)
     // Assumes a whole bunch of stuff exists without being explicitly required (double grrrrr)
@@ -182,7 +184,7 @@ function xmldb_local_iomad_track_record_certificates($courseid, $userid, $tracki
         $certissue = $certissue_function($course, $user, $certificate, $cm);
         // Fix the issue date.
         if (!empty($trackinfo->timecompleted)) {
-            $certissue->timecreated = $timecompleted;
+            $certissue->timecreated = $trackinfo->timecompleted;
         }
 
         // Add the trackid.
@@ -192,6 +194,7 @@ function xmldb_local_iomad_track_record_certificates($courseid, $userid, $tracki
         $certname = rtrim($certificate->name, '.');
         $filename = clean_filename("$certname.pdf");
 
+	$certificate->finalscore = $trackinfo->finalscore;
         // Create the certificate content (always create new so it's up to date)
         $content = xmldb_local_iomad_track_create_certificate($certificate, $user, $cm, $course, $certissue);
 
