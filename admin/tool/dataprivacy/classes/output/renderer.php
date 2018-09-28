@@ -139,4 +139,15 @@ class renderer extends plugin_renderer_base {
         $data = $page->export_for_template($this);
         return parent::render_from_template('tool_dataprivacy/data_deletion', $data);
     }
+
+    /**
+     * Render the user data retention summary page.
+     *
+     * @param  summary_page $page
+     * @return string html for the page.
+     */
+    public function render_summary_page(summary_page $page) {
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('tool_dataprivacy/summary', $data);
+    }
 }
