@@ -232,7 +232,7 @@ class enrol_license_plugin extends enrol_plugin {
                 // Enrol the user in the course.
                 $timestart = time();
 
-                if ($license->type == 1 || $license->type == 3) {
+                if ($license->type == 0 || $license->type == 2) {
                     // Set the timeend to be time start + the valid length for the license in days.
                     $timeend = $timestart + ($license->validlength * 24 * 60 * 60 );
                 } else {
@@ -434,27 +434,33 @@ class enrol_license_plugin extends enrol_plugin {
                             $license['score'] = $gradeitem->finalgrade;
                             $license['result'] = $gradeitem->feedback;
                         }
+
                         $DB->delete_records('grade_grades', array('id' => $gradeitem->id));
                     }
+		}
 
-                    // Delete any completion data.
-                    $completion = $DB->get_record('course_completions', array('userid' => $user->userid,
-                                                                              'course' => $user->courseid));
+		if (!empty($license['id'])) {
+                    // Update the user license information.
+                    mtrace("updating license ".$license['id']." for user ".$user->userid);
+                    $DB->update_record('companylicense_users', $license);
+		}
+
+                // Delete any completion data.
+                if ($completion = $DB->get_record('course_completions', array('userid' => $user->userid,
+                                                                              'course' => $user->courseid))){
                     if (!empty($completion->timecompleted)) {
                         $license['timecompleted'] = $completion->timecompleted;
                     } else {
                         $license['timecompleted'] = $runtime;
                     }
-                    // Update the user license information.
-                    mtrace("updating license ".$license['id']." for user ".$user->userid);
-                    $DB->update_record('companylicense_users', $license);
                     // Delete the completion information.
                     mtrace("removing course completion for user $user->userid on $user->courseid");
                     $DB->delete_records('course_completions', array('id' => $completion->id));
-                    // Delete the enrolment.
-                    mtrace("removing enrolment for user ".$user->userid." from ".$user->courseid);
-                    $DB->delete_records('user_enrolments', array('id' => $user->id));
                 }
+
+                // Delete the enrolment.
+                mtrace("removing enrolment for user ".$user->userid." from ".$user->courseid);
+                $DB->delete_records('user_enrolments', array('id' => $user->id));
             }
         }
     }
