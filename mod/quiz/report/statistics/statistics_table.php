@@ -134,6 +134,20 @@ class quiz_statistics_table extends flexible_table {
         parent::setup();
     }
 
+    public function  wrap_html_start() {
+        // Horrible Moodle 2.0 wide-content work-around.
+        if (!$this->is_downloading()) {
+            echo html_writer::start_tag('div', array('id' => 'tablecontainer',
+                    'class' => 'statistics-tablecontainer'));
+        }
+    }
+
+    public function wrap_html_finish() {
+        if (!$this->is_downloading()) {
+            echo html_writer::end_tag('div');
+        }
+    }
+
     /**
      * The question number.
      * @param \core_question\statistics\questions\calculated $questionstat stats for the question.
@@ -279,10 +293,9 @@ class quiz_statistics_table extends flexible_table {
     protected function col_s($questionstat) {
         if ($this->is_calculated_question_summary($questionstat)) {
             list($min, $max) = $questionstat->get_min_max_of('s');
-            $a = new stdClass();
-            $a->min = $min ?: 0;
-            $a->max = $max ?: 0;
-            return get_string('rangebetween', 'quiz_statistics', $a);
+            $min = $min ?: 0;
+            $max = $max ?: 0;
+            return $this->format_range($min, $max);
         } else if (!isset($questionstat->s)) {
             return 0;
         } else {
@@ -298,19 +311,11 @@ class quiz_statistics_table extends flexible_table {
     protected function col_facility($questionstat) {
         if ($this->is_calculated_question_summary($questionstat)) {
             list($min, $max) = $questionstat->get_min_max_of('facility');
-
-            if (is_null($min) && is_null($max)) {
-                return '';
-            } else {
-                $a = new stdClass();
-                $a->min = get_string('percents', 'moodle', number_format($min * 100, 2));
-                $a->max = get_string('percents', 'moodle', number_format($max * 100, 2));
-                return get_string('rangebetween', 'quiz_statistics', $a);
-            }
+            return $this->format_percentage_range($min, $max);
         } else if (is_null($questionstat->facility)) {
             return '';
         } else {
-            return get_string('percents', 'moodle', number_format($questionstat->facility * 100, 2));
+            return $this->format_percentage($questionstat->facility);
         }
     }
 
@@ -322,19 +327,11 @@ class quiz_statistics_table extends flexible_table {
     protected function col_sd($questionstat) {
         if ($this->is_calculated_question_summary($questionstat)) {
             list($min, $max) = $questionstat->get_min_max_of('sd');
-
-            if (is_null($min) && is_null($max)) {
-                return '';
-            } else {
-                $a = new stdClass();
-                $a->min = get_string('percents', 'moodle', number_format($min * 100, 2));
-                $a->max = get_string('percents', 'moodle', number_format($max * 100, 2));
-                return get_string('rangebetween', 'quiz_statistics', $a);
-            }
+            return $this->format_percentage_range($min, $max);
         } else if (is_null($questionstat->sd) || $questionstat->maxmark == 0) {
             return '';
         } else {
-            return get_string('percents', 'moodle', number_format($questionstat->sd * 100 / $questionstat->maxmark, 2));
+            return $this->format_percentage($questionstat->sd / $questionstat->maxmark);
         }
     }
 
@@ -346,20 +343,11 @@ class quiz_statistics_table extends flexible_table {
     protected function col_random_guess_score($questionstat) {
         if ($this->is_calculated_question_summary($questionstat)) {
             list($min, $max) = $questionstat->get_min_max_of('randomguessscore');
-
-            if (is_null($min) && is_null($max)) {
-                return '';
-            } else {
-                $a = new stdClass();
-                $a->min = get_string('percents', 'moodle', number_format($min * 100, 2));
-                $a->max = get_string('percents', 'moodle', number_format($max * 100, 2));
-
-                return get_string('rangebetween', 'quiz_statistics', $a);
-            }
+            return $this->format_percentage_range($min, $max);
         } else if (is_null($questionstat->randomguessscore)) {
             return '';
         } else {
-            return get_string('percents', 'moodle', number_format($questionstat->randomguessscore * 100, 2));
+            return $this->format_percentage($questionstat->randomguessscore);
         }
     }
 
@@ -377,10 +365,9 @@ class quiz_statistics_table extends flexible_table {
             if (is_null($min) && is_null($max)) {
                 return '';
             } else {
-                $a = new stdClass();
-                $a->min = quiz_report_scale_summarks_as_percentage($min, $this->quiz);
-                $a->max = quiz_report_scale_summarks_as_percentage($max, $this->quiz);
-                return get_string('rangebetween', 'quiz_statistics', $a);
+                $min = quiz_report_scale_summarks_as_percentage($min, $this->quiz);
+                $max = quiz_report_scale_summarks_as_percentage($max, $this->quiz);
+                return $this->format_range($min, $max);
             }
         } else {
             return quiz_report_scale_summarks_as_percentage($questionstat->maxmark, $this->quiz);
@@ -407,10 +394,7 @@ class quiz_statistics_table extends flexible_table {
                     $min = get_string('negcovar', 'quiz_statistics');
                 }
 
-                $a = new stdClass();
-                $a->min = $min;
-                $a->max = $max;
-                return get_string('rangebetween', 'quiz_statistics', $a);
+                return $this->format_range($min, $max);
             }
         } else if (is_null($questionstat->effectiveweight)) {
             return '';
@@ -425,7 +409,7 @@ class quiz_statistics_table extends flexible_table {
 
             return $negcovar;
         } else {
-            return get_string('percents', 'moodle', number_format($questionstat->effectiveweight, 2));
+            return $this->format_percentage($questionstat->effectiveweight, false);
         }
     }
 
@@ -440,21 +424,22 @@ class quiz_statistics_table extends flexible_table {
         if ($this->is_calculated_question_summary($questionstat)) {
             list($min, $max) = $questionstat->get_min_max_of('discriminationindex');
 
-            if (is_numeric($min)) {
-                $min = get_string('percents', 'moodle', number_format($min, 2));
-            }
-            if (is_numeric($max)) {
-                $max = get_string('percents', 'moodle', number_format($max, 2));
+            if (isset($max)) {
+                $min = $min ?: 0;
             }
 
-            $a = new stdClass();
-            $a->min = $min;
-            $a->max = $max;
-            return get_string('rangebetween', 'quiz_statistics', $a);
+            if (is_numeric($min)) {
+                $min = $this->format_percentage($min, false);
+            }
+            if (is_numeric($max)) {
+                $max = $this->format_percentage($max, false);
+            }
+
+            return $this->format_range($min, $max);
         } else if (!is_numeric($questionstat->discriminationindex)) {
             return $questionstat->discriminationindex;
         } else {
-            return get_string('percents', 'moodle', number_format($questionstat->discriminationindex, 2));
+            return $this->format_percentage($questionstat->discriminationindex, false);
         }
     }
 
@@ -471,15 +456,12 @@ class quiz_statistics_table extends flexible_table {
             if (!is_numeric($min) && !is_numeric($max)) {
                 return '';
             } else {
-                $a = new stdClass();
-                $a->min = get_string('percents', 'moodle', number_format($min, 2));
-                $a->max = get_string('percents', 'moodle', number_format($max, 2));
-                return get_string('rangebetween', 'quiz_statistics', $a);
+                return $this->format_percentage_range($min, $max, false);
             }
         } else if (!is_numeric($questionstat->discriminativeefficiency)) {
             return '';
         } else {
-            return get_string('percents', 'moodle', number_format($questionstat->discriminativeefficiency, 2));
+            return $this->format_percentage($questionstat->discriminativeefficiency);
         }
     }
 
@@ -514,17 +496,61 @@ class quiz_statistics_table extends flexible_table {
         return $questionstat instanceof calculated_question_summary;
     }
 
-    public function  wrap_html_start() {
-        // Horrible Moodle 2.0 wide-content work-around.
-        if (!$this->is_downloading()) {
-            echo html_writer::start_tag('div', array('id' => 'tablecontainer',
-                    'class' => 'statistics-tablecontainer'));
+    /**
+     * Format inputs to represent a range between $min and $max.
+     * This function does not check if $min is less than $max or not.
+     * If both $min and $max are equal to null, this function returns an empty string.
+     *
+     * @param string|null $min The minimum value in the range
+     * @param string|null $max The maximum value in the range
+     * @return string
+     */
+    protected function format_range(string $min = null, string $max = null) {
+        if (is_null($min) && is_null($max)) {
+            return '';
+        } else {
+            $a = new stdClass();
+            $a->min = $min;
+            $a->max = $max;
+
+            return get_string('rangebetween', 'quiz_statistics', $a);
         }
     }
 
-    public function wrap_html_finish() {
-        if (!$this->is_downloading()) {
-            echo html_writer::end_tag('div');
+    /**
+     * Format a number to a localised percentage with specified decimal points.
+     *
+     * @param float $number The number being formatted
+     * @param bool $fraction An indicator for whether the number is a fraction or is already multiplied by 100
+     * @param int $decimals Sets the number of decimal points
+     * @return string
+     */
+    protected function format_percentage(float $number, bool $fraction = true, int $decimals = 2) {
+        $coefficient = $fraction ? 100 : 1;
+        return get_string('percents', 'moodle', format_float($number * $coefficient, $decimals));
+    }
+
+    /**
+     * Format $min and $max to localised percentages and form a string that represents a range between them.
+     * This function does not check if $min is less than $max or not.
+     * If both $min and $max are equal to null, this function returns an empty string.
+     *
+     * @param float|null $min The minimum value of the range
+     * @param float|null $max The maximum value of the range
+     * @param bool $fraction An indicator for whether min and max are a fractions or are already multiplied by 100
+     * @param int $decimals Sets the number of decimal points
+     * @return string A formatted string that represents a range between $min to $max.
+     */
+    protected function format_percentage_range(float $min = null, float $max = null, bool $fraction = true, int $decimals = 2) {
+        if (is_null($min) && is_null($max)) {
+            return '';
+        } else {
+            $min = $min ?: 0;
+            $max = $max ?: 0;
+            return $this->format_range(
+                    $this->format_percentage($min, $fraction, $decimals),
+                    $this->format_percentage($max, $fraction, $decimals)
+            );
         }
     }
 }
