@@ -124,25 +124,26 @@ function xmldb_block_iomad_company_admin_upgrade($oldversion) {
     if ($oldversion < 2017090308) {
         $systemcontext = context_system::instance();
         foreach (array('clientadministrator', 'companymanager', 'companydepartmentmanager') as $rolename) {
-            $role = $DB->get_record('role', array('shortname' => $rolename), '*', MUST_EXIST);
-            assign_capability(
-                'block/iomad_company_admin:block/iomad_company_admin:edituserpassword',
-                CAP_ALLOW,
-                $role->id,
-                $systemcontext->id
-            );
-            assign_capability(
-                'block/iomad_company_admin:block/iomad_company_admin:deleteuser',
-                CAP_ALLOW,
-                $role->id,
-                $systemcontext->id
-            );
-            assign_capability(
-                'block/iomad_company_admin:block/iomad_company_admin:suspenduser',
-                CAP_ALLOW,
-                $role->id,
-                $systemcontext->id
-            );
+            if ($role = $DB->get_record('role', array('shortname' => $rolename), '*')) {
+                assign_capability(
+                    'block/iomad_company_admin:block/iomad_company_admin:edituserpassword',
+                    CAP_ALLOW,
+                    $role->id,
+                    $systemcontext->id
+                );
+                assign_capability(
+                    'block/iomad_company_admin:block/iomad_company_admin:deleteuser',
+                    CAP_ALLOW,
+                    $role->id,
+                    $systemcontext->id
+                );
+                assign_capability(
+                    'block/iomad_company_admin:block/iomad_company_admin:suspenduser',
+                    CAP_ALLOW,
+                    $role->id,
+                    $systemcontext->id
+                );
+            }
         }
 
         // Iomad savepoint reached.
