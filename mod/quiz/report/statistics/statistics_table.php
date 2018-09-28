@@ -26,7 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
 
-use \core_question\statistics\questions\calculated_random_question_summary;
+use \core_question\statistics\questions\calculated_question_summary;
+
 /**
  * This table has one row for each question in the quiz, with sub-rows when
  * random questions and variants appear.
@@ -139,7 +140,7 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_number($questionstat) {
-        if ($this->is_random_question_summary($questionstat)) {
+        if ($this->is_calculated_question_summary($questionstat)) {
             return '';
         }
         if (!isset($questionstat->question->number)) {
@@ -164,7 +165,7 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_icon($questionstat) {
-        if ($this->is_random_question_summary($questionstat)) {
+        if ($this->is_calculated_question_summary($questionstat)) {
             return '';
         } else {
             return print_question_icon($questionstat->question, true);
@@ -177,7 +178,7 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_actions($questionstat) {
-        if ($this->is_random_question_summary($questionstat)) {
+        if ($this->is_calculated_question_summary($questionstat)) {
             return '';
         } else {
             return quiz_question_action_icons($this->quiz, $this->cmid,
@@ -241,22 +242,14 @@ class quiz_statistics_table extends flexible_table {
                 $number = $questionstat->question->number;
                 $israndomquestion = $questionstat->question->qtype == 'random';
                 $url = new moodle_url($baseurl, array('slot' => $questionstat->slot));
-                if ($israndomquestion) {
-                    if ($this->is_random_question_summary($questionstat)) {
-                        // Only make the random question summary row name link to the slot structure
-                        // analysis page with specific text to clearly indicate the link to the user.
-                        // Random question rows will render the name without a link to improve clarity
-                        // in the UI.
-                        $name = html_writer::link($url,
-                                                  get_string('viewanalysis', 'quiz_statistics'),
-                                                  array('title' => get_string('viewanalysishint', 'quiz_statistics', $number)));
-                    }
-                } else if ($questionstat->get_variants() || $questionstat->get_sub_question_ids()) {
-                    // Question can be broken down into sub-questions or variants. Link will show structural analysis page.
-                    $name = html_writer::link($url,
-                                              $name,
-                                              array('title' => get_string('slotstructureanalysis', 'quiz_statistics', $number)));
-                } else {
+
+                if ($this->is_calculated_question_summary($questionstat)) {
+                    // Only make the random question summary row name link to the slot structure
+                    // analysis page with specific text to clearly indicate the link to the user.
+                    // Random and variant question rows will render the name without a link to improve clarity
+                    // in the UI.
+                    $name = html_writer::link($url, get_string('viewanalysis', 'quiz_statistics'));
+                } else if (!$israndomquestion && !$questionstat->get_variants() && !$questionstat->get_sub_question_ids()) {
                     // Question cannot be broken down into sub-questions or variants. Link will show response analysis page.
                     $name = html_writer::link($url,
                                               $name,
@@ -284,7 +277,7 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_s($questionstat) {
-        if ($this->is_random_question_summary($questionstat)) {
+        if ($this->is_calculated_question_summary($questionstat)) {
             list($min, $max) = $questionstat->get_min_max_of('s');
             $a = new stdClass();
             $a->min = $min ?: 0;
@@ -303,7 +296,7 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_facility($questionstat) {
-        if ($this->is_random_question_summary($questionstat)) {
+        if ($this->is_calculated_question_summary($questionstat)) {
             list($min, $max) = $questionstat->get_min_max_of('facility');
 
             if (is_null($min) && is_null($max)) {
@@ -327,7 +320,7 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_sd($questionstat) {
-        if ($this->is_random_question_summary($questionstat)) {
+        if ($this->is_calculated_question_summary($questionstat)) {
             list($min, $max) = $questionstat->get_min_max_of('sd');
 
             if (is_null($min) && is_null($max)) {
@@ -351,7 +344,7 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_random_guess_score($questionstat) {
-        if ($this->is_random_question_summary($questionstat)) {
+        if ($this->is_calculated_question_summary($questionstat)) {
             list($min, $max) = $questionstat->get_min_max_of('randomguessscore');
 
             if (is_null($min) && is_null($max)) {
@@ -378,7 +371,7 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_intended_weight($questionstat) {
-        if ($this->is_random_question_summary($questionstat)) {
+        if ($this->is_calculated_question_summary($questionstat)) {
             list($min, $max) = $questionstat->get_min_max_of('maxmark');
 
             if (is_null($min) && is_null($max)) {
@@ -403,7 +396,7 @@ class quiz_statistics_table extends flexible_table {
     protected function col_effective_weight($questionstat) {
         global $OUTPUT;
 
-        if ($this->is_random_question_summary($questionstat)) {
+        if ($this->is_calculated_question_summary($questionstat)) {
             list($min, $max) = $questionstat->get_min_max_of('effectiveweight');
 
             if (is_null($min) && is_null($max)) {
@@ -444,7 +437,7 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_discrimination_index($questionstat) {
-        if ($this->is_random_question_summary($questionstat)) {
+        if ($this->is_calculated_question_summary($questionstat)) {
             list($min, $max) = $questionstat->get_min_max_of('discriminationindex');
 
             if (is_numeric($min)) {
@@ -472,7 +465,7 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_discriminative_efficiency($questionstat) {
-        if ($this->is_random_question_summary($questionstat)) {
+        if ($this->is_calculated_question_summary($questionstat)) {
             list($min, $max) = $questionstat->get_min_max_of('discriminativeefficiency');
 
             if (!is_numeric($min) && !is_numeric($max)) {
@@ -496,7 +489,7 @@ class quiz_statistics_table extends flexible_table {
      * @return bool is this question possibly not pulling it's weight?
      */
     protected function is_dubious_question($questionstat) {
-        if ($this->is_random_question_summary($questionstat)) {
+        if ($this->is_calculated_question_summary($questionstat)) {
             // We only care about the minimum value here.
             // If the minimum value is less than the threshold, then we know that there is at least one value below the threshold.
             list($discriminativeefficiency) = $questionstat->get_min_max_of('discriminativeefficiency');
@@ -512,13 +505,13 @@ class quiz_statistics_table extends flexible_table {
     }
 
     /**
-     * Check if the given stats object is an instance of calculated_random_question_summary.
+     * Check if the given stats object is an instance of calculated_question_summary.
      *
      * @param  \core_question\statistics\questions\calculated $questionstat Stats object
      * @return bool
      */
-    protected function is_random_question_summary($questionstat) {
-        return $questionstat instanceof calculated_random_question_summary;
+    protected function is_calculated_question_summary($questionstat) {
+        return $questionstat instanceof calculated_question_summary;
     }
 
     public function  wrap_html_start() {

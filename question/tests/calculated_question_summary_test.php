@@ -25,15 +25,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_question\statistics\questions\calculated_random_question_summary;
+use core_question\statistics\questions\calculated_question_summary;
 
 /**
- * Class core_question_calculated_random_question_summary_testcase
+ * Class core_question_calculated_question_summary_testcase
  *
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_question_calculated_random_question_summary_testcase extends advanced_testcase {
+class core_question_calculated_question_summary_testcase extends advanced_testcase {
 
     /**
      * Provider for test_get_min_max_of.
@@ -100,7 +100,7 @@ class core_question_calculated_random_question_summary_testcase extends advanced
      * @dataProvider get_min_max_provider
      */
     public function test_get_min_max_of($subqstats, $expected) {
-        $calculatedsummary = new calculated_random_question_summary(null, null, $subqstats);
+        $calculatedsummary = new calculated_question_summary(null, null, $subqstats);
         $res = $calculatedsummary->get_min_max_of('index');
         $this->assertEquals($expected, $res);
     }
@@ -151,7 +151,7 @@ class core_question_calculated_random_question_summary_testcase extends advanced
      * @dataProvider get_sd_min_max_provider
      */
     public function test_get_min_max_of_sd($subqstats, $expected) {
-        $calculatedsummary = new calculated_random_question_summary(null, null, $subqstats);
+        $calculatedsummary = new calculated_question_summary(null, null, $subqstats);
         $res = $calculatedsummary->get_min_max_of('sd');
         $this->assertEquals($expected, $res);
     }

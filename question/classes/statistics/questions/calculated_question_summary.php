@@ -26,7 +26,7 @@ namespace core_question\statistics\questions;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class calculated_random_question_summary
+ * Class calculated_question_summary
  *
  * This class is used to indicate the statistics for a random question slot should
  * be rendered with a link to a summary of the displayed questions.
@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2018 Ryan Wyllie <ryan@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class calculated_random_question_summary extends calculated {
+class calculated_question_summary extends calculated {
 
     /**
      * @var int only set immediately before display in the table. The order of display in the table.
@@ -50,7 +50,7 @@ class calculated_random_question_summary extends calculated {
     protected $subqstats;
 
     /**
-     * calculated_random_question_summary constructor.
+     * calculated_question_summary constructor.
      *
      * @param \stdClass $question
      * @param int $slot

@@ -117,5 +117,4 @@ $string['statistics:view'] = 'View statistics report';
 $string['statsfor'] = 'Quiz statistics (for {$a})';
 $string['variant'] = 'Variant';
 $string['viewanalysis'] = 'View analysis of these questions';
-$string['viewanalysishint'] = 'View analysis of the random question(s) above';
 $string['whichtries'] = 'Analyze responses for';
