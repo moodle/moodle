@@ -84,19 +84,20 @@ class calculated_random_question_summary extends calculated {
             return $this->$getmethod();
         } else {
             $min = $max = null;
+            $set = false;
 
             // We cannot simply use min or max functions because, in theory, some attributes might be non-scalar.
             foreach (array_column($this->subqstats, $attribute) as $value) {
-                if (is_scalar($value)) {
-                    if (!isset($min)) {
+                if (is_scalar($value) || is_null($value)) {
+                    if (!$set) {    // It is not good enough to check if (!isset($min)),
+                                    // because $min might have been set to null in an earlier iteration.
                         $min = $value;
-                    }
-                    if (!isset($max)) {
                         $max = $value;
+                        $set = true;
                     }
 
-                    $min = min($min, $value);
-                    $max = max($max, $value);
+                    $min  = $this->min($min, $value);
+                    $max  = $this->max($max, $value);
                 }
             }
 
@@ -110,21 +111,74 @@ class calculated_random_question_summary extends calculated {
      */
     protected function get_min_max_of_sd() {
         $min = $max = null;
+        $set = false;
 
         foreach ($this->subqstats as $subqstat) {
             if (isset($subqstat->sd) && $subqstat->maxmark) {
-                if (!isset($min)) {
-                    $min = $subqstat->sd / $subqstat->maxmark;
-                }
-                if (!isset($max)) {
-                    $max = $subqstat->sd / $subqstat->maxmark;
-                }
-
-                $min = min($min, $subqstat->sd / $subqstat->maxmark);
-                $max = max($max, $subqstat->sd / $subqstat->maxmark);
+                $value = $subqstat->sd / $subqstat->maxmark;
+            } else {
+                $value = null;
             }
+
+            if (!$set) {    // It is not good enough to check if (!isset($min)),
+                            // because $min might have been set to null in an earlier iteration.
+                $min = $value;
+                $max = $value;
+                $set = true;
+            }
+
+            $min = $this->min($min, $value);
+            $max = $this->max($max, $value);
         }
 
         return [$min, $max];
+    }
+
+    /**
+     * Find higher value.
+     * A zero value is almost considered equal to zero in comparisons. The only difference is that when being compared to zero,
+     * zero is higher than null.
+     *
+     * @param float|null $value1
+     * @param float|null $value2
+     * @return float|null
+     */
+    protected function max(float $value1 = null, float $value2 = null) {
+        $temp1 = $value1 ?: 0;
+        $temp2 = $value2 ?: 0;
+
+        $tempmax = max($temp1, $temp2);
+
+        if (!$tempmax && $value1 !== 0 && $value2 !== 0) {
+            $max = null;
+        } else {
+            $max = $tempmax;
+        }
+
+        return $max;
+    }
+
+    /**
+     * Find lower value.
+     * A zero value is almost considered equal to zero in comparisons. The only difference is that when being compared to zero,
+     * zero is lower than null.
+     *
+     * @param float|null $value1
+     * @param float|null $value2
+     * @return mixed|null
+     */
+    protected function min(float $value1 = null, float $value2 = null) {
+        $temp1 = $value1 ?: 0;
+        $temp2 = $value2 ?: 0;
+
+        $tempmin = min($temp1, $temp2);
+
+        if (!$tempmin && $value1 !== 0 && $value2 !== 0) {
+            $min = null;
+        } else {
+            $min = $tempmin;
+        }
+
+        return $min;
     }
 }
