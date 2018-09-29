@@ -3814,7 +3814,7 @@ function calendar_get_allowed_event_types(int $courseid = null) {
                 $ctxfields = context_helper::get_preload_record_columns_sql('ctx');
                 $sql = "SELECT
                             c.id, c.visible, {$ctxfields}
-                        FROM {course}
+                        FROM {course} c
                         JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
                 $params = [
                     'contextlevel' => CONTEXT_COURSE,
