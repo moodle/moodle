@@ -260,6 +260,7 @@ $string['nopermissiontodelinglossary'] = 'You can\'t comments in this glossary!'
 $string['nopermissiontoviewresult'] = 'You can only look at results for your own entries';
 $string['notcategorised'] = 'Not categorised';
 $string['notapproved'] = 'glossary entry is not approved yet.';
+$string['entrynotapproved'] = 'Entry not approved';
 $string['numberofentries'] = 'Number of entries';
 $string['onebyline'] = '(one per line)';
 $string['page-mod-glossary-x'] = 'Any glossary module page';
