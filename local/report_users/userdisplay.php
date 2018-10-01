@@ -273,7 +273,7 @@ foreach ($usercourses as $usercourse) {
                     'courseid' => $usercourseid,
                     'action' => 'clear'
                 ));
-            if (empty($usercompcourse->canbecleared) && has_capability('block/iomad_company_admin:editusers', $context)) {
+            if (!empty($usercompcourse->canbecleared) && has_capability('block/iomad_company_admin:editusers', $context)) {
                 // Its from the course_completions table.  Check the license type.
                 if ($DB->get_record_sql("SELECT cl.* FROM {companylicense} cl
                                          JOIN {companylicense_users} clu
