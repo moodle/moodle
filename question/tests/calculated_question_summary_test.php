@@ -97,6 +97,8 @@ class core_question_calculated_question_summary_testcase extends advanced_testca
     }
 
     /**
+     * Unit test for get_min_max_of() method.
+     *
      * @dataProvider get_min_max_provider
      */
     public function test_get_min_max_of($subqstats, $expected) {
@@ -148,6 +150,8 @@ class core_question_calculated_question_summary_testcase extends advanced_testca
     }
 
     /**
+     * Unit test for get_min_max_of_sd() method.
+     *
      * @dataProvider get_sd_min_max_provider
      */
     public function test_get_min_max_of_sd($subqstats, $expected) {

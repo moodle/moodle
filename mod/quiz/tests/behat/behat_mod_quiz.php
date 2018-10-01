@@ -702,8 +702,8 @@ class behat_mod_quiz extends behat_question_base {
      * to force either which random question was chose, or which random variant
      * was used, as for {@link user_has_attempted_with_responses()} above.
      *
-     * @param string $quizname the name of the quiz the user will attempt.
      * @param string $username the username of the user that will attempt.
+     * @param string $quizname the name of the quiz the user will attempt.
      * @param TableNode $attemptinfo information about the questions to add, as above.
      * @Given /^user "([^"]*)" has started an attempt at quiz "([^"]*) randomised as follows:"$/
      */
@@ -773,8 +773,8 @@ class behat_mod_quiz extends behat_question_base {
      * There is no need to supply answers to all questions. If so, other questions will be
      * left unanswered.
      *
-     * @param string $quizname the name of the quiz the user will attempt.
      * @param string $username the username of the user that will attempt.
+     * @param string $quizname the name of the quiz the user will attempt.
      * @param TableNode $attemptinfo information about the questions to add, as above.
      * @throws \Behat\Mink\Exception\ExpectationException
      * @Given /^user "([^"]*)" has checked answers in their attempt at quiz "([^"]*)":$/
