@@ -1968,6 +1968,37 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test can create a contact request.
+     */
+    public function test_can_create_contact_request() {
+        global $CFG;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+        $this->assertFalse(\core_message\api::can_create_contact($user1->id, $user2->id));
+
+        // Re-enable messaging.
+        $CFG->messaging = 1;
+
+        // Allow users to message anyone site-wide.
+        $CFG->messagingallusers = 1;
+        $this->assertTrue(\core_message\api::can_create_contact($user1->id, $user2->id));
+
+        // Disallow users from messaging anyone site-wide.
+        $CFG->messagingallusers = 0;
+        $this->assertFalse(\core_message\api::can_create_contact($user1->id, $user2->id));
+
+        // Put the users in the same course so a contact request should be possible.
+        $course = self::getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->assertTrue(\core_message\api::can_create_contact($user1->id, $user2->id));
+    }
+
+    /**
      * Test creating a contact request.
      */
     public function test_create_contact_request() {

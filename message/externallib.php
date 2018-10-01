@@ -744,6 +744,16 @@ class core_message_external extends external_api {
         $params = ['userid' => $userid, 'requesteduserid' => $requesteduserid];
         $params = self::validate_parameters(self::create_contact_request_parameters(), $params);
 
+        if (!\core_message\api::can_create_contact($params['userid'], $params['requesteduserid'])) {
+            $warning[] = [
+                'item' => 'user',
+                'itemid' => $params['requesteduserid'],
+                'warningcode' => 'cannotcreatecontactrequest',
+                'message' => 'You are unable to create a contact request for this user'
+            ];
+            return $warning;
+        }
+
         if (!\core_message\api::does_contact_request_exist($params['userid'], $params['requesteduserid'])) {
             \core_message\api::create_contact_request($params['userid'], $params['requesteduserid']);
         }

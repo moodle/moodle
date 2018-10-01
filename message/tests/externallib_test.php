@@ -607,7 +607,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
      * Test creating a contact request.
      */
     public function test_create_contact_request() {
-        global $DB;
+        global $CFG, $DB;
 
         $this->resetAfterTest();
 
@@ -615,6 +615,9 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $user2 = self::getDataGenerator()->create_user();
 
         $this->setUser($user1);
+
+        // Allow users to message anyone site-wide.
+        $CFG->messagingallusers = 1;
 
         $return = core_message_external::create_contact_request($user1->id, $user2->id);
         $return = external_api::clean_returnvalue(core_message_external::create_contact_request_returns(), $return);
@@ -628,6 +631,32 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         $this->assertEquals($user1->id, $request->userid);
         $this->assertEquals($user2->id, $request->requesteduserid);
+    }
+
+    /**
+     * Test creating a contact request when not allowed.
+     */
+    public function test_create_contact_request_not_allowed() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        $CFG->messagingallusers = 0;
+
+        $return = core_message_external::create_contact_request($user1->id, $user2->id);
+        $return = external_api::clean_returnvalue(core_message_external::create_contact_request_returns(), $return);
+
+        $warning = reset($return);
+
+        $this->assertEquals('user', $warning['item']);
+        $this->assertEquals($user2->id, $warning['itemid']);
+        $this->assertEquals('cannotcreatecontactrequest', $warning['warningcode']);
+        $this->assertEquals('You are unable to create a contact request for this user', $warning['message']);
     }
 
     /**

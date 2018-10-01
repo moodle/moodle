@@ -1320,6 +1320,30 @@ class api {
     }
 
     /**
+     * Checks if a user can create a contact request.
+     *
+     * @param int $userid The id of the user who is creating the contact request
+     * @param int $requesteduserid The id of the user being requested
+     * @return bool
+     */
+    public static function can_create_contact(int $userid, int $requesteduserid) : bool {
+        global $CFG;
+
+        // If we can't message at all, then we can't create a contact.
+        if (empty($CFG->messaging)) {
+            return false;
+        }
+
+        // If we can message anyone on the site then we can create a contact.
+        if ($CFG->messagingallusers) {
+            return true;
+        }
+
+        // We need to check if they are in the same course.
+        return enrol_sharing_course($userid, $requesteduserid);
+    }
+
+    /**
      * Handles creating a contact request.
      *
      * @param int $userid The id of the user who is creating the contact request
