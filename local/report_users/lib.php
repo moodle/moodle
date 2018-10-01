@@ -127,7 +127,13 @@ class userrep {
                         $u->result = '';
                     }
                     $user = $DB->get_record('user', array('id' => $userid));
-                    if (!empty($u->certsource) && is_enrolled(context_course::instance($courseid), $user)) {
+                    if (!empty($u->certsource) &&
+                        (is_enrolled(context_course::instance($courseid), $user) ||
+                         $DB->get_record_sql("SELECT id FROM {course_completions}
+                                              WHERE userid = :userid
+                                              AND courseid = :courseid
+                                              AND timecompleted IS NOT NULL",
+                                              array('userid' => $userid, 'courseid' => $courseid)))) {
                         $u->canbecleared = true;
                     } else {
                         $u->canbecleared = false;
