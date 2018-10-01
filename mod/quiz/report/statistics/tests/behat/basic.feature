@@ -71,7 +71,7 @@ Feature: Basic use of the Statistics report
     And "1" row "Facility index" column of "questionstatistics" table should contain "66.67 %"
     And "1" row "Standard deviation" column of "questionstatistics" table should contain "57.74 %"
     And "1" row "Random guess score" column of "questionstatistics" table should contain "50.00 %"
-    And "1" row "Intended weight" column of "questionstatistics" table should contain "33.33%"
+    And "1" row "Intended weight" column of "questionstatistics" table should contain "33.33 %"
     And "1" row "Effective weight" column of "questionstatistics" table should contain "30.90 %"
     And "1" row "Discrimination index" column of "questionstatistics" table should contain "50.00 %"
 
@@ -81,7 +81,7 @@ Feature: Basic use of the Statistics report
     And "2" row "Facility index" column of "questionstatistics" table should contain "33.33 %"
     And "2" row "Standard deviation" column of "questionstatistics" table should contain "57.74 %"
     And "2" row "Random guess score" column of "questionstatistics" table should contain "50.00 %"
-    And "2" row "Intended weight" column of "questionstatistics" table should contain "33.33%"
+    And "2" row "Intended weight" column of "questionstatistics" table should contain "33.33 %"
     And "2" row "Effective weight" column of "questionstatistics" table should contain "34.55 %"
     And "2" row "Discrimination index" column of "questionstatistics" table should contain "86.60 %"
 
@@ -91,7 +91,7 @@ Feature: Basic use of the Statistics report
     And "3" row "Facility index" column of "questionstatistics" table should contain "33.33 %"
     And "3" row "Standard deviation" column of "questionstatistics" table should contain "57.74 %"
     And "3" row "Random guess score" column of "questionstatistics" table should contain "50.00 %"
-    And "3" row "Intended weight" column of "questionstatistics" table should contain "33.33%"
+    And "3" row "Intended weight" column of "questionstatistics" table should contain "33.33 %"
     And "3" row "Effective weight" column of "questionstatistics" table should contain "34.55 %"
     And "3" row "Discrimination index" column of "questionstatistics" table should contain "86.60 %"
 
