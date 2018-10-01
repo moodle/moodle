@@ -131,7 +131,7 @@ class userrep {
                         (is_enrolled(context_course::instance($courseid), $user) ||
                          $DB->get_record_sql("SELECT id FROM {course_completions}
                                               WHERE userid = :userid
-                                              AND courseid = :courseid
+                                              AND course = :courseid
                                               AND timecompleted IS NOT NULL",
                                               array('userid' => $userid, 'courseid' => $courseid)))) {
                         $u->canbecleared = true;
