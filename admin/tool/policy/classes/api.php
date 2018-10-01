@@ -760,14 +760,14 @@ class api {
                 if (isset($acceptances[$policy->currentversion->id])) {
                     $policy->currentversion->acceptance = $acceptances[$policy->currentversion->id];
                 } else {
-                    $policy->currentversion->acceptance = 0;
+                    $policy->currentversion->acceptance = null;
                 }
                 $versions[] = $policy->currentversion;
             }
             foreach ($policy->archivedversions as $version) {
                 if ($version->audience != policy_version::AUDIENCE_GUESTS
                         && static::can_user_view_policy_version($version, $userid)) {
-                    $version->acceptance = isset($acceptances[$version->id]) ? $acceptances[$version->id] : 0;
+                    $version->acceptance = isset($acceptances[$version->id]) ? $acceptances[$version->id] : null;
                     $versions[] = $version;
                 }
             }

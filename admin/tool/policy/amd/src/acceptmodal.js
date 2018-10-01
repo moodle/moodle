@@ -53,36 +53,6 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/n
         AcceptOnBehalf.prototype.contextid = -1;
 
         /**
-         * @var {Array} strings
-         * @private
-         */
-        AcceptOnBehalf.prototype.stringKeys = [
-            {
-                key: 'consentdetails',
-                component: 'tool_policy'
-            },
-            {
-                key: 'iagreetothepolicy',
-                component: 'tool_policy'
-            },
-            {
-                key: 'selectusersforconsent',
-                component: 'tool_policy'
-            },
-            {
-                key: 'ok'
-            },
-            {
-                key: 'revokedetails',
-                component: 'tool_policy'
-            },
-            {
-                key: 'irevokethepolicy',
-                component: 'tool_policy'
-            }
-        ];
-
-        /**
          * @var {object} currentTrigger The triggered HTML jQuery object
          * @private
          */
@@ -121,9 +91,14 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/n
                     var formData = form.serialize();
                     this.showFormModal(formData);
                 } else {
-                    Str.get_strings(this.stringKeys).done(function(strings) {
-                        Notification.alert('', strings[2], strings[3]);
-                    });
+                    Str.get_strings([
+                        {key: 'notice'},
+                        {key: 'selectusersforconsent', component: 'tool_policy'},
+                        {key: 'ok'}
+                    ]).then(function(strings) {
+                        Notification.alert(strings[0], strings[1], strings[2]);
+                        return;
+                    }).fail(Notification.exception);
                 }
             }.bind(this));
         };
@@ -143,18 +118,28 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/n
                 }
             }
             // Fetch the title string.
-            Str.get_strings(this.stringKeys).done(function(strings) {
+            Str.get_strings([
+                {key: 'statusformtitleaccept', component: 'tool_policy'},
+                {key: 'iagreetothepolicy', component: 'tool_policy'},
+                {key: 'statusformtitlerevoke', component: 'tool_policy'},
+                {key: 'irevokethepolicy', component: 'tool_policy'},
+                {key: 'statusformtitledecline', component: 'tool_policy'},
+                {key: 'declinethepolicy', component: 'tool_policy'}
+            ]).then(function(strings) {
                 var title;
                 var saveText;
-                if (action == 'revoke') {
-                    title = strings[4];
-                    saveText = strings[5];
-                } else {
+                if (action == 'accept') {
                     title = strings[0];
                     saveText = strings[1];
+                } else if (action == 'revoke') {
+                    title = strings[2];
+                    saveText = strings[3];
+                } else if (action == 'decline') {
+                    title = strings[4];
+                    saveText = strings[5];
                 }
                 // Create the modal.
-                ModalFactory.create({
+                return ModalFactory.create({
                     type: ModalFactory.types.SAVE_CANCEL,
                     title: title,
                     body: ''
@@ -163,7 +148,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/n
                     this.setupFormModal(formData, saveText);
                 }.bind(this));
             }.bind(this))
-                .fail(Notification.exception);
+                .catch(Notification.exception);
         };
 
         /**

@@ -94,11 +94,9 @@ class acceptances_filter implements \templatable, \renderable {
                 switch ((int)$parts[1]) {
                     case self::FILTER_POLICYID:
                     case self::FILTER_VERSIONID:
-                        $value = (int)$parts[2];
-                        break;
                     case self::FILTER_CAPABILITY_ACCEPT:
                     case self::FILTER_STATUS:
-                        $value = (int)(bool)$parts[2];
+                        $value = (int)$parts[2];
                         break;
                     case self::FILTER_ROLE:
                         $value = (int)$parts[2];
@@ -408,8 +406,9 @@ class acceptances_filter implements \templatable, \renderable {
 
         // Status.
         $statuses = [
+            self::FILTER_STATUS.':2' => get_string('filterstatusdeclined', 'tool_policy'),
             self::FILTER_STATUS.':1' => get_string('filterstatusyes', 'tool_policy'),
-            self::FILTER_STATUS.':0' => get_string('filterstatusno', 'tool_policy'),
+            self::FILTER_STATUS.':0' => get_string('filterstatuspending', 'tool_policy'),
         ];
         if (($currentstatus = $this->get_status_filter()) !== null) {
             $selectedoptions[] = $key = self::FILTER_STATUS . ':' . $currentstatus;

@@ -26,67 +26,30 @@
     -
 
     Context variables required for this template:
-    * status
-    * onbehalf
-    * canaccept
-    * acceptlink
+    * statusicon
+    * statustext
+    * actions
+        - url
+        - data
+        - text
+        - title
 
     Example context (json):
     {
-        "status": false,
-        "onbehalf": false,
-        "canaccept": true,
-        "canrevoke": true,
-        "acceptlink": "/",
-        "revokelink": "/",
-        "singleversion": false,
-        "versionname": ""
+        "statusicon": "accepted",
+        "statustext": "Accepted",
+        "actions": {
+            "url": "/admin/tool/policy/accept.php?param=value",
+            "data": "acceptmodal",
+            "text": "Withdraw",
+            "title": "Withdraw acceptance of Site policy"
+        }
     }
 }}
-{{#status}}
-    {{#canrevoke}}
-        {{#singleversion}}
-            {{#onbehalf}}
-                <a href="{{revokelink}}" data-action="acceptmodal">{{#pix}}agreedyesonbehalf, tool_policy,
-                    {{#str}} agreedyesonbehalfwithlink, tool_policy, {{{versionname}}} {{/str}}{{/pix}}</a>
-            {{/onbehalf}}
-            {{^onbehalf}}
-                <a href="{{revokelink}}" data-action="acceptmodal">{{#pix}}agreedyes, tool_policy,
-                    {{#str}} agreedyeswithlink, tool_policy, {{{versionname}}} {{/str}}{{/pix}}</a>
-            {{/onbehalf}}
-        {{/singleversion}}
-        {{^singleversion}}
-            {{#onbehalf}}
-                <a href="{{revokelink}}" data-action="acceptmodal">{{#pix}}agreedyesonbehalf, tool_policy,
-                    {{#str}} agreedyesonbehalfwithlinkall, tool_policy {{/str}}{{/pix}}</a>
-            {{/onbehalf}}
-            {{^onbehalf}}
-                <a href="{{revokelink}}" data-action="acceptmodal">{{#pix}}agreedyes, tool_policy,
-                    {{#str}} agreedyeswithlinkall, tool_policy {{/str}}{{/pix}}</a>
-            {{/onbehalf}}
-        {{/singleversion}}
-    {{/canrevoke}}
-
-    {{^canrevoke}}
-        {{#onbehalf}}
-            <span>{{#pix}}agreedyesonbehalf, tool_policy, {{#str}} agreedyesonbehalf, tool_policy {{/str}}{{/pix}}</span>
-        {{/onbehalf}}
-        {{^onbehalf}}
-            <span>{{#pix}}agreedyes, tool_policy, {{#str}} agreedyes, tool_policy {{/str}}{{/pix}}</span>
-        {{/onbehalf}}
-    {{/canrevoke}}
-{{/status}}
-
-{{^status}}
-    {{#canaccept}}
-        {{#singleversion}}
-            <a href="{{acceptlink}}" data-action="acceptmodal">{{#pix}}agreedno, tool_policy, {{#str}} agreednowithlink, tool_policy, {{{versionname}}} {{/str}}{{/pix}}</a>
-        {{/singleversion}}
-        {{^singleversion}}
-            <a href="{{acceptlink}}" data-action="acceptmodal">{{#pix}}agreedno, tool_policy, {{#str}} agreednowithlinkall, tool_policy {{/str}}{{/pix}}</a>
-        {{/singleversion}}
-    {{/canaccept}}
-    {{^canaccept}}
-        <span>{{#pix}}agreedno, tool_policy, {{#str}} agreedno, tool_policy {{/str}}{{/pix}}</span>
-    {{/canaccept}}
-{{/status}}
+<span class="tool_policy-user_agreement-icon">{{#pix}} {{statusicon}}, tool_policy{{/pix}}</span>
+<span class="tool_policy-user_agreement-status">{{statustext}}</span>
+<span class="tool_policy-user_agreement-actions">
+{{#actions}}
+    <a href="{{url}}" title="{{title}}" data-action="{{data}}"><small>{{text}}</small></a>
+{{/actions}}
+</span>
