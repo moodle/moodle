@@ -111,18 +111,26 @@ class userrep {
                         } else {
                             $u->timecompleted = 0;
                             $u->status = 'inprogress';
+                            $u->certsource = null;
                             ++$inprogress;
                         }
 
                     } else {
                         $u->timestarted = 0;
                         $u->status = 'notstarted';
+                        $u->certsource = null;
                         ++$notstarted;
                     }
                     if (!empty($completioninfo->finalscore)) {
                         $u->result = round($completioninfo->finalscore, 0);
                     } else {
                         $u->result = '';
+                    }
+                    $user = $DB->get_record('user', array('id' => $userid));
+                    if (!empty($u->certsource) && is_enrolled(context_course::instance($courseid), $user)) {
+                        $u->canbecleared = true;
+                    } else {
+                        $u->canbecleared = false;
                     }
                     $datum->completion->{$completioninfo->id} = $u;
 
@@ -135,6 +143,7 @@ class userrep {
                         $u->timestarted = 0;
                         $u->status = 'notstarted';
                         $u->certsource = null;
+                        $u->canbecleared = true;
                         ++$notstarted;
                         $datum->completion->$courseid = $u;
                     }
@@ -149,6 +158,7 @@ class userrep {
                 $u->timestarted = 0;
                 $u->status = 'notstarted';
                 $u->certsource = null;
+                $u->canbecleared = true;
                 ++$notstarted;
                 $datum->completion->$courseid = $u;
                 $data[$courseid] = $datum;
@@ -164,6 +174,7 @@ class userrep {
                 $u->timestarted = 0;
                 $u->status = 'notstarted';
                 $u->certsource = null;
+                $u->canbecleared = true;
                 ++$notstarted;
                 $datum->completion->$courseid = $u;
                 $data[$courseid] = $datum;
