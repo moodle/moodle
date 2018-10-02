@@ -41,23 +41,33 @@ class expiry_info {
     /** @var bool Whether the default expiry value of this purpose has been reached */
     protected $defaultexpiryreached = false;
 
+    /** @var bool Whether the default purpose is protected */
+    protected $defaultprotected = false;
+
     /** @var int[] List of expires roles */
     protected $expired = [];
 
     /** @var int[] List of unexpires roles */
     protected $unexpired = [];
 
+    /** @var int[] List of unexpired roles which are also protected */
+    protected $protectedroles = [];
+
     /**
      * Constructor for the expiry_info class.
      *
      * @param   bool    $default Whether the default expiry period for this context has been reached.
+     * @param   bool    $defaultprotected Whether the default expiry is protected.
      * @param   int[]   $expired A list of roles in this context which have explicitly expired.
      * @param   int[]   $unexpired A list of roles in this context which have not yet expired.
+     * @param   int[]   $protectedroles A list of unexpired roles in this context which are protected.
      */
-    public function __construct(bool $default, array $expired, array $unexpired) {
+    public function __construct(bool $default, bool $defaultprotected, array $expired, array $unexpired, array $protectedroles) {
         $this->defaultexpiryreached = $default;
+        $this->defaultprotected = $defaultprotected;
         $this->expired = $expired;
         $this->unexpired = $unexpired;
+        $this->protectedroles = $protectedroles;
     }
 
     /**
@@ -125,12 +135,40 @@ class expiry_info {
     }
 
     /**
+     * Whether the default purpose is protected.
+     *
+     * @return  bool
+     */
+    public function is_default_protected() : bool {
+        return $this->defaultprotected;
+    }
+
+    /**
      * Get the list of unexpired role IDs.
      *
      * @return  int[]
      */
     public function get_unexpired_roles() : array {
         return $this->unexpired;
+    }
+
+    /**
+     * Get the list of unexpired protected roles.
+     *
+     * @return  int[]
+     */
+    public function get_unexpired_protected_roles() : array {
+        return array_keys(array_filter($this->protectedroles));
+    }
+
+    /**
+     * Get a list of all overridden roles which are unprotected.
+     * @return  int[]
+     */
+    public function get_unprotected_overridden_roles() : array {
+        $allroles = array_merge($this->expired, $this->unexpired);
+
+        return array_diff($allroles, $this->protectedroles);
     }
 
     /**
