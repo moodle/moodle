@@ -58,7 +58,7 @@ class user_favourites_service_testcase extends advanced_testcase {
      */
     protected function get_mock_repository(array $mockstore) {
         // This mock will just store data in an array.
-        $mockrepo = $this->getMockBuilder(\core_favourites\local\ifavourites_repository::class)
+        $mockrepo = $this->getMockBuilder(\core_favourites\local\repository\ifavourites_repository::class)
             ->setMethods([])
             ->getMock();
         $mockrepo->expects($this->any())
@@ -140,7 +140,7 @@ class user_favourites_service_testcase extends advanced_testcase {
     public function test_get_service_for_user_context() {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
         $userservice = \core_favourites\services::get_service_for_user_context($user1context);
-        $this->assertInstanceOf(\core_favourites\local\user_favourites_service::class, $userservice);
+        $this->assertInstanceOf(\core_favourites\local\service\user_favourites_service::class, $userservice);
     }
 
     /**
@@ -151,7 +151,7 @@ class user_favourites_service_testcase extends advanced_testcase {
 
         // Get a user_favourites_service for a user.
         $repo = $this->get_mock_repository([]); // Mock repository, using the array as a mock DB.
-        $user1service = new \core_favourites\local\user_favourites_service($user1context, $repo);
+        $user1service = new \core_favourites\local\service\user_favourites_service($user1context, $repo);
 
         // Favourite a course.
         $favourite1 = $user1service->create_favourite('core_course', 'course', $course1context->instanceid, $course1context);
@@ -170,7 +170,7 @@ class user_favourites_service_testcase extends advanced_testcase {
 
         // Get a user_favourites_service for the user.
         $repo = $this->get_mock_repository([]); // Mock repository, using the array as a mock DB.
-        $user1service = new \core_favourites\local\user_favourites_service($user1context, $repo);
+        $user1service = new \core_favourites\local\service\user_favourites_service($user1context, $repo);
 
         // Try to favourite something in a non-existent component.
         $this->expectException('moodle_exception');
@@ -185,7 +185,7 @@ class user_favourites_service_testcase extends advanced_testcase {
 
         // Get a user_favourites_service for the user.
         $repo = $this->get_mock_repository([]); // Mock repository, using the array as a mock DB.
-        $service = new \core_favourites\local\user_favourites_service($user1context, $repo);
+        $service = new \core_favourites\local\service\user_favourites_service($user1context, $repo);
 
         // Favourite 2 courses, in separate areas.
         $fav1 = $service->create_favourite('core_course', 'course', $course1context->instanceid, $course1context);
@@ -211,8 +211,8 @@ class user_favourites_service_testcase extends advanced_testcase {
 
         // Get a user_favourites_service for 2 users.
         $repo = $this->get_mock_repository([]);
-        $user1service = new \core_favourites\local\user_favourites_service($user1context, $repo);
-        $user2service = new \core_favourites\local\user_favourites_service($user2context, $repo);
+        $user1service = new \core_favourites\local\service\user_favourites_service($user1context, $repo);
+        $user2service = new \core_favourites\local\service\user_favourites_service($user2context, $repo);
 
         // Now, as each user, favourite the same course.
         $fav1 = $user1service->create_favourite('core_course', 'course', $course1context->instanceid, $course1context);
@@ -238,7 +238,7 @@ class user_favourites_service_testcase extends advanced_testcase {
 
         // Get a user_favourites_service for the user.
         $repo = $this->get_mock_repository([]);
-        $service = new \core_favourites\local\user_favourites_service($user1context, $repo);
+        $service = new \core_favourites\local\service\user_favourites_service($user1context, $repo);
 
         // Verify we get an exception if we try to search for favourites in an invalid component.
         $this->expectException('moodle_exception');
@@ -253,7 +253,7 @@ class user_favourites_service_testcase extends advanced_testcase {
 
         // Get a user_favourites_service for the user.
         $repo = $this->get_mock_repository([]);
-        $service = new \core_favourites\local\user_favourites_service($user1context, $repo);
+        $service = new \core_favourites\local\service\user_favourites_service($user1context, $repo);
 
         // Favourite a course.
         $fav1 = $service->create_favourite('core_course', 'course', $course1context->instanceid, $course1context);

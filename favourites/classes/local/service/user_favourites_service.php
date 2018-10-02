@@ -21,7 +21,7 @@
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_favourites\local;
+namespace core_favourites\local\service;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class user_favourites_service {
 
-    /** @var user_favourites_repository $repo the user favourites repository object. */
+    /** @var ifavourites_repository $repo the user favourites repository object. */
     protected $repo;
 
     /** @var int $userid the id of the user to which this favourites service is scoped. */
@@ -59,9 +59,9 @@ class user_favourites_service {
      * The user_favourites_service constructor.
      *
      * @param \context_user $usercontext The context of the user to which this service operations are scoped.
-     * @param ifavourites_repository $repository a user favourites repository.
+     * @param \core_favourites\local\repository\ifavourites_repository $repository a user favourites repository.
      */
-    public function __construct(\context_user $usercontext, ifavourites_repository $repository) {
+    public function __construct(\context_user $usercontext, \core_favourites\local\repository\ifavourites_repository $repository) {
         $this->repo = $repository;
         $this->userid = $usercontext->instanceid;
     }

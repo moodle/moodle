@@ -42,8 +42,8 @@ class services {
      * @param \context_user $context the context of the user to which the service should be scoped.
      * @return user_favourites_service the service object.
      */
-    public static function get_service_for_user_context(\context_user $context) : local\user_favourites_service {
-        return new local\user_favourites_service($context, new local\favourites_repository());
+    public static function get_service_for_user_context(\context_user $context) : local\service\user_favourites_service {
+        return new local\service\user_favourites_service($context, new local\repository\favourites_repository());
     }
 }
 

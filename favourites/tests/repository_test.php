@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_favourites\local\favourites_repository;
+use \core_favourites\local\repository\favourites_repository;
 
 /**
  * Test class covering the favourites_repository.

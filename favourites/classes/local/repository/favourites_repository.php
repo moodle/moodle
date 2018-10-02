@@ -20,7 +20,7 @@
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_favourites\local;
+namespace core_favourites\local\repository;
 
 defined('MOODLE_INTERNAL') || die();
 
