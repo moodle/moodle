@@ -24,11 +24,14 @@
 
 use core\invalid_persistent_exception;
 use core\task\manager;
+use tool_dataprivacy\contextlist_context;
 use tool_dataprivacy\context_instance;
 use tool_dataprivacy\api;
 use tool_dataprivacy\data_registry;
 use tool_dataprivacy\expired_context;
 use tool_dataprivacy\data_request;
+use tool_dataprivacy\purpose;
+use tool_dataprivacy\category;
 use tool_dataprivacy\local\helper;
 use tool_dataprivacy\task\initiate_data_request_task;
 use tool_dataprivacy\task\process_data_request_task;
@@ -1377,6 +1380,228 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that delete requests do not filter out protected purpose contexts if they are already expired.
+     */
+    public function test_add_request_contexts_with_status_delete_course_expired_protected() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1H', 'PT1H', 'PT1H');
+        $purposes->course->set('protected', 1)->save();
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - YEARSECS]);
+        $coursecontext = \context_course::instance($course->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $collection = new \core_privacy\local\request\contextlist_collection($user->id);
+        $contextlist = new \core_privacy\local\request\contextlist();
+        $contextlist->set_component('tool_dataprivacy');
+        $contextlist->add_from_sql('SELECT id FROM {context} WHERE id IN(:ctx1)', ['ctx1' => $coursecontext->id]);
+        $collection->add_contextlist($contextlist);
+
+        $request = api::create_data_request($user->id, api::DATAREQUEST_TYPE_DELETE);
+
+        $purposes->course->set('protected', 1)->save();
+        api::add_request_contexts_with_status($collection, $request->get('id'), contextlist_context::STATUS_APPROVED);
+
+        $requests = contextlist_context::get_records();
+        $this->assertCount(1, $requests);
+    }
+
+    /**
+     * Test that delete requests does filter out protected purpose contexts which are not expired.
+     */
+    public function test_add_request_contexts_with_status_delete_course_unexpired_protected() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1H', 'PT1H', 'P1Y');
+        $purposes->course->set('protected', 1)->save();
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time()]);
+        $coursecontext = \context_course::instance($course->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $collection = new \core_privacy\local\request\contextlist_collection($user->id);
+        $contextlist = new \core_privacy\local\request\contextlist();
+        $contextlist->set_component('tool_dataprivacy');
+        $contextlist->add_from_sql('SELECT id FROM {context} WHERE id IN(:ctx1)', ['ctx1' => $coursecontext->id]);
+        $collection->add_contextlist($contextlist);
+
+        $request = api::create_data_request($user->id, api::DATAREQUEST_TYPE_DELETE);
+
+        $purposes->course->set('protected', 1)->save();
+        api::add_request_contexts_with_status($collection, $request->get('id'), contextlist_context::STATUS_APPROVED);
+
+        $requests = contextlist_context::get_records();
+        $this->assertCount(0, $requests);
+    }
+
+    /**
+     * Test that delete requests do not filter out unexpired contexts if they are not protected.
+     */
+    public function test_add_request_contexts_with_status_delete_course_unexpired_unprotected() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1H', 'PT1H', 'P1Y');
+        $purposes->course->set('protected', 1)->save();
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time()]);
+        $coursecontext = \context_course::instance($course->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $collection = new \core_privacy\local\request\contextlist_collection($user->id);
+        $contextlist = new \core_privacy\local\request\contextlist();
+        $contextlist->set_component('tool_dataprivacy');
+        $contextlist->add_from_sql('SELECT id FROM {context} WHERE id IN(:ctx1)', ['ctx1' => $coursecontext->id]);
+        $collection->add_contextlist($contextlist);
+
+        $request = api::create_data_request($user->id, api::DATAREQUEST_TYPE_DELETE);
+
+        $purposes->course->set('protected', 0)->save();
+        api::add_request_contexts_with_status($collection, $request->get('id'), contextlist_context::STATUS_APPROVED);
+
+        $requests = contextlist_context::get_records();
+        $this->assertCount(1, $requests);
+    }
+
+    /**
+     * Test that delete requests do not filter out protected purpose contexts if they are already expired.
+     */
+    public function test_get_approved_contextlist_collection_for_request_delete_course_expired_protected() {
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1H', 'PT1H', 'PT1H');
+        $purposes->course->set('protected', 1)->save();
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - YEARSECS]);
+        $coursecontext = \context_course::instance($course->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        // Create the request, with its contextlist and context.
+        $request = api::create_data_request($user->id, api::DATAREQUEST_TYPE_DELETE);
+        $contextlist = new \tool_dataprivacy\contextlist(0, (object) ['component' => 'tool_dataprivacy']);
+        $contextlist->save();
+
+        $clcontext = new \tool_dataprivacy\contextlist_context(0, (object) [
+                'contextid' => $coursecontext->id,
+                'status' => contextlist_context::STATUS_APPROVED,
+                'contextlistid' => $contextlist->get('id'),
+            ]);
+        $clcontext->save();
+
+        $rcl = new \tool_dataprivacy\request_contextlist(0, (object) [
+                'requestid' => $request->get('id'),
+                'contextlistid' => $contextlist->get('id'),
+            ]);
+        $rcl->save();
+
+        $purposes->course->set('protected', 1)->save();
+        $collection = api::get_approved_contextlist_collection_for_request($request);
+
+        $this->assertCount(1, $collection);
+
+        $list = $collection->get_contextlist_for_component('tool_dataprivacy');
+        $this->assertCount(1, $list);
+    }
+
+    /**
+     * Test that delete requests does filter out protected purpose contexts which are not expired.
+     */
+    public function test_get_approved_contextlist_collection_for_request_delete_course_unexpired_protected() {
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1H', 'PT1H', 'P1Y');
+        $purposes->course->set('protected', 1)->save();
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time()]);
+        $coursecontext = \context_course::instance($course->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        // Create the request, with its contextlist and context.
+        $request = api::create_data_request($user->id, api::DATAREQUEST_TYPE_DELETE);
+        $contextlist = new \tool_dataprivacy\contextlist(0, (object) ['component' => 'tool_dataprivacy']);
+        $contextlist->save();
+
+        $clcontext = new \tool_dataprivacy\contextlist_context(0, (object) [
+                'contextid' => $coursecontext->id,
+                'status' => contextlist_context::STATUS_APPROVED,
+                'contextlistid' => $contextlist->get('id'),
+            ]);
+        $clcontext->save();
+
+        $rcl = new \tool_dataprivacy\request_contextlist(0, (object) [
+                'requestid' => $request->get('id'),
+                'contextlistid' => $contextlist->get('id'),
+            ]);
+        $rcl->save();
+
+        $purposes->course->set('protected', 1)->save();
+        $collection = api::get_approved_contextlist_collection_for_request($request);
+
+        $this->assertCount(0, $collection);
+
+        $list = $collection->get_contextlist_for_component('tool_dataprivacy');
+        $this->assertEmpty($list);
+    }
+
+    /**
+     * Test that delete requests do not filter out unexpired contexts if they are not protected.
+     */
+    public function test_get_approved_contextlist_collection_for_request_delete_course_unexpired_unprotected() {
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1H', 'PT1H', 'P1Y');
+        $purposes->course->set('protected', 1)->save();
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time()]);
+        $coursecontext = \context_course::instance($course->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        // Create the request, with its contextlist and context.
+        $request = api::create_data_request($user->id, api::DATAREQUEST_TYPE_DELETE);
+        $contextlist = new \tool_dataprivacy\contextlist(0, (object) ['component' => 'tool_dataprivacy']);
+        $contextlist->save();
+
+        $clcontext = new \tool_dataprivacy\contextlist_context(0, (object) [
+                'contextid' => $coursecontext->id,
+                'status' => contextlist_context::STATUS_APPROVED,
+                'contextlistid' => $contextlist->get('id'),
+            ]);
+        $clcontext->save();
+
+        $rcl = new \tool_dataprivacy\request_contextlist(0, (object) [
+                'requestid' => $request->get('id'),
+                'contextlistid' => $contextlist->get('id'),
+            ]);
+        $rcl->save();
+
+        $purposes->course->set('protected', 0)->save();
+        $collection = api::get_approved_contextlist_collection_for_request($request);
+
+        $this->assertCount(1, $collection);
+
+        $list = $collection->get_contextlist_for_component('tool_dataprivacy');
+        $this->assertCount(1, $list);
+    }
+
+    /**
      * Data provider for \tool_dataprivacy_api_testcase::test_set_context_defaults
      */
     public function set_context_defaults_provider() {
@@ -1634,5 +1859,67 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
             ],
             'list' => $approvedcollection->get_contextlist_for_component('tool_dataprivacy'),
         ];
+    }
+
+    /**
+     * Setup the basics with the specified retention period.
+     *
+     * @param   string  $system Retention policy for the system.
+     * @param   string  $user Retention policy for users.
+     * @param   string  $course Retention policy for courses.
+     * @param   string  $activity Retention policy for activities.
+     */
+    protected function setup_basics(string $system, string $user, string $course = null, string $activity = null) : \stdClass {
+        $this->resetAfterTest();
+
+        $purposes = (object) [
+            'system' => $this->create_and_set_purpose_for_contextlevel($system, CONTEXT_SYSTEM),
+            'user' => $this->create_and_set_purpose_for_contextlevel($user, CONTEXT_USER),
+        ];
+
+        if (null !== $course) {
+            $purposes->course = $this->create_and_set_purpose_for_contextlevel($course, CONTEXT_COURSE);
+        }
+
+        if (null !== $activity) {
+            $purposes->activity = $this->create_and_set_purpose_for_contextlevel($activity, CONTEXT_MODULE);
+        }
+
+        return $purposes;
+    }
+
+    /**
+     * Create a retention period and set it for the specified context level.
+     *
+     * @param   string  $retention
+     * @param   int     $contextlevel
+     * @return  purpose
+     */
+    protected function create_and_set_purpose_for_contextlevel(string $retention, int $contextlevel) : purpose {
+        $purpose = new purpose(0, (object) [
+            'name' => 'Test purpose ' . rand(1, 1000),
+            'retentionperiod' => $retention,
+            'lawfulbases' => 'gdpr_art_6_1_a',
+        ]);
+        $purpose->create();
+
+        $cat = new category(0, (object) ['name' => 'Test category']);
+        $cat->create();
+
+        if ($contextlevel <= CONTEXT_USER) {
+            $record = (object) [
+                'purposeid'     => $purpose->get('id'),
+                'categoryid'    => $cat->get('id'),
+                'contextlevel'  => $contextlevel,
+            ];
+            api::set_contextlevel($record);
+        } else {
+            list($purposevar, ) = data_registry::var_names_from_context(
+                    \context_helper::get_class_for_level(CONTEXT_COURSE)
+                );
+            set_config($purposevar, $purpose->get('id'), 'tool_dataprivacy');
+        }
+
+        return $purpose;
     }
 }
