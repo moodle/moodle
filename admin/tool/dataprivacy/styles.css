@@ -37,8 +37,7 @@ dd a.contactdpo {
     margin: 1em;
 }
 
-[data-region="purposes"] .col-description,
-[data-region="purposes"] .col-name {
+[data-region="purposes"] .col-name-description {
     width: 25%;
 }
 
