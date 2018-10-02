@@ -45,8 +45,7 @@ class iomad_company_select_form extends moodleform {
 
     }
 }
-        
-    
+
 class block_iomad_company_admin extends block_base {
 
     public function init() {
@@ -80,11 +79,11 @@ class block_iomad_company_admin extends block_base {
      * Check company status when accessing this block
      */
     private function check_company_status() {
-	global $SESSION, $DB;
+        global $SESSION, $DB;
 
         $systemcontext = context_system::instance();
 
-	// Get parameters.
+            // Get parameters.
         $edit = optional_param( 'edit', null, PARAM_BOOL );
         $company = optional_param('company', 0, PARAM_INT);
         $showsuspendedcompanies = optional_param('showsuspendedcompanies', false, PARAM_BOOL);
@@ -94,7 +93,7 @@ class block_iomad_company_admin extends block_base {
         $SESSION->showsuspendedcompanies = $showsuspendedcompanies;
 
         // Set the session to a user if they are editing a company other than their own.
-        if (!empty($company) && ( iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext) 
+        if (!empty($company) && ( iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext)
             || $DB->get_record('company_users', array('managertype' => 1, 'companyid' => $company, 'userid' => $USER->id)))) {
             $SESSION->currenteditingcompany = $company;
         }
@@ -106,11 +105,14 @@ class block_iomad_company_admin extends block_base {
             redirect(new moodle_url('/blocks/iomad_company_admin/company_edit_form.php', ['createnew' => 1]));
         }
 
-        // Otherwise, make the first (or only) company the current one
-        $companies = $DB->get_records('company');
-        $firstcompany = reset($companies);
-        $SESSION->currenteditingcompany = $firstcompany->id;
-        $company = $firstcompany->id;
+        // If we don't have one selected pick the first of these.
+        if (empty($SESSION->currenteditingcompany)) {
+            // Otherwise, make the first (or only) company the current one
+            $companies = $DB->get_records('company');
+            $firstcompany = reset($companies);
+            $SESSION->currenteditingcompany = $firstcompany->id;
+            $company = $firstcompany->id;
+        }
     }
 
     public function get_content() {
@@ -120,8 +122,8 @@ class block_iomad_company_admin extends block_base {
 
         if ($this->content !== null) {
             return $this->content;
-	}
-	$this->content = new stdClass;
+        }
+        $this->content = new stdClass;
 
         // Renderer
         $renderer = $this->page->get_renderer('block_iomad_company_admin');
@@ -177,8 +179,8 @@ class block_iomad_company_admin extends block_base {
 
         // Build content for selected tab (from menu array).
         $menus = $this->get_menu();
-	$html = '<div class="iomadlink_container clearfix">';
-	$somethingtodisplay = false;
+        $html = '<div class="iomadlink_container clearfix">';
+        $somethingtodisplay = false;
         foreach ($menus as $key => $menu) {
 
             // If it's the wrong tab then move on.
@@ -189,8 +191,8 @@ class block_iomad_company_admin extends block_base {
             // If no capability then move on.
             if (!iomad::has_capability($menu['cap'], $context)) {
                 continue;
-	    }
-	    $somethingtodisplay = true;
+            }
+            $somethingtodisplay = true;
 
             // Build correct url.
             if (substr($menu['url'], 0, 1) == '/') {
@@ -233,14 +235,14 @@ class block_iomad_company_admin extends block_base {
             $html .= '</a>';
         }
         $html .= '</div>';
-	$menu = $html;
+        $menu = $html;
 
-	// If there are no menu items to show this user...
-	if (!$somethingtodisplay) {
+        // If there are no menu items to show this user...
+        if (!$somethingtodisplay) {
             $this->content = new stdClass;
-	    $this->content->text = '';
-	    return $this->content;
-        }		
+            $this->content->text = '';
+            return $this->content;
+        }
 
         // Logo.
         $logourl = $renderer->image_url('iomadlogo', 'block_iomad_company_admin');
@@ -265,15 +267,15 @@ class block_iomad_company_admin extends block_base {
 
         $row = array();
 
-	// Build list.
+        // Build list.
         foreach ($tabs as $key => $tabdata) {
             list($fa, $tab) = $tabdata;
             $row[] = new tabobject(
                 $key,
-		new moodle_url($PAGE->url, array(
+        new moodle_url($PAGE->url, array(
                     'tabid'=>$key,
                     'showsuspendedcompanies' => $showsuspendedcompanies)
-	        ),
+            ),
                 '<i class="fa ' . $fa . '"></i> ' . $tab
             );
         }
@@ -357,7 +359,7 @@ class block_iomad_company_admin extends block_base {
         $selector = new \stdClass;
 
         // Only display if you have the correct capability, or you are not in more than one company.
-        // Just display name of current company if no choice. 
+        // Just display name of current company if no choice.
         if (!iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
             if ($DB->count_records('company_users', array('userid' => $USER->id)) <= 1 ) {
                 $companyuser = $DB->get_record('company_users', array('userid' => $USER->id), '*', MUST_EXIST);
@@ -387,7 +389,7 @@ class block_iomad_company_admin extends block_base {
         }
 
         //  Check users session current show suspended setting.
-	if (!empty($SESSION->showsuspendedcompanies)) {
+        if (!empty($SESSION->showsuspendedcompanies)) {
             $showsuspendedcompanies = $SESSION->showsuspendedcompanies;
         } else {
             $showsuspendedcompanies = false;
@@ -402,7 +404,7 @@ class block_iomad_company_admin extends block_base {
 
         // Get a list of companies.
         $companylist = company::get_companies_select($showsuspendedcompanies);
-        $select = new iomad_company_select_form(new moodle_url('/my'), $companylist, $selectedcompany);
+        $select = new iomad_company_select_form(new moodle_url('/my/index.php'), $companylist, $selectedcompany);
         $select->set_data(array('company' => $selectedcompany, 'showsuspendedcompanies' => $showsuspendedcompanies));
         $selector->selectform = $select->render();
         if (!$showsuspendedcompanies) {
@@ -428,11 +430,10 @@ class block_iomad_company_admin extends block_base {
         // Bodge? Modify our own instance to make the default region the
         // content area, not the side bar.
         $instance = $this->instance;
-	$instance->defaultregion = 'content';
-	$instance->defaultweight = -10;
+        $instance->defaultregion = 'content';
+        $instance->defaultweight = -10;
         $DB->update_record('block_instances', $instance);
 
         return true;
     }
-
 }
