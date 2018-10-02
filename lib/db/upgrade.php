@@ -2373,7 +2373,7 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2018092100.02) {
         $table = new xmldb_table('question');
-        $index = new xmldb_index('categoryidnumber', XMLDB_INDEX_UNIQUE, array('category, idnumber'));
+        $index = new xmldb_index('categoryidnumber', XMLDB_INDEX_UNIQUE, array('category', 'idnumber'));
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
@@ -2391,7 +2391,7 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2018092100.04) {
         $table = new xmldb_table('question_categories');
-        $index = new xmldb_index('contextididnumber', XMLDB_INDEX_UNIQUE, array('contextid, idnumber'));
+        $index = new xmldb_index('contextididnumber', XMLDB_INDEX_UNIQUE, array('contextid', 'idnumber'));
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
