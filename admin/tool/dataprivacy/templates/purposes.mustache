@@ -67,8 +67,7 @@
         <caption class="accesshide">{{#str}}purposeslist, tool_dataprivacy{{/str}}</caption>
         <thead>
             <tr>
-                <th scope="col" class="col-name">{{#str}}name{{/str}}</th>
-                <th scope="col" class="col-description">{{#str}}description{{/str}}</th>
+                <th scope="col" class="col-name-description">{{#str}}name{{/str}}</th>
                 <th scope="col">{{#str}}lawfulbases, tool_dataprivacy{{/str}}</th>
                 <th scope="col">{{#str}}sensitivedatareasons, tool_dataprivacy{{/str}}</th>
                 <th scope="col">{{#str}}retentionperiod, tool_dataprivacy{{/str}}</th>
@@ -79,10 +78,18 @@
         <tbody>
             {{#purposes}}
             <tr data-purposeid="{{id}}">
-                <td>{{{name}}}</td>
-                <td>{{{description}}}</td>
                 <td>
-                    <ul>
+                    <dl>
+                        <dt>
+                            {{{name}}}
+                        </dt>
+                        <dd>
+                            {{{description}}}
+                        </dd>
+                    </dl>
+                </td>
+                <td>
+                    <ul class="list-unstyled">
                         {{#formattedlawfulbases}}
                             <li>
                                 <span>{{name}}{{# pix }} i/info, core, {{description}} {{/ pix }}</span>
@@ -91,7 +98,7 @@
                     </ul>
                 </td>
                 <td>
-                    <ul>
+                    <ul class="list-unstyled">
                         {{#formattedsensitivedatareasons}}
                             <li>
                                 <span>{{name}}{{# pix }} i/info, core, {{description}} {{/ pix }}</span>
