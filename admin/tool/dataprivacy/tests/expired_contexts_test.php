@@ -29,6 +29,7 @@ use tool_dataprivacy\purpose;
 use tool_dataprivacy\purpose_override;
 use tool_dataprivacy\category;
 use tool_dataprivacy\contextlevel;
+use tool_dataprivacy\expired_contexts_manager;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -50,15 +51,20 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
      * @param   string  $course Retention policy for courses.
      * @param   string  $activity Retention policy for activities.
      */
-    protected function setup_basics(string $system, string $user, string $course, string $activity = null) : array {
+    protected function setup_basics(string $system, string $user, string $course = null, string $activity = null) : \stdClass {
         $this->resetAfterTest();
 
-        $purposes = [];
-        $purposes[] = $this->create_and_set_purpose_for_contextlevel($system, CONTEXT_SYSTEM);
-        $purposes[] = $this->create_and_set_purpose_for_contextlevel($user, CONTEXT_USER);
-        $purposes[] = $this->create_and_set_purpose_for_contextlevel($course, CONTEXT_COURSE);
+        $purposes = (object) [
+            'system' => $this->create_and_set_purpose_for_contextlevel($system, CONTEXT_SYSTEM),
+            'user' => $this->create_and_set_purpose_for_contextlevel($user, CONTEXT_USER),
+        ];
+
+        if (null !== $course) {
+            $purposes->course = $this->create_and_set_purpose_for_contextlevel($course, CONTEXT_COURSE);
+        }
+
         if (null !== $activity) {
-            $purposes[] = $this->create_and_set_purpose_for_contextlevel($activity, CONTEXT_MODULE);
+            $purposes->activity = $this->create_and_set_purpose_for_contextlevel($activity, CONTEXT_MODULE);
         }
 
         return $purposes;
@@ -286,7 +292,6 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $purposes = $this->setup_basics('PT1H', 'PT1H', 'PT1H');
-        $userpurpose = $purposes[1];
 
         $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
         $usercontext = \context_user::instance($user->id);
@@ -295,7 +300,7 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $role = $DB->get_record('role', ['shortname' => 'manager']);
 
         $override = new purpose_override(0, (object) [
-                'purposeid' => $userpurpose->get('id'),
+                'purposeid' => $purposes->user->get('id'),
                 'roleid' => $role->id,
                 'retentionperiod' => 'P5Y',
             ]);
@@ -445,7 +450,7 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
     public function test_flag_user_retention_changed() {
         $this->resetAfterTest();
 
-        list($systempurpose, $userpurpose, $coursepurpose) = $this->setup_basics('PT1H', 'PT1H', 'PT1H');
+        $purposes = $this->setup_basics('PT1H', 'PT1H', 'PT1H');
 
         $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - DAYSECS]);
         $usercontext = \context_user::instance($user->id);
@@ -466,8 +471,8 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->assertNotFalse($expiredcontext);
 
         // Increase the retention period to 5 years.
-        $userpurpose->set('retentionperiod', 'P5Y');
-        $userpurpose->save();
+        $purposes->user->set('retentionperiod', 'P5Y');
+        $purposes->user->save();
 
         // Re-run the expiry job - the previously flagged user will be removed because the retention period has been increased.
         list($flaggedcourses, $flaggedusers) = $manager->flag_expired_contexts();
@@ -485,7 +490,7 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
     public function test_flag_user_historic_block_unapproved() {
         $this->resetAfterTest();
 
-        list($systempurpose, $userpurpose, $coursepurpose) = $this->setup_basics('PT1H', 'PT1H', 'PT1H');
+        $this->setup_basics('PT1H', 'PT1H', 'PT1H');
 
         $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - DAYSECS]);
         $usercontext = \context_user::instance($user->id);
@@ -522,8 +527,8 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
     public function test_flag_user_historic_unexpired_child() {
         $this->resetAfterTest();
 
-        list($systempurpose, $userpurpose, $coursepurpose) = $this->setup_basics('PT1H', 'PT1H', 'PT1H');
-        $blockpurpose = $this->create_and_set_purpose_for_contextlevel('P5Y', CONTEXT_BLOCK);
+        $this->setup_basics('PT1H', 'PT1H', 'PT1H');
+        $this->create_and_set_purpose_for_contextlevel('P5Y', CONTEXT_BLOCK);
 
         $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - DAYSECS]);
         $usercontext = \context_user::instance($user->id);
@@ -680,12 +685,11 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $purposes = $this->setup_basics('PT1H', 'PT1H', 'PT1H');
-        $coursepurpose = $purposes[2];
 
         $role = $DB->get_record('role', ['shortname' => 'editingteacher']);
 
         $override = new purpose_override(0, (object) [
-                'purposeid' => $coursepurpose->get('id'),
+                'purposeid' => $purposes->course->get('id'),
                 'roleid' => $role->id,
                 'retentionperiod' => 'P5Y',
             ]);
@@ -720,13 +724,12 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $purposes = $this->setup_basics('PT1H', 'PT1H', 'PT1H');
-        $coursepurpose = $purposes[2];
 
         $role = $DB->get_record('role', ['shortname' => 'student']);
 
         // The role has a much shorter retention, but both should match.
         $override = new purpose_override(0, (object) [
-                'purposeid' => $coursepurpose->get('id'),
+                'purposeid' => $purposes->course->get('id'),
                 'roleid' => $role->id,
                 'retentionperiod' => 'PT1M',
             ]);
@@ -760,12 +763,11 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $purposes = $this->setup_basics('P1Y', 'P1Y', 'P1Y');
-        $coursepurpose = $purposes[2];
 
         $role = $DB->get_record('role', ['shortname' => 'editingteacher']);
 
         (new purpose_override(0, (object) [
-                'purposeid' => $coursepurpose->get('id'),
+                'purposeid' => $purposes->course->get('id'),
                 'roleid' => $role->id,
                 'retentionperiod' => 'PT1S',
             ]))->save();
@@ -830,7 +832,6 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $purposes = $this->setup_basics('PT1H', 'PT1H', 'PT1H');
-        $userpurpose = $purposes[1];
 
         $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
         $usercontext = \context_user::instance($user->id);
@@ -839,7 +840,7 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $role = $DB->get_record('role', ['shortname' => 'manager']);
 
         $override = new purpose_override(0, (object) [
-                'purposeid' => $userpurpose->get('id'),
+                'purposeid' => $purposes->user->get('id'),
                 'roleid' => $role->id,
                 'retentionperiod' => 'P5Y',
             ]);
@@ -889,12 +890,11 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $purposes = $this->setup_basics('PT1H', 'PT1H', 'PT1H');
-        $coursepurpose = $purposes[2];
 
         $role = $DB->get_record('role', ['shortname' => 'editingteacher']);
 
         $override = new purpose_override(0, (object) [
-                'purposeid' => $coursepurpose->get('id'),
+                'purposeid' => $purposes->course->get('id'),
                 'roleid' => $role->id,
                 'retentionperiod' => 'P5Y',
             ]);
@@ -978,12 +978,11 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $purposes = $this->setup_basics('PT1H', 'PT1H', 'P5Y');
-        $coursepurpose = $purposes[2];
 
         $role = $DB->get_record('role', ['shortname' => 'student']);
 
         $override = new purpose_override(0, (object) [
-                'purposeid' => $coursepurpose->get('id'),
+                'purposeid' => $purposes->course->get('id'),
                 'roleid' => $role->id,
                 'retentionperiod' => 'PT1M',
             ]);
@@ -1067,12 +1066,11 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $purposes = $this->setup_basics('PT1H', 'PT1H', 'P5Y');
-        $coursepurpose = $purposes[2];
 
         $role = $DB->get_record('role', ['shortname' => 'student']);
 
         $override = new purpose_override(0, (object) [
-                'purposeid' => $coursepurpose->get('id'),
+                'purposeid' => $purposes->course->get('id'),
                 'roleid' => $role->id,
                 'retentionperiod' => 'PT1M',
             ]);
@@ -1157,11 +1155,10 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $purposes = $this->setup_basics('PT1H', 'PT1H', 'P5Y');
-        $coursepurpose = $purposes[2];
 
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $override = new purpose_override(0, (object) [
-                'purposeid' => $coursepurpose->get('id'),
+                'purposeid' => $purposes->course->get('id'),
                 'roleid' => $studentrole->id,
                 'retentionperiod' => 'PT1M',
             ]);
@@ -1169,7 +1166,7 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
 
         $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
         $override = new purpose_override(0, (object) [
-                'purposeid' => $coursepurpose->get('id'),
+                'purposeid' => $purposes->course->get('id'),
                 'roleid' => $teacherrole->id,
                 'retentionperiod' => 'PT1M',
             ]);
@@ -1578,7 +1575,7 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
     public function test_process_user_historic_block_unapproved() {
         $this->resetAfterTest();
 
-        list($systempurpose, $userpurpose, $coursepurpose) = $this->setup_basics('PT1H', 'PT1H', 'PT1H');
+        $this->setup_basics('PT1H', 'PT1H', 'PT1H');
 
         $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - DAYSECS]);
         $usercontext = \context_user::instance($user->id);
@@ -1637,8 +1634,8 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
     public function test_process_user_historic_unexpired_child() {
         $this->resetAfterTest();
 
-        list($systempurpose, $userpurpose, $coursepurpose) = $this->setup_basics('PT1H', 'PT1H', 'PT1H');
-        $blockpurpose = $this->create_and_set_purpose_for_contextlevel('P5Y', CONTEXT_BLOCK);
+        $this->setup_basics('PT1H', 'PT1H', 'PT1H');
+        $this->create_and_set_purpose_for_contextlevel('P5Y', CONTEXT_BLOCK);
 
         $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - DAYSECS]);
         $usercontext = \context_user::instance($user->id);
@@ -1722,9 +1719,8 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $manager->set_progress(new \null_progress_trace());
         $manager->method('get_privacy_manager')->willReturn($mockprivacymanager);
 
-        $coursepurpose = $purposes[2];
-        $coursepurpose->set('retentionperiod', 'P5Y');
-        $coursepurpose->save();
+        $purposes->course->set('retentionperiod', 'P5Y');
+        $purposes->course->save();
 
         list($processedcourses, $processedusers) = $manager->process_approved_deletions();
 
@@ -2184,5 +2180,388 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $block = end($blocks);
 
         return $block;
+    }
+
+    /**
+     * Test the is_context_expired functions when supplied with the system context.
+     */
+    public function test_is_context_expired_system() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setup_basics('PT1H', 'PT1H', 'P1D');
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+
+        $this->assertFalse(expired_contexts_manager::is_context_expired(\context_system::instance()));
+        $this->assertFalse(
+                expired_contexts_manager::is_context_expired_or_unprotected_for_user(\context_system::instance(), $user));
+    }
+
+    /**
+     * Test the is_context_expired functions when supplied with an expired course.
+     */
+    public function test_is_context_expired_course_expired() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1H', 'PT1H', 'P1D');
+
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time()]);
+        $coursecontext = \context_course::instance($course->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $this->assertFalse(expired_contexts_manager::is_context_expired($coursecontext));
+
+        $purposes->course->set('protected', 1)->save();
+        $this->assertFalse(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $user));
+
+        $purposes->course->set('protected', 0)->save();
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $user));
+    }
+
+    /**
+     * Test the is_context_expired functions when supplied with an unexpired course.
+     */
+    public function test_is_context_expired_course_unexpired() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1H', 'PT1H', 'P1D');
+
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - WEEKSECS]);
+        $coursecontext = \context_course::instance($course->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $this->assertTrue(expired_contexts_manager::is_context_expired($coursecontext));
+
+        $purposes->course->set('protected', 1)->save();
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $user));
+
+        $purposes->course->set('protected', 0)->save();
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $user));
+    }
+
+    /**
+     * Test the is_context_expired functions when supplied with an expired course which has role overrides.
+     */
+    public function test_is_context_expired_course_expired_override() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1H', 'PT1H', 'PT1H');
+
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - WEEKSECS]);
+        $coursecontext = \context_course::instance($course->id);
+        $systemcontext = \context_system::instance();
+
+        $role = $DB->get_record('role', ['shortname' => 'manager']);
+        $override = new purpose_override(0, (object) [
+                'purposeid' => $purposes->course->get('id'),
+                'roleid' => $role->id,
+                'retentionperiod' => 'P5Y',
+            ]);
+        $override->save();
+        role_assign($role->id, $user->id, $systemcontext->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $this->assertFalse(expired_contexts_manager::is_context_expired($coursecontext));
+
+        $purposes->course->set('protected', 1)->save();
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $user));
+
+        $purposes->course->set('protected', 0)->save();
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $user));
+    }
+
+    /**
+     * Test the is_context_expired functions when supplied with an expired course which has role overrides.
+     */
+    public function test_is_context_expired_course_expired_override_parent() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1H', 'PT1H');
+
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - WEEKSECS]);
+        $coursecontext = \context_course::instance($course->id);
+        $systemcontext = \context_system::instance();
+
+        $role = $DB->get_record('role', ['shortname' => 'manager']);
+        $override = new purpose_override(0, (object) [
+                'purposeid' => $purposes->system->get('id'),
+                'roleid' => $role->id,
+                'retentionperiod' => 'P5Y',
+            ]);
+        $override->save();
+        role_assign($role->id, $user->id, $systemcontext->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $this->assertFalse(expired_contexts_manager::is_context_expired($coursecontext));
+
+        // The user override applies to this user. THIs means that the default expiry has no effect.
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $user));
+
+        $purposes->system->set('protected', 1)->save();
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $user));
+
+        $purposes->system->set('protected', 0)->save();
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $user));
+
+        $override->set('protected', 1)->save();
+        $this->assertFalse(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $user));
+
+        $purposes->system->set('protected', 1)->save();
+        $this->assertFalse(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $user));
+
+        $purposes->system->set('protected', 0)->save();
+        $this->assertFalse(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $user));
+
+    }
+
+    /**
+     * Test the is_context_expired functions when supplied with an expired course which has role overrides but the user
+     * does not hold the role.
+     */
+    public function test_is_context_expired_course_expired_override_parent_no_role() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1H', 'PT1H');
+
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - WEEKSECS]);
+        $coursecontext = \context_course::instance($course->id);
+        $systemcontext = \context_system::instance();
+
+        $role = $DB->get_record('role', ['shortname' => 'manager']);
+        $override = new purpose_override(0, (object) [
+                'purposeid' => $purposes->system->get('id'),
+                'roleid' => $role->id,
+                'retentionperiod' => 'P5Y',
+            ]);
+        $override->save();
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        // This context is not _fully _ expired.
+        $this->assertFalse(expired_contexts_manager::is_context_expired($coursecontext));
+    }
+
+    /**
+     * Test the is_context_expired functions when supplied with an unexpired course which has role overrides.
+     */
+    public function test_is_context_expired_course_expired_override_inverse() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('P1Y', 'P1Y');
+
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - WEEKSECS]);
+        $coursecontext = \context_course::instance($course->id);
+        $systemcontext = \context_system::instance();
+
+        $role = $DB->get_record('role', ['shortname' => 'student']);
+        $override = new purpose_override(0, (object) [
+                'purposeid' => $purposes->system->get('id'),
+                'roleid' => $role->id,
+                'retentionperiod' => 'PT1S',
+            ]);
+        $override->save();
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        // This context is not _fully _ expired.
+        $this->assertFalse(expired_contexts_manager::is_context_expired($coursecontext));
+    }
+
+    /**
+     * Test the is_context_expired functions when supplied with an unexpired course which has role overrides.
+     */
+    public function test_is_context_expired_course_expired_override_inverse_parent() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('P1Y', 'P1Y');
+
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - WEEKSECS]);
+        $coursecontext = \context_course::instance($course->id);
+        $systemcontext = \context_system::instance();
+
+        $role = $DB->get_record('role', ['shortname' => 'manager']);
+        $override = new purpose_override(0, (object) [
+                'purposeid' => $purposes->system->get('id'),
+                'roleid' => $role->id,
+                'retentionperiod' => 'PT1S',
+            ]);
+        $override->save();
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+        role_assign($role->id, $user->id, $systemcontext->id);
+
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        role_unassign($studentrole->id, $user->id, $coursecontext->id);
+
+        // This context is not _fully _ expired.
+        $this->assertFalse(expired_contexts_manager::is_context_expired($coursecontext));
+    }
+
+    /**
+     * Test the is_context_expired functions when supplied with an unexpired course which has role overrides.
+     */
+    public function test_is_context_expired_course_expired_override_inverse_parent_not_assigned() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('P1Y', 'P1Y');
+
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - WEEKSECS]);
+        $coursecontext = \context_course::instance($course->id);
+        $systemcontext = \context_system::instance();
+
+        $role = $DB->get_record('role', ['shortname' => 'manager']);
+        $override = new purpose_override(0, (object) [
+                'purposeid' => $purposes->system->get('id'),
+                'roleid' => $role->id,
+                'retentionperiod' => 'PT1S',
+            ]);
+        $override->save();
+
+        // Enrol the user in the course without any role.
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        role_unassign($studentrole->id, $user->id, $coursecontext->id);
+
+        // This context is not _fully _ expired.
+        $this->assertFalse(expired_contexts_manager::is_context_expired($coursecontext));
+    }
+
+    /**
+     * Ensure that context expired checks for a specific user taken into account roles.
+     */
+    public function test_is_context_expired_or_unprotected_for_user_role_mixtures_protected() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1S', 'PT1S', 'PT1S');
+
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - DAYSECS]);
+        $coursecontext = \context_course::instance($course->id);
+        $systemcontext = \context_system::instance();
+
+        $roles = $DB->get_records_menu('role', [], 'id', 'shortname, id');
+        $override = new purpose_override(0, (object) [
+                'purposeid' => $purposes->course->get('id'),
+                'roleid' => $roles['manager'],
+                'retentionperiod' => 'P1W',
+                'protected' => 1,
+            ]);
+        $override->save();
+
+        $s = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($s->id, $course->id, 'student');
+
+        $t = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($t->id, $course->id, 'teacher');
+
+        $sm = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($sm->id, $course->id, 'student');
+        role_assign($roles['manager'], $sm->id, $coursecontext->id);
+
+        $m = $this->getDataGenerator()->create_user();
+        role_assign($roles['manager'], $m->id, $coursecontext->id);
+
+        $tm = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($t->id, $course->id, 'teacher');
+        role_assign($roles['manager'], $tm->id, $coursecontext->id);
+
+        // The context should only be expired for users who are not a manager.
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $s));
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $t));
+        $this->assertFalse(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $sm));
+        $this->assertFalse(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $tm));
+        $this->assertFalse(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $m));
+
+        $override->set('protected', 0)->save();
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $s));
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $t));
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $sm));
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $tm));
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $m));
+    }
+
+    /**
+     * Ensure that context expired checks for a specific user taken into account roles when retention is inversed.
+     */
+    public function test_is_context_expired_or_unprotected_for_user_role_mixtures_protected_inverse() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('P5Y', 'P5Y', 'P5Y');
+
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - DAYSECS]);
+        $coursecontext = \context_course::instance($course->id);
+        $systemcontext = \context_system::instance();
+
+        $roles = $DB->get_records_menu('role', [], 'id', 'shortname, id');
+        $override = new purpose_override(0, (object) [
+                'purposeid' => $purposes->course->get('id'),
+                'roleid' => $roles['student'],
+                'retentionperiod' => 'PT1S',
+            ]);
+        $override->save();
+
+        $s = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($s->id, $course->id, 'student');
+
+        $t = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($t->id, $course->id, 'teacher');
+
+        $sm = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($sm->id, $course->id, 'student');
+        role_assign($roles['manager'], $sm->id, $coursecontext->id);
+
+        $m = $this->getDataGenerator()->create_user();
+        role_assign($roles['manager'], $m->id, $coursecontext->id);
+
+        $tm = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($t->id, $course->id, 'teacher');
+        role_assign($roles['manager'], $tm->id, $coursecontext->id);
+
+        // The context should only be expired for users who are only a student.
+        $purposes->course->set('protected', 1)->save();
+        $override->set('protected', 1)->save();
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $s));
+        $this->assertFalse(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $t));
+        $this->assertFalse(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $sm));
+        $this->assertFalse(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $tm));
+        $this->assertFalse(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $m));
+
+        $purposes->course->set('protected', 0)->save();
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $s));
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $t));
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $sm));
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $tm));
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $m));
     }
 }
