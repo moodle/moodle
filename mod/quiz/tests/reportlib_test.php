@@ -66,9 +66,9 @@ class mod_quiz_reportlib_testcase extends advanced_testcase {
         $quiz->sumgrades = 10;
         $quiz->decimalpoints = 2;
 
-        $this->assertEquals('12.34567%',
+        $this->assertEquals('12.34567 %',
             quiz_report_scale_summarks_as_percentage(1.234567, $quiz, false));
-        $this->assertEquals('12.35%',
+        $this->assertEquals('12.35 %',
             quiz_report_scale_summarks_as_percentage(1.234567, $quiz, true));
         $this->assertEquals('-',
             quiz_report_scale_summarks_as_percentage('-', $quiz, true));

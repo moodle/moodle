@@ -947,6 +947,34 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     }
 
     /**
+     * Set current $USER, reset access cache.
+     *
+     * In some cases, behat will execute the code as admin but in many cases we need to set an specific user as some
+     * API's might rely on the logged user to take some action.
+     *
+     * @param null|int|stdClass $user user record, null or 0 means non-logged-in, positive integer means userid
+     */
+    public static function set_user($user = null) {
+        global $DB;
+
+        if (is_object($user)) {
+            $user = clone($user);
+        } else if (!$user) {
+            // Assign valid data to admin user (some generator-related code needs a valid user).
+            $user = $DB->get_record('user', array('username' => 'admin'));
+        } else {
+            $user = $DB->get_record('user', array('id' => $user));
+        }
+        unset($user->description);
+        unset($user->access);
+        unset($user->preference);
+
+        // Ensure session is empty, as it may contain caches and user specific info.
+        \core\session\manager::init_empty_session();
+
+        \core\session\manager::set_user($user);
+    }
+    /**
      * Trigger click on node via javascript instead of actually clicking on it via pointer.
      *
      * This function resolves the issue of nested elements with click listeners or links - in these cases clicking via

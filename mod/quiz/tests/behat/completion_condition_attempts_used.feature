@@ -30,16 +30,12 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
     And quiz "Test quiz name" contains the following questions:
       | question       | page |
       | First question | 1    |
+    And user "student1" has attempted "Test quiz name" with responses:
+      | slot | response |
+      |   1  | False    |
 
   Scenario: student1 uses up both attempts without passing
     When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And the "Test quiz name" "quiz" activity with "auto" completion should be marked as not complete
-    And I follow "Test quiz name"
-    And I press "Attempt quiz now"
-    And I set the field "False" to "1"
-    And I press "Finish attempt ..."
-    And I press "Submit all and finish"
     And I am on "Course 1" course homepage
     And the "Test quiz name" "quiz" activity with "auto" completion should be marked as not complete
     And I follow "Test quiz name"

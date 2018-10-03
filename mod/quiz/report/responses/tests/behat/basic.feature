@@ -40,29 +40,21 @@ Feature: Basic use of the Responses report
     Then I should see "Attempts: 0"
     And I should see "Nothing to display"
     And I set the field "Attempts from" to "enrolled users who have not attempted the quiz"
-    And I press "Show report"
-    And "Student One" row "State" column of "responses" table should contain "-"
+    And I log out
 
   @javascript
   Scenario: Report works when there are attempts
-    # Add an attempt
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I press "Attempt quiz now"
-    And I set the field "Answer" to "1.0"
-    And I press "Check"
-    And I press "Try again"
-    And I set the field "Answer" to "3.0"
-    And I press "Check"
-    And I press "Try again"
-    And I set the field "Answer" to "3.14"
-    And I press "Check"
-    And I press "Finish attempt ..."
-    And I press "Submit all and finish"
-    And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
-    And I log out
-
+    Given user "student1" has started an attempt at quiz "Quiz 1"
+    And user "student1" has checked answers in their attempt at quiz "Quiz 1":
+      | slot | response |
+      |   1  | 1.0      |
+    And user "student1" has checked answers in their attempt at quiz "Quiz 1":
+      | slot | response |
+      |   1  | 3.0      |
+    And user "student1" has checked answers in their attempt at quiz "Quiz 1":
+      | slot | response |
+      |   1  | 3.14     |
+    And user "student1" has finished an attempt at quiz "Quiz 1"
     When I log in as "teacher"
     And I am on "Course 1" course homepage
     And I follow "Quiz 1"

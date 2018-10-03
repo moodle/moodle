@@ -32,17 +32,12 @@ Feature: Quiz reset
     And quiz "Test quiz name" contains the following questions:
       | question | page |
       | TF1      | 1    |
+    And user "student1" has attempted "Test quiz name" with responses:
+      | slot | response |
+      |   1  | True     |
 
   Scenario: Use course reset to clear all attempt data
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test quiz name"
-    And I press "Attempt quiz now"
-    And I set the field "True" to "1"
-    And I press "Finish attempt ..."
-    And I press "Submit all and finish"
-    And I log out
-    And I log in as "teacher1"
+    When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reset" in current page administration
     And I set the following fields to these values:

@@ -1101,7 +1101,7 @@ class quiz_attempt {
      * @return question_usage_by_activity the usage.
      */
     public function get_question_usage() {
-        if (!PHPUNIT_TEST) {
+        if (!(PHPUNIT_TEST || defined('BEHAT_TEST'))) {
             throw new coding_exception('get_question_usage is only for use in unit tests. ' .
                     'For other operations, use the quiz_attempt api, or extend it properly.');
         }
@@ -1814,10 +1814,12 @@ class quiz_attempt {
      * @param int  $timestamp  the timestamp that should be stored as the modifed
      *                         time in the database for these actions. If null, will use the current time.
      * @param bool $becomingoverdue
-     * @param array|null $simulatedresponses If not null, then we are testing, and this is an array of simulated data, keys are slot
-     *                                          nos and values are arrays representing student responses which will be passed to
-     *                                          question_definition::prepare_simulated_post_data method and then have the
-     *                                          appropriate prefix added.
+     * @param array|null $simulatedresponses If not null, then we are testing, and this is an array of simulated data.
+     *      There are two formats supported here, for historical reasons. The newer approach is to pass an array created by
+     *      {@link core_question_generator::get_simulated_post_data_for_questions_in_usage()}.
+     *      the second is to pass an array slot no => contains arrays representing student
+     *      responses which will be passed to {@link question_definition::prepare_simulated_post_data()}.
+     *      This second method will probably get deprecated one day.
      */
     public function process_submitted_actions($timestamp, $becomingoverdue = false, $simulatedresponses = null) {
         global $DB;
@@ -1825,7 +1827,12 @@ class quiz_attempt {
         $transaction = $DB->start_delegated_transaction();
 
         if ($simulatedresponses !== null) {
-            $simulatedpostdata = $this->quba->prepare_simulated_post_data($simulatedresponses);
+            if (is_int(key($simulatedresponses))) {
+                // Legacy approach. Should be removed one day.
+                $simulatedpostdata = $this->quba->prepare_simulated_post_data($simulatedresponses);
+            } else {
+                $simulatedpostdata = $simulatedresponses;
+            }
         } else {
             $simulatedpostdata = null;
         }

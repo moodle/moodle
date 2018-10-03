@@ -2373,14 +2373,19 @@ function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessman
 /**
  * Prepare and start a new attempt deleting the previous preview attempts.
  *
- * @param  quiz $quizobj quiz object
- * @param  int $attemptnumber the attempt number
- * @param  object $lastattempt last attempt object
+ * @param quiz $quizobj quiz object
+ * @param int $attemptnumber the attempt number
+ * @param object $lastattempt last attempt object
  * @param bool $offlineattempt whether is an offline attempt or not
+ * @param array $forcedrandomquestions slot number => question id. Used for random questions,
+ *      to force the choice of a particular actual question. Intended for testing purposes only.
+ * @param array $forcedvariants slot number => variant. Used for questions with variants,
+ *      to force the choice of a particular variant. Intended for testing purposes only.
  * @return object the new attempt
  * @since  Moodle 3.1
  */
-function quiz_prepare_and_start_new_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $offlineattempt = false) {
+function quiz_prepare_and_start_new_attempt(quiz $quizobj, $attemptnumber, $lastattempt,
+        $offlineattempt = false, $forcedrandomquestions = [], $forcedvariants = []) {
     global $DB, $USER;
 
     // Delete any previous preview attempts belonging to this user.
@@ -2394,7 +2399,8 @@ function quiz_prepare_and_start_new_attempt(quiz $quizobj, $attemptnumber, $last
     $attempt = quiz_create_attempt($quizobj, $attemptnumber, $lastattempt, $timenow, $quizobj->is_preview_user());
 
     if (!($quizobj->get_quiz()->attemptonlast && $lastattempt)) {
-        $attempt = quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow);
+        $attempt = quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow,
+                $forcedrandomquestions, $forcedvariants);
     } else {
         $attempt = quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt);
     }
