@@ -152,156 +152,6 @@ function message_format_message_text($message, $forcetexttohtml = false) {
 }
 
 /**
- * Add the selected user as a contact for the current user
- *
- * @param int $contactid the ID of the user to add as a contact
- * @param int $blocked 1 if you wish to block the contact
- * @param int $userid the user ID of the user we want to add the contact for, defaults to current user if not specified.
- * @return bool/int false if the $contactid isnt a valid user id. True if no changes made.
- *                  Otherwise returns the result of update_record() or insert_record()
- */
-function message_add_contact($contactid, $blocked = 0, $userid = 0) {
-    global $USER, $DB;
-
-    if (!$DB->record_exists('user', array('id' => $contactid))) { // invalid userid
-        return false;
-    }
-
-    if (empty($userid)) {
-        $userid = $USER->id;
-    }
-
-    // Check if a record already exists as we may be changing blocking status.
-    if (($contact = $DB->get_record('message_contacts', array('userid' => $userid, 'contactid' => $contactid))) !== false) {
-        // Check if blocking status has been changed.
-        if ($contact->blocked != $blocked) {
-            $contact->blocked = $blocked;
-            $DB->update_record('message_contacts', $contact);
-
-            if ($blocked == 1) {
-                // Trigger event for blocking a contact.
-                $event = \core\event\message_contact_blocked::create(array(
-                    'objectid' => $contact->id,
-                    'userid' => $contact->userid,
-                    'relateduserid' => $contact->contactid,
-                    'context'  => context_user::instance($contact->userid)
-                ));
-                $event->add_record_snapshot('message_contacts', $contact);
-                $event->trigger();
-            } else {
-                // Trigger event for unblocking a contact.
-                $event = \core\event\message_contact_unblocked::create(array(
-                    'objectid' => $contact->id,
-                    'userid' => $contact->userid,
-                    'relateduserid' => $contact->contactid,
-                    'context'  => context_user::instance($contact->userid)
-                ));
-                $event->add_record_snapshot('message_contacts', $contact);
-                $event->trigger();
-            }
-
-            return true;
-        } else {
-            // No change to blocking status.
-            return true;
-        }
-
-    } else {
-        // New contact record.
-        $contact = new stdClass();
-        $contact->userid = $userid;
-        $contact->contactid = $contactid;
-        $contact->blocked = $blocked;
-        $contact->id = $DB->insert_record('message_contacts', $contact);
-
-        $eventparams = array(
-            'objectid' => $contact->id,
-            'userid' => $contact->userid,
-            'relateduserid' => $contact->contactid,
-            'context'  => context_user::instance($contact->userid)
-        );
-
-        if ($blocked) {
-            $event = \core\event\message_contact_blocked::create($eventparams);
-        } else {
-            $event = \core\event\message_contact_added::create($eventparams);
-        }
-        // Trigger event.
-        $event->trigger();
-
-        return true;
-    }
-}
-
-/**
- * remove a contact
- *
- * @param int $contactid the user ID of the contact to remove
- * @param int $userid the user ID of the user we want to remove the contacts for, defaults to current user if not specified.
- * @return bool returns the result of delete_records()
- */
-function message_remove_contact($contactid, $userid = 0) {
-    global $USER, $DB;
-
-    if (empty($userid)) {
-        $userid = $USER->id;
-    }
-
-    if ($contact = $DB->get_record('message_contacts', array('userid' => $userid, 'contactid' => $contactid))) {
-        $DB->delete_records('message_contacts', array('id' => $contact->id));
-
-        // Trigger event for removing a contact.
-        $event = \core\event\message_contact_removed::create(array(
-            'objectid' => $contact->id,
-            'userid' => $contact->userid,
-            'relateduserid' => $contact->contactid,
-            'context'  => context_user::instance($contact->userid)
-        ));
-        $event->add_record_snapshot('message_contacts', $contact);
-        $event->trigger();
-
-        return true;
-    }
-
-    return false;
-}
-
-/**
- * Unblock a contact. Note that this reverts the previously blocked user back to a non-contact.
- *
- * @param int $contactid the user ID of the contact to unblock
- * @param int $userid the user ID of the user we want to unblock the contact for, defaults to current user
- *  if not specified.
- * @return bool returns the result of delete_records()
- */
-function message_unblock_contact($contactid, $userid = 0) {
-    return message_add_contact($contactid, 0, $userid);
-}
-
-/**
- * Block a user.
- *
- * @param int $contactid the user ID of the user to block
- * @param int $userid the user ID of the user we want to unblock the contact for, defaults to current user
- *  if not specified.
- * @return bool
- */
-function message_block_contact($contactid, $userid = 0) {
-    return message_add_contact($contactid, 1, $userid);
-}
-
-/**
- * Load a user's contact record
- *
- * @param int $contactid the user ID of the user whose contact record you want
- * @return array message contacts
- */
-function message_get_contact($contactid) {
-    global $USER, $DB;
-    return $DB->get_record('message_contacts', array('userid' => $USER->id, 'contactid' => $contactid));
-}
-
-/**
  * Search through course users.
  *
  * If $courseids contains the site course then this function searches
@@ -337,6 +187,7 @@ function message_search_users($courseids, $searchtext, $sort='', $exceptions='')
 
     $params = array(
         'userid' => $USER->id,
+        'userid2' => $USER->id,
         'query' => "%$searchtext%"
     );
 
@@ -357,10 +208,12 @@ function message_search_users($courseids, $searchtext, $sort='', $exceptions='')
 
     if (in_array(SITEID, $courseids)) {
         // Search on site level.
-        return $DB->get_records_sql("SELECT $ufields, mc.id as contactlistid, mc.blocked
+        return $DB->get_records_sql("SELECT $ufields, mc.id as contactlistid, mub.id as userblockedid
                                        FROM {user} u
                                        LEFT JOIN {message_contacts} mc
                                             ON mc.contactid = u.id AND mc.userid = :userid
+                                       LEFT JOIN {message_users_blocked} mub
+                                            ON mub.userid = :userid2 AND mub.blockeduserid = u.id
                                       WHERE u.deleted = '0' AND u.confirmed = '1'
                                             AND (".$DB->sql_like($fullname, ':query', false).")
                                             $except
@@ -379,11 +232,13 @@ function message_search_users($courseids, $searchtext, $sort='', $exceptions='')
 
         // Everyone who has a role assignment in this course or higher.
         // TODO: add enabled enrolment join here (skodak)
-        $users = $DB->get_records_sql("SELECT DISTINCT $ufields, mc.id as contactlistid, mc.blocked
+        $users = $DB->get_records_sql("SELECT DISTINCT $ufields, mc.id as contactlistid, mub.id as userblockedid
                                          FROM {user} u
                                          JOIN {role_assignments} ra ON ra.userid = u.id
                                          LEFT JOIN {message_contacts} mc
                                               ON mc.contactid = u.id AND mc.userid = :userid
+                                         LEFT JOIN {message_users_blocked} mub
+                                              ON mub.userid = :userid2 AND mub.blockeduserid = u.id
                                         WHERE u.deleted = '0' AND u.confirmed = '1'
                                               AND (".$DB->sql_like($fullname, ':query', false).")
                                               AND ra.contextid $contextwhere

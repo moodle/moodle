@@ -102,20 +102,20 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
      * Test count_blocked_users.
      */
     public function test_count_blocked_users() {
+        global $USER;
+
         // Set this user as the admin.
         $this->setAdminUser();
 
-        // Create users to add to the admin's contact list.
+        // Create user to add to the admin's block list.
         $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
 
         $this->assertEquals(0, \core_message\api::count_blocked_users());
 
-        // Add 1 blocked and 1 normal contact to admin's contact list.
-        message_add_contact($user1->id);
-        message_add_contact($user2->id, 1);
+        // Add 1 blocked user to admin's blocked user list.
+        \core_message\api::block_user($USER->id, $user1->id);
 
-        $this->assertEquals(0, \core_message\api::count_blocked_users($user2));
+        $this->assertEquals(0, \core_message\api::count_blocked_users($user1));
         $this->assertEquals(1, \core_message\api::count_blocked_users());
     }
 
@@ -140,7 +140,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user2 = self::getDataGenerator()->create_user($user2);
 
         // Block the second user.
-        message_block_contact($user2->id, $user1->id);
+        \core_message\api::block_user($user1->id, $user2->id);
 
         $user3 = new stdClass();
         $user3->firstname = 'User';
@@ -247,9 +247,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->getDataGenerator()->enrol_user($user1->id, $course5->id, $role->id);
 
         // Add some users as contacts.
-        message_add_contact($user2->id, 0, $user1->id);
-        message_add_contact($user3->id, 0, $user1->id);
-        message_add_contact($user4->id, 0, $user1->id);
+        \core_message\api::add_contact($user1->id, $user2->id);
+        \core_message\api::add_contact($user1->id, $user3->id);
+        \core_message\api::add_contact($user1->id, $user4->id);
 
         // Remove the viewparticipants capability from one of the courses.
         $course5context = context_course::instance($course5->id);
@@ -280,25 +280,31 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
 
         // The person doing the search.
         $this->setUser($user1);
 
         // Send some messages back and forth.
         $time = 1;
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 1);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 3);
+        $this->send_fake_message($user3, $user1, 'Don\'t block me.', 0, $time);
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+
+        // Block user 3.
+        \core_message\api::block_user($user1->id, $user3->id);
 
         // Perform a search.
         $messages = \core_message\api::search_messages($user1->id, 'o');
 
         // Confirm the data is correct.
-        $this->assertEquals(2, count($messages));
+        $this->assertEquals(3, count($messages));
 
         $message1 = $messages[0];
         $message2 = $messages[1];
+        $message3 = $messages[2];
 
         $this->assertEquals($user2->id, $message1->userid);
         $this->assertEquals($user2->id, $message1->useridfrom);
@@ -321,6 +327,17 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertTrue($message2->isread);
         $this->assertFalse($message2->isblocked);
         $this->assertNull($message2->unreadcount);
+
+        $this->assertEquals($user3->id, $message3->userid);
+        $this->assertEquals($user3->id, $message3->useridfrom);
+        $this->assertEquals(fullname($user3), $message3->fullname);
+        $this->assertTrue($message3->ismessaging);
+        $this->assertEquals('Don\'t block me.', $message3->lastmessage);
+        $this->assertNotEmpty($message3->messageid);
+        $this->assertNull($message3->isonline);
+        $this->assertFalse($message3->isread);
+        $this->assertTrue($message3->isblocked);
+        $this->assertNull($message3->unreadcount);
     }
 
     /**
@@ -939,15 +956,16 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user5 = self::getDataGenerator()->create_user($user5);
 
         // Add some users as contacts.
-        message_add_contact($user2->id, 0, $user1->id);
-        message_add_contact($user3->id, 0, $user1->id);
-        message_add_contact($user4->id, 0, $user1->id);
+        \core_message\api::add_contact($user1->id, $user2->id);
+        \core_message\api::add_contact($user1->id, $user3->id);
+        \core_message\api::add_contact($user1->id, $user4->id);
 
         // Retrieve the contacts.
         $contacts = \core_message\api::get_contacts($user1->id);
 
         // Confirm the data is correct.
         $this->assertEquals(3, count($contacts));
+        usort($contacts, ['static', 'sort_contacts']);
 
         $contact1 = $contacts[0];
         $contact2 = $contacts[1];
@@ -1315,7 +1333,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->setUser($user1);
 
         // Block the second user.
-        message_block_contact($user2->id);
+        \core_message\api::block_user($user1->id, $user2->id);
 
         // Check that the second user can no longer send the first user a message.
         $this->assertFalse(\core_message\api::can_post_message($user1, $user2));
@@ -1343,10 +1361,17 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertTrue(\core_message\api::is_user_non_contact_blocked($user2));
 
         // Add the first user as a contact for the second user.
-        message_add_contact($user1->id, 0, $user2->id);
+        \core_message\api::add_contact($user2->id, $user1->id);
 
         // Check that the return result is now false.
         $this->assertFalse(\core_message\api::is_user_non_contact_blocked($user2));
+
+        // Set the first user's preference to not receive messages from non-contacts.
+        set_user_preference('message_blocknoncontacts', 1, $user1->id);
+        $this->setUser($user2);
+        // Confirm it is still false. We want to ensure a contact request works both ways
+        // as it is now an agreement between users.
+        $this->assertFalse(\core_message\api::is_user_non_contact_blocked($user1));
     }
 
     /**
@@ -1363,16 +1388,19 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // User shouldn't be blocked.
         $this->assertFalse(\core_message\api::is_user_blocked($user1->id, $user2->id));
+        $this->assertDebuggingCalled();
 
         // Block the user.
-        message_block_contact($user2->id);
+        \core_message\api::block_user($user1->id, $user2->id);
 
         // User should be blocked.
         $this->assertTrue(\core_message\api::is_user_blocked($user1->id, $user2->id));
+        $this->assertDebuggingCalled();
 
         // Unblock the user.
-        message_unblock_contact($user2->id);
+        \core_message\api::unblock_user($user1->id, $user2->id);
         $this->assertFalse(\core_message\api::is_user_blocked($user1->id, $user2->id));
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -1386,13 +1414,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->setUser($user1);
 
         // Block the admin user.
-        message_block_contact(2);
+        \core_message\api::block_user($user1->id, 2);
 
         // Now change to the admin user.
         $this->setAdminUser();
 
         // As the admin you should still be able to send messages to the user.
         $this->assertFalse(\core_message\api::is_user_blocked($user1->id));
+        $this->assertDebuggingCalled();
     }
 
     /*
@@ -1623,13 +1652,12 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user2 = $this->getDataGenerator()->create_user();
 
         // Add users to the admin's contact list.
-        message_add_contact($user1->id);
-        message_add_contact($user2->id, 1);
+        \core_message\api::block_user($USER->id, $user2->id);
 
         $this->assertCount(1, \core_message\api::get_blocked_users($USER->id));
 
         // Block other user.
-        message_block_contact($user1->id);
+        \core_message\api::block_user($USER->id, $user1->id);
         $this->assertCount(2, \core_message\api::get_blocked_users($USER->id));
 
         // Test deleting users.
@@ -1649,9 +1677,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user4 = self::getDataGenerator()->create_user();
 
         // Add the users to each of their contacts.
-        message_add_contact($user1->id, 0, $user2->id);
-        message_add_contact($user2->id, 0, $user1->id);
-        message_add_contact($user3->id, 0, $user2->id);
+        \core_message\api::add_contact($user1->id, $user2->id);
+        \core_message\api::add_contact($user2->id, $user3->id);
 
         $this->send_fake_message($user1, $user2);
         $this->send_fake_message($user1, $user2);
@@ -1669,13 +1696,13 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Get the contacts and the unread message count.
         $messages = \core_message\api::get_contacts_with_unread_message_count($user2->id);
-
         // Confirm the size is correct.
         $this->assertCount(2, $messages);
         ksort($messages);
 
         $messageinfo1 = array_shift($messages);
         $messageinfo2 = array_shift($messages);
+
         $this->assertEquals($user1->id, $messageinfo1->id);
         $this->assertEquals(4, $messageinfo1->messagecount);
         $this->assertEquals($user3->id, $messageinfo2->id);
@@ -1742,7 +1769,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user2 = self::getDataGenerator()->create_user();
 
         // Add the users to each of their contacts.
-        message_add_contact($user1->id, 0, $user2->id);
+        \core_message\api::add_contact($user2->id, $user1->id);
 
         // Check we get the correct message count.
         $messages = \core_message\api::get_contacts_with_unread_message_count($user2->id);
@@ -1768,8 +1795,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user4 = self::getDataGenerator()->create_user();
 
         // Add a user to the contact list of the users we are testing this function with.
-        message_add_contact($user4->id, 0, $user1->id);
-        message_add_contact($user4->id, 0, $user2->id);
+        \core_message\api::add_contact($user1->id, $user4->id);
+        \core_message\api::add_contact($user2->id, $user4->id);
 
         $this->send_fake_message($user1, $user2);
         $this->send_fake_message($user1, $user2);
@@ -1938,5 +1965,275 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         $this->assertEquals($conversationid,
             \core_message\api::get_conversation_between_users([$user1->id, $user2->id]));
+    }
+
+    /**
+     * Test can create a contact request.
+     */
+    public function test_can_create_contact_request() {
+        global $CFG;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+        $this->assertFalse(\core_message\api::can_create_contact($user1->id, $user2->id));
+
+        // Re-enable messaging.
+        $CFG->messaging = 1;
+
+        // Allow users to message anyone site-wide.
+        $CFG->messagingallusers = 1;
+        $this->assertTrue(\core_message\api::can_create_contact($user1->id, $user2->id));
+
+        // Disallow users from messaging anyone site-wide.
+        $CFG->messagingallusers = 0;
+        $this->assertFalse(\core_message\api::can_create_contact($user1->id, $user2->id));
+
+        // Put the users in the same course so a contact request should be possible.
+        $course = self::getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->assertTrue(\core_message\api::can_create_contact($user1->id, $user2->id));
+    }
+
+    /**
+     * Test creating a contact request.
+     */
+    public function test_create_contact_request() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        \core_message\api::create_contact_request($user1->id, $user2->id);
+
+        $request = $DB->get_records('message_contact_requests');
+
+        $this->assertCount(1, $request);
+
+        $request = reset($request);
+
+        $this->assertEquals($user1->id, $request->userid);
+        $this->assertEquals($user2->id, $request->requesteduserid);
+    }
+
+    /**
+     * Test confirming a contact request.
+     */
+    public function test_confirm_contact_request() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        \core_message\api::create_contact_request($user1->id, $user2->id);
+
+        \core_message\api::confirm_contact_request($user1->id, $user2->id);
+
+        $this->assertEquals(0, $DB->count_records('message_contact_requests'));
+
+        $contact = $DB->get_records('message_contacts');
+
+        $this->assertCount(1, $contact);
+
+        $contact = reset($contact);
+
+        $this->assertEquals($user1->id, $contact->userid);
+        $this->assertEquals($user2->id, $contact->contactid);
+    }
+
+    /**
+     * Test declining a contact request.
+     */
+    public function test_decline_contact_request() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        \core_message\api::create_contact_request($user1->id, $user2->id);
+
+        \core_message\api::decline_contact_request($user1->id, $user2->id);
+
+        $this->assertEquals(0, $DB->count_records('message_contact_requests'));
+        $this->assertEquals(0, $DB->count_records('message_contacts'));
+    }
+
+    /**
+     * Test retrieving contact requests.
+     */
+    public function test_get_contact_requests() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Block one user, their request should not show up.
+        \core_message\api::block_user($user1->id, $user3->id);
+
+        \core_message\api::create_contact_request($user2->id, $user1->id);
+        \core_message\api::create_contact_request($user3->id, $user1->id);
+
+        $requests = \core_message\api::get_contact_requests($user1->id);
+
+        $this->assertCount(1, $requests);
+
+        $request = reset($requests);
+
+        $this->assertEquals($user2->id, $request->id);
+        $this->assertEquals($user2->picture, $request->picture);
+        $this->assertEquals($user2->firstname, $request->firstname);
+        $this->assertEquals($user2->lastname, $request->lastname);
+        $this->assertEquals($user2->firstnamephonetic, $request->firstnamephonetic);
+        $this->assertEquals($user2->lastnamephonetic, $request->lastnamephonetic);
+        $this->assertEquals($user2->middlename, $request->middlename);
+        $this->assertEquals($user2->alternatename, $request->alternatename);
+        $this->assertEquals($user2->email, $request->email);
+    }
+
+    /**
+     * Test adding contacts.
+     */
+    public function test_add_contact() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        \core_message\api::add_contact($user1->id, $user2->id);
+
+        $contact = $DB->get_records('message_contacts');
+
+        $this->assertCount(1, $contact);
+
+        $contact = reset($contact);
+
+        $this->assertEquals($user1->id, $contact->userid);
+        $this->assertEquals($user2->id, $contact->contactid);
+    }
+
+    /**
+     * Test removing contacts.
+     */
+    public function test_remove_contact() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        \core_message\api::add_contact($user1->id, $user2->id);
+        \core_message\api::remove_contact($user1->id, $user2->id);
+
+        $this->assertEquals(0, $DB->count_records('message_contacts'));
+    }
+
+    /**
+     * Test blocking users.
+     */
+    public function test_block_user() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        \core_message\api::block_user($user1->id, $user2->id);
+
+        $blockedusers = $DB->get_records('message_users_blocked');
+
+        $this->assertCount(1, $blockedusers);
+
+        $blockeduser = reset($blockedusers);
+
+        $this->assertEquals($user1->id, $blockeduser->userid);
+        $this->assertEquals($user2->id, $blockeduser->blockeduserid);
+    }
+
+    /**
+     * Test unblocking users.
+     */
+    public function test_unblock_user() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        \core_message\api::block_user($user1->id, $user2->id);
+        \core_message\api::unblock_user($user1->id, $user2->id);
+
+        $this->assertEquals(0, $DB->count_records('message_users_blocked'));
+    }
+
+    /**
+     * Test is contact check.
+     */
+    public function test_is_contact() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        \core_message\api::add_contact($user1->id, $user2->id);
+
+        $this->assertTrue(\core_message\api::is_contact($user1->id, $user2->id));
+        $this->assertTrue(\core_message\api::is_contact($user2->id, $user1->id));
+        $this->assertFalse(\core_message\api::is_contact($user2->id, $user3->id));
+    }
+
+    /**
+     * Test get contact.
+     */
+    public function test_get_contact() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        \core_message\api::add_contact($user1->id, $user2->id);
+
+        $contact = \core_message\api::get_contact($user1->id, $user2->id);
+
+        $this->assertEquals($user1->id, $contact->userid);
+        $this->assertEquals($user2->id, $contact->contactid);
+    }
+
+    /**
+     * Test is blocked checked.
+     */
+    public function test_is_blocked() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->assertFalse(\core_message\api::is_blocked($user1->id, $user2->id));
+        $this->assertFalse(\core_message\api::is_blocked($user2->id, $user1->id));
+
+        \core_message\api::block_user($user1->id, $user2->id);
+
+        $this->assertTrue(\core_message\api::is_blocked($user1->id, $user2->id));
+        $this->assertFalse(\core_message\api::is_blocked($user2->id, $user1->id));
+    }
+
+    /**
+     * Test the contact request exist check.
+     */
+    public function test_does_contact_request_exist() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->assertFalse(\core_message\api::does_contact_request_exist($user1->id, $user2->id));
+        $this->assertFalse(\core_message\api::does_contact_request_exist($user2->id, $user1->id));
+
+        \core_message\api::create_contact_request($user1->id, $user2->id);
+
+        $this->assertTrue(\core_message\api::does_contact_request_exist($user1->id, $user2->id));
+        $this->assertTrue(\core_message\api::does_contact_request_exist($user2->id, $user1->id));
+    }
+
+    /**
+     * Comparison function for sorting contacts.
+     *
+     * @param stdClass $a
+     * @param stdClass $b
+     * @return bool
+     */
+    protected static function sort_contacts($a, $b) {
+        return $a->userid > $b->userid;
     }
 }

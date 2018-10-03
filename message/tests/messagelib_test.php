@@ -106,6 +106,8 @@ class core_message_messagelib_testcase extends advanced_testcase {
      * Test message_get_blocked_users.
      */
     public function test_message_get_blocked_users() {
+        global $USER;
+
         // Set this user as the admin.
         $this->setAdminUser();
 
@@ -113,15 +115,13 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        // Add users to the admin's contact list.
-        message_add_contact($user1->id);
-        message_add_contact($user2->id, 1);
+        \core_message\api::block_user($USER->id, $user2->id);
 
         $this->assertCount(1, message_get_blocked_users());
         $this->assertDebuggingCalled();
 
         // Block other user.
-        message_block_contact($user1->id);
+        \core_message\api::block_user($USER->id, $user1->id);
         $this->assertCount(2, message_get_blocked_users());
         $this->assertDebuggingCalled();
 
@@ -149,8 +149,8 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $user3 = $this->getDataGenerator()->create_user(); // Stranger.
 
         // Add users to the admin's contact list.
-        message_add_contact($user1->id);
-        message_add_contact($user2->id);
+        \core_message\api::add_contact($USER->id, $user1->id);
+        \core_message\api::add_contact($USER->id, $user2->id);
 
         // Send some messages.
         $this->send_fake_message($user1, $USER);
@@ -173,7 +173,7 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $this->assertCount(3, $strangers);
 
         // Block 1 user.
-        message_block_contact($user2->id);
+        \core_message\api::block_user($USER->id, $user2->id);
         list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts();
         $this->assertDebuggingCalled();
         $this->assertCount(0, $onlinecontacts);
@@ -286,29 +286,34 @@ class core_message_messagelib_testcase extends advanced_testcase {
      * Test message_add_contact.
      */
     public function test_message_add_contact() {
+        global $DB, $USER;
+
         // Set this user as the admin.
         $this->setAdminUser();
 
         // Create a user to add to the admin's contact list.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
-        $user3 = $this->getDataGenerator()->create_user();
 
         message_add_contact($user1->id);
-        message_add_contact($user2->id, 0);
-        // Add duplicate contact and make sure only 1 record exists.
-        message_add_contact($user2->id, 1);
+        $this->assertDebuggingCalled();
+        $this->assertEquals(1, $DB->count_records('message_contact_requests'));
 
-        $this->assertNotEmpty(message_get_contact($user1->id));
-        $this->assertNotEmpty(message_get_contact($user2->id));
-        $this->assertEquals(false, message_get_contact($user3->id));
-        $this->assertEquals(1, \core_message\api::count_blocked_users());
+        message_add_contact($user2->id, 1);
+        $this->assertDebuggingCalled();
+        $this->assertEquals(1, $DB->count_records('message_users_blocked'));
+
+        message_add_contact($user2->id, 0);
+        $this->assertDebuggingCalled();
+        $this->assertEquals(0, $DB->count_records('message_users_blocked'));
     }
 
     /**
      * Test message_remove_contact.
      */
     public function test_message_remove_contact() {
+        global $USER;
+
         // Set this user as the admin.
         $this->setAdminUser();
 
@@ -316,18 +321,21 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
 
         // Add the user to the admin's contact list.
-        message_add_contact($user->id);
-        $this->assertNotEmpty(message_get_contact($user->id));
+        \core_message\api::add_contact($USER->id, $user->id);
 
         // Remove user from admin's contact list.
         message_remove_contact($user->id);
+        $this->assertDebuggingCalled();
         $this->assertEquals(false, message_get_contact($user->id));
+        $this->assertDebuggingCalled();
     }
 
     /**
      * Test message_block_contact.
      */
     public function test_message_block_contact() {
+        global $USER;
+
         // Set this user as the admin.
         $this->setAdminUser();
 
@@ -336,13 +344,14 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $user2 = $this->getDataGenerator()->create_user();
 
         // Add users to the admin's contact list.
-        message_add_contact($user1->id);
-        message_add_contact($user2->id);
+        \core_message\api::add_contact($USER->id, $user1->id);
+        \core_message\api::add_contact($USER->id, $user2->id);
 
         $this->assertEquals(0, \core_message\api::count_blocked_users());
 
         // Block 1 user.
         message_block_contact($user2->id);
+        $this->assertDebuggingCalled();
         $this->assertEquals(1, \core_message\api::count_blocked_users());
 
     }
@@ -351,21 +360,21 @@ class core_message_messagelib_testcase extends advanced_testcase {
      * Test message_unblock_contact.
      */
     public function test_message_unblock_contact() {
+        global $USER;
+
         // Set this user as the admin.
         $this->setAdminUser();
 
         // Create a user to add to the admin's contact list.
         $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
 
-        // Add users to the admin's contact list.
-        message_add_contact($user1->id);
-        message_add_contact($user2->id, 1); // Add blocked contact.
-
+        // Add users to the admin's blocked list.
+        \core_message\api::block_user($USER->id, $user1->id);
         $this->assertEquals(1, \core_message\api::count_blocked_users());
 
         // Unblock user.
-        message_unblock_contact($user2->id);
+        message_unblock_contact($user1->id);
+        $this->assertDebuggingCalled();
         $this->assertEquals(0, \core_message\api::count_blocked_users());
     }
 
@@ -373,6 +382,8 @@ class core_message_messagelib_testcase extends advanced_testcase {
      * Test message_search_users.
      */
     public function test_message_search_users() {
+        global $USER;
+
         // Set this user as the admin.
         $this->setAdminUser();
 
@@ -381,8 +392,8 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $user2 = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'user2'));
 
         // Add users to the admin's contact list.
-        message_add_contact($user1->id);
-        message_add_contact($user2->id); // Add blocked contact.
+        \core_message\api::add_contact($USER->id, $user1->id);
+        \core_message\api::add_contact($USER->id, $user2->id);
 
         $this->assertCount(1, message_search_users(0, 'Test1'));
         $this->assertCount(2, message_search_users(0, 'Test'));

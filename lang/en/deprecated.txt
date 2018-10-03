@@ -135,3 +135,5 @@ keepsearching,core
 allfieldsrequired,core
 previewhtml,core
 messagedselecteduserfailed,core
+eventmessagecontactblocked,core_message
+eventmessagecontactunblocked,core_message

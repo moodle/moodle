@@ -4182,7 +4182,7 @@ EOD;
 
                 // Check to see if we should be displaying a message button.
                 if (!empty($CFG->messaging) && $USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
-                    $iscontact = !empty(message_get_contact($user->id));
+                    $iscontact = \core_message\api::is_contact($USER->id, $user->id);
                     $contacttitle = $iscontact ? 'removefromyourcontacts' : 'addtoyourcontacts';
                     $contacturlaction = $iscontact ? 'removecontact' : 'addcontact';
                     $contactimage = $iscontact ? 'removecontact' : 'addcontact';

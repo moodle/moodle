@@ -63,8 +63,8 @@ class api {
         $ufields2 = \user_picture::fields('u2', array('lastaccess'), 'userto_id', 'userto_');
 
         $sql = "SELECT m.id, m.useridfrom, mcm.userid as useridto, m.subject, m.fullmessage, m.fullmessagehtml, m.fullmessageformat,
-                       m.smallmessage, m.timecreated, 0 as isread, $ufields, mcont.blocked as userfrom_blocked, $ufields2,
-                       mcont2.blocked as userto_blocked
+                       m.smallmessage, m.timecreated, 0 as isread, $ufields, mub.id as userfrom_blocked, $ufields2,
+                       mub2.id as userto_blocked
                   FROM {messages} m
             INNER JOIN {user} u
                     ON u.id = m.useridfrom
@@ -74,10 +74,10 @@ class api {
                     ON mcm.conversationid = m.conversationid
             INNER JOIN {user} u2
                     ON u2.id = mcm.userid
-             LEFT JOIN {message_contacts} mcont
-                    ON (mcont.contactid = u.id AND mcont.userid = ?)
-             LEFT JOIN {message_contacts} mcont2
-                    ON (mcont2.contactid = u2.id AND mcont2.userid = ?)
+             LEFT JOIN {message_users_blocked} mub
+                    ON (mub.blockeduserid = u.id AND mub.userid = ?)
+             LEFT JOIN {message_users_blocked} mub2
+                    ON (mub2.blockeduserid = u2.id AND mub2.userid = ?)
              LEFT JOIN {message_user_actions} mua
                     ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
                  WHERE (m.useridfrom = ? OR mcm.userid = ?)
@@ -101,7 +101,7 @@ class api {
                     $message->isread = true;
                 }
                 $blockedcol = $prefix . 'blocked';
-                $message->blocked = $message->$blockedcol;
+                $message->blocked = $message->$blockedcol ? 1 : 0;
 
                 $message->messageid = $message->id;
                 $conversations[] = helper::create_contact($message, $prefix);
@@ -126,12 +126,12 @@ class api {
 
         // Get all the users in the course.
         list($esql, $params) = get_enrolled_sql(\context_course::instance($courseid), '', 0, true);
-        $sql = "SELECT u.*, mc.blocked
+        $sql = "SELECT u.*, mub.id as isblocked
                   FROM {user} u
                   JOIN ($esql) je
                     ON je.id = u.id
-             LEFT JOIN {message_contacts} mc
-                    ON (mc.contactid = u.id AND mc.userid = :userid)
+             LEFT JOIN {message_users_blocked} mub
+                    ON (mub.blockeduserid = u.id AND mub.userid = :userid)
                  WHERE u.deleted = 0";
         // Add more conditions.
         $fullname = $DB->sql_fullname();
@@ -144,6 +144,7 @@ class api {
         $contacts = array();
         if ($users = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum)) {
             foreach ($users as $user) {
+                $user->blocked = $user->isblocked ? 1 : 0;
                 $contacts[] = helper::create_contact($user);
             }
         }
@@ -172,19 +173,22 @@ class api {
 
         // Ok, let's search for contacts first.
         $contacts = array();
-        $sql = "SELECT $ufields, mc.blocked
+        $sql = "SELECT $ufields, mub.id as isuserblocked
                   FROM {user} u
                   JOIN {message_contacts} mc
                     ON u.id = mc.contactid
+             LEFT JOIN {message_users_blocked} mub
+                    ON (mub.userid = :userid2 AND mub.blockeduserid = u.id)
                  WHERE mc.userid = :userid
                    AND u.deleted = 0
                    AND u.confirmed = 1
                    AND " . $DB->sql_like($fullname, ':search', false) . "
                    AND u.id $exclude
               ORDER BY " . $DB->sql_fullname();
-        if ($users = $DB->get_records_sql($sql, array('userid' => $userid, 'search' => '%' . $search . '%') + $excludeparams,
-            0, $limitnum)) {
+        if ($users = $DB->get_records_sql($sql, array('userid' => $userid, 'userid2' => $userid,
+                'search' => '%' . $search . '%') + $excludeparams, 0, $limitnum)) {
             foreach ($users as $user) {
+                $user->blocked = $user->isuserblocked ? 1 : 0;
                 $contacts[] = helper::create_contact($user);
             }
         }
@@ -225,7 +229,7 @@ class api {
                                      WHERE userid = :userid)
               ORDER BY " . $DB->sql_fullname();
         if ($users = $DB->get_records_sql($sql,  array('userid' => $userid, 'search' => '%' . $search . '%') + $excludeparams,
-            0, $limitnum)) {
+                0, $limitnum)) {
             foreach ($users as $user) {
                 $noncontacts[] = helper::create_contact($user);
             }
@@ -324,7 +328,7 @@ class api {
             return [];
         }
 
-        $contactssql = "SELECT contactid, blocked
+        $contactssql = "SELECT contactid
                           FROM {message_contacts}
                          WHERE userid = ?
                            AND contactid $useridsql";
@@ -401,21 +405,41 @@ class api {
     public static function get_contacts($userid, $limitfrom = 0, $limitnum = 0) {
         global $DB;
 
-        $arrcontacts = array();
-        $sql = "SELECT u.*, mc.blocked
+        $contactids = [];
+        $sql = "SELECT mc.*
                   FROM {message_contacts} mc
-                  JOIN {user} u
-                    ON mc.contactid = u.id
-                 WHERE mc.userid = :userid
-                   AND u.deleted = 0
-              ORDER BY " . $DB->sql_fullname();
-        if ($contacts = $DB->get_records_sql($sql, array('userid' => $userid), $limitfrom, $limitnum)) {
+                 WHERE mc.userid = ? OR mc.contactid = ?
+              ORDER BY timecreated DESC";
+        if ($contacts = $DB->get_records_sql($sql, [$userid, $userid], $limitfrom, $limitnum)) {
             foreach ($contacts as $contact) {
-                $arrcontacts[] = helper::create_contact($contact);
+                if ($userid == $contact->userid) {
+                    $contactids[] = $contact->contactid;
+                } else {
+                    $contactids[] = $contact->userid;
+                }
             }
         }
 
-        return $arrcontacts;
+        if (!empty($contactids)) {
+            list($insql, $inparams) = $DB->get_in_or_equal($contactids);
+
+            $sql = "SELECT u.*, mub.id as isblocked
+                      FROM {user} u
+                 LEFT JOIN {message_users_blocked} mub
+                        ON u.id = mub.blockeduserid
+                     WHERE u.id $insql";
+            if ($contacts = $DB->get_records_sql($sql, $inparams)) {
+                $arrcontacts = [];
+                foreach ($contacts as $contact) {
+                    $contact->blocked = $contact->isblocked ? 1 : 0;
+                    $arrcontacts[] = helper::create_contact($contact);
+                }
+
+                return $arrcontacts;
+            }
+        }
+
+        return [];
     }
 
     /**
@@ -434,21 +458,24 @@ class api {
         $unreadcountssql = "SELECT $userfields, count(m.id) as messagecount
                               FROM {message_contacts} mc
                         INNER JOIN {user} u
-                                ON u.id = mc.contactid
+                                ON (u.id = mc.contactid OR u.id = mc.userid)
                          LEFT JOIN {messages} m
-                                ON m.useridfrom = mc.contactid
+                                ON ((m.useridfrom = mc.contactid OR m.useridfrom = mc.userid) AND m.useridfrom != ?)
                          LEFT JOIN {message_conversation_members} mcm
                                 ON mcm.conversationid = m.conversationid AND mcm.userid = ? AND mcm.userid != m.useridfrom
                          LEFT JOIN {message_user_actions} mua
                                 ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
+                         LEFT JOIN {message_users_blocked} mub
+                                ON (mub.userid = ? AND mub.blockeduserid = u.id)
                              WHERE mua.id is NULL
-                               AND mc.userid = ?
-                               AND mc.blocked = 0
+                               AND mub.id is NULL
+                               AND (mc.userid = ? OR mc.contactid = ?)
+                               AND u.id != ?
                                AND u.deleted = 0
                           GROUP BY $userfields";
 
-        return $DB->get_records_sql($unreadcountssql, [$userid, $userid, self::MESSAGE_ACTION_READ,
-            $userid, $userid], $limitfrom, $limitnum);
+        return $DB->get_records_sql($unreadcountssql, [$userid, $userid, $userid, self::MESSAGE_ACTION_READ,
+            $userid, $userid, $userid, $userid], $limitfrom, $limitnum);
     }
 
     /**
@@ -474,14 +501,17 @@ class api {
                                 ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
                          LEFT JOIN {message_contacts} mc
                                 ON (mc.userid = ? AND mc.contactid = u.id)
+                         LEFT JOIN {message_users_blocked} mub
+                                ON (mub.userid = ? AND mub.blockeduserid = u.id)
                              WHERE mcm.userid = ?
                                AND mcm.userid != m.useridfrom
                                AND mua.id is NULL
+                               AND mub.id is NULL
                                AND mc.id is NULL
                                AND u.deleted = 0
                           GROUP BY $userfields";
 
-        return $DB->get_records_sql($unreadcountssql, [$userid, self::MESSAGE_ACTION_READ, $userid, $userid],
+        return $DB->get_records_sql($unreadcountssql, [$userid, self::MESSAGE_ACTION_READ, $userid, $userid, $userid],
             $limitfrom, $limitnum);
     }
 
@@ -550,7 +580,7 @@ class api {
      * @return \stdClass
      */
     public static function get_profile($userid, $otheruserid) {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $PAGE;
 
         require_once($CFG->dirroot . '/user/lib.php');
 
@@ -587,15 +617,8 @@ class api {
             }
         }
 
-        // Check if the contact has been blocked.
-        $contact = $DB->get_record('message_contacts', array('userid' => $userid, 'contactid' => $otheruserid));
-        if ($contact) {
-            $data->isblocked = (bool) $contact->blocked;
-            $data->iscontact = true;
-        } else {
-            $data->isblocked = false;
-            $data->iscontact = false;
-        }
+        $data->isblocked = self::is_blocked($userid, $otheruserid);
+        $data->iscontact = self::is_contact($userid, $otheruserid);
 
         return $data;
     }
@@ -854,9 +877,9 @@ class api {
             $user = $USER;
         }
 
-        $sql = "SELECT count(mc.id)
-                  FROM {message_contacts} mc
-                 WHERE mc.userid = :userid AND mc.blocked = 1";
+        $sql = "SELECT count(mub.id)
+                  FROM {message_users_blocked} mub
+                 WHERE mub.userid = :userid";
         return $DB->count_records_sql($sql, array('userid' => $user->id));
     }
 
@@ -890,8 +913,14 @@ class api {
         if ($sender !== null && isset($sender->id)) {
             $senderid = $sender->id;
         }
+
+        $systemcontext = \context_system::instance();
+        if (has_capability('moodle/site:readallmessages', $systemcontext, $senderid)) {
+            return true;
+        }
+
         // The recipient has specifically blocked this sender.
-        if (self::is_user_blocked($recipient->id, $senderid)) {
+        if (self::is_blocked($recipient->id, $senderid)) {
             return false;
         }
 
@@ -908,7 +937,7 @@ class api {
      * @return bool true if $sender is blocked, false otherwise.
      */
     public static function is_user_non_contact_blocked($recipient, $sender = null) {
-        global $USER, $DB;
+        global $USER;
 
         if (is_null($sender)) {
             // The message is from the logged in user, unless otherwise specified.
@@ -918,8 +947,7 @@ class api {
         $blockednoncontacts = get_user_preferences('message_blocknoncontacts', '', $recipient->id);
         if (!empty($blockednoncontacts)) {
             // Confirm the sender is a contact of the recipient.
-            $exists = $DB->record_exists('message_contacts', array('userid' => $recipient->id, 'contactid' => $sender->id));
-            if ($exists) {
+            if (self::is_contact($sender->id, $recipient->id)) {
                 // All good, the recipient is a contact of the sender.
                 return false;
             } else {
@@ -937,12 +965,16 @@ class api {
      * Note: This function will always return false if the sender has the
      * readallmessages capability at the system context level.
      *
+     * @deprecated since 3.6
      * @param int $recipientid User ID of the recipient.
      * @param int $senderid User ID of the sender.
      * @return bool true if $sender is blocked, false otherwise.
      */
     public static function is_user_blocked($recipientid, $senderid = null) {
-        global $USER, $DB;
+        debugging('\core_message\api::is_user_blocked is deprecated and should not be used.',
+            DEBUG_DEVELOPER);
+
+        global $USER;
 
         if (is_null($senderid)) {
             // The message is from the logged in user, unless otherwise specified.
@@ -954,7 +986,7 @@ class api {
             return false;
         }
 
-        if ($DB->get_field('message_contacts', 'blocked', ['userid' => $recipientid, 'contactid' => $senderid])) {
+        if (self::is_blocked($recipientid, $senderid)) {
             return true;
         }
 
@@ -1079,12 +1111,11 @@ class api {
 
         $userfields = \user_picture::fields('u', array('lastaccess'));
         $blockeduserssql = "SELECT $userfields
-                              FROM {message_contacts} mc
+                              FROM {message_users_blocked} mub
                         INNER JOIN {user} u
-                                ON u.id = mc.contactid
+                                ON u.id = mub.blockeduserid
                              WHERE u.deleted = 0
-                               AND mc.userid = ?
-                               AND mc.blocked = 1
+                               AND mub.userid = ?
                           GROUP BY $userfields
                           ORDER BY u.firstname ASC";
         return $DB->get_records_sql($blockeduserssql, [$userid]);
@@ -1286,5 +1317,299 @@ class api {
         }
 
         return $conversation->id;
+    }
+
+    /**
+     * Checks if a user can create a contact request.
+     *
+     * @param int $userid The id of the user who is creating the contact request
+     * @param int $requesteduserid The id of the user being requested
+     * @return bool
+     */
+    public static function can_create_contact(int $userid, int $requesteduserid) : bool {
+        global $CFG;
+
+        // If we can't message at all, then we can't create a contact.
+        if (empty($CFG->messaging)) {
+            return false;
+        }
+
+        // If we can message anyone on the site then we can create a contact.
+        if ($CFG->messagingallusers) {
+            return true;
+        }
+
+        // We need to check if they are in the same course.
+        return enrol_sharing_course($userid, $requesteduserid);
+    }
+
+    /**
+     * Handles creating a contact request.
+     *
+     * @param int $userid The id of the user who is creating the contact request
+     * @param int $requesteduserid The id of the user being requested
+     */
+    public static function create_contact_request(int $userid, int $requesteduserid) {
+        global $DB;
+
+        $request = new \stdClass();
+        $request->userid = $userid;
+        $request->requesteduserid = $requesteduserid;
+        $request->timecreated = time();
+
+        $DB->insert_record('message_contact_requests', $request);
+
+        // Send a notification.
+        $userfrom = \core_user::get_user($userid);
+        $userfromfullname = fullname($userfrom);
+        $userto = \core_user::get_user($requesteduserid);
+        $url = new \moodle_url('/message/pendingcontactrequests.php');
+
+        $subject = get_string('messagecontactrequestsnotificationsubject', 'core_message', $userfromfullname);
+        $fullmessage = get_string('messagecontactrequestsnotification', 'core_message', $userfromfullname);
+
+        $message = new \core\message\message();
+        $message->courseid = SITEID;
+        $message->component = 'moodle';
+        $message->name = 'messagecontactrequests';
+        $message->notification = 1;
+        $message->userfrom = $userfrom;
+        $message->userto = $userto;
+        $message->subject = $subject;
+        $message->fullmessage = text_to_html($fullmessage);
+        $message->fullmessageformat = FORMAT_HTML;
+        $message->fullmessagehtml = $fullmessage;
+        $message->smallmessage = '';
+        $message->contexturl = $url->out(false);
+
+        message_send($message);
+    }
+
+
+    /**
+     * Handles confirming a contact request.
+     *
+     * @param int $userid The id of the user who created the contact request
+     * @param int $requesteduserid The id of the user confirming the request
+     */
+    public static function confirm_contact_request(int $userid, int $requesteduserid) {
+        global $DB;
+
+        if ($request = $DB->get_record('message_contact_requests', ['userid' => $userid,
+                'requesteduserid' => $requesteduserid])) {
+            self::add_contact($userid, $requesteduserid);
+
+            $DB->delete_records('message_contact_requests', ['id' => $request->id]);
+        }
+    }
+
+    /**
+     * Handles declining a contact request.
+     *
+     * @param int $userid The id of the user who created the contact request
+     * @param int $requesteduserid The id of the user declining the request
+     */
+    public static function decline_contact_request(int $userid, int $requesteduserid) {
+        global $DB;
+
+        if ($request = $DB->get_record('message_contact_requests', ['userid' => $userid,
+                'requesteduserid' => $requesteduserid])) {
+            $DB->delete_records('message_contact_requests', ['id' => $request->id]);
+        }
+    }
+
+    /**
+     * Handles returning the contact requests for a user.
+     *
+     * This also includes the user data necessary to display information
+     * about the user.
+     *
+     * It will not include blocked users.
+     *
+     * @param int $userid
+     * @return array The list of contact requests
+     */
+    public static function get_contact_requests(int $userid) : array {
+        global $DB;
+
+        // Used to search for contacts.
+        $ufields = \user_picture::fields('u');
+
+        $sql = "SELECT $ufields, mcr.id as contactrequestid
+                  FROM {user} u
+                  JOIN {message_contact_requests} mcr
+                    ON u.id = mcr.userid
+             LEFT JOIN {message_users_blocked} mub
+                    ON (mub.userid = ? AND mub.blockeduserid = u.id)
+                 WHERE mcr.requesteduserid = ?
+                   AND u.deleted = 0
+                   AND mub.id is NULL
+              ORDER BY mcr.timecreated DESC";
+
+        return $DB->get_records_sql($sql, [$userid, $userid]);
+    }
+
+    /**
+     * Handles adding a contact.
+     *
+     * @param int $userid The id of the user who requested to be a contact
+     * @param int $contactid The id of the contact
+     */
+    public static function add_contact(int $userid, int $contactid) {
+        global $DB;
+
+        $messagecontact = new \stdClass();
+        $messagecontact->userid = $userid;
+        $messagecontact->contactid = $contactid;
+        $messagecontact->timecreated = time();
+        $messagecontact->id = $DB->insert_record('message_contacts', $messagecontact);
+
+        $eventparams = [
+            'objectid' => $messagecontact->id,
+            'userid' => $userid,
+            'relateduserid' => $contactid,
+            'context' => \context_user::instance($userid)
+        ];
+        $event = \core\event\message_contact_added::create($eventparams);
+        $event->add_record_snapshot('message_contacts', $messagecontact);
+        $event->trigger();
+    }
+
+    /**
+     * Handles removing a contact.
+     *
+     * @param int $userid The id of the user who is removing a user as a contact
+     * @param int $contactid The id of the user to be removed as a contact
+     */
+    public static function remove_contact(int $userid, int $contactid) {
+        global $DB;
+
+        if ($contact = self::get_contact($userid, $contactid)) {
+            $DB->delete_records('message_contacts', ['id' => $contact->id]);
+
+            $event = \core\event\message_contact_removed::create(array(
+                'objectid' => $contact->id,
+                'userid' => $userid,
+                'relateduserid' => $contactid,
+                'context' => \context_user::instance($userid)
+            ));
+            $event->add_record_snapshot('message_contacts', $contact);
+            $event->trigger();
+        }
+    }
+
+    /**
+     * Handles blocking a user.
+     *
+     * @param int $userid The id of the user who is blocking
+     * @param int $usertoblockid The id of the user being blocked
+     */
+    public static function block_user(int $userid, int $usertoblockid) {
+        global $DB;
+
+        $blocked = new \stdClass();
+        $blocked->userid = $userid;
+        $blocked->blockeduserid = $usertoblockid;
+        $blocked->timecreated = time();
+        $blocked->id = $DB->insert_record('message_users_blocked', $blocked);
+
+        // Trigger event for blocking a contact.
+        $event = \core\event\message_user_blocked::create(array(
+            'objectid' => $blocked->id,
+            'userid' => $userid,
+            'relateduserid' => $usertoblockid,
+            'context' => \context_user::instance($userid)
+        ));
+        $event->add_record_snapshot('message_users_blocked', $blocked);
+        $event->trigger();
+    }
+
+    /**
+     * Handles unblocking a user.
+     *
+     * @param int $userid The id of the user who is unblocking
+     * @param int $usertounblockid The id of the user being unblocked
+     */
+    public static function unblock_user(int $userid, int $usertounblockid) {
+        global $DB;
+
+        if ($blockeduser = $DB->get_record('message_users_blocked',
+                ['userid' => $userid, 'blockeduserid' => $usertounblockid])) {
+            $DB->delete_records('message_users_blocked', ['id' => $blockeduser->id]);
+
+            // Trigger event for unblocking a contact.
+            $event = \core\event\message_user_unblocked::create(array(
+                'objectid' => $blockeduser->id,
+                'userid' => $userid,
+                'relateduserid' => $usertounblockid,
+                'context' => \context_user::instance($userid)
+            ));
+            $event->add_record_snapshot('message_users_blocked', $blockeduser);
+            $event->trigger();
+        }
+    }
+
+    /**
+     * Checks if users are already contacts.
+     *
+     * @param int $userid The id of one of the users
+     * @param int $contactid The id of the other user
+     * @return bool Returns true if they are a contact, false otherwise
+     */
+    public static function is_contact(int $userid, int $contactid) : bool {
+        global $DB;
+
+        $sql = "SELECT id
+                  FROM {message_contacts} mc
+                 WHERE (mc.userid = ? AND mc.contactid = ?)
+                    OR (mc.userid = ? AND mc.contactid = ?)";
+        return $DB->record_exists_sql($sql, [$userid, $contactid, $contactid, $userid]);
+    }
+
+    /**
+     * Returns the row in the database table message_contacts that represents the contact between two people.
+     *
+     * @param int $userid The id of one of the users
+     * @param int $contactid The id of the other user
+     * @return mixed A fieldset object containing the record, false otherwise
+     */
+    public static function get_contact(int $userid, int $contactid) {
+        global $DB;
+
+        $sql = "SELECT mc.*
+                  FROM {message_contacts} mc
+                 WHERE (mc.userid = ? AND mc.contactid = ?)
+                    OR (mc.userid = ? AND mc.contactid = ?)";
+        return $DB->get_record_sql($sql, [$userid, $contactid, $contactid, $userid]);
+    }
+
+    /**
+     * Checks if a user is already blocked.
+     *
+     * @param int $userid
+     * @param int $blockeduserid
+     * @return bool Returns true if they are a blocked, false otherwise
+     */
+    public static function is_blocked(int $userid, int $blockeduserid) : bool {
+        global $DB;
+
+        return $DB->record_exists('message_users_blocked', ['userid' => $userid, 'blockeduserid' => $blockeduserid]);
+    }
+
+    /**
+     * Checks if a contact request already exists between users.
+     *
+     * @param int $userid The id of the user who is creating the contact request
+     * @param int $requesteduserid The id of the user being requested
+     * @return bool Returns true if a contact request exists, false otherwise
+     */
+    public static function does_contact_request_exist(int $userid, int $requesteduserid) : bool {
+        global $DB;
+
+        $sql = "SELECT id
+                  FROM {message_contact_requests} mcr
+                 WHERE (mcr.userid = ? AND mcr.requesteduserid = ?)
+                    OR (mcr.userid = ? AND mcr.requesteduserid = ?)";
+        return $DB->record_exists_sql($sql, [$userid, $requesteduserid, $requesteduserid, $userid]);
     }
 }

@@ -52,6 +52,8 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
      * Test the message contact added event.
      */
     public function test_message_contact_added() {
+        global $USER;
+
         // Set this user as the admin.
         $this->setAdminUser();
 
@@ -60,7 +62,7 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
 
         // Trigger and capture the event when adding a contact.
         $sink = $this->redirectEvents();
-        message_add_contact($user->id);
+        \core_message\api::add_contact($USER->id, $user->id);
         $events = $sink->get_events();
         $event = reset($events);
 
@@ -78,6 +80,8 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
      * Test the message contact removed event.
      */
     public function test_message_contact_removed() {
+        global $USER;
+
         // Set this user as the admin.
         $this->setAdminUser();
 
@@ -85,11 +89,11 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
         $user = $this->getDataGenerator()->create_user();
 
         // Add the user to the admin's contact list.
-        message_add_contact($user->id);
+        \core_message\api::add_contact($USER->id, $user->id);
 
         // Trigger and capture the event when adding a contact.
         $sink = $this->redirectEvents();
-        message_remove_contact($user->id);
+        \core_message\api::remove_contact($USER->id, $user->id);
         $events = $sink->get_events();
         $event = reset($events);
 
@@ -104,61 +108,37 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Test the message contact blocked event.
+     * Test the message user blocked event.
      */
-    public function test_message_contact_blocked() {
+    public function test_message_user_blocked() {
+        global $USER;
+
         // Set this user as the admin.
         $this->setAdminUser();
 
         // Create a user to add to the admin's contact list.
         $user = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
 
         // Add the user to the admin's contact list.
-        message_add_contact($user->id);
+        \core_message\api::add_contact($USER->id, $user->id);
 
         // Trigger and capture the event when blocking a contact.
         $sink = $this->redirectEvents();
-        message_block_contact($user->id);
+        \core_message\api::block_user($USER->id, $user->id);
         $events = $sink->get_events();
         $event = reset($events);
 
         // Check that the event data is valid.
-        $this->assertInstanceOf('\core\event\message_contact_blocked', $event);
+        $this->assertInstanceOf('\core\event\message_user_blocked', $event);
         $this->assertEquals(context_user::instance(2), $event->get_context());
-        $expected = array(SITEID, 'message', 'block contact', 'index.php?user1=' . $user->id . '&amp;user2=2', $user->id);
-        $this->assertEventLegacyLogData($expected, $event);
-        $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
-        $this->assertEquals($url, $event->get_url());
-
-        // Make sure that the contact blocked event is not triggered again.
-        $sink->clear();
-        message_block_contact($user->id);
-        $events = $sink->get_events();
-        $event = reset($events);
-        $this->assertEmpty($event);
-        // Make sure that we still have 1 blocked user.
-        $this->assertEquals(1, \core_message\api::count_blocked_users());
-
-        // Now blocking a user that is not a contact.
-        $sink->clear();
-        message_block_contact($user2->id);
-        $events = $sink->get_events();
-        $event = reset($events);
-
-        // Check that the event data is valid.
-        $this->assertInstanceOf('\core\event\message_contact_blocked', $event);
-        $this->assertEquals(context_user::instance(2), $event->get_context());
-        $expected = array(SITEID, 'message', 'block contact', 'index.php?user1=' . $user2->id . '&amp;user2=2', $user2->id);
-        $this->assertEventLegacyLogData($expected, $event);
-        $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
-        $this->assertEquals($url, $event->get_url());
     }
 
     /**
-     * Test the message contact unblocked event.
+     * Test the message user unblocked event.
      */
-    public function test_message_contact_unblocked() {
+    public function test_message_user_unblocked() {
+        global $USER;
+
         // Set this user as the admin.
         $this->setAdminUser();
 
@@ -166,38 +146,24 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
         $user = $this->getDataGenerator()->create_user();
 
         // Add the user to the admin's contact list.
-        message_add_contact($user->id);
+        \core_message\api::add_contact($USER->id, $user->id);
 
         // Block the user.
-        message_block_contact($user->id);
+        \core_message\api::block_user($USER->id, $user->id);
         // Make sure that we have 1 blocked user.
         $this->assertEquals(1, \core_message\api::count_blocked_users());
 
         // Trigger and capture the event when unblocking a contact.
         $sink = $this->redirectEvents();
-        message_unblock_contact($user->id);
+        \core_message\api::unblock_user($USER->id, $user->id);
         $events = $sink->get_events();
         $event = reset($events);
 
         // Check that the event data is valid.
-        $this->assertInstanceOf('\core\event\message_contact_unblocked', $event);
+        $this->assertInstanceOf('\core\event\message_user_unblocked', $event);
         $this->assertEquals(context_user::instance(2), $event->get_context());
-        $expected = array(SITEID, 'message', 'unblock contact', 'index.php?user1=' . $user->id . '&amp;user2=2', $user->id);
-        $this->assertEventLegacyLogData($expected, $event);
-        $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
-        $this->assertEquals($url, $event->get_url());
 
         // Make sure that we have no blocked users.
-        $this->assertEmpty(\core_message\api::count_blocked_users());
-
-        // Make sure that the contact unblocked event is not triggered again.
-        $sink->clear();
-        message_unblock_contact($user->id);
-        $events = $sink->get_events();
-        $event = reset($events);
-        $this->assertEmpty($event);
-
-        // Make sure that we still have no blocked users.
         $this->assertEmpty(\core_message\api::count_blocked_users());
     }
 
