@@ -94,4 +94,3 @@ Feature: Basic use of the Statistics report
     And "3" row "Intended weight" column of "questionstatistics" table should contain "33.33 %"
     And "3" row "Effective weight" column of "questionstatistics" table should contain "34.55 %"
     And "3" row "Discrimination index" column of "questionstatistics" table should contain "86.60 %"
-
