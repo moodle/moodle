@@ -86,3 +86,36 @@ Feature: The timeline block allows users to see upcoming activities
     And I should see "Test feedback 3 closes" in the "Timeline" "block"
     And I should see "Test feedback 2 closes" in the "Timeline" "block"
     And I should not see "Test choice 2 closes" in the "Timeline" "block"
+
+  Scenario: Persistent All in date view
+    Given I log in as "student1"
+    And I click on "Next 30 days" "button" in the "Timeline" "block"
+    When I click on "All" "link" in the "Timeline" "block"
+    And I reload the page
+    Then I should see "Test assign 1 is due" in the "Timeline" "block"
+    And I should see "Test feedback 1 closes" in the "Timeline" "block"
+    And I should see "Test choice 1 closes" in the "Timeline" "block"
+    And I should see "Test choice 3 closes" in the "Timeline" "block"
+    And I should see "Test feedback 3 closes" in the "Timeline" "block"
+    And I should not see "Test choice 2 closes" in the "Timeline" "block"
+    And I should not see "Test feedback 2 closes" in the "Timeline" "block"
+    And I click on "[data-region='paging-bar'] [data-control='next']" "css_element" in the "Timeline" "block"
+    And I should see "Test feedback 2 closes" in the "Timeline" "block"
+    And I should not see "Test assign 1 is due" in the "Timeline" "block"
+    And I should not see "Test feedback 1 closes" in the "Timeline" "block"
+    And I should not see "Test choice 1 closes" in the "Timeline" "block"
+    And I should not see "Test choice 3 closes" in the "Timeline" "block"
+    And I should not see "Test feedback 3 closes" in the "Timeline" "block"
+    And I should not see "Test choice 2 closes" in the "Timeline" "block"
+
+  Scenario: Persistent Overdue in date view
+    Given I log in as "student1"
+    And I click on "Next 30 days" "button" in the "Timeline" "block"
+    When I click on "Overdue" "link" in the "Timeline" "block"
+    And I reload the page
+    Then I should see "Test assign 1 is due" in the "Timeline" "block"
+    And I should not see "Test choice 2 closes" in the "Timeline" "block"
+    And I should not see "Test feedback 1 closes" in the "Timeline" "block"
+    And I should not see "Test choice 1 closes" in the "Timeline" "block"
+    And I should not see "Test choice 3 closes" in the "Timeline" "block"
+    And I should not see "Test feedback 3 closes" in the "Timeline" "block"

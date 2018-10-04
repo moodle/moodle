@@ -32,12 +32,12 @@
         <span data-region="caret" class="caret"></span>
     </button>
     <ul role="menu" class="dropdown-menu dropdown-menu-right" data-show-active-item>
-        <li class="dropdown-item active" data-target="#view_dates_{{uniqid}}" data-toggle="tab">
+        <li class="dropdown-item {{#sorttimelinedates}}active{{/sorttimelinedates}}" data-target="#view_dates_{{uniqid}}" data-toggle="tab" data-filtername="sortbydates">
             <a href="#" aria-label="{{#str}} ariaviewselectoroption, block_timeline, {{#str}} sortbydates, block_timeline {{/str}}{{/str}}">
                 {{#str}} sortbydates, block_timeline {{/str}}
             </a>
         </li>
-        <li class="dropdown-item" data-target="#view_courses_{{uniqid}}" data-toggle="tab">
+        <li class="dropdown-item {{#sorttimelinecourses}}active{{/sorttimelinecourses}}" data-target="#view_courses_{{uniqid}}" data-toggle="tab" data-filtername="sortbycourses">
             <a href="#" aria-label="{{#str}} ariaviewselectoroption, block_timeline, {{#str}} sortbycourses, block_timeline {{/str}}{{/str}}">
                 {{#str}} sortbycourses, block_timeline {{/str}}
             </a>
