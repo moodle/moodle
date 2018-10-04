@@ -1210,4 +1210,25 @@ class api {
 
         return true;
     }
+
+    /**
+     * Format the supplied date interval as a retention period.
+     *
+     * @param   \DateInterval   $interval
+     * @return  string
+     */
+    public static function format_retention_period(\DateInterval $interval) : string {
+        // It is one or another.
+        if ($interval->y) {
+            $formattedtime = get_string('numyears', 'moodle', $interval->format('%y'));
+        } else if ($interval->m) {
+            $formattedtime = get_string('nummonths', 'moodle', $interval->format('%m'));
+        } else if ($interval->d) {
+            $formattedtime = get_string('numdays', 'moodle', $interval->format('%d'));
+        } else {
+            $formattedtime = get_string('retentionperiodzero', 'tool_dataprivacy');
+        }
+
+        return $formattedtime;
+    }
 }
