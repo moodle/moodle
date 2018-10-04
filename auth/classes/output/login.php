@@ -78,7 +78,7 @@ class login implements renderable, templatable {
      * @param string $username The username to display.
      */
     public function __construct(array $authsequence, $username = '') {
-        global $CFG, $SESSION;
+        global $CFG;
 
         $this->username = $username;
 
@@ -87,12 +87,13 @@ class login implements renderable, templatable {
         $this->cansignup = $CFG->registerauth == 'email' || !empty($CFG->registerauth);
         if ($CFG->rememberusername == 0) {
             $this->cookieshelpicon = new help_icon('cookiesenabledonlysession', 'core');
+            $this->rememberusername = false;
         } else {
             $this->cookieshelpicon = new help_icon('cookiesenabled', 'core');
+            $this->rememberusername = true;
         }
 
         $this->autofocusform = !empty($CFG->loginpageautofocus);
-        $this->rememberusername = isset($CFG->rememberusername) and $CFG->rememberusername == 2;
 
         $this->forgotpasswordurl = new moodle_url('/login/forgot_password.php');
         $this->loginurl = new moodle_url('/login/index.php');
