@@ -85,7 +85,11 @@ class login implements renderable, templatable {
         $this->canloginasguest = $CFG->guestloginbutton and !isguestuser();
         $this->canloginbyemail = !empty($CFG->authloginviaemail);
         $this->cansignup = $CFG->registerauth == 'email' || !empty($CFG->registerauth);
-        $this->cookieshelpicon = new help_icon('cookiesenabled', 'core');
+        if ($CFG->rememberusername == 0) {
+            $this->cookieshelpicon = new help_icon('cookiesenabledonlysession', 'core');
+        } else {
+            $this->cookieshelpicon = new help_icon('cookiesenabled', 'core');
+        }
 
         $this->autofocusform = !empty($CFG->loginpageautofocus);
         $this->rememberusername = isset($CFG->rememberusername) and $CFG->rememberusername == 2;
