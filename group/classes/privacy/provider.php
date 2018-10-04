@@ -263,24 +263,32 @@ class provider implements
     }
 
     /**
-     * Get the list of contexts that contain user information for the specified user.
+     * Get the list of contexts that contain group membership for the specified user.
      *
-     * @param   int $userid The user to search.
-     * @return  contextlist The contextlist containing the list of contexts used in this plugin.
+     * @param   int     $userid     The user to search.
+     * @param   string  $component  The component to check.
+     * @param   int     $itemid     Optional itemid associated with component.
+     * @return  contextlist         The contextlist containing the list of contexts.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_group_member(int $userid, string $component, int $itemid = 0) {
         $contextlist = new contextlist();
 
         $sql = "SELECT ctx.id
                   FROM {groups_members} gm
                   JOIN {groups} g ON gm.groupid = g.id
                   JOIN {context} ctx ON g.courseid = ctx.instanceid AND ctx.contextlevel = :contextcourse
-                 WHERE gm.userid = :userid";
+                 WHERE gm.userid = :userid AND gm.component = :component";
 
         $params = [
             'contextcourse' => CONTEXT_COURSE,
-            'userid'        => $userid
+            'userid'        => $userid,
+            'component'     => $component
         ];
+
+        if ($itemid) {
+            $sql .= ' AND gm.itemid = :itemid';
+            $params['itemid'] = $itemid;
+        }
 
         $contextlist->add_from_sql($sql, $params);
 
@@ -289,6 +297,16 @@ class provider implements
 
     /**
      * Get the list of users who have data within a context.
+     *
+     * @param   int $userid The user to search.
+     * @return  contextlist The contextlist containing the list of contexts used in this plugin.
+     */
+    public static function get_contexts_for_userid(int $userid) : contextlist {
+        return static::get_contexts_for_group_member($userid, '');
+    }
+
+    /**
+     * Get the list of contexts that contain user information for the specified user.
      *
      * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
      */

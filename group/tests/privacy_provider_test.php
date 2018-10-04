@@ -582,6 +582,43 @@ class core_group_privacy_provider_testcase extends provider_testcase {
     }
 
     /**
+     * Test for provider::get_contexts_for_userid() when there are group memberships from other components.
+     */
+    public function test_get_contexts_for_userid_component() {
+        $this->resetAfterTest();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course1->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course2->id));
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+
+        $this->getDataGenerator()->create_group_member(
+                array(
+                    'userid' => $user->id,
+                    'groupid' => $group1->id
+                ));
+        $this->getDataGenerator()->create_group_member(
+                array(
+                    'userid' => $user->id,
+                    'groupid' => $group2->id,
+                    'component' => 'enrol_meta'
+                ));
+
+        $coursecontext1 = context_course::instance($course1->id);
+
+        // User is member of some groups in course1 and course2,
+        // but only the membership in course1 is directly managed by core_group.
+        $contextlist = provider::get_contexts_for_userid($user->id);
+        $this->assertEquals([$coursecontext1->id], $contextlist->get_contextids());
+    }
+
+    /**
      * Test for provider::export_user_data().
      */
     public function test_export_user_data() {
