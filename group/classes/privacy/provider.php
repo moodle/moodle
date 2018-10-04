@@ -29,8 +29,10 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
 
 /**
  * Privacy Subsystem implementation for core_group.
@@ -46,7 +48,10 @@ class provider implements
         \core_privacy\local\request\subsystem\provider,
 
         // The group subsystem can provide information to other plugins.
-        \core_privacy\local\request\subsystem\plugin_provider {
+        \core_privacy\local\request\subsystem\plugin_provider,
+
+        // This plugin is capable of determining which users have data within it.
+        \core_privacy\local\request\core_userlist_provider {
 
     /**
      * Returns meta data about this system.
@@ -191,6 +196,73 @@ class provider implements
     }
 
     /**
+     * Add the list of users who are members of some groups in the specified constraints.
+     *
+     * @param   userlist    $userlist   The userlist to add the users to.
+     * @param   string      $component  The component to check.
+     * @param   int         $itemid     Optional itemid associated with component.
+     */
+    public static function get_group_members_in_context(userlist $userlist, string $component, int $itemid = 0) {
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_course) {
+            return;
+        }
+
+        // Group members in the given context.
+        $sql = "SELECT gm.userid
+                  FROM {groups_members} gm
+                  JOIN {groups} g ON gm.groupid = g.id
+                 WHERE g.courseid = :courseid AND gm.component = :component";
+        $params = [
+            'courseid'      => $context->instanceid,
+            'component'     => $component
+        ];
+
+        if ($itemid) {
+            $sql .= ' AND gm.itemid = :itemid';
+            $params['itemid'] = $itemid;
+        }
+
+        $userlist->add_from_sql('userid', $sql, $params);
+    }
+
+    /**
+     * Deletes all records for multiple users within a single context.
+     *
+     * @param approved_userlist $userlist   The approved context and user information to delete information for.
+     * @param string            $component  Component to delete from. Empty string means no component (manual memberships).
+     * @param int               $itemid     Optional itemid associated with component.
+     */
+    public static function delete_groups_for_users(approved_userlist $userlist, string $component, int $itemid = 0) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        $userids = $userlist->get_userids();
+
+        list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+
+        $groupselect = "SELECT g.id
+                          FROM {groups} g
+                          JOIN {context} ctx ON g.courseid = ctx.instanceid AND ctx.contextlevel = :contextcourse
+                         WHERE ctx.id = :contextid";
+        $groupparams = ['contextid' => $context->id, 'contextcourse' => CONTEXT_COURSE];
+
+        $select = "component = :component AND userid {$usersql} AND groupid IN ({$groupselect})";
+        $params = ['component' => $component] + $groupparams + $userparams;
+
+        if ($itemid) {
+            $select .= ' AND itemid = :itemid';
+            $params['itemid'] = $itemid;
+        }
+
+        $DB->delete_records_select('groups_members', $select, $params);
+
+        // Invalidate the group and grouping cache for the user.
+        \cache_helper::invalidate_by_definition('core', 'user_group_groupings', array(), $userids);
+    }
+
+    /**
      * Get the list of contexts that contain user information for the specified user.
      *
      * @param   int $userid The user to search.
@@ -213,6 +285,21 @@ class provider implements
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_course) {
+            return;
+        }
+
+        static::get_group_members_in_context($userlist, '');
     }
 
     /**
@@ -245,4 +332,14 @@ class provider implements
     public static function delete_data_for_user(approved_contextlist $contextlist) {
         static::delete_groups_for_user($contextlist, '');
     }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist   $userlist   The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        static::delete_groups_for_users($userlist, '');
+    }
+
 }
