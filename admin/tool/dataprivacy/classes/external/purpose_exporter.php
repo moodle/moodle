@@ -26,7 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
 use core\external\persistent_exporter;
-use DateInterval;
 use Exception;
 use renderer_base;
 use tool_dataprivacy\context_instance;
@@ -79,6 +78,9 @@ class purpose_exporter extends persistent_exporter {
                 'multiple' => true,
                 'optional' => true
             ],
+            'roleoverrides' => [
+                'type' => PARAM_TEXT
+            ],
         ];
     }
 
@@ -125,22 +127,13 @@ class purpose_exporter extends persistent_exporter {
 
         $retentionperiod = $this->persistent->get('retentionperiod');
         if ($retentionperiod) {
-            $interval = new DateInterval($retentionperiod);
-
-            // It is one or another.
-            if ($interval->y) {
-                $formattedtime = get_string('numyears', 'moodle', $interval->format('%y'));
-            } else if ($interval->m) {
-                $formattedtime = get_string('nummonths', 'moodle', $interval->format('%m'));
-            } else if ($interval->d) {
-                $formattedtime = get_string('numdays', 'moodle', $interval->format('%d'));
-            } else {
-                $formattedtime = get_string('retentionperiodzero', 'tool_dataprivacy');
-            }
+            $formattedtime = \tool_dataprivacy\api::format_retention_period(new \DateInterval($retentionperiod));
         } else {
             $formattedtime = get_string('retentionperiodnotdefined', 'tool_dataprivacy');
         }
         $values['formattedretentionperiod'] = $formattedtime;
+
+        $values['roleoverrides'] = !empty($this->persistent->get_purpose_overrides());
 
         return $values;
     }
