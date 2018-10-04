@@ -68,23 +68,7 @@ class provider implements
      * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
-        $contextlist = new contextlist();
-
-        $sql = "SELECT ctx.id
-                  FROM {groups_members} gm
-                  JOIN {groups} g ON gm.groupid = g.id
-                  JOIN {context} ctx ON g.courseid = ctx.instanceid AND ctx.contextlevel = :contextlevel
-                 WHERE gm.userid = :userid
-                   AND gm.component = 'enrol_cohort'";
-
-        $params = [
-            'contextlevel' => CONTEXT_COURSE,
-            'userid'        => $userid
-        ];
-
-        $contextlist->add_from_sql($sql, $params);
-
-        return $contextlist;
+        return \core_group\privacy\provider::get_contexts_for_group_member($userid, 'enrol_cohort');
     }
 
     /**
