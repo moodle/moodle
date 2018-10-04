@@ -1,4 +1,4 @@
-.block_course_overview {
+.block_course_overview, section.block_myoverview {
     display:none;
 }
 
