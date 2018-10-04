@@ -25,7 +25,7 @@ function block_iomad_company_admin_menu() {
                 'name' => get_string('managecompanies', 'block_iomad_company_admin'),
                 'url' => 'editcompanies.php',
                 'cap' => 'block/iomad_company_admin:company_add_child',
-                'icondefault' => 'managecompany',
+                'icondefault' => 'editcompany',
                 'style' => 'company',
                 'icon' => 'fa-building',
                 'iconsmall' => 'fa-gear'

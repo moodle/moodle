@@ -32,5 +32,5 @@ function xmldb_block_iomad_company_admin_install() {
         );
     $page->blocks->add_blocks($defaultblocks);
 
-    return $true;
+    return true;
 }
