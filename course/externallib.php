@@ -56,6 +56,8 @@ class core_course_external extends external_api {
                                                 'The expected keys (value format) are:
                                                 excludemodules (bool) Do not return modules, return only the sections structure
                                                 excludecontents (bool) Do not return module contents (i.e: files inside a resource)
+                                                includestealthmodules (bool) Return stealth modules for students in a special
+                                                    section (with id -1)
                                                 sectionid (int) Return only this section
                                                 sectionnumber (int) Return only this section with number (order)
                                                 cmid (int) Return only this module information (among the whole sections structure)
@@ -96,6 +98,7 @@ class core_course_external extends external_api {
                     switch ($name) {
                         case 'excludemodules':
                         case 'excludecontents':
+                        case 'includestealthmodules':
                             $value = clean_param($option['value'], PARAM_BOOL);
                             $filters[$name] = $value;
                             break;
@@ -161,20 +164,11 @@ class core_course_external extends external_api {
             $modinfo = get_fast_modinfo($course);
             $sections = $modinfo->get_section_info_all();
             $coursenumsections = course_get_format($course)->get_last_section_number();
+            $stealthmodules = array();   // Array to keep all the modules available but not visible in a course section/topic.
 
             //for each sections (first displayed to last displayed)
             $modinfosections = $modinfo->get_sections();
             foreach ($sections as $key => $section) {
-
-                // Show the section if the user is permitted to access it, OR if it's not available
-                // but there is some available info text which explains the reason & should display.
-                $showsection = $section->uservisible ||
-                    ($section->visible && !$section->available &&
-                    !empty($section->availableinfo));
-
-                if (!$showsection) {
-                    continue;
-                }
 
                 // This becomes true when we are filtering and we found the value to filter with.
                 $sectionfound = false;
@@ -216,8 +210,8 @@ class core_course_external extends external_api {
 
                 $sectioncontents = array();
 
-                // For each module of the section (if it is visible).
-                if ($section->uservisible and empty($filters['excludemodules']) and !empty($modinfosections[$section->section])) {
+                // For each module of the section.
+                if (empty($filters['excludemodules']) and !empty($modinfosections[$section->section])) {
                     foreach ($modinfosections[$section->section] as $cmid) {
                         $cm = $modinfo->cms[$cmid];
 
@@ -310,8 +304,13 @@ class core_course_external extends external_api {
                             }
                         }
 
-                        //assign result to $sectioncontents
-                        $sectioncontents[] = $module;
+                        // Assign result to $sectioncontents, there is an exception,
+                        // stealth activities in non-visible sections for students go to a special section.
+                        if (!empty($filters['includestealthmodules']) && !$section->uservisible && $cm->is_stealth()) {
+                            $stealthmodules[] = $module;
+                        } else {
+                            $sectioncontents[] = $module;
+                        }
 
                         // If we just did a filtering, break the loop.
                         if ($modfound) {
@@ -323,13 +322,46 @@ class core_course_external extends external_api {
                 $sectionvalues['modules'] = $sectioncontents;
 
                 // assign result to $coursecontents
-                $coursecontents[] = $sectionvalues;
+                $coursecontents[$key] = $sectionvalues;
 
                 // Break the loop if we are filtering.
                 if ($sectionfound) {
                     break;
                 }
             }
+
+            // Now that we have iterated over all the sections and activities, check the visibility.
+            // We didn't this before to be able to retrieve stealth activities.
+            foreach ($coursecontents as $sectionnumber => $sectioncontents) {
+                $section = $sections[$sectionnumber];
+                // Show the section if the user is permitted to access it, OR if it's not available
+                // but there is some available info text which explains the reason & should display.
+                $showsection = $section->uservisible ||
+                    ($section->visible && !$section->available &&
+                    !empty($section->availableinfo));
+
+                if (!$showsection) {
+                    unset($coursecontents[$sectionnumber]);
+                    continue;
+                }
+
+                // Remove modules information if the section is not visible for the user.
+                if (!$section->uservisible) {
+                    $coursecontents[$sectionnumber]['modules'] = array();
+                }
+            }
+
+            // Include stealth modules in special section (without any info).
+            if (!empty($stealthmodules)) {
+                $coursecontents[] = array(
+                    'id' => -1,
+                    'name' => '',
+                    'summary' => '',
+                    'summaryformat' => FORMAT_MOODLE,
+                    'modules' => $stealthmodules
+                );
+            }
+
         }
         return $coursecontents;
     }
