@@ -26,10 +26,12 @@ namespace search_simpledb\privacy;
 defined('MOODLE_INTERNAL') || die();
 
 use core_privacy\local\metadata\collection;
-use core_privacy\local\request\writer;
-use core_privacy\local\request\transform;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
+use core_privacy\local\request\writer;
 
 /**
  * Provider for the search_simpledb plugin.
@@ -39,6 +41,7 @@ use core_privacy\local\request\approved_contextlist;
  */
 class provider implements
         \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\core_userlist_provider,
         \core_privacy\local\request\plugin\provider {
 
     /**
@@ -80,10 +83,37 @@ class provider implements
         $contextlist = new \core_privacy\local\request\contextlist();
 
         $params = ['userid' => $userid, 'owneruserid' => $userid];
-        $sql = "SELECT DISTINCT contextid FROM {search_simpledb_index} WHERE (userid = :userid OR owneruserid = :owneruserid)";
+        $sql = "SELECT DISTINCT contextid
+                  FROM {search_simpledb_index}
+                 WHERE (userid = :userid OR owneruserid = :owneruserid)";
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        $params = [
+            'contextid' => $context->id,
+        ];
+
+        $sql = "SELECT ssi.userid
+                  FROM {search_simpledb_index} ssi
+                 WHERE ssi.contextid = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        $sql = "SELECT ssi.owneruserid AS userid
+                  FROM {search_simpledb_index} ssi
+                 WHERE ssi.contextid = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -157,6 +187,24 @@ class provider implements
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
         $select = "contextid $contextsql AND (userid = :userid OR owneruserid = :owneruserid)";
         $params = ['userid' => $userid, 'owneruserid' => $userid] + $contextparams;
+        $DB->delete_records_select('search_simpledb_index', $select, $params);
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+        $context = $userlist->get_context();
+
+        list($usersql, $userparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+        list($ownersql, $ownerparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+
+        $select = "contextid = :contextid AND (userid {$usersql} OR owneruserid {$ownersql})";
+        $params = ['contextid' => $context->id] + $userparams + $ownerparams;
+
         $DB->delete_records_select('search_simpledb_index', $select, $params);
     }
 }
