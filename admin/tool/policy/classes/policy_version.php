@@ -168,4 +168,26 @@ class policy_version extends persistent {
             ],
         ];
     }
+
+    /**
+     * Hook to execute after an update.
+     *
+     * @param bool $result Whether or not the update was successful (but it always is)
+     */
+    protected function after_update($result) {
+
+        $optcache = \cache::make('tool_policy', 'policy_optional');
+        $optcache->delete($this->raw_get('id'));
+    }
+
+    /**
+     * Hook to execute after an update.
+     *
+     * @param bool $result Whether or not the update was successful (but it always is)
+     */
+    protected function after_delete($result) {
+
+        $optcache = \cache::make('tool_policy', 'policy_optional');
+        $optcache->delete($this->raw_get('id'));
+    }
 }

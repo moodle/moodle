@@ -668,4 +668,21 @@ class tool_policy_api_testcase extends advanced_testcase {
         $this->assertFalse(api::is_user_version_accepted(13, 6, $preloadedacceptances));
         $this->assertNull(api::is_user_version_accepted(13, 5, $preloadedacceptances));
     }
+
+    /**
+     * Test the functionality of {@link api::get_agreement_optional()}.
+     */
+    public function test_get_agreement_optional() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $policy1 = $this->add_policy(['optional' => policy_version::AGREEMENT_OPTIONAL])->to_record();
+        api::make_current($policy1->id);
+        $policy2 = $this->add_policy(['optional' => policy_version::AGREEMENT_COMPULSORY])->to_record();
+        api::make_current($policy2->id);
+
+        $this->assertEquals(api::get_agreement_optional($policy1->id), policy_version::AGREEMENT_OPTIONAL);
+        $this->assertEquals(api::get_agreement_optional($policy2->id), policy_version::AGREEMENT_COMPULSORY);
+    }
 }

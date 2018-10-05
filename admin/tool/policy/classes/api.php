@@ -131,6 +131,8 @@ class api {
 
         $policies = [];
         $versions = [];
+        $optcache = \cache::make('tool_policy', 'policy_optional');
+
         $rs = $DB->get_recordset_sql($sql, $params);
 
         foreach ($rs as $r) {
@@ -149,6 +151,8 @@ class api {
             }
 
             $versions[$r->id][$versiondata->id] = $versiondata;
+
+            $optcache->set($versiondata->id, $versiondata->optional);
         }
 
         $rs->close();
@@ -1039,5 +1043,30 @@ class api {
             }
             $DB->insert_records('tool_policy_acceptances', $acceptances);
         }
+    }
+
+    /**
+     * Returns the value of the optional flag for the given policy version.
+     *
+     * Optimised for being called multiple times by making use of a request cache. The cache is normally populated as a
+     * side effect of calling {@link self::list_policies()} and in most cases should be warm enough for hits.
+     *
+     * @param int $versionid
+     * @return int policy_version::AGREEMENT_COMPULSORY | policy_version::AGREEMENT_OPTIONAL
+     */
+    public static function get_agreement_optional($versionid) {
+        global $DB;
+
+        $optcache = \cache::make('tool_policy', 'policy_optional');
+
+        $hit = $optcache->get($versionid);
+
+        if ($hit === false) {
+            $flags = $DB->get_records_menu('tool_policy_versions', null, '', 'id, optional');
+            $optcache->set_many($flags);
+            $hit = $flags[$versionid];
+        }
+
+        return $hit;
     }
 }

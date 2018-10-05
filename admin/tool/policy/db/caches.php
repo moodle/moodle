@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,15 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Defined caches used internally by the plugin.
  *
  * @package     tool_policy
+ * @category    cache
  * @copyright   2018 David Mudrák <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018100100;         // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018050800;         // Requires this Moodle version.
-$plugin->component = 'tool_policy';      // Full name of the plugin (used for diagnostics).
+$definitions = [
+    'policy_optional' => [
+        'mode' => cache_store::MODE_REQUEST,
+    ],
+];

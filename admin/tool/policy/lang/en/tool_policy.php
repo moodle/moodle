@@ -52,6 +52,7 @@ $string['agreedyeswithlinkall'] = 'Consent given; click to withdraw user consent
 $string['agreepolicies'] = 'Please agree to the following policies';
 $string['backtoprevious'] = 'Go back to previous page';
 $string['backtotop'] = 'Back to top';
+$string['cachedef_policy_optional'] = 'Cache of the optional/compulsory flag for policy versions';
 $string['consentbulk'] = 'Consent';
 $string['consentdetails'] = 'Give consent on behalf of user(s)';
 $string['consentpagetitle'] = 'Consent';
