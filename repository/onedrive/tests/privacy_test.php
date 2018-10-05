@@ -25,6 +25,7 @@ defined('MOODLE_INTERNAL') || die();
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\writer;
 use \core_privacy\local\request\approved_contextlist;
+use \core_privacy\local\request\approved_userlist;
 use \repository_onedrive\privacy\provider;
 /**
  * Unit tests for the repository_onedrive implementation of the privacy API.
@@ -82,6 +83,75 @@ class repository_onedrive_privacy_testcase extends \core_privacy\tests\provider_
         $context = reset($contexts);
         $this->assertEquals(CONTEXT_USER, $context->contextlevel);
         $this->assertEquals($user->id, $context->instanceid);
+    }
+
+    /**
+     * Test for provider::test_get_users_in_context().
+     */
+    public function test_get_users_in_context() {
+        global $DB;
+        $component = 'repository_onedrive';
+
+        // Test setup.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $u1id = $user1->id;
+        $u2id = $user2->id;
+
+        // Add a repository_onedrive_access records for each user.
+        $this->setUser($user1);
+        $access = (object)[
+            'usermodified' => $u1id,
+            'itemid' => 'Some onedrive access item data',
+            'permissionid' => 'Some onedrive access permission data',
+            'timecreated' => date('u'),
+            'timemodified' => date('u'),
+        ];
+        $DB->insert_record('repository_onedrive_access', $access);
+
+        $this->setUser($user2);
+        $access = (object)[
+            'usermodified' => $u2id,
+            'itemid' => 'Another onedrive access item data',
+            'permissionid' => 'Another onedrive access permission data',
+            'timecreated' => date('u'),
+            'timemodified' => date('u'),
+        ];
+        $DB->insert_record('repository_onedrive_access', $access);
+
+        // Fetch the context of each user's access record.
+        $contextlist = provider::get_contexts_for_userid($u1id);
+        $u1contexts = $contextlist->get_contexts();
+        $this->assertCount(1, $u1contexts);
+
+        $contextlist = provider::get_contexts_for_userid($u2id);
+        $u2contexts = $contextlist->get_contexts();
+        $this->assertCount(1, $u2contexts);
+
+        $contexts = [
+            $u1id => $u1contexts[0],
+            $u2id => $u2contexts[0],
+        ];
+
+        // Test context 1 only contains user 1.
+        $userlist = new \core_privacy\local\request\userlist($contexts[$u1id], $component);
+        provider::get_users_in_context($userlist);
+
+        $this->assertCount(1, $userlist);
+        $actual = $userlist->get_userids();
+        $this->assertEquals([$u1id], $actual);
+
+        // Test context 2 only contains user 2.
+        $userlist = new \core_privacy\local\request\userlist($contexts[$u2id], $component);
+        provider::get_users_in_context($userlist);
+
+        $this->assertCount(1, $userlist);
+        $actual = $userlist->get_userids();
+        $this->assertEquals([$u2id], $actual);
+
+        // Test the contexts match the users' contexts.
+        $this->assertEquals($u1id, $contexts[$u1id]->instanceid);
+        $this->assertEquals($u2id, $contexts[$u2id]->instanceid);
     }
 
     /**
@@ -250,6 +320,65 @@ class repository_onedrive_privacy_testcase extends \core_privacy\tests\provider_
         $context = reset($contexts);
         $this->assertEquals(CONTEXT_USER, $context->contextlevel);
         $this->assertEquals($user2->id, $context->instanceid);
+        $access = $DB->get_records('repository_onedrive_access', ['usermodified' => $user2->id]);
+        $this->assertCount(1, $access);
+    }
+
+    /**
+     * Test for provider::delete_data_for_users().
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+        $component = 'repository_onedrive';
+
+        // Test setup.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $this->setUser($user1);
+
+        // Add 3 repository_onedrive_accesss records for User 1.
+        $noaccess = 3;
+        for ($a = 0; $a < $noaccess; $a++) {
+            $access = (object)[
+                'usermodified' => $user1->id,
+                'itemid' => 'Some onedrive access item data for user 1 - ' . $a,
+                'permissionid' => 'Some onedrive access permission data - ' . $a,
+                'timecreated' => date('u'),
+                'timemodified' => date('u'),
+            ];
+            $DB->insert_record('repository_onedrive_access', $access);
+        }
+        // Add 1 repository_onedrive_accesss record for User 2.
+        $access = (object)[
+            'usermodified' => $user2->id,
+            'itemid' => 'Some onedrive access item data for user 2',
+            'permissionid' => 'Some onedrive access permission data',
+            'timecreated' => date('u'),
+            'timemodified' => date('u'),
+        ];
+        $DB->insert_record('repository_onedrive_access', $access);
+
+        // Test the created repository_onedrive records for User 1 equals test number of access specified.
+        $communities = $DB->get_records('repository_onedrive_access', ['usermodified' => $user1->id]);
+        $this->assertCount($noaccess, $communities);
+
+        // Test the created repository_onedrive records for User 2 equals 1.
+        $communities = $DB->get_records('repository_onedrive_access', ['usermodified' => $user2->id]);
+        $this->assertCount(1, $communities);
+
+        // Fetch the context of each user's access record.
+        $contextlist = provider::get_contexts_for_userid($user1->id);
+        $u1contexts = $contextlist->get_contexts();
+
+        // Test the deletion of context 1 results in deletion of user 1's records only.
+        $approveduserids = [$user1->id, $user2->id];
+        $approvedlist = new approved_userlist($u1contexts[0], $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        $access = $DB->get_records('repository_onedrive_access', ['usermodified' => $user1->id]);
+        $this->assertCount(0, $access);
+
+        // Ensure user 2's record still exists.
         $access = $DB->get_records('repository_onedrive_access', ['usermodified' => $user2->id]);
         $this->assertCount(1, $access);
     }
