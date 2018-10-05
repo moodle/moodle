@@ -68,14 +68,14 @@ if (array_diff($agreedocs, $listdocs) || array_diff($declinedocs, $listdocs)) {
 
 if (isloggedin() && !isguestuser()) {
     // Existing user.
-    $haspermissionagreedocs = api::can_accept_policies($behalfid);
+    $haspermissionagreedocs = api::can_accept_policies($listdocs, $behalfid);
 } else {
     // New user.
     $haspermissionagreedocs = true;
 }
 
 if (!$haspermissionagreedocs) {
-    $outputpage = new \tool_policy\output\page_nopermission($behalfid);
+    $outputpage = new \tool_policy\output\page_nopermission($listdocs, $behalfid);
 } else if ($cancel) {
     redirect(new moodle_url('/'));
 } else {

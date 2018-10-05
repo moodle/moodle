@@ -55,6 +55,7 @@ $string['declinethepolicy'] = 'Decline user consent';
 $string['deleting'] = 'Deleting a version';
 $string['deleteconfirm'] = '<p>Are you sure you want to delete policy <em>\'{$a->name}\'</em>?</p><p>This operation can not be undone.</p>';
 $string['editingpolicydocument'] = 'Editing policy';
+$string['errorpolicyversioncompulsory'] = 'Compulsory policies cannot be declined!';
 $string['errorpolicyversionnotfound'] = 'There isn\'t any policy version with this identifier.';
 $string['errorsaveasdraft'] = 'Minor change can not be saved as draft';
 $string['errorusercantviewpolicyversion'] = 'The user doesn\'t have access to this policy version.';

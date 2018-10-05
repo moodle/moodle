@@ -780,14 +780,19 @@ class api {
     }
 
     /**
-     * Checks if user can accept policies for themselves or on behalf of another user
+     * Check if given policies can be accepted by the current user (eventually on behalf of the other user)
      *
-     * @param int $userid
-     * @param bool $throwexception
+     * Currently, the version ids are not relevant and the check is based on permissions only. In the future, additional
+     * conditions can be added (such as policies applying to certain users only).
+     *
+     * @param array $versionids int[] List of policy version ids to check
+     * @param int $userid Accepting policies on this user's behalf (defaults to accepting on self)
+     * @param bool $throwexception Throw exception instead of returning false
      * @return bool
      */
-    public static function can_accept_policies($userid = null, $throwexception = false) {
+    public static function can_accept_policies(array $versionids, $userid = null, $throwexception = false) {
         global $USER;
+
         if (!isloggedin() || isguestuser()) {
             if ($throwexception) {
                 throw new \moodle_exception('noguest');
@@ -795,6 +800,7 @@ class api {
                 return false;
             }
         }
+
         if (!$userid) {
             $userid = $USER->id;
         }
@@ -820,15 +826,48 @@ class api {
     }
 
     /**
-     * Checks if user can revoke policies for themselves or on behalf of another user
+     * Check if given policies can be declined by the current user (eventually on behalf of the other user)
      *
-     * @param int $userid
-     * @param bool $throwexception
+     * Only optional policies can be declined. Otherwise, the permissions are same as for accepting policies.
+     *
+     * @param array $versionids int[] List of policy version ids to check
+     * @param int $userid Declining policies on this user's behalf (defaults to declining by self)
+     * @param bool $throwexception Throw exception instead of returning false
      * @return bool
      */
-    public static function can_revoke_policies($userid = null, $throwexception = false) {
+    public static function can_decline_policies(array $versionids, $userid = null, $throwexception = false) {
+
+        foreach ($versionids as $versionid) {
+            if (static::get_agreement_optional($versionid) == policy_version::AGREEMENT_COMPULSORY) {
+                // Compulsory policies can't be declined (that is what makes them compulsory).
+                if ($throwexception) {
+                    throw new \moodle_exception('errorpolicyversioncompulsory', 'tool_policy');
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        return static::can_accept_policies($versionids, $userid, $throwexception);
+    }
+
+    /**
+     * Check if acceptances to given policies can be revoked by the current user (eventually on behalf of the other user)
+     *
+     * Revoking optional policies is controlled by the same rules as declining them. Compulsory policies can be revoked
+     * only by users with the permission to accept policies on other's behalf. The reasoning behind this is to make sure
+     * the user communicates with the site's privacy officer and is well aware of all consequences of the decision (such
+     * as losing right to access the site).
+     *
+     * @param array $versionids int[] List of policy version ids to check
+     * @param int $userid Revoking policies on this user's behalf (defaults to revoking by self)
+     * @param bool $throwexception Throw exception instead of returning false
+     * @return bool
+     */
+    public static function can_revoke_policies(array $versionids, $userid = null, $throwexception = false) {
         global $USER;
 
+        // Guests' acceptance is not stored so there is nothing to revoke.
         if (!isloggedin() || isguestuser()) {
             if ($throwexception) {
                 throw new \moodle_exception('noguest');
@@ -836,20 +875,46 @@ class api {
                 return false;
             }
         }
-        if (!$userid) {
-            $userid = $USER->id;
+
+        // Sort policies into two sets according the optional flag.
+        $compulsory = [];
+        $optional = [];
+
+        foreach ($versionids as $versionid) {
+            $agreementoptional = static::get_agreement_optional($versionid);
+            if ($agreementoptional == policy_version::AGREEMENT_COMPULSORY) {
+                $compulsory[] = $versionid;
+            } else if ($agreementoptional == policy_version::AGREEMENT_OPTIONAL) {
+                $optional[] = $versionid;
+            } else {
+                throw new \coding_exception('Unexpected optional flag value');
+            }
         }
 
-        // At the moment, current users can't revoke their own policies.
-        // Check capability to revoke on behalf as the real user.
-        $realuser = manager::get_realuser();
-        $usercontext = \context_user::instance($userid);
-        if ($throwexception) {
-            require_capability('tool/policy:acceptbehalf', $usercontext, $realuser);
-            return;
-        } else {
-            return has_capability('tool/policy:acceptbehalf', $usercontext, $realuser);
+        // Check if the user can revoke the optional policies from the list.
+        if ($optional) {
+            if (!static::can_decline_policies($optional, $userid, $throwexception)) {
+                return false;
+            }
         }
+
+        // Check if the user can revoke the compulsory policies from the list.
+        if ($compulsory) {
+            if (!$userid) {
+                $userid = $USER->id;
+            }
+
+            $realuser = manager::get_realuser();
+            $usercontext = \context_user::instance($userid);
+            if ($throwexception) {
+                require_capability('tool/policy:acceptbehalf', $usercontext, $realuser);
+                return;
+            } else {
+                return has_capability('tool/policy:acceptbehalf', $usercontext, $realuser);
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -897,7 +962,7 @@ class api {
         if (!$userid) {
             $userid = $USER->id;
         }
-        self::can_accept_policies($userid, true);
+        self::can_accept_policies([$policyversionid], $userid, true);
 
         // Retrieve the list of policy versions that need agreement (do not update existing agreements).
         list($sql, $params) = $DB->get_in_or_equal($policyversionid, SQL_PARAMS_NAMED);
@@ -986,7 +1051,7 @@ class api {
         if (!$userid) {
             $userid = $USER->id;
         }
-        self::can_accept_policies($userid, true);
+        self::can_accept_policies([$policyversionid], $userid, true);
 
         if ($currentacceptance = $DB->get_record('tool_policy_acceptances',
                 ['policyversionid' => $policyversionid, 'userid' => $userid])) {

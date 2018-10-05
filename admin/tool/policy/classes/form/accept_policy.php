@@ -56,7 +56,7 @@ class accept_policy extends \moodleform {
         $action = $this->_customdata['action'];
         $userids = clean_param_array($this->_customdata['userids'], PARAM_INT);
         $versionids = clean_param_array($this->_customdata['versionids'], PARAM_INT);
-        $usernames = $this->validate_and_get_users($userids, $action);
+        $usernames = $this->validate_and_get_users($versionids, $userids, $action);
         $versionnames = $this->validate_and_get_versions($versionids);
 
         foreach ($usernames as $userid => $name) {
@@ -117,11 +117,12 @@ class accept_policy extends \moodleform {
     /**
      * Validate userids and return usernames
      *
+     * @param array $versionids int[] List of policy version ids to process.
      * @param array $userids
      * @param string $action accept|decline|revoke
      * @return array (userid=>username)
      */
-    protected function validate_and_get_users($userids, $action) {
+    protected function validate_and_get_users($versionids, $userids, $action) {
         global $DB;
 
         $usernames = [];
@@ -142,11 +143,11 @@ class accept_policy extends \moodleform {
             }
             \context_helper::preload_from_record($user);
             if ($action === 'revoke') {
-                api::can_revoke_policies($userid, true);
+                api::can_revoke_policies($versionids, $userid, true);
             } else if ($action === 'accept') {
-                api::can_accept_policies($userid, true);
+                api::can_accept_policies($versionids, $userid, true);
             } else if ($action === 'decline') {
-                api::can_decline_policies($userid, true);
+                api::can_decline_policies($versionids, $userid, true);
             }
             $usernames[$userid] = fullname($user);
         }

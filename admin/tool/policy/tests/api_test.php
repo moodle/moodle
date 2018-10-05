@@ -369,6 +369,164 @@ class tool_policy_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test behaviour of the {@link api::can_accept_policies()} method.
+     */
+    public function test_can_accept_policies() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $user = $this->getDataGenerator()->create_user();
+        $child = $this->getDataGenerator()->create_user();
+        $parent = $this->getDataGenerator()->create_user();
+        $officer = $this->getDataGenerator()->create_user();
+        $manager = $this->getDataGenerator()->create_user();
+
+        $syscontext = context_system::instance();
+        $childcontext = context_user::instance($child->id);
+
+        $roleminorid = create_role('Digital minor', 'digiminor', 'Not old enough to accept site policies themselves');
+        $roleparentid = create_role('Parent', 'parent', 'Can accept policies on behalf of their child');
+        $roleofficerid = create_role('Policy officer', 'policyofficer', 'Can see all acceptances but can\'t edit policy documents');
+        $rolemanagerid = create_role('Policy manager', 'policymanager', 'Can manage policy documents');
+
+        assign_capability('tool/policy:accept', CAP_PROHIBIT, $roleminorid, $syscontext->id);
+        assign_capability('tool/policy:acceptbehalf', CAP_ALLOW, $roleparentid, $syscontext->id);
+        assign_capability('tool/policy:acceptbehalf', CAP_ALLOW, $roleofficerid, $syscontext->id);
+        assign_capability('tool/policy:viewacceptances', CAP_ALLOW, $roleofficerid, $syscontext->id);
+        assign_capability('tool/policy:acceptbehalf', CAP_ALLOW, $rolemanagerid, $syscontext->id);
+        assign_capability('tool/policy:managedocs', CAP_ALLOW, $rolemanagerid, $syscontext->id);
+
+        role_assign($roleminorid, $child->id, $syscontext->id);
+        role_assign($roleparentid, $parent->id, $childcontext->id);
+        role_assign($roleofficerid, $officer->id, $syscontext->id);
+        role_assign($rolemanagerid, $manager->id, $syscontext->id);
+
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $policy1 = $this->add_policy(['optional' => policy_version::AGREEMENT_COMPULSORY])->to_record();
+        $policy2 = $this->add_policy(['optional' => policy_version::AGREEMENT_COMPULSORY])->to_record();
+        $policy3 = $this->add_policy(['optional' => policy_version::AGREEMENT_OPTIONAL])->to_record();
+        $policy4 = $this->add_policy(['optional' => policy_version::AGREEMENT_OPTIONAL])->to_record();
+
+        $mixed = [$policy1->id, $policy2->id, $policy3->id, $policy4->id];
+        $compulsory = [$policy1->id, $policy2->id];
+        $optional = [$policy3->id, $policy4->id];
+
+        // Normally users can accept all policies.
+        $this->setUser($user);
+        $this->assertTrue(api::can_accept_policies($mixed));
+        $this->assertTrue(api::can_accept_policies($compulsory));
+        $this->assertTrue(api::can_accept_policies($optional));
+
+        // Digital minors can be set to not be able to accept policies themselves.
+        $this->setUser($child);
+        $this->assertFalse(api::can_accept_policies($mixed));
+        $this->assertFalse(api::can_accept_policies($compulsory));
+        $this->assertFalse(api::can_accept_policies($optional));
+
+        // The parent can accept optional policies on child's behalf.
+        $this->setUser($parent);
+        $this->assertTrue(api::can_accept_policies($mixed, $child->id));
+        $this->assertTrue(api::can_accept_policies($compulsory, $child->id));
+        $this->assertTrue(api::can_accept_policies($optional, $child->id));
+
+        // Officers and managers can accept on other user's behalf.
+        $this->setUser($officer);
+        $this->assertTrue(api::can_accept_policies($mixed, $parent->id));
+        $this->assertTrue(api::can_accept_policies($compulsory, $parent->id));
+        $this->assertTrue(api::can_accept_policies($optional, $parent->id));
+
+        $this->setUser($manager);
+        $this->assertTrue(api::can_accept_policies($mixed, $parent->id));
+        $this->assertTrue(api::can_accept_policies($compulsory, $parent->id));
+        $this->assertTrue(api::can_accept_policies($optional, $parent->id));
+    }
+
+    /**
+     * Test behaviour of the {@link api::can_decline_policies()} method.
+     */
+    public function test_can_decline_policies() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $user = $this->getDataGenerator()->create_user();
+        $child = $this->getDataGenerator()->create_user();
+        $parent = $this->getDataGenerator()->create_user();
+        $officer = $this->getDataGenerator()->create_user();
+        $manager = $this->getDataGenerator()->create_user();
+
+        $syscontext = context_system::instance();
+        $childcontext = context_user::instance($child->id);
+
+        $roleminorid = create_role('Digital minor', 'digiminor', 'Not old enough to accept site policies themselves');
+        $roleparentid = create_role('Parent', 'parent', 'Can accept policies on behalf of their child');
+        $roleofficerid = create_role('Policy officer', 'policyofficer', 'Can see all acceptances but can\'t edit policy documents');
+        $rolemanagerid = create_role('Policy manager', 'policymanager', 'Can manage policy documents');
+
+        assign_capability('tool/policy:accept', CAP_PROHIBIT, $roleminorid, $syscontext->id);
+        assign_capability('tool/policy:acceptbehalf', CAP_ALLOW, $roleparentid, $syscontext->id);
+        assign_capability('tool/policy:acceptbehalf', CAP_ALLOW, $roleofficerid, $syscontext->id);
+        assign_capability('tool/policy:viewacceptances', CAP_ALLOW, $roleofficerid, $syscontext->id);
+        assign_capability('tool/policy:acceptbehalf', CAP_ALLOW, $rolemanagerid, $syscontext->id);
+        assign_capability('tool/policy:managedocs', CAP_ALLOW, $rolemanagerid, $syscontext->id);
+
+        role_assign($roleminorid, $child->id, $syscontext->id);
+        role_assign($roleparentid, $parent->id, $childcontext->id);
+        role_assign($roleofficerid, $officer->id, $syscontext->id);
+        role_assign($rolemanagerid, $manager->id, $syscontext->id);
+
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $policy1 = $this->add_policy(['optional' => policy_version::AGREEMENT_COMPULSORY])->to_record();
+        $policy2 = $this->add_policy(['optional' => policy_version::AGREEMENT_COMPULSORY])->to_record();
+        $policy3 = $this->add_policy(['optional' => policy_version::AGREEMENT_OPTIONAL])->to_record();
+        $policy4 = $this->add_policy(['optional' => policy_version::AGREEMENT_OPTIONAL])->to_record();
+
+        $mixed = [$policy1->id, $policy2->id, $policy3->id, $policy4->id];
+        $compulsory = [$policy1->id, $policy2->id];
+        $optional = [$policy3->id, $policy4->id];
+
+        // Normally users can decline only optional policies.
+        $this->setUser($user);
+        $this->assertFalse(api::can_decline_policies($mixed));
+        $this->assertFalse(api::can_decline_policies($compulsory));
+        $this->assertTrue(api::can_decline_policies($optional));
+
+        // If they can't accept them, they can't decline them too.
+        $this->setUser($child);
+        $this->assertFalse(api::can_decline_policies($mixed));
+        $this->assertFalse(api::can_decline_policies($compulsory));
+        $this->assertFalse(api::can_decline_policies($optional));
+
+        // The parent can decline optional policies on child's behalf.
+        $this->setUser($parent);
+        $this->assertFalse(api::can_decline_policies($mixed, $child->id));
+        $this->assertFalse(api::can_decline_policies($compulsory, $child->id));
+        $this->assertTrue(api::can_decline_policies($optional, $child->id));
+
+        // Even officers or managers cannot decline compulsory policies.
+        $this->setUser($officer);
+        $this->assertFalse(api::can_decline_policies($mixed));
+        $this->assertFalse(api::can_decline_policies($compulsory));
+        $this->assertTrue(api::can_decline_policies($optional));
+        $this->assertFalse(api::can_decline_policies($mixed, $child->id));
+        $this->assertFalse(api::can_decline_policies($compulsory, $child->id));
+        $this->assertTrue(api::can_decline_policies($optional, $child->id));
+
+        $this->setUser($manager);
+        $this->assertFalse(api::can_decline_policies($mixed));
+        $this->assertFalse(api::can_decline_policies($compulsory));
+        $this->assertTrue(api::can_decline_policies($optional));
+        $this->assertFalse(api::can_decline_policies($mixed, $child->id));
+        $this->assertFalse(api::can_decline_policies($compulsory, $child->id));
+        $this->assertTrue(api::can_decline_policies($optional, $child->id));
+    }
+
+    /**
      * Test behaviour of the {@link api::can_revoke_policies()} method.
      */
     public function test_can_revoke_policies() {
@@ -406,32 +564,48 @@ class tool_policy_api_testcase extends advanced_testcase {
 
         accesslib_clear_all_caches_for_unit_testing();
 
-        // Prepare a policy document with some versions.
-        list($policy1, $policy2, $policy3) = $this->create_versions(3);
+        $policy1 = helper::add_policy(['optional' => policy_version::AGREEMENT_COMPULSORY])->to_record();
+        $policy2 = helper::add_policy(['optional' => policy_version::AGREEMENT_OPTIONAL])->to_record();
+
+        $versionids = [$policy1->id, $policy2->id];
+
+        // Guests cannot revoke anything.
+        $this->setGuestUser();
+        $this->assertFalse(api::can_revoke_policies($versionids));
 
         // Normally users do not have access to revoke policies.
         $this->setUser($user);
-        $this->assertFalse(api::can_revoke_policies($user->id));
+        $this->assertFalse(api::can_revoke_policies($versionids, $user->id));
         $this->setUser($child);
-        $this->assertFalse(api::can_revoke_policies($child->id));
+        $this->assertFalse(api::can_revoke_policies($versionids, $child->id));
 
-        // The parent can revoke the policy on behalf of her child (but not her own policies).
+        // Optional policies can be revoked if the user can accept them.
+        $this->setUser($user);
+        $this->assertTrue(api::can_revoke_policies([$policy2->id]));
+        $this->assertTrue(api::can_revoke_policies([$policy2->id], $user->id));
+        $this->setUser($child);
+        $this->assertFalse(api::can_revoke_policies([$policy2->id]));
+        $this->assertFalse(api::can_revoke_policies([$policy2->id], $child->id));
+
+        // The parent can revoke the policy on behalf of her child (but not her own policies, unless they are optional).
         $this->setUser($parent);
-        $this->assertFalse(api::can_revoke_policies($parent->id));
-        $this->assertTrue(api::can_revoke_policies($child->id));
+        $this->assertFalse(api::can_revoke_policies($versionids, $parent->id));
+        $this->assertTrue(api::can_revoke_policies($versionids, $child->id));
+        $this->assertTrue(api::can_revoke_policies([$policy2->id]));
+        $this->assertTrue(api::can_revoke_policies([$policy2->id], $child->id));
 
         // Officers and managers can revoke everything.
         $this->setUser($officer);
-        $this->assertTrue(api::can_revoke_policies($officer->id));
-        $this->assertTrue(api::can_revoke_policies($child->id));
-        $this->assertTrue(api::can_revoke_policies($parent->id));
-        $this->assertTrue(api::can_revoke_policies($manager->id));
+        $this->assertTrue(api::can_revoke_policies($versionids, $officer->id));
+        $this->assertTrue(api::can_revoke_policies($versionids, $child->id));
+        $this->assertTrue(api::can_revoke_policies($versionids, $parent->id));
+        $this->assertTrue(api::can_revoke_policies($versionids, $manager->id));
 
         $this->setUser($manager);
-        $this->assertTrue(api::can_revoke_policies($manager->id));
-        $this->assertTrue(api::can_revoke_policies($child->id));
-        $this->assertTrue(api::can_revoke_policies($parent->id));
-        $this->assertTrue(api::can_revoke_policies($officer->id));
+        $this->assertTrue(api::can_revoke_policies($versionids, $manager->id));
+        $this->assertTrue(api::can_revoke_policies($versionids, $child->id));
+        $this->assertTrue(api::can_revoke_policies($versionids, $parent->id));
+        $this->assertTrue(api::can_revoke_policies($versionids, $officer->id));
     }
 
     /**

@@ -94,11 +94,11 @@ class user_agreement implements \templatable, \renderable {
         $this->canaccept = $canaccept;
 
         if (count($this->accepted) < count($this->versions) && $canaccept === null) {
-            $this->canaccept = \tool_policy\api::can_accept_policies($this->userid);
+            $this->canaccept = \tool_policy\api::can_accept_policies(array_keys($this->versions), $this->userid);
         }
 
         if (count($this->accepted) > 0 && $canrevoke === null) {
-            $this->canrevoke = \tool_policy\api::can_revoke_policies($this->userid);
+            $this->canrevoke = \tool_policy\api::can_revoke_policies(array_keys($this->versions), $this->userid);
         }
     }
 

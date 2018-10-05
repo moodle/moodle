@@ -352,7 +352,7 @@ class page_agreedocs implements renderable, templatable {
         // Check for correct user capabilities.
         if ($this->isexistinguser) {
             // For existing users, it's needed to check if they have the capability for accepting policies.
-            api::can_accept_policies($this->behalfid, true);
+            api::can_accept_policies($this->listdocs, $this->behalfid, true);
         } else {
             // For new users, the behalfid parameter is ignored.
             if ($this->behalfid) {

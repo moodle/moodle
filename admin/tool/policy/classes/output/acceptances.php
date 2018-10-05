@@ -50,9 +50,6 @@ class acceptances implements renderable, templatable {
     /** @var moodle_url */
     protected $returnurl;
 
-    /** @var bool */
-    protected $canrevoke;
-
     /**
      * Contructor.
      *
@@ -62,7 +59,6 @@ class acceptances implements renderable, templatable {
     public function __construct($userid, $returnurl = null) {
         $this->userid = $userid;
         $this->returnurl = $returnurl ? (new moodle_url($returnurl))->out(false) : null;
-        $this->canrevoke = \tool_policy\api::can_revoke_policies($this->userid);
     }
 
     /**
@@ -76,19 +72,20 @@ class acceptances implements renderable, templatable {
         $data->hasonbehalfagreements = false;
         $data->pluginbaseurl = (new moodle_url('/admin/tool/policy'))->out(false);
         $data->returnurl = $this->returnurl;
-        $data->canrevoke = $this->canrevoke;
 
         // Get the list of policies and versions that current user is able to see
         // and the respective acceptance records for the selected user.
         $policies = api::get_policies_with_acceptances($this->userid);
+        $versionids = [];
 
         $canviewfullnames = has_capability('moodle/site:viewfullnames', \context_system::instance());
         foreach ($policies as $policy) {
-
             foreach ($policy->versions as $version) {
+                $versionids[$version->id] = $version->id;
                 unset($version->summary);
                 unset($version->content);
                 $version->iscurrent = ($version->status == policy_version::STATUS_ACTIVE);
+                $version->isoptional = ($version->optional == policy_version::AGREEMENT_OPTIONAL);
                 $version->name = $version->name;
                 $version->revision = $version->revision;
                 $returnurl = new moodle_url('/admin/tool/policy/user.php', ['userid' => $this->userid]);
@@ -138,6 +135,8 @@ class acceptances implements renderable, templatable {
         }
 
         $data->policies = array_values($policies);
+        $data->canrevoke = \tool_policy\api::can_revoke_policies(array_keys($versionids), $this->userid);
+
         return $data;
     }
 }
