@@ -67,7 +67,7 @@ class assignsubmission_online_privacy_testcase extends \mod_assign\tests\mod_ass
      * Quick test to make sure that get_metadata returns something.
      */
     public function test_get_metadata() {
-        $collection = new \core_privacy\local\metadata\collection('assignsubmission_file');
+        $collection = new \core_privacy\local\metadata\collection('assignsubmission_onlinetext');
         $collection = \assignsubmission_onlinetext\privacy\provider::get_metadata($collection);
         $this->assertNotEmpty($collection);
     }
@@ -160,5 +160,57 @@ class assignsubmission_online_privacy_testcase extends \mod_assign\tests\mod_ass
         $this->assertTrue($plugin->is_empty($submission));
         // But there is for the second submission.
         $this->assertFalse($plugin2->is_empty($submission2));
+    }
+
+    public function test_delete_submissions() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        // Only makes submissions in the second assignment.
+        $user4 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user4->id, $course->id, 'student');
+
+        $assign1 = $this->create_instance(['course' => $course]);
+        $assign2 = $this->create_instance(['course' => $course]);
+
+        $context1 = $assign1->get_context();
+        $context2 = $assign2->get_context();
+
+        $student1text = 'Student one\'s text.';
+        list($plugin1, $submission1) = $this->create_online_submission($assign1, $user1, $student1text);
+        $student2text = 'Student two\'s text.';
+        list($plugin2, $submission2) = $this->create_online_submission($assign1, $user2, $student2text);
+        $student3text = 'Student two\'s text.';
+        list($plugin3, $submission3) = $this->create_online_submission($assign1, $user3, $student3text);
+        // Now for submissions in assignment two.
+        $student3text2 = 'Student two\'s text for the second assignment.';
+        list($plugin4, $submission4) = $this->create_online_submission($assign2, $user3, $student3text2);
+        $student4text = 'Student four\'s text.';
+        list($plugin5, $submission5) = $this->create_online_submission($assign2, $user4, $student4text);
+
+        $data = $DB->get_records('assignsubmission_onlinetext', ['assignment' => $assign1->get_instance()->id]);
+        $this->assertCount(3, $data);
+        // Delete the submissions for user 1 and 3.
+        $requestdata = new \mod_assign\privacy\assign_plugin_request_data($context1, $assign1);
+        $requestdata->set_userids([$user1->id, $user2->id]);
+        $requestdata->populate_submissions_and_grades();
+        \assignsubmission_onlinetext\privacy\provider::delete_submissions($requestdata);
+
+        // There should only be one record left for assignment one.
+        $data = $DB->get_records('assignsubmission_onlinetext', ['assignment' => $assign1->get_instance()->id]);
+        $this->assertCount(1, $data);
+
+        // Check that the second assignment has not been touched.
+        $data = $DB->get_records('assignsubmission_onlinetext', ['assignment' => $assign2->get_instance()->id]);
+        $this->assertCount(2, $data);
     }
 }
