@@ -79,26 +79,37 @@ class handler extends \core_privacy\local\sitepolicy\handler {
      */
     public static function accept() {
         global $USER, $DB;
+
         if (!isloggedin()) {
             return false;
         }
+
         if ($USER->policyagreed) {
             return false;
         }
 
-        if (!isguestuser()) {
-            // Accepts all policies with a current version for logged users on behalf of the current user.
-            if (!$versions = api::get_current_versions_ids(policy_version::AUDIENCE_LOGGEDIN)) {
-                return false;
-            }
-            api::accept_policies(array_values($versions));
+        if (isguestuser()) {
+            // For guests, agreement is stored in the session only.
+            $USER->policyagreed = 1;
+            return true;
         }
 
-        if (!isguestuser()) {
-            // For the guests agreement in stored in session only, for other users - in DB.
-            $DB->set_field('user', 'policyagreed', 1, array('id' => $USER->id));
+        // Find all compulsory policies and mark them as accepted.
+        $compulsory = [];
+        foreach (api::list_current_versions(policy_version::AUDIENCE_LOGGEDIN) as $policyversion) {
+            if ($policyversion->optional == policy_version::AGREEMENT_COMPULSORY) {
+                $compulsory[] = $policyversion->id;
+            }
         }
+
+        if ($compulsory) {
+            api::accept_policies($compulsory);
+        }
+
+        // Mark policies as agreed.
+        $DB->set_field('user', 'policyagreed', 1, array('id' => $USER->id));
         $USER->policyagreed = 1;
+
         return true;
     }
 
@@ -110,7 +121,7 @@ class handler extends \core_privacy\local\sitepolicy\handler {
     public static function signup_form($mform) {
         if (static::is_defined()) {
             // This plugin displays policies to the user who is signing up before the signup form is shown.
-            // By the time user has access to signup form they have already agreed to the policies.
+            // By the time user has access to signup form they have already agreed to all compulsory policies.
             $mform->addElement('hidden', 'policyagreed', 1);
             $mform->setType('policyagreed', PARAM_INT);
         }
