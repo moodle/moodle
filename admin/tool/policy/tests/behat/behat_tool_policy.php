@@ -52,6 +52,7 @@ class behat_tool_policy extends behat_base {
      * - Summary: Policy summary text.
      * - Content: Policy full text.
      * - Agreement style (agreementstyle): 0 - On the consent page, 1 - On its own page
+     * - Agreement optional (optional): 0 - Compulsory policy, 1 - Optional policy
      *
      * @param TableNode $data
      */
@@ -71,6 +72,7 @@ class behat_tool_policy extends behat_base {
             'content',
             'summary',
             'agreementstyle',
+            'optional',
         ];
 
         // Associative array "policy identifier" => id in the database .
