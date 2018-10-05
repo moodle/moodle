@@ -2410,5 +2410,16 @@ $capabilities = array(
         'archetypes' => array(
         )
     ),
+    // Allow message any user, regardlesss of the privacy preferences for messaging.
+    'moodle/site:messageanyuser' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
 
 );
