@@ -472,7 +472,7 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
 
                 switch ($grade_item->gradetype) {
                     case GRADE_TYPE_NONE:
-                        continue;
+                        break;
 
                     case GRADE_TYPE_VALUE:
                         $item->scaleid = 0;

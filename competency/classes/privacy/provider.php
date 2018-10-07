@@ -500,14 +500,13 @@ class provider implements
         foreach ($contextlist as $context) {
             switch ($context->contextlevel) {
                 case CONTEXT_USER:
-                    if ($context->instanceid != $userid) {
+                    if ($context->instanceid == $userid) {
                         // Only delete the user's information when they requested their context to be deleted. We
                         // do not take any action on other user's contexts because we don't own the data there.
-                        continue;
+                        static::delete_user_evidence_of_prior_learning($userid);
+                        static::delete_user_plans($userid);
+                        static::delete_user_competencies($userid);
                     }
-                    static::delete_user_evidence_of_prior_learning($userid);
-                    static::delete_user_plans($userid);
-                    static::delete_user_competencies($userid);
                     break;
 
                 case CONTEXT_COURSE:

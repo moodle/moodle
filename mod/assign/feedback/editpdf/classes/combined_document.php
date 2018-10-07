@@ -187,7 +187,7 @@ class combined_document {
                 $status = $file->get('status');
                 switch ($status) {
                     case \core_files\conversion::STATUS_COMPLETE:
-                        continue;
+                        continue 2;
                         break;
                     default:
                         $converter->poll_conversion($conversion);

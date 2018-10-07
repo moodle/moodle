@@ -3097,10 +3097,9 @@ function mod_feedback_get_completion_active_rule_descriptions($cm) {
     foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
         switch ($key) {
             case 'completionsubmit':
-                if (empty($val)) {
-                    continue;
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionsubmit', 'feedback');
                 }
-                $descriptions[] = get_string('completionsubmit', 'feedback');
                 break;
             default:
                 break;

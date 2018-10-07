@@ -1745,16 +1745,14 @@ function mod_lesson_get_completion_active_rule_descriptions($cm) {
     foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
         switch ($key) {
             case 'completionendreached':
-                if (empty($val)) {
-                    continue;
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionendreached_desc', 'lesson', $val);
                 }
-                $descriptions[] = get_string('completionendreached_desc', 'lesson', $val);
                 break;
             case 'completiontimespent':
-                if (empty($val)) {
-                    continue;
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completiontimespentdesc', 'lesson', format_time($val));
                 }
-                $descriptions[] = get_string('completiontimespentdesc', 'lesson', format_time($val));
                 break;
             default:
                 break;
