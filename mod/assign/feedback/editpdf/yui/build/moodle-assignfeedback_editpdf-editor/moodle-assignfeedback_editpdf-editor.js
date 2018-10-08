@@ -48,6 +48,7 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         UNSAVEDCHANGESDIV: '.assignfeedback_editpdf_warningmessages',
         UNSAVEDCHANGESINPUT: 'input[name="assignfeedback_editpdf_haschanges"]',
         STAMPSBUTTON: '.currentstampbutton',
+        USERINFOREGION: '[data-region="user-info"]',
         DIALOGUE: '.' + CSS.DIALOGUE
     },
     SELECTEDBORDERCOLOUR = 'rgba(200, 200, 255, 0.9)',
@@ -3732,9 +3733,7 @@ EDITOR.prototype = {
      * @method poll_document_conversion_status
      */
     poll_document_conversion_status: function() {
-        if (this.get('destroyed')) {
-            return;
-        }
+        var requestUserId = this.get('userid');
 
         Y.io(AJAXBASE, {
             method: 'get',
@@ -3750,6 +3749,15 @@ EDITOR.prototype = {
             },
             on: {
                 success: function(tid, response) {
+                    var currentUserRegion = Y.one(SELECTOR.USERINFOREGION);
+                    if (currentUserRegion) {
+                        var currentUserId = currentUserRegion.getAttribute('data-userid');
+                        if (currentUserId && (currentUserId != requestUserId)) {
+                            // Polling conversion status needs to abort because
+                            // the current user changed.
+                            return;
+                        }
+                    }
                     var data = this.handle_response_data(response),
                         poll = false;
                     if (data) {
@@ -3798,9 +3806,6 @@ EDITOR.prototype = {
      * @method get_images_for_documents
      */
     start_document_to_image_conversion: function() {
-        if (this.get('destroyed')) {
-            return;
-        }
         Y.io(AJAXBASE, {
             method: 'get',
             context: this,
@@ -3933,9 +3938,6 @@ EDITOR.prototype = {
      * @method update_page_load_progress
      */
     update_page_load_progress: function() {
-        if (this.get('destroyed')) {
-            return;
-        }
         var checkconversionstatus,
             ajax_error_total = 0,
             progressbar = this.get_dialogue_element(SELECTOR.PROGRESSBARCONTAINER + ' .bar');
@@ -3958,9 +3960,6 @@ EDITOR.prototype = {
             },
             on: {
                 success: function(tid, response) {
-                    if (this.get('destroyed')) {
-                        return;
-                    }
                     ajax_error_total = 0;
 
                     var progress = 0;
@@ -3982,9 +3981,6 @@ EDITOR.prototype = {
                     }
                 },
                 failure: function(tid, response) {
-                    if (this.get('destroyed')) {
-                        return;
-                    }
                     ajax_error_total = ajax_error_total + 1;
                     // We only continue on error if the all pages were not generated,
                     // and if the ajax call did not produce 5 errors in the row.
@@ -4017,9 +4013,6 @@ EDITOR.prototype = {
      * @return  {object}
      */
     handle_response_data: function(response) {
-        if (this.get('destroyed')) {
-            return;
-        }
         var data;
         try {
             data = Y.JSON.parse(response.responseText);
@@ -4505,9 +4498,6 @@ EDITOR.prototype = {
      */
     save_current_page: function() {
         this.clear_warnings(false);
-        if (this.get('destroyed')) {
-            return;
-        }
         var ajaxurl = AJAXBASE,
             config;
 
@@ -4651,7 +4641,9 @@ EDITOR.prototype = {
         }
 
         page = this.pages[this.currentpage];
-        this.loadingicon.hide();
+        if (this.loadingicon) {
+            this.loadingicon.hide();
+        }
         drawingcanvas.setStyle('backgroundImage', 'url("' + page.url + '")');
         drawingcanvas.setStyle('width', page.width + 'px');
         drawingcanvas.setStyle('height', page.height + 'px');
@@ -4858,10 +4850,6 @@ M.assignfeedback_editpdf.editor = M.assignfeedback_editpdf.editor || {};
  * @param {Object} params
  */
 M.assignfeedback_editpdf.editor.init = M.assignfeedback_editpdf.editor.init || function(params) {
-    if (typeof M.assignfeedback_editpdf.instance !== 'undefined') {
-        M.assignfeedback_editpdf.instance.destroy();
-    }
-
     M.assignfeedback_editpdf.instance = new EDITOR(params);
     return M.assignfeedback_editpdf.instance;
 };
