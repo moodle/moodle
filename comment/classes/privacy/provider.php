@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\transform;
+use \core_privacy\local\request\userlist;
 
 /**
  * Privacy class for requesting user data.
@@ -225,5 +226,30 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
 
         $select = "contextid = :contextid AND component = :component {$areasql} {$itemsql} AND userid {$insql}";
         $DB->delete_records_select('comments', $select, $params);
+    }
+
+    /**
+     * Add the list of users who have commented in the specified constraints.
+     *
+     * @param   userlist    $userlist The userlist to add the users to.
+     * @param   string      $alias An alias prefix to use for comment selects to avoid interference with your own sql.
+     * @param   string      $component The component to check.
+     * @param   string      $area The comment area to check.
+     * @param   string      $insql The SQL to use in a sub-select for the itemid query.
+     * @param   array       $params The params required for the insql.
+     */
+    public static function get_users_in_context_from_sql(
+            userlist $userlist, string $alias, string $component, string $area, string $insql, $params) {
+        // Comment authors.
+        $sql = "SELECT {$alias}.userid
+                  FROM {comments} {$alias}
+                 WHERE {$alias}.component = :{$alias}component
+                   AND {$alias}.commentarea = :{$alias}commentarea
+                   AND {$alias}.itemid IN ({$insql})";
+
+        $params["{$alias}component"] = $component;
+        $params["{$alias}commentarea"] = $area;
+
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 }
