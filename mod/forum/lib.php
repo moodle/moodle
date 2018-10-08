@@ -3191,6 +3191,10 @@ function forum_print_post_end($post, $return = false) {
 
 /**
  * Print a forum post
+ * This function should always be surrounded with calls to forum_print_post_start
+ * and forum_print_post_end to create the surrounding container for the post.
+ * Replies can be nested before forum_print_post_end and should reflect the structure of
+ * thread.
  *
  * @global object
  * @global object
