@@ -1923,38 +1923,4 @@ class behat_course extends behat_base {
             throw new ExpectationException($msg, $this->getSession());
         }
     }
-
-    /**
-     * Moves up the specified role.
-     *
-     * @Given /^I move up role "(?P<role_string>(?:[^"]|\\")*)" in the global role sortorder$/
-     * @param String $role
-     */
-    public function i_move_up_role($role) {
-        global $DB;
-        $roledb = $DB->get_record('role', array('shortname' => $role), 'id, sortorder', MUST_EXIST);
-        $query = "SELECT id, sortorder FROM {role} WHERE sortorder < ".$roledb->sortorder." ORDER BY sortorder DESC";
-        $previousroles = $DB->get_records_sql($query, null, 0, 1);
-        foreach ($previousroles as $id => $previousrole) {
-            switch_roles($previousrole, $roledb);
-            break;
-        }
-    }
-
-    /**
-     * Moves down the specified role.
-     *
-     * @Given /^I move down role "(?P<role_string>(?:[^"]|\\")*)" in the global role sortorder$/
-     * @param String $role
-     */
-    public function i_move_down_role($role) {
-        global $DB;
-        $roledb = $DB->get_record('role', array('shortname' => $role), 'id, sortorder', MUST_EXIST);
-        $query = "SELECT id, sortorder FROM {role} WHERE sortorder > " . $roledb->sortorder . " ORDER BY sortorder ASC";
-        $previousroles = $DB->get_records_sql($query, null, 0, 1);
-        foreach ($previousroles as $id => $previousrole) {
-            switch_roles($previousrole, $roledb);
-            break;
-        }
-    }
 }
