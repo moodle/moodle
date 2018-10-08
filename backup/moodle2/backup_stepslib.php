@@ -2474,6 +2474,7 @@ class backup_activity_grades_structure_step extends backup_structure_step {
         // This only happens if we are including user info
         if ($userinfo) {
             $grade->set_source_table('grade_grades', array('itemid' => backup::VAR_PARENTID));
+            $grade->annotate_files('grade', 'feedback', 'id');
         }
 
         $letter->set_source_table('grade_letters', array('contextid' => backup::VAR_CONTEXTID));
@@ -2537,6 +2538,7 @@ class backup_activity_grade_history_structure_step extends backup_structure_step
                                      JOIN {backup_ids_temp} bi ON ggh.itemid = bi.itemid
                                     WHERE bi.backupid = ?
                                       AND bi.itemname = 'grade_item'", array(backup::VAR_BACKUPID));
+            $grade->annotate_files('grade', 'history', 'id');
         }
 
         // Annotations.
