@@ -1303,4 +1303,3 @@ function blog_validate_access($courseid, $modid, $groupid, $entryid, $userid) {
     }
     return array($courseid, $userid);
 }
-
