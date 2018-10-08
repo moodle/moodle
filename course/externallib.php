@@ -3014,6 +3014,7 @@ class core_course_external extends external_api {
      */
     public static function get_courses_by_field($field = '', $value = '') {
         global $DB, $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
         require_once($CFG->libdir . '/filterlib.php');
 
         $params = self::validate_parameters(self::get_courses_by_field_parameters(),
