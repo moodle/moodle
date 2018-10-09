@@ -13,4 +13,6 @@ Description of import of various jQuery libraries into Moodle:
 
 5/ open http://127.0.0.1/lib/tests/other/jquerypage.php
 
+6/ Update the version of jquery in core_privacy\local\request\moodle_content_writer::write_html_data()
+
 Petr Skoda
