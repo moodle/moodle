@@ -2852,7 +2852,7 @@ class company {
      * @return bool true on success.
      */
     public static function user_deleted(\core\event\user_deleted $event) {
-        global $DB;
+        global $DB, $CFG;
 
         $userid = $event->objectid;
         $timestamp = time();
