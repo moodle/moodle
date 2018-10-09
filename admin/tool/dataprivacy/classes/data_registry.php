@@ -191,14 +191,14 @@ class data_registry {
      * @param int|false $forcedvalue Use this value as if this was this context instance value.
      * @return persistent|false It return a 'purpose' instance or a 'category' instance, depending on $element
      */
-    public static function get_effective_context_value(\context $context, $element, $forcedvalue=false) {
+    public static function get_effective_context_value(\context $context, $element, $forcedvalue = false) {
 
         if ($element !== 'purpose' && $element !== 'category') {
             throw new coding_exception('Only \'purpose\' and \'category\' are supported.');
         }
         $fieldname = $element . 'id';
 
-        if ($forcedvalue === false) {
+        if (empty($forcedvalue)) {
             $instance = context_instance::get_record_by_contextid($context->id, false);
 
             if (!$instance) {
@@ -217,20 +217,29 @@ class data_registry {
             // The effective value varies depending on the context level.
             if ($context->contextlevel == CONTEXT_USER) {
                 // Use the context level value as we don't allow people to set specific instances values.
-                return self::get_effective_contextlevel_value($context->contextlevel, $element);
-            } else {
-                // Check if we need to pass the plugin name of an activity.
-                $forplugin = '';
-                if ($context->contextlevel == CONTEXT_MODULE) {
-                    list($course, $cm) = get_course_and_cm_from_cmid($context->instanceid);
-                    $forplugin = $cm->modname;
-                }
-                // Use the default context level value.
-                list($purposeid, $categoryid) = self::get_effective_default_contextlevel_purpose_and_category(
-                    $context->contextlevel, false, false, $forplugin
-                );
-                return self::get_element_instance($element, $$fieldname);
+                return self::get_effective_contextlevel_value(CONTEXT_USER, $element);
             }
+
+            $parents = $context->get_parent_contexts(true);
+            foreach ($parents as $parent) {
+                if ($parent->contextlevel == CONTEXT_USER) {
+                    // Use the context level value as we don't allow people to set specific instances values.
+                    return self::get_effective_contextlevel_value(CONTEXT_USER, $element);
+                }
+            }
+
+            // Check if we need to pass the plugin name of an activity.
+            $forplugin = '';
+            if ($context->contextlevel == CONTEXT_MODULE) {
+                list($course, $cm) = get_course_and_cm_from_cmid($context->instanceid);
+                $forplugin = $cm->modname;
+            }
+            // Use the default context level value.
+            list($purposeid, $categoryid) = self::get_effective_default_contextlevel_purpose_and_category(
+                $context->contextlevel, false, false, $forplugin
+            );
+
+            return self::get_element_instance($element, $$fieldname);
         }
 
         // Specific value for this context instance.
