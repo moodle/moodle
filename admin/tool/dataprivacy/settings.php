@@ -65,7 +65,7 @@ if ($hassiteconfig) {
         $privacysettings->add(new admin_setting_configcheckbox('tool_dataprivacy/requireallenddatesforuserdeletion',
                 new lang_string('requireallenddatesforuserdeletion', 'tool_dataprivacy'),
                 new lang_string('requireallenddatesforuserdeletion_desc', 'tool_dataprivacy'),
-                0));
+                1));
     }
 }
 
