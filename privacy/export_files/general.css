@@ -1,0 +1,50 @@
+.hide {
+    display: none;
+}
+
+li.menu-item {
+    cursor: pointer;
+}
+
+li[aria-expanded=false]:not(.item) {
+    list-style-image: url('pix/collapsed.svg');
+}
+
+li[aria-expanded=true]:not(.item) {
+    list-style-image: url('pix/expanded.svg');
+}
+
+[aria-expanded="false"] > [role="group"] {
+    display: none;
+}
+
+#navigation {
+    display: inline-block;
+    width: 20%;
+    vertical-align: top;
+    overflow: scroll;
+    border-radius: 0.3rem;
+}
+
+[data-main-content] {
+    display: inline-block;
+    width: 69%;
+    vertical-align: top;
+}
+
+.title {
+    font-size: large;
+    font-weight: bold;
+}
+
+.block {
+    padding: 19px;
+}
+
+.item {
+    list-style-image: url('pix/navigationitem.svg');
+}
+
+.moodle-logo {
+    width: 110px;
+}

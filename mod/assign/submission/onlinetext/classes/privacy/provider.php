@@ -98,9 +98,10 @@ class provider implements metadataprovider, \mod_assign\privacy\assignsubmission
         $context = $exportdata->get_context();
         if (!empty($editortext)) {
             $submissiontext = new \stdClass();
-            $submissiontext->text = writer::with_context($context)->rewrite_pluginfile_urls([], '', '', '', $editortext);
             $currentpath = $exportdata->get_subcontext();
             $currentpath[] = get_string('privacy:path', 'assignsubmission_onlinetext');
+            $submissiontext->text = writer::with_context($context)->rewrite_pluginfile_urls($currentpath,
+                    'assignsubmission_onlinetext', 'submissions_onlinetext', $submission->id, $editortext);
             writer::with_context($context)
                     ->export_area_files($currentpath, 'assignsubmission_onlinetext', 'submissions_onlinetext', $submission->id)
                     // Add the text to the exporter.
