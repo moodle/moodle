@@ -1418,8 +1418,6 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
      * @param bool $override Whether to override instances.
      */
     public function test_set_context_defaults($contextlevel, $inheritcategory, $inheritpurpose, $foractivity, $override) {
-        $this->setAdminUser();
-
         $this->resetAfterTest();
 
         $generator = $this->getDataGenerator();

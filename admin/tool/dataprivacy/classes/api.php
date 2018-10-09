@@ -1122,8 +1122,6 @@ class api {
     public static function set_context_defaults($contextlevel, $categoryid, $purposeid, $activity = null, $override = false) {
         global $DB;
 
-        self::check_can_manage_data_registry();
-
         // Get the class name associated with this context level.
         $classname = context_helper::get_class_for_level($contextlevel);
         list($purposevar, $categoryvar) = data_registry::var_names_from_context($classname, $activity);
