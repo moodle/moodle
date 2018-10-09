@@ -157,7 +157,7 @@ class expired_contexts_manager {
         $where = '';
 
         if (!empty($contextpath)) {
-            $where = "AND (ctx.path = :pathmatchexact OR ctx.path LIKE :pathmatchchildren)";
+            $where = "WHERE (ctx.path = :pathmatchexact OR ctx.path LIKE :pathmatchchildren)";
             $params['pathmatchexact'] = $contextpath;
             $params['pathmatchchildren'] = "{$contextpath}/%";
         }
@@ -177,7 +177,7 @@ class expired_contexts_manager {
                     ON dpctx.contextid = ctx.id
              LEFT JOIN {tool_dataprivacy_ctxexpired} expiredctx
                     ON ctx.id = expiredctx.contextid
-                 WHERE 1 = 1 {$where}
+                 {$where}
               ORDER BY ctx.path DESC";
 
         return self::get_nested_expiry_info_from_sql($sql, $params);
