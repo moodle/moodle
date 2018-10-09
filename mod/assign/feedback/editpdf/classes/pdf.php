@@ -72,6 +72,23 @@ class pdf extends \FPDI {
     const BLANK_PDF = '/mod/assign/feedback/editpdf/fixtures/blank.pdf';
 
     /**
+     * Get the name of the font to use in generated PDF files.
+     * If $CFG->pdfexportfont is set - use it, otherwise use "freesans" as this
+     * open licensed font has wide support for different language charsets.
+     *
+     * @return string
+     */
+    private function get_export_font_name() {
+        global $CFG;
+
+        $fontname = 'freesans';
+        if (!empty($CFG->pdfexportfont)) {
+            $fontname = $CFG->pdfexportfont;
+        }
+        return $fontname;
+    }
+
+    /**
      * Combine the given PDF files into a single PDF. Optionally add a coversheet and coversheet fields.
      * @param string[] $pdflist  the filenames of the files to combine
      * @param string $outfilename the filename to write to
@@ -86,7 +103,8 @@ class pdf extends \FPDI {
         $this->setPrintHeader(false);
         $this->setPrintFooter(false);
         $this->scale = 72.0 / 100.0;
-        $this->SetFont('helvetica', '', 16.0 * $this->scale);
+        // Use font supporting the widest range of characters.
+        $this->SetFont($this->get_export_font_name(), '', 16.0 * $this->scale, '', true);
         $this->SetTextColor(0, 0, 0);
 
         $totalpagecount = 0;
@@ -133,7 +151,7 @@ class pdf extends \FPDI {
 
         $this->setPageUnit('pt');
         $this->scale = 72.0 / 100.0;
-        $this->SetFont('helvetica', '', 16.0 * $this->scale);
+        $this->SetFont($this->get_export_font_name(), '', 16.0 * $this->scale, '', true);
         $this->SetFillColor(255, 255, 176);
         $this->SetDrawColor(0, 0, 0);
         $this->SetLineWidth(1.0 * $this->scale);
@@ -226,7 +244,7 @@ class pdf extends \FPDI {
         $this->SetFontSize(12 * $this->scale);
         $this->SetMargins(100 * $this->scale, 120 * $this->scale, -1, true);
         $this->SetAutoPageBreak(true, 100 * $this->scale);
-        $this->setHeaderFont(array('helvetica', '', 24 * $this->scale));
+        $this->setHeaderFont(array($this->get_export_font_name(), '', 24 * $this->scale, '', true));
         $this->setHeaderMargin(24 * $this->scale);
         $this->setHeaderData('', 0, '', get_string('commentindex', 'assignfeedback_editpdf'));
 
