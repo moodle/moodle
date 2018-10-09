@@ -1714,73 +1714,85 @@ class core_moodlelib_testcase extends advanced_testcase {
                 'time' => '1309514400',
                 'usertimezone' => 'America/Moncton',
                 'timezone' => '0.0', // No dst offset.
-                'expectedoutput' => 'Friday, 1 July 2011, 10:00 AM'
+                'expectedoutput' => 'Friday, 1 July 2011, 10:00 AM',
+                'expectedoutputhtml' => '<time datetime="2011-07-01T07:00:00-03:00">Friday, 1 July 2011, 10:00 AM</time>'
             ),
             array(
                 'time' => '1309514400',
                 'usertimezone' => 'America/Moncton',
                 'timezone' => '99', // Dst offset and timezone offset.
-                'expectedoutput' => 'Friday, 1 July 2011, 7:00 AM'
+                'expectedoutput' => 'Friday, 1 July 2011, 7:00 AM',
+                'expectedoutputhtml' => '<time datetime="2011-07-01T07:00:00-03:00">Friday, 1 July 2011, 7:00 AM</time>'
             ),
             array(
                 'time' => '1309514400',
                 'usertimezone' => 'America/Moncton',
                 'timezone' => 'America/Moncton', // Dst offset and timezone offset.
-                'expectedoutput' => 'Friday, 1 July 2011, 7:00 AM'
+                'expectedoutput' => 'Friday, 1 July 2011, 7:00 AM',
+                'expectedoutputhtml' => '<time datetime="2011-07-01t07:00:00-03:00">Friday, 1 July 2011, 7:00 AM</time>'
             ),
             array(
                 'time' => '1293876000 ',
                 'usertimezone' => 'America/Moncton',
                 'timezone' => '0.0', // No dst offset.
-                'expectedoutput' => 'Saturday, 1 January 2011, 10:00 AM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 10:00 AM',
+                'expectedoutputhtml' => '<time datetime="2011-01-01T06:00:00-04:00">Saturday, 1 January 2011, 10:00 AM</time>'
             ),
             array(
                 'time' => '1293876000 ',
                 'usertimezone' => 'America/Moncton',
                 'timezone' => '99', // No dst offset in jan, so just timezone offset.
-                'expectedoutput' => 'Saturday, 1 January 2011, 6:00 AM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 6:00 AM',
+                'expectedoutputhtml' => '<time datetime="2011-01-01T06:00:00-04:00">Saturday, 1 January 2011, 6:00 AM</time>'
             ),
             array(
                 'time' => '1293876000 ',
                 'usertimezone' => 'America/Moncton',
                 'timezone' => 'America/Moncton', // No dst offset in jan.
-                'expectedoutput' => 'Saturday, 1 January 2011, 6:00 AM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 6:00 AM',
+                'expectedoutputhtml' => '<time datetime="2011-01-01T06:00:00-04:00">Saturday, 1 January 2011, 6:00 AM</time>'
             ),
             array(
                 'time' => '1293876000 ',
                 'usertimezone' => '2',
                 'timezone' => '99', // Take user timezone.
-                'expectedoutput' => 'Saturday, 1 January 2011, 12:00 PM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 12:00 PM',
+                'expectedoutputhtml' => '<time datetime="2011-01-01T12:00:00+02:00">Saturday, 1 January 2011, 12:00 PM</time>'
             ),
             array(
                 'time' => '1293876000 ',
                 'usertimezone' => '-2',
                 'timezone' => '99', // Take user timezone.
-                'expectedoutput' => 'Saturday, 1 January 2011, 8:00 AM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 8:00 AM',
+                'expectedoutputhtml' => '<time datetime="2011-01-01T08:00:00-02:00">Saturday, 1 January 2011, 8:00 AM</time>'
             ),
             array(
                 'time' => '1293876000 ',
                 'usertimezone' => '-10',
                 'timezone' => '2', // Take this timezone.
-                'expectedoutput' => 'Saturday, 1 January 2011, 12:00 PM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 12:00 PM',
+                'expectedoutputhtml' => '<time datetime="2011-01-01T00:00:00-10:00">Saturday, 1 January 2011, 12:00 PM</time>'
             ),
             array(
                 'time' => '1293876000 ',
                 'usertimezone' => '-10',
                 'timezone' => '-2', // Take this timezone.
-                'expectedoutput' => 'Saturday, 1 January 2011, 8:00 AM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 8:00 AM',
+                'expectedoutputhtml' => '<time datetime="2011-01-01T00:00:00-10:00">Saturday, 1 January 2011, 8:00 AM</time>'
             ),
             array(
                 'time' => '1293876000 ',
                 'usertimezone' => '-10',
                 'timezone' => 'random/time', // This should show server time.
-                'expectedoutput' => 'Saturday, 1 January 2011, 6:00 PM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 6:00 PM',
+                'expectedoutputhtml' => '<time datetime="2011-01-01T00:00:00-10:00">Saturday, 1 January 2011, 6:00 PM</time>'
             ),
             array(
                 'time' => '1293876000 ',
                 'usertimezone' => '20', // Fallback to server time zone.
                 'timezone' => '99',     // This should show user time.
-                'expectedoutput' => 'Saturday, 1 January 2011, 6:00 PM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 6:00 PM',
+                'expectedoutputhtml' => '<time datetime="2011-01-01T18:00:00+08:00">Saturday, 1 January 2011, 6:00 PM</time>'
             ),
         );
 
@@ -1791,13 +1803,18 @@ class core_moodlelib_testcase extends advanced_testcase {
         foreach ($testvalues as $vals) {
             $USER->timezone = $vals['usertimezone'];
             $actualoutput = userdate($vals['time'], '%A, %d %B %Y, %I:%M %p', $vals['timezone']);
+            $actualoutputhtml = userdate_htmltime($vals['time'], '%A, %d %B %Y, %I:%M %p', $vals['timezone']);
 
             // On different systems case of AM PM changes so compare case insensitive.
             $vals['expectedoutput'] = core_text::strtolower($vals['expectedoutput']);
+            $vals['expectedoutputhtml'] = core_text::strtolower($vals['expectedoutputhtml']);
             $actualoutput = core_text::strtolower($actualoutput);
+            $actualoutputhtml = core_text::strtolower($actualoutputhtml);
 
             $this->assertSame($vals['expectedoutput'], $actualoutput,
                 "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput} \ndata: " . var_export($vals, true));
+            $this->assertSame($vals['expectedoutputhtml'], $actualoutputhtml,
+                "Expected: {$vals['expectedoutputhtml']} => Actual: {$actualoutputhtml} \ndata: " . var_export($vals, true));
         }
     }
 

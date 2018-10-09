@@ -315,3 +315,15 @@ span.unread {
 #page-mod-forum-view img.timedpost {
     margin-right: 5px;
 }
+
+.path-mod-forum article .nav .nav-link:first-of-type {
+    margin-left: auto;
+}
+.path-mod-forum.dir-rtl article .nav .nav-link:first-of-type {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+.path-mod-forum article .nav .nav-link + .nav-link {
+    border-left: 1px solid #ddd;
+}

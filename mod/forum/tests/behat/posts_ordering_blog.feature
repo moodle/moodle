@@ -72,9 +72,9 @@ Feature: Blog posts are always displayed in reverse chronological order
     #
     # Make sure the order of the blog posts is still reverse chronological.
     #
-    Then I should see "This is the third post" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' forumpost ')][position()=1]" "xpath_element"
-    And I should see "This is the second post" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' forumpost ')][position()=2]" "xpath_element"
-    And I should see "This is the first post" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' forumpost ')][position()=3]" "xpath_element"
+    Then I should see "This is the third post" in the "//article[position()=1]" "xpath_element"
+    And I should see "This is the second post" in the "//article[position()=2]" "xpath_element"
+    And I should see "This is the first post" in the "//article[position()=3]" "xpath_element"
     #
     # Make sure the next/prev navigation uses the same order of the posts.
     #
