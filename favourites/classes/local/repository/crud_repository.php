@@ -31,10 +31,10 @@ interface crud_repository {
     /**
      * Add one item to this repository.
      *
-     * @param \stdClass $item the item to add.
-     * @return \stdClass the item which was added.
+     * @param object $item the item to add.
+     * @return object the item which was added.
      */
-    public function add(\stdClass $item) : \stdClass;
+    public function add($item);
 
     /**
      * Add all the items in the list to this repository.
@@ -48,24 +48,28 @@ interface crud_repository {
      * Find an item in this repository based on its id.
      *
      * @param int $id the id of the item.
-     * @return \stdClass the item.
+     * @return object the item.
      */
-    public function find(int $id) : \stdClass;
+    public function find(int $id);
 
     /**
      * Find all items in this repository.
      *
+     * @param int $limitfrom optional pagination control for returning a subset of records, starting at this point.
+     * @param int $limitnum optional pagination control for returning a subset comprising this many records.
      * @return array list of all items in this repository.
      */
-    public function find_all() : array;
+    public function find_all(int $limitfrom = 0, int $limitnum = 0) : array;
 
     /**
      * Find all items with attributes matching certain values.
      *
      * @param array $criteria the array of attribute/value pairs.
+     * @param int $limitfrom optional pagination control for returning a subset of records, starting at this point.
+     * @param int $limitnum optional pagination control for returning a subset comprising this many records.
      * @return array the list of items matching the criteria.
      */
-    public function find_by(array $criteria) : array;
+    public function find_by(array $criteria, int $limitfrom = 0, int $limitnum = 0) : array;
 
     /**
      * Check whether an item exists in this repository, based on its id.
@@ -85,10 +89,10 @@ interface crud_repository {
     /**
      * Update an item within this repository.
      *
-     * @param \stdClass $item the item to update.
-     * @return \stdClass the updated item.
+     * @param object $item the item to update.
+     * @return object the updated item.
      */
-    public function update(\stdClass $item) : \stdClass;
+    public function update($item);
 
     /**
      * Delete an item by id.

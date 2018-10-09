@@ -45,17 +45,6 @@ class user_favourites_service {
     protected $userid;
 
     /**
-     * Helper, returning a flat list of component names.
-     *
-     * @return array the array of component names.
-     */
-    protected function get_component_list() {
-        return array_keys(array_reduce(\core_component::get_component_list(), function($carry, $item) {
-            return array_merge($carry, $item);
-        }, []));
-    }
-
-    /**
      * The user_favourites_service constructor.
      *
      * @param \context_user $usercontext The context of the user to which this service operations are scoped.
@@ -64,6 +53,17 @@ class user_favourites_service {
     public function __construct(\context_user $usercontext, \core_favourites\local\repository\ifavourites_repository $repository) {
         $this->repo = $repository;
         $this->userid = $usercontext->instanceid;
+    }
+
+    /**
+     * Helper, returning a flat list of component names.
+     *
+     * @return array the array of component names.
+     */
+    protected function get_component_list() {
+        return array_keys(array_reduce(\core_component::get_component_list(), function($carry, $item) {
+            return array_merge($carry, $item);
+        }, []));
     }
 
     /**
@@ -105,14 +105,24 @@ class user_favourites_service {
      *
      * @param string $component the frankenstyle component name.
      * @param string $itemtype the type of the favourited item.
+     * @param int $limitfrom optional pagination control for returning a subset of records, starting at this point.
+     * @param int $limitnum optional pagination control for returning a subset comprising this many records.
      * @return array the list of favourites found.
      * @throws \moodle_exception if the component name is invalid, or if the repository encounters any errors.
      */
-    public function find_favourites_by_type(string $component, string $itemtype) : array {
+    public function find_favourites_by_type(string $component, string $itemtype, int $limitfrom = 0, int $limitnum = 0) : array {
         if (!in_array($component, $this->get_component_list())) {
             throw new \moodle_exception("Invalid component name '$component'");
         }
-        return $this->repo->find_by(['userid' => $this->userid, 'component' => $component, 'itemtype' => $itemtype]);
+        return $this->repo->find_by(
+            [
+                'userid' => $this->userid,
+                'component' => $component,
+                'itemtype' => $itemtype
+            ],
+            $limitfrom,
+            $limitnum
+        );
     }
 
     /**

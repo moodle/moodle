@@ -53,7 +53,7 @@ class favourites_repository implements ifavourites_repository {
      * @throws \dml_exception if any database errors are encountered.
      * @throws \moodle_exception if the favourite has missing or invalid properties.
      */
-    public function add(\stdClass $favourite) : \stdClass {
+    public function add($favourite) : \stdClass {
         global $DB;
         $this->validate($favourite);
         $favourite = (array)$favourite;
@@ -102,23 +102,27 @@ class favourites_repository implements ifavourites_repository {
      * Return all items matching the supplied criteria (a [key => value,..] list).
      *
      * @param array $criteria the list of key/value criteria pairs.
+     * @param int $limitfrom optional pagination control for returning a subset of records, starting at this point.
+     * @param int $limitnum optional pagination control for returning a subset comprising this many records.
      * @return array the list of favourites matching the criteria.
      * @throws \dml_exception if any database errors are encountered.
      */
-    public function find_by(array $criteria) : array {
+    public function find_by(array $criteria, int $limitfrom = 0, int $limitnum = 0) : array {
         global $DB;
-        return $DB->get_records($this->favouritetable, $criteria);
+        return $DB->get_records($this->favouritetable, $criteria, '', '*', $limitfrom, $limitnum);
     }
 
     /**
      * Return all items in this repository, as an array, indexed by id.
      *
+     * @param int $limitfrom optional pagination control for returning a subset of records, starting at this point.
+     * @param int $limitnum optional pagination control for returning a subset comprising this many records.
      * @return array the list of all favourites stored within this repository.
      * @throws \dml_exception if any database errors are encountered.
      */
-    public function find_all() : array {
+    public function find_all(int $limitfrom = 0, int $limitnum = 0) : array {
         global $DB;
-        return $DB->get_records($this->favouritetable);
+        return $DB->get_records($this->favouritetable, null, '', '*', $limitfrom, $limitnum);
     }
 
     /**
@@ -165,7 +169,7 @@ class favourites_repository implements ifavourites_repository {
      * @return \stdClass the updated favourite.
      * @throws \dml_exception if any database errors are encountered.
      */
-    public function update(\stdClass $favourite) : \stdClass {
+    public function update($favourite) : \stdClass {
         global $DB;
         $time = time();
         $favourite->timemodified = $time;

@@ -236,6 +236,48 @@ class favourites_repository_testcase extends advanced_testcase {
     }
 
     /**
+     * Testing the pagination of the find_all method.
+     */
+    public function test_find_all_pagination() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+
+        $favouritesrepo = new favourites_repository($user1context);
+
+        // Verify that for an empty repository, find_all with any combination of page options returns an empty array.
+        $this->assertEquals([], $favouritesrepo->find_all(0, 0));
+        $this->assertEquals([], $favouritesrepo->find_all(0, 10));
+        $this->assertEquals([], $favouritesrepo->find_all(1, 0));
+        $this->assertEquals([], $favouritesrepo->find_all(1, 10));
+
+        // Save 10 arbitrary favourites to the repo.
+        foreach (range(1, 10) as $i) {
+            $favourite = (object) [
+                'userid' => $user1context->instanceid,
+                'component' => 'core_course',
+                'itemtype' => 'course',
+                'itemid' => $i,
+                'contextid' => $course1context->id
+            ];
+            $favouritesrepo->add($favourite);
+        }
+
+        // Verify we have 10 favourites.
+        $this->assertEquals(10, $favouritesrepo->count());
+
+        // Verify we can fetch the first page of 5 records.
+        $favourites = $favouritesrepo->find_all(0, 5);
+        $this->assertCount(5, $favourites);
+
+        // Verify we can fetch the second page.
+        $favourites = $favouritesrepo->find_all(5, 5);
+        $this->assertCount(5, $favourites);
+
+        // Verify the third page request ends with an empty array.
+        $favourites = $favouritesrepo->find_all(10, 5);
+        $this->assertCount(0, $favourites);
+    }
+
+    /**
      * Test retrieval of a user's favourites for a given criteria, in this case, area.
      */
     public function test_find_by() {
@@ -261,6 +303,52 @@ class favourites_repository_testcase extends advanced_testcase {
         $userfavourites = $favouritesrepo->find_by(['component' => 'core_cannibalism', 'itemtype' => 'course']);
         $this->assertInternalType('array', $userfavourites);
         $this->assertCount(0, $userfavourites);
+    }
+
+    /**
+     * Testing the pagination of the find_by method.
+     */
+    public function test_find_by_pagination() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+
+        $favouritesrepo = new favourites_repository($user1context);
+
+        // Verify that for an empty repository, find_all with any combination of page options returns an empty array.
+        $this->assertEquals([], $favouritesrepo->find_by([], 0, 0));
+        $this->assertEquals([], $favouritesrepo->find_by([], 0, 10));
+        $this->assertEquals([], $favouritesrepo->find_by([], 1, 0));
+        $this->assertEquals([], $favouritesrepo->find_by([], 1, 10));
+
+        // Save 10 arbitrary favourites to the repo.
+        foreach (range(1, 10) as $i) {
+            $favourite = (object) [
+                'userid' => $user1context->instanceid,
+                'component' => 'core_course',
+                'itemtype' => 'course',
+                'itemid' => $i,
+                'contextid' => $course1context->id
+            ];
+            $favouritesrepo->add($favourite);
+        }
+
+        // Verify we have 10 favourites.
+        $this->assertEquals(10, $favouritesrepo->count());
+
+        // Verify a request for a page, when no criteria match, results in an empty array.
+        $favourites = $favouritesrepo->find_by(['component' => 'core_message'], 0, 5);
+        $this->assertCount(0, $favourites);
+
+        // Verify we can fetch a the first page of 5 records.
+        $favourites = $favouritesrepo->find_by(['component' => 'core_course'], 0, 5);
+        $this->assertCount(5, $favourites);
+
+        // Verify we can fetch the second page.
+        $favourites = $favouritesrepo->find_by(['component' => 'core_course'], 5, 5);
+        $this->assertCount(5, $favourites);
+
+        // Verify the third page request ends with an empty array.
+        $favourites = $favouritesrepo->find_by(['component' => 'core_course'], 10, 5);
+        $this->assertCount(0, $favourites);
     }
 
     /**

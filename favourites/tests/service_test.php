@@ -84,7 +84,7 @@ class user_favourites_service_testcase extends advanced_testcase {
         );
         $mockrepo->expects($this->any())
             ->method('find_by')
-            ->will($this->returnCallback(function(array $criteria) use (&$mockstore) {
+            ->will($this->returnCallback(function(array $criteria, int $limitfrom = 0, int $limitnum = 0) use (&$mockstore) {
                 // Check the mockstore for all objects with properties matching the key => val pairs in $criteria.
                 foreach ($mockstore as $index => $mockrow) {
                     $mockrowarr = (array)$mockrow;
@@ -92,6 +92,11 @@ class user_favourites_service_testcase extends advanced_testcase {
                         $returns[$index] = $mockrow;
                     }
                 }
+                // Return a subset of the records, according to the paging options, if set.
+                if ($limitnum != 0) {
+                    return array_slice($returns, $limitfrom, $limitnum);
+                }
+                // Otherwise, just return the full set.
                 return $returns;
             })
         );
@@ -243,6 +248,37 @@ class user_favourites_service_testcase extends advanced_testcase {
         // Verify we get an exception if we try to search for favourites in an invalid component.
         $this->expectException('moodle_exception');
         $service->find_favourites_by_type('cccore_notreal', 'something');
+    }
+
+    /**
+     * Test confirming the pagination support for the find_favourites_by_type() method.
+     */
+    public function test_find_favourites_by_type_pagination() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+
+        // Get a user_favourites_service for the user.
+        $repo = $this->get_mock_repository([]);
+        $service = new \core_favourites\local\service\user_favourites_service($user1context, $repo);
+
+        // Favourite 10 arbitrary items.
+        foreach (range(1, 10) as $i) {
+            $service->create_favourite('core_course', 'course', $i, $course1context);
+        }
+
+        // Verify we have 10 favourites.
+        $this->assertCount(10, $service->find_favourites_by_type('core_course', 'course'));
+
+        // Verify we get back 5 favourites for page 1.
+        $favourites = $service->find_favourites_by_type('core_course', 'course', 0, 5);
+        $this->assertCount(5, $favourites);
+
+        // Verify we get back 5 favourites for page 2.
+        $favourites = $service->find_favourites_by_type('core_course', 'course', 5, 5);
+        $this->assertCount(5, $favourites);
+
+        // Verify we get back an empty array if querying page 3.
+        $favourites = $service->find_favourites_by_type('core_course', 'course', 10, 5);
+        $this->assertCount(0, $favourites);
     }
 
     /**
