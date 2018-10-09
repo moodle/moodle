@@ -410,7 +410,6 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         var drag = e.drag;
         // Get a reference to our drag node
         var dragnode = drag.get('node');
-        var dropnode = e.drop.get('node');
 
         // Add spinner if it not there
         var actionarea = dragnode.one(CSS.ACTIONAREA);
@@ -432,7 +431,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         params['class'] = 'resource';
         params.field = 'move';
         params.id = Number(Y.Moodle.mod_quiz.util.slot.getId(dragnode));
-        params.sectionId = Y.Moodle.core_course.util.section.getId(dropnode.ancestor('li.section', true));
+        params.sectionId = Y.Moodle.core_course.util.section.getId(dragnode.ancestor('li.section', true));
 
         var previousslot = dragnode.previous(SELECTOR.SLOT);
         if (previousslot) {
