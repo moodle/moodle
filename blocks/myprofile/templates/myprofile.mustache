@@ -1,0 +1,179 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myprofile/myprofile
+
+    This template renders the content of the myprofile block.
+
+    Classes required for JS:
+        * none
+
+        Data attributes required for JS:
+        * none
+
+        Context variables required for this template:
+        * userfullname
+
+        Optional context variables for this template:
+        * userpicture
+        * usercountry
+        * usercity
+        * useremail
+        * usericq
+        * userskype
+        * useryahoo
+        * useraim
+        * usermsn
+        * userphone1
+        * userphone2
+        * userinstitution
+        * useraddress
+        * userfirstaccess
+        * userlastaccess
+        * usercurrentlogin
+        * userlastip
+
+    Example context (json):
+    {
+        "userpicture": "<img src='http://example.com/image.png' title='Picture of John Doe'>",
+        "userfullname": "John Doe",
+        "usercountry": "Australia",
+        "usercity": "Perth",
+        "useremail": "<a href=''>john.doe@example.com</a>",
+        "usericq": "12345",
+        "userskype": "john.doe",
+        "useryahoo": "12345",
+        "useraim": "12345",
+        "usermsn": "12345",
+        "userphone1": "123456789",
+        "userphone2": "123456789",
+        "userinstitution": "Institution",
+        "useraddress": "Address",
+        "userfirstaccess": "Friday, 6 July 2018, 9:03 AM",
+        "userlastaccess": "Wednesday, 26 September 2018, 8:05 AM",
+        "usercurrentlogin": "Wednesday, 26 September 2018, 7:17 AM",
+        "userlastip": "0:0:0:0:0:0:0:1"
+    }
+}}
+<div>
+    {{#userpicture}}
+    <div class="myprofileitem picture">
+        {{{ userpicture }}}
+    </div>
+    {{/userpicture}}
+</div>
+<div class="w-100 no-overflow">
+    <div class="myprofileitem fullname">
+        {{ userfullname }}
+    </div>
+    {{#usercountry}}
+    <div class="myprofileitem country">
+        <span>{{#str}} country {{/str}}:</span>
+        {{ usercountry }}
+    </div>
+    {{/usercountry}}
+    {{#usercity}}
+    <div class="myprofileitem city">
+         <span>{{#str}} city {{/str}}:</span>
+         {{ usercity }}
+    </div>
+    {{/usercity}}
+    {{#useremail}}
+        <div class="myprofileitem city">
+             <span>{{#str}} email {{/str}}:</span>
+             {{{ useremail }}}
+        </div>
+    {{/useremail}}
+    {{#usericq}}
+    <div class="myprofileitem icq">
+         <span>ICQ:</span>
+         {{ usericq }}
+    </div>
+    {{/usericq}}
+    {{#userskype}}
+    <div class="myprofileitem skype">
+         <span>Skype:</span>
+         {{ userskype }}
+    </div>
+    {{/userskype}}
+    {{#useryahoo}}
+    <div class="myprofileitem yahoo">
+         <span>Yahoo:</span>
+         {{ useryahoo }}
+    </div>
+    {{/useryahoo}}
+    {{#useraim}}
+    <div class="myprofileitem aim">
+         <span>AIM:</span>
+         {{ useraim }}
+    </div>
+    {{/useraim}}
+    {{#usermsn}}
+    <div class="myprofileitem msn">
+         <span>MSN:</span>
+         {{ usermsn }}
+    </div>
+    {{/usermsn}}
+    {{#userphone1}}
+    <div class="myprofileitem phone1">
+         <span>{{#str}} phone1 {{/str}}:</span>
+         {{ userphone1 }}
+    </div>
+    {{/userphone1}}
+    {{#userphone2}}
+    <div class="myprofileitem phone2">
+         <span>{{#str}} phone2 {{/str}}:</span>
+         {{ userphone2 }}
+    </div>
+    {{/userphone2}}
+    {{#userinstitution}}
+    <div class="myprofileitem institution">
+        <span>{{#str}} institution {{/str}}:</span>
+        {{ userinstitution }}
+    </div>
+    {{/userinstitution}}
+    {{#useraddress}}
+    <div class="myprofileitem address">
+        <span>{{#str}} address {{/str}}:</span>
+        {{ useraddress }}
+    </div>
+    {{/useraddress}}
+    {{#userfirstaccess}}
+    <div class="myprofileitem firstaccess">
+         <span>{{#str}} firstaccess {{/str}}: </span>
+         {{ userfirstaccess }}
+    </div>
+    {{/userfirstaccess}}
+    {{#userlastaccess}}
+    <div class="myprofileitem lastaccess">
+         <span>{{#str}} lastaccess {{/str}}:</span>
+         {{ userlastaccess }}
+    </div>
+    {{/userlastaccess}}
+    {{#usercurrentlogin}}
+    <div class="myprofileitem currentlogin">
+         <span>{{#str}} login {{/str}}:</span>
+         {{ usercurrentlogin }}
+    </div>
+    {{/usercurrentlogin}}
+    {{#userlastip}}
+    <div class="myprofileitem lastip">
+         <span>IP:</span>
+         {{ userlastip }}
+    </div>
+    {{/userlastip}}
+</div>
