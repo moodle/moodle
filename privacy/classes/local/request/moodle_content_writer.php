@@ -665,7 +665,7 @@ class moodle_content_writer implements content_writer {
         $this->write_data($path, $encoded);
 
         $output = $PAGE->get_renderer('core_privacy');
-        $navigationpage = new \core_privacy\output\exported_navigation_page(current($richtree));
+        $navigationpage = new \core_privacy\output\exported_navigation_page($richtree[array_keys($richtree)[0]]);
         $navigationhtml = $output->render_navigation($navigationpage);
 
         $systemname = $SITE->fullname;
