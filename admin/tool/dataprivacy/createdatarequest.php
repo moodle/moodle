@@ -24,7 +24,6 @@
 
 require_once('../../../config.php');
 require_once('lib.php');
-require_once('classes/api.php');
 require_once('createdatarequest_form.php');
 
 $manage = optional_param('manage', 0, PARAM_INT);
@@ -67,6 +66,14 @@ if ($mform->is_cancelled()) {
 
 // Data request submitted.
 if ($data = $mform->get_data()) {
+    if ($data->userid != $USER->id) {
+        if (!\tool_dataprivacy\api::can_manage_data_requests($USER->id)) {
+            // If not a DPO, only users with the capability to make data requests for the user should be allowed.
+            // (e.g. users with the Parent role, etc).
+            \tool_dataprivacy\api::require_can_create_data_request_for_user($data->userid);
+        }
+    }
+
     \tool_dataprivacy\api::create_data_request($data->userid, $data->type, $data->comments);
 
     if ($manage) {
