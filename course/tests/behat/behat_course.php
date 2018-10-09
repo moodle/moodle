@@ -1879,4 +1879,48 @@ class behat_course extends behat_base {
         $xpath = "//div[contains(@class,'block')]//li[p/*[string(.)=$coursestr or string(.)=$mycoursestr]]";
         $this->execute('behat_general::i_click_on_in_the', [get_string('participants'), 'link', $xpath, 'xpath_element']);
     }
+
+    /**
+     * Check that one teacher appears before another in the course contacts.
+     *
+     * @Given /^I should see teacher "(?P<pteacher_string>(?:[^"]|\\")*)" before "(?P<fteacher_string>(?:[^"]|\\")*)" in the course contact listing$/
+     *
+     * @param string $pteacher The first teacher to find
+     * @param string $fteacher The second teacher to find (should be after the first teacher)
+     *
+     * @throws ExpectationException
+     */
+    public function i_should_see_teacher_before($pteacher, $fteacher) {
+        $xpath = "//ul[contains(@class,'teachers')]//li//a[text()='{$pteacher}']/ancestor::li//following::a[text()='{$fteacher}']";
+        $msg = "Teacher {$pteacher} does not appear before Teacher {$fteacher}";
+        if (!$this->getSession()->getDriver()->find($xpath)) {
+            throw new ExpectationException($msg, $this->getSession());
+        }
+    }
+
+    /**
+     * Check that one teacher oes not appears after another in the course contacts.
+     *
+     * @Given /^I should not see teacher "(?P<fteacher_string>(?:[^"]|\\")*)" after "(?P<pteacher_string>(?:[^"]|\\")*)" in the course contact listing$/
+     *
+     * @param string $fteacher The teacher that should not be found (after the other teacher)
+     * @param string $pteacher The teacher after who the other should not be found (this teacher must be found!)
+     *
+     * @throws ExpectationException
+     */
+    public function i_should_not_see_teacher_after($fteacher, $pteacher) {
+        $xpathliteral = behat_context_helper::escape($pteacher);
+        $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]" .
+                "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
+        try {
+            $nodes = $this->find_all('xpath', $xpath);
+        } catch (ElementNotFoundException $e) {
+            throw new ExpectationException('"' . $pteacher . '" text was not found in the page', $this->getSession());
+        }
+        $xpath = "//ul[contains(@class,'teachers')]//li//a[text()='{$pteacher}']/ancestor::li//following::a[text()='{$fteacher}']";
+        $msg = "Teacher {$fteacher} appears after Teacher {$pteacher}";
+        if ($this->getSession()->getDriver()->find($xpath)) {
+            throw new ExpectationException($msg, $this->getSession());
+        }
+    }
 }

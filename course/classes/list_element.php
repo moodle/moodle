@@ -151,37 +151,50 @@ class core_course_list_element implements IteratorAggregate {
             // No roles are configured to be displayed as course contacts.
             return array();
         }
+
+        if (!$this->has_course_contacts()) {
+            // No course contacts exist.
+            return array();
+        }
+
         if ($this->coursecontacts === null) {
             $this->coursecontacts = array();
+
             $context = context_course::instance($this->id);
 
-            if (!isset($this->record->managers)) {
-                // Preload course contacts from DB.
-                $courses = array($this->id => &$this->record);
-                core_course_category::preload_course_contacts($courses);
-            }
-
-            // Build return array with full roles names (for this course context) and users names.
             $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
+
+            $displayall = get_config('core', 'coursecontactduplicates');
+
             foreach ($this->record->managers as $ruser) {
-                if (isset($this->coursecontacts[$ruser->id])) {
-                    // Only display a user once with the highest sortorder role.
+                $processed = array_key_exists($ruser->id, $this->coursecontacts);
+                if (!$displayall && $processed) {
                     continue;
                 }
-                $user = new stdClass();
-                $user = username_load_fields_from_object($user, $ruser, null, array('id', 'username'));
-                $role = new stdClass();
-                $role->id = $ruser->roleid;
-                $role->name = $ruser->rolename;
-                $role->shortname = $ruser->roleshortname;
-                $role->coursealias = $ruser->rolecoursealias;
 
-                $this->coursecontacts[$user->id] = array(
-                    'user' => $user,
-                    'role' => $role,
-                    'rolename' => role_get_name($role, $context, ROLENAME_ALIAS),
-                    'username' => fullname($user, $canviewfullnames)
-                );
+                $role = (object)[
+                        'id'          => $ruser->roleid,
+                        'name'        => $ruser->rolename,
+                        'shortname'   => $ruser->roleshortname,
+                        'coursealias' => $ruser->rolecoursealias,
+                ];
+                $role->displayname = role_get_name($role, $context, ROLENAME_ALIAS);
+
+                if (!$processed) {
+                    $user = username_load_fields_from_object((object)[], $ruser, null, ['id', 'username']);
+                    $this->coursecontacts[$ruser->id] = [
+                            'user'     => $user,
+                            'username' => fullname($user, $canviewfullnames),
+
+                            // List of all roles.
+                            'roles'    => [],
+
+                            // Primary role of this user.
+                            'role'     => $role,
+                            'rolename' => $role->displayname,
+                    ];
+                }
+                $this->coursecontacts[$ruser->id]['roles'][$ruser->roleid] = $role;
             }
         }
         return $this->coursecontacts;
