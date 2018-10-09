@@ -36,3 +36,11 @@ dd a.contactdpo {
 .context-level-view {
     margin: 1em;
 }
+
+[data-region="purposes"] .col-name-description {
+    width: 25%;
+}
+
+[data-region="categories"] .col-description {
+    width: 50%;
+}
