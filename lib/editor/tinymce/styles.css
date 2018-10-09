@@ -22,3 +22,7 @@
 .mceToolbar td {
     box-sizing: content-box;
 }
+
+img.emoticon {
+    width: 16px;
+}
