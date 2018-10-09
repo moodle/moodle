@@ -390,19 +390,13 @@ class moodle_content_writer implements content_writer {
      * @param  array  $destination Destination path to copy the file to.
      */
     protected function copy_data(array $path, array $destination) {
-        // Do we not have a moodle function to do something like this?
-        $systempath = getcwd();
-        // This is likely to be running from admin/cli.
-        if (stripos($systempath, 'admin' . DIRECTORY_SEPARATOR . 'cli') !== false) {
-            $bits = explode('admin' . DIRECTORY_SEPARATOR . 'cli', $systempath);
-            $systempath = implode('', $bits);
-        }
+        global $CFG;
         $filename = array_pop($destination);
         $destdirectory = implode(DIRECTORY_SEPARATOR, $destination);
         $fulldestination = $this->path . DIRECTORY_SEPARATOR . $destdirectory;
         check_dir_exists($fulldestination, true, true);
         $fulldestination .= $filename;
-        $currentpath = $systempath . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $path);
+        $currentpath = $CFG->dirroot . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $path);
         copy($currentpath, $fulldestination);
         $this->files[$destdirectory . DIRECTORY_SEPARATOR . $filename] = $fulldestination;
     }
