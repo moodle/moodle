@@ -1344,6 +1344,7 @@ class external extends external_api {
         // Validate context.
         $context = context_system::instance();
         self::validate_context($context);
+        api::check_can_manage_data_registry();
 
         // Set the context defaults.
         $result = api::set_context_defaults($contextlevel, $category, $purpose, $activity, $override);
