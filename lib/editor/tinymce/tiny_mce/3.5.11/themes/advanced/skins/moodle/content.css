@@ -51,3 +51,7 @@ font[face=mceinline] {font-family:inherit !important}
 #tinymce[dir=rtl] ol {
     margin: 0 25px 10px 0;
 }
+img.icon.emoticon {
+    height: 16px;
+    width: 16px;
+}
