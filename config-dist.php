@@ -572,6 +572,12 @@ $CFG->admin = 'admin';
 //
 //      $CFG->upgradekey = 'put_some_password-like_value_here';
 //
+// Font used in exported PDF files. When generating a PDF, Moodle embeds a subset of
+// the font in the PDF file so it will be readable on the widest range of devices.
+// The default font is 'freesans' which is part of the GNU FreeFont collection.
+//
+//      $CFG->pdfexportfont = 'freesans';
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
