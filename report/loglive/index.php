@@ -33,7 +33,7 @@ $page = optional_param('page', 0, PARAM_INT);
 $logreader = optional_param('logreader', '', PARAM_COMPONENT); // Reader which will be used for displaying logs.
 
 if (empty($id)) {
-    require_login();
+    admin_externalpage_setup('reportloglive', '', null, '', array('pagelayout' => 'report'));
     $context = context_system::instance();
     $coursename = format_string($SITE->fullname, true, array('context' => $context));
 } else {
@@ -75,9 +75,7 @@ if ($page == 0 && !empty($logreader)) {
 $strlivelogs = get_string('livelogs', 'report_loglive');
 $strupdatesevery = get_string('updatesevery', 'moodle', $refresh);
 
-if (empty($id)) {
-    admin_externalpage_setup('reportloglive', '', null, '', array('pagelayout' => 'report'));
-}
+
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_title("$coursename: $strlivelogs ($strupdatesevery)");

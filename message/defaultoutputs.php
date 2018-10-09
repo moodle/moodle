@@ -28,9 +28,6 @@ require_once($CFG->libdir.'/adminlib.php');
 // This is an admin page
 admin_externalpage_setup('defaultmessageoutputs');
 
-// Require site configuration capability
-require_capability('moodle/site:config', context_system::instance());
-
 // Fetch processors
 $processors = get_message_processors(true);
 // Fetch message providers

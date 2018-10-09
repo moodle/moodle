@@ -48,7 +48,6 @@ $defineurl = $CFG->wwwroot . '/' . $CFG->admin . '/roles/define.php';
 
 // Check access permissions.
 $systemcontext = context_system::instance();
-require_login();
 require_capability('moodle/role:manage', $systemcontext);
 admin_externalpage_setup('defineroles');
 

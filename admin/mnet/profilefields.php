@@ -29,14 +29,10 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin .'/mnet/profilefields_form.php');
 $mnet = get_mnet_environment();
 
-require_login();
 $hostid = required_param('hostid', PARAM_INT);
 $mnet_peer = new mnet_peer();
 $mnet_peer->set_id($hostid);
 
-$context = context_system::instance();
-
-require_capability('moodle/site:config', $context, $USER->id, true, 'nopermissions');
 admin_externalpage_setup('mnetpeers');
 $form = new mnet_profile_form(null, array('hostid' => $hostid));
 

@@ -41,8 +41,6 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $resetall = optional_param('resetall', null, PARAM_BOOL);
 
-require_login();
-
 $header = "$SITE->shortname: ".get_string('myhome')." (".get_string('mypage', 'admin').")";
 
 $PAGE->set_blocks_editing_capability('moodle/my:configsyspages');

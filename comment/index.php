@@ -26,7 +26,6 @@ require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/comment/locallib.php');
 
-require_login();
 admin_externalpage_setup('comments', '', null, '', array('pagelayout'=>'report'));
 
 $context = context_system::instance();

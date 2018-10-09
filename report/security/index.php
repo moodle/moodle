@@ -29,7 +29,6 @@ require('../../config.php');
 require_once($CFG->dirroot.'/report/security/locallib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-require_login();
 
 $issue = optional_param('issue', '', PARAM_ALPHANUMEXT); // show detailed info about one issue only
 

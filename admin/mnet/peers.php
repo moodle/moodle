@@ -32,10 +32,6 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/mnet/lib.php');
 require_once($CFG->dirroot.'/'.$CFG->admin.'/mnet/peer_forms.php');
 
-require_login();
-
-$context = context_system::instance();
-require_capability('moodle/site:config', $context, $USER->id, true, 'nopermissions');
 
 /// Initialize variables.
 $hostid = optional_param('hostid', 0, PARAM_INT);

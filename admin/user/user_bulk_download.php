@@ -30,7 +30,6 @@ require_once($CFG->dirroot.'/user/profile/lib.php');
 
 $dataformat = optional_param('dataformat', '', PARAM_ALPHA);
 
-require_login();
 admin_externalpage_setup('userbulk');
 require_capability('moodle/user:update', context_system::instance());
 

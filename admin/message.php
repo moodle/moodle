@@ -28,9 +28,6 @@ require_once($CFG->libdir.'/adminlib.php');
 // This is an admin page
 admin_externalpage_setup('managemessageoutputs');
 
-// Require site configuration capability
-require_capability('moodle/site:config', context_system::instance());
-
 // Get the submitted params
 $disable    = optional_param('disable', 0, PARAM_INT);
 $enable     = optional_param('enable', 0, PARAM_INT);
