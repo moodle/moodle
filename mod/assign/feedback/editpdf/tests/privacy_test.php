@@ -241,4 +241,78 @@ class assignfeedback_editpdf_privacy_testcase extends \mod_assign\tests\mod_assi
         // Check that user 2 data is still there.
         $this->assertFalse($plugin2->is_empty($grade2));
     }
+
+    /**
+     * Test that a grade item is deleted for a user.
+     */
+    public function test_delete_feedback_for_grades() {
+        global $DB;
+
+        $this->resetAfterTest();
+        // Create course, assignment, submission, and then a feedback comment.
+        $course = $this->getDataGenerator()->create_course();
+        // Students.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+        // Teacher.
+        $user5 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user4->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user5->id, $course->id, 'editingteacher');
+        $assign1 = $this->create_instance(['course' => $course,
+                'assignsubmission_file_enabled' => 1,
+                'assignsubmission_file_maxfiles' => 1,
+                'assignfeedback_editpdf_enabled' => 1,
+                'assignsubmission_file_maxsizebytes' => 1000000]);
+
+        $assign2 = $this->create_instance(['course' => $course,
+                'assignsubmission_file_enabled' => 1,
+                'assignsubmission_file_maxfiles' => 1,
+                'assignfeedback_editpdf_enabled' => 1,
+                'assignsubmission_file_maxsizebytes' => 1000000]);
+
+        $context = $assign1->get_context();
+
+        list($plugin1, $grade1, $storedfile1) = $this->create_feedback($assign1, $user1, $user5);
+        list($plugin2, $grade2, $storedfile2) = $this->create_feedback($assign1, $user2, $user5);
+        list($plugin3, $grade3, $storedfile3) = $this->create_feedback($assign1, $user3, $user5);
+        list($plugin4, $grade4, $storedfile4) = $this->create_feedback($assign2, $user3, $user5);
+        list($plugin5, $grade5, $storedfile5) = $this->create_feedback($assign2, $user4, $user5);
+
+        // Check that we have data.
+        $this->assertFalse($plugin1->is_empty($grade1));
+        $this->assertFalse($plugin2->is_empty($grade2));
+        $this->assertFalse($plugin3->is_empty($grade3));
+        $this->assertFalse($plugin4->is_empty($grade4));
+        $this->assertFalse($plugin5->is_empty($grade5));
+
+        // Check that there are also files generated.
+        $files = $DB->get_records('files', ['component' => 'assignfeedback_editpdf', 'filearea' => 'download']);
+        $this->assertCount(10, $files);
+
+        $deletedata = new assign_plugin_request_data($context, $assign1);
+        $deletedata->set_userids([$user1->id, $user3->id]);
+        $deletedata->populate_submissions_and_grades();
+        \assignfeedback_editpdf\privacy\provider::delete_feedback_for_grades($deletedata);
+
+        // Check that we now have no data for user 1.
+        $this->assertTrue($plugin1->is_empty($grade1));
+        // Check that user 2 data is still there.
+        $this->assertFalse($plugin2->is_empty($grade2));
+        // User 3 in assignment 1 should be gone.
+        $this->assertTrue($plugin3->is_empty($grade3));
+        // User 3 in assignment 2 should still be here.
+        $this->assertFalse($plugin4->is_empty($grade4));
+        // User 4 in assignment 2 should also still be here.
+        $this->assertFalse($plugin5->is_empty($grade5));
+
+        // Check the files as well.
+        $files = $DB->get_records('files', ['component' => 'assignfeedback_editpdf', 'filearea' => 'download']);
+        // We should now only have six records here.
+        $this->assertCount(6, $files);
+    }
 }
