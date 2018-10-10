@@ -595,6 +595,7 @@ class api {
     /**
      * Returns the messages to display in the message area.
      *
+     * @deprecated since 3.6
      * @param int $userid the current user
      * @param int $otheruserid the other user
      * @param int $limitfrom
@@ -605,7 +606,9 @@ class api {
      * @return array
      */
     public static function get_messages($userid, $otheruserid, $limitfrom = 0, $limitnum = 0,
-        $sort = 'timecreated ASC', $timefrom = 0, $timeto = 0) {
+            $sort = 'timecreated ASC', $timefrom = 0, $timeto = 0) {
+        debugging('\core_message\api::get_messages() is deprecated, please use ' .
+            '\core_message\api::get_conversation_messages() instead.', DEBUG_DEVELOPER);
 
         if (!empty($timefrom)) {
             // Get the conversation between userid and otheruserid.
@@ -674,11 +677,15 @@ class api {
     /**
      * Returns the most recent message between two users.
      *
+     * @deprecated since 3.6
      * @param int $userid the current user
      * @param int $otheruserid the other user
      * @return \stdClass|null
      */
     public static function get_most_recent_message($userid, $otheruserid) {
+        debugging('\core_message\api::get_most_recent_message() is deprecated, please use ' .
+            '\core_message\api::get_most_recent_conversation_message() instead.', DEBUG_DEVELOPER);
+
         // We want two messages here so we get an accurate 'blocktime' value.
         if ($messages = helper::get_messages($userid, $otheruserid, 0, 0, 2, 'timecreated DESC')) {
             // Swap the order so we now have them in historical order.

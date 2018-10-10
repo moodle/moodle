@@ -2785,6 +2785,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Retrieve the messages.
         $result = core_message_external::data_for_messagearea_messages($user1->id, $user2->id);
+        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_messages_returns(),
@@ -2849,6 +2850,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Retrieve the messages from $time - 3, which should be the 3 most recent messages.
         $result = core_message_external::data_for_messagearea_messages($user1->id, $user2->id, 0, 0, false, $time - 3);
+        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_messages_returns(),
@@ -2889,6 +2891,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Retrieve the messages.
         $result = core_message_external::data_for_messagearea_messages($user1->id, $user2->id);
+        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_messages_returns(),
@@ -3252,6 +3255,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Get the most recent message.
         $result = core_message_external::data_for_messagearea_get_most_recent_message($user1->id, $user2->id);
+        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_get_most_recent_message_returns(),
@@ -3285,6 +3289,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Get the most recent message.
         $result = core_message_external::data_for_messagearea_get_most_recent_message($user1->id, $user2->id);
+        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_get_most_recent_message_returns(),
