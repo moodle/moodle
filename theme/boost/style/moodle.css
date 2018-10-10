@@ -10386,7 +10386,8 @@ ul {
   top: 0; }
 
 [data-drag-type="move"] {
-  cursor: move; }
+  cursor: move;
+  touch-action: none; }
 
 .clickable {
   cursor: pointer; }
