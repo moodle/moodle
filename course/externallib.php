@@ -2266,7 +2266,7 @@ class core_course_external extends external_api {
                 'fullname' => $contact['username'],
                 'roles' => array_map(function($role){
                     return array('id' => $role->id, 'name' => $role->displayname);
-                }, $contact['role']),
+                }, $contact['roles']),
                 'role' => array('id' => $contact['role']->id, 'name' => $contact['role']->displayname),
                 'rolename' => $contact['rolename']
              );
