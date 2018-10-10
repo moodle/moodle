@@ -397,8 +397,9 @@ class external_api {
                     return (bool)$response;
                 }
             }
+            $responsetype = gettype($response);
             $debuginfo = 'Invalid external api response: the value is "' . $response .
-                    '", the server was expecting "' . $description->type . '" type';
+                    '" of PHP type "' . $responsetype . '", the server was expecting "' . $description->type . '" type';
             try {
                 return validate_param($response, $description->type, $description->allownull, $debuginfo);
             } catch (invalid_parameter_exception $e) {
