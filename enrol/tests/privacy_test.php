@@ -21,12 +21,16 @@
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die();
+
 use core_enrol\privacy\provider;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\writer;
 use core_privacy\tests\provider_testcase;
 use \core_privacy\local\request\transform;
+use \core_privacy\local\request\approved_userlist;
+
 /**
  * Privacy test for the core_enrol.
  *
@@ -171,5 +175,97 @@ class core_enrol_privacy_testcase extends provider_testcase {
         // Get all user enrolments accounts.
         $userenrolments = $DB->get_records('user_enrolments', array());
         $this->assertCount(3, $userenrolments);
+    }
+
+    /**
+     * Test that only users within a course context are fetched.
+     */
+    public function test_get_users_in_context() {
+        $this->resetAfterTest();
+
+        $component = 'core_enrol';
+
+        $user = $this->getDataGenerator()->create_user();
+        $usercontext = context_user::instance($user->id);
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        $userlist1 = new \core_privacy\local\request\userlist($coursecontext, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(0, $userlist1);
+
+        // Enrol user into course.
+        $this->getDataGenerator()->enrol_user($user->id, $course->id,  null, 'manual');
+
+        // The list of users within the course context should contain user.
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(1, $userlist1);
+        $expected = [$user->id];
+        $actual = $userlist1->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        // The list of users within the user context should be empty.
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(0, $userlist2);
+    }
+
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        $this->resetAfterTest();
+
+        $component = 'core_enrol';
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = context_course::instance($course1->id);
+        $coursecontext2 = context_course::instance($course2->id);
+        $systemcontext = context_system::instance();
+
+        // Enrol user1 into course1.
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id,  null, 'manual');
+        // Enrol user2 into course1.
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id,  null, 'manual');
+        // Enrol user3 into course2.
+        $this->getDataGenerator()->enrol_user($user3->id, $course2->id,  null, 'manual');
+
+        $userlist1 = new \core_privacy\local\request\userlist($coursecontext1, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(2, $userlist1);
+
+        $userlist2 = new \core_privacy\local\request\userlist($coursecontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+
+        // Convert $userlist1 into an approved_contextlist.
+        $approvedlist1 = new approved_userlist($coursecontext1, $component, $userlist1->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist1);
+        // Re-fetch users in coursecontext1.
+        $userlist1 = new \core_privacy\local\request\userlist($coursecontext1, $component);
+        provider::get_users_in_context($userlist1);
+        // The user data in coursecontext1 should be deleted.
+        $this->assertCount(0, $userlist1);
+
+        // Re-fetch users in coursecontext2.
+        $userlist2 = new \core_privacy\local\request\userlist($coursecontext2, $component);
+        provider::get_users_in_context($userlist2);
+        // The user data in coursecontext2 should be still present.
+        $this->assertCount(1, $userlist2);
+
+        // Convert $userlist2 into an approved_contextlist in the system context.
+        $approvedlist2 = new approved_userlist($systemcontext, $component, $userlist2->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist2);
+        // Re-fetch users in coursecontext1.
+        $userlist2 = new \core_privacy\local\request\userlist($coursecontext2, $component);
+        provider::get_users_in_context($userlist2);
+        // The user data in systemcontext should not be deleted.
+        $this->assertCount(1, $userlist2);
     }
 }
