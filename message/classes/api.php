@@ -654,7 +654,7 @@ class api {
 
         if (!empty($timefrom)) {
             // Check the cache to see if we even need to do a DB query.
-            $cache = \cache::make('core', 'message_time_last_message_between_users');
+            $cache = \cache::make('core', 'message_time_last_message_in_conversation');
             $key = helper::get_last_message_time_created_cache_key($convid);
             $lastcreated = $cache->get($key);
 
