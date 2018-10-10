@@ -83,6 +83,15 @@ $functions = array(
         'ajax'          => true,
         'loginrequired' => false,
     ),
+    'core_blog_view_entries' => array(
+        'classname'   => 'core_blog\external',
+        'methodname'  => 'view_entries',
+        'description' => 'Trigger the blog_entries_viewed event.',
+        'type'        => 'read',
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax'          => true,
+        'loginrequired' => false,
+    ),
     'core_calendar_get_calendar_monthly_view' => array(
         'classname' => 'core_calendar_external',
         'methodname' => 'get_calendar_monthly_view',

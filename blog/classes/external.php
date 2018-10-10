@@ -49,6 +49,72 @@ use core_blog\external\post_exporter;
 class external extends external_api {
 
     /**
+     * Validate access to the blog and the filters to apply when listing entries.
+     *
+     * @param  array  $rawwsfilters array containing the filters in WS format
+     * @return array  context, filters to apply and the calculated courseid and user
+     * @since  Moodle 3.6
+     */
+    protected static function validate_access_and_filters($rawwsfilters) {
+        global $CFG;
+
+        if (empty($CFG->enableblogs)) {
+            throw new moodle_exception('blogdisable', 'blog');
+        }
+
+        // Init filters.
+        $filterstype = array(
+            'courseid' => PARAM_INT,
+            'groupid' => PARAM_INT,
+            'userid' => PARAM_INT,
+            'tagid' => PARAM_INT,
+            'tag' => PARAM_NOTAGS,
+            'cmid' => PARAM_INT,
+            'entryid' => PARAM_INT,
+            'search' => PARAM_RAW
+        );
+        $filters = array(
+            'courseid' => null,
+            'groupid' => null,
+            'userid' => null,
+            'tagid' => null,
+            'tag' => null,
+            'cmid' => null,
+            'entryid' => null,
+            'search' => null
+        );
+
+        foreach ($rawwsfilters as $filter) {
+            $name = trim($filter['name']);
+            if (!isset($filterstype[$name])) {
+                throw new moodle_exception('errorinvalidparam', 'webservice', '', $name);
+            }
+            $filters[$name] = clean_param($filter['value'], $filterstype[$name]);
+        }
+
+        // Do not overwrite here the filters, blog_get_headers and blog_listing will take care of that.
+        list($courseid, $userid) = blog_validate_access($filters['courseid'], $filters['cmid'], $filters['groupid'],
+            $filters['entryid'], $filters['userid']);
+
+        if ($courseid && $courseid != SITEID) {
+            $context = context_course::instance($courseid);
+            self::validate_context($context);
+        } else {
+            $context = context_system::instance();
+            if ($CFG->bloglevel == BLOG_GLOBAL_LEVEL) {
+                // Everybody can see anything - no login required unless site is locked down using forcelogin.
+                if ($CFG->forcelogin) {
+                    self::validate_context($context);
+                }
+            } else {
+                self::validate_context($context);
+            }
+        }
+        // Courseid and userid may not be the same that the ones in $filters.
+        return array($context, $filters, $courseid, $userid);
+    }
+
+    /**
      * Returns description of get_entries() parameters.
      *
      * @return external_function_parameters
@@ -92,49 +158,16 @@ class external extends external_api {
      * @since  Moodle 3.6
      */
     public static function get_entries($filters = array(), $page = 0, $perpage = 10) {
-        global $CFG, $DB, $PAGE;
+        global $PAGE;
 
         $warnings = array();
         $params = self::validate_parameters(self::get_entries_parameters(),
             array('filters' => $filters, 'page' => $page, 'perpage' => $perpage));
 
-        if (empty($CFG->enableblogs)) {
-            throw new moodle_exception('blogdisable', 'blog');
-        }
+        list($context, $filters, $courseid, $userid) = self::validate_access_and_filters($params['filters']);
 
-        // Init filters.
-        $filterstype = array('courseid' => PARAM_INT, 'groupid' => PARAM_INT, 'userid' => PARAM_INT, 'tagid' => PARAM_INT,
-            'tag' => PARAM_NOTAGS, 'cmid' => PARAM_INT, 'entryid' => PARAM_INT, 'search' => PARAM_RAW);
-        $filters = array('courseid' => null, 'groupid' => null, 'userid' => null, 'tagid' => null,
-            'tag' => null, 'cmid' => null, 'entryid' => null, 'search' => null);
-
-        foreach ($params['filters'] as $filter) {
-            $name = trim($filter['name']);
-            if (!isset($filterstype[$name])) {
-                throw new moodle_exception('errorinvalidparam', 'webservice', '', $name);
-            }
-            $filters[$name] = clean_param($filter['value'], $filterstype[$name]);
-        }
-
-        // Do not overwrite here the filters, blog_get_headers and blog_listing will take care of that.
-        list($courseid, $userid) = blog_validate_access($filters['courseid'], $filters['cmid'], $filters['groupid'],
-            $filters['entryid'], $filters['userid']);
-
-        if ($courseid && $courseid != SITEID) {
-            $context = context_course::instance($courseid);
-            self::validate_context($context);
-        } else {
-            $context = context_system::instance();
-            if ($CFG->bloglevel == BLOG_GLOBAL_LEVEL) {
-                // Everybody can see anything - no login required unless site is locked down using forcelogin.
-                if ($CFG->forcelogin) {
-                    self::validate_context($context);
-                }
-            } else {
-                self::validate_context($context);
-            }
-        }
         $PAGE->set_context($context); // Needed by internal APIs.
+        $output = $PAGE->get_renderer('core');
 
         // Get filters.
         $blogheaders = blog_get_headers($filters['courseid'], $filters['groupid'], $filters['userid'], $filters['tagid'],
@@ -148,7 +181,6 @@ class external extends external_api {
         $totalentries = $bloglisting->count_entries();
 
         $exportedentries = array();
-        $output = $PAGE->get_renderer('core');
         foreach ($entries as $entry) {
             $exporter = new post_exporter($entry, array('context' => $context));
             $exportedentries[] = $exporter->export($output);
@@ -173,6 +205,85 @@ class external extends external_api {
                     post_exporter::get_read_structure()
                 ),
                 'totalentries' => new external_value(PARAM_INT, 'The total number of entries found.'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Returns description of view_entries() parameters.
+     *
+     * @return external_function_parameters
+     * @since  Moodle 3.6
+     */
+    public static function view_entries_parameters() {
+        return new external_function_parameters(
+            array(
+                'filters' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHA,
+                                'The expected keys (value format) are:
+                                tag      PARAM_NOTAGS blog tag
+                                tagid    PARAM_INT    blog tag id
+                                userid   PARAM_INT    blog author (userid)
+                                cmid     PARAM_INT    course module id
+                                entryid  PARAM_INT    entry id
+                                groupid  PARAM_INT    group id
+                                courseid PARAM_INT    course id
+                                search   PARAM_RAW    search term
+                                '
+                            ),
+                            'value' => new external_value(PARAM_RAW, 'The value of the filter.')
+                        )
+                    ), 'Parameters used in the filter of view_entries.', VALUE_DEFAULT, array()
+                ),
+            )
+        );
+    }
+
+    /**
+     * Trigger the blog_entries_viewed event.
+     *
+     * @param array $filters the parameters used in the filter of get_entries
+     * @return array with status result and warnings
+     * @since  Moodle 3.6
+     */
+    public static function view_entries($filters = array()) {
+
+        $warnings = array();
+        $params = self::validate_parameters(self::view_entries_parameters(), array('filters' => $filters));
+
+        list($context, $filters, $courseid, $userid) = self::validate_access_and_filters($params['filters']);
+
+        $eventparams = array(
+            'other' => array('entryid' => $filters['entryid'], 'tagid' => $filters['tagid'], 'userid' => $userid,
+                'modid' => $filters['cmid'], 'groupid' => $filters['groupid'], 'search' => $filters['search']
+            )
+        );
+        if (!empty($userid)) {
+            $eventparams['relateduserid'] = $userid;
+        }
+        $eventparams['other']['courseid'] = ($courseid === SITEID) ? 0 : $courseid;
+        $event = \core\event\blog_entries_viewed::create($eventparams);
+        $event->trigger();
+
+        return array(
+            'warnings' => $warnings,
+            'status' => true,
+        );
+    }
+
+    /**
+     * Returns description of view_entries() result value.
+     *
+     * @return external_description
+     * @since  Moodle 3.6
+     */
+    public static function view_entries_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
                 'warnings' => new external_warnings(),
             )
         );
