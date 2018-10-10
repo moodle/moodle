@@ -206,4 +206,63 @@ class assignfeedback_file_privacy_testcase extends \mod_assign\tests\mod_assign_
         // User 2's data should still be intact.
         $this->assertFalse($plugin2->is_empty($grade2));
     }
+
+    /**
+     * Test that a grade item is deleted for a user.
+     */
+    public function test_delete_feedback_for_grades() {
+        $this->resetAfterTest();
+        // Create course, assignment, submission, and then a feedback comment.
+        $course = $this->getDataGenerator()->create_course();
+        // Students.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+        // Teacher.
+        $user5 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user4->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user5->id, $course->id, 'editingteacher');
+        $assign1 = $this->create_instance(['course' => $course]);
+        $assign2 = $this->create_instance(['course' => $course]);
+
+        $context = $assign1->get_context();
+
+        $feedbacktext = '<p>first comment for this test</p>';
+        list($plugin1, $grade1) = $this->create_feedback($assign1, $user1, $user5, 'Submission text', $feedbacktext);
+        $feedbacktext = '<p>Comment for second submission.</p>';
+        list($plugin2, $grade2) = $this->create_feedback($assign1, $user2, $user5, 'Submission text', $feedbacktext);
+        $feedbacktext = '<p>Comment for second submission.</p>';
+        list($plugin3, $grade3) = $this->create_feedback($assign1, $user3, $user5, 'Submission text', $feedbacktext);
+        $feedbacktext = '<p>Comment for second submission.</p>';
+        list($plugin4, $grade4) = $this->create_feedback($assign2, $user3, $user5, 'Submission text', $feedbacktext);
+        $feedbacktext = '<p>Comment for second submission.</p>';
+        list($plugin5, $grade5) = $this->create_feedback($assign2, $user4, $user5, 'Submission text', $feedbacktext);
+
+        // Check that we have data.
+        $this->assertFalse($plugin1->is_empty($grade1));
+        $this->assertFalse($plugin2->is_empty($grade2));
+        $this->assertFalse($plugin3->is_empty($grade3));
+        $this->assertFalse($plugin4->is_empty($grade4));
+        $this->assertFalse($plugin5->is_empty($grade5));
+
+        $deletedata = new assign_plugin_request_data($context, $assign1);
+        $deletedata->set_userids([$user1->id, $user3->id]);
+        $deletedata->populate_submissions_and_grades();
+        \assignfeedback_file\privacy\provider::delete_feedback_for_grades($deletedata);
+
+        // Check that we now have no data.
+        $this->assertTrue($plugin1->is_empty($grade1));
+        // User 2's data should still be intact.
+        $this->assertFalse($plugin2->is_empty($grade2));
+        // User 3's data in assignment 1 should be gone.
+        $this->assertTrue($plugin3->is_empty($grade3));
+        // User 3's data in assignment 2 should still be intact.
+        $this->assertFalse($plugin4->is_empty($grade4));
+        // User 4's data in assignment 2 should still be intact.
+        $this->assertFalse($plugin5->is_empty($grade5));
+    }
 }
