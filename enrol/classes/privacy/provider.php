@@ -20,7 +20,9 @@
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace core_enrol\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
 use core_privacy\local\metadata\collection;
@@ -29,6 +31,8 @@ use core_privacy\local\request\context;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
+use core_privacy\local\request\userlist;
+use \core_privacy\local\request\approved_userlist;
 
 /**
  * Privacy Subsystem for core_enrol implementing metadata and plugin providers.
@@ -38,6 +42,7 @@ use core_privacy\local\request\writer;
  */
 class provider implements
         \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\core_userlist_provider,
         \core_privacy\local\request\subsystem\provider {
     /**
      * Returns meta data about this system.
@@ -87,6 +92,36 @@ class provider implements
 
         return $contextlist;
     }
+
+    /**
+     * Get the list of users within a specific context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_course) {
+            return;
+        }
+
+        $params = [
+            'contextid' => $context->id,
+            'contextcourse' => CONTEXT_COURSE,
+        ];
+
+        $sql = "SELECT ue.userid as userid
+                  FROM {user_enrolments} ue
+                  JOIN {enrol} e
+                       ON e.id = ue.enrolid
+                  JOIN {context} ctx
+                       ON ctx.instanceid = e.courseid
+                       AND ctx.contextlevel = :contextcourse
+                 WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+    }
+
     /**
      * Export all user data for the specified user, in the specified contexts.
      *
@@ -181,6 +216,39 @@ class provider implements
             }
         }
     }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if ($context instanceof \context_course) {
+            list($usersql, $userparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+
+            $sql = "SELECT ue.id
+                      FROM {user_enrolments} ue
+                      JOIN {enrol} e
+                        ON e.id = ue.enrolid
+                      JOIN {context} ctx
+                        ON ctx.instanceid = e.courseid
+                     WHERE ctx.id = :contextid
+                     AND ue.userid {$usersql}";
+
+            $params = ['contextid' => $context->id] + $userparams;
+            $enrolsids = $DB->get_fieldset_sql($sql, $params);
+
+            if (!empty($enrolsids)) {
+                list($insql, $inparams) = $DB->get_in_or_equal($enrolsids, SQL_PARAMS_NAMED);
+                static::delete_user_data($insql, $inparams);
+            }
+        }
+    }
+
     /**
      * Delete all user data for the specified user, in the specified contexts.
      *
