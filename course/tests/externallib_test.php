@@ -1141,6 +1141,50 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get course contents completion
+     */
+    public function test_get_course_contents_completion() {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        list($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm) = $this->prepare_get_course_contents_test();
+
+        // Test activity not completed yet.
+        $result = core_course_external::get_course_contents($course->id, array(
+            array("name" => "modname", "value" => "forum"), array("name" => "modid", "value" => $forumcm->instance)));
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
+
+        $this->assertCount(1, $result[0]['modules']);
+        $this->assertEquals("forum", $result[0]['modules'][0]["modname"]);
+        $this->assertEquals(COMPLETION_TRACKING_MANUAL, $result[0]['modules'][0]["completion"]);
+        $this->assertEquals(0, $result[0]['modules'][0]["completiondata"]['state']);
+        $this->assertEquals(0, $result[0]['modules'][0]["completiondata"]['timecompleted']);
+        $this->assertEmpty($result[0]['modules'][0]["completiondata"]['overrideby']);
+
+        // Set activity completed.
+        core_completion_external::update_activity_completion_status_manually($forumcm->id, true);
+
+        $result = core_course_external::get_course_contents($course->id, array(
+            array("name" => "modname", "value" => "forum"), array("name" => "modid", "value" => $forumcm->instance)));
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
+
+        $this->assertEquals(COMPLETION_COMPLETE, $result[0]['modules'][0]["completiondata"]['state']);
+        $this->assertNotEmpty($result[0]['modules'][0]["completiondata"]['timecompleted']);
+        $this->assertEmpty($result[0]['modules'][0]["completiondata"]['overrideby']);
+
+        // Disable completion.
+        $CFG->enablecompletion = 0;
+        $result = core_course_external::get_course_contents($course->id, array(
+            array("name" => "modname", "value" => "forum"), array("name" => "modid", "value" => $forumcm->instance)));
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
+
+        $this->assertArrayNotHasKey('completiondata', $result[0]['modules'][0]);
+    }
+
+    /**
      * Test duplicate_course
      */
     public function test_duplicate_course() {

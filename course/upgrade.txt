@@ -9,6 +9,8 @@ information provided here is intended especially for developers.
    - onclick (onclick javascript action code)
    - afterlink (after link info to be displayed)
    - customdata (module custom data (JSON encoded))
+   - completion (to indicate if completion is enabled or not)
+   - completiondata (completion status for the current user in the module)
 
 === 3.5 ===
 
