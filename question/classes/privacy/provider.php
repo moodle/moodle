@@ -401,6 +401,32 @@ class provider implements
     }
 
     /**
+     * Add the list of users who have rated in the specified constraints.
+     *
+     * @param   userlist    $userlist   The userlist to add the users to.
+     * @param   string      $prefix     A unique prefix to add to the table alias to avoid interference with your own sql.
+     * @param   string      $insql      The SQL to use in a sub-select for the question_usages.id query.
+     * @param   array       $params     The params required for the insql.
+     * @param   int|null    $contextid  An optional context id, in case the $sql query is not already filtered by that.
+     */
+    public static function get_users_in_context_from_sql(userlist $userlist, string $prefix, string $insql, $params,
+            int $contextid = null) {
+
+        $sql = "SELECT {$prefix}_qas.userid
+                  FROM {question_attempt_steps} {$prefix}_qas
+                  JOIN {question_attempts} {$prefix}_qa ON {$prefix}_qas.questionattemptid = {$prefix}_qa.id
+                  JOIN {question_usages} {$prefix}_qu ON {$prefix}_qa.questionusageid = {$prefix}_qu.id
+                 WHERE {$prefix}_qu.id IN ({$insql})";
+
+        if ($contextid) {
+            $sql .= " AND {$prefix}_qu.contextid = :{$prefix}_contextid";
+            $params["{$prefix}_contextid"] = $contextid;
+        }
+
+        $userlist->add_from_sql('userid', $sql, $params);
+    }
+
+    /**
      * Export all user data for the specified user, in the specified contexts.
      *
      * @param   approved_contextlist    $contextlist    The approved contexts to export information for.
