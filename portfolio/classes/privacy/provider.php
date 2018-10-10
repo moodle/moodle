@@ -30,6 +30,8 @@ use core_privacy\local\request\context;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Provider for the portfolio API.
@@ -41,6 +43,7 @@ class provider implements
         // The core portfolio system stores preferences related to the other portfolio subsystems.
         \core_privacy\local\metadata\provider,
         \core_privacy\local\request\plugin\provider,
+        \core_privacy\local\request\core_userlist_provider,
         // The portfolio subsystem will be called by other components.
         \core_privacy\local\request\subsystem\plugin_provider {
 
@@ -94,6 +97,42 @@ class provider implements
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, $params);
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users within a specific context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_user) {
+            return;
+        }
+
+        $params = [
+            'contextid' => $context->id,
+            'contextuser' => CONTEXT_USER,
+        ];
+
+        $sql = "SELECT ctx.instanceid as userid
+                  FROM {portfolio_instance_user} piu
+                  JOIN {context} ctx
+                       ON ctx.instanceid = piu.userid
+                       AND ctx.contextlevel = :contextuser
+                 WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        $sql = "SELECT ctx.instanceid as userid
+                  FROM {portfolio_log} pl
+                  JOIN {context} ctx
+                       ON ctx.instanceid = pl.userid
+                       AND ctx.contextlevel = :contextuser
+                  WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -185,6 +224,23 @@ class provider implements
         global $DB;
         // Context could be anything, BEWARE!
         if ($context->contextlevel == CONTEXT_USER) {
+            $DB->delete_records('portfolio_instance_user', ['userid' => $context->instanceid]);
+            $DB->delete_records('portfolio_tempdata', ['userid' => $context->instanceid]);
+            $DB->delete_records('portfolio_log', ['userid' => $context->instanceid]);
+        }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if ($context instanceof \context_user) {
             $DB->delete_records('portfolio_instance_user', ['userid' => $context->instanceid]);
             $DB->delete_records('portfolio_tempdata', ['userid' => $context->instanceid]);
             $DB->delete_records('portfolio_log', ['userid' => $context->instanceid]);
