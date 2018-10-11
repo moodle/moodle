@@ -133,6 +133,30 @@ class provider implements
      * @return  contextlist     $contextlist The contextlist containing the list of contexts used in this plugin.
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
+        $resultset = new contextlist();
+
+        // Users who attempted the quiz.
+        $sql = "SELECT c.id
+                  FROM {context} c
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {quiz} q ON q.id = cm.instance
+                  JOIN {quiz_attempts} qa ON qa.quiz = q.id
+                 WHERE qa.userid = :userid AND qa.preview = 0";
+        $params = ['contextlevel' => CONTEXT_MODULE, 'modname' => 'quiz', 'userid' => $userid];
+        $resultset->add_from_sql($sql, $params);
+
+        // Users with quiz overrides.
+        $sql = "SELECT c.id
+                  FROM {context} c
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {quiz} q ON q.id = cm.instance
+                  JOIN {quiz_overrides} qo ON qo.quiz = q.id
+                 WHERE qo.userid = :userid";
+        $params = ['contextlevel' => CONTEXT_MODULE, 'modname' => 'quiz', 'userid' => $userid];
+        $resultset->add_from_sql($sql, $params);
+
         // Get the SQL used to link indirect question usages for the user.
         // This includes where a user is the manual marker on a question attempt.
         $qubaid = \core_question\privacy\provider::get_related_question_usages_for_user('rel', 'mod_quiz', 'qa.uniqueid', $userid);
@@ -144,33 +168,16 @@ class provider implements
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modname
                   JOIN {quiz} q ON q.id = cm.instance
                   JOIN {quiz_attempts} qa ON qa.quiz = q.id
-             LEFT JOIN {quiz_overrides} qo ON qo.quiz = q.id AND qo.userid = :qouserid
             " . $qubaid->from . "
-            WHERE (
-                qa.userid = :qauserid OR
-                " . $qubaid->where() . " OR
-                qo.id IS NOT NULL
-            ) AND qa.preview = 0
-        ";
-
-        $params = array_merge(
-                [
-                    'contextlevel'      => CONTEXT_MODULE,
-                    'modname'           => 'quiz',
-                    'qauserid'          => $userid,
-                    'qouserid'          => $userid,
-                ],
-                $qubaid->from_where_params()
-            );
-
-        $resultset = new contextlist();
+            WHERE " . $qubaid->where() . " AND qa.preview = 0";
+        $params = ['contextlevel' => CONTEXT_MODULE, 'modname' => 'quiz'] + $qubaid->from_where_params();
         $resultset->add_from_sql($sql, $params);
 
         return $resultset;
     }
 
     /**
-     * Delete all data for all users in the specified context.
+     * Export all user data for the specified user, in the specified contexts.
      *
      * @param   approved_contextlist    $contextlist    The approved contexts to export information for.
      */
