@@ -42,3 +42,4 @@ Uporabite --help opcijo.';
 $string['cliyesnoprompt'] = 'pritisnite d (pomeni da) ali n (pomeni ne)';
 $string['environmentrequireinstall'] = 'namestitev oz. omogočanje je zahtevano.';
 $string['environmentrequireversion'] = 'različica {$a->needed} je zahtevana, vi uporabljate {$a->current}';
+$string['upgradekeyset'] = 'Ključ za nadgradnjo (pustite prazno, če ga ne želite nastaviti)';
