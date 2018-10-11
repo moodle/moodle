@@ -50,6 +50,7 @@ $string['descriptions_help'] = 'Audio descriptions may be used to provide a narr
 $string['descriptionssourcelabel'] = 'Description track URL';
 $string['displayoptions'] = 'Display options';
 $string['entername'] = 'Enter name';
+$string['entertitle'] = 'Enter title';
 $string['entersource'] = 'Source URL';
 $string['enterurl'] = 'Enter URL';
 $string['height'] = 'Height';

@@ -61,9 +61,10 @@ Feature: Add media to Atto
     And I change window size to "large"
     And I set the field with xpath "//*[contains(concat(' ', normalize-space(@class), ' '), ' atto_media_width_entry ')]" to "420"
     And I set the field with xpath "//*[contains(concat(' ', normalize-space(@class), ' '), ' atto_media_height_entry ')]" to "69"
+    And I set the field "Enter title" to "VideoTitle"
     And I click on "Display options" "link"
     When I click on "Insert media" "button"
-    Then "//video[descendant::source[contains(@src, 'moodle-logo.webm')]][contains(@poster, 'moodle-logo.png')][@width=420][@height=69]" "xpath_element" should exist
+    Then "//video[descendant::source[contains(@src, 'moodle-logo.webm')]][contains(@poster, 'moodle-logo.png')][@width=420][@height=69][@title='VideoTitle']" "xpath_element" should exist
 
   @javascript
   Scenario: Insert some media as a video with advanced settings
