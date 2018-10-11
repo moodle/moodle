@@ -92,6 +92,7 @@ $string['deletedefaults'] = 'Delete defaults: {$a}';
 $string['deletedefaultsconfirmation'] = 'Are you sure you want to delete the default category and purpose for {$a} modules?';
 $string['deleteexpiredcontextstask'] = 'Delete expired contexts';
 $string['deleteexpireddatarequeststask'] = 'Delete files from completed data requests that have expired';
+$string['deletemyaccount'] = 'Delete my account';
 $string['deletepurpose'] = 'Delete purpose';
 $string['deletepurposetext'] = 'Are you sure you want to delete the purpose \'{$a}\'?';
 $string['defaultssaved'] = 'Defaults saved';
