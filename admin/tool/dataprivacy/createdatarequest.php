@@ -27,8 +27,9 @@ require_once('lib.php');
 require_once('createdatarequest_form.php');
 
 $manage = optional_param('manage', 0, PARAM_INT);
+$requesttype = optional_param('type', \tool_dataprivacy\api::DATAREQUEST_TYPE_EXPORT, PARAM_INT);
 
-$url = new moodle_url('/admin/tool/dataprivacy/createdatarequest.php', ['manage' => $manage]);
+$url = new moodle_url('/admin/tool/dataprivacy/createdatarequest.php', ['manage' => $manage, 'type' => $requesttype]);
 
 $PAGE->set_url($url);
 
@@ -58,6 +59,7 @@ if (!$manage && !\tool_dataprivacy\api::can_contact_dpo()) {
 }
 
 $mform = new tool_dataprivacy_data_request_form($url->out(false), ['manage' => !empty($manage)]);
+$mform->set_data(['type' => $requesttype]);
 
 // Data request cancelled.
 if ($mform->is_cancelled()) {
