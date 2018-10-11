@@ -86,6 +86,16 @@ class provider implements
     }
 
     /**
+     * Deletes all user content for a user in a context in all plagiarism plugins.
+     *
+     * @param  array    $userids   The users to delete
+     * @param  \context $context   The context to refine the deletion.
+     */
+    public static function delete_plagiarism_for_users(array $userids, \context $context) {
+        static::call_plugin_method('delete_plagiarism_for_users', [$userids, $context]);
+    }
+
+    /**
      * Internal method for looping through all of the plagiarism plugins and calling a method.
      *
      * @param  string $methodname Name of the method to call on the plugins.
