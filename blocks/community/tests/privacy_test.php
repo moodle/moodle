@@ -29,6 +29,7 @@ use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\writer;
 use \core_privacy\local\request\approved_contextlist;
 use \block_community\privacy\provider;
+use \core_privacy\local\request\approved_userlist;
 
 /**
  * Unit tests for the block_community implementation of the privacy API.
@@ -264,4 +265,137 @@ class block_community_privacy_testcase extends \core_privacy\tests\provider_test
         $this->assertCount(1, $communities);
     }
 
+    /**
+     * Test that only users within a course context are fetched.
+     */
+    public function test_get_users_in_context() {
+        global $DB;
+
+        $component = 'block_community';
+
+        // Create a user.
+        $teacher = $this->getDataGenerator()->create_user();
+        $teacherctx = \context_user::instance($teacher->id);
+
+        $userlist = new \core_privacy\local\request\userlist($teacherctx, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(0, $userlist);
+
+        $this->setUser($teacher);
+        // Add two community links for the user.
+        $community = (object)[
+            'userid' => $teacher->id,
+            'coursename' => 'Dummy Community Course Name - 1',
+            'coursedescription' => 'Dummy Community Course Description - 1',
+            'courseurl' => 'https://moodle.org/community_courses/Dummy_Community_Course-1',
+            'imageurl' => ''
+        ];
+        $DB->insert_record('block_community', $community);
+
+        $community = (object)[
+            'userid' => $teacher->id,
+            'coursename' => 'Dummy Community Course Name - 2',
+            'coursedescription' => 'Dummy Community Course Description - 2',
+            'courseurl' => 'https://moodle.org/community_courses/Dummy_Community_Course-2',
+            'imageurl' => ''
+        ];
+        $DB->insert_record('block_community', $community);
+
+        // The list of users within the user context should contain user.
+        provider::get_users_in_context($userlist);
+        $this->assertCount(1, $userlist);
+        $expected = [$teacher->id];
+        $actual = $userlist->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        // The list of users within the system context should be empty.
+        $systemctx = \context_system::instance();
+        $userlist2 = new \core_privacy\local\request\userlist($systemctx, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(0, $userlist2);
+    }
+
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+
+        $component = 'block_community';
+
+        // Create user1.
+        $user1 = $this->getDataGenerator()->create_user();
+        $userctx1 = \context_user::instance($user1->id);
+        // Create user2.
+        $user2 = $this->getDataGenerator()->create_user();
+        $userctx2 = \context_user::instance($user2->id);
+
+        $this->setUser($user1);
+        // Add a community link for user1.
+        $community = (object)[
+            'userid' => $user1->id,
+            'coursename' => 'Dummy Community Course Name - 1',
+            'coursedescription' => 'Dummy Community Course Description - 1',
+            'courseurl' => 'https://moodle.org/community_courses/Dummy_Community_Course-1',
+            'imageurl' => ''
+        ];
+        $DB->insert_record('block_community', $community);
+
+        // Add a community link for user1.
+        $community = (object)[
+            'userid' => $user1->id,
+            'coursename' => 'Dummy Community Course Name - 2',
+            'coursedescription' => 'Dummy Community Course Description - 2',
+            'courseurl' => 'https://moodle.org/community_courses/Dummy_Community_Course-2',
+            'imageurl' => ''
+        ];
+        $DB->insert_record('block_community', $community);
+
+        $this->setUser($user2);
+        // Add a community link for user2.
+        $community = (object)[
+            'userid' => $user2->id,
+            'coursename' => 'Dummy Community Course Name - 3',
+            'coursedescription' => 'Dummy Community Course Description - 3',
+            'courseurl' => 'https://moodle.org/community_courses/Dummy_Community_Course-3',
+            'imageurl' => ''
+        ];
+        $DB->insert_record('block_community', $community);
+
+        $userlist1 = new \core_privacy\local\request\userlist($userctx1, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(1, $userlist1);
+
+        $userlist2 = new \core_privacy\local\request\userlist($userctx2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+
+        // Convert $userlist1 into an approved_contextlist.
+        $approvedlist1 = new approved_userlist($userctx1, $component, $userlist1->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist1);
+
+        // Re-fetch users in userctx1.
+        $userlist1 = new \core_privacy\local\request\userlist($userctx1, $component);
+        provider::get_users_in_context($userlist1);
+        // The user data in userctx1 should be deleted.
+        $this->assertCount(0, $userlist1);
+
+        // Re-fetch users in userctx2.
+        $userlist2 = new \core_privacy\local\request\userlist($userctx2, $component);
+        provider::get_users_in_context($userlist2);
+        // The user data in userctx2 should be still present.
+        $this->assertCount(1, $userlist2);
+
+        // Convert $userlist2 into an approved_contextlist in the system context.
+        $systemcontext = \context_system::instance();
+        $approvedlist2 = new approved_userlist($systemcontext, $component, $userlist2->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist2);
+        // Re-fetch users in userctx2.
+        $userlist2 = new \core_privacy\local\request\userlist($userctx2, $component);
+        provider::get_users_in_context($userlist2);
+        // The user data in systemcontext should not be deleted.
+        $this->assertCount(1, $userlist2);
+    }
 }
