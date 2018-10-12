@@ -440,16 +440,6 @@ class helper {
     }
 
     /**
-     * Returns the cache key for the time created value of the last message of this conversation.
-     *
-     * @param int $convid The conversation identifier.
-     * @return string The key.
-     */
-    public static function get_last_message_time_created_cache_key(int $convid) {
-        return $convid;
-    }
-
-    /**
      * Checks if legacy messages exist for a given user.
      *
      * @param int $userid
