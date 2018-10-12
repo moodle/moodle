@@ -165,6 +165,8 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
      * information returned.
      */
     public function test_user_has_never_posted_subscribed_to_forum() {
+        global $DB;
+
         // Create a course, with a forum, our user under test, another user, and a discussion + post from the other user.
         $course = $this->getDataGenerator()->create_course();
         $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
@@ -199,6 +201,17 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
 
         // There should be data about the forum itself.
         $this->assertNotEmpty($writer->get_data($subcontext));
+
+        // Delete the data now.
+        // Only the post by the user under test will be removed.
+        $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
+            \core_user::get_user($user->id),
+            'mod_forum',
+            [$context->id]
+        );
+        $this->assertCount(1, $DB->get_records('forum_subscriptions', ['userid' => $user->id]));
+        provider::delete_data_for_user($approvedcontextlist);
+        $this->assertCount(0, $DB->get_records('forum_subscriptions', ['userid' => $user->id]));
     }
 
     /**
@@ -207,6 +220,8 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
      * information returned.
      */
     public function test_user_has_never_posted_subscribed_to_discussion() {
+        global $DB;
+
         // Create a course, with a forum, our user under test, another user, and a discussion + post from the other user.
         $course = $this->getDataGenerator()->create_course();
         $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
@@ -256,6 +271,17 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         // Post content is not exported unless the user participated.
         $postsubcontext = $this->get_subcontext($forum, $discussion, $post);
         $this->assertCount(0, $writer->get_data($postsubcontext));
+
+        // Delete the data now.
+        // Only the post by the user under test will be removed.
+        $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
+            \core_user::get_user($user->id),
+            'mod_forum',
+            [$context->id]
+        );
+        $this->assertCount(1, $DB->get_records('forum_discussion_subs', ['userid' => $user->id]));
+        provider::delete_data_for_user($approvedcontextlist);
+        $this->assertCount(0, $DB->get_records('forum_discussion_subs', ['userid' => $user->id]));
     }
 
     /**
@@ -296,8 +322,8 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
     }
 
     /**
-     * Test that a user who has posted a reply to another users discussion
-     * will have all content returned.
+     * Test that a user who has posted a reply to another users discussion will have all content returned, and
+     * appropriate content removed.
      */
     public function test_user_has_posted_reply() {
         global $DB;
@@ -347,6 +373,25 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
 
         // The reply will be included.
         $this->assert_post_data($reply, $writer->get_data($this->get_subcontext($forum, $discussion, $reply)), $writer);
+
+        // Delete the data now.
+        // Only the post by the user under test will be removed.
+        $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
+            \core_user::get_user($user->id),
+            'mod_forum',
+            [$context->id]
+        );
+        provider::delete_data_for_user($approvedcontextlist);
+
+        $reply = $DB->get_record('forum_posts', ['id' => $reply->id]);
+        $this->assertEmpty($reply->subject);
+        $this->assertEmpty($reply->message);
+        $this->assertEquals(1, $reply->deleted);
+
+        $post = $DB->get_record('forum_posts', ['id' => $post->id]);
+        $this->assertNotEmpty($post->subject);
+        $this->assertNotEmpty($post->message);
+        $this->assertEquals(0, $post->deleted);
     }
 
     /**
@@ -354,6 +399,8 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
      * rater's information returned.
      */
     public function test_user_has_rated_others() {
+        global $DB;
+
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', [
             'course' => $course->id,
@@ -404,12 +451,26 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
 
         // The original post will not be included.
         $this->assert_post_data($post, $writer->get_data($this->get_subcontext($forum, $discussion, $post)), $writer);
+
+        // Delete the data of the user who rated the other user.
+        // The rating should not be deleted as it the rating is considered grading data.
+        $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
+            \core_user::get_user($user->id),
+            'mod_forum',
+            [$context->id]
+        );
+        provider::delete_data_for_user($approvedcontextlist);
+
+        // Ratings should remain as they are of another user's content.
+        $this->assertCount(1, $DB->get_records('rating', ['itemid' => $post->id]));
     }
 
     /**
      * Test that ratings of a users own content will all be returned.
      */
     public function test_user_has_been_rated() {
+        global $DB;
+
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', [
             'course' => $course->id,
@@ -457,12 +518,26 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
             'post',
             $post->id
         );
+
+        // Delete the data of the user who was rated.
+        // The rating should now be deleted.
+        $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
+            \core_user::get_user($user->id),
+            'mod_forum',
+            [$context->id]
+        );
+        provider::delete_data_for_user($approvedcontextlist);
+
+        // Ratings should remain as they are of another user's content.
+        $this->assertCount(0, $DB->get_records('rating', ['itemid' => $post->id]));
     }
 
     /**
      * Test that per-user daily digest settings are included correctly.
      */
     public function test_user_forum_digest() {
+        global $DB;
+
         $course = $this->getDataGenerator()->create_course();
 
         $forum0 = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
@@ -514,12 +589,30 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
 
         $this->export_context_data_for_user($user->id, $context2, 'mod_forum');
         $this->assertEquals(2, \core_privacy\local\request\writer::with_context($context2)->get_metadata([], 'digestpreference'));
+
+        // Delete the data for one of the users in one of the forums.
+        $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
+            \core_user::get_user($user->id),
+            'mod_forum',
+            [$context1->id]
+        );
+
+        $this->assertEquals(0, $DB->get_field('forum_digests', 'maildigest', ['userid' => $user->id, 'forum' => $forum0->id]));
+        $this->assertEquals(1, $DB->get_field('forum_digests', 'maildigest', ['userid' => $user->id, 'forum' => $forum1->id]));
+        $this->assertEquals(2, $DB->get_field('forum_digests', 'maildigest', ['userid' => $user->id, 'forum' => $forum2->id]));
+        provider::delete_data_for_user($approvedcontextlist);
+        $this->assertEquals(0, $DB->get_field('forum_digests', 'maildigest', ['userid' => $user->id, 'forum' => $forum0->id]));
+        $this->assertFalse($DB->get_field('forum_digests', 'maildigest', ['userid' => $user->id, 'forum' => $forum1->id]));
+        $this->assertEquals(2, $DB->get_field('forum_digests', 'maildigest', ['userid' => $user->id, 'forum' => $forum2->id]));
+
     }
 
     /**
      * Test that the per-user, per-forum user tracking data is exported.
      */
     public function test_user_tracking_data() {
+        global $DB;
+
         $course = $this->getDataGenerator()->create_course();
 
         $forumoff = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
@@ -548,6 +641,33 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         $this->export_context_data_for_user($user->id, $contextoff, 'mod_forum');
         $this->assertEquals(0,
                 \core_privacy\local\request\writer::with_context($contextoff)->get_metadata([], 'trackreadpreference'));
+
+        // Delete the data for one of the users in the 'on' forum.
+        $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
+            \core_user::get_user($user->id),
+            'mod_forum',
+            [$contexton->id]
+        );
+
+        $this->assertTrue($DB->record_exists('forum_track_prefs', ['userid' => $user->id, 'forumid' => $forumoff->id]));
+        $this->assertFalse($DB->record_exists('forum_track_prefs', ['userid' => $user->id, 'forumid' => $forumon->id]));
+
+        provider::delete_data_for_user($approvedcontextlist);
+
+        $this->assertTrue($DB->record_exists('forum_track_prefs', ['userid' => $user->id, 'forumid' => $forumoff->id]));
+        $this->assertFalse($DB->record_exists('forum_track_prefs', ['userid' => $user->id, 'forumid' => $forumon->id]));
+
+        // Delete the data for one of the users in the 'off' forum.
+        $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
+            \core_user::get_user($user->id),
+            'mod_forum',
+            [$contextoff->id]
+        );
+
+        provider::delete_data_for_user($approvedcontextlist);
+
+        $this->assertFalse($DB->record_exists('forum_track_prefs', ['userid' => $user->id, 'forumid' => $forumoff->id]));
+        $this->assertFalse($DB->record_exists('forum_track_prefs', ['userid' => $user->id, 'forumid' => $forumon->id]));
     }
 
     /**
@@ -708,6 +828,23 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         $this->assertNotEmpty($readdata);
         $this->assertTrue(isset($readdata->firstread));
         $this->assertTrue(isset($readdata->lastread));
+
+        // Delete all data for one of the users in one of the forums.
+        $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
+            \core_user::get_user($user->id),
+            'mod_forum',
+            [$context3->id]
+        );
+
+        $this->assertTrue($DB->record_exists('forum_read', ['userid' => $user->id, 'forumid' => $forum1->id]));
+        $this->assertTrue($DB->record_exists('forum_read', ['userid' => $user->id, 'forumid' => $forum2->id]));
+        $this->assertTrue($DB->record_exists('forum_read', ['userid' => $user->id, 'forumid' => $forum3->id]));
+
+        provider::delete_data_for_user($approvedcontextlist);
+
+        $this->assertTrue($DB->record_exists('forum_read', ['userid' => $user->id, 'forumid' => $forum1->id]));
+        $this->assertTrue($DB->record_exists('forum_read', ['userid' => $user->id, 'forumid' => $forum2->id]));
+        $this->assertFalse($DB->record_exists('forum_read', ['userid' => $user->id, 'forumid' => $forum3->id]));
     }
 
     /**
