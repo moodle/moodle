@@ -13,765 +13,657 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * JavaScript to allow dragging options to slots (using mouse down or touch) or tab through slots using keyboard.
+/**
+ * JavaScript to make drag-drop into text questions work.
  *
- * @package    qtype
- * @subpackage ddwtos
+ * Some vocabulary to help understand this code:
+ *
+ * The question text contains 'drops' - blanks into which the 'drags', the missing
+ * words, can be put.
+ *
+ * The thing that can be moved into the drops are called 'drags'. There may be
+ * multiple copies of the 'same' drag which does not really cause problems.
+ * Each drag has a 'choice' number which is the value set on the drop's hidden
+ * input when this drag is placed in a drop.
+ *
+ * These may be in separate 'groups', distinguished by colour.
+ * Things can only interact with other things in the same group.
+ * The groups are numbered from 1.
+ *
+ * The place where a given drag started from is called its 'home'.
+ *
+ * @module     qtype_ddwtos/ddwtos
+ * @package    qtype_ddwtos
  * @copyright  2018 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      3.6
  */
-define(['jquery', 'core/dragdrop'], function ($, dd) {
+define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys) {
 
     "use strict";
 
-    var t = {
-        /**
-         * The accuracy of the drag item in brink of a slot to be accepted.
-         * @private
+    /**
+     * Object to handle one drag-drop into text question.
+     *
+     * @param {String} containerId id of the outer div for this question.
+     * @param {boolean} readOnly whether the question is being displayed read-only.
+     * @constructor
+     */
+    function DragDropToTextQuestion(containerId, readOnly) {
+        this.containerId = containerId;
+        if (readOnly) {
+            this.getRoot().addClass('qtype_ddwtos-readonly');
+        }
+        this.resizeAllDragsAndDrops();
+        this.cloneDrags();
+        this.positionDrags();
+    }
 
+    /**
+     * In each group, resize all the items to be the same size.
+     */
+    DragDropToTextQuestion.prototype.resizeAllDragsAndDrops = function() {
+        var thisQ = this;
+        this.getRoot().find('.answercontainer > div').each(function(i) {
+            thisQ.resizeAllDragsAndDropsInGroup(i + 1);
+        });
+    };
 
-         */
-        DRAG_PROXIMITY: 10,
+    /**
+     * In a given group, set all the drags and drops to be the same size.
+     *
+     * @param {int} group the group number.
+     */
+    DragDropToTextQuestion.prototype.resizeAllDragsAndDropsInGroup = function(group) {
+        var thisQ = this,
+            dragHomes = this.getRoot().find('.draggrouphomes' + group + ' span.draghome'),
+            maxWidth = 0,
+            maxHeight = 0;
 
-        /**
-         * Tolerance in px for highlighting the borders of question container
-         * when a drag is about to leave the containe's boundaries.
-         * @private
-         */
-        CONTAINER_BORDER_TOLERANCE: 10,
+        // Find the maximum size of any drag in this groups.
+        dragHomes.each(function(i, drag) {
+            maxWidth = Math.max(maxWidth, Math.ceil(drag.offsetWidth));
+            maxHeight = Math.max(maxHeight, Math.ceil(0 + drag.offsetHeight));
+        });
 
-        /**
-         * Animation time in milliseconds
-         * @private
-         */
-        ANIMATION_DURATION: 300,
+        // The size we will want to set is a bit bigger than this.
+        maxWidth += 8;
+        maxHeight += 2;
 
-        /**
-         * Params object, Todo: I only need to know whether the question is 'readonly'
-         * @private
-         */
-        params: {},
+        // Set each drag home to that size.
+        dragHomes.each(function(i, drag) {
+            thisQ.setElementSize(drag, maxWidth, maxHeight);
+        });
 
-        nextDragItemNo : 1,
+        // Set each drop to that size.
+        this.getRoot().find('span.drop.group' + group).each(function(i, drop) {
+            thisQ.setElementSize(drop, maxWidth, maxHeight);
+        });
+    };
 
-        /**
-         * Put all our selectors in the same place so we can quickly find and change them later
-         * if the structure of the document changes.
-         */
-        cssSelectors: function (topnode) {
-            return {
-                topNode: function () {
-                    return topnode;
-                },
-                dragContainer: function () {
-                    return topnode + ' div.drags';
-                },
-                drags: function () {
-                    return this.dragContainer() + ' span.drag';
-                },
-                drag: function (no) {
-                    return this.drags() + '.no' + no;
-                },
-                dragsInGroup: function (groupno) {
-                    return this.drags() + '.group' + groupno;
-                },
-                dragsForChoiceInGroup: function (choiceno, groupno) {
-                    return this.dragsInGroup(groupno) + '.choice' + choiceno;
-                },
-                placedDragsInGroup: function (groupno) {
-                    return this.dragsInGroup(groupno) + '.placed';
-                },
-                unplacedDragsInGroup: function (groupno) {
-                    return this.dragsInGroup(groupno) + '.unplaced';
-                },
-                unplacedDragsForChoiceInGroup: function (choiceno, groupno) {
-                    return this.unplacedDragsInGroup(groupno) + '.choice' + choiceno;
-                },
-                dragHomes: function () {
-                    return topnode + ' span.draghome';
-                },
-                dragHomesGroup: function (groupno) {
-                    return topnode + ' .draggrouphomes' + groupno + ' span.draghome';
-                },
-                dragHome: function (groupno, choiceno) {
-                    return topnode + ' .draggrouphomes' + groupno + ' span.draghome.choice' + choiceno;
-                },
-                // List of selectors related to drops.
-                drops: function () {
-                    return topnode + ' span.drop';
-                },
-                dropForPlace: function (placeno) {
-                    return this.drops() + '.place' + placeno;
-                },
-                dropsInGroup: function (groupno) {
-                    return this.drops() + '.group' + groupno;
-                },
-                dropsGroup: function (groupno) {
-                    return topnode + ' span.drop.group' + groupno;
-                }
-            };
-        },
+    /**
+     * Set a given DOM element to be a particular size.
+     *
+     * @param {HTMLElement} element
+     * @param {int} width
+     * @param {int} height
+     */
+    DragDropToTextQuestion.prototype.setElementSize = function(element, width, height) {
+        $(element).width(width).height(height).css('lineHeight', height + 'px');
+    };
 
-        /**
-         * Return an array of inputids.
-         * @param topNode
-         * @returns {Array}
-         */
-        getInputIds : function (topNode) {
-            var inputIds = [];
-            var count = 0;
-            $(topNode).find('input[type=hidden]').each(function(index, input) {
-                var questionIdNumber = parseInt(topNode.match(/\d/g));
-                if ($(input)[0].id.indexOf('_' + questionIdNumber + '_p') !== -1) {
-                    inputIds[++count] = $(input)[0].id;
-                }
-            });
-            return inputIds;
-        },
+    /**
+     * Invisible 'drag homes' are output by the renderer. These have the same properties
+     * as the drag items but are invisible. We clone these invisible elements to make the
+     * actual drag items.
+     */
+    DragDropToTextQuestion.prototype.cloneDrags = function() {
+        var thisQ = this;
+        this.getRoot().find('span.draghome').each(function(index, draghome) {
+            thisQ.cloneDragsForOneChoice($(draghome));
+        });
+    };
 
-        /**
-         * Return a given inputid
-         * @param topNode
-         * @param no
-         * @returns {*}
-         */
-        getInputId : function(topNode, no) {
-            return t.getInputIds(topNode)[no];
-        },
-
-        /**
-         * Initialise questions
-         * @param params
-         */
-        init : function (params) {
-            var pendingId = 'qtype_ddwtos-' + Math.random().toString(36).slice(2); // Random string.
-            M.util.js_pending(pendingId);
-            t.params = params;
-            t.initQuestion(params['topnode']);
-            M.util.js_complete(pendingId);
-        },
-
-        /**
-         * Update the position on the drags on resize
-         * @param string topNode, unique question id
-         */
-        updateOnResize : function(topNode) {
-            $(window).on('resize', function () {
-                t.updateDragsPositions(topNode);
-            }).resize();
-        },
-
-        /**
-         * Initialise question.
-         * @param topNode
-         */
-        initQuestion: function (topNode) {
-            // Return if question has been initialised.
-            if ($(topNode).data('initialised') === 1 ) {
-                return;
+    /**
+     * Clone drag item for one choice.
+     *
+     * @param {jQuery} dragHome the drag home to clone.
+     */
+    DragDropToTextQuestion.prototype.cloneDragsForOneChoice = function(dragHome) {
+        if (dragHome.hasClass('infinite')) {
+            var noOfDrags = this.noOfDropsInGroup(this.getGroup(dragHome));
+            for (var i = 0; i < noOfDrags; i++) {
+                this.cloneDrag(dragHome);
             }
-            t.setPaddingSizesAll(topNode);
-            t.cloneDragItems(topNode);
-            t.updateDragsPositions(topNode);
-            t.updateOnResize(topNode);
-            t.makeDropZones(topNode);
-            // Remember that the question has been initialised.
-            $(topNode).data('initialised', 1);
-        },
-
-        /**
-         * Set the position of the drag to the position of the drop item.
-         * @param topNode
-         * @param drag
-         * @param drop
-         */
-        putDragInDrop: function (topNode, drag, drop) {
-            var inputNode = $('input#' + t.getInputId(topNode, t.getPlace(drop)));
-            if (inputNode.val() > 0) {
-                var prevDrag = $(t.cssSelectors(topNode).dragsForChoiceInGroup(inputNode.val(), t.getGroup(drop)));
-                if (prevDrag.length) {
-                    t.putBackToOrigin(topNode, prevDrag);
-                }
-            }
-            if (drag && drag.length) {
-                inputNode.val(t.getChoice(drag));
-                t.setDragOffset(drag, drop);
-                drag.css('z-index', (Number(drag.css('z-index')) - 1));
-            } else {
-                inputNode.val(0);
-                drag.removeClass('placed');
-                drag.addClass('unplaced');
-            }
-        },
-
-        /**
-         * Update the position of drags
-         * @param topNode
-         */
-        updateDragsPositions : function (topNode) {
-            var unplacedDrags = $(t.cssSelectors(topNode).drags());
-            unplacedDrags.addClass('unplaced');
-            for (var i = 0; i < unplacedDrags.length; i++) {
-                var unplaceDrag = $(unplacedDrags[i]);
-                var groupNo = t.getGroup(unplaceDrag);
-                var choiceNo = t.getChoice(unplaceDrag);
-                unplaceDrag.offset($(topNode + ' .draggrouphomes' + groupNo + ' span:nth-child(' + choiceNo + ')').offset());
-            }
-            // Let the drag in target follow the position of the target after resize.
-            for (var pn in t.getInputIds(topNode)) {
-                //var drop = $(t.cssSelectors(topNode).dropForPlace(pn));
-                var inputNode = $('input#' + t.getInputId(topNode, pn));
-                var choiceNo = Number(inputNode.val());
-                if (choiceNo !== 0) {
-                    var drop = $(t.cssSelectors(topNode).dropForPlace(pn));
-                    var groupNo = t.getGroup(drop);
-                    var drag = $(t.cssSelectors(topNode).unplacedDragsForChoiceInGroup(choiceNo, groupNo));
-                    if (drag.hasClass('infinite')) {
-                        drag = $(t.cssSelectors(topNode).drag(t.getNo(drag)));
-                    }
-                    t.setDragOffset(drag, drop);
-                }
-            }
-        },
-
-        /**
-         * Invisible 'drag homes' are output by the renderer. These have the same properties
-         * as the drag items but are invisible. We clone these invisible elements to make the
-         * actual drag items.
-         * @param topNode
-         */
-        cloneDragItems: function(topNode) {
-            t.nextDragItemNo = 1;
-            $(t.cssSelectors(topNode).dragHomes()).each(function(index, draghome) {
-                t.cloneDragItemsForOneChoice(topNode, $(draghome));
-            });
-        },
-        /**
-         * Clone drag item for one choice.
-         * @param topNode
-         * @param draghome
-         */
-        cloneDragItemsForOneChoice: function(topNode, draghome) {
-            if (draghome.hasClass('infinite')) {
-                var groupno = t.getGroup(draghome);
-                var noofdrags = $(t.cssSelectors(topNode).dropsInGroup(groupno)).length;
-                for (var i = 0; i < noofdrags; i++) {
-                    t.cloneDragItem(topNode, draghome);
-                }
-            } else {
-                t.cloneDragItem(topNode, draghome);
-            }
-        },
-        /**
-         * Clone drag item.
-         * @param topNode
-         * @param draghome
-         */
-        cloneDragItem: function(topNode, draghome) {
-            var drag = draghome.clone();
-            drag.removeClass('draghome');
-            drag.addClass('drag');
-            drag.addClass('no' + t.nextDragItemNo);
-            t.nextDragItemNo++;
-            drag.css({
-                'top': draghome.offset().top,
-                'left': draghome.offset().left,
-                'visibility': 'visible',
-                'position': 'absolute'
-            });
-            $(t.cssSelectors(topNode).dragContainer()).append(drag);
-            if (!t.params['readonly']) {
-                drag.addClass('unplaced');
-                drag.on('mousedown touchstart', t.mouseDownOrTouchStart(topNode, drag));
-            }
-        },
-
-        /**
-         * Return a function on mousedown or touchstart.
-         * @param dragProxy
-         * @returns {Function}
-         */
-        mouseDownOrTouchStart: function(topNode, dragProxy) {
-            return function (e) {
-                if (dd.prepare(e).start === true) {
-                    e.preventDefault();
-                    dragProxy.css('cursor', 'move');
-                    dragProxy.addClass('moodle-has-zindex');
-                    var choice = t.getChoice(dragProxy);
-                    var group = t.getGroup(dragProxy);
-                    var draginfo = {};
-                    draginfo.id = 'g' + group + 'c' + choice;
-                    draginfo.group = group;
-                    draginfo.choice = choice;
-                    draginfo.drag = dragProxy;
-                    draginfo.origin = dragProxy.position();
-                    var om = function (x, y) {
-                        t.onMove(topNode, x, y, draginfo, dragProxy);
-                    };
-                    var od = function () {
-                        t.onDrop(topNode, draginfo, dragProxy);
-                    };
-                    dragProxy.css('z-index', (Number(dragProxy.css('z-index')) + 1));
-                    dd.start(e, dragProxy, om, od);
-                }
-            };
-        },
-
-        /**
-         * Called when user drags a drag item.
-         *
-         * @param topNode
-         * @param x
-         * @param y
-         * @param draginfo
-         * @param dragProxy
-         */
-        onMove: function (topNode, x, y, draginfo, dragProxy) {
-            var container = $(topNode).find('.formulation');
-            if (t.isDragOutsideQuestionContainer(container, x, y)) {
-                // Highlight the border around the question container.
-                container.addClass('outside-container');
-
-                dragProxy.on('mouseup', function() {
-                    // Remove the highlighted border around the question container.
-                    container.removeClass('outside-container');
-                });
-                return;
-            }
-            var drops = $(t.cssSelectors(topNode).dropsInGroup(draginfo.group));
-            drops.each(function(index, drop){
-                if (t.isDragCloseToTarget(dragProxy, $(drop))) {
-                    $(drop).addClass('valid-drag-over-drop');
-                } else {
-                    $(drop).removeClass('valid-drag-over-drop');
-                }
-            });
-        },
-
-        /**
-         * Called when user drops a drag item and applies the change.
-         *
-         * @param topNode
-         * @param draginfo
-         * @param dragProxy
-         */
-        onDrop: function (topNode, draginfo, dragProxy) {
-            var drops = $(t.cssSelectors(topNode).dropsInGroup(draginfo.group));
-            var breakOut = false;
-            drops.each(function(index, drop){
-                // If dropping the same drag inside the drop break out.
-                if (t.isDragInTheSameDrop(dragProxy, $(drop))) {
-                    breakOut = true;
-                    return false;
-                }
-                if (t.isDragCloseToTarget(dragProxy, $(drop))) {
-                    $(drop).removeClass('valid-drag-over-drop');
-                    t.putDragInDrop(topNode, $(dragProxy), $(drop));
-
-                    breakOut = true;
-                    return false;
-                }
-            });
-            if(breakOut) {
-                //breakOut = false;
-                return false;
-            } else {
-                t.putBackToOrigin(topNode, dragProxy);
-            }
-        },
-
-        /**
-         * Make drop zones for keyboard access.
-         * @param topNode
-         */
-        makeDropZones: function(topNode) {
-            $(t.cssSelectors(topNode).drops()).each(function(index, drop){
-                t.makeDropZone(topNode, $(drop));
-            });
-        },
-
-        /**
-         * Make a drop dropn zone to accept key press.
-         * @param topNode
-         * @param drop
-         */
-        makeDropZone: function(topNode, drop) {
-            if (!t.params['readonly']) {
-                drop.on('keydown', function(e) {
-                    t.dropZoneKeyPress(topNode, e);
-                });
-            }
-        },
-
-        /**
-         * It put back the drag in position
-         * @param drag
-         */
-        putBackToOrigin: function (topNode, drag) {
-            drag.removeClass('placed');
-            drag.addClass('unplaced');
-            var groupNo = t.getGroup(drag);
-            var choiceNo = t.getChoice(drag);
-            // Find the drag in the list of this draggrouphomes, make the original visible and destroy the cloned drag.
-            var dragHome = $(topNode + ' .draggrouphomes' + groupNo + ' span:nth-child(' + choiceNo + ')');
-            // Animate the option back to the original position.
-            t.animateEl(drag, dragHome, t.ANIMATION_DURATION, 'swing');
-        },
-
-        /**
-         * Check whether a slot contains an option and returns the option.
-         *
-         * @param slot the slot object which may contain an option object
-         * @returns option object if slot contains an option or null if it doesn't
-         */
-         isDragInDrop: function(topNode, drop) {
-            if (!drop.length) {
-                return false;
-            }
-            // If there is a drag in this drop put it back to origin.
-            var dragInDrop = drop.children(topNode + ' span.placed');
-            if (dragInDrop.length) {
-                //t.putBackToOrigin(dragInDrop);
-                return dragInDrop;
-            }
-            return false;
-        },
-
-        isDragOutsideQuestionContainer : function (container, x, y) {
-            var containerEdges = {
-                'lt': { 'Y': container.offset().top + t.CONTAINER_BORDER_TOLERANCE,
-                    'X': container.offset().left + t.CONTAINER_BORDER_TOLERANCE},
-                'rt': { 'Y' : container.offset().top + t.CONTAINER_BORDER_TOLERANCE,
-                    'X' : container.offset().left + container[0].clientWidth - t.CONTAINER_BORDER_TOLERANCE},
-                'lb': { 'Y' : container.offset().top + container[0].clientHeight - t.CONTAINER_BORDER_TOLERANCE,
-                    'X' : container.offset().left},
-                'rb': { 'Y' : container.offset().top + container[0].clientHeight - t.CONTAINER_BORDER_TOLERANCE,
-                    'X' : container.offset().left + container[0].clientWidth - t.CONTAINER_BORDER_TOLERANCE}
-            };
-
-            // Check boundaries (I know that these ifs could be simplified as one if, bit i think this is more readable).
-            if (y < containerEdges.lt.Y || x < containerEdges.lt.X) {
-                $(container).addClass('outside-container');
-                return true;
-            }
-            if (y < containerEdges.rt.Y || x > containerEdges.rt.X) {
-                $(container).addClass('outside-container');
-                return true;
-            }
-            if (y > containerEdges.lb.Y || x < containerEdges.lb.X) {
-                $(container).addClass('outside-container');
-                return true;
-            }
-            if (y > containerEdges.rb.Y || x > containerEdges.rb.X) {
-                $(container).addClass('outside-container');
-                return true;
-            }
-            $(container).removeClass('outside-container');
-            return false;
-        },
-
-        /**
-         * Animate the object to the given destination.
-         *
-         * @param el object: the object to be animated
-         * @param duration int: duration on animation in miliseconds
-         * @param easing string: the easing type
-         * @param ctop css value of current top
-         * @param cleft css value of current left
-         * @param top css value of origin top
-         * @param left css value of origin left
-         */
-        animateEl: function (dragBack,  dragHome, duration, easing) {
-            var durationFactor = (Math.abs(dragBack.css('left') - dragHome.offset().left) +
-                                Math.abs(dragBack.css('top') - dragHome.offset().top));
-            durationFactor = (durationFactor > 1) ? durationFactor : 1;
-
-            dragBack.animate(
-                {
-                    opacity: 0.5,
-                    width: (parseInt(dragBack.css('width')) * 1.2) + 'px',
-                    height: (parseInt(dragBack.css('height')) * 1.2) + 'px',
-                    top: dragHome.offset().top,
-                    left: dragHome.offset().left
-                },
-                {
-                    duration: duration / durationFactor,
-                    easing: easing
-                }
-            );
-            dragBack.animate(
-                {
-                    opacity: 1,
-                    width: parseInt(dragBack.css('width')) +'px',
-                    height: parseInt(dragBack.css('height')) + 'px',
-                    top: dragHome.offset().top,
-                    left: dragHome.offset().left
-                },
-                {
-                    duration: duration / durationFactor,
-                    easing: easing
-                }
-            );
-        },
-
-        /**
-         * isDragCloseToTarget checks whether the drag item is close enough to the target
-         *
-         * @param drag
-         * @param target
-         * @returns {boolean}
-         */
-        isDragCloseToTarget: function (drag, target) {
-            var midDragX = drag.offset().left + drag.outerWidth() / 2;
-            var midDragY = drag.offset().top + drag.outerHeight() / 2;
-            var midTargetX = target.offset().left + target.outerWidth() / 2;
-            var midTargetY = target.offset().top + target.outerHeight() / 2;
-            // Is the drag item close to target?
-            if ((midDragX > (midTargetX - t.DRAG_PROXIMITY) &&
-                midDragX < (midTargetX + t.DRAG_PROXIMITY)) &&
-                (midDragY > (midTargetY - t.DRAG_PROXIMITY) &&
-                midDragY < (midTargetY + t.DRAG_PROXIMITY))) {
-                return true;
-            }
-            return false;
-        },
-
-        /**
-         * Set padding to all drags and drops.
-         */
-        setPaddingSizesAll: function (topNode) {
-            for (var groupno = 1; groupno <= 8; groupno++) {
-                t.setPaddingSizeForGroup(topNode, groupno);
-            }
-        },
-
-        /**
-         * Set padding to drags and drops in a group.
-         * @param groupNo
-         */
-        setPaddingSizeForGroup: function (topNode, groupNo) {
-            var groupItems = $(t.cssSelectors(topNode).dragHomesGroup(groupNo));
-            if (groupItems.length != 0) {
-                var maxWidth = 0;
-                var maxHeight = 0;
-                // Find max height and width
-                $(groupItems).each(function (item, groupItem) {
-                    maxWidth = Math.max(maxWidth, Math.ceil(groupItem.offsetWidth));
-                    maxHeight = Math.max(maxHeight, Math.ceil(groupItem.offsetHeight));
-                });
-                maxWidth += 8;
-                maxHeight += 2;
-
-                $(groupItems).each(function (item, dragItem) {
-                    t.padWidthHeight(dragItem, maxWidth, maxHeight);
-
-                    t.positionDrags(topNode, groupNo, dragItem);
-                });
-                $(t.cssSelectors(topNode).dropsGroup(groupNo)).each(function (item, dropItem) {
-                    t.padWidthHeight(dropItem, maxWidth + 2, maxHeight + 2);
-                });
-            }
-        },
-
-        /**
-         *
-         *
-         * @param topNode
-         * @param groupNo
-         * @param dragItem
-         */
-        positionDrags: function (topNode, groupNo, dragItem) {
-            var dragsingroup = $(t.cssSelectors(topNode).dragsInGroup(groupNo));
-            $(t.cssSelectors(topNode).dragContainer()).append($(dragsingroup).append($(dragItem)));
-        },
-
-        padWidthHeight: function (node, width, height) {
-            $(node).css(
-                {
-                    'width': width + 'px',
-                    'height': height + 'px',
-                    'lineHeight': height + 'px'
-                }
-            );
-        },
-
-        /**
-         * Return the number at the end of the prefix.
-         * @param node
-         * @param prefix
-         * @returns {*|number}
-         */
-        getClassnameNumericSuffix: function (node, prefix) {
-            var classes = node.attr('class');
-            if (classes !== '') {
-                var classesArr = classes.split(' ');
-                for (var index = 0; index < classesArr.length; index++) {
-                    var patt1 = new RegExp('^' + prefix + '([0-9])+$');
-                    if (patt1.test(classesArr[index])) {
-                        var patt2 = new RegExp('([0-9])+$');
-                        var match = patt2.exec(classesArr[index]);
-                        return Number(match[0]);
-                    }
-                }
-            }
-            throw 'Prefix "' + prefix + '" not found in class names.';
-        },
-        getChoice: function (node) {
-            return t.getClassnameNumericSuffix(node, 'choice');
-        },
-        getGroup: function (node) {
-            return t.getClassnameNumericSuffix(node, 'group');
-        },
-        getPlace: function (node) {
-            return t.getClassnameNumericSuffix(node, 'place');
-        },
-        getNo: function (node) {
-            return t.getClassnameNumericSuffix(node, 'no');
-        },
-
-        /**
-         * Set drag's offset to the appropriate drop's offset.
-         *
-         * @param drag
-         * @param drop
-         */
-        setDragOffset : function(drag, drop) {
-            drag.removeClass('unplaced');
-            drag.addClass('placed');
-            drag.offset(
-                {
-                    'top' : Math.round(drop.offset().top) + 1,
-                    'left' : Math.round(drop.offset().left) + 1
-                }
-            );
-        },
-
-        /**
-         * Check whether user drop the current drag is in the same drop
-         * @param drag
-         * @param drop
-         * @returns {boolean}
-         */
-        isDragInTheSameDrop: function (drag, drop) {
-            if (parseInt(drag.css('top')) === Math.round(drop.offset().top) + 1) {
-                return true;
-            }
-            return false;
-        },
-
-        /**
-         * Remove drag from drop.
-         * @param drop
-         */
-        removeDragFromDrop: function (topNode, drop) {
-            t.putDragInDrop(topNode, null, drop);
-        },
-
-        /**
-         * Tab through drops and place drag in drop or remove drag from drop using keybord.
-         * @param e
-         */
-        dropZoneKeyPress: function(topNode, e) {
-            var keys =  {
-                '27': 'remove',   // Escape
-                '32': 'next',     // Space
-                '37': 'previous', // Left arrow
-                '38': 'previous', // Up arrow
-                '39': 'next',     // Right arrow
-                '40': 'next'      // Down arrow
-            };
-            e.direction = keys[e.keyCode];
-            //e.preventDefault();
-            switch (e.direction) {
-                case 'next' :
-                    e.preventDefault();
-                    t.placeNextDragIn(topNode, $(e.target));
-                    break;
-                case 'previous' :
-                    e.preventDefault();
-                    t.placePreviousDragIn(topNode, $(e.target));
-                    break;
-                case 'remove' :
-                    e.preventDefault();
-                    t.removeDragFromDrop(topNode, $(e.target));
-                    break;
-            }
-        },
-
-        /**
-         * Place next drag in drop.
-         * @param drop
-         */
-        placeNextDragIn: function(topNode, drop) {
-            t.chooseNextChoiceForDrop(topNode, drop, 1);
-        },
-
-        /**
-         * Place previous drag in drop.
-         * @param drop
-         */
-        placePreviousDragIn: function(topNode, drop) {
-            t.chooseNextChoiceForDrop(topNode, drop, -1);
-        },
-
-        /**
-         * Choose the next drag to put in drop.
-         * @param drop
-         * @param direction
-         */
-        chooseNextChoiceForDrop: function(topNode, drop, direction) {
-            var groupNo = t.getGroup(drop);
-            var current = t.currentChoiceInDrop(topNode, $(drop));
-            var unplacedDragsInGroup = $(t.cssSelectors(topNode).unplacedDragsInGroup(groupNo));
-            var next = current;
-            var arrayOfDrags = unplacedDragsInGroup.toArray();
-            if (0 === current) {
-                if (direction === 1) {
-                    next = t.getChoice($(arrayOfDrags.shift()));
-                } else {
-                    next = t.getChoice($(arrayOfDrags.pop()));
-                }
-            } else {
-                next = current + direction;
-            }
-            var drag = $(t.cssSelectors(topNode).unplacedDragsForChoiceInGroup(next, groupNo));
-            if (drag.length === 0) {
-                drag = $(t.cssSelectors(topNode).unplacedDragsForChoiceInGroup(next + direction, groupNo));
-            }
-            if ($(t.cssSelectors(topNode).dragsForChoiceInGroup(next, groupNo)) === null) {
-                t.removeDragFromDrop(topNode, drop);
-                return;
-            } else {
-                if (drag.hasClass('infinite')) {
-                    var bOut = false; // Break out of each loop boolean variable.
-                    drag.each(function (index, draginf) {
-                        if ($(draginf).hasClass('unplaced')) {
-                            t.putDragInDrop(topNode, $(draginf), drop);
-                            bOut = true;
-                            return false;
-                        }
-                    });
-                    if (bOut) {
-                        bOut = false;
-                        return false;
-                    }
-                } else {
-                    t.putDragInDrop(topNode, drag, drop);
-                }
-            }
-        },
-
-        /**
-         * Return curent drag choice in drop.
-         *
-         * @param drop
-         * @returns {*|number}
-         */
-        currentChoiceInDrop: function(topNode, drop) {
-            var inputNode = $('input#' + t.getInputId(topNode, t.getPlace(drop)));
-            return Number($(inputNode).val());
+        } else {
+            this.cloneDrag(dragHome);
         }
     };
-    return t;
+
+    /**
+     * Clone drag item.
+     *
+     * @param {jQuery} dragHome
+     */
+    DragDropToTextQuestion.prototype.cloneDrag = function(dragHome) {
+        var drag = dragHome.clone();
+        drag.removeClass('draghome')
+            .addClass('drag unplaced moodle-has-zindex')
+            .offset(dragHome.offset());
+        this.getRoot().find('div.drags').append(drag);
+    };
+
+    /**
+     * Update the position of drags.
+     */
+    DragDropToTextQuestion.prototype.positionDrags = function() {
+        var thisQ = this,
+            root = this.getRoot();
+
+        // First move all items back home.
+        root.find('span.drag').each(function(i, dragNode) {
+            var drag = $(dragNode),
+                currentPlace = thisQ.getClassnameNumericSuffix(drag, 'inplace');
+            drag.addClass('unplaced')
+                .removeClass('placed')
+                .offset(thisQ.getDragHome(thisQ.getGroup(drag), thisQ.getChoice(drag)).offset());
+            if (currentPlace !== null) {
+                drag.removeClass('inplace' + currentPlace);
+            }
+        });
+
+        // Then place the once that should be placed.
+        root.find('input.placeinput').each(function(i, inputNode) {
+            var input = $(inputNode),
+                choice = input.val();
+            if (choice === '0') {
+                // No item in this place.
+                return;
+            }
+
+            var place = thisQ.getPlace(input);
+            thisQ.getUnplacedChoice(thisQ.getGroup(input), choice)
+                .removeClass('unplaced')
+                .addClass('placed inplace' + place)
+                .offset(root.find('.drop.place' + place).offset());
+        });
+    };
+
+    /**
+     * Handles the start of dragging an item.
+     *
+     * @param {Event} e the touch start or mouse down event.
+     */
+    DragDropToTextQuestion.prototype.handleDragStart = function(e) {
+        var thisQ = this,
+            drag = $(e.target).closest('.drag');
+
+        var info = dragDrop.prepare(e);
+        if (!info.start) {
+            return;
+        }
+
+        var currentPlace = this.getClassnameNumericSuffix(drag, 'inplace');
+        if (currentPlace !== null) {
+            this.setInputValue(currentPlace, 0);
+            drag.removeClass('inplace' + currentPlace);
+        }
+
+        drag.addClass('beingdragged');
+        dragDrop.start(e, drag, function(x, y, drag) {
+            thisQ.dragMove(x, y, drag);
+        }, function(x, y, drag) {
+            thisQ.dragEnd(x, y, drag);
+        });
+    };
+
+    /**
+     * Called whenever the currently dragged items moves.
+     *
+     * @param {Number} pageX the x position.
+     * @param {Number} pageY the y position.
+     * @param {jQuery} drag the item being moved.
+     */
+    DragDropToTextQuestion.prototype.dragMove = function(pageX, pageY, drag) {
+        var thisQ = this;
+        this.getRoot().find('span.drop.group' + this.getGroup(drag)).each(function(i, dropNode) {
+            var drop = $(dropNode);
+            if (thisQ.isPointInDrop(pageX, pageY, drop)) {
+                drop.addClass('valid-drag-over-drop');
+            } else {
+                drop.removeClass('valid-drag-over-drop');
+            }
+        });
+    };
+
+    /**
+     * Called when user drops a drag item.
+     *
+     * @param {Number} pageX the x position.
+     * @param {Number} pageY the y position.
+     * @param {jQuery} drag the item being moved.
+     */
+    DragDropToTextQuestion.prototype.dragEnd = function(pageX, pageY, drag) {
+        var thisQ = this,
+            root = this.getRoot(),
+            placed = false;
+        root.find('span.drop.group' + this.getGroup(drag)).each(function(i, dropNode) {
+            var drop = $(dropNode);
+            if (!thisQ.isPointInDrop(pageX, pageY, drop)) {
+                // Not this drop.
+                return true;
+            }
+
+            // Now put this drag into the drop.
+            drop.removeClass('valid-drag-over-drop');
+            thisQ.sendDragToDrop(drag, drop);
+            placed = true;
+            return false; // Stop the each() here.
+        });
+
+        if (!placed) {
+            this.sendDragHome(drag);
+        }
+    };
+
+    /**
+     * Animate a drag item into a given place (or back home).
+     *
+     * @param {jQuery|null} drag the item to place. If null, clear the place.
+     * @param {jQuery} drop the place to put it.
+     */
+    DragDropToTextQuestion.prototype.sendDragToDrop = function(drag, drop) {
+        // Is there already a drag in this drop? if so, evict it.
+        var oldDrag = this.getCurrentDragInPlace(this.getPlace(drop));
+        if (oldDrag.length !== 0) {
+            this.sendDragHome(oldDrag);
+        }
+
+        if (drag.length === 0) {
+            this.setInputValue(this.getPlace(drop), 0);
+        } else {
+            this.setInputValue(this.getPlace(drop), this.getChoice(drag));
+            drag.removeClass('unplaced')
+                .addClass('placed inplace' + this.getPlace(drop));
+            this.animateTo(drag, drop);
+        }
+    };
+
+    /**
+     * Animate a drag back to its home.
+     *
+     * @param {jQuery} drag the item being moved.
+     */
+    DragDropToTextQuestion.prototype.sendDragHome = function(drag) {
+        drag.removeClass('placed').addClass('unplaced');
+        var currentPlace = this.getClassnameNumericSuffix(drag, 'inplace');
+        if (currentPlace !== null) {
+            drag.removeClass('inplace' + currentPlace);
+        }
+
+        this.animateTo(drag, this.getDragHome(this.getGroup(drag), this.getChoice(drag)));
+    };
+
+    /**
+     * Handles keyboard events on drops.
+     *
+     * Drops are focusable. Once focused, right/down/space switches to the next choice, and
+     * left/up switches to the previous. Escape clear.
+     *
+     * @param {KeyboardEvent} e
+     */
+    DragDropToTextQuestion.prototype.handleKeyPress = function(e) {
+        var drop = $(e.target).closest('.drop'),
+            currentDrag = this.getCurrentDragInPlace(this.getPlace(drop)),
+            nextDrag = $();
+
+        switch (e.keyCode) {
+            case keys.space:
+            case keys.arrowRight:
+            case keys.arrowDown:
+                nextDrag = this.getNextDrag(this.getGroup(drop), currentDrag);
+                break;
+
+            case keys.arrowLeft:
+            case keys.arrowUp:
+                nextDrag = this.getPreviousDrag(this.getGroup(drop), currentDrag);
+                break;
+
+            case keys.escape:
+                break;
+
+            default:
+                return; // To avoid the preventDefault below.
+        }
+
+        e.preventDefault();
+        this.sendDragToDrop(nextDrag, drop);
+    };
+
+    /**
+     * Choose the next drag in a group.
+     *
+     * @param {int} group which group.
+     * @param {jQuery} drag current choice (empty jQuery if there isn't one).
+     * @return {jQuery} the next drag in that group, or null if there wasn't one.
+     */
+    DragDropToTextQuestion.prototype.getNextDrag = function(group, drag) {
+        var choice,
+            numChoices = this.noOfChoicesInGroup(group);
+
+        if (drag.length === 0) {
+            choice = 1; // Was empty, so we want to select the first choice.
+        } else {
+            choice = this.getChoice(drag) + 1;
+        }
+
+        var next = this.getUnplacedChoice(group, choice);
+        while (next.length === 0 && choice < numChoices) {
+            choice++;
+            next = this.getUnplacedChoice(group, choice);
+        }
+
+        return next;
+    };
+
+    /**
+     * Choose the previous drag in a group.
+     *
+     * @param {int} group which group.
+     * @param {jQuery} drag current choice (empty jQuery if there isn't one).
+     * @return {jQuery} the next drag in that group, or null if there wasn't one.
+     */
+    DragDropToTextQuestion.prototype.getPreviousDrag = function(group, drag) {
+        var choice;
+
+        if (drag.length === 0) {
+            choice = this.noOfChoicesInGroup(group);
+        } else {
+            choice = this.getChoice(drag) - 1;
+        }
+
+        var previous = this.getUnplacedChoice(group, choice);
+        while (previous.length === 0 && choice > 1) {
+            choice--;
+            previous = this.getUnplacedChoice(group, choice);
+        }
+
+        // Does this choice exist?
+        return previous;
+    };
+
+    /**
+     * Animate an object to the given destination.
+     *
+     * @param {jQuery} drag the element to be animated.
+     * @param {jQuery} target element marking the place to move it to.
+     */
+    DragDropToTextQuestion.prototype.animateTo = function(drag, target) {
+        var currentPos = drag.offset(),
+            targetPos = target.offset();
+        drag.addClass('beingdragged');
+
+        // Animate works in terms of CSS position, whereas locating an object
+        // on the page works best with jQuery offset() function. So, to get
+        // the right target position, we work out the required change in
+        // offset() and then add that to the current CSS position.
+        drag.animate(
+            {
+                left: parseInt(drag.css('left')) + targetPos.left - currentPos.left,
+                top: parseInt(drag.css('top')) + targetPos.top - currentPos.top
+            },
+            {
+                duration: 'fast',
+                done: function() {
+                    drag.removeClass('beingdragged');
+                    // It seems that the animation sometimes leaves the drag
+                    // one pixel out of position. Put it in exactly the right place.
+                    drag.offset(targetPos);
+                }
+            }
+        );
+    };
+
+    /**
+     * Detect if a point is inside a given DOM node.
+     *
+     * @param {Number} pageX the x position.
+     * @param {Number} pageY the y position.
+     * @param {jQuery} drop the node to check (typically a drop).
+     * @return {boolean} whether the point is inside the node.
+     */
+    DragDropToTextQuestion.prototype.isPointInDrop = function(pageX, pageY, drop) {
+        var position = drop.offset();
+        return pageX >= position.left && pageX < position.left + drop.width()
+                && pageY >= position.top && pageY < position.top + drop.height();
+    };
+
+    /**
+     * Set the value of the hidden input for a place, to record what is currently there.
+     *
+     * @param {int} place which place to set the input value for.
+     * @param {int} choice the value to set.
+     */
+    DragDropToTextQuestion.prototype.setInputValue = function(place, choice) {
+        this.getRoot().find('input.placeinput.place' + place).val(choice);
+    };
+
+    /**
+     * Get the outer div for this question.
+     *
+     * @returns {jQuery} containing that div.
+     */
+    DragDropToTextQuestion.prototype.getRoot = function() {
+        return $(document.getElementById(this.containerId));
+    };
+
+    /**
+     * Get drag home for a given choice.
+     *
+     * @param {int} group the group.
+     * @param {int} choice the choice number.
+     * @returns {jQuery} containing that div.
+     */
+    DragDropToTextQuestion.prototype.getDragHome = function(group, choice) {
+        return this.getRoot().find('.draghome.group' + group + '.choice' + choice);
+    };
+
+    /**
+     * Get an unplaced choice for a particular group.
+     *
+     * @param {int} group the group.
+     * @param {int} choice the choice number.
+     * @returns {jQuery} jQuery wrapping the unplaced choice. If there isn't one, the jQuery will be empty.
+     */
+    DragDropToTextQuestion.prototype.getUnplacedChoice = function(group, choice) {
+        return this.getRoot().find('.drag.group' + group + '.choice' + choice + '.unplaced').slice(0, 1);
+    };
+
+    /**
+     * Get the drag that is currently in a given place.
+     *
+     * @param {int} place the place number.
+     * @return {jQuery} the current drag (or an empty jQuery if none).
+     */
+    DragDropToTextQuestion.prototype.getCurrentDragInPlace = function(place) {
+        return this.getRoot().find('span.drag.inplace' + place);
+    };
+
+    /**
+     * Return the number of blanks in a given group.
+     *
+     * @param {int} group the group number.
+     * @returns {int} the number of drops.
+     */
+    DragDropToTextQuestion.prototype.noOfDropsInGroup = function(group) {
+        return this.getRoot().find('.drop.group' + group).length;
+    };
+
+    /**
+     * Return the number of choices in a given group.
+     *
+     * @param {int} group the group number.
+     * @returns {int} the number of choices.
+     */
+    DragDropToTextQuestion.prototype.noOfChoicesInGroup = function(group) {
+        return this.getRoot().find('.draghome.group' + group).length;
+    };
+
+    /**
+     * Return the number at the end of the CSS class name with the given prefix.
+     *
+     * @param {jQuery} node
+     * @param {String} prefix name prefix
+     * @returns {Number|null} the suffix if found, else null.
+     */
+    DragDropToTextQuestion.prototype.getClassnameNumericSuffix = function(node, prefix) {
+        var classes = node.attr('class');
+        if (classes !== '') {
+            var classesArr = classes.split(' ');
+            for (var index = 0; index < classesArr.length; index++) {
+                var patt1 = new RegExp('^' + prefix + '([0-9])+$');
+                if (patt1.test(classesArr[index])) {
+                    var patt2 = new RegExp('([0-9])+$');
+                    var match = patt2.exec(classesArr[index]);
+                    return Number(match[0]);
+                }
+            }
+        }
+        return null;
+    };
+
+    /**
+     * Get the choice number of a drag.
+     *
+     * @param {jQuery} drag the drag.
+     * @returns {Number} the choice number.
+     */
+    DragDropToTextQuestion.prototype.getChoice = function(drag) {
+        return this.getClassnameNumericSuffix(drag, 'choice');
+    };
+
+    /**
+     * Given a DOM node that is significant to this question
+     * (drag, drop, ...) get the group it belongs to.
+     *
+     * @param {jQuery} node a DOM node.
+     * @returns {Number} the group it belongs to.
+     */
+    DragDropToTextQuestion.prototype.getGroup = function(node) {
+        return this.getClassnameNumericSuffix(node, 'group');
+    };
+
+    /**
+     * Get the place number of a drop, or its corresponding hidden input.
+     *
+     * @param {jQuery} node the DOM node.
+     * @returns {Number} the place number.
+     */
+    DragDropToTextQuestion.prototype.getPlace = function(node) {
+        return this.getClassnameNumericSuffix(node, 'place');
+    };
+
+    /**
+     * Singleton that tracks all the DragDropToTextQuestions on this page, and deals
+     * with event dispatching.
+     *
+     * @type {Object}
+     */
+    var questionManager = {
+        /**
+         * {boolean} used to ensure the event handlers are only initialised once per page.
+         */
+        eventHandlersInitialised: false,
+
+        /**
+         * {DragDropToTextQuestion[]} all the questions on this page, indexed by containerId (id on the .que div).
+         */
+        questions: {},
+
+        /**
+         * Initialise questions.
+         *
+         * @param {String} containerId id of the outer div for this question.
+         * @param {boolean} readOnly whether the question is being displayed read-only.
+         */
+        init: function(containerId, readOnly) {
+            questionManager.questions[containerId] = new DragDropToTextQuestion(containerId, readOnly);
+            if (!questionManager.eventHandlersInitialised) {
+                questionManager.setupEventHandlers();
+                questionManager.eventHandlersInitialised = true;
+            }
+        },
+
+        /**
+         * Set up the event handlers that make this question type work. (Done once per page.)
+         */
+        setupEventHandlers: function() {
+            $('body').on('mousedown touchstart',
+                    '.que.ddwtos:not(.qtype_ddwtos-readonly) span.drag',
+                    questionManager.handleDragStart)
+                .on('keydown',
+                    '.que.ddwtos:not(.qtype_ddwtos-readonly) span.drop',
+                    questionManager.handleKeyPress);
+
+            $(window).on('resize', questionManager.handleWindowResize);
+        },
+
+        /**
+         * Handle mouse down / touch start on drags.
+         * @param {Event} e the DOM event.
+         */
+        handleDragStart: function(e) {
+            e.preventDefault();
+            var question = questionManager.getQuestionForEvent(e);
+            if (question) {
+                question.handleDragStart(e);
+            }
+        },
+
+        /**
+         * Handle key down / press on drops.
+         * @param {KeyboardEvent} e
+         */
+        handleKeyPress: function(e) {
+            var question = questionManager.getQuestionForEvent(e);
+            if (question) {
+                question.handleKeyPress(e);
+            }
+        },
+
+        /**
+         * Handle when the window is resized.
+         */
+        handleWindowResize: function() {
+            for (var containerId in questionManager.questions) {
+                if (questionManager.questions.hasOwnProperty(containerId)) {
+                    questionManager.questions[containerId].positionDrags();
+                }
+            }
+        },
+
+        /**
+         * Given an event, work out which question it affects.
+         *
+         * @param {Event} e the event.
+         * @returns {DragDropToTextQuestion|undefined} The question, or undefined.
+         */
+        getQuestionForEvent: function(e) {
+            var containerId = $(e.currentTarget).closest('.que.ddwtos').attr('id');
+            return questionManager.questions[containerId];
+        }
+    };
+
+    /**
+     * @alias module:qtype_ddwtos/ddwtos
+     */
+    return {
+        /**
+         * Initialise one drag-drop into text question.
+         *
+         * @param {String} containerId id of the outer div for this question.
+         * @param {boolean} readOnly whether the question is being displayed read-only.
+         */
+        init: questionManager.init
+    };
 });
