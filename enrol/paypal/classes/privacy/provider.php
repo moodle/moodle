@@ -115,17 +115,11 @@ class provider implements
                   FROM {enrol_paypal} ep
                   JOIN {enrol} e ON ep.instanceid = e.id
                   JOIN {context} ctx ON e.courseid = ctx.instanceid AND ctx.contextlevel = :contextcourse
-             LEFT JOIN {user} u ON u.id = :emailuserid AND (
-                    LOWER(u.email) = ep.receiver_email
-                        OR
-                    LOWER(u.email) = ep.business
-                )
-                 WHERE ep.userid = :userid
-                       OR u.id IS NOT NULL";
+                  JOIN {user} u ON u.id = ep.userid OR LOWER(u.email) = ep.receiver_email OR LOWER(u.email) = ep.business
+                 WHERE u.id = :userid";
         $params = [
             'contextcourse' => CONTEXT_COURSE,
             'userid'        => $userid,
-            'emailuserid'   => $userid,
         ];
 
         $contextlist->add_from_sql($sql, $params);
@@ -179,14 +173,8 @@ class provider implements
                   FROM {enrol_paypal} ep
                   JOIN {enrol} e ON ep.instanceid = e.id
                   JOIN {context} ctx ON e.courseid = ctx.instanceid AND ctx.contextlevel = :contextcourse
-             LEFT JOIN {user} u ON u.id = :emailuserid AND (
-                    LOWER(u.email) = ep.receiver_email
-                        OR
-                    LOWER(u.email) = ep.business
-                )
-                 WHERE ctx.id {$contextsql}
-                       AND (ep.userid = :userid
-                        OR u.id IS NOT NULL)
+                  JOIN {user} u ON u.id = ep.userid OR LOWER(u.email) = ep.receiver_email OR LOWER(u.email) = ep.business
+                 WHERE ctx.id {$contextsql} AND u.id = :userid
               ORDER BY e.courseid";
 
         $params = [
