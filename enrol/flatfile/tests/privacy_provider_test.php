@@ -200,6 +200,57 @@ class enrol_flatfile_privacy_testcase extends provider_testcase {
     }
 
     /**
+     * Test for provider::get_users_in_context().
+     */
+    public function test_get_users_in_context() {
+        global $DB;
+        // Create, via flatfile syncing, the future enrolments entries in the enrol_flatfile table.
+        $this->create_future_enrolments();
+
+        $this->assertEquals(3, $DB->count_records('enrol_flatfile'));
+
+        // We expect to see 1 entry for course1, and that's user1.
+        $userlist = new \core_privacy\local\request\userlist($this->coursecontext1, 'enrol_flatfile');
+        provider::get_users_in_context($userlist);
+        $this->assertEquals([$this->user1->id], $userlist->get_userids());
+
+        // And 1 for course2 which is for user2.
+        $userlist = new \core_privacy\local\request\userlist($this->coursecontext2, 'enrol_flatfile');
+        provider::get_users_in_context($userlist);
+        $this->assertEquals([$this->user2->id], $userlist->get_userids());
+
+        // And 1 for course3 which is for user1 again.
+        $userlist = new \core_privacy\local\request\userlist($this->coursecontext3, 'enrol_flatfile');
+        provider::get_users_in_context($userlist);
+        $this->assertEquals([$this->user1->id], $userlist->get_userids());
+    }
+
+    /**
+     * Test for provider::delete_data_for_users().
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+
+        // Create, via flatfile syncing, the future enrolments entries in the enrol_flatfile table.
+        $this->create_future_enrolments();
+
+        // Verify we have 1 future enrolment for user 1.
+        $userlist = new \core_privacy\local\request\userlist($this->coursecontext1, 'enrol_flatfile');
+        provider::get_users_in_context($userlist);
+        $this->assertEquals([$this->user1->id], $userlist->get_userids());
+
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($this->coursecontext1, 'enrol_flatfile',
+                [$this->user1->id]);
+
+        // Now, run delete for user and confirm that the record is removed.
+        provider::delete_data_for_users($approveduserlist);
+        $userlist = new \core_privacy\local\request\userlist($this->coursecontext1, 'enrol_flatfile');
+        provider::get_users_in_context($userlist);
+        $this->assertEquals(0, $userlist->count());
+        $this->assertEquals(0, $DB->count_records('enrol_flatfile', ['courseid' => $this->coursecontext1->instanceid]));
+    }
+
+    /**
      * Helper to sync a file and create the enrol_flatfile DB entries, for use with the get, export and delete tests.
      */
     protected function create_future_enrolments() {
