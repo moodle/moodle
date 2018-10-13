@@ -13,22 +13,29 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Privacy Subsystem implementation for enrol_flatfile.
  *
  * @package    enrol_flatfile
+ * @category   privacy
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace enrol_flatfile\privacy;
+
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\context;
 use core_privacy\local\request\contextlist;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use core_privacy\local\request\transform;
 
 defined('MOODLE_INTERNAL') || die();
+
 /**
  * Privacy Subsystem for enrol_flatfile implementing null_provider.
  *
@@ -37,7 +44,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 class provider implements
         \core_privacy\local\metadata\provider,
-        \core_privacy\local\request\plugin\provider {
+        \core_privacy\local\request\plugin\provider,
+        \core_privacy\local\request\core_userlist_provider {
 
     /**
      * Returns meta data about this system.
@@ -73,6 +81,23 @@ class provider implements
         $contextlist = new contextlist();
         $contextlist->set_component('enrol_flatfile');
         return $contextlist->add_from_sql($sql, $params);
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if ($context->contextlevel != CONTEXT_COURSE) {
+            return;
+        }
+
+        $sql = "SELECT userid FROM {enrol_flatfile} WHERE courseid = ?";
+        $params = [$context->instanceid];
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -146,7 +171,7 @@ class provider implements
      * @param   approved_contextlist $contextlist The approved contexts and user information to delete information for.
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
-        // Only delete data from contexts which are at the COURSE_MODULE contextlevel.
+        // Only delete data from contexts which are at the CONTEXT_COURSE contextlevel.
         $contexts = self::validate_contextlist_contexts($contextlist);
         if (empty($contexts)) {
             return;
@@ -162,6 +187,28 @@ class provider implements
         list($insql, $inparams) = $DB->get_in_or_equal($contextinstanceids, SQL_PARAMS_NAMED);
         $params = array_merge(['userid' => $user->id], $inparams);
         $sql = "userid = :userid AND courseid $insql";
+        $DB->delete_records_select('enrol_flatfile', $sql, $params);
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if ($context->contextlevel != CONTEXT_COURSE) {
+            return;
+        }
+
+        $userids = $userlist->get_userids();
+
+        list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        $params = array_merge(['courseid' => $context->instanceid], $inparams);
+        $sql = "courseid = :courseid AND userid $insql";
         $DB->delete_records_select('enrol_flatfile', $sql, $params);
     }
 
