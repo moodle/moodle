@@ -15,16 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version info
+ * Tool xmldb external functions and service definitions.
  *
  * @package    tool_xmldb
- * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @copyright  2018 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2018051401; // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2018050800; // Requires this Moodle version
-$plugin->component = 'tool_xmldb'; // Full name of the plugin (used for diagnostics)
-
+$functions = [
+    'tool_xmldb_invoke_move_action' => [
+        'classname' => tool_xmldb_external::class,
+        'methodname' => 'invoke_move_action',
+        'description' => 'moves element up/down',
+        'type' => 'write',
+        'ajax' => true,
+    ]
+];
