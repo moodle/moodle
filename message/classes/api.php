@@ -628,17 +628,30 @@ class api {
      *
      * @param int $userid The user id of who we want to delete the messages for (this may be done by the admin
      *  but will still seem as if it was by the user)
+     * @param int $conversationid The id of the conversation
      * @return bool Returns true if a user can delete the conversation, false otherwise.
      */
-    public static function can_delete_conversation($userid) {
+    public static function can_delete_conversation(int $userid, int $conversationid = null) : bool {
         global $USER;
+
+        if (is_null($conversationid)) {
+            debugging('\core_message\api::can_delete_conversation() now expects a \'conversationid\' to be passed.',
+                DEBUG_DEVELOPER);
+            return false;
+        }
 
         $systemcontext = \context_system::instance();
 
-        // Let's check if the user is allowed to delete this conversation.
-        if (has_capability('moodle/site:deleteanymessage', $systemcontext) ||
-            ((has_capability('moodle/site:deleteownmessage', $systemcontext) &&
-                $USER->id == $userid))) {
+        if (has_capability('moodle/site:deleteanymessage', $systemcontext)) {
+            return true;
+        }
+
+        if (!self::is_user_in_conversation($userid, $conversationid)) {
+            return false;
+        }
+
+        if (has_capability('moodle/site:deleteownmessage', $systemcontext) &&
+                $USER->id == $userid) {
             return true;
         }
 

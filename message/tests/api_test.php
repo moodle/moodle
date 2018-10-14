@@ -1146,17 +1146,26 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
+        // Send some messages back and forth.
+        $time = 1;
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+
+        $conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+
         // The admin can do anything.
-        $this->assertTrue(\core_message\api::can_delete_conversation($user1->id));
+        $this->assertTrue(\core_message\api::can_delete_conversation($user1->id, $conversationid));
 
         // Set as the user 1.
         $this->setUser($user1);
 
         // They can delete their own messages.
-        $this->assertTrue(\core_message\api::can_delete_conversation($user1->id));
+        $this->assertTrue(\core_message\api::can_delete_conversation($user1->id, $conversationid));
 
         // They can't delete someone elses.
-        $this->assertFalse(\core_message\api::can_delete_conversation($user2->id));
+        $this->assertFalse(\core_message\api::can_delete_conversation($user2->id, $conversationid));
     }
 
     /**

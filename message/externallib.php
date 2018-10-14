@@ -2587,10 +2587,12 @@ class core_message_external extends external_api {
         $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
         core_user::require_active_user($user);
 
-        if (\core_message\api::can_delete_conversation($user->id)) {
-            if ($conversationid = \core_message\api::get_conversation_between_users([$userid, $otheruserid])) {
-                \core_message\api::delete_conversation_by_id($user->id, $conversationid);
-            }
+        if (!$conversationid = \core_message\api::get_conversation_between_users([$userid, $otheruserid])) {
+            return [];
+        }
+
+        if (\core_message\api::can_delete_conversation($user->id, $conversationid)) {
+            \core_message\api::delete_conversation_by_id($user->id, $conversationid);
             $status = true;
         } else {
             throw new moodle_exception('You do not have permission to delete messages');
