@@ -3380,7 +3380,7 @@ class CAS_Client
                 case 'user':
                 case 'proxies':
                 case 'proxyGrantingTicket':
-                    continue;
+                    break;
                 default:
                     if (strlen(trim($attr_node->nodeValue))) {
                         phpCas :: trace(
