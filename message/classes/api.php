@@ -650,13 +650,15 @@ class api {
      *
      * This function does not verify any permissions.
      *
+     * @deprecated since 3.6
      * @param int $userid The user id of who we want to delete the messages for (this may be done by the admin
      *  but will still seem as if it was by the user)
      * @param int $otheruserid The id of the other user in the conversation
      * @return bool
      */
     public static function delete_conversation($userid, $otheruserid) {
-        global $DB, $USER;
+        debugging('\core_message\api::delete_conversation() is deprecated, please use ' .
+            '\core_message\api::delete_conversation_by_id() instead.', DEBUG_DEVELOPER);
 
         $conversationid = self::get_conversation_between_users([$userid, $otheruserid]);
 
@@ -664,6 +666,23 @@ class api {
         if (!$conversationid) {
             return true;
         }
+
+        self::delete_conversation_by_id($userid, $conversationid);
+
+        return true;
+    }
+
+    /**
+     * Deletes a conversation for a specified user.
+     *
+     * This function does not verify any permissions.
+     *
+     * @param int $userid The user id of who we want to delete the messages for (this may be done by the admin
+     *  but will still seem as if it was by the user)
+     * @param int $conversationid The id of the other user in the conversation
+     */
+    public static function delete_conversation_by_id(int $userid, int $conversationid) {
+        global $DB, $USER;
 
         // Get all messages belonging to this conversation that have not already been deleted by this user.
         $sql = "SELECT m.*
@@ -689,8 +708,6 @@ class api {
             \core\event\message_deleted::create_from_ids($userid, $USER->id,
                 $message->id, $mua->id)->trigger();
         }
-
-        return true;
     }
 
     /**

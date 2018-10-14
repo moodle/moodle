@@ -28,6 +28,7 @@ information provided here is intended especially for developers.
   Please see their declaration in lib/deprecatedlib.php to view their alternatives (if applicable).
 * The following methods have been deprecated and should not be used any more:
   - \core_message\api::is_user_blocked()
+  - \core_message\api::delete_conversation()
 * The following web services have been deprecated. Please do not call these any more.
   - core_message_external::block_contacts, please use core_message_external::block_user instead.
   - core_message_external::unblock_contacts, please use core_message_external::unblock_user instead.
