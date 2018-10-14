@@ -686,13 +686,8 @@ class api {
             $mua->timecreated = time();
             $mua->id = $DB->insert_record('message_user_actions', $mua);
 
-            if ($message->useridfrom == $userid) {
-                $useridto = $otheruserid;
-            } else {
-                $useridto = $userid;
-            }
-            \core\event\message_deleted::create_from_ids($message->useridfrom, $useridto,
-                $USER->id, $message->id, $mua->id)->trigger();
+            \core\event\message_deleted::create_from_ids($userid, $USER->id,
+                $message->id, $mua->id)->trigger();
         }
 
         return true;
@@ -1243,17 +1238,11 @@ class api {
      * @return bool
      */
     public static function delete_message($userid, $messageid) {
-        global $DB;
+        global $DB, $USER;
 
-        $sql = "SELECT m.id, m.useridfrom, mcm.userid as useridto
-                  FROM {messages} m
-            INNER JOIN {message_conversations} mc
-                    ON m.conversationid = mc.id
-            INNER JOIN {message_conversation_members} mcm
-                    ON mcm.conversationid = mc.id
-                 WHERE mcm.userid != m.useridfrom
-                   AND m.id = ?";
-        $message = $DB->get_record_sql($sql, [$messageid], MUST_EXIST);
+        if (!$DB->record_exists('messages', ['id' => $messageid])) {
+            return false;
+        }
 
         // Check if the user has already deleted this message.
         if (!$DB->record_exists('message_user_actions', ['userid' => $userid,
@@ -1266,8 +1255,8 @@ class api {
             $mua->id = $DB->insert_record('message_user_actions', $mua);
 
             // Trigger event for deleting a message.
-            \core\event\message_deleted::create_from_ids($message->useridfrom, $message->useridto,
-                $userid, $message->id, $mua->id)->trigger();
+            \core\event\message_deleted::create_from_ids($userid, $USER->id,
+                $messageid, $mua->id)->trigger();
 
             return true;
         }

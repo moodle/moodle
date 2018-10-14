@@ -33,8 +33,6 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event.
  *
  *      - int messageid: the id of the message.
- *      - int useridfrom: the id of the user who received the message.
- *      - int useridto: the id of the user who sent the message.
  * }
  *
  * @package    core
@@ -47,32 +45,22 @@ class message_deleted extends base {
     /**
      * Create event using ids.
      *
-     * @param int $userfromid the user who the message was from.
-     * @param int $usertoid the user who the message was sent to.
-     * @param int $userdeleted the user who deleted it.
+     * @param int $userid the user who the we are deleting the message for.
+     * @param int $userdeleting the user who deleted it (it's possible that an admin may delete a message on someones behalf)
      * @param int $messageid the id of the message that was deleted.
-     * @param int $muaid The id in the message_user_actions table
+     * @param int $muaid The id in the message_user_actions table.
      * @return message_deleted
      */
-    public static function create_from_ids($userfromid, $usertoid, $userdeleted, $messageid, $muaid) {
-        // Check who was deleting the message.
-        if ($userdeleted == $userfromid) {
-            $relateduserid = $usertoid;
-        } else {
-            $relateduserid = $userfromid;
-        }
-
+    public static function create_from_ids(int $userid, int $userdeleting, int $messageid, int $muaid) : message_deleted {
         // We set the userid to the user who deleted the message, nothing to do
         // with whether or not they sent or received the message.
         $event = self::create(array(
             'objectid' => $muaid,
-            'userid' => $userdeleted,
+            'userid' => $userdeleting,
             'context' => \context_system::instance(),
-            'relateduserid' => $relateduserid,
+            'relateduserid' => $userid,
             'other' => array(
                 'messageid' => $messageid,
-                'useridfrom' => $userfromid,
-                'useridto' => $usertoid
             )
         ));
 
@@ -103,14 +91,28 @@ class message_deleted extends base {
      * @return string
      */
     public function get_description() {
-        // Check if the person who deleted the message received or sent it.
-        if ($this->userid == $this->other['useridto']) {
-            $str = 'from';
-        } else {
-            $str = 'to';
+        // This is for BC when the event used to take this value into account before group conversations.
+        // We still want the same message to display for older events.
+        if (isset($this->other['useridto'])) {
+            // Check if the person who deleted the message received or sent it.
+            if ($this->userid == $this->other['useridto']) {
+                $str = 'from';
+            } else {
+                $str = 'to';
+            }
+
+            return "The user with id '$this->userid' deleted a message sent $str the user with id '$this->relateduserid'.";
         }
 
-        return "The user with id '$this->userid' deleted a message sent $str the user with id '$this->relateduserid'.";
+        $messageid = $this->other['messageid'];
+
+        // Check if the user deleting the message was not the actual user we are deleting for.
+        $str = "The user with id '$this->userid' deleted a message with id '$messageid'";
+        if ($this->userid != $this->relateduserid) {
+            $str .= " for the user with id '$this->relateduserid'";
+        }
+
+        return $str;
     }
 
     /**
@@ -129,14 +131,6 @@ class message_deleted extends base {
         if (!isset($this->other['messageid'])) {
             throw new \coding_exception('The \'messageid\' value must be set in other.');
         }
-
-        if (!isset($this->other['useridfrom'])) {
-            throw new \coding_exception('The \'useridfrom\' value must be set in other.');
-        }
-
-        if (!isset($this->other['useridto'])) {
-            throw new \coding_exception('The \'useridto\' value must be set in other.');
-        }
     }
 
     public static function get_objectid_mapping() {
@@ -145,9 +139,9 @@ class message_deleted extends base {
 
     public static function get_other_mapping() {
         // Messages are not backed up, so no need to map them on restore.
-        $othermapped = array();
-        $othermapped['useridfrom'] = array('db' => 'user', 'restore' => base::NOT_MAPPED);
-        $othermapped['useridto'] = array('db' => 'user', 'restore' => base::NOT_MAPPED);
+        $othermapped = [];
+        $othermapped['messageid'] = ['db' => 'messages', 'restore' => base::NOT_MAPPED];
+
         return $othermapped;
     }
 }
