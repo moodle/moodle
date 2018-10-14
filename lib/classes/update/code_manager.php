@@ -328,7 +328,7 @@ class code_manager {
             if ($fileinfo->getFilename() === '..') {
                 continue;
             }
-            if (strpos($fileinfo->getRealPath(), $folderpathinfo->getRealPath() !== 0)) {
+            if (strpos($fileinfo->getRealPath(), $folderpathinfo->getRealPath()) !== 0) {
                 throw new moodle_exception('unexpected_filepath_mismatch', 'core_plugin');
             }
             $key = substr($fileinfo->getRealPath(), $strip);
