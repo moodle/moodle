@@ -1197,30 +1197,20 @@ class api {
     public static function can_delete_message($userid, $messageid) {
         global $DB, $USER;
 
-        $sql = "SELECT m.id, m.useridfrom, mcm.userid as useridto
-                  FROM {messages} m
-            INNER JOIN {message_conversations} mc
-                    ON m.conversationid = mc.id
-            INNER JOIN {message_conversation_members} mcm
-                    ON mcm.conversationid = mc.id
-                 WHERE mcm.userid != m.useridfrom
-                   AND m.id = ?";
-        $message = $DB->get_record_sql($sql, [$messageid], MUST_EXIST);
+        $systemcontext = \context_system::instance();
 
-        if ($message->useridfrom == $userid) {
-            $userdeleting = 'useridfrom';
-        } else if ($message->useridto == $userid) {
-            $userdeleting = 'useridto';
-        } else {
+        $conversationid = $DB->get_field('messages', 'conversationid', ['id' => $messageid], MUST_EXIST);
+
+        if (has_capability('moodle/site:deleteanymessage', $systemcontext)) {
+            return true;
+        }
+
+        if (!self::is_user_in_conversation($userid, $conversationid)) {
             return false;
         }
 
-        $systemcontext = \context_system::instance();
-
-        // Let's check if the user is allowed to delete this message.
-        if (has_capability('moodle/site:deleteanymessage', $systemcontext) ||
-            ((has_capability('moodle/site:deleteownmessage', $systemcontext) &&
-                $USER->id == $message->$userdeleting))) {
+        if (has_capability('moodle/site:deleteownmessage', $systemcontext) &&
+                $USER->id == $userid) {
             return true;
         }
 
@@ -1600,5 +1590,20 @@ class api {
                  WHERE (mcr.userid = ? AND mcr.requesteduserid = ?)
                     OR (mcr.userid = ? AND mcr.requesteduserid = ?)";
         return $DB->record_exists_sql($sql, [$userid, $requesteduserid, $requesteduserid, $userid]);
+    }
+
+    /**
+     * Checks if a user is already in a conversation.
+     *
+     * @param int $userid The id of the user we want to check if they are in a group
+     * @param int $conversationid The id of the conversation
+     * @return bool Returns true if a contact request exists, false otherwise
+     */
+    public static function is_user_in_conversation(int $userid, int $conversationid) : bool {
+        global $DB;
+
+        return $DB->record_exists('message_conversation_members', ['conversationid' => $conversationid,
+            'userid' => $userid]);
+
     }
 }

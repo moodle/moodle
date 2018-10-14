@@ -2227,6 +2227,31 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test the user in conversation check.
+     */
+    public function test_is_user_in_conversation() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+
+        $this->assertTrue(\core_message\api::is_user_in_conversation($user1->id, $conversationid));
+    }
+
+    /**
+     * Test the user in conversation check when they are not.
+     */
+    public function test_is_user_in_conversation_when_not() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+
+        $this->assertFalse(\core_message\api::is_user_in_conversation($user3->id, $conversationid));
+    }
+
+    /**
      * Comparison function for sorting contacts.
      *
      * @param stdClass $a
