@@ -125,7 +125,9 @@ class edit_field extends XMLDBAction {
             $o.= '      <tr valign="top"><td><label for="name" accesskey="n">Name:</label></td><td colspan="2"><input name="name" type="text" size="'.xmldb_field::NAME_MAX_LENGTH.'" maxlength="'.xmldb_field::NAME_MAX_LENGTH.'" id="name" value="' . s($field->getName()) . '" /></td></tr>';
         }
         // XMLDB field comment
-        $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td colspan="2"><textarea name="comment" rows="3" cols="80" id="comment">' . s($field->getComment()) . '</textarea></td></tr>';
+        $o .= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td colspan="2">
+                     <textarea name="comment" rows="3" cols="80" id="comment" class="form-control">' .
+                     s($field->getComment()) . '</textarea></td></tr>';
         // xmldb_field Type
         $typeoptions = array (XMLDB_TYPE_INTEGER => $field->getXMLDBTypeName(XMLDB_TYPE_INTEGER),
                               XMLDB_TYPE_NUMBER  => $field->getXMLDBTypeName(XMLDB_TYPE_NUMBER),
@@ -167,7 +169,8 @@ class edit_field extends XMLDBAction {
         $o.= '      <tr valign="top"><td><label for="default" accesskey="d">Default:</label></td>';
         $o.= '        <td colspan="2"><input type="text" name="default" size="30" maxlength="80" id="default" value="' . s($field->getDefault()) . '" /></td></tr>';
         // Change button
-        $o.= '      <tr valign="top"><td>&nbsp;</td><td colspan="2"><input type="submit" value="' .$this->str['change'] . '" /></td></tr>';
+        $o .= '      <tr valign="top"><td>&nbsp;</td><td colspan="2"><input type="submit" value="' . $this->str['change'] .
+                     '" class="btn btn-secondary" /></td></tr>';
         $o.= '    </table>';
         $o.= '</div></form>';
         // Calculate the buttons
