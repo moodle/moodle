@@ -1059,7 +1059,8 @@ $functions = array(
         'classname' => 'core_message_external',
         'methodname' => 'mark_all_messages_as_read',
         'classpath' => 'message/externallib.php',
-        'description' => 'Mark all messages as read for a given user',
+        'description' => '** DEPRECATED ** Please do not call this function any more.
+                          Mark all messages as read for a given user',
         'type' => 'write',
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
