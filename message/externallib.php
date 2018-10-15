@@ -2634,6 +2634,71 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     * @since 3.6
+     */
+    public static function delete_conversation_by_id_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The user id of who we want to delete the conversation for'),
+                'conversationid' => new external_value(PARAM_INT, 'The id of the conversation'),
+            )
+        );
+    }
+
+    /**
+     * Deletes a conversation.
+     *
+     * @param int $userid The user id of who we want to delete the conversation for
+     * @param int $conversationid The id of the conversation
+     * @return array
+     * @throws moodle_exception
+     * @since 3.6
+     */
+    public static function delete_conversation_by_id($userid, $conversationid) {
+        global $CFG;
+
+        // Check if private messaging between users is allowed.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        // Validate params.
+        $params = [
+            'userid' => $userid,
+            'conversationid' => $conversationid,
+        ];
+        $params = self::validate_parameters(self::delete_conversation_by_id_parameters(), $params);
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
+
+        if (\core_message\api::can_delete_conversation($user->id, $conversationid)) {
+            \core_message\api::delete_conversation_by_id($user->id, $conversationid);
+        } else {
+            throw new moodle_exception("You do not have permission to delete the conversation '$conversationid'");
+        }
+
+        return [];
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     * @since 3.6
+     */
+    public static function delete_conversation_by_id_returns() {
+        return new external_warnings();
+    }
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters

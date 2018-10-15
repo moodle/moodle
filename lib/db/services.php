@@ -924,6 +924,16 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_message_delete_conversation_by_id' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'delete_conversation_by_id',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Deletes a conversation.',
+        'type' => 'write',
+        'capabilities' => 'moodle/site:deleteownmessage',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_message_delete_message' => array(
         'classname' => 'core_message_external',
         'methodname' => 'delete_message',
