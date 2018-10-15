@@ -63,6 +63,9 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
     width: calc(100% - #{$blocks-plus-gutter});
     @include media-breakpoint-down(lg) {
         width: 100%;
+        /* MDL-63102 - Remove extra space at bottom.
+        If modifying make sure block-region is horizontally stacked when in full screen */
+        display: block;
     }
 }
 

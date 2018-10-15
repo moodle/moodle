@@ -11125,7 +11125,10 @@ div.editor_atto_toolbar button .icon {
   @media (max-width: 1199.98px) {
     #region-main-settings-menu.has-blocks,
     #region-main.has-blocks {
-      width: 100%; } }
+      width: 100%;
+      /* MDL-63102 - Remove extra space at bottom.
+        If modifying make sure block-region is horizontally stacked when in full screen */
+      display: block; } }
 
 @media (max-width: 1199.98px) {
   [data-region="blocks-column"] {
