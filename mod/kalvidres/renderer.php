@@ -47,7 +47,7 @@ class mod_kalvidres_renderer extends plugin_renderer_base {
 
     /**
      * This function displays the iframe markup.
-     * @param object $kalvidres A Kaltura video resrouce instance object.
+     * @param object $kalvidres A Kaltura video resource instance object.
      * @param int $courseid A course id.
      * @return string HTML markup.
      */

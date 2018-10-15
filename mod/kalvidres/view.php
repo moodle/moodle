@@ -86,6 +86,7 @@ $params = array(
     'height' => $kalvidres->height
 );
 $PAGE->requires->yui_module('moodle-local_kaltura-lticontainer', 'M.local_kaltura.init', array($params), null, true);
+$PAGE->requires->js(new moodle_url('/local/kaltura/js/bse_iframe_resize.js'));
 
 echo $renderer->display_iframe($kalvidres, $course->id);
 
