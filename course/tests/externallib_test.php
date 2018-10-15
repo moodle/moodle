@@ -806,8 +806,11 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
      * @return array A list with the course object and course modules objects
      */
     private function prepare_get_course_contents_test() {
-        global $DB;
-        $course  = self::getDataGenerator()->create_course(['numsections' => 3]);
+        global $DB, $CFG;
+
+        $CFG->allowstealth = 1; // Allow stealth activities.
+
+        $course  = self::getDataGenerator()->create_course(['numsections' => 4]);
         $forumdescription = 'This is the forum description';
         $forum = $this->getDataGenerator()->create_module('forum',
             array('course' => $course->id, 'intro' => $forumdescription),
@@ -817,6 +820,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $datacm = get_coursemodule_from_instance('page', $data->id);
         $page = $this->getDataGenerator()->create_module('page', array('course' => $course->id));
         $pagecm = get_coursemodule_from_instance('page', $page->id);
+        // This is an stealth page (set by visibleoncoursepage).
+        $pagestealth = $this->getDataGenerator()->create_module('page', array('course' => $course->id, 'visibleoncoursepage' => 0));
         $labeldescription = 'This is a very long label to test if more than 50 characters are returned.
                 So bla bla bla bla <b>bold bold bold</b> bla bla bla bla.';
         $label = $this->getDataGenerator()->create_module('label', array('course' => $course->id,
@@ -846,10 +851,18 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $conditions = array('course' => $course->id, 'section' => 2);
         $DB->set_field('course_sections', 'summary', 'Text with iframe <iframe src="https://moodle.org"></iframe>', $conditions);
 
-        // Add date availability condition not met for last section.
+        // Add date availability condition not met for section 3.
         $availability = '{"op":"&","c":[{"type":"date","d":">=","t":' . $tomorrow . '}],"showc":[true]}';
         $DB->set_field('course_sections', 'availability', $availability,
                 array('course' => $course->id, 'section' => 3));
+
+        // Create resource for last section.
+        $pageinhiddensection = $this->getDataGenerator()->create_module('page',
+            array('course' => $course->id, 'name' => 'Page in hidden section', 'section' => 4));
+        // Set not visible last section.
+        $DB->set_field('course_sections', 'visible', 0,
+                array('course' => $course->id, 'section' => 4));
+
         rebuild_course_cache($course->id, true);
 
         return array($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm);
@@ -863,6 +876,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         list($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm) = $this->prepare_get_course_contents_test();
 
+        // We first run the test as admin.
+        $this->setAdminUser();
         $sections = core_course_external::get_course_contents($course->id, array());
         // We need to execute the return values cleaning process to simulate the web service server.
         $sections = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $sections);
@@ -889,21 +904,18 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(2, $testexecuted);
         $this->assertEquals(0, $sections[0]['section']);
 
-        // Check that the only return section has the 5 created modules.
-        $this->assertCount(4, $sections[0]['modules']);
+        $this->assertCount(5, $sections[0]['modules']);
         $this->assertCount(1, $sections[1]['modules']);
         $this->assertCount(1, $sections[2]['modules']);
-        $this->assertCount(0, $sections[3]['modules']); // No modules for the section with availability restrictions.
+        $this->assertCount(1, $sections[3]['modules']); // One module for the section with availability restrictions.
+        $this->assertCount(1, $sections[4]['modules']); // One module for the hidden section with a visible activity.
         $this->assertNotEmpty($sections[3]['availabilityinfo']);
         $this->assertEquals(1, $sections[1]['section']);
         $this->assertEquals(2, $sections[2]['section']);
         $this->assertEquals(3, $sections[3]['section']);
+        $this->assertEquals(4, $sections[4]['section']);
         $this->assertContains('<iframe', $sections[2]['summary']);
         $this->assertContains('</iframe>', $sections[2]['summary']);
-        // The module with the availability restriction met is returning contents.
-        $this->assertNotEmpty($sections[1]['modules'][0]['contents']);
-        // The module with the availability restriction not met is not returning contents.
-        $this->assertArrayNotHasKey('contents', $sections[2]['modules'][0]);
         $this->assertNotEmpty($sections[2]['modules'][0]['availabilityinfo']);
         try {
             $sections = core_course_external::get_course_contents($course->id,
@@ -914,6 +926,54 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         }
     }
 
+
+    /**
+     * Test get_course_contents as student
+     */
+    public function test_get_course_contents_student() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        list($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm) = $this->prepare_get_course_contents_test();
+
+        $studentroleid = $DB->get_field('role', 'id', array('shortname' => 'student'));
+        $user = self::getDataGenerator()->create_user();
+        self::getDataGenerator()->enrol_user($user->id, $course->id, $studentroleid);
+        $this->setUser($user);
+
+        $sections = core_course_external::get_course_contents($course->id, array());
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $sections = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $sections);
+
+        $this->assertCount(4, $sections); // Nothing for the not visible section.
+        $this->assertCount(5, $sections[0]['modules']);
+        $this->assertCount(1, $sections[1]['modules']);
+        $this->assertCount(1, $sections[2]['modules']);
+        $this->assertCount(0, $sections[3]['modules']); // No modules for the section with availability restrictions.
+
+        $this->assertNotEmpty($sections[3]['availabilityinfo']);
+        $this->assertEquals(1, $sections[1]['section']);
+        $this->assertEquals(2, $sections[2]['section']);
+        $this->assertEquals(3, $sections[3]['section']);
+        // The module with the availability restriction met is returning contents.
+        $this->assertNotEmpty($sections[1]['modules'][0]['contents']);
+        // The module with the availability restriction not met is not returning contents.
+        $this->assertArrayNotHasKey('contents', $sections[2]['modules'][0]);
+
+        // Now include flag for returning stealth information (fake section).
+        $sections = core_course_external::get_course_contents($course->id,
+            array(array("name" => "includestealthmodules", "value" => 1)));
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $sections = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $sections);
+
+        $this->assertCount(5, $sections); // Include fake section with stealth activities.
+        $this->assertCount(5, $sections[0]['modules']);
+        $this->assertCount(1, $sections[1]['modules']);
+        $this->assertCount(1, $sections[2]['modules']);
+        $this->assertCount(0, $sections[3]['modules']); // No modules for the section with availability restrictions.
+        $this->assertCount(1, $sections[4]['modules']); // One stealh module.
+        $this->assertEquals(-1, $sections[4]['id']);
+    }
 
     /**
      * Test get_course_contents excluding modules
@@ -972,7 +1032,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $sections = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $sections);
 
         $this->assertCount(1, $sections);
-        $this->assertCount(4, $sections[0]['modules']);
+        $this->assertCount(5, $sections[0]['modules']);
     }
 
     /**
