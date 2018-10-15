@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use \tool_monitor\privacy\provider;
 use \core_privacy\local\request\approved_contextlist;
+use \core_privacy\local\request\approved_userlist;
 
 /**
  * Privacy test for the event monitor
@@ -126,6 +127,55 @@ class tool_monitor_privacy_testcase extends advanced_testcase {
 
         // Check that a context is returned for just subscribing to a rule.
         $this->assertEquals($usercontext2->id, $contextlist->get_contextids()[0]);
+    }
+
+    /**
+     * Check that the correct userlist is returned if there is any user data for this context.
+     */
+    public function test_get_users_in_context() {
+        $component = 'tool_monitor';
+        $user = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $usercontext = \context_user::instance($user->id);
+        $usercontext2 = \context_user::instance($user2->id);
+
+        $userlist = new \core_privacy\local\request\userlist($usercontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertEmpty($userlist);
+
+        $userlist = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertEmpty($userlist);
+
+        $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
+
+        // Create a rule with user.
+        $this->setUser($user);
+        $rule = $monitorgenerator->create_rule();
+        $userlist = new \core_privacy\local\request\userlist($usercontext, $component);
+        provider::get_users_in_context($userlist);
+
+        // Check that we only get back user.
+        $userids = $userlist->get_userids();
+        $this->assertCount(1, $userlist);
+        $this->assertEquals($user->id, $userids[0]);
+
+        // Create a subscription with user2.
+        $this->setUser($user2);
+
+        $record = new stdClass();
+        $record->courseid = 0;
+        $record->userid = $user2->id;
+        $record->ruleid = $rule->id;
+
+        $subscription = $monitorgenerator->create_subscription($record);
+        $userlist = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist);
+
+        // Check that user2 is returned for just subscribing to a rule.
+        $userids = $userlist->get_userids();
+        $this->assertCount(1, $userlist);
+        $this->assertEquals($user2->id, $userids[0]);
     }
 
     /**
@@ -285,5 +335,81 @@ class tool_monitor_privacy_testcase extends advanced_testcase {
         $this->assertCount(2, $dbsubs);
         $this->assertEquals($user2->id, $dbsubs[$subscription2->id]->userid);
         $this->assertEquals($user2->id, $dbsubs[$subscription3->id]->userid);
+    }
+
+    /**
+     * Test deleting user data for an approved userlist in a context.
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+
+        $component = 'tool_monitor';
+        $user = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $usercontext = \context_user::instance($user->id);
+        $usercontext2 = \context_user::instance($user2->id);
+        $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
+
+        $this->setUser($user);
+        // Need to give user one the ability to manage rules.
+        $this->assign_user_capability('tool/monitor:managerules', \context_system::instance());
+
+        $rulerecord = (object)['name' => 'privacy rule'];
+        $rule = $monitorgenerator->create_rule($rulerecord);
+
+        $secondrulerecord = (object)['name' => 'privacy rule2'];
+        $rule2 = $monitorgenerator->create_rule($secondrulerecord);
+
+        $subscription = (object)['ruleid' => $rule->id, 'userid' => $user->id];
+        $subscription = $monitorgenerator->create_subscription($subscription);
+
+        // Have user 2 subscribe to the second rule created by user 1.
+        $subscription2 = (object)['ruleid' => $rule2->id, 'userid' => $user2->id];
+        $subscription2 = $monitorgenerator->create_subscription($subscription2);
+
+        $this->setUser($user2);
+        $thirdrulerecord = (object)['name' => 'privacy rule for second user'];
+        $rule3 = $monitorgenerator->create_rule($thirdrulerecord);
+
+        $subscription3 = (object)['ruleid' => $rule3->id, 'userid' => $user2->id];
+        $subscription3 = $monitorgenerator->create_subscription($subscription3);
+
+        // Get all of the monitor rules, ensure all exist.
+        $dbrules = $DB->get_records('tool_monitor_rules');
+        $this->assertCount(3, $dbrules);
+
+        // Delete for user2 in first user's context, should have no effect.
+        $approveduserids = [$user2->id];
+        $approvedlist = new approved_userlist($usercontext, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        $dbrules = $DB->get_records('tool_monitor_rules');
+        $this->assertCount(3, $dbrules);
+
+        // Delete for user in usercontext.
+        $approveduserids = [$user->id];
+        $approvedlist = new approved_userlist($usercontext, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        // Only the rules for user 1 that does not have any more subscriptions should be deleted (the first rule).
+        $dbrules = $DB->get_records('tool_monitor_rules');
+        $this->assertCount(2, $dbrules);
+        $this->assertEquals($user->id, $dbrules[$rule2->id]->userid);
+        $this->assertEquals($user2->id, $dbrules[$rule3->id]->userid);
+
+        // There should be two subscriptions left, both for user 2.
+        $dbsubs = $DB->get_records('tool_monitor_subscriptions');
+        $this->assertCount(2, $dbsubs);
+        $this->assertEquals($user2->id, $dbsubs[$subscription2->id]->userid);
+        $this->assertEquals($user2->id, $dbsubs[$subscription3->id]->userid);
+
+        // Delete for user2 in context 2.
+        $approveduserids = [$user2->id];
+        $approvedlist = new approved_userlist($usercontext2, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        // There should be no subscriptions left.
+        $dbsubs = $DB->get_records('tool_monitor_subscriptions');
+        $this->assertEmpty($dbsubs);
     }
 }
