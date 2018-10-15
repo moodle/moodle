@@ -554,6 +554,8 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
  *
  * @param string|array $fields Extra fields to be returned (array or comma-separated list).
  * @param string|null $sort Comma separated list of fields to sort by, defaults to respecting navsortmycoursessort.
+ * Allowed prefixes for sort fields are: "ul" for the user_lastaccess table, "c" for the courses table,
+ * "ue" for the user_enrolments table.
  * @param int $limit max number of courses
  * @param array $courseids the list of course ids to filter by
  * @param bool $allaccessible Include courses user is not enrolled in, but can access
@@ -599,17 +601,32 @@ function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $coursei
 
     $orderby = "";
     $sort    = trim($sort);
+    $sorttimeaccess = false;
+    $allowedsortprefixes = array('c', 'ul', 'ue');
     if (!empty($sort)) {
         $rawsorts = explode(',', $sort);
         $sorts = array();
         foreach ($rawsorts as $rawsort) {
             $rawsort = trim($rawsort);
-            if (strpos($rawsort, 'c.') === 0) {
-                $rawsort = substr($rawsort, 2);
+            if (preg_match('/^ul\.(\S*)\s(asc|desc)/i', $rawsort, $matches)) {
+                if (strcasecmp($matches[2], 'asc') == 0) {
+                    $sorts[] = 'COALESCE(ul.' . $matches[1] . ', 0) ASC';
+                } else {
+                    $sorts[] = 'COALESCE(ul.' . $matches[1] . ', 0) DESC';
+                }
+                $sorttimeaccess = true;
+            } else if (strpos($rawsort, '.') !== false) {
+                $prefix = explode('.', $rawsort);
+                if (in_array($prefix[0], $allowedsortprefixes)) {
+                    $sorts[] = trim($rawsort);
+                } else {
+                    throw new coding_exception('Invalid $sort parameter in enrol_get_my_courses()');
+                }
+            } else {
+                $sorts[] = 'c.'.trim($rawsort);
             }
-            $sorts[] = trim($rawsort);
         }
-        $sort = 'c.'.implode(',c.', $sorts);
+        $sort = implode(',', $sorts);
         $orderby = "ORDER BY $sort";
     }
 
@@ -628,6 +645,9 @@ function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $coursei
     $params['contextlevel'] = CONTEXT_COURSE;
     $wheres = implode(" AND ", $wheres);
 
+    $timeaccessselect = "";
+    $timeaccessjoin = "";
+
     if (!empty($courseids)) {
         list($courseidssql, $courseidsparams) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
         $wheres = sprintf("%s AND c.id %s", $wheres, $courseidssql);
@@ -640,14 +660,20 @@ function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $coursei
         $courseidsql .= "
                 SELECT DISTINCT e.courseid
                   FROM {enrol} e
-                  JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid)
+                  JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid1)
                  WHERE ue.status = :active AND e.status = :enabled AND ue.timestart < :now1
                        AND (ue.timeend = 0 OR ue.timeend > :now2)";
-        $params['userid'] = $USER->id;
+        $params['userid1'] = $USER->id;
         $params['active'] = ENROL_USER_ACTIVE;
         $params['enabled'] = ENROL_INSTANCE_ENABLED;
         $params['now1'] = round(time(), -2); // Improves db caching.
         $params['now2'] = $params['now1'];
+
+        if ($sorttimeaccess) {
+            $params['userid2'] = $USER->id;
+            $timeaccessselect = ', ul.timeaccess as lastaccessed';
+            $timeaccessjoin = "LEFT JOIN {user_lastaccess} ul ON (ul.courseid = c.id AND ul.userid = :userid2)";
+        }
     }
 
     // When including non-enrolled but accessible courses...
@@ -708,9 +734,10 @@ function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $coursei
 
     // Note: we can not use DISTINCT + text fields due to Oracle and MS limitations, that is why
     // we have the subselect there.
-    $sql = "SELECT $coursefields $ccselect
+    $sql = "SELECT $coursefields $ccselect $timeaccessselect
               FROM {course} c
               JOIN ($courseidsql) en ON (en.courseid = c.id)
+           $timeaccessjoin
            $ccjoin
              WHERE $wheres
           $orderby";

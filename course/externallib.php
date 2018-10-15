@@ -3622,6 +3622,8 @@ class core_course_external extends external_api {
         $sort = $params['sort'];
 
         switch($classification) {
+            case COURSE_TIMELINE_ALL:
+                break;
             case COURSE_TIMELINE_PAST:
                 break;
             case COURSE_TIMELINE_INPROGRESS:

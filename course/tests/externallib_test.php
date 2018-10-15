@@ -2496,6 +2496,66 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'expectedcourses' => ['cfuture', 'dfuture', 'efuture'],
                 'expectednextoffset' => 15
             ],
+            'all no limit or offset' => [
+                'coursedata' => $coursedata,
+                'classification' => 'all',
+                'limit' => 0,
+                'offset' => 0,
+                'expectedcourses' => [
+                    'afuture',
+                    'ainprogress',
+                    'apast',
+                    'bfuture',
+                    'binprogress',
+                    'bpast',
+                    'cfuture',
+                    'cinprogress',
+                    'cpast',
+                    'dfuture',
+                    'dinprogress',
+                    'dpast',
+                    'efuture',
+                    'einprogress',
+                    'epast'
+                ],
+                'expectednextoffset' => 15
+            ],
+            'all limit no offset' => [
+                'coursedata' => $coursedata,
+                'classification' => 'all',
+                'limit' => 5,
+                'offset' => 0,
+                'expectedcourses' => [
+                    'afuture',
+                    'ainprogress',
+                    'apast',
+                    'bfuture',
+                    'binprogress'
+                ],
+                'expectednextoffset' => 5
+            ],
+            'all limit and offset' => [
+                'coursedata' => $coursedata,
+                'classification' => 'all',
+                'limit' => 5,
+                'offset' => 5,
+                'expectedcourses' => [
+                    'bpast',
+                    'cfuture',
+                    'cinprogress',
+                    'cpast',
+                    'dfuture'
+                ],
+                'expectednextoffset' => 10
+            ],
+            'all offset past result set' => [
+                'coursedata' => $coursedata,
+                'classification' => 'all',
+                'limit' => 5,
+                'offset' => 50,
+                'expectedcourses' => [],
+                'expectednextoffset' => 50
+            ],
         ];
     }
 
