@@ -163,4 +163,77 @@ class qtype_multichoice_test extends advanced_testcase {
             }
         }
     }
+
+    /**
+     * Test to make sure that loading of question options works, including in an error case.
+     */
+    public function test_get_question_options() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Create a complete, in DB question to use.
+        $questiondata = test_question_maker::get_question_data('multichoice', 'two_of_four');
+        $formdata = test_question_maker::get_question_form_data('multichoice', 'two_of_four');
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category(array());
+
+        $formdata->category = "{$cat->id},{$cat->contextid}";
+        qtype_multichoice_edit_form::mock_submit((array)$formdata);
+
+        $form = qtype_multichoice_test_helper::get_question_editing_form($cat, $questiondata);
+
+        $this->assertTrue($form->is_validated());
+
+        $fromform = $form->get_data();
+
+        $returnedfromsave = $this->qtype->save_question($questiondata, $fromform);
+
+        // Now get just the raw DB record.
+        $question = $DB->get_record('question', ['id' => $returnedfromsave->id], '*', MUST_EXIST);
+
+        // Load it.
+        $this->qtype->get_question_options($question);
+        $this->assertDebuggingNotCalled();
+        $this->assertInstanceOf(stdClass::class, $question->options);
+
+        $options = $question->options;
+        $this->assertEquals($question->id, $options->questionid);
+        $this->assertEquals(0, $options->single);
+
+        $this->assertCount(4, $options->answers);
+
+        // Now we are going to delete the options record.
+        $DB->delete_records('qtype_multichoice_options', ['questionid' => $question->id]);
+
+        // Now see what happens.
+        $question = $DB->get_record('question', ['id' => $returnedfromsave->id], '*', MUST_EXIST);
+        $this->qtype->get_question_options($question);
+
+        $this->assertDebuggingCalled('Question ID '.$question->id.' was missing an options record. Using default.');
+        $this->assertInstanceOf(stdClass::class, $question->options);
+        $options = $question->options;
+        $this->assertEquals($question->id, $options->questionid);
+        $this->assertCount(4, $options->answers);
+
+        $this->assertEquals(get_string('correctfeedbackdefault', 'question'), $options->correctfeedback);
+        $this->assertEquals(FORMAT_HTML, $options->correctfeedbackformat);
+
+        // We no longer know how many answers, so it just has to guess with the default value.
+        $this->assertEquals(get_config('qtype_multichoice', 'answerhowmany'), $options->single);
+
+        // And finally we try again with no answer either.
+        $DB->delete_records('question_answers', ['question' => $question->id]);
+
+        $question = $DB->get_record('question', ['id' => $returnedfromsave->id], '*', MUST_EXIST);
+        $this->qtype->get_question_options($question);
+
+        $this->assertDebuggingCalled('Question ID '.$question->id.' was missing an options record. Using default.');
+        $this->assertInstanceOf(stdClass::class, $question->options);
+        $options = $question->options;
+        $this->assertEquals($question->id, $options->questionid);
+        $this->assertCount(0, $options->answers);
+    }
 }
