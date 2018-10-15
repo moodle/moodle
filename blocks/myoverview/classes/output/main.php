@@ -27,14 +27,13 @@ defined('MOODLE_INTERNAL') || die();
 use renderable;
 use renderer_base;
 use templatable;
-use core_completion\progress;
 
 require_once($CFG->libdir . '/completionlib.php');
 
 /**
  * Class containing data for my overview block.
  *
- * @copyright  2017 Simey Lameze <simey@moodle.com>
+ * @copyright  2018 Bas Brands <bas@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class main implements renderable, templatable {
@@ -45,38 +44,11 @@ class main implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        global $USER;
 
-        $courses = enrol_get_my_courses('*');
-        $coursesprogress = [];
-
-        foreach ($courses as $course) {
-
-            $completion = new \completion_info($course);
-
-            // First, let's make sure completion is enabled.
-            if (!$completion->is_enabled()) {
-                continue;
-            }
-
-            $percentage = progress::get_course_progress_percentage($course);
-            if (!is_null($percentage)) {
-                $percentage = floor($percentage);
-            }
-
-            $coursesprogress[$course->id]['completed'] = $completion->is_course_complete($USER->id);
-            $coursesprogress[$course->id]['progress'] = $percentage;
-        }
-
-        $coursesview = new courses_view($courses, $coursesprogress);
         $nocoursesurl = $output->image_url('courses', 'block_myoverview')->out();
 
-        return [
-            'midnight' => usergetmidnight(time()),
-            'coursesview' => $coursesview->export_for_template($output),
-            'urls' => [
-                'nocourses' => $nocoursesurl,
-            ],
+        return (object) [
+            'nocoursesimg' => $nocoursesurl
         ];
     }
 }

@@ -1,0 +1,55 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/view-list
+
+    This template renders the list view for the myoverview block.
+
+    Example context (json):
+    {
+        "courses": [
+            {
+                "name": "Assignment due 1",
+                "viewurl": "https://moodlesite/course/view.php?id=2",
+                "courseimage": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
+                "fullname": "course 3",
+                "hasprogress": true,
+                "progress": 10
+            }
+        ]
+    }
+}}  
+
+<ul class="list-group" role="list">
+{{#courses}}
+    <li class="list-group-item course-listitem" role="listitem">
+        <div class="row-fluid">
+            <div class="{{#hasprogress}}col-6 span6{{/hasprogress}}{{^hasprogress}}col-12 span12{{/hasprogress}}">
+                <a href="{{viewurl}}">
+                    <span class="sr-only">{{#str}}aria:coursename, block_myoverview{{/str}}</span>
+                    {{{fullname}}}
+                </a>
+            </div>
+            {{#hasprogress}}
+            <div class="col-6 span6">
+                {{> block_myoverview/progress-bar}}
+            </div>
+            {{/hasprogress}}
+        </div>
+    </li>
+{{/courses}}
+</ul>

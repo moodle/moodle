@@ -23,21 +23,31 @@
     {}
 }}
 
-<div id="block-myoverview-{{uniqid}}" class="block-myoverview" data-region="myoverview">
-    <div class="container p-0 m-b-1">
-        <div class="row no-gutters">
-            {{#coursesview}}
-                {{#hascourses}}
-                    <div class="{{#viewingtimeline}}d-none{{/viewingtimeline}}" data-tab-content="courses">
-                        {{> block_myoverview/courses-view-nav-grouping-display-filter }}
-                    </div>
-                {{/hascourses}}
-            {{/coursesview}}
-        </div>
-    </div>
-    <div class="container p-0">
-        {{#coursesview}}
+<div id="block-myoverview-{{uniqid}}" class="block-myoverview" data-region="myoverview" role="navigation">
+
+            <div data-region="filter" class="d-flex m-b-1" aria-label="{{#str}} aria:controls, block_myoverview {{/str}}">
+                {{> block_myoverview/nav-grouping-selector }}
+
+                {{> block_myoverview/nav-sort-selector }}
+
+                {{> block_myoverview/nav-display-selector }}
+            </div>
+
+    <div class="container-fluid p-0">
         {{> block_myoverview/courses-view }}
-        {{/coursesview}}
     </div>
 </div>
+{{#js}}
+require(
+[
+    'jquery',
+    'block_myoverview/main',
+],
+function(
+    $,
+    Main
+) {
+    var root = $('#block-myoverview-{{uniqid}}');
+    Main.init(root);
+});
+{{/js}}

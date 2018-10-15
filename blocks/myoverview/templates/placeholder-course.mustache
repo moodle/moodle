@@ -15,30 +15,19 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_myoverview/paging-content
+    @template block_myoverview/placeholder-course
 
-    This template renders each of the content regions for a paginated
-    content section.
+    This template renders an course card item loading placeholder for the myoverview block.
 
     Example context (json):
-    {
-        "pages": [
-            {
-                "active": true,
-                "page": 1,
-                "content": "<p>Some page content</p>"
-            },
-            {
-                "page": 2,
-                "content": "<p>Some page content</p>"
-            }
-        ]
-    }
+    {}
 }}
-<div id="{{$pagingcontentid}}paging-content-{{uniqid}}{{/pagingcontentid}}" data-region="paging-content">
-    {{#pages}}
-        {{$paging-content-item}}
-            {{> block_myoverview/paging-content-item }}
-        {{/paging-content-item}}
-    {{/pages}}
-</div>
+<div class="card course-card border-0">
+    <div class="card-img-top bg-pulse-grey w-100" style="height: 7rem">
+    </div>
+    <div class="card-body course-info-container">
+        <div class="bg-pulse-grey w-100 m-b-3" style="height: 1rem"></div>
+    </div>
+    <div class="bg-pulse-grey w-100" style="height: 3rem">
+    </div>
+</div>	
