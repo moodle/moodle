@@ -911,7 +911,7 @@ class api {
      * @param int $forcedvalue Use this categoryid value as if this was this context instance category.
      * @return category|false
      */
-    public static function get_effective_context_category(\context $context, $forcedvalue=false) {
+    public static function get_effective_context_category(\context $context, $forcedvalue = false) {
         if (!data_registry::defaults_set()) {
             return false;
         }
@@ -938,15 +938,14 @@ class api {
      * Returns the effective category given a context level.
      *
      * @param int $contextlevel
-     * @param int $forcedvalue Use this categoryid value as if this was this context level category.
      * @return category|false
      */
-    public static function get_effective_contextlevel_category($contextlevel, $forcedvalue=false) {
+    public static function get_effective_contextlevel_category($contextlevel) {
         if (!data_registry::defaults_set()) {
             return false;
         }
 
-        return data_registry::get_effective_contextlevel_value($contextlevel, 'category', $forcedvalue);
+        return data_registry::get_effective_contextlevel_value($contextlevel, 'category');
     }
 
     /**
