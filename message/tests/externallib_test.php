@@ -3246,6 +3246,128 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test marking all conversation messages as read with an invalid user.
+     */
+    public function test_mark_all_conversation_messages_as_read_invalid_user_exception() {
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        $conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+
+        $this->expectException('moodle_exception');
+        core_message_external::mark_all_conversation_messages_as_read(-2132131, $conversationid);
+    }
+
+    /**
+     * Test marking all conversation messages as read without proper access.
+     */
+    public function test_mark_all_conversation_messages_as_read_access_denied_exception() {
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        $conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+
+        // User 3 is not in the conversation.
+        $this->expectException('moodle_exception');
+        core_message_external::mark_all_conversation_messages_as_read($user3->id, $conversationid);
+    }
+
+    /**
+     * Test marking all conversation messages as read for another user.
+     */
+    public function test_mark_all_conversation_messages_as_read_wrong_user() {
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        $conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+
+        // Can't mark the messages as read for user 2.
+        $this->setUser($user1);
+        $this->expectException('moodle_exception');
+        core_message_external::mark_all_conversation_messages_as_read($user2->id, $conversationid);
+    }
+
+    /**
+     * Test marking all conversation messages as admin.
+     */
+    public function test_mark_all_conversation_messages_as_admin() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        $conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+
+        // Admin can do anything.
+        $this->setAdminUser();
+        core_message_external::mark_all_conversation_messages_as_read($user2->id, $conversationid);
+        $this->assertEquals(2, $DB->count_records('message_user_actions'));
+    }
+
+    /**
+     * Test marking all conversation messages.
+     */
+    public function test_mark_all_conversation_messages_as_read() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        $conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+
+        // We are the user we want to mark the messages for and we are in the conversation, all good.
+        $this->setUser($user1);
+        core_message_external::mark_all_conversation_messages_as_read($user1->id, $conversationid);
+        $this->assertEquals(2, $DB->count_records('message_user_actions'));
+    }
+
+    /**
      * Test getting unread conversation count.
      */
     public function test_get_unread_conversations_count() {

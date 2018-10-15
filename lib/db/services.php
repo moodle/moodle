@@ -1065,6 +1065,15 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_message_mark_all_conversation_messages_as_read' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'mark_all_conversation_messages_as_read',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Mark all conversation messages as read for a given user',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_message_mark_message_read' => array(
         'classname' => 'core_message_external',
         'methodname' => 'mark_message_read',

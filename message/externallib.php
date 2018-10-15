@@ -2514,6 +2514,66 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Mark all conversation messages as read parameters description.
+     *
+     * @return external_function_parameters
+     * @since 3.6
+     */
+    public static function mark_all_conversation_messages_as_read_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The user id who who we are marking the messages as read for'),
+                'conversationid' =>
+                    new external_value(PARAM_INT, 'The conversation id who who we are marking the messages as read for')
+            )
+        );
+    }
+
+    /**
+     * Mark all conversation messages as read function.
+     *
+     * @param int $userid The user id of who we want to delete the conversation for
+     * @param int $conversationid The id of the conversations
+     * @since 3.6
+     */
+    public static function mark_all_conversation_messages_as_read(int $userid, int $conversationid) {
+        global $CFG;
+
+        // Check if messaging is enabled.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $params = array(
+            'userid' => $userid,
+            'conversationid' => $conversationid,
+        );
+        $params = self::validate_parameters(self::mark_all_conversation_messages_as_read_parameters(), $params);
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
+
+        if (\core_message\api::can_mark_all_messages_as_read($userid, $conversationid)) {
+            \core_message\api::mark_all_messages_as_read($userid, $conversationid);
+        } else {
+            throw new moodle_exception('accessdenied', 'admin');
+        }
+    }
+
+    /**
+     * Mark all conversation messages as read return description.
+     *
+     * @return external_warnings
+     * @since 3.6
+     */
+    public static function mark_all_conversation_messages_as_read_returns() {
+        return new external_warnings();
+    }
+
+    /**
      * Returns description of method parameters.
      *
      * @deprecated since 3.6
