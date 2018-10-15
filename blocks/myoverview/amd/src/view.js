@@ -119,7 +119,7 @@ function(
 
     /**
      * Intialise the courses list and cards views on page load.
-     * 
+     *
      * @param {object} root The root element for the courses view.
      * @param {object} content The content element for the courses view.
      */
@@ -166,10 +166,10 @@ function(
     /**
      * Reset the courses views to their original
      * state on first page load.
-     * 
+     *
      * This is called when configuration has changed for the event lists
      * to cause them to reload their data.
-     * 
+     *
      * @param {object} root The root element for the timeline view.
      * @param {object} content The content element for the timeline view.
      */

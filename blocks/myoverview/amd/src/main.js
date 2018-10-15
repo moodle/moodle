@@ -37,9 +37,10 @@ function(
         COURSES_VIEW: '[data-region="courses-view"]',
         COURSES_VIEW_CONTENT: '[data-region="course-view-content"]'
     };
+
     /**
      * Initialise all of the modules for the overview block.
-     * 
+     *
      * @param {object} root The root element for the overview block.
      */
     var init = function(root) {
