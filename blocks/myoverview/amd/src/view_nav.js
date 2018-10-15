@@ -41,7 +41,7 @@ function(
 
     /**
      * Event listener for the Display filter (cards, list).
-     * 
+     *
      * @param {object} root The root element for the overview block
      * @param {object} viewRoot The root element for displaying courses.
      * @param {object} viewContent content The content element for the courses view.
@@ -93,7 +93,7 @@ function(
     /**
      * Initialise the timeline view navigation by adding event listeners to
      * the navigation elements.
-     * 
+     *
      * @param {object} root The root element for the myoverview block
      * @param {object} viewRoot The root element for the myoverview block
      * @param {object} viewContent The content element for the myoverview block
