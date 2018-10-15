@@ -72,113 +72,94 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
     }
 }
 
-$chart-size: 70px;
-$doughnut-border-size: 15px;
-$doughnut-dasharray: 173;
-$doughnut-empty-colour: $gray-lighter;
-$doughnut-fill-colour: $brand-warning;
-
-.progress-chart-container {
-    height: $chart-size;
-    width: $chart-size;
-
-    .progress-doughnut {
-        position: relative;
-        height: $chart-size;
-        width: $chart-size;
-        background-clip: padding-box;
-        border: $doughnut-border-size solid $doughnut-empty-colour;
-        border-radius: 50%;
-        box-sizing: border-box;
-
-        .progress-text {
-            position: absolute;
-            top: 50%;
-            /*rtl:ignore*/
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: $doughnut-empty-colour;
-
-            &.has-percent {
-                color: $doughnut-fill-colour;
-            }
-        }
-
-        .progress-indicator {
-            position: absolute;
-            top: ($doughnut-border-size * -1);
-            left: ($doughnut-border-size * -1);
-            height: $chart-size;
-            width: $chart-size;
-
-            svg {
-                position: relative;
-                height: 100%;
-                width: 100%;
-
-                .circle {
-                    stroke-width: $doughnut-border-size;
-                    stroke: $doughnut-fill-colour;
-                    fill: none;
-                    stroke-dasharray: $doughnut-dasharray;
-                    stroke-dashoffset: $doughnut-dasharray;
-                    transform: rotate(-90deg);
-                    transform-origin: center center;
-
-                    @for $i from 1 through 100 {
-                        &.percent-#{$i} {
-                            stroke-dashoffset: $doughnut-dasharray - ($i / 100 * $doughnut-dasharray);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    .no-progress {
-        height: $chart-size;
-        width: $chart-size;
-        background-color: $doughnut-empty-colour;
-        border-radius: 50%;
-        position: relative;
-
-        .icon {
-            position: absolute;
-            top: 50%;
-            /*rtl:ignore*/
-            left: 50%;
-            margin: 0;
-            transform: translate(-63%, -50%);
-            color: #fff;
-            height: ($chart-size / 2) + 10px;
-            width: ($chart-size / 2) + 10px;
-            font-size: ($chart-size / 2) + 10px;
-        }
-    }
-}
+$card-gutter : $card-deck-margin * 2;
 
 .block_myoverview {
-    .empty-placeholder-image-sm {
-        height: 50px;
-    }
-
     .empty-placeholder-image-lg {
         height: 125px;
     }
-}
-
-.card-deck {
-    .card {
-        $card-gutter : $card-deck-margin * 2;
-        flex-grow: 0;
-        flex-shrink: 0;
-        flex-basis: calc(50% - #{$card-gutter});
+    .course-card {
+        margin-bottom: $card-gutter;
+        flex-basis: 100%;
+    }
+    .course-info-container {
+        padding: 0.8rem;
+    }
+    .course-card-footer {
+        padding: 0.8rem;
+    }
+    .progress {
+        height: 0.5rem;
     }
     .myoverviewimg {
-        height: 150px;
-        &.courseimage {
-            background-position: center;
-            background-size: cover;
+        height: 7rem;
+        background-position: center;
+        background-size: cover;
+    }
+    .course-summaryitem {
+        border: $border-width solid $border-color;
+        background-color: $body-bg;
+    }
+    .summary img {
+        max-width: 100%;
+    }
+    @include media-breakpoint-down(sm) {
+        .summaryimage {
+            max-height: 7rem;
+        }
+    }
+}
+
+#region-main {
+    .block_myoverview {
+        .course-card {
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-basis: calc(50% - #{$card-gutter});
+        }
+        @include media-breakpoint-up(sm) {
+            .course-card {
+                flex-basis: calc(50% - #{$card-gutter});
+            }
+        }
+        @include media-breakpoint-up(md) {
+            .course-card {
+                flex-basis: calc(33.33% - #{$card-gutter});
+            }
+        }
+        @include media-breakpoint-up(lg) {
+            .course-card {
+                flex-basis: calc(25% - #{$card-gutter});
+            }
+        }
+        @include media-breakpoint-up(xl) {
+            .course-card {
+                flex-basis: calc(20% - #{$card-gutter});
+            }
+        }
+    }
+}
+
+#region-main.has-blocks .block_myoverview {
+    @include media-breakpoint-up(lg) {
+        .course-card {
+            flex-basis: calc(33.33% - #{$card-gutter});
+        }
+    }
+    @include media-breakpoint-up(xl) {
+        .course-card {
+            flex-basis: calc(25% - #{$card-gutter});
+        }
+    }
+}
+
+body.drawer-open-left #region-main.has-blocks .block_myoverview {
+    .course-card {
+        flex-basis: calc(50% - #{$card-gutter});
+    }
+    @include media-breakpoint-up(lg) {
+        .course-card {
+            flex-basis: calc(33.33% - #{$card-gutter});
         }
     }
 }

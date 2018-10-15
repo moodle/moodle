@@ -15,27 +15,20 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_myoverview/paging-bar-item
+    @template block_myoverview/progress-bar
 
-    This template renders a single item in the paging bar.
+    This template renders a simple progress bar.
 
     Example context (json):
     {
-        "url": "#",
-        "number": 1,
-        "page": "1",
-        "active": true
+        "progress": 50
     }
 }}
-<li class="page-item {{#active}}active{{/active}} {{#disabled}}disabled{{/disabled}}"
-    data-region="page-item"
-    data-page-number="{{$pagenumber}}{{number}}{{/pagenumber}}">
 
-    <a href="{{url}}"
-       class="page-link"
-       data-region="page-link">
-        {{$item-content}}
-            {{{page}}}
-        {{/item-content}}
-    </a>
-</li>
+<div class="progress">
+	<div class="progress-bar bar" role="progressbar" aria-valuenow="{{progress}}" style="width: {{progress}}%" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+<div class="small">
+    <span class="sr-only">{{#str}}aria:courseprogress, block_myoverview{{/str}}</span>
+	<strong>{{progress}}%</strong> {{#str}}complete, block_myoverview{{/str}}
+</div>

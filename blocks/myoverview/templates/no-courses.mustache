@@ -15,22 +15,19 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_myoverview/paging-content-item
+    @template block_myoverview/no-courses
 
-    This template renders the content of a page. It is to be used with
-    the paging bar to toggle visibility of the content items.
+    This template renders the no courses message.
 
     Example context (json):
     {
-        "active": true,
-        "page": 1,
-        "content": "<p>Some page content</p>"
+        "nocoursesimg": "https://moodlesite/theme/image.php/boost/block_myoverview/1535727318/courses"
     }
 }}
-<div data-region="paging-content-item"
-     data-page="{{page}}"
-     class="{{^active}}hidden{{/active}} {{$classes}}{{/classes}}">
-    {{$content}}
-        {{{content}}}
-    {{/content}}
-</div>
+<div class="text-xs-center text-center m-t-3" data-region="empty-message">
+    <img class="empty-placeholder-image-lg"
+         src="{{nocoursesimg}}"
+         alt="{{#str}} nocourses, block_myoverview {{/str}}"
+         role="presentation">
+    <p class="text-muted mt-3">{{#str}} nocourses, block_myoverview {{/str}}</p>
+</div>	

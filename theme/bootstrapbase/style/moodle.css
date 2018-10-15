@@ -16536,36 +16536,100 @@ body {
   height: 35px;
   width: 35px;
 }
-.block_myoverview {
-  background-color: transparent;
-}
-.block_myoverview .row-fluid [class*="span"] {
-  margin-left: 0;
-}
-.block_myoverview .empty-placeholder-image-sm {
-  height: 50px;
+.block_myoverview *,
+.block_myoverview *::before,
+.block_myoverview *::after {
+  box-sizing: border-box;
 }
 .block_myoverview .empty-placeholder-image-lg {
   height: 125px;
 }
-.block_myoverview .courses-view-course-item {
-  height: 220px;
-  overflow-y: hidden;
+.block_myoverview .course-card {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: calc(50% - 0.6rem);
 }
-.block_myoverview h4 {
-  font-weight: normal;
+.block_myoverview .course-info-container {
+  flex: 1 1 auto;
+  padding: 0.8rem;
 }
-.block_myoverview .well {
-  background-color: #fff;
-  box-shadow: none;
-  margin: 0 5px 10px;
+.block_myoverview .course-card-footer {
+  padding: 0.8rem;
+  background-color: #f5f5f5;
+  border-top: 1px solid #e3e3e3;
+  -webkit-border-bottom-right-radius: 4px;
+  -moz-border-radius-bottomright: 4px;
+  border-bottom-right-radius: 4px;
+  -webkit-border-bottom-left-radius: 4px;
+  -moz-border-radius-bottomleft: 4px;
+  border-bottom-left-radius: 4px;
+}
+.block_myoverview .progress {
+  height: 0.5rem;
+  margin-bottom: 0;
 }
 .block_myoverview .myoverviewimg {
-  height: 150px;
-}
-.block_myoverview .myoverviewimg.courseimage {
+  height: 7rem;
   background-position: center;
   background-size: cover;
+  -webkit-border-top-right-radius: 4px;
+  -moz-border-radius-topright: 4px;
+  border-top-right-radius: 4px;
+  -webkit-border-top-left-radius: 4px;
+  -moz-border-radius-topleft: 4px;
+  border-top-left-radius: 4px;
+}
+.block_myoverview .list-group {
+  margin: 0;
+}
+.block_myoverview .course-listitem {
+  display: block;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 0.5rem;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.block_myoverview .course-summaryitem {
+  padding: 0.5rem;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.block_myoverview .summary img {
+  max-width: 100%;
+}
+@media (max-width: 576px) {
+  .block_myoverview .summaryimage {
+    max-height: 7rem;
+  }
+}
+@media (min-width: 576px) {
+  .block_myoverview .card-deck {
+    display: flex;
+    flex-flow: row wrap;
+    margin-right: -0.25rem;
+    margin-left: -0.25rem;
+  }
+  .block_myoverview .course-card {
+    display: flex;
+    flex-direction: column;
+    margin-right: 0.25rem;
+    margin-left: 0.25rem;
+  }
+}
+@media (min-width: 1200px) {
+  .block_myoverview .course-card {
+    flex-basis: calc(33% - 0.5rem);
+  }
 }
 /**
  * Moodle forms HTML isn't changeable via renderers (yet?) so this
@@ -22106,4 +22170,19 @@ ul.indented-list {
 }
 .w-25 {
   width: 25%;
+}
+.d-flex {
+  display: flex !important;
+}
+.flex-column {
+  flex-direction: column !important;
+}
+.align-self-stretch {
+  align-self: stretch;
+}
+.ml-auto {
+  margin-left: auto;
+}
+.mt-auto {
+  margin-top: auto;
 }

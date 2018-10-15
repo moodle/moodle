@@ -55,6 +55,7 @@ define('FIRSTUSEDEXCELROW', 3);
 define('MOD_CLASS_ACTIVITY', 0);
 define('MOD_CLASS_RESOURCE', 1);
 
+define('COURSE_TIMELINE_ALL', 'all');
 define('COURSE_TIMELINE_PAST', 'past');
 define('COURSE_TIMELINE_INPROGRESS', 'inprogress');
 define('COURSE_TIMELINE_FUTURE', 'future');
@@ -4204,8 +4205,9 @@ function course_filter_courses_by_timeline_classification(
     int $limit = 0
 ) : array {
 
-    if (!in_array($classification, [COURSE_TIMELINE_PAST, COURSE_TIMELINE_INPROGRESS, COURSE_TIMELINE_FUTURE])) {
-        $message = 'Classification must be one of COURSE_TIMELINE_PAST, '
+    if (!in_array($classification,
+            [COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, COURSE_TIMELINE_INPROGRESS, COURSE_TIMELINE_FUTURE])) {
+        $message = 'Classification must be one of COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, '
             . 'COURSE_TIMELINE_INPROGRESS or COURSE_TIMELINE_FUTURE';
         throw new moodle_exception($message);
     }
@@ -4217,7 +4219,7 @@ function course_filter_courses_by_timeline_classification(
     foreach ($courses as $course) {
         $numberofcoursesprocessed++;
 
-        if ($classification == course_classify_for_timeline($course)) {
+        if ($classification == COURSE_TIMELINE_ALL || $classification == course_classify_for_timeline($course)) {
             $filteredcourses[] = $course;
             $filtermatches++;
         }
