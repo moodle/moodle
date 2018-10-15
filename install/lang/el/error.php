@@ -40,7 +40,7 @@ $string['cannotsavemd5file'] = 'Αδυναμία αποθήκευσης αρχε
 $string['cannotsavezipfile'] = 'Αδυναμία αποθήκευσης συμπιεσμένου αρχείου';
 $string['cannotunzipfile'] = 'Αδυναμία αποσυμπίεσης αρχείου';
 $string['componentisuptodate'] = 'Το στοιχείο λογισμικού είναι ενημερωμένο.';
-$string['downloadedfilecheckfailed'] = 'Ο έλεγχος του ληφθέντος αρχείου απέτυχε.';
+$string['downloadedfilecheckfailed'] = 'Αποτυχία ελέγχου αρχείου που έγινε λήψη';
 $string['invalidmd5'] = 'Μη έγκυρο md5';
 $string['missingrequiredfield'] = 'Κάποιο απαιτούμενο πεδίο λείπει';
 $string['remotedownloaderror'] = '<p>Απέτυχε η λήψη του τμήματος στον εξυπηρετητή σας. Παρακαλούμε επιβεβαιώστε τις ρυθμίσεις του διακομιστή μεσολάβησης (proxy)· η επέκταση PHP cURL συνιστάται θερμά.</p> <p>Πρέπει να κατεβάσετε το <a href="{$a->url}">{$a->url}</a> χειροκίνητα, να το αντιγράψετε στο "{$a->dest}" στον εξυπηρετητή σας και να το αποσυμπιέσετε εκεί.</p>';
