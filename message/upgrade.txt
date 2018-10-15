@@ -35,7 +35,7 @@ information provided here is intended especially for developers.
   - core_message_external::block_contacts(), please use core_message_external::block_user() instead.
   - core_message_external::unblock_contacts(), please use core_message_external::unblock_user() instead.
   - core_message_external::create_contacts(), please use core_message_external::create_contact_request() instead.
-  - core_message_external::delete_conversation(), please use core_message_external::delete_conversation_by_id() instead.
+  - core_message_external::delete_conversation(), please use core_message_external::delete_conversations_by_id() instead.
 
 === 3.5 ===
 

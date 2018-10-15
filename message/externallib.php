@@ -2639,11 +2639,14 @@ class core_message_external extends external_api {
      * @return external_function_parameters
      * @since 3.6
      */
-    public static function delete_conversation_by_id_parameters() {
+    public static function delete_conversations_by_id_parameters() {
         return new external_function_parameters(
             array(
                 'userid' => new external_value(PARAM_INT, 'The user id of who we want to delete the conversation for'),
-                'conversationid' => new external_value(PARAM_INT, 'The id of the conversation'),
+                'conversationids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'The id of the conversation'),
+                    'List of conversation IDs'
+                ),
             )
         );
     }
@@ -2652,12 +2655,12 @@ class core_message_external extends external_api {
      * Deletes a conversation.
      *
      * @param int $userid The user id of who we want to delete the conversation for
-     * @param int $conversationid The id of the conversation
+     * @param int[] $conversationids The ids of the conversations
      * @return array
      * @throws moodle_exception
      * @since 3.6
      */
-    public static function delete_conversation_by_id($userid, $conversationid) {
+    public static function delete_conversations_by_id($userid, array $conversationids) {
         global $CFG;
 
         // Check if private messaging between users is allowed.
@@ -2668,9 +2671,9 @@ class core_message_external extends external_api {
         // Validate params.
         $params = [
             'userid' => $userid,
-            'conversationid' => $conversationid,
+            'conversationids' => $conversationids,
         ];
-        $params = self::validate_parameters(self::delete_conversation_by_id_parameters(), $params);
+        $params = self::validate_parameters(self::delete_conversations_by_id_parameters(), $params);
 
         // Validate context.
         $context = context_system::instance();
@@ -2679,10 +2682,12 @@ class core_message_external extends external_api {
         $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
         core_user::require_active_user($user);
 
-        if (\core_message\api::can_delete_conversation($user->id, $conversationid)) {
-            \core_message\api::delete_conversation_by_id($user->id, $conversationid);
-        } else {
-            throw new moodle_exception("You do not have permission to delete the conversation '$conversationid'");
+        foreach ($conversationids as $conversationid) {
+            if (\core_message\api::can_delete_conversation($user->id, $conversationid)) {
+                \core_message\api::delete_conversation_by_id($user->id, $conversationid);
+            } else {
+                throw new moodle_exception("You do not have permission to delete the conversation '$conversationid'");
+            }
         }
 
         return [];
@@ -2694,7 +2699,7 @@ class core_message_external extends external_api {
      * @return external_description
      * @since 3.6
      */
-    public static function delete_conversation_by_id_returns() {
+    public static function delete_conversations_by_id_returns() {
         return new external_warnings();
     }
 

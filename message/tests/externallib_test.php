@@ -3484,9 +3484,9 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test deleting conversation.
+     * Test deleting conversations.
      */
-    public function test_delete_conversation_by_id() {
+    public function test_delete_conversations_by_id() {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -3508,7 +3508,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
 
         // Delete the conversation.
-        core_message_external::delete_conversation_by_id($user1->id, $conversationid);
+        core_message_external::delete_conversations_by_id($user1->id, [$conversationid]);
 
         $muas = $DB->get_records('message_user_actions', array(), 'timecreated ASC');
         $this->assertCount(4, $muas);
@@ -3538,9 +3538,9 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test deleting conversation as other user.
+     * Test deleting conversations as other user.
      */
-    public function test_delete_conversation_by_id_as_other_user() {
+    public function test_delete_conversations_by_id_as_other_user() {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -3561,7 +3561,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
 
         // Delete the conversation.
-        core_message_external::delete_conversation_by_id($user1->id, $conversationid);
+        core_message_external::delete_conversations_by_id($user1->id, [$conversationid]);
 
         $muas = $DB->get_records('message_user_actions', array(), 'timecreated ASC');
         $this->assertCount(4, $muas);
@@ -3591,9 +3591,9 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test deleting conversation as other user without proper capability.
+     * Test deleting conversations as other user without proper capability.
      */
-    public function test_delete_conversation_by_id_as_other_user_without_cap() {
+    public function test_delete_conversations_by_id_as_other_user_without_cap() {
         $this->resetAfterTest(true);
 
         // Create some users.
@@ -3615,13 +3615,13 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Ensure an exception is thrown.
         $this->expectException('moodle_exception');
-        core_message_external::delete_conversation_by_id($user1->id, $conversationid);
+        core_message_external::delete_conversations_by_id($user1->id, [$conversationid]);
     }
 
     /**
-     * Test deleting conversation with messaging disabled.
+     * Test deleting conversations with messaging disabled.
      */
-    public function test_delete_conversation_by_id_messaging_disabled() {
+    public function test_delete_conversations_by_id_messaging_disabled() {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -3647,7 +3647,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Ensure an exception is thrown.
         $this->expectException('moodle_exception');
-        core_message_external::delete_conversation_by_id($user1->id, $conversationid);
+        core_message_external::delete_conversations_by_id($user1->id, [$conversationid]);
     }
 
     /**
