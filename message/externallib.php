@@ -2541,6 +2541,7 @@ class core_message_external extends external_api {
     /**
      * Returns description of method parameters.
      *
+     * @deprecated since 3.6
      * @return external_function_parameters
      * @since 3.2
      */
@@ -2556,6 +2557,7 @@ class core_message_external extends external_api {
     /**
      * Deletes a conversation.
      *
+     * @deprecated since 3.6
      * @param int $userid The user id of who we want to delete the conversation for
      * @param int $otheruserid The user id of the other user in the conversation
      * @return array
@@ -2609,6 +2611,7 @@ class core_message_external extends external_api {
     /**
      * Returns description of method result value.
      *
+     * @deprecated since 3.6
      * @return external_description
      * @since 3.2
      */
@@ -2619,6 +2622,15 @@ class core_message_external extends external_api {
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function delete_conversation_is_deprecated() {
+        return true;
     }
 
     /**
@@ -3016,7 +3028,6 @@ class core_message_external extends external_api {
             )
         );
     }
-
 
     /**
      * Returns description of method parameters

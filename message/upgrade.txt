@@ -32,9 +32,10 @@ information provided here is intended especially for developers.
 * The method \core_message\api::can_delete_conversation() now expects a 'conversationid' to be passed
   as the second parameter.
 * The following web services have been deprecated. Please do not call these any more.
-  - core_message_external::block_contacts, please use core_message_external::block_user instead.
-  - core_message_external::unblock_contacts, please use core_message_external::unblock_user instead.
-  - core_message_external::create_contacts, please use core_message_external::create_contact_request instead.
+  - core_message_external::block_contacts(), please use core_message_external::block_user() instead.
+  - core_message_external::unblock_contacts(), please use core_message_external::unblock_user() instead.
+  - core_message_external::create_contacts(), please use core_message_external::create_contact_request() instead.
+  - core_message_external::delete_conversation(), please use core_message_external::delete_conversation_by_id() instead.
 
 === 3.5 ===
 

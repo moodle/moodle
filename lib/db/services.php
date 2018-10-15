@@ -917,7 +917,8 @@ $functions = array(
         'classname' => 'core_message_external',
         'methodname' => 'delete_conversation',
         'classpath' => 'message/externallib.php',
-        'description' => 'Deletes a conversation.',
+        'description' => '** DEPRECATED ** Please do not call this function any more.
+                          Deletes a conversation.',
         'type' => 'write',
         'capabilities' => 'moodle/site:deleteownmessage',
         'ajax' => true,
