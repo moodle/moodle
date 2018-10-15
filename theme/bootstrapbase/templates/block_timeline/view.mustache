@@ -20,15 +20,38 @@
     This template renders the timeline view for the timeline block.
 
     Example context (json):
-    {}
+    {
+        "midnight": 1538954668,
+        "coursepages": [
+            {}
+        ],
+        "urls": {
+            "nocourses": "#",
+            "noevents": "#"
+        },
+        "sorttimelinedates": true,
+        "sorttimelinecourses": false,
+        "selectedfilter": "all",
+        "hasdaysoffset": true,
+        "hasdayslimit": false,
+        "nodayslimit": true,
+        "all": true,
+        "overdue": false,
+        "next7days": false,
+        "next30days": false,
+        "next3months": false,
+        "next6months": false,
+        "daysoffset": -14,
+        "dayslimit": false
+    }
 }}
 <div data-region="timeline-view">
     <div class="tab-content" style="overflow: visible">
-        <div class="tab-pane active fade in" data-region="view-dates" id="view_dates_{{uniqid}}">
+        <div class="tab-pane {{#sorttimelinedates}}active in{{/sorttimelinedates}} fade" data-region="view-dates" id="view_dates_{{uniqid}}">
             {{> block_timeline/view-dates }}
         </div>
         <div
-            class="tab-pane fade"
+            class="tab-pane {{#sorttimelinecourses}}active in{{/sorttimelinecourses}} fade"
             data-region="view-courses"
             data-midnight="{{midnight}}"
             data-limit="2"

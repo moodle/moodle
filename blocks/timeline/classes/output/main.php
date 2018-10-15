@@ -30,6 +30,7 @@ use templatable;
 use core_course\external\course_summary_exporter;
 
 require_once($CFG->dirroot . '/course/lib.php');
+require_once($CFG->dirroot . '/blocks/timeline/lib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
 /**
@@ -42,6 +43,86 @@ class main implements renderable, templatable {
 
     /** Number of courses to load per page */
     const COURSES_PER_PAGE = 2;
+
+    /**
+     * @var string The current filter preference
+     */
+    public $filter;
+
+    /**
+     * @var string The current sort/order preference
+     */
+    public $order;
+
+    /**
+     * main constructor.
+     *
+     * @param string $order Constant sort value from ../timeline/lib.php
+     * @param string $filter Constant sort value from ../timeline/lib.php
+     */
+    public function __construct($order, $filter) {
+        $this->order = $order ? $order : BLOCK_TIMELINE_SORT_BY_DATES;
+        $this->filter = $filter ? $filter : BLOCK_TIMELINE_FILTER_BY_7_DAYS;
+    }
+
+    /**
+     * Test the available filters with the current user preference and return an array with
+     * bool flags corresponding to which is active
+     *
+     * @return array
+     */
+    protected function get_filters_as_booleans() {
+        $filters = [
+            BLOCK_TIMELINE_FILTER_BY_NONE => false,
+            BLOCK_TIMELINE_FILTER_BY_OVERDUE => false,
+            BLOCK_TIMELINE_FILTER_BY_7_DAYS => false,
+            BLOCK_TIMELINE_FILTER_BY_30_DAYS => false,
+            BLOCK_TIMELINE_FILTER_BY_3_MONTHS => false,
+            BLOCK_TIMELINE_FILTER_BY_6_MONTHS => false
+        ];
+
+        // Set the selected filter to true.
+        $filters[$this->filter] = true;
+
+        return $filters;
+    }
+
+    /**
+     * Get the offset/limit values corresponding to $this->filter
+     * which are used to send through to the context as default values
+     *
+     * @return array
+     */
+    private function get_filter_offsets() {
+
+        $limit = false;
+        if (in_array($this->filter, [BLOCK_TIMELINE_FILTER_BY_NONE, BLOCK_TIMELINE_FILTER_BY_OVERDUE])) {
+            $offset = -14;
+            if ($this->filter == BLOCK_TIMELINE_FILTER_BY_OVERDUE) {
+                $limit = 0;
+            }
+        } else {
+            $offset = 0;
+            $limit = 7;
+
+            switch($this->filter) {
+                case BLOCK_TIMELINE_FILTER_BY_30_DAYS:
+                    $limit = 30;
+                    break;
+                case BLOCK_TIMELINE_FILTER_BY_3_MONTHS:
+                    $limit = 90;
+                    break;
+                case BLOCK_TIMELINE_FILTER_BY_6_MONTHS:
+                    $limit = 180;
+                    break;
+            }
+        }
+
+        return [
+            'daysoffset' => $offset,
+            'dayslimit' => $limit
+        ];
+    }
 
     /**
      * Export this data so it can be used as the context for a mustache template.
@@ -69,13 +150,22 @@ class main implements renderable, templatable {
             return $exporter->export($output);
         }, $inprogresscourses);
 
-        return [
+        $filters = $this->get_filters_as_booleans();
+        $offsets = $this->get_filter_offsets();
+        $contextvariables = [
             'midnight' => usergetmidnight(time()),
             'coursepages' => [$formattedcourses],
             'urls' => [
                 'nocourses' => $nocoursesurl,
                 'noevents' => $noeventsurl
-            ]
+            ],
+            'sorttimelinedates' => $this->order == BLOCK_TIMELINE_SORT_BY_DATES,
+            'sorttimelinecourses' => $this->order == BLOCK_TIMELINE_SORT_BY_COURSES,
+            'selectedfilter' => $this->filter,
+            'hasdaysoffset' => true,
+            'hasdayslimit' => $offsets['dayslimit'] !== false ,
+            'nodayslimit' => $offsets['dayslimit'] === false ,
         ];
+        return array_merge($contextvariables, $filters, $offsets);
     }
 }

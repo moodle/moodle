@@ -25,12 +25,16 @@ define(
 [
     'jquery',
     'core/custom_interaction_events',
-    'block_timeline/view'
+    'block_timeline/view',
+    'core/ajax',
+    'core/notification'
 ],
 function(
     $,
     CustomEvents,
-    View
+    View,
+    Ajax,
+    Notification
 ) {
 
     var SELECTORS = {
@@ -39,6 +43,29 @@ function(
         TIMELINE_VIEW_SELECTOR: '[data-region="view-selector"]',
         DATA_DAYS_OFFSET: '[data-days-offset]',
         DATA_DAYS_LIMIT: '[data-days-limit]',
+    };
+
+    /**
+     * Generic handler to persist user preferences
+     *
+     * @param {string} type The name of the attribute you're updating
+     * @param {string} value The value of the attribute you're updating
+     */
+    var updateUserPreferences = function(type, value) {
+        var request = {
+            methodname: 'core_user_update_user_preferences',
+            args: {
+                preferences: [
+                    {
+                        type: type,
+                        value: value
+                    }
+                ]
+            }
+        };
+
+        Ajax.call([request])[0]
+            .fail(Notification.exception);
     };
 
     /**
@@ -55,6 +82,11 @@ function(
             CustomEvents.events.activate,
             SELECTORS.TIMELINE_DAY_FILTER_OPTION,
             function(e, data) {
+                // Update the user preference
+                var filtername = $(e.currentTarget).data('filtername');
+                var type = 'block_timeline_user_filter_preference';
+                updateUserPreferences(type, filtername);
+
                 var option = $(e.target).closest(SELECTORS.TIMELINE_DAY_FILTER_OPTION);
 
                 if (option.hasClass('active')) {
@@ -94,10 +126,20 @@ function(
      * @param {object} timelineViewRoot The root element for the timeline view
      */
     var registerViewSelector = function(root, timelineViewRoot) {
+        var viewSelector = root.find(SELECTORS.TIMELINE_VIEW_SELECTOR);
+
         // Listen for when the user changes tab so that we can show the first set of courses
         // and load their events when they request the sort by courses view for the first time.
-        root.find(SELECTORS.TIMELINE_VIEW_SELECTOR).on('shown shown.bs.tab', function() {
+        viewSelector.on('shown shown.bs.tab', function() {
             View.shown(timelineViewRoot);
+        });
+
+        // Event selector for user_sort
+        CustomEvents.define(viewSelector, [CustomEvents.events.activate]);
+        viewSelector.on(CustomEvents.events.activate, "[data-toggle='tab']", function(e) {
+            var filtername = $(e.currentTarget).data('filtername');
+            var type = 'block_timeline_user_sort_preference';
+            updateUserPreferences(type, filtername);
         });
     };
 

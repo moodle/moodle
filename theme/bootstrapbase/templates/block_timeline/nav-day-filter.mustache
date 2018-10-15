@@ -32,33 +32,33 @@
         <span data-region="caret" class="caret"></span>
     </button>
     <ul role="menu" class="dropdown-menu" data-show-active-item>
-        <li class="dropdown-item" data-from="-14">
+        <li class="dropdown-item {{#all}} active {{/all}}" data-from="-14" data-filtername="all">
             <a href="#" aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} all, core {{/str}}{{/str}}">
                 {{#str}} all, core {{/str}}
             </a>
         </li>
-        <li class="dropdown-item" data-from="-14" data-to="0">
+        <li class="dropdown-item {{#overdue}} active {{/overdue}}" data-from="-14" data-to="0" data-filtername="overdue">
             <a href="#" aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} overdue, block_timeline {{/str}}{{/str}}">
                 {{#str}} overdue, block_timeline {{/str}}
             </a>
         </li>
         <li class="divider"></li>
-        <li class="dropdown-item" data-from="0" data-to="7">
+        <li class="dropdown-item {{#next7days}} active {{/next7days}}" data-from="0" data-to="7" data-filtername="next7days">
             <a href="#" aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next7days, block_timeline {{/str}}{{/str}}">
                 {{#str}} next7days, block_timeline {{/str}}
             </a>
         </li>
-        <li class="dropdown-item active" data-from="0" data-to="30">
+        <li class="dropdown-item {{#next30days}} active {{/next30days}}" data-from="0" data-to="30" data-filtername="next30days">
             <a href="#" aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next30days, block_timeline {{/str}}{{/str}}">
                 {{#str}} next30days, block_timeline {{/str}}
             </a>
         </li>
-        <li class="dropdown-item" data-from="0" data-to="90">
+        <li class="dropdown-item {{#next3months}} active {{/next3months}}" data-from="0" data-to="90" data-filtername="next3months">
             <a href="#" aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next3months, block_timeline {{/str}}{{/str}}">
                 {{#str}} next3months, block_timeline {{/str}}
             </a>
         </li>
-        <li class="dropdown-item" data-from="0" data-to="180">
+        <li class="dropdown-item {{#next6months}} active {{/next6months}}" data-from="0" data-to="180" data-filtername="next6months">
             <a href="#" aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next6months, block_timeline {{/str}}{{/str}}">
                 {{#str}} next6months, block_timeline {{/str}}
             </a>
