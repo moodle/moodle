@@ -30,6 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\contextlist;
+use core_privacy\local\request\userlist;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Privacy Subsystem implementation for block_comments.
@@ -40,7 +42,7 @@ use core_privacy\local\request\contextlist;
 class provider implements
         // The block_comments block stores user provided data.
         \core_privacy\local\metadata\provider,
-
+        \core_privacy\local\request\core_userlist_provider,
         // The block_comments block provides data directly to core.
         \core_privacy\local\request\plugin\provider {
 
@@ -78,6 +80,27 @@ class provider implements
     }
 
     /**
+     * Get the list of users within a specific context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        $params = [
+            'contextid' => $context->id,
+            'component' => 'block_comments',
+        ];
+
+        $sql = "SELECT userid as userid
+                  FROM {comments}
+                 WHERE component = :component
+                       AND contextid = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+    }
+
+    /**
      * Export all user data for the specified user, in the specified contexts.
      *
      * @param approved_contextlist $contextlist
@@ -102,6 +125,15 @@ class provider implements
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         \core_comment\privacy\provider::delete_comments_for_all_users($context, 'block_comments');
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        \core_comment\privacy\provider::delete_comments_for_users($userlist, 'block_comments');
     }
 
     /**
