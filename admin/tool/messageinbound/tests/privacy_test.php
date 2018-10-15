@@ -29,7 +29,9 @@ global $CFG;
 
 use core_privacy\tests\provider_testcase;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use tool_messageinbound\privacy\provider;
 
@@ -70,6 +72,51 @@ class tool_messageinbound_privacy_testcase extends provider_testcase {
         $this->assertEquals($u2ctx->id, $contexts[0]->id);
     }
 
+    /**
+     * Test for provider::test_get_users_in_context().
+     */
+    public function test_get_users_in_context() {
+        $component = 'tool_messageinbound';
+        $dg = $this->getDataGenerator();
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u1ctx = context_user::instance($u1->id);
+        $u2ctx = context_user::instance($u2->id);
+        $u3ctx = context_user::instance($u3->id);
+
+        $addressmanager = new \core\message\inbound\address_manager();
+        $addressmanager->set_handler('\tool_messageinbound\message\inbound\invalid_recipient_handler');
+        $addressmanager->set_data(123);
+
+        // Create a user key for user 1.
+        $addressmanager->generate($u1->id);
+
+        // Create a messagelist for user 2.
+        $this->create_messagelist(['userid' => $u2->id, 'address' => 'u2@example1.com']);
+
+        $userlist1 = new userlist($u1ctx, $component);
+        provider::get_users_in_context($userlist1);
+        $userlist2 = new userlist($u2ctx, $component);
+        provider::get_users_in_context($userlist2);
+        $userlist3 = new userlist($u3ctx, $component);
+        provider::get_users_in_context($userlist3);
+
+        // Ensure user 1 is found from userkey.
+        $userids = $userlist1->get_userids();
+        $this->assertCount(1, $userids);
+        $this->assertEquals($u1->id, $userids[0]);
+
+        // Ensure user 2 is found from messagelist.
+        $userids = $userlist2->get_userids();
+        $this->assertCount(1, $userids);
+        $this->assertEquals($u2->id, $userids[0]);
+
+        // User 3 has neither, so should not be found.
+        $userids = $userlist3->get_userids();
+        $this->assertCount(0, $userids);
+    }
+
     public function test_delete_data_for_user() {
         global $DB;
         $dg = $this->getDataGenerator();
@@ -104,6 +151,58 @@ class tool_messageinbound_privacy_testcase extends provider_testcase {
 
         // Deleting user 1.
         provider::delete_data_for_user(new approved_contextlist($u1, 'tool_messageinbound', [$u1ctx->id]));
+        $this->assertFalse($DB->record_exists('user_private_key', ['userid' => $u1->id, 'script' => 'messageinbound_handler']));
+        $this->assertTrue($DB->record_exists('user_private_key', ['userid' => $u2->id, 'script' => 'messageinbound_handler']));
+        $this->assertFalse($DB->record_exists('messageinbound_messagelist', ['userid' => $u1->id]));
+        $this->assertTrue($DB->record_exists('messageinbound_messagelist', ['userid' => $u2->id]));
+    }
+
+    /**
+     * Test for provider::test_delete_data_for_users().
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+        $component = 'tool_messageinbound';
+        $dg = $this->getDataGenerator();
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u1ctx = context_user::instance($u1->id);
+        $u2ctx = context_user::instance($u2->id);
+
+        $addressmanager = new \core\message\inbound\address_manager();
+        $addressmanager->set_handler('\tool_messageinbound\message\inbound\invalid_recipient_handler');
+        $addressmanager->set_data(123);
+
+        // Create a user key for both users.
+        $addressmanager->generate($u1->id);
+        $addressmanager->generate($u2->id);
+
+        // Create a messagelist for both users.
+        $this->create_messagelist(['userid' => $u1->id]);
+        $this->create_messagelist(['userid' => $u2->id]);
+
+        // Ensure data exists for both users.
+        $this->assertTrue($DB->record_exists('user_private_key', ['userid' => $u1->id, 'script' => 'messageinbound_handler']));
+        $this->assertTrue($DB->record_exists('user_private_key', ['userid' => $u2->id, 'script' => 'messageinbound_handler']));
+        $this->assertTrue($DB->record_exists('messageinbound_messagelist', ['userid' => $u1->id]));
+        $this->assertTrue($DB->record_exists('messageinbound_messagelist', ['userid' => $u2->id]));
+
+        // Ensure passing another user's ID does not do anything.
+        $approveduserids = [$u2->id];
+        $approvedlist = new approved_userlist($u1ctx, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        $this->assertTrue($DB->record_exists('user_private_key', ['userid' => $u1->id, 'script' => 'messageinbound_handler']));
+        $this->assertTrue($DB->record_exists('user_private_key', ['userid' => $u2->id, 'script' => 'messageinbound_handler']));
+        $this->assertTrue($DB->record_exists('messageinbound_messagelist', ['userid' => $u1->id]));
+        $this->assertTrue($DB->record_exists('messageinbound_messagelist', ['userid' => $u2->id]));
+
+        // Delete u1's data.
+        $approveduserids = [$u1->id];
+        $approvedlist = new approved_userlist($u1ctx, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        // Confirm only u1's data is deleted.
         $this->assertFalse($DB->record_exists('user_private_key', ['userid' => $u1->id, 'script' => 'messageinbound_handler']));
         $this->assertTrue($DB->record_exists('user_private_key', ['userid' => $u2->id, 'script' => 'messageinbound_handler']));
         $this->assertFalse($DB->record_exists('messageinbound_messagelist', ['userid' => $u1->id]));
