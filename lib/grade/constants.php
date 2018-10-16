@@ -270,11 +270,11 @@ define('GRADE_MIN_MAX_FROM_GRADE_GRADE', 2);
 define('GRADE_FILE_COMPONENT', 'grade');
 
 /**
- * The file area to store grade feedback files.
+ * The file area to store the associated grade_grades feedback files.
  */
 define('GRADE_FEEDBACK_FILEAREA', 'feedback');
 
 /**
- * The file area to store grade history files.
+ * The file area to store the associated grade_grades_history feedback files.
  */
-define('GRADE_HISTORY_FILEAREA', 'history');
+define('GRADE_HISTORY_FEEDBACK_FILEAREA', 'historyfeedback');

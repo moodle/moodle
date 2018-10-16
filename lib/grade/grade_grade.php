@@ -1056,7 +1056,7 @@ class grade_grade extends grade_object {
             $this->copy_feedback_files($context, GRADE_FEEDBACK_FILEAREA, $this->id);
 
             if (empty($CFG->disablegradehistory)) {
-                $this->copy_feedback_files($context, GRADE_HISTORY_FILEAREA, $historyid);
+                $this->copy_feedback_files($context, GRADE_HISTORY_FEEDBACK_FILEAREA, $historyid);
             }
         }
 
@@ -1109,7 +1109,7 @@ class grade_grade extends grade_object {
             $this->copy_feedback_files($context, GRADE_FEEDBACK_FILEAREA, $this->id);
 
             if (empty($CFG->disablegradehistory)) {
-                $this->copy_feedback_files($context, GRADE_HISTORY_FILEAREA, $historyid);
+                $this->copy_feedback_files($context, GRADE_HISTORY_FEEDBACK_FILEAREA, $historyid);
             }
         }
 

@@ -3705,6 +3705,10 @@ class restore_activity_grades_structure_step extends restore_structure_step {
     }
 
     protected function process_grade_grade($data) {
+        global $CFG;
+
+        require_once($CFG->libdir . '/grade/constants.php');
+
         $data = (object)($data);
         $olduserid = $data->userid;
         $oldid = $data->id;
@@ -3723,8 +3727,8 @@ class restore_activity_grades_structure_step extends restore_structure_step {
             $this->set_mapping('grade_grades', $oldid, $grade->id, true);
 
             $this->add_related_files(
-                'grade',
-                'feedback',
+                GRADE_FILE_COMPONENT,
+                GRADE_FEEDBACK_FILEAREA,
                 'grade_grades',
                 null,
                 $oldid
@@ -3803,7 +3807,9 @@ class restore_activity_grade_history_structure_step extends restore_structure_st
     }
 
     protected function process_grade_grade($data) {
-        global $DB;
+        global $CFG, $DB;
+
+        require_once($CFG->libdir . '/grade/constants.php');
 
         $data = (object) $data;
         $oldhistoryid = $data->id;
@@ -3823,8 +3829,8 @@ class restore_activity_grade_history_structure_step extends restore_structure_st
             $this->set_mapping('grade_grades_history', $oldhistoryid, $newhistoryid, true);
 
             $this->add_related_files(
-                'grade',
-                'history',
+                GRADE_FILE_COMPONENT,
+                GRADE_HISTORY_FEEDBACK_FILEAREA,
                 'grade_grades_history',
                 null,
                 $oldhistoryid

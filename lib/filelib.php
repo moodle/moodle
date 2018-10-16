@@ -4198,6 +4198,9 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
 
     // ========================================================================================================================
     } else if ($component === 'grade') {
+
+        require_once($CFG->libdir . '/grade/constants.php');
+
         if (($filearea === 'outcome' or $filearea === 'scale') and $context->contextlevel == CONTEXT_SYSTEM) {
             // Global gradebook files
             if ($CFG->forcelogin) {
@@ -4213,7 +4216,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
             \core\session\manager::write_close(); // Unlock session during file serving.
             send_stored_file($file, 60*60, 0, $forcedownload, $sendfileoptions);
 
-        } else if ($filearea === 'feedback' || $filearea == 'history') {
+        } else if ($filearea == GRADE_FEEDBACK_FILEAREA || $filearea == GRADE_HISTORY_FEEDBACK_FILEAREA) {
             if ($context->contextlevel != CONTEXT_MODULE) {
                 send_file_not_found;
             }
@@ -4222,7 +4225,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
 
             $gradeid = (int) array_shift($args);
             $filename = array_pop($args);
-            if ($filearea == 'historyfeedback') {
+            if ($filearea == GRADE_HISTORY_FEEDBACK_FILEAREA) {
                 $grade = $DB->get_record('grade_grades_history', ['id' => $gradeid]);
             } else {
                 $grade = $DB->get_record('grade_grades', ['id' => $gradeid]);

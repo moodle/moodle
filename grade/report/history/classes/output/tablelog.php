@@ -323,7 +323,7 @@ class tablelog extends \table_sql implements \renderable {
                 'pluginfile.php',
                 $context->id,
                 GRADE_FILE_COMPONENT,
-                GRADE_HISTORY_FILEAREA,
+                GRADE_HISTORY_FEEDBACK_FILEAREA,
                 $history->id
             );
 
