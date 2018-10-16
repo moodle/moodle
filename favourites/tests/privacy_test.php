@@ -62,8 +62,8 @@ class privacy_test extends provider_testcase {
         list($user1, $user2, $user1context, $user2context, $course1context, $course2context) = $this->set_up_courses_and_users();
 
         // Favourite 2 courses for user1 and 1 course for user2, all at the site context.
-        $ufservice1 = \core_favourites\services::get_service_for_user_context($user1context);
-        $ufservice2 = \core_favourites\services::get_service_for_user_context($user2context);
+        $ufservice1 = \core_favourites\service_factory::get_service_for_user_context($user1context);
+        $ufservice2 = \core_favourites\service_factory::get_service_for_user_context($user2context);
         $systemcontext = context_system::instance();
         $ufservice1->create_favourite('core_course', 'course', $course1context->instanceid, $systemcontext);
         $ufservice1->create_favourite('core_course', 'course', $course2context->instanceid, $systemcontext);
@@ -94,8 +94,8 @@ class privacy_test extends provider_testcase {
         list($user1, $user2, $user1context, $user2context, $course1context, $course2context) = $this->set_up_courses_and_users();
 
         // Favourite 2 courses for user1 and 1 course for user2, all at the user context.
-        $ufservice1 = \core_favourites\services::get_service_for_user_context($user1context);
-        $ufservice2 = \core_favourites\services::get_service_for_user_context($user2context);
+        $ufservice1 = \core_favourites\service_factory::get_service_for_user_context($user1context);
+        $ufservice2 = \core_favourites\service_factory::get_service_for_user_context($user2context);
         $ufservice1->create_favourite('core_course', 'course', $course1context->instanceid, $user1context);
         $ufservice1->create_favourite('core_course', 'course', $course2context->instanceid, $user1context);
         $ufservice2->create_favourite('core_course', 'course', $course2context->instanceid, $user2context);
@@ -115,8 +115,8 @@ class privacy_test extends provider_testcase {
         list($user1, $user2, $user1context, $user2context, $course1context, $course2context) = $this->set_up_courses_and_users();
 
         // Favourite 2 course modules for user1 and 1 course module for user2 all in course 1 context.
-        $ufservice1 = \core_favourites\services::get_service_for_user_context($user1context);
-        $ufservice2 = \core_favourites\services::get_service_for_user_context($user2context);
+        $ufservice1 = \core_favourites\service_factory::get_service_for_user_context($user1context);
+        $ufservice2 = \core_favourites\service_factory::get_service_for_user_context($user2context);
         $ufservice1->create_favourite('core_course', 'modules', 1, $course1context);
         $ufservice1->create_favourite('core_course', 'modules', 2, $course1context);
         $ufservice2->create_favourite('core_course', 'modules', 3, $course1context);

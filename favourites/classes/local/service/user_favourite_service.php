@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains the user_favourites_service class, part of the service layer for the favourites subsystem.
+ * Contains the user_favourite_service class, part of the service layer for the favourites subsystem.
  *
  * @package   core_favourites
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_favourites_service {
+class user_favourite_service {
 
     /** @var ifavourite_repository $repo the user favourites repository object. */
     protected $repo;
@@ -46,7 +46,7 @@ class user_favourites_service {
     protected $userid;
 
     /**
-     * The user_favourites_service constructor.
+     * The user_favourite_service constructor.
      *
      * @param \context_user $usercontext The context of the user to which this service operations are scoped.
      * @param \core_favourites\local\repository\ifavourite_repository $repository a user favourites repository.
