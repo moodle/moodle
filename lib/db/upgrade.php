@@ -2337,22 +2337,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018091200.00);
     }
 
-    if ($oldversion < 2018091400.01) {
-        if (!isset($CFG->messagingallusers)) {
-            // For existing instances, $CFG->messagingallusers would be same value $CFG->messaging has.
-            if (isset($CFG->messaging)) {
-                set_config('messagingallusers', $CFG->messaging);
-            } else {
-                // When $CFG->messaging is not set, default value for $CFG->messaging should be true,
-                // so $CFG->messagingallusers value should be true as well.
-                set_config('messagingallusers', 1);
-            }
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2018091400.01);
-    }
-
     if ($oldversion < 2018091700.01) {
         // Remove unused setting.
         unset_config('messaginghidereadnotifications');
@@ -2522,6 +2506,23 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         upgrade_main_savepoint(true, 2018092800.03);
+    }
+
+    if ($oldversion < 2018101100.01) {
+        if (empty($CFG->keepmessagingallusersenabled)) {
+            // When it is not set, $CFG->messagingallusers should be disabled by default.
+            // When $CFG->messagingallusers = false, the default user preference is MESSAGE_PRIVACY_COURSEMEMBER
+            // (contacted by users sharing a course).
+            set_config('messagingallusers', false);
+        } else {
+            // When $CFG->keepmessagingallusersenabled is set to true, $CFG->messagingallusers is set to true.
+            // When $CFG->messagingallusers = true, the default user preference is MESSAGE_PRIVACY_SITE
+            // (contacted by all users site).
+            set_config('messagingallusers', true);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018101100.01);
     }
 
     return true;
