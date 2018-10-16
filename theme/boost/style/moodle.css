@@ -10468,6 +10468,66 @@ div.editor_atto_toolbar button .icon {
 .dir-ltr .dir-ltr-hide {
   display: none; }
 
+.switch {
+  position: relative; }
+  .switch input {
+    position: absolute;
+    height: 1px;
+    width: 1px;
+    background: none;
+    border: 0;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    overflow: hidden;
+    padding: 0; }
+    .switch input + label {
+      position: relative;
+      min-height: 1.725rem;
+      min-width: 3.45rem;
+      line-height: 1.725rem;
+      border-radius: 1.725rem;
+      display: inline-block;
+      cursor: pointer;
+      outline: none;
+      user-select: none;
+      vertical-align: middle;
+      padding-left: 3.95rem; }
+    .switch input + label::before,
+    .switch input + label::after {
+      content: '';
+      position: absolute;
+      top: calc(50% - 0.8625rem);
+      left: 0;
+      width: 3.45rem;
+      height: 1.725rem;
+      bottom: 0;
+      display: block; }
+    .switch input + label::before {
+      right: 0;
+      background-color: #dee2e6;
+      border-radius: 1.725rem;
+      transition: 0.2s all; }
+    .switch input + label::after {
+      margin-top: 2px;
+      left: 2px;
+      width: calc(1.725rem - 4px);
+      height: calc(1.725rem - 4px);
+      border-radius: 50%;
+      background-color: #fff;
+      transition: 0.2s all; }
+    .switch input:checked + label::before {
+      background-color: #1177d1; }
+    .switch input:checked + label::after {
+      margin-left: 1.725rem; }
+    .switch input:focus + label::before {
+      outline: none;
+      box-shadow: 0 0 0 0.2rem rgba(17, 119, 209, 0.25); }
+    .switch input:disabled + label {
+      color: #868e96;
+      cursor: not-allowed; }
+    .switch input:disabled + label::before {
+      background-color: #e9ecef; }
+
 .icon {
   font-size: 16px;
   width: 16px;
