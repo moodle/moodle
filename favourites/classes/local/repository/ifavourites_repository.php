@@ -21,11 +21,12 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace core_favourites\local\repository;
+use \core_favourites\local\entity\favourite;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The favourites_repository interface, defining additional operations useful to favourites type repositories.
+ * The favourites_repository interface, defining additional operations useful to favourite type repositories.
  *
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -39,7 +40,7 @@ interface ifavourites_repository extends crud_repository {
      * @param string $itemtype the type of the favourited item.
      * @param int $itemid the id of the item which was favourited (not the favourite's id).
      * @param int $contextid the contextid of the item which was favourited.
-     * @return \stdClass the favourite.
+     * @return favourite the favourite.
      */
-    public function find_favourite(int $userid, string $component, string $itemtype, int $itemid, int $contextid) : \stdClass;
+    public function find_favourite(int $userid, string $component, string $itemtype, int $itemid, int $contextid) : favourite;
 }

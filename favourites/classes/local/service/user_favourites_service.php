@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace core_favourites\local\service;
+use \core_favourites\local\entity\favourite;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -74,11 +75,11 @@ class user_favourites_service {
      * @param int $itemid the id of the item which is to be favourited.
      * @param \context $context the context in which the item is to be favourited.
      * @param int|null $ordering optional ordering integer used for sorting the favourites in an area.
-     * @return \stdClass the favourite, once created.
+     * @return favourite the favourite, once created.
      * @throws \moodle_exception if the component name is invalid, or if the repository encounters any errors.
      */
     public function create_favourite(string $component, string $itemtype, int $itemid, \context $context,
-                                     int $ordering = null) : \stdClass {
+            int $ordering = null) : favourite {
         // Access: Any component can ask to favourite something, we can't verify access to that 'something' here though.
 
         // Validate the component name.
@@ -86,14 +87,8 @@ class user_favourites_service {
             throw new \moodle_exception("Invalid component name '$component'");
         }
 
-        $favourite = (object) [
-            'userid' => $this->userid,
-            'component' => $component,
-            'itemtype' => $itemtype,
-            'itemid' => $itemid,
-            'contextid' => $context->id,
-            'ordering' => $ordering > 0 ? $ordering : null
-        ];
+        $favourite = new favourite($component, $itemtype, $itemid, $context->id, $this->userid);
+        $favourite->ordering = $ordering > 0 ? $ordering : null;
         return $this->repo->add($favourite);
     }
 

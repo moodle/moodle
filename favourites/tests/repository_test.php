@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use \core_favourites\local\repository\favourites_repository;
+use \core_favourites\local\entity\favourite;
 
 /**
  * Test class covering the favourites_repository.
@@ -61,18 +62,19 @@ class favourites_repository_testcase extends advanced_testcase {
         // Create a favourites repository and favourite a course.
         $favouritesrepo = new favourites_repository($user1context);
 
-        $favcourse = (object)[
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'course',
-            'itemid' => $course1context->instanceid,
-            'contextid' => $course1context->id,
-        ];
+        $favcourse = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
         $timenow = time(); // Reference only, to check that the created item has a time equal to or greater than this.
         $favourite = $favouritesrepo->add($favcourse);
 
         // Verify we get the record back.
-        $this->assertInstanceOf(\stdClass::class, $favourite);
+        $this->assertInstanceOf(favourite::class, $favourite);
+        $this->assertObjectHasAttribute('id', $favourite);
         $this->assertEquals('core_course', $favourite->component);
         $this->assertEquals('course', $favourite->itemtype);
 
@@ -95,14 +97,14 @@ class favourites_repository_testcase extends advanced_testcase {
         // Create a favourites repository and favourite a course.
         $favouritesrepo = new favourites_repository($user1context);
 
-        $favcourse = (object)[
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'course',
-            'itemid' => $course1context->instanceid,
-            'contextid' => $course1context->id,
-            'anotherfield' => 'cat'
-        ];
+        $favcourse = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
+        $favcourse->something = 'something';
 
         $this->expectException('moodle_exception');
         $favouritesrepo->add($favcourse);
@@ -114,14 +116,17 @@ class favourites_repository_testcase extends advanced_testcase {
     public function test_add_incomplete_favourite() {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
-        // Create a favourites repository and favourite a course.
+        // Create a favourites repository and try to favourite a course.
         $favouritesrepo = new favourites_repository($user1context);
 
-        $favcourse = (object)[
-            'component' => 'core_course',
-            'itemtype' => 'course',
-            'itemid' => $course1context->instanceid
-        ];
+        $favcourse = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
+        unset($favcourse->userid);
 
         $this->expectException('moodle_exception');
         $favouritesrepo->add($favcourse);
@@ -134,27 +139,29 @@ class favourites_repository_testcase extends advanced_testcase {
         $favouritesrepo = new favourites_repository($user1context);
         $favcourses = [];
 
-        $favcourses[] = (object)[
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'course',
-            'itemid' => $course1context->instanceid,
-            'contextid' => $course1context->id,
-        ];
-        $favcourses[] = (object)[
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'course',
-            'itemid' => $course2context->instanceid,
-            'contextid' => $course2context->id,
-        ];
+        $favcourses[] = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
+        $favcourses[] = new favourite(
+            'core_course',
+            'course',
+            $course2context->instanceid,
+            $course2context->id,
+            $user1context->instanceid
+        );
+
         $timenow = time(); // Reference only, to check that the created item has a time equal to or greater than this.
         $favourites = $favouritesrepo->add_all($favcourses);
 
         $this->assertInternalType('array', $favourites);
         $this->assertCount(2, $favourites);
         foreach ($favourites as $favourite) {
-            // Verify we get the record back.
+            // Verify we get the favourite back.
+            $this->assertInstanceOf(favourite::class, $favourite);
             $this->assertEquals('core_course', $favourite->component);
             $this->assertEquals('course', $favourite->itemtype);
 
@@ -177,18 +184,18 @@ class favourites_repository_testcase extends advanced_testcase {
 
         // Create a favourites repository and favourite a course.
         $favouritesrepo = new favourites_repository($user1context);
-        $favourite = (object) [
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'course',
-            'itemid' => $course1context->instanceid,
-            'contextid' => $course1context->id
-        ];
+        $favourite = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
         $favourite = $favouritesrepo->add($favourite);
 
         // Now, from the repo, get the single favourite we just created, by id.
         $userfavourite = $favouritesrepo->find($favourite->id);
-        $this->assertInstanceOf(\stdClass::class, $userfavourite);
+        $this->assertInstanceOf(favourite::class, $userfavourite);
         $this->assertObjectHasAttribute('timecreated', $userfavourite);
 
         // Try to get a favourite we know doesn't exist.
@@ -209,20 +216,20 @@ class favourites_repository_testcase extends advanced_testcase {
         $this->assertEquals([], $favouritesrepo->find_all());
 
         // Save a favourite for 2 courses, in different areas.
-        $favourite = (object) [
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'course',
-            'itemid' => $course1context->instanceid,
-            'contextid' => $course1context->id
-        ];
-        $favourite2 = (object) [
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'anothertype',
-            'itemid' => $course2context->instanceid,
-            'contextid' => $course2context->id
-        ];
+        $favourite = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
+        $favourite2 = new favourite(
+            'core_course',
+            'course',
+            $course2context->instanceid,
+            $course2context->id,
+            $user1context->instanceid
+        );
         $favouritesrepo->add($favourite);
         $favouritesrepo->add($favourite2);
 
@@ -230,6 +237,7 @@ class favourites_repository_testcase extends advanced_testcase {
         $favourites = $favouritesrepo->find_all();
         $this->assertCount(2, $favourites);
         foreach ($favourites as $fav) {
+            $this->assertInstanceOf(favourite::class, $fav);
             $this->assertObjectHasAttribute('id', $fav);
             $this->assertObjectHasAttribute('timecreated', $fav);
         }
@@ -251,13 +259,13 @@ class favourites_repository_testcase extends advanced_testcase {
 
         // Save 10 arbitrary favourites to the repo.
         foreach (range(1, 10) as $i) {
-            $favourite = (object) [
-                'userid' => $user1context->instanceid,
-                'component' => 'core_course',
-                'itemtype' => 'course',
-                'itemid' => $i,
-                'contextid' => $course1context->id
-            ];
+            $favourite = new favourite(
+                'core_course',
+                'course',
+                $i,
+                $course1context->id,
+                $user1context->instanceid
+            );
             $favouritesrepo->add($favourite);
         }
 
@@ -285,13 +293,13 @@ class favourites_repository_testcase extends advanced_testcase {
 
         // Create a favourites repository and favourite a course.
         $favouritesrepo = new favourites_repository($user1context);
-        $favourite = (object) [
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'course',
-            'itemid' => $course1context->instanceid,
-            'contextid' => $course1context->id
-        ];
+        $favourite = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
         $favouritesrepo->add($favourite);
 
         // From the repo, get the list of favourites for the 'core_course/course' area.
@@ -321,13 +329,13 @@ class favourites_repository_testcase extends advanced_testcase {
 
         // Save 10 arbitrary favourites to the repo.
         foreach (range(1, 10) as $i) {
-            $favourite = (object) [
-                'userid' => $user1context->instanceid,
-                'component' => 'core_course',
-                'itemtype' => 'course',
-                'itemid' => $i,
-                'contextid' => $course1context->id
-            ];
+            $favourite = new favourite(
+                'core_course',
+                'course',
+                $i,
+                $course1context->id,
+                $user1context->instanceid
+            );
             $favouritesrepo->add($favourite);
         }
 
@@ -359,20 +367,20 @@ class favourites_repository_testcase extends advanced_testcase {
 
         // Create a favourites repository and add 2 favourites in different areas.
         $favouritesrepo = new favourites_repository($user1context);
-        $favourite = (object) [
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'course',
-            'itemid' => $course1context->instanceid,
-            'contextid' => $course1context->id
-        ];
-        $favourite2 = (object) [
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'anothertype',
-            'itemid' => $course2context->instanceid,
-            'contextid' => $course2context->id
-        ];
+        $favourite = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
+        $favourite2 = new favourite(
+            'core_course',
+            'anothertype',
+            $course2context->instanceid,
+            $course2context->id,
+            $user1context->instanceid
+        );
         $favouritesrepo->add($favourite);
         $favouritesrepo->add($favourite2);
 
@@ -390,13 +398,13 @@ class favourites_repository_testcase extends advanced_testcase {
 
         // Create a favourites repository and favourite a course.
         $favouritesrepo = new favourites_repository($user1context);
-        $favourite = (object) [
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'course',
-            'itemid' => $course1context->instanceid,
-            'contextid' => $course1context->id
-        ];
+        $favourite = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
         $createdfavourite = $favouritesrepo->add($favourite);
 
         // Verify the existence of the favourite in the repo.
@@ -411,20 +419,20 @@ class favourites_repository_testcase extends advanced_testcase {
 
         // Create a favourites repository and favourite two courses, in different areas.
         $favouritesrepo = new favourites_repository($user1context);
-        $favourite = (object) [
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'course',
-            'itemid' => $course1context->instanceid,
-            'contextid' => $course1context->id
-        ];
-        $favourite2 = (object) [
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'anothertype',
-            'itemid' => $course2context->instanceid,
-            'contextid' => $course2context->id
-        ];
+        $favourite = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
+        $favourite2 = new favourite(
+            'core_course',
+            'anothertype',
+            $course2context->instanceid,
+            $course2context->id,
+            $user1context->instanceid
+        );
         $favourite1 = $favouritesrepo->add($favourite);
         $favourite2 = $favouritesrepo->add($favourite2);
 
@@ -447,19 +455,20 @@ class favourites_repository_testcase extends advanced_testcase {
 
         // Create a favourites repository and favourite a course.
         $favouritesrepo = new favourites_repository($user1context);
-        $favourite = (object) [
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'course',
-            'itemid' => $course1context->instanceid,
-            'contextid' => $course1context->id
-        ];
+        $favourite = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
         $favourite1 = $favouritesrepo->add($favourite);
+        $this->assertNull($favourite1->ordering);
 
         // Verify we can update the ordering for 2 favourites.
         $favourite1->ordering = 1;
         $favourite1 = $favouritesrepo->update($favourite1);
-        $this->assertInstanceOf(stdClass::class, $favourite1);
+        $this->assertInstanceOf(favourite::class, $favourite1);
         $this->assertAttributeEquals('1', 'ordering', $favourite1);
     }
 
@@ -468,13 +477,13 @@ class favourites_repository_testcase extends advanced_testcase {
 
         // Create a favourites repository and favourite a course.
         $favouritesrepo = new favourites_repository($user1context);
-        $favourite = (object) [
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'course',
-            'itemid' => $course1context->instanceid,
-            'contextid' => $course1context->id
-        ];
+        $favourite = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
         $favourite = $favouritesrepo->add($favourite);
 
         // Verify the existence of the favourite in the repo.
@@ -490,20 +499,20 @@ class favourites_repository_testcase extends advanced_testcase {
 
         // Create a favourites repository and favourite two courses, in different areas.
         $favouritesrepo = new favourites_repository($user1context);
-        $favourite = (object) [
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'course',
-            'itemid' => $course1context->instanceid,
-            'contextid' => $course1context->id
-        ];
-        $favourite2 = (object) [
-            'userid' => $user1context->instanceid,
-            'component' => 'core_course',
-            'itemtype' => 'anothertype',
-            'itemid' => $course2context->instanceid,
-            'contextid' => $course2context->id
-        ];
+        $favourite = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
+        $favourite2 = new favourite(
+            'core_course',
+            'anothertype',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
         $favourite1 = $favouritesrepo->add($favourite);
         $favourite2 = $favouritesrepo->add($favourite2);
 

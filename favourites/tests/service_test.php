@@ -22,7 +22,7 @@
  * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+use \core_favourites\local\entity\favourite;
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -63,7 +63,7 @@ class user_favourites_service_testcase extends advanced_testcase {
             ->getMock();
         $mockrepo->expects($this->any())
             ->method('add')
-            ->will($this->returnCallback(function(\stdclass $favourite) use (&$mockstore) {
+            ->will($this->returnCallback(function(favourite $favourite) use (&$mockstore) {
                 // Mock implementation of repository->add(), where an array is used instead of the DB.
                 // Duplicates are confirmed via the unique key, and exceptions thrown just like a real repo.
                 $key = $favourite->userid . $favourite->component . $favourite->itemtype . $favourite->itemid

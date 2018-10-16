@@ -21,6 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace core_favourites\local\repository;
+use \core_favourites\local\entity\favourite;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,10 +32,10 @@ interface crud_repository {
     /**
      * Add one item to this repository.
      *
-     * @param object $item the item to add.
-     * @return object the item which was added.
+     * @param favourite $item the item to add.
+     * @return favourite the item which was added.
      */
-    public function add($item);
+    public function add(favourite $item) : favourite;
 
     /**
      * Add all the items in the list to this repository.
@@ -48,9 +49,9 @@ interface crud_repository {
      * Find an item in this repository based on its id.
      *
      * @param int $id the id of the item.
-     * @return object the item.
+     * @return favourite the item.
      */
-    public function find(int $id);
+    public function find(int $id) : favourite;
 
     /**
      * Find all items in this repository.
@@ -89,10 +90,10 @@ interface crud_repository {
     /**
      * Update an item within this repository.
      *
-     * @param object $item the item to update.
-     * @return object the updated item.
+     * @param favourite $item the item to update.
+     * @return favourite the updated item.
      */
-    public function update($item);
+    public function update(favourite $item) : favourite;
 
     /**
      * Delete an item by id.

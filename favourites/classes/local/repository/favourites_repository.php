@@ -14,13 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Contains the user_favourites_repository class, responsible for CRUD operations for user favourites.
+ * Contains the favourites_repository class, responsible for CRUD operations for favourites.
  *
  * @package   core_favourites
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace core_favourites\local\repository;
+use \core_favourites\local\entity\favourite;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -40,20 +41,48 @@ class favourites_repository implements ifavourites_repository {
     protected $favouritetable = 'favourite';
 
     /**
-     * The favourites_repository constructor.
+     * Get a favourite object, based on a full record.
+     * @param \stdClass $record the record we wish to hydrate.
+     * @return favourite the favourite record.
      */
-    public function __construct() {
+    protected function get_favourite_from_record(\stdClass $record) : favourite {
+        $favourite = new favourite(
+            $record->component,
+            $record->itemtype,
+            $record->itemid,
+            $record->contextid,
+            $record->userid
+        );
+        $favourite->id = $record->id;
+        $favourite->ordering = $record->ordering ?? null;
+        $favourite->timecreated = $record->timecreated ?? null;
+        $favourite->timemodified = $record->timemodified ?? null;
+
+        return $favourite;
+    }
+
+    /**
+     * Get a list of favourite objects, based on a list of records.
+     * @param array $records the record we wish to hydrate.
+     * @return array the list of favourites.
+     */
+    protected function get_list_of_favourites_from_records(array $records) {
+        $list = [];
+        foreach ($records as $index => $record) {
+            $list[$index] = $this->get_favourite_from_record($record);
+        }
+        return $list;
     }
 
     /**
      * Add a favourite to the repository.
      *
-     * @param \stdClass $favourite the favourite to add.
-     * @return \stdClass the favourite which has been stored.
+     * @param favourite $favourite the favourite to add.
+     * @return favourite the favourite which has been stored.
      * @throws \dml_exception if any database errors are encountered.
      * @throws \moodle_exception if the favourite has missing or invalid properties.
      */
-    public function add($favourite) : \stdClass {
+    public function add(favourite $favourite) : favourite {
         global $DB;
         $this->validate($favourite);
         $favourite = (array)$favourite;
@@ -83,19 +112,21 @@ class favourites_repository implements ifavourites_repository {
             $ids[] = $DB->insert_record($this->favouritetable, $favourite);
         }
         list($insql, $params) = $DB->get_in_or_equal($ids);
-        return $DB->get_records_select($this->favouritetable, "id $insql", $params);
+        $records = $DB->get_records_select($this->favouritetable, "id $insql", $params);
+        return $this->get_list_of_favourites_from_records($records);
     }
 
     /**
      * Find a favourite by id.
      *
      * @param int $id the id of the favourite.
-     * @return \stdClass the favourite.
+     * @return favourite the favourite.
      * @throws \dml_exception if any database errors are encountered.
      */
-    public function find(int $id) : \stdClass {
+    public function find(int $id) : favourite {
         global $DB;
-        return $DB->get_record($this->favouritetable, ['id' => $id], '*', MUST_EXIST);
+        $record = $DB->get_record($this->favouritetable, ['id' => $id], '*', MUST_EXIST);
+        return $this->get_favourite_from_record($record);
     }
 
     /**
@@ -109,7 +140,8 @@ class favourites_repository implements ifavourites_repository {
      */
     public function find_by(array $criteria, int $limitfrom = 0, int $limitnum = 0) : array {
         global $DB;
-        return $DB->get_records($this->favouritetable, $criteria, '', '*', $limitfrom, $limitnum);
+        $records = $DB->get_records($this->favouritetable, $criteria, '', '*', $limitfrom, $limitnum);
+        return $this->get_list_of_favourites_from_records($records);
     }
 
     /**
@@ -122,7 +154,8 @@ class favourites_repository implements ifavourites_repository {
      */
     public function find_all(int $limitfrom = 0, int $limitnum = 0) : array {
         global $DB;
-        return $DB->get_records($this->favouritetable, null, '', '*', $limitfrom, $limitnum);
+        $records = $DB->get_records($this->favouritetable, null, '', '*', $limitfrom, $limitnum);
+        return $this->get_list_of_favourites_from_records($records);
     }
 
     /**
@@ -135,19 +168,20 @@ class favourites_repository implements ifavourites_repository {
      * @param string $itemtype the type of the favourited item.
      * @param int $itemid the id of the item which was favourited (not the favourite's id).
      * @param int $contextid the contextid of the item which was favourited.
-     * @return \stdClass the favourite.
+     * @return favourite the favourite.
      * @throws \dml_exception if any database errors are encountered or if the record could not be found.
      */
-    public function find_favourite(int $userid, string $component, string $itemtype, int $itemid, int $contextid) : \stdClass {
+    public function find_favourite(int $userid, string $component, string $itemtype, int $itemid, int $contextid) : favourite {
         global $DB;
         // Favourites model: We know that only one favourite can exist based on these properties.
-        return $DB->get_record($this->favouritetable, [
+        $record = $DB->get_record($this->favouritetable, [
             'userid' => $userid,
             'component' => $component,
             'itemtype' => $itemtype,
             'itemid' => $itemid,
             'contextid' => $contextid
         ], '*', MUST_EXIST);
+        return $this->get_favourite_from_record($record);
     }
 
     /**
@@ -165,11 +199,11 @@ class favourites_repository implements ifavourites_repository {
     /**
      * Update a favourite.
      *
-     * @param \stdClass $favourite the favourite to update.
-     * @return \stdClass the updated favourite.
+     * @param favourite $favourite the favourite to update.
+     * @return favourite the updated favourite.
      * @throws \dml_exception if any database errors are encountered.
      */
-    public function update($favourite) : \stdClass {
+    public function update(favourite $favourite) : favourite {
         global $DB;
         $time = time();
         $favourite->timemodified = $time;
@@ -260,22 +294,25 @@ class favourites_repository implements ifavourites_repository {
     /**
      * Basic validation, confirming we have the minimum field set needed to save a record to the store.
      *
-     * @param \stdClass $favourite the favourite record to validate.
+     * @param favourite $favourite the favourite record to validate.
      * @throws \moodle_exception if the supplied favourite has missing or unsupported fields.
      */
-    protected function validate(\stdClass $favourite) {
+    protected function validate(favourite $favourite) {
 
         $favourite = (array)$favourite;
 
-        // The allowed fields, and whether or not each is required.
-        // The timecreated field is generated during create/update, and cannot be specified either.
+        // The allowed fields, and whether or not each is required to create a record.
+        // The timecreated, timemodified and id fields are generated during create/update.
         $allowedfields = [
             'userid' => true,
             'component' => true,
             'itemtype' => true,
             'itemid' => true,
             'contextid' => true,
-            'ordering' => false
+            'ordering' => false,
+            'timecreated' => false,
+            'timemodified' => false,
+            'id' => false
         ];
 
         $requiredfields = array_filter($allowedfields, function($field) {
