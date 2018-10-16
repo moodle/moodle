@@ -59,8 +59,7 @@ abstract class qtype_elements_embedded_in_question_text_renderer
         }
 
         $result = '';
-        $result .= html_writer::tag('div', $questiontext,
-                array('class' => $this->qtext_classname(), 'id' => $this->qtext_id($qa)));
+        $result .= html_writer::tag('div', $questiontext, array('class' => 'qtext'));
 
         $result .= $this->post_qtext_elements($qa, $options);
 
@@ -97,10 +96,6 @@ abstract class qtype_elements_embedded_in_question_text_renderer
             $glues[$i] = $prefix . $i . $postfix;
         }
         return $glues;
-    }
-
-    protected function qtext_classname() {
-        return 'qtext';
     }
 
     protected function qtext_id($qa) {

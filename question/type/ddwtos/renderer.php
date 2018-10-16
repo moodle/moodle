@@ -36,10 +36,6 @@ require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
  */
 class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_renderer {
 
-    protected function qtext_classname() {
-        return 'qtext ddwtos_questionid_for_javascript';
-    }
-
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
         global $PAGE;
