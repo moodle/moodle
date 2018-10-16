@@ -102,15 +102,8 @@ class provider implements metadataprovider,
         if ($context->contextlevel != CONTEXT_MODULE) {
             return;
         }
-        $sql = "SELECT userid
-                  FROM {comments}
-                 WHERE contextid = :contextid
-                   AND component = :component
-                   AND commentarea = :commentarea";
-        $userlist->add_from_sql('userid', $sql, [
-                'contextid' => $context->id,
-                'component' => 'assignsubmission_comments',
-                'commentarea' => 'submission_comments']);
+        comments_provider::get_users_in_context_from_sql($userlist, 'c', 'assignsubmission_comments', 'submission_comments',
+                $context->id);
     }
 
     /**

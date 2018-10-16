@@ -184,17 +184,7 @@ class provider implements
             WHERE ctx.id = :contextid";
 
         $userlist->add_from_sql('userid', $sql, $params);
-
-        $sql = "
-          SELECT p.id
-            FROM {modules} m
-            JOIN {course_modules} cm ON cm.module = m.id AND m.name = :modname
-            JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :contextlevel
-            JOIN {wiki_subwikis} s ON cm.instance = s.wikiid
-            JOIN {wiki_pages} p ON p.subwikiid = s.id
-            WHERE ctx.id = :contextid";
-
-        \core_comment\privacy\provider::get_users_in_context_from_sql($userlist, 'com', 'mod_wiki', 'wiki_page', $sql, $params);
+        \core_comment\privacy\provider::get_users_in_context_from_sql($userlist, 'com', 'mod_wiki', 'wiki_page', $context->id);
     }
 
     /**

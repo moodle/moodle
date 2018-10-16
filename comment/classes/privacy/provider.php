@@ -235,17 +235,29 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @param   string      $alias An alias prefix to use for comment selects to avoid interference with your own sql.
      * @param   string      $component The component to check.
      * @param   string      $area The comment area to check.
+     * @param   int         $contextid The context id.
      * @param   string      $insql The SQL to use in a sub-select for the itemid query.
      * @param   array       $params The params required for the insql.
      */
     public static function get_users_in_context_from_sql(
-            userlist $userlist, string $alias, string $component, string $area, string $insql, $params) {
+                userlist $userlist, string $alias, string $component, string $area, int $contextid = null, string $insql = '',
+                array $params = []) {
+
+        if ($insql != '') {
+            $insql = "AND {$alias}.itemid {$insql}";
+        }
+        $contextsql = '';
+        if (isset($contextid)) {
+            $contextsql = "AND {$alias}.contextid = :{$alias}contextid";
+            $params["{$alias}contextid"] = $contextid;
+        }
+
         // Comment authors.
         $sql = "SELECT {$alias}.userid
                   FROM {comments} {$alias}
                  WHERE {$alias}.component = :{$alias}component
                    AND {$alias}.commentarea = :{$alias}commentarea
-                   AND {$alias}.itemid IN ({$insql})";
+                   $contextsql $insql";
 
         $params["{$alias}component"] = $component;
         $params["{$alias}commentarea"] = $area;
