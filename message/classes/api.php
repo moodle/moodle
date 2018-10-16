@@ -1298,6 +1298,84 @@ class api {
     }
 
     /**
+     * Returns the count of conversations (collection of messages from a single user) for
+     * the given user.
+     *
+     * @param \stdClass $user The user who's conversations should be counted
+     * @param int $type The conversation type
+     * @param bool $excludefavourites Exclude favourite conversations
+     * @return int the count of the user's unread conversations
+     */
+    public static function count_conversations($user, int $type = null, bool $excludefavourites = false) {
+        global $DB;
+
+        $params = [];
+        $favouritessql = '';
+
+        if ($excludefavourites) {
+            $favouritessql = "AND m.conversationid NOT IN (
+                                SELECT itemid
+                                FROM {favourite}
+                                WHERE component = 'core_message'
+                                AND itemtype = 'message_conversations'
+                                AND userid = ?
+                            )";
+            $params[] = $user->id;
+        }
+
+        switch($type) {
+            case null:
+                $params = array_merge([$user->id, self::MESSAGE_ACTION_DELETED, $user->id], $params);
+                $sql = "SELECT COUNT(DISTINCT(m.conversationid))
+                          FROM {messages} m
+                     LEFT JOIN {message_conversations} c
+                            ON m.conversationid = c.id
+                     LEFT JOIN {message_user_actions} ma
+                            ON ma.messageid = m.id
+                     LEFT JOIN {message_conversation_members} mcm
+                            ON m.conversationid = mcm.conversationid
+                         WHERE mcm.userid = ?
+                           AND (
+                                    c.type != " . self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL . "
+                                    OR
+                                    (
+                                        (ma.action IS NULL OR ma.action != ? OR ma.userid != ?)
+                                        AND c.type = " . self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL . "
+                                    )
+                                )
+                               ${favouritessql}";
+                break;
+            case self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL:
+                $params = array_merge([self::MESSAGE_ACTION_DELETED, $user->id, $user->id], $params);
+                $sql = "SELECT COUNT(DISTINCT(m.conversationid))
+                          FROM {messages} m
+                     LEFT JOIN {message_conversations} c
+                            ON m.conversationid = c.id
+                     LEFT JOIN {message_user_actions} ma
+                            ON ma.messageid = m.id
+                     LEFT JOIN {message_conversation_members} mcm
+                            ON m.conversationid = mcm.conversationid
+                         WHERE (ma.action IS NULL OR ma.action != ? OR ma.userid != ?)
+                           AND mcm.userid = ?
+                           AND c.type = " . self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL . "
+                               ${favouritessql}";
+                break;
+            default:
+                $params = array_merge([$user->id, $type], $params);
+                $sql = "SELECT COUNT(m.conversationid)
+                          FROM {message_conversation_members} m
+                     LEFT JOIN {message_conversations} c
+                            ON m.conversationid = c.id
+                         WHERE m.userid = ?
+                           AND c.type = ?
+                               ${favouritessql}";
+
+        }
+
+        return $DB->count_records_sql($sql, $params);
+    }
+
+    /**
      * Marks all messages being sent to a user in a particular conversation.
      *
      * If $conversationdid is null then it marks all messages as read sent to $userid.
