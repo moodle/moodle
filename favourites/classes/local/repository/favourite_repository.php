@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Contains the favourites_repository class, responsible for CRUD operations for favourites.
+ * Contains the favourite_repository class, responsible for CRUD operations for favourites.
  *
  * @package   core_favourites
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
@@ -26,14 +26,14 @@ use \core_favourites\local\entity\favourite;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class favourites_repository.
+ * Class favourite_repository.
  *
  * This class handles persistence of favourites. Favourites from all areas are supported by this repository.
  *
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class favourites_repository implements ifavourites_repository {
+class favourite_repository implements ifavourite_repository {
 
     /**
      * @var string the name of the table which favourites are stored in.

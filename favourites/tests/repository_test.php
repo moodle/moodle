@@ -25,16 +25,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_favourites\local\repository\favourites_repository;
+use \core_favourites\local\repository\favourite_repository;
 use \core_favourites\local\entity\favourite;
 
 /**
- * Test class covering the favourites_repository.
+ * Test class covering the favourite_repository.
  *
  * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class favourites_repository_testcase extends advanced_testcase {
+class favourite_repository_testcase extends advanced_testcase {
 
     public function setUp() {
         $this->resetAfterTest();
@@ -60,7 +60,7 @@ class favourites_repository_testcase extends advanced_testcase {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite a course.
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
 
         $favcourse = new favourite(
             'core_course',
@@ -95,7 +95,7 @@ class favourites_repository_testcase extends advanced_testcase {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite a course.
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
 
         $favcourse = new favourite(
             'core_course',
@@ -117,7 +117,7 @@ class favourites_repository_testcase extends advanced_testcase {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and try to favourite a course.
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
 
         $favcourse = new favourite(
             'core_course',
@@ -136,7 +136,7 @@ class favourites_repository_testcase extends advanced_testcase {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite several courses.
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
         $favcourses = [];
 
         $favcourses[] = new favourite(
@@ -183,7 +183,7 @@ class favourites_repository_testcase extends advanced_testcase {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite a course.
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
         $favourite = new favourite(
             'core_course',
             'course',
@@ -210,7 +210,7 @@ class favourites_repository_testcase extends advanced_testcase {
     public function test_find_all() {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
 
         // Verify that for an empty repository, find_all returns an empty array.
         $this->assertEquals([], $favouritesrepo->find_all());
@@ -249,7 +249,7 @@ class favourites_repository_testcase extends advanced_testcase {
     public function test_find_all_pagination() {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
 
         // Verify that for an empty repository, find_all with any combination of page options returns an empty array.
         $this->assertEquals([], $favouritesrepo->find_all(0, 0));
@@ -292,7 +292,7 @@ class favourites_repository_testcase extends advanced_testcase {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite a course.
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
         $favourite = new favourite(
             'core_course',
             'course',
@@ -319,7 +319,7 @@ class favourites_repository_testcase extends advanced_testcase {
     public function test_find_by_pagination() {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
 
         // Verify that for an empty repository, find_all with any combination of page options returns an empty array.
         $this->assertEquals([], $favouritesrepo->find_by([], 0, 0));
@@ -366,7 +366,7 @@ class favourites_repository_testcase extends advanced_testcase {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and add 2 favourites in different areas.
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
         $favourite = new favourite(
             'core_course',
             'course',
@@ -397,7 +397,7 @@ class favourites_repository_testcase extends advanced_testcase {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite a course.
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
         $favourite = new favourite(
             'core_course',
             'course',
@@ -418,7 +418,7 @@ class favourites_repository_testcase extends advanced_testcase {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite two courses, in different areas.
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
         $favourite = new favourite(
             'core_course',
             'course',
@@ -454,7 +454,7 @@ class favourites_repository_testcase extends advanced_testcase {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite a course.
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
         $favourite = new favourite(
             'core_course',
             'course',
@@ -476,7 +476,7 @@ class favourites_repository_testcase extends advanced_testcase {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite a course.
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
         $favourite = new favourite(
             'core_course',
             'course',
@@ -498,7 +498,7 @@ class favourites_repository_testcase extends advanced_testcase {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite two courses, in different areas.
-        $favouritesrepo = new favourites_repository($user1context);
+        $favouritesrepo = new favourite_repository($user1context);
         $favourite = new favourite(
             'core_course',
             'course',

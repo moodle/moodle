@@ -58,7 +58,7 @@ class user_favourites_service_testcase extends advanced_testcase {
      */
     protected function get_mock_repository(array $mockstore) {
         // This mock will just store data in an array.
-        $mockrepo = $this->getMockBuilder(\core_favourites\local\repository\ifavourites_repository::class)
+        $mockrepo = $this->getMockBuilder(\core_favourites\local\repository\ifavourite_repository::class)
             ->setMethods([])
             ->getMock();
         $mockrepo->expects($this->any())

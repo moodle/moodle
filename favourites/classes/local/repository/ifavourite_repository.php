@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Contains the favourites_repository interface.
+ * Contains the favourite_repository interface.
  *
  * @package   core_favourites
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
@@ -26,12 +26,12 @@ use \core_favourites\local\entity\favourite;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The favourites_repository interface, defining additional operations useful to favourite type repositories.
+ * The favourite_repository interface, defining additional operations useful to favourite type repositories.
  *
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface ifavourites_repository extends crud_repository {
+interface ifavourite_repository extends crud_repository {
     /**
      * Find a single favourite, based on it's unique identifiers.
      *

@@ -43,7 +43,7 @@ class services {
      * @return \core_favourites\local\service\user_favourites_service the service object.
      */
     public static function get_service_for_user_context(\context_user $context) : local\service\user_favourites_service {
-        return new local\service\user_favourites_service($context, new local\repository\favourites_repository());
+        return new local\service\user_favourites_service($context, new local\repository\favourite_repository());
     }
 }
 
