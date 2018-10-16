@@ -136,22 +136,8 @@ class provider implements
         $userlist->add_from_sql('userid', $sql, $params);
 
         // Find users with glossary comments.
-        $sql = "SELECT ge.id
-                  FROM {context} c
-                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
-                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-                  JOIN {glossary} g ON g.id = cm.instance
-                  JOIN {glossary_entries} ge ON ge.glossaryid = g.id
-                 WHERE c.id = :contextid";
-
-        $params = [
-            'contextid' => $context->id,
-            'contextlevel' => CONTEXT_MODULE,
-            'modname' => 'glossary',
-        ];
-
-        \core_comment\privacy\provider::get_users_in_context_from_sql(
-            $userlist, 'com', 'mod_glossary', 'glossary_entry', $sql, $params);
+        \core_comment\privacy\provider::get_users_in_context_from_sql($userlist, 'com', 'mod_glossary', 'glossary_entry',
+                $context->id);
 
         // Find users with glossary ratings.
         $sql = "SELECT ge.id
