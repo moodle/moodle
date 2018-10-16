@@ -164,6 +164,7 @@ class core_message_external extends external_api {
         $tousers = $DB->get_records_select("user", "id " . $sqluserids . " AND deleted = 0", $sqlparams);
 
         $resultmessages = array();
+        $messageids = array();
         foreach ($params['messages'] as $message) {
             $resultmsg = array(); //the infos about the success of the operation
 
@@ -197,6 +198,12 @@ class core_message_external extends external_api {
             }
             if ($success) {
                 $resultmsg['msgid'] = $success;
+                $resultmsg['text'] = message_format_message_text((object) [
+                    'smallmessage' => $message['text'],
+                    'fullmessageformat' => external_validate_format($message['textformat'])
+                ]);
+                $resultmsg['timecreated'] = time();
+                $messageids[] = $success;
             } else {
                 // WARNINGS: for backward compatibility we return this errormessage.
                 //          We should have thrown exceptions as these errors prevent results to be returned.
@@ -206,6 +213,16 @@ class core_message_external extends external_api {
             }
 
             $resultmessages[] = $resultmsg;
+        }
+
+        if (!empty($messageids)) {
+            $messagerecords = $DB->get_records_list('messages', 'id', $messageids, '', 'id, conversationid');
+            $resultmessages = array_map(function($resultmessage) use ($messagerecords, $USER) {
+                $id = $resultmessage['msgid'];
+                $resultmessage['conversationid'] = isset($messagerecords[$id]) ? $messagerecords[$id]->conversationid : null;
+                $resultmessage['useridfrom'] = $USER->id;
+                return $resultmessage;
+            }, $resultmessages);
         }
 
         return $resultmessages;
@@ -223,7 +240,11 @@ class core_message_external extends external_api {
                 array(
                     'msgid' => new external_value(PARAM_INT, 'test this to know if it succeeds:  id of the created message if it succeeded, -1 when failed'),
                     'clientmsgid' => new external_value(PARAM_ALPHANUMEXT, 'your own id for the message', VALUE_OPTIONAL),
-                    'errormessage' => new external_value(PARAM_TEXT, 'error message - if it failed', VALUE_OPTIONAL)
+                    'errormessage' => new external_value(PARAM_TEXT, 'error message - if it failed', VALUE_OPTIONAL),
+                    'text' => new external_value(PARAM_RAW, 'The text of the message', VALUE_OPTIONAL),
+                    'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the message', VALUE_OPTIONAL),
+                    'conversationid' => new external_value(PARAM_INT, 'The conversation id for this message', VALUE_OPTIONAL),
+                    'useridfrom' => new external_value(PARAM_INT, 'The user id who sent the message', VALUE_OPTIONAL),
                 )
             )
         );
