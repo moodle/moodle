@@ -3665,6 +3665,8 @@ class core_course_external extends external_api {
                 break;
             case COURSE_FAVOURITES:
                 break;
+            case COURSE_TIMELINE_HIDDEN:
+                break;
             default:
                 throw new invalid_parameter_exception('Invalid classification');
         }
@@ -3692,7 +3694,6 @@ class core_course_external extends external_api {
                 $favouritecourseids,
                 $limit
             );
-
         } else {
             list($filteredcourses, $processedcount) = course_filter_courses_by_timeline_classification(
                 $courses,

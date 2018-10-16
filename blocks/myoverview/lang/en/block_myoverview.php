@@ -48,6 +48,7 @@ $string['aria:summary'] = 'Switch to summary view';
 $string['aria:sortingdropdown'] = 'Sorting dropdown';
 $string['card'] = 'Card';
 $string['cards'] = 'Cards';
+$string['courseprogress'] = 'Course progress:';
 $string['complete'] = 'Complete';
 $string['favourite'] = 'Starred course';
 $string['favourites'] = 'Starred';
@@ -67,6 +68,14 @@ $string['privacy:metadata:overviewgroupingpreference'] = 'The myoverview block g
 $string['removefromfavourites'] = 'Unstar this course';
 $string['summary'] = 'Summary';
 $string['title'] = 'Title';
+$string['aria:hidecourse'] = 'Hide {$a} from view';
+$string['aria:showcourse'] = 'Show {$a} in view';
+$string['aria:hiddencourses'] = 'Show hidden courses';
+$string['hidden'] = 'Hidden courses';
+$string['hidecourse'] = 'Hide from view';
+$string['hiddencourses'] = 'Hidden';
+$string['show'] = 'Show this course';
+$string['privacy:request:preference:set'] = 'The value of the setting \'{$a->name}\' was \'{$a->value}\'';
 
 // Deprecated since Moodle 3.6.
 $string['defaulttab'] = 'Default tab';
@@ -84,4 +93,4 @@ $string['sortbydates'] = 'Sort by dates';
 $string['timeline'] = 'Timeline';
 $string['viewcoursename'] = 'View course {$a}';
 $string['privacy:metadata:overviewlasttab'] = 'This stores the last tab selected by the user on the overview block.';
-
+$string['viewcourse'] = 'View course';

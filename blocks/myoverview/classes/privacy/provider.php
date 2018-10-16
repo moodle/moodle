@@ -78,5 +78,20 @@ class provider implements \core_privacy\local\metadata\provider, user_preference
                 get_string($preference, 'block_myoverview'),
                 get_string('privacy:metadata:overviewgroupingpreference', 'block_myoverview'));
         }
+
+        $preferences = get_user_preferences(null, null, $userid);
+        foreach ($preferences as $name => $value) {
+            if ((substr($name, 0, 30) == 'block_myoverview_hidden_course')) {
+                writer::export_user_preference(
+                    'block_myoverview',
+                    $name,
+                    $value,
+                    get_string('privacy:request:preference:set', 'block_myoverview', (object) [
+                        'name' => $name,
+                        'value' => $value,
+                    ])
+                );
+            }
+        }
     }
 }

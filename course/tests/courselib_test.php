@@ -4718,6 +4718,218 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($expectedprocessedcount, $processedcount);
     }
 
+    /**
+     * Test cases for the course_filter_courses_by_timeline_classification w/ hidden courses tests.
+     */
+    public function get_course_filter_courses_by_timeline_classification_hidden_courses_test_cases() {
+        $now = time();
+        $day = 86400;
+
+        $coursedata = [
+            [
+                'shortname' => 'apast',
+                'startdate' => $now - ($day * 2),
+                'enddate' => $now - $day
+            ],
+            [
+                'shortname' => 'bpast',
+                'startdate' => $now - ($day * 2),
+                'enddate' => $now - $day
+            ],
+            [
+                'shortname' => 'cpast',
+                'startdate' => $now - ($day * 2),
+                'enddate' => $now - $day
+            ],
+            [
+                'shortname' => 'dpast',
+                'startdate' => $now - ($day * 2),
+                'enddate' => $now - $day
+            ],
+            [
+                'shortname' => 'epast',
+                'startdate' => $now - ($day * 2),
+                'enddate' => $now - $day
+            ],
+            [
+                'shortname' => 'ainprogress',
+                'startdate' => $now - $day,
+                'enddate' => $now + $day
+            ],
+            [
+                'shortname' => 'binprogress',
+                'startdate' => $now - $day,
+                'enddate' => $now + $day
+            ],
+            [
+                'shortname' => 'cinprogress',
+                'startdate' => $now - $day,
+                'enddate' => $now + $day
+            ],
+            [
+                'shortname' => 'dinprogress',
+                'startdate' => $now - $day,
+                'enddate' => $now + $day
+            ],
+            [
+                'shortname' => 'einprogress',
+                'startdate' => $now - $day,
+                'enddate' => $now + $day
+            ],
+            [
+                'shortname' => 'afuture',
+                'startdate' => $now + $day
+            ],
+            [
+                'shortname' => 'bfuture',
+                'startdate' => $now + $day
+            ],
+            [
+                'shortname' => 'cfuture',
+                'startdate' => $now + $day
+            ],
+            [
+                'shortname' => 'dfuture',
+                'startdate' => $now + $day
+            ],
+            [
+                'shortname' => 'efuture',
+                'startdate' => $now + $day
+            ]
+        ];
+
+        // Raw enrolled courses result set should be returned in this order:
+        // afuture, ainprogress, apast, bfuture, binprogress, bpast, cfuture, cinprogress, cpast,
+        // dfuture, dinprogress, dpast, efuture, einprogress, epast
+        //
+        // By classification the offset values for each record should be:
+        // COURSE_TIMELINE_FUTURE
+        // 0 (afuture), 3 (bfuture), 6 (cfuture), 9 (dfuture), 12 (efuture)
+        // COURSE_TIMELINE_INPROGRESS
+        // 1 (ainprogress), 4 (binprogress), 7 (cinprogress), 10 (dinprogress), 13 (einprogress)
+        // COURSE_TIMELINE_PAST
+        // 2 (apast), 5 (bpast), 8 (cpast), 11 (dpast), 14 (epast).
+        return [
+            'empty set' => [
+                'coursedata' => [],
+                'classification' => COURSE_TIMELINE_FUTURE,
+                'limit' => 2,
+                'offset' => 0,
+                'expectedcourses' => [],
+                'expectedprocessedcount' => 0,
+                'hiddencourse' => ''
+            ],
+            // COURSE_TIMELINE_FUTURE.
+            'future not limit no offset' => [
+                'coursedata' => $coursedata,
+                'classification' => COURSE_TIMELINE_FUTURE,
+                'limit' => 0,
+                'offset' => 0,
+                'expectedcourses' => ['afuture', 'cfuture', 'dfuture', 'efuture'],
+                'expectedprocessedcount' => 15,
+                'hiddencourse' => 'bfuture'
+            ],
+            'future no offset' => [
+                'coursedata' => $coursedata,
+                'classification' => COURSE_TIMELINE_FUTURE,
+                'limit' => 2,
+                'offset' => 0,
+                'expectedcourses' => ['afuture', 'cfuture'],
+                'expectedprocessedcount' => 7,
+                'hiddencourse' => 'bfuture'
+            ],
+            'future offset' => [
+                'coursedata' => $coursedata,
+                'classification' => COURSE_TIMELINE_FUTURE,
+                'limit' => 2,
+                'offset' => 2,
+                'expectedcourses' => ['bfuture', 'dfuture'],
+                'expectedprocessedcount' => 8,
+                'hiddencourse' => 'cfuture'
+            ],
+            'future exact limit' => [
+                'coursedata' => $coursedata,
+                'classification' => COURSE_TIMELINE_FUTURE,
+                'limit' => 5,
+                'offset' => 0,
+                'expectedcourses' => ['afuture', 'cfuture', 'dfuture', 'efuture'],
+                'expectedprocessedcount' => 15,
+                'hiddencourse' => 'bfuture'
+            ],
+            'future limit less results' => [
+                'coursedata' => $coursedata,
+                'classification' => COURSE_TIMELINE_FUTURE,
+                'limit' => 10,
+                'offset' => 0,
+                'expectedcourses' => ['afuture', 'cfuture', 'dfuture', 'efuture'],
+                'expectedprocessedcount' => 15,
+                'hiddencourse' => 'bfuture'
+            ],
+            'future limit less results with offset' => [
+                'coursedata' => $coursedata,
+                'classification' => COURSE_TIMELINE_FUTURE,
+                'limit' => 10,
+                'offset' => 5,
+                'expectedcourses' => ['cfuture', 'efuture'],
+                'expectedprocessedcount' => 10,
+                'hiddencourse' => 'dfuture'
+            ],
+        ];
+    }
+
+    /**
+     * Test the course_filter_courses_by_timeline_classification function hidden courses.
+     *
+     * @dataProvider get_course_filter_courses_by_timeline_classification_hidden_courses_test_cases()
+     * @param array $coursedata Course test data to create.
+     * @param string $classification Timeline classification.
+     * @param int $limit Maximum number of results to return.
+     * @param int $offset Results to skip at the start of the result set.
+     * @param string[] $expectedcourses Expected courses in results.
+     * @param int $expectedprocessedcount Expected number of course records to be processed.
+     * @param int $hiddencourse The course to hide as part of this process
+     */
+    public function test_course_filter_courses_by_timeline_classification_with_hidden_courses(
+        $coursedata,
+        $classification,
+        $limit,
+        $offset,
+        $expectedcourses,
+        $expectedprocessedcount,
+        $hiddencourse
+    ) {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $student = $generator->create_user();
+        $this->setUser($student);
+
+        $courses = array_map(function($coursedata) use ($generator, $hiddencourse) {
+            $course = $generator->create_course($coursedata);
+            if ($course->shortname == $hiddencourse) {
+                set_user_preference('block_myoverview_hidden_course_' . $course->id, true);
+            }
+            return $course;
+        }, $coursedata);
+
+        foreach ($courses as $course) {
+            $generator->enrol_user($student->id, $course->id, 'student');
+        }
+
+        $coursesgenerator = course_get_enrolled_courses_for_logged_in_user(0, $offset, 'shortname ASC', 'shortname');
+        list($result, $processedcount) = course_filter_courses_by_timeline_classification(
+            $coursesgenerator,
+            $classification,
+            $limit
+        );
+
+        $actual = array_map(function($course) {
+            return $course->shortname;
+        }, $result);
+
+        $this->assertEquals($expectedcourses, $actual);
+        $this->assertEquals($expectedprocessedcount, $processedcount);
+    }
+
 
     /**
      * Testing core_course_core_calendar_get_valid_event_timestart_range when the course has no end date.

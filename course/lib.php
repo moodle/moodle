@@ -60,6 +60,7 @@ define('COURSE_TIMELINE_PAST', 'past');
 define('COURSE_TIMELINE_INPROGRESS', 'inprogress');
 define('COURSE_TIMELINE_FUTURE', 'future');
 define('COURSE_FAVOURITES', 'favourites');
+define('COURSE_TIMELINE_HIDDEN', 'hidden');
 define('COURSE_DB_QUERY_LIMIT', 1000);
 
 function make_log_url($module, $url) {
@@ -4242,7 +4243,8 @@ function course_filter_courses_by_timeline_classification(
 ) : array {
 
     if (!in_array($classification,
-            [COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, COURSE_TIMELINE_INPROGRESS, COURSE_TIMELINE_FUTURE])) {
+            [COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, COURSE_TIMELINE_INPROGRESS,
+                COURSE_TIMELINE_FUTURE, COURSE_TIMELINE_HIDDEN])) {
         $message = 'Classification must be one of COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, '
             . 'COURSE_TIMELINE_INPROGRESS or COURSE_TIMELINE_FUTURE';
         throw new moodle_exception($message);
@@ -4254,8 +4256,11 @@ function course_filter_courses_by_timeline_classification(
 
     foreach ($courses as $course) {
         $numberofcoursesprocessed++;
+        $pref = get_user_preferences('block_myoverview_hidden_course_' . $course->id, 0);
 
-        if ($classification == COURSE_TIMELINE_ALL || $classification == course_classify_for_timeline($course)) {
+        // Added as of MDL-63457 toggle viewability for each user.
+        if (($classification == COURSE_TIMELINE_HIDDEN && $pref) ||
+            (($classification == COURSE_TIMELINE_ALL || $classification == course_classify_for_timeline($course)) && !$pref)) {
             $filteredcourses[] = $course;
             $filtermatches++;
         }
@@ -4299,8 +4304,9 @@ function course_filter_courses_by_favourites(
 
     foreach ($courses as $course) {
         $numberofcoursesprocessed++;
+        $pref = get_user_preferences('block_myoverview_hidden_course_' . $course->id, 0);
 
-        if (in_array($course->id, $favouritecourseids)) {
+        if (in_array($course->id, $favouritecourseids) && !$pref) {
             $filteredcourses[] = $course;
             $filtermatches++;
         }

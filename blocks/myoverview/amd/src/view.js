@@ -28,6 +28,7 @@ define(
     'core/paged_content_factory',
     'core/custom_interaction_events',
     'core/notification',
+    'core/ajax',
     'core/templates',
 ],
 function(
@@ -36,10 +37,14 @@ function(
     PagedContentFactory,
     CustomEvents,
     Notification,
+    Ajax,
     Templates
 ) {
 
     var SELECTORS = {
+        COURSE_REGION: '[data-region="course-view-content"]',
+        ACTION_HIDE_COURSE: '[data-action="hide-course"]',
+        ACTION_SHOW_COURSE: '[data-action="show-course"]',
         ACTION_ADD_FAVOURITE: '[data-action="add-favourite"]',
         ACTION_REMOVE_FAVOURITE: '[data-action="remove-favourite"]',
         FAVOURITE_ICON: '[data-region="favourite-icon"]',
@@ -127,7 +132,7 @@ function(
      * @param {Object} root The favourite icon container element.
      * @return {Number} Course id.
      */
-    var getFavouriteCourseId = function(root) {
+    var getCourseId = function(root) {
         return root.attr('data-course-id');
     };
 
@@ -294,20 +299,12 @@ function(
     };
 
     /**
-     * Intialise the courses list and cards views on page load.
+     * Intialise the paged list and cards views on page load.
      *
      * @param {object} root The root element for the courses view.
      * @param {object} content The content element for the courses view.
      */
-    var init = function(root, content) {
-
-        root = $(root);
-
-        if (!root.attr('data-init')) {
-            registerEventListeners(root);
-            root.attr('data-init', true);
-        }
-
+    var initializePagedContent = function(root, content) {
         var filters = getFilterValues(root);
 
         var pagedContentPromise = PagedContentFactory.createWithLimit(
@@ -330,7 +327,7 @@ function(
                         loadedPages[currentPage] = coursesData;
                         return renderCourses(root, coursesData);
                     })
-                    .catch(Notification.exception);
+                        .catch(Notification.exception);
 
                     promises.push(pagePromise);
                 });
@@ -350,21 +347,21 @@ function(
      *
      * @param {Object} root The myoverview block container element.
      */
-    var registerEventListeners = function(root) {
+    var registerEventListeners = function(root, content) {
         CustomEvents.define(root, [
             CustomEvents.events.activate
         ]);
 
         root.on(CustomEvents.events.activate, SELECTORS.ACTION_ADD_FAVOURITE, function(e, data) {
             var favourite = $(e.target).closest(SELECTORS.ACTION_ADD_FAVOURITE);
-            var courseId = getFavouriteCourseId(favourite);
+            var courseId = getCourseId(favourite);
             addToFavourites(root, courseId);
             data.originalEvent.preventDefault();
         });
 
         root.on(CustomEvents.events.activate, SELECTORS.ACTION_REMOVE_FAVOURITE, function(e, data) {
             var favourite = $(e.target).closest(SELECTORS.ACTION_REMOVE_FAVOURITE);
-            var courseId = getFavouriteCourseId(favourite);
+            var courseId = getCourseId(favourite);
             removeFromFavourites(root, courseId);
             data.originalEvent.preventDefault();
         });
@@ -372,9 +369,67 @@ function(
         root.on(CustomEvents.events.activate, SELECTORS.FAVOURITE_ICON, function(e, data) {
             data.originalEvent.preventDefault();
         });
+
+        root.on(CustomEvents.events.activate, SELECTORS.ACTION_HIDE_COURSE, function(e, data) {
+            var target = $(e.target).closest(SELECTORS.ACTION_HIDE_COURSE);
+            var id = getCourseId(target);
+
+            var request = {
+                preferences: [
+                    {
+                        type: 'block_myoverview_hidden_course_' + id,
+                        value: true
+                    }
+                ]
+            };
+            Repository.updateUserPreferences(request);
+
+            // Reload the paged content based on the hidden course
+            initializePagedContent(root, content);
+            data.originalEvent.preventDefault();
+        });
+
+        root.on(CustomEvents.events.activate, SELECTORS.ACTION_SHOW_COURSE, function(e, data) {
+            var target = $(e.target).closest(SELECTORS.ACTION_SHOW_COURSE);
+            var id = getCourseId(target);
+
+            var request = {
+                preferences: [
+                    {
+                        type: 'block_myoverview_hidden_course_' + id,
+                        value: null
+                    }
+                ]
+            };
+
+            Repository.updateUserPreferences(request);
+
+            // Reload the paged content based on the hidden course
+            initializePagedContent(root, content);
+            data.originalEvent.preventDefault();
+        });
     };
 
     /**
+     * Intialise the courses list and cards views on page load.
+     * 
+     * @param {object} root The root element for the courses view.
+     * @param {object} content The content element for the courses view.
+     */
+    var init = function(root, content) {
+
+        root = $(root);
+
+        if (!root.attr('data-init')) {
+            registerEventListeners(root, content);
+            root.attr('data-init', true);
+        }
+
+        initializePagedContent(root, content);
+    };
+
+    /**
+
      * Reset the courses views to their original
      * state on first page load.
      *

@@ -158,3 +158,45 @@ Feature: The my overview block allows users to easily access their courses
     And I reload the page
     Then I should see "Last accessed" in the "Course overview" "block"
     And "[data-sort='ul.timeaccess desc']" "css_element" in the "Course overview" "block" should be visible
+
+  Scenario: View inprogress courses with hide persistent functionality
+    Given I log in as "student1"
+    And I click on "All" "button" in the "Course overview" "block"
+    When I click on "In progress" "link" in the "Course overview" "block"
+    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on "Hide from view" "link" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
+    And I reload the page
+    Then I should see "Course 3" in the "Course overview" "block"
+    Then I should see "Course 4" in the "Course overview" "block"
+    And I should not see "Course 2" in the "Course overview" "block"
+    And I should not see "Course 1" in the "Course overview" "block"
+    And I should not see "Course 5" in the "Course overview" "block"
+    And I log out
+
+  Scenario: View past courses with hide persistent functionality
+    Given I log in as "student1"
+    And I click on "All" "button" in the "Course overview" "block"
+    When I click on "Past" "link" in the "Course overview" "block"
+    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card course-card' and contains(.,'Course 1')]" "xpath_element"
+    And I click on "Hide from view" "link" in the "//div[@class='card course-card' and contains(.,'Course 1')]" "xpath_element"
+    And I reload the page
+    Then I should not see "Course 1" in the "Course overview" "block"
+    And I should not see "Course 2" in the "Course overview" "block"
+    And I should not see "Course 3" in the "Course overview" "block"
+    And I should not see "Course 4" in the "Course overview" "block"
+    And I should not see "Course 5" in the "Course overview" "block"
+    And I log out
+
+  Scenario: View future courses with hide persistent functionality
+    Given I log in as "student1"
+    And I click on "All" "button" in the "Course overview" "block"
+    When I click on "Future" "link" in the "Course overview" "block"
+    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card course-card' and contains(.,'Course 5')]" "xpath_element"
+    And I click on "Hide from view" "link" in the "//div[@class='card course-card' and contains(.,'Course 5')]" "xpath_element"
+    And I reload the page
+    Then I should not see "Course 5" in the "Course overview" "block"
+    And I should not see "Course 1" in the "Course overview" "block"
+    And I should not see "Course 2" in the "Course overview" "block"
+    And I should not see "Course 3" in the "Course overview" "block"
+    And I should not see "Course 4" in the "Course overview" "block"
+    And I log out

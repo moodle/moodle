@@ -57,5 +57,27 @@
                 {{#str}} aria:removefromfavourites, block_myoverview {{/str}} {{{fullname}}}
             </div>
         </a>
+        <a class="dropdown-item {{^hidden}}hidden{{/hidden}}" href="#"
+            data-action="show-course"
+            data-course-id="{{id}}"
+            aria-controls="favorite-icon-{{ id }}"
+            >
+            {{#pix}} i/show, core, {{#str}} hidden, block_myoverview {{/str}} {{/pix}}
+            {{#str}} show, block_myoverview {{/str}}
+            <div class="sr-only">
+                {{#str}} aria:showcourse, block_myoverview, {{fullname}} {{/str}}
+            </div>
+        </a>
+        <a class="dropdown-item {{#hidden}}hidden{{/hidden}}" href="#"
+            data-action="hide-course"
+            data-course-id="{{id}}"
+            aria-controls="favorite-icon-{{ id }}"
+            >
+            {{#pix}} i/hide, core, {{#str}} hidden, block_myoverview {{/str}} {{/pix}}
+            {{#str}} hidecourse, block_myoverview {{/str}}
+            <div class="sr-only">
+                {{#str}} aria:hidecourse, block_myoverview, {{fullname}} {{/str}}
+            </div>
+        </a>
     </div>
 </div>
