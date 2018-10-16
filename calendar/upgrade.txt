@@ -8,6 +8,8 @@ information provided here is intended especially for developers.
   set_requesting_user() and get_requesting_user().
 * The following functions have been finally deprecated and can not be used anymore:
   * calendar_preferences_button()
+* added core_calendar_get_valid_event_timestart_range callback for course events when the update_event_start_day function is used
+  in the local api.
 
 === 3.5 ===
 * core_calendar_external::get_calendar_events now returns the categoryid for category events.

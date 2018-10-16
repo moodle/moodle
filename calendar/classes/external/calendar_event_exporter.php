@@ -176,6 +176,9 @@ class calendar_event_exporter extends event_exporter_base {
 
         if ($event->get_course_module()) {
             $values = array_merge($values, $this->get_module_timestamp_limits($event));
+        } else if ($hascourse && $course->id != SITEID && empty($event->get_group())) {
+            // This is a course event.
+            $values = array_merge($values, $this->get_course_timestamp_limits($event));
         }
 
         return $values;
@@ -217,6 +220,44 @@ class calendar_event_exporter extends event_exporter_base {
      * @param event_interface $event
      * @return array
      */
+    protected function get_course_timestamp_limits($event) {
+        $values = [];
+        $mapper = container::get_event_mapper();
+        $starttime = $event->get_times()->get_start_time();
+
+        list($min, $max) = component_callback(
+            'core_course',
+            'core_calendar_get_valid_event_timestart_range',
+            [$mapper->from_event_to_legacy_event($event), $event->get_course()->get_proxied_instance()],
+            [false, false]
+        );
+
+        // The callback will return false for either of the
+        // min or max cutoffs to indicate that there are no
+        // valid timestart values. In which case the event is
+        // not draggable.
+        if ($min === false || $max === false) {
+            return ['draggable' => false];
+        }
+
+        if ($min) {
+            $values = array_merge($values, $this->get_timestamp_min_limit($starttime, $min));
+        }
+
+        if ($max) {
+            $values = array_merge($values, $this->get_timestamp_max_limit($starttime, $max));
+        }
+
+        return $values;
+    }
+
+    /**
+     * Return the set of minimum and maximum date timestamp values
+     * for the given event.
+     *
+     * @param event_interface $event
+     * @return array
+     */
     protected function get_module_timestamp_limits($event) {
         $values = [];
         $mapper = container::get_event_mapper();
@@ -240,11 +281,11 @@ class calendar_event_exporter extends event_exporter_base {
         }
 
         if ($min) {
-            $values = array_merge($values, $this->get_module_timestamp_min_limit($starttime, $min));
+            $values = array_merge($values, $this->get_timestamp_min_limit($starttime, $min));
         }
 
         if ($max) {
-            $values = array_merge($values, $this->get_module_timestamp_max_limit($starttime, $max));
+            $values = array_merge($values, $this->get_timestamp_max_limit($starttime, $max));
         }
 
         return $values;
@@ -252,12 +293,13 @@ class calendar_event_exporter extends event_exporter_base {
 
     /**
      * Get the correct minimum midnight day limit based on the event start time
-     * and the module's minimum timestamp limit.
+     * and the minimum timestamp limit of what the event belongs to.
      *
      * @param DateTimeInterface $starttime The event start time
      * @param array $min The module's minimum limit for the event
+     * @return array Returns an array with mindaytimestamp and mindayerror keys.
      */
-    protected function get_module_timestamp_min_limit(\DateTimeInterface $starttime, $min) {
+    protected function get_timestamp_min_limit(\DateTimeInterface $starttime, $min) {
         // We need to check that the minimum valid time is earlier in the
         // day than the current event time so that if the user drags and drops
         // the event to this day (which changes the date but not the time) it
@@ -295,15 +337,16 @@ class calendar_event_exporter extends event_exporter_base {
 
     /**
      * Get the correct maximum midnight day limit based on the event start time
-     * and the module's maximum timestamp limit.
+     * and the maximum timestamp limit of what the event belongs to.
      *
      * @param DateTimeInterface $starttime The event start time
      * @param array $max The module's maximum limit for the event
+     * @return array Returns an array with maxdaytimestamp and maxdayerror keys.
      */
-    protected function get_module_timestamp_max_limit(\DateTimeInterface $starttime, $max) {
+    protected function get_timestamp_max_limit(\DateTimeInterface $starttime, $max) {
         // We're doing a similar calculation here as we are for the minimum
         // day timestamp. See the explanation above.
-        $values;
+        $values = [];
         $timestamp = $max[0];
         $errorstring = $max[1];
         $maxdate = (new \DateTimeImmutable())->setTimestamp($timestamp);
@@ -325,5 +368,37 @@ class calendar_event_exporter extends event_exporter_base {
         // timestamp is violated.
         $values['maxdayerror'] = $errorstring;
         return $values;
+    }
+
+    /**
+     * Get the correct minimum midnight day limit based on the event start time
+     * and the module's minimum timestamp limit.
+     *
+     * @deprecated since Moodle 3.6. Please use get_timestamp_min_limit().
+     * @todo final deprecation. To be removed in Moodle 4.0
+     * @param DateTimeInterface $starttime The event start time
+     * @param array $min The module's minimum limit for the event
+     * @return array Returns an array with mindaytimestamp and mindayerror keys.
+     */
+    protected function get_module_timestamp_min_limit(\DateTimeInterface $starttime, $min) {
+        debugging('get_module_timestamp_min_limit() has been deprecated. Please call get_timestamp_min_limit() instead.',
+                DEBUG_DEVELOPER);
+        return $this->get_timestamp_min_limit($starttime, $min);
+    }
+
+    /**
+     * Get the correct maximum midnight day limit based on the event start time
+     * and the module's maximum timestamp limit.
+     *
+     * @deprecated since Moodle 3.6. Please use get_timestamp_max_limit().
+     * @todo final deprecation. To be removed in Moodle 4.0
+     * @param DateTimeInterface $starttime The event start time
+     * @param array $max The module's maximum limit for the event
+     * @return array Returns an array with maxdaytimestamp and maxdayerror keys.
+     */
+    protected function get_module_timestamp_max_limit(\DateTimeInterface $starttime, $max) {
+        debugging('get_module_timestamp_max_limit() has been deprecated. Please call get_timestamp_max_limit() instead.',
+                DEBUG_DEVELOPER);
+        return $this->get_timestamp_max_limit($starttime, $max);
     }
 }
