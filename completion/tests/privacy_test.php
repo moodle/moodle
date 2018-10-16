@@ -60,6 +60,36 @@ class core_completion_privacy_test extends \core_privacy\tests\provider_testcase
     }
 
     /**
+     * Test fetching users' course completion by context and adding to a userlist.
+     */
+    public function test_add_course_completion_users_to_userlist() {
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        // User1 and user2 complete course.
+        $this->create_course_completion();
+        $this->complete_course($user1);
+        $this->complete_course($user2);
+
+        // User3 is enrolled but has not completed course.
+        $this->getDataGenerator()->enrol_user($user3->id, $this->course->id, 'student');
+
+        $userlist = new \core_privacy\local\request\userlist($this->coursecontext, 'test');
+        \core_completion\privacy\provider::add_course_completion_users_to_userlist($userlist);
+
+        // Ensure only users that have course completion are returned.
+        $expected = [$user1->id, $user2->id];
+        $actual = $userlist->get_userids();
+        sort($expected);
+        sort($actual);
+        $this->assertCount(2, $actual);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
      * Test getting course completion information.
      */
     public function test_get_course_completion_info() {
@@ -114,5 +144,62 @@ class core_completion_privacy_test extends \core_privacy\tests\provider_testcase
         foreach ($coursecompletion['criteria'] as $criterion) {
             $this->assertEquals('No', $criterion['completed']);
         }
+    }
+
+    /**
+     * Test deleting course completion information by approved userlist.
+     */
+    public function test_delete_completion_by_approved_userlist() {
+        $this->resetAfterTest();
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+
+        $this->create_course_completion();
+        $this->complete_course($user1);
+        $this->complete_course($user2);
+        $this->complete_course($user3);
+        $this->complete_course($user4);
+
+        // Prepare approved userlist (context/component are irrelevant for this test).
+        $approveduserids = [$user1->id, $user3->id];
+        $userlist = new \core_privacy\local\request\approved_userlist($this->coursecontext, 'completion', $approveduserids);
+
+        // Test deleting activity completion information only affects approved userlist.
+        \core_completion\privacy\provider::delete_completion_by_approved_userlist(
+                $userlist, null, $this->cm->id);
+        $activitycompletion1 = \core_completion\privacy\provider::get_activity_completion_info($user1, $this->course,
+                $this->cm);
+        $this->assertEquals(0, $activitycompletion1->completionstate);
+        $activitycompletion2 = \core_completion\privacy\provider::get_activity_completion_info($user2, $this->course,
+                $this->cm);
+        $this->assertNotEquals(0, $activitycompletion2->completionstate);
+        $activitycompletion3 = \core_completion\privacy\provider::get_activity_completion_info($user3, $this->course,
+                $this->cm);
+        $this->assertEquals(0, $activitycompletion3->completionstate);
+        $activitycompletion4 = \core_completion\privacy\provider::get_activity_completion_info($user4, $this->course,
+                $this->cm);
+        $this->assertNotEquals(0, $activitycompletion4->completionstate);
+
+        // Prepare different approved userlist (context/component are irrelevant for this test).
+        $approveduserids = [$user2->id, $user4->id];
+        $userlist = new \core_privacy\local\request\approved_userlist($this->coursecontext, 'completion', $approveduserids);
+
+        // Test deleting course completion information only affects approved userlist.
+        \core_completion\privacy\provider::delete_completion_by_approved_userlist($userlist, $this->course->id);
+
+        $coursecompletion1 = \core_completion\privacy\provider::get_course_completion_info($user1, $this->course);
+        $hasno = array_search('No', $coursecompletion1['criteria'], true);
+        $this->assertFalse($hasno);
+        $coursecompletion2 = \core_completion\privacy\provider::get_course_completion_info($user2, $this->course);
+        $hasyes = array_search('Yes', $coursecompletion1['criteria'], true);
+        $this->assertFalse($hasyes);
+        $coursecompletion3 = \core_completion\privacy\provider::get_course_completion_info($user3, $this->course);
+        $hasno = array_search('No', $coursecompletion1['criteria'], true);
+        $this->assertFalse($hasno);
+        $coursecompletion4 = \core_completion\privacy\provider::get_course_completion_info($user4, $this->course);
+        $hasyes = array_search('Yes', $coursecompletion1['criteria'], true);
+        $this->assertFalse($hasyes);
     }
 }
