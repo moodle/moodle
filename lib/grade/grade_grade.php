@@ -1020,47 +1020,9 @@ class grade_grade extends grade_object {
      * @return int The new grade_grade ID if successful, false otherwise
      */
     public function insert($source=null) {
-        global $USER, $CFG, $DB;
         // TODO: dategraded hack - do not update times, they are used for submission and grading (MDL-31379)
         //$this->timecreated = $this->timemodified = time();
-
-        if (!empty($this->id)) {
-            debugging("Grade object already exists!");
-            return false;
-        }
-
-        $data = $this->get_record_data();
-
-        $this->id = $DB->insert_record($this->table, $data);
-
-        // Set all object properties from real db data.
-        $this->update_from_db();
-
-        $data = $this->get_record_data();
-
-        if (empty($CFG->disablegradehistory)) {
-            unset($data->timecreated);
-            $data->action       = GRADE_HISTORY_INSERT;
-            $data->oldid        = $this->id;
-            $data->source       = $source;
-            $data->timemodified = time();
-            $data->loggeduser   = $USER->id;
-            $historyid = $DB->insert_record($this->table.'_history', $data);
-        }
-
-        $this->notify_changed(false);
-
-        // We only support feedback files for modules atm.
-        if ($this->grade_item && $this->grade_item->is_external_item()) {
-            $context = $this->get_context();
-            $this->copy_feedback_files($context, GRADE_FEEDBACK_FILEAREA, $this->id);
-
-            if (empty($CFG->disablegradehistory)) {
-                $this->copy_feedback_files($context, GRADE_HISTORY_FEEDBACK_FILEAREA, $historyid);
-            }
-        }
-
-        return $this->id;
+        return parent::insert($source);
     }
 
     /**
@@ -1071,33 +1033,42 @@ class grade_grade extends grade_object {
      * @return bool success
      */
     public function update($source=null) {
-        global $USER, $CFG, $DB;
-
-        $this->rawgrade    = grade_floatval($this->rawgrade);
-        $this->finalgrade  = grade_floatval($this->finalgrade);
+        $this->rawgrade = grade_floatval($this->rawgrade);
+        $this->finalgrade = grade_floatval($this->finalgrade);
         $this->rawgrademin = grade_floatval($this->rawgrademin);
         $this->rawgrademax = grade_floatval($this->rawgrademax);
+        return parent::update($source);
+    }
 
-        if (empty($this->id)) {
-            debugging('Can not update grade object, no id!');
-            return false;
+
+    /**
+     * Handles adding feedback files in the gradebook.
+     *
+     * @param int|null $historyid
+     */
+    protected function add_feedback_files(int $historyid = null) {
+        global $CFG;
+
+        // We only support feedback files for modules atm.
+        if ($this->grade_item && $this->grade_item->is_external_item()) {
+            $context = $this->get_context();
+            $this->copy_feedback_files($context, GRADE_FEEDBACK_FILEAREA, $this->id);
+
+            if (empty($CFG->disablegradehistory) && $historyid) {
+                $this->copy_feedback_files($context, GRADE_HISTORY_FEEDBACK_FILEAREA, $historyid);
+            }
         }
 
-        $data = $this->get_record_data();
+        return $this->id;
+    }
 
-        $DB->update_record($this->table, $data);
-
-        if (empty($CFG->disablegradehistory)) {
-            unset($data->timecreated);
-            $data->action       = GRADE_HISTORY_UPDATE;
-            $data->oldid        = $this->id;
-            $data->source       = $source;
-            $data->timemodified = time();
-            $data->loggeduser   = $USER->id;
-            $historyid = $DB->insert_record($this->table.'_history', $data);
-        }
-
-        $this->notify_changed(false);
+    /**
+     * Handles updating feedback files in the gradebook.
+     *
+     * @param int|null $historyid
+     */
+    protected function update_feedback_files(int $historyid = null){
+        global $CFG;
 
         // We only support feedback files for modules atm.
         if ($this->grade_item && $this->grade_item->is_external_item()) {
@@ -1108,7 +1079,7 @@ class grade_grade extends grade_object {
 
             $this->copy_feedback_files($context, GRADE_FEEDBACK_FILEAREA, $this->id);
 
-            if (empty($CFG->disablegradehistory)) {
+            if (empty($CFG->disablegradehistory) && $historyid) {
                 $this->copy_feedback_files($context, GRADE_HISTORY_FEEDBACK_FILEAREA, $historyid);
             }
         }

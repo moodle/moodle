@@ -252,6 +252,7 @@ abstract class grade_object {
 
         $DB->update_record($this->table, $data);
 
+        $historyid = null;
         if (empty($CFG->disablegradehistory)) {
             unset($data->timecreated);
             $data->action       = GRADE_HISTORY_UPDATE;
@@ -259,10 +260,13 @@ abstract class grade_object {
             $data->source       = $source;
             $data->timemodified = time();
             $data->loggeduser   = $USER->id;
-            $DB->insert_record($this->table.'_history', $data);
+            $historyid = $DB->insert_record($this->table.'_history', $data);
         }
 
         $this->notify_changed(false);
+
+        $this->update_feedback_files($historyid);
+
         return true;
     }
 
@@ -346,6 +350,7 @@ abstract class grade_object {
 
         $data = $this->get_record_data();
 
+        $historyid = null;
         if (empty($CFG->disablegradehistory)) {
             unset($data->timecreated);
             $data->action       = GRADE_HISTORY_INSERT;
@@ -353,10 +358,13 @@ abstract class grade_object {
             $data->source       = $source;
             $data->timemodified = time();
             $data->loggeduser   = $USER->id;
-            $DB->insert_record($this->table.'_history', $data);
+            $historyid = $DB->insert_record($this->table.'_history', $data);
         }
 
         $this->notify_changed(false);
+
+        $this->add_feedback_files($historyid);
+
         return $this->id;
     }
 
@@ -409,6 +417,22 @@ abstract class grade_object {
      * @param bool $deleted
      */
     protected function notify_changed($deleted) {
+    }
+
+    /**
+     * Handles adding feedback files in the gradebook.
+     *
+     * @param int|null $historyid
+     */
+    protected function add_feedback_files(int $historyid = null) {
+    }
+
+    /**
+     * Handles updating feedback files in the gradebook.
+     *
+     * @param int|null $historyid
+     */
+    protected function update_feedback_files(int $historyid = null) {
     }
 
     /**
