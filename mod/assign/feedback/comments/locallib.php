@@ -122,7 +122,15 @@ class assign_feedback_comments extends assign_feedback_plugin {
             }
         }
 
-        if ($commenttext == $data->assignfeedbackcomments_editor['text']) {
+        $formtext = $data->assignfeedbackcomments_editor['text'];
+
+        // Need to convert the form text to use @@PLUGINFILE@@ and format it so we can compare it with what is stored in the DB.
+        if (isset($data->assignfeedbackcomments_editor['itemid'])) {
+            $formtext = file_rewrite_urls_to_pluginfile($formtext, $data->assignfeedbackcomments_editor['itemid']);
+            $formtext = format_text($formtext, FORMAT_HTML);
+        }
+
+        if ($commenttext == $formtext) {
             return false;
         } else {
             return true;
