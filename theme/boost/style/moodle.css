@@ -11251,6 +11251,56 @@ div.editor_atto_toolbar button .icon {
   .block_settings .block_tree p.hasicon .icon {
     margin-right: 2px; }
 
+.block_starredcourses [data-region="starredcoursess-view-content"] {
+  overflow-x: hidden; }
+
+.block_starredcourses .card-deck {
+  flex-wrap: nowrap; }
+
+.block_starredcourses .starredcoursessimg {
+  height: 7rem;
+  background-position: center;
+  background-size: cover; }
+
+.block_starredcourses .starredcourses-info-container {
+  padding: 0.8rem; }
+  .block_starredcourses .starredcourses-info-container .card-title {
+    max-width: 100%; }
+    .block_starredcourses .starredcourses-info-container .card-title a {
+      max-width: 100%; }
+
+.block_starredcourses .empty-placeholder-image-lg {
+  height: 125px; }
+
+.block_starredcourses [data-region="starred-courses-view-content"] {
+  overflow-x: hidden; }
+
+.block_starredcourses .starred-course-card {
+  flex-basis: auto;
+  height: 150px;
+  width: 200px;
+  flex-shrink: 0; }
+
+.block_starredcourses .course-card-container {
+  height: 150px;
+  overflow: hidden;
+  flex-wrap: wrap; }
+
+.block_starredcourses .starred-course-img {
+  height: 7rem;
+  background-position: center;
+  background-size: cover; }
+
+.block_starredcourses .starred-course-info-container {
+  padding: 0.8rem; }
+  .block_starredcourses .starred-course-info-container .card-title {
+    max-width: 100%; }
+    .block_starredcourses .starred-course-info-container .card-title a {
+      max-width: 100%; }
+
+.block_starredcourses .empty-placeholder-image-lg {
+  height: 125px; }
+
 .navbar {
   max-height: 50px; }
 

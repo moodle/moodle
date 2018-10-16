@@ -237,3 +237,64 @@ body.drawer-open-left #region-main.has-blocks {
         margin-right: 2px;
     }
 }
+$card-gutter : $card-deck-margin * 2;
+.block_starredcourses {
+    [data-region="starredcoursess-view-content"] {
+        overflow-x: hidden;
+    }
+    .card-deck {
+        flex-wrap: nowrap;
+    }
+    .starredcoursessimg {
+        height: 7rem;
+        background-position: center;
+        background-size: cover;
+    }
+    .starredcourses-info-container {
+        padding: 0.8rem;
+        .card-title {
+            max-width: 100%;
+            a {
+                max-width: 100%;
+            }
+        }
+    }
+    .empty-placeholder-image-lg {
+        height: 125px;
+    }
+}
+
+$card-gutter : $card-deck-margin * 2;
+.block_starredcourses {
+    [data-region="starred-courses-view-content"] {
+        overflow-x: hidden;
+    }
+    .starred-course-card {
+        flex-basis: auto;
+        height: 150px;
+        width: 200px;
+        flex-shrink: 0;
+    }
+    .course-card-container {
+        height: 150px;
+        overflow: hidden;
+        flex-wrap: wrap;
+    }
+    .starred-course-img {
+        height: 7rem;
+        background-position: center;
+        background-size: cover;
+    }
+    .starred-course-info-container {
+        padding: 0.8rem;
+        .card-title {
+            max-width: 100%;
+            a {
+                max-width: 100%;
+            }
+        }
+    }
+    .empty-placeholder-image-lg {
+        height: 125px;
+    }
+}

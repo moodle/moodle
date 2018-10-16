@@ -15,15 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Starred courses block language strings.
+ * File description.
  *
  * @package   block_starredcourses
  * @copyright 2018 Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['nocourses'] = 'No starred courses';
-$string['pluginname'] = 'Starred courses';
-$string['starredcourses:addinstance'] = 'Add a new instance of starred courses block';
-$string['starredcourses:myaddinstance'] = 'Add a new instance of starred block to Dashboard';
+defined('MOODLE_INTERNAL') || die();
+
+$functions = array(
+
+    'block_starredcourses_get_starred_courses' => array(
+        'classpath' => 'block/starredcourses/classes/external.php',
+        'classname'   => 'block_starredcourses_external',
+        'methodname'  => 'get_starred_courses',
+        'description' => 'Get users starred courses.',
+        'type'        => 'read',
+        'ajax'        => true,
+    ),
+);
 

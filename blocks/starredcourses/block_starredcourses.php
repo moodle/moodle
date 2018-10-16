@@ -53,9 +53,13 @@ class block_starredcourses extends block_base {
             return $this->content;
         }
 
-        $this->content = new stdClass();
-        $this->content->footer = '';
-        $this->content->text  = '';
+        $renderable = new \block_starredcourses\output\main();
+        $renderer = $this->page->get_renderer('block_starredcourses');
+
+        $this->content = (object) [
+            'text' => $renderer->render($renderable),
+            'footer' => ''
+        ];
 
         return $this->content;
     }
