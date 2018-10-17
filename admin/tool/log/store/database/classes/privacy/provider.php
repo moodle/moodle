@@ -40,7 +40,8 @@ use core_privacy\local\request\contextlist;
  */
 class provider implements
     \core_privacy\local\metadata\provider,
-    \tool_log\local\privacy\logstore_provider {
+    \tool_log\local\privacy\logstore_provider,
+    \tool_log\local\privacy\logstore_userlist_provider {
 
     use \tool_log\local\privacy\moodle_database_export_and_delete;
 
@@ -89,6 +90,38 @@ class provider implements
             return 'SELECT ' . $id . $db->sql_null_from_clause();
         }, $contextids));
         $contextlist->add_from_sql($sql, []);
+    }
+
+    /**
+     * Add user IDs that contain user information for the specified context.
+     *
+     * @param \core_privacy\local\request\userlist $userlist The userlist to add the users to.
+     * @return void
+     */
+    public static function add_userids_for_context(\core_privacy\local\request\userlist $userlist) {
+        list($db, $table) = static::get_database_and_table();
+        if (!$db || !$table) {
+            return;
+        }
+
+        $userids = [];
+        $records = $db->get_records($table, ['contextid' => $userlist->get_context()->id], '',
+                'id, userid, relateduserid, realuserid');
+        if (empty($records)) {
+            return;
+        }
+
+        foreach ($records as $record) {
+            $userids[] = $record->userid;
+            if (!empty($record->relateduserid)) {
+                $userids[] = $record->relateduserid;
+            }
+            if (!empty($record->realuserid)) {
+                $userids[] = $record->realuserid;
+            }
+        }
+        $userids = array_unique($userids);
+        $userlist->add_users($userids);
     }
 
     /**
