@@ -589,6 +589,11 @@ $CFG->admin = 'admin';
 //
 //      $CFG->pdfexportfont = 'freesans';
 //
+// Use the following flag to enable messagingallusers and set the default preference
+// value for existing users to allow them to be contacted by other site users.
+//
+//      $CFG->keepmessagingallusersenabled = true;
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================

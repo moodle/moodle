@@ -29,6 +29,7 @@
     * userid The logged in user id
     * disableall If the user has disabled notifications
     * components The list of notification components
+    * privacychoices The choice options for the contactable privacy setting
 
     Example context (json):
     {
@@ -65,21 +66,38 @@
                     }
                 ]
             }
+        ],
+        "privacychoices": [
+            {
+                "value": 1,
+                "text": "My contacts only",
+                "checked": 0
+            },
+            {
+                "value": 2,
+                "text": "Anyone within courses I am a member of",
+                "checked": 1
+            }
         ]
     }
 }}
 <div class="preferences-page-container" data-region="preferences-page-container">
     <h2>{{#str}} messagepreferences, message {{/str}}</h2>
-    <div class="checkbox-container" data-region="block-non-contacts-container">
-        <input id="block-non-contacts"
-                type="checkbox"
-                data-user-id="{{userid}}"
-                data-block-non-contacts
-                data-preference-key="message_blocknoncontacts"
-                {{#blocknoncontacts}}checked{{/blocknoncontacts}} />
-        <label for="block-non-contacts">{{#str}} blocknoncontacts, message {{/str}}</label>
-        {{> core/loading }}
-    </div>
+    <div class="privacy-setting-container"
+         data-user-id="{{userid}}"
+         data-region="privacy-setting-container"
+         data-preference-key="message_blocknoncontacts">
+        <p>{{#str}} contactableprivacy, message {{/str}}</p>
+       {{#privacychoices}}
+        <input id="action-selection-option-{{value}}"
+               type="radio"
+               name="message_blocknoncontacts"
+               value="{{value}}"
+               {{#checked}}checked="checked"{{/checked}}/>
+        <label for="action-selection-option-{{value}}">{{text}}</label>
+        <br>
+       {{/privacychoices}}
+    </div><br>
     <div class="preferences-container {{#disableall}}disabled{{/disableall}}"
         data-user-id="{{userid}}"
         data-region="preferences-container">

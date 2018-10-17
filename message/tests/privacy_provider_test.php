@@ -160,7 +160,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // Set some message user preferences.
         set_user_preference('message_provider_moodle_instantmessage_loggedin', 'airnotifier', $USER->id);
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'popup', $USER->id);
-        set_user_preference('message_blocknoncontacts', 1, $USER->id);
+        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS, $USER->id);
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'inbound', $user->id);
 
         // Set an unrelated preference.

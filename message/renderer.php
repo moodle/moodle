@@ -227,6 +227,8 @@ class core_message_renderer extends plugin_renderer_base {
      * @return string The text to render
      */
     public function render_user_message_preferences($user) {
+        global $CFG;
+
         // Filter out enabled, available system_configured and user_configured processors only.
         $readyprocessors = array_filter(get_message_processors(), function($processor) {
             return $processor->enabled &&
@@ -243,7 +245,29 @@ class core_message_renderer extends plugin_renderer_base {
         $notificationlistoutput = new \core_message\output\preferences\message_notification_list($readyprocessors,
             $providers, $preferences, $user);
         $context = $notificationlistoutput->export_for_template($this);
-        $context['blocknoncontacts'] = get_user_preferences('message_blocknoncontacts', '', $user->id) ? true : false;
+
+        // Get the privacy settings options for being messaged.
+        $privacysetting = \core_message\api::get_user_privacy_messaging_preference($user->id);
+        $choices = array();
+        $choices[] = [
+            'value' => \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS,
+            'text' => get_string('contactableprivacy_onlycontacts', 'message'),
+            'checked' => ($privacysetting == \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS)
+        ];
+        $choices[] = [
+            'value' => \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER,
+            'text' => get_string('contactableprivacy_coursemember', 'message'),
+            'checked' => ($privacysetting == \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER)
+        ];
+        if (!empty($CFG->messagingallusers)) {
+            // Add the MESSAGE_PRIVACY_SITE option when site-wide messaging between users is enabled.
+            $choices[] = [
+                'value' => \core_message\api::MESSAGE_PRIVACY_SITE,
+                'text' => get_string('contactableprivacy_site', 'message'),
+                'checked' => ($privacysetting == \core_message\api::MESSAGE_PRIVACY_SITE)
+            ];
+        }
+        $context['privacychoices'] = $choices;
 
         return $this->render_from_template('message/message_preferences', $context);
     }

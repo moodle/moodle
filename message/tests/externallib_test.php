@@ -115,6 +115,18 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         $sentmessages = core_message_external::send_instant_messages($messages);
         $sentmessages = external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
+        $this->assertEquals(
+            get_string('usercantbemessaged', 'message', fullname(\core_user::get_user($message1['touserid']))),
+            array_pop($sentmessages)['errormessage']
+        );
+
+        // Add the user1 as a contact.
+        \core_message\api::add_contact($user1->id, $user2->id);
+
+        // Send message again. Now it should work properly.
+        $sentmessages = core_message_external::send_instant_messages($messages);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $sentmessages = external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
 
         $sentmessage = reset($sentmessages);
 
@@ -165,7 +177,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         $sentmessage = reset($sentmessages);
 
-        $this->assertEquals(get_string('userisblockingyou', 'message'), $sentmessage['errormessage']);
+        $this->assertEquals(get_string('usercantbemessaged', 'message', fullname($user2)), $sentmessage['errormessage']);
 
         $this->assertEquals(0, $DB->count_records('messages'));
     }
@@ -187,7 +199,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->setUser($user1);
 
         // Set the user preference so user 2 does not accept messages from non-contacts.
-        set_user_preference('message_blocknoncontacts', 1, $user2);
+        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS, $user2);
 
         // Create test message data.
         $message1 = array();
@@ -201,7 +213,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         $sentmessage = reset($sentmessages);
 
-        $this->assertEquals(get_string('userisblockingyounoncontact', 'message', fullname($user2)), $sentmessage['errormessage']);
+        $this->assertEquals(get_string('usercantbemessaged', 'message', fullname($user2)), $sentmessage['errormessage']);
 
         $this->assertEquals(0, $DB->count_records('messages'));
     }
@@ -223,7 +235,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->setUser($user1);
 
         // Set the user preference so user 2 does not accept messages from non-contacts.
-        set_user_preference('message_blocknoncontacts', 1, $user2);
+        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS, $user2);
 
         \core_message\api::add_contact($user1->id, $user2->id);
 
@@ -3681,10 +3693,13 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $user = self::getDataGenerator()->create_user();
         $this->setUser($user);
 
+        // Enable site-wide messagging privacy setting. The user will be able to receive messages from everybody.
+        set_config('messagingallusers', true);
+
         // Set a couple of preferences to test.
         set_user_preference('message_provider_moodle_instantmessage_loggedin', 'email', $user);
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user);
-        set_user_preference('message_blocknoncontacts', 1, $user);
+        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_SITE, $user);
 
         $prefs = core_message_external::get_user_message_preferences();
         $prefs = external_api::clean_returnvalue(core_message_external::get_user_message_preferences_returns(), $prefs);
@@ -3692,7 +3707,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Check components.
         $this->assertCount(1, $prefs['preferences']['components']);
-        $this->assertTrue($prefs['blocknoncontacts']);
+        $this->assertEquals(\core_message\api::MESSAGE_PRIVACY_SITE, $prefs['blocknoncontacts']);
 
         // Check some preferences that we previously set.
         $found = false;

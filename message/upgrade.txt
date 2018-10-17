@@ -36,6 +36,8 @@ information provided here is intended especially for developers.
   - core_message_external::unblock_contacts(), please use core_message_external::unblock_user() instead.
   - core_message_external::create_contacts(), please use core_message_external::create_contact_request() instead.
   - core_message_external::delete_conversation(), please use core_message_external::delete_conversations_by_id() instead.
+* The following function has been added for getting the privacy messaging preference:
+  - get_user_privacy_messaging_preference()
 
 === 3.5 ===
 

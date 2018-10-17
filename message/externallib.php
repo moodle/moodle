@@ -92,72 +92,36 @@ class core_message_external extends external_api {
         }
         list($sqluserids, $sqlparams) = $DB->get_in_or_equal($receivers);
         $tousers = $DB->get_records_select("user", "id " . $sqluserids . " AND deleted = 0", $sqlparams);
-        $blocklist   = array();
-        $contactlist = array();
-        $contactsqlparams = array_merge($sqlparams, [$USER->id], [$USER->id], $sqlparams);
-        $rs = $DB->get_recordset_sql("SELECT *
-                                        FROM {message_contacts}
-                                       WHERE (userid $sqluserids AND contactid = ?)
-                                          OR (userid = ? AND contactid $sqluserids)", $contactsqlparams);
-        foreach ($rs as $record) {
-            $useridtouse = $record->userid;
-            if ($record->userid == $USER->id) {
-                $useridtouse = $record->contactid;
-            }
-            $contactlist[$useridtouse] = true;
-        }
-        $rs->close();
-        $blocksqlparams = array_merge($sqlparams, [$USER->id]);
-        $rs = $DB->get_recordset_sql("SELECT *
-                                        FROM {message_users_blocked}
-                                       WHERE userid $sqluserids
-                                         AND blockeduserid = ?", $blocksqlparams);
-        foreach ($rs as $record) {
-            $blocklist[$record->userid] = true;
-        }
-        $rs->close();
-
-        $canreadallmessages = has_capability('moodle/site:readallmessages', $context);
 
         $resultmessages = array();
         foreach ($params['messages'] as $message) {
             $resultmsg = array(); //the infos about the success of the operation
 
-            //we are going to do some checking
-            //code should match /messages/index.php checks
+            // We are going to do some checking.
+            // Code should match /messages/index.php checks.
             $success = true;
 
-            //check the user exists
+            // Check the user exists.
             if (empty($tousers[$message['touserid']])) {
                 $success = false;
                 $errormessage = get_string('touserdoesntexist', 'message', $message['touserid']);
             }
 
-            //check that the touser is not blocking the current user
-            if ($success and !empty($blocklist[$message['touserid']]) and !$canreadallmessages) {
+            // TODO MDL-31118 performance improvement - edit the function so we can pass an array instead userid
+            // Check if the recipient can be messaged by the sender.
+            if ($success && !\core_message\api::can_post_message($tousers[$message['touserid']], $USER)) {
                 $success = false;
-                $errormessage = get_string('userisblockingyou', 'message');
+                $errormessage = get_string('usercantbemessaged', 'message', fullname(\core_user::get_user($message['touserid'])));
             }
 
-            // Check if the user is a contact
-            //TODO MDL-31118 performance improvement - edit the function so we can pass an array instead userid
-            $blocknoncontacts = get_user_preferences('message_blocknoncontacts', NULL, $message['touserid']);
-            // message_blocknoncontacts option is on and current user is not in contact list
-            if ($success && empty($contactlist[$message['touserid']]) && !empty($blocknoncontacts)) {
-                // The user isn't a contact and they have selected to block non contacts so this message won't be sent.
-                $success = false;
-                $errormessage = get_string('userisblockingyounoncontact', 'message',
-                        fullname(core_user::get_user($message['touserid'])));
-            }
-
-            //now we can send the message (at least try)
+            // Now we can send the message (at least try).
             if ($success) {
-                //TODO MDL-31118 performance improvement - edit the function so we can pass an array instead one touser object
+                // TODO MDL-31118 performance improvement - edit the function so we can pass an array instead one touser object.
                 $success = message_post_message($USER, $tousers[$message['touserid']],
                         $message['text'], external_validate_format($message['textformat']));
             }
 
-            //build the resultmsg
+            // Build the resultmsg.
             if (isset($message['clientmsgid'])) {
                 $resultmsg['clientmsgid'] = $message['clientmsgid'];
             }
@@ -571,7 +535,6 @@ class core_message_external extends external_api {
     /**
      * Unblock contacts.
      *
-     * @deprecated since Moodle 3.6
      * @param array $userids array of user IDs.
      * @param int $userid The id of the user we are unblocking the contacts for
      * @return null
@@ -3154,7 +3117,7 @@ class core_message_external extends external_api {
         $result = array(
             'warnings' => array(),
             'preferences' => $notificationlistoutput->export_for_template($renderer),
-            'blocknoncontacts' => get_user_preferences('message_blocknoncontacts', '', $user->id) ? true : false,
+            'blocknoncontacts' => \core_message\api::get_user_privacy_messaging_preference($user->id),
         );
         return $result;
     }
@@ -3169,7 +3132,7 @@ class core_message_external extends external_api {
         return new external_function_parameters(
             array(
                 'preferences' => self::get_preferences_structure(),
-                'blocknoncontacts' => new external_value(PARAM_BOOL, 'Whether to block or not messages from non contacts'),
+                'blocknoncontacts' => new external_value(PARAM_INT, 'Privacy messaging setting to define who can message you'),
                 'warnings' => new external_warnings(),
             )
         );

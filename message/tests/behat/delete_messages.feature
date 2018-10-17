@@ -6,9 +6,16 @@ Feature: Delete messages
 
   Scenario: Delete messages
     Given the following "users" exist:
-      | username | firstname | lastname | email            |
+      | username | firstname | lastname | email                |
       | user1    | User      | 1        | user1@example.com    |
       | user2    | User      | 2        | user2@example.com    |
+    And the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | user1    | C1     | student        |
+      | user2    | C1     | student        |
     And I log in as "user2"
     And I send "User 2 to User 1 message 1" message to "User 1" user
     And I send "User 2 to User 1 message 2" message in the message area
