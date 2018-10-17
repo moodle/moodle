@@ -911,6 +911,7 @@ $string['profilerequired'] = 'Is this field required?';
 $string['profileroles'] = 'Profile visible roles';
 $string['profilesforenrolledusersonly'] = 'Profiles for enrolled users only';
 $string['profileshortname'] = 'Short name (must be unique)';
+$string['profileshortnameinvalid'] = 'This short name can only contain alphanumeric characters (letters and numbers) or underscore (_).';
 $string['profileshortnamenotunique'] = 'This short name is already in use';
 $string['profilesignup'] = 'Display on signup page?';
 $string['profilespecificsettings'] = 'Specific settings';
