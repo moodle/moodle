@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class favourite_repository implements ifavourite_repository {
+class favourite_repository implements favourite_repository_interface {
 
     /**
      * @var string the name of the table which favourites are stored in.

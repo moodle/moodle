@@ -23,6 +23,7 @@
  */
 namespace core_favourites\local\service;
 use \core_favourites\local\entity\favourite;
+use \core_favourites\local\repository\favourite_repository_interface;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,14 +33,14 @@ defined('MOODLE_INTERNAL') || die();
  * This class is responsible for exposing key operations (add, remove, find) and enforces any business logic necessary to validate
  * authorization/data integrity for these operations.
  *
- * All object persistence is delegated to the ifavourite_repository.
+ * All object persistence is delegated to the favourite_repository_interface object.
  *
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_favourite_service {
 
-    /** @var ifavourite_repository $repo the user favourites repository object. */
+    /** @var favourite_repository_interface $repo the favourite repository object. */
     protected $repo;
 
     /** @var int $userid the id of the user to which this favourites service is scoped. */
@@ -49,9 +50,9 @@ class user_favourite_service {
      * The user_favourite_service constructor.
      *
      * @param \context_user $usercontext The context of the user to which this service operations are scoped.
-     * @param \core_favourites\local\repository\ifavourite_repository $repository a user favourites repository.
+     * @param \core_favourites\local\repository\favourite_repository_interface $repository a favourites repository.
      */
-    public function __construct(\context_user $usercontext, \core_favourites\local\repository\ifavourite_repository $repository) {
+    public function __construct(\context_user $usercontext, favourite_repository_interface $repository) {
         $this->repo = $repository;
         $this->userid = $usercontext->instanceid;
     }
