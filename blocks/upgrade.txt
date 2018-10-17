@@ -5,6 +5,10 @@ information provided here is intended especially for developers.
 
 * The timeline view from block_myoverview has been split out into block_timeline.
 * External function core_blocks::get_course_blocks now returns the block visible status and weight for ordering.
+* New method added block_base::get_content_for_external(). It will return all the block contents rendered for external functions.
+  If your block is returning formatted content or provide files for download, you should override this method to use the
+  external_format_text, external_format_string functions for formatting or external_util::get_area_files for files.
+  See block_html as example.
 
 === 3.4 ===
 
