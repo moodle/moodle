@@ -805,4 +805,31 @@ class core_component_testcase extends advanced_testcase {
         $this->assertEquals($componentslist['mod']['mod_forum'], $CFG->dirroot . '/mod/forum');
         $this->assertEquals($componentslist['tool']['tool_usertours'], $CFG->dirroot . '/' . $CFG->admin . '/tool/usertours');
     }
+
+    /**
+     * Test the get_component_names() method.
+     */
+    public function test_get_component_names() {
+        global $CFG;
+        $componentnames = \core_component::get_component_names();
+
+        // We should have an entry for each plugin type.
+        $plugintypes = \core_component::get_plugin_types();
+        $numplugintypes = 0;
+        foreach ($plugintypes as $type => $typedir) {
+            foreach (\core_component::get_plugin_list($type) as $plugin) {
+                $numplugintypes++;
+            }
+        }
+        // And an entry for each core subsystem.
+        $numcomponents = $numplugintypes + count(\core_component::get_core_subsystems());
+
+        $this->assertEquals($numcomponents, count($componentnames));
+
+        // Check a few of the known plugin types to confirm their presence at their respective type index.
+        $this->assertContains('core_comment', $componentnames);
+        $this->assertContains('mod_forum', $componentnames);
+        $this->assertContains('tool_usertours', $componentnames);
+        $this->assertContains('core_favourites', $componentnames);
+    }
 }

@@ -1278,4 +1278,31 @@ $cache = '.var_export($cache, true).';
         }
         return $components;
     }
+
+    /**
+     * Returns a list of frankenstyle component names.
+     *
+     * E.g.
+     *  [
+     *      'core_course',
+     *      'core_message',
+     *      'mod_assign',
+     *      ...
+     *  ]
+     * @return array the list of frankenstyle component names.
+     */
+    public static function get_component_names() : array {
+        $componentnames = [];
+        // Get all plugins.
+        foreach (self::get_plugin_types() as $plugintype => $typedir) {
+            foreach (self::get_plugin_list($plugintype) as $pluginname => $plugindir) {
+                $componentnames[] = $plugintype . '_' . $pluginname;
+            }
+        }
+        // Get all subsystems.
+        foreach (self::get_core_subsystems() as $subsystemname => $subsystempath) {
+            $componentnames[] = 'core_' . $subsystemname;
+        }
+        return $componentnames;
+    }
 }
