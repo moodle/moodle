@@ -58,17 +58,6 @@ class user_favourite_service {
     }
 
     /**
-     * Helper, returning a flat list of component names.
-     *
-     * @return array the array of component names.
-     */
-    protected function get_component_list() {
-        return array_keys(array_reduce(\core_component::get_component_list(), function($carry, $item) {
-            return array_merge($carry, $item);
-        }, []));
-    }
-
-    /**
      * Favourite an item defined by itemid/context, in the area defined by component/itemtype.
      *
      * @param string $component the frankenstyle component name.
@@ -84,7 +73,7 @@ class user_favourite_service {
         // Access: Any component can ask to favourite something, we can't verify access to that 'something' here though.
 
         // Validate the component name.
-        if (!in_array($component, $this->get_component_list())) {
+        if (!in_array($component, \core_component::get_component_names())) {
             throw new \moodle_exception("Invalid component name '$component'");
         }
 
@@ -107,7 +96,7 @@ class user_favourite_service {
      * @throws \moodle_exception if the component name is invalid, or if the repository encounters any errors.
      */
     public function find_favourites_by_type(string $component, string $itemtype, int $limitfrom = 0, int $limitnum = 0) : array {
-        if (!in_array($component, $this->get_component_list())) {
+        if (!in_array($component, \core_component::get_component_names())) {
             throw new \moodle_exception("Invalid component name '$component'");
         }
         return $this->repo->find_by(
@@ -133,7 +122,7 @@ class user_favourite_service {
      * @throws \moodle_exception if the user does not control the favourite, or it doesn't exist.
      */
     public function delete_favourite(string $component, string $itemtype, int $itemid, \context $context) {
-        if (!in_array($component, $this->get_component_list())) {
+        if (!in_array($component, \core_component::get_component_names())) {
             throw new \moodle_exception("Invalid component name '$component'");
         }
 
