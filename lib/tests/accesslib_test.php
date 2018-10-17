@@ -3820,6 +3820,47 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->setUser($user2);
         $this->assertEquals($expectedteacher, get_profile_roles($coursecontext));
     }
+
+    /**
+     * Ensure that the get_parent_contexts() function limits the number of queries it performs.
+     */
+    public function test_get_parent_contexts_preload() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        /*
+         * Given the following data structure:
+         * System
+         * - Category
+         * --- Category
+         * ----- Category
+         * ------- Category
+         * --------- Course
+         * ----------- Activity (Forum)
+         */
+
+        $contexts = [];
+
+        $cat1 = $this->getDataGenerator()->create_category();
+        $cat2 = $this->getDataGenerator()->create_category(['parent' => $cat1->id]);
+        $cat3 = $this->getDataGenerator()->create_category(['parent' => $cat2->id]);
+        $cat4 = $this->getDataGenerator()->create_category(['parent' => $cat3->id]);
+        $course = $this->getDataGenerator()->create_course(['category' => $cat4->id]);
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+
+        $modcontext = context_module::instance($forum->cmid);
+
+        context_helper::reset_caches();
+
+        // There should only be a single DB query.
+        $predbqueries = $DB->perf_get_reads();
+
+        $parents = $modcontext->get_parent_contexts();
+        // Note: For some databases There is one read, plus one FETCH, plus one CLOSE.
+        // These all show as reads, when there has actually only been a single query.
+        $this->assertLessThanOrEqual(3, $DB->perf_get_reads() - $predbqueries);
+    }
 }
 
 /**
