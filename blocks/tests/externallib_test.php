@@ -140,6 +140,82 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_course_blocks contents
+     */
+    public function test_get_course_blocks_contents() {
+        global $DB, $FULLME;
+
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id);
+        $coursecontext = context_course::instance($course->id);
+
+        // Create a HTML block.
+        $title = 'Some course info';
+        $body = 'Some course info<br /><p>Some contents</p>';
+        $bodyformat = FORMAT_MOODLE;
+        $page = new moodle_page();
+        $page->set_context($coursecontext);
+        $page->set_pagelayout('course');
+        $course->format = course_get_format($course)->get_format();
+        $page->set_pagetype('course-view-' . $course->format);
+        $page->blocks->load_blocks();
+        $newblock = 'html';
+        $page->blocks->add_block_at_end_of_default_region($newblock);
+
+        $this->setUser($user);
+        // Re-create the page.
+        $page = new moodle_page();
+        $page->set_context($coursecontext);
+        $page->set_pagelayout('course');
+        $course->format = course_get_format($course)->get_format();
+        $page->set_pagetype('course-view-' . $course->format);
+        $page->blocks->load_blocks();
+        $blocks = $page->blocks->get_blocks_for_region($page->blocks->get_default_region());
+        $block = end($blocks);
+        $block = block_instance('html', $block->instance);
+        $configdata = (object) [
+            'title' => $title,
+            'text' => [
+                'itemid' => 0,
+                'text' => $body,
+                'format' => $bodyformat,
+            ],
+        ];
+        $block->instance_config_save((object) $configdata);
+        $filename = 'img.png';
+        $filerecord = array(
+            'contextid' => context_block::instance($block->instance->id)->id,
+            'component' => 'block_html',
+            'filearea' => 'content',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => $filename,
+        );
+        // Create an area to upload the file.
+        $fs = get_file_storage();
+        // Create a file from the string that we made earlier.
+        $file = $fs->create_file_from_string($filerecord, 'some fake content (should be an image).');
+
+        // Check for the new block.
+        $result = core_block_external::get_course_blocks($course->id, true);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_block_external::get_course_blocks_returns(), $result);
+
+        // Expect the new block.
+        $this->assertCount(1, $result['blocks']);
+        $this->assertEquals($title, $result['blocks'][0]['contents']['title']);
+        $this->assertEquals($body, $result['blocks'][0]['contents']['content']);
+        $this->assertEquals(FORMAT_HTML, $result['blocks'][0]['contents']['contentformat']);    // Format change for external.
+        $this->assertEquals('', $result['blocks'][0]['contents']['footer']);
+        $this->assertCount(1, $result['blocks'][0]['contents']['files']);
+        $this->assertEquals($newblock, $result['blocks'][0]['name']);
+    }
+
+    /**
      * Test user get default dashboard blocks.
      */
     public function test_get_dashboard_blocks_default_dashboard() {

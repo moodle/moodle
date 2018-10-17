@@ -57,6 +57,16 @@ class core_block_external extends external_api {
                 'dockable'      => new external_value(PARAM_BOOL, 'Whether the block is dockable.'),
                 'weight'        => new external_value(PARAM_INT, 'Used to order blocks within a region.', VALUE_OPTIONAL),
                 'visible'       => new external_value(PARAM_BOOL, 'Whether the block is visible.', VALUE_OPTIONAL),
+                'contents'      => new external_single_structure(
+                    array(
+                        'title'         => new external_value(PARAM_TEXT, 'Block title.'),
+                        'content'       => new external_value(PARAM_RAW, 'Block contents.'),
+                        'contentformat' => new external_format_value('content'),
+                        'footer'        => new external_value(PARAM_RAW, 'Block footer.'),
+                        'files'         => new external_files('Block files.'),
+                    ),
+                    'Block contents (if required).', VALUE_OPTIONAL
+                ),
             ), 'Block information.'
         );
     }
@@ -65,10 +75,11 @@ class core_block_external extends external_api {
      * Convenience function for getting all the blocks of the current $PAGE.
      *
      * @param bool $includeinvisible Whether to include not visible blocks or not
+     * @param bool $returncontents Whether to return the block contents
      * @return array Block information
      * @since  Moodle 3.6
      */
-    private static function get_all_current_page_blocks($includeinvisible = false) {
+    private static function get_all_current_page_blocks($includeinvisible = false, $returncontents = false) {
         global $PAGE, $OUTPUT;
 
         // Load the block instances for all the regions.
@@ -82,20 +93,24 @@ class core_block_external extends external_api {
             // Index block instances to retrieve required info.
             $blockinstances = array();
             foreach ($regioninstances as $ri) {
-                $blockinstances[$ri->instance->id] = $ri->instance;
+                $blockinstances[$ri->instance->id] = $ri;
             }
 
             foreach ($regionblocks as $bc) {
-                $allblocks[] = [
+                $block = [
                     'instanceid' => $bc->blockinstanceid,
-                    'name' => $blockinstances[$bc->blockinstanceid]->blockname,
+                    'name' => $blockinstances[$bc->blockinstanceid]->instance->blockname,
                     'region' => $region,
                     'positionid' => $bc->blockpositionid,
                     'collapsible' => (bool) $bc->collapsible,
                     'dockable' => (bool) $bc->dockable,
-                    'weight' => $blockinstances[$bc->blockinstanceid]->weight,
-                    'visible' => $blockinstances[$bc->blockinstanceid]->visible,
+                    'weight' => $blockinstances[$bc->blockinstanceid]->instance->weight,
+                    'visible' => $blockinstances[$bc->blockinstanceid]->instance->visible,
                 ];
+                if ($returncontents) {
+                    $block['contents'] = (array) $blockinstances[$bc->blockinstanceid]->get_content_for_external($OUTPUT);
+                }
+                $allblocks[] = $block;
             }
         }
         return $allblocks;
@@ -110,7 +125,8 @@ class core_block_external extends external_api {
     public static function get_course_blocks_parameters() {
         return new external_function_parameters(
             array(
-                'courseid'  => new external_value(PARAM_INT, 'course id')
+                'courseid'  => new external_value(PARAM_INT, 'course id'),
+                'returncontents' => new external_value(PARAM_BOOL, 'Whether to return the block contents.', VALUE_DEFAULT, false),
             )
         );
     }
@@ -119,15 +135,17 @@ class core_block_external extends external_api {
      * Returns blocks information for a course.
      *
      * @param int $courseid The course id
+     * @param bool $returncontents Whether to return the block contents
      * @return array Blocks list and possible warnings
      * @throws moodle_exception
      * @since Moodle 3.3
      */
-    public static function get_course_blocks($courseid) {
+    public static function get_course_blocks($courseid, $returncontents = false) {
         global $PAGE;
 
         $warnings = array();
-        $params = self::validate_parameters(self::get_course_blocks_parameters(), ['courseid' => $courseid]);
+        $params = self::validate_parameters(self::get_course_blocks_parameters(),
+            ['courseid' => $courseid, 'returncontents' => $returncontents]);
 
         $course = get_course($params['courseid']);
         $context = context_course::instance($course->id);
@@ -144,7 +162,7 @@ class core_block_external extends external_api {
             $PAGE->set_pagetype('course-view-' . $course->format);
         }
 
-        $allblocks = self::get_all_current_page_blocks();
+        $allblocks = self::get_all_current_page_blocks(false, $params['returncontents']);
 
         return array(
             'blocks' => $allblocks,
@@ -177,7 +195,8 @@ class core_block_external extends external_api {
     public static function get_dashboard_blocks_parameters() {
         return new external_function_parameters(
             array(
-                'userid'  => new external_value(PARAM_INT, 'User id (optional), default is current user.', VALUE_DEFAULT, 0)
+                'userid'  => new external_value(PARAM_INT, 'User id (optional), default is current user.', VALUE_DEFAULT, 0),
+                'returncontents' => new external_value(PARAM_BOOL, 'Whether to return the block contents.', VALUE_DEFAULT, false),
             )
         );
     }
@@ -186,17 +205,19 @@ class core_block_external extends external_api {
      * Returns blocks information for the given user dashboard.
      *
      * @param int $userid The user id to retrive the blocks from, optional, default is to current user.
+     * @param bool $returncontents Whether to return the block contents
      * @return array Blocks list and possible warnings
      * @throws moodle_exception
      * @since Moodle 3.6
      */
-    public static function get_dashboard_blocks($userid = 0) {
+    public static function get_dashboard_blocks($userid = 0, $returncontents = false) {
         global $CFG, $USER, $PAGE;
 
         require_once($CFG->dirroot . '/my/lib.php');
 
         $warnings = array();
-        $params = self::validate_parameters(self::get_dashboard_blocks_parameters(), ['userid' => $userid]);
+        $params = self::validate_parameters(self::get_dashboard_blocks_parameters(),
+            ['userid' => $userid, 'returncontents' => $returncontents]);
 
         $userid = $params['userid'];
         if (empty($userid)) {
@@ -226,7 +247,7 @@ class core_block_external extends external_api {
 
         // Load the block instances in the current $PAGE for all the regions.
         $returninvisible = has_capability('moodle/my:manageblocks', $context) ? true : false;
-        $allblocks = self::get_all_current_page_blocks($returninvisible);
+        $allblocks = self::get_all_current_page_blocks($returninvisible, $params['returncontents']);
 
         return array(
             'blocks' => $allblocks,
