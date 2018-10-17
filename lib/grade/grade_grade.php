@@ -173,6 +173,22 @@ class grade_grade extends grade_object {
     public $aggregationweight = null;
 
     /**
+     * Feedback files to copy.
+     *
+     * Example -
+     *
+     * [
+     *     'contextid' => 1,
+     *     'component' => 'mod_xyz',
+     *     'filearea' => 'mod_xyz_feedback',
+     *     'itemid' => 2
+     * ];
+     *
+     * @var array
+     */
+    public $feedbackfiles = [];
+
+    /**
      * Returns array of grades for given grade_item+users
      *
      * @param grade_item $grade_item
@@ -1017,11 +1033,58 @@ class grade_grade extends grade_object {
      * @return bool success
      */
     public function update($source=null) {
-        $this->rawgrade    = grade_floatval($this->rawgrade);
-        $this->finalgrade  = grade_floatval($this->finalgrade);
+        $this->rawgrade = grade_floatval($this->rawgrade);
+        $this->finalgrade = grade_floatval($this->finalgrade);
         $this->rawgrademin = grade_floatval($this->rawgrademin);
         $this->rawgrademax = grade_floatval($this->rawgrademax);
         return parent::update($source);
+    }
+
+
+    /**
+     * Handles adding feedback files in the gradebook.
+     *
+     * @param int|null $historyid
+     */
+    protected function add_feedback_files(int $historyid = null) {
+        global $CFG;
+
+        // We only support feedback files for modules atm.
+        if ($this->grade_item && $this->grade_item->is_external_item()) {
+            $context = $this->get_context();
+            $this->copy_feedback_files($context, GRADE_FEEDBACK_FILEAREA, $this->id);
+
+            if (empty($CFG->disablegradehistory) && $historyid) {
+                $this->copy_feedback_files($context, GRADE_HISTORY_FEEDBACK_FILEAREA, $historyid);
+            }
+        }
+
+        return $this->id;
+    }
+
+    /**
+     * Handles updating feedback files in the gradebook.
+     *
+     * @param int|null $historyid
+     */
+    protected function update_feedback_files(int $historyid = null){
+        global $CFG;
+
+        // We only support feedback files for modules atm.
+        if ($this->grade_item && $this->grade_item->is_external_item()) {
+            $context = $this->get_context();
+
+            $fs = new file_storage();
+            $fs->delete_area_files($context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA, $this->id);
+
+            $this->copy_feedback_files($context, GRADE_FEEDBACK_FILEAREA, $this->id);
+
+            if (empty($CFG->disablegradehistory) && $historyid) {
+                $this->copy_feedback_files($context, GRADE_HISTORY_FEEDBACK_FILEAREA, $historyid);
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -1120,5 +1183,45 @@ class grade_grade extends grade_object {
     function get_aggregation_hint() {
         return array('status' => $this->get_aggregationstatus(),
                      'weight' => $this->get_aggregationweight());
+    }
+
+    /**
+     * Handles copying feedback files to a specified gradebook file area.
+     *
+     * @param context $context
+     * @param string $filearea
+     * @param int $itemid
+     */
+    private function copy_feedback_files(context $context, string $filearea, int $itemid) {
+        if ($this->feedbackfiles) {
+            $filestocopycontextid = $this->feedbackfiles['contextid'];
+            $filestocopycomponent = $this->feedbackfiles['component'];
+            $filestocopyfilearea = $this->feedbackfiles['filearea'];
+            $filestocopyitemid = $this->feedbackfiles['itemid'];
+
+            $fs = new file_storage();
+            if ($filestocopy = $fs->get_area_files($filestocopycontextid, $filestocopycomponent, $filestocopyfilearea,
+                    $filestocopyitemid)) {
+                foreach ($filestocopy as $filetocopy) {
+                    $destination = [
+                        'contextid' => $context->id,
+                        'component' => GRADE_FILE_COMPONENT,
+                        'filearea' => $filearea,
+                        'itemid' => $itemid
+                    ];
+                    $fs->create_file_from_storedfile($destination, $filetocopy);
+                }
+            }
+        }
+    }
+
+    /**
+     * Determine the correct context for this grade_grade.
+     *
+     * @return context
+     */
+    public function get_context() {
+        $this->load_grade_item();
+        return $this->grade_item->get_context();
     }
 }

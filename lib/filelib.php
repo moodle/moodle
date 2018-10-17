@@ -4198,6 +4198,9 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
 
     // ========================================================================================================================
     } else if ($component === 'grade') {
+
+        require_once($CFG->libdir . '/grade/constants.php');
+
         if (($filearea === 'outcome' or $filearea === 'scale') and $context->contextlevel == CONTEXT_SYSTEM) {
             // Global gradebook files
             if ($CFG->forcelogin) {
@@ -4213,15 +4216,35 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
             \core\session\manager::write_close(); // Unlock session during file serving.
             send_stored_file($file, 60*60, 0, $forcedownload, $sendfileoptions);
 
-        } else if ($filearea === 'feedback' and $context->contextlevel == CONTEXT_COURSE) {
-            //TODO: nobody implemented this yet in grade edit form!!
-            send_file_not_found();
-
-            if ($CFG->forcelogin || $course->id != SITEID) {
-                require_login($course);
+        } else if ($filearea == GRADE_FEEDBACK_FILEAREA || $filearea == GRADE_HISTORY_FEEDBACK_FILEAREA) {
+            if ($context->contextlevel != CONTEXT_MODULE) {
+                send_file_not_found;
             }
 
-            $fullpath = "/$context->id/$component/$filearea/".implode('/', $args);
+            require_login($course, false);
+
+            $gradeid = (int) array_shift($args);
+            $filename = array_pop($args);
+            if ($filearea == GRADE_HISTORY_FEEDBACK_FILEAREA) {
+                $grade = $DB->get_record('grade_grades_history', ['id' => $gradeid]);
+            } else {
+                $grade = $DB->get_record('grade_grades', ['id' => $gradeid]);
+            }
+
+            if (!$grade) {
+                send_file_not_found();
+            }
+
+            $iscurrentuser = $USER->id == $grade->userid;
+
+            if (!$iscurrentuser) {
+                $coursecontext = context_course::instance($course->id);
+                if (!has_capability('moodle/grade:viewall', $coursecontext)) {
+                    send_file_not_found();
+                }
+            }
+
+            $fullpath = "/$context->id/$component/$filearea/$gradeid/$filename";
 
             if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
                 send_file_not_found();
