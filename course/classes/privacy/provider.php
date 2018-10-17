@@ -29,8 +29,10 @@ defined('MOODLE_INTERNAL') || die();
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\contextlist;
 use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\writer;
+use \core_privacy\local\request\approved_userlist;
 use \core_privacy\local\request\transform;
+use \core_privacy\local\request\userlist;
+use \core_privacy\local\request\writer;
 
 /**
  * Privacy class for requesting user data.
@@ -41,6 +43,7 @@ use \core_privacy\local\request\transform;
 class provider implements
         \core_privacy\local\metadata\provider,
         \core_privacy\local\request\context_aware_provider,
+        \core_privacy\local\request\core_userlist_provider,
         \core_privacy\local\request\plugin\provider,
         \core_privacy\local\request\user_preference_provider {
 
@@ -73,6 +76,21 @@ class provider implements
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, $params);
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!is_a($context, \context_course::class)) {
+            return;
+        }
+
+        \core_completion\privacy\provider::add_course_completion_users_to_userlist($userlist);
     }
 
     /**
@@ -216,6 +234,21 @@ class provider implements
                 // Delete course completion data.
                 \core_completion\privacy\provider::delete_completion($contextlist->get_user(), $context->instanceid);
             }
+        }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+        $context = $userlist->get_context();
+
+        if ($context->contextlevel == CONTEXT_COURSE) {
+            // Delete course completion data.
+            \core_completion\privacy\provider::delete_completion_by_approved_userlist($userlist, $context->instanceid);
         }
     }
 }
