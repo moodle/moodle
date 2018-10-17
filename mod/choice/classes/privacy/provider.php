@@ -244,7 +244,10 @@ class provider implements
             if (!$context instanceof \context_module) {
                 continue;
             }
-            $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
+            $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid]);
+            if (!$instanceid) {
+                continue;
+            }
             $DB->delete_records('choice_answers', ['choiceid' => $instanceid, 'userid' => $userid]);
         }
     }
