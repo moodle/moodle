@@ -47,34 +47,62 @@ class expired_contexts_manager {
     /** @var manager The privacy manager */
     protected $manager = null;
 
+    /** @var \progress_trace Trace tool for logging */
+    protected $trace = null;
+
+    /**
+     * Constructor for the expired_contexts_manager.
+     *
+     * @param   \progress_trace $trace
+     */
+    public function __construct(\progress_trace $trace = null) {
+        if (null === $trace) {
+            $trace = new \null_progress_trace();
+        }
+
+        $this->trace = $trace;
+    }
+
     /**
      * Flag expired contexts as expired.
      *
      * @return  int[]   The number of contexts flagged as expired for courses, and users.
      */
     public function flag_expired_contexts() : array {
+        $this->trace->output('Checking requirements');
         if (!$this->check_requirements()) {
+            $this->trace->output('Requirements not met. Cannot process expired retentions.', 1);
             return [0, 0];
         }
 
         // Clear old and stale records first.
+        $this->trace->output('Clearing obselete records.', 0);
         static::clear_old_records();
+        $this->trace->output('Done.', 1);
 
+        $this->trace->output('Calculating potential course expiries.', 0);
         $data = static::get_nested_expiry_info_for_courses();
+
         $coursecount = 0;
+        $this->trace->output('Updating course expiry data.', 0);
         foreach ($data as $expiryrecord) {
             if ($this->update_from_expiry_info($expiryrecord)) {
                 $coursecount++;
             }
         }
+        $this->trace->output('Done.', 1);
 
+        $this->trace->output('Calculating potential user expiries.', 0);
         $data = static::get_nested_expiry_info_for_user();
+
         $usercount = 0;
+        $this->trace->output('Updating user expiry data.', 0);
         foreach ($data as $expiryrecord) {
             if ($this->update_from_expiry_info($expiryrecord)) {
                 $usercount++;
             }
         }
+        $this->trace->output('Done.', 1);
 
         return [$coursecount, $usercount];
     }
@@ -328,16 +356,21 @@ class expired_contexts_manager {
      * @return  int[]       The number of deleted contexts.
      */
     public function process_approved_deletions() : array {
+        $this->trace->output('Checking requirements');
         if (!$this->check_requirements()) {
+            $this->trace->output('Requirements not met. Cannot process expired retentions.', 1);
             return [0, 0];
         }
 
+        $this->trace->output('Fetching all approved and expired contexts for deletion.');
         $expiredcontexts = expired_context::get_records(['status' => expired_context::STATUS_APPROVED]);
+        $this->trace->output('Done.', 1);
         $totalprocessed = 0;
         $usercount = 0;
         $coursecount = 0;
         foreach ($expiredcontexts as $expiredctx) {
             $context = \context::instance_by_id($expiredctx->get('contextid'), IGNORE_MISSING);
+
             if (empty($context)) {
                 // Unable to process this request further.
                 // We have no context to delete.
@@ -345,7 +378,9 @@ class expired_contexts_manager {
                 continue;
             }
 
+            $this->trace->output("Deleting data for " . $context->get_context_name(), 2);
             if ($this->delete_expired_context($expiredctx)) {
+                $this->trace->output("Done.", 3);
                 if ($context instanceof \context_user) {
                     $usercount++;
                 } else {

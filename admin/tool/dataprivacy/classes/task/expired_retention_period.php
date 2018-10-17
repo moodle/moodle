@@ -54,7 +54,7 @@ class expired_retention_period extends scheduled_task {
      * Run the task to flag context instances as expired.
      */
     public function execute() {
-        $manager = new \tool_dataprivacy\expired_contexts_manager();
+        $manager = new \tool_dataprivacy\expired_contexts_manager(new \text_progress_trace());
         list($courses, $users) = $manager->flag_expired_contexts();
         mtrace("Flagged {$courses} course contexts, and {$users} user contexts as expired");
     }
