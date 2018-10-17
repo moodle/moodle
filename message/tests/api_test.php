@@ -1146,17 +1146,26 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
+        // Send some messages back and forth.
+        $time = 1;
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+
+        $conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+
         // The admin can do anything.
-        $this->assertTrue(\core_message\api::can_delete_conversation($user1->id));
+        $this->assertTrue(\core_message\api::can_delete_conversation($user1->id, $conversationid));
 
         // Set as the user 1.
         $this->setUser($user1);
 
         // They can delete their own messages.
-        $this->assertTrue(\core_message\api::can_delete_conversation($user1->id));
+        $this->assertTrue(\core_message\api::can_delete_conversation($user1->id, $conversationid));
 
         // They can't delete someone elses.
-        $this->assertFalse(\core_message\api::can_delete_conversation($user2->id));
+        $this->assertFalse(\core_message\api::can_delete_conversation($user2->id, $conversationid));
     }
 
     /**
@@ -1181,6 +1190,58 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Delete the conversation as user 1.
         \core_message\api::delete_conversation($user1->id, $user2->id);
+        $this->assertDebuggingCalled();
+
+        $muas = $DB->get_records('message_user_actions', array(), 'timecreated ASC');
+        $this->assertCount(4, $muas);
+        // Sort by id.
+        ksort($muas);
+
+        $mua1 = array_shift($muas);
+        $mua2 = array_shift($muas);
+        $mua3 = array_shift($muas);
+        $mua4 = array_shift($muas);
+
+        $this->assertEquals($user1->id, $mua1->userid);
+        $this->assertEquals($m1id, $mua1->messageid);
+        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua1->action);
+
+        $this->assertEquals($user1->id, $mua2->userid);
+        $this->assertEquals($m2id, $mua2->messageid);
+        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua2->action);
+
+        $this->assertEquals($user1->id, $mua3->userid);
+        $this->assertEquals($m3id, $mua3->messageid);
+        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua3->action);
+
+        $this->assertEquals($user1->id, $mua4->userid);
+        $this->assertEquals($m4id, $mua4->messageid);
+        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua4->action);
+    }
+
+    /**
+     * Tests deleting a conversation by conversation id.
+     */
+    public function test_delete_conversation_by_id() {
+        global $DB;
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person doing the search.
+        $this->setUser($user1);
+
+        // Send some messages back and forth.
+        $time = 1;
+        $m1id = $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $m2id = $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $m3id = $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $m4id = $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+
+        // Delete the conversation as user 1.
+        $conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        \core_message\api::delete_conversation_by_id($user1->id, $conversationid);
 
         $muas = $DB->get_records('message_user_actions', array(), 'timecreated ASC');
         $this->assertCount(4, $muas);
@@ -2224,6 +2285,31 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         $this->assertTrue(\core_message\api::does_contact_request_exist($user1->id, $user2->id));
         $this->assertTrue(\core_message\api::does_contact_request_exist($user2->id, $user1->id));
+    }
+
+    /**
+     * Test the user in conversation check.
+     */
+    public function test_is_user_in_conversation() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+
+        $this->assertTrue(\core_message\api::is_user_in_conversation($user1->id, $conversationid));
+    }
+
+    /**
+     * Test the user in conversation check when they are not.
+     */
+    public function test_is_user_in_conversation_when_not() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+
+        $this->assertFalse(\core_message\api::is_user_in_conversation($user3->id, $conversationid));
     }
 
     /**

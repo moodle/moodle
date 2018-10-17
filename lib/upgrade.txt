@@ -135,6 +135,9 @@ the groupid field.
   - message_contact_unblocked
   The reason for this is because you can now block/unblock users without them necessarily being a contact. These events
   have been replaced with message_user_blocked and message_user_unblocked respectively.
+* The event message_deleted has been changed, it no longer records the value of the 'useridto' due to
+  the introduction of group messaging. Please, if you have any observers or are triggering this event
+  in your code you will have to make some changes!
 
 === 3.5 ===
 

@@ -274,7 +274,9 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
      * Test the message deleted event.
      */
     public function test_message_deleted() {
-        global $DB;
+        global $DB, $USER;
+
+        $this->setAdminUser();
 
         // Create users to send messages between.
         $user1 = $this->getDataGenerator()->create_user();
@@ -294,12 +296,12 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\message_deleted', $event);
-        $this->assertEquals($user1->id, $event->userid); // The user who deleted it.
-        $this->assertEquals($user2->id, $event->relateduserid);
+        $this->assertEquals($USER->id, $event->userid); // The user who deleted it.
+        $this->assertEquals($user1->id, $event->relateduserid);
         $this->assertEquals($mua->id, $event->objectid);
         $this->assertEquals($messageid, $event->other['messageid']);
-        $this->assertEquals($user1->id, $event->other['useridfrom']);
-        $this->assertEquals($user2->id, $event->other['useridto']);
+
+        $this->setUser($user1);
 
         // Create a read message.
         $messageid = $this->send_fake_message($user1, $user2);
@@ -318,12 +320,10 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\message_deleted', $event);
-        $this->assertEquals($user2->id, $event->userid);
-        $this->assertEquals($user1->id, $event->relateduserid);
+        $this->assertEquals($user1->id, $event->userid);
+        $this->assertEquals($user2->id, $event->relateduserid);
         $this->assertEquals($mua->id, $event->objectid);
         $this->assertEquals($messageid, $event->other['messageid']);
-        $this->assertEquals($user1->id, $event->other['useridfrom']);
-        $this->assertEquals($user2->id, $event->other['useridto']);
     }
 
     /**
@@ -336,7 +336,7 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
-        // The person doing the search.
+        // The person doing the deletion.
         $this->setUser($user1);
 
         // Send some messages back and forth.
@@ -364,6 +364,7 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
         \core_message\api::delete_conversation($user1->id, $user2->id);
+        $this->assertDebuggingCalled();
         $events = $sink->get_events();
 
         // Get the user actions for the messages deleted by that user.
@@ -383,18 +384,14 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
         // Check that the event data is valid.
         $i = 1;
         foreach ($events as $event) {
-            $useridfromid = ($i % 2 == 0) ? $user2->id : $user1->id;
-            $useridtoid = ($i % 2 == 0) ? $user1->id : $user2->id;
             $messageid = $messages[$i - 1];
 
             $this->assertInstanceOf('\core\event\message_deleted', $event);
 
             $this->assertEquals($muatest[$messageid]->id, $event->objectid);
             $this->assertEquals($user1->id, $event->userid);
-            $this->assertEquals($user2->id, $event->relateduserid);
+            $this->assertEquals($user1->id, $event->relateduserid);
             $this->assertEquals($messageid, $event->other['messageid']);
-            $this->assertEquals($useridfromid, $event->other['useridfrom']);
-            $this->assertEquals($useridtoid, $event->other['useridto']);
 
             $i++;
         }
