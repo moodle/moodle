@@ -87,7 +87,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
                  WHERE userid = :userid
                    AND component = :component";
         if (!is_null($itemtype)) {
-            $sql .= "AND itemtype = :itemtype";
+            $sql .= " AND itemtype = :itemtype";
         }
         $params = ['userid' => $userid, 'component' => $component, 'itemtype' => $itemtype];
         $contextlist->add_from_sql($sql, $params);
