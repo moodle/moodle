@@ -2525,36 +2525,31 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2018101600.01) {
-        // Define table 'favourite' to be created.
+        // Define table favourite to be created.
         $table = new xmldb_table('favourite');
 
-        // Adding fields to table 'favourite'.
+        // Adding fields to table favourite.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
         $table->add_field('itemtype', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
         $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('ordering', XMLDB_TYPE_INTEGER, 10, null, null, null, null);
+        $table->add_field('ordering', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
-        // Adding keys to table 'favourite'.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
-        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        // Adding keys to table favourite.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('contextid', XMLDB_KEY_FOREIGN, ['contextid'], 'context', ['id']);
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
 
-        // Conditionally launch create table for 'favourite'.
+        // Adding indexes to table favourite.
+        $table->add_index('uniqueuserfavouriteitem', XMLDB_INDEX_UNIQUE, ['component', 'itemtype', 'itemid', 'contextid', 'userid']);
+
+        // Conditionally launch create table for favourite.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
-        }
-
-        // Add composite index 'uniqueuserfavouriteitem' to the table 'favourite'.
-        $index = new xmldb_index('uniqueuserfavouriteitem', XMLDB_INDEX_UNIQUE,
-            ['component', 'itemtype', 'itemid', 'contextid', 'userid']);
-
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
         }
 
         // Main savepoint reached.
