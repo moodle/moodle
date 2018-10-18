@@ -81,11 +81,27 @@ interface favourite_repository_interface {
     public function exists(int $id) : bool;
 
     /**
+     * Check whether an item exists in this repository, based on the specified criteria.
+     *
+     * @param array $criteria the list of key/value criteria pairs.
+     * @return bool true if the favourite exists, false otherwise.
+     */
+    public function exists_by(array $criteria) : bool;
+
+    /**
      * Return the total number of items in this repository.
      *
      * @return int the total number of items.
      */
     public function count() : int;
+
+    /**
+     * Return the number of favourites matching the specified criteria.
+     *
+     * @param array $criteria the list of key/value criteria pairs.
+     * @return int the number of favourites matching the criteria.
+     */
+    public function count_by(array $criteria) : int;
 
     /**
      * Update an item within this repository.
@@ -102,6 +118,14 @@ interface favourite_repository_interface {
      * @return void
      */
     public function delete(int $id);
+
+    /**
+     * Delete all favourites matching the specified criteria.
+     *
+     * @param array $criteria the list of key/value criteria pairs.
+     * @return void.
+     */
+    public function delete_by(array $criteria);
 
     /**
      * Find a single favourite, based on it's unique identifiers.

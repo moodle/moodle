@@ -393,6 +393,9 @@ class favourite_repository_testcase extends advanced_testcase {
             'itemtype' => 'nonexistenttype']));
     }
 
+    /**
+     * Test the exists() function.
+     */
     public function test_exists() {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
@@ -414,7 +417,10 @@ class favourite_repository_testcase extends advanced_testcase {
         $this->assertFalse($favouritesrepo->exists(1));
     }
 
-    public function test_exists_by_area() {
+    /**
+     * Test the exists_by() method.
+     */
+    public function test_exists_by() {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite two courses, in different areas.
@@ -437,14 +443,35 @@ class favourite_repository_testcase extends advanced_testcase {
         $favourite2 = $favouritesrepo->add($favourite2);
 
         // Verify the existence of the favourites.
-        $this->assertTrue($favouritesrepo->exists_by_area($user1context->instanceid, 'core_course', 'course', $favourite1->itemid,
-            $favourite1->contextid));
-        $this->assertTrue($favouritesrepo->exists_by_area($user1context->instanceid, 'core_course', 'anothertype',
-            $favourite2->itemid, $favourite2->contextid));
+        $this->assertTrue($favouritesrepo->exists_by(
+            [
+                'userid' => $user1context->instanceid,
+                'component' => 'core_course',
+                'itemtype' => 'course',
+                'itemid' => $favourite1->itemid,
+                'contextid' => $favourite1->contextid
+            ]
+        ));
+        $this->assertTrue($favouritesrepo->exists_by(
+            [
+                'userid' => $user1context->instanceid,
+                'component' => 'core_course',
+                'itemtype' => 'anothertype',
+                'itemid' => $favourite2->itemid,
+                'contextid' => $favourite2->contextid
+            ]
+        ));
 
         // Verify that we can't find a favourite from one area, in another.
-        $this->assertFalse($favouritesrepo->exists_by_area($user1context->instanceid, 'core_course', 'anothertype',
-            $favourite1->itemid, $favourite1->contextid));
+        $this->assertFalse($favouritesrepo->exists_by(
+            [
+                'userid' => $user1context->instanceid,
+                'component' => 'core_course',
+                'itemtype' => 'anothertype',
+                'itemid' => $favourite1->itemid,
+                'contextid' => $favourite1->contextid
+            ]
+        ));
     }
 
     /**
@@ -494,7 +521,10 @@ class favourite_repository_testcase extends advanced_testcase {
         $this->assertFalse($favouritesrepo->exists($favourite->id));
     }
 
-    public function test_delete_by_area() {
+    /**
+     * Test the delete_by() method.
+     */
+    public function test_delete_by() {
         list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
 
         // Create a favourites repository and favourite two courses, in different areas.
@@ -520,17 +550,77 @@ class favourite_repository_testcase extends advanced_testcase {
         $this->assertEquals(2, $favouritesrepo->count());
 
         // Try to delete by a non-existent area, and confirm it doesn't remove anything.
-        $favouritesrepo->delete_by_area($user1context->instanceid, 'core_course', 'donaldduck');
+        $favouritesrepo->delete_by(
+            [
+                'userid' => $user1context->instanceid,
+                'component' => 'core_course',
+                'itemtype' => 'donaldduck'
+            ]
+        );
         $this->assertEquals(2, $favouritesrepo->count());
 
         // Try to delete by a non-existent area, and confirm it doesn't remove anything.
-        $favouritesrepo->delete_by_area($user1context->instanceid, 'core_course', 'cat');
+        $favouritesrepo->delete_by(
+            [
+                'userid' => $user1context->instanceid,
+                'component' => 'core_course',
+                'itemtype' => 'cat'
+            ]
+        );
         $this->assertEquals(2, $favouritesrepo->count());
 
         // Delete by area, and confirm we have one record left, from the 'core_course/anothertype' area.
-        $favouritesrepo->delete_by_area($user1context->instanceid, 'core_course', 'course');
+        $favouritesrepo->delete_by(
+            [
+                'userid' => $user1context->instanceid,
+                'component' => 'core_course',
+                'itemtype' => 'course'
+            ]
+        );
         $this->assertEquals(1, $favouritesrepo->count());
         $this->assertFalse($favouritesrepo->exists($favourite1->id));
         $this->assertTrue($favouritesrepo->exists($favourite2->id));
+    }
+
+    /**
+     * Test the find_favourite() method for an existing favourite.
+     */
+    public function test_find_favourite_basic() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+
+        // Create a favourites repository and favourite two courses, in different areas.
+        $favouritesrepo = new favourite_repository($user1context);
+        $favourite = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
+        $favourite2 = new favourite(
+            'core_course',
+            'anothertype',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
+        $favourite1 = $favouritesrepo->add($favourite);
+        $favourite2 = $favouritesrepo->add($favourite2);
+
+        $fav = $favouritesrepo->find_favourite($user1context->instanceid, 'core_course', 'course', $course1context->instanceid,
+            $course1context->id);
+        $this->assertInstanceOf(\core_favourites\local\entity\favourite::class, $fav);
+    }
+
+    /**
+     * Test confirming the repository throws an exception in find_favourite if the favourite can't be found.
+     */
+    public function test_find_favourite_nonexistent_favourite() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+
+        // Confirm we get an exception.
+        $favouritesrepo = new favourite_repository($user1context);
+        $this->expectException(\dml_exception::class);
+        $favouritesrepo->find_favourite($user1context->instanceid, 'core_course', 'course', 0, $course1context->id);
     }
 }
