@@ -155,6 +155,7 @@ $string['context'] = 'Context';
 $string['course:activityvisibility'] = 'Hide/show activities';
 $string['course:bulkmessaging'] = 'Send a message to many people';
 $string['course:create'] = 'Create courses';
+$string['course:creategroupconversations'] = 'Create group conversations';
 $string['course:delete'] = 'Delete courses';
 $string['course:viewsuspendedusers'] = 'View suspended users';
 $string['course:changecategory'] = 'Change course category';
