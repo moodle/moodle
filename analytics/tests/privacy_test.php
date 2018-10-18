@@ -26,6 +26,7 @@ use \core_analytics\privacy\provider;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -100,6 +101,42 @@ class core_analytics_privacy_model_testcase extends \core_privacy\tests\provider
     }
 
     /**
+     * Test fetching users within a context.
+     */
+    public function test_get_users_in_context() {
+        global $CFG;
+
+        $component = 'core_analytics';
+        $course1context = \context_course::instance($this->c1->id);
+        $course2context = \context_course::instance($this->c2->id);
+        $systemcontext = \context_system::instance();
+        $expected = [$this->u1->id, $this->u2->id, $this->u3->id, $this->u4->id];
+
+        // Check users exist in the relevant contexts.
+        $userlist = new \core_privacy\local\request\userlist($course1context, $component);
+        provider::get_users_in_context($userlist);
+        $actual = $userlist->get_userids();
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+
+        $userlist = new \core_privacy\local\request\userlist($course2context, $component);
+        provider::get_users_in_context($userlist);
+        $actual = $userlist->get_userids();
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+
+        // System context will also find guest and admin user, add to expected before testing.
+        $expected = array_merge($expected, [$CFG->siteguest, get_admin()->id]);
+        sort($expected);
+
+        $userlist = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist);
+        $actual = $userlist->get_userids();
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
      * Test delete a context.
      *
      * @return null
@@ -158,6 +195,130 @@ class core_analytics_privacy_model_testcase extends \core_privacy\tests\provider
                                                                             $usercontexts->get_contextids());
         provider::delete_data_for_user($contextlist);
         $this->assertEquals(0, $DB->count_records('analytics_predictions'));
+    }
+
+    /**
+     * Test deleting multiple users in a context.
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+
+        $component = 'core_analytics';
+        $course1context = \context_course::instance($this->c1->id);
+        $course2context = \context_course::instance($this->c2->id);
+        $systemcontext = \context_system::instance();
+
+        // Ensure all records exist in expected contexts.
+        $expectedcontexts = [$course1context->id, $course2context->id, $systemcontext->id];
+        sort($expectedcontexts);
+
+        $actualcontexts = [
+            $this->u1->id => provider::get_contexts_for_userid($this->u1->id)->get_contextids(),
+            $this->u2->id => provider::get_contexts_for_userid($this->u2->id)->get_contextids(),
+            $this->u3->id => provider::get_contexts_for_userid($this->u3->id)->get_contextids(),
+            $this->u4->id => provider::get_contexts_for_userid($this->u4->id)->get_contextids(),
+        ];
+
+        foreach ($actualcontexts as $userid => $unused) {
+            sort($actualcontexts[$userid]);
+            $this->assertEquals($expectedcontexts, $actualcontexts[$userid]);
+        }
+
+        // Test initial record counts are as expected.
+        $this->assertEquals(6, $DB->count_records('analytics_predictions'));
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions'));
+        $this->assertEquals(14, $DB->count_records('analytics_indicator_calc'));
+
+        // Delete u1 and u3 from system context.
+        $approveduserids = [$this->u1->id, $this->u3->id];
+        $approvedlist = new approved_userlist($systemcontext, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        // Ensure u1 and u3 system context data deleted only.
+        $expectedcontexts = [
+            $this->u1->id => [$course1context->id, $course2context->id],
+            $this->u2->id => [$systemcontext->id, $course1context->id, $course2context->id],
+            $this->u3->id => [$course1context->id, $course2context->id],
+            $this->u4->id => [$systemcontext->id, $course1context->id, $course2context->id],
+        ];
+
+        $actualcontexts = [
+            $this->u1->id => provider::get_contexts_for_userid($this->u1->id)->get_contextids(),
+            $this->u2->id => provider::get_contexts_for_userid($this->u2->id)->get_contextids(),
+            $this->u3->id => provider::get_contexts_for_userid($this->u3->id)->get_contextids(),
+            $this->u4->id => provider::get_contexts_for_userid($this->u4->id)->get_contextids(),
+        ];
+
+        foreach ($actualcontexts as $userid => $unused) {
+            sort($expectedcontexts[$userid]);
+            sort($actualcontexts[$userid]);
+            $this->assertEquals($expectedcontexts[$userid], $actualcontexts[$userid]);
+        }
+
+        // Test expected number of records have been deleted.
+        $this->assertEquals(5, $DB->count_records('analytics_predictions'));
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions'));
+        $this->assertEquals(12, $DB->count_records('analytics_indicator_calc'));
+
+        // Delete for all 4 users in course 2 context.
+        $approveduserids = [$this->u1->id, $this->u2->id, $this->u3->id, $this->u4->id];
+        $approvedlist = new approved_userlist($course2context, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        // Ensure all course 2 context data deleted for all 4 users.
+        $expectedcontexts = [
+            $this->u1->id => [$course1context->id],
+            $this->u2->id => [$systemcontext->id, $course1context->id],
+            $this->u3->id => [$course1context->id],
+            $this->u4->id => [$systemcontext->id, $course1context->id],
+        ];
+
+        $actualcontexts = [
+            $this->u1->id => provider::get_contexts_for_userid($this->u1->id)->get_contextids(),
+            $this->u2->id => provider::get_contexts_for_userid($this->u2->id)->get_contextids(),
+            $this->u3->id => provider::get_contexts_for_userid($this->u3->id)->get_contextids(),
+            $this->u4->id => provider::get_contexts_for_userid($this->u4->id)->get_contextids(),
+        ];
+
+        foreach ($actualcontexts as $userid => $unused) {
+            sort($actualcontexts[$userid]);
+            sort($expectedcontexts[$userid]);
+            $this->assertEquals($expectedcontexts[$userid], $actualcontexts[$userid]);
+        }
+
+        // Test expected number of records have been deleted.
+        $this->assertEquals(3, $DB->count_records('analytics_predictions'));
+        $this->assertEquals(1, $DB->count_records('analytics_prediction_actions'));
+        $this->assertEquals(8, $DB->count_records('analytics_indicator_calc'));
+
+        $approveduserids = [$this->u3->id];
+        $approvedlist = new approved_userlist($course1context, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        // Ensure all course 1 context data deleted for u3.
+        $expectedcontexts = [
+            $this->u1->id => [$course1context->id],
+            $this->u2->id => [$systemcontext->id, $course1context->id],
+            $this->u3->id => [],
+            $this->u4->id => [$systemcontext->id, $course1context->id],
+        ];
+
+        $actualcontexts = [
+            $this->u1->id => provider::get_contexts_for_userid($this->u1->id)->get_contextids(),
+            $this->u2->id => provider::get_contexts_for_userid($this->u2->id)->get_contextids(),
+            $this->u3->id => provider::get_contexts_for_userid($this->u3->id)->get_contextids(),
+            $this->u4->id => provider::get_contexts_for_userid($this->u4->id)->get_contextids(),
+        ];
+        foreach ($actualcontexts as $userid => $unused) {
+            sort($actualcontexts[$userid]);
+            sort($expectedcontexts[$userid]);
+            $this->assertEquals($expectedcontexts[$userid], $actualcontexts[$userid]);
+        }
+
+        // Test expected number of records have been deleted.
+        $this->assertEquals(2, $DB->count_records('analytics_predictions'));
+        $this->assertEquals(0, $DB->count_records('analytics_prediction_actions'));
+        $this->assertEquals(7, $DB->count_records('analytics_indicator_calc'));
     }
 
     /**
