@@ -2225,6 +2225,15 @@ $functions = array(
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
 
+    'core_block_get_dashboard_blocks' => array(
+        'classname'     => 'core_block_external',
+        'methodname'    => 'get_dashboard_blocks',
+        'description'   => 'Returns blocks information for the given user dashboard.',
+        'type'          => 'read',
+        'capabilities'  => '',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+
     // Filters functions.
     'core_filters_get_available_in_context' => array(
         'classname'   => 'core_filters\external',

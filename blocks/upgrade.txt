@@ -4,6 +4,7 @@ information provided here is intended especially for developers.
 === 3.6 ===
 
 * The timeline view from block_myoverview has been split out into block_timeline.
+* External function core_blocks::get_course_blocks now returns the block visible status and weight for ordering.
 
 === 3.4 ===
 
