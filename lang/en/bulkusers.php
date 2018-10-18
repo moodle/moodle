@@ -30,6 +30,7 @@ $string['allselectedusers'] = 'All selected ({$a->count}/{$a->total})';
 $string['allusers'] = 'All users ({$a})';
 $string['available'] = 'Available';
 $string['confirmmessage'] = 'Do you really want to send the message above to all these users?<br />{$a}';
+$string['deleteduser'] = 'Deleted user';
 $string['nofilteredusers'] = 'No users found (0/{$a})';
 $string['noselectedusers'] = 'No users selected';
 $string['removeall'] = 'Remove all';
