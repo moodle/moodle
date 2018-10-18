@@ -2588,5 +2588,26 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018101900.01);
     }
 
+    if ($oldversion < 2018101900.02) {
+        // Define table 'message_conversations' to be updated.
+        $table = new xmldb_table('message_conversations');
+
+        // Remove the unique 'convhash' index, change to null and add a new non unique index.
+        $index = new xmldb_index('convhash', XMLDB_INDEX_UNIQUE, ['convhash']);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        $field = new xmldb_field('convhash', XMLDB_TYPE_CHAR, '40', null, null, null, null, 'name');
+        $dbman->change_field_notnull($table, $field);
+
+        $index = new xmldb_index('convhash', XMLDB_INDEX_NOTUNIQUE, ['convhash']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2018101900.02);
+    }
+
     return true;
 }
