@@ -1386,6 +1386,25 @@ class api {
     }
 
     /**
+     * Checks if a user can create a group conversation.
+     *
+     * @param int $userid The id of the user attempting to create the conversation
+     * @param \context $context The context they are creating the conversation from, most likely course context
+     * @return bool
+     */
+    public static function can_create_group_conversation(int $userid, \context $context) : bool {
+        global $CFG;
+
+        // If we can't message at all, then we can't create a conversation.
+        if (empty($CFG->messaging)) {
+            return false;
+        }
+
+        // We need to check they have the capability to create the conversation.
+        return has_capability('moodle/course:creategroupconversations', $context, $userid);
+    }
+
+    /**
      * Checks if a user can create a contact request.
      *
      * @param int $userid The id of the user who is creating the contact request

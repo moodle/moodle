@@ -2417,6 +2417,35 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test can create a group conversation.
+     */
+    public function test_can_create_group_conversation() {
+        global $CFG;
+
+        $student = self::getDataGenerator()->create_user();
+        $teacher = self::getDataGenerator()->create_user();
+        $course = self::getDataGenerator()->create_course();
+
+        $coursecontext = context_course::instance($course->id);
+
+        $this->getDataGenerator()->enrol_user($student->id, $course->id);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, 'editingteacher');
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+        $this->assertFalse(\core_message\api::can_create_group_conversation($student->id, $coursecontext));
+
+        // Re-enable messaging.
+        $CFG->messaging = 1;
+
+        // Student shouldn't be able to.
+        $this->assertFalse(\core_message\api::can_create_group_conversation($student->id, $coursecontext));
+
+        // Teacher should.
+        $this->assertTrue(\core_message\api::can_create_group_conversation($teacher->id, $coursecontext));
+    }
+
+    /**
      * Comparison function for sorting contacts.
      *
      * @param stdClass $a
