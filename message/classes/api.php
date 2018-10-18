@@ -1358,10 +1358,14 @@ class api {
     /**
      * Creates a conversation between two users.
      *
+     * @deprecated since 3.6
      * @param array $userids
      * @return int The id of the conversation
      */
     public static function create_conversation_between_users(array $userids) {
+        debugging('\core_message\api::create_conversation_between_users is deprecated, please use ' .
+            '\core_message\api::create_conversation instead.', DEBUG_DEVELOPER);
+
         global $DB;
 
         $conversation = new \stdClass();
