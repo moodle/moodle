@@ -127,6 +127,19 @@ class user_favourite_service_testcase extends advanced_testcase {
             })
         );
         $mockrepo->expects($this->any())
+            ->method('exists_by')
+            ->will($this->returnCallback(function(array $criteria) use (&$mockstore) {
+                // Check the mockstore for all objects with properties matching the key => val pairs in $criteria.
+                foreach ($mockstore as $index => $mockrow) {
+                    $mockrowarr = (array)$mockrow;
+                    if (array_diff($criteria, $mockrowarr) == []) {
+                        return true;
+                    }
+                }
+                return false;
+            })
+        );
+        $mockrepo->expects($this->any())
             ->method('delete')
             ->will($this->returnCallback(function(int $id) use (&$mockstore) {
                 foreach ($mockstore as $mockrow) {
@@ -304,5 +317,39 @@ class user_favourite_service_testcase extends advanced_testcase {
         // Try to delete a favourite which we know doesn't exist.
         $this->expectException(\moodle_exception::class);
         $service->delete_favourite('core_course', 'course', $course1context->instanceid, $course1context);
+    }
+
+    /**
+     * Test confirming the behaviour of the favourite_exists() method.
+     */
+    public function test_favourite_exists() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+
+        // Get a user_favourite_service for the user.
+        $repo = $this->get_mock_repository([]);
+        $service = new \core_favourites\local\service\user_favourite_service($user1context, $repo);
+
+        // Favourite a course.
+        $fav1 = $service->create_favourite('core_course', 'course', $course1context->instanceid, $course1context);
+
+        // Verify we can check existence of the favourite.
+        $this->assertTrue(
+            $service->favourite_exists(
+                'core_course',
+                'course',
+                $course1context->instanceid,
+                $course1context
+            )
+        );
+
+        // And one that we know doesn't exist.
+        $this->assertFalse(
+            $service->favourite_exists(
+                'core_course',
+                'someothertype',
+                $course1context->instanceid,
+                $course1context
+            )
+        );
     }
 }

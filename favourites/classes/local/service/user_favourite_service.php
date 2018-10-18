@@ -135,4 +135,25 @@ class user_favourite_service {
 
         $this->repo->delete($favourite->id);
     }
+
+    /**
+     * Check whether an item has been marked as a favourite in the respective area.
+     *
+     * @param string $component the frankenstyle component name.
+     * @param string $itemtype the type of the favourited item.
+     * @param int $itemid the id of the item which was favourited (not the favourite's id).
+     * @param \context $context the context of the item which was favourited.
+     * @return bool true if the item is favourited, false otherwise.
+     */
+    public function favourite_exists(string $component, string $itemtype, int $itemid, \context $context) : bool {
+        return $this->repo->exists_by(
+            [
+                'userid' => $this->userid,
+                'component' => $component,
+                'itemtype' => $itemtype,
+                'itemid' => $itemid,
+                'contextid' => $context->id
+            ]
+        );
+    }
 }
