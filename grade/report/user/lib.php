@@ -491,7 +491,7 @@ class grade_report_user extends grade_report {
                     $excluded = ' excluded';
                 }
                 **/
-
+                $canviewall = has_capability('moodle/grade:viewall', $this->context);
                 /// Other class information
                 $class .= $hidden . $excluded;
                 if ($this->switch) { // alter style based on whether aggregation is first or last
@@ -520,6 +520,7 @@ class grade_report_user extends grade_report {
                 $gradeitemdata['categoryid'] = $grade_object->categoryid;
                 $gradeitemdata['outcomeid'] = $grade_object->outcomeid;
                 $gradeitemdata['scaleid'] = $grade_object->outcomeid;
+                $gradeitemdata['locked'] = $canviewall ? $grade_grade->grade_item->is_locked() : null;
 
                 if ($this->showfeedback) {
                     // Copy $class before appending itemcenter as feedback should not be centered
@@ -551,6 +552,8 @@ class grade_report_user extends grade_report {
                     $gradeitemdata['gradeishidden'] = $grade_grade->is_hidden();
                     $gradeitemdata['gradedatesubmitted'] = $grade_grade->get_datesubmitted();
                     $gradeitemdata['gradedategraded'] = $grade_grade->get_dategraded();
+                    $gradeitemdata['gradeislocked'] = $canviewall ? $grade_grade->is_locked() : null;
+                    $gradeitemdata['gradeisoverridden'] = $canviewall ? $grade_grade->is_overridden() : null;
 
                     if ($grade_grade->grade_item->needsupdate) {
                         $data['grade']['class'] = $class.' gradingerror';
