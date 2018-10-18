@@ -771,6 +771,7 @@ class provider implements
         $DB->delete_records('forum_track_prefs', ['forumid' => $forumid]);
         $DB->delete_records('forum_subscriptions', ['forum' => $forumid]);
         $DB->delete_records('forum_read', ['forumid' => $forumid]);
+        $DB->delete_records('forum_digests', ['forum' => $forumid]);
 
         // Delete all discussion items.
         $DB->delete_records_select(
@@ -831,6 +832,11 @@ class provider implements
                 'userid' => $userid,
             ]);
 
+            $DB->delete_records('forum_digests', [
+                'forum' => $forum->id,
+                'userid' => $userid,
+            ]);
+
             // Delete all discussion items.
             $DB->delete_records_select(
                 'forum_queue',
@@ -846,48 +852,39 @@ class provider implements
                 'userid' => $userid,
             ]);
 
-            $uniquediscussions = $DB->get_recordset('forum_discussions', [
-                    'forum' => $forum->id,
-                    'userid' => $userid,
-                ]);
+            // Do not delete discussion or forum posts.
+            // Instead update them to reflect that the content has been deleted.
+            $postsql = "userid = :userid AND discussion IN (SELECT id FROM {forum_discussions} WHERE forum = :forum)";
+            $postidsql = "SELECT fp.id FROM {forum_posts} fp WHERE {$postsql}";
+            $postparams = [
+                'forum' => $forum->id,
+                'userid' => $userid,
+            ];
 
-            foreach ($uniquediscussions as $discussion) {
-                // Do not delete discussion or forum posts.
-                // Instead update them to reflect that the content has been deleted.
-                $postsql = "userid = :userid AND discussion IN (SELECT id FROM {forum_discussions} WHERE forum = :forum)";
-                $postidsql = "SELECT fp.id FROM {forum_posts} fp WHERE {$postsql}";
-                $postparams = [
-                    'forum' => $forum->id,
-                    'userid' => $userid,
-                ];
+            // Update the subject.
+            $DB->set_field_select('forum_posts', 'subject', '', $postsql, $postparams);
 
-                // Update the subject.
-                $DB->set_field_select('forum_posts', 'subject', '', $postsql, $postparams);
+            // Update the message and its format.
+            $DB->set_field_select('forum_posts', 'message', '', $postsql, $postparams);
+            $DB->set_field_select('forum_posts', 'messageformat', FORMAT_PLAIN, $postsql, $postparams);
 
-                // Update the subject and its format.
-                $DB->set_field_select('forum_posts', 'message', '', $postsql, $postparams);
-                $DB->set_field_select('forum_posts', 'messageformat', FORMAT_PLAIN, $postsql, $postparams);
+            // Mark the post as deleted.
+            $DB->set_field_select('forum_posts', 'deleted', 1, $postsql, $postparams);
 
-                // Mark the post as deleted.
-                $DB->set_field_select('forum_posts', 'deleted', 1, $postsql, $postparams);
+            // Note: Do _not_ delete ratings of other users. Only delete ratings on the users own posts.
+            // Ratings are aggregate fields and deleting the rating of this post will have an effect on the rating
+            // of any post.
+            \core_rating\privacy\provider::delete_ratings_select($context, 'mod_forum', 'post',
+                    "IN ($postidsql)", $postparams);
 
-                // Note: Do _not_ delete ratings of other users. Only delete ratings on the users own posts.
-                // Ratings are aggregate fields and deleting the rating of this post will have an effect on the rating
-                // of any post.
-                \core_rating\privacy\provider::delete_ratings_select($context, 'mod_forum', 'post',
-                        "IN ($postidsql)", $postparams);
+            // Delete all Tags.
+            \core_tag\privacy\provider::delete_item_tags_select($context, 'mod_forum', 'forum_posts',
+                    "IN ($postidsql)", $postparams);
 
-                // Delete all Tags.
-                \core_tag\privacy\provider::delete_item_tags_select($context, 'mod_forum', 'forum_posts',
-                        "IN ($postidsql)", $postparams);
-
-                // Delete all files from the posts.
-                $fs = get_file_storage();
-                $fs->delete_area_files_select($context->id, 'mod_forum', 'post', "IN ($postidsql)", $postparams);
-                $fs->delete_area_files_select($context->id, 'mod_forum', 'attachment', "IN ($postidsql)", $postparams);
-            }
-
-            $uniquediscussions->close();
+            // Delete all files from the posts.
+            $fs = get_file_storage();
+            $fs->delete_area_files_select($context->id, 'mod_forum', 'post', "IN ($postidsql)", $postparams);
+            $fs->delete_area_files_select($context->id, 'mod_forum', 'attachment', "IN ($postidsql)", $postparams);
         }
     }
 }
