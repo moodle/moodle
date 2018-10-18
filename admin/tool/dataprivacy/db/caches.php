@@ -33,6 +33,13 @@ $definitions = array(
         'staticacceleration' => true,
         'staticaccelerationsize' => 30,
     ),
+    'purpose_overrides' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => false,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 50,
+    ),
     'contextlevel' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
