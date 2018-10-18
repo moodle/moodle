@@ -355,6 +355,9 @@ class assign_feedback_comments extends assign_feedback_plugin {
             // No feedback given yet - maybe we need to copy the text from the submission?
             if (!empty($commentinlinenabled) && $submission) {
                 $this->convert_submission_text_to_feedback($submission, $data, $grade);
+            } else { // Set it to empty.
+                $data->assignfeedbackcomments = '';
+                $data->assignfeedbackcommentsformat = FORMAT_HTML;
             }
         }
 
@@ -367,6 +370,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
             ASSIGNFEEDBACK_COMMENTS_FILEAREA,
             $grade->id
         );
+
         $mform->addElement('editor', 'assignfeedbackcomments_editor', $this->get_name(), null, $this->get_editor_options());
 
         return true;
