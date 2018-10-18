@@ -201,7 +201,7 @@ class favourite_repository_testcase extends advanced_testcase {
         // Try to get a favourite we know doesn't exist.
         // We expect an exception in this case.
         $this->expectException(dml_exception::class);
-        $favouritesrepo->find(1);
+        $favouritesrepo->find(0);
     }
 
     /**
@@ -414,7 +414,7 @@ class favourite_repository_testcase extends advanced_testcase {
         $this->assertTrue($favouritesrepo->exists($createdfavourite->id));
 
         // Verify exists returns false for non-existent favourite.
-        $this->assertFalse($favouritesrepo->exists(1));
+        $this->assertFalse($favouritesrepo->exists(0));
     }
 
     /**
