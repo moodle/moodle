@@ -75,6 +75,44 @@ class favourite_repository implements favourite_repository_interface {
     }
 
     /**
+     * Basic validation, confirming we have the minimum field set needed to save a record to the store.
+     *
+     * @param favourite $favourite the favourite record to validate.
+     * @throws \moodle_exception if the supplied favourite has missing or unsupported fields.
+     */
+    protected function validate(favourite $favourite) {
+
+        $favourite = (array)$favourite;
+
+        // The allowed fields, and whether or not each is required to create a record.
+        // The timecreated, timemodified and id fields are generated during create/update.
+        $allowedfields = [
+            'userid' => true,
+            'component' => true,
+            'itemtype' => true,
+            'itemid' => true,
+            'contextid' => true,
+            'ordering' => false,
+            'timecreated' => false,
+            'timemodified' => false,
+            'id' => false
+        ];
+
+        $requiredfields = array_filter($allowedfields, function($field) {
+            return $field;
+        });
+
+        if ($missingfields = array_keys(array_diff_key($requiredfields, $favourite))) {
+            throw new \moodle_exception("Missing object property(s) '" . join(', ', $missingfields) . "'.");
+        }
+
+        // If the record contains fields we don't allow, throw an exception.
+        if ($unsupportedfields = array_keys(array_diff_key($favourite, $allowedfields))) {
+            throw new \moodle_exception("Unexpected object property(s) '" . join(', ', $unsupportedfields) . "'.");
+        }
+    }
+
+    /**
      * Add a favourite to the repository.
      *
      * @param favourite $favourite the favourite to add.
@@ -130,6 +168,20 @@ class favourite_repository implements favourite_repository_interface {
     }
 
     /**
+     * Return all items in this repository, as an array, indexed by id.
+     *
+     * @param int $limitfrom optional pagination control for returning a subset of records, starting at this point.
+     * @param int $limitnum optional pagination control for returning a subset comprising this many records.
+     * @return array the list of all favourites stored within this repository.
+     * @throws \dml_exception if any database errors are encountered.
+     */
+    public function find_all(int $limitfrom = 0, int $limitnum = 0) : array {
+        global $DB;
+        $records = $DB->get_records($this->favouritetable, null, '', '*', $limitfrom, $limitnum);
+        return $this->get_list_of_favourites_from_records($records);
+    }
+
+    /**
      * Return all items matching the supplied criteria (a [key => value,..] list).
      *
      * @param array $criteria the list of key/value criteria pairs.
@@ -141,20 +193,6 @@ class favourite_repository implements favourite_repository_interface {
     public function find_by(array $criteria, int $limitfrom = 0, int $limitnum = 0) : array {
         global $DB;
         $records = $DB->get_records($this->favouritetable, $criteria, '', '*', $limitfrom, $limitnum);
-        return $this->get_list_of_favourites_from_records($records);
-    }
-
-    /**
-     * Return all items in this repository, as an array, indexed by id.
-     *
-     * @param int $limitfrom optional pagination control for returning a subset of records, starting at this point.
-     * @param int $limitnum optional pagination control for returning a subset comprising this many records.
-     * @return array the list of all favourites stored within this repository.
-     * @throws \dml_exception if any database errors are encountered.
-     */
-    public function find_all(int $limitfrom = 0, int $limitnum = 0) : array {
-        global $DB;
-        $records = $DB->get_records($this->favouritetable, null, '', '*', $limitfrom, $limitnum);
         return $this->get_list_of_favourites_from_records($records);
     }
 
@@ -197,6 +235,18 @@ class favourite_repository implements favourite_repository_interface {
     }
 
     /**
+     * Check whether an item exists in this repository, based on the specified criteria.
+     *
+     * @param array $criteria the list of key/value criteria pairs.
+     * @return bool true if the favourite exists, false otherwise.
+     * @throws \dml_exception if any database errors are encountered.
+     */
+    public function exists_by(array $criteria) : bool {
+        global $DB;
+        return $DB->record_exists($this->favouritetable, $criteria);
+    }
+
+    /**
      * Update a favourite.
      *
      * @param favourite $favourite the favourite to update.
@@ -223,6 +273,17 @@ class favourite_repository implements favourite_repository_interface {
     }
 
     /**
+     * Delete all favourites matching the specified criteria.
+     *
+     * @param array $criteria the list of key/value criteria pairs.
+     * @throws \dml_exception if any database errors are encountered.
+     */
+    public function delete_by(array $criteria) {
+        global $DB;
+        $DB->delete_records($this->favouritetable, $criteria);
+    }
+
+    /**
      * Return the total number of favourites in this repository.
      *
      * @return int the total number of items.
@@ -231,52 +292,6 @@ class favourite_repository implements favourite_repository_interface {
     public function count() : int {
         global $DB;
         return $DB->count_records($this->favouritetable);
-    }
-
-    /**
-     * Check for the existence of a favourite item in the specified area.
-     *
-     * A favourite item is identified by the itemid/contextid pair.
-     * An area is identified by the component/itemtype pair.
-     *
-     * @param int $userid the id of user to whom the favourite belongs.
-     * @param string $component the frankenstyle component name.
-     * @param string $itemtype the type of the favourited item.
-     * @param int $itemid the id of the item which was favourited (not the favourite's id).
-     * @param int $contextid the contextid of the item which was favourited.
-     * @return bool true if the favourited item exists, false otherwise.
-     * @throws \dml_exception if any database errors are encountered.
-     */
-    public function exists_by_area(int $userid, string $component, string $itemtype, int $itemid, int $contextid) : bool {
-        global $DB;
-        return $DB->record_exists($this->favouritetable,
-            [
-                'userid' => $userid,
-                'component' => $component,
-                'itemtype' => $itemtype,
-                'itemid' => $itemid,
-                'contextid' => $contextid
-            ]
-        );
-    }
-
-    /**
-     * Delete all favourites within the component/itemtype.
-     *
-     * @param int $userid the id of the user to whom the favourite belongs.
-     * @param string $component the frankenstyle component name.
-     * @param string $itemtype the type of the favourited item.
-     * @throws \dml_exception if any database errors are encountered.
-     */
-    public function delete_by_area(int $userid, string $component, string $itemtype) {
-        global $DB;
-        $DB->delete_records($this->favouritetable,
-            [
-                'userid' => $userid,
-                'component' => $component,
-                'itemtype' => $itemtype
-            ]
-        );
     }
 
     /**
@@ -289,43 +304,5 @@ class favourite_repository implements favourite_repository_interface {
     public function count_by(array $criteria) : int {
         global $DB;
         return $DB->count_records($this->favouritetable, $criteria);
-    }
-
-    /**
-     * Basic validation, confirming we have the minimum field set needed to save a record to the store.
-     *
-     * @param favourite $favourite the favourite record to validate.
-     * @throws \moodle_exception if the supplied favourite has missing or unsupported fields.
-     */
-    protected function validate(favourite $favourite) {
-
-        $favourite = (array)$favourite;
-
-        // The allowed fields, and whether or not each is required to create a record.
-        // The timecreated, timemodified and id fields are generated during create/update.
-        $allowedfields = [
-            'userid' => true,
-            'component' => true,
-            'itemtype' => true,
-            'itemid' => true,
-            'contextid' => true,
-            'ordering' => false,
-            'timecreated' => false,
-            'timemodified' => false,
-            'id' => false
-        ];
-
-        $requiredfields = array_filter($allowedfields, function($field) {
-            return $field;
-        });
-
-        if ($missingfields = array_keys(array_diff_key($requiredfields, $favourite))) {
-            throw new \moodle_exception("Missing object property(s) '" . join(', ', $missingfields) . "'.");
-        }
-
-        // If the record contains fields we don't allow, throw an exception.
-        if ($unsupportedfields = array_keys(array_diff_key($favourite, $allowedfields))) {
-            throw new \moodle_exception("Unexpected object property(s) '" . join(', ', $unsupportedfields) . "'.");
-        }
     }
 }
