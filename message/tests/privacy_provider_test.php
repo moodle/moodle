@@ -663,8 +663,14 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         }
 
         if (!$conversationid = \core_message\api::get_conversation_between_users([$useridfrom, $useridto])) {
-            $conversationid = \core_message\api::create_conversation_between_users([$useridfrom,
-                $useridto]);
+            $conversation = \core_message\api::create_conversation(
+                \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+                [
+                    $useridfrom,
+                    $useridto
+                ]
+            );
+            $conversationid = $conversation->id;
         }
 
         // Ok, send the message.

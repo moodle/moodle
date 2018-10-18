@@ -74,8 +74,14 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         }
 
         if (!$conversationid = \core_message\api::get_conversation_between_users([$userfrom->id, $userto->id])) {
-            $conversationid = \core_message\api::create_conversation_between_users([$userfrom->id,
-                $userto->id]);
+            $conversation = \core_message\api::create_conversation(
+                \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+                [
+                    $userfrom->id,
+                    $userto->id
+                ]
+            );
+            $conversationid = $conversation->id;
         }
 
         // Ok, send the message.

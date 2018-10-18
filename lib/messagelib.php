@@ -163,8 +163,14 @@ function message_send(\core\message\message $eventdata) {
 
         if (!$conversationid = \core_message\api::get_conversation_between_users([$eventdata->userfrom->id,
                 $eventdata->userto->id])) {
-            $conversationid = \core_message\api::create_conversation_between_users([$eventdata->userfrom->id,
-                $eventdata->userto->id]);
+            $conversation = \core_message\api::create_conversation(
+                \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+                [
+                    $eventdata->userfrom->id,
+                    $eventdata->userto->id
+                ]
+            );
+            $conversationid = $conversation->id;
         }
 
         $tabledata = new stdClass();
