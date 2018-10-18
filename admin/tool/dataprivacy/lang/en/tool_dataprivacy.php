@@ -35,6 +35,7 @@ $string['approverequest'] = 'Approve request';
 $string['bulkapproverequests'] = 'Approve requests';
 $string['bulkdenyrequests'] = 'Deny requests';
 $string['cachedef_purpose'] = 'Data purposes';
+$string['cachedef_purpose_overrides'] = 'Purpose overrides in the Data Privacy tool';
 $string['cachedef_contextlevel'] = 'Context levels purpose and category';
 $string['cancelrequest'] = 'Cancel request';
 $string['cancelrequestconfirmation'] = 'Do you really want cancel this data request?';

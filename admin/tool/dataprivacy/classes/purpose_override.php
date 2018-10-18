@@ -89,11 +89,55 @@ class purpose_override extends \core\persistent {
      * @return  array
      */
     public static function get_overrides_for_purpose(purpose $purpose) : array {
+        $cache = \cache::make('tool_dataprivacy', 'purpose_overrides');
+
         $overrides = [];
-        foreach (self::get_records(['purposeid' => $purpose->get('id')]) as $override) {
-            $overrides[$override->get('roleid')] = $override;
+        $alldata = $cache->get($purpose->get('id'));
+        if (false === $alldata) {
+            $tocache = [];
+            foreach (self::get_records(['purposeid' => $purpose->get('id')]) as $override) {
+                $tocache[] = $override->to_record();
+                $overrides[$override->get('roleid')] = $override;
+            }
+            $cache->set($purpose->get('id'), $tocache);
+        } else {
+            foreach ($alldata as $data) {
+                $override = new self(0, $data);
+                $overrides[$override->get('roleid')] = $override;
+            }
         }
 
         return $overrides;
+    }
+
+    /**
+     * Adds the new record to the cache.
+     *
+     * @return null
+     */
+    protected function after_create() {
+        $cache = \cache::make('tool_dataprivacy', 'purpose_overrides');
+        $cache->delete($this->get('purposeid'));
+    }
+
+    /**
+     * Updates the cache record.
+     *
+     * @param bool $result
+     * @return null
+     */
+    protected function after_update($result) {
+        $cache = \cache::make('tool_dataprivacy', 'purpose_overrides');
+        $cache->delete($this->get('purposeid'));
+    }
+
+    /**
+     * Removes unnecessary stuff from db.
+     *
+     * @return null
+     */
+    protected function before_delete() {
+        $cache = \cache::make('tool_dataprivacy', 'purpose_overrides');
+        $cache->delete($this->get('purposeid'));
     }
 }
