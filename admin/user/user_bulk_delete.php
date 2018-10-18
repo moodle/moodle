@@ -24,7 +24,7 @@ echo $OUTPUT->header();
 if ($confirm and confirm_sesskey()) {
     $notifications = '';
     list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
-    $rs = $DB->get_recordset_select('user', "id $in", $params);
+    $rs = $DB->get_recordset_select('user', "deleted = 0 and id $in", $params);
     foreach ($rs as $user) {
         if (!is_siteadmin($user) and $USER->id != $user->id and delete_user($user)) {
             unset($SESSION->bulk_users[$user->id]);
