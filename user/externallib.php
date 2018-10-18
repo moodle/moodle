@@ -161,7 +161,6 @@ class core_user_external extends external_api {
         $transaction = $DB->start_delegated_transaction();
 
         $userids = array();
-        $createpassword = false;
         foreach ($params['users'] as $user) {
             // Make sure that the username, firstname and lastname are not blank.
             foreach (array('username', 'firstname', 'lastname') as $fieldname) {
@@ -194,7 +193,8 @@ class core_user_external extends external_api {
             }
 
             // Make sure we have a password or have to create one.
-            if (empty($user['password']) && empty($user['createpassword'])) {
+            $authplugin = get_auth_plugin($user['auth']);
+            if ($authplugin->is_internal() && empty($user['password']) && empty($user['createpassword'])) {
                 throw new invalid_parameter_exception('Invalid password: you must provide a password, or set createpassword.');
             }
 
@@ -213,11 +213,15 @@ class core_user_external extends external_api {
 
             $createpassword = !empty($user['createpassword']);
             unset($user['createpassword']);
-            if ($createpassword) {
-                $user['password'] = '';
-                $updatepassword = false;
+            $updatepassword = false;
+            if ($authplugin->is_internal()) {
+                if ($createpassword) {
+                    $user['password'] = '';
+                } else {
+                    $updatepassword = true;
+                }
             } else {
-                $updatepassword = true;
+                $user['password'] = AUTH_PASSWORD_NOT_CACHED;
             }
 
             // Create the user data now!
