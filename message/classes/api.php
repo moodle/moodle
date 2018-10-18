@@ -987,11 +987,14 @@ class api {
      * contact. If not then it checks to make sure the sender is in the
      * recipient's contacts.
      *
+     * @deprecated since 3.6
      * @param \stdClass $recipient The user object.
      * @param \stdClass|null $sender The user object.
      * @return bool true if $sender is blocked, false otherwise.
      */
     public static function is_user_non_contact_blocked($recipient, $sender = null) {
+        debugging('\core_message\api::is_user_non_contact_blocked() is deprecated', DEBUG_DEVELOPER);
+
         global $USER, $CFG;
 
         if (is_null($sender)) {

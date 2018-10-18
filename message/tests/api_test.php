@@ -1582,28 +1582,33 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // By default, user only can be messaged by contacts and members of any of his/her courses.
         $this->assertTrue(\core_message\api::is_user_non_contact_blocked($user2));
+        $this->assertDebuggingCalled();
 
         // Enable all users privacy messaging and check now the default user's preference has been set to allow receiving
         // messages from everybody.
         set_config('messagingallusers', true);
         // Check that the return result is now false because any site user can contact him/her.
         $this->assertFalse(\core_message\api::is_user_non_contact_blocked($user2));
+        $this->assertDebuggingCalled();
 
         // Set the second user's preference to not receive messages from non-contacts.
         set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS, $user2->id);
         // Check that the return result is still true (because is even more restricted).
         $this->assertTrue(\core_message\api::is_user_non_contact_blocked($user2));
+        $this->assertDebuggingCalled();
 
         // Add the first user as a contact for the second user.
         \core_message\api::add_contact($user2->id, $user1->id);
 
         // Check that the return result is now false.
         $this->assertFalse(\core_message\api::is_user_non_contact_blocked($user2));
+        $this->assertDebuggingCalled();
 
         // Set the second user's preference to receive messages from course members.
         set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER, $user2->id);
         // Check that the return result is still false (because $user1 is still his/her contact).
         $this->assertFalse(\core_message\api::is_user_non_contact_blocked($user2));
+        $this->assertDebuggingCalled();
     }
 
     /**
