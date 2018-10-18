@@ -616,6 +616,8 @@
     <TABLE NAME="message_conversations" COMMENT="Stores all message conversations">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="type" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="convhash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
@@ -623,6 +625,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
+        <INDEX NAME="type" UNIQUE="false" FIELDS="type"/>
         <INDEX NAME="convhash" UNIQUE="true" FIELDS="convhash"/>
       </INDEXES>
     </TABLE>
