@@ -269,6 +269,8 @@ class expired_contexts_manager {
         $datalist = [];
         $expiredcontents = [];
         $pathstoskip = [];
+
+        $userpurpose = data_registry::get_effective_contextlevel_value(CONTEXT_USER, 'purpose');
         foreach ($fulllist as $record) {
             \context_helper::preload_from_record($record);
             $context = \context::instance_by_id($record->id, false);
@@ -291,8 +293,12 @@ class expired_contexts_manager {
                 continue;
             }
 
-            $purposevalue = $record->purposeid !== null ? $record->purposeid : context_instance::NOTSET;
-            $purpose = api::get_effective_context_purpose($context, $purposevalue);
+            if ($context instanceof \context_user) {
+                $purpose = $userpurpose;
+            } else {
+                $purposevalue = $record->purposeid !== null ? $record->purposeid : context_instance::NOTSET;
+                $purpose = api::get_effective_context_purpose($context, $purposevalue);
+            }
 
             if ($context instanceof \context_user && !empty($record->userdeleted)) {
                 $expiryinfo = static::get_expiry_info($purpose, $record->userdeleted);
