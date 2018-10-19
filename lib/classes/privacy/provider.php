@@ -18,6 +18,7 @@
  * Privacy class for requesting user data.
  *
  * @package    core
+ * @category   privacy
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,9 +27,11 @@ namespace core\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\contextlist;
-use \core_privacy\local\request\approved_contextlist;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\userlist;
 
 /**
  * Privacy class for requesting user data.
@@ -37,7 +40,10 @@ use \core_privacy\local\request\approved_contextlist;
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\subsystem\provider {
+class provider implements
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\subsystem\provider,
+        \core_privacy\local\request\core_userlist_provider {
 
     /**
      * Returns information about the user data stored in this component.
@@ -115,6 +121,15 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
     }
 
     /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        // Don't add any user.
+    }
+
+    /**
      * Export all user data for the specified user, in the specified contexts.
      *
      * @param approved_contextlist $contextlist The approved contexts to export information for.
@@ -138,6 +153,17 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
+        // None of the the data from these tables should be deleted.
+        // Note: Although it may be tempting to delete the adhoc task data, do not do so.
+        // The delete process is run as an adhoc task.
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
         // None of the the data from these tables should be deleted.
         // Note: Although it may be tempting to delete the adhoc task data, do not do so.
         // The delete process is run as an adhoc task.
