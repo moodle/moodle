@@ -78,6 +78,9 @@ class tool_xmldb_external extends external_api {
             'position' => $position
         ]);
 
+        self::validate_context(context_system::instance());
+        require_capability('moodle/site:config', context_system::instance());
+
         if (!in_array($action, ['move_updown_table', 'move_updown_field', 'move_updown_key', 'move_updown_index'])) {
             throw new coding_exception('Unsupported action');
         }
