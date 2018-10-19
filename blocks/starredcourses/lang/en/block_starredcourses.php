@@ -24,6 +24,7 @@
 
 $string['nocourses'] = 'No starred courses';
 $string['pluginname'] = 'Starred courses';
+$string['privacy:metadata'] = 'The starred courses block does not store any personal data.';
 $string['starredcourses:addinstance'] = 'Add a new instance of starred courses block';
 $string['starredcourses:myaddinstance'] = 'Add a new instance of starred block to Dashboard';
 
