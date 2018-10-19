@@ -109,6 +109,57 @@ class helper {
     }
 
     /**
+     * Helper function to return a conversation messages with the involved members (only the ones
+     * who have sent any of these messages).
+     *
+     * @param int $userid The current userid.
+     * @param int $convid The conversation id.
+     * @param array $messages The formated array messages.
+     * @return array A conversation array with the messages and the involved members.
+     */
+    public static function format_conversation_messages(int $userid, int $convid, array $messages) : array {
+        global $USER;
+
+        // Create the conversation array.
+        $conversation = array(
+            'id' => $convid,
+        );
+
+        // Store the messages.
+        $arrmessages = array();
+
+        // We always view messages from oldest to newest, ensure we have it in that order.
+        $lastmessage = end($messages);
+        $firstmessage = reset($messages);
+        if ($lastmessage->timecreated < $firstmessage->timecreated) {
+            $messages = array_reverse($messages);
+        }
+
+        foreach ($messages as $message) {
+            // Store the message information.
+            $msg = new \stdClass();
+            $msg->id = $message->id;
+            $msg->useridfrom = $message->useridfrom;
+            $msg->text = message_format_message_text($message);
+            $msg->timecreated = $message->timecreated;
+            $arrmessages[] = $msg;
+        }
+        // Add the messages to the conversation.
+        $conversation['messages'] = $arrmessages;
+
+        // Get the users who have sent any of the $messages.
+        $memberids = array_unique(array_map(function($message) {
+            return $message->useridfrom;
+        }, $messages));
+        // Get members information.
+        $arrmembers = self::get_member_info($userid, $memberids);
+        // Add the members to the conversation.
+        $conversation['members'] = $arrmembers;
+
+        return $conversation;
+    }
+
+    /**
      * Helper function to return an array of messages.
      *
      * @param int $userid
