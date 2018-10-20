@@ -11310,14 +11310,14 @@ div.editor_atto_toolbar button .icon {
 .block_myoverview .empty-placeholder-image-lg {
   height: 125px; }
 
-.card-deck .card, .card-deck #page-enrol-users #filterform, #page-enrol-users .card-deck #filterform, .card-deck .que .history, .que .card-deck .history, .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .card-deck section, .card-deck .groupinfobox, .card-deck .well {
+.block_myoverview .card-deck .card, .block_myoverview .card-deck #page-enrol-users #filterform, #page-enrol-users .block_myoverview .card-deck #filterform, .block_myoverview .card-deck .que .history, .que .block_myoverview .card-deck .history, .block_myoverview .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .block_myoverview .card-deck section, .block_myoverview .card-deck .groupinfobox, .block_myoverview .card-deck .well {
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: calc(50% - 30px); }
 
-.card-deck .myoverviewimg {
+.block_myoverview .card-deck .myoverviewimg {
   height: 150px; }
-  .card-deck .myoverviewimg.courseimage {
+  .block_myoverview .card-deck .myoverviewimg.courseimage {
     background-position: center;
     background-size: cover; }
 
