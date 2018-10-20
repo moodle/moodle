@@ -1798,21 +1798,7 @@ class api {
             $members[] = $member;
         }
 
-        $transaction = $DB->start_delegated_transaction();
-
         $DB->insert_records('message_conversation_members', $members);
-
-        // Hash is usefull only for 1-to-1 convs, so we don't update null conversation hashes.
-        if (isset($conversation->convhash)) {
-            // Getting all conversation members to create a new hash.
-            $newuserids = array_values($DB->get_records_menu(
-                'message_conversation_members', ['conversationid' => $convid], 'id', 'id, userid')
-            );
-
-            $conversation->convhash = helper::get_conversation_hash($newuserids);
-            $DB->update_record('message_conversations', $conversation);
-        }
-        $transaction->allow_commit();
     }
 
     /**
@@ -1835,22 +1821,8 @@ class api {
         list($useridcondition, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
         $params['convid'] = $convid;
 
-        $transaction = $DB->start_delegated_transaction();
-
         $DB->delete_records_select('message_conversation_members',
             "conversationid = :convid AND userid $useridcondition", $params);
-
-        // Hash is usefull only for 1-to-1 convs, so we don't update null conversation hashes.
-        if (isset($conversation->convhash)) {
-            // Getting all conversation members to create a new hash.
-            $newuserids = array_values($DB->get_records_menu(
-                'message_conversation_members', ['conversationid' => $convid], 'id', 'id, userid')
-            );
-
-            $conversation->convhash = helper::get_conversation_hash($newuserids);
-            $DB->update_record('message_conversations', $conversation);
-        }
-        $transaction->allow_commit();
     }
 
     /**
