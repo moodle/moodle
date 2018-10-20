@@ -24,18 +24,30 @@
 define(
 [
     'jquery',
-    'core/notification',
     'block_myoverview/repository',
     'core/paged_content_factory',
+    'core/custom_interaction_events',
+    'core/notification',
     'core/templates',
 ],
 function(
     $,
-    Notification,
     Repository,
     PagedContentFactory,
+    CustomEvents,
+    Notification,
     Templates
 ) {
+
+    var SELECTORS = {
+        ACTION_ADD_FAVOURITE: '[data-action="add-favourite"]',
+        ACTION_REMOVE_FAVOURITE: '[data-action="remove-favourite"]',
+        FAVOURITE_ICON: '[data-region="favourite-icon"]',
+        ICON_IS_FAVOURITE: '[data-region="is-favourite"]',
+        ICON_NOT_FAVOURITE: '[data-region="not-favourite"]',
+        PAGED_CONTENT_CONTAINER: '[data-region="page-container"]'
+
+    };
 
     var TEMPLATES = {
         COURSES_CARDS: 'block_myoverview/view-cards',
@@ -44,9 +56,9 @@ function(
         NOCOURSES: 'block_myoverview/no-courses'
     };
 
-    var NUMCOURSES_PERPAGE = [12, 24];
+    var NUMCOURSES_PERPAGE = [12, 24, 48];
 
-    var currentCourseList = [];
+    var loadedPages = [];
 
     /**
      * Get filter values from DOM.
@@ -62,7 +74,7 @@ function(
         return filters;
     };
 
-    // We want the paged content controls below the paged content area
+    // We want the paged content controls below the paged content area.
     // and the controls should be ignored while data is loading.
     var DEFAULT_PAGED_CONTENT_CONFIG = {
         ignoreControlWhileLoading: true,
@@ -75,9 +87,10 @@ function(
      * @param {object} filters The filters for this view.
      * @param {int} limit The number of courses to show.
      * @param {int} pageNumber The pagenumber to view.
-     * @return {promise} Resolved with an array of courses.
+     * @return {promise|Array} Resolved with an array of courses.
      */
     var getMyCourses = function(filters, limit, pageNumber) {
+
         return Repository.getEnrolledCoursesByTimeline({
             offset:  pageNumber * limit,
             limit: limit,
@@ -87,14 +100,177 @@ function(
     };
 
     /**
+     * Get the container element for the favourite icon.
+     *
+     * @param  {Object} root The course overview container
+     * @param  {Number} courseId Course id number
+     * @return {Object} The favourite icon container
+     */
+    var getFavouriteIconContainer = function(root, courseId) {
+        return root.find(SELECTORS.FAVOURITE_ICON + '[data-course-id="' + courseId + '"]');
+    };
+
+    /**
+     * Get the paged content container element.
+     *
+     * @param  {Object} root The course overview container
+     * @param  {Number} index Rendered page index.
+     * @return {Object} The rendered paged container.
+     */
+    var getPagedContentContainer = function(root, index) {
+        return root.find('[data-region="paged-content-page"][data-page="' + index + '"]');
+    };
+
+    /**
+     * Get the course id from a favourite element.
+     *
+     * @param {Object} root The favourite icon container element.
+     * @return {Number} Course id.
+     */
+    var getFavouriteCourseId = function(root) {
+        return root.attr('data-course-id');
+    };
+
+    /**
+     * Hide the favourite icon.
+     *
+     * @param {Object} root The favourite icon container element.
+     * @param  {Number} courseId Course id number.
+     */
+    var hideFavouriteIcon = function(root, courseId) {
+        var iconContainer = getFavouriteIconContainer(root, courseId);
+        var isFavouriteIcon = iconContainer.find(SELECTORS.ICON_IS_FAVOURITE);
+        isFavouriteIcon.addClass('hidden');
+        isFavouriteIcon.attr('aria-hidden', true);
+        var notFavourteIcon = iconContainer.find(SELECTORS.ICON_NOT_FAVOURITE);
+        notFavourteIcon.removeClass('hidden');
+        notFavourteIcon.attr('aria-hidden', false);
+    };
+
+    /**
+     * Show the favourite icon.
+     *
+     * @param  {Object} root The course overview container.
+     * @param  {Number} courseId Course id number.
+     */
+    var showFavouriteIcon = function(root, courseId) {
+        var iconContainer = getFavouriteIconContainer(root, courseId);
+        var isFavouriteIcon = iconContainer.find(SELECTORS.ICON_IS_FAVOURITE);
+        isFavouriteIcon.removeClass('hidden');
+        isFavouriteIcon.attr('aria-hidden', false);
+        var notFavourteIcon = iconContainer.find(SELECTORS.ICON_NOT_FAVOURITE);
+        notFavourteIcon.addClass('hidden');
+        notFavourteIcon.attr('aria-hidden', true);
+    };
+
+    /**
+     * Get the action menu item
+     *
+     * @param {Object} root  root The course overview container
+     * @param {Number} courseId Course id.
+     * @return {Object} The add to favourite menu item.
+     */
+    var getAddFavouriteMenuItem = function(root, courseId) {
+        return root.find('[data-action="add-favourite"][data-course-id="' + courseId + '"]');
+    };
+
+    /**
+     * Get the action menu item
+     *
+     * @param {Object} root  root The course overview container
+     * @param {Number} courseId Course id.
+     * @return {Object} The remove from favourites menu item.
+     */
+    var getRemoveFavouriteMenuItem = function(root, courseId) {
+        return root.find('[data-action="remove-favourite"][data-course-id="' + courseId + '"]');
+    };
+
+    /**
+     * Add course to favourites
+     *
+     * @param  {Object} root The course overview container
+     * @param  {Number} courseId Course id number
+     */
+    var addToFavourites = function(root, courseId) {
+        var removeAction = getRemoveFavouriteMenuItem(root, courseId);
+        var addAction = getAddFavouriteMenuItem(root, courseId);
+
+        setCourseFavouriteState(courseId, true).then(function(success) {
+            if (success) {
+                removeAction.removeClass('hidden');
+                addAction.addClass('hidden');
+                showFavouriteIcon(root, courseId);
+            } else {
+                Notification.alert('Starring course failed', 'Could not change favourite state');
+            }
+            return;
+        }).catch(Notification.exception);
+    };
+
+    /**
+     * Remove course from favourites
+     *
+     * @param  {Object} root The course overview container
+     * @param  {Number} courseId Course id number
+     */
+    var removeFromFavourites = function(root, courseId) {
+        var removeAction = getRemoveFavouriteMenuItem(root, courseId);
+        var addAction = getAddFavouriteMenuItem(root, courseId);
+
+        setCourseFavouriteState(courseId, false).then(function(success) {
+            if (success) {
+                removeAction.addClass('hidden');
+                addAction.removeClass('hidden');
+                hideFavouriteIcon(root, courseId);
+            } else {
+                Notification.alert('Starring course failed', 'Could not change favourite state');
+            }
+            return;
+        }).catch(Notification.exception);
+    };
+
+    /**
+     * Set the courses favourite status and push to repository
+     *
+     * @param  {Number} courseId Course id to favourite.
+     * @param  {Bool} status new favourite status.
+     * @return {Promise} Repository promise.
+     */
+    var setCourseFavouriteState = function(courseId, status) {
+
+        return Repository.setFavouriteCourses({
+            courses: [
+                    {
+                        'id': courseId,
+                        'favourite': status
+                    }
+                ]
+        }).then(function(result) {
+            if (result.warnings.length == 0) {
+                loadedPages.forEach(function(courseList) {
+                    courseList.courses.forEach(function(course, index) {
+                        if (course.id == courseId) {
+                            courseList.courses[index].isfavourite = status;
+                        }
+                    });
+                });
+                return true;
+            } else {
+                return false;
+            }
+        }).catch(Notification.exception);
+    };
+
+    /**
      * Render the dashboard courses.
      *
      * @param {object} root The root element for the courses view.
      * @param {array} coursesData containing array of returned courses.
-     * @param {object} filters The filters for this view.
      * @return {promise} jQuery promise resolved after rendering is complete.
      */
-    var renderCourses = function(root, coursesData, filters) {
+    var renderCourses = function(root, coursesData) {
+
+        var filters = getFilterValues(root);
 
         var currentTemplate = '';
         if (filters.display == 'cards') {
@@ -127,6 +303,11 @@ function(
 
         root = $(root);
 
+        if (!root.attr('data-init')) {
+            registerEventListeners(root);
+            root.attr('data-init', true);
+        }
+
         var filters = getFilterValues(root);
 
         var pagedContentPromise = PagedContentFactory.createWithLimit(
@@ -135,6 +316,7 @@ function(
                 var promises = [];
 
                 pagesData.forEach(function(pageData) {
+                    var currentPage = pageData.pageNumber;
                     var pageNumber = pageData.pageNumber - 1;
 
                     var pagePromise = getMyCourses(
@@ -145,8 +327,8 @@ function(
                         if (coursesData.courses.length < pageData.limit) {
                             actions.allItemsLoaded(pageData.pageNumber);
                         }
-                        currentCourseList = coursesData;
-                        return renderCourses(root, coursesData, filters);
+                        loadedPages[currentPage] = coursesData;
+                        return renderCourses(root, coursesData);
                     })
                     .catch(Notification.exception);
 
@@ -164,21 +346,57 @@ function(
     };
 
     /**
+     * Listen to, and handle events for  the myoverview block.
+     *
+     * @param {Object} root The myoverview block container element.
+     */
+    var registerEventListeners = function(root) {
+        CustomEvents.define(root, [
+            CustomEvents.events.activate
+        ]);
+
+        root.on(CustomEvents.events.activate, SELECTORS.ACTION_ADD_FAVOURITE, function(e, data) {
+            var favourite = $(e.target).closest(SELECTORS.ACTION_ADD_FAVOURITE);
+            var courseId = getFavouriteCourseId(favourite);
+            addToFavourites(root, courseId);
+            data.originalEvent.preventDefault();
+        });
+
+        root.on(CustomEvents.events.activate, SELECTORS.ACTION_REMOVE_FAVOURITE, function(e, data) {
+            var favourite = $(e.target).closest(SELECTORS.ACTION_REMOVE_FAVOURITE);
+            var courseId = getFavouriteCourseId(favourite);
+            removeFromFavourites(root, courseId);
+            data.originalEvent.preventDefault();
+        });
+
+        root.on(CustomEvents.events.activate, SELECTORS.FAVOURITE_ICON, function(e, data) {
+            data.originalEvent.preventDefault();
+        });
+    };
+
+    /**
      * Reset the courses views to their original
      * state on first page load.
      *
      * This is called when configuration has changed for the event lists
      * to cause them to reload their data.
      *
-     * @param {object} root The root element for the timeline view.
-     * @param {object} content The content element for the timeline view.
+     * @param {Object} root The root element for the timeline view.
+     * @param {Object} content The content element for the timeline view.
      */
     var reset = function(root, content) {
-        var filters = getFilterValues(root);
-        renderCourses(root, currentCourseList, filters)
-            .then(function(html, js) {
-                return Templates.replaceNodeContents(content, html, js);
-            }).catch(Notification.exception);
+
+        if (loadedPages.length > 0) {
+            loadedPages.forEach(function(courseList, index) {
+                var pagedContentPage = getPagedContentContainer(root, index);
+                renderCourses(root, courseList).then(function(html, js) {
+                    return Templates.replaceNodeContents(pagedContentPage, html, js);
+                }).catch(Notification.exception);
+            });
+        } else {
+            init(root, content);
+        }
+
     };
 
     return {

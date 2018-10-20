@@ -16541,6 +16541,12 @@ body {
 .block_myoverview *::after {
   box-sizing: border-box;
 }
+.block_myoverview .favouritebtn {
+  box-sizing: content-box;
+}
+.block_myoverview .favouritebtn * {
+  box-sizing: content-box;
+}
 .block_myoverview .empty-placeholder-image-lg {
   height: 125px;
 }
@@ -16606,6 +16612,24 @@ body {
 }
 .block_myoverview .summary img {
   max-width: 100%;
+}
+.block_myoverview .favouritebtn {
+  cursor: pointer;
+  margin-left: 0;
+}
+.block_myoverview .coursemenubtn {
+  border-radius: 50%;
+  height: 36px;
+  width: 36px;
+  padding: 8px 0;
+}
+.block_myoverview .coursemenubtn:hover {
+  background-color: #e9ecef;
+}
+.block_myoverview .coursemenubtn img.icon {
+  padding-right: 0;
+  height: 16px;
+  width: 16px;
 }
 @media (max-width: 576px) {
   .block_myoverview .summaryimage {
@@ -22179,6 +22203,9 @@ ul.indented-list {
 }
 .align-self-stretch {
   align-self: stretch;
+}
+.align-items-start {
+  align-items: flex-start !important;
 }
 .ml-auto {
   margin-left: auto;

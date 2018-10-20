@@ -37,19 +37,21 @@
 <div class="row card-deck" role="list">
 {{#courses}}
     <div class="card course-card" role="listitem">
-        <a href="{{viewurl}}" tabindex="-1" role="presentation">
+        <a href="{{viewurl}}" tabindex="-1">
             <div class="card-img-top myoverviewimg" style='background-image: url("{{{courseimage}}}");'>
                 <span class="sr-only">{{#str}}aria:courseimage, block_myoverview{{/str}}</span>
+                {{> block_myoverview/favourite-icon }}
             </div>
         </a>
-        <div class="card-body course-info-container" id="course-info-container-{{id}}">
-            <div class="d-flex">
-                <div class="card-title">
+        <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}">
+            <div class="d-flex align-items-start">
+                <div class="card-title mr-2">
                     <a href="{{viewurl}}">
                         <span class="sr-only">{{#str}}aria:coursename, block_myoverview{{/str}}</span>
-                        {{#shortentext}}140, {{{fullname}}} {{/shortentext}}
+                        {{#shortentext}}40, {{{fullname}}} {{/shortentext}}
                     </a>
                 </div>
+                {{> block_myoverview/course-action-menu }}
             </div>
         </div>
         {{#hasprogress}}

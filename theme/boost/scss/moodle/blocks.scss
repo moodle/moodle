@@ -106,6 +106,31 @@ $card-gutter : $card-deck-margin * 2;
     .summary img {
         max-width: 100%;
     }
+    .icon {
+        margin-right: 0;
+    }
+    a,
+    .btn-link {
+        color: inherit;
+    }
+    .btn.btn-link.btn-icon {
+        height: $icon-width;
+        width: $icon-width;
+        padding: 0;
+        border-radius: 50%;
+        flex-shrink: 0;
+
+        @include hover-focus {
+            background-color: $gray-200;
+        }
+
+        @each $size, $length in $iconsizes {
+            &.icon-size-#{$size} {
+                height: ($length + 20px) !important;
+                width: ($length + 20px) !important;
+            }
+        }
+    }
     @include media-breakpoint-down(sm) {
         .summaryimage {
             max-height: 7rem;
@@ -163,6 +188,11 @@ body.drawer-open-left #region-main.has-blocks .block_myoverview {
     @include media-breakpoint-up(lg) {
         .course-card {
             flex-basis: calc(33.33% - #{$card-gutter});
+        }
+    }
+    @media (min-width: 1400px) {
+        .course-card {
+            flex-basis: calc(25% - #{$card-gutter});
         }
     }
 }

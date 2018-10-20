@@ -346,6 +346,12 @@
     *::after {
         box-sizing: border-box;
     }
+    .favouritebtn {
+        box-sizing: content-box;
+        * {
+            box-sizing: content-box;
+        }
+    }
     .empty-placeholder-image-lg {
         height: 125px;
     }
@@ -395,6 +401,24 @@
     }
     .summary img {
         max-width: 100%;
+    }
+    .favouritebtn {
+        cursor: pointer;
+        margin-left: 0;
+    }
+    .coursemenubtn {
+        border-radius: 50%;
+        height: 36px;
+        width: 36px;
+        padding: 8px 0;
+        &:hover {
+            background-color: #e9ecef;
+        }
+        img.icon {
+            padding-right: 0;
+            height: 16px;
+            width: 16px;
+        }
     }
 
     @media (max-width: 576px) {

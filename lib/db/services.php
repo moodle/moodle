@@ -2241,6 +2241,14 @@ $functions = array(
         'description' => 'Returns the filters available in the given contexts.',
         'type'        => 'read',
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+    'core_course_set_favourite_courses' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'set_favourite_courses',
+        'classpath' => 'course/externallib.php',
+        'description' => 'Add a list of courses to the list of favourite courses.',
+        'type' => 'read',
+        'ajax' => true
     )
 );
 
