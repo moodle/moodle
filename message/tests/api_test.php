@@ -2148,10 +2148,38 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
 
         $this->assertEquals(2,
             \core_message\api::count_conversation_members($conversationid));
+    }
+
+    /**
+     * Test add_members_to_conversation for an individual conversation.
+     */
+    public function test_add_members_to_individual_conversation() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->expectException('moodle_exception');
+        \core_message\api::add_members_to_conversation([$user3->id], $conversationid);
     }
 
     /**
@@ -2162,7 +2190,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
 
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
 
         $this->assertNull(\core_message\api::add_members_to_conversation([$user3->id], $conversationid));
         $this->assertEquals(3,
@@ -2187,7 +2222,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
 
         // Don't throw an error for non existing user, but don't add it as a member.
         $this->assertNull(\core_message\api::add_members_to_conversation([0], $conversationid));
@@ -2202,7 +2244,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
 
         // Don't add as a member a user that is already conversation member.
         $this->assertNull(\core_message\api::add_members_to_conversation([$user1->id], $conversationid));
@@ -2219,7 +2268,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user3 = self::getDataGenerator()->create_user();
         $user4 = self::getDataGenerator()->create_user();
 
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
 
         $this->assertNull(\core_message\api::add_members_to_conversation([$user3->id, $user4->id], $conversationid));
         $this->assertEquals(4,
@@ -2234,12 +2290,39 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
 
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
 
         // Don't throw errors, but don't add as members users don't exist or are already conversation members.
         $this->assertNull(\core_message\api::add_members_to_conversation([$user3->id, $user1->id, 0], $conversationid));
         $this->assertEquals(3,
             \core_message\api::count_conversation_members($conversationid));
+    }
+
+    /**
+     * Test remove_members_from_conversation for individual conversation.
+     */
+    public function test_remove_members_from_individual_conversation() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->expectException('moodle_exception');
+        \core_message\api::remove_members_from_conversation([$user1->id], $conversationid);
     }
 
     /**
@@ -2249,7 +2332,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
 
         $this->assertNull(\core_message\api::remove_members_from_conversation([$user1->id], $conversationid));
         $this->assertEquals(1,
@@ -2274,7 +2364,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
 
         $this->assertNull(\core_message\api::remove_members_from_conversation([0], $conversationid));
         $this->assertEquals(2,
@@ -2290,7 +2387,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user3 = self::getDataGenerator()->create_user();
         $user4 = self::getDataGenerator()->create_user();
 
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
 
         $this->assertNull(\core_message\api::add_members_to_conversation([$user3->id, $user4->id], $conversationid));
         $this->assertNull(\core_message\api::remove_members_from_conversation([$user3->id, $user4->id], $conversationid));
@@ -2307,7 +2411,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user3 = self::getDataGenerator()->create_user();
         $user4 = self::getDataGenerator()->create_user();
 
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
 
         $this->assertNull(\core_message\api::add_members_to_conversation([$user3->id], $conversationid));
         $this->assertNull(
@@ -2324,7 +2435,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
         $this->assertNull(\core_message\api::remove_members_from_conversation([$user1->id, $user2->id], $conversationid));
 
         $this->assertEquals(0,
