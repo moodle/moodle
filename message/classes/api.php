@@ -1765,11 +1765,17 @@ class api {
      * @param int $convid The conversation id. Must exists.
      * @throws \dml_missing_record_exception If convid conversation doesn't exist
      * @throws \dml_exception If there is a database error
+     * @throws \moodle_exception If trying to add a member(s) to a non-group conversation
      */
     public static function add_members_to_conversation(array $userids, int $convid) {
         global $DB;
 
         $conversation = $DB->get_record('message_conversations', ['id' => $convid], '*', MUST_EXIST);
+
+        // We can only add members to a group conversation.
+        if ($conversation->type != self::MESSAGE_CONVERSATION_TYPE_GROUP) {
+            throw new \moodle_exception('You can not add members to a non-group conversation.');
+        }
 
         // Be sure we are not trying to add a non existing user to the conversation. Work only with existing users.
         list($useridcondition, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
@@ -1815,11 +1821,16 @@ class api {
      * @param array $userids The user ids to remove from conversation members.
      * @param int $convid The conversation id. Must exists.
      * @throws \dml_exception
+     * @throws \moodle_exception If trying to remove a member(s) from a non-group conversation
      */
     public static function remove_members_from_conversation(array $userids, int $convid) {
         global $DB;
 
         $conversation = $DB->get_record('message_conversations', ['id' => $convid], '*', MUST_EXIST);
+
+        if ($conversation->type != self::MESSAGE_CONVERSATION_TYPE_GROUP) {
+            throw new \moodle_exception('You can not remove members from a non-group conversation.');
+        }
 
         list($useridcondition, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
         $params['convid'] = $convid;
