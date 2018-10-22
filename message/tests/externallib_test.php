@@ -3752,4 +3752,199 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     protected static function sort_contacts($a, $b) {
         return $a['userid'] > $b['userid'];
     }
+
+    /**
+     * Test verifying that conversations can be marked as favourite conversations.
+     */
+    public function test_set_favourite_conversations_basic() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Now, create some conversations.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+
+        $this->send_message($user1, $user3, 'Booyah');
+        $this->send_message($user3, $user1, 'Whaaat?');
+        $this->send_message($user1, $user3, 'Nothing.');
+
+        $this->send_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?');
+        $this->send_message($user4, $user1, 'Yah brah, it\'s pretty rad.');
+
+        // Favourite 2 conversations as user 1.
+        $conversation1 = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        $conversation2 = \core_message\api::get_conversation_between_users([$user1->id, $user3->id]);
+        $result = core_message_external::set_favourite_conversations($user1->id, [$conversation1, $conversation2]);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::set_favourite_conversations_returns(), $result);
+        $this->assertCount(0, $result);
+    }
+
+    /**
+     * Test confirming that a user can't favourite a conversation on behalf of another user.
+     */
+    public function test_set_favourite_conversations_another_users_conversation() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user3);
+
+        // Now, create some conversations.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+
+        $this->send_message($user1, $user3, 'Booyah');
+        $this->send_message($user3, $user1, 'Whaaat?');
+        $this->send_message($user1, $user3, 'Nothing.');
+
+        // Try to favourite conversation 1 for user 2, as user3.
+        $conversation1 = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        $this->expectException(\moodle_exception::class);
+        $result = core_message_external::set_favourite_conversations($user2->id, [$conversation1]);
+    }
+
+    /**
+     * Test confirming that a user can't mark a conversation as their own favourite if it's a conversation they're not a member of.
+     */
+    public function test_set_favourite_conversations_non_member() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user3);
+
+        // Now, create some conversations.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+
+        $this->send_message($user1, $user3, 'Booyah');
+        $this->send_message($user3, $user1, 'Whaaat?');
+        $this->send_message($user1, $user3, 'Nothing.');
+
+        // Try to favourite conversation 1 as user 3.
+        $conversation1 = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        $conversation2 = \core_message\api::get_conversation_between_users([$user1->id, $user3->id]);
+        $this->expectException(\moodle_exception::class);
+        $result = core_message_external::set_favourite_conversations($user3->id, [$conversation1]);
+    }
+
+    /**
+     * Test confirming that a user can't favourite a non-existent conversation.
+     */
+    public function test_set_favourite_conversations_non_existent_conversation() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $this->setUser($user1);
+
+        // Try to favourite a non-existent conversation.
+        $this->expectException(\moodle_exception::class);
+        $result = core_message_external::set_favourite_conversations($user1->id, [0]);
+    }
+
+    /**
+     * Test confirming that a user can unset a favourite conversation, or list of favourite conversations.
+     */
+    public function test_unset_favourite_conversations_basic() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Now, create some conversations.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+
+        $this->send_message($user1, $user3, 'Booyah');
+        $this->send_message($user3, $user1, 'Whaaat?');
+        $this->send_message($user1, $user3, 'Nothing.');
+
+        $this->send_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?');
+        $this->send_message($user4, $user1, 'Yah brah, it\'s pretty rad.');
+
+        // Favourite 2 conversations as user 1.
+        $conversation1 = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        $conversation2 = \core_message\api::get_conversation_between_users([$user1->id, $user3->id]);
+        \core_message\api::set_favourite_conversation($conversation1, $user1->id);
+        \core_message\api::set_favourite_conversation($conversation2, $user1->id);
+        $this->assertCount(2, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
+
+        // Now, using the web service, unset the favourite conversations.
+        $result = core_message_external::unset_favourite_conversations($user1->id, [$conversation1, $conversation2]);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::unset_favourite_conversations_returns(), $result);
+        $this->assertCount(0, $result);
+    }
+
+    /**
+     * Test confirming that a user can't unfavourite a conversation for another user.
+     */
+    public function test_unset_favourite_conversations_another_users_conversation() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user3);
+
+        // Now, create some conversations.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+
+        $this->send_message($user1, $user3, 'Booyah');
+        $this->send_message($user3, $user1, 'Whaaat?');
+        $this->send_message($user1, $user3, 'Nothing.');
+
+        // Favourite conversation 1 for user1. The current user ($USER) isn't checked for this action.
+        $conversation1 = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        \core_message\api::set_favourite_conversation($conversation1, $user1->id);
+        $this->assertCount(1, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
+
+        // Try to unfavourite conversation 1 for user 2, as user3.
+        $conversation1 = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        $this->expectException(\moodle_exception::class);
+        $result = core_message_external::unset_favourite_conversations($user2->id, [$conversation1]);
+    }
+
+    /**
+     * Test confirming that a user can't unfavourite a non-existent conversation.
+     */
+    public function test_unset_favourite_conversations_non_existent_conversation() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $this->setUser($user1);
+
+        // Try to unfavourite a non-existent conversation.
+        $this->expectException(\moodle_exception::class);
+        $result = core_message_external::unset_favourite_conversations($user1->id, [0]);
+    }
 }
