@@ -528,4 +528,132 @@ class core_group_lib_testcase extends advanced_testcase {
         }
         $this->assertEquals(2, $DB->count_records('groups_members', array('groupid' => $group6->id)));
     }
+
+    /**
+     * Test groups_create_group enabling a group of conversation.
+     */
+    public function groups_create_group_with_conversation_area() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = context_course::instance($course1->id);
+        // Check not exists and conversation area created.
+        $this->assertEquals(
+                0,
+                $DB->count_records_sql("SELECT COUNT(ca.id)
+                                          FROM {message_conversation_area} ca
+                                         WHERE ca.contextid = ?
+                                               AND ca.component = 'core_group'
+                                               AND ca.itemtype = 'groups'", [$coursecontext1->id])
+        );
+        // Create two groups and only one group with enablemessaging = 1.
+        $group1a = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 1));
+        $group1b = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 0));
+        // Check exist only one row created in conversation area.
+        $this->assertEquals(
+                1,
+                $DB->count_records_sql("SELECT COUNT(ca.id)
+                                          FROM {message_conversation_area} ca
+                                         WHERE ca.contextid = ?
+                                               AND ca.component = 'core_group'
+                                               AND ca.itemtype = 'groups'
+                                               AND ca.enabled = 1", [$coursecontext1->id])
+        );
+        $conversation = $DB->get_record_sql("SELECT c.*
+                                               FROM {message_conversations} c
+                                               JOIN {message_conversation_area} ca ON c.id = ca.conversationid
+                                              WHERE ca.contextid = ?
+                                                    AND ca.component = 'core_group'
+                                                    AND ca.itemtype = 'groups'", [$coursecontext1->id]);
+        // Check group name and course fullname was stored in conversation.
+        $this->assertEquals($group1a->name, $conversation->name);
+        // Check groupid was stored in itemid on conversation area.
+        $this->assertEquals(
+                $group1a->id,
+                $DB->get_field_sql("SELECT ca.itemid
+                                      FROM {message_conversation_area} ca
+                                     WHERE ca.contextid = ?
+                                           AND ca.component = 'core_group'
+                                           AND ca.itemtype = 'groups'
+                                           AND ca.conversationid = ?", [$coursecontext1->id, $conversation->id])
+        );
+    }
+
+    /**
+     * Test groups_update_group enabling and disabling a group of conversation.
+     */
+    public function test_groups_update_group_conversation_area() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = context_course::instance($course1->id);
+        // Check not exists and conversation area created.
+        $this->assertEquals(
+                0,
+                $DB->count_records_sql("SELECT COUNT(ca.id)
+                                          FROM {message_conversation_area} ca
+                                         WHERE ca.contextid = ?
+                                               AND ca.component = 'core_group'
+                                               AND ca.itemtype = 'groups'", [$coursecontext1->id])
+        );
+        // Create two groups and only one group with enablemessaging = 1.
+        $group1a = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 1));
+        $group1b = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 0));
+        // Check exist only one row created in conversation area.
+        $this->assertEquals(
+                1,
+                $DB->count_records_sql("SELECT COUNT(ca.id)
+                                          FROM {message_conversation_area} ca
+                                         WHERE ca.contextid = ?
+                                               AND ca.component = 'core_group'
+                                               AND ca.itemtype = 'groups'
+                                               AND ca.enabled = 1", [$coursecontext1->id])
+        );
+        // Check that the conversation area is created when group messaging is enabled in the course group.
+        $group1b->enablemessaging = 1;
+        groups_update_group($group1b);
+        $this->assertEquals(
+                2,
+                $DB->count_records_sql("SELECT COUNT(ca.id)
+                                          FROM {message_conversation_area} ca
+                                         WHERE ca.contextid = ?
+                                               AND ca.component = 'core_group'
+                                               AND ca.itemtype = 'groups'
+                                               AND ca.enabled = 1", [$coursecontext1->id])
+        );
+        $conversation1b = $DB->get_record_sql("SELECT c.*
+                                               FROM {message_conversations} c
+                                               JOIN {message_conversation_area} ca ON c.id = ca.conversationid
+                                              WHERE ca.contextid = ?
+                                                    AND ca.itemid = ?
+                                                    AND ca.component = 'core_group'
+                                                    AND ca.itemtype = 'groups'", [$coursecontext1->id, $group1b->id]);
+        // Check for group1b that group name was stored in conversation.
+        $this->assertEquals($group1b->name, $conversation1b->name);
+        // Check how to is disabled conversation area when group messaging is disabled in the course group.
+        $this->assertEquals(1, $DB->get_field("message_conversation_area", "enabled",
+                                                ['itemid' => $group1b->id,
+                                                 'contextid' => $coursecontext1->id]));
+        $group1b->enablemessaging = 0;
+        groups_update_group($group1b);
+        $this->assertEquals(0, $DB->get_field("message_conversation_area", "enabled",
+                                                ['itemid' => $group1b->id,
+                                                 'contextid' => $coursecontext1->id]));
+        // Check that the name of the conversation is changed when the name of the course group is updated.
+        $group1b->name = 'New group name';
+        $this->assertNotEquals($group1b->name, $conversation1b->name);
+        groups_update_group($group1b);
+        $conversation1b = $DB->get_record_sql("SELECT c.*
+                                               FROM {message_conversations} c
+                                               JOIN {message_conversation_area} ca ON c.id = ca.conversationid
+                                              WHERE ca.contextid = ?
+                                                    AND ca.itemid = ?
+                                                    AND ca.component = 'core_group'
+                                                    AND ca.itemtype = 'groups'", [$coursecontext1->id, $group1b->id]);
+        $this->assertEquals($group1b->name, $conversation1b->name);
+    }
 }

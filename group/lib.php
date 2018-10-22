@@ -233,7 +233,7 @@ function groups_remove_member($grouporid, $userorid) {
  * @return id of group or false if error
  */
 function groups_create_group($data, $editform = false, $editoroptions = false) {
-    global $CFG, $DB;
+    global $CFG, $DB, $USER;
 
     //check that courseid exists
     $course = $DB->get_record('course', array('id' => $data->courseid), '*', MUST_EXIST);
@@ -274,6 +274,18 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
 
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($course->id));
+
+    // Group conversation messaging.
+    if (\core_message\api::can_create_group_conversation($USER->id, $context)) {
+        if (!empty($data->enablemessaging)) {
+            \core_message\api::create_conversation_area('core_group',
+                                                        'groups',
+                                                        $group->id,
+                                                        $context->id,
+                                                        1,
+                                                        $group->name);
+        }
+    }
 
     // Trigger group event.
     $params = array(
@@ -383,7 +395,7 @@ function groups_update_group_icon($group, $data, $editform) {
  * @return bool true or exception
  */
 function groups_update_group($data, $editform = false, $editoroptions = false) {
-    global $CFG, $DB;
+    global $CFG, $DB, $USER;
 
     $context = context_course::instance($data->courseid);
 
@@ -411,6 +423,31 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
 
     if ($editform) {
         groups_update_group_icon($group, $data, $editform);
+    }
+
+    // Group conversation messaging.
+    if (\core_message\api::can_create_group_conversation($USER->id, $context)) {
+        if ($conversationarea = \core_message\api::get_conversation_area('core_group',
+                                                                         'groups',
+                                                                         $group->id,
+                                                                         $context->id)) {
+            if ($data->enablemessaging && $data->enablemessaging != $conversationarea->enabled) {
+                \core_message\api::enable_conversation_area($conversationarea->id);
+            }
+            if (!$data->enablemessaging && $data->enablemessaging != $conversationarea->enabled) {
+                \core_message\api::disable_conversation_area($conversationarea->id);
+            }
+            \core_message\api::update_conversation_name($conversationarea->conversationid, $group->name);
+        } else {
+            if (!empty($data->enablemessaging)) {
+                \core_message\api::create_conversation_area('core_group',
+                                                            'groups',
+                                                            $group->id,
+                                                            $context->id,
+                                                            1,
+                                                            $group->name);
+            }
+        }
     }
 
     // Trigger group event.

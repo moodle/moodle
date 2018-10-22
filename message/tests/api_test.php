@@ -3301,4 +3301,118 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 $DB->get_field('message_conversations', 'name', ['id' => $conversationarea->conversationid])
         );
     }
+
+    /**
+     * Test get_conversation_area.
+     */
+    public function test_get_conversation_area() {
+        global $DB;
+
+        $contextid = 111;
+        $itemid = 222;
+        $name = 'Name of conversation';
+        \core_message\api::create_conversation_area('core_group',
+                                                    'groups',
+                                                    $itemid,
+                                                    $contextid,
+                                                    1,
+                                                    $name);
+        $conversationarea = \core_message\api::get_conversation_area('core_group',
+                                                                     'groups',
+                                                                      $itemid,
+                                                                      $contextid);
+        $this->assertEquals($itemid, $conversationarea->itemid);
+        $this->assertEquals($contextid, $conversationarea->contextid);
+        $this->assertEquals('core_group', $conversationarea->component);
+        $this->assertEquals('groups', $conversationarea->itemtype);
+        $this->assertEquals(1, $conversationarea->enabled);
+    }
+
+    /**
+     * Test enable_conversation_area.
+     */
+    public function test_enable_conversation_area() {
+        global $DB;
+
+        $contextid = 111;
+        $itemid = 222;
+        $name = 'Name of conversation';
+        \core_message\api::create_conversation_area('core_group',
+                                                    'groups',
+                                                    $itemid,
+                                                    $contextid,
+                                                    0,
+                                                    $name);
+        $conversationarea = $DB->get_record('message_conversation_area', ['itemid'    => $itemid,
+                                                                          'contextid' => $contextid,
+                                                                          'component' => 'core_group',
+                                                                          'itemtype'  => 'groups']);
+        $this->assertEquals(0, $conversationarea->enabled);
+        \core_message\api::enable_conversation_area($conversationarea->id);
+        $conversationarea = $DB->get_record('message_conversation_area', ['itemid'    => $itemid,
+                                                                          'contextid' => $contextid,
+                                                                          'component' => 'core_group',
+                                                                          'itemtype'  => 'groups']);
+        $this->assertEquals(1, $conversationarea->enabled);
+    }
+
+    /**
+     * Test disable_conversation_area.
+     */
+    public function test_disable_conversation_area() {
+        global $DB;
+
+        $contextid = 111;
+        $itemid = 222;
+        $name = 'Name of conversation';
+        \core_message\api::create_conversation_area('core_group',
+                                                    'groups',
+                                                    $itemid,
+                                                    $contextid,
+                                                    1,
+                                                    $name);
+        $conversationarea = $DB->get_record('message_conversation_area', ['itemid'    => $itemid,
+                                                                          'contextid' => $contextid,
+                                                                          'component' => 'core_group',
+                                                                          'itemtype'  => 'groups']);
+        $this->assertEquals(1, $conversationarea->enabled);
+        \core_message\api::disable_conversation_area($conversationarea->id);
+        $conversationarea = $DB->get_record('message_conversation_area', ['itemid'    => $itemid,
+                                                                          'contextid' => $contextid,
+                                                                          'component' => 'core_group',
+                                                                          'itemtype'  => 'groups']);
+        $this->assertEquals(0, $conversationarea->enabled);
+    }
+    /**
+     * Test update_conversation_name.
+     */
+    public function test_update_conversation_name() {
+        global $DB;
+
+        $contextid = 111;
+        $itemid = 222;
+        $name = 'Name of conversation';
+        \core_message\api::create_conversation_area('core_group',
+                                                    'groups',
+                                                    $itemid,
+                                                    $contextid,
+                                                    1,
+                                                    $name);
+        $conversationarea = $DB->get_record('message_conversation_area', ['itemid'    => $itemid,
+                                                                          'contextid' => $contextid,
+                                                                          'component' => 'core_group',
+                                                                          'itemtype'  => 'groups']);
+        $this->assertEquals(
+                $name,
+                $DB->get_field('message_conversations', 'name', ['id' => $conversationarea->conversationid])
+        );
+
+        $newname = 'New name of conversation';
+        \core_message\api::update_conversation_name($conversationarea->conversationid, $newname);
+
+        $this->assertEquals(
+                $newname,
+                $DB->get_field('message_conversations', 'name', ['id' => $conversationarea->conversationid])
+        );
+    }
 }

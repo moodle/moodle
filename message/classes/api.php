@@ -2011,4 +2011,75 @@ class api {
 
         return $conversationarea;
     }
+
+    /**
+     * Get conversation area.
+     *
+     * @param string $component Defines the Moodle component which the area was added to.
+     * @param string $itemtype Defines the type of the component.
+     * @param int    $itemid The id of the component.
+     * @param int    $contextid The id of the context.
+     * @return object message_conversation_area.
+     */
+    public static function get_conversation_area(string $component,
+                                                 string $itemtype,
+                                                 int $itemid,
+                                                 int $contextid) {
+        global $DB;
+
+        return $DB->get_record('message_conversation_area', ['itemid'    => $itemid,
+                                                             'contextid' => $contextid,
+                                                             'component' => $component,
+                                                             'itemtype'  => $itemtype]);
+    }
+
+    /**
+     * Enable a conversation area.
+     *
+     * @param int  $conversationareaid The id of a conversation area.
+     * @return void
+     */
+    public static function enable_conversation_area(int $conversationareaid) {
+        global $DB;
+
+        $conversationarea = new \stdClass();
+        $conversationarea->id = $conversationareaid;
+        $conversationarea->enabled = 1;
+        $conversationarea->timeread = time();
+        $DB->update_record('message_conversation_area', $conversationarea);
+    }
+
+    /**
+     * Disable a conversation area.
+     *
+     * @param int  $conversationareaid The id of a conversation area.
+     * @return void
+     */
+    public static function disable_conversation_area(int $conversationareaid) {
+        global $DB;
+
+        $conversationarea = new \stdClass();
+        $conversationarea->id = $conversationareaid;
+        $conversationarea->enabled = 0;
+        $conversationarea->timeread = time();
+        $DB->update_record('message_conversation_area', $conversationarea);
+    }
+
+    /**
+     * Update the name of a conversation.
+     *
+     * @param int  $conversationid The id of a conversation.
+     * @param string $name The main name of the area
+     * @return void
+     */
+    public static function update_conversation_name(int $conversationid, string $name) {
+        global $DB;
+
+        if ($conversation = $DB->get_record('message_conversations', array('id' => $conversationid))) {
+            if ($name <> $conversation->name) {
+                $conversation->name = $name;
+                $DB->update_record('message_conversations', $conversation);
+            }
+        }
+    }
 }
