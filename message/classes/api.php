@@ -939,32 +939,17 @@ class api {
             $sender = $USER;
         }
 
-        if (!has_capability('moodle/site:sendmessage', \context_system::instance(), $sender)) {
-            return false;
-        }
-
-        // The recipient blocks messages from non-contacts and the
-        // sender isn't a contact.
-        if (self::is_user_non_contact_blocked($recipient, $sender)) {
-            return false;
-        }
-
-        $senderid = null;
-        if ($sender !== null && isset($sender->id)) {
-            $senderid = $sender->id;
-        }
-
         $systemcontext = \context_system::instance();
-        if (has_capability('moodle/site:readallmessages', $systemcontext, $senderid)) {
+        if (!has_capability('moodle/site:sendmessage', $systemcontext, $sender)) {
+            return false;
+        }
+
+        if (has_capability('moodle/site:readallmessages', $systemcontext, $sender->id)) {
             return true;
         }
 
-        // The recipient has specifically blocked this sender.
-        if (self::is_blocked($recipient->id, $senderid)) {
-            return false;
-        }
-
-        return true;
+        // Check if the recipient can be messaged by the sender.
+        return (self::can_contact_user($recipient, $sender));
     }
 
     /**
@@ -1002,11 +987,14 @@ class api {
      * contact. If not then it checks to make sure the sender is in the
      * recipient's contacts.
      *
+     * @deprecated since 3.6
      * @param \stdClass $recipient The user object.
      * @param \stdClass|null $sender The user object.
      * @return bool true if $sender is blocked, false otherwise.
      */
     public static function is_user_non_contact_blocked($recipient, $sender = null) {
+        debugging('\core_message\api::is_user_non_contact_blocked() is deprecated', DEBUG_DEVELOPER);
+
         global $USER, $CFG;
 
         if (is_null($sender)) {
@@ -1687,6 +1675,78 @@ class api {
 
         return $DB->record_exists('message_conversation_members', ['conversationid' => $conversationid,
             'userid' => $userid]);
+    }
 
+    /**
+     * Checks if the sender can message the recipient.
+     *
+     * @param \stdClass $recipient The user object.
+     * @param \stdClass $sender The user object.
+     * @return bool true if recipient hasn't blocked sender and sender can contact to recipient, false otherwise.
+     */
+    protected static function can_contact_user(\stdClass $recipient, \stdClass $sender) : bool {
+        global $CFG;
+
+        if (has_capability('moodle/site:messageanyuser', \context_system::instance(), $sender->id)) {
+            // The sender has the ability to contact any user across the entire site.
+            return true;
+        }
+
+        // The initial value of $cancontact is null to indicate that a value has not been determined.
+        $cancontact = null;
+
+        if (self::is_blocked($recipient->id, $sender->id)) {
+            // The recipient has specifically blocked this sender.
+            $cancontact = false;
+        }
+
+        $sharedcourses = null;
+        if (null === $cancontact) {
+            // There are three user preference options:
+            // - Site: Allow anyone not explicitly blocked to contact me;
+            // - Course members: Allow anyone I am in a course with to contact me; and
+            // - Contacts: Only allow my contacts to contact me.
+            //
+            // The Site option is only possible when the messagingallusers site setting is also enabled.
+
+            $privacypreference = self::get_user_privacy_messaging_preference($recipient->id);
+            if (self::MESSAGE_PRIVACY_SITE === $privacypreference) {
+                // The user preference is to allow any user to contact them.
+                // No need to check anything else.
+                $cancontact = true;
+            } else {
+                // This user only allows their own contacts, and possibly course peers, to contact them.
+                // If the users are contacts then we can avoid the more expensive shared courses check.
+                $cancontact = self::is_contact($sender->id, $recipient->id);
+
+                if (!$cancontact && self::MESSAGE_PRIVACY_COURSEMEMBER === $privacypreference) {
+                    // The users are not contacts and the user allows course member messaging.
+                    // Check whether these two users share any course together.
+                    $sharedcourses = enrol_get_shared_courses($recipient->id, $sender->id, true);
+                    $cancontact = (!empty($sharedcourses));
+                }
+            }
+        }
+
+        if (false === $cancontact) {
+            // At the moment the users cannot contact one another.
+            // Check whether the messageanyuser capability applies in any of the shared courses.
+            // This is intended to allow teachers to message students regardless of message settings.
+
+            // Note: You cannot use empty($sharedcourses) here because this may be an empty array.
+            if (null === $sharedcourses) {
+                $sharedcourses = enrol_get_shared_courses($recipient->id, $sender->id, true);
+            }
+
+            foreach ($sharedcourses as $course) {
+                // Note: enrol_get_shared_courses will preload any shared context.
+                if (has_capability('moodle/site:messageanyuser', \context_course::instance($course->id), $sender->id)) {
+                    $cancontact = true;
+                    break;
+                }
+            }
+        }
+
+        return $cancontact;
     }
 }
