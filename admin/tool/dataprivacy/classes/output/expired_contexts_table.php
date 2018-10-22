@@ -57,8 +57,14 @@ class expired_contexts_table extends table_sql {
      */
     protected $selectall = true;
 
-    /** @var purpose[] Array of purposes mapped to the contexts. */
+    /** @var purpose[] Array of purposes by their id. */
     protected $purposes = [];
+
+    /** @var purpose[] Map of context => purpose. */
+    protected $purposemap = [];
+
+    /** @var array List of roles. */
+    protected $roles = [];
 
     /**
      * expired_contexts_table constructor.
@@ -77,6 +83,7 @@ class expired_contexts_table extends table_sql {
             'purpose' => get_string('purpose', 'tool_dataprivacy'),
             'category' => get_string('category', 'tool_dataprivacy'),
             'retentionperiod' => get_string('retentionperiod', 'tool_dataprivacy'),
+            'tobedeleted' => get_string('tobedeleted', 'tool_dataprivacy'),
             'timecreated' => get_string('expiry', 'tool_dataprivacy'),
         ];
         $checkboxattrs = [
@@ -93,21 +100,25 @@ class expired_contexts_table extends table_sql {
         $this->no_sorting('purpose');
         $this->no_sorting('category');
         $this->no_sorting('retentionperiod');
+        $this->no_sorting('tobedeleted');
 
         // Make this table sorted by first name by default.
         $this->sortable(true, 'timecreated');
+
+        // We use roles in several places.
+        $this->roles = role_get_names();
     }
 
     /**
      * The context name column.
      *
-     * @param stdClass $data The row data.
+     * @param stdClass $expiredctx The row data.
      * @return string
      * @throws coding_exception
      */
-    public function col_name($data) {
+    public function col_name($expiredctx) {
         global $OUTPUT;
-        $context = context_helper::instance_by_id($data->contextid);
+        $context = context_helper::instance_by_id($expiredctx->get('contextid'));
         $parent = $context->get_parent_context();
         $contextdata = (object)[
             'name' => $context->get_context_name(false, true),
@@ -128,14 +139,14 @@ class expired_contexts_table extends table_sql {
     /**
      * The context information column.
      *
-     * @param stdClass $data The row data.
+     * @param stdClass $expiredctx The row data.
      * @return string
      * @throws coding_exception
      */
-    public function col_info($data) {
+    public function col_info($expiredctx) {
         global $OUTPUT;
 
-        $context = context_helper::instance_by_id($data->contextid);
+        $context = context_helper::instance_by_id($expiredctx->get('contextid'));
 
         $children = $context->get_child_contexts();
         if (empty($children)) {
@@ -156,13 +167,13 @@ class expired_contexts_table extends table_sql {
     /**
      * The category name column.
      *
-     * @param stdClass $data The row data.
+     * @param stdClass $expiredctx The row data.
      * @return mixed
      * @throws coding_exception
      * @throws dml_exception
      */
-    public function col_category($data) {
-        $context = context_helper::instance_by_id($data->contextid);
+    public function col_category($expiredctx) {
+        $context = context_helper::instance_by_id($expiredctx->get('contextid'));
         $category = api::get_effective_context_category($context);
 
         return s($category->get('name'));
@@ -171,12 +182,12 @@ class expired_contexts_table extends table_sql {
     /**
      * The purpose column.
      *
-     * @param stdClass $data The row data.
+     * @param stdClass $expiredctx The row data.
      * @return string
      * @throws coding_exception
      */
-    public function col_purpose($data) {
-        $purpose = $this->purposes[$data->contextid];
+    public function col_purpose($expiredctx) {
+        $purpose = $this->get_purpose_for_expiry($expiredctx);
 
         return s($purpose->get('name'));
     }
@@ -184,40 +195,112 @@ class expired_contexts_table extends table_sql {
     /**
      * The retention period column.
      *
-     * @param stdClass $data The row data.
+     * @param stdClass $expiredctx The row data.
      * @return string
-     * @throws Exception
      */
-    public function col_retentionperiod($data) {
-        global $PAGE;
+    public function col_retentionperiod($expiredctx) {
+        $purpose = $this->get_purpose_for_expiry($expiredctx);
 
-        $purpose = $this->purposes[$data->contextid];
+        $expiries = [];
 
-        $exporter = new purpose_exporter($purpose, ['context' => \context_system::instance()]);
-        $exportedpurpose = $exporter->export($PAGE->get_renderer('core'));
+        $expiry = html_writer::tag('dt', get_string('default'), ['class' => 'col-sm-3']);
+        if ($expiredctx->get('defaultexpired')) {
+            $expiries[get_string('default')] = get_string('expiredrolewithretention', 'tool_dataprivacy', (object) [
+                    'retention' => api::format_retention_period(new \DateInterval($purpose->get('retentionperiod'))),
+                ]);
+        } else {
+            $expiries[get_string('default')] = get_string('unexpiredrolewithretention', 'tool_dataprivacy', (object) [
+                    'retention' => api::format_retention_period(new \DateInterval($purpose->get('retentionperiod'))),
+                ]);
+        }
 
-        return $exportedpurpose->formattedretentionperiod;
+        if (!$expiredctx->is_fully_expired()) {
+            $purposeoverrides = $purpose->get_purpose_overrides();
+
+            foreach ($expiredctx->get('unexpiredroles') as $roleid) {
+                $role = $this->roles[$roleid];
+                $override = $purposeoverrides[$roleid];
+
+                $expiries[$role->localname] = get_string('unexpiredrolewithretention', 'tool_dataprivacy', (object) [
+                        'retention' => api::format_retention_period(new \DateInterval($override->get('retentionperiod'))),
+                    ]);
+            }
+
+            foreach ($expiredctx->get('expiredroles') as $roleid) {
+                $role = $this->roles[$roleid];
+                $override = $purposeoverrides[$roleid];
+
+                $expiries[$role->localname] = get_string('expiredrolewithretention', 'tool_dataprivacy', (object) [
+                        'retention' => api::format_retention_period(new \DateInterval($override->get('retentionperiod'))),
+                    ]);
+            }
+        }
+
+        $output = array_map(function($rolename, $expiry) {
+            $return = html_writer::tag('dt', $rolename, ['class' => 'col-sm-3']);
+            $return .= html_writer::tag('dd', $expiry, ['class' => 'col-sm-9']);
+
+            return $return;
+        }, array_keys($expiries), $expiries);
+
+        return html_writer::tag('dl', implode($output), ['class' => 'row']);
     }
 
     /**
      * The timecreated a.k.a. the context expiry date column.
      *
-     * @param stdClass $data The row data.
+     * @param stdClass $expiredctx The row data.
      * @return string
      */
-    public function col_timecreated($data) {
-        return userdate($data->timecreated);
+    public function col_timecreated($expiredctx) {
+        return userdate($expiredctx->get('timecreated'));
     }
 
     /**
      * Generate the select column.
      *
-     * @param stdClass $data The row data.
+     * @param stdClass $expiredctx The row data.
      * @return string
      */
-    public function col_select($data) {
-        $id = $data->id;
+    public function col_select($expiredctx) {
+        $id = $expiredctx->get('id');
         return html_writer::checkbox('expiredcontext_' . $id, $id, $this->selectall, '', ['class' => 'selectcontext']);
+    }
+
+    /**
+     * Formatting for the 'tobedeleted' column which indicates in a friendlier fashion whose data will be removed.
+     *
+     * @param stdClass $expiredctx The row data.
+     * @return string
+     */
+    public function col_tobedeleted($expiredctx) {
+        if ($expiredctx->is_fully_expired()) {
+            return get_string('defaultexpired', 'tool_dataprivacy');
+        }
+
+        $purpose = $this->get_purpose_for_expiry($expiredctx);
+
+        $a = (object) [];
+
+        $expiredroles = [];
+        foreach ($expiredctx->get('expiredroles') as $roleid) {
+            $expiredroles[] = html_writer::tag('li', $this->roles[$roleid]->localname);
+        }
+        $a->expired = html_writer::tag('ul', implode($expiredroles));
+
+        $unexpiredroles = [];
+        foreach ($expiredctx->get('unexpiredroles') as $roleid) {
+            $unexpiredroles[] = html_writer::tag('li', $this->roles[$roleid]->localname);
+        }
+        $a->unexpired = html_writer::tag('ul', implode($unexpiredroles));
+
+        if ($expiredctx->get('defaultexpired')) {
+            return get_string('defaultexpiredexcept', 'tool_dataprivacy', $a);
+        } else if (empty($unexpiredroles)) {
+            return get_string('defaultunexpired', 'tool_dataprivacy', $a);
+        } else {
+            return get_string('defaultunexpiredwithexceptions', 'tool_dataprivacy', $a);
+        }
     }
 
     /**
@@ -241,16 +324,15 @@ class expired_contexts_table extends table_sql {
         // Only load expired contexts that are awaiting confirmation.
         $expiredcontexts = expired_context::get_records_by_contextlevel($this->contextlevel, expired_context::STATUS_EXPIRED,
             $sort, $this->get_page_start(), $this->get_page_size());
+
         $this->rawdata = [];
+        $contextids = [];
         foreach ($expiredcontexts as $persistent) {
-            $data = $persistent->to_record();
-
-            $context = context_helper::instance_by_id($data->contextid);
-
-            $purpose = api::get_effective_context_purpose($context);
-            $this->purposes[$data->contextid] = $purpose;
-            $this->rawdata[] = $data;
+            $this->rawdata[] = $persistent;
+            $contextids[] = $persistent->get('contextid');
         }
+
+        $this->preload_contexts($contextids);
 
         // Set initial bars.
         if ($useinitialsbar) {
@@ -280,5 +362,49 @@ class expired_contexts_table extends table_sql {
             return parent::show_hide_link($column, $index);
         }
         return '';
+    }
+
+    /**
+     * Get the purpose for the specified expired context.
+     *
+     * @param   expired_context $expiredcontext
+     * @return  purpose
+     */
+    protected function get_purpose_for_expiry(expired_context $expiredcontext) : purpose {
+        $context = context_helper::instance_by_id($expiredcontext->get('contextid'));
+
+        if (empty($this->purposemap[$context->id])) {
+            $purpose = api::get_effective_context_purpose($context);
+            $this->purposemap[$context->id] = $purpose->get('id');
+
+            if (empty($this->purposes[$purpose->get('id')])) {
+                $this->purposes[$purpose->get('id')] = $purpose;
+            }
+        }
+
+        return $this->purposes[$this->purposemap[$context->id]];
+    }
+
+    /**
+     * Preload context records given a set of contextids.
+     *
+     * @param   array   $contextids
+     */
+    protected function preload_contexts(array $contextids) {
+        global $DB;
+
+        if (empty($contextids)) {
+            return;
+        }
+
+        $ctxfields = \context_helper::get_preload_record_columns_sql('ctx');
+        list($insql, $inparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED);
+        $sql = "SELECT {$ctxfields} FROM {context} ctx WHERE ctx.id {$insql}";
+        $contextlist = $DB->get_recordset_sql($sql, $inparams);
+        foreach ($contextlist as $contextdata) {
+            \context_helper::preload_from_record($contextdata);
+        }
+        $contextlist->close();
+
     }
 }

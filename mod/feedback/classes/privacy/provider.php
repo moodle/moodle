@@ -31,9 +31,11 @@ use context_helper;
 use stdClass;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\helper;
 use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
 require_once($CFG->dirroot . '/mod/feedback/lib.php');
@@ -48,6 +50,7 @@ require_once($CFG->dirroot . '/mod/feedback/lib.php');
  */
 class provider implements
     \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\plugin\provider {
 
     /**
@@ -100,6 +103,38 @@ class provider implements
         $contextlist->add_from_sql(sprintf($sql, 'feedback_completed'), $params);
         $contextlist->add_from_sql(sprintf($sql, 'feedback_completedtmp'), $params);
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     *
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!is_a($context, \context_module::class)) {
+            return;
+        }
+
+        // Find users with feedback entries.
+        $sql = "
+            SELECT fc.userid
+              FROM {%s} fc
+              JOIN {modules} m
+                ON m.name = :feedback
+              JOIN {course_modules} cm
+                ON cm.instance = fc.feedback
+               AND cm.module = m.id
+              JOIN {context} ctx
+                ON ctx.instanceid = cm.id
+               AND ctx.contextlevel = :modlevel
+             WHERE ctx.id = :contextid";
+        $params = ['feedback' => 'feedback', 'modlevel' => CONTEXT_MODULE, 'contextid' => $context->id];
+
+        $userlist->add_from_sql('userid', sprintf($sql, 'feedback_completed'), $params);
+        $userlist->add_from_sql('userid', sprintf($sql, 'feedback_completedtmp'), $params);
     }
 
     /**
@@ -254,6 +289,48 @@ class provider implements
              WHERE fc.userid = :userid
                AND cm.id $insql";
         $completedparams = array_merge($inparams, ['userid' => $userid, 'feedback' => 'feedback']);
+
+        // Delete all submissions in progress.
+        $completedtmpids = $DB->get_fieldset_sql(sprintf($completedsql, 'feedback_completedtmp'), $completedparams);
+        if (!empty($completedtmpids)) {
+            list($insql, $inparams) = $DB->get_in_or_equal($completedtmpids, SQL_PARAMS_NAMED);
+            $DB->delete_records_select('feedback_valuetmp', "completed $insql", $inparams);
+            $DB->delete_records_select('feedback_completedtmp', "id $insql", $inparams);
+        }
+
+        // Delete all final submissions.
+        $completedids = $DB->get_fieldset_sql(sprintf($completedsql, 'feedback_completed'), $completedparams);
+        if (!empty($completedids)) {
+            list($insql, $inparams) = $DB->get_in_or_equal($completedids, SQL_PARAMS_NAMED);
+            $DB->delete_records_select('feedback_value', "completed $insql", $inparams);
+            $DB->delete_records_select('feedback_completed', "id $insql", $inparams);
+        }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist    $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        $userids = $userlist->get_userids();
+
+        // Prepare SQL to gather all completed IDs.
+        list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        $completedsql = "
+            SELECT fc.id
+              FROM {%s} fc
+              JOIN {modules} m
+                ON m.name = :feedback
+              JOIN {course_modules} cm
+                ON cm.instance = fc.feedback
+               AND cm.module = m.id
+             WHERE cm.id = :instanceid
+               AND fc.userid $insql";
+        $completedparams = array_merge($inparams, ['instanceid' => $context->instanceid, 'feedback' => 'feedback']);
 
         // Delete all submissions in progress.
         $completedtmpids = $DB->get_fieldset_sql(sprintf($completedsql, 'feedback_completedtmp'), $completedparams);

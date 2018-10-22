@@ -101,6 +101,76 @@ class mod_assignment_privacy_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that the correct userids are returned for a specific context.
+     */
+    public function test_get_users_in_context() {
+
+        $this->resetAfterTest(true);
+
+        $student1 = $this->getDataGenerator()->create_user(['username' => 'student1']);
+        $student2 = $this->getDataGenerator()->create_user(['username' => 'student2']);
+        // Student 3 should not turn up in the results of this test.
+        $student3 = $this->getDataGenerator()->create_user(['username' => 'student3']);
+        $teacher1 = $this->getDataGenerator()->create_user(['username' => 'teacher1']);
+
+        $course = $this->getDataGenerator()->create_course();
+        $course1assignment1 = $this->getDataGenerator()->create_module('assignment',
+            [
+                'course' => $course->id,
+                'name' => 'Course 1 - Assignment 1 (onlinetext)',
+                'assignmenttype' => 'onlinetext',
+            ]
+        );
+        // Create a second assignment in the same course.
+        $course1assignment2 = $this->getDataGenerator()->create_module('assignment',
+            [
+                'course' => $course->id,
+                'name' => 'Course 1 - Assignment 1 (onlinetext)',
+                'assignmenttype' => 'onlinetext',
+            ]
+        );
+
+        $this->add_assignment_submission(
+            $course1assignment1,
+            $student1,
+            "Course 1 - Ass 1: Student1 Test Submission"
+        );
+
+        $this->add_assignment_submission(
+            $course1assignment1,
+            $student2,
+            "Course 1 - Ass 1: Student2 Test Submission"
+        );
+        // Add a submission for the second assignment.
+        $this->add_assignment_submission(
+            $course1assignment2,
+            $student3,
+            "Course 1 - Ass 2: Student3 Test Submission"
+        );
+
+        $submissions = $this->get_course_assignment_submissions($course->id);
+        foreach ($submissions as $submission) {
+            $this->mark_assignment_submission($submission->assignment, $submission->id, $teacher1, 50);
+        }
+
+        $c1ass1ctx = context_module::instance($course1assignment1->cmid);
+        $userlist = new \core_privacy\local\request\userlist($c1ass1ctx, 'mod_assignment');
+
+        provider::get_users_in_context($userlist);
+        $userids = $userlist->get_userids();
+
+        // This is both students and the teacher who marked both assignments.
+        $this->assertCount(3, $userids);
+        // Make sure that student 3 is not in the returned userids.
+        $this->assertFalse(in_array($student3->id, $userids));
+        // Try with the course context.
+        $coursecontext = context_course::instance($course->id);
+        $userlist = new \core_privacy\local\request\userlist($coursecontext, 'mod_assignment');
+        provider::get_users_in_context($userlist);
+        $this->assertEmpty($userlist->get_userids());
+    }
+
+    /**
      * Test for provider::export_user_data().
      *
      * @throws coding_exception
@@ -361,6 +431,73 @@ class mod_assignment_privacy_testcase extends advanced_testcase {
             $files = $DB->get_records('files', ['component' => 'mod_assignment', 'filearea' => 'submission', 'contextid' => $contextid]);
             $this->assertEquals(0, count($files));
         }
+    }
+
+    /**
+     * Test the deletion of a data for users.
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $student1 = $this->getDataGenerator()->create_user(['username' => 'student1']);
+        $student2 = $this->getDataGenerator()->create_user(['username' => 'student2']);
+        $student3 = $this->getDataGenerator()->create_user(['username' => 'student3']);
+
+        $course = $this->getDataGenerator()->create_course();
+        $course1assignment = $this->getDataGenerator()->create_module('assignment',
+            [
+                'course' => $course->id,
+                'name' => 'Course 1 - Assignment 1 (single file upload)',
+                'assignmenttype' => 'uploadsingle'
+            ]
+        );
+        $context = context_module::instance($course1assignment->cmid);
+
+        // Student one submission.
+        $this->add_file_assignment_submission(
+            $course1assignment,
+            $student1,
+            "Course 1 - Ass 2: " . $student1->id,
+            'Student' . $student1->id . '-Course1-Ass2'
+        );
+        // Student two submission.
+        $this->add_file_assignment_submission(
+            $course1assignment,
+            $student2,
+            "Course 1 - Ass 2: " . $student2->id,
+            'Student' . $student2->id . '-Course1-Ass2'
+        );
+        // Student three submission to be retained.
+        $this->add_file_assignment_submission(
+            $course1assignment,
+            $student3,
+            "Course 1 - Ass 2: " . $student3->id,
+            'Student' . $student3->id . '-Course1-Ass2'
+        );
+
+        $files = $DB->get_records('files', [
+            'component' => 'mod_assignment',
+            'filearea' => 'submission',
+            'contextid' => $context->id
+        ]);
+        $this->assertCount(6, $files);
+
+        $submissions = $this->get_assignment_submissions($context->id);
+        $this->assertCount(3, $submissions);
+
+        $userlist = new \core_privacy\local\request\approved_userlist($context, 'mod_assignment', [$student1->id, $student2->id]);
+        provider::delete_data_for_users($userlist);
+
+        $files = $DB->get_records('files', [
+            'component' => 'mod_assignment',
+            'filearea' => 'submission',
+            'contextid' => $context->id
+        ]);
+        $this->assertCount(2, $files);
+
+        $submissions = $this->get_assignment_submissions($context->id);
+        $this->assertCount(1, $submissions);
     }
 
     // Start of helper functions.

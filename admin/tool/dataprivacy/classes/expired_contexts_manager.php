@@ -47,34 +47,62 @@ class expired_contexts_manager {
     /** @var manager The privacy manager */
     protected $manager = null;
 
+    /** @var \progress_trace Trace tool for logging */
+    protected $trace = null;
+
+    /**
+     * Constructor for the expired_contexts_manager.
+     *
+     * @param   \progress_trace $trace
+     */
+    public function __construct(\progress_trace $trace = null) {
+        if (null === $trace) {
+            $trace = new \null_progress_trace();
+        }
+
+        $this->trace = $trace;
+    }
+
     /**
      * Flag expired contexts as expired.
      *
      * @return  int[]   The number of contexts flagged as expired for courses, and users.
      */
     public function flag_expired_contexts() : array {
+        $this->trace->output('Checking requirements');
         if (!$this->check_requirements()) {
+            $this->trace->output('Requirements not met. Cannot process expired retentions.', 1);
             return [0, 0];
         }
 
         // Clear old and stale records first.
+        $this->trace->output('Clearing obselete records.', 0);
         static::clear_old_records();
+        $this->trace->output('Done.', 1);
 
+        $this->trace->output('Calculating potential course expiries.', 0);
         $data = static::get_nested_expiry_info_for_courses();
+
         $coursecount = 0;
+        $this->trace->output('Updating course expiry data.', 0);
         foreach ($data as $expiryrecord) {
             if ($this->update_from_expiry_info($expiryrecord)) {
                 $coursecount++;
             }
         }
+        $this->trace->output('Done.', 1);
 
+        $this->trace->output('Calculating potential user expiries.', 0);
         $data = static::get_nested_expiry_info_for_user();
+
         $usercount = 0;
+        $this->trace->output('Updating user expiry data.', 0);
         foreach ($data as $expiryrecord) {
             if ($this->update_from_expiry_info($expiryrecord)) {
                 $usercount++;
             }
         }
+        $this->trace->output('Done.', 1);
 
         return [$coursecount, $usercount];
     }
@@ -241,6 +269,8 @@ class expired_contexts_manager {
         $datalist = [];
         $expiredcontents = [];
         $pathstoskip = [];
+
+        $userpurpose = data_registry::get_effective_contextlevel_value(CONTEXT_USER, 'purpose');
         foreach ($fulllist as $record) {
             \context_helper::preload_from_record($record);
             $context = \context::instance_by_id($record->id, false);
@@ -263,14 +293,19 @@ class expired_contexts_manager {
                 continue;
             }
 
-            $purposevalue = $record->purposeid !== null ? $record->purposeid : context_instance::NOTSET;
-            $purpose = api::get_effective_context_purpose($context, $purposevalue);
+            if ($context instanceof \context_user) {
+                $purpose = $userpurpose;
+            } else {
+                $purposevalue = $record->purposeid !== null ? $record->purposeid : context_instance::NOTSET;
+                $purpose = api::get_effective_context_purpose($context, $purposevalue);
+            }
 
             if ($context instanceof \context_user && !empty($record->userdeleted)) {
                 $expiryinfo = static::get_expiry_info($purpose, $record->userdeleted);
             } else {
                 $expiryinfo = static::get_expiry_info($purpose, $record->expirydate);
             }
+
             foreach ($datalist as $path => $data) {
                 // Merge with already-processed children.
                 if (strpos($path, $context->path) !== 0) {
@@ -279,6 +314,7 @@ class expired_contexts_manager {
 
                 $expiryinfo->merge_with_child($data->info);
             }
+
             $datalist[$context->path] = (object) [
                 'context' => $context,
                 'record' => $record,
@@ -309,44 +345,7 @@ class expired_contexts_manager {
         }));
 
         if (!$shouldskip && $context instanceof \context_user) {
-            // The context instanceid is the user's ID.
-            if (isguestuser($context->instanceid) || is_siteadmin($context->instanceid)) {
-                // This is an admin, or the guest and cannot be deleted.
-                $shouldskip = true;
-            }
-
-            if (!$shouldskip) {
-                $courses = enrol_get_users_courses($context->instanceid, false, ['enddate']);
-                $requireenddate = self::require_all_end_dates_for_user_deletion();
-
-                foreach ($courses as $course) {
-                    if (empty($course->enddate)) {
-                        // This course has no end date.
-                        if ($requireenddate) {
-                            // Course end dates are required, and this course has no end date.
-                            $shouldskip = true;
-                            break;
-                        }
-
-                        // Course end dates are not required. The subsequent checks are pointless at this time so just
-                        // skip them.
-                        continue;
-                    }
-
-                    if ($course->enddate >= time()) {
-                        // This course is still in the future.
-                        $shouldskip = true;
-                        break;
-                    }
-
-                    // This course has an end date which is in the past.
-                    if (!self::is_course_expired($course)) {
-                        // This course has not expired yet.
-                        $shouldskip = true;
-                        break;
-                    }
-                }
-            }
+            $shouldskip = !self::are_user_context_dependencies_expired($context);
         }
 
         if ($shouldskip) {
@@ -363,16 +362,21 @@ class expired_contexts_manager {
      * @return  int[]       The number of deleted contexts.
      */
     public function process_approved_deletions() : array {
+        $this->trace->output('Checking requirements');
         if (!$this->check_requirements()) {
+            $this->trace->output('Requirements not met. Cannot process expired retentions.', 1);
             return [0, 0];
         }
 
+        $this->trace->output('Fetching all approved and expired contexts for deletion.');
         $expiredcontexts = expired_context::get_records(['status' => expired_context::STATUS_APPROVED]);
+        $this->trace->output('Done.', 1);
         $totalprocessed = 0;
         $usercount = 0;
         $coursecount = 0;
         foreach ($expiredcontexts as $expiredctx) {
             $context = \context::instance_by_id($expiredctx->get('contextid'), IGNORE_MISSING);
+
             if (empty($context)) {
                 // Unable to process this request further.
                 // We have no context to delete.
@@ -380,7 +384,9 @@ class expired_contexts_manager {
                 continue;
             }
 
+            $this->trace->output("Deleting data for " . $context->get_context_name(), 2);
             if ($this->delete_expired_context($expiredctx)) {
+                $this->trace->output("Done.", 3);
                 if ($context instanceof \context_user) {
                     $usercount++;
                 } else {
@@ -425,11 +431,39 @@ class expired_contexts_manager {
         }
 
         $privacymanager = $this->get_privacy_manager();
-        if ($context instanceof \context_user) {
-            $this->delete_expired_user_context($expiredctx);
-        } else {
-            // This context is fully expired - that is that the default retention period has been reached.
-            $privacymanager->delete_data_for_all_users_in_context($context);
+        if ($expiredctx->is_fully_expired()) {
+            if ($context instanceof \context_user) {
+                $this->delete_expired_user_context($expiredctx);
+            } else {
+                // This context is fully expired - that is that the default retention period has been reached, and there are
+                // no remaining overrides.
+                $privacymanager->delete_data_for_all_users_in_context($context);
+            }
+
+            // Mark the record as cleaned.
+            $expiredctx->set('status', expired_context::STATUS_CLEANED);
+            $expiredctx->save();
+
+            return $context;
+        }
+
+        // We need to find all users in the context, and delete just those who have expired.
+        $collection = $privacymanager->get_users_in_context($context);
+
+        // Apply the expired and unexpired filters to remove the users in these categories.
+        $userassignments = $this->get_role_users_for_expired_context($expiredctx, $context);
+        $approvedcollection = new \core_privacy\local\request\userlist_collection($context);
+        foreach ($collection as $pendinguserlist) {
+            $userlist = filtered_userlist::create_from_userlist($pendinguserlist);
+            $userlist->apply_expired_context_filters($userassignments->expired, $userassignments->unexpired);
+            if (count($userlist)) {
+                $approvedcollection->add_userlist($userlist);
+            }
+        }
+
+        if (count($approvedcollection)) {
+            // Perform the deletion with the newly approved collection.
+            $privacymanager->delete_data_for_users_in_context($approvedcollection);
         }
 
         // Mark the record as cleaned.
@@ -545,14 +579,45 @@ class expired_contexts_manager {
      * @return  expiry_info
      */
     protected static function get_expiry_info(purpose $purpose, int $comparisondate = 0) : expiry_info {
-        if (empty($comparisondate)) {
-            // The date is empty, therefore this context cannot be considered for automatic expiry.
-            $defaultexpired = false;
-        } else {
-            $defaultexpired = static::has_expired($purpose->get('retentionperiod'), $comparisondate);
-        }
+        $overrides = $purpose->get_purpose_overrides();
+        $expiredroles = $unexpiredroles = [];
+        if (empty($overrides)) {
+            // There are no overrides for this purpose.
+            if (empty($comparisondate)) {
+                // The date is empty, therefore this context cannot be considered for automatic expiry.
+                $defaultexpired = false;
+            } else {
+                $defaultexpired = static::has_expired($purpose->get('retentionperiod'), $comparisondate);
+            }
 
-        return new expiry_info($defaultexpired);
+            return new expiry_info($defaultexpired, $purpose->get('protected'), [], [], []);
+        } else {
+            $protectedroles = [];
+            foreach ($overrides as $override) {
+                if (static::has_expired($override->get('retentionperiod'), $comparisondate)) {
+                    // This role has expired.
+                    $expiredroles[] = $override->get('roleid');
+                } else {
+                    // This role has not yet expired.
+                    $unexpiredroles[] = $override->get('roleid');
+
+                    if ($override->get('protected')) {
+                        $protectedroles[$override->get('roleid')] = true;
+                    }
+                }
+            }
+
+            $defaultexpired = false;
+            if (static::has_expired($purpose->get('retentionperiod'), $comparisondate)) {
+                $defaultexpired = true;
+            }
+
+            if ($defaultexpired) {
+                $expiredroles = [];
+            }
+
+            return new expiry_info($defaultexpired, $purpose->get('protected'), $expiredroles, $unexpiredroles, $protectedroles);
+        }
     }
 
     /**
@@ -565,7 +630,7 @@ class expired_contexts_manager {
      * @return  expired_context|null
      */
     protected function update_from_expiry_info(\stdClass $expiryrecord) {
-        if ($expiryrecord->info->is_any_expired()) {
+        if ($isanyexpired = $expiryrecord->info->is_any_expired()) {
             // The context is expired in some fashion.
             // Create or update as required.
             if ($expiryrecord->record->expiredctxid) {
@@ -577,6 +642,15 @@ class expired_contexts_manager {
                 }
             } else {
                 $expiredcontext = expired_context::create_from_expiry_info($expiryrecord->context, $expiryrecord->info);
+            }
+
+            if ($expiryrecord->context instanceof \context_user) {
+                $userassignments = $this->get_role_users_for_expired_context($expiredcontext, $expiryrecord->context);
+                if (!empty($userassignments->unexpired)) {
+                    $expiredcontext->delete();
+
+                    return null;
+                }
             }
 
             return $expiredcontext;
@@ -608,7 +682,6 @@ class expired_contexts_manager {
         // Fetch the current nested expiry data.
         $expiryrecords = self::get_nested_expiry_info($context->path);
 
-        // Find the current record.
         if (empty($expiryrecords[$context->path])) {
             $expiredctx->delete();
             return null;
@@ -651,6 +724,80 @@ class expired_contexts_manager {
     }
 
     /**
+     * Get the list of actual users for the combination of expired, and unexpired roles.
+     *
+     * @param   expired_context $expiredctx
+     * @param   \context        $context
+     * @return  \stdClass
+     */
+    protected function get_role_users_for_expired_context(expired_context $expiredctx, \context $context) : \stdClass {
+        $expiredroles = $expiredctx->get('expiredroles');
+        $expiredroleusers = [];
+        if (!empty($expiredroles)) {
+            // Find the list of expired role users.
+            $expiredroleuserassignments = get_role_users($expiredroles, $context, true, 'ra.id, u.id AS userid', 'ra.id');
+            $expiredroleusers = array_map(function($assignment) {
+                return $assignment->userid;
+            }, $expiredroleuserassignments);
+        }
+        $expiredroleusers = array_unique($expiredroleusers);
+
+        $unexpiredroles = $expiredctx->get('unexpiredroles');
+        $unexpiredroleusers = [];
+        if (!empty($unexpiredroles)) {
+            // Find the list of unexpired role users.
+            $unexpiredroleuserassignments = get_role_users($unexpiredroles, $context, true, 'ra.id, u.id AS userid', 'ra.id');
+            $unexpiredroleusers = array_map(function($assignment) {
+                return $assignment->userid;
+            }, $unexpiredroleuserassignments);
+        }
+        $unexpiredroleusers = array_unique($unexpiredroleusers);
+
+        if (!$expiredctx->get('defaultexpired')) {
+            $tofilter = get_users_roles($context, $expiredroleusers);
+            $tofilter = array_filter($tofilter, function($userroles) use ($expiredroles) {
+                // Each iteration contains the list of role assignment for a specific user.
+                // All roles that the user holds must match those in the list of expired roles.
+                foreach ($userroles as $ra) {
+                    if (false === array_search($ra->roleid, $expiredroles)) {
+                        // This role was not found in the list of assignments.
+                        return true;
+                    }
+                }
+
+                return false;
+            });
+            $unexpiredroleusers = array_merge($unexpiredroleusers, array_keys($tofilter));
+        }
+
+        return (object) [
+            'expired' => $expiredroleusers,
+            'unexpired' => $unexpiredroleusers,
+        ];
+    }
+
+    /**
+     * Determine whether the supplied context has expired.
+     *
+     * @param   \context    $context
+     * @return  bool
+     */
+    public static function is_context_expired(\context $context) : bool {
+        $parents = $context->get_parent_contexts(true);
+        foreach ($parents as $parent) {
+            if ($parent instanceof \context_course) {
+                return self::is_course_context_expired($context);
+            }
+
+            if ($parent instanceof \context_user) {
+                return self::are_user_context_dependencies_expired($context);
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Check whether the course has expired.
      *
      * @param   \stdClass   $course
@@ -658,9 +805,147 @@ class expired_contexts_manager {
      */
     protected static function is_course_expired(\stdClass $course) : bool {
         $context = \context_course::instance($course->id);
+
+        return self::is_course_context_expired($context);
+    }
+
+    /**
+     * Determine whether the supplied course context has expired.
+     *
+     * @param   \context_course $context
+     * @return  bool
+     */
+    protected static function is_course_context_expired(\context_course $context) : bool {
         $expiryrecords = self::get_nested_expiry_info_for_courses($context->path);
 
         return !empty($expiryrecords[$context->path]) && $expiryrecords[$context->path]->info->is_fully_expired();
+    }
+
+    /**
+     * Determine whether the supplied user context's dependencies have expired.
+     *
+     * This checks whether courses have expired, and some other check, but does not check whether the user themself has expired.
+     *
+     * Although this seems unusual at first, each location calling this actually checks whether the user is elgible for
+     * deletion, irrespective if they have actually expired.
+     *
+     * For example, a request to delete the user only cares about course dependencies and the user's lack of expiry
+     * should not block their own request to be deleted; whilst the expiry eligibility check has already tested for the
+     * user being expired.
+     *
+     * @param   \context_user   $context
+     * @return  bool
+     */
+    protected static function are_user_context_dependencies_expired(\context_user $context) : bool {
+        // The context instanceid is the user's ID.
+        if (isguestuser($context->instanceid) || is_siteadmin($context->instanceid)) {
+            // This is an admin, or the guest and cannot expire.
+            return false;
+        }
+
+        $courses = enrol_get_users_courses($context->instanceid, false, ['enddate']);
+        $requireenddate = self::require_all_end_dates_for_user_deletion();
+
+        $expired = true;
+
+        foreach ($courses as $course) {
+            if (empty($course->enddate)) {
+                // This course has no end date.
+                if ($requireenddate) {
+                    // Course end dates are required, and this course has no end date.
+                    $expired = false;
+                    break;
+                }
+
+                // Course end dates are not required. The subsequent checks are pointless at this time so just
+                // skip them.
+                continue;
+            }
+
+            if ($course->enddate >= time()) {
+                // This course is still in the future.
+                $expired = false;
+                break;
+            }
+
+            // This course has an end date which is in the past.
+            if (!self::is_course_expired($course)) {
+                // This course has not expired yet.
+                $expired = false;
+                break;
+            }
+        }
+
+        return $expired;
+    }
+
+    /**
+     * Determine whether the supplied context has expired or unprotected for the specified user.
+     *
+     * @param   \context    $context
+     * @param   \stdClass   $user
+     * @return  bool
+     */
+    public static function is_context_expired_or_unprotected_for_user(\context $context, \stdClass $user) : bool {
+        $parents = $context->get_parent_contexts(true);
+        foreach ($parents as $parent) {
+            if ($parent instanceof \context_course) {
+                return self::is_course_context_expired_or_unprotected_for_user($parent, $user);
+            }
+
+            if ($parent instanceof \context_user) {
+                return self::are_user_context_dependencies_expired($context);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine whether the supplied course context has expired, or is unprotected.
+     *
+     * @param   \context_course $context
+     * @param   \stdClass       $user
+     * @return  bool
+     */
+    protected static function is_course_context_expired_or_unprotected_for_user(\context_course $context, \stdClass $user) {
+        $expiryrecords = self::get_nested_expiry_info_for_courses($context->path);
+
+        $info = $expiryrecords[$context->path]->info;
+        if ($info->is_fully_expired()) {
+            // This context is fully expired.
+            return true;
+        }
+
+        // Now perform user checks.
+        $userroles = array_map(function($assignment) {
+            return $assignment->roleid;
+        }, get_user_roles($context, $user->id));
+
+        $unexpiredprotectedroles = $info->get_unexpired_protected_roles();
+        if (!empty(array_intersect($unexpiredprotectedroles, $userroles))) {
+            // The user holds an unexpired and protected role.
+            return false;
+        }
+
+        $unprotectedoverriddenroles = $info->get_unprotected_overridden_roles();
+        $matchingroles = array_intersect($unprotectedoverriddenroles, $userroles);
+        if (!empty($matchingroles)) {
+            // This user has at least one overridden role which is not a protected.
+            // However, All such roles must match.
+            // If the user has multiple roles then all must be expired, otherwise we should fall back to the default behaviour.
+            if (empty(array_diff($userroles, $unprotectedoverriddenroles))) {
+                // All roles that this user holds are a combination of expired, or unprotected.
+                return true;
+            }
+        }
+
+        if ($info->is_default_expired()) {
+            // If the user has no unexpired roles, and the context is expired by default then this must be expired.
+            return true;
+        }
+
+        return !$info->is_default_protected();
     }
 
     /**

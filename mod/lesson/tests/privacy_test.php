@@ -108,6 +108,60 @@ class mod_lesson_privacy_testcase extends provider_testcase {
         $this->assertTrue(in_array($cm3ctx->id, $contextids));
     }
 
+    /*
+     * Test for provider::get_users_in_context().
+     */
+    public function test_get_users_in_context() {
+        $dg = $this->getDataGenerator();
+        $c1 = $dg->create_course();
+        $component = 'mod_lesson';
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u4 = $dg->create_user();
+        $u5 = $dg->create_user();
+        $u6 = $dg->create_user();
+
+        $cm1 = $dg->create_module('lesson', ['course' => $c1]);
+        $cm2 = $dg->create_module('lesson', ['course' => $c1]);
+
+        $cm1ctx = context_module::instance($cm1->cmid);
+        $cm2ctx = context_module::instance($cm2->cmid);
+
+        $this->create_attempt($cm1, $u1);
+        $this->create_grade($cm1, $u2);
+        $this->create_timer($cm1, $u3);
+        $this->create_branch($cm1, $u4);
+        $this->create_override($cm1, $u5);
+
+        $this->create_attempt($cm2, $u6);
+        $this->create_grade($cm2, $u6);
+        $this->create_timer($cm2, $u6);
+        $this->create_branch($cm2, $u6);
+        $this->create_override($cm2, $u6);
+
+        $context = context_module::instance($cm1->cmid);
+        $userlist = new \core_privacy\local\request\userlist($context, $component);
+        provider::get_users_in_context($userlist);
+        $userids = $userlist->get_userids();
+
+        $this->assertCount(5, $userids);
+        $expected = [$u1->id, $u2->id, $u3->id, $u4->id, $u5->id];
+        $actual = $userids;
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+
+        $context = context_module::instance($cm2->cmid);
+        $userlist = new \core_privacy\local\request\userlist($context, $component);
+        provider::get_users_in_context($userlist);
+        $userids = $userlist->get_userids();
+
+        $this->assertCount(1, $userids);
+        $this->assertEquals([$u6->id], $userids);
+    }
+
     public function test_delete_data_for_all_users_in_context() {
         global $DB;
         $dg = $this->getDataGenerator();
@@ -291,6 +345,85 @@ class mod_lesson_privacy_testcase extends provider_testcase {
         $this->assertTrue($DB->record_exists('lesson_timer', ['userid' => $u1->id, 'lessonid' => $cm2->id]));
         $this->assertTrue($DB->record_exists('lesson_branch', ['userid' => $u1->id, 'lessonid' => $cm2->id]));
         $this->assertTrue($DB->record_exists('lesson_overrides', ['userid' => $u1->id, 'lessonid' => $cm2->id]));
+    }
+
+    /*
+     * Test for provider::delete_data_for_users().
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+        $dg = $this->getDataGenerator();
+        $c1 = $dg->create_course();
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+
+        $cm1 = $dg->create_module('lesson', ['course' => $c1]);
+        $cm2 = $dg->create_module('lesson', ['course' => $c1]);
+        $cm3 = $dg->create_module('lesson', ['course' => $c1]);
+        $context1 = context_module::instance($cm1->cmid);
+        $context3 = context_module::instance($cm3->cmid);
+
+        $this->create_attempt($cm1, $u1);
+        $this->create_grade($cm1, $u1);
+        $this->create_timer($cm1, $u1);
+        $this->create_branch($cm1, $u1);
+        $this->create_override($cm1, $u1);
+        $this->create_attempt($cm1, $u2);
+        $this->create_grade($cm1, $u2);
+        $this->create_timer($cm1, $u2);
+        $this->create_branch($cm1, $u2);
+        $this->create_override($cm1, $u2);
+
+        $this->create_attempt($cm2, $u1);
+        $this->create_grade($cm2, $u1);
+        $this->create_timer($cm2, $u1);
+        $this->create_branch($cm2, $u1);
+        $this->create_override($cm2, $u1);
+        $this->create_attempt($cm2, $u2);
+        $this->create_grade($cm2, $u2);
+        $this->create_timer($cm2, $u2);
+        $this->create_branch($cm2, $u2);
+        $this->create_override($cm2, $u2);
+
+        $assertnochange = function($user, $cm) use ($DB) {
+            $this->assertTrue($DB->record_exists('lesson_attempts', ['userid' => $user->id, 'lessonid' => $cm->id]));
+            $this->assertTrue($DB->record_exists('lesson_grades', ['userid' => $user->id, 'lessonid' => $cm->id]));
+            $this->assertTrue($DB->record_exists('lesson_timer', ['userid' => $user->id, 'lessonid' => $cm->id]));
+            $this->assertTrue($DB->record_exists('lesson_branch', ['userid' => $user->id, 'lessonid' => $cm->id]));
+            $this->assertTrue($DB->record_exists('lesson_overrides', ['userid' => $user->id, 'lessonid' => $cm->id]));
+        };
+
+        $assertdeleted = function($user, $cm) use ($DB) {
+            $this->assertFalse($DB->record_exists('lesson_attempts', ['userid' => $user->id, 'lessonid' => $cm->id]));
+            $this->assertFalse($DB->record_exists('lesson_grades', ['userid' => $user->id, 'lessonid' => $cm->id]));
+            $this->assertFalse($DB->record_exists('lesson_timer', ['userid' => $user->id, 'lessonid' => $cm->id]));
+            $this->assertFalse($DB->record_exists('lesson_branch', ['userid' => $user->id, 'lessonid' => $cm->id]));
+            $this->assertFalse($DB->record_exists('lesson_overrides', ['userid' => $user->id, 'lessonid' => $cm->id]));
+        };
+
+        // Confirm existing state.
+        $assertnochange($u1, $cm1);
+        $assertnochange($u1, $cm2);
+        $assertnochange($u2, $cm1);
+        $assertnochange($u2, $cm2);
+
+        // Delete another module: no change.
+        $approveduserlist = new core_privacy\local\request\approved_userlist($context3, 'mod_lesson', [$u1->id]);
+        provider::delete_data_for_users($approveduserlist);
+
+        $assertnochange($u1, $cm1);
+        $assertnochange($u1, $cm2);
+        $assertnochange($u2, $cm1);
+        $assertnochange($u2, $cm2);
+
+        // Delete cm1 for u1: no change for u2 and in cm2.
+        $approveduserlist = new core_privacy\local\request\approved_userlist($context1, 'mod_lesson', [$u1->id]);
+        provider::delete_data_for_users($approveduserlist);
+
+        $assertdeleted($u1, $cm1);
+        $assertnochange($u1, $cm2);
+        $assertnochange($u2, $cm1);
+        $assertnochange($u2, $cm2);
     }
 
     public function test_export_data_for_user_overrides() {

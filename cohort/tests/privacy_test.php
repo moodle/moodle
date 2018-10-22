@@ -29,6 +29,7 @@ use core_cohort\privacy\provider;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\writer;
 use core_privacy\tests\provider_testcase;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Unit tests for cohort\classes\privacy\provider.php
@@ -217,5 +218,125 @@ class core_cohort_testcase extends provider_testcase {
         // Confirm that the cohorts hasn't been removed.
         $cohortscount = $DB->get_records('cohort');
         $this->assertCount(2, (array) $cohortscount);
+    }
+
+    /**
+     * Test that only users within a course context are fetched.
+     */
+    public function test_get_users_in_context() {
+        $component = 'core_cohort';
+
+        // Create system cohort and category cohort.
+        $coursecategory = $this->getDataGenerator()->create_category();
+        $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
+        $systemctx = \context_system::instance();
+        $categorycohort = $this->getDataGenerator()->create_cohort([
+            'contextid' => $coursecategoryctx->id,
+            'name' => 'Category cohort 1',
+        ]);
+        // Create user.
+        $user = $this->getDataGenerator()->create_user();
+        $userctx = \context_user::instance($user->id);
+
+        $userlist1 = new \core_privacy\local\request\userlist($coursecategoryctx, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(0, $userlist1);
+
+        $userlist2 = new \core_privacy\local\request\userlist($systemctx, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(0, $userlist2);
+
+        $systemcohort = $this->getDataGenerator()->create_cohort([
+            'contextid' => $systemctx->id,
+            'name' => 'System cohort 1'
+        ]);
+        // Create user and add to the system and category cohorts.
+        cohort_add_member($categorycohort->id, $user->id);
+        cohort_add_member($systemcohort->id, $user->id);
+
+        // The list of users within the coursecat context should contain user.
+        $userlist1 = new \core_privacy\local\request\userlist($coursecategoryctx, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(1, $userlist1);
+        $expected = [$user->id];
+        $actual = $userlist1->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        // The list of users within the system context should contain user.
+        $userlist2 = new \core_privacy\local\request\userlist($systemctx, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+        $expected = [$user->id];
+        $actual = $userlist2->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        // The list of users within the user context should be empty.
+        $userlist3 = new \core_privacy\local\request\userlist($userctx, $component);
+        provider::get_users_in_context($userlist3);
+        $this->assertCount(0, $userlist3);
+    }
+
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        $component = 'core_cohort';
+
+        // Create system cohort and category cohort.
+        $coursecategory = $this->getDataGenerator()->create_category();
+        $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
+        $systemctx = \context_system::instance();
+        $categorycohort = $this->getDataGenerator()->create_cohort([
+            'contextid' => $coursecategoryctx->id,
+            'name' => 'Category cohort 1',
+        ]);
+        // Create user1.
+        $user1 = $this->getDataGenerator()->create_user();
+        $userctx1 = \context_user::instance($user1->id);
+        // Create user2.
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $systemcohort = $this->getDataGenerator()->create_cohort([
+            'contextid' => $systemctx->id,
+            'name' => 'System cohort 1'
+        ]);
+        // Create user and add to the system and category cohorts.
+        cohort_add_member($categorycohort->id, $user1->id);
+        cohort_add_member($systemcohort->id, $user1->id);
+        cohort_add_member($categorycohort->id, $user2->id);
+
+        $userlist1 = new \core_privacy\local\request\userlist($coursecategoryctx, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(2, $userlist1);
+
+        $userlist2 = new \core_privacy\local\request\userlist($systemctx, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+
+        // Convert $userlist1 into an approved_contextlist.
+        $approvedlist1 = new approved_userlist($coursecategoryctx, $component, $userlist1->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist1);
+
+        // Re-fetch users in coursecategoryctx.
+        $userlist1 = new \core_privacy\local\request\userlist($coursecategoryctx, $component);
+        provider::get_users_in_context($userlist1);
+        // The user data in coursecategoryctx should be deleted.
+        $this->assertCount(0, $userlist1);
+        // Re-fetch users in coursecategoryctx.
+        $userlist2 = new \core_privacy\local\request\userlist($systemctx, $component);
+        provider::get_users_in_context($userlist2);
+        // The user data in coursecontext2 should be still present.
+        $this->assertCount(1, $userlist2);
+
+        // Convert $userlist2 into an approved_contextlist in the user context.
+        $approvedlist3 = new approved_userlist($userctx1, $component, $userlist2->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist3);
+        // Re-fetch users in coursecontext1.
+        $userlist3 = new \core_privacy\local\request\userlist($systemctx, $component);
+        provider::get_users_in_context($userlist3);
+        // The user data in systemcontext should not be deleted.
+        $this->assertCount(1, $userlist3);
     }
 }

@@ -29,6 +29,7 @@ global $CFG;
 use core_privacy\tests\provider_testcase;
 use mod_wiki\privacy\provider;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\writer;
 
 require_once($CFG->dirroot.'/mod/wiki/locallib.php');
@@ -80,11 +81,13 @@ class mod_wiki_privacy_testcase extends provider_testcase {
         $this->users[1] = $dg->create_user();
         $this->users[2] = $dg->create_user();
         $this->users[3] = $dg->create_user();
+        $this->users[4] = $dg->create_user();
 
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $this->getDataGenerator()->enrol_user($this->users[1]->id, $course->id, $studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($this->users[2]->id, $course->id, $studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($this->users[3]->id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($this->users[4]->id, $course->id, $studentrole->id, 'manual');
 
         $cm1 = $this->getDataGenerator()->create_module('wiki', ['course' => $course->id]);
         $cm2 = $this->getDataGenerator()->create_module('wiki', ['course' => $course->id, 'wikimode' => 'individual']);
@@ -133,6 +136,10 @@ class mod_wiki_privacy_testcase extends provider_testcase {
         // Lock a page in the third wiki without having any revisions on it.
         wiki_set_lock($this->pages[3][1]->id, $this->users[3]->id, null, true);
 
+        // User 4 - added to the first wiki, so all users are not part of all edited contexts.
+        $this->setUser($this->users[4]);
+        $this->pages[1][4] = $this->create_page($cm1);
+
         $this->subwikis = [
             1 => $this->pages[1][1]->subwikiid,
             21 => $this->pages[21][1]->subwikiid,
@@ -153,6 +160,7 @@ class mod_wiki_privacy_testcase extends provider_testcase {
                 1 => $this->pages[1][1]->id . ' ' . $this->pages[1][1]->title,
                 2 => $this->pages[1][2]->id . ' ' . $this->pages[1][2]->title,
                 3 => $this->pages[1][3]->id . ' ' . $this->pages[1][3]->title,
+                4 => $this->pages[1][4]->id . ' ' . $this->pages[1][4]->title,
             ],
             21 => [
                 1 => $this->pages[21][1]->id . ' ' . $this->pages[21][1]->title,
@@ -259,6 +267,60 @@ class mod_wiki_privacy_testcase extends provider_testcase {
             $this->contexts[2]->id,
             $this->contexts[3]->id,
         ], $contextids, '', 0.0, 10, true);
+    }
+
+    /**
+     * Test getting the users within a context.
+     */
+    public function test_get_users_in_context() {
+        global $DB;
+        $component = 'mod_wiki';
+
+        // Add a comment from user 4 in context 3.
+        $this->setUser($this->users[4]);
+        $this->add_comment($this->pages[3][1], 'Look at me, getting involved!');
+
+        // Ensure userlist for context 1 contains all users.
+        $userlist = new \core_privacy\local\request\userlist($this->contexts[1], $component);
+        provider::get_users_in_context($userlist);
+
+        $this->assertCount(4, $userlist);
+
+        $expected = [$this->users[1]->id, $this->users[2]->id, $this->users[3]->id, $this->users[4]->id];
+        $actual = $userlist->get_userids();
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+
+        // Ensure userlist for context 2 contains users 1-3 only.
+        $userlist = new \core_privacy\local\request\userlist($this->contexts[2], $component);
+        provider::get_users_in_context($userlist);
+
+        $this->assertCount(3, $userlist);
+
+        $expected = [$this->users[1]->id, $this->users[2]->id, $this->users[3]->id];
+        $actual = $userlist->get_userids();
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+
+        // Ensure userlist for context 3 contains users 2, 3 and 4 only.
+        $userlist = new \core_privacy\local\request\userlist($this->contexts[3], $component);
+        provider::get_users_in_context($userlist);
+
+        $this->assertCount(3, $userlist);
+
+        $expected = [$this->users[2]->id, $this->users[3]->id, $this->users[4]->id];
+        $actual = $userlist->get_userids();
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+
+        // Ensure userlist for context 4 is empty.
+        $userlist = new \core_privacy\local\request\userlist($this->contexts[4], $component);
+        provider::get_users_in_context($userlist);
+
+        $this->assertEmpty($userlist);
     }
 
     /**
@@ -528,5 +590,64 @@ class mod_wiki_privacy_testcase extends provider_testcase {
         provider::export_user_data($appctx);
         $this->assertTrue(writer::with_context($this->contexts[1])->has_any_data());
         $this->assertFalse(writer::with_context($this->contexts[2])->has_any_data());
+    }
+
+    /**
+     * Test for delete_data_for_users().
+     */
+    public function test_delete_data_for_users() {
+        $component = 'mod_wiki';
+
+        // Ensure data exists within context 2 - individual wikis.
+        // Since each user owns their own subwiki in this context, they can be deleted.
+        $u1ctx2 = new approved_contextlist($this->users[1], 'mod_wiki', [$this->contexts[2]->id]);
+        provider::export_user_data($u1ctx2);
+        $u2ctx2 = new approved_contextlist($this->users[2], 'mod_wiki', [$this->contexts[2]->id]);
+        provider::export_user_data($u2ctx2);
+        $u3ctx2 = new approved_contextlist($this->users[3], 'mod_wiki', [$this->contexts[2]->id]);
+        provider::export_user_data($u3ctx2);
+
+        $this->assertTrue(writer::with_context($this->contexts[2])->has_any_data());
+        writer::reset();
+
+        // Delete user 1 and 2 data, user 3's wiki still remains.
+        $approveduserids = [$this->users[1]->id, $this->users[2]->id];
+        $approvedlist = new approved_userlist($this->contexts[2], $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        $u1ctx2 = new approved_contextlist($this->users[1], 'mod_wiki', [$this->contexts[2]->id]);
+        provider::export_user_data($u1ctx2);
+        $u2ctx2 = new approved_contextlist($this->users[2], 'mod_wiki', [$this->contexts[2]->id]);
+        provider::export_user_data($u2ctx2);
+        $u3ctx2 = new approved_contextlist($this->users[3], 'mod_wiki', [$this->contexts[2]->id]);
+        provider::export_user_data($u3ctx2);
+
+        $this->assertTrue(writer::with_context($this->contexts[2])->has_any_data());
+        writer::reset();
+
+        // Delete user 3's wiki. All 3 subwikis now deleted, so ensure no data is found in this context.
+        $approveduserids = [$this->users[3]->id];
+        $approvedlist = new approved_userlist($this->contexts[2], $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        $u1ctx2 = new approved_contextlist($this->users[1], 'mod_wiki', [$this->contexts[2]->id]);
+        provider::export_user_data($u1ctx2);
+        $u2ctx2 = new approved_contextlist($this->users[2], 'mod_wiki', [$this->contexts[2]->id]);
+        provider::export_user_data($u2ctx2);
+        $u3ctx2 = new approved_contextlist($this->users[3], 'mod_wiki', [$this->contexts[2]->id]);
+        provider::export_user_data($u3ctx2);
+
+        $this->assertFalse(writer::with_context($this->contexts[2])->has_any_data());
+        writer::reset();
+
+        // Ensure Context 1 still contains data.
+        $u1ctx1 = new approved_contextlist($this->users[1], 'mod_wiki', [$this->contexts[1]->id]);
+        provider::export_user_data($u1ctx1);
+        $u2ctx1 = new approved_contextlist($this->users[2], 'mod_wiki', [$this->contexts[1]->id]);
+        provider::export_user_data($u2ctx1);
+        $u3ctx1 = new approved_contextlist($this->users[3], 'mod_wiki', [$this->contexts[1]->id]);
+        provider::export_user_data($u3ctx1);
+
+        $this->assertTrue(writer::with_context($this->contexts[1])->has_any_data());
     }
 }

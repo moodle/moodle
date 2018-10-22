@@ -44,14 +44,47 @@ $form = new \tool_dataprivacy\form\purpose($PAGE->url->out(false),
 $returnurl = new \moodle_url('/admin/tool/dataprivacy/purposes.php');
 if ($form->is_cancelled()) {
     redirect($returnurl);
-} else if ($data = $form->get_data()) {
+} else if ($alldata = $form->get_data()) {
+    $data = $form->filter_data_for_persistent($alldata);
+
     if (empty($data->id)) {
-        \tool_dataprivacy\api::create_purpose($data);
+        $purpose = \tool_dataprivacy\api::create_purpose($data);
         $messagesuccess = get_string('purposecreated', 'tool_dataprivacy');
     } else {
-        \tool_dataprivacy\api::update_purpose($data);
+        $purpose = \tool_dataprivacy\api::update_purpose($data);
         $messagesuccess = get_string('purposeupdated', 'tool_dataprivacy');
     }
+
+    $currentoverrides = [];
+    foreach ($purpose->get_purpose_overrides() as $override) {
+        $currentoverrides[$override->get('id')] = $override;
+    }
+
+    $overrides = $form->get_role_overrides_from_data($alldata);
+    $submittedoverrides = [];
+    $tosave = [];
+
+    foreach ($overrides as $overridedata) {
+        $overridedata->purposeid = $purpose->get('id');
+        $override = new \tool_dataprivacy\purpose_override($overridedata->id, $overridedata);
+
+        $tosave[] = $override;
+
+        if (!empty($overridedata->id)) {
+            $submittedoverrides[$overridedata->id] = true;
+        }
+    }
+
+    foreach ($currentoverrides as $id => $override) {
+        if (!isset($submittedoverrides[$id])) {
+            $override->delete();
+        }
+    }
+
+    foreach ($tosave as $override) {
+        $override->save();
+    }
+
     redirect($returnurl, $messagesuccess, 0, \core\output\notification::NOTIFY_SUCCESS);
 }
 

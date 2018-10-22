@@ -54,10 +54,16 @@
 }}
 
 {{#navigation}}
-    {{> core/action_link}}
+    <div class="m-b-1">
+        {{> core/action_link}}
+    </div>
 {{/navigation}}
 
-<div data-region="purposes" class="m-t-3 m-b-1">
+<p>
+  {{#str}}purposeoverview, tool_dataprivacy{{/str}}
+</p>
+
+<div data-region="purposes" class="m-b-1">
     <div class="m-y-1">
         <button class="btn btn-secondary" data-add-element="purpose" title="{{#str}}addpurpose, tool_dataprivacy{{/str}}">
             {{#pix}}t/add, moodle, {{#str}}addpurpose, tool_dataprivacy{{/str}}{{/pix}}
@@ -72,6 +78,7 @@
                 <th scope="col">{{#str}}sensitivedatareasons, tool_dataprivacy{{/str}}</th>
                 <th scope="col">{{#str}}retentionperiod, tool_dataprivacy{{/str}}</th>
                 <th scope="col">{{#str}}protected, tool_dataprivacy{{/str}}</th>
+                <th scope="col">{{#str}}roleoverrides, tool_dataprivacy{{/str}}</th>
                 <th scope="col">{{#str}}actions{{/str}}</th>
             </tr>
         </thead>
@@ -114,6 +121,14 @@
                     {{^protected}}
                         {{#str}}no{{/str}}
                     {{/protected}}
+                </td>
+                <td>
+                    {{#roleoverrides}}
+                        {{#str}}yes{{/str}}
+                    {{/roleoverrides}}
+                    {{^roleoverrides}}
+                        {{#str}}no{{/str}}
+                    {{/roleoverrides}}
                 </td>
                 <td>
                     {{#actions}}
