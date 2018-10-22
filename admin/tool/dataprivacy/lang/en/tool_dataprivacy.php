@@ -277,6 +277,8 @@ $string['send'] = 'Send';
 $string['sensitivedatareasons'] = 'Sensitive personal data processing reasons';
 $string['sensitivedatareasons_help'] = 'Select one or more applicable reasons that exempts the prohibition of processing sensitive personal data tied to this purpose. For more information, please see  <a href="https://gdpr-info.eu/art-9-gdpr/" target="_blank">GDPR Art. 9.2</a>';
 $string['setdefaults'] = 'Set defaults';
+$string['showdataretentionsummary'] = 'Show data retention summary';
+$string['showdataretentionsummary_desc'] = 'If enabled, a link to the data retention summary is shown in the page footer and in the user profile page.';
 $string['statusapproved'] = 'Approved';
 $string['statusawaitingapproval'] = 'Awaiting approval';
 $string['statuscancelled'] = 'Cancelled';
