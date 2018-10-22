@@ -1975,4 +1975,40 @@ class api {
 
         return $DB->count_records('message_conversation_members', ['conversationid' => $convid]);
     }
+
+    /**
+     * Create message conversation area.
+     *
+     * @param string $component Defines the Moodle component which the area was added to
+     * @param string $itemtype Defines the type of the component
+     * @param int    $itemid The id of the component
+     * @param int    $contextid The id of the context
+     * @param int    $enabled Allow enabled or disabled the conversation area
+     * @param string $name The main name of the area
+     * @return \stdClass
+     */
+    public static function create_conversation_area(string $component,
+                                                    string $itemtype,
+                                                    int $itemid,
+                                                    int $contextid,
+                                                    int $enabled = 0,
+                                                    string $name) {
+        global $DB;
+
+        // Create a conversation.
+        $conversation = self::create_conversation(self::MESSAGE_CONVERSATION_TYPE_GROUP, array(), $name);
+        // Create a conversation area.
+        $conversationarea = new \stdClass;
+        $conversationarea->conversationid = $conversation->id;
+        $conversationarea->component      = !empty($component) ? $component : '';
+        $conversationarea->itemtype       = $itemtype;
+        $conversationarea->itemid         = $itemid;
+        $conversationarea->contextid      = $contextid;
+        $conversationarea->enabled        = $enabled;
+        $conversationarea->timecreated    = time();
+        $conversationarea->timemodified   = $conversationarea->timecreated;
+        $conversationarea->id = $DB->insert_record('message_conversation_area', $conversationarea);
+
+        return $conversationarea;
+    }
 }

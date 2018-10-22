@@ -3273,4 +3273,32 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     protected static function sort_contacts($a, $b) {
         return $a->userid > $b->userid;
     }
+
+    /**
+     * Test create message conversation area.
+     */
+    public function test_create_conversation_area() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $contextid = 111;
+        $itemid = 222;
+        $name = 'Name of conversation';
+        \core_message\api::create_conversation_area('core_group',
+                                                    'groups',
+                                                    $itemid,
+                                                    $contextid,
+                                                    1,
+                                                    $name);
+        $conversationarea = $DB->get_record('message_conversation_area', ['itemid'    => $itemid,
+                                                                          'contextid' => $contextid,
+                                                                          'component' => 'core_group',
+                                                                          'itemtype'  => 'groups']);
+        // Check if exist the new conversation area and if the conversation has been created with the name.
+        $this->assertEquals($itemid, $conversationarea->itemid);
+        $this->assertEquals(
+                $name,
+                $DB->get_field('message_conversations', 'name', ['id' => $conversationarea->conversationid])
+        );
+    }
 }
