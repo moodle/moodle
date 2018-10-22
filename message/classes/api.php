@@ -24,6 +24,8 @@
 
 namespace core_message;
 
+use core_favourites\local\entity\favourite;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/lib/messagelib.php');
@@ -274,10 +276,30 @@ class api {
      * @param int $userid The user id
      * @param int $limitfrom
      * @param int $limitnum
+     * @param int $type the conversation type.
+     * @param bool $favouritesonly whether to retrieve only the favourite conversations for the user, or not.
      * @return array
      */
-    public static function get_conversations($userid, $limitfrom = 0, $limitnum = 20) {
+    public static function get_conversations($userid, $limitfrom = 0, $limitnum = 20, int $type = null,
+            bool $favouritesonly = false) {
         global $DB;
+
+        $favouritesql = "";
+        $favouriteparams = [];
+        if ($favouritesonly) {
+            // Ask the favourites subsystem for the user's favourite conversations.
+            $service = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($userid));
+            $favourites = $service->find_favourites_by_type('core_message', 'message_conversations');
+            if (empty($favourites)) {
+                return []; // No favourited conversations, so return none.
+            }
+            $favids = array_values(array_map(function ($fav) {
+                return $fav->itemid;
+            }, $favourites));
+            list ($insql, $inparams) = $DB->get_in_or_equal($favids, SQL_PARAMS_NAMED, 'favouriteids');
+            $favouritesql = " AND m.conversationid {$insql} ";
+            $favouriteparams = $inparams;
+        }
 
         // Get the last message from each conversation that the user belongs to.
         $sql = "SELECT m.id, m.conversationid, m.useridfrom, mcm2.userid as useridto, m.smallmessage, m.timecreated
@@ -305,10 +327,12 @@ class api {
             INNER JOIN {message_conversation_members} mcm2
                     ON mcm2.conversationid = m.conversationid
                  WHERE mcm.userid = m.useridfrom
-                   AND mcm.id != mcm2.id
+                   AND mcm.id != mcm2.id $favouritesql
               ORDER BY m.timecreated DESC";
-        $messageset = $DB->get_recordset_sql($sql, ['userid' => $userid, 'action' => self::MESSAGE_ACTION_DELETED,
-            'userid2' => $userid], $limitfrom, $limitnum);
+
+        $params = array_merge($favouriteparams, ['userid' => $userid, 'action' => self::MESSAGE_ACTION_DELETED,
+            'userid2' => $userid]);
+        $messageset = $DB->get_recordset_sql($sql, $params, $limitfrom, $limitnum);
 
         $messages = [];
         foreach ($messageset as $message) {
@@ -407,6 +431,34 @@ class api {
         }
 
         return $arrconversations;
+    }
+
+    /**
+     * Mark a conversation as a favourite for the given user.
+     *
+     * @param int $conversationid the id of the conversation to mark as a favourite.
+     * @param int $userid the id of the user to whom the favourite belongs.
+     * @return favourite the favourite object.
+     * @throws \moodle_exception if the user or conversation don't exist.
+     */
+    public static function set_favourite_conversation(int $conversationid, int $userid) : favourite {
+        if (!self::is_user_in_conversation($userid, $conversationid)) {
+            throw new \moodle_exception("Conversation doesn't exist or user is not a member");
+        }
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($userid));
+        return $ufservice->create_favourite('core_message', 'message_conversations', $conversationid, \context_system::instance());
+    }
+
+    /**
+     * Unset a conversation as a favourite for the given user.
+     *
+     * @param int $conversationid the id of the conversation to unset as a favourite.
+     * @param int $userid the id to whom the favourite belongs.
+     * @throws \moodle_exception if the favourite does not exist for the user.
+     */
+    public static function unset_favourite_conversation(int $conversationid, int $userid) {
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($userid));
+        $ufservice->delete_favourite('core_message', 'message_conversations', $conversationid, \context_system::instance());
     }
 
     /**
