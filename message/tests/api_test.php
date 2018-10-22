@@ -342,6 +342,304 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test verifying that favourited conversations can be retrieved.
+     */
+    public function test_get_favourite_conversations() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // The person doing the search.
+        $this->setUser($user1);
+
+        // No conversations yet.
+        $this->assertEquals([], \core_message\api::get_conversations($user1->id));
+
+        // Create some conversations for user1.
+        $time = 1;
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $messageid1 = $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+
+        $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
+        $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
+        $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
+        $messageid2 = $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+
+        $this->send_fake_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?', 0, $time + 9);
+        $this->send_fake_message($user4, $user1, 'Yah brah, it\'s pretty rad.', 0, $time + 10);
+        $messageid3 = $this->send_fake_message($user1, $user4, 'Dope.', 0, $time + 11);
+
+        // Favourite the first 2 conversations for user1.
+        $convoids = [];
+        $convoids[] = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        $convoids[] = \core_message\api::get_conversation_between_users([$user1->id, $user3->id]);
+        $user1context = context_user::instance($user1->id);
+        $service = \core_favourites\service_factory::get_service_for_user_context($user1context);
+        foreach ($convoids as $convoid) {
+            $service->create_favourite('core_message', 'message_conversations', $convoid, $user1context);
+        }
+
+        // We should have 3 conversations.
+        $this->assertCount(3, \core_message\api::get_conversations($user1->id));
+
+        // And 2 favourited conversations.
+        $conversations = \core_message\api::get_conversations($user1->id, 0, 20, null, true);
+        $this->assertCount(2, $conversations);
+    }
+
+    /**
+     * Tests retrieving favourite conversations with a limit and offset to ensure pagination works correctly.
+     */
+    public function test_get_favourite_conversations_limit_offset() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // The person doing the search.
+        $this->setUser($user1);
+
+        // No conversations yet.
+        $this->assertEquals([], \core_message\api::get_conversations($user1->id));
+
+        // Create some conversations for user1.
+        $time = 1;
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $messageid1 = $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+
+        $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
+        $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
+        $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
+        $messageid2 = $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+
+        $this->send_fake_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?', 0, $time + 9);
+        $this->send_fake_message($user4, $user1, 'Yah brah, it\'s pretty rad.', 0, $time + 10);
+        $messageid3 = $this->send_fake_message($user1, $user4, 'Dope.', 0, $time + 11);
+
+        // Favourite the all conversations for user1.
+        $convoids = [];
+        $convoids[] = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        $convoids[] = \core_message\api::get_conversation_between_users([$user1->id, $user3->id]);
+        $convoids[] = \core_message\api::get_conversation_between_users([$user1->id, $user4->id]);
+        $user1context = context_user::instance($user1->id);
+        $service = \core_favourites\service_factory::get_service_for_user_context($user1context);
+        foreach ($convoids as $convoid) {
+            $service->create_favourite('core_message', 'message_conversations', $convoid, $user1context);
+        }
+
+        // Get all records, using offset 0 and large limit.
+        $this->assertCount(2, \core_message\api::get_conversations($user1->id, 1, 10, null, true));
+
+        // Now, get 10 conversations starting at the second record. We should see 2 conversations.
+        $this->assertCount(2, \core_message\api::get_conversations($user1->id, 1, 10, null, true));
+
+        // Now, try to get favourited conversations using an invalid offset.
+        $this->assertCount(0, \core_message\api::get_conversations($user1->id, 4, 10, null, true));
+    }
+
+    /**
+     * Tests retrieving favourite conversations when a conversation contains a deleted user.
+     */
+    public function test_get_favourite_conversations_with_deleted_user() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth, have some different conversations with different users.
+        $time = 1;
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+
+        $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
+        $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
+        $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
+        $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+
+        // Favourite the all conversations for user1.
+        $convoids = [];
+        $convoids[] = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        $convoids[] = \core_message\api::get_conversation_between_users([$user1->id, $user3->id]);
+        $user1context = context_user::instance($user1->id);
+        $service = \core_favourites\service_factory::get_service_for_user_context($user1context);
+        foreach ($convoids as $convoid) {
+            $service->create_favourite('core_message', 'message_conversations', $convoid, $user1context);
+        }
+
+        // Delete the second user.
+        delete_user($user2);
+
+        // Retrieve the conversations.
+        $conversations = \core_message\api::get_conversations($user1->id, 0, 20, null, true);
+
+        // We should only have one conversation because the other user was deleted.
+        $this->assertCount(1, $conversations);
+
+        // Confirm the conversation is from the non-deleted user.
+        $conversation = reset($conversations);
+        $this->assertEquals($user3->id, $conversation->userid);
+    }
+
+    /**
+     * Test confirming that conversations can be marked as favourites.
+     */
+    public function test_set_favourite_conversation() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth, have some different conversations with different users.
+        $time = 1;
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+
+        $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
+        $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
+        $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
+        $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+
+        // Favourite the first conversation as user 1.
+        $conversationid1 = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        \core_message\api::set_favourite_conversation($conversationid1, $user1->id);
+
+        // Verify we have a single favourite conversation a user 1.
+        $this->assertCount(1, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
+
+        // Verify we have no favourites as user2, despite being a member in that conversation.
+        $this->assertCount(0, \core_message\api::get_conversations($user2->id, 0, 20, null, true));
+
+        // Try to favourite the same conversation again.
+        $this->expectException(\moodle_exception::class);
+        \core_message\api::set_favourite_conversation($conversationid1, $user1->id);
+    }
+
+    /**
+     * Test verifying that trying to mark a non-existent conversation as a favourite, results in an exception.
+     */
+    public function test_set_favourite_conversation_nonexistent_conversation() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        // Try to favourite a non-existent conversation.
+        $this->expectException(\moodle_exception::class);
+        \core_message\api::set_favourite_conversation(0, $user1->id);
+    }
+
+    /**
+     * Test verifying that a conversation cannot be marked as favourite unless the user is a member of that conversation.
+     */
+    public function test_set_favourite_conversation_non_member() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth, have some different conversations with different users.
+        $time = 1;
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+
+        $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
+        $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
+        $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
+        $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+
+        // Try to favourite the first conversation as user 3, who is not a member.
+        $conversationid1 = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        $this->expectException(\moodle_exception::class);
+        \core_message\api::set_favourite_conversation($conversationid1, $user3->id);
+    }
+
+    /**
+     * Test confirming that those conversations marked as favourites can be unfavourited.
+     */
+    public function test_unset_favourite_conversation() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth, have some different conversations with different users.
+        $time = 1;
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+
+        $this->send_fake_message($user1, $user3, 'Booyah', 0, $time + 5);
+        $this->send_fake_message($user3, $user1, 'Whaaat?', 0, $time + 6);
+        $this->send_fake_message($user1, $user3, 'Nothing.', 0, $time + 7);
+        $this->send_fake_message($user3, $user1, 'Cool.', 0, $time + 8);
+
+        // Favourite the first conversation as user 1 and the second as user 3.
+        $conversationid1 = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        $conversationid2 = \core_message\api::get_conversation_between_users([$user1->id, $user3->id]);
+        \core_message\api::set_favourite_conversation($conversationid1, $user1->id);
+        \core_message\api::set_favourite_conversation($conversationid2, $user3->id);
+
+        // Verify we have a single favourite conversation for both user 1 and user 3.
+        $this->assertCount(1, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
+        $this->assertCount(1, \core_message\api::get_conversations($user3->id, 0, 20, null, true));
+
+        // Now unfavourite the conversation as user 1.
+        \core_message\api::unset_favourite_conversation($conversationid1, $user1->id);
+
+        // Verify we have a single favourite conversation user 3 only, and none for user1.
+        $this->assertCount(1, \core_message\api::get_conversations($user3->id, 0, 20, null, true));
+        $this->assertCount(0, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
+
+        // Try to favourite the same conversation again as user 1.
+        $this->expectException(\moodle_exception::class);
+        \core_message\api::unset_favourite_conversation($conversationid1, $user1->id);
+    }
+
+    /**
+     * Test verifying that a valid conversation cannot be unset as a favourite if it's not marked as a favourite.
+     */
+    public function test_unset_favourite_conversation_not_favourite() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth, have some different conversations with different users.
+        $time = 1;
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+
+        // Now try to unfavourite the conversation as user 1.
+        $conversationid1 = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        $this->expectException(\moodle_exception::class);
+        \core_message\api::unset_favourite_conversation($conversationid1, $user1->id);
+    }
+
+    /**
+     * Test verifying that a non-existent conversation cannot be unset as a favourite.
+     */
+    public function test_unset_favourite_conversation_non_existent_conversation() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+
+        // Now try to unfavourite the conversation as user 1.
+        $this->expectException(\moodle_exception::class);
+        \core_message\api::unset_favourite_conversation(0, $user1->id);
+    }
+
+    /**
      * Tests retrieving conversations.
      */
     public function test_get_conversations() {

@@ -3137,4 +3137,122 @@ class core_message_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters for the favourite_conversations() method.
+     *
+     * @return external_function_parameters
+     */
+    public static function set_favourite_conversations_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'id of the user, 0 for current user', VALUE_DEFAULT, 0),
+                'conversations' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'id of the conversation', VALUE_DEFAULT, 0)
+                )
+            )
+        );
+    }
+
+    /**
+     * Favourite a conversation, or list of conversations for a user.
+     *
+     * @param int $userid the id of the user, or 0 for the current user.
+     * @param array $conversationids the list of conversations ids to favourite.
+     * @return array
+     * @throws moodle_exception if messaging is disabled or if the user cannot perform the action.
+     */
+    public static function set_favourite_conversations(int $userid, array $conversationids) {
+        global $CFG, $USER;
+
+        // All the business logic checks that really shouldn't be in here.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+        $params = [
+            'userid' => $userid,
+            'conversations' => $conversationids
+        ];
+        $params = self::validate_parameters(self::set_favourite_conversations_parameters(), $params);
+        $systemcontext = context_system::instance();
+        self::validate_context($systemcontext);
+
+        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
+
+        foreach ($params['conversations'] as $conversationid) {
+            \core_message\api::set_favourite_conversation($conversationid, $params['userid']);
+        }
+
+        return [];
+    }
+
+    /**
+     * Return a description of the returns for the create_user_favourite_conversations() method.
+     *
+     * @return external_description
+     */
+    public static function set_favourite_conversations_returns() {
+        return new external_warnings();
+    }
+
+    /**
+     * Returns description of method parameters for unfavourite_conversations() method.
+     *
+     * @return external_function_parameters
+     */
+    public static function unset_favourite_conversations_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'id of the user, 0 for current user', VALUE_DEFAULT, 0),
+                'conversations' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'id of the conversation', VALUE_DEFAULT, 0)
+                )
+            )
+        );
+    }
+
+    /**
+     * Unfavourite a conversation, or list of conversations for a user.
+     *
+     * @param int $userid the id of the user, or 0 for the current user.
+     * @param array $conversationids the list of conversations ids unset as favourites.
+     * @return array
+     * @throws moodle_exception if messaging is disabled or if the user cannot perform the action.
+     */
+    public static function unset_favourite_conversations(int $userid, array $conversationids) {
+        global $CFG, $USER;
+
+        // All the business logic checks that really shouldn't be in here.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+        $params = [
+            'userid' => $userid,
+            'conversations' => $conversationids
+        ];
+        $params = self::validate_parameters(self::unset_favourite_conversations_parameters(), $params);
+        $systemcontext = context_system::instance();
+        self::validate_context($systemcontext);
+
+        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
+
+        foreach ($params['conversations'] as $conversationid) {
+            \core_message\api::unset_favourite_conversation($conversationid, $params['userid']);
+        }
+
+        return [];
+    }
+
+    /**
+     * Unset favourite conversations return description.
+     *
+     * @return external_description
+     */
+    public static function unset_favourite_conversations_returns() {
+        return new external_warnings();
+    }
 }

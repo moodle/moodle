@@ -1154,6 +1154,22 @@ $functions = array(
         'capabilities' => 'moodle/user:editownmessageprofile',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_message_set_favourite_conversations' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'set_favourite_conversations',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Mark a conversation or group of conversations as favourites/starred conversations.',
+        'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+    'core_message_unset_favourite_conversations' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'unset_favourite_conversations',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Unset a conversation or group of conversations as favourites/starred conversations.',
+        'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_notes_create_notes' => array(
         'classname' => 'core_notes_external',
         'methodname' => 'create_notes',
