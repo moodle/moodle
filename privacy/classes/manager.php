@@ -27,6 +27,7 @@ use core_privacy\local\metadata\null_provider;
 use core_privacy\local\request\context_aware_provider;
 use core_privacy\local\request\contextlist_collection;
 use core_privacy\local\request\core_user_data_provider;
+use core_privacy\local\request\core_userlist_provider;
 use core_privacy\local\request\data_provider;
 use core_privacy\local\request\user_preference_provider;
 use \core_privacy\local\metadata\provider as metadata_provider;
@@ -256,6 +257,46 @@ class manager {
     }
 
     /**
+     * Gets a collection of users for all components in the specified context.
+     *
+     * @param   \context    $context The context to search
+     * @return  userlist_collection the collection of userlist items for the respective components.
+     */
+    public function get_users_in_context(\context $context) : \core_privacy\local\request\userlist_collection {
+        $progress = static::get_log_tracer();
+
+        $components = $this->get_component_list();
+        $a = (object) [
+            'total' => count($components),
+            'progress' => 0,
+            'component' => '',
+            'datetime' => userdate(time()),
+        ];
+        $collection = new \core_privacy\local\request\userlist_collection($context);
+
+        $progress->output(get_string('trace:fetchcomponents', 'core_privacy', $a), 1);
+        foreach ($components as $component) {
+            $a->component = $component;
+            $a->progress++;
+            $a->datetime = userdate(time());
+            $progress->output(get_string('trace:preprocessingcomponent', 'core_privacy', $a), 2);
+            $userlist = new local\request\userlist($context, $component);
+
+            $this->handled_component_class_callback($component, core_userlist_provider::class, 'get_users_in_context', [$userlist]);
+
+            // Add contexts that the component may not know about.
+            \core_privacy\local\request\helper::add_shared_users_to_userlist($userlist);
+
+            if (count($userlist)) {
+                $collection->add_userlist($userlist);
+            }
+        }
+        $progress->output(get_string('trace:done', 'core_privacy'), 1);
+
+        return $collection;
+    }
+
+    /**
      * Export all user data for the specified approved_contextlist items.
      *
      * Note: userid and component are stored in each respective approved_contextlist.
@@ -377,6 +418,48 @@ class manager {
             // Delete any shared user data it doesn't know about.
             local\request\helper::delete_data_for_user($approvedcontextlist);
         }
+        $progress->output(get_string('trace:done', 'core_privacy'), 1);
+    }
+
+    /**
+     * Delete all user data for all specified users in a context.
+     *
+     * @param   \core_privacy\local\request\userlist_collection $collection
+     */
+    public function delete_data_for_users_in_context(\core_privacy\local\request\userlist_collection $collection) {
+        $progress = static::get_log_tracer();
+
+        $a = (object) [
+            'contextid' => $collection->get_context()->id,
+            'total' => count($collection),
+            'progress' => 0,
+            'component' => '',
+            'datetime' => userdate(time()),
+        ];
+
+        // Delete the data.
+        $progress->output(get_string('trace:deletingapprovedusers', 'core_privacy', $a), 1);
+        foreach ($collection as $userlist) {
+            if (!$userlist instanceof \core_privacy\local\request\approved_userlist) {
+                throw new \moodle_exception('The supplied userlist must be an approved_userlist');
+            }
+
+            $component = $userlist->get_component();
+            $a->component = $component;
+            $a->progress++;
+            $a->datetime = userdate(time());
+
+            if (empty($userlist)) {
+                // This really shouldn't happen!
+                continue;
+            }
+
+            $progress->output(get_string('trace:processingcomponent', 'core_privacy', $a), 2);
+
+            $this->handled_component_class_callback($component, core_userlist_provider::class,
+                    'delete_data_for_users', [$userlist]);
+        }
+
         $progress->output(get_string('trace:done', 'core_privacy'), 1);
     }
 

@@ -26,8 +26,10 @@ namespace repository_dropbox\privacy;
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\context;
 use core_privacy\local\request\contextlist;
+use core_privacy\local\request\userlist;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +39,10 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\plugin\provider {
+class provider implements
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\core_userlist_provider,
+        \core_privacy\local\request\plugin\provider {
 
     /**
      * Returns meta data about this system.
@@ -68,6 +73,14 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
     }
 
     /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+    }
+
+    /**
      * Export all user data for the specified user, in the specified contexts.
      *
      * @param   approved_contextlist $contextlist The approved contexts to export information for.
@@ -91,4 +104,11 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
     public static function delete_data_for_user(approved_contextlist $contextlist) {
     }
 
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+    }
 }

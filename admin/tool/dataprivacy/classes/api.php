@@ -988,6 +988,7 @@ class api {
      */
     public static function add_request_contexts_with_status(contextlist_collection $clcollection, int $requestid, int $status) {
         $request = new data_request($requestid);
+        $user = \core_user::get_user($request->get('userid'));
         foreach ($clcollection as $contextlist) {
             // Convert the \core_privacy\local\request\contextlist into a contextlist persistent and store it.
             $clp = \tool_dataprivacy\contextlist::from_contextlist($contextlist);
@@ -998,10 +999,14 @@ class api {
             foreach ($contextlist->get_contextids() as $contextid) {
                 if ($request->get('type') == static::DATAREQUEST_TYPE_DELETE) {
                     $context = \context::instance_by_id($contextid);
-                    if (($purpose = static::get_effective_context_purpose($context)) && !empty($purpose->get('protected'))) {
+                    $purpose = static::get_effective_context_purpose($context);
+
+                    // Data can only be deleted from it if the context is either expired, or unprotected.
+                    if (!expired_contexts_manager::is_context_expired_or_unprotected_for_user($context, $user)) {
                         continue;
                     }
                 }
+
                 $context = new contextlist_context();
                 $context->set('contextid', $contextid)
                     ->set('contextlistid', $contextlistid)
@@ -1097,6 +1102,15 @@ class api {
                     $approvedcollection->add_contextlist(new approved_contextlist($foruser, $lastcomponent, $contexts));
                 }
                 $contexts = [];
+            }
+
+            if ($request->get('type') == static::DATAREQUEST_TYPE_DELETE) {
+                $context = \context::instance_by_id($record->contextid);
+                $purpose = static::get_effective_context_purpose($context);
+                // Data can only be deleted from it if the context is either expired, or unprotected.
+                if (!expired_contexts_manager::is_context_expired_or_unprotected_for_user($context, $foruser)) {
+                    continue;
+                }
             }
 
             $contexts[] = $record->contextid;
@@ -1195,5 +1209,26 @@ class api {
         }
 
         return true;
+    }
+
+    /**
+     * Format the supplied date interval as a retention period.
+     *
+     * @param   \DateInterval   $interval
+     * @return  string
+     */
+    public static function format_retention_period(\DateInterval $interval) : string {
+        // It is one or another.
+        if ($interval->y) {
+            $formattedtime = get_string('numyears', 'moodle', $interval->format('%y'));
+        } else if ($interval->m) {
+            $formattedtime = get_string('nummonths', 'moodle', $interval->format('%m'));
+        } else if ($interval->d) {
+            $formattedtime = get_string('numdays', 'moodle', $interval->format('%d'));
+        } else {
+            $formattedtime = get_string('retentionperiodzero', 'tool_dataprivacy');
+        }
+
+        return $formattedtime;
     }
 }

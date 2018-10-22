@@ -25,9 +25,11 @@ namespace mod_lti\privacy;
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\helper;
 use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
 defined('MOODLE_INTERNAL') || die();
@@ -40,6 +42,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class provider implements
     \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\plugin\provider {
 
     /**
@@ -158,6 +161,58 @@ class provider implements
     }
 
     /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!is_a($context, \context_module::class)) {
+            return;
+        }
+
+        // Fetch all LTI submissions.
+        $sql = "SELECT ltisub.userid
+                  FROM {context} c
+            INNER JOIN {course_modules} cm
+                    ON cm.id = c.instanceid
+                   AND c.contextlevel = :contextlevel
+            INNER JOIN {modules} m
+                    ON m.id = cm.module
+                   AND m.name = :modname
+            INNER JOIN {lti} lti
+                    ON lti.id = cm.instance
+            INNER JOIN {lti_submission} ltisub
+                    ON ltisub.ltiid = lti.id
+                 WHERE c.id = :contextid";
+
+        $params = [
+            'modname' => 'lti',
+            'contextlevel' => CONTEXT_MODULE,
+            'contextid' => $context->id,
+        ];
+
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Fetch all LTI types.
+        $sql = "SELECT ltit.createdby AS userid
+                 FROM {context} c
+                 JOIN {course} course
+                   ON c.contextlevel = :contextlevel
+                  AND c.instanceid = course.id
+                 JOIN {lti_types} ltit
+                   ON ltit.course = course.id
+                WHERE c.id = :contextid";
+
+        $params = [
+            'contextlevel' => CONTEXT_COURSE,
+            'contextid' => $context->id,
+        ];
+        $userlist->add_from_sql('userid', $sql, $params);
+    }
+
+    /**
      * Export personal data for the given approved_contextlist. User and context information is contained within the contextlist.
      *
      * @param approved_contextlist $contextlist a list of contexts approved for export.
@@ -206,6 +261,27 @@ class provider implements
             }
             $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
             $DB->delete_records('lti_submission', ['ltiid' => $instanceid, 'userid' => $userid]);
+        }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if ($context instanceof \context_module) {
+            $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
+
+            list($insql, $inparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+            $sql = "ltiid = :instanceid AND userid {$insql}";
+            $params = array_merge(['instanceid' => $instanceid], $inparams);
+
+            $DB->delete_records_select('lti_submission', $sql, $params);
         }
     }
 

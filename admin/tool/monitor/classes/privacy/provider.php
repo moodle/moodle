@@ -27,7 +27,9 @@ defined('MOODLE_INTERNAL') || die();
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\contextlist;
 use \core_privacy\local\request\approved_contextlist;
+use \core_privacy\local\request\approved_userlist;
 use \core_privacy\local\request\transform;
+use \core_privacy\local\request\userlist;
 use \core_privacy\local\request\writer;
 use \tool_monitor\subscription_manager;
 use \tool_monitor\rule_manager;
@@ -39,7 +41,10 @@ use \tool_monitor\rule_manager;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\plugin\provider {
+class provider implements
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\core_userlist_provider,
+        \core_privacy\local\request\plugin\provider {
 
     /**
      * Get information about the user data stored by this plugin.
@@ -102,6 +107,40 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
     }
 
     /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!is_a($context, \context_user::class)) {
+            return;
+        }
+
+        $params = [
+            'contextid' => $context->id,
+            'contextuser' => CONTEXT_USER,
+        ];
+
+        $sql = "SELECT mr.userid
+                  FROM {context} ctx
+                  JOIN {tool_monitor_rules} mr ON ctx.instanceid = mr.userid
+                       AND ctx.contextlevel = :contextuser
+                 WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        $sql = "SELECT ms.userid
+                  FROM {context} ctx
+             LEFT JOIN {tool_monitor_subscriptions} ms ON ctx.instanceid = ms.userid
+                       AND ctx.contextlevel = :contextuser
+                 WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+    }
+
+    /**
      * Export all event monitor information for the list of contexts and this user.
      *
      * @param  approved_contextlist $contextlist The list of approved contexts for a user.
@@ -140,6 +179,22 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
         static::delete_user_data($contextlist->get_user()->id);
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        $context = $userlist->get_context();
+        $userids = $userlist->get_userids();
+        $userid = reset($userids);
+
+        // Only delete data for user context, which should be a single user.
+        if ($context->contextlevel == CONTEXT_USER && count($userids) == 1 && $userid == $context->instanceid) {
+            static::delete_user_data($userid);
+        }
     }
 
     /**

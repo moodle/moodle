@@ -29,6 +29,7 @@ global $CFG;
 
 use core_privacy\tests\provider_testcase;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 use mod_survey\privacy\provider;
@@ -83,6 +84,59 @@ class mod_survey_privacy_testcase extends provider_testcase {
         $this->assertTrue(in_array(context_module::instance($cm1a->cmid)->id, $contextids));
         $this->assertTrue(in_array(context_module::instance($cm1b->cmid)->id, $contextids));
         $this->assertTrue(in_array(context_module::instance($cm1c->cmid)->id, $contextids));
+    }
+
+    /**
+     * Test for provider::test_get_users_in_context().
+     */
+    public function test_get_users_in_context() {
+        $dg = $this->getDataGenerator();
+        $component = 'mod_survey';
+
+        $c1 = $dg->create_course();
+        $c2 = $dg->create_course();
+        $cm1a = $dg->create_module('survey', ['template' => 1, 'course' => $c1]);
+        $cm1b = $dg->create_module('survey', ['template' => 2, 'course' => $c1]);
+        $cm2 = $dg->create_module('survey', ['template' => 1, 'course' => $c2]);
+        $cm1acontext = context_module::instance($cm1a->cmid);
+        $cm1bcontext = context_module::instance($cm1b->cmid);
+        $cm2context = context_module::instance($cm2->cmid);
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $bothusers = [$u1->id, $u2->id];
+        sort($bothusers);
+
+        $this->create_answer($cm1a->id, 1, $u1->id);
+        $this->create_answer($cm1b->id, 1, $u1->id);
+        $this->create_answer($cm1b->id, 1, $u2->id);
+        $this->create_answer($cm2->id, 1, $u2->id);
+        $this->create_analysis($cm2->id, $u1->id);
+
+        // Cm1a should only contain u1.
+        $userlist = new \core_privacy\local\request\userlist($cm1acontext, $component);
+        provider::get_users_in_context($userlist);
+
+        $this->assertCount(1, $userlist);
+        $this->assertEquals([$u1->id], $userlist->get_userids());
+
+        // Cm1b should contain u1 and u2 (both have answers).
+        $userlist = new \core_privacy\local\request\userlist($cm1bcontext, $component);
+        provider::get_users_in_context($userlist);
+
+        $this->assertCount(2, $userlist);
+        $actual = $userlist->get_userids();
+        sort($actual);
+        $this->assertEquals($bothusers, $actual);
+
+        // Cm2 should contain u1 (analysis) and u2 (answer).
+        $userlist = new \core_privacy\local\request\userlist($cm2context, $component);
+        provider::get_users_in_context($userlist);
+
+        $this->assertCount(2, $userlist);
+        $actual = $userlist->get_userids();
+        sort($actual);
+        $this->assertEquals($bothusers, $actual);
     }
 
     public function test_delete_data_for_all_users_in_context() {
@@ -187,6 +241,64 @@ class mod_survey_privacy_testcase extends provider_testcase {
         $this->assertFalse($DB->record_exists('survey_analysis', ['userid' => $u1->id, 'survey' => $cm1a->id]));
         $this->assertFalse($DB->record_exists('survey_analysis', ['userid' => $u1->id, 'survey' => $cm1b->id]));
         $this->assertTrue($DB->record_exists('survey_analysis', ['userid' => $u2->id, 'survey' => $cm1a->id]));
+        $this->assertTrue($DB->record_exists('survey_analysis', ['userid' => $u2->id, 'survey' => $cm1c->id]));
+    }
+
+    /**
+     * Test for provider::delete_data_for_users().
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+        $dg = $this->getDataGenerator();
+        $component = 'mod_survey';
+
+        $c1 = $dg->create_course();
+        $cm1a = $dg->create_module('survey', ['template' => 1, 'course' => $c1]);
+        $cm1b = $dg->create_module('survey', ['template' => 2, 'course' => $c1]);
+        $cm1c = $dg->create_module('survey', ['template' => 2, 'course' => $c1]);
+        $cm1acontext = context_module::instance($cm1a->cmid);
+        $cm1bcontext = context_module::instance($cm1b->cmid);
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+
+        $this->create_answer($cm1a->id, 1, $u1->id);
+        $this->create_answer($cm1a->id, 1, $u2->id);
+        $this->create_analysis($cm1a->id, $u1->id);
+        $this->create_analysis($cm1a->id, $u2->id);
+        $this->create_answer($cm1b->id, 1, $u2->id);
+        $this->create_analysis($cm1b->id, $u1->id);
+        $this->create_answer($cm1c->id, 1, $u1->id);
+        $this->create_analysis($cm1c->id, $u2->id);
+
+        // Confirm data exists before deletion.
+        $this->assertTrue($DB->record_exists('survey_answers', ['userid' => $u1->id, 'survey' => $cm1a->id]));
+        $this->assertTrue($DB->record_exists('survey_answers', ['userid' => $u1->id, 'survey' => $cm1c->id]));
+        $this->assertTrue($DB->record_exists('survey_answers', ['userid' => $u2->id, 'survey' => $cm1a->id]));
+        $this->assertTrue($DB->record_exists('survey_answers', ['userid' => $u2->id, 'survey' => $cm1b->id]));
+        $this->assertTrue($DB->record_exists('survey_analysis', ['userid' => $u1->id, 'survey' => $cm1a->id]));
+        $this->assertTrue($DB->record_exists('survey_analysis', ['userid' => $u1->id, 'survey' => $cm1b->id]));
+        $this->assertTrue($DB->record_exists('survey_analysis', ['userid' => $u2->id, 'survey' => $cm1a->id]));
+        $this->assertTrue($DB->record_exists('survey_analysis', ['userid' => $u2->id, 'survey' => $cm1c->id]));
+
+        // Ensure only approved user data is deleted.
+        $approveduserids = [$u1->id];
+        $approvedlist = new approved_userlist($cm1acontext, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        $this->assertFalse($DB->record_exists('survey_answers', ['userid' => $u1->id, 'survey' => $cm1a->id]));
+        $this->assertFalse($DB->record_exists('survey_analysis', ['userid' => $u1->id, 'survey' => $cm1a->id]));
+        $this->assertTrue($DB->record_exists('survey_answers', ['userid' => $u2->id, 'survey' => $cm1a->id]));
+        $this->assertTrue($DB->record_exists('survey_analysis', ['userid' => $u2->id, 'survey' => $cm1a->id]));
+
+        $approveduserids = [$u1->id, $u2->id];
+        $approvedlist = new approved_userlist($cm1bcontext, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        $this->assertFalse($DB->record_exists('survey_answers', ['survey' => $cm1b->id]));
+        $this->assertFalse($DB->record_exists('survey_analysis', ['survey' => $cm1b->id]));
+
+        $this->assertTrue($DB->record_exists('survey_answers', ['userid' => $u1->id, 'survey' => $cm1c->id]));
         $this->assertTrue($DB->record_exists('survey_analysis', ['userid' => $u2->id, 'survey' => $cm1c->id]));
     }
 

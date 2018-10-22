@@ -113,6 +113,47 @@ class mod_lti_privacy_provider_testcase extends \core_privacy\tests\provider_tes
     }
 
     /**
+     * Test for provider::test_get_users_in_context()
+     */
+    public function test_get_users_in_context() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $component = 'mod_lti';
+
+        // The LTI activity the user will have submitted something for.
+        $lti1 = $this->getDataGenerator()->create_module('lti', array('course' => $course->id));
+
+        // Another LTI activity that has no user activity.
+        $lti2 = $this->getDataGenerator()->create_module('lti', array('course' => $course->id));
+
+        // Create user which will make a submission each.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $this->create_lti_submission($lti1->id, $user1->id);
+        $this->create_lti_submission($lti1->id, $user2->id);
+
+        $context = context_module::instance($lti1->cmid);
+        $userlist = new \core_privacy\local\request\userlist($context, $component);
+        provider::get_users_in_context($userlist);
+
+        $this->assertCount(2, $userlist);
+        $expected = [$user1->id, $user2->id];
+        $actual = $userlist->get_userids();
+        sort($expected);
+        sort($actual);
+
+        $this->assertEquals($expected, $actual);
+
+        $context = context_module::instance($lti2->cmid);
+        $userlist = new \core_privacy\local\request\userlist($context, $component);
+        provider::get_users_in_context($userlist);
+
+        $this->assertEmpty($userlist);
+    }
+
+    /**
      * Test for provider::export_user_data().
      */
     public function test_export_for_context_submissions() {
@@ -286,6 +327,51 @@ class mod_lti_privacy_provider_testcase extends \core_privacy\tests\provider_tes
         $this->assertCount(1, $ltisubmission);
         $lastsubmission = reset($ltisubmission);
         $this->assertEquals($user2->id, $lastsubmission->userid);
+    }
+
+    /**
+     * Test for provider::delete_data_for_users().
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+        $component = 'mod_lti';
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $lti = $this->getDataGenerator()->create_module('lti', array('course' => $course->id));
+
+        // Create users that will make submissions.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        $this->create_lti_submission($lti->id, $user1->id);
+        $this->create_lti_submission($lti->id, $user2->id);
+        $this->create_lti_submission($lti->id, $user3->id);
+
+        // Before deletion we should have 2 responses.
+        $count = $DB->count_records('lti_submission', ['ltiid' => $lti->id]);
+        $this->assertEquals(3, $count);
+
+        $context = \context_module::instance($lti->cmid);
+        $approveduserids = [$user1->id, $user2->id];
+        $approvedlist = new core_privacy\local\request\approved_userlist($context, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        // After deletion the lti submission for the first two users should have been deleted.
+        list($insql, $inparams) = $DB->get_in_or_equal($approveduserids, SQL_PARAMS_NAMED);
+        $sql = "ltiid = :ltiid AND userid {$insql}";
+        $params = array_merge($inparams, ['ltiid' => $lti->id]);
+        $count = $DB->count_records_select('lti_submission', $sql, $params);
+        $this->assertEquals(0, $count);
+
+        // Check the submission for the third user is still there.
+        $ltisubmission = $DB->get_records('lti_submission');
+        $this->assertCount(1, $ltisubmission);
+        $lastsubmission = reset($ltisubmission);
+        $this->assertEquals($user3->id, $lastsubmission->userid);
     }
 
     /**

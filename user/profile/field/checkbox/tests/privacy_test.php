@@ -25,6 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 use \core_privacy\tests\provider_testcase;
+use profilefield_checkbox\privacy\provider;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Unit tests for user\profile\field\checkbox\classes\privacy\provider.php
@@ -58,7 +60,7 @@ class profilefield_checkbox_testcase extends provider_testcase {
         // Confirm we got the right number of user field data.
         $this->assertCount(1, $userfielddata);
         $context = context_user::instance($user->id);
-        $contextlist = \profilefield_checkbox\privacy\provider::get_contexts_for_userid($user->id);
+        $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertEquals($context, $contextlist->current());
     }
 
@@ -110,7 +112,7 @@ class profilefield_checkbox_testcase extends provider_testcase {
         // Check that we have two entries.
         $userinfodata = $DB->get_records('user_info_data', ['userid' => $user->id]);
         $this->assertCount(2, $userinfodata);
-        \profilefield_checkbox\privacy\provider::delete_data_for_all_users_in_context($context);
+        provider::delete_data_for_all_users_in_context($context);
         // Check that the correct profile field has been deleted.
         $userinfodata = $DB->get_records('user_info_data', ['userid' => $user->id]);
         $this->assertCount(1, $userinfodata);
@@ -140,11 +142,113 @@ class profilefield_checkbox_testcase extends provider_testcase {
         $this->assertCount(2, $userinfodata);
         $approvedlist = new \core_privacy\local\request\approved_contextlist($user, 'profilefield_checkbox',
             [$context->id]);
-        \profilefield_checkbox\privacy\provider::delete_data_for_user($approvedlist);
+        provider::delete_data_for_user($approvedlist);
         // Check that the correct profile field has been deleted.
         $userinfodata = $DB->get_records('user_info_data', ['userid' => $user->id]);
         $this->assertCount(1, $userinfodata);
         $this->assertNotEquals('test data', reset($userinfodata)->data);
+    }
+
+    /**
+     * Test that only users with a user context are fetched.
+     */
+    public function test_get_users_in_context() {
+        $this->resetAfterTest();
+
+        $component = 'profilefield_checkbox';
+        // Create profile category.
+        $categoryid = $this->add_profile_category();
+        // Create profile field.
+        $profilefieldid = $this->add_profile_field($categoryid, 'checkbox');
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+        $usercontext = context_user::instance($user->id);
+        // The list of users should not return anything yet (related data still haven't been created).
+        $userlist = new \core_privacy\local\request\userlist($usercontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(0, $userlist);
+
+        $this->add_user_info_data($user->id, $profilefieldid, 'test data');
+
+        // The list of users for user context should return the user.
+        provider::get_users_in_context($userlist);
+        $this->assertCount(1, $userlist);
+        $expected = [$user->id];
+        $actual = $userlist->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        // The list of users for system context should not return any users.
+        $systemcontext = context_system::instance();
+        $userlist = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(0, $userlist);
+    }
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        $this->resetAfterTest();
+
+        $component = 'profilefield_checkbox';
+
+        // Create profile category.
+        $categoryid = $this->add_profile_category();
+        // Create profile field.
+        $profilefieldid = $this->add_profile_field($categoryid, 'checkbox');
+
+        // Create user1.
+        $user1 = $this->getDataGenerator()->create_user();
+        $usercontext1 = context_user::instance($user1->id);
+        // Create user2.
+        $user2 = $this->getDataGenerator()->create_user();
+        $usercontext2 = context_user::instance($user2->id);
+
+        $this->add_user_info_data($user1->id, $profilefieldid, 'test data');
+        $this->add_user_info_data($user2->id, $profilefieldid, 'test data');
+
+        // The list of users for usercontext1 should return user1.
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(1, $userlist1);
+        $expected = [$user1->id];
+        $actual = $userlist1->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        // The list of users for usercontext2 should return user2.
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+        $expected = [$user2->id];
+        $actual = $userlist2->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        // Add userlist1 to the approved user list.
+        $approvedlist = new approved_userlist($usercontext1, $component, $userlist1->get_userids());
+
+        // Delete user data using delete_data_for_user for usercontext1.
+        provider::delete_data_for_users($approvedlist);
+
+        // Re-fetch users in usercontext1 - The user list should now be empty.
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(0, $userlist1);
+
+        // Re-fetch users in usercontext2 - The user list should not be empty (user2).
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+
+        // User data should be only removed in the user context.
+        $systemcontext = context_system::instance();
+        // Add userlist2 to the approved user list in the system context.
+        $approvedlist = new approved_userlist($systemcontext, $component, $userlist2->get_userids());
+        // Delete user1 data using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist);
+        // Re-fetch users in usercontext2 - The user list should not be empty (user2).
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(1, $userlist1);
     }
 
     /**
