@@ -48,6 +48,17 @@ function xmldb_tool_policy_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018082900, 'tool', 'policy');
     }
 
+    if ($oldversion < 2018091800) {
+        // Add field "optional" to the table "tool_policy_versions".
+        $table = new xmldb_table('tool_policy_versions');
+        $field = new xmldb_field('optional', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0', 'agreementstyle');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2018091800, 'tool', 'policy');
+    }
+
     return true;
 }
-

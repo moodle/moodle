@@ -169,10 +169,18 @@ class page_viewdoc implements renderable, templatable {
                 unset($data->returnurl);
                 $data->accepturl = (new moodle_url('/admin/tool/policy/index.php', [
                     'listdoc[]' => $this->policy->id,
-                    'agreedoc[]' => $this->policy->id,
+                    'status'.$this->policy->id => 1,
                     'submit' => 'accept',
                     'sesskey' => sesskey(),
                 ]))->out(false);
+                if ($this->policy->optional == policy_version::AGREEMENT_OPTIONAL) {
+                    $data->declineurl = (new moodle_url('/admin/tool/policy/index.php', [
+                        'listdoc[]' => $this->policy->id,
+                        'status'.$this->policy->id => 0,
+                        'submit' => 'decline',
+                        'sesskey' => sesskey(),
+                    ]))->out(false);
+                }
             }
         }
 

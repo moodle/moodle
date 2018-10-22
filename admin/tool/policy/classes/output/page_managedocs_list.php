@@ -159,6 +159,12 @@ class page_managedocs_list implements renderable, templatable {
             $version->statustext = html_writer::span($version->statustext, 'label');
         }
 
+        if ($version->optional == policy_version::AGREEMENT_OPTIONAL) {
+            $version->optionaltext = get_string('policydocoptionalyes', 'tool_policy');
+        } else {
+            $version->optionaltext = get_string('policydocoptionalno', 'tool_policy');
+        }
+
         $version->indented = $isindented;
 
         $editbaseurl = new moodle_url('/admin/tool/policy/editpolicydoc.php', [

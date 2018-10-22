@@ -91,6 +91,8 @@ class policydoc extends moodleform {
 
         $mform->addElement('selectyesno', 'agreementstyle', get_string('policypriorityagreement', 'tool_policy'));
 
+        $mform->addElement('selectyesno', 'optional', get_string('policydocoptional', 'tool_policy'));
+
         if (!$formdata->id || $formdata->status == policy_version::STATUS_DRAFT) {
             // Creating a new version or editing a draft/archived version.
             $mform->addElement('hidden', 'minorchange');

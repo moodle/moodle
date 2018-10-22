@@ -113,7 +113,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I follow "Profile" in the user menu
     # User can see his own agreements in the profile.
     And I follow "Policies and agreements"
-    And "Agreed" "icon" should exist in the "This site policy" "table_row"
+    And "Accepted" "text" should exist in the "This site policy" "table_row"
     And I log out
 
   Scenario: Accept policy on sign up, multiple policies
@@ -172,8 +172,8 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I follow "Profile" in the user menu
     # User can see his own agreements in the profile.
     And I follow "Policies and agreements"
-    And "Agreed" "icon" should exist in the "This site policy" "table_row"
-    And "Agreed" "icon" should exist in the "This privacy policy" "table_row"
+    And "Accepted" "text" should exist in the "This site policy" "table_row"
+    And "Accepted" "text" should exist in the "This privacy policy" "table_row"
     And I should not see "This guests policy"
     And I log out
 
@@ -225,7 +225,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I follow "Profile" in the user menu
     # User can see his own agreements in the profile.
     And I follow "Policies and agreements"
-    And "Agreed" "icon" should exist in the "This site policy" "table_row"
+    And "Accepted" "text" should exist in the "This site policy" "table_row"
     And I log out
 
   Scenario: Accept policy on sign up, do not accept all policies
@@ -252,12 +252,12 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the field "I agree to the This privacy policy" to "0"
     And I press "Next"
     Then I should see "Please agree to the following policies"
-    And I should see "Before continuing you must agree to all these policies."
+    And I should see "Before continuing you need to acknowledge all these policies."
     # Confirm that a notification is displayed if only some policies are accepted.
     When I set the field "I agree to the This site policy" to "1"
     And I set the field "I agree to the This privacy policy" to "0"
     Then I should see "Please agree to the following policies"
-    And I should see "Before continuing you must agree to all these policies."
+    And I should see "Before continuing you need to acknowledge all these policies."
 
   Scenario: Accept policy on login, do not accept all policies
     Given the following config values are set as admin:
@@ -284,12 +284,12 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the field "I agree to the This privacy policy" to "0"
     And I press "Next"
     Then I should see "Please agree to the following policies"
-    And I should see "Before continuing you must agree to all these policies."
+    And I should see "Before continuing you need to acknowledge all these policies."
     # Confirm that a notification is displayed if only some policies are accepted.
     When I set the field "I agree to the This site policy" to "1"
     And I set the field "I agree to the This privacy policy" to "0"
     Then I should see "Please agree to the following policies"
-    And I should see "Before continuing you must agree to all these policies."
+    And I should see "Before continuing you need to acknowledge all these policies."
     # Confirm that user can not browse the site (edit their profile).
     When I follow "Profile" in the user menu
     Then I should see "Please agree to the following policies"
@@ -319,7 +319,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the field "I agree to the This privacy policy" to "1"
     And I press "Next"
     Then I should not see "Please agree to the following policies"
-    And I should not see "Before continuing you must agree to all these policies."
+    And I should not see "Before continuing you need to acknowledge all these policies."
     # Confirm that user can login and browse the site (edit their profile).
     When I open my profile in edit mode
     Then the field "First name" matches value "User"
@@ -661,7 +661,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I follow "Profile" in the user menu
     # User can see his own agreements in the profile.
     And I follow "Policies and agreements"
-    And "Agreed" "icon" should exist in the "This site policy" "table_row"
+    And "Accepted" "text" should exist in the "This site policy" "table_row"
     And I log out
 
   Scenario: Accepting policies on sign up, multiple policies with different style of giving ageement.
@@ -730,10 +730,10 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I follow "Profile" in the user menu
     # User can see his own agreements in the profile.
     And I follow "Policies and agreements"
-    And "Agreed" "icon" should exist in the "Privacy policy" "table_row"
-    And "Agreed" "icon" should exist in the "Cookies policy" "table_row"
-    And "Agreed" "icon" should exist in the "Terms of Service" "table_row"
-    And "Agreed" "icon" should exist in the "Digital maturity declaration" "table_row"
+    And "Accepted" "text" should exist in the "Privacy policy" "table_row"
+    And "Accepted" "text" should exist in the "Cookies policy" "table_row"
+    And "Accepted" "text" should exist in the "Terms of Service" "table_row"
+    And "Accepted" "text" should exist in the "Digital maturity declaration" "table_row"
     And I log out
 
   Scenario: Accepting policies on login, multiple policies with different style of giving ageement.
@@ -788,10 +788,10 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I follow "Profile" in the user menu
     # User can see his own agreements in the profile.
     And I follow "Policies and agreements"
-    And "Agreed" "icon" should exist in the "Privacy policy" "table_row"
-    And "Agreed" "icon" should exist in the "Cookies policy" "table_row"
-    And "Agreed" "icon" should exist in the "Terms of Service" "table_row"
-    And "Agreed" "icon" should exist in the "Digital maturity declaration" "table_row"
+    And "Accepted" "text" should exist in the "Privacy policy" "table_row"
+    And "Accepted" "text" should exist in the "Cookies policy" "table_row"
+    And "Accepted" "text" should exist in the "Terms of Service" "table_row"
+    And "Accepted" "text" should exist in the "Digital maturity declaration" "table_row"
     And I log out
 
   Scenario: Accepting policies on login, all and loggedin policies to be accepted on their own page.
@@ -822,9 +822,9 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I press "I agree to the Terms of Service"
     And I follow "Profile" in the user menu
     And I follow "Policies and agreements"
-    And "Agreed" "icon" should exist in the "Privacy policy" "table_row"
-    And "Agreed" "icon" should exist in the "Terms of Service" "table_row"
-    And "Agreed" "icon" should exist in the "Digital maturity declaration" "table_row"
+    And "Accepted" "text" should exist in the "Privacy policy" "table_row"
+    And "Accepted" "text" should exist in the "Terms of Service" "table_row"
+    And "Accepted" "text" should exist in the "Digital maturity declaration" "table_row"
     And "Cookies policy" "table_row" should not exist
     And I log out
 
@@ -872,8 +872,8 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I follow "Profile" in the user menu
     # User can see his own agreements in the profile.
     And I follow "Policies and agreements"
-    And "Agreed" "icon" should exist in the "Digital maturity declaration" "table_row"
-    And "Agreed" "icon" should exist in the "Cookies policy" "table_row"
+    And "Accepted" "text" should exist in the "Digital maturity declaration" "table_row"
+    And "Accepted" "text" should exist in the "Cookies policy" "table_row"
     And "Privacy policy" "table_row" should not exist
     And "Terms of Service" "table_row" should not exist
     And I log out
