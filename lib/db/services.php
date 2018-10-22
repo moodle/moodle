@@ -1028,6 +1028,14 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_message_get_conversations' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'get_conversations',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Retrieve a list of conversations for a user',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_message_get_messages' => array(
         'classname' => 'core_message_external',
         'methodname' => 'get_messages',
