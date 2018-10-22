@@ -27,4 +27,4 @@
         "triggerextraclasses": ""
     }
 }}
-<a href="#" class="{{triggerextraclasses}} toggle-display {{#menutrigger}}textmenu{{/menutrigger}}" id="action-menu-toggle-{{instance}}" title="{{title}}" role="menuitem">{{{actiontext}}}{{{menutrigger}}}{{#icon}}{{#pix}}{{key}}, {{component}}, {{title}}{{/pix}}{{/icon}}{{#rawicon}}{{{.}}}{{/rawicon}}{{#menutrigger}}<b class="caret"></b>{{/menutrigger}}</a>
+<a tabindex="0" class="{{triggerextraclasses}} toggle-display {{#menutrigger}}textmenu{{/menutrigger}}" id="action-menu-toggle-{{instance}}" aria-label="{{title}}" role="menuitem" aria-controls="action-menu-{{instance}}-menu">{{{actiontext}}}{{{menutrigger}}}{{#icon}}{{#pix}}{{key}}, {{component}}, {{title}}{{/pix}}{{/icon}}{{#rawicon}}{{{.}}}{{/rawicon}}{{#menutrigger}}<b class="caret"></b>{{/menutrigger}}</a>
