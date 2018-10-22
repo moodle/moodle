@@ -63,5 +63,6 @@ $params = array(
     'padding' => 15
 );
 $PAGE->requires->yui_module('moodle-local_kaltura-lticontainer', 'M.local_kaltura.init', array($params), null, true);
+$PAGE->requires->js(new moodle_url('/local/kaltura/js/kea_resize.js'));
 
 echo $OUTPUT->footer();
