@@ -27,6 +27,10 @@ namespace core_files\privacy;
 defined('MOODLE_INTERNAL') || die();
 
 use core_privacy\local\metadata\collection;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\userlist;
+use \core_privacy\local\request\approved_userlist;
 
 /**
  * Data provider class.
@@ -40,8 +44,11 @@ use core_privacy\local\metadata\collection;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
-    \core_privacy\local\metadata\provider,
-    \core_privacy\local\request\subsystem\plugin_provider {
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\subsystem\plugin_provider,
+        \core_privacy\local\request\core_userlist_provider,
+        // We store a userkey for token-based file access.
+        \core_privacy\local\request\subsystem\provider {
 
     /**
      * Returns metadata.
@@ -68,4 +75,118 @@ class provider implements
         return $collection;
     }
 
+    /**
+     * Get the list of contexts that contain user information for the specified user.
+     *
+     * This is currently just the user context.
+     *
+     * @param int $userid The user to search.
+     * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
+     */
+    public static function get_contexts_for_userid(int $userid) : contextlist {
+        $sql = "SELECT ctx.id
+                  FROM {user_private_key} k
+                  JOIN {user} u ON k.userid = u.id
+                  JOIN {context} ctx ON ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel
+                 WHERE k.userid = :userid AND k.script = :script";
+        $params = [
+            'userid' => $userid,
+            'contextlevel' => CONTEXT_USER,
+            'script' => 'core_files',
+        ];
+        $contextlist = new contextlist();
+        $contextlist->add_from_sql($sql, $params);
+
+        return $contextlist;
+    }
+
+    /**
+     * Get the list of users within a specific context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_user) {
+            return;
+        }
+
+        \core_userkey\privacy\provider::get_user_contexts_with_script($userlist, $context, 'core_files');
+    }
+
+    /**
+     * Export all user data for the specified user, in the specified contexts.
+     *
+     * @param approved_contextlist $contextlist The approved contexts to export information for.
+     */
+    public static function export_user_data(approved_contextlist $contextlist) {
+        // If the user has data, then only the CONTEXT_USER should be present so get the first context.
+        $contexts = $contextlist->get_contexts();
+        if (count($contexts) == 0) {
+            return;
+        }
+
+        // Sanity check that context is at the user context level, then get the userid.
+        $context = reset($contexts);
+        if ($context->contextlevel !== CONTEXT_USER) {
+            return;
+        }
+
+        // Export associated userkeys.
+        $subcontext = [
+            get_string('files'),
+        ];
+        \core_userkey\privacy\provider::export_userkeys($context, $subcontext, 'core_files');
+    }
+
+    /**
+     * Delete all use data which matches the specified deletion_criteria.
+     *
+     * @param context $context A user context.
+     */
+    public static function delete_data_for_all_users_in_context(\context $context) {
+        // Sanity check that context is at the user context level, then get the userid.
+        if ($context->contextlevel !== CONTEXT_USER) {
+            return;
+        }
+
+        // Delete all the userkeys.
+        \core_userkey\privacy\provider::delete_userkeys('core_files', $context->instanceid);
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if ($context instanceof \context_user) {
+            \core_userkey\privacy\provider::delete_userkeys('core_files', $context->instanceid);
+        }
+    }
+
+    /**
+     * Delete all user data for the specified user, in the specified contexts.
+     *
+     * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
+     */
+    public static function delete_data_for_user(approved_contextlist $contextlist) {
+        // If the user has data, then only the user context should be present so get the first context.
+        $contexts = $contextlist->get_contexts();
+        if (count($contexts) == 0) {
+            return;
+        }
+
+        // Sanity check that context is at the user context level, then get the userid.
+        $context = reset($contexts);
+        if ($context->contextlevel !== CONTEXT_USER) {
+            return;
+        }
+
+        // Delete all the userkeys for core_files..
+        \core_userkey\privacy\provider::delete_userkeys('core_files', $context->instanceid);
+    }
 }
