@@ -1951,12 +1951,23 @@ class core_renderer extends renderer_base {
             throw new coding_exception('The cancel param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a single_button instance.');
         }
 
-        $output = $this->box_start('generalbox modal modal-dialog modal-in-page show', 'notice');
+        $attributes = [
+            'role'=>'alertdialog',
+            'aria-labelledby'=>'modal-header',
+            'aria-describedby'=>'modal-body',
+            'aria-modal'=>'true'
+        ];
+
+        $output = $this->box_start('generalbox modal modal-dialog modal-in-page show', 'notice', $attributes);
         $output .= $this->box_start('modal-content', 'modal-content');
         $output .= $this->box_start('modal-header p-x-1', 'modal-header');
         $output .= html_writer::tag('h4', get_string('confirm'));
         $output .= $this->box_end();
-        $output .= $this->box_start('modal-body', 'modal-body');
+        $attributes = [
+            'role'=>'alert',
+            'data-aria-autofocus'=>'true'
+        ];
+        $output .= $this->box_start('modal-body', 'modal-body', $attributes);
         $output .= html_writer::tag('p', $message);
         $output .= $this->box_end();
         $output .= $this->box_start('modal-footer', 'modal-footer');

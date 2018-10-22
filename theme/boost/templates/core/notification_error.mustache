@@ -37,7 +37,7 @@
     { "message": "Your pants are on fire!", "closebutton": 1, "announce": 1, "extraclasses": "foo bar"}
 }}
 <div class="alert alert-danger alert-block fade in {{ extraclasses }}" {{!
-    }}{{# announce }} role="alert"{{/ announce }}{{!
+    }}{{# announce }} role="alert" data-aria-autofocus="true"{{/ announce }}{{!
     }}>
     {{# closebutton }}<button type="button" class="close" data-dismiss="alert">&times;</button>{{/ closebutton }}
     {{{ message }}}

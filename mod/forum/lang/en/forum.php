@@ -148,6 +148,7 @@ $string['discussionnowsubscribed'] = '{$a->name} will be notified of new posts i
 $string['discussionpin'] = 'Pin';
 $string['discussionpinned'] = 'Pinned';
 $string['discussionpinned_help'] = 'Pinned discussions will appear at the top of a forum.';
+$string['discussionsplit'] = 'Discussion has been split';
 $string['discussionsubscribestop'] = 'I don\'t want to be notified of new posts in this discussion';
 $string['discussionsubscribestart'] = 'Send me notifications of new posts in this discussion';
 $string['discussionsubscription'] = 'Discussion subscription';

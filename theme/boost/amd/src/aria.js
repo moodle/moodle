@@ -183,6 +183,17 @@ define(['jquery'], function($) {
                     shiftFocus(trigger);
                 }
             });
+
+            // After page load, focus on any element with special autofocus attribute.
+            $(function() {
+                window.setTimeout(function() {
+                    var alerts = $('[role="alert"][data-aria-autofocus="true"]');
+                    if (alerts.length > 0) {
+                        $(alerts[0]).attr('tabindex', '0');
+                        $(alerts[0]).focus();
+                    }
+                }, 300);
+            });
         }
     };
 });
