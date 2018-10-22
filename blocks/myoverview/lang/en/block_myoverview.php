@@ -47,6 +47,7 @@ $string['aria:removefromfavourites'] = 'Remove star for';
 $string['aria:summary'] = 'Switch to summary view';
 $string['aria:sortingdropdown'] = 'Sorting dropdown';
 $string['card'] = 'Card';
+$string['cards'] = 'Cards';
 $string['complete'] = 'Complete';
 $string['favourite'] = 'Starred course';
 $string['favourites'] = 'Starred';

@@ -34,11 +34,11 @@
     }
 }}
 
-<div class="row card-deck" role="list">
+<div class="card-deck dashboard-card-deck" role="list">
 {{#courses}}
-    <div class="card course-card" role="listitem">
+    <div class="card dashboard-card" role="listitem">
         <a href="{{viewurl}}" tabindex="-1">
-            <div class="card-img-top myoverviewimg" style='background-image: url("{{{courseimage}}}");'>
+            <div class="card-img dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
                 <span class="sr-only">{{#str}}aria:courseimage, block_myoverview{{/str}}</span>
                 {{> block_myoverview/favourite-icon }}
             </div>
@@ -55,7 +55,7 @@
             </div>
         </div>
         {{#hasprogress}}
-        <div class="card-footer course-card-footer">
+        <div class="card-footer dashboard-card-footer">
             {{> block_myoverview/progress-bar}}
         </div>
         {{/hasprogress}}

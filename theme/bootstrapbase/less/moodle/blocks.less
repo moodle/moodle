@@ -341,32 +341,15 @@
 }
 
 .block_myoverview {
-    *,
-    *::before,
-    *::after {
-        box-sizing: border-box;
-    }
-    .favouritebtn {
-        box-sizing: content-box;
-        * {
-            box-sizing: content-box;
-        }
-    }
+
     .empty-placeholder-image-lg {
         height: 125px;
-    }
-    .course-card {
-        .border-radius(@baseBorderRadius);
-        margin-bottom: 0.5rem;
-        flex-grow: 0;
-        flex-shrink: 0;
-        flex-basis: ~"calc(50% - 0.6rem)";
     }
     .course-info-container {
         flex: 1 1 auto;
         padding: 0.8rem;
     }
-    .course-card-footer {
+    .dashboard-card-footer {
         padding: 0.8rem;
         background-color: @wellBackground;
         border-top: 1px solid darken(@wellBackground, 7%);
@@ -375,12 +358,6 @@
     .progress {
         height: 0.5rem;
         margin-bottom: 0;
-    }
-    .myoverviewimg {
-        height: 7rem;
-        background-position: center;
-        background-size: cover;
-        .border-top-radius(@baseBorderRadius);
     }
     .list-group {
         margin: 0;
@@ -402,49 +379,65 @@
     .summary img {
         max-width: 100%;
     }
-    .favouritebtn {
-        cursor: pointer;
-        margin-left: 0;
-    }
-    .coursemenubtn {
-        border-radius: 50%;
-        height: 36px;
-        width: 36px;
-        padding: 8px 0;
-        &:hover {
-            background-color: #e9ecef;
-        }
-        img.icon {
-            padding-right: 0;
-            height: 16px;
-            width: 16px;
-        }
-    }
 
     @media (max-width: 576px) {
         .summaryimage {
             max-height: 7rem;
         }
     }
+}
 
+.dashboard-card-deck {
+    box-sizing: border-box;
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+    display: flex;
+    flex-flow: row wrap;
+    margin-right: -.25rem;
+    margin-left: -.25rem;
+
+    .dashboard-card {
+        .border-radius(@baseBorderRadius);
+        margin-bottom: 0.5rem;
+        flex-grow: 0;
+        flex-shrink: 0;
+        min-width: 0;
+        flex-basis: 100%;
+    }
     @media (min-width: 576px) {
-        .card-deck {
-            display: flex;
-            flex-flow: row wrap;
-            margin-right: -.25rem;
-            margin-left: -.25rem;
-        }
-        .course-card {
+        .dashboard-card {
             display: flex;
             flex-direction: column;
             margin-right: 0.25rem;
             margin-left: 0.25rem;
+            flex-basis: ~"calc(50% - 0.6rem)";
         }
     }
 
     @media (min-width: 1200px) {
-        .course-card {
+        .dashboard-card {
             flex-basis: ~"calc(33% - 0.5rem)";
         }
     }
+}
+
+@media (min-width: 768px) {
+    #block-region-side-post .dashboard-card-deck {
+        margin: 0;
+        .dashboard-card {
+            flex-basis: 100%;
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
+}
+
+.dashboard-card-img {
+    height: 7rem;
+    background-position: center;
+    background-size: cover;
+    .border-top-radius(@baseBorderRadius);
 }

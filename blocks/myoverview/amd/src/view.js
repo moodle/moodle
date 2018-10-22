@@ -396,7 +396,6 @@ function(
         } else {
             init(root, content);
         }
-
     };
 
     return {

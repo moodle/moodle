@@ -16536,34 +16536,14 @@ body {
   height: 35px;
   width: 35px;
 }
-.block_myoverview *,
-.block_myoverview *::before,
-.block_myoverview *::after {
-  box-sizing: border-box;
-}
-.block_myoverview .favouritebtn {
-  box-sizing: content-box;
-}
-.block_myoverview .favouritebtn * {
-  box-sizing: content-box;
-}
 .block_myoverview .empty-placeholder-image-lg {
   height: 125px;
-}
-.block_myoverview .course-card {
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  margin-bottom: 0.5rem;
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: calc(50% - 0.6rem);
 }
 .block_myoverview .course-info-container {
   flex: 1 1 auto;
   padding: 0.8rem;
 }
-.block_myoverview .course-card-footer {
+.block_myoverview .dashboard-card-footer {
   padding: 0.8rem;
   background-color: #f5f5f5;
   border-top: 1px solid #e3e3e3;
@@ -16577,17 +16557,6 @@ body {
 .block_myoverview .progress {
   height: 0.5rem;
   margin-bottom: 0;
-}
-.block_myoverview .myoverviewimg {
-  height: 7rem;
-  background-position: center;
-  background-size: cover;
-  -webkit-border-top-right-radius: 4px;
-  -moz-border-radius-topright: 4px;
-  border-top-right-radius: 4px;
-  -webkit-border-top-left-radius: 4px;
-  -moz-border-radius-topleft: 4px;
-  border-top-left-radius: 4px;
 }
 .block_myoverview .list-group {
   margin: 0;
@@ -16613,47 +16582,67 @@ body {
 .block_myoverview .summary img {
   max-width: 100%;
 }
-.block_myoverview .favouritebtn {
-  cursor: pointer;
-  margin-left: 0;
-}
-.block_myoverview .coursemenubtn {
-  border-radius: 50%;
-  height: 36px;
-  width: 36px;
-  padding: 8px 0;
-}
-.block_myoverview .coursemenubtn:hover {
-  background-color: #e9ecef;
-}
-.block_myoverview .coursemenubtn img.icon {
-  padding-right: 0;
-  height: 16px;
-  width: 16px;
-}
 @media (max-width: 576px) {
   .block_myoverview .summaryimage {
     max-height: 7rem;
   }
 }
+.dashboard-card-deck {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row wrap;
+  margin-right: -0.25rem;
+  margin-left: -0.25rem;
+}
+.dashboard-card-deck *,
+.dashboard-card-deck *::before,
+.dashboard-card-deck *::after {
+  box-sizing: border-box;
+}
+.dashboard-card-deck .dashboard-card {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  flex-grow: 0;
+  flex-shrink: 0;
+  min-width: 0;
+  flex-basis: 100%;
+}
 @media (min-width: 576px) {
-  .block_myoverview .card-deck {
-    display: flex;
-    flex-flow: row wrap;
-    margin-right: -0.25rem;
-    margin-left: -0.25rem;
-  }
-  .block_myoverview .course-card {
+  .dashboard-card-deck .dashboard-card {
     display: flex;
     flex-direction: column;
     margin-right: 0.25rem;
     margin-left: 0.25rem;
+    flex-basis: calc(50% - 0.6rem);
   }
 }
 @media (min-width: 1200px) {
-  .block_myoverview .course-card {
+  .dashboard-card-deck .dashboard-card {
     flex-basis: calc(33% - 0.5rem);
   }
+}
+@media (min-width: 768px) {
+  #block-region-side-post .dashboard-card-deck {
+    margin: 0;
+  }
+  #block-region-side-post .dashboard-card-deck .dashboard-card {
+    flex-basis: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+.dashboard-card-img {
+  height: 7rem;
+  background-position: center;
+  background-size: cover;
+  -webkit-border-top-right-radius: 4px;
+  -moz-border-radius-topright: 4px;
+  border-top-right-radius: 4px;
+  -webkit-border-top-left-radius: 4px;
+  -moz-border-radius-topleft: 4px;
+  border-top-left-radius: 4px;
 }
 /**
  * Moodle forms HTML isn't changeable via renderers (yet?) so this
@@ -22207,8 +22196,14 @@ ul.indented-list {
 .align-items-start {
   align-items: flex-start !important;
 }
+.align-items-center {
+  align-items: center !important;
+}
 .ml-auto {
   margin-left: auto;
+}
+.mr-auto {
+  margin-right: auto;
 }
 .mt-auto {
   margin-top: auto;
