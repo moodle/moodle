@@ -86,6 +86,8 @@ test
         $this->setAdminUser();
         $PAGE->set_url('/');
         $CFG->theme = 'clean';
+        $PAGE->reset_theme_and_output();
+        $PAGE->initialise_theme_and_output();
 
         // Set the configuration.
         set_config('customusermenuitems', $data);
@@ -94,7 +96,8 @@ test
         $dividercount += 2;
 
         // The basic entry count will additionally include the wrapper menu, Dashboard, Profile, Logout and switch roles link.
-        $entrycount += 4;
+        // On clean theme only, the trigger is also a menuitem.
+        $entrycount += 5;
 
         $output = $OUTPUT->user_menu($USER);
         preg_match_all('/<a [^>]+role="menuitem"[^>]+>/', $output, $results);
