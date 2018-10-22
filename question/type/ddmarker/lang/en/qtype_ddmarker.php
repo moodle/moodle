@@ -42,7 +42,7 @@ First selecting a shape (circle, rectangle or polygon) will add a new drop zone 
 
 Editing a shape starts with a click on the shape in the preview to show the editing handles. You can move the shape using the center handle, or adjust the shape\'s dimensions with the vertex handles.
 
-For polygons only, holding the control button while clicking on a vertex handle will add a new vertex to the polygon. Please keep a polygon shape as simple as possible, without crossing lines.
+For polygons only, holding the control button (command button on a Mac) while clicking on a vertex handle will add a new vertex to the polygon. Please keep a polygon shape as simple as possible, without crossing lines.
 
 For information the three shapes use coordinates in this way:<br />
 * Circle: centre_x, centre_y; radius<br />for example: <code>80,100;50</code><br />

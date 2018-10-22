@@ -42,13 +42,32 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes'], function($, dragDro
 
     /**
      * Update the coordinates from a particular string.
+     *
+     * @param {SVGElement} [svg] the SVG element that is the preview.
      */
-    DropZoneManager.prototype.updateCoordinatesFromForm = function() {
-        var coordinates = this.getCoordinates();
+    DropZoneManager.prototype.updateCoordinatesFromForm = function(svg) {
+        var coordinates = this.getCoordinates(),
+            currentNumPoints = this.shape.getType() === 'polygon' && this.shape.points.length;
         if (this.shape.getCoordinates() === coordinates) {
             return;
         }
-        if (this.shape.parse(coordinates)) {
+        if (!this.shape.parse(coordinates)) {
+            // Invalid coordinates. Don't update the preview.
+            return;
+        }
+
+        if (this.shape.getType() === 'polygon' && currentNumPoints !== this.shape.points.length) {
+            // Polygon, and size has changed.
+            var currentyActive = this.isActive();
+            this.removeFromSvg();
+            if (svg) {
+                this.addToSvg(svg);
+                if (currentyActive) {
+                    this.setActive();
+                }
+            }
+        } else {
+            // Simple update.
             this.updateSvgEl();
         }
     };
@@ -165,6 +184,8 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes'], function($, dragDro
         }
 
         // Move handle.
+        // The shape + its label are the first two children of svgEl.
+        // Then come the move handle followed by the edit handles.
         this.svgEl.childNodes[2].setAttribute('cx', handles.moveHandle.x);
         this.svgEl.childNodes[2].setAttribute('cy', handles.moveHandle.y);
 
@@ -188,6 +209,11 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes'], function($, dragDro
      * Set this drop zone as being edited.
      */
     DropZoneManager.prototype.setActive = function() {
+        // Move this one to last, so that it is always on top.
+        // (Otherwise the handles may not be able to receive events.)
+        var parent = this.svgEl.parentNode;
+        parent.removeChild(this.svgEl);
+        parent.appendChild(this.svgEl);
         this.svgEl.setAttribute('class', this.svgEl.getAttribute('class') + ' active');
     };
 
@@ -244,9 +270,13 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes'], function($, dragDro
         var movingDropZone = this,
                 lastX = info.x,
                 lastY = info.y,
-                dragProxy = this.makeDragProxy(info.x, info.y);
+                dragProxy = this.makeDragProxy(info.x, info.y),
+                bgImg = $('fieldset#id_previewareaheader .dropbackground'),
+                maxX = bgImg.width(),
+                maxY = bgImg.height();
+
         dragDrop.start(e, $(dragProxy), function(pageX, pageY) {
-            movingDropZone.shape.move(pageX - lastX, pageY - lastY);
+            movingDropZone.shape.move(pageX - lastX, pageY - lastY, maxX, maxY);
             lastX = pageX;
             lastY = pageY;
             movingDropZone.updateSvgEl();
@@ -269,7 +299,7 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes'], function($, dragDro
         }
 
         // For polygons, CTRL + drag adds a new point.
-        if (this.shape.getType() === 'polygon' && e.ctrlKey) {
+        if (this.shape.getType() === 'polygon' && (e.ctrlKey || e.metaKey)) {
             this.shape.addNewPointAfter(handleIndex);
             this.removeFromSvg();
             this.addToSvg(svg);
@@ -279,9 +309,13 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes'], function($, dragDro
         var changingDropZone = this,
             lastX = info.x,
             lastY = info.y,
-            dragProxy = this.makeDragProxy(info.x, info.y);
+            dragProxy = this.makeDragProxy(info.x, info.y),
+            bgImg = $('fieldset#id_previewareaheader .dropbackground'),
+            maxX = bgImg.width(),
+            maxY = bgImg.height();
+
         dragDrop.start(e, $(dragProxy), function(pageX, pageY) {
-            changingDropZone.shape.edit(handleIndex, pageX - lastX, pageY - lastY);
+            changingDropZone.shape.edit(handleIndex, pageX - lastX, pageY - lastY, maxX, maxY);
             lastX = pageX;
             lastY = pageY;
             changingDropZone.updateSvgEl();
@@ -473,7 +507,7 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes'], function($, dragDro
                         break;
 
                     case 'coords':
-                        dropZone.updateCoordinatesFromForm();
+                        dropZone.updateCoordinatesFromForm(dragDropForm.form.getSvg());
                         break;
 
                     case 'choice':

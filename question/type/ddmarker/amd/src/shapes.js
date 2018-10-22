@@ -138,9 +138,11 @@ define(function() {
      *
      * @param {int} dx x offset.
      * @param {int} dy y offset.
+     * @param {int} maxX ensure that after editing, the shape lies between 0 and maxX on the x-axis.
+     * @param {int} maxY ensure that after editing, the shape lies between 0 and maxX on the y-axis.
      */
-    Shape.prototype.move = function(dx, dy) {
-        this.centre.move(dx, dy);
+    Shape.prototype.move = function(dx, dy, maxX, maxY) {
+        void (maxY);
     };
 
     /**
@@ -149,9 +151,11 @@ define(function() {
      * @param {int} handleIndex which handle was moved.
      * @param {int} dx x offset.
      * @param {int} dy y offset.
+     * @param {int} maxX ensure that after editing, the shape lies between 0 and maxX on the x-axis.
+     * @param {int} maxY ensure that after editing, the shape lies between 0 and maxX on the y-axis.
      */
-    Shape.prototype.edit = function(handleIndex, dx, dy) {
-        void (dy);
+    Shape.prototype.edit = function(handleIndex, dx, dy, maxX, maxY) {
+        void (maxY);
     };
 
     /**
@@ -259,7 +263,7 @@ define(function() {
     };
 
     Circle.prototype.parse = function(coordinates) {
-        if (!coordinates.match(/\d+,\d+;\d+/)) {
+        if (!coordinates.match(/^\d+,\d+;\d+$/)) {
             return false;
         }
 
@@ -269,9 +273,31 @@ define(function() {
         return true;
     };
 
-    Circle.prototype.edit = function(handleIndex, dx, dy) {
+    Circle.prototype.move = function(dx, dy, maxX, maxY) {
+        this.centre.move(dx, dy);
+        if (this.centre.x < this.radius) {
+            this.centre.x = this.radius;
+        }
+        if (this.centre.x > maxX - this.radius) {
+            this.centre.x = maxX - this.radius;
+        }
+        if (this.centre.y < this.radius) {
+            this.centre.y = this.radius;
+        }
+        if (this.centre.y > maxY - this.radius) {
+            this.centre.y = maxY - this.radius;
+        }
+    };
+
+    Circle.prototype.edit = function(handleIndex, dx, dy, maxX, maxY) {
         this.radius += dx;
-        void (dy);
+        var limit = Math.min(this.centre.x, this.centre.y, maxX - this.centre.x, maxY - this.centre.y);
+        if (this.radius > limit) {
+            this.radius = limit;
+        }
+        if (this.radius < -limit) {
+            this.radius = -limit;
+        }
     };
 
     /**
@@ -357,7 +383,7 @@ define(function() {
     };
 
     Rectangle.prototype.parse = function(coordinates) {
-        if (!coordinates.match(/\d+,\d+;\d+,\d+/)) {
+        if (!coordinates.match(/^\d+,\d+;\d+,\d+$/)) {
             return false;
         }
 
@@ -369,9 +395,37 @@ define(function() {
         return true;
     };
 
-    Rectangle.prototype.edit = function(handleIndex, dx, dy) {
+    Rectangle.prototype.move = function(dx, dy, maxX, maxY) {
+        this.centre.move(dx, dy);
+        if (this.centre.x < 0) {
+            this.centre.x = 0;
+        }
+        if (this.centre.x > maxX - this.width) {
+            this.centre.x = maxX - this.width;
+        }
+        if (this.centre.y < 0) {
+            this.centre.y = 0;
+        }
+        if (this.centre.y > maxY - this.height) {
+            this.centre.y = maxY - this.height;
+        }
+    };
+
+    Rectangle.prototype.edit = function(handleIndex, dx, dy, maxX, maxY) {
         this.width += dx;
         this.height += dy;
+        if (this.width < -this.centre.x) {
+            this.width = -this.centre.x;
+        }
+        if (this.width > maxX - this.centre.x) {
+            this.width = maxX - this.centre.x;
+        }
+        if (this.height < -this.centre.y) {
+            this.height = -this.centre.y;
+        }
+        if (this.height > maxY - this.centre.y) {
+            this.height = maxY - this.centre.y;
+        }
     };
 
     /**
@@ -452,7 +506,7 @@ define(function() {
     };
 
     Polygon.prototype.parse = function(coordinates) {
-        if (!coordinates.match(/(?:\d+,\d+)?(?:;\d+,\d+)*/)) {
+        if (!coordinates.match(/^\d+,\d+(?:;\d+,\d+)*$/)) {
             return false;
         }
 
@@ -470,8 +524,47 @@ define(function() {
         return true;
     };
 
-    Polygon.prototype.edit = function(handleIndex, dx, dy) {
+    Polygon.prototype.move = function(dx, dy, maxX, maxY) {
+        this.centre.move(dx, dy);
+        var bbXMin = maxX,
+            bbXMax = 0,
+            bbYMin = maxY,
+            bbYMax = 0;
+        // Computer centre.
+        for (var i = 0; i < this.points.length; i++) {
+            bbXMin = Math.min(bbXMin, this.points[i].x);
+            bbXMax = Math.max(bbXMax, this.points[i].x);
+            bbYMin = Math.min(bbYMin, this.points[i].y);
+            bbYMax = Math.max(bbYMax, this.points[i].y);
+        }
+        if (this.centre.x < -bbXMin) {
+            this.centre.x = -bbXMin;
+        }
+        if (this.centre.x > maxX - bbXMax) {
+            this.centre.x = maxX - bbXMax;
+        }
+        if (this.centre.y < -bbYMin) {
+            this.centre.y = -bbYMin;
+        }
+        if (this.centre.y > maxY - bbYMax) {
+            this.centre.y = maxY - bbYMax;
+        }
+    };
+
+    Polygon.prototype.edit = function(handleIndex, dx, dy, maxX, maxY) {
         this.points[handleIndex].move(dx, dy);
+        if (this.points[handleIndex].x < -this.centre.x) {
+            this.points[handleIndex].x = -this.centre.x;
+        }
+        if (this.points[handleIndex].x > maxX - this.centre.x) {
+            this.points[handleIndex].x = maxX - this.centre.x;
+        }
+        if (this.points[handleIndex].y < -this.centre.y) {
+            this.points[handleIndex].y = -this.centre.y;
+        }
+        if (this.points[handleIndex].y > maxY - this.centre.y) {
+            this.points[handleIndex].y = maxY - this.centre.y;
+        }
     };
 
     /**
