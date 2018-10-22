@@ -491,14 +491,13 @@ class helper {
 
         list($useridsql, $usersparams) = $DB->get_in_or_equal($userids);
         $userfields = \user_picture::fields('u', array('lastaccess'));
-        $userssql = "SELECT $userfields, mc.id AS contactid, mub.id AS blockedid
+        $userssql = "SELECT $userfields, u.deleted, mc.id AS contactid, mub.id AS blockedid
                        FROM {user} u
                   LEFT JOIN {message_contacts} mc
                          ON (mc.userid = ? AND mc.contactid = u.id)
                   LEFT JOIN {message_users_blocked} mub
                          ON (mub.userid = ? AND mub.blockeduserid = u.id)
-                      WHERE u.id $useridsql
-                        AND u.deleted = 0";
+                      WHERE u.id $useridsql";
         $usersparams = array_merge([$referenceuserid, $referenceuserid], $usersparams);
         $otherusers = $DB->get_records_sql($userssql, $usersparams);
 
@@ -523,6 +522,8 @@ class helper {
             // Set contact and blocked status indicators.
             $data->iscontact = ($member->contactid) ? true : false;
             $data->isblocked = ($member->blockedid) ? true : false;
+
+            $data->isdeleted = ($member->deleted) ? true : false;
 
             $members[$data->id] = $data;
         }
