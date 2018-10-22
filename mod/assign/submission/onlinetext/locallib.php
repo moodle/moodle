@@ -397,11 +397,10 @@ class assign_submission_onlinetext extends assign_submission_plugin {
 
         // Note that this check is the same logic as the result from the is_empty function but we do
         // not call it directly because we already have the submission record.
-        if ($onlinetextsubmission && !empty($onlinetextsubmission->onlinetext)) {
-            $finaltext = $this->assignment->download_rewrite_pluginfile_urls($onlinetextsubmission->onlinetext, $user, $this);
-            $formattedtext = format_text($finaltext,
-                                         $onlinetextsubmission->onlineformat,
-                                         array('context'=>$this->assignment->get_context()));
+        if ($onlinetextsubmission) {
+            // Do not pass the text through format_text. The result may not be displayed in Moodle and
+            // may be passed to external services such as document conversion or portfolios.
+            $formattedtext = $this->assignment->download_rewrite_pluginfile_urls($onlinetextsubmission->onlinetext, $user, $this);
             $head = '<head><meta charset="UTF-8"></head>';
             $submissioncontent = '<!DOCTYPE html><html>' . $head . '<body>'. $formattedtext . '</body></html>';
 
