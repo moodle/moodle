@@ -120,22 +120,22 @@ EOD;
      * @return string New html with no image tags.
      */
     protected static function strip_images($html) {
+        // Load HTML and suppress any parsing errors (DOMDocument->loadHTML() does not current support HTML5 tags).
         $dom = new DOMDocument();
-        $dom->loadHTML("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" . $html);
-        $images = $dom->getElementsByTagName('img');
-        $i = 0;
+        libxml_use_internal_errors(true);
+        $dom->loadHTML('<?xml version="1.0" encoding="UTF-8" ?>' . $html);
+        libxml_clear_errors();
 
-        for ($i = ($images->length - 1); $i >= 0; $i--) {
-            $node = $images->item($i);
+        // Find all img tags.
+        if ($imgnodes = $dom->getElementsByTagName('img')) {
+            // Replace img nodes with the img alt text without overriding DOM elements.
+            for ($i = ($imgnodes->length - 1); $i >= 0; $i--) {
+                $imgnode = $imgnodes->item($i);
+                $alt = ($imgnode->hasAttribute('alt')) ? ' [ ' . $imgnode->getAttribute('alt') . ' ] ' : ' ';
+                $textnode = $dom->createTextNode($alt);
 
-            if ($node->hasAttribute('alt')) {
-                $replacement = ' [ ' . $node->getAttribute('alt') . ' ] ';
-            } else {
-                $replacement = ' ';
+                $imgnode->parentNode->replaceChild($textnode, $imgnode);
             }
-
-            $text = $dom->createTextNode($replacement);
-            $node->parentNode->replaceChild($text, $node);
         }
         $count = 1;
         return str_replace("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>", "", $dom->saveHTML(), $count);
