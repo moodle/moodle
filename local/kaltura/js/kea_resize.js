@@ -1,13 +1,14 @@
 (function() {
     window.addEventListener('message', function (e) {
         try {
-            if (e.data && e.data.messageType && e.data.messageType === "kea-ready") {
-                // listen to kea bootstrap event so we can
-                // resize the iframe accordingly
+            var postMessageData = e.data;
+            if (postMessageData.subject === "lti.frameResize") {
+                var height = postMessageData.height;
                 var lti = document.querySelector("#contentframe");
-                lti.style.height = e.data.height + "px";
+                lti.style.height = height + "px";
             }
-        } catch(ex) {
+        }
+        catch (ex) {
             console.error("encountered error in kms communication", ex);
         }
     });
