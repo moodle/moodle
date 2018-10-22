@@ -2642,9 +2642,6 @@ function upgrade_fix_config_auth_plugin_defaults($plugin) {
         include($settingspath);
 
         if ($settings) {
-            // Consistently with what admin/cli/upgrade.php does, apply the default settings twice.
-            // I assume this is done for theoretical cases when a default value depends on an other.
-            admin_apply_default_settings($settings, false);
             admin_apply_default_settings($settings, false);
         }
     }

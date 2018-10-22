@@ -510,8 +510,7 @@ function install_cli_database(array $options, $interactive) {
     // log in as admin - we need do anything when applying defaults
     \core\session\manager::set_user(get_admin());
 
-    // apply all default settings, do it twice to fill all defaults - some settings depend on other setting
-    admin_apply_default_settings(NULL, true);
+    // Apply all default settings.
     admin_apply_default_settings(NULL, true);
     set_config('registerauth', '');
 
