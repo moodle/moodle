@@ -35,6 +35,7 @@ $string['approverequest'] = 'Approve request';
 $string['bulkapproverequests'] = 'Approve requests';
 $string['bulkdenyrequests'] = 'Deny requests';
 $string['cachedef_purpose'] = 'Data purposes';
+$string['cachedef_purpose_overrides'] = 'Purpose overrides in the Data Privacy tool';
 $string['cachedef_contextlevel'] = 'Context levels purpose and category';
 $string['cancelrequest'] = 'Cancel request';
 $string['cancelrequestconfirmation'] = 'Do you really want cancel this data request?';
@@ -196,6 +197,7 @@ $string['nopurposes'] = 'There are no purposes yet';
 $string['nosubjectaccessrequests'] = 'There are no data requests that you need to act on';
 $string['nosystemdefaults'] = 'Site purpose and category have not yet been defined.';
 $string['notset'] = 'Not set (use the default value)';
+$string['notyetexpired'] = '{$a} (not yet expired)';
 $string['overrideinstances'] = 'Reset instances with custom values';
 $string['pluginregistry'] = 'Plugin privacy registry';
 $string['pluginregistrytitle'] = 'Plugin privacy compliance registry';
@@ -264,6 +266,7 @@ $string['retentionperiod'] = 'Retention period';
 $string['retentionperiod_help'] = 'The retention period specifies the length of time that data should be kept for. When the retention period has expired, the data is flagged and listed for deletion, awaiting admin confirmation.';
 $string['retentionperiodnotdefined'] = 'No retention period was defined';
 $string['retentionperiodzero'] = 'No retention period';
+$string['roleoverrides'] = 'Role overrides';
 $string['selectbulkaction'] = 'Please select a bulk action.';
 $string['selectdatarequests'] = 'Please select data requests.';
 $string['selectuserdatarequest'] = 'Select {$a->username}\'s {$a->requesttype} data request.';
@@ -289,3 +292,22 @@ $string['summary'] = 'Registry configuration summary';
 $string['user'] = 'User';
 $string['viewrequest'] = 'View the request';
 $string['visible'] = 'Expand all';
+$string['unexpiredrolewithretention'] = '{$a->retention} (Unexpired)';
+$string['expiredrolewithretention'] = '{$a->retention} (Expired)';
+$string['defaultexpired'] = 'Data for all users';
+$string['defaultexpiredexcept'] = 'Data for all users, except those who hold any of the following roles:<br>
+{$a->unexpired}';
+$string['defaultunexpiredwithexceptions'] = 'Only data for users who hold any of the following roles:<br>
+{$a->expired}
+Unless they also hold any of the following roles:<br>
+{$a->unexpired}';
+$string['defaultunexpired'] = 'Only data for users holding any of the following roles:<br>
+{$a->expired}';
+$string['tobedeleted'] = 'Data to be deleted';
+$string['addroleoverride'] = 'Add role override';
+$string['roleoverride'] = 'Role override';
+$string['role'] = 'Role';
+$string['role_help'] = 'Which role do you wish to apply this override to';
+$string['duplicaterole'] = 'Role already specified';
+$string['purposeoverview'] = 'A purpose describes the intended use and retention policy for stored data. The basis for storing and retaining that data is also described in the purpose.';
+$string['roleoverrideoverview'] = 'The default retention policy can be overridden for specific user roles, allowing you to specify a longer, or a shorter, retention policy. A user is only expired when all of their roles have expired.';

@@ -26,6 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 use \core_privacy\tests\provider_testcase;
+use \core_user\privacy\provider;
+use \core_privacy\local\request\approved_userlist;
 
 require_once($CFG->dirroot . "/user/lib.php");
 
@@ -269,6 +271,129 @@ class core_user_privacy_testcase extends provider_testcase {
         $this->assertEquals($user->firstname, $record->firstname);
         $this->assertEquals($user->lastname, $record->lastname);
         $this->assertEquals($user->email, $record->email);
+    }
+
+    /**
+     * Test that only users with a user context are fetched.
+     */
+    public function test_get_users_in_context() {
+        $this->resetAfterTest();
+
+        $component = 'core_user';
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+        $usercontext = \context_user::instance($user->id);
+        $userlist = new \core_privacy\local\request\userlist($usercontext, $component);
+
+        // The list of users for user context should return the user.
+        provider::get_users_in_context($userlist);
+        $this->assertCount(1, $userlist);
+        $expected = [$user->id];
+        $actual = $userlist->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        // The list of users for system context should not return any users.
+        $systemcontext = context_system::instance();
+        $userlist = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(0, $userlist);
+    }
+
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $component = 'core_user';
+
+        // Create user1.
+        $user1 = $this->getDataGenerator()->create_user([
+            'idnumber' => 'A0023',
+            'emailstop' => 1,
+            'icq' => 'aksdjf98',
+            'phone1' => '555 3257',
+            'institution' => 'test',
+            'department' => 'Science',
+            'city' => 'Perth',
+            'country' => 'au'
+        ]);
+        $usercontext1 = \context_user::instance($user1->id);
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
+
+        // Create user2.
+        $user2 = $this->getDataGenerator()->create_user([
+            'idnumber' => 'A0024',
+            'emailstop' => 1,
+            'icq' => 'aksdjf981',
+            'phone1' => '555 3258',
+            'institution' => 'test',
+            'department' => 'Science',
+            'city' => 'Perth',
+            'country' => 'au'
+        ]);
+        $usercontext2 = \context_user::instance($user2->id);
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+
+        // The list of users for usercontext1 should return user1.
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(1, $userlist1);
+        // The list of users for usercontext2 should return user2.
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+
+        // Add userlist1 to the approved user list.
+        $approvedlist = new approved_userlist($usercontext1, $component, $userlist1->get_userids());
+        // Delete using delete_data_for_users().
+        provider::delete_data_for_users($approvedlist);
+
+        // Now check that there is still a record for user1 (deleted user), but non-critical information is removed.
+        $record = $DB->get_record('user', ['id' => $user1->id]);
+        $this->assertEmpty($record->idnumber);
+        $this->assertEmpty($record->emailstop);
+        $this->assertEmpty($record->icq);
+        $this->assertEmpty($record->phone1);
+        $this->assertEmpty($record->institution);
+        $this->assertEmpty($record->department);
+        $this->assertEmpty($record->city);
+        $this->assertEmpty($record->country);
+        $this->assertEmpty($record->timezone);
+        $this->assertEmpty($record->timecreated);
+        $this->assertEmpty($record->timemodified);
+        $this->assertEmpty($record->firstnamephonetic);
+        // Check for critical fields.
+        // Deleted should now be 1.
+        $this->assertEquals(1, $record->deleted);
+        $this->assertEquals($user1->id, $record->id);
+        $this->assertEquals($user1->username, $record->username);
+        $this->assertEquals($user1->password, $record->password);
+        $this->assertEquals($user1->firstname, $record->firstname);
+        $this->assertEquals($user1->lastname, $record->lastname);
+        $this->assertEquals($user1->email, $record->email);
+
+        // Now check that the record and information for user2 is still present.
+        $record = $DB->get_record('user', ['id' => $user2->id]);
+        $this->assertNotEmpty($record->idnumber);
+        $this->assertNotEmpty($record->emailstop);
+        $this->assertNotEmpty($record->icq);
+        $this->assertNotEmpty($record->phone1);
+        $this->assertNotEmpty($record->institution);
+        $this->assertNotEmpty($record->department);
+        $this->assertNotEmpty($record->city);
+        $this->assertNotEmpty($record->country);
+        $this->assertNotEmpty($record->timezone);
+        $this->assertNotEmpty($record->timecreated);
+        $this->assertNotEmpty($record->timemodified);
+        $this->assertNotEmpty($record->firstnamephonetic);
+        $this->assertEquals(0, $record->deleted);
+        $this->assertEquals($user2->id, $record->id);
+        $this->assertEquals($user2->username, $record->username);
+        $this->assertEquals($user2->password, $record->password);
+        $this->assertEquals($user2->firstname, $record->firstname);
+        $this->assertEquals($user2->lastname, $record->lastname);
+        $this->assertEquals($user2->email, $record->email);
     }
 
     /**

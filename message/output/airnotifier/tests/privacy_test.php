@@ -24,6 +24,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 use \core_privacy\tests\provider_testcase;
+use \message_airnotifier\privacy\provider;
+use \core_privacy\local\request\approved_userlist;
+
 /**
  * Unit tests for message\output\airnotifier\classes\privacy\provider.php
  *
@@ -159,5 +162,90 @@ class message_airnotifier_testcase extends provider_testcase {
         // Check that it has now been deleted.
         $devices = $DB->get_records('message_airnotifier_devices');
         $this->assertCount(0, $devices);
+    }
+
+    /**
+     * Test that only users with a user context are fetched.
+     */
+    public function test_get_users_in_context() {
+        $component = 'message_airnotifier';
+
+        // Create user.
+        $user = $this->getDataGenerator()->create_user();
+        $usercontext = context_user::instance($user->id);
+
+        // The lists of users for the user context should be empty.
+        // Related user data have not been created yet.
+        $userlist = new \core_privacy\local\request\userlist($usercontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(0, $userlist);
+
+        $this->add_device($user, 'apuJih874kj');
+        $this->add_device($user, 'bdu09Ikjjsu');
+
+        // The list of users for userlist should return one user (user).
+        provider::get_users_in_context($userlist);
+        $this->assertCount(1, $userlist);
+        $expected = [$user->id];
+        $actual = $userlist->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        // The list of users should only return users in the user context.
+        $systemcontext = context_system::instance();
+        $userlist1 = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(0, $userlist1);
+    }
+
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        $component = 'message_airnotifier';
+
+        // Create user1.
+        $user1 = $this->getDataGenerator()->create_user();
+        $usercontext1 = context_user::instance($user1->id);
+        // Create user2.
+        $user2 = $this->getDataGenerator()->create_user();
+        $usercontext2 = context_user::instance($user2->id);
+
+        $this->add_device($user1, 'apuJih874kj');
+        $this->add_device($user1, 'cpuJih874kp');
+        $this->add_device($user2, 'bdu09Ikjjsu');
+
+        // The list of users for usercontext1 should return one user (user1).
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(1, $userlist1);
+
+        // The list of users for usercontext2 should return one user (user2).
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+
+        $approvedlist = new approved_userlist($usercontext1, $component, $userlist1->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist);
+
+        // Re-fetch users in usercontext1 - the user data should now be empty.
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(0, $userlist1);
+
+        // The list of users for usercontext2 should still return one user (user2).
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+
+        // User data should only be removed in the user context.
+        $systemcontext = context_system::instance();
+        $approvedlist = new approved_userlist($systemcontext, $component, $userlist2->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist);
+        // Re-fetch users in usercontext2 - the user data should still be present.
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
     }
 }

@@ -23,6 +23,7 @@
  */
 
 use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_userlist;
 use mod_data\privacy\provider;
 
 defined('MOODLE_INTERNAL') || die();
@@ -39,6 +40,8 @@ class mod_data_privacy_provider_testcase extends \core_privacy\tests\provider_te
     protected $student;
     /** @var stdClass The student object. */
     protected $student2;
+    /** @var stdClass The student object. */
+    protected $student3;
 
     /** @var stdClass The data object. */
     protected $datamodule;
@@ -84,9 +87,11 @@ class mod_data_privacy_provider_testcase extends \core_privacy\tests\provider_te
         // Create a student.
         $student1 = $generator->create_user();
         $student2 = $generator->create_user();
+        $student3 = $generator->create_user();
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $generator->enrol_user($student1->id,  $course->id, $studentrole->id);
         $generator->enrol_user($student2->id,  $course->id, $studentrole->id);
+        $generator->enrol_user($student3->id,  $course->id, $studentrole->id);
 
         // Add records.
         $this->setUser($student1);
@@ -98,8 +103,12 @@ class mod_data_privacy_provider_testcase extends \core_privacy\tests\provider_te
         $this->generate_data_record($datamodule);
         $this->generate_data_record($datamodule);
 
+        $this->setUser($student3);
+        $this->generate_data_record($datamodule);
+
         $this->student = $student1;
         $this->student2 = $student2;
+        $this->student3 = $student3;
         $this->datamodule = $datamodule;
         $this->course = $course;
     }
@@ -178,6 +187,27 @@ class mod_data_privacy_provider_testcase extends \core_privacy\tests\provider_te
     }
 
     /**
+     * Test for provider::get_users_in_context().
+     */
+    public function test_get_users_in_context() {
+        $component = 'mod_data';
+        $cm = get_coursemodule_from_instance('data', $this->datamodule->id);
+        $cmcontext = context_module::instance($cm->id);
+
+        $userlist = new \core_privacy\local\request\userlist($cmcontext, $component);
+        provider::get_users_in_context($userlist);
+
+        $this->assertCount(3, $userlist);
+
+        $expected = [$this->student->id, $this->student2->id, $this->student3->id];
+        $actual = $userlist->get_userids();
+        sort($expected);
+        sort($actual);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
      * Get test privacy writer
      *
      * @param context $context
@@ -239,5 +269,47 @@ class mod_data_privacy_provider_testcase extends \core_privacy\tests\provider_te
 
         provider::export_user_data($appctxt);
         $this->assertFalse($this->get_writer($cmcontext)->has_any_data());
+    }
+
+    /**
+     * Test for provider::delete_data_for_users().
+     */
+    public function test_delete_data_for_users() {
+        $cm = get_coursemodule_from_instance('data', $this->datamodule->id);
+        $cmcontext = context_module::instance($cm->id);
+        $userstodelete = [$this->student->id, $this->student2->id];
+
+        // Ensure student, student 2 and student 3 have data before being deleted.
+        $appctxt = new \core_privacy\local\request\approved_contextlist($this->student, 'mod_data', [$cmcontext->id]);
+        provider::export_user_data($appctxt);
+        $this->assertTrue($this->get_writer($cmcontext)->has_any_data());
+
+        $appctxt = new \core_privacy\local\request\approved_contextlist($this->student2, 'mod_data', [$cmcontext->id]);
+        provider::export_user_data($appctxt);
+        $this->assertTrue($this->get_writer($cmcontext)->has_any_data());
+
+        // Delete data for student 1 and 2.
+        $approvedlist = new approved_userlist($cmcontext, 'mod_data', $userstodelete);
+        provider::delete_data_for_users($approvedlist);
+
+        // Reset the writer so it doesn't contain the data from before deletion.
+        \core_privacy\local\request\writer::reset();
+
+        // Ensure data is now deleted for student and student 2.
+        $appctxt = new \core_privacy\local\request\approved_contextlist($this->student, 'mod_data', [$cmcontext->id]);
+        provider::export_user_data($appctxt);
+
+        $this->assertFalse($this->get_writer($cmcontext)->has_any_data());
+
+        $appctxt = new \core_privacy\local\request\approved_contextlist($this->student2, 'mod_data', [$cmcontext->id]);
+        provider::export_user_data($appctxt);
+
+        $this->assertFalse($this->get_writer($cmcontext)->has_any_data());
+
+        // Ensure data still intact for student 3.
+        $appctxt = new \core_privacy\local\request\approved_contextlist($this->student3, 'mod_data', [$cmcontext->id]);
+        provider::export_user_data($appctxt);
+
+        $this->assertTrue($this->get_writer($cmcontext)->has_any_data());
     }
 }
