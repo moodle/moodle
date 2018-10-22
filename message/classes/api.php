@@ -62,6 +62,16 @@ class api {
     const MESSAGE_PRIVACY_SITE = 2;
 
     /**
+     * An individual conversation.
+     */
+    const MESSAGE_CONVERSATION_TYPE_INDIVIDUAL = 1;
+
+    /**
+     * A group conversation.
+     */
+    const MESSAGE_CONVERSATION_TYPE_GROUP = 2;
+
+    /**
      * Handles searching for messages in the message area.
      *
      * @param int $userid The user id doing the searching
@@ -1336,7 +1346,11 @@ class api {
 
         $hash = helper::get_conversation_hash($userids);
 
-        if ($conversation = $DB->get_record('message_conversations', ['convhash' => $hash])) {
+        $params = [
+            'type' => self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            'convhash' => $hash
+        ];
+        if ($conversation = $DB->get_record('message_conversations', $params)) {
             return $conversation->id;
         }
 
@@ -1346,27 +1360,82 @@ class api {
     /**
      * Creates a conversation between two users.
      *
+     * @deprecated since 3.6
      * @param array $userids
      * @return int The id of the conversation
      */
     public static function create_conversation_between_users(array $userids) {
+        debugging('\core_message\api::create_conversation_between_users is deprecated, please use ' .
+            '\core_message\api::create_conversation instead.', DEBUG_DEVELOPER);
+
+        // This method was always used for individual conversations.
+        $conversation = self::create_conversation(self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $userids);
+
+        return $conversation->id;
+    }
+
+    /**
+     * Creates a conversation with selected users and messages.
+     *
+     * @param int $type The type of conversation
+     * @param int[] $userids The array of users to add to the conversation
+     * @param string $name The name of the conversation
+     * @return \stdClass
+     */
+    public static function create_conversation(int $type, array $userids, string $name = null) {
         global $DB;
 
+        // Sanity check.
+        if ($type == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL) {
+            if (count($userids) > 2) {
+                throw new \moodle_exception('An individual conversation can not have more than two users.');
+            }
+        }
+
         $conversation = new \stdClass();
-        $conversation->convhash = helper::get_conversation_hash($userids);
+        $conversation->type = $type;
+        $conversation->name = $name;
+        $conversation->convhash = null;
+        if ($type == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL) {
+            $conversation->convhash = helper::get_conversation_hash($userids);
+        }
         $conversation->timecreated = time();
         $conversation->id = $DB->insert_record('message_conversations', $conversation);
 
-        // Add members to this conversation.
+        // Add users to this conversation.
+        $arrmembers = [];
         foreach ($userids as $userid) {
             $member = new \stdClass();
             $member->conversationid = $conversation->id;
             $member->userid = $userid;
             $member->timecreated = time();
-            $DB->insert_record('message_conversation_members', $member);
+            $member->id = $DB->insert_record('message_conversation_members', $member);
+
+            $arrmembers[] = $member;
         }
 
-        return $conversation->id;
+        $conversation->members = $arrmembers;
+
+        return $conversation;
+    }
+
+    /**
+     * Checks if a user can create a group conversation.
+     *
+     * @param int $userid The id of the user attempting to create the conversation
+     * @param \context $context The context they are creating the conversation from, most likely course context
+     * @return bool
+     */
+    public static function can_create_group_conversation(int $userid, \context $context) : bool {
+        global $CFG;
+
+        // If we can't message at all, then we can't create a conversation.
+        if (empty($CFG->messaging)) {
+            return false;
+        }
+
+        // We need to check they have the capability to create the conversation.
+        return has_capability('moodle/course:creategroupconversations', $context, $userid);
     }
 
     /**

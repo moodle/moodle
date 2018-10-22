@@ -2200,6 +2200,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user2 = self::getDataGenerator()->create_user();
 
         $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+        $this->assertDebuggingCalled();
 
         $this->assertEquals($conversationid,
             \core_message\api::get_conversation_between_users([$user1->id, $user2->id]));
@@ -2471,7 +2472,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
 
         $this->assertTrue(\core_message\api::is_user_in_conversation($user1->id, $conversationid));
     }
@@ -2484,9 +2492,123 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
 
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
 
         $this->assertFalse(\core_message\api::is_user_in_conversation($user3->id, $conversationid));
+    }
+
+    /**
+     * Test can create a group conversation.
+     */
+    public function test_can_create_group_conversation() {
+        global $CFG;
+
+        $student = self::getDataGenerator()->create_user();
+        $teacher = self::getDataGenerator()->create_user();
+        $course = self::getDataGenerator()->create_course();
+
+        $coursecontext = context_course::instance($course->id);
+
+        $this->getDataGenerator()->enrol_user($student->id, $course->id);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, 'editingteacher');
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+        $this->assertFalse(\core_message\api::can_create_group_conversation($student->id, $coursecontext));
+
+        // Re-enable messaging.
+        $CFG->messaging = 1;
+
+        // Student shouldn't be able to.
+        $this->assertFalse(\core_message\api::can_create_group_conversation($student->id, $coursecontext));
+
+        // Teacher should.
+        $this->assertTrue(\core_message\api::can_create_group_conversation($teacher->id, $coursecontext));
+    }
+
+    /**
+     * Test creating an individual conversation.
+     */
+    public function test_create_conversation_individual() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ],
+            'A conversation name'
+        );
+
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $conversation->type);
+        $this->assertEquals('A conversation name', $conversation->name);
+        $this->assertEquals(\core_message\helper::get_conversation_hash([$user1->id, $user2->id]), $conversation->convhash);
+
+        $this->assertCount(2, $conversation->members);
+
+        $member1 = array_shift($conversation->members);
+        $member2 = array_shift($conversation->members);
+
+        $this->assertEquals($user1->id, $member1->userid);
+        $this->assertEquals($conversation->id, $member1->conversationid);
+
+        $this->assertEquals($user2->id, $member2->userid);
+        $this->assertEquals($conversation->id, $member2->conversationid);
+    }
+
+    /**
+     * Test creating a group conversation.
+     */
+    public function test_create_conversation_group() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id,
+                $user3->id
+            ],
+            'A conversation name'
+        );
+
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, $conversation->type);
+        $this->assertEquals('A conversation name', $conversation->name);
+        $this->assertNull($conversation->convhash);
+
+        $this->assertCount(3, $conversation->members);
+
+        $member1 = array_shift($conversation->members);
+        $member2 = array_shift($conversation->members);
+        $member3 = array_shift($conversation->members);
+
+        $this->assertEquals($user1->id, $member1->userid);
+        $this->assertEquals($conversation->id, $member1->conversationid);
+
+        $this->assertEquals($user2->id, $member2->userid);
+        $this->assertEquals($conversation->id, $member2->conversationid);
+
+        $this->assertEquals($user3->id, $member3->userid);
+        $this->assertEquals($conversation->id, $member3->conversationid);
+    }
+
+    /**
+     * Test creating an individual conversation with too many members.
+     */
+    public function test_create_conversation_individual_too_many_members() {
+        $this->expectException('moodle_exception');
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, [1, 2, 3]);
     }
 
     /**

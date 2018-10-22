@@ -2565,5 +2565,45 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018101800.00);
     }
 
+    if ($oldversion < 2018102200.00) {
+        // Add field 'type' to 'message_conversations'.
+        $table = new xmldb_table('message_conversations');
+        $field = new xmldb_field('type', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 1, 'id');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Add field 'name' to 'message_conversations'.
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'type');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Conditionally launch add index 'type'.
+        $index = new xmldb_index('type', XMLDB_INDEX_NOTUNIQUE, ['type']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define table 'message_conversations' to be updated.
+        $table = new xmldb_table('message_conversations');
+
+        // Remove the unique 'convhash' index, change to null and add a new non unique index.
+        $index = new xmldb_index('convhash', XMLDB_INDEX_UNIQUE, ['convhash']);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        $field = new xmldb_field('convhash', XMLDB_TYPE_CHAR, '40', null, null, null, null, 'name');
+        $dbman->change_field_notnull($table, $field);
+
+        $index = new xmldb_index('convhash', XMLDB_INDEX_NOTUNIQUE, ['convhash']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2018102200.00);
+    }
+
     return true;
 }
