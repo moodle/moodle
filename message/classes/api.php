@@ -1685,8 +1685,6 @@ class api {
      * @return bool true if recipient hasn't blocked sender and sender can contact to recipient, false otherwise.
      */
     protected static function can_contact_user(\stdClass $recipient, \stdClass $sender) : bool {
-        global $CFG;
-
         if (has_capability('moodle/site:messageanyuser', \context_system::instance(), $sender->id)) {
             // The sender has the ability to contact any user across the entire site.
             return true;
