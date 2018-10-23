@@ -1918,8 +1918,7 @@ class api {
 
         // Be sure we are not trying to add a non existing user to the conversation. Work only with existing users.
         list($useridcondition, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
-        $existingusers = array_keys($DB->get_records_select_menu('user',
-            "id $useridcondition", $params, 'id', 'id, id'));
+        $existingusers = $DB->get_fieldset_select('user', 'id', "id $useridcondition", $params);
 
         // Be sure we are not adding a user is already member of the conversation. Take all the members.
         $memberuserids = array_values($DB->get_records_menu(
