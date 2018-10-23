@@ -96,8 +96,7 @@ test
         $dividercount += 2;
 
         // The basic entry count will additionally include the wrapper menu, Dashboard, Profile, Logout and switch roles link.
-        // On clean theme only, the trigger is also a menuitem.
-        $entrycount += 5;
+        $entrycount += 4;
 
         $output = $OUTPUT->user_menu($USER);
         preg_match_all('/<a [^>]+role="menuitem"[^>]+>/', $output, $results);
