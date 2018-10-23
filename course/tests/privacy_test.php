@@ -51,6 +51,36 @@ class core_course_privacy_testcase extends \core_privacy\tests\provider_testcase
     }
 
     /**
+     * Test fetching users within a context.
+     */
+    public function test_get_users_in_context() {
+        $this->resetAfterTest();
+        $component = 'core_course';
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        // User1 and user2 complete course.
+        $this->create_course_completion();
+        $this->complete_course($user1);
+        $this->complete_course($user2);
+
+        // User3 is enrolled but has not completed course.
+        $this->getDataGenerator()->enrol_user($user3->id, $this->course->id, 'student');
+
+        // Ensure only users that have course completion are returned.
+        $userlist = new \core_privacy\local\request\userlist($this->coursecontext, $component);
+        \core_course\privacy\provider::get_users_in_context($userlist);
+        $expected = [$user1->id, $user2->id];
+        $actual = $userlist->get_userids();
+        sort($expected);
+        sort($actual);
+        $this->assertCount(2, $actual);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
      * Test that user data is exported.
      */
     public function test_export_user_data() {
@@ -174,5 +204,43 @@ class core_course_privacy_testcase extends \core_privacy\tests\provider_testcase
         $this->assertCount(1, $records);
         $records = $DB->get_records('course_completion_crit_compl');
         $this->assertCount(1, $records);
+    }
+
+    /**
+     * Test deleting data within a context for an approved userlist.
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $component = 'core_course';
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        $this->create_course_completion();
+        $this->complete_course($user1);
+        $this->complete_course($user2);
+        $this->complete_course($user3);
+
+        // Ensure records exist for all users before delete.
+        $records = $DB->get_records('course_modules_completion');
+        $this->assertCount(3, $records);
+        $records = $DB->get_records('course_completion_crit_compl');
+        $this->assertCount(3, $records);
+
+        $approveduserids = [$user1->id, $user3->id];
+        $approvedlist = new \core_privacy\local\request\approved_userlist($this->coursecontext, $component, $approveduserids);
+        \core_course\privacy\provider::delete_data_for_users($approvedlist);
+
+        // Ensure content is only deleted for approved userlist.
+        $records = $DB->get_records('course_modules_completion');
+        $this->assertCount(1, $records);
+        $record = reset($records);
+        $this->assertEquals($user2->id, $record->userid);
+        $records = $DB->get_records('course_completion_crit_compl');
+        $this->assertCount(1, $records);
+        $record = reset($records);
+        $this->assertEquals($user2->id, $record->userid);
     }
 }
