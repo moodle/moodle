@@ -66,6 +66,14 @@ $functions = array(
         'ajax'          => true,
         'loginrequired' => false,
     ),
+    'core_auth_resend_confirmation_email' => array(
+        'classname'   => 'core_auth_external',
+        'methodname'  => 'resend_confirmation_email',
+        'description' => 'Resend confirmation email.',
+        'type'        => 'write',
+        'ajax'          => true,
+        'loginrequired' => false,
+    ),
     'core_badges_get_user_badges' => array(
         'classname'     => 'core_badges_external',
         'methodname'    => 'get_user_badges',
