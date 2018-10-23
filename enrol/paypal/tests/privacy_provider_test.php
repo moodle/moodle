@@ -185,7 +185,7 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
         );
 
         // Enrol student3 in course3 with businessuser3 as the receiver.
-        $paypalplugin->enrol_user($enrolinstance1, $this->student1->id, $studentrole->id);
+        $paypalplugin->enrol_user($enrolinstance1, $this->student3->id, $studentrole->id);
         $this->create_enrol_paypal_record(
             $this->businessuser3,
             $this->receiveruser3,
