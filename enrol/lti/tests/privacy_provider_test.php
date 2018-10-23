@@ -41,6 +41,11 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
     protected $user = null;
 
     /**
+     * @var stdClass Another user
+     */
+    protected $anotheruser = null;
+
+    /**
      * @var stdClass The course
      */
     protected $course = null;
@@ -70,8 +75,8 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
         $this->create_lti_users($cmcontext, $this->user->id);
 
         // Create another LTI user.
-        $user = $this->getDataGenerator()->create_user();
-        $this->create_lti_users($coursecontext, $user->id);
+        $this->anotheruser = $this->getDataGenerator()->create_user();
+        $this->create_lti_users($coursecontext, $this->anotheruser->id);
     }
 
     /**
@@ -196,5 +201,92 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
             'timecreated' => time()
         ];
         $DB->insert_record('enrol_lti_users', $ltiuser);
+    }
+
+    /**
+     * Test for provider::get_users_in_context() when the context is a course.
+     */
+    public function test_get_users_in_context_course() {
+        $coursecontext = context_course::instance($this->course->id);
+        $userlist = new \core_privacy\local\request\userlist($coursecontext, 'enrol_paypal');
+        provider::get_users_in_context($userlist);
+
+        $this->assertEquals(
+                [$this->user->id, $this->anotheruser->id],
+                $userlist->get_userids(),
+                '', 0.0, 10, true);
+    }
+
+    /**
+     * Test for provider::get_users_in_context() when the context is an activity.
+     */
+    public function test_get_users_in_context_activity() {
+        $activityctx = context_module::instance($this->activity->cmid);
+        $userlist = new \core_privacy\local\request\userlist($activityctx, 'enrol_paypal');
+        provider::get_users_in_context($userlist);
+
+        $this->assertEquals(
+                [$this->user->id],
+                $userlist->get_userids());
+    }
+
+    /**
+     * Test for provider::delete_data_for_users() when the context is a course.
+     */
+    public function test_delete_data_for_users_course() {
+        global $DB;
+
+        $coursecontext = context_course::instance($this->course->id);
+
+        $count = $DB->count_records('enrol_lti_users');
+        $this->assertEquals(4, $count);
+
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($coursecontext, 'enrol_paypal',
+                [$this->user->id]);
+        provider::delete_data_for_users($approveduserlist);
+
+        $ltiusers = $DB->get_records('enrol_lti_users');
+        $this->assertCount(2, $ltiusers);
+
+        foreach ($ltiusers as $ltiuser) {
+            $leftover = false;
+            if ($ltiuser->userid == $this->user->id) {
+                $contextid = $DB->get_field('enrol_lti_tools', 'contextid', ['id' => $ltiuser->toolid]);
+                if ($contextid == $coursecontext->id) {
+                    $leftover = true;
+                }
+            }
+        }
+        $this->assertFalse($leftover);
+    }
+
+    /**
+     * Test for provider::delete_data_for_users() when the context is an activity.
+     */
+    public function test_delete_data_for_users_activity() {
+        global $DB;
+
+        $cmcontext = context_module::instance($this->activity->cmid);
+
+        $count = $DB->count_records('enrol_lti_users');
+        $this->assertEquals(4, $count);
+
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($cmcontext, 'enrol_paypal',
+                [$this->user->id]);
+        provider::delete_data_for_users($approveduserlist);
+
+        $ltiusers = $DB->get_records('enrol_lti_users');
+        $this->assertCount(3, $ltiusers);
+
+        foreach ($ltiusers as $ltiuser) {
+            $leftover = false;
+            if ($ltiuser->userid == $this->user->id) {
+                $contextid = $DB->get_field('enrol_lti_tools', 'contextid', ['id' => $ltiuser->toolid]);
+                if ($contextid == $cmcontext->id) {
+                    $leftover = true;
+                }
+            }
+        }
+        $this->assertFalse($leftover);
     }
 }
