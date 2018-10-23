@@ -1435,6 +1435,43 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Tests checking if a user can mark all messages as read.
+     */
+    public function test_can_mark_all_messages_as_read() {
+        // Set as the admin.
+        $this->setAdminUser();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth.
+        $time = 1;
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+
+        $conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+
+        // The admin can do anything.
+        $this->assertTrue(\core_message\api::can_mark_all_messages_as_read($user1->id, $conversationid));
+
+        // Set as the user 1.
+        $this->setUser($user1);
+
+        // The user can mark the messages as he is in the conversation.
+        $this->assertTrue(\core_message\api::can_mark_all_messages_as_read($user1->id, $conversationid));
+
+        // User 1 can not mark the messages read for user 2.
+        $this->assertFalse(\core_message\api::can_mark_all_messages_as_read($user2->id, $conversationid));
+
+        // This user is not a part of the conversation.
+        $this->assertFalse(\core_message\api::can_mark_all_messages_as_read($user3->id, $conversationid));
+    }
+
+    /**
      * Tests checking if a user can delete a conversation.
      */
     public function test_can_delete_conversation() {

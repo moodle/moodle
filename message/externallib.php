@@ -2414,6 +2414,7 @@ class core_message_external extends external_api {
     /**
      * Mark all messages as read parameters description.
      *
+     * @deprecated since 3.6
      * @return external_function_parameters
      * @since 3.2
      */
@@ -2429,14 +2430,15 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Mark all notifications as read function.
+     * Mark all messages as read function.
      *
-     * @since  3.2
+     * @deprecated since 3.6
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      * @param  int      $useridto       the user id who received the message
      * @param  int      $useridfrom     the user id who send the message. -10 or -20 for no-reply or support user
      * @return external_description
+     * @since  3.2
      */
     public static function mark_all_messages_as_read($useridto, $useridfrom) {
         global $USER, $CFG;
@@ -2492,13 +2494,83 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Mark all notifications as read return description.
+     * Mark all messages as read return description.
      *
+     * @deprecated since 3.6
      * @return external_single_structure
      * @since 3.2
      */
     public static function mark_all_messages_as_read_returns() {
         return new external_value(PARAM_BOOL, 'True if the messages were marked read, false otherwise');
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function mark_all_messages_as_read_is_deprecated() {
+        return true;
+    }
+
+    /**
+     * Mark all conversation messages as read parameters description.
+     *
+     * @return external_function_parameters
+     * @since 3.6
+     */
+    public static function mark_all_conversation_messages_as_read_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The user id who who we are marking the messages as read for'),
+                'conversationid' =>
+                    new external_value(PARAM_INT, 'The conversation id who who we are marking the messages as read for')
+            )
+        );
+    }
+
+    /**
+     * Mark all conversation messages as read function.
+     *
+     * @param int $userid The user id of who we want to delete the conversation for
+     * @param int $conversationid The id of the conversations
+     * @since 3.6
+     */
+    public static function mark_all_conversation_messages_as_read(int $userid, int $conversationid) {
+        global $CFG;
+
+        // Check if messaging is enabled.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $params = array(
+            'userid' => $userid,
+            'conversationid' => $conversationid,
+        );
+        $params = self::validate_parameters(self::mark_all_conversation_messages_as_read_parameters(), $params);
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
+
+        if (\core_message\api::can_mark_all_messages_as_read($userid, $conversationid)) {
+            \core_message\api::mark_all_messages_as_read($userid, $conversationid);
+        } else {
+            throw new moodle_exception('accessdenied', 'admin');
+        }
+    }
+
+    /**
+     * Mark all conversation messages as read return description.
+     *
+     * @return external_warnings
+     * @since 3.6
+     */
+    public static function mark_all_conversation_messages_as_read_returns() {
+        return new external_warnings();
     }
 
     /**

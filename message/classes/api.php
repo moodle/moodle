@@ -830,6 +830,34 @@ class api {
     }
 
     /**
+     * Checks if a user can mark all messages as read.
+     *
+     * @param int $userid The user id of who we want to mark the messages for
+     * @param int $conversationid The id of the conversation
+     * @return bool true if user is permitted, false otherwise
+     * @since 3.6
+     */
+    public static function can_mark_all_messages_as_read(int $userid, int $conversationid) : bool {
+        global $USER;
+
+        $systemcontext = \context_system::instance();
+
+        if (has_capability('moodle/site:readallmessages', $systemcontext)) {
+            return true;
+        }
+
+        if (!self::is_user_in_conversation($userid, $conversationid)) {
+            return false;
+        }
+
+        if ($USER->id == $userid) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Marks all messages being sent to a user in a particular conversation.
      *
      * If $conversationdid is null then it marks all messages as read sent to $userid.
