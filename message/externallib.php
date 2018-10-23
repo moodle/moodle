@@ -1273,6 +1273,7 @@ class core_message_external extends external_api {
     /**
      * The messagearea conversations parameters.
      *
+     * @deprecated since 3.6
      * @return external_function_parameters
      * @since 3.2
      */
@@ -1289,6 +1290,13 @@ class core_message_external extends external_api {
     /**
      * Get messagearea conversations.
      *
+     * NOTE FOR FINAL DEPRECATION:
+     * When removing this method, please also consider removal of get_conversations_legacy_formatter()
+     * from the \core_message\helper class. This helper method was used solely to format the new get_conversations() return data
+     * into the old format used here, and in message/index.php. If we no longer need either of these, then that method can be
+     * removed.
+     *
+     * @deprecated since 3.6
      * @param int $userid The id of the user who we are viewing conversations for
      * @param int $limitfrom
      * @param int $limitnum
@@ -1319,6 +1327,10 @@ class core_message_external extends external_api {
         }
 
         $conversations = \core_message\api::get_conversations($userid, $limitfrom, $limitnum);
+
+        // Format the conversations in the legacy style, as the get_conversations method has since been changed.
+        $conversations = \core_message\helper::get_conversations_legacy_formatter($conversations);
+
         $conversations = new \core_message\output\messagearea\contacts(null, $conversations);
 
         $renderer = $PAGE->get_renderer('core_message');
@@ -1328,6 +1340,7 @@ class core_message_external extends external_api {
     /**
      * The messagearea conversations return structure.
      *
+     * @deprecated since 3.6
      * @return external_single_structure
      * @since 3.2
      */
@@ -1339,6 +1352,15 @@ class core_message_external extends external_api {
                 )
             )
         );
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function data_for_messagearea_conversations_is_deprecated() {
+        return true;
     }
 
     /**

@@ -529,4 +529,37 @@ class helper {
         }
         return $members;
     }
+
+    /**
+     * Backwards compatibility formatter, transforming the new output of get_conversations() into the old format.
+     *
+     * @param array $conversations the array of conversations, which must come from get_conversations().
+     * @return array the array of conversations, formatted in the legacy style.
+     */
+    public static function get_conversations_legacy_formatter(array $conversations) : array {
+        // Transform new data format back into the old format, just for BC during the deprecation life cycle.
+        $tmp = [];
+        foreach ($conversations as $id => $conv) {
+            $data = new \stdClass();
+            // The logic for the 'other user' is as follows:
+            // If a conversation is of type 'individual', the other user is always the member who is not the current user.
+            // If the conversation is of type 'group', the other user is always the sender of the most recent message.
+            // The get_conversations method already follows this logic, so we just need the first member.
+            $otheruser = reset($conv->members);
+            $data->userid = $otheruser->id;
+            $data->useridfrom = $conv->messages[0]->useridfrom ?? null;
+            $data->fullname = $conv->members[$otheruser->id]->fullname;
+            $data->profileimageurl = $conv->members[$otheruser->id]->profileimageurl;
+            $data->profileimageurlsmall = $conv->members[$otheruser->id]->profileimageurlsmall;
+            $data->ismessaging = isset($conv->messages[0]->text) ? true : false;
+            $data->lastmessage = $conv->messages[0]->text ?? null;
+            $data->messageid = $conv->messages[0]->id ?? null;
+            $data->isonline = $conv->members[$otheruser->id]->isonline ?? null;
+            $data->isblocked = $conv->members[$otheruser->id]->isblocked ?? null;
+            $data->isread = $conv->isread;
+            $data->unreadcount = $conv->unreadcount;
+            $tmp[$data->userid] = $data;
+        }
+        return $tmp;
+    }
 }

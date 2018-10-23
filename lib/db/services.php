@@ -981,7 +981,8 @@ $functions = array(
         'classname' => 'core_message_external',
         'methodname' => 'data_for_messagearea_conversations',
         'classpath' => 'message/externallib.php',
-        'description' => 'Retrieve the template data for the conversation list',
+        'description' => '** DEPRECATED ** Please do not call this function any more.
+                          Retrieve the template data for the conversation list',
         'type' => 'read',
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
