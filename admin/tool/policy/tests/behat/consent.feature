@@ -420,7 +420,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     # Create new version of the policy document.
     And I log in as "admin"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
-    When I follow "Actions"
+    # Menu is already open because javascript is disabled.
     Then I should see "View"
     And I should see "Edit"
     And I should see "Set status to \"Inactive\""
