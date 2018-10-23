@@ -78,3 +78,7 @@ Feature: A teacher can preview questions in the question bank
   Scenario: Preview lets the teacher "Fill in correct response" while previewing
     When I press "Fill in correct responses"
     Then the field "Answer:" matches value "3.14"
+
+  @javascript @_switch_window
+  Scenario: Preview has an option to export the individual quesiton.
+    Then following "Download this question in Moodle XML format" should download between "1000" and "2500" bytes
