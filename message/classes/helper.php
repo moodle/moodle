@@ -354,4 +354,59 @@ class helper {
 
         return $messageexists || $messagereadexists;
     }
+
+    /**
+     * Returns conversation member info for the supplied users, relative to the supplied referenceuserid.
+     *
+     * This is the basic structure used when returning members, and includes information about the relationship between each member
+     * and the referenceuser, such as a whether the referenceuser has marked the member as a contact, or has blocked them.
+     *
+     * @param int $referenceuserid the id of the user which check contact and blocked status.
+     * @param array $userids
+     * @return array the array of objects containing member info, indexed by userid.
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public static function get_member_info(int $referenceuserid, array $userids) : array {
+        global $DB, $PAGE;
+
+        list($useridsql, $usersparams) = $DB->get_in_or_equal($userids);
+        $userfields = \user_picture::fields('u', array('lastaccess'));
+        $userssql = "SELECT $userfields, mc.id AS contactid, mub.id AS blockedid
+                       FROM {user} u
+                  LEFT JOIN {message_contacts} mc
+                         ON (mc.userid = ? AND mc.contactid = u.id)
+                  LEFT JOIN {message_users_blocked} mub
+                         ON (mub.userid = ? AND mub.blockeduserid = u.id)
+                      WHERE u.id $useridsql
+                        AND u.deleted = 0";
+        $usersparams = array_merge([$referenceuserid, $referenceuserid], $usersparams);
+        $otherusers = $DB->get_records_sql($userssql, $usersparams);
+
+        $members = [];
+        foreach ($otherusers as $member) {
+            // Set basic data.
+            $data = new \stdClass();
+            $data->id = $member->id;
+            $data->fullname = fullname($member);
+
+            // Set the user picture data.
+            $userpicture = new \user_picture($member);
+            $userpicture->size = 1; // Size f1.
+            $data->profileimageurl = $userpicture->get_url($PAGE)->out(false);
+            $userpicture->size = 0; // Size f2.
+            $data->profileimageurlsmall = $userpicture->get_url($PAGE)->out(false);
+
+            // Set online status indicators.
+            $data->isonline = self::show_online_status($member) ? self::is_online($member->lastaccess) : null;
+            $data->showonlinestatus = is_null($data->isonline) ? false : true;
+
+            // Set contact and blocked status indicators.
+            $data->iscontact = ($member->contactid) ? true : false;
+            $data->isblocked = ($member->blockedid) ? true : false;
+
+            $members[$data->id] = $data;
+        }
+        return $members;
+    }
 }
