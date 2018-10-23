@@ -45,7 +45,7 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
     /** @var stdClass The manager user object. */
     protected $manager;
 
-/** @var context_system The system context instance. */
+    /** @var context_system The system context instance. */
     protected $syscontext;
 
     /**
