@@ -23,11 +23,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\tests\provider_testcase;
-use \core_rss\privacy\provider;
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\approved_userlist;
+use core_privacy\tests\provider_testcase;
+use core_rss\privacy\provider;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Unit tests for rss\classes\privacy\provider.php
