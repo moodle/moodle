@@ -26,7 +26,7 @@ Feature: Manage data storage purposes
     And I should see "Legal obligation (GDPR Art 6.1(c))" in the "Purpose 1" "table_row"
     And I should see "Explicit consent (GDPR Art. 9.2(a))" in the "Purpose 1" "table_row"
     And I should see "2 years" in the "Purpose 1" "table_row"
-    And I should see "No" in the "Purpose 1" "table_row"
+    And "Purpose 1 Purpose 1 description" row "5" column of "List of data purposes" table should contain "No"
 
   Scenario: Update a data storage purpose
     Given I click on "Actions" "link" in the "Purpose 1" "table_row"
@@ -45,7 +45,7 @@ Feature: Manage data storage purposes
     And I should see "Vital interests (GDPR Art. 6.1(d))" in the "Purpose 1 edited" "table_row"
     And I should see "3 years" in the "Purpose 1 edited" "table_row"
     But I should not see "Legal obligation (GDPR Art 6.1(c))" in the "Purpose 1 edited" "table_row"
-    And I should not see "No" in the "Purpose 1 edited" "table_row"
+    And "Purpose 1 edited Purpose 1 description edited" row "5" column of "List of data purposes" table should not contain "No"
 
   Scenario: Delete a data storage purpose
     Given I click on "Actions" "link" in the "Purpose 1" "table_row"
