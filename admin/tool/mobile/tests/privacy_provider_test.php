@@ -23,11 +23,11 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\transform;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\approved_userlist;
-use \tool_mobile\privacy\provider;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
+use tool_mobile\privacy\provider;
 
 /**
  * Unit tests for the tool_mobile implementation of the privacy API.
