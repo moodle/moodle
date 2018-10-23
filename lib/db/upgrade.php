@@ -2565,5 +2565,11 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018101800.00);
     }
 
+    if ($oldversion < 2018101900.01) {
+        // Show course images by default.
+        set_config('showcourseimages', 1, 'moodlecourse');
+        upgrade_main_savepoint(true, 2018101900.01);
+    }
+
     return true;
 }
