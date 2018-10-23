@@ -1727,9 +1727,7 @@ class api {
     public static function get_contact_requests(int $userid) : array {
         global $DB;
 
-        // Used to search for contacts.
         $ufields = \user_picture::fields('u');
-
         $sql = "SELECT $ufields, mcr.id as contactrequestid
                   FROM {user} u
                   JOIN {message_contact_requests} mcr
@@ -2166,5 +2164,48 @@ class api {
                 $DB->update_record('message_conversations', $conversation);
             }
         }
+    }
+
+    /**
+     * Returns a list of conversation members.
+     *
+     * @param int $userid The user we are returning the conversation members for, used by helper::get_member_info.
+     * @param int $conversationid The id of the conversation
+     * @param bool $includecontactrequests Do we want to include contact requests with this data?
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return array
+     */
+    public static function get_conversation_members(int $userid, int $conversationid, bool $includecontactrequests = false,
+                                                    int $limitfrom = 0, int $limitnum = 0) : array {
+        global $DB;
+
+        if ($members = $DB->get_records('message_conversation_members', ['conversationid' => $conversationid],
+                'timecreated ASC, id ASC', 'userid', $limitfrom, $limitnum)) {
+            $userids = array_keys($members);
+            $members = helper::get_member_info($userid, $userids);
+
+            // Check if we want to include contact requests as well.
+            if ($includecontactrequests) {
+                list($useridsql, $usersparams) = $DB->get_in_or_equal($userids);
+
+                $wheresql = "(userid $useridsql OR requesteduserid $useridsql)";
+                if ($contactrequests = $DB->get_records_select('message_contact_requests', $wheresql,
+                        array_merge($usersparams, $usersparams), 'timecreated ASC, id ASC')) {
+                    foreach ($contactrequests as $contactrequest) {
+                        if (isset($members[$contactrequest->userid])) {
+                            $members[$contactrequest->userid]->contactrequests[] = $contactrequest;
+                        }
+                        if (isset($members[$contactrequest->requesteduserid])) {
+                            $members[$contactrequest->requesteduserid]->contactrequests[] = $contactrequest;
+                        }
+                    }
+                }
+            }
+
+            return $members;
+        }
+
+        return [];
     }
 }
