@@ -354,26 +354,4 @@ class helper {
 
         return $messageexists || $messagereadexists;
     }
-
-    /**
-     * Get if exists a conversation area and is enabled.
-     *
-     * @param string $component Defines the Moodle component which the area was added to.
-     * @param string $itemtype Defines the type of the component.
-     * @param int    $itemid The id of the component.
-     * @param int    $contextid The id of the context.
-     * @return bool Returns if a conversation area exists and is enabled, false otherwise
-     */
-    public static function get_does_conversation_area_enabled(string $component,
-                                                              string $itemtype,
-                                                              int $itemid,
-                                                              int $contextid) : bool {
-        global $DB;
-
-        return $DB->record_exists('message_conversation_area',  ['itemid'    => $itemid,
-                                                                 'contextid' => $contextid,
-                                                                 'component' => $component,
-                                                                 'itemtype'  => $itemtype,
-                                                                 'enabled'   => 1]);
-    }
 }

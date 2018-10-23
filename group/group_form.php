@@ -96,7 +96,7 @@ class group_form extends moodleform {
      * Extend the form definition after the data has been parsed.
      */
     public function definition_after_data() {
-        global $COURSE, $DB;
+        global $COURSE, $DB, $USER;
 
         $mform = $this->_form;
         $groupid = $mform->getElementValue('id');
@@ -104,11 +104,8 @@ class group_form extends moodleform {
 
         if ($group = $DB->get_record('groups', array('id' => $groupid))) {
             // If can create group conversation then get if a conversation area exists and it is enabled.
-            if ($mform->elementExists('enablemessaging')) {
-                if (\core_message\helper::get_does_conversation_area_enabled('core_group',
-                                                                             'groups',
-                                                                              $groupid,
-                                                                              $coursecontext->id)) {
+            if (\core_message\api::can_create_group_conversation($USER->id, $coursecontext)) {
+                if (\core_message\api::is_conversation_area_enabled('core_group', 'groups', $groupid, $coursecontext->id)) {
                     $mform->getElement('enablemessaging')->setSelected(1);
                 }
             }

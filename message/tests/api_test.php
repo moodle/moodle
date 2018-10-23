@@ -3264,63 +3264,32 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Comparison function for sorting contacts.
-     *
-     * @param stdClass $a
-     * @param stdClass $b
-     * @return bool
-     */
-    protected static function sort_contacts($a, $b) {
-        return $a->userid > $b->userid;
-    }
-
-    /**
      * Test create message conversation area.
      */
     public function test_create_conversation_area() {
-        global $DB;
-
         $this->resetAfterTest();
         $contextid = 111;
         $itemid = 222;
         $name = 'Name of conversation';
-        \core_message\api::create_conversation_area('core_group',
-                                                    'groups',
-                                                    $itemid,
-                                                    $contextid,
-                                                    1,
-                                                    $name);
-        $conversationarea = $DB->get_record('message_conversation_area', ['itemid'    => $itemid,
-                                                                          'contextid' => $contextid,
-                                                                          'component' => 'core_group',
-                                                                          'itemtype'  => 'groups']);
-        // Check if exist the new conversation area and if the conversation has been created with the name.
+        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name, 0);
+
         $this->assertEquals($itemid, $conversationarea->itemid);
-        $this->assertEquals(
-                $name,
-                $DB->get_field('message_conversations', 'name', ['id' => $conversationarea->conversationid])
-        );
+        $this->assertEquals($contextid, $conversationarea->contextid);
+        $this->assertEquals('core_group', $conversationarea->component);
+        $this->assertEquals('groups', $conversationarea->itemtype);
+        $this->assertEquals(0, $conversationarea->enabled);
     }
 
     /**
      * Test get_conversation_area.
      */
     public function test_get_conversation_area() {
-        global $DB;
-
         $contextid = 111;
         $itemid = 222;
         $name = 'Name of conversation';
-        \core_message\api::create_conversation_area('core_group',
-                                                    'groups',
-                                                    $itemid,
-                                                    $contextid,
-                                                    1,
-                                                    $name);
-        $conversationarea = \core_message\api::get_conversation_area('core_group',
-                                                                     'groups',
-                                                                      $itemid,
-                                                                      $contextid);
+        \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name, 1);
+        $conversationarea = \core_message\api::get_conversation_area('core_group', 'groups', $itemid, $contextid);
+
         $this->assertEquals($itemid, $conversationarea->itemid);
         $this->assertEquals($contextid, $conversationarea->contextid);
         $this->assertEquals('core_group', $conversationarea->component);
@@ -3337,23 +3306,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $contextid = 111;
         $itemid = 222;
         $name = 'Name of conversation';
-        \core_message\api::create_conversation_area('core_group',
-                                                    'groups',
-                                                    $itemid,
-                                                    $contextid,
-                                                    0,
-                                                    $name);
-        $conversationarea = $DB->get_record('message_conversation_area', ['itemid'    => $itemid,
-                                                                          'contextid' => $contextid,
-                                                                          'component' => 'core_group',
-                                                                          'itemtype'  => 'groups']);
-        $this->assertEquals(0, $conversationarea->enabled);
+        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name, 0);
         \core_message\api::enable_conversation_area($conversationarea->id);
-        $conversationarea = $DB->get_record('message_conversation_area', ['itemid'    => $itemid,
-                                                                          'contextid' => $contextid,
-                                                                          'component' => 'core_group',
-                                                                          'itemtype'  => 'groups']);
-        $this->assertEquals(1, $conversationarea->enabled);
+        $conversationareaenabled = $DB->get_field('message_conversation_area', 'enabled', ['id' => $conversationarea->id]);
+        $this->assertEquals(1, $conversationareaenabled);
     }
 
     /**
@@ -3365,23 +3321,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $contextid = 111;
         $itemid = 222;
         $name = 'Name of conversation';
-        \core_message\api::create_conversation_area('core_group',
-                                                    'groups',
-                                                    $itemid,
-                                                    $contextid,
-                                                    1,
-                                                    $name);
-        $conversationarea = $DB->get_record('message_conversation_area', ['itemid'    => $itemid,
-                                                                          'contextid' => $contextid,
-                                                                          'component' => 'core_group',
-                                                                          'itemtype'  => 'groups']);
+        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name, 1);
         $this->assertEquals(1, $conversationarea->enabled);
         \core_message\api::disable_conversation_area($conversationarea->id);
-        $conversationarea = $DB->get_record('message_conversation_area', ['itemid'    => $itemid,
-                                                                          'contextid' => $contextid,
-                                                                          'component' => 'core_group',
-                                                                          'itemtype'  => 'groups']);
-        $this->assertEquals(0, $conversationarea->enabled);
+        $conversationareaenabled = $DB->get_field('message_conversation_area', 'enabled', ['id' => $conversationarea->id]);
+        $this->assertEquals(0, $conversationareaenabled);
     }
     /**
      * Test update_conversation_name.
@@ -3392,20 +3336,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $contextid = 111;
         $itemid = 222;
         $name = 'Name of conversation';
-        \core_message\api::create_conversation_area('core_group',
-                                                    'groups',
-                                                    $itemid,
-                                                    $contextid,
-                                                    1,
-                                                    $name);
-        $conversationarea = $DB->get_record('message_conversation_area', ['itemid'    => $itemid,
-                                                                          'contextid' => $contextid,
-                                                                          'component' => 'core_group',
-                                                                          'itemtype'  => 'groups']);
-        $this->assertEquals(
-                $name,
-                $DB->get_field('message_conversations', 'name', ['id' => $conversationarea->conversationid])
-        );
+        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name, 1);
 
         $newname = 'New name of conversation';
         \core_message\api::update_conversation_name($conversationarea->conversationid, $newname);
@@ -3414,5 +3345,16 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 $newname,
                 $DB->get_field('message_conversations', 'name', ['id' => $conversationarea->conversationid])
         );
+    }
+
+    /**
+     * Comparison function for sorting contacts.
+     *
+     * @param stdClass $a
+     * @param stdClass $b
+     * @return bool
+     */
+    protected static function sort_contacts($a, $b) {
+        return $a->userid > $b->userid;
     }
 }
