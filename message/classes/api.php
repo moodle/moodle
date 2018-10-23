@@ -1868,4 +1868,84 @@ class api {
 
         return $cancontact;
     }
+
+    /**
+     * Add some new members to an existing conversation.
+     *
+     * @param array $userids User ids array to add as members.
+     * @param int $convid The conversation id. Must exists.
+     * @throws \dml_missing_record_exception If convid conversation doesn't exist
+     * @throws \dml_exception If there is a database error
+     * @throws \moodle_exception If trying to add a member(s) to a non-group conversation
+     */
+    public static function add_members_to_conversation(array $userids, int $convid) {
+        global $DB;
+
+        $conversation = $DB->get_record('message_conversations', ['id' => $convid], '*', MUST_EXIST);
+
+        // We can only add members to a group conversation.
+        if ($conversation->type != self::MESSAGE_CONVERSATION_TYPE_GROUP) {
+            throw new \moodle_exception('You can not add members to a non-group conversation.');
+        }
+
+        // Be sure we are not trying to add a non existing user to the conversation. Work only with existing users.
+        list($useridcondition, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        $existingusers = array_keys($DB->get_records_select_menu('user',
+            "id $useridcondition", $params, 'id', 'id, id'));
+
+        // Be sure we are not adding a user is already member of the conversation. Take all the members.
+        $memberuserids = array_values($DB->get_records_menu(
+            'message_conversation_members', ['conversationid' => $convid], 'id', 'id, userid')
+        );
+
+        // Work with existing new members.
+        $members = array();
+        $newuserids = array_diff($existingusers, $memberuserids);
+        foreach ($newuserids as $userid) {
+            $member = new \stdClass();
+            $member->conversationid = $convid;
+            $member->userid = $userid;
+            $member->timecreated = time();
+            $members[] = $member;
+        }
+
+        $DB->insert_records('message_conversation_members', $members);
+    }
+
+    /**
+     * Remove some members from an existing conversation.
+     *
+     * @param array $userids The user ids to remove from conversation members.
+     * @param int $convid The conversation id. Must exists.
+     * @throws \dml_exception
+     * @throws \moodle_exception If trying to remove a member(s) from a non-group conversation
+     */
+    public static function remove_members_from_conversation(array $userids, int $convid) {
+        global $DB;
+
+        $conversation = $DB->get_record('message_conversations', ['id' => $convid], '*', MUST_EXIST);
+
+        if ($conversation->type != self::MESSAGE_CONVERSATION_TYPE_GROUP) {
+            throw new \moodle_exception('You can not remove members from a non-group conversation.');
+        }
+
+        list($useridcondition, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        $params['convid'] = $convid;
+
+        $DB->delete_records_select('message_conversation_members',
+            "conversationid = :convid AND userid $useridcondition", $params);
+    }
+
+    /**
+     * Count conversation members.
+     *
+     * @param int $convid The conversation id.
+     * @return int Number of conversation members.
+     * @throws \dml_exception
+     */
+    public static function count_conversation_members(int $convid) : int {
+        global $DB;
+
+        return $DB->count_records('message_conversation_members', ['conversationid' => $convid]);
+    }
 }

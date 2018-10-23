@@ -2505,6 +2505,323 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test count_conversation_members for non existing conversation.
+     */
+    public function test_count_conversation_members_no_existing_conversation() {
+        $this->assertEquals(0,
+            \core_message\api::count_conversation_members(0));
+    }
+
+    /**
+     * Test count_conversation_members for existing conversation.
+     */
+    public function test_count_conversation_members_existing_conversation() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->assertEquals(2,
+            \core_message\api::count_conversation_members($conversationid));
+    }
+
+    /**
+     * Test add_members_to_conversation for an individual conversation.
+     */
+    public function test_add_members_to_individual_conversation() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->expectException('moodle_exception');
+        \core_message\api::add_members_to_conversation([$user3->id], $conversationid);
+    }
+
+    /**
+     * Test add_members_to_conversation for existing conversation.
+     */
+    public function test_add_members_to_existing_conversation() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->assertNull(\core_message\api::add_members_to_conversation([$user3->id], $conversationid));
+        $this->assertEquals(3,
+            \core_message\api::count_conversation_members($conversationid));
+    }
+
+    /**
+     * Test add_members_to_conversation for non existing conversation.
+     */
+    public function test_add_members_to_no_existing_conversation() {
+        $user1 = self::getDataGenerator()->create_user();
+
+        // Throw dml_missing_record_exception for non existing conversation.
+        $this->expectException('dml_missing_record_exception');
+        \core_message\api::add_members_to_conversation([$user1->id], 0);
+    }
+
+    /**
+     * Test add_member_to_conversation for non existing user.
+     */
+    public function test_add_members_to_no_existing_user() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        // Don't throw an error for non existing user, but don't add it as a member.
+        $this->assertNull(\core_message\api::add_members_to_conversation([0], $conversationid));
+        $this->assertEquals(2,
+            \core_message\api::count_conversation_members($conversationid));
+    }
+
+    /**
+     * Test add_members_to_conversation for current conversation member.
+     */
+    public function test_add_members_to_current_conversation_member() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        // Don't add as a member a user that is already conversation member.
+        $this->assertNull(\core_message\api::add_members_to_conversation([$user1->id], $conversationid));
+        $this->assertEquals(2,
+            \core_message\api::count_conversation_members($conversationid));
+    }
+
+    /**
+     * Test add_members_to_conversation for multiple users.
+     */
+    public function test_add_members_for_multiple_users() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->assertNull(\core_message\api::add_members_to_conversation([$user3->id, $user4->id], $conversationid));
+        $this->assertEquals(4,
+            \core_message\api::count_conversation_members($conversationid));
+    }
+
+    /**
+     * Test add_members_to_conversation for multiple users, included non existing and current conversation members
+     */
+    public function test_add_members_for_multiple_not_valid_users() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        // Don't throw errors, but don't add as members users don't exist or are already conversation members.
+        $this->assertNull(\core_message\api::add_members_to_conversation([$user3->id, $user1->id, 0], $conversationid));
+        $this->assertEquals(3,
+            \core_message\api::count_conversation_members($conversationid));
+    }
+
+    /**
+     * Test remove_members_from_conversation for individual conversation.
+     */
+    public function test_remove_members_from_individual_conversation() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->expectException('moodle_exception');
+        \core_message\api::remove_members_from_conversation([$user1->id], $conversationid);
+    }
+
+    /**
+     * Test remove_members_from_conversation for existing conversation.
+     */
+    public function test_remove_members_from_existing_conversation() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->assertNull(\core_message\api::remove_members_from_conversation([$user1->id], $conversationid));
+        $this->assertEquals(1,
+            \core_message\api::count_conversation_members($conversationid));
+    }
+
+    /**
+     * Test remove_members_from_conversation for non existing conversation.
+     */
+    public function test_remove_members_from_no_existing_conversation() {
+        $user1 = self::getDataGenerator()->create_user();
+
+        // Throw dml_missing_record_exception for non existing conversation.
+        $this->expectException('dml_missing_record_exception');
+        \core_message\api::remove_members_from_conversation([$user1->id], 0);
+    }
+
+    /**
+     * Test remove_members_from_conversation for non existing user.
+     */
+    public function test_remove_members_for_no_existing_user() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->assertNull(\core_message\api::remove_members_from_conversation([0], $conversationid));
+        $this->assertEquals(2,
+            \core_message\api::count_conversation_members($conversationid));
+    }
+
+    /**
+     * Test remove_members_from_conversation for multiple users.
+     */
+    public function test_remove_members_for_multiple_users() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->assertNull(\core_message\api::add_members_to_conversation([$user3->id, $user4->id], $conversationid));
+        $this->assertNull(\core_message\api::remove_members_from_conversation([$user3->id, $user4->id], $conversationid));
+        $this->assertEquals(2,
+            \core_message\api::count_conversation_members($conversationid));
+    }
+
+    /**
+     * Test remove_members_from_conversation for multiple non valid users.
+     */
+    public function test_remove_members_for_multiple_no_valid_users() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->assertNull(\core_message\api::add_members_to_conversation([$user3->id], $conversationid));
+        $this->assertNull(
+            \core_message\api::remove_members_from_conversation([$user2->id, $user3->id, $user4->id, 0], $conversationid)
+        );
+        $this->assertEquals(1,
+            \core_message\api::count_conversation_members($conversationid));
+    }
+
+    /**
+     * Test count_conversation_members for empty conversation.
+     */
+    public function test_count_conversation_members_empty_conversation() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->assertNull(\core_message\api::remove_members_from_conversation([$user1->id, $user2->id], $conversationid));
+
+        $this->assertEquals(0,
+            \core_message\api::count_conversation_members($conversationid));
+    }
+
+    /**
      * Test can create a contact request.
      */
     public function test_can_create_contact_request() {
