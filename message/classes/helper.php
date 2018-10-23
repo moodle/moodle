@@ -109,6 +109,76 @@ class helper {
     }
 
     /**
+     * Helper function to retrieve conversation messages.
+     *
+     * @param  int $userid The current user.
+     * @param  int $convid The conversation identifier.
+     * @param  int $timedeleted The time the message was deleted
+     * @param  int $limitfrom Return a subset of records, starting at this point (optional).
+     * @param  int $limitnum Return a subset comprising this many records in total (optional, required if $limitfrom is set).
+     * @param  string $sort The column name to order by including optionally direction.
+     * @param  int $timefrom The time from the message being sent.
+     * @param  int $timeto The time up until the message being sent.
+     * @return array of messages
+     */
+    public static function get_conversation_messages(int $userid, int $convid, int $timedeleted = 0, int $limitfrom = 0,
+                                                     int $limitnum = 0, string $sort = 'timecreated ASC', int $timefrom = 0,
+                                                     int $timeto = 0) : array {
+        global $DB;
+
+        $sql = "SELECT m.id, m.useridfrom, m.subject, m.fullmessage, m.fullmessagehtml,
+                       m.fullmessageformat, m.smallmessage, m.timecreated, muaread.timecreated AS timeread
+                  FROM {message_conversations} mc
+            INNER JOIN {messages} m
+                    ON m.conversationid = mc.id
+             LEFT JOIN {message_user_actions} muaread
+                    ON (muaread.messageid = m.id
+                   AND muaread.userid = :userid1
+                   AND muaread.action = :readaction)";
+        $params = ['userid1' => $userid, 'readaction' => api::MESSAGE_ACTION_READ, 'convid' => $convid];
+
+        if (empty($timedeleted)) {
+            $sql .= " LEFT JOIN {message_user_actions} mua
+                             ON (mua.messageid = m.id
+                            AND mua.userid = :userid2
+                            AND mua.action = :deleteaction
+                            AND mua.timecreated is NOT NULL)";
+        } else {
+            $sql .= " INNER JOIN {message_user_actions} mua
+                              ON (mua.messageid = m.id
+                             AND mua.userid = :userid2
+                             AND mua.action = :deleteaction
+                             AND mua.timecreated = :timedeleted)";
+            $params['timedeleted'] = $timedeleted;
+        }
+
+        $params['userid2'] = $userid;
+        $params['deleteaction'] = api::MESSAGE_ACTION_DELETED;
+
+        $sql .= " WHERE mc.id = :convid";
+
+        if (!empty($timefrom)) {
+            $sql .= " AND m.timecreated >= :timefrom";
+            $params['timefrom'] = $timefrom;
+        }
+
+        if (!empty($timeto)) {
+            $sql .= " AND m.timecreated <= :timeto";
+            $params['timeto'] = $timeto;
+        }
+
+        if (empty($timedeleted)) {
+            $sql .= " AND mua.id is NULL";
+        }
+
+        $sql .= " ORDER BY m.$sort";
+
+        $messages = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+
+        return $messages;
+    }
+
+    /**
      * Helper function to return a conversation messages with the involved members (only the ones
      * who have sent any of these messages).
      *
@@ -370,16 +440,13 @@ class helper {
     }
 
     /**
-     * Returns the cache key for the time created value of the last message between two users.
+     * Returns the cache key for the time created value of the last message of this conversation.
      *
-     * @param int $userid
-     * @param int $user2id
-     * @return string
+     * @param int $convid The conversation identifier.
+     * @return string The key.
      */
-    public static function get_last_message_time_created_cache_key($userid, $user2id) {
-        $ids = [$userid, $user2id];
-        sort($ids);
-        return implode('_', $ids);
+    public static function get_last_message_time_created_cache_key(int $convid) {
+        return $convid;
     }
 
     /**

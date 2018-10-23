@@ -292,11 +292,12 @@ function message_send(\core\message\message $eventdata) {
 
     // Only cache messages, not notifications.
     if (!$eventdata->notification) {
-        // Cache the timecreated value of the last message between these two users.
-        $cache = cache::make('core', 'message_time_last_message_between_users');
-        $key = \core_message\helper::get_last_message_time_created_cache_key($eventdata->userfrom->id,
-            $eventdata->userto->id);
-        $cache->set($key, $tabledata->timecreated);
+        if (!empty($eventdata->convid)) {
+            // Cache the timecreated value of the last message in this conversation.
+            $cache = cache::make('core', 'message_time_last_message_between_users');
+            $key = \core_message\helper::get_last_message_time_created_cache_key($eventdata->convid);
+            $cache->set($key, $tabledata->timecreated);
+        }
     }
 
     // Store unread message just in case we get a fatal error any time later.
@@ -306,7 +307,6 @@ function message_send(\core\message\message $eventdata) {
     // Let the manager do the sending or buffering when db transaction in progress.
     return \core\message\manager::send_message($eventdata, $tabledata, $processorlist);
 }
-
 
 /**
  * Updates the message_providers table with the current set of message providers

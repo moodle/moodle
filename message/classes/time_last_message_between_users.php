@@ -28,7 +28,7 @@ namespace core_message;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Cache data source for the time of the last message between users.
+ * Cache data source for the time of the last message in a conversation.
  *
  * @package    core_message
  * @category   cache
@@ -61,9 +61,7 @@ class time_last_message_between_users implements \cache_data_source {
      * @return mixed What ever data should be returned, or false if it can't be loaded.
      */
     public function load_for_cache($key) {
-        list($userid1, $userid2) = explode('_', $key);
-
-        $message = api::get_most_recent_message($userid1, $userid2);
+        $message = api::get_most_recent_conversation_message($key);
 
         if ($message) {
             return $message->timecreated;
