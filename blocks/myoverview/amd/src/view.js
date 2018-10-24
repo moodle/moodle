@@ -28,7 +28,6 @@ define(
     'core/paged_content_factory',
     'core/custom_interaction_events',
     'core/notification',
-    'core/ajax',
     'core/templates',
 ],
 function(
@@ -37,7 +36,6 @@ function(
     PagedContentFactory,
     CustomEvents,
     Notification,
-    Ajax,
     Templates
 ) {
 
@@ -234,6 +232,19 @@ function(
         }).catch(Notification.exception);
     };
 
+    var toggleHiddenFromCard = function(root, courseId, status) {
+        var element = root.find('[data-course-id="' + courseId + '"][data-region="course-content"]');
+
+        loadedPages.forEach(function(courseList) {
+            courseList.courses.forEach(function(course, index) {
+                if (course.id == courseId) {
+                    courseList.courses[index].hidden = status;
+                    element.css('display', 'none');
+                }
+            });
+        });
+    };
+
     /**
      * Set the courses favourite status and push to repository
      *
@@ -347,7 +358,7 @@ function(
      *
      * @param {Object} root The myoverview block container element.
      */
-    var registerEventListeners = function(root, content) {
+    var registerEventListeners = function(root) {
         CustomEvents.define(root, [
             CustomEvents.events.activate
         ]);
@@ -384,8 +395,7 @@ function(
             };
             Repository.updateUserPreferences(request);
 
-            // Reload the paged content based on the hidden course
-            initializePagedContent(root, content);
+            toggleHiddenFromCard(root, id, true);
             data.originalEvent.preventDefault();
         });
 
@@ -404,8 +414,7 @@ function(
 
             Repository.updateUserPreferences(request);
 
-            // Reload the paged content based on the hidden course
-            initializePagedContent(root, content);
+            toggleHiddenFromCard(root, id, false);
             data.originalEvent.preventDefault();
         });
     };

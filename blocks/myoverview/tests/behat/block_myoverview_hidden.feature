@@ -25,18 +25,18 @@ Feature: The my overview block allows users to favourite their courses
 
   Scenario: Test hide toggle functionality
     Given I log in as "student1"
-    When I click on ".coursemenubtn" "css_element" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on "Hide from view" "link" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
+    When I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on "Hide from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I reload the page
     Then I should not see "Course 2" in the "Course overview" "block"
     And I log out
 
   Scenario: Test hide toggle functionality w/ favorites
     Given I log in as "student1"
-    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on "Star this course" "link" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on "Hide from view" "link" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on "Star this course" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on "Hide from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     When I reload the page
     Then I should not see "Course 2" in the "Course overview" "block"
     And I click on "All" "button" in the "Course overview" "block"
@@ -49,12 +49,12 @@ Feature: The my overview block allows users to favourite their courses
 
   Scenario: Test show toggle functionality
     Given I log in as "student1"
-    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on "Hide from view" "link" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on "Hide from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     When I click on "All" "button" in the "Course overview" "block"
     And I click on "Hidden" "link" in the "Course overview" "block"
-    When I click on ".coursemenubtn" "css_element" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on "Show this course" "link" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
+    When I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on "Show this course" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I reload the page
     And I click on "Hidden" "button" in the "Course overview" "block"
     When I click on "All" "link" in the "Course overview" "block"
@@ -63,15 +63,15 @@ Feature: The my overview block allows users to favourite their courses
 
   Scenario: Test show toggle functionality w/ favorites
     Given I log in as "student1"
-    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on "Star this course" "link" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on "Hide from view" "link" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on "Star this course" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on "Hide from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I click on "All" "button" in the "Course overview" "block"
     And I click on "Hidden" "link" in the "Course overview" "block"
     And I should see "Course 2" in the "Course overview" "block"
-    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on "Show this course" "link" in the "//div[@class='card course-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on "Show this course" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     When I reload the page
     Then I should not see "Course 2" in the "Course overview" "block"
     And I click on "Hidden" "button" in the "Course overview" "block"
