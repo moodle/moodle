@@ -20,7 +20,7 @@
  * @copyright  2018 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery'], function($) {
+define(['jquery', 'core/pending'], function($, Pending) {
     return {
         init: function() {
             // Drop downs from bootstrap don't support keyboard accessibility by default.
@@ -65,12 +65,11 @@ define(['jquery'], function($) {
 
             // Special handling for navigation keys when menu is open.
             var shiftFocus = function(element) {
-                M.util.pending_js('core/aria:delayed-focus');
-                var delayedFocus = function() {
+                var delayedFocus = function(pendingPromise) {
                     $(this).focus();
-                    M.util.complete_js('core/aria:delayed-focus');
+                    pendingPromise.resolve();
                 }.bind(element);
-                setTimeout(delayedFocus, 50);
+                setTimeout(delayedFocus, 50, new Pending('core/aria:delayed-focus'));
             };
 
             $('.dropdown').on('shown.bs.dropdown', function(e) {
@@ -188,15 +187,14 @@ define(['jquery'], function($) {
 
             // After page load, focus on any element with special autofocus attribute.
             $(function() {
-                M.util.pending_js('core/aria:delayed-focus');
-                window.setTimeout(function() {
+                window.setTimeout(function(pendingPromise) {
                     var alerts = $('[role="alert"][data-aria-autofocus="true"]');
                     if (alerts.length > 0) {
                         $(alerts[0]).attr('tabindex', '0');
                         $(alerts[0]).focus();
                     }
-                    M.util.complete_js('core/aria:delayed-focus');
-                }, 300);
+                    pendingPromise.resolve();
+                }, 300, new Pending('core/aria:delayed-focus'));
             });
         }
     };
