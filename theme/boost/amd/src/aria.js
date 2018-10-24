@@ -65,8 +65,10 @@ define(['jquery'], function($) {
 
             // Special handling for navigation keys when menu is open.
             var shiftFocus = function(element) {
+                M.util.pending_js('core/aria:delayed-focus');
                 var delayedFocus = function() {
                     $(this).focus();
+                    M.util.complete_js('core/aria:delayed-focus');
                 }.bind(element);
                 setTimeout(delayedFocus, 50);
             };
@@ -186,12 +188,14 @@ define(['jquery'], function($) {
 
             // After page load, focus on any element with special autofocus attribute.
             $(function() {
+                M.util.pending_js('core/aria:delayed-focus');
                 window.setTimeout(function() {
                     var alerts = $('[role="alert"][data-aria-autofocus="true"]');
                     if (alerts.length > 0) {
                         $(alerts[0]).attr('tabindex', '0');
                         $(alerts[0]).focus();
                     }
+                    M.util.complete_js('core/aria:delayed-focus');
                 }, 300);
             });
         }
