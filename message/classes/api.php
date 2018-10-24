@@ -74,6 +74,16 @@ class api {
     const MESSAGE_CONVERSATION_TYPE_GROUP = 2;
 
     /**
+     * The state for an enabled conversation area.
+     */
+    const MESSAGE_CONVERSATION_AREA_ENABLED = 1;
+
+    /**
+     * The state for a disabled conversation area.
+     */
+    const MESSAGE_CONVERSATION_AREA_DISABLED = 0;
+
+    /**
      * Handles searching for messages in the message area.
      *
      * @param int $userid The user id doing the searching
@@ -1988,7 +1998,7 @@ class api {
      * @return \stdClass
      */
     public static function create_conversation_area(string $component, string $itemtype, int $itemid, int $contextid, string $name,
-            int $enabled = 0) {
+            int $enabled = self::MESSAGE_CONVERSATION_AREA_DISABLED) {
         global $DB;
 
         // Create a conversation.
@@ -2027,7 +2037,7 @@ class api {
                 'contextid' => $contextid,
                 'component' => $component,
                 'itemtype' => $itemtype,
-                'enabled' => 1
+                'enabled' => self::MESSAGE_CONVERSATION_AREA_ENABLED
             ]
         );
     }
@@ -2065,7 +2075,7 @@ class api {
 
         $conversationarea = new \stdClass();
         $conversationarea->id = $conversationareaid;
-        $conversationarea->enabled = 1;
+        $conversationarea->enabled = self::MESSAGE_CONVERSATION_AREA_ENABLED;
         $conversationarea->timemodified = time();
         $DB->update_record('message_conversation_area', $conversationarea);
     }
@@ -2081,7 +2091,7 @@ class api {
 
         $conversationarea = new \stdClass();
         $conversationarea->id = $conversationareaid;
-        $conversationarea->enabled = 0;
+        $conversationarea->enabled = self::MESSAGE_CONVERSATION_AREA_DISABLED;
         $conversationarea->timemodified = time();
         $DB->update_record('message_conversation_area', $conversationarea);
     }

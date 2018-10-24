@@ -3271,13 +3271,13 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $contextid = 111;
         $itemid = 222;
         $name = 'Name of conversation';
-        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name, 0);
+        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name);
 
         $this->assertEquals($itemid, $conversationarea->itemid);
         $this->assertEquals($contextid, $conversationarea->contextid);
         $this->assertEquals('core_group', $conversationarea->component);
         $this->assertEquals('groups', $conversationarea->itemtype);
-        $this->assertEquals(0, $conversationarea->enabled);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_AREA_DISABLED, $conversationarea->enabled);
     }
 
     /**
@@ -3287,14 +3287,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $contextid = 111;
         $itemid = 222;
         $name = 'Name of conversation';
-        \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name, 1);
+        \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name,
+            \core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED);
         $conversationarea = \core_message\api::get_conversation_area('core_group', 'groups', $itemid, $contextid);
 
         $this->assertEquals($itemid, $conversationarea->itemid);
         $this->assertEquals($contextid, $conversationarea->contextid);
         $this->assertEquals('core_group', $conversationarea->component);
         $this->assertEquals('groups', $conversationarea->itemtype);
-        $this->assertEquals(1, $conversationarea->enabled);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED, $conversationarea->enabled);
     }
 
     /**
@@ -3306,10 +3307,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $contextid = 111;
         $itemid = 222;
         $name = 'Name of conversation';
-        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name, 0);
+
+        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name);
         \core_message\api::enable_conversation_area($conversationarea->id);
         $conversationareaenabled = $DB->get_field('message_conversation_area', 'enabled', ['id' => $conversationarea->id]);
-        $this->assertEquals(1, $conversationareaenabled);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED, $conversationareaenabled);
     }
 
     /**
@@ -3321,11 +3323,13 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $contextid = 111;
         $itemid = 222;
         $name = 'Name of conversation';
-        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name, 1);
-        $this->assertEquals(1, $conversationarea->enabled);
+
+        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name,
+            \core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED, $conversationarea->enabled);
         \core_message\api::disable_conversation_area($conversationarea->id);
         $conversationareaenabled = $DB->get_field('message_conversation_area', 'enabled', ['id' => $conversationarea->id]);
-        $this->assertEquals(0, $conversationareaenabled);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_AREA_DISABLED, $conversationareaenabled);
     }
     /**
      * Test update_conversation_name.
@@ -3336,7 +3340,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $contextid = 111;
         $itemid = 222;
         $name = 'Name of conversation';
-        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name, 1);
+
+        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name);
 
         $newname = 'New name of conversation';
         \core_message\api::update_conversation_name($conversationarea->conversationid, $newname);

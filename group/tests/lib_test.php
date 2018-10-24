@@ -549,7 +549,7 @@ class core_group_lib_testcase extends advanced_testcase {
                 'contextid' => $coursecontext1->id,
                 'component' => 'core_group',
                 'itemtype' => 'groups',
-                'enabled' => 1
+                'enabled' => \core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED
             ]
         );
         $this->assertCount(1, $conversationareas);
@@ -587,7 +587,7 @@ class core_group_lib_testcase extends advanced_testcase {
                 'contextid' => $coursecontext1->id,
                 'component' => 'core_group',
                 'itemtype' => 'groups',
-                'enabled' => 1
+                'enabled' => \core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED
             ]
         );
         $this->assertCount(1, $conversationareas);
@@ -601,7 +601,7 @@ class core_group_lib_testcase extends advanced_testcase {
                 'contextid' => $coursecontext1->id,
                 'component' => 'core_group',
                 'itemtype' => 'groups',
-                'enabled' => 1
+                'enabled' => \core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED
             ],
         'id ASC');
         $this->assertCount(2, $conversationareas);

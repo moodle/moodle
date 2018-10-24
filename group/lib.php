@@ -278,7 +278,8 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
     // Group conversation messaging.
     if (\core_message\api::can_create_group_conversation($USER->id, $context)) {
         if (!empty($data->enablemessaging)) {
-            \core_message\api::create_conversation_area('core_group', 'groups', $group->id, $context->id, $group->name, 1);
+            \core_message\api::create_conversation_area('core_group', 'groups', $group->id, $group->name, $context->id,
+                \core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED);
         }
     }
 
@@ -432,7 +433,8 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
             \core_message\api::update_conversation_name($conversationarea->conversationid, $group->name);
         } else {
             if (!empty($data->enablemessaging)) {
-                \core_message\api::create_conversation_area('core_group', 'groups', $group->id, $context->id, $group->name, 1);
+                \core_message\api::create_conversation_area('core_group', 'groups', $group->id, $group->name,
+                    \core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED);
             }
         }
     }
