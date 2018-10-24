@@ -51,7 +51,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         $bgimage = self::get_url_for_image($qa, 'bgimage');
 
         $img = html_writer::empty_tag('img', array(
-                'src' => $bgimage, 'class' => 'dropbackground',
+                'class' => 'dropbackground',
                 'alt' => get_string('dropbackground', 'qtype_ddmarker')));
 
         $droparea = html_writer::tag('div', $img, array('class' => 'droparea'));
@@ -96,14 +96,8 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
             $visibledropzones = array();
         }
 
-        $topnode = 'div#q'.$qa->get_slot();
-        $params = array('dropzones' => $visibledropzones,
-                        'topnode' => $topnode,
-                        'readonly' => $options->readonly);
-
-        $PAGE->requires->yui_module('moodle-qtype_ddmarker-dd',
-                                        'M.qtype_ddmarker.init_question',
-                                        array($params));
+        $PAGE->requires->js_call_amd('qtype_ddmarker/question', 'init',
+                ['q' . $qa->get_slot(), $bgimage, $options->readonly, $visibledropzones]);
 
         if ($qa->get_state() == question_state::$invalid) {
             $output .= html_writer::nonempty_tag('div',

@@ -36,11 +36,20 @@ $string['dropbackground'] = 'Background image for dragging markers onto';
 $string['dropzone'] = 'Drop zone {$a}';
 $string['dropzoneheader'] = 'Drop zones';
 $string['dropzones'] = 'Drop zones';
-$string['dropzones_help'] = 'The drop zones are defined by typing coordinates. As you type, the preview above is immediately updated, so you can position things by trial and improvement.
+$string['dropzones_help'] = 'Drop zones may be defined by coordinates, or dragged into position in the preview above.
 
-* Circle: centre_x, centre_y; radius<br>for example: <code>80, 100; 50</code>
-* Polygon: x1, y1; x2, y2; ...; xn, yn<br>for example: <code>20, 60; 100, 60; 20, 100</code>
-* Rectangle: top_left_x, top_left_y; width, height<br>for example: <code>20, 60; 80, 40</code>';
+First selecting a shape (circle, rectangle or polygon) will add a new drop zone shape to the top left of the preview. It may be useful to minimise the Markers section so you can see the preview while editing the Drop zones.
+
+Editing a shape starts with a click on the shape in the preview to show the editing handles. You can move the shape using the center handle, or adjust the shape\'s dimensions with the vertex handles.
+
+For polygons only, holding the control button (command button on a Mac) while clicking on a vertex handle will add a new vertex to the polygon. Please keep a polygon shape as simple as possible, without crossing lines.
+
+For information the three shapes use coordinates in this way:<br />
+* Circle: centre_x, centre_y; radius<br />for example: <code>80,100;50</code><br />
+* Rectangle: top_left_x, top_left_y; width, height<br />for example: <code>20,60;80,40</code><br />
+* Polygon: x1, y1; x2, y2; ...; xn, yn<br />for example: <code>20,60;100,60;20,100</code>
+
+Selecting a Marker text will add that text to the shape in the preview.';
 $string['followingarewrong'] = 'The following markers have been placed in the wrong area : {$a}.';
 $string['followingarewrongandhighlighted'] = 'The following markers were incorrectly placed :  {$a}. Highlighted marker(s) are now shown with the correct placement(s).<br /> Click on the marker to highlight the allowed area.';
 $string['formerror_nobgimage'] = 'You need to select an image to use as the background for the drag and drop area.';
