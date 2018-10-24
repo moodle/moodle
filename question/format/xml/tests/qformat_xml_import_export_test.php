@@ -366,7 +366,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
                 'attachmentsrequired' => 0,
                 'graderinfo' => ['format' => '1', 'text' => ''],
                 'responsetemplate' => ['format' => '1', 'text' => ''],
-                'idnumber' => 'K1']);
+                'idnumber' => '']);
         $kappaquestion1  = $generator->create_question('truefalse', null, [
                 'category' => $categorykappa->id,
                 'name' => 'Kappa Question',
@@ -378,7 +378,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
                 'feedbacktrue' => ['format' => '1', 'text' => ''],
                 'feedbackfalse' => ['format' => '1', 'text' => ''],
                 'penalty' => '1',
-                'idnumber' => 'K2']);
+                'idnumber' => '']);
         $categorylambda = $generator->create_question_category([
                 'name' => 'Lambda',
                 'contextid' => '2',

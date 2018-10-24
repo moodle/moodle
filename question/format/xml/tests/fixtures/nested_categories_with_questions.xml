@@ -63,7 +63,7 @@
     <defaultgrade>1.0000000</defaultgrade>
     <penalty>0.0000000</penalty>
     <hidden>0</hidden>
-    <idnumber>K1</idnumber>
+    <idnumber></idnumber>
     <responseformat>editor</responseformat>
     <responserequired>1</responserequired>
     <responsefieldlines>10</responsefieldlines>
@@ -91,7 +91,7 @@
     <defaultgrade>1.0000000</defaultgrade>
     <penalty>1.0000000</penalty>
     <hidden>0</hidden>
-    <idnumber>K2</idnumber>
+    <idnumber></idnumber>
     <answer fraction="100" format="moodle_auto_format">
       <text>true</text>
       <feedback format="html">
