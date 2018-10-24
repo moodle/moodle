@@ -32,35 +32,14 @@ Feature: Manage data registry defaults
       | Purpose 2    | P5Y            |
     And I set the site category and purpose to "Site category" and "Site purpose"
 
+  # Setting a default for course categories should apply to everything beneath that category.
   Scenario: Set course category data registry defaults
-    Given I set the category and purpose for the course category "scitech" to "Category 2" and "Purpose 2"
-    And I navigate to "Users > Privacy and policies > Data registry" in site administration
+    Given I navigate to "Users > Privacy and policies > Data registry" in site administration
     And I click on "Set defaults" "link"
     And I should see "Inherit"
-    And I should not see "Add a new module default"
     And I press "Edit"
     And I set the field "Category" to "Category 1"
     And I set the field "Purpose" to "Purpose 1"
-    When I press "Save changes"
-    Then I should see "Category 1"
-    And I should see "Purpose 1"
-    And I navigate to "Users > Privacy and policies > Data registry" in site administration
-    And I click on "Science and technology" "link"
-    And I wait until the page is ready
-    And the field "categoryid" matches value "Category 2"
-    And the field "purposeid" matches value "Purpose 2"
-    And I should see "5 years"
-
-  Scenario: Set course category data registry defaults with override
-    Given I set the category and purpose for the course category "scitech" to "Category 2" and "Purpose 2"
-    And I navigate to "Users > Privacy and policies > Data registry" in site administration
-    And I click on "Set defaults" "link"
-    And I should see "Inherit"
-    And I should not see "Add a new module default"
-    And I press "Edit"
-    And I set the field "Category" to "Category 1"
-    And I set the field "Purpose" to "Purpose 1"
-    And I click on "Reset instances with custom values" "checkbox"
     When I press "Save changes"
     Then I should see "Category 1"
     And I should see "Purpose 1"
@@ -68,6 +47,90 @@ Feature: Manage data registry defaults
     And I click on "Science and technology" "link"
     And I wait until the page is ready
     And the field "categoryid" matches value "Not set (use the default value)"
+    And the field "purposeid" matches value "Not set (use the default value)"
+    And I should see "3 years"
+    And I click on "Courses" "link"
+    And I wait until the page is ready
+    And I click on "Physics 101" "link"
+    And I wait until the page is ready
+    And I should see "3 years"
+    And I click on "Activities and resources" "link"
+    And I wait until the page is ready
+    And I should see "3 years"
+    And I click on "Assignment 1 (Assignment)" "link"
+    And I wait until the page is ready
+    And I should see "3 years"
+
+  # When Setting a default for course categories, and overriding a specific category, only that category and its
+  # children will be overridden.
+  # If any child is a course category, it will get the default.
+  Scenario: Set course category data registry defaults with override
+    Given I navigate to "Users > Privacy and policies > Data registry" in site administration
+    And I click on "Set defaults" "link"
+    And I press "Edit"
+    And I set the field "Category" to "Category 1"
+    And I set the field "Purpose" to "Purpose 1"
+    And I press "Save changes"
+    And I should see "Category 1"
+    And I should see "Purpose 1"
+    And I set the category and purpose for the course category "scitech" to "Category 2" and "Purpose 2"
+    When I navigate to "Users > Privacy and policies > Data registry" in site administration
+    And I click on "Science and technology" "link"
+    And I wait until the page is ready
+    Then the field "categoryid" matches value "Category 2"
+    And the field "purposeid" matches value "Purpose 2"
+    And I should see "5 years"
+    And I click on "Courses" "link"
+    And I wait until the page is ready
+    # Physics 101 is also a category, so it will get the category default.
+    And I click on "Physics 101" "link"
+    And I wait until the page is ready
+    And I should see "3 years"
+    And I click on "Activities and resources" "link"
+    And I wait until the page is ready
+    And I should see "3 years"
+    And I click on "Assignment 1 (Assignment)" "link"
+    And I wait until the page is ready
+    And I should see "3 years"
+
+  # When overriding a specific category, only that category and its children will be overridden.
+  Scenario: Set course category data registry defaults with override
+    Given I set the category and purpose for the course category "scitech" to "Category 2" and "Purpose 2"
+    When I navigate to "Users > Privacy and policies > Data registry" in site administration
+    And I click on "Science and technology" "link"
+    And I wait until the page is ready
+    Then the field "categoryid" matches value "Category 2"
+    And the field "purposeid" matches value "Purpose 2"
+    And I should see "5 years"
+    And I click on "Courses" "link"
+    And I wait until the page is ready
+    # Physics 101 is also a category, so it will get the category default.
+    And I click on "Physics 101" "link"
+    And I wait until the page is ready
+    And I should see "5 years"
+    And I click on "Activities and resources" "link"
+    And I wait until the page is ready
+    And I should see "5 years"
+    And I click on "Assignment 1 (Assignment)" "link"
+    And I wait until the page is ready
+    And I should see "5 years"
+
+  # Resetting instances removes custom values.
+  Scenario: Set course category data registry defaults with override
+    Given I set the category and purpose for the course category "scitech" to "Category 2" and "Purpose 2"
+    And I navigate to "Users > Privacy and policies > Data registry" in site administration
+    And I click on "Set defaults" "link"
+    And I press "Edit"
+    And I set the field "Category" to "Category 1"
+    And I set the field "Purpose" to "Purpose 1"
+    When I click on "Reset instances with custom values" "checkbox"
+    And I press "Save changes"
+    And I should see "Category 1"
+    And I should see "Purpose 1"
+    And I navigate to "Users > Privacy and policies > Data registry" in site administration
+    And I click on "Science and technology" "link"
+    And I wait until the page is ready
+    Then the field "categoryid" matches value "Not set (use the default value)"
     And the field "purposeid" matches value "Not set (use the default value)"
     And I should see "3 years"
 
@@ -94,6 +157,12 @@ Feature: Manage data registry defaults
     And the field "categoryid" matches value "Category 2"
     And the field "purposeid" matches value "Purpose 2"
     And I should see "5 years (after the course end date)"
+    And I click on "Activities and resources" "link"
+    And I wait until the page is ready
+    And I should see "5 years"
+    And I click on "Assignment 1 (Assignment)" "link"
+    And I wait until the page is ready
+    And I should see "5 years"
 
   Scenario: Set course data registry defaults with override
     Given I set the category and purpose for the course "Physics 101" to "Category 2" and "Purpose 2"
@@ -119,6 +188,12 @@ Feature: Manage data registry defaults
     And the field "categoryid" matches value "Not set (use the default value)"
     And the field "purposeid" matches value "Not set (use the default value)"
     And I should see "3 years (after the course end date)"
+    And I click on "Activities and resources" "link"
+    And I wait until the page is ready
+    And I should see "3 years"
+    And I click on "Assignment 1 (Assignment)" "link"
+    And I wait until the page is ready
+    And I should see "3 years"
 
   Scenario: Set module level data registry defaults
     Given I set the category and purpose for the "assign1" "assign" in course "Physics 101" to "Category 2" and "Purpose 2"

@@ -145,12 +145,12 @@ class context_instance extends \core\form\persistent {
             $persistent->set('contextid', $context->id);
         }
 
-        $purposeoptions = \tool_dataprivacy\output\data_registry_page::purpose_options(
-            api::get_purposes()
-        );
-        $categoryoptions = \tool_dataprivacy\output\data_registry_page::category_options(
-            api::get_categories()
-        );
+        $purposes = [];
+        foreach (api::get_purposes() as $purpose) {
+            $purposes[$purpose->get('id')] = $purpose;
+        }
+        $purposeoptions = \tool_dataprivacy\output\data_registry_page::purpose_options($purposes);
+        $categoryoptions = \tool_dataprivacy\output\data_registry_page::category_options(api::get_categories());
 
         $customdata = [
             'context' => $context,
@@ -168,9 +168,14 @@ class context_instance extends \core\form\persistent {
                 $context);
 
             $customdata['purposeretentionperiods'] = [];
-            foreach ($purposeoptions as $optionvalue => $unused) {
-                // Get the effective purpose if $optionvalue would be the selected value.
-                $purpose = api::get_effective_context_purpose($context, $optionvalue);
+            foreach (array_keys($purposeoptions) as $optionvalue) {
+
+                if (isset($purposes[$optionvalue])) {
+                    $purpose = $purposes[$optionvalue];
+                } else {
+                    // Get the effective purpose if $optionvalue would be the selected value.
+                    $purpose = api::get_effective_context_purpose($context, $optionvalue);
+                }
 
                 $retentionperiod = self::get_retention_display_text(
                     $purpose,
