@@ -3264,91 +3264,113 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Test create message conversation area.
+     * Test create message conversation with area.
      */
-    public function test_create_conversation_area() {
-        $this->resetAfterTest();
+    public function test_create_conversation_with_area() {
         $contextid = 111;
         $itemid = 222;
         $name = 'Name of conversation';
-        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [],
+            $name,
+            \core_message\api::MESSAGE_CONVERSATION_DISABLED,
+            'core_group',
+            'groups',
+            $itemid,
+            $contextid
+        );
 
-        $this->assertEquals($itemid, $conversationarea->itemid);
-        $this->assertEquals($contextid, $conversationarea->contextid);
-        $this->assertEquals('core_group', $conversationarea->component);
-        $this->assertEquals('groups', $conversationarea->itemtype);
-        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_AREA_DISABLED, $conversationarea->enabled);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_DISABLED, $conversation->enabled);
+        $this->assertEquals('core_group', $conversation->component);
+        $this->assertEquals('groups', $conversation->itemtype);
+        $this->assertEquals($itemid, $conversation->itemid);
+        $this->assertEquals($contextid, $conversation->contextid);
     }
 
     /**
-     * Test get_conversation_area.
+     * Test get_conversation_by_area.
      */
-    public function test_get_conversation_area() {
+    public function test_get_conversation_by_area() {
         $contextid = 111;
         $itemid = 222;
         $name = 'Name of conversation';
-        \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name,
-            \core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED);
-        $conversationarea = \core_message\api::get_conversation_area('core_group', 'groups', $itemid, $contextid);
+        $createconversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [],
+            $name,
+            \core_message\api::MESSAGE_CONVERSATION_DISABLED,
+            'core_group',
+            'groups',
+            $itemid,
+            $contextid
+        );
+        $conversation = \core_message\api::get_conversation_by_area('core_group', 'groups', $itemid, $contextid);
 
-        $this->assertEquals($itemid, $conversationarea->itemid);
-        $this->assertEquals($contextid, $conversationarea->contextid);
-        $this->assertEquals('core_group', $conversationarea->component);
-        $this->assertEquals('groups', $conversationarea->itemtype);
-        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED, $conversationarea->enabled);
+        $this->assertEquals($createconversation->id, $conversation->id);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_DISABLED, $conversation->enabled);
+        $this->assertEquals('core_group', $conversation->component);
+        $this->assertEquals('groups', $conversation->itemtype);
+        $this->assertEquals($itemid, $conversation->itemid);
+        $this->assertEquals($contextid, $conversation->contextid);
     }
 
     /**
-     * Test enable_conversation_area.
+     * Test enable_conversation.
      */
-    public function test_enable_conversation_area() {
+    public function test_enable_conversation() {
         global $DB;
 
-        $contextid = 111;
-        $itemid = 222;
         $name = 'Name of conversation';
 
-        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name);
-        \core_message\api::enable_conversation_area($conversationarea->id);
-        $conversationareaenabled = $DB->get_field('message_conversation_area', 'enabled', ['id' => $conversationarea->id]);
-        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED, $conversationareaenabled);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [],
+            $name,
+            \core_message\api::MESSAGE_CONVERSATION_DISABLED
+        );
+
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_DISABLED, $conversation->enabled);
+        \core_message\api::enable_conversation($conversation->id);
+        $conversationenabled = $DB->get_field('message_conversations', 'enabled', ['id' => $conversation->id]);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_ENABLED, $conversationenabled);
     }
 
     /**
-     * Test disable_conversation_area.
+     * Test disable_conversation.
      */
-    public function test_disable_conversation_area() {
+    public function test_disable_conversation() {
         global $DB;
 
-        $contextid = 111;
-        $itemid = 222;
         $name = 'Name of conversation';
 
-        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name,
-            \core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED);
-        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED, $conversationarea->enabled);
-        \core_message\api::disable_conversation_area($conversationarea->id);
-        $conversationareaenabled = $DB->get_field('message_conversation_area', 'enabled', ['id' => $conversationarea->id]);
-        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_AREA_DISABLED, $conversationareaenabled);
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [],
+            $name,
+            \core_message\api::MESSAGE_CONVERSATION_ENABLED
+        );
+
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_ENABLED, $conversation->enabled);
+        \core_message\api::disable_conversation($conversation->id);
+        $conversationenabled = $DB->get_field('message_conversations', 'enabled', ['id' => $conversation->id]);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_DISABLED, $conversationenabled);
     }
+
     /**
      * Test update_conversation_name.
      */
     public function test_update_conversation_name() {
         global $DB;
 
-        $contextid = 111;
-        $itemid = 222;
-        $name = 'Name of conversation';
-
-        $conversationarea = \core_message\api::create_conversation_area('core_group', 'groups', $itemid, $contextid, $name);
+        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, []);
 
         $newname = 'New name of conversation';
-        \core_message\api::update_conversation_name($conversationarea->conversationid, $newname);
+        \core_message\api::update_conversation_name($conversation->id, $newname);
 
         $this->assertEquals(
                 $newname,
-                $DB->get_field('message_conversations', 'name', ['id' => $conversationarea->conversationid])
+                $DB->get_field('message_conversations', 'name', ['id' => $conversation->id])
         );
     }
 

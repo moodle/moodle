@@ -278,8 +278,15 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
     // Group conversation messaging.
     if (\core_message\api::can_create_group_conversation($USER->id, $context)) {
         if (!empty($data->enablemessaging)) {
-            \core_message\api::create_conversation_area('core_group', 'groups', $group->id, $group->name, $context->id,
-                \core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED);
+            \core_message\api::create_conversation(
+                \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+                [],
+                $group->name,
+                \core_message\api::MESSAGE_CONVERSATION_ENABLED,
+                'core_group',
+                'groups',
+                $group->id,
+                $context->id);
         }
     }
 
@@ -423,18 +430,26 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
 
     // Group conversation messaging.
     if (\core_message\api::can_create_group_conversation($USER->id, $context)) {
-        if ($conversationarea = \core_message\api::get_conversation_area('core_group', 'groups', $group->id, $context->id)) {
-            if ($data->enablemessaging && $data->enablemessaging != $conversationarea->enabled) {
-                \core_message\api::enable_conversation_area($conversationarea->id);
+        if ($conversation = \core_message\api::get_conversation_by_area('core_group', 'groups', $group->id, $context->id)) {
+            if ($data->enablemessaging && $data->enablemessaging != $conversation->enabled) {
+                \core_message\api::enable_conversation($conversation->id);
             }
-            if (!$data->enablemessaging && $data->enablemessaging != $conversationarea->enabled) {
-                \core_message\api::disable_conversation_area($conversationarea->id);
+            if (!$data->enablemessaging && $data->enablemessaging != $conversation->enabled) {
+                \core_message\api::disable_conversation($conversation->id);
             }
-            \core_message\api::update_conversation_name($conversationarea->conversationid, $group->name);
+            \core_message\api::update_conversation_name($conversation->id, $group->name);
         } else {
             if (!empty($data->enablemessaging)) {
-                \core_message\api::create_conversation_area('core_group', 'groups', $group->id, $group->name,
-                    \core_message\api::MESSAGE_CONVERSATION_AREA_ENABLED);
+                \core_message\api::create_conversation(
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+                    [],
+                    $group->name,
+                    \core_message\api::MESSAGE_CONVERSATION_ENABLED,
+                    'core_group',
+                    'groups',
+                    $group->id,
+                    $context->id
+                );
             }
         }
     }

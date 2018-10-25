@@ -2606,26 +2606,47 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2018102300.02) {
-        // Create new 'message_conversation_area' table.
-        $table = new xmldb_table('message_conversation_area');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
-        $table->add_field('conversationid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
-        $table->add_field('component',  XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'conversationid');
-        $table->add_field('itemtype',  XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'component');
-        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'itemtype');
-        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'itemid');
-        $table->add_field('enabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'contextid');
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'enabled');
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'timecreated');
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id'], null, null);
-        $table->add_key('conversationid', XMLDB_KEY_FOREIGN, ['conversationid'], 'message_conversations', ['id']);
-        $table->add_key('contextid', XMLDB_KEY_FOREIGN, ['contextid'], 'context', ['id']);
-        $table->add_index('component-itemtype-contextid-itemid', XMLDB_INDEX_UNIQUE, ['component',
-                                                                                      'itemtype',
-                                                                                      'itemid',
-                                                                                      'contextid']);
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
+        // Alter 'message_conversations' table to support groups.
+        $table = new xmldb_table('message_conversations');
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'convhash');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('itemtype', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'component');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('itemid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'itemtype');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('contextid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'itemid');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('enabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'contextid');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'enabled');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Add key.
+        $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, ['contextid'], 'context', ['id']);
+        $dbman->add_key($table, $key);
+
+        // Add index.
+        $index = new xmldb_index('component-itemtype-contextid-itemid', XMLDB_INDEX_NOTUNIQUE, ['component', 'itemtype',
+            'itemid', 'contextid']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
         }
 
         upgrade_main_savepoint(true, 2018102300.02);
