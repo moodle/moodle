@@ -34,7 +34,7 @@ Feature: Course category management interface performs as expected
     And I should not see "Course categories and courses" in the ".view-mode-selector .menu" "css_element"
     And I should not see "Course categories" in the ".view-mode-selector .menu" "css_element"
     And I should not see "Courses" in the ".view-mode-selector .menu" "css_element"
-    When I click on "Course categories" "link" in the ".view-mode-selector" "css_element"
+    And I open the action menu in ".view-mode-selector" "css_element"
     And I start watching to see if a new page loads
     Then I should see "Course categories and courses" in the ".view-mode-selector .menu" "css_element"
     And I should see "Course categories" in the ".view-mode-selector .menu" "css_element"
@@ -55,7 +55,7 @@ Feature: Course category management interface performs as expected
     And I should see "Cat 1" in the "#course-listing h3" "css_element"
     And I should see "Cat 1" in the "#category-listing" "css_element"
     And I should see "Course 1" in the "#course-listing" "css_element"
-    When I click on "Course categories" "link" in the ".view-mode-selector" "css_element"
+    And I open the action menu in ".view-mode-selector" "css_element"
     Then I should see "Courses" in the ".view-mode-selector .menu" "css_element"
     And I click on "Courses" "link" in the ".view-mode-selector .menu" "css_element"
     And a new page should have loaded since I started watching
@@ -315,7 +315,7 @@ Feature: Course category management interface performs as expected
     And a new page should have loaded since I started watching
     And I start watching to see if a new page loads
     And I should see the "Course categories and courses" management page
-    And I click on "Sort courses" "link"
+    And I open the action menu in ".course-listing-actions" "css_element"
     And I should see "Sort by Course full name ascending" in the ".course-listing-actions" "css_element"
     And I should see "Sort by Course full name descending" in the ".course-listing-actions" "css_element"
     And I should see "Sort by Course short name ascending" in the ".course-listing-actions" "css_element"
@@ -369,7 +369,7 @@ Feature: Course category management interface performs as expected
     And a new page should have loaded since I started watching
     And I start watching to see if a new page loads
     And I should see the "Course categories and courses" management page
-    And I click on "Sort courses" "link"
+    And I open the action menu in ".course-listing-actions" "css_element"
     And I click on "Sort by Course ID number ascending" "link" in the ".course-listing-actions" "css_element"
     And a new page should have loaded since I started watching
     And I start watching to see if a new page loads
@@ -386,7 +386,7 @@ Feature: Course category management interface performs as expected
     And I should see course listing "Course 10" before "Course 11"
     And I should see course listing "Course 11" before "Course 12"
     And "#course-listing .listing-pagination" "css_element" should not exist
-    And I click on "Per page: 20" "link" in the ".course-listing-actions" "css_element"
+    And I open the action menu in ".courses-per-page" "css_element"
     And I should see "5" in the ".courses-per-page" "css_element"
     And I should see "10" in the ".courses-per-page" "css_element"
     And I should see "20" in the ".courses-per-page" "css_element"
@@ -558,7 +558,7 @@ Feature: Course category management interface performs as expected
     And I click on "Cat 1" "link"
     # Redirect.
     And I should see the "Course categories and courses" management page
-    And I click on "Sort courses" "link"
+    And I open the action menu in ".course-listing-actions" "css_element"
     And I click on "Sort by Course ID number ascending" "link" in the ".course-listing-actions" "css_element"
     # Redirect.
     And I should see "Per page: 20" in the ".course-listing-actions" "css_element"
@@ -625,7 +625,7 @@ Feature: Course category management interface performs as expected
     And a new page should have loaded since I started watching
     And I start watching to see if a new page loads
     And I should see the "Course categories and courses" management page
-    And I click on "Sort courses" "link"
+    And I open the action menu in ".course-listing-actions" "css_element"
     And I click on "Sort by Course ID number ascending" "link" in the ".course-listing-actions" "css_element"
     And a new page should have loaded since I started watching
     And I start watching to see if a new page loads
@@ -635,7 +635,7 @@ Feature: Course category management interface performs as expected
     And I should see course listing "Course 19" before "Course 20"
     And I should not see "Course 21"
     And I should see "Showing courses 1 to 20 of 32 courses"
-    And I click on "Per page: 20" "link" in the ".course-listing-actions" "css_element"
+    And I open the action menu in ".courses-per-page" "css_element"
     And I click on "100" "link" in the ".courses-per-page" "css_element"
     And a new page should have loaded since I started watching
     And I start watching to see if a new page loads
@@ -646,7 +646,7 @@ Feature: Course category management interface performs as expected
     And I should see course listing "Course 21" before "Course 22"
     And I should see course listing "Course 31" before "Course 32"
     And "#course-listing .listing-pagination" "css_element" should not exist
-    And I click on "Per page: 100" "link" in the ".course-listing-actions" "css_element"
+    And I open the action menu in ".courses-per-page" "css_element"
     And I click on "5" "link" in the ".courses-per-page" "css_element"
     And a new page should have loaded since I started watching
     And I start watching to see if a new page loads
