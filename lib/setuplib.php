@@ -98,6 +98,8 @@ class moodle_exception extends Exception {
      * @param string $debuginfo optional debugging information
      */
     function __construct($errorcode, $module='', $link='', $a=NULL, $debuginfo=null) {
+        global $CFG;
+
         if (empty($module) || $module == 'moodle' || $module == 'core') {
             $module = 'error';
         }
@@ -116,11 +118,21 @@ class moodle_exception extends Exception {
             $haserrorstring = false;
         }
 
-        if (defined('PHPUNIT_TEST') and PHPUNIT_TEST and $debuginfo) {
-            $message = "$message ($debuginfo)";
+        $isinphpunittest = (defined('PHPUNIT_TEST') && PHPUNIT_TEST);
+        $hasdebugdeveloper = (
+            isset($CFG->debugdisplay) &&
+            isset($CFG->debug) &&
+            $CFG->debugdisplay &&
+            $CFG->debug === DEBUG_DEVELOPER
+        );
+
+        if ($debuginfo) {
+            if ($isinphpunittest || $hasdebugdeveloper) {
+                $message = "$message ($debuginfo)";
+            }
         }
 
-        if (!$haserrorstring and defined('PHPUNIT_TEST') and PHPUNIT_TEST) {
+        if (!$haserrorstring and $isinphpunittest) {
             // Append the contents of $a to $debuginfo so helpful information isn't lost.
             // This emulates what {@link get_exception_info()} does. Unfortunately that
             // function is not used by phpunit.
