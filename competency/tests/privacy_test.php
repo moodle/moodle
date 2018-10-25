@@ -30,7 +30,9 @@ global $CFG, $DB;
 use core_privacy\tests\provider_testcase;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use core_competency\api;
 use core_competency\privacy\provider;
@@ -111,6 +113,62 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assert_contextlist($contextlist, [$sysctx, $cat1ctx]);
     }
 
+    public function test_get_users_in_context_with_usermodified_for_framework() {
+        $dg = $this->getDataGenerator();
+        $ccg = $dg->get_plugin_generator('core_competency');
+
+        $cat1 = $dg->create_category();
+        $cat2 = $dg->create_category();
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u4 = $dg->create_user();
+
+        $sysctx = context_system::instance();
+        $cat1ctx = context_coursecat::instance($cat1->id);
+        $cat2ctx = context_coursecat::instance($cat2->id);
+
+        // Add frameworks.
+        $this->setUser($u1);
+        $f1 = $ccg->create_framework();
+        $f2 = $ccg->create_framework(['contextid' => $cat1ctx->id]);
+
+        $this->setUser($u2);
+        $ccg->create_framework(['contextid' => $cat2ctx->id]);
+
+        // Add competencies.
+        $this->setUser($u3);
+        $c1 = $ccg->create_competency(['competencyframeworkid' => $f1->get('id')]);
+        $c2 = $ccg->create_competency(['competencyframeworkid' => $f1->get('id')]);
+        $c3 = $ccg->create_competency(['competencyframeworkid' => $f1->get('id')]);
+        $c4 = $ccg->create_competency(['competencyframeworkid' => $f2->get('id')]);
+        $c5 = $ccg->create_competency(['competencyframeworkid' => $f2->get('id')]);
+        $c6 = $ccg->create_competency(['competencyframeworkid' => $f2->get('id')]);
+
+        // Add related competencies.
+        $this->setUser($u4);
+        $cr = $ccg->create_related_competency(['competencyid' => $c1->get('id'), 'relatedcompetencyid' => $c2->get('id')]);
+        $cr = $ccg->create_related_competency(['competencyid' => $c4->get('id'), 'relatedcompetencyid' => $c5->get('id')]);
+
+        // Test correct users appear in each context.
+        $component = 'core_competency';
+
+        $userlist = new userlist($sysctx, $component);
+        provider::get_users_in_context($userlist);
+        $expected = [$u1->id, $u3->id, $u4->id];
+        $this->assert_array_match($expected, $userlist->get_userids());
+
+        $userlist = new userlist($cat1ctx, $component);
+        provider::get_users_in_context($userlist);
+        $expected = [$u1->id, $u3->id, $u4->id];
+        $this->assert_array_match($expected, $userlist->get_userids());
+
+        $userlist = new userlist($cat2ctx, $component);
+        provider::get_users_in_context($userlist);
+        $expected = [$u2->id];
+        $this->assert_array_match($expected, $userlist->get_userids());
+    }
+
     public function test_get_contexts_for_userid_with_usermodified_for_template() {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
@@ -174,6 +232,69 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assert_contextlist($contextlist, [$sysctx, $cat1ctx]);
     }
 
+    public function test_get_users_in_context_with_usermodified_for_template() {
+        $dg = $this->getDataGenerator();
+        $ccg = $dg->get_plugin_generator('core_competency');
+
+        $cat1 = $dg->create_category();
+        $cat2 = $dg->create_category();
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u4 = $dg->create_user();
+        $cohort = $dg->create_cohort();
+
+        $sysctx = context_system::instance();
+        $cat1ctx = context_coursecat::instance($cat1->id);
+        $cat2ctx = context_coursecat::instance($cat2->id);
+
+        $f1 = $ccg->create_framework();
+        $f2 = $ccg->create_framework(['contextid' => $cat1ctx->id]);
+        $f3 = $ccg->create_framework(['contextid' => $cat2ctx->id]);
+        $cs = [];
+
+        foreach ([$f1, $f2, $f3] as $f) {
+            $cs[$f->get('id')] = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
+        }
+
+        // Create template context.
+        $this->setUser($u1);
+        $t1 = $ccg->create_template();
+        $t2 = $ccg->create_template(['contextid' => $cat1ctx->id]);
+
+        // Add to category context.
+        $this->setUser($u2);
+        $ccg->create_template(['contextid' => $cat2ctx->id]);
+
+        // Create template competencies.
+        $this->setUser($u3);
+        $c1 = $ccg->create_template_competency(['competencyid' => $cs[$f1->get('id')]->get('id'), 'templateid' => $t1->get('id')]);
+        $c4 = $ccg->create_template_competency(['competencyid' => $cs[$f2->get('id')]->get('id'), 'templateid' => $t2->get('id')]);
+
+        // Create template cohorts.
+        $this->setUser($u4);
+        $c1 = $ccg->create_template_cohort(['cohortid' => $cohort->id, 'templateid' => $t1->get('id')]);
+        $c4 = $ccg->create_template_cohort(['cohortid' => $cohort->id, 'templateid' => $t2->get('id')]);
+
+        // Test correct users appear in each context.
+        $component = 'core_competency';
+
+        $userlist = new userlist($sysctx, $component);
+        provider::get_users_in_context($userlist);
+        $expected = [$u1->id, $u3->id, $u4->id];
+        $this->assert_array_match($expected, $userlist->get_userids());
+
+        $userlist = new userlist($cat1ctx, $component);
+        provider::get_users_in_context($userlist);
+        $expected = [$u1->id, $u3->id, $u4->id];
+        $this->assert_array_match($expected, $userlist->get_userids());
+
+        $userlist = new userlist($cat2ctx, $component);
+        provider::get_users_in_context($userlist);
+        $expected = [$u2->id];
+        $this->assert_array_match($expected, $userlist->get_userids());
+    }
+
     public function test_get_contexts_for_userid_with_usermodified_for_course() {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
@@ -225,6 +346,51 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), [$c2ctx]);
     }
 
+    public function test_get_users_in_context_with_usermodified_for_course() {
+        $dg = $this->getDataGenerator();
+        $ccg = $dg->get_plugin_generator('core_competency');
+        $c1 = $dg->create_course();
+        $c2 = $dg->create_course();
+        $u0 = $dg->create_user();
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u4 = $dg->create_user();
+        $c1ctx = context_course::instance($c1->id);
+        $c2ctx = context_course::instance($c2->id);
+
+        $f = $ccg->create_framework();
+        $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
+        $comp2 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
+
+        $this->setUser($u1);
+        $ccg->create_course_competency(['courseid' => $c1->id, 'competencyid' => $comp1->get('id')]);
+
+        $this->setUser($u2);
+        $ccg->create_course_competency(['courseid' => $c2->id, 'competencyid' => $comp2->get('id')]);
+        $ccg->create_course_competency(['courseid' => $c1->id, 'competencyid' => $comp2->get('id')]);
+
+        $this->setUser($u3);
+        $ccs = new \core_competency\course_competency_settings(null, (object) ['courseid' => $c1->id]);
+        $ccs->create();
+
+        $this->setUser($u4);
+        $ccg->create_user_competency_course(['courseid' => $c2->id, 'userid' => $u0->id, 'competencyid' => $comp1->get('id')]);
+
+        // Test correct users appear in each context.
+        $component = 'core_competency';
+
+        $userlist = new userlist($c1ctx, $component);
+        provider::get_users_in_context($userlist);
+        $expected = [$u1->id, $u2->id, $u3->id];
+        $this->assert_array_match($expected, $userlist->get_userids());
+
+        $userlist = new userlist($c2ctx, $component);
+        provider::get_users_in_context($userlist);
+        $expected = [$u0->id, $u2->id, $u4->id];
+        $this->assert_array_match($expected, $userlist->get_userids());
+    }
+
     public function test_get_contexts_for_userid_with_usermodified_for_module() {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
@@ -256,6 +422,42 @@ class core_competency_privacy_testcase extends provider_testcase {
         $ccg->create_course_module_competency(['cmid' => $m1->cmid, 'competencyid' => $comp2->get('id')]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u1->id), [$m1ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), [$m1ctx, $m2ctx]);
+    }
+
+    public function test_get_users_in_context_with_usermodified_for_module() {
+        $dg = $this->getDataGenerator();
+        $ccg = $dg->get_plugin_generator('core_competency');
+        $c1 = $dg->create_course();
+        $m1 = $dg->create_module('choice', ['course' => $c1]);
+        $m2 = $dg->create_module('choice', ['course' => $c1]);
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $m1ctx = context_module::instance($m1->cmid);
+        $m2ctx = context_module::instance($m2->cmid);
+
+        $f = $ccg->create_framework();
+        $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
+        $comp2 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
+
+        $this->setUser($u1);
+        $ccg->create_course_module_competency(['cmid' => $m1->cmid, 'competencyid' => $comp1->get('id')]);
+
+        $this->setUser($u2);
+        $ccg->create_course_module_competency(['cmid' => $m2->cmid, 'competencyid' => $comp2->get('id')]);
+        $ccg->create_course_module_competency(['cmid' => $m1->cmid, 'competencyid' => $comp2->get('id')]);
+
+        // Test correct users appear in each context.
+        $component = 'core_competency';
+
+        $userlist = new userlist($m1ctx, $component);
+        provider::get_users_in_context($userlist);
+        $expected = [$u1->id, $u2->id];
+        $this->assert_array_match($expected, $userlist->get_userids());
+
+        $userlist = new userlist($m2ctx, $component);
+        provider::get_users_in_context($userlist);
+        $expected = [$u2->id];
+        $this->assert_array_match($expected, $userlist->get_userids());
     }
 
     public function test_get_contexts_for_userid_with_usermodified_for_plan() {
@@ -292,6 +494,38 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assert_contextlist(provider::get_contexts_for_userid($u1->id), [$u0ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), [$u0ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), [$u0ctx]);
+    }
+
+    public function test_get_users_in_context_with_usermodified_for_plan() {
+        $dg = $this->getDataGenerator();
+        $ccg = $dg->get_plugin_generator('core_competency');
+        $u0 = $dg->create_user();
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u0ctx = context_user::instance($u0->id);
+
+        $f = $ccg->create_framework();
+        $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
+        $comp2 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
+
+        $this->setUser($u1);
+        $plan = $ccg->create_plan(['userid' => $u0->id]);
+
+        $this->setUser($u2);
+        $ccg->create_plan_competency(['planid' => $plan->get('id'), 'competencyid' => $comp1->get('id')]);
+
+        $this->setUser($u3);
+        $ccg->create_user_competency_plan(['planid' => $plan->get('id'), 'competencyid' => $comp1->get('id'),
+            'userid' => $u0->id]);
+
+        // Test correct users appear in the context.
+        $component = 'core_competency';
+
+        $userlist = new userlist($u0ctx, $component);
+        provider::get_users_in_context($userlist);
+        $expected = [$u0->id, $u1->id, $u2->id, $u3->id];
+        $this->assert_array_match($expected, $userlist->get_userids());
     }
 
     public function test_get_contexts_for_userid_with_usermodified_for_competency_data() {
@@ -372,6 +606,57 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assert_contextlist(provider::get_contexts_for_userid($u8->id), [$u0ctx]);
     }
 
+    public function test_get_users_in_context_with_usermodified_for_competency_data() {
+        $dg = $this->getDataGenerator();
+        $ccg = $dg->get_plugin_generator('core_competency');
+        $u0 = $dg->create_user();
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u4 = $dg->create_user();
+        $u5 = $dg->create_user();
+        $u6 = $dg->create_user();
+        $u7 = $dg->create_user();
+        $u8 = $dg->create_user();
+        $u0ctx = context_user::instance($u0->id);
+
+        $f = $ccg->create_framework();
+        $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
+
+        $this->setUser($u1);
+        $uc = $ccg->create_user_competency(['userid' => $u0->id, 'competencyid' => $comp1->get('id'),
+            'reviewerid' => $u6->id]);
+
+        $this->setUser($u2);
+        $e = $ccg->create_evidence(['usercompetencyid' => $uc->get('id'), 'actionuserid' => $u5->id]);
+
+        $this->setUser($u3);
+        $ccg->create_user_evidence(['userid' => $u0->id]);
+
+        $this->setUser($u4);
+        $ccg->create_user_evidence(['userid' => $u0->id]);
+
+        // Comment on competency.
+        $this->allow_anyone_to_comment_anywhere();
+        $this->setUser($u7);
+        $comments = $uc->get_comment_object();
+        $comments->add('Hello there!');
+
+        // Comment on plan.
+        $this->setUser($u8);
+        $plan = $ccg->create_plan(['userid' => $u0->id]);
+        $comments = $plan->get_comment_object();
+        $comments->add('Hi, planet!');
+
+        // Test correct users appear in the context.
+        $component = 'core_competency';
+
+        $userlist = new userlist($u0ctx, $component);
+        provider::get_users_in_context($userlist);
+        $expected = [$u0->id, $u1->id, $u2->id, $u3->id, $u4->id, $u5->id, $u6->id, $u7->id, $u8->id];
+        $this->assert_array_match($expected, $userlist->get_userids());
+    }
+
     public function test_get_contexts_for_userid_with_actual_data_and_actual_data_is_goooood() {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
@@ -419,6 +704,53 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), [$u2ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), [$c1ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), [$u4ctx]);
+    }
+
+    public function test_get_users_in_context_with_actual_data_and_actual_data_is_goooood() {
+        $dg = $this->getDataGenerator();
+        $ccg = $dg->get_plugin_generator('core_competency');
+        $c1 = $dg->create_course();
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u4 = $dg->create_user();
+
+        $c1ctx = context_course::instance($c1->id);
+        $u1ctx = context_user::instance($u1->id);
+        $u2ctx = context_user::instance($u2->id);
+        $u3ctx = context_user::instance($u3->id);
+        $u4ctx = context_user::instance($u4->id);
+
+        $f = $ccg->create_framework();
+        $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
+        $comp2 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
+
+        $ccg->create_plan(['userid' => $u1->id]);
+
+        $ccg->create_user_competency(['userid' => $u2->id, 'competencyid' => $comp1->get('id')]);
+
+        $ccg->create_user_competency_course(['userid' => $u3->id, 'competencyid' => $comp1->get('id'), 'courseid' => $c1->id]);
+
+        $ccg->create_user_evidence(['userid' => $u4->id]);
+
+        // Test correct users appear in each context.
+        $component = 'core_competency';
+
+        $userlist = new userlist($u1ctx, $component);
+        provider::get_users_in_context($userlist);
+        $this->assert_array_match([$u1->id], $userlist->get_userids());
+
+        $userlist = new userlist($u2ctx, $component);
+        provider::get_users_in_context($userlist);
+        $this->assert_array_match([$u2->id], $userlist->get_userids());
+
+        $userlist = new userlist($c1ctx, $component);
+        provider::get_users_in_context($userlist);
+        $this->assert_array_match([$u3->id], $userlist->get_userids());
+
+        $userlist = new userlist($u4ctx, $component);
+        provider::get_users_in_context($userlist);
+        $this->assert_array_match([$u4->id], $userlist->get_userids());
     }
 
     public function test_delete_data_for_user() {
@@ -668,6 +1000,273 @@ class core_competency_privacy_testcase extends provider_testcase {
         // Delete for user 2, but we pass u1 and u2 context.
         $p2acommentobj = $p2a->get_comment_object();
         provider::delete_data_for_user(new approved_contextlist($u2, 'core_competency', [$u1ctx->id, $u2ctx->id]));
+
+        // The plan got deleted.
+        $this->assertFalse(\core_competency\plan::record_exists($p2a->get('id')));
+        $this->assert_has_no_comments($p2acommentobj);
+
+        // Nothing should have happened for u1.
+        $this->assertTrue(\core_competency\user_evidence::record_exists($ue1a->get('id')));
+        $this->assertTrue(\core_competency\user_evidence_competency::record_exists($uec1a->get('id')));
+        $this->assertTrue(\core_competency\plan::record_exists($p1a->get('id')));
+        $this->assertTrue(\core_competency\plan_competency::record_exists($pc1a->get('id')));
+        $this->assertTrue(\core_competency\user_competency_plan::record_exists($ucp1a->get('id')));
+        $this->assertTrue(\core_competency\user_competency::record_exists($uc1a->get('id')));
+        $this->assertTrue(\core_competency\evidence::record_exists($e1a->get('id')));
+        $this->assert_has_comments($p1a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($p1a->get_comment_object(), $u2->id));
+        $this->assert_has_comments($uc1a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($uc1a->get_comment_object(), $u2->id));
+    }
+
+    public function test_delete_data_for_users() {
+        $dg = $this->getDataGenerator();
+        $ccg = $dg->get_plugin_generator('core_competency');
+
+        $c1 = $dg->create_course();
+        $c2 = $dg->create_course();
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+
+        $c1ctx = context_course::instance($c1->id);
+        $u1ctx = context_user::instance($u1->id);
+
+        $f = $ccg->create_framework();
+        $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
+        $comp2 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
+
+        $ue1a = $ccg->create_user_evidence(['userid' => $u1->id]);
+        $ue1b = $ccg->create_user_evidence(['userid' => $u1->id]);
+        $ue2 = $ccg->create_user_evidence(['userid' => $u2->id]);
+        $uec1a = $ccg->create_user_evidence_competency(['userevidenceid' => $ue1a->get('id'),
+            'competencyid' => $comp1->get('id')]);
+        $uec1b = $ccg->create_user_evidence_competency(['userevidenceid' => $ue1b->get('id'),
+            'competencyid' => $comp2->get('id')]);
+        $uec2 = $ccg->create_user_evidence_competency(['userevidenceid' => $ue2->get('id'),
+            'competencyid' => $comp1->get('id')]);
+
+        $p1a = $ccg->create_plan(['userid' => $u1->id]);
+        $p1b = $ccg->create_plan(['userid' => $u1->id]);
+        $p2 = $ccg->create_plan(['userid' => $u2->id]);
+        $pc1a = $ccg->create_plan_competency(['planid' => $p1a->get('id'), 'competencyid' => $comp1->get('id')]);
+        $pc1b = $ccg->create_plan_competency(['planid' => $p1b->get('id'), 'competencyid' => $comp2->get('id')]);
+        $pc2 = $ccg->create_plan_competency(['planid' => $p2->get('id'), 'competencyid' => $comp1->get('id')]);
+        $ucp1a = $ccg->create_user_competency_plan(['userid' => $u1->id, 'planid' => $p1a->get('id'),
+            'competencyid' => $comp1->get('id')]);
+        $ucp1b = $ccg->create_user_competency_plan(['userid' => $u1->id, 'planid' => $p1b->get('id'),
+            'competencyid' => $comp2->get('id')]);
+        $ucp2 = $ccg->create_user_competency_plan(['userid' => $u2->id, 'planid' => $p2->get('id'),
+            'competencyid' => $comp1->get('id')]);
+
+        $uc1a = $ccg->create_user_competency(['userid' => $u1->id, 'competencyid' => $comp1->get('id')]);
+        $uc1b = $ccg->create_user_competency(['userid' => $u1->id, 'competencyid' => $comp2->get('id')]);
+        $uc2 = $ccg->create_user_competency(['userid' => $u2->id, 'competencyid' => $comp2->get('id')]);
+        $e1a = $ccg->create_evidence(['usercompetencyid' => $uc1a->get('id')]);
+        $e1b = $ccg->create_evidence(['usercompetencyid' => $uc1b->get('id')]);
+        $e2 = $ccg->create_evidence(['usercompetencyid' => $uc2->get('id')]);
+
+        $ucc1a = $ccg->create_user_competency_course(['userid' => $u1->id, 'courseid' => $c1->id,
+            'competencyid' => $comp1->get('id')]);
+        $ucc1b = $ccg->create_user_competency_course(['userid' => $u1->id, 'courseid' => $c2->id,
+            'competencyid' => $comp1->get('id')]);
+        $ucc2 = $ccg->create_user_competency_course(['userid' => $u2->id, 'courseid' => $c1->id,
+            'competencyid' => $comp1->get('id')]);
+
+        // User 1 comments on both plans.
+        $this->allow_anyone_to_comment_anywhere();
+        $this->setUser($u1);
+        $p1a->get_comment_object()->add('Hi...');
+        $p1a->get_comment_object()->add('mister');
+        $p2->get_comment_object()->add('Ahoy!');
+
+        // User 2 comments on both competencies.
+        $this->setUser($u2);
+        $uc1a->get_comment_object()->add('Hi, too!');
+        $uc1a->get_comment_object()->add('How are you?');
+        $uc2->get_comment_object()->add('Ahoy, too!');
+
+        $p1acommentobj = $p1a->get_comment_object();
+        $p2commentobj = $p2->get_comment_object();
+        $uc1acommentobj = $uc1a->get_comment_object();
+        $uc2commentobj = $uc2->get_comment_object();
+
+        $this->setAdminUser();
+        $this->assertTrue(\core_competency\user_evidence::record_exists($ue1a->get('id')));
+        $this->assertTrue(\core_competency\user_evidence::record_exists($ue1b->get('id')));
+        $this->assertTrue(\core_competency\user_evidence::record_exists($ue2->get('id')));
+        $this->assertTrue(\core_competency\user_evidence_competency::record_exists($uec1a->get('id')));
+        $this->assertTrue(\core_competency\user_evidence_competency::record_exists($uec1b->get('id')));
+        $this->assertTrue(\core_competency\user_evidence_competency::record_exists($uec2->get('id')));
+        $this->assertTrue(\core_competency\plan::record_exists($p1a->get('id')));
+        $this->assertTrue(\core_competency\plan::record_exists($p1b->get('id')));
+        $this->assertTrue(\core_competency\plan::record_exists($p2->get('id')));
+        $this->assertTrue(\core_competency\plan_competency::record_exists($pc1a->get('id')));
+        $this->assertTrue(\core_competency\plan_competency::record_exists($pc1b->get('id')));
+        $this->assertTrue(\core_competency\plan_competency::record_exists($pc2->get('id')));
+        $this->assertTrue(\core_competency\user_competency_plan::record_exists($ucp1a->get('id')));
+        $this->assertTrue(\core_competency\user_competency_plan::record_exists($ucp1b->get('id')));
+        $this->assertTrue(\core_competency\user_competency_plan::record_exists($ucp2->get('id')));
+        $this->assertTrue(\core_competency\user_competency::record_exists($uc1a->get('id')));
+        $this->assertTrue(\core_competency\user_competency::record_exists($uc1b->get('id')));
+        $this->assertTrue(\core_competency\user_competency::record_exists($uc2->get('id')));
+        $this->assertTrue(\core_competency\evidence::record_exists($e1a->get('id')));
+        $this->assertTrue(\core_competency\evidence::record_exists($e1b->get('id')));
+        $this->assertTrue(\core_competency\evidence::record_exists($e2->get('id')));
+        $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc1a->get('id')));
+        $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc1b->get('id')));
+        $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc2->get('id')));
+        $this->assert_has_comments($p1acommentobj);
+        $this->assertEquals(2, $this->get_comments_count($p1acommentobj, $u1->id));
+        $this->assertEquals(0, $this->get_comments_count($p1acommentobj, $u2->id));
+        $this->assert_has_comments($p2commentobj);
+        $this->assertEquals(1, $this->get_comments_count($p2commentobj, $u1->id));
+        $this->assertEquals(0, $this->get_comments_count($p2commentobj, $u2->id));
+        $this->assert_has_comments($uc1acommentobj);
+        $this->assertEquals(0, $this->get_comments_count($uc1acommentobj, $u1->id));
+        $this->assertEquals(2, $this->get_comments_count($uc1acommentobj, $u2->id));
+        $this->assert_has_comments($uc2commentobj);
+        $this->assertEquals(0, $this->get_comments_count($uc2commentobj, $u1->id));
+        $this->assertEquals(1, $this->get_comments_count($uc2commentobj, $u2->id));
+
+        // Deleting user context.
+        $userlist = new approved_userlist($u1ctx, 'core_competency', [$u1->id, $u2->id]);
+        provider::delete_data_for_users($userlist);
+
+        $this->assertFalse(\core_competency\user_evidence::record_exists($ue1a->get('id')));
+        $this->assertFalse(\core_competency\user_evidence::record_exists($ue1b->get('id')));
+        $this->assertFalse(\core_competency\user_evidence_competency::record_exists($uec1a->get('id')));
+        $this->assertFalse(\core_competency\user_evidence_competency::record_exists($uec1b->get('id')));
+        $this->assertFalse(\core_competency\plan::record_exists($p1a->get('id')));
+        $this->assertFalse(\core_competency\plan::record_exists($p1b->get('id')));
+        $this->assertFalse(\core_competency\plan_competency::record_exists($pc1a->get('id')));
+        $this->assertFalse(\core_competency\plan_competency::record_exists($pc1b->get('id')));
+        $this->assertFalse(\core_competency\user_competency_plan::record_exists($ucp1a->get('id')));
+        $this->assertFalse(\core_competency\user_competency_plan::record_exists($ucp1b->get('id')));
+        $this->assertFalse(\core_competency\user_competency::record_exists($uc1a->get('id')));
+        $this->assertFalse(\core_competency\user_competency::record_exists($uc1b->get('id')));
+        $this->assertFalse(\core_competency\evidence::record_exists($e1a->get('id')));
+        $this->assertFalse(\core_competency\evidence::record_exists($e1b->get('id')));
+
+        $this->assert_has_no_comments($p1acommentobj);
+        $this->assertEquals(0, $this->get_comments_count($p1acommentobj, $u1->id));
+        $this->assertEquals(0, $this->get_comments_count($p1acommentobj, $u2->id));
+        $this->assert_has_no_comments($uc1acommentobj);
+        $this->assertEquals(0, $this->get_comments_count($uc1acommentobj, $u1->id));
+        $this->assertEquals(0, $this->get_comments_count($uc1acommentobj, $u2->id));
+
+        // This should not have been affected.
+        $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc1a->get('id')));
+        $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc1b->get('id')));
+
+        $this->assertTrue(\core_competency\user_evidence::record_exists($ue2->get('id')));
+        $this->assertTrue(\core_competency\user_evidence_competency::record_exists($uec2->get('id')));
+        $this->assertTrue(\core_competency\plan::record_exists($p2->get('id')));
+        $this->assertTrue(\core_competency\plan_competency::record_exists($pc2->get('id')));
+        $this->assertTrue(\core_competency\user_competency_plan::record_exists($ucp2->get('id')));
+        $this->assertTrue(\core_competency\user_competency::record_exists($uc2->get('id')));
+        $this->assertTrue(\core_competency\evidence::record_exists($e2->get('id')));
+        $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc2->get('id')));
+        $this->assert_has_comments($p2commentobj);
+        $this->assertEquals(1, $this->get_comments_count($p2commentobj, $u1->id));
+        $this->assertEquals(0, $this->get_comments_count($p2commentobj, $u2->id));
+        $this->assert_has_comments($uc2commentobj);
+        $this->assertEquals(0, $this->get_comments_count($uc2commentobj, $u1->id));
+        $this->assertEquals(1, $this->get_comments_count($uc2commentobj, $u2->id));
+
+        // Deleting course context as well.
+        $userlist = new approved_userlist($c1ctx, 'core_competency', [$u1->id]);
+        provider::delete_data_for_users($userlist);
+
+        $this->assertFalse(\core_competency\user_competency_course::record_exists($ucc1a->get('id')));
+
+        // The rest belongs to another course, or the other user.
+        $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc1b->get('id')));
+        $this->assertTrue(\core_competency\user_evidence::record_exists($ue2->get('id')));
+        $this->assertTrue(\core_competency\user_evidence_competency::record_exists($uec2->get('id')));
+        $this->assertTrue(\core_competency\plan::record_exists($p2->get('id')));
+        $this->assertTrue(\core_competency\plan_competency::record_exists($pc2->get('id')));
+        $this->assertTrue(\core_competency\user_competency_plan::record_exists($ucp2->get('id')));
+        $this->assertTrue(\core_competency\user_competency::record_exists($uc2->get('id')));
+        $this->assertTrue(\core_competency\evidence::record_exists($e2->get('id')));
+        $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc2->get('id')));
+    }
+
+    public function test_delete_data_for_users_with_other_user_context() {
+        $dg = $this->getDataGenerator();
+        $ccg = $dg->get_plugin_generator('core_competency');
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+
+        $u1ctx = context_user::instance($u1->id);
+        $u2ctx = context_user::instance($u2->id);
+
+        $f = $ccg->create_framework();
+        $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
+
+        // Create a bunch of data for user 1.
+        $ue1a = $ccg->create_user_evidence(['userid' => $u1->id]);
+        $uec1a = $ccg->create_user_evidence_competency(['userevidenceid' => $ue1a->get('id'),
+            'competencyid' => $comp1->get('id')]);
+        $p1a = $ccg->create_plan(['userid' => $u1->id]);
+        $pc1a = $ccg->create_plan_competency(['planid' => $p1a->get('id'), 'competencyid' => $comp1->get('id')]);
+        $ucp1a = $ccg->create_user_competency_plan(['userid' => $u1->id, 'planid' => $p1a->get('id'),
+            'competencyid' => $comp1->get('id')]);
+        $uc1a = $ccg->create_user_competency(['userid' => $u1->id, 'competencyid' => $comp1->get('id')]);
+        $e1a = $ccg->create_evidence(['usercompetencyid' => $uc1a->get('id')]);
+
+        $p2a = $ccg->create_plan(['userid' => $u2->id]);
+
+        // User 2 comments.
+        $this->allow_anyone_to_comment_anywhere();
+        $this->setUser($u2);
+        $p1a->get_comment_object()->add('Hi...');
+        $p2a->get_comment_object()->add('Hi, hi!');
+        $uc1a->get_comment_object()->add('Hi, too!');
+
+        // Confirm state.
+        $this->setAdminUser();
+        $this->assertTrue(\core_competency\user_evidence::record_exists($ue1a->get('id')));
+        $this->assertTrue(\core_competency\user_evidence_competency::record_exists($uec1a->get('id')));
+        $this->assertTrue(\core_competency\plan::record_exists($p1a->get('id')));
+        $this->assertTrue(\core_competency\plan_competency::record_exists($pc1a->get('id')));
+        $this->assertTrue(\core_competency\user_competency_plan::record_exists($ucp1a->get('id')));
+        $this->assertTrue(\core_competency\user_competency::record_exists($uc1a->get('id')));
+        $this->assertTrue(\core_competency\evidence::record_exists($e1a->get('id')));
+        $this->assert_has_comments($p1a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($p1a->get_comment_object(), $u2->id));
+        $this->assert_has_comments($p2a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($p2a->get_comment_object(), $u2->id));
+        $this->assert_has_comments($uc1a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($uc1a->get_comment_object(), $u2->id));
+
+        $this->assertTrue(\core_competency\plan::record_exists($p2a->get('id')));
+
+        // Delete for user 2, but we pass u1 context.
+        $userlist = new approved_userlist($u1ctx, 'core_competency', [$u2->id]);
+        provider::delete_data_for_users($userlist);
+
+        // Nothing should have happened.
+        $this->assertTrue(\core_competency\user_evidence::record_exists($ue1a->get('id')));
+        $this->assertTrue(\core_competency\user_evidence_competency::record_exists($uec1a->get('id')));
+        $this->assertTrue(\core_competency\plan::record_exists($p1a->get('id')));
+        $this->assertTrue(\core_competency\plan_competency::record_exists($pc1a->get('id')));
+        $this->assertTrue(\core_competency\user_competency_plan::record_exists($ucp1a->get('id')));
+        $this->assertTrue(\core_competency\user_competency::record_exists($uc1a->get('id')));
+        $this->assertTrue(\core_competency\evidence::record_exists($e1a->get('id')));
+        $this->assert_has_comments($p1a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($p1a->get_comment_object(), $u2->id));
+        $this->assert_has_comments($p2a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($p2a->get_comment_object(), $u2->id));
+        $this->assert_has_comments($uc1a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($uc1a->get_comment_object(), $u2->id));
+
+        $this->assertTrue(\core_competency\plan::record_exists($p2a->get('id')));
+
+        // Delete for user 2, in user 2 context.
+        $p2acommentobj = $p2a->get_comment_object();
+        $userlist = new approved_userlist($u2ctx, 'core_competency', [$u2->id]);
+        provider::delete_data_for_users($userlist);
 
         // The plan got deleted.
         $this->assertFalse(\core_competency\plan::record_exists($p2a->get('id')));
