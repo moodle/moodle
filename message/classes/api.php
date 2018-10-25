@@ -74,6 +74,16 @@ class api {
     const MESSAGE_CONVERSATION_TYPE_GROUP = 2;
 
     /**
+     * The state for an enabled conversation area.
+     */
+    const MESSAGE_CONVERSATION_ENABLED = 1;
+
+    /**
+     * The state for a disabled conversation area.
+     */
+    const MESSAGE_CONVERSATION_DISABLED = 0;
+
+    /**
      * Handles searching for messages in the message area.
      *
      * @param int $userid The user id doing the searching
@@ -1459,10 +1469,18 @@ class api {
      *
      * @param int $type The type of conversation
      * @param int[] $userids The array of users to add to the conversation
-     * @param string $name The name of the conversation
+     * @param string|null $name The name of the conversation
+     * @param int $enabled Determines if the conversation is created enabled or disabled
+     * @param string|null $component Defines the Moodle component which the conversation belongs to, if any
+     * @param string|null $itemtype Defines the type of the component
+     * @param int|null $itemid The id of the component
+     * @param int|null $contextid The id of the context
      * @return \stdClass
      */
-    public static function create_conversation(int $type, array $userids, string $name = null) {
+    public static function create_conversation(int $type, array $userids, string $name = null,
+            int $enabled = self::MESSAGE_CONVERSATION_ENABLED, string $component = null,
+            string $itemtype = null, int $itemid = null, int $contextid = null) {
+
         global $DB;
 
         // Sanity check.
@@ -1479,7 +1497,13 @@ class api {
         if ($type == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL) {
             $conversation->convhash = helper::get_conversation_hash($userids);
         }
+        $conversation->component = $component;
+        $conversation->itemtype = $itemtype;
+        $conversation->itemid = $itemid;
+        $conversation->contextid = $contextid;
+        $conversation->enabled = $enabled;
         $conversation->timecreated = time();
+        $conversation->timemodified = $conversation->timecreated;
         $conversation->id = $DB->insert_record('message_conversations', $conversation);
 
         // Add users to this conversation.
@@ -1974,5 +1998,101 @@ class api {
         global $DB;
 
         return $DB->count_records('message_conversation_members', ['conversationid' => $convid]);
+    }
+
+    /**
+     * Checks whether or not a conversation area is enabled.
+     *
+     * @param string $component Defines the Moodle component which the area was added to.
+     * @param string $itemtype Defines the type of the component.
+     * @param int $itemid The id of the component.
+     * @param int $contextid The id of the context.
+     * @return bool Returns if a conversation area exists and is enabled, false otherwise
+     */
+    public static function is_conversation_area_enabled(string $component, string $itemtype, int $itemid, int $contextid) : bool {
+        global $DB;
+
+        return $DB->record_exists('message_conversations',
+            [
+                'itemid' => $itemid,
+                'contextid' => $contextid,
+                'component' => $component,
+                'itemtype' => $itemtype,
+                'enabled' => self::MESSAGE_CONVERSATION_ENABLED
+            ]
+        );
+    }
+
+    /**
+     * Get conversation by area.
+     *
+     * @param string $component Defines the Moodle component which the area was added to.
+     * @param string $itemtype Defines the type of the component.
+     * @param int $itemid The id of the component.
+     * @param int $contextid The id of the context.
+     * @return \stdClass
+     */
+    public static function get_conversation_by_area(string $component, string $itemtype, int $itemid, int $contextid) {
+        global $DB;
+
+        return $DB->get_record('message_conversations',
+            [
+                'itemid' => $itemid,
+                'contextid' => $contextid,
+                'component' => $component,
+                'itemtype'  => $itemtype
+            ]
+        );
+    }
+
+    /**
+     * Enable a conversation.
+     *
+     * @param int $conversationid The id of the conversation.
+     * @return void
+     */
+    public static function enable_conversation(int $conversationid) {
+        global $DB;
+
+        $conversation = new \stdClass();
+        $conversation->id = $conversationid;
+        $conversation->enabled = self::MESSAGE_CONVERSATION_ENABLED;
+        $conversation->timemodified = time();
+        $DB->update_record('message_conversations', $conversation);
+    }
+
+    /**
+     * Disable a conversation.
+     *
+     * @param int $conversationid The id of the conversation.
+     * @return void
+     */
+    public static function disable_conversation(int $conversationid) {
+        global $DB;
+
+        $conversation = new \stdClass();
+        $conversation->id = $conversationid;
+        $conversation->enabled = self::MESSAGE_CONVERSATION_DISABLED;
+        $conversation->timemodified = time();
+        $DB->update_record('message_conversations', $conversation);
+    }
+
+    /**
+     * Update the name of a conversation.
+     *
+     * @param int $conversationid The id of a conversation.
+     * @param string $name The main name of the area
+     * @return void
+     */
+    public static function update_conversation_name(int $conversationid, string $name) {
+        global $DB;
+
+        if ($conversation = $DB->get_record('message_conversations', array('id' => $conversationid))) {
+            if ($name <> $conversation->name) {
+                $conversation->name = $name;
+                $conversation->timemodified = time();
+                $DB->update_record('message_conversations', $conversation);
+            }
+        }
     }
 }

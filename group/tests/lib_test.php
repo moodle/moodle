@@ -528,4 +528,100 @@ class core_group_lib_testcase extends advanced_testcase {
         }
         $this->assertEquals(2, $DB->count_records('groups_members', array('groupid' => $group6->id)));
     }
+
+    /**
+     * Test groups_create_group enabling a group conversation.
+     */
+    public function test_groups_create_group_with_conversation() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = context_course::instance($course1->id);
+
+        // Create two groups and only one group with enablemessaging = 1.
+        $group1a = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 1));
+        $group1b = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 0));
+
+        $conversations = $DB->get_records('message_conversations',
+            [
+                'contextid' => $coursecontext1->id,
+                'component' => 'core_group',
+                'itemtype' => 'groups',
+                'enabled' => \core_message\api::MESSAGE_CONVERSATION_ENABLED
+            ]
+        );
+        $this->assertCount(1, $conversations);
+
+        $conversation = reset($conversations);
+        // Check groupid was stored in itemid on conversation area.
+        $this->assertEquals($group1a->id, $conversation->itemid);
+
+        $conversations = $DB->get_records('message_conversations', ['id' => $conversation->id]);
+        $this->assertCount(1, $conversations);
+
+        $conversation = reset($conversations);
+
+        // Check group name was stored in conversation.
+        $this->assertEquals($group1a->name, $conversation->name);
+    }
+
+    /**
+     * Test groups_update_group enabling and disabling a group conversation.
+     */
+    public function test_groups_update_group_conversation() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = context_course::instance($course1->id);
+
+        // Create two groups and only one group with enablemessaging = 1.
+        $group1a = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 1));
+        $group1b = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 0));
+
+        $conversations = $DB->get_records('message_conversations',
+            [
+                'contextid' => $coursecontext1->id,
+                'component' => 'core_group',
+                'itemtype' => 'groups',
+                'enabled' => \core_message\api::MESSAGE_CONVERSATION_ENABLED
+            ]
+        );
+        $this->assertCount(1, $conversations);
+
+        // Check that the conversation area is created when group messaging is enabled in the course group.
+        $group1b->enablemessaging = 1;
+        groups_update_group($group1b);
+
+        $conversations = $DB->get_records('message_conversations',
+            [
+                'contextid' => $coursecontext1->id,
+                'component' => 'core_group',
+                'itemtype' => 'groups',
+                'enabled' => \core_message\api::MESSAGE_CONVERSATION_ENABLED
+            ],
+        'id ASC');
+        $this->assertCount(2, $conversations);
+
+        $conversation1a = array_shift($conversations);
+        $conversation1b = array_shift($conversations);
+
+        $conversation1b = $DB->get_record('message_conversations', ['id' => $conversation1b->id]);
+
+        // Check for group1b that group name was stored in conversation.
+        $this->assertEquals($group1b->name, $conversation1b->name);
+
+        $group1b->enablemessaging = 0;
+        groups_update_group($group1b);
+        $this->assertEquals(0, $DB->get_field("message_conversations", "enabled", ['id' => $conversation1b->id]));
+
+        // Check that the name of the conversation is changed when the name of the course group is updated.
+        $group1b->name = 'New group name';
+        groups_update_group($group1b);
+        $conversation1b = $DB->get_record('message_conversations', ['id' => $conversation1b->id]);
+        $this->assertEquals($group1b->name, $conversation1b->name);
+    }
 }
