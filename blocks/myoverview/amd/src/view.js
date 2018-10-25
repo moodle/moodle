@@ -232,17 +232,18 @@ function(
         }).catch(Notification.exception);
     };
 
-    var toggleHiddenFromCard = function(root, courseId, status) {
-        var element = root.find('[data-course-id="' + courseId + '"][data-region="course-content"]');
+    /**
+     * Initialize the Paged Content and jump to the active Page.
+     *
+     * @param {Object} root The course overview container
+     * @param {object} content The content element for the courses view.
+     */
+    var initializeJumpto = function(root, content) {
 
-        loadedPages.forEach(function(courseList) {
-            courseList.courses.forEach(function(course, index) {
-                if (course.id == courseId) {
-                    courseList.courses[index].hidden = status;
-                    element.css('display', 'none');
-                }
-            });
-        });
+        var pagingBar = root.find('[data-region="paging-bar"]');
+        var jumpto = pagingBar.attr('data-active-page-number');
+
+        initializePagedContent(root, content, jumpto);
     };
 
     /**
@@ -315,7 +316,7 @@ function(
      * @param {object} root The root element for the courses view.
      * @param {object} content The content element for the courses view.
      */
-    var initializePagedContent = function(root, content) {
+    var initializePagedContent = function(root, content, jumpto) {
         var filters = getFilterValues(root);
 
         var pagedContentPromise = PagedContentFactory.createWithLimit(
@@ -345,7 +346,8 @@ function(
 
                 return promises;
             },
-            DEFAULT_PAGED_CONTENT_CONFIG
+            DEFAULT_PAGED_CONTENT_CONFIG,
+            jumpto
         );
 
         pagedContentPromise.then(function(html, js) {
@@ -358,7 +360,7 @@ function(
      *
      * @param {Object} root The myoverview block container element.
      */
-    var registerEventListeners = function(root) {
+    var registerEventListeners = function(root, content) {
         CustomEvents.define(root, [
             CustomEvents.events.activate
         ]);
@@ -395,7 +397,7 @@ function(
             };
             Repository.updateUserPreferences(request);
 
-            toggleHiddenFromCard(root, id, true);
+            initializeJumpto(root, content);
             data.originalEvent.preventDefault();
         });
 
@@ -414,7 +416,7 @@ function(
 
             Repository.updateUserPreferences(request);
 
-            toggleHiddenFromCard(root, id, false);
+            initializeJumpto(root, content);
             data.originalEvent.preventDefault();
         });
     };
