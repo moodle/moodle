@@ -36,7 +36,7 @@ Feature: Grant an extension to an offline student
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I navigate to "View all submissions" in current page administration
-    And I click on "Edit" "link" in the "Student 1" "table_row"
+    And I open the action menu in "Student 1" "table_row"
     And I follow "Grant extension"
     And I should see "Student 1 (student1@example.com)"
     And I set the field "Enable" to "1"
@@ -89,7 +89,7 @@ Feature: Grant an extension to an offline student
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I navigate to "View all submissions" in current page administration
-    And I click on "Edit" "link" in the "Student 1" "table_row"
+    And I open the action menu in "Student 1" "table_row"
     And I follow "Grant extension"
     And I should see "Student 1 (student1@example.com)"
     And I set the field "Enable" to "1"

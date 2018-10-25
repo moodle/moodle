@@ -35,7 +35,7 @@ Feature: Manage data requests
     And I navigate to "Users > Privacy and policies > Data requests" in site administration
     Then I should see "Hi PO!" in the "John Doe" "table_row"
     And I should see "Dear Mr. Privacy Officer" in the "Jane Doe" "table_row"
-    And I click on "Actions" "link" in the "John Doe" "table_row"
+    And I open the action menu in "John Doe" "table_row"
     And I should see "View the request"
     And I should see "Mark as complete"
     And I choose "View the request" in the open action menu
@@ -43,17 +43,17 @@ Feature: Manage data requests
     And I press "Mark as complete"
     And I wait until the page is ready
     And I should see "Complete" in the "John Doe" "table_row"
-    And I click on "Actions" "link" in the "John Doe" "table_row"
+    And I open the action menu in "John Doe" "table_row"
     And I should see "View the request"
     But I should not see "Mark as complete"
     And I press key "27" in ".moodle-actionmenu" "css_element"
-    And I click on "Actions" "link" in the "Jane Doe" "table_row"
+    And I open the action menu in "Jane Doe" "table_row"
     And I choose "Mark as complete" in the open action menu
     And I should see "Do you really want to mark this user enquiry as complete?"
     And I press "Mark as complete"
     And I wait until the page is ready
     And I should see "Complete" in the "Jane Doe" "table_row"
-    And I click on "Actions" "link" in the "Jane Doe" "table_row"
+    And I open the action menu in "Jane Doe" "table_row"
     And I should see "View the request"
     But I should not see "Mark as complete"
 
