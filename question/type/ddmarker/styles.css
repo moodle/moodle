@@ -150,7 +150,7 @@ form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
     stroke: #008;
 }
 .que.ddmarker .dropzone.active .handle {
-    display: unset;
+    display: inherit;
 }
 
 /* Editing form. Style repeated elements*/
