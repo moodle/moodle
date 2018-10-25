@@ -4339,4 +4339,215 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->expectException(\moodle_exception::class);
         $result = core_message_external::unset_favourite_conversations($user1->id, [0]);
     }
+
+    /**
+     * Test returning members in a conversation with no contact requests.
+     */
+    public function test_get_conversation_members_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $CFG->messaging = 0;
+
+        $this->expectException('moodle_exception');
+        core_message_external::get_conversation_members(1, 2);
+    }
+
+    /**
+     * Test returning members in a conversation with no contact requests.
+     */
+    public function test_get_conversation_members_wrong_user() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user2);
+
+        $this->expectException('moodle_exception');
+        core_message_external::get_conversation_members($user1->id, 2);
+    }
+
+    /**
+     * Test returning members in a conversation with no contact requests.
+     */
+    public function test_get_conversation_members() {
+        $this->resetAfterTest();
+
+        $lastaccess = new stdClass();
+        $lastaccess->lastaccess = time();
+
+        $user1 = self::getDataGenerator()->create_user($lastaccess);
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // This user will not be in the conversation, but a contact request will exist for them.
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Add some contact requests.
+        \core_message\api::create_contact_request($user1->id, $user3->id);
+        \core_message\api::create_contact_request($user1->id, $user4->id);
+        \core_message\api::create_contact_request($user2->id, $user3->id);
+
+        // User 1 and 2 are already contacts.
+        \core_message\api::add_contact($user1->id, $user2->id);
+
+        // User 1 has blocked user 3.
+        \core_message\api::block_user($user1->id, $user3->id);
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id,
+                $user3->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->setAdminUser();
+
+        $members = core_message_external::get_conversation_members($user1->id, $conversationid, false);
+        external_api::clean_returnvalue(core_message_external::get_conversation_members_returns(), $members);
+
+        // Sort them by id.
+        ksort($members);
+        $this->assertCount(3, $members);
+        $member1 = array_shift($members);
+        $member2 = array_shift($members);
+        $member3 = array_shift($members);
+
+        // Confirm the standard fields are OK.
+        $this->assertEquals($user1->id, $member1->id);
+        $this->assertEquals(fullname($user1), $member1->fullname);
+        $this->assertEquals(true, $member1->isonline);
+        $this->assertEquals(true, $member1->showonlinestatus);
+        $this->assertEquals(false, $member1->iscontact);
+        $this->assertEquals(false, $member1->isblocked);
+        $this->assertObjectNotHasAttribute('contactrequests', $member1);
+
+        $this->assertEquals($user2->id, $member2->id);
+        $this->assertEquals(fullname($user2), $member2->fullname);
+        $this->assertEquals(false, $member2->isonline);
+        $this->assertEquals(true, $member2->showonlinestatus);
+        $this->assertEquals(true, $member2->iscontact);
+        $this->assertEquals(false, $member2->isblocked);
+        $this->assertObjectNotHasAttribute('contactrequests', $member2);
+
+        $this->assertEquals($user3->id, $member3->id);
+        $this->assertEquals(fullname($user3), $member3->fullname);
+        $this->assertEquals(false, $member3->isonline);
+        $this->assertEquals(true, $member3->showonlinestatus);
+        $this->assertEquals(false, $member3->iscontact);
+        $this->assertEquals(true, $member3->isblocked);
+        $this->assertObjectNotHasAttribute('contactrequests', $member3);
+    }
+
+    /**
+     * Test returning members in a conversation with contact requests.
+     */
+    public function test_get_conversation_members_with_contact_requests() {
+        $this->resetAfterTest();
+
+        $lastaccess = new stdClass();
+        $lastaccess->lastaccess = time();
+
+        $user1 = self::getDataGenerator()->create_user($lastaccess);
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // This user will not be in the conversation, but a contact request will exist for them.
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Add some contact requests.
+        \core_message\api::create_contact_request($user1->id, $user2->id);
+        \core_message\api::create_contact_request($user1->id, $user3->id);
+        \core_message\api::create_contact_request($user1->id, $user4->id);
+        \core_message\api::create_contact_request($user2->id, $user3->id);
+
+        // User 1 and 2 are already contacts.
+        \core_message\api::add_contact($user1->id, $user2->id);
+        // User 1 has blocked user 3.
+        \core_message\api::block_user($user1->id, $user3->id);
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id,
+                $user3->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->setAdminUser();
+
+        $members = core_message_external::get_conversation_members($user1->id, $conversationid, true);
+        external_api::clean_returnvalue(core_message_external::get_conversation_members_returns(), $members);
+
+        // Sort them by id.
+        ksort($members);
+        $this->assertCount(3, $members);
+        $member1 = array_shift($members);
+        $member2 = array_shift($members);
+        $member3 = array_shift($members);
+
+        // Confirm the standard fields are OK.
+        $this->assertEquals($user1->id, $member1->id);
+        $this->assertEquals(fullname($user1), $member1->fullname);
+        $this->assertEquals(true, $member1->isonline);
+        $this->assertEquals(true, $member1->showonlinestatus);
+        $this->assertEquals(false, $member1->iscontact);
+        $this->assertEquals(false, $member1->isblocked);
+        $this->assertCount(3, $member1->contactrequests);
+
+        $this->assertEquals($user2->id, $member2->id);
+        $this->assertEquals(fullname($user2), $member2->fullname);
+        $this->assertEquals(false, $member2->isonline);
+        $this->assertEquals(true, $member2->showonlinestatus);
+        $this->assertEquals(true, $member2->iscontact);
+        $this->assertEquals(false, $member2->isblocked);
+        $this->assertCount(2, $member2->contactrequests);
+
+        $this->assertEquals($user3->id, $member3->id);
+        $this->assertEquals(fullname($user3), $member3->fullname);
+        $this->assertEquals(false, $member3->isonline);
+        $this->assertEquals(true, $member3->showonlinestatus);
+        $this->assertEquals(false, $member3->iscontact);
+        $this->assertEquals(true, $member3->isblocked);
+        $this->assertCount(2, $member3->contactrequests);
+
+        // Confirm the contact requests are OK.
+        $request1 = array_shift($member1->contactrequests);
+        $request2 = array_shift($member1->contactrequests);
+        $request3 = array_shift($member1->contactrequests);
+
+        $this->assertEquals($user1->id, $request1->userid);
+        $this->assertEquals($user2->id, $request1->requesteduserid);
+
+        $this->assertEquals($user1->id, $request2->userid);
+        $this->assertEquals($user3->id, $request2->requesteduserid);
+
+        $this->assertEquals($user1->id, $request3->userid);
+        $this->assertEquals($user4->id, $request3->requesteduserid);
+
+        $request1 = array_shift($member2->contactrequests);
+        $request2 = array_shift($member2->contactrequests);
+
+        $this->assertEquals($user1->id, $request1->userid);
+        $this->assertEquals($user2->id, $request1->requesteduserid);
+
+        $this->assertEquals($user2->id, $request2->userid);
+        $this->assertEquals($user3->id, $request2->requesteduserid);
+
+        $request1 = array_shift($member3->contactrequests);
+        $request2 = array_shift($member3->contactrequests);
+
+        $this->assertEquals($user1->id, $request1->userid);
+        $this->assertEquals($user3->id, $request1->requesteduserid);
+
+        $this->assertEquals($user2->id, $request2->userid);
+        $this->assertEquals($user3->id, $request2->requesteduserid);
+    }
 }
