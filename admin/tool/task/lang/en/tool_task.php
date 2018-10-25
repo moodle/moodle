@@ -25,6 +25,7 @@
 $string['asap'] = 'ASAP';
 $string['backtoscheduledtasks'] = 'Back to scheduled tasks';
 $string['blocking'] = 'Blocking';
+$string['cannotfindthepathtothecli'] = 'Cannot find the path to the PHP CLI executable so task execution aborted. Set the "Path to PHP CLI" setting in "Site administration / Server / System paths"';
 $string['clearfaildelay_confirm'] = 'Are you sure you want to clear the fail delay for task \'{$a}\'? After clearing the delay, the task will run according to its normal schedule.';
 $string['component'] = 'Component';
 $string['corecomponent'] = 'Core';
@@ -58,3 +59,4 @@ $string['taskscheduleminute_help'] = 'Minute field for task schedule. The field 
 $string['taskschedulemonth'] = 'Month';
 $string['taskschedulemonth_help'] = 'Month field for task schedule. The field uses the same format as unix cron. Some examples are:<br/><ul><li><strong>*</strong> Every month</li><li><strong>*/2</strong> Every second month</li><li><strong>1</strong> Every January</li><li><strong>1,5</strong> Every January and May</li></ul>';
 $string['privacy:metadata'] = 'The Scheduled task configuration plugin does not store any personal data.';
+
