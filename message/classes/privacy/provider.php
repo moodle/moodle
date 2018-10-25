@@ -18,6 +18,7 @@
  * Privacy Subsystem implementation for core_message.
  *
  * @package    core_message
+ * @category   privacy
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,8 +26,10 @@ namespace core_message\privacy;
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
 defined('MOODLE_INTERNAL') || die();
@@ -40,7 +43,8 @@ defined('MOODLE_INTERNAL') || die();
 class provider implements
     \core_privacy\local\metadata\provider,
     \core_privacy\local\request\subsystem\provider,
-    \core_privacy\local\request\user_preference_provider {
+    \core_privacy\local\request\user_preference_provider,
+    \core_privacy\local\request\core_userlist_provider {
 
     /**
      * Return the fields which contain personal data.
@@ -204,6 +208,44 @@ class provider implements
     }
 
     /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_user) {
+            return;
+        }
+
+        $userid = $context->instanceid;
+
+        // Messages are in the user context.
+        // For the sake of performance, there is no need to call add_from_sql for each of the below cases.
+        // It is enough to add the user's context as soon as we come to the conclusion that the user has some data.
+        // Also, the order of checking is sorted by the probability of occurrence (just by guess).
+        // There is no need to check the message_user_actions table, as there needs to be a message in order to be a message action.
+        // So, checking messages table would suffice.
+
+        $hasdata = false;
+        $hasdata = $hasdata || $DB->record_exists_select('notifications', 'useridfrom = ? OR useridto = ?', [$userid, $userid]);
+        $hasdata = $hasdata || $DB->record_exists('message_conversation_members', ['userid' => $userid]);
+        $hasdata = $hasdata || $DB->record_exists('messages', ['useridfrom' => $userid]);
+        $hasdata = $hasdata || $DB->record_exists_select('message_contacts', 'userid = ? OR contactid = ?', [$userid, $userid]);
+        $hasdata = $hasdata || $DB->record_exists_select('message_users_blocked', 'userid = ? OR blockeduserid = ?',
+                        [$userid, $userid]);
+        $hasdata = $hasdata || $DB->record_exists_select('message_contact_requests', 'userid = ? OR requesteduserid = ?',
+                        [$userid, $userid]);
+
+        if ($hasdata) {
+            $userlist->add_user($userid);
+        }
+    }
+
+    /**
      * Export personal data for the given approved_contextlist. User and context information is contained within the contextlist.
      *
      * @param approved_contextlist $contextlist a list of contexts approved for export.
@@ -273,6 +315,30 @@ class provider implements
         }
 
         static::delete_user_data($userid);
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_user) {
+            return;
+        }
+
+        // Remove invalid users. If it ends up empty then early return.
+        $userids = array_filter($userlist->get_userids(), function($userid) use($context) {
+            return $context->instanceid == $userid;
+        });
+
+        if (empty($userids)) {
+            return;
+        }
+
+        static::delete_user_data($context->instanceid);
     }
 
     /**
