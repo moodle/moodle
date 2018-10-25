@@ -87,7 +87,7 @@ function(
      * @param {object} filters The filters for this view.
      * @param {int} limit The number of courses to show.
      * @param {int} pageNumber The pagenumber to view.
-     * @return {promise|Array} Resolved with an array of courses.
+     * @return {promise} Resolved with an array of courses.
      */
     var getMyCourses = function(filters, limit, pageNumber) {
 

@@ -72,7 +72,7 @@ define(['core/ajax', 'core/notification'], function(Ajax, Notification) {
      * Update the user preferences.
      *
      * @param {Object} args Arguments send to the webservice.
-     * 
+     *
      * Sample args:
      * {
      *     preferences: [
