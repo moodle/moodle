@@ -406,10 +406,16 @@ class qformat_default {
             $question->timecreated = time();
             $question->modifiedby = $USER->id;
             $question->timemodified = time();
-            if (isset($question->idnumber) && (string) $question->idnumber !== '') {
-                if ($DB->record_exists('question', ['idnumber' => $question->idnumber, 'category' => $question->category])) {
-                    // We cannot have duplicate idnumbers in a category.
+            if (isset($question->idnumber)) {
+                if ((string) $question->idnumber === '') {
+                    // Id number not really set. Get rid of it.
                     unset($question->idnumber);
+                } else {
+                    if ($DB->record_exists('question',
+                            ['idnumber' => $question->idnumber, 'category' => $question->category])) {
+                        // We cannot have duplicate idnumbers in a category. Just remove it.
+                        unset($question->idnumber);
+                    }
                 }
             }
 
