@@ -113,6 +113,60 @@ class privacy_model_testcase extends \core_privacy\tests\provider_testcase {
     }
 
     /**
+     * Test fetching contexts for a given user ID.
+     */
+    public function test_get_contexts_for_userid() {
+        // Ensure both contexts are found for both users.
+        $expected = [$this->c1context->id, $this->c2context->id];
+        sort($expected);
+
+        // User 1.
+        $contextlist = provider::get_contexts_for_userid($this->u1->id);
+        $this->assertCount(2, $contextlist);
+
+        $actual = $contextlist->get_contextids();
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+
+        // User 2.
+        $contextlist = provider::get_contexts_for_userid($this->u2->id);
+        $this->assertCount(2, $contextlist);
+
+        $actual = $contextlist->get_contextids();
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Test fetching user IDs for a given context.
+     */
+    public function test_get_users_in_context() {
+        $component = 'search_simpledb';
+
+        // Ensure both users are found for both contexts.
+        $expected = [$this->u1->id, $this->u2->id];
+        sort($expected);
+
+        // User 1.
+        $userlist = new \core_privacy\local\request\userlist($this->c1context, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(2, $userlist);
+
+        $actual = $userlist->get_userids();
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+
+        // User 2.
+        $userlist = new \core_privacy\local\request\userlist($this->c2context, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(2, $userlist);
+
+        $actual = $userlist->get_userids();
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
      * Test export user data.
      *
      * @return null
@@ -180,6 +234,37 @@ class privacy_model_testcase extends \core_privacy\tests\provider_testcase {
         $this->assertEquals(0, $DB->count_records_select('search_simpledb_index', $select, $params));
         $this->assertEquals(2, $DB->count_records('search_simpledb_index', ['contextid' => $this->c2context->id]));
         $this->assertEquals(4, $DB->count_records('search_simpledb_index'));
+    }
+
+    /**
+     * Test deleting data for an approved userlist.
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+        $component = 'search_simpledb';
+        $select = 'contextid = :contextid AND (owneruserid = :owneruserid OR userid = :userid)';
+
+        // Ensure expected amount of data for both users exists in each context.
+        $this->assertEquals(4, $DB->count_records('search_simpledb_index', ['contextid' => $this->c1context->id]));
+        $this->assertEquals(4, $DB->count_records('search_simpledb_index', ['contextid' => $this->c2context->id]));
+
+        // Delete user 1's data in context 1.
+        $approveduserids = [$this->u1->id];
+        $approvedlist = new \core_privacy\local\request\approved_userlist($this->c1context, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        $params = ['contextid' => $this->c1context->id, 'owneruserid' => $this->u1->id, 'userid' => $this->u1->id];
+        $this->assertEquals(0, $DB->count_records_select('search_simpledb_index', $select, $params));
+
+        // Ensure user 2's data in context 1 is retained.
+        $params = ['contextid' => $this->c1context->id, 'owneruserid' => $this->u2->id, 'userid' => $this->u2->id];
+        $this->assertEquals(2, $DB->count_records_select('search_simpledb_index', $select, $params));
+
+        // Ensure both users' data in context 2 is retained.
+        $params = ['contextid' => $this->c2context->id, 'owneruserid' => $this->u1->id, 'userid' => $this->u1->id];
+        $this->assertEquals(2, $DB->count_records_select('search_simpledb_index', $select, $params));
+        $params = ['contextid' => $this->c2context->id, 'owneruserid' => $this->u2->id, 'userid' => $this->u2->id];
+        $this->assertEquals(2, $DB->count_records_select('search_simpledb_index', $select, $params));
     }
 
     /**
