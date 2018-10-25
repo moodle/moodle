@@ -66,3 +66,95 @@ Feature: The my overview block allows users to easily access their courses
     Then I should see "Course 4" in the "Course overview" "block"
     Then I should see "Course 5" in the "Course overview" "block"
     And I log out
+
+  Scenario: View inprogress courses - test persistence
+    Given I log in as "student1"
+    And I click on "All" "button" in the "Course overview" "block"
+    And I click on "In progress" "link" in the "Course overview" "block"
+    And I reload the page
+    Then I should see "In progress" in the "Course overview" "block"
+    Then I should see "Course 2" in the "Course overview" "block"
+    Then I should see "Course 3" in the "Course overview" "block"
+    Then I should see "Course 4" in the "Course overview" "block"
+    And I should not see "Course 1" in the "Course overview" "block"
+    And I should not see "Course 5" in the "Course overview" "block"
+    And I log out
+
+  Scenario: View all courses - w/ persistence
+    Given I log in as "student1"
+    And I click on "All" "button" in the "Course overview" "block"
+    When I click on "All" "link" in the "Course overview" "block"
+    And I reload the page
+    Then I should see "All" in the "Course overview" "block"
+    Then I should see "Course 1" in the "Course overview" "block"
+    Then I should see "Course 2" in the "Course overview" "block"
+    Then I should see "Course 3" in the "Course overview" "block"
+    Then I should see "Course 4" in the "Course overview" "block"
+    Then I should see "Course 5" in the "Course overview" "block"
+    And I log out
+
+  Scenario: View past courses - w/ persistence
+    Given I log in as "student1"
+    And I click on "All" "button" in the "Course overview" "block"
+    When I click on "Past" "link" in the "Course overview" "block"
+    And I reload the page
+    Then I should see "Past" in the "Course overview" "block"
+    Then I should see "Course 1" in the "Course overview" "block"
+    And I should not see "Course 2" in the "Course overview" "block"
+    And I should not see "Course 3" in the "Course overview" "block"
+    And I should not see "Course 4" in the "Course overview" "block"
+    And I should not see "Course 5" in the "Course overview" "block"
+    And I log out
+
+  Scenario: View future courses - w/ persistence
+    Given I log in as "student1"
+    And I click on "All" "button" in the "Course overview" "block"
+    When I click on "Future" "link" in the "Course overview" "block"
+    And I reload the page
+    Then I should see "Future" in the "Course overview" "block"
+    Then I should see "Course 5" in the "Course overview" "block"
+    And I should not see "Course 1" in the "Course overview" "block"
+    And I should not see "Course 2" in the "Course overview" "block"
+    And I should not see "Course 3" in the "Course overview" "block"
+    And I should not see "Course 4" in the "Course overview" "block"
+    And I log out
+
+  Scenario: List display  persistence
+    Given I log in as "student1"
+    And I click on "Display dropdown" "button" in the "Course overview" "block"
+    And I click on "List" "link" in the "Course overview" "block"
+    And I reload the page
+    Then I should see "List" in the "Course overview" "block"
+    And "[data-display='list']" "css_element" in the "Course overview" "block" should be visible
+
+  Scenario: Cards display  persistence
+    Given I log in as "student1"
+    And I click on "Display dropdown" "button" in the "Course overview" "block"
+    And I click on "Card" "link" in the "Course overview" "block"
+    And I reload the page
+    Then I should see "Card" in the "Course overview" "block"
+    And "[data-display='cards']" "css_element" in the "Course overview" "block" should be visible
+
+  Scenario: Summary display  persistence
+    Given I log in as "student1"
+    And I click on "Display dropdown" "button" in the "Course overview" "block"
+    And I click on "Summary" "link" in the "Course overview" "block"
+    And I reload the page
+    Then I should see "Summary" in the "Course overview" "block"
+    And "[data-display='summary']" "css_element" in the "Course overview" "block" should be visible
+
+  Scenario: Title sort persistence
+    Given I log in as "student1"
+    And I click on "sortingdropdown" "button" in the "Course overview" "block"
+    And I click on "Title" "link" in the "Course overview" "block"
+    And I reload the page
+    Then I should see "Title" in the "Course overview" "block"
+    And "[data-sort='fullname']" "css_element" in the "Course overview" "block" should be visible
+
+  Scenario: Last accessed sort persistence
+    Given I log in as "student1"
+    And I click on "sortingdropdown" "button" in the "Course overview" "block"
+    And I click on "Last accessed" "link" in the "Course overview" "block"
+    And I reload the page
+    Then I should see "Last accessed" in the "Course overview" "block"
+    And "[data-sort='ul.timeaccess desc']" "css_element" in the "Course overview" "block" should be visible

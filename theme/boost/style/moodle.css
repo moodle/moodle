@@ -11137,70 +11137,85 @@ div.editor_atto_toolbar button .icon {
 .block_myoverview .empty-placeholder-image-lg {
   height: 125px; }
 
-.block_myoverview .course-card {
-  margin-bottom: 0.5rem;
-  flex-basis: 100%; }
-
 .block_myoverview .course-info-container {
-  padding: 0.8rem; }
-
-.block_myoverview .course-card-footer {
   padding: 0.8rem; }
 
 .block_myoverview .progress {
   height: 0.5rem; }
 
-.block_myoverview .myoverviewimg {
-  height: 7rem;
-  background-position: center;
-  background-size: cover; }
-
 .block_myoverview .course-summaryitem {
   border: 1px solid #dee2e6;
   background-color: #fff; }
 
-.block_myoverview .summary img {
-  max-width: 100%; }
+.block_myoverview .icon {
+  margin-right: 0; }
+
+.block_myoverview a,
+.block_myoverview .btn-link {
+  color: inherit; }
+
+.block_myoverview .btn.btn-link.btn-icon, .block_myoverview #page-grade-grading-manage .actions .btn-link.btn-icon.action, #page-grade-grading-manage .actions .block_myoverview .btn-link.btn-icon.action, .block_myoverview #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_myoverview input.btn-link.btn-icon, .block_myoverview #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .block_myoverview .btn-link.btn-icon.addcriterion {
+  height: 36px;
+  width: 36px;
+  padding: 0;
+  border-radius: 50%; }
+  .block_myoverview .btn.btn-link.btn-icon:hover, .block_myoverview #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover, #page-grade-grading-manage .actions .block_myoverview .btn-link.btn-icon.action:hover, .block_myoverview #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_myoverview input.btn-link.btn-icon:hover, .block_myoverview #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .block_myoverview .btn-link.btn-icon.addcriterion:hover, .block_myoverview .btn.btn-link.btn-icon:focus, .block_myoverview #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus, #page-grade-grading-manage .actions .block_myoverview .btn-link.btn-icon.action:focus, .block_myoverview #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_myoverview input.btn-link.btn-icon:focus, .block_myoverview #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .block_myoverview .btn-link.btn-icon.addcriterion:focus {
+    background-color: #e9ecef; }
 
 @media (max-width: 767.98px) {
   .block_myoverview .summaryimage {
     max-height: 7rem; } }
 
-#region-main .block_myoverview .course-card {
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: calc(50% - 0.5rem); }
+.dashboard-card-deck .dashboard-card {
+  margin-bottom: 0.5rem;
+  flex-basis: 100%;
+  flex-grow: 0; }
+  .dashboard-card-deck .dashboard-card .dashboard-card-img {
+    height: 7rem;
+    background-position: center;
+    background-size: cover; }
+  .dashboard-card-deck .dashboard-card .dashboard-card-footer {
+    padding: 0.8rem; }
 
 @media (min-width: 576px) {
-  #region-main .block_myoverview .course-card {
+  .dashboard-card-deck .dashboard-card {
     flex-basis: calc(50% - 0.5rem); } }
 
 @media (min-width: 768px) {
-  #region-main .block_myoverview .course-card {
+  .dashboard-card-deck .dashboard-card {
     flex-basis: calc(33.33% - 0.5rem); } }
 
 @media (min-width: 992px) {
-  #region-main .block_myoverview .course-card {
+  .dashboard-card-deck .dashboard-card {
     flex-basis: calc(25% - 0.5rem); } }
 
 @media (min-width: 1200px) {
-  #region-main .block_myoverview .course-card {
+  .dashboard-card-deck .dashboard-card {
     flex-basis: calc(20% - 0.5rem); } }
 
 @media (min-width: 992px) {
-  #region-main.has-blocks .block_myoverview .course-card {
+  #region-main.has-blocks .dashboard-card-deck .dashboard-card {
     flex-basis: calc(33.33% - 0.5rem); } }
 
 @media (min-width: 1200px) {
-  #region-main.has-blocks .block_myoverview .course-card {
+  #region-main.has-blocks .dashboard-card-deck .dashboard-card {
     flex-basis: calc(25% - 0.5rem); } }
 
-body.drawer-open-left #region-main.has-blocks .block_myoverview .course-card {
-  flex-basis: calc(50% - 0.5rem); }
-
 @media (min-width: 992px) {
-  body.drawer-open-left #region-main.has-blocks .block_myoverview .course-card {
+  body.drawer-open-left #region-main.has-blocks .dashboard-card-deck .dashboard-card {
     flex-basis: calc(33.33% - 0.5rem); } }
+
+@media (min-width: 1400px) {
+  body.drawer-open-left #region-main.has-blocks .dashboard-card-deck .dashboard-card {
+    flex-basis: calc(25% - 0.5rem); } }
+
+@media (min-width: 1200px) {
+  #block-region-side-pre .dashboard-card-deck {
+    margin: 0; }
+    #block-region-side-pre .dashboard-card-deck .dashboard-card {
+      flex-basis: 100% !important;
+      margin-left: 0;
+      margin-right: 0; } }
 
 .block_settings .block_tree [aria-expanded="true"],
 .block_settings .block_tree [aria-expanded="true"].emptybranch,

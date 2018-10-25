@@ -38,14 +38,21 @@
 {{#courses}}
     <div class="course-summaryitem m-b-1 p-2" role="listitem">
         <div class="row-fluid d-flex">
-            <a href="{{viewurl}}" class="col-sm-4 col-xl-3 span4" tabindex="-1" role="presentation">
+            <a href="{{viewurl}}" class="col-sm-4 col-xl-3 span4 position-relative" tabindex="-1">
+                <div class="position-absolute">
+                    {{> block_myoverview/favourite-icon }}
+                </div>
                 <img src="{{{courseimage}}}" class="summaryimage img-fluid" alt="{{#str}}aria:courseimage, block_myoverview{{/str}}">
+
             </a>
             <div class="col-sm-8 col-xl-9 span8 align-self-stretch d-flex flex-column">
-                <a href="{{viewurl}}">
-                    <span class="sr-only">{{#str}}aria:coursename, block_myoverview{{/str}}</span>
-                    <h4>{{{fullname}}}</h4>
-                </a>
+                <div class="d-flex">
+                    <a href="{{viewurl}}">
+                        <span class="sr-only">{{#str}}aria:coursename, block_myoverview{{/str}}</span>
+                        <h4>{{{fullname}}}</h4>
+                    </a>
+                    {{> block_myoverview/course-action-menu }}
+                </div>
                 <div class="summary">
                     <span class="sr-only">{{#str}}aria:coursesummary, block_myoverview{{/str}}</span>
                     {{{summary}}}

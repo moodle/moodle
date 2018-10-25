@@ -3663,6 +3663,8 @@ class core_course_external extends external_api {
                 break;
             case COURSE_TIMELINE_FUTURE:
                 break;
+            case COURSE_FAVOURITES:
+                break;
             default:
                 throw new invalid_parameter_exception('Invalid classification');
         }
@@ -3672,17 +3674,42 @@ class core_course_external extends external_api {
         $requiredproperties = course_summary_exporter::define_properties();
         $fields = join(',', array_keys($requiredproperties));
         $courses = course_get_enrolled_courses_for_logged_in_user(0, $offset, $sort, $fields);
-        list($filteredcourses, $processedcount) = course_filter_courses_by_timeline_classification(
-            $courses,
-            $classification,
-            $limit
-        );
+
+        $favouritecourseids = [];
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($USER->id));
+        $favourites = $ufservice->find_favourites_by_type('core_course', 'courses');
+
+        if ($favourites) {
+            $favouritecourseids = array_map(
+                function($favourite) {
+                    return $favourite->itemid;
+                }, $favourites);
+        }
+
+        if ($classification == COURSE_FAVOURITES) {
+            list($filteredcourses, $processedcount) = course_filter_courses_by_favourites(
+                $courses,
+                $favouritecourseids,
+                $limit
+            );
+
+        } else {
+            list($filteredcourses, $processedcount) = course_filter_courses_by_timeline_classification(
+                $courses,
+                $classification,
+                $limit
+            );
+        }
 
         $renderer = $PAGE->get_renderer('core');
-        $formattedcourses = array_map(function($course) use ($renderer) {
+        $formattedcourses = array_map(function($course) use ($renderer, $favouritecourseids) {
             context_helper::preload_from_record($course);
             $context = context_course::instance($course->id);
-            $exporter = new course_summary_exporter($course, ['context' => $context]);
+            $isfavourite = false;
+            if (in_array($course->id, $favouritecourseids)) {
+                $isfavourite = true;
+            }
+            $exporter = new course_summary_exporter($course, ['context' => $context, 'isfavourite' => $isfavourite]);
             return $exporter->export($renderer);
         }, $filteredcourses);
 
@@ -3702,6 +3729,116 @@ class core_course_external extends external_api {
             array(
                 'courses' => new external_multiple_structure(course_summary_exporter::get_read_structure(), 'Course'),
                 'nextoffset' => new external_value(PARAM_INT, 'Offset for the next request')
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function set_favourite_courses_parameters() {
+        return new external_function_parameters(
+            array(
+                'courses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'course ID'),
+                            'favourite' => new external_value(PARAM_BOOL, 'favourite status')
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Set the course favourite status for an array of courses.
+     *
+     * @param  array $courses List with course id's and favourite status.
+     * @return array Array with an array of favourite courses.
+     */
+    public static function set_favourite_courses(
+        array $courses
+    ) {
+        global $USER;
+
+        $params = self::validate_parameters(self::set_favourite_courses_parameters(),
+            array(
+                'courses' => $courses
+            )
+        );
+
+        $warnings = [];
+
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($USER->id));
+
+        foreach ($params['courses'] as $course) {
+
+            $warning = [];
+
+            $favouriteexists = $ufservice->favourite_exists('core_course', 'courses', $course['id'], \context_system::instance());
+
+            if ($course['favourite']) {
+                if (!$favouriteexists) {
+                    try {
+                        $ufservice->create_favourite('core_course', 'courses', $course['id'], \context_system::instance());
+                    } catch (Exception $e) {
+                        $warning['courseid'] = $course['id'];
+                        if ($e instanceof moodle_exception) {
+                            $warning['warningcode'] = $e->errorcode;
+                        } else {
+                            $warning['warningcode'] = $e->getCode();
+                        }
+                        $warning['message'] = $e->getMessage();
+                        $warnings[] = $warning;
+                        $warnings[] = $warning;
+                    }
+                } else {
+                    $warning['courseid'] = $course['id'];
+                    $warning['warningcode'] = 'coursealreadyfavourited';
+                    $warning['message'] = 'Course already favourited';
+                    $warnings[] = $warning;
+                }
+            } else {
+                if ($favouriteexists) {
+                    try {
+                        $ufservice->delete_favourite('core_course', 'courses', $course['id'], \context_system::instance());
+                    } catch (Exception $e) {
+                        $warning['courseid'] = $course['id'];
+                        if ($e instanceof moodle_exception) {
+                            $warning['warningcode'] = $e->errorcode;
+                        } else {
+                            $warning['warningcode'] = $e->getCode();
+                        }
+                        $warning['message'] = $e->getMessage();
+                        $warnings[] = $warning;
+                        $warnings[] = $warning;
+                    }
+                } else {
+                    $warning['courseid'] = $course['id'];
+                    $warning['warningcode'] = 'cannotdeletefavourite';
+                    $warning['message'] = 'Could not delete favourite status for course';
+                    $warnings[] = $warning;
+                }
+            }
+        }
+
+        return [
+            'warnings' => $warnings
+        ];
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     */
+    public static function set_favourite_courses_returns() {
+        return new external_single_structure(
+            array(
+                'warnings' => new external_warnings()
             )
         );
     }

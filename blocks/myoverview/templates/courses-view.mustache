@@ -21,18 +21,21 @@
 
     Example context (json):
     {
-        "nocoursesimg": "https://moodlesite/theme/image.php/boost/block_myoverview/1535727318/courses"
+        "nocoursesimg": "https://moodlesite/theme/image.php/boost/block_myoverview/1535727318/courses",
+        "grouping": "all",
+        "sort": "fullname",
+        "view": "card"
     }
 }}
 <div id="courses-view-{{uniqid}}"
     data-region="courses-view"
-    data-display="cards"
-    data-grouping="all"
-    data-sort="fullname"
+    data-display="{{view}}"
+    data-grouping="{{grouping}}"
+    data-sort="{{sort}}"
     data-nocoursesimg="{{nocoursesimg}}">
     <div data-region="course-view-content">
         <div data-region="courses-loading-placeholder">
-            <div class="row card-deck">
+            <div class="card-deck dashboard-card-deck">
                 {{> block_myoverview/placeholder-course }}
                 {{> block_myoverview/placeholder-course }}
                 {{> block_myoverview/placeholder-course }}

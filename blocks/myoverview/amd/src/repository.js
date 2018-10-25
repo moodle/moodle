@@ -20,7 +20,7 @@
  * @copyright  2018 Bas Brands <base@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/ajax'], function(Ajax) {
+define(['core/ajax', 'core/notification'], function(Ajax, Notification) {
 
     /**
      * Retrieve a list of enrolled courses.
@@ -47,7 +47,55 @@ define(['core/ajax'], function(Ajax) {
         return promise;
     };
 
+    /**
+     * Set the favourite state on a list of courses.
+     *
+     * Valid args are:
+     * Array courses  list of course id numbers.
+     *
+     * @param {Object} args Arguments send to the webservice.
+     * @return {Promise} Resolve with warnings.
+     */
+    var setFavouriteCourses = function(args) {
+
+        var request = {
+            methodname: 'core_course_set_favourite_courses',
+            args: args
+        };
+
+        var promise = Ajax.call([request])[0];
+
+        return promise;
+    };
+
+    /**
+     * Update the user preferences.
+     *
+     * @param {Object} args Arguments send to the webservice.
+     * 
+     * Sample args:
+     * {
+     *     preferences: [
+     *         {
+     *             type: 'block_example_user_sort_preference'
+     *             value: 'title'
+     *         }
+     *     ]
+     * }
+     */
+    var updateUserPreferences = function(args) {
+        var request = {
+            methodname: 'core_user_update_user_preferences',
+            args: args
+        };
+
+        Ajax.call([request])[0]
+            .fail(Notification.exception);
+    };
+
     return {
-        getEnrolledCoursesByTimeline: getEnrolledCoursesByTimeline
+        getEnrolledCoursesByTimeline: getEnrolledCoursesByTimeline,
+        setFavouriteCourses: setFavouriteCourses,
+        updateUserPreferences: updateUserPreferences
     };
 });

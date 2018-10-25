@@ -28,7 +28,7 @@ use renderable;
 use renderer_base;
 use templatable;
 
-require_once($CFG->libdir . '/completionlib.php');
+require_once($CFG->dirroot . '/blocks/myoverview/lib.php');
 
 /**
  * Class containing data for my overview block.
@@ -37,18 +37,75 @@ require_once($CFG->libdir . '/completionlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class main implements renderable, templatable {
+
+    /**
+     * Store the grouping preference
+     *
+     * @var string String matching the grouping constants defined in myoverview/lib.php
+     */
+    private $grouping;
+
+    /**
+     * Store the sort preference
+     *
+     * @var string String matching the sort constants defined in myoverview/lib.php
+     */
+    private $sort;
+
+    /**
+     * Store the view preference
+     *
+     * @var string String matching the view/display constants defined in myoverview/lib.php
+     */
+    private $view;
+
+    /**
+     * main constructor.
+     * Initialize the user preferences
+     *
+     * @param string $grouping Grouping user preference
+     * @param string $sort Sort user preference
+     * @param string $view Display user preference
+     */
+    public function __construct($grouping, $sort, $view) {
+        $this->grouping = $grouping ? $grouping : BLOCK_MYOVERVIEW_GROUPING_ALL;
+        $this->sort = $sort ? $sort : BLOCK_MYOVERVIEW_SORTING_TITLE;
+        $this->view = $view ? $view : BLOCK_MYOVERVIEW_VIEW_CARD;
+    }
+
+    /**
+     * Get the user preferences as an array to figure out what has been selected
+     *
+     * @return array $preferences Array with the pref as key and value set to true
+     */
+    public function get_preferences_as_booleans() {
+        $preferences = [];
+        $preferences[$this->view] = true;
+        $preferences[$this->sort] = true;
+        $preferences[$this->grouping] = true;
+
+        return $preferences;
+    }
+
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param \renderer_base $output
-     * @return stdClass
+     * @return array Context variables for the template
      */
     public function export_for_template(renderer_base $output) {
 
         $nocoursesurl = $output->image_url('courses', 'block_myoverview')->out();
 
-        return (object) [
-            'nocoursesimg' => $nocoursesurl
+        $defaultvariables = [
+            'nocoursesimg' => $nocoursesurl,
+            'grouping' => $this->grouping,
+            'sort' => $this->sort == BLOCK_MYOVERVIEW_SORTING_TITLE ? 'fullname' : 'ul.timeaccess desc',
+            'view' => $this->view
         ];
+
+        $preferences = $this->get_preferences_as_booleans();
+        return array_merge($defaultvariables, $preferences);
+
     }
 }

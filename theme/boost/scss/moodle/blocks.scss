@@ -81,30 +81,32 @@ $card-gutter : $card-deck-margin * 2;
     .empty-placeholder-image-lg {
         height: 125px;
     }
-    .course-card {
-        margin-bottom: $card-gutter;
-        flex-basis: 100%;
-    }
     .course-info-container {
-        padding: 0.8rem;
-    }
-    .course-card-footer {
         padding: 0.8rem;
     }
     .progress {
         height: 0.5rem;
     }
-    .myoverviewimg {
-        height: 7rem;
-        background-position: center;
-        background-size: cover;
-    }
     .course-summaryitem {
         border: $border-width solid $border-color;
         background-color: $body-bg;
     }
-    .summary img {
-        max-width: 100%;
+    .icon {
+        margin-right: 0;
+    }
+    a,
+    .btn-link {
+        color: inherit;
+    }
+    .btn.btn-link.btn-icon {
+        height: 36px;
+        width: 36px;
+        padding: 0;
+        border-radius: 50%;
+
+        @include hover-focus {
+            background-color: $gray-200;
+        }
     }
     @include media-breakpoint-down(sm) {
         .summaryimage {
@@ -113,56 +115,82 @@ $card-gutter : $card-deck-margin * 2;
     }
 }
 
-#region-main {
-    .block_myoverview {
-        .course-card {
-            flex-grow: 0;
-            flex-shrink: 0;
-            flex-basis: calc(50% - #{$card-gutter});
-        }
-        @include media-breakpoint-up(sm) {
-            .course-card {
-                flex-basis: calc(50% - #{$card-gutter});
-            }
-        }
-        @include media-breakpoint-up(md) {
-            .course-card {
-                flex-basis: calc(33.33% - #{$card-gutter});
-            }
-        }
-        @include media-breakpoint-up(lg) {
-            .course-card {
-                flex-basis: calc(25% - #{$card-gutter});
-            }
-        }
-        @include media-breakpoint-up(xl) {
-            .course-card {
-                flex-basis: calc(20% - #{$card-gutter});
-            }
-        }
+.dashboard-card-deck .dashboard-card {
+    margin-bottom: $card-gutter;
+    flex-basis: 100%;
+    flex-grow: 0;
+    .dashboard-card-img {
+        height: 7rem;
+        background-position: center;
+        background-size: cover;
+    }
+    .dashboard-card-footer {
+        padding: 0.8rem;
     }
 }
 
-#region-main.has-blocks .block_myoverview {
-    @include media-breakpoint-up(lg) {
-        .course-card {
+.dashboard-card-deck {
+    @include media-breakpoint-up(sm) {
+        .dashboard-card {
+            flex-basis: calc(50% - #{$card-gutter});
+        }
+    }
+    @include media-breakpoint-up(md) {
+        .dashboard-card {
             flex-basis: calc(33.33% - #{$card-gutter});
         }
     }
-    @include media-breakpoint-up(xl) {
-        .course-card {
+    @include media-breakpoint-up(lg) {
+        .dashboard-card {
             flex-basis: calc(25% - #{$card-gutter});
         }
     }
+    @include media-breakpoint-up(xl) {
+        .dashboard-card {
+            flex-basis: calc(20% - #{$card-gutter});
+        }
+    }
 }
 
-body.drawer-open-left #region-main.has-blocks .block_myoverview {
-    .course-card {
-        flex-basis: calc(50% - #{$card-gutter});
+#region-main.has-blocks {
+    .dashboard-card-deck {
+        @include media-breakpoint-up(lg) {
+            .dashboard-card {
+                flex-basis: calc(33.33% - #{$card-gutter});
+            }
+        }
+        @include media-breakpoint-up(xl) {
+            .dashboard-card {
+                flex-basis: calc(25% - #{$card-gutter});
+            }
+        }
     }
-    @include media-breakpoint-up(lg) {
-        .course-card {
-            flex-basis: calc(33.33% - #{$card-gutter});
+}
+
+body.drawer-open-left #region-main.has-blocks {
+    .dashboard-card-deck {
+        @include media-breakpoint-up(lg) {
+            .dashboard-card {
+                flex-basis: calc(33.33% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 1400px) {
+            .dashboard-card {
+                flex-basis: calc(25% - #{$card-gutter});
+            }
+        }
+    }
+}
+
+@media (min-width: 1200px) {
+    #block-region-side-pre {
+        .dashboard-card-deck {
+            margin: 0;
+            .dashboard-card {
+                flex-basis: 100% !important;
+                margin-left: 0;
+                margin-right: 0;
+            }
         }
     }
 }

@@ -25,11 +25,13 @@ define(
 [
     'jquery',
     'core/custom_interaction_events',
+    'block_myoverview/repository',
     'block_myoverview/view'
 ],
 function(
     $,
     CustomEvents,
+    Repository,
     View
 ) {
 
@@ -37,6 +39,32 @@ function(
         FILTERS: '[data-region="filter"]',
         FILTER_OPTION: '[data-filter]',
         DISPLAY_OPTION: '[data-display-option]'
+    };
+
+    /**
+     * Update the user preference for the block.
+     *
+     * @param {String} filter The type of filter: display/sort/grouping.
+     * @param {String} value The current preferred value.
+     */
+    var updatePreferences = function(filter, value) {
+        var type = null;
+        if (filter == 'display') {
+            type = 'block_myoverview_user_view_preference';
+        } else if (filter == 'sort') {
+            type = 'block_myoverview_user_sort_preference';
+        } else {
+            type = 'block_myoverview_user_grouping_preference';
+        }
+
+        Repository.updateUserPreferences({
+            preferences: [
+                {
+                    type: type,
+                    value: value
+                }
+            ]
+        });
     };
 
     /**
@@ -62,8 +90,14 @@ function(
                     return;
                 }
 
-                var attributename = 'data-' + option.attr('data-filter');
-                viewRoot.attr(attributename, option.attr('data-value'));
+                var filter = option.attr('data-filter');
+                var attributename = 'data-' + filter;
+                var value = option.attr('data-value');
+                var pref = option.attr('data-pref');
+
+                viewRoot.attr(attributename, value);
+
+                updatePreferences(filter, pref);
 
                 // Reset the views.
                 View.init(viewRoot, viewContent);
@@ -83,7 +117,12 @@ function(
                     return;
                 }
 
-                viewRoot.attr('data-display', option.attr('data-value'));
+                var filter = option.attr('data-display-option');
+                var value = option.attr('data-value');
+                var pref = option.attr('data-pref');
+
+                updatePreferences(filter, pref);
+                viewRoot.attr('data-display', value);
                 View.reset(viewRoot, viewContent);
                 data.originalEvent.preventDefault();
             }

@@ -59,6 +59,7 @@ define('COURSE_TIMELINE_ALL', 'all');
 define('COURSE_TIMELINE_PAST', 'past');
 define('COURSE_TIMELINE_INPROGRESS', 'inprogress');
 define('COURSE_TIMELINE_FUTURE', 'future');
+define('COURSE_FAVOURITES', 'favourites');
 define('COURSE_DB_QUERY_LIMIT', 1000);
 
 function make_log_url($module, $url) {
@@ -4255,6 +4256,51 @@ function course_filter_courses_by_timeline_classification(
         $numberofcoursesprocessed++;
 
         if ($classification == COURSE_TIMELINE_ALL || $classification == course_classify_for_timeline($course)) {
+            $filteredcourses[] = $course;
+            $filtermatches++;
+        }
+
+        if ($limit && $filtermatches >= $limit) {
+            // We've found the number of requested courses. No need to continue searching.
+            break;
+        }
+    }
+
+    // Return the number of filtered courses as well as the number of courses that were searched
+    // in order to find the matching courses. This allows the calling code to do some kind of
+    // pagination.
+    return [$filteredcourses, $numberofcoursesprocessed];
+}
+
+/**
+ * Search the given $courses for any that match the given $classification up to the specified
+ * $limit.
+ *
+ * This function will return the subset of courses that are favourites as well as the
+ * number of courses it had to process to build that subset.
+ *
+ * It is recommended that for larger sets of courses this function is given a Generator that loads
+ * the courses from the database in chunks.
+ *
+ * @param array|Traversable $courses List of courses to process
+ * @param array $favouritecourseids Array of favourite courses.
+ * @param int $limit Limit the number of results to this amount
+ * @return array First value is the filtered courses, second value is the number of courses processed
+ */
+function course_filter_courses_by_favourites(
+    $courses,
+    $favouritecourseids,
+    int $limit = 0
+) : array {
+
+    $filteredcourses = [];
+    $numberofcoursesprocessed = 0;
+    $filtermatches = 0;
+
+    foreach ($courses as $course) {
+        $numberofcoursesprocessed++;
+
+        if (in_array($course->id, $favouritecourseids)) {
             $filteredcourses[] = $course;
             $filtermatches++;
         }
