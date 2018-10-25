@@ -63,6 +63,28 @@ function tool_dataprivacy_myprofile_navigation(tree $tree, $user, $iscurrentuser
         $node = new core_user\output\myprofile\node('privacyandpolicies', 'datarequests',
             get_string('datarequests', 'tool_dataprivacy'), null, $url);
         $category->add_node($node);
+
+        // Check if the user has an ongoing data export request.
+        $hasexportrequest = \tool_dataprivacy\api::has_ongoing_request($user->id, \tool_dataprivacy\api::DATAREQUEST_TYPE_EXPORT);
+        // Show data export link only if the user doesn't have an ongoing data export request.
+        if (!$hasexportrequest) {
+            $exportparams = ['type' => \tool_dataprivacy\api::DATAREQUEST_TYPE_EXPORT];
+            $exporturl = new moodle_url('/admin/tool/dataprivacy/createdatarequest.php', $exportparams);
+            $exportnode = new core_user\output\myprofile\node('privacyandpolicies', 'requestdataexport',
+                get_string('requesttypeexport', 'tool_dataprivacy'), null, $exporturl);
+            $category->add_node($exportnode);
+        }
+
+        // Check if the user has an ongoing data deletion request.
+        $hasdeleterequest = \tool_dataprivacy\api::has_ongoing_request($user->id, \tool_dataprivacy\api::DATAREQUEST_TYPE_DELETE);
+        // Show data deletion link only if the user doesn't have an ongoing data deletion request.
+        if (!$hasdeleterequest) {
+            $deleteparams = ['type' => \tool_dataprivacy\api::DATAREQUEST_TYPE_DELETE];
+            $deleteurl = new moodle_url('/admin/tool/dataprivacy/createdatarequest.php', $deleteparams);
+            $deletenode = new core_user\output\myprofile\node('privacyandpolicies', 'requestdatadeletion',
+                get_string('deletemyaccount', 'tool_dataprivacy'), null, $deleteurl);
+            $category->add_node($deletenode);
+        }
     }
 
     $summaryurl = new moodle_url('/admin/tool/dataprivacy/summary.php');
