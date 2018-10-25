@@ -174,16 +174,70 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
     }
 
     /**
-     * Test for provider::get_contexts_for_userid().
+     * Test for provider::get_contexts_for_userid() when there is no message or notification.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid_no_data() {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
         $contextlist = provider::get_contexts_for_userid($user->id);
+        $this->assertEmpty($contextlist);
+    }
+
+    /**
+     * Test for provider::get_contexts_for_userid() when there is a message between users.
+     */
+    public function test_get_contexts_for_userid_with_message() {
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $this->create_message($user1->id, $user2->id, time() - (9 * DAYSECS));
+
+        // Test for the sender.
+        $contextlist = provider::get_contexts_for_userid($user1->id);
         $this->assertCount(1, $contextlist);
         $contextforuser = $contextlist->current();
-        $this->assertEquals(SYSCONTEXTID, $contextforuser->id);
+        $this->assertEquals(
+                context_user::instance($user1->id)->id,
+                $contextforuser->id);
+
+        // Test for the receiver.
+        $contextlist = provider::get_contexts_for_userid($user2->id);
+        $this->assertCount(1, $contextlist);
+        $contextforuser = $contextlist->current();
+        $this->assertEquals(
+                context_user::instance($user2->id)->id,
+                $contextforuser->id);
+    }
+
+    /**
+     * Test for provider::get_contexts_for_userid() when there is a notification between users.
+     */
+    public function test_get_contexts_for_userid_with_notification() {
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $this->create_notification($user1->id, $user2->id, time() - (9 * DAYSECS));
+
+        // Test for the sender.
+        $contextlist = provider::get_contexts_for_userid($user1->id);
+        $this->assertCount(1, $contextlist);
+        $contextforuser = $contextlist->current();
+        $this->assertEquals(
+                context_user::instance($user1->id)->id,
+                $contextforuser->id);
+
+        // Test for the receiver.
+        $contextlist = provider::get_contexts_for_userid($user2->id);
+        $this->assertCount(1, $contextlist);
+        $contextforuser = $contextlist->current();
+        $this->assertEquals(
+                context_user::instance($user2->id)->id,
+                $contextforuser->id);
     }
 
     /**
@@ -205,9 +259,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         message_add_contact($user3->id, 0, $user1->id);
         message_add_contact($user4->id, 1, $user1->id);
 
-        $this->export_context_data_for_user($user1->id, \context_system::instance(), 'core_message');
+        $user1context = context_user::instance($user1->id);
 
-        $writer = writer::with_context(\context_system::instance());
+        $this->export_context_data_for_user($user1->id, $user1context, 'core_message');
+
+        $writer = writer::with_context($user1context);
 
         $contacts = (array) $writer->get_data([get_string('contacts', 'core_message')]);
         usort($contacts, ['static', 'sort_contacts']);
@@ -261,9 +317,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         \core_message\api::delete_message($user1->id, $m2);
         \core_message\api::delete_message($user1->id, $m5);
 
-        $this->export_context_data_for_user($user1->id, \context_system::instance(), 'core_message');
+        $user1context = context_user::instance($user1->id);
 
-        $writer = writer::with_context(\context_system::instance());
+        $this->export_context_data_for_user($user1->id, $user1context, 'core_message');
+
+        $writer = writer::with_context($user1context);
 
         $this->assertTrue($writer->has_any_data());
 
@@ -357,9 +415,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->create_notification($user2->id, $user3->id, $now + (2 * DAYSECS));
         $this->create_notification($user3->id, $user2->id, $now + (1 * DAYSECS));
 
-        $this->export_context_data_for_user($user1->id, \context_system::instance(), 'core_message');
+        $user1context = context_user::instance($user1->id);
 
-        $writer = writer::with_context(\context_system::instance());
+        $this->export_context_data_for_user($user1->id, $user1context, 'core_message');
+
+        $writer = writer::with_context($user1context);
 
         $this->assertTrue($writer->has_any_data());
 
@@ -380,50 +440,75 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // Create users to test with.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
 
         $now = time();
         $timeread = $now - DAYSECS;
 
-        $systemcontext = \context_system::instance();
+        $user1context = context_user::instance($user1->id);
 
         // Create contacts.
         message_add_contact($user1->id, 0, $user2->id);
         message_add_contact($user2->id, 0, $user1->id);
+        message_add_contact($user2->id, 0, $user3->id);
+        message_add_contact($user3->id, 0, $user2->id);
 
         // Create messages.
         $m1 = $this->create_message($user1->id, $user2->id, $now + (9 * DAYSECS), true);
         $m2 = $this->create_message($user2->id, $user1->id, $now + (8 * DAYSECS));
+        $m3 = $this->create_message($user2->id, $user3->id, $now + (7 * DAYSECS));
 
         // Create notifications.
         $n1 = $this->create_notification($user1->id, $user2->id, $now + (9 * DAYSECS), $timeread);
         $n2 = $this->create_notification($user2->id, $user1->id, $now + (8 * DAYSECS));
+        $n3 = $this->create_notification($user2->id, $user3->id, $now + (7 * DAYSECS));
 
         // Delete one of the messages.
         \core_message\api::delete_message($user1->id, $m2);
 
-        // There should be 2 contacts.
-        $this->assertEquals(2, $DB->count_records('message_contacts'));
+        // There should be 4 contacts.
+        $this->assertEquals(4, $DB->count_records('message_contacts'));
 
-        // There should be two messages.
-        $this->assertEquals(2, $DB->count_records('messages'));
+        // There should be 3 messages.
+        $this->assertEquals(3, $DB->count_records('messages'));
 
-        // There should be two user actions - one for reading the message, one for deleting.
+        // There should be 2 user actions - one for reading the message, one for deleting.
         $this->assertEquals(2, $DB->count_records('message_user_actions'));
 
-        // There should be two conversation members.
-        $this->assertEquals(2, $DB->count_records('message_conversation_members'));
+        // There should be 4 conversation members (user1 and user2 in one conversation and user2 and user3 in another).
+        $this->assertEquals(4, $DB->count_records('message_conversation_members'));
 
-        // There should be two notifications.
-        $this->assertEquals(2, $DB->count_records('notifications'));
+        // There should be 3 notifications.
+        $this->assertEquals(3, $DB->count_records('notifications'));
 
-        provider::delete_data_for_all_users_in_context($systemcontext);
+        provider::delete_data_for_all_users_in_context($user1context);
 
-        // Confirm all has been deleted.
-        $this->assertEquals(0, $DB->count_records('message_contacts'));
-        $this->assertEquals(0, $DB->count_records('messages'));
-        $this->assertEquals(0, $DB->count_records('message_user_actions'));
-        $this->assertEquals(0, $DB->count_records('message_conversation_members'));
-        $this->assertEquals(0, $DB->count_records('notifications'));
+        // Confirm there are only 2 contacts left.
+        $this->assertEquals(2, $DB->count_records('message_contacts'));
+        // And none of them are related to user1.
+        $this->assertEquals(0,
+                $DB->count_records_select('message_contacts', 'userid = ? OR contactid = ?', [$user1->id, $user1->id]));
+
+        // Confirm there are only 2 messages left.
+        $this->assertEquals(2, $DB->count_records('messages'));
+        // And none of them are from user1.
+        $this->assertEquals(0, $DB->count_records('messages', ['useridfrom' => $user1->id]));
+
+        // Confirm there is only 1 user action left - the one that is for user2 reading the message.
+        $this->assertEquals(1, $DB->count_records('message_user_actions'));
+        // And it is not for user1.
+        $this->assertEquals(0, $DB->count_records('message_user_actions', ['userid' => $user1->id]));
+
+        // Confirm there are only 3 conversation members left.
+        $this->assertEquals(3, $DB->count_records('message_conversation_members'));
+        // And user1 is not in any conversation.
+        $this->assertEquals(0, $DB->count_records('message_conversation_members', ['userid' => $user1->id]));
+
+        // Confirm there is only 1 notification.
+        $this->assertEquals(1, $DB->count_records('notifications'));
+        // And it is not related to user1.
+        $this->assertEquals(0,
+                $DB->count_records_select('notifications', 'useridfrom = ? OR useridto = ? ', [$user1->id, $user1->id]));
     }
 
     /**
@@ -474,9 +559,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be three notifications.
         $this->assertEquals(3, $DB->count_records('notifications'));
 
-        $systemcontext = \context_system::instance();
+        $user1context = context_user::instance($user1->id);
         $contextlist = new \core_privacy\local\request\approved_contextlist($user1, 'core_message',
-            [$systemcontext->id]);
+            [$user1context->id]);
         provider::delete_data_for_user($contextlist);
 
         // Confirm the user 2 data still exists.
