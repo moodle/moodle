@@ -91,7 +91,7 @@ Feature: Control the aggregation of the scales
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Override weight of Grade me" to "1"
     Then the field "Override weight of Grade me" matches value "100.00"
-    And I click on "Edit" "link" in the "Scale me" "table_row"
+    And I open the action menu in "Scale me" "table_row"
     And I click on "Edit settings" "link" in the "Scale me" "table_row"
     And I follow "Show more..."
     And I should not see "Weight adjusted"
@@ -104,7 +104,7 @@ Feature: Control the aggregation of the scales
     And the field "Override weight of Grade me" matches value "95.238"
     And I set the field "Override weight of Scale me" to "1"
     And the field "Override weight of Scale me" matches value "4.8"
-    And I click on "Edit" "link" in the "Scale me" "table_row"
+    And I open the action menu in "Scale me" "table_row"
     And I click on "Edit settings" "link" in the "Scale me" "table_row"
     And I follow "Show more..."
     And I should see "Weight adjusted"

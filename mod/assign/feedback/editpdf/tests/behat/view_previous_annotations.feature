@@ -43,7 +43,7 @@ Feature: In an assignment, teacher can view the feedback for a previous attempt.
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
-    And I click on "Edit" "link" in the "Submitted for grading" "table_row"
+    And I open the action menu in "Submitted for grading" "table_row"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
     And I should see "Page 1 of 3"
     And I click on ".navigate-next-button" "css_element"
