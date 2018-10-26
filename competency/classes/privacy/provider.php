@@ -478,8 +478,7 @@ class provider implements
                 break;
 
             case CONTEXT_COURSE:
-                $courseid = $context->instanceid;
-                $DB->delete_records(user_competency_course::TABLE, ['courseid' => $courseid]);
+                static::delete_user_competencies_in_course($context->instanceid);
                 break;
         }
     }
@@ -511,7 +510,7 @@ class provider implements
                     break;
 
                 case CONTEXT_COURSE:
-                    static::delete_user_competencies_in_course($userid, $context->instanceid);
+                    static::delete_user_competencies_in_course($context->instanceid, [$userid]);
                     break;
             }
         }
@@ -602,15 +601,26 @@ class provider implements
     }
 
     /**
-     * Delete the record of competencies for a user in a course.
+     * Delete the record of competencies for user(s) in a course.
      *
-     * @param int $userid The user ID.
      * @param int $courseid The course ID.
+     * @param int[] $userids The user IDs, if deleting for specific user(s).
      * @return void
      */
-    protected static function delete_user_competencies_in_course($userid, $courseid) {
+    protected static function delete_user_competencies_in_course($courseid, $userids = []) {
         global $DB;
-        $DB->delete_records(user_competency_course::TABLE, ['userid' => $userid, 'courseid' => $courseid]);
+
+        $params = ['courseid' => $courseid];
+        $where = "courseid = :courseid";
+
+        if (!empty($userids)) {
+            list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+            $params = $params + $inparams;
+
+            $where .= " AND userid {$insql}";
+        }
+
+        $DB->delete_records_select(user_competency_course::TABLE, $where, $params);
     }
 
     /**
