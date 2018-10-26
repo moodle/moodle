@@ -219,7 +219,9 @@ class issuer extends persistent {
      * @return lang_string|boolean
      */
     protected function validate_baseurl($value) {
-        if (!empty($value) && strpos($value, 'https://') !== 0) {
+        global $CFG;
+        include_once($CFG->dirroot . '/lib/validateurlsyntax.php');
+        if (!empty($value) && !validateUrlSyntax($value, 'S+')) {
             return new lang_string('sslonlyaccess', 'error');
         }
         return true;
