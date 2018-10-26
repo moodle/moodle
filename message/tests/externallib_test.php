@@ -30,6 +30,8 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/message/externallib.php');
 
+use \core_message\tests\helper as testhelper;
+
 class core_message_externallib_testcase extends externallib_advanced_testcase {
 
     /**
@@ -2783,6 +2785,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Retrieve the messages.
         $result = core_message_external::data_for_messagearea_messages($user1->id, $user2->id);
+        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_messages_returns(),
@@ -2847,6 +2850,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Retrieve the messages from $time - 3, which should be the 3 most recent messages.
         $result = core_message_external::data_for_messagearea_messages($user1->id, $user2->id, 0, 0, false, $time - 3);
+        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_messages_returns(),
@@ -2887,6 +2891,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Retrieve the messages.
         $result = core_message_external::data_for_messagearea_messages($user1->id, $user2->id);
+        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_messages_returns(),
@@ -2972,6 +2977,263 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Tests get_conversation_messages for retrieving messages.
+     */
+    public function test_get_conversation_messages() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+        $user5 = self::getDataGenerator()->create_user();
+
+        // Create group conversation.
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id, $user4->id]
+        );
+
+        // The person asking for the messages.
+        $this->setUser($user1);
+
+        // Send some messages back and forth.
+        $time = time();
+        testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'Yo!', $time);
+        testhelper::send_fake_message_to_conversation($user3, $conversation->id, 'Sup mang?', $time + 1);
+        testhelper::send_fake_message_to_conversation($user2, $conversation->id, 'Writing PHPUnit tests!', $time + 2);
+        testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'Word.', $time + 3);
+
+        // Retrieve the messages.
+        $result = core_message_external::get_conversation_messages($user1->id, $conversation->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::get_conversation_messages_returns(),
+            $result);
+
+        // Check the results are correct.
+        $this->assertEquals($conversation->id, $result['id']);
+
+        // Confirm the members data is correct.
+        $members = $result['members'];
+        $this->assertCount(3, $members);
+        $membersid = [$members[0]['id'], $members[1]['id'], $members[2]['id']];
+        $this->assertContains($user1->id, $membersid);
+        $this->assertContains($user2->id, $membersid);
+        $this->assertContains($user3->id, $membersid);
+        $this->assertNotContains($user4->id, $membersid);
+        $this->assertNotContains($user5->id, $membersid);
+        $membersfullnames = [$members[0]['fullname'], $members[1]['fullname'], $members[2]['fullname']];
+        $this->assertContains(fullname($user1), $membersfullnames);
+        $this->assertContains(fullname($user2), $membersfullnames);
+        $this->assertContains(fullname($user3), $membersfullnames);
+        $this->assertNotContains(fullname($user4), $membersfullnames);
+        $this->assertNotContains(fullname($user5), $membersfullnames);
+
+        // Confirm the messages data is correct.
+        $messages = $result['messages'];
+        $this->assertCount(4, $messages);
+
+        $message1 = $messages[0];
+        $message2 = $messages[1];
+        $message3 = $messages[2];
+        $message4 = $messages[3];
+
+        $this->assertEquals($user1->id, $message1['useridfrom']);
+        $this->assertContains('Yo!', $message1['text']);
+
+        $this->assertEquals($user3->id, $message2['useridfrom']);
+        $this->assertContains('Sup mang?', $message2['text']);
+
+        $this->assertEquals($user2->id, $message3['useridfrom']);
+        $this->assertContains('Writing PHPUnit tests!', $message3['text']);
+
+        $this->assertEquals($user1->id, $message4['useridfrom']);
+        $this->assertContains('Word.', $message4['text']);
+    }
+
+    /**
+     * Tests get_conversation_messages for retrieving messages using timefrom parameter.
+     */
+    public function test_get_conversation_messages_timefrom() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Create group conversation.
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id]
+        );
+
+        // The person asking for the messages.
+        $this->setUser($user1);
+
+        // Send some messages back and forth.
+        $time = time();
+        testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'Message 1', $time - 4);
+        testhelper::send_fake_message_to_conversation($user2, $conversation->id, 'Message 2', $time - 3);
+        testhelper::send_fake_message_to_conversation($user2, $conversation->id, 'Message 3', $time - 2);
+        testhelper::send_fake_message_to_conversation($user2, $conversation->id, 'Message 4', $time - 1);
+
+        // Retrieve the messages from $time - 3, which should be the 3 most recent messages.
+        $result = core_message_external::get_conversation_messages($user1->id, $conversation->id, 0, 0, false, $time - 3);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::get_conversation_messages_returns(),
+            $result);
+
+        // Check the results are correct.
+        $this->assertEquals($conversation->id, $result['id']);
+
+        // Confirm the messages data is correct.
+        $messages = $result['messages'];
+        $this->assertCount(3, $messages);
+
+        $message1 = $messages[0];
+        $message2 = $messages[1];
+        $message3 = $messages[2];
+
+        $this->assertContains('Message 2', $message1['text']);
+        $this->assertContains('Message 3', $message2['text']);
+        $this->assertContains('Message 4', $message3['text']);
+
+        // Confirm the members data is correct.
+        $members = $result['members'];
+        $this->assertCount(1, $members);
+        $this->assertEquals($user2->id, $members[0]['id']);
+    }
+
+    /**
+     * Tests get_conversation_messages for retrieving messages as another user.
+     */
+    public function test_get_conversation_messages_as_other_user() {
+        $this->resetAfterTest(true);
+
+        // Set as admin.
+        $this->setAdminUser();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Create group conversation.
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id, $user4->id]
+        );
+
+        // Send some messages back and forth.
+        $time = time();
+        testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'Yo!', $time);
+        testhelper::send_fake_message_to_conversation($user3, $conversation->id, 'Sup mang?', $time + 1);
+        testhelper::send_fake_message_to_conversation($user2, $conversation->id, 'Writing PHPUnit tests!', $time + 2);
+        testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'Word.', $time + 3);
+
+        // Retrieve the messages.
+        $result = core_message_external::get_conversation_messages($user1->id, $conversation->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::get_conversation_messages_returns(),
+            $result);
+
+        // Check the results are correct.
+        $this->assertEquals($conversation->id, $result['id']);
+
+        // Confirm the members data is correct.
+        $members = $result['members'];
+        $this->assertCount(3, $members);
+        $membersid = [$members[0]['id'], $members[1]['id'], $members[2]['id']];
+        $this->assertContains($user1->id, $membersid);
+        $this->assertContains($user2->id, $membersid);
+        $this->assertContains($user3->id, $membersid);
+        $this->assertNotContains($user4->id, $membersid);
+
+        // Confirm the message data is correct.
+        $messages = $result['messages'];
+        $this->assertCount(4, $messages);
+
+        $message1 = $messages[0];
+        $message2 = $messages[1];
+        $message3 = $messages[2];
+        $message4 = $messages[3];
+
+        $this->assertEquals($user1->id, $message1['useridfrom']);
+        $this->assertContains('Yo!', $message1['text']);
+
+        $this->assertEquals($user3->id, $message2['useridfrom']);
+        $this->assertContains('Sup mang?', $message2['text']);
+
+        $this->assertEquals($user2->id, $message3['useridfrom']);
+        $this->assertContains('Writing PHPUnit tests!', $message3['text']);
+
+        $this->assertEquals($user1->id, $message4['useridfrom']);
+        $this->assertContains('Word.', $message4['text']);
+    }
+
+    /**
+     * Tests get_conversation_messages for retrieving messages as another user without the proper capabilities.
+     */
+    public function test_get_conversation_messages_as_other_user_without_cap() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Create group conversation.
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id, $user4->id]
+        );
+
+        // The person asking for the messages for another user.
+        $this->setUser($user1);
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::get_conversation_messages($user2->id, $conversation->id);
+    }
+
+    /**
+     * Tests get_conversation_messages for retrieving messages with messaging disabled.
+     */
+    public function test_get_conversation_messages_messaging_disabled() {
+        $this->resetAfterTest(true);
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Create group conversation.
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id, $user4->id]
+        );
+
+        // The person asking for the messages for another user.
+        $this->setUser($user1);
+
+        // Disable messaging.
+        set_config('messaging', 0);
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::get_conversation_messages($user1->id, $conversation->id);
+    }
+
+    /**
      * Tests retrieving most recent message.
      */
     public function test_messagearea_get_most_recent_message() {
@@ -2993,6 +3255,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Get the most recent message.
         $result = core_message_external::data_for_messagearea_get_most_recent_message($user1->id, $user2->id);
+        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_get_most_recent_message_returns(),
@@ -3026,6 +3289,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Get the most recent message.
         $result = core_message_external::data_for_messagearea_get_most_recent_message($user1->id, $user2->id);
+        $this->assertDebuggingCalledCount(3);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_get_most_recent_message_returns(),

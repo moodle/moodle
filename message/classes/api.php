@@ -605,6 +605,7 @@ class api {
     /**
      * Returns the messages to display in the message area.
      *
+     * @deprecated since 3.6
      * @param int $userid the current user
      * @param int $otheruserid the other user
      * @param int $limitfrom
@@ -615,13 +616,22 @@ class api {
      * @return array
      */
     public static function get_messages($userid, $otheruserid, $limitfrom = 0, $limitnum = 0,
-        $sort = 'timecreated ASC', $timefrom = 0, $timeto = 0) {
+            $sort = 'timecreated ASC', $timefrom = 0, $timeto = 0) {
+        debugging('\core_message\api::get_messages() is deprecated, please use ' .
+            '\core_message\api::get_conversation_messages() instead.', DEBUG_DEVELOPER);
 
         if (!empty($timefrom)) {
+            // Get the conversation between userid and otheruserid.
+            $userids = [$userid, $otheruserid];
+            if (!$conversationid = self::get_conversation_between_users($userids)) {
+                // This method was always used for individual conversations.
+                $conversation = self::create_conversation(self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $userids);
+                $conversationid = $conversation->id;
+            }
+
             // Check the cache to see if we even need to do a DB query.
-            $cache = \cache::make('core', 'message_time_last_message_between_users');
-            $key = helper::get_last_message_time_created_cache_key($otheruserid, $userid);
-            $lastcreated = $cache->get($key);
+            $cache = \cache::make('core', 'message_time_last_message_in_conversation');
+            $lastcreated = $cache->get($conversationid);
 
             // The last known message time is earlier than the one being requested so we can
             // just return an empty result set rather than having to query the DB.
@@ -633,8 +643,42 @@ class api {
         $arrmessages = array();
         if ($messages = helper::get_messages($userid, $otheruserid, 0, $limitfrom, $limitnum,
                                              $sort, $timefrom, $timeto)) {
-
             $arrmessages = helper::create_messages($userid, $messages);
+        }
+
+        return $arrmessages;
+    }
+
+    /**
+     * Returns the messages for the defined conversation.
+     *
+     * @param  int $userid The current user.
+     * @param  int $convid The conversation where the messages belong. Could be an object or just the id.
+     * @param  int $limitfrom Return a subset of records, starting at this point (optional).
+     * @param  int $limitnum Return a subset comprising this many records in total (optional, required if $limitfrom is set).
+     * @param  string $sort The column name to order by including optionally direction.
+     * @param  int $timefrom The time from the message being sent.
+     * @param  int $timeto The time up until the message being sent.
+     * @return array of messages
+     */
+    public static function get_conversation_messages(int $userid, int $convid, int $limitfrom = 0, int $limitnum = 0,
+        string $sort = 'timecreated ASC', int $timefrom = 0, int $timeto = 0) : array {
+
+        if (!empty($timefrom)) {
+            // Check the cache to see if we even need to do a DB query.
+            $cache = \cache::make('core', 'message_time_last_message_in_conversation');
+            $lastcreated = $cache->get($convid);
+
+            // The last known message time is earlier than the one being requested so we can
+            // just return an empty result set rather than having to query the DB.
+            if ($lastcreated && $lastcreated < $timefrom) {
+                return [];
+            }
+        }
+
+        $arrmessages = array();
+        if ($messages = helper::get_conversation_messages($userid, $convid, 0, $limitfrom, $limitnum, $sort, $timefrom, $timeto)) {
+            $arrmessages = helper::format_conversation_messages($userid, $convid, $messages);
         }
 
         return $arrmessages;
@@ -643,17 +687,43 @@ class api {
     /**
      * Returns the most recent message between two users.
      *
+     * @deprecated since 3.6
      * @param int $userid the current user
      * @param int $otheruserid the other user
      * @return \stdClass|null
      */
     public static function get_most_recent_message($userid, $otheruserid) {
+        debugging('\core_message\api::get_most_recent_message() is deprecated, please use ' .
+            '\core_message\api::get_most_recent_conversation_message() instead.', DEBUG_DEVELOPER);
+
         // We want two messages here so we get an accurate 'blocktime' value.
         if ($messages = helper::get_messages($userid, $otheruserid, 0, 0, 2, 'timecreated DESC')) {
             // Swap the order so we now have them in historical order.
             $messages = array_reverse($messages);
             $arrmessages = helper::create_messages($userid, $messages);
             return array_pop($arrmessages);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the most recent message in a conversation.
+     *
+     * @param int $convid The conversation identifier.
+     * @param int $currentuserid The current user identifier.
+     * @return \stdClass|null The most recent message.
+     */
+    public static function get_most_recent_conversation_message(int $convid, int $currentuserid = 0) {
+        global $USER;
+
+        if (empty($currentuserid)) {
+            $currentuserid = $USER->id;
+        }
+
+        if ($messages = helper::get_conversation_messages($currentuserid, $convid, 0, 0, 1, 'timecreated DESC')) {
+            $convmessages = helper::format_conversation_messages($currentuserid, $convid, $messages);
+            return array_pop($convmessages['messages']);
         }
 
         return null;

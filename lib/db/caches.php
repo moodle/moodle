@@ -342,12 +342,12 @@ $definitions = array(
         'staticaccelerationsize' => 3
     ),
 
-    // Caches the time of the last message between two users.
-    'message_time_last_message_between_users' => array(
+    // Caches the time of the last message in a conversation.
+    'message_time_last_message_in_conversation' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true, // The id of the sender and recipient is used.
+        'simplekeys' => true, // The conversation id is used.
         'simplevalues' => true,
-        'datasource' => '\core_message\time_last_message_between_users',
+        'datasource' => '\core_message\time_last_message_in_conversation',
     ),
 
     // Caches font awesome icons.

@@ -28,16 +28,16 @@ namespace core_message;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Cache data source for the time of the last message between users.
+ * Cache data source for the time of the last message in a conversation.
  *
  * @package    core_message
  * @category   cache
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class time_last_message_between_users implements \cache_data_source {
+class time_last_message_in_conversation implements \cache_data_source {
 
-    /** @var time_last_message_between_users the singleton instance of this class. */
+    /** @var time_last_message_in_conversation the singleton instance of this class. */
     protected static $instance = null;
 
     /**
@@ -49,7 +49,7 @@ class time_last_message_between_users implements \cache_data_source {
      */
     public static function get_instance_for_cache(\cache_definition $definition) {
         if (is_null(self::$instance)) {
-            self::$instance = new time_last_message_between_users();
+            self::$instance = new time_last_message_in_conversation();
         }
         return self::$instance;
     }
@@ -61,9 +61,7 @@ class time_last_message_between_users implements \cache_data_source {
      * @return mixed What ever data should be returned, or false if it can't be loaded.
      */
     public function load_for_cache($key) {
-        list($userid1, $userid2) = explode('_', $key);
-
-        $message = api::get_most_recent_message($userid1, $userid2);
+        $message = api::get_most_recent_conversation_message($key);
 
         if ($message) {
             return $message->timecreated;

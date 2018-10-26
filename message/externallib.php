@@ -869,6 +869,44 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Return the structure of a conversation member.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.6
+     */
+    private static function get_conversation_member_structure() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'The user id'),
+                'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
+                'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
+                'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
+                'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
+                'showonlinestatus' => new external_value(PARAM_BOOL, 'Show the user\'s online status?'),
+                'isblocked' => new external_value(PARAM_BOOL, 'If the user has been blocked'),
+                'iscontact' => new external_value(PARAM_BOOL, 'Is the user a contact?')
+            )
+        );
+    }
+
+    /**
+     * Return the structure of a message area message.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.6
+     */
+    private static function get_conversation_message_structure() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'The id of the message'),
+                'useridfrom' => new external_value(PARAM_INT, 'The id of the user who sent the message'),
+                'text' => new external_value(PARAM_RAW, 'The text of the message'),
+                'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the message'),
+            )
+        );
+    }
+
+    /**
      * Return the structure of a message area message.
      *
      * @return external_single_structure
@@ -1369,6 +1407,108 @@ class core_message_external extends external_api {
                     self::get_messagearea_message_structure()
                 ),
                 'isblocked' => new external_value(PARAM_BOOL, 'Is this user blocked by the current user?', VALUE_DEFAULT, false),
+            )
+        );
+    }
+
+    /**
+     * The conversation messages parameters.
+     *
+     * @return external_function_parameters
+     * @since 3.6
+     */
+    public static function get_conversation_messages_parameters() {
+        return new external_function_parameters(
+            array(
+                'currentuserid' => new external_value(PARAM_INT, 'The current user\'s id'),
+                'convid' => new external_value(PARAM_INT, 'The conversation id'),
+                'limitfrom' => new external_value(PARAM_INT, 'Limit from', VALUE_DEFAULT, 0),
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0),
+                'newest' => new external_value(PARAM_BOOL, 'Newest first?', VALUE_DEFAULT, false),
+                'timefrom' => new external_value(PARAM_INT,
+                    'The timestamp from which the messages were created', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Get conversation messages.
+     *
+     * @param  int $currentuserid The current user's id.
+     * @param  int $convid The conversation id.
+     * @param  int $limitfrom Return a subset of records, starting at this point (optional).
+     * @param  int $limitnum Return a subset comprising this many records in total (optional, required if $limitfrom is set).
+     * @param  bool $newest True for getting first newest messages, false otherwise.
+     * @param  int  $timefrom The time from the conversation messages to get.
+     * @return stdClass The messages and members who have sent some of these messages.
+     * @throws moodle_exception
+     * @since 3.6
+     */
+    public static function get_conversation_messages(int $currentuserid, int $convid, int $limitfrom = 0, int $limitnum = 0,
+                                                         bool $newest = false, int $timefrom = 0) {
+        global $CFG, $PAGE, $USER;
+
+        // Check if messaging is enabled.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $systemcontext = context_system::instance();
+
+        $params = array(
+            'currentuserid' => $currentuserid,
+            'convid' => $convid,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum,
+            'newest' => $newest,
+            'timefrom' => $timefrom,
+        );
+        self::validate_parameters(self::get_conversation_messages_parameters(), $params);
+        self::validate_context($systemcontext);
+
+        if (($USER->id != $currentuserid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
+
+        $sort = $newest ? 'timecreated DESC' : 'timecreated ASC';
+
+        // We need to enforce a one second delay on messages to avoid race conditions of current
+        // messages still being sent.
+        //
+        // There is a chance that we could request messages before the current time's
+        // second has elapsed and while other messages are being sent in that same second. In which
+        // case those messages will be lost.
+        //
+        // Instead we ignore the current time in the result set to ensure that second is allowed to finish.
+        $timeto = empty($timefrom) ? 0 : time() - 1;
+
+        // No requesting messages from the current time, as stated above.
+        if ($timefrom == time()) {
+            $messages = [];
+        } else {
+            $messages = \core_message\api::get_conversation_messages($currentuserid, $convid, $limitfrom,
+                                                        $limitnum, $sort, $timefrom, $timeto);
+        }
+
+        return $messages;
+    }
+
+    /**
+     * The messagearea messages return structure.
+     *
+     * @return external_single_structure
+     * @since 3.6
+     */
+    public static function get_conversation_messages_returns() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'The conversation id'),
+                'members' => new external_multiple_structure(
+                    self::get_conversation_member_structure()
+                ),
+                'messages' => new external_multiple_structure(
+                    self::get_conversation_message_structure()
+                ),
             )
         );
     }

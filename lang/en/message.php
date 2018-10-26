@@ -38,6 +38,7 @@ $string['contactableprivacy_site'] = 'Anyone on the site';
 $string['contactblocked'] = 'Contact blocked';
 $string['contactrequests'] = 'Contact requests';
 $string['contacts'] = 'Contacts';
+$string['conversationdoesntexist'] = 'Conversation does not exist';
 $string['defaultmessageoutputs'] = 'Default message outputs';
 $string['defaults'] = 'Defaults';
 $string['deleteallconfirm'] = "Are you sure you would like to delete this entire conversation?";
