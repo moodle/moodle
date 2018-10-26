@@ -1473,6 +1473,73 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test verifying the sorting param for get_conversation_messages is respected().
+     */
+    public function test_get_conversation_messages_sorting() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Create conversations - 1 group and 1 individual.
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]
+        );
+        $conversation2 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id]
+        );
+
+        // Send some messages back and forth.
+        $time = 1;
+        $m1id = testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'Yo!', $time + 1);
+        $m2id = testhelper::send_fake_message_to_conversation($user2, $conversation->id, 'Sup mang?', $time + 2);
+        $m3id = testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'Writing PHPUnit tests!', $time + 3);
+        $m4id = testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'Word.', $time + 4);
+
+        $gm1id = testhelper::send_fake_message_to_conversation($user1, $conversation2->id, 'Yo!', $time + 1);
+        $gm2id = testhelper::send_fake_message_to_conversation($user2, $conversation2->id, 'Sup mang?', $time + 2);
+        $gm3id = testhelper::send_fake_message_to_conversation($user3, $conversation2->id, 'Writing PHPUnit tests!', $time + 3);
+        $gm4id = testhelper::send_fake_message_to_conversation($user1, $conversation2->id, 'Word.', $time + 4);
+
+        // The person doing the search.
+        $this->setUser($user1);
+
+        // Retrieve the messages using default sort ('timecreated ASC') and verify ordering.
+        $convmessages = \core_message\api::get_conversation_messages($user1->id, $conversation->id);
+        $messages = $convmessages['messages'];
+        $this->assertEquals($m1id, $messages[0]->id);
+        $this->assertEquals($m2id, $messages[1]->id);
+        $this->assertEquals($m3id, $messages[2]->id);
+        $this->assertEquals($m4id, $messages[3]->id);
+
+        // Retrieve the messages without specifying DESC sort ordering, and verify ordering.
+        $convmessages = \core_message\api::get_conversation_messages($user1->id, $conversation->id, 0, 0, 'timecreated DESC');
+        $messages = $convmessages['messages'];
+        $this->assertEquals($m1id, $messages[3]->id);
+        $this->assertEquals($m2id, $messages[2]->id);
+        $this->assertEquals($m3id, $messages[1]->id);
+        $this->assertEquals($m4id, $messages[0]->id);
+
+        // Retrieve the messages using default sort ('timecreated ASC') and verify ordering.
+        $convmessages = \core_message\api::get_conversation_messages($user1->id, $conversation2->id);
+        $messages = $convmessages['messages'];
+        $this->assertEquals($gm1id, $messages[0]->id);
+        $this->assertEquals($gm2id, $messages[1]->id);
+        $this->assertEquals($gm3id, $messages[2]->id);
+        $this->assertEquals($gm4id, $messages[3]->id);
+
+        // Retrieve the messages without specifying DESC sort ordering, and verify ordering.
+        $convmessages = \core_message\api::get_conversation_messages($user1->id, $conversation2->id, 0, 0, 'timecreated DESC');
+        $messages = $convmessages['messages'];
+        $this->assertEquals($gm1id, $messages[3]->id);
+        $this->assertEquals($gm2id, $messages[2]->id);
+        $this->assertEquals($gm3id, $messages[1]->id);
+        $this->assertEquals($gm4id, $messages[0]->id);
+    }
+
+    /**
      * Test retrieving conversation messages by providing a minimum timecreated value.
      */
     public function test_get_conversation_messages_time_from_only() {
