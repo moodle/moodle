@@ -2643,7 +2643,7 @@ function xmldb_main_upgrade($oldversion) {
         $dbman->add_key($table, $key);
 
         // Add index.
-        $index = new xmldb_index('component-itemtype-contextid-itemid', XMLDB_INDEX_NOTUNIQUE, ['component', 'itemtype',
+        $index = new xmldb_index('component-itemtype-itemid-contextid', XMLDB_INDEX_NOTUNIQUE, ['component', 'itemtype',
             'itemid', 'contextid']);
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);

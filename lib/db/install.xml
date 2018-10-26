@@ -634,7 +634,7 @@
       <INDEXES>
         <INDEX NAME="type" UNIQUE="false" FIELDS="type"/>
         <INDEX NAME="convhash" UNIQUE="false" FIELDS="convhash"/>
-        <INDEX NAME="component-itemtype-contextid-itemid" UNIQUE="false" FIELDS="component, itemtype, contextid, itemid"/>
+        <INDEX NAME="component-itemtype-itemid-contextid" UNIQUE="false" FIELDS="component, itemtype, itemid, contextid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="message_conversation_members" COMMENT="Stores all members in a conversations">
