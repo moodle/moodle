@@ -1223,7 +1223,7 @@ $string['upgradekeyset'] = 'Upgrade key (leave empty to not set it)';
 $string['upgradelogs'] = 'For full functionality, your old logs need to be upgraded.  <a href="{$a}">More information</a>';
 $string['upgradelogsinfo'] = 'Some changes have recently been made in the way logs are stored.  To be able to view all of your old logs on a per-activity basis, your old logs need to be upgraded.  Depending on your site this can take a long time (eg several hours) and can be quite taxing on the database for large sites.  Once you start this process you should let it finish (by keeping the browser window open).  Don\'t worry - your site will work fine for other people while the logs are being upgraded.<br /><br />Do you want to upgrade your logs now?';
 $string['upgradesettings'] = 'New settings';
-$string['upgradesettingsintro'] = 'The settings shown below were added during your last Moodle upgrade. Make any changes necessary to the defaults and then click the &quot;Save changes&quot; button at the bottom of this page.';
+$string['upgradesettingsintro'] = 'The settings shown below were added during your last Moodle upgrade. Make any changes necessary to the defaults and then click the \'Save changes\' button at the bottom of this page.';
 $string['upgradestalefiles'] = 'Mixed Moodle versions detected, upgrade cannot continue';
 $string['upgradestalefilesinfo'] = 'The Moodle update process has been paused because PHP scripts from at least two major versions of Moodle have been detected in the Moodle directory.
 
