@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Privacy test for the mnetservice_enrol implementation of the privacy API.
  *
@@ -21,12 +22,16 @@
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die();
+
 use mnetservice_enrol\privacy\provider;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\writer;
 use core_privacy\local\request\transform;
 use core_privacy\tests\provider_testcase;
+use core_privacy\local\request\approved_userlist;
+
 /**
  * Privacy test for the mnetservice_enrol.
  *
@@ -34,8 +39,10 @@ use core_privacy\tests\provider_testcase;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mnetservice_enrol_privacy_testcase extends provider_testcase {
+
     /** @var stdClass the mnet host we are using to test. */
     protected $mnethost;
+
     /** @var stdClass the mnet service enrolment to test. */
     protected $enrolment;
 
@@ -53,6 +60,7 @@ class mnetservice_enrol_privacy_testcase extends provider_testcase {
         $this->mnethost->public_key = 'A random public key!';
         $this->mnethost->id = $DB->insert_record('mnet_host', $this->mnethost);
     }
+
     /**
      * Check that a user context is returned if there is any user data for this user.
      */
@@ -73,6 +81,7 @@ class mnetservice_enrol_privacy_testcase extends provider_testcase {
         $usercontext = \context_user::instance($user->id);
         $this->assertEquals($usercontext->id, $contextlist->get_contextids()[0]);
     }
+
     /**
      * Test that user data is exported correctly.
      */
@@ -141,6 +150,7 @@ class mnetservice_enrol_privacy_testcase extends provider_testcase {
         $userenrolments = $DB->get_records('mnetservice_enrol_enrolments', array());
         $this->assertCount(2, $userenrolments);
     }
+
     /**
      * This should work identical to the above test.
      */
@@ -178,6 +188,108 @@ class mnetservice_enrol_privacy_testcase extends provider_testcase {
         // Get all user enrolments accounts.
         $userenrolments = $DB->get_records('mnetservice_enrol_enrolments', array());
         $this->assertCount(2, $userenrolments);
+    }
+
+    /**
+     * Test that only users within a course context are fetched.
+     */
+    public function test_get_users_in_context() {
+        $this->resetAfterTest();
+
+        $component = 'mnetservice_enrol';
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+        $usercontext = context_user::instance($user->id);
+
+        // Create user2.
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $userlist = new \core_privacy\local\request\userlist($usercontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(0, $userlist);
+
+        // Create a test MNet service enrol enrolments.
+        $remotecourseid = 101;
+        $this->insert_mnetservice_enrol_courses($remotecourseid);
+        $this->insert_mnetservice_enrol_enrolments($user->id, $remotecourseid);
+        $this->insert_mnetservice_enrol_enrolments($user2->id, $remotecourseid);
+
+        // The list of users within the user context should contain only user.
+        provider::get_users_in_context($userlist);
+        $this->assertCount(1, $userlist);
+        $this->assertFalse(in_array($user2->id, $userlist->get_userids()));
+        $this->assertTrue(in_array($user->id, $userlist->get_userids()));
+
+        // The list of users within the system context should be empty.
+        $systemcontext = context_system::instance();
+        $userlist2 = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(0, $userlist2);
+    }
+
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        $this->resetAfterTest();
+
+        $component = 'mnetservice_enrol';
+
+        // Create user1.
+        $user1 = $this->getDataGenerator()->create_user();
+        $usercontext1 = context_user::instance($user1->id);
+        // Create user2.
+        $user2 = $this->getDataGenerator()->create_user();
+        $usercontext2 = context_user::instance($user2->id);
+
+        // Create a test MNet service enrol enrolments.
+        $remotecourseid = 101;
+        $this->insert_mnetservice_enrol_courses($remotecourseid);
+        $this->insert_mnetservice_enrol_enrolments($user1->id, $remotecourseid);
+        $this->insert_mnetservice_enrol_enrolments($user2->id, $remotecourseid);
+
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(1, $userlist1);
+        $expected = [$user1->id];
+        $actual = $userlist1->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+        $expected = [$user2->id];
+        $actual = $userlist2->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        // Convert $userlist1 into an approved_contextlist.
+        $approvedlist1 = new approved_userlist($usercontext1, $component, $userlist1->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist1);
+
+        // Re-fetch users in usercontext1.
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
+        provider::get_users_in_context($userlist1);
+        // The user data in usercontext1 should be deleted.
+        $this->assertCount(0, $userlist1);
+
+        // Re-fetch users in usercontext2.
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist2);
+        // The user data in usercontext2 should be still present.
+        $this->assertCount(1, $userlist2);
+
+        // Convert $userlist2 into an approved_contextlist in the system context.
+        $systemcontext = context_system::instance();
+        $approvedlist3 = new approved_userlist($systemcontext, $component, $userlist2->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist3);
+        // Re-fetch users in usercontext2.
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist2);
+        // The user data in systemcontext should not be deleted.
+        $this->assertCount(1, $userlist2);
     }
 
     /**
