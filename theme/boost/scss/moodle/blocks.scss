@@ -108,11 +108,12 @@ $card-gutter : $card-deck-margin * 2;
             background-color: $gray-200;
         }
     }
-    @include media-breakpoint-down(sm) {
-        .summaryimage {
-            max-height: 7rem;
-        }
-    }
+}
+
+.summaryimage {
+    height: 7rem;
+    background-position: center;
+    background-size: cover;
 }
 
 .dashboard-card-deck .dashboard-card {
