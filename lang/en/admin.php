@@ -280,7 +280,7 @@ $string['configmaxevents'] = 'Events to Lookahead';
 $string['configmessaging'] = 'If enabled, users can send messages to other users on the site.';
 $string['configmessagingallowemailoverride'] = 'Allow users to have email message notifications sent to an email address other than the email address in their profile';
 $string['configmessagingdeletereadnotificationsdelay'] = 'Read notifications can be deleted to save space. How long after a notification is read can it be deleted?';
-$string['configmessagingallusers'] = 'If enabled, users can choose to allow anyone on the site to send them a message. Otherwise, users can choose to allow only their contacts or others in their courses to send them messages.';
+$string['configmessagingallusers'] = 'If enabled, users can view the list of all users on the site when selecting someone to message, and their message preferences include the option to accept messages from anyone on the site. If disabled, users can only view the list of users in their courses, and they have just two options in message preferences - to accept messages from their contacts only, or their contacts and anyone in their courses.';
 $string['configminpassworddigits'] = 'Passwords must have at least these many digits.';
 $string['configminpasswordlength'] = 'Passwords must be at least these many characters long.';
 $string['configminpasswordlower'] = 'Passwords must have at least these many lower case letters.';
@@ -756,7 +756,7 @@ $string['mediapluginwmv'] = 'Enable .wmv filter';
 $string['mediapluginyoutube'] = 'Enable YouTube links filter';
 $string['messaging'] = 'Enable messaging system';
 $string['messagingallowemailoverride'] = 'Notification email override';
-$string['messagingallusers'] = 'Allow messages from anyone on the site';
+$string['messagingallusers'] = 'Allow site-wide messaging';
 $string['messagingdeletereadnotificationsdelay'] = 'Delete read notifications';
 $string['minpassworddigits'] = 'Digits';
 $string['minpasswordlength'] = 'Password length';
@@ -1249,7 +1249,7 @@ $string['upgradekeyset'] = 'Upgrade key (leave empty to not set it)';
 $string['upgradelogs'] = 'For full functionality, your old logs need to be upgraded.  <a href="{$a}">More information</a>';
 $string['upgradelogsinfo'] = 'Some changes have recently been made in the way logs are stored.  To be able to view all of your old logs on a per-activity basis, your old logs need to be upgraded.  Depending on your site this can take a long time (eg several hours) and can be quite taxing on the database for large sites.  Once you start this process you should let it finish (by keeping the browser window open).  Don\'t worry - your site will work fine for other people while the logs are being upgraded.<br /><br />Do you want to upgrade your logs now?';
 $string['upgradesettings'] = 'New settings';
-$string['upgradesettingsintro'] = 'The settings shown below were added during your last Moodle upgrade. Make any changes necessary to the defaults and then click the &quot;Save changes&quot; button at the bottom of this page.';
+$string['upgradesettingsintro'] = 'The settings shown below were added during your last Moodle upgrade. Make any changes necessary to the defaults and then click the \'Save changes\' button at the bottom of this page.';
 $string['upgradestalefiles'] = 'Mixed Moodle versions detected, upgrade cannot continue';
 $string['upgradestalefilesinfo'] = 'The Moodle update process has been paused because PHP scripts from at least two major versions of Moodle have been detected in the Moodle directory.
 

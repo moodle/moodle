@@ -131,7 +131,7 @@ $string['synchronize'] = 'Synchronise the data from shared datasets with other q
 $string['synchronizeno'] = 'Do not synchronise';
 $string['synchronizeyes'] = 'Synchronise';
 $string['synchronizeyesdisplay'] = 'Synchronise and display the shared datasets name as prefix of the question name';
-$string['tolerance'] = 'Tolerance &plusmn;';
+$string['tolerance'] = 'Tolerance ±';
 $string['tolerancetype'] = 'Type';
 $string['trueanswerinsidelimits'] = 'Correct answer : {$a->correct} inside limits of true value {$a->true}';
 $string['trueansweroutsidelimits'] = '<span class="error">ERROR Correct answer : {$a->correct} outside limits of true value {$a->true}</span>';
