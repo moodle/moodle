@@ -3675,7 +3675,17 @@ class core_course_external extends external_api {
 
         $requiredproperties = course_summary_exporter::define_properties();
         $fields = join(',', array_keys($requiredproperties));
-        $courses = course_get_enrolled_courses_for_logged_in_user(0, $offset, $sort, $fields);
+        $hiddencourses = get_hidden_courses_on_timeline();
+        $courses = [];
+
+        // If the timeline requires the hidden courses then restrict the result to only $hiddencourses else exclude.
+        if ($classification == COURSE_TIMELINE_HIDDEN) {
+            $courses = course_get_enrolled_courses_for_logged_in_user(0, $offset, $sort, $fields,
+                COURSE_DB_QUERY_LIMIT, $hiddencourses);
+        } else {
+            $courses = course_get_enrolled_courses_for_logged_in_user(0, $offset, $sort, $fields,
+                COURSE_DB_QUERY_LIMIT, [], $hiddencourses);
+        }
 
         $favouritecourseids = [];
         $ufservice = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($USER->id));

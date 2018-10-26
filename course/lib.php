@@ -4191,6 +4191,8 @@ function course_classify_courses_for_timeline(array $courses) {
  * @param string|null $sort SQL string for sorting
  * @param string|null $fields SQL string for fields to be returned
  * @param int $dbquerylimit The number of records to load per DB request
+ * @param array $includecourses courses ids to be restricted
+ * @param array $hiddencourses courses ids to be excluded
  * @return Generator
  */
 function course_get_enrolled_courses_for_logged_in_user(
@@ -4198,14 +4200,16 @@ function course_get_enrolled_courses_for_logged_in_user(
     int $offset = 0,
     string $sort = null,
     string $fields = null,
-    int $dbquerylimit = COURSE_DB_QUERY_LIMIT
+    int $dbquerylimit = COURSE_DB_QUERY_LIMIT,
+    array $includecourses = [],
+    array $hiddencourses = []
 ) : Generator {
 
     $haslimit = !empty($limit);
     $recordsloaded = 0;
     $querylimit = (!$haslimit || $limit > $dbquerylimit) ? $dbquerylimit : $limit;
 
-    while ($courses = enrol_get_my_courses($fields, $sort, $querylimit, [], false, $offset)) {
+    while ($courses = enrol_get_my_courses($fields, $sort, $querylimit, $includecourses, false, $offset, $hiddencourses)) {
         yield from $courses;
 
         $recordsloaded += $querylimit;
@@ -4304,9 +4308,8 @@ function course_filter_courses_by_favourites(
 
     foreach ($courses as $course) {
         $numberofcoursesprocessed++;
-        $pref = get_user_preferences('block_myoverview_hidden_course_' . $course->id, 0);
 
-        if (in_array($course->id, $favouritecourseids) && !$pref) {
+        if (in_array($course->id, $favouritecourseids)) {
             $filteredcourses[] = $course;
             $filtermatches++;
         }
@@ -4499,4 +4502,30 @@ function can_download_from_backup_filearea($filearea, \context $context, stdClas
 
     }
     return $candownload;
+}
+
+/**
+ * Get a list of hidden courses
+ *
+ * @param int|object|null $user User override to get the filter from. Defaults to current user
+ * @return array $ids List of hidden courses
+ * @throws coding_exception
+ */
+function get_hidden_courses_on_timeline($user = null) {
+    global $USER;
+
+    if (empty($user)) {
+        $user = $USER->id;
+    }
+
+    $preferences = get_user_preferences(null, null, $user);
+    $ids = [];
+    foreach ($preferences as $key => $value) {
+        if (preg_match('/block_myoverview_hidden_course_(\d)+/', $key)) {
+            $id = preg_split('/block_myoverview_hidden_course_/', $key);
+            $ids[] = $id[1];
+        }
+    }
+
+    return $ids;
 }
