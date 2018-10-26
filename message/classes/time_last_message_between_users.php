@@ -35,9 +35,9 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class time_last_message_in_conversation implements \cache_data_source {
+class time_last_message_between_users implements \cache_data_source {
 
-    /** @var time_last_message_in_conversation the singleton instance of this class. */
+    /** @var time_last_message_between_users the singleton instance of this class. */
     protected static $instance = null;
 
     /**
@@ -49,7 +49,7 @@ class time_last_message_in_conversation implements \cache_data_source {
      */
     public static function get_instance_for_cache(\cache_definition $definition) {
         if (is_null(self::$instance)) {
-            self::$instance = new time_last_message_in_conversation();
+            self::$instance = new time_last_message_between_users();
         }
         return self::$instance;
     }

@@ -294,7 +294,7 @@ function message_send(\core\message\message $eventdata) {
     if (!$eventdata->notification) {
         if (!empty($eventdata->convid)) {
             // Cache the timecreated value of the last message in this conversation.
-            $cache = cache::make('core', 'message_time_last_message_in_conversation');
+            $cache = cache::make('core', 'message_time_last_message_between_users');
             $key = \core_message\helper::get_last_message_time_created_cache_key($eventdata->convid);
             $cache->set($key, $tabledata->timecreated);
         }
