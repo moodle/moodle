@@ -30,6 +30,9 @@
     * userid The logged in user id
     * urls The URLs for the popover
 
+    This is an overridden template
+    adding: ".m-0.flex-grow" to "textarea.form-control"
+
     Example context (json):
     {}
 
@@ -38,7 +41,7 @@
 <div class="d-flex mt-1">
     <textarea
         data-region="send-message-txt"
-        class="form-control bg-light"
+        class="form-control bg-light m-0 flex-grow"
         rows="3"
         data-auto-rows
         data-min-rows="3"

@@ -15,10 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_message/message_drawer_view_conversation_footer_content
+    @template core_message/message_drawer_icon_back
 
-    This template will render the footer content for the conversation page in
-    the message drawer.
+    This template will render the back icon for the message drawer.
 
     Classes required for JS:
     * none
@@ -30,30 +29,12 @@
     * userid The logged in user id
     * urls The URLs for the popover
 
+    This is an overridden template
+    changing icon "i/previous" to "t/collapsed_rtl"
+
     Example context (json):
     {}
 
 }}
-
-<div class="d-flex mt-1">
-    <textarea
-        data-region="send-message-txt"
-        class="form-control bg-light"
-        rows="3"
-        data-auto-rows
-        data-min-rows="3"
-        data-max-rows="5"
-        role="textbox"
-        aria-label="{{#str}} writeamessage, core_message {{/str}}"
-        placeholder="{{#str}} writeamessage, core_message {{/str}}"
-        style="resize: none"
-    ></textarea>
-    <button
-        class="btn btn-link btn-icon icon-size-3 ml-1 mt-auto"
-        aria-label="{{#str}} sendmessage, core_message {{/str}}"
-        data-action="send-message"
-    >
-        <span data-region="send-icon-container">{{#pix}} i/sendmessage, core {{/pix}}</span>
-        <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
-    </button>
-</div>
+<span class="dir-rtl-hide">{{#pix}} t/collapsed_rtl, core {{/pix}}</span>
+<span class="dir-ltr-hide">{{#pix}} t/collapsed, core {{/pix}}</span>
