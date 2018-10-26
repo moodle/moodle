@@ -54,7 +54,6 @@ Feature: Managers can create courses
       | id_enddate_year | 2016 |
     And I press "Save and return"
     Then I should see the "Course categories and courses" management page
-    And I click on "Sort courses" "link"
     And I click on "Sort by Course time created ascending" "link" in the ".course-listing-actions" "css_element"
     And I should see course listing "Course 1" before "Course 2"
     And I click on "Course 2" "link" in the "region-main" "region"

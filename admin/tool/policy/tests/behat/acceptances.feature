@@ -98,7 +98,6 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
   Scenario: View acceptances made by users on their own, multiple policies
     Given I log in as "admin"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
-    And I open the action menu in "This privacy policy" "table_row"
     And I click on "Set status to \"Active\"" "link" in the "This privacy policy" "table_row"
     And I press "Continue"
     And I log out
@@ -136,7 +135,6 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
   Scenario: Agree on behalf of another user as a manager, multiple policies, javascript off
     Given I log in as "admin"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
-    And I open the action menu in "This privacy policy" "table_row"
     And I click on "Set status to \"Active\"" "link" in the "This privacy policy" "table_row"
     And I press "Continue"
     And I set the following system permissions of "Manager" role:
@@ -169,7 +167,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
   Scenario: Agree on behalf of another user as a manager, multiple policies, javascript on
     Given I log in as "admin"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
-    And I open the action menu in "This privacy policy" "table_row"
+    And I click on "Actions" "link_or_button" in the "This privacy policy" "table_row"
     And I click on "Set status to \"Active\"" "link" in the "This privacy policy" "table_row"
     And I press "Activate"
     And I set the following system permissions of "Manager" role:
@@ -265,7 +263,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
   Scenario: Bulk agree on behalf of another users as a manager, multiple policies, javascript on
     Given I log in as "admin"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
-    And I open the action menu in "This privacy policy" "table_row"
+    And I click on "Actions" "link_or_button" in the "This privacy policy" "table_row"
     And I click on "Set status to \"Active\"" "link" in the "This privacy policy" "table_row"
     And I press "Activate"
     And I set the following system permissions of "Manager" role:
