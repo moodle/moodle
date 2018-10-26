@@ -40,7 +40,7 @@ Feature: Submissions are unlocked when a new attempt is given
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
-    And I click on "Edit" "link" in the "Student 1" "table_row"
+    And I open the action menu in "Student 1" "table_row"
     And I follow "Prevent submission changes"
     And I should see "Submission changes not allowed"
     And I click on "Quick grading" "checkbox"
@@ -73,10 +73,10 @@ Feature: Submissions are unlocked when a new attempt is given
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
-    And I click on "Edit" "link" in the "Student 1" "table_row"
+    And I open the action menu in "Student 1" "table_row"
     And I follow "Prevent submission changes"
     And I should see "Submission changes not allowed"
-    And I click on "Edit" "link" in the "Student 1" "table_row"
+    And I open the action menu in "Student 1" "table_row"
     And I follow "Allow another attempt"
     Then I should see "Reopened"
     And I should not see "Submission changes not allowed"

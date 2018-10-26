@@ -75,7 +75,7 @@ Feature: Test we can resort course in the management interface.
     And I should not see "Sort by Course ID number descending" in the ".course-listing-actions" "css_element"
     And I should not see "Sort by Course time created ascending" in the ".course-listing-actions" "css_element"
     And I should not see "Sort by Course time created descending" in the ".course-listing-actions" "css_element"
-    And I click on "Sort courses" "link"
+    And I open the action menu in ".course-listing-actions" "css_element"
     And I should see "Sort by Course full name ascending" in the ".course-listing-actions" "css_element"
     And I should see "Sort by Course full name descending" in the ".course-listing-actions" "css_element"
     And I should see "Sort by Course short name ascending" in the ".course-listing-actions" "css_element"
@@ -119,7 +119,7 @@ Feature: Test we can resort course in the management interface.
     And I should see the "Course categories and courses" management page
     And I should see "Course categories" in the "#category-listing h3" "css_element"
     And I should see "Cat 1" in the "#category-listing" "css_element"
-    And I click on "Sort courses" "link"
+    And I open the action menu in ".course-listing-actions" "css_element"
     And I click on "Sort by Course ID number ascending" "link" in the ".course-listing-actions" "css_element"
     # Redirect.
     And I should see the "Course categories and courses" management page
@@ -158,7 +158,7 @@ Feature: Test we can resort course in the management interface.
     And I should see the "Course categories and courses" management page
     And I should see "Course categories" in the "#category-listing h3" "css_element"
     And I should see "Cat 1" in the "#category-listing" "css_element"
-    And I click on "Sort courses" "link"
+    And I open the action menu in ".course-listing-actions" "css_element"
     And I click on "Sort by Course ID number ascending" "link" in the ".course-listing-actions" "css_element"
     And a new page should have loaded since I started watching
     And I start watching to see if a new page loads
