@@ -105,20 +105,11 @@ class provider implements
             return;
         }
 
-        $params = [
-            'contextid' => $context->id,
-            'contextcourse' => CONTEXT_COURSE,
-        ];
-
         $sql = "SELECT ue.userid as userid
                   FROM {user_enrolments} ue
-                  JOIN {enrol} e
-                       ON e.id = ue.enrolid
-                  JOIN {context} ctx
-                       ON ctx.instanceid = e.courseid
-                       AND ctx.contextlevel = :contextcourse
-                 WHERE ctx.id = :contextid";
-
+                  JOIN {enrol} e ON e.id = ue.enrolid
+                 WHERE e.courseid = ?";
+        $params = [$context->instanceid];
         $userlist->add_from_sql('userid', $sql, $params);
     }
 
