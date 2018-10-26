@@ -27,8 +27,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
+require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
-
 
 /**
  * This class contains the test cases for the functions in reportlib.php.
@@ -66,9 +66,9 @@ class mod_quiz_reportlib_testcase extends advanced_testcase {
         $quiz->sumgrades = 10;
         $quiz->decimalpoints = 2;
 
-        $this->assertEquals('12.34567 %',
+        $this->assertEquals('12.34567%',
             quiz_report_scale_summarks_as_percentage(1.234567, $quiz, false));
-        $this->assertEquals('12.35 %',
+        $this->assertEquals('12.35%',
             quiz_report_scale_summarks_as_percentage(1.234567, $quiz, true));
         $this->assertEquals('-',
             quiz_report_scale_summarks_as_percentage('-', $quiz, true));
