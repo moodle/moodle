@@ -80,12 +80,13 @@ class userlist extends userlist_base {
     public function add_users(array $userids) : userlist {
         global $DB;
 
-        list($useridsql, $useridparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
-        $sql = "SELECT DISTINCT u.id
-                  FROM {user} u
-                 WHERE u.id {$useridsql}";
-        $this->add_from_sql('id', $sql, $useridparams);
-
+        if (!empty($userids)) {
+            list($useridsql, $useridparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+            $sql = "SELECT DISTINCT u.id
+                      FROM {user} u
+                     WHERE u.id {$useridsql}";
+            $this->add_from_sql('id', $sql, $useridparams);
+        }
         return $this;
     }
 
