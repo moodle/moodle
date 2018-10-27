@@ -26,6 +26,8 @@ namespace gradingform_rubric\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
+use \core_privacy\local\metadata\collection;
+
 /**
  * Privacy class for requesting user data.
  *
@@ -33,15 +35,55 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
-        \core_privacy\local\metadata\null_provider {
+        \core_privacy\local\metadata\provider,
+        \core_grading\privacy\gradingform_provider_v2 {
 
     /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
+     * Returns meta data about this system.
      *
-     * @return  string
+     * @param  collection $collection The initialised collection to add items to.
+     * @return collection A listing of user data stored through this system.
      */
-    public static function get_reason() : string {
-        return 'privacy:metadata';
+    public static function get_metadata(collection $collection) : collection {
+        $collection->add_database_table('gradingform_rubric_fillings', [
+            'instanceid' => 'privacy:metadata:instanceid',
+            'criterionid' => 'privacy:metadata:criterionid',
+            'levelid' => 'privacy:metadata:levelid',
+            'remark' => 'privacy:metadata:remark'
+        ], 'privacy:metadata:fillingssummary');
+        return $collection;
+    }
+
+    /**
+     * Export user data relating to an instance ID.
+     *
+     * @param  \context $context Context to use with the export writer.
+     * @param  int $instanceid The instance ID to export data for.
+     * @param  array $subcontext The directory to export this data to.
+     */
+    public static function export_gradingform_instance_data(\context $context, int $instanceid, array $subcontext) {
+        global $DB;
+        // Get records from the provided params.
+        $params = ['instanceid' => $instanceid];
+        $sql = "SELECT rc.description, rl.definition, rl.score, rf.remark
+                  FROM {gradingform_rubric_fillings} rf
+                  JOIN {gradingform_rubric_criteria} rc ON rc.id = rf.criterionid
+                  JOIN {gradingform_rubric_levels} rl ON rf.levelid = rl.id
+                 WHERE rf.instanceid = :instanceid";
+        $records = $DB->get_records_sql($sql, $params);
+        if ($records) {
+            $subcontext = array_merge($subcontext, [get_string('rubric', 'gradingform_rubric'), $instanceid]);
+            \core_privacy\local\request\writer::with_context($context)->export_data($subcontext, (object) $records);
+        }
+    }
+
+    /**
+     * Deletes all user data related to the provided instance IDs.
+     *
+     * @param  array  $instanceids The instance IDs to delete information from.
+     */
+    public static function delete_gradingform_for_instances(array $instanceids) {
+        global $DB;
+        $DB->delete_records_list('gradingform_rubric_fillings', 'instanceid', $instanceids);
     }
 }
