@@ -41,7 +41,7 @@ trait gradingform_legacy_polyfill {
      * @param  int $instanceid The instance ID to export data for.
      * @param  array $subcontext The directory to export this data to.
      */
-    public static function export_gradingform_instance_data(\context $context, int $instanceid, array $subcontext) {
+    public static function export_gradingform_instance_data(\context $context, $instanceid, array $subcontext) {
         static::_export_gradingform_instance_data($context, $instanceid, $subcontext);
     }
 
