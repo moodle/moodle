@@ -73,7 +73,7 @@ class provider implements
      * @param  int $instanceid The instance ID to export data for.
      * @param  array $subcontext The directory to export this data to.
      */
-    public static function export_gradingform_instance_data(\context $context, int $instanceid, array $subcontext) {
+    public static function export_gradingform_instance_data(\context $context, $instanceid, array $subcontext) {
         global $DB;
         // Get records from the provided params.
         $params = ['instanceid' => $instanceid];

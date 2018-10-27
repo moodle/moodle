@@ -44,7 +44,7 @@ class provider implements
      * @param  collection $collection The initialised collection to add items to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection) {
         $collection->add_database_table('gradingform_rubric_fillings', [
             'instanceid' => 'privacy:metadata:instanceid',
             'criterionid' => 'privacy:metadata:criterionid',
@@ -61,7 +61,7 @@ class provider implements
      * @param  int $instanceid The instance ID to export data for.
      * @param  array $subcontext The directory to export this data to.
      */
-    public static function export_gradingform_instance_data(\context $context, int $instanceid, array $subcontext) {
+    public static function export_gradingform_instance_data(\context $context, $instanceid, array $subcontext) {
         global $DB;
         // Get records from the provided params.
         $params = ['instanceid' => $instanceid];
