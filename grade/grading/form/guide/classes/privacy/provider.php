@@ -38,6 +38,7 @@ use \core_privacy\local\request\writer;
  */
 class provider implements
         \core_privacy\local\metadata\provider,
+        \core_grading\privacy\gradingform_provider_v2,
         \core_privacy\local\request\user_preference_provider {
 
     /**
@@ -47,6 +48,12 @@ class provider implements
      * @return  collection A listing of user data stored through this system.
      */
     public static function get_metadata(collection $collection) : collection {
+        $collection->add_database_table('gradingform_guide_fillings', [
+            'instanceid' => 'privacy:metadata:instanceid',
+            'criterionid' => 'privacy:metadata:criterionid',
+            'remark' => 'privacy:metadata:remark',
+            'score' => 'privacy:metadata:score'
+        ], 'privacy:metadata:fillingssummary');
         $collection->add_user_preference(
             'gradingform_guide-showmarkerdesc',
             'privacy:metadata:preference:showmarkerdesc'
@@ -57,6 +64,38 @@ class provider implements
         );
 
         return $collection;
+    }
+
+    /**
+     * Export user data relating to an instance ID.
+     *
+     * @param  \context $context Context to use with the export writer.
+     * @param  int $instanceid The instance ID to export data for.
+     * @param  array $subcontext The directory to export this data to.
+     */
+    public static function export_gradingform_instance_data(\context $context, int $instanceid, array $subcontext) {
+        global $DB;
+        // Get records from the provided params.
+        $params = ['instanceid' => $instanceid];
+        $sql = "SELECT gc.shortname, gc.description, gc.maxscore, gf.score, gf.remark
+                  FROM {gradingform_guide_fillings} gf
+                  JOIN {gradingform_guide_criteria} gc ON gc.id = gf.criterionid
+                 WHERE gf.instanceid = :instanceid";
+        $records = $DB->get_records_sql($sql, $params);
+        if ($records) {
+            $subcontext = array_merge($subcontext, [get_string('guide', 'gradingform_guide'), $instanceid]);
+            writer::with_context($context)->export_data($subcontext, (object) $records);
+        }
+    }
+
+    /**
+     * Deletes all user data related to the provided instance IDs.
+     *
+     * @param  array  $instanceids The instance IDs to delete information from.
+     */
+    public static function delete_gradingform_for_instances(array $instanceids) {
+        global $DB;
+        $DB->delete_records_list('gradingform_guide_fillings', 'instanceid', $instanceids);
     }
 
     /**
