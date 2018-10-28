@@ -182,7 +182,7 @@ class test_legacy_polyfill_gradingform_provider implements
      *
      * @return stdClass The data to export.
      */
-    protected static function _get_gradingform_export_data(\context $context, $definition, int $userid) {
+    protected static function _get_gradingform_export_data(\context $context, $definition, $userid) {
         static::$mock->get_return_value(__FUNCTION__, func_get_args());
     }
 
@@ -207,7 +207,7 @@ class test_legacy_polyfill_gradingform_provider implements
      * @param int $userid The user whose information is to be deleted.
      * @param context $context Context owner of the data.
      */
-    protected static function _delete_gradingform_for_userid(int $userid, \context $context) {
+    protected static function _delete_gradingform_for_userid($userid, \context $context) {
         static::$mock->get_return_value(__FUNCTION__, func_get_args());
     }
 }

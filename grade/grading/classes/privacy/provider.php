@@ -140,7 +140,7 @@ class provider implements
      * @param  int      $itemid     Item ID to export on.
      * @param  array    $subcontext Directory location to export to.
      */
-    public static function export_item_data(\context $context, int $itemid, array $subcontext) {
+    public static function export_item_data(\context $context, $itemid, array $subcontext) {
         global $DB;
 
         $sql = "SELECT gi.id AS instanceid, gd.id AS definitionid, gd.method
@@ -170,7 +170,7 @@ class provider implements
      * @param  \context $context The context to delete on.
      * @param  int|null $itemid  An optional item ID to refine the deletion.
      */
-    public static function delete_instance_data(\context $context, int $itemid = null) {
+    public static function delete_instance_data(\context $context, $itemid = null) {
         global $DB;
         $itemsql = '';
         $params = ['contextid' => $context->id];
