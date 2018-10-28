@@ -143,10 +143,8 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             $this->markTestSkipped('Skipping ' . $predictionsprocessorclass . ' as the predictor is not ready.');
         }
 
-        set_config('predictionsprocessor', $predictionsprocessorclass, 'analytics');
-
         $model = $this->add_perfect_model();
-        $model->enable($timesplittingid);
+        $model->update(true, false, $timesplittingid, get_class($predictionsprocessor));
 
         // No samples trained yet.
         $this->assertEquals(0, $DB->count_records('analytics_train_samples', array('modelid' => $model->get_id())));
@@ -423,8 +421,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             $this->markTestSkipped('Skipping ' . $predictionsprocessorclass . ' as the predictor is not ready.');
         }
 
-        set_config('predictionsprocessor', $predictionsprocessorclass, 'analytics');
-
+        $model->update(false, false, false, get_class($predictionsprocessor));
         $results = $model->evaluate();
 
         // We check that the returned status includes at least $expectedcode code.

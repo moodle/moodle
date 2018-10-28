@@ -2652,5 +2652,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018102300.02);
     }
 
+    if ($oldversion < 2018102900.00) {
+        // Define field predictionsprocessor to be added to analytics_models.
+        $table = new xmldb_table('analytics_models');
+        $field = new xmldb_field('predictionsprocessor', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'timesplitting');
+
+        // Conditionally launch add field predictionsprocessor.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018102900.00);
+    }
+
     return true;
 }

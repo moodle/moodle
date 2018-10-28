@@ -37,8 +37,8 @@ if ($hassiteconfig) {
             $predictors[$fullclassname] = new lang_string('pluginname', $pluginname);
         }
         $settings->add(new \core_analytics\admin_setting_predictor('analytics/predictionsprocessor',
-            new lang_string('predictionsprocessor', 'analytics'), new lang_string('predictionsprocessor_help', 'analytics'),
-            '\mlbackend_php\processor', $predictors)
+            new lang_string('defaultpredictionsprocessor', 'analytics'), new lang_string('predictionsprocessor_help', 'analytics'),
+            \core_analytics\manager::default_mlbackend(), $predictors)
         );
 
         // Log store.

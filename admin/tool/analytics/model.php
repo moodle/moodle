@@ -110,7 +110,8 @@ switch ($action) {
             'id' => $model->get_id(),
             'model' => $model,
             'indicators' => $model->get_potential_indicators(),
-            'timesplittings' => \core_analytics\manager::get_enabled_time_splitting_methods()
+            'timesplittings' => \core_analytics\manager::get_enabled_time_splitting_methods(),
+            'predictionprocessors' => \core_analytics\manager::get_all_prediction_processors()
         );
         $mform = new \tool_analytics\output\form\edit_model(null, $customdata);
 
@@ -126,7 +127,8 @@ switch ($action) {
                 $indicators[] = \core_analytics\manager::get_indicator($indicatorclass);
             }
             $timesplitting = \tool_analytics\output\helper::option_to_class($data->timesplitting);
-            $model->update($data->enabled, $indicators, $timesplitting);
+            $predictionsprocessor = \tool_analytics\output\helper::option_to_class($data->predictionsprocessor);
+            $model->update($data->enabled, $indicators, $timesplitting, $predictionsprocessor);
             redirect(new \moodle_url('/admin/tool/analytics/index.php'));
         }
 
@@ -137,6 +139,7 @@ switch ($action) {
         $callable = array('\tool_analytics\output\helper', 'class_to_option');
         $modelobj->indicators = array_map($callable, json_decode($modelobj->indicators));
         $modelobj->timesplitting = \tool_analytics\output\helper::class_to_option($modelobj->timesplitting);
+        $modelobj->predictionsprocessor = \tool_analytics\output\helper::class_to_option($modelobj->predictionsprocessor);
         $mform->set_data($modelobj);
         $mform->display();
         break;

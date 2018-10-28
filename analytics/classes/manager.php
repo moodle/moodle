@@ -36,6 +36,11 @@ defined('MOODLE_INTERNAL') || die();
 class manager {
 
     /**
+     * Default mlbackend
+     */
+    const DEFAULT_MLBACKEND = '\mlbackend_php\processor';
+
+    /**
      * @var \core_analytics\predictor[]
      */
     protected static $predictionprocessors = null;
@@ -117,9 +122,9 @@ class manager {
     }
 
     /**
-     * Returns the site selected predictions processor.
+     * Returns the provided predictions processor class.
      *
-     * @param string $predictionclass
+     * @param false|string $predictionclass Returns the system default processor if false
      * @param bool $checkisready
      * @return \core_analytics\predictor
      */
@@ -128,13 +133,13 @@ class manager {
         // We want 0 or 1 so we can use it as an array key for caching.
         $checkisready = intval($checkisready);
 
-        if ($predictionclass === false) {
+        if (!$predictionclass) {
             $predictionclass = get_config('analytics', 'predictionsprocessor');
         }
 
         if (empty($predictionclass)) {
             // Use the default one if nothing set.
-            $predictionclass = '\mlbackend_php\processor';
+            $predictionclass = self::default_mlbackend();
         }
 
         if (!class_exists($predictionclass)) {
@@ -177,6 +182,44 @@ class manager {
             $predictionprocessors[$classfullpath] = self::get_predictions_processor($classfullpath, false);
         }
         return $predictionprocessors;
+    }
+
+    /**
+     * Returns the name of the provided predictions processor.
+     *
+     * @param \core_analytics\predictor $predictionsprocessor
+     * @return string
+     */
+    public static function get_predictions_processor_name(\core_analytics\predictor $predictionsprocessor) {
+            $component = substr(get_class($predictionsprocessor), 0, strpos(get_class($predictionsprocessor), '\\', 1));
+        return get_string('pluginname', $component);
+    }
+
+    /**
+     * Whether the provided plugin is used by any model.
+     *
+     * @param string $plugin
+     * @return bool
+     */
+    public static function is_mlbackend_used($plugin) {
+        $models = self::get_all_models();
+        foreach ($models as $model) {
+            $processor = $model->get_predictions_processor();
+            $noprefixnamespace = ltrim(get_class($processor), '\\');
+            $processorplugin = substr($noprefixnamespace, 0, strpos($noprefixnamespace, '\\'));
+            if ($processorplugin == $plugin) {
+                return true;
+            }
+        }
+
+        // Default predictions processor.
+        $defaultprocessorclass = get_config('analytics', 'predictionsprocessor');
+        $pluginclass = '\\' . $plugin . '\\processor';
+        if ($pluginclass === $defaultprocessorclass) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -544,6 +587,15 @@ class manager {
             $DB->delete_records_select('analytics_predict_samples', "modelid = :modelid AND analysableid $notinsql", $params);
             $DB->delete_records_select('analytics_train_samples', "modelid = :modelid AND analysableid $notinsql", $params);
         }
+    }
+
+    /**
+     * Default system backend.
+     *
+     * @return string
+     */
+    public static function default_mlbackend() {
+        return self::DEFAULT_MLBACKEND;
     }
 
     /**

@@ -40,7 +40,8 @@ class mlbackend extends base {
      * @return bool
      */
     public function is_uninstall_allowed() {
-        return true;
+
+        return !\core_analytics\manager::is_mlbackend_used('mlbackend_' . $this->name);
     }
 
     /**
