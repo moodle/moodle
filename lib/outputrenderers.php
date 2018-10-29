@@ -4257,6 +4257,11 @@ EOD;
       */
     protected function render_context_header(context_header $contextheader) {
 
+        $showheader = empty($this->page->layout_options['nocontextheader']);
+        if (!$showheader) {
+            return '';
+        }
+
         // All the html stuff goes here.
         $html = html_writer::start_div('page-context-header');
 
