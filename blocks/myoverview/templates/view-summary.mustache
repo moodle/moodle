@@ -42,8 +42,9 @@
                 <div class="position-absolute">
                     {{> block_myoverview/favourite-icon }}
                 </div>
-                <img src="{{{courseimage}}}" class="summaryimage img-fluid" alt="{{#str}}aria:courseimage, block_myoverview{{/str}}">
-
+                <div class="card-img-top summaryimage" style='background-image: url("{{{courseimage}}}");'>
+                    <span class="sr-only">{{#str}}aria:courseimage, block_myoverview{{/str}}</span>
+                </div>
             </a>
             <div class="col-sm-8 col-xl-9 span8 align-self-stretch d-flex flex-column">
                 <div class="d-flex">
