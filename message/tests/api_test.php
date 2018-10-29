@@ -950,7 +950,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Favourite the first conversation as user 1.
         $conversationid1 = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
-        \core_message\api::set_favourite_conversation($conversationid1, $user1->id);
+        $favourite = \core_message\api::set_favourite_conversation($conversationid1, $user1->id);
 
         // Verify we have a single favourite conversation a user 1.
         $this->assertCount(1, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
@@ -958,9 +958,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Verify we have no favourites as user2, despite being a member in that conversation.
         $this->assertCount(0, \core_message\api::get_conversations($user2->id, 0, 20, null, true));
 
-        // Try to favourite the same conversation again.
-        $this->expectException(\moodle_exception::class);
-        \core_message\api::set_favourite_conversation($conversationid1, $user1->id);
+        // Try to favourite the same conversation again should just return the existing favourite.
+        $repeatresult = \core_message\api::set_favourite_conversation($conversationid1, $user1->id);
+        $this->assertEquals($favourite->id, $repeatresult->id);
     }
 
     /**

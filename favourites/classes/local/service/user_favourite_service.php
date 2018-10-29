@@ -156,4 +156,49 @@ class user_favourite_service {
             ]
         );
     }
+
+    /**
+     * Get the favourite.
+     *
+     * @param string $component the frankenstyle component name.
+     * @param string $itemtype the type of the favourited item.
+     * @param int $itemid the id of the item which was favourited (not the favourite's id).
+     * @param \context $context the context of the item which was favourited.
+     * @return favourite|null
+     */
+    public function get_favourite(string $component, string $itemtype, int $itemid, \context $context) {
+        try {
+            return $this->repo->find_favourite(
+                $this->userid,
+                $component,
+                $itemtype,
+                $itemid,
+                $context->id
+            );
+        } catch (\dml_missing_record_exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Count the favourite by item type.
+     *
+     * @param string $component the frankenstyle component name.
+     * @param string $itemtype the type of the favourited item.
+     * @param \context|null $context the context of the item which was favourited.
+     * @return favourite|null
+     */
+    public function count_favourites_by_type(string $component, string $itemtype, \context $context = null) {
+        $criteria = [
+            'userid' => $this->userid,
+            'component' => $component,
+            'itemtype' => $itemtype
+        ];
+
+        if ($context) {
+            $criteria['contextid'] = $context->id;
+        }
+
+        return $this->repo->count_by($criteria);
+    }
 }

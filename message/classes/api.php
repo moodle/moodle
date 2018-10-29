@@ -813,8 +813,13 @@ class api {
         if (!self::is_user_in_conversation($userid, $conversationid)) {
             throw new \moodle_exception("Conversation doesn't exist or user is not a member");
         }
+        $systemcontext = \context_system::instance();
         $ufservice = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($userid));
-        return $ufservice->create_favourite('core_message', 'message_conversations', $conversationid, \context_system::instance());
+        if ($favourite = $ufservice->get_favourite('core_message', 'message_conversations', $conversationid, $systemcontext)) {
+            return $favourite;
+        } else {
+            return $ufservice->create_favourite('core_message', 'message_conversations', $conversationid, $systemcontext);
+        }
     }
 
     /**
