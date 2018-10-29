@@ -425,8 +425,7 @@ $string['return_to_course'] = 'Click <a href="{$a->link}" target="_top">here</a>
 $string['saveallfeedback'] = 'Save all my feedback';
 $string['search:activity'] = 'External tool - activity information';
 $string['secure_icon_url'] = 'Secure icon URL';
-$string['secure_icon_url_help'] = 'Similar to the icon URL, but used if the user accessing Moodle securely through SSL. The main purpose for this field is to prevent
-the browser from warning the user if the underlying page was accessed over SSL, but requesting to show an unsecure image.';
+$string['secure_icon_url_help'] = 'Similar to the icon URL, but used when the site is accessed securely through SSL. This field is to prevent the browser from displaying a warning about an insecure image.';
 $string['secure_launch_url'] = 'Secure tool URL';
 $string['secure_launch_url_help'] = 'Similar to the tool URL, but used instead of the tool URL if high security is required. Moodle will use the secure tool URL instead of the tool URL if the Moodle site is accessed through SSL, or if the tool configuration is set to always launch through SSL.
 

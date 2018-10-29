@@ -266,19 +266,19 @@ $string['confirmed'] = 'Your registration has been confirmed';
 $string['confirmednot'] = 'Your registration has not yet been confirmed. Please check your mailbox for a confirmation email.';
 $string['confirmcheckfull'] = 'Are you absolutely sure you want to confirm {$a} ?';
 $string['confirmcoursemove'] = 'Are you sure you want to move this course ({$a->course}) into this category ({$a->category})?';
-$string['considereddigitalminor'] = 'You are considered to be a digital minor.';
+$string['considereddigitalminor'] = 'You are too young to create an account on this site.';
 $string['content'] = 'Content';
 $string['continue'] = 'Continue';
 $string['continuetocourse'] = 'Click here to enter your course';
 $string['convertingwikitomarkdown'] = 'Converting wiki to Markdown';
 $string['cookiesenabled'] = 'Cookies must be enabled in your browser';
-$string['cookiesenabled_help'] = 'Two cookies are used by this site:
+$string['cookiesenabled_help'] = 'Two cookies are used on this site:
 
-The essential one is the session cookie, usually called MoodleSession. You must allow this cookie into your browser to provide continuity and maintain your login from page to page. When you log out or close the browser this cookie is destroyed (in your browser and on the server).
+The essential one is the session cookie, usually called MoodleSession. You must allow this cookie in your browser to provide continuity and to remain logged in when browsing the site. When you log out or close the browser, this cookie is destroyed (in your browser and on the server).
 
-The other cookie is purely for convenience, usually called something like MOODLEID. It just remembers your username within the browser. This means when you return to this site the username field on the login page will be already filled out for you. It is safe to refuse this cookie - you will just have to retype your username every time you log in.';
+The other cookie is purely for convenience, usually called MOODLEID or similar. It just remembers your username in the browser. This means that when you return to this site, the username field on the login page is already filled in for you. It is safe to refuse this cookie - you will just have to retype your username each time you log in.';
 $string['cookiesenabledonlysession'] = 'Cookies must be enabled in your browser';
-$string['cookiesenabledonlysession_help'] = 'This site uses one session cookie, usually called MoodleSession. You must allow this cookie into your browser to provide continuity and maintain your login from page to page. When you log out or close the browser this cookie is destroyed (in your browser and on the server).';
+$string['cookiesenabledonlysession_help'] = 'This site uses one session cookie, usually called MoodleSession. You must allow this cookie in your browser to provide continuity and to remain logged in when browsing the site. When you log out or close the browser, this cookie is destroyed (in your browser and on the server).';
 $string['cookiesnotenabled'] = 'Unfortunately, cookies are currently not enabled in your browser';
 $string['copy'] = 'copy';
 $string['copyasnoun'] = 'copy';
@@ -506,7 +506,7 @@ $string['deselectall'] = 'Deselect all';
 $string['detailedless'] = 'Less detailed';
 $string['detailedmore'] = 'More detailed';
 $string['digitalminor'] = 'Digital minor';
-$string['digitalminor_desc'] = 'To create an account on this site please have your parent/guardian contact the following person.';
+$string['digitalminor_desc'] = 'Please ask your parent/guardian to contact:';
 $string['directory'] = 'Directory';
 $string['disable'] = 'Disable';
 $string['disabledcomments'] = 'Comments are disabled';
@@ -1383,7 +1383,7 @@ $string['nocourseendtime'] = 'The course does not have an end time';
 $string['nocourses'] = 'No courses';
 $string['nocoursesections'] = 'No course sections';
 $string['nocoursesfound'] = 'No courses were found with the words \'{$a}\'';
-$string['nocoursestarttime'] = 'The course does not have an start time';
+$string['nocoursestarttime'] = 'The course does not have a start date.';
 $string['nocoursestudents'] = 'No students';
 $string['nocoursesyet'] = 'No courses in this category';
 $string['nocomments'] = 'No comments';
@@ -1518,7 +1518,7 @@ $string['payments'] = 'Payments';
 $string['paymentsorry'] = 'Thank you for your payment!  Unfortunately your payment has not yet been fully processed, and you are not yet registered to enter the course "{$a->fullname}".  Please try continuing to the course in a few seconds, but if you continue to have trouble then please alert the {$a->teacher} or the site administrator';
 $string['paymentthanks'] = 'Thank you for your payment!  You are now enrolled in your course:<br />"{$a}"';
 $string['pendingrequests'] = 'Pending requests';
-$string['percents'] = '{$a} %';
+$string['percents'] = '{$a}%';
 $string['periodending'] = 'Period ending ({$a})';
 $string['perpage'] = 'Per page';
 $string['perpagea'] = 'Per page: {$a}';
@@ -2162,8 +2162,7 @@ $string['withdisablednote'] = '{$a} (disabled)';
 $string['withoutuserdata'] = 'without user data';
 $string['withselectedusers'] = 'With selected users...';
 $string['withselectedusers_help'] = '* Send message - For sending a message to one or more participants
-* Add a new note - For adding a note to a selected participant
-* Add a common note - For adding the same note to more than one participant';
+* Add a new note - For adding a note to a selected participant';
 $string['withuserdata'] = 'with user data';
 $string['wordforstudent'] = 'Your word for Student';
 $string['wordforstudenteg'] = 'eg Student, Participant etc';

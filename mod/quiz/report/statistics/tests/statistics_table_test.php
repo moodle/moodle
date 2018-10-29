@@ -45,12 +45,12 @@ class quiz_statistics_statistics_table_testcase extends advanced_testcase {
         $method->setAccessible(true);
 
         $this->assertEquals(
-                '84.758 %',
+                '84.758%',
                 $method->invokeArgs($table, [0.847576, true, 3])
         );
 
         $this->assertEquals(
-                '84.758 %',
+                '84.758%',
                 $method->invokeArgs($table, [84.7576, false, 3])
         );
     }
@@ -64,12 +64,12 @@ class quiz_statistics_statistics_table_testcase extends advanced_testcase {
         $method->setAccessible(true);
 
         $this->assertEquals(
-                '54.400 % − 84.758 %',
+                '54.400% − 84.758%',
                 $method->invokeArgs($table, [0.544, 0.847576, true, 3])
         );
 
         $this->assertEquals(
-                '54.400 % − 84.758 %',
+                '54.400% − 84.758%',
                 $method->invokeArgs($table, [54.4, 84.7576, false, 3])
         );
     }
