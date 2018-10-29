@@ -121,6 +121,9 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $temp->add(new admin_setting_configselect('moodlecourse/showreports', new lang_string('showreports'), '', 0,
         array(0 => new lang_string('no'), 1 => new lang_string('yes'))));
 
+    $temp->add(new admin_setting_configcheckbox('moodlecourse/showcourseimages', get_string('showcourseimages'),
+        get_string('showcourseimages_desc'), 1));
+
     // Files and uploads.
     $temp->add(new admin_setting_heading('filesanduploadshdr', new lang_string('filesanduploads'), ''));
 
@@ -154,7 +157,6 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $temp->add(new admin_setting_configselect('moodlecourse/groupmodeforce', new lang_string('force'), new lang_string('coursehelpforce'), 0,array(0 => new lang_string('no'), 1 => new lang_string('yes'))));
 
     $ADMIN->add('courses', $temp);
-
 
     // "courserequests" settingpage.
     $temp = new admin_settingpage('courserequest', new lang_string('courserequest'));
