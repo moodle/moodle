@@ -18,6 +18,7 @@
  * Privacy Subsystem implementation for mod_choice.
  *
  * @package    mod_choice
+ * @category   privacy
  * @copyright  2018 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,9 +27,11 @@ namespace mod_choice\privacy;
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\deletion_criteria;
 use core_privacy\local\request\helper;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
 defined('MOODLE_INTERNAL') || die();
@@ -44,7 +47,10 @@ class provider implements
         \core_privacy\local\metadata\provider,
 
         // This plugin is a core_user_data_provider.
-        \core_privacy\local\request\plugin\provider {
+        \core_privacy\local\request\plugin\provider,
+
+        // This plugin is capable of determining which users have data within it.
+        \core_privacy\local\request\core_userlist_provider {
     /**
      * Return the fields which contain personal data.
      *
@@ -92,6 +98,35 @@ class provider implements
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_module) {
+            return;
+        }
+
+        // Fetch all choice answers.
+        $sql = "SELECT ca.userid
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {choice} ch ON ch.id = cm.instance
+                  JOIN {choice_options} co ON co.choiceid = ch.id
+                  JOIN {choice_answers} ca ON ca.optionid = co.id AND ca.choiceid = ch.id
+                 WHERE cm.id = :cmid";
+
+        $params = [
+            'cmid'      => $context->instanceid,
+            'modname'   => 'choice',
+        ];
+
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -209,8 +244,40 @@ class provider implements
             if (!$context instanceof \context_module) {
                 continue;
             }
-            $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
+            $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid]);
+            if (!$instanceid) {
+                continue;
+            }
             $DB->delete_records('choice_answers', ['choiceid' => $instanceid, 'userid' => $userid]);
         }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_module) {
+            return;
+        }
+
+        $cm = get_coursemodule_from_id('choice', $context->instanceid);
+
+        if (!$cm) {
+            // Only choice module will be handled.
+            return;
+        }
+
+        $userids = $userlist->get_userids();
+        list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+
+        $select = "choiceid = :choiceid AND userid $usersql";
+        $params = ['choiceid' => $cm->instance] + $userparams;
+        $DB->delete_records_select('choice_answers', $select, $params);
     }
 }

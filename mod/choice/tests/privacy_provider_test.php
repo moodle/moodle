@@ -222,4 +222,94 @@ class mod_choice_privacy_provider_testcase extends \core_privacy\tests\provider_
         // And that it's the other student's response.
         $this->assertEquals($otherstudent->id, $lastresponse->userid);
     }
+
+    /**
+     * Test for provider::get_users_in_context().
+     */
+    public function test_get_users_in_context() {
+        $cm = get_coursemodule_from_instance('choice', $this->choice->id);
+        $cmcontext = context_module::instance($cm->id);
+
+        $userlist = new \core_privacy\local\request\userlist($cmcontext, 'mod_choice');
+        \mod_choice\privacy\provider::get_users_in_context($userlist);
+
+        $this->assertEquals(
+                [$this->student->id],
+                $userlist->get_userids()
+        );
+    }
+
+    /**
+     * Test for provider::get_users_in_context() with invalid context type.
+     */
+    public function test_get_users_in_context_invalid_context_type() {
+        $systemcontext = context_system::instance();
+
+        $userlist = new \core_privacy\local\request\userlist($systemcontext, 'mod_choice');
+        \mod_choice\privacy\provider::get_users_in_context($userlist);
+
+        $this->assertCount(0, $userlist->get_userids());
+    }
+
+    /**
+     * Test for provider::delete_data_for_users().
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+
+        $choice = $this->choice;
+        $generator = $this->getDataGenerator();
+        $cm1 = get_coursemodule_from_instance('choice', $this->choice->id);
+
+        // Create a second choice activity.
+        $options = ['Boracay', 'Camiguin', 'Bohol', 'Cebu', 'Coron'];
+        $params = [
+            'course' => $this->course->id,
+            'option' => $options,
+            'name' => 'Which do you think is the best island in the Philippines?',
+            'showpreview' => 0
+        ];
+        $plugingenerator = $generator->get_plugin_generator('mod_choice');
+        $choice2 = $plugingenerator->create_instance($params);
+        $plugingenerator->create_instance($params);
+        $cm2 = get_coursemodule_from_instance('choice', $choice2->id);
+
+        // Make a selection for the first student for the 2nd choice activity.
+        $choicewithoptions = choice_get_choice($choice2->id);
+        $optionids = array_keys($choicewithoptions->option);
+        choice_user_submit_response($optionids[2], $choice2, $this->student->id, $this->course, $cm2);
+
+        // Create 2 other students who will answer the first choice activity.
+        $otherstudent = $generator->create_and_enrol($this->course, 'student');
+        $anotherstudent = $generator->create_and_enrol($this->course, 'student');
+
+        $choicewithoptions = choice_get_choice($choice->id);
+        $optionids = array_keys($choicewithoptions->option);
+
+        choice_user_submit_response($optionids[1], $choice, $otherstudent->id, $this->course, $cm1);
+        choice_user_submit_response($optionids[1], $choice, $anotherstudent->id, $this->course, $cm1);
+
+        // Before deletion, we should have 3 responses in the first choice activity.
+        $count = $DB->count_records('choice_answers', ['choiceid' => $choice->id]);
+        $this->assertEquals(3, $count);
+
+        $context1 = context_module::instance($cm1->id);
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($context1, 'choice',
+                [$this->student->id, $otherstudent->id]);
+        provider::delete_data_for_users($approveduserlist);
+
+        // After deletion, the choice answers of the 2 students provided above should have been deleted
+        // from the first choice activity. So there should only remain 1 answer which is for $anotherstudent.
+        $choiceanswers = $DB->get_records('choice_answers', ['choiceid' => $choice->id]);
+        $this->assertCount(1, $choiceanswers);
+        $lastresponse = reset($choiceanswers);
+        $this->assertEquals($anotherstudent->id, $lastresponse->userid);
+
+        // Confirm that the answer that was submitted in the other choice activity is intact.
+        $choiceanswers = $DB->get_records_select('choice_answers', 'choiceid <> ?', [$choice->id]);
+        $this->assertCount(1, $choiceanswers);
+        $lastresponse = reset($choiceanswers);
+        // And that it's for the choice2 activity.
+        $this->assertEquals($choice2->id, $lastresponse->choiceid);
+    }
 }
