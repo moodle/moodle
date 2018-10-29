@@ -1,6 +1,12 @@
 This files describes API changes in /grade/report/*,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+* External function gradereport_user_external::get_grade_items now return the following information (only for course managers).
+  - locked: Whether the grade item is locked.
+  - gradeislocked: Whether the user grade is locked.
+  - gradeisoverridden: Whether the user grade is overridden.
+
 === 3.2 ===
 * External function gradereport_user_external::get_grades_table now has an optional groupid parameter.
 Is recommended to use this parameter in courses with separate groups or when the user requesting the report is in more than one group.
