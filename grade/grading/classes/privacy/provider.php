@@ -41,6 +41,8 @@ use \core_privacy\manager;
  */
 class provider implements
     \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\plugin\provider,
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\subsystem\provider {
 
     /**
@@ -108,6 +110,34 @@ class provider implements
     }
 
     /**
+     * Get the list of contexts that contain user information for the specified user.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(\core_privacy\local\request\userlist $userlist) {
+        $context = $userlist->get_context();
+        if ($context->contextlevel != CONTEXT_MODULE) {
+            return;
+        }
+
+        $params = ['contextid' => $context->id];
+
+        $sql = "SELECT d.usercreated, d.usermodified
+                  FROM {grading_definitions} d
+                  JOIN {grading_areas} a ON a.id = d.areaid
+                  WHERE a.contextid = :contextid";
+        $userlist->add_from_sql('usercreated', $sql, $params);
+        $userlist->add_from_sql('usermodified', $sql, $params);
+
+        $sql = "SELECT i.raterid
+                  FROM {grading_definitions} d
+                  JOIN {grading_areas} a ON a.id = d.areaid
+                  JOIN {grading_instances} i ON i.definitionid = d.id
+                  WHERE a.contextid = :contextid";
+        $userlist->add_from_sql('raterid', $sql, $params);
+    }
+
+    /**
      * Export all user data for the specified user, in the specified contexts.
      *
      * @param approved_contextlist $contextlist The approved contexts to export information for.
@@ -171,12 +201,27 @@ class provider implements
      * @param  int|null $itemid  An optional item ID to refine the deletion.
      */
     public static function delete_instance_data(\context $context, int $itemid = null) {
+        if (is_null($itemid)) {
+            self::delete_data_for_instances($context);
+        } else {
+            self::delete_data_for_instances($context, [$itemid]);
+        }
+    }
+
+    /**
+     * Deletes all user data related to a context and possibly itemids.
+     *
+     * @param  \context $context The context to delete on.
+     * @param  array $itemids  An optional list of item IDs to refine the deletion.
+     */
+    public static function delete_data_for_instances(\context $context, array $itemids = []) {
         global $DB;
         $itemsql = '';
         $params = ['contextid' => $context->id];
-        if (isset($itemid)) {
-            $params['itemid'] = $itemid;
-            $itemsql = 'AND gi.itemid = :itemid';
+        if (!empty($itemids)) {
+            list($itemsql, $itemparams) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED);
+            $params = array_merge($params, $itemparams);
+            $itemsql = "AND itemid $itemsql";
         }
         $sql = "SELECT gi.id AS instanceid, gd.id, gd.method
                   FROM {grading_definitions} gd
@@ -358,5 +403,14 @@ class provider implements
             [$contextlist]
         );
         // End of section to be removed for final deprecation.
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(\core_privacy\local\request\approved_userlist $userlist) {
+        // The only information left to be deleted here is the grading definitions. Currently we are not deleting these.
     }
 }

@@ -45,6 +45,8 @@ class test_guide {
     protected $criterionid = 0;
     /** @var integer $sortorder The current id for the sort order. */
     protected $sortorder = 0;
+    /** @var gradingform_controller The grading form controller. */
+    protected $controller;
 
     /** @var grading_manager $manager The grading manager to handle creating the real marking guide. */
     public $manager;
@@ -92,8 +94,8 @@ class test_guide {
             'status' => 20
         ];
 
-        $controller = $this->manager->get_controller('guide');
-        $controller->update_definition($data);
+        $this->controller = $this->manager->get_controller('guide');
+        $this->controller->update_definition($data);
     }
 
     /**
@@ -114,5 +116,43 @@ class test_guide {
             'descriptionmarkers' => $descriptionmarkers,
             'maxscore' => $maxscore
         ];
+    }
+
+    /**
+     * Update the grade for the item provided.
+     * Keep the gradeinfo array in the same order as the definition of the criteria.
+     * The array should be [['remark' => remark, 'score' => intvalue],['remark' => remark, 'score' => intvalue]]
+     * for a guide that has two criteria.
+     *
+     * @param  int $userid The user we are updating.
+     * @param  int $itemid The itemid that the grade will be for
+     * @param  array $gradeinfo Comments and grades for the grade.
+     * @return gradingform_guide_instance The created instance associated with the grade created.
+     */
+    public function grade_item(int $userid, int $itemid, array $gradeinfo) : gradingform_guide_instance {
+        global $DB;
+
+        if (!isset($this->controller)) {
+            throw new Exception("Please call create_guide before calling this method", 1);
+        }
+
+        $instance = $this->controller->create_instance($userid, $itemid);
+
+        // I need the ids for the criteria and there doesn't seem to be a nice method to get it.
+        $criteria = $DB->get_records('gradingform_guide_criteria');
+        $data = ['criteria' => []];
+        $i = 0;
+        // The sort order should keep everything here in order.
+        foreach ($criteria as $key => $value) {
+            $data['criteria'][$key]['remark'] = $gradeinfo[$i]['remark'];
+            $data['criteria'][$key]['remarkformat'] = 0;
+            $data['criteria'][$key]['score'] = $gradeinfo[$i]['score'];
+            $i++;
+        }
+        $data['itemid'] = $itemid;
+
+        // Update this instance with data.
+        $instance->update($data);
+        return $instance;
     }
 }
