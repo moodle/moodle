@@ -15,18 +15,30 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Atto text editor recordrtc version file.
+ * Atto text editor recordrtc capabilities.
  *
  * @package    atto_recordrtc
- * @author     Jesus Federico (jesus [at] blindsidenetworks [dt] com)
- * @author     Jacob Prud'homme (jacob [dt] prudhomme [at] blindsidenetworks [dt] com)
- * @copyright  2017 Blindside Networks Inc.
+ * @copyright  2018 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018102900;
-$plugin->requires  = 2018050800;
-$plugin->component = 'atto_recordrtc';
-$plugin->maturity = MATURITY_STABLE;
+$capabilities = [
+    // Capability to record audio using this plugin.
+    'atto/recordrtc:recordaudio' => [
+        'captype'      => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+    // Capability to record video using this plugin.
+    'atto/recordrtc:recordvideo' => [
+        'captype'      => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes'   => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+];
