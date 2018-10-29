@@ -167,6 +167,11 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         }
         if (!empty($data->groupid)) {
             $data->groupid = $this->get_mappingid('group', $data->groupid);
+            if (!$data->groupid) {
+                // If the group does not exist, then the submission cannot be viewed and restoring can
+                // violate the unique index on the submission table.
+                return;
+            }
         } else {
             $data->groupid = 0;
         }
