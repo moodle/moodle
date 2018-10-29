@@ -106,28 +106,13 @@ class gradingform_guide_privacy_testcase extends provider_testcase {
         );
         $guide->create_guide();
 
-        $controller = $guide->manager->get_controller('guide');
         // In the situation of mod_assign this would be the id from assign_grades.
         $itemid = 1;
-        $instance = $controller->create_instance($user->id, $itemid);
-        // I need the ids for the criteria and there doesn't seem to be a nice method to get it.
-        $criteria = $DB->get_records('gradingform_guide_criteria');
-        $data = ['criteria' => []];
-        foreach ($criteria as $key => $value) {
-            if ($value->shortname == 'Spelling mistakes') {
-                $data['criteria'][$key]['remark'] = 'This user made several mistakes.';
-                $data['criteria'][$key]['remarkformat'] = 0;
-                $data['criteria'][$key]['score'] = 5;
-            } else {
-                $data['criteria'][$key]['remark'] = 'This user has two pictures.';
-                $data['criteria'][$key]['remarkformat'] = 0;
-                $data['criteria'][$key]['score'] = 10;
-            }
-        }
-        $data['itemid'] = $itemid;
-
-        // Update this instance with data.
-        $instance->update($data);
+        $gradedata = [
+            ['remark' => 'This user made several mistakes.', 'score' => 5],
+            ['remark' => 'This user has two pictures.', 'score' => 10]
+        ];
+        $instance = $guide->grade_item($user->id, $itemid, $gradedata);
         $instanceid = $instance->get_data('id');
 
         // Let's try the method we are testing.
