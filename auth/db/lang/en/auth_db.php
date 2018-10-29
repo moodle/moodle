@@ -59,7 +59,7 @@ $string['auth_dbsybasequotinghelp'] = 'Sybase style single quote escaping - need
 $string['auth_dbsyncuserstask'] = 'Synchronise users task';
 $string['auth_dbtable'] = 'Name of the table in the database';
 $string['auth_dbtable_key'] = 'Table';
-$string['auth_dbtype'] = 'The database type (See the <a href="http://phplens.com/adodb/supported.databases.html" target="_blank">ADOdb documentation</a> for details)';
+$string['auth_dbtype'] = 'The database type (see the documentation <a href="http://adodb.org/dokuwiki/doku.php" target="_blank">ADOdb - Database Abstraction Layer for PHP</a> for details).';
 $string['auth_dbtype_key'] = 'Database';
 $string['auth_dbupdateusers'] = 'Update users';
 $string['auth_dbupdateusers_description'] = 'As well as inserting new users, update existing users.';

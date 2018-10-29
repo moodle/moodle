@@ -23,7 +23,7 @@
  */
 
 $string['conditiontitle'] = 'User profile field';
-$string['description'] = 'Control access based on fields within the student&rsquo;s profile.';
+$string['description'] = 'Control access based on fields within the student\'s profile.';
 $string['error_selectfield'] = 'You must select a profile field.';
 $string['error_setvalue'] = 'You must type a value.';
 $string['label_operator'] = 'Method of comparison';
@@ -42,7 +42,7 @@ $string['requires_startswith'] = 'Your <strong>{$a->field}</strong> starts with 
 $string['missing'] = '(Missing custom field: {$a})';
 $string['title'] = 'User profile';
 $string['op_contains'] = 'contains';
-$string['op_doesnotcontain'] = 'doesn&rsquo;t contain';
+$string['op_doesnotcontain'] = 'doesn\'t contain';
 $string['op_endswith'] = 'ends with';
 $string['op_isempty'] = 'is empty';
 $string['op_isequalto'] = 'is equal to';

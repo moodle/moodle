@@ -386,7 +386,7 @@ $string['penaltyforeachincorrecttry_help'] = 'When questions are run using the \
 
 The penalty is a proportion of the total question grade, so if the question is worth three marks, and the penalty is 0.3333333, then the student will score 3 if they get the question right first time, 2 if they get it right second try, and 1 of they get it right on the third try.';
 $string['previewquestion'] = 'Preview question: {$a}';
-$string['privacy:metadata:database:question'] = 'The details about an specific question.';
+$string['privacy:metadata:database:question'] = 'The details about a specific question.';
 $string['privacy:metadata:database:question:createdby'] = 'The person who created the question.';
 $string['privacy:metadata:database:question:generalfeedback'] = 'The general feedback for this question.';
 $string['privacy:metadata:database:question:modifiedby'] = 'The person who last updated the question.';
