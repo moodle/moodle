@@ -20,7 +20,7 @@
 
 {{! Start Block Container }}
 <section id="{{id}}"
-     class="{{#hidden}}hidden{{/hidden}} block block_{{type}} {{#hascontrols}}block_with_controls{{/hascontrols}} card mb-2"
+     class="{{#hidden}}hidden{{/hidden}} block block_{{type}} {{#hascontrols}}block_with_controls{{/hascontrols}} card mb-3"
      role="{{ariarole}}"
      data-block="{{type}}"
      {{#arialabel}}
@@ -33,7 +33,7 @@
      {{/arialabel}}>
 
     {{! Block contents }}
-    <div class="card-body">
+    <div class="card-body p-3">
 
         {{! Block header }}
         {{#title}}
