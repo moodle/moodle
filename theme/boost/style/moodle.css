@@ -12440,6 +12440,9 @@ body.drawer-ease {
   body.drawer-open-right {
     margin-right: 285px; } }
 
+#page-my-index {
+  background-color: #f8f9fa; }
+
 .fp-content-center {
   height: 100%;
   width: 100%;
