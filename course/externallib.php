@@ -85,6 +85,7 @@ class core_course_external extends external_api {
     public static function get_course_contents($courseid, $options = array()) {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
+        require_once($CFG->libdir . '/completionlib.php');
 
         //validate parameter
         $params = self::validate_parameters(self::get_course_contents_parameters(),
@@ -167,6 +168,8 @@ class core_course_external extends external_api {
             $sections = $modinfo->get_section_info_all();
             $coursenumsections = course_get_format($course)->get_last_section_number();
             $stealthmodules = array();   // Array to keep all the modules available but not visible in a course section/topic.
+
+            $completioninfo = new completion_info($course);
 
             //for each sections (first displayed to last displayed)
             $modinfosections = $modinfo->get_sections();
@@ -261,6 +264,21 @@ class core_course_external extends external_api {
                         $module['modplural'] = $cm->modplural;
                         $module['modicon'] = $cm->get_icon_url()->out(false);
                         $module['indent'] = $cm->indent;
+                        $module['onclick'] = $cm->onclick;
+                        $module['afterlink'] = $cm->afterlink;
+                        $module['customdata'] = json_encode($cm->customdata);
+                        $module['completion'] = $cm->completion;
+
+                        // Check module completion.
+                        $completion = $completioninfo->is_enabled($cm);
+                        if ($completion != COMPLETION_DISABLED) {
+                            $completiondata = $completioninfo->get_data($cm, true);
+                            $module['completiondata'] = array(
+                                'state'         => $completiondata->completionstate,
+                                'timecompleted' => $completiondata->timemodified,
+                                'overrideby'    => $completiondata->overrideby
+                            );
+                        }
 
                         if (!empty($cm->showdescription) or $cm->modname == 'label') {
                             // We want to use the external format. However from reading get_formatted_content(), $cm->content format is always FORMAT_HTML.
@@ -408,6 +426,21 @@ class core_course_external extends external_api {
                                     'modplural' => new external_value(PARAM_TEXT, 'activity module plural name'),
                                     'availability' => new external_value(PARAM_RAW, 'module availability settings', VALUE_OPTIONAL),
                                     'indent' => new external_value(PARAM_INT, 'number of identation in the site'),
+                                    'onclick' => new external_value(PARAM_RAW, 'Onclick action.', VALUE_OPTIONAL),
+                                    'afterlink' => new external_value(PARAM_RAW, 'After link info to be displayed.',
+                                        VALUE_OPTIONAL),
+                                    'customdata' => new external_value(PARAM_RAW, 'Custom data (JSON encoded).', VALUE_OPTIONAL),
+                                    'completion' => new external_value(PARAM_INT, 'Type of completion tracking:
+                                        0 means none, 1 manual, 2 automatic.', VALUE_OPTIONAL),
+                                    'completiondata' => new external_single_structure(
+                                        array(
+                                            'state' => new external_value(PARAM_INT, 'Completion state value:
+                                                0 means incomplete, 1 complete, 2 complete pass, 3 complete fail'),
+                                            'timecompleted' => new external_value(PARAM_INT, 'Timestamp for completion status.'),
+                                            'overrideby' => new external_value(PARAM_INT, 'The user id who has overriden the
+                                                status.'),
+                                        ), 'Module completion data.', VALUE_OPTIONAL
+                                    ),
                                     'contents' => new external_multiple_structure(
                                           new external_single_structure(
                                               array(

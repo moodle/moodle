@@ -809,15 +809,24 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         global $DB, $CFG;
 
         $CFG->allowstealth = 1; // Allow stealth activities.
+        $CFG->enablecompletion = true;
+        $CFG->forum_allowforcedreadtracking = 1;
+        $course  = self::getDataGenerator()->create_course(['numsections' => 4, 'enablecompletion' => 1]);
 
-        $course  = self::getDataGenerator()->create_course(['numsections' => 4]);
         $forumdescription = 'This is the forum description';
         $forum = $this->getDataGenerator()->create_module('forum',
-            array('course' => $course->id, 'intro' => $forumdescription),
-            array('showdescription' => true));
+            array('course' => $course->id, 'intro' => $forumdescription, 'trackingtype' => 2),
+            array('showdescription' => true, 'completion' => COMPLETION_TRACKING_MANUAL));
         $forumcm = get_coursemodule_from_id('forum', $forum->cmid);
-        $data = $this->getDataGenerator()->create_module('data', array('assessed' => 1, 'scale' => 100, 'course' => $course->id));
-        $datacm = get_coursemodule_from_instance('page', $data->id);
+        // Add discussions to the tracking forced forum.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = 0;
+        $record->forum = $forum->id;
+        $discussionforce = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+        $data = $this->getDataGenerator()->create_module('data',
+            array('assessed' => 1, 'scale' => 100, 'course' => $course->id, 'completion' => 2, 'completionentries' => 3));
+        $datacm = get_coursemodule_from_instance('data', $data->id);
         $page = $this->getDataGenerator()->create_module('page', array('course' => $course->id));
         $pagecm = get_coursemodule_from_instance('page', $page->id);
         // This is an stealth page (set by visibleoncoursepage).
@@ -830,7 +839,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $tomorrow = time() + DAYSECS;
         // Module with availability restrictions not met.
         $url = $this->getDataGenerator()->create_module('url',
-            array('course' => $course->id, 'name' => 'URL: % & $ ../', 'section' => 2),
+            array('course' => $course->id, 'name' => 'URL: % & $ ../', 'section' => 2, 'display' => RESOURCELIB_DISPLAY_POPUP,
+                'popupwidth' => 100, 'popupheight' => 100),
             array('availability' => '{"op":"&","c":[{"type":"date","d":">=","t":' . $tomorrow . '}],"showc":[true]}'));
         $urlcm = get_coursemodule_from_instance('url', $url->id);
         // Module for the last section.
@@ -891,7 +901,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                     array('noclean' => true, 'para' => false, 'filter' => false));
                 $this->assertEquals($formattedtext, $module['description']);
                 $this->assertEquals($forumcm->instance, $module['instance']);
-                $testexecuted = $testexecuted + 1;
+                $this->assertContains('1 unread post', $module['afterlink']);
+                $testexecuted = $testexecuted + 2;
             } else if ($module['id'] == $labelcm->id and $module['modname'] == 'label') {
                 $cm = $modinfo->cms[$labelcm->id];
                 $formattedtext = format_text($cm->content, FORMAT_HTML,
@@ -899,9 +910,19 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($formattedtext, $module['description']);
                 $this->assertEquals($labelcm->instance, $module['instance']);
                 $testexecuted = $testexecuted + 1;
+            } else if ($module['id'] == $datacm->id and $module['modname'] == 'data') {
+                $this->assertContains('customcompletionrules', $module['customdata']);
+                $testexecuted = $testexecuted + 1;
             }
         }
-        $this->assertEquals(2, $testexecuted);
+        foreach ($sections[2]['modules'] as $module) {
+            if ($module['id'] == $urlcm->id and $module['modname'] == 'url') {
+                $this->assertContains('width=100,height=100', $module['onclick']);
+                $testexecuted = $testexecuted + 1;
+            }
+        }
+
+        $this->assertEquals(5, $testexecuted);
         $this->assertEquals(0, $sections[0]['section']);
 
         $this->assertCount(5, $sections[0]['modules']);
@@ -1117,6 +1138,50 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(1, $sections[0]['modules']);
         $this->assertEquals("page", $sections[0]['modules'][0]["modname"]);
         $this->assertEquals($pagecm->instance, $sections[0]['modules'][0]["instance"]);
+    }
+
+    /**
+     * Test get course contents completion
+     */
+    public function test_get_course_contents_completion() {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        list($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm) = $this->prepare_get_course_contents_test();
+
+        // Test activity not completed yet.
+        $result = core_course_external::get_course_contents($course->id, array(
+            array("name" => "modname", "value" => "forum"), array("name" => "modid", "value" => $forumcm->instance)));
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
+
+        $this->assertCount(1, $result[0]['modules']);
+        $this->assertEquals("forum", $result[0]['modules'][0]["modname"]);
+        $this->assertEquals(COMPLETION_TRACKING_MANUAL, $result[0]['modules'][0]["completion"]);
+        $this->assertEquals(0, $result[0]['modules'][0]["completiondata"]['state']);
+        $this->assertEquals(0, $result[0]['modules'][0]["completiondata"]['timecompleted']);
+        $this->assertEmpty($result[0]['modules'][0]["completiondata"]['overrideby']);
+
+        // Set activity completed.
+        core_completion_external::update_activity_completion_status_manually($forumcm->id, true);
+
+        $result = core_course_external::get_course_contents($course->id, array(
+            array("name" => "modname", "value" => "forum"), array("name" => "modid", "value" => $forumcm->instance)));
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
+
+        $this->assertEquals(COMPLETION_COMPLETE, $result[0]['modules'][0]["completiondata"]['state']);
+        $this->assertNotEmpty($result[0]['modules'][0]["completiondata"]['timecompleted']);
+        $this->assertEmpty($result[0]['modules'][0]["completiondata"]['overrideby']);
+
+        // Disable completion.
+        $CFG->enablecompletion = 0;
+        $result = core_course_external::get_course_contents($course->id, array(
+            array("name" => "modname", "value" => "forum"), array("name" => "modid", "value" => $forumcm->instance)));
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
+
+        $this->assertArrayNotHasKey('completiondata', $result[0]['modules'][0]);
     }
 
     /**
