@@ -11094,7 +11094,7 @@ div.editor_atto_toolbar button .icon {
   color: #373a3c; }
 
 [data-region="blocks-column"] {
-  width: 250px;
+  width: 360px;
   float: right; }
 
 /* We put an absolutely positioned div in a relatively positioned div so it takes up no space */
@@ -11121,7 +11121,7 @@ div.editor_atto_toolbar button .icon {
 #region-main-settings-menu.has-blocks,
 #region-main.has-blocks {
   display: inline-block;
-  width: calc(100% - 265px); }
+  width: calc(100% - 375px); }
   @media (max-width: 1199.98px) {
     #region-main-settings-menu.has-blocks,
     #region-main.has-blocks {
