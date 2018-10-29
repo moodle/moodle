@@ -16644,6 +16644,14 @@ body {
   -moz-border-radius-topleft: 4px;
   border-top-left-radius: 4px;
 }
+.summaryimage {
+  height: 7rem;
+  background-position: center;
+  background-size: cover;
+}
+.position-absolute {
+  position: absolute;
+}
 /**
  * Moodle forms HTML isn't changeable via renderers (yet?) so this
  * .less file imports styles from the bootstrap @variables file and
