@@ -197,6 +197,9 @@ function(
 
         setCourseFavouriteState(courseId, true).then(function(success) {
             if (success) {
+                // Trigger a JS event so the starred courses block can refresh the list of courses.
+                $('body').trigger('myoverview-events:course_starred', [courseId]);
+
                 removeAction.removeClass('hidden');
                 addAction.addClass('hidden');
                 showFavouriteIcon(root, courseId);
@@ -219,6 +222,7 @@ function(
 
         setCourseFavouriteState(courseId, false).then(function(success) {
             if (success) {
+                $('body').trigger('myoverview-events:course_unstarred', [courseId]);
                 removeAction.addClass('hidden');
                 addAction.removeClass('hidden');
                 hideFavouriteIcon(root, courseId);
