@@ -11,6 +11,7 @@ information provided here is intended especially for developers.
    - customdata (module custom data (JSON encoded))
    - completion (to indicate if completion is enabled or not)
    - completiondata (completion status for the current user in the module)
+ * External function core_group_external::get_course_user_groups now can return all user courses group information.
 
 === 3.5 ===
 
