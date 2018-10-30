@@ -57,6 +57,36 @@ class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_te
     }
 
     /**
+     * Test for provider::get_contexts_for_userid() when there is no quiz attempt at all.
+     */
+    public function test_get_contexts_for_userid_no_attempt_with_override() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_user();
+
+        // Make a quiz with an override.
+        $this->setUser();
+        $quiz = $this->create_test_quiz($course);
+        $DB->insert_record('quiz_overrides', [
+            'quiz' => $quiz->id,
+            'userid' => $user->id,
+            'timeclose' => 1300,
+            'timelimit' => null,
+        ]);
+
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+        $context = \context_module::instance($cm->id);
+
+        // Fetch the contexts - only one context should be returned.
+        $this->setUser();
+        $contextlist = provider::get_contexts_for_userid($user->id);
+        $this->assertCount(1, $contextlist);
+        $this->assertEquals($context, $contextlist->current());
+    }
+
+    /**
      * The export function should handle an empty contextlist properly.
      */
     public function test_export_user_data_no_data() {
