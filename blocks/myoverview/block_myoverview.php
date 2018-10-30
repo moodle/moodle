@@ -52,8 +52,9 @@ class block_myoverview extends block_base {
         $group = get_user_preferences('block_myoverview_user_grouping_preference');
         $sort = get_user_preferences('block_myoverview_user_sort_preference');
         $view = get_user_preferences('block_myoverview_user_view_preference');
+        $paging = get_user_preferences('block_myoverview_user_paging_preference');
 
-        $renderable = new \block_myoverview\output\main($group, $sort, $view);
+        $renderable = new \block_myoverview\output\main($group, $sort, $view, $paging);
         $renderer = $this->page->get_renderer('block_myoverview');
 
         $this->content = new stdClass();

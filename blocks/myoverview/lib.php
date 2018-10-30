@@ -49,6 +49,13 @@ define('BLOCK_MYOVERVIEW_VIEW_LIST', 'list');
 define('BLOCK_MYOVERVIEW_VIEW_SUMMARY', 'summary');
 
 /**
+ * Constants for the user paging preferences
+ */
+define('BLOCK_MYOVERVIEW_PAGING_12', 12);
+define('BLOCK_MYOVERVIEW_PAGING_24', 24);
+define('BLOCK_MYOVERVIEW_PAGING_48', 48);
+
+/**
  * Get the current user preferences that are available
  *
  * @return mixed Array representing current options along with defaults
@@ -93,6 +100,17 @@ function block_myoverview_user_preferences() {
         'type' => PARAM_INT,
         'null' => NULL_NOT_ALLOWED,
         'default' => 'none'
+    );
+
+    $preferences['block_myoverview_user_paging_preference'] = array(
+        'null' => NULL_NOT_ALLOWED,
+        'default' => BLOCK_MYOVERVIEW_PAGING_12,
+        'type' => PARAM_INT,
+        'choices' => array(
+            BLOCK_MYOVERVIEW_PAGING_12,
+            BLOCK_MYOVERVIEW_PAGING_24,
+            BLOCK_MYOVERVIEW_PAGING_48
+        )
     );
 
     return $preferences;

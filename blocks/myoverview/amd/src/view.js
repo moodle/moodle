@@ -31,7 +31,8 @@ define(
     'core/notification',
     'core/templates',
     'core_course/events',
-    'block_myoverview/selectors'
+    'block_myoverview/selectors',
+    'core/paged_content_events',
 ],
 function(
     $,
@@ -42,7 +43,8 @@ function(
     Notification,
     Templates,
     CourseEvents,
-    Selectors
+    Selectors,
+    PagedContentEvents
 ) {
 
     var SELECTORS = {
@@ -75,6 +77,8 @@ function(
 
     var lastLimit = 0;
 
+    var namespace = null;
+
     /**
      * Get filter values from DOM.
      *
@@ -95,6 +99,7 @@ function(
     var DEFAULT_PAGED_CONTENT_CONFIG = {
         ignoreControlWhileLoading: true,
         controlPlacementBottom: true,
+        persistentLimitKey: 'block_myoverview_user_paging_preference'
     };
 
     /**
@@ -378,16 +383,57 @@ function(
     };
 
     /**
+     * Return the callback to be passed to the subscribe event
+     *
+     * @param {Number} limit The paged limit that is passed through the event
+     */
+    var setLimit = function(limit) {
+        this.find(Selectors.courseView.region).attr('data-paging', limit);
+    };
+
+    /**
      * Intialise the paged list and cards views on page load.
+     * Returns an array of paged contents that we would like to handle here
+     *
+     * @param {object} root The root element for the courses view
+     * @param {string} namespace The namespace for all the events attached
+     */
+    var registerPagedEventHandlers = function(root, namespace) {
+        var event = namespace + PagedContentEvents.SET_ITEMS_PER_PAGE_LIMIT;
+        PubSub.subscribe(event, setLimit.bind(root));
+    };
+
+    /**
+     * Intialise the courses list and cards views on page load.
      *
      * @param {object} root The root element for the courses view.
      * @param {object} content The content element for the courses view.
      */
     var initializePagedContent = function(root) {
+        namespace = "block_myoverview_" + root.attr('id') + "_" + Math.random();
+
+        var itemsPerPage = NUMCOURSES_PERPAGE;
+        var pagingLimit = parseInt(root.find(Selectors.courseView.region).attr('data-paging'), 10);
+        if (pagingLimit) {
+            itemsPerPage = NUMCOURSES_PERPAGE.map(function(value) {
+                var active = false;
+                if (value == pagingLimit) {
+                    active = true;
+                }
+
+                return {
+                    value: value,
+                    active: active
+                };
+            });
+        }
+
         var filters = getFilterValues(root);
+        var config = $.extend({}, DEFAULT_PAGED_CONTENT_CONFIG);
+        config.eventNamespace = namespace;
 
         var pagedContentPromise = PagedContentFactory.createWithLimit(
-            NUMCOURSES_PERPAGE,
+            itemsPerPage,
             function(pagesData, actions) {
                 var promises = [];
 
@@ -471,10 +517,11 @@ function(
 
                 return promises;
             },
-            DEFAULT_PAGED_CONTENT_CONFIG
+            config
         );
 
         pagedContentPromise.then(function(html, js) {
+            registerPagedEventHandlers(root, namespace);
             return Templates.replaceNodeContents(root.find(Selectors.courseView.region), html, js);
         }).catch(Notification.exception);
     };
@@ -556,12 +603,12 @@ function(
         lastPage = 0;
         courseOffset = 0;
 
+        initializePagedContent(root);
+
         if (!root.attr('data-init')) {
             registerEventListeners(root);
             root.attr('data-init', true);
         }
-
-        initializePagedContent(root);
     };
 
     /**
