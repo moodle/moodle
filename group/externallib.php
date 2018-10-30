@@ -1259,7 +1259,7 @@ class core_group_external extends external_api {
                 );
             }
 
-            $groups = groups_get_all_groups($course->id, $userid, 0,
+            $groups = groups_get_all_groups($course->id, $userid, $groupingid,
                 'g.id, g.name, g.description, g.descriptionformat, g.idnumber');
 
             foreach ($groups as $group) {

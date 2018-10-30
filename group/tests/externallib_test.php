@@ -413,6 +413,17 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         groups_add_member($group2->id, $student1->id);
         groups_add_member($group3->id, $student1->id);
 
+        // Create a grouping.
+        $groupingdata = array();
+        $groupingdata['courseid'] = $course->id;
+        $groupingdata['name'] = 'Grouping Test';
+        $groupingdata['description'] = 'Grouping Test description';
+        $groupingdata['descriptionformat'] = FORMAT_MOODLE;
+
+        $grouping = self::getDataGenerator()->create_grouping($groupingdata);
+        // Grouping only containing group1.
+        groups_assign_grouping($grouping->id, $group1->id);
+
         $this->setUser($student1);
 
         $groups = core_group_external::get_course_user_groups($course->id, $student1->id);
@@ -421,6 +432,14 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(2, $groups['groups']);
         $this->assertEquals($course->id, $groups['groups'][0]['courseid']);
         $this->assertEquals($course->id, $groups['groups'][1]['courseid']);
+
+        // Check that I only see my groups inside the given grouping.
+        $groups = core_group_external::get_course_user_groups($course->id, $student1->id, $grouping->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        // Check that I see my groups in the grouping.
+        $this->assertCount(1, $groups['groups']);
+        $this->assertEquals($group1->id, $groups['groups'][0]['id']);
+
 
         // Check optional parameters (all student 1 courses and current user).
         $groups = core_group_external::get_course_user_groups();
