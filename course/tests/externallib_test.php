@@ -810,7 +810,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         $CFG->allowstealth = 1; // Allow stealth activities.
         $CFG->enablecompletion = true;
-        $CFG->forum_allowforcedreadtracking = 1;
         $course  = self::getDataGenerator()->create_course(['numsections' => 4, 'enablecompletion' => 1]);
 
         $forumdescription = 'This is the forum description';
@@ -882,8 +881,10 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
      * Test get_course_contents
      */
     public function test_get_course_contents() {
+        global $CFG;
         $this->resetAfterTest(true);
 
+        $CFG->forum_allowforcedreadtracking = 1;
         list($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm) = $this->prepare_get_course_contents_test();
 
         // We first run the test as admin.
@@ -921,6 +922,9 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $testexecuted = $testexecuted + 1;
             }
         }
+
+        $CFG->forum_allowforcedreadtracking = 0;    // Recover original value.
+        forum_tp_count_forum_unread_posts($forumcm, $course, true);    // Reset static cache for further tests.
 
         $this->assertEquals(5, $testexecuted);
         $this->assertEquals(0, $sections[0]['section']);
