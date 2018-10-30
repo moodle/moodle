@@ -29,6 +29,8 @@ use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
+use core_privacy\local\request\userlist;
+use \core_privacy\local\request\approved_userlist;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -41,7 +43,10 @@ require_once($CFG->dirroot . '/notes/lib.php');
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\plugin\provider {
+class provider implements
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\core_userlist_provider,
+        \core_privacy\local\request\plugin\provider {
 
     /**
      * Return the fields which contain personal data.
@@ -110,6 +115,48 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_course) {
+            return;
+        }
+
+        $params = [
+            'instanceid' => $context->instanceid
+        ];
+
+        $sql = "SELECT usermodified as userid
+                  FROM {post}
+                 WHERE module = 'notes'
+                       AND courseid = :instanceid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        $publishstates = [
+            NOTES_STATE_PUBLIC,
+            NOTES_STATE_SITE
+        ];
+
+        list($publishstatesql, $publishstateparams) = $DB->get_in_or_equal($publishstates, SQL_PARAMS_NAMED);
+        $params += $publishstateparams;
+
+        $sql = "SELECT userid
+                  FROM {post}
+                 WHERE module = 'notes'
+                       AND courseid = :instanceid
+                       AND publishstate {$publishstatesql}";
+
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -189,6 +236,31 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
         }
 
         $DB->delete_records('post', ['module' => 'notes', 'courseid' => $context->instanceid]);
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        if ($context->contextlevel != CONTEXT_COURSE) {
+            return;
+        }
+
+        $userids = $userlist->get_userids();
+        if (empty($userids)) {
+            return;
+        }
+
+        list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        $select = "module = :module AND courseid = :courseid AND usermodified {$usersql}";
+        $params = ['module' => 'notes', 'courseid' => $context->instanceid] + $userparams;
+
+        $DB->delete_records_select('post', $select, $params);
     }
 
     /**
