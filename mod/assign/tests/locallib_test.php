@@ -3501,11 +3501,14 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
             } else if ($type == 'file') {
                 $this->assertEquals(array('feedback_files' => 'Feedback files'), $fileareas);
                 $usingfilearea++;
+            } else if ($type == 'comments') {
+                $this->assertEquals(array('feedback' => 'Feedback comments'), $fileareas);
+                $usingfilearea++;
             } else {
                 $this->assertEmpty($fileareas);
             }
         }
-        $this->assertEquals(2, $usingfilearea);
+        $this->assertEquals(3, $usingfilearea);
     }
 
     /**
