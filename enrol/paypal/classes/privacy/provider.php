@@ -29,8 +29,9 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\contextlist;
-use core_privacy\local\request\helper;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
 /**
@@ -40,8 +41,14 @@ use core_privacy\local\request\writer;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
+        // Transactions store user data.
         \core_privacy\local\metadata\provider,
-        \core_privacy\local\request\plugin\provider {
+
+        // The paypal enrolment plugin contains user's transactions.
+        \core_privacy\local\request\plugin\provider,
+
+        // This plugin is capable of determining which users have data within it.
+        \core_privacy\local\request\core_userlist_provider {
 
     /**
      * Returns meta data about this system.
@@ -108,22 +115,40 @@ class provider implements
                   FROM {enrol_paypal} ep
                   JOIN {enrol} e ON ep.instanceid = e.id
                   JOIN {context} ctx ON e.courseid = ctx.instanceid AND ctx.contextlevel = :contextcourse
-             LEFT JOIN {user} u ON u.id = :emailuserid AND (
-                    LOWER(u.email) = ep.receiver_email
-                        OR
-                    LOWER(u.email) = ep.business
-                )
-                 WHERE ep.userid = :userid
-                       OR u.id IS NOT NULL";
+                  JOIN {user} u ON u.id = ep.userid OR LOWER(u.email) = ep.receiver_email OR LOWER(u.email) = ep.business
+                 WHERE u.id = :userid";
         $params = [
             'contextcourse' => CONTEXT_COURSE,
             'userid'        => $userid,
-            'emailuserid'   => $userid,
         ];
 
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_course) {
+            return;
+        }
+
+        // Values of ep.receiver_email and ep.business are already normalised to lowercase characters by PayPal,
+        // therefore there is no need to use LOWER() on them in the following query.
+        $sql = "SELECT u.id
+                  FROM {enrol_paypal} ep
+                  JOIN {enrol} e ON ep.instanceid = e.id
+                  JOIN {user} u ON ep.userid = u.id OR LOWER(u.email) = ep.receiver_email OR LOWER(u.email) = ep.business
+                 WHERE e.courseid = :courseid";
+        $params = ['courseid' => $context->instanceid];
+
+        $userlist->add_from_sql('id', $sql, $params);
     }
 
     /**
@@ -148,14 +173,8 @@ class provider implements
                   FROM {enrol_paypal} ep
                   JOIN {enrol} e ON ep.instanceid = e.id
                   JOIN {context} ctx ON e.courseid = ctx.instanceid AND ctx.contextlevel = :contextcourse
-             LEFT JOIN {user} u ON u.id = :emailuserid AND (
-                    LOWER(u.email) = ep.receiver_email
-                        OR
-                    LOWER(u.email) = ep.business
-                )
-                 WHERE ctx.id {$contextsql}
-                       AND (ep.userid = :userid
-                        OR u.id IS NOT NULL)
+                  JOIN {user} u ON u.id = ep.userid OR LOWER(u.email) = ep.receiver_email OR LOWER(u.email) = ep.business
+                 WHERE ctx.id {$contextsql} AND u.id = :userid
               ORDER BY e.courseid";
 
         $params = [
@@ -281,6 +300,39 @@ class provider implements
 
         $select = "receiver_email = :receiver_email AND courseid $insql";
         $params = $inparams + ['receiver_email' => \core_text::strtolower($user->email)];
+        $DB->set_field_select('enrol_paypal', 'receiver_email', '', $select, $params);
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if ($context->contextlevel != CONTEXT_COURSE) {
+            return;
+        }
+
+        $userids = $userlist->get_userids();
+
+        list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+
+        $params = ['courseid' => $context->instanceid] + $userparams;
+
+        $select = "courseid = :courseid AND userid $usersql";
+        $DB->delete_records_select('enrol_paypal', $select, $params);
+
+        // We do not want to delete the payment record when the user is just the receiver of payment.
+        // In that case, we just delete the receiver's info from the transaction record.
+
+        $select = "courseid = :courseid AND business IN (SELECT LOWER(email) FROM {user} WHERE id $usersql)";
+        $DB->set_field_select('enrol_paypal', 'business', '', $select, $params);
+
+        $select = "courseid = :courseid AND receiver_email IN (SELECT LOWER(email) FROM {user} WHERE id $usersql)";
         $DB->set_field_select('enrol_paypal', 'receiver_email', '', $select, $params);
     }
 }
