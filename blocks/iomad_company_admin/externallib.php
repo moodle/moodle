@@ -54,6 +54,7 @@ class block_iomad_company_admin_external extends external_api {
                             'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0', VALUE_DEFAULT, 0),
                             'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
                             'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
+                            'customcss' => new external_value(PARAM_TEXT, 'Company custom css'),
                         )
                     )
                 )
@@ -146,6 +147,7 @@ class block_iomad_company_admin_external extends external_api {
                      'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0'),
                      'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
                      'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
+                     'customcss' => new external_value(PARAM_TEXT, 'Company custom css'),
                 )
             )
         );
@@ -1296,6 +1298,10 @@ class block_iomad_company_admin_external extends external_api {
                              'used' => new external_value(PARAM_INT, 'Number how often the lic can be allocated'),
                              'companyid' => new external_value(PARAM_INT, 'Company id'),
                              'parentid' => new external_value(PARAM_INT, 'Parent license id'),
+                             'type' => new external_value(PARAM_INT, 'License type - 0 = standard, 1 = reusable, 2 = standard educator, 3 = reusable educator'),
+                             'program' => new external_value(PARAM_INT, 'Program pf courses 0 = no, 1 = yes'),
+                             'reference' => new external_value(PARAM_TEXT, 'License reference'),
+                             'instant' => new external_value(PARAM_INT, 'Instant access - 0 = no, 1 = yes'),
                              'courses' => new external_multiple_structure(
                                  new external_single_structure(
                                         array(
@@ -1378,14 +1384,18 @@ class block_iomad_company_admin_external extends external_api {
                      'used' => new external_value(PARAM_INT, 'Number allocated'),
                      'companyid' => new external_value(PARAM_INT, 'Company id'),
                      'parentid' => new external_value(PARAM_INT, 'Parent license id'),
+                     'type' => new external_value(PARAM_INT, 'License type - 0 = standard, 1 = reusable, 2 = standard educator, 3 = reusable educator'),
+                     'program' => new external_value(PARAM_INT, 'Program pf courses 0 = no, 1 = yes'),
+                     'reference' => new external_value(PARAM_TEXT, 'License reference'),
+                     'instant' => new external_value(PARAM_INT, 'Instant access - 0 = no, 1 = yes'),
                      'courses' => new external_multiple_structure(
                          new external_single_structure(
                                 array(
                                     'courseid'  => new external_value(PARAM_INT, 'Course ID'),
                                 )
-                         )
-                    ),
-                )
+                         ),'one or many course IDs', VALUE_REQUIRED
+                    )
+                ), 'one or many licenses'
             )
         );
     }
@@ -1410,7 +1420,18 @@ class block_iomad_company_admin_external extends external_api {
                              'used' => new external_value(PARAM_INT, 'Number allocated'),
                              'companyid' => new external_value(PARAM_INT, 'Company id'),
                              'parentid' => new external_value(PARAM_INT, 'Parent license id'),
-                        )
+                             'type' => new external_value(PARAM_INT, 'License type - 0 = standard, 1 = reusable, 2 = standard educator, 3 = reusable educator'),
+                             'program' => new external_value(PARAM_INT, 'Program pf courses 0 = no, 1 = yes'),
+                             'reference' => new external_value(PARAM_TEXT, 'License reference'),
+                             'instant' => new external_value(PARAM_INT, 'Instant access - 0 = no, 1 = yes'),
+                             'courses' => new external_multiple_structure(
+                                 new external_single_structure(
+                                        array(
+                                            'courseid'  => new external_value(PARAM_INT, 'Course ID'),
+                                        )
+                                 ),'one or many course IDs', VALUE_REQUIRED
+                            )
+                        ), 'one or many licenses'
                     )
                 )
             )
@@ -1444,6 +1465,31 @@ class block_iomad_company_admin_external extends external_api {
                 throw new invalid_parameter_exception("License id=$id does not exist");
             }
 
+
+            // Deal with course allocations if there are any.
+            // Capture them for checking.
+            $oldcourses = $DB->get_records('companylicense_courses', array('licenseid' => $licenseid), null, 'courseid');
+            // Clear down all of them initially.
+            $DB->delete_records('companylicense_courses', array('licenseid' => $licenseid));
+            foreach ($license['courses'] as $course) {
+                $DB->insert_record('companylicense_courses', array('licenseid' => $licenseid,
+                                                                          'courseid' => $course['courseid']));
+            }
+
+            // Create an event to deal with an parent license allocations.
+            $eventother = array('licenseid' => $oldlicense->id,
+                                'parentid' => $oldlicense->parentid);
+            $eventother['oldcourses'] = json_encode($oldcourses);
+            if ($oldlicense->program != $license->program) {
+                $eventother['programchange'] = true;
+            }
+            if ($oldlicense->startdate != $license->startdate) {
+                $eventother['oldstartdate'] = $license->startdate;
+            }
+            if ($oldlicense->type != $license->type) {
+                $eventother['educatorchange'] = true;
+            }
+
             // Copy whatever vars we have
             foreach ($license as $key => $value) {
                 $oldlicense->$key = $value;
@@ -1473,9 +1519,33 @@ class block_iomad_company_admin_external extends external_api {
      * @return external_description
      */
     public static function edit_licenses_returns() {
-        return new external_value(PARAM_BOOL, 'Success or failure');
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                     'id' => new external_value(PARAM_INT, 'license ID'),
+                     'name' => new external_value(PARAM_TEXT, 'License name'),
+                     'allocation' => new external_value(PARAM_INT, 'Number of license slots'),
+                     'validlength' => new external_value(PARAM_INT, 'Course access length (days)'),
+                     'startdate' => new external_value(PARAM_INT, 'Date from which the liucense is available (int = timestamp) '),
+                     'expirydate' => new external_value(PARAM_INT, 'License expiry date (int = timestamp)'),
+                     'used' => new external_value(PARAM_INT, 'Number allocated'),
+                     'companyid' => new external_value(PARAM_INT, 'Company id'),
+                     'parentid' => new external_value(PARAM_INT, 'Parent license id'),
+                     'type' => new external_value(PARAM_INT, 'License type - 0 = standard, 1 = reusable, 2 = standard educator, 3 = reusable educator'),
+                     'program' => new external_value(PARAM_INT, 'Program pf courses 0 = no, 1 = yes'),
+                     'reference' => new external_value(PARAM_TEXT, 'License reference'),
+                     'instant' => new external_value(PARAM_INT, 'Instant access - 0 = no, 1 = yes'),
+                     'courses' => new external_multiple_structure(
+                         new external_single_structure(
+                                array(
+                                    'courseid'  => new external_value(PARAM_INT, 'Course ID'),
+                                )
+                         )
+                    ),
+                )
+            )
+        );
     }
-
 
     /**
      * block_iomad_company_admin_edit_licenses
