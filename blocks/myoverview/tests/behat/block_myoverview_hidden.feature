@@ -1,5 +1,5 @@
 @block @block_myoverview @javascript
-Feature: The my overview block allows users to favourite their courses
+Feature: The my overview block allows users to hide their courses
   In order to enable the my overview block in a course
   As a student
   I can add the my overview block to my dashboard

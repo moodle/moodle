@@ -26,6 +26,7 @@ namespace block_myoverview\privacy;
 
 use core_privacy\local\request\user_preference_provider;
 use core_privacy\local\metadata\collection;
+use \core_privacy\local\request\writer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -58,14 +59,14 @@ class provider implements \core_privacy\local\metadata\provider, user_preference
     public static function export_user_preferences(int $userid) {
         $preference = get_user_preferences('block_myoverview_user_sort_preference', null, $userid);
         if (isset($preference)) {
-            \core_privacy\local\request\writer::export_user_preference('block_myoverview',
+            writer::export_user_preference('block_myoverview',
                 'block_myoverview_user_sort_preference', get_string($preference, 'block_myoverview'),
                 get_string('privacy:metadata:overviewsortpreference', 'block_myoverview'));
         }
 
         $preference = get_user_preferences('block_myoverview_user_view_preference', null, $userid);
         if (isset($preference)) {
-            \core_privacy\local\request\writer::export_user_preference('block_myoverview',
+            writer::export_user_preference('block_myoverview',
                 'block_myoverview_user_view_preference',
                 get_string($preference, 'block_myoverview'),
                 get_string('privacy:metadata:overviewviewpreference', 'block_myoverview'));
@@ -73,7 +74,7 @@ class provider implements \core_privacy\local\metadata\provider, user_preference
 
         $preference = get_user_preferences('block_myoverview_user_grouping_preference', null, $userid);
         if (isset($preference)) {
-            \core_privacy\local\request\writer::export_user_preference('block_myoverview',
+            writer::export_user_preference('block_myoverview',
                 'block_myoverview_user_grouping_preference',
                 get_string($preference, 'block_myoverview'),
                 get_string('privacy:metadata:overviewgroupingpreference', 'block_myoverview'));

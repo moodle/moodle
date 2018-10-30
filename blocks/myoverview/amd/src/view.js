@@ -29,6 +29,7 @@ define(
     'core/custom_interaction_events',
     'core/notification',
     'core/templates',
+    'block_myoverview/selectors'
 ],
 function(
     $,
@@ -36,7 +37,8 @@ function(
     PagedContentFactory,
     CustomEvents,
     Notification,
-    Templates
+    Templates,
+    Selectors
 ) {
 
     var SELECTORS = {
@@ -63,6 +65,10 @@ function(
 
     var loadedPages = [];
 
+    var courseOffset = 0;
+
+    var lastPage = 0;
+
     /**
      * Get filter values from DOM.
      *
@@ -70,11 +76,12 @@ function(
      * @return {filters} Set filters.
      */
     var getFilterValues = function(root) {
-        var filters = {};
-        filters.display = root.attr('data-display');
-        filters.grouping = root.attr('data-grouping');
-        filters.sort = root.attr('data-sort');
-        return filters;
+        var courseRegion = root.find(Selectors.courseView.region);
+        return {
+            display: courseRegion.attr('data-display'),
+            grouping: courseRegion.attr('data-grouping'),
+            sort: courseRegion.attr('data-sort')
+        };
     };
 
     // We want the paged content controls below the paged content area.
@@ -89,13 +96,12 @@ function(
      *
      * @param {object} filters The filters for this view.
      * @param {int} limit The number of courses to show.
-     * @param {int} pageNumber The pagenumber to view.
      * @return {promise} Resolved with an array of courses.
      */
-    var getMyCourses = function(filters, limit, pageNumber) {
+    var getMyCourses = function(filters, limit) {
 
         return Repository.getEnrolledCoursesByTimeline({
-            offset:  pageNumber * limit,
+            offset: courseOffset,
             limit: limit,
             classification: filters.grouping,
             sort: filters.sort
@@ -233,17 +239,58 @@ function(
     };
 
     /**
-     * Initialize the Paged Content and jump to the active Page.
+     * Reset the loadedPages dataset to take into account the hidden element
      *
      * @param {Object} root The course overview container
-     * @param {object} content The content element for the courses view.
+     * @param {Object} target The course that you want to hide
      */
-    var initializeJumpto = function(root, content) {
+    var hideElement = function(root, target) {
+        var id = getCourseId(target);
 
         var pagingBar = root.find('[data-region="paging-bar"]');
-        var jumpto = pagingBar.attr('data-active-page-number');
+        var jumpto = parseInt(pagingBar.attr('data-active-page-number'));
 
-        initializePagedContent(root, content, jumpto);
+        // Get a reduced dataset for the current page.
+        var courseList = loadedPages[jumpto];
+        var reducedCourse = courseList.courses.reduce(function(accumulator, current) {
+            if (id != current.id) {
+                accumulator.push(current);
+            }
+            return accumulator;
+        }, []);
+
+        // Get the next page's data if loaded and pop the first element from it
+        if (loadedPages[jumpto + 1] != undefined) {
+            var newElement = loadedPages[jumpto + 1].courses.slice(0, 1);
+            loadedPages[jumpto + 1].courses = loadedPages[jumpto + 1].courses.slice(1);
+
+            reducedCourse = $.merge(reducedCourse, newElement);
+        }
+
+        // Check if the next page is the last page and if it still has data associated to it
+        if (lastPage == jumpto + 1 && loadedPages[jumpto + 1].courses.length == 0) {
+            var pagedContentContainer = root.find('[data-region="paged-content-container"]');
+            PagedContentFactory.resetLastPageNumber($(pagedContentContainer).attr('id'), jumpto);
+        }
+
+        loadedPages[jumpto].courses = reducedCourse;
+
+        // Reduce the course offset
+        courseOffset--;
+
+        // Render the paged content for the current
+        var pagedContentPage = getPagedContentContainer(root, jumpto);
+        renderCourses(root, loadedPages[jumpto]).then(function(html, js) {
+            return Templates.replaceNodeContents(pagedContentPage, html, js);
+        }).catch(Notification.exception);
+
+        // Delete subsequent pages in order to trigger the callback
+        loadedPages.forEach(function(courseList, index) {
+            if (index > jumpto) {
+                var page = getPagedContentContainer(root, index);
+                page.remove();
+            }
+        });
     };
 
     /**
@@ -303,7 +350,7 @@ function(
                 courses: coursesData.courses
             });
         } else {
-            var nocoursesimg = root.attr('data-nocoursesimg');
+            var nocoursesimg = root.find(Selectors.courseView.region).attr('data-nocoursesimg');
             return Templates.render(TEMPLATES.NOCOURSES, {
                 nocoursesimg: nocoursesimg
             });
@@ -316,7 +363,7 @@ function(
      * @param {object} root The root element for the courses view.
      * @param {object} content The content element for the courses view.
      */
-    var initializePagedContent = function(root, content, jumpto) {
+    var initializePagedContent = function(root) {
         var filters = getFilterValues(root);
 
         var pagedContentPromise = PagedContentFactory.createWithLimit(
@@ -326,32 +373,78 @@ function(
 
                 pagesData.forEach(function(pageData) {
                     var currentPage = pageData.pageNumber;
-                    var pageNumber = pageData.pageNumber - 1;
+                    var limit = pageData.limit;
+
+                    if (lastPage == currentPage) {
+                        // If we are on the last page and have it's data then load it from cache
+                        actions.allItemsLoaded(lastPage);
+                        promises.push(renderCourses(root, loadedPages[currentPage]));
+                        return true;
+                    }
+
+                    // Get 2 pages worth of data as we will need it for the hidden functionality.
+                    if (loadedPages[currentPage + 1] == undefined) {
+                        if (loadedPages[currentPage] == undefined) {
+                            limit *= 2;
+                        }
+                    }
 
                     var pagePromise = getMyCourses(
                         filters,
-                        pageData.limit,
-                        pageNumber
+                        limit
                     ).then(function(coursesData) {
-                        if (coursesData.courses.length < pageData.limit) {
-                            actions.allItemsLoaded(pageData.pageNumber);
+                        var courses = coursesData.courses;
+                        var nextPageStart = 0;
+                        var pageCourses = [];
+
+                        // If current page's data is loaded make sure we max it to page limit
+                        if (loadedPages[currentPage] != undefined) {
+                            pageCourses = loadedPages[currentPage].courses;
+                            var currentPageLength = pageCourses.length;
+                            if (currentPageLength < pageData.limit) {
+                                nextPageStart = pageData.limit - currentPageLength;
+                                pageCourses = $.merge(loadedPages[currentPage].courses, courses.slice(0, nextPageStart));
+                            }
+                        } else {
+                            nextPageStart = pageData.limit;
+                            pageCourses = courses.slice(0, pageData.limit);
                         }
-                        loadedPages[currentPage] = coursesData;
-                        return renderCourses(root, coursesData);
+
+                        // Finished setting up the current page
+                        loadedPages[currentPage] = {
+                            courses: pageCourses
+                        };
+
+                        // Set up the next page
+                        var remainingCourses = courses.slice(nextPageStart, courses.length);
+                        loadedPages[currentPage + 1] = {
+                            courses: remainingCourses
+                        };
+
+                        // Set the last page to either the current or next page
+                        if (loadedPages[currentPage].courses.length < pageData.limit) {
+                            lastPage = currentPage;
+                            actions.allItemsLoaded(currentPage);
+                        } else if (loadedPages[currentPage + 1] != undefined
+                            && loadedPages[currentPage + 1].courses.length < pageData.limit) {
+                            lastPage = currentPage + 1;
+                        }
+
+                        courseOffset = coursesData.nextoffset;
+                        return renderCourses(root, loadedPages[currentPage]);
                     })
-                        .catch(Notification.exception);
+                    .catch(Notification.exception);
 
                     promises.push(pagePromise);
                 });
 
                 return promises;
             },
-            DEFAULT_PAGED_CONTENT_CONFIG,
-            jumpto
+            DEFAULT_PAGED_CONTENT_CONFIG
         );
 
         pagedContentPromise.then(function(html, js) {
-            return Templates.replaceNodeContents(content, html, js);
+            return Templates.replaceNodeContents(root.find(Selectors.courseView.region), html, js);
         }).catch(Notification.exception);
     };
 
@@ -360,7 +453,7 @@ function(
      *
      * @param {Object} root The myoverview block container element.
      */
-    var registerEventListeners = function(root, content) {
+    var registerEventListeners = function(root) {
         CustomEvents.define(root, [
             CustomEvents.events.activate
         ]);
@@ -397,7 +490,7 @@ function(
             };
             Repository.updateUserPreferences(request);
 
-            initializeJumpto(root, content);
+            hideElement(root, target);
             data.originalEvent.preventDefault();
         });
 
@@ -416,7 +509,7 @@ function(
 
             Repository.updateUserPreferences(request);
 
-            initializeJumpto(root, content);
+            hideElement(root, target);
             data.originalEvent.preventDefault();
         });
     };
@@ -425,33 +518,32 @@ function(
      * Intialise the courses list and cards views on page load.
      * 
      * @param {object} root The root element for the courses view.
-     * @param {object} content The content element for the courses view.
      */
-    var init = function(root, content) {
-
+    var init = function(root) {
         root = $(root);
+        loadedPages = [];
+        lastPage = 0;
+        courseOffset = 0;
 
         if (!root.attr('data-init')) {
-            registerEventListeners(root, content);
+            registerEventListeners(root);
             root.attr('data-init', true);
         }
 
-        initializePagedContent(root, content);
+        initializePagedContent(root);
     };
 
     /**
 
      * Reset the courses views to their original
-     * state on first page load.
+     * state on first page load.courseOffset
      *
      * This is called when configuration has changed for the event lists
      * to cause them to reload their data.
      *
      * @param {Object} root The root element for the timeline view.
-     * @param {Object} content The content element for the timeline view.
      */
-    var reset = function(root, content) {
-
+    var reset = function(root) {
         if (loadedPages.length > 0) {
             loadedPages.forEach(function(courseList, index) {
                 var pagedContentPage = getPagedContentContainer(root, index);
@@ -460,7 +552,7 @@ function(
                 }).catch(Notification.exception);
             });
         } else {
-            init(root, content);
+            init(root);
         }
     };
 
