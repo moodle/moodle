@@ -1960,17 +1960,63 @@ class api {
     public static function get_conversation_between_users(array $userids) {
         global $DB;
 
-        $hash = helper::get_conversation_hash($userids);
+        $conversations = self::get_individual_conversations_between_users([$userids]);
+        $conversation = $conversations[0];
 
-        $params = [
-            'type' => self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
-            'convhash' => $hash
-        ];
-        if ($conversation = $DB->get_record('message_conversations', $params)) {
+        if ($conversation) {
             return $conversation->id;
         }
 
         return false;
+    }
+
+    /**
+     * Returns the conversations between sets of users.
+     *
+     * The returned array of results will be in the same order as the requested
+     * arguments, null will be returned if there is no conversation for that user
+     * pair.
+     *
+     * For example:
+     * If we have 6 users with ids 1, 2, 3, 4, 5, 6 where only 2 conversations
+     * exist. One between 1 and 2 and another between 5 and 6.
+     *
+     * Then if we call:
+     * $conversations = get_individual_conversations_between_users([[1,2], [3,4], [5,6]]);
+     *
+     * The conversations array will look like:
+     * [<conv_record>, null, <conv_record>];
+     *
+     * Where null is returned for the pairing of [3, 4] since no record exists.
+     *
+     * @param array $useridsets An array of arrays where the inner array is the set of user ids
+     * @return stdClass[] Array of conversation records
+     */
+    public static function get_individual_conversations_between_users(array $useridsets) : array {
+        global $DB;
+
+        if (empty($useridsets)) {
+            return [];
+        }
+
+        $hashes = array_map(function($userids) {
+            return  helper::get_conversation_hash($userids);
+        }, $useridsets);
+
+        list($inorequalsql, $params) = $DB->get_in_or_equal($hashes);
+        array_unshift($params, self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL);
+        $where = "type = ? AND convhash ${inorequalsql}";
+        $conversations = array_fill(0, count($hashes), null);
+        $records = $DB->get_records_select('message_conversations', $where, $params);
+
+        foreach (array_values($records) as $record) {
+            $index = array_search($record->convhash, $hashes);
+            if ($index !== false) {
+                $conversations[$index] = $record;
+            }
+        }
+
+        return $conversations;
     }
 
     /**
@@ -2106,8 +2152,9 @@ class api {
      *
      * @param int $userid The id of the user who is creating the contact request
      * @param int $requesteduserid The id of the user being requested
+     * @return \stdClass the request
      */
-    public static function create_contact_request(int $userid, int $requesteduserid) {
+    public static function create_contact_request(int $userid, int $requesteduserid) : \stdClass {
         global $DB;
 
         $request = new \stdClass();
@@ -2115,32 +2162,9 @@ class api {
         $request->requesteduserid = $requesteduserid;
         $request->timecreated = time();
 
-        $DB->insert_record('message_contact_requests', $request);
+        $request->id = $DB->insert_record('message_contact_requests', $request);
 
-        // Send a notification.
-        $userfrom = \core_user::get_user($userid);
-        $userfromfullname = fullname($userfrom);
-        $userto = \core_user::get_user($requesteduserid);
-        $url = new \moodle_url('/message/pendingcontactrequests.php');
-
-        $subject = get_string('messagecontactrequestsnotificationsubject', 'core_message', $userfromfullname);
-        $fullmessage = get_string('messagecontactrequestsnotification', 'core_message', $userfromfullname);
-
-        $message = new \core\message\message();
-        $message->courseid = SITEID;
-        $message->component = 'moodle';
-        $message->name = 'messagecontactrequests';
-        $message->notification = 1;
-        $message->userfrom = $userfrom;
-        $message->userto = $userto;
-        $message->subject = $subject;
-        $message->fullmessage = text_to_html($fullmessage);
-        $message->fullmessageformat = FORMAT_HTML;
-        $message->fullmessagehtml = $fullmessage;
-        $message->smallmessage = '';
-        $message->contexturl = $url->out(false);
-
-        message_send($message);
+        return $request;
     }
 
 
@@ -2205,6 +2229,17 @@ class api {
         }
 
         return [];
+    }
+
+    /**
+     * Count how many contact requests the user has received.
+     *
+     * @param \stdClass $user The user to fetch contact requests for
+     * @return int The count
+     */
+    public static function count_received_contact_requests(\stdClass $user) : int {
+        global $DB;
+        return $DB->count_records('message_contact_requests', ['requesteduserid' => $user->id]);
     }
 
     /**
@@ -2352,6 +2387,23 @@ class api {
         global $DB;
 
         return $DB->record_exists('message_users_blocked', ['userid' => $userid, 'blockeduserid' => $blockeduserid]);
+    }
+
+    /**
+     * Get contact requests between users.
+     *
+     * @param int $userid The id of the user who is creating the contact request
+     * @param int $requesteduserid The id of the user being requested
+     * @return \stdClass[]
+     */
+    public static function get_contact_requests_between_users(int $userid, int $requesteduserid) : array {
+        global $DB;
+
+        $sql = "SELECT *
+                  FROM {message_contact_requests} mcr
+                 WHERE (mcr.userid = ? AND mcr.requesteduserid = ?)
+                    OR (mcr.userid = ? AND mcr.requesteduserid = ?)";
+        return $DB->get_records_sql($sql, [$userid, $requesteduserid, $requesteduserid, $userid]);
     }
 
     /**

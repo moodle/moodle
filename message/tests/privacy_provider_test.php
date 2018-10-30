@@ -693,8 +693,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 4 conversation members.
         $this->assertEquals(4, $DB->count_records('message_conversation_members'));
 
-        // There should be 3 notifications + 2 for the contact request.
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        // There should be 3 notifications.
+        $this->assertEquals(3, $DB->count_records('notifications'));
 
         provider::delete_data_for_all_users_in_context($user1context);
 
@@ -732,8 +732,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // And user1 is not in any conversation.
         $this->assertEquals(0, $DB->count_records('message_conversation_members', ['userid' => $user1->id]));
 
-        // Confirm there is only 1 notification + 1 for the contact request.
-        $this->assertEquals(2, $DB->count_records('notifications'));
+        // Confirm there is only 1 notification.
+        $this->assertEquals(1, $DB->count_records('notifications'));
         // And it is not related to user1.
         $this->assertEquals(0,
                 $DB->count_records_select('notifications', 'useridfrom = ? OR useridto = ? ', [$user1->id, $user1->id]));
@@ -800,8 +800,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be two conversation members.
         $this->assertEquals(2, $DB->count_records('message_conversation_members'));
 
-        // There should be three notifications + two for the contact requests.
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        // There should be three notifications.
+        $this->assertEquals(3, $DB->count_records('notifications'));
 
         $user1context = context_user::instance($user1->id);
         $contextlist = new \core_privacy\local\request\approved_contextlist($user1, 'core_message',
@@ -846,12 +846,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $mcm = reset($mcms);
         $this->assertEquals($user2->id, $mcm->userid);
 
-        $this->assertCount(2, $notifications);
+        $this->assertCount(1, $notifications);
         ksort($notifications);
-
-        $notification = array_shift($notifications);
-        $this->assertEquals($user2->id, $notification->useridfrom);
-        $this->assertEquals($user4->id, $notification->useridto);
 
         $notification = array_shift($notifications);
         $this->assertEquals($user2->id, $notification->useridfrom);
@@ -1120,7 +1116,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(2, $DB->count_records('message_conversation_members'));
 
         // There should be three notifications + two for the contact requests.
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        $this->assertEquals(3, $DB->count_records('notifications'));
 
         $user1context = context_user::instance($user1->id);
         $approveduserlist = new \core_privacy\local\request\approved_userlist($user1context, 'core_message',
@@ -1167,12 +1163,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $mcm = reset($mcms);
         $this->assertEquals($user2->id, $mcm->userid);
 
-        $this->assertCount(2, $notifications);
+        $this->assertCount(1, $notifications);
         ksort($notifications);
-
-        $notification = array_shift($notifications);
-        $this->assertEquals($user2->id, $notification->useridfrom);
-        $this->assertEquals($user4->id, $notification->useridto);
 
         $notification = array_shift($notifications);
         $this->assertEquals($user2->id, $notification->useridfrom);
