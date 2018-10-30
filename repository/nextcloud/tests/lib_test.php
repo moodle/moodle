@@ -449,7 +449,7 @@ XML;
 
         // Method get_link correctly raises an exception that contains error code and message.
         $this->expectException(\repository_nextcloud\request_exception::class);
-        $this->expectExceptionMessage(get_string('request_exception', 'repository_nextcloud', array('instance' => 'Nextcloud',
+        $this->expectExceptionMessage(get_string('request_exception', 'repository_nextcloud', array('instance' => $this->repo->get_name(),
             'errormessage' => sprintf('(%s) %s', '404', 'Msg'))));
         $this->repo->get_link($file);
     }
@@ -792,7 +792,7 @@ XML;
         $this->set_private_property('', 'client');
         $this->expectException(repository_nextcloud\request_exception::class);
         $this->expectExceptionMessage(get_string('contactadminwith', 'repository_nextcloud',
-            'The OAuth client could not be connected.'));
+            'The OAuth clients could not be connected.'));
 
         $this->repo->send_file($storedfile, '', '', '');
 

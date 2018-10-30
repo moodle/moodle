@@ -80,7 +80,7 @@ class issuer_management {
     public static function parse_endpoint_url(string $endpointname, \core\oauth2\issuer $issuer): array {
         $url = $issuer->get_endpoint_url($endpointname);
         if (empty($url)) {
-            throw new configuration_exception(sprintf('Endpoint %s not defined.', $endpointname));
+            throw new configuration_exception(get_string('endpointnotdefined', 'repository_nextcloud', $endpointname));
         }
         return parse_url($url);
     }

@@ -295,15 +295,14 @@ class repository_nextcloud extends repository {
 
         $response = $this->ocsclient->call('create_share', $ocsparams);
         $xml = simplexml_load_string($response);
-        $repositoryname = get_string('pluginname', 'repository_nextcloud');
 
         if ($xml === false ) {
-            throw new \repository_nextcloud\request_exception(array('instance' => $repositoryname,
-                'errormessage' => 'Invalid response'));
+            throw new \repository_nextcloud\request_exception(array('instance' => $this->get_name(),
+                'errormessage' => get_string('invalidresponse', 'repository_nextcloud')));
         }
 
         if ((string)$xml->meta->status !== 'ok') {
-            throw new \repository_nextcloud\request_exception(array('instance' => $repositoryname, 'errormessage' => sprintf(
+            throw new \repository_nextcloud\request_exception(array('instance' => $this->get_name(), 'errormessage' => sprintf(
                 '(%s) %s', $xml->meta->statuscode, $xml->meta->message)));
         }
 
@@ -436,7 +435,7 @@ class repository_nextcloud extends repository {
         // 1. assure the client and user is logged in.
         if (empty($this->client) || $this->get_system_oauth_client() === false || $this->get_system_ocs_client() === null) {
             $details = get_string('contactadminwith', 'repository_nextcloud',
-                'The OAuth client could not be connected.');
+                get_string('noclientconnection', 'repository_nextcloud'));
             throw new \repository_nextcloud\request_exception(array('instance' => $repositoryname, 'errormessage' => $details));
         }
 
@@ -481,7 +480,7 @@ class repository_nextcloud extends repository {
             $copyresult = $linkmanager->transfer_file_to_path($filetarget, $this->controlledlinkfoldername,
                 'move', $this->dav);
             if (!($copyresult == 201 || $copyresult == 412)) {
-                throw new \repository_nextcloud\request_exception(array('instance' => $this->repositoryname,
+                throw new \repository_nextcloud\request_exception(array('instance' => $repositoryname,
                     'errormessage' => get_string('couldnotmove', 'repository_nextcloud', $this->controlledlinkfoldername)));
             }
             $shareid = $responsecreateshare['shareid'];
@@ -828,9 +827,7 @@ class repository_nextcloud extends repository {
 
         echo $OUTPUT->header();
 
-        $repositoryname = get_string('pluginname', 'repository_nextcloud');
-
-        $button = new single_button($url, get_string('logintoaccount', 'repository', $repositoryname),
+        $button = new single_button($url, get_string('logintoaccount', 'repository', $this->get_name()),
             'post', true);
         $button->add_action(new popup_action('click', $url, 'Login'));
         $button->class = 'mdl-align';

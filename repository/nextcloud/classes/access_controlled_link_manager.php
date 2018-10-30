@@ -271,7 +271,7 @@ class access_controlled_link_manager{
             if ($response != 201) {
                 $this->systemwebdavclient->close();
                 $details = get_string('contactadminwith', 'repository_nextcloud',
-                    "Folder path $fullpath could not be created in the system account.");
+                    get_string('pathnotcreated', 'repository_nextcloud', $fullpath));
                 throw new request_exception(array('instance' => $this->repositoryname,
                     'errormessage' => $details));
             }

@@ -59,3 +59,7 @@ $string['contactadminwith'] = 'The requested action could not be executed. In ca
 $string['cannotconnect'] = 'The user could not be authenticated, please log in and then upload the file.';
 $string['filenotaccessed'] = 'The requested file could not be accessed. Please check whether you have chosen a valid file and you are authenticated with the right account.';
 $string['couldnotmove'] = 'The requested file could not be moved in the {$a} folder.';
+$string['invalidresponse'] = 'Invalid server response.';
+$string['noclientconnection'] = 'The OAuth clients could not be connected.';
+$string['pathnotcreated'] = 'Folder path {$a} could not be created in the system account.';
+$string['endpointnotdefined'] = 'Endpoint {$a} not defined.';
