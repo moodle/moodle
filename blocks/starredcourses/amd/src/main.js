@@ -26,14 +26,18 @@ define(
     'core/notification',
     'block_starredcourses/repository',
     'core/paged_content_factory',
-    'core/templates'
+    'core/pubsub',
+    'core/templates',
+    'core_course/events'
 ],
 function(
     $,
     Notification,
     Repository,
     PagedContentFactory,
-    Templates
+    PubSub,
+    Templates,
+    CourseEvents
 ) {
 
     var SELECTORS = {
@@ -111,13 +115,11 @@ function(
      * @param {Number} userid The user id.
      */
     var registerEventListeners = function(root, userid) {
-        var body = $('body');
-
-        body.on('myoverview-events:course_starred', function() {
+        PubSub.subscribe(CourseEvents.favourited, function() {
             reloadContent(root, userid);
         });
 
-        body.on('myoverview-events:course_unstarred', function() {
+        PubSub.subscribe(CourseEvents.unfavorited, function() {
             reloadContent(root, userid);
         });
     };
