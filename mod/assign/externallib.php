@@ -374,6 +374,7 @@ class mod_assign_external extends external_api {
                      'm.requireallteammemberssubmit, '.
                      'm.teamsubmissiongroupingid, ' .
                      'm.blindmarking, ' .
+                     'm.hidegrader, ' .
                      'm.revealidentities, ' .
                      'm.attemptreopenmethod, '.
                      'm.maxattempts, ' .
@@ -447,6 +448,7 @@ class mod_assign_external extends external_api {
                         'requireallteammemberssubmit' => $module->requireallteammemberssubmit,
                         'teamsubmissiongroupingid' => $module->teamsubmissiongroupingid,
                         'blindmarking' => $module->blindmarking,
+                        'hidegrader' => $module->hidegrader,
                         'revealidentities' => $module->revealidentities,
                         'attemptreopenmethod' => $module->attemptreopenmethod,
                         'maxattempts' => $module->maxattempts,
@@ -524,6 +526,7 @@ class mod_assign_external extends external_api {
                 'requireallteammemberssubmit' => new external_value(PARAM_INT, 'if enabled, all team members must submit'),
                 'teamsubmissiongroupingid' => new external_value(PARAM_INT, 'the grouping id for the team submission groups'),
                 'blindmarking' => new external_value(PARAM_INT, 'if enabled, hide identities until reveal identities actioned'),
+                'hidegrader' => new external_value(PARAM_INT, 'If enabled, hide grader to student'),
                 'revealidentities' => new external_value(PARAM_INT, 'show identities for a blind marking assignment'),
                 'attemptreopenmethod' => new external_value(PARAM_TEXT, 'method used to control opening new attempts'),
                 'maxattempts' => new external_value(PARAM_INT, 'maximum number of attempts allowed'),
@@ -2362,6 +2365,9 @@ class mod_assign_external extends external_api {
         if ($gradingsummary) {
             $result['gradingsummary'] = $gradingsummary;
         }
+        // Show the grader's identity if 'Hide Grader' is disabled or has the 'Show Hidden Grader' capability.
+        $showgradername = (has_capability('mod/assign:showhiddengrader', $context, $user) or
+            !$assign->is_hidden_grader());
 
         // Did we submit anything?
         if ($lastattempt) {
@@ -2408,6 +2414,9 @@ class mod_assign_external extends external_api {
         // The feedback for our latest submission.
         if ($feedback) {
             if ($feedback->grade) {
+                if (!$showgradername) {
+                    $feedback->grade->grader = false;
+                }
                 $feedbackplugins = $assign->get_feedback_plugins();
                 $feedback->plugins = self::get_plugins_data($assign, $feedbackplugins, $feedback->grade);
             } else {
@@ -2446,7 +2455,12 @@ class mod_assign_external extends external_api {
 
                 if ($grade) {
                     // From object to id.
-                    $grade->grader = $grade->grader->id;
+                    if (!$showgradername) {
+                        $grade->grader = false;
+                    } else {
+                        $grade->grader = $grade->grader->id;
+                    }
+
                     $feedbackplugins = self::get_plugins_data($assign, $previousattempts->feedbackplugins, $grade);
 
                     $attempt['grade'] = $grade;

@@ -2499,8 +2499,8 @@ class assign {
                 if ($submission->hidegrader && !has_capability('mod/assign:showhiddengrader', $contextmodule, $user)) {
                     $messagetype = 'feedbackavailableanon';
                     // There's no point in having an "anonymous grader" if the notification email
-                    // comes from them. Send the email from the primary site admin instead.
-                    $grader = get_admin();
+                    // comes from them. Send the email from the noreply user instead.
+                    $grader = core_user::get_noreply_user();
                 }
 
                 $eventtype = 'assign_notification';

@@ -175,10 +175,9 @@ function xmldb_assign_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2018120500) {
-    // Define field hidegrader to be added to assign.
+        // Define field hidegrader to be added to assign.
         $table = new xmldb_table('assign');
-        $field = new xmldb_field('hidegrader', XMLDB_TYPE_INTEGER, '2', null,
-                                 XMLDB_NOTNULL, null, '0', 'blindmarking');
+        $field = new xmldb_field('hidegrader', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'blindmarking');
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);

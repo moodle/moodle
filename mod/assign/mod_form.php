@@ -199,7 +199,7 @@ class mod_assign_mod_form extends moodleform_mod {
         if ($assignment->has_submissions_or_grades() ) {
             $mform->freeze('blindmarking');
         }
-        
+
         $name = get_string('hidegrader', 'assign');
         $mform->addElement('selectyesno', 'hidegrader', $name);
         $mform->addHelpButton('hidegrader', 'hidegrader', 'assign');

@@ -1,9 +1,9 @@
-@mod @mod_assign
+@mod @mod_assign @_file_upload
 Feature: Hide grader identities identity from students
   In order to keep the grader's identity a secret
   As a moodle teacher
   I need to enable Hide Grader in the assignment settings
- 
+
   Background:
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
@@ -40,7 +40,7 @@ Feature: Hide grader identities identity from students
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I navigate to "View all submissions" in current page administration
     And I should not see "Graded" in the "Student 1" "table_row"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50"
@@ -48,10 +48,10 @@ Feature: Hide grader identities identity from students
     And I press "Save changes"
     And I press "Ok"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I navigate to "View all submissions" in current page administration
     And I should see "Graded" in the "Student 1" "table_row"
     And I log out
-  
+
   @javascript
   Scenario: Hidden grading is disabled.
     When I log in as "student1"
@@ -61,14 +61,14 @@ Feature: Hide grader identities identity from students
     And I should see "Catch for us the foxes."
     And I should see "Teacher" in the "Graded by" "table_row"
     And I log out
-    
+
   @javascript
   Scenario: Hidden grading is enabled.
     # Enable the hidden grader option
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" in current page administration
     And I follow "Expand all"
     And I set the field "Hide grader identity from students" to "1"
     And I press "Save and return to course"
