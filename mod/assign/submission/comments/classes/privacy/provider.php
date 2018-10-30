@@ -41,7 +41,9 @@ use \mod_assign\privacy\assign_plugin_request_data;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements metadataprovider, \mod_assign\privacy\assignsubmission_provider {
+class provider implements metadataprovider,
+        \mod_assign\privacy\assignsubmission_provider,
+        \mod_assign\privacy\assignsubmission_user_provider {
 
     /**
      * Return meta data about this plugin.
@@ -90,6 +92,21 @@ class provider implements metadataprovider, \mod_assign\privacy\assignsubmission
     }
 
     /**
+     * If you have tables that contain userids and you can generate entries in your tables without creating an
+     * entry in the assign_submission table then please fill in this method.
+     *
+     * @param  \core_privacy\local\request\userlist $userlist The userlist object
+     */
+    public static function get_userids_from_context(\core_privacy\local\request\userlist $userlist) {
+        $context = $userlist->get_context();
+        if ($context->contextlevel != CONTEXT_MODULE) {
+            return;
+        }
+        comments_provider::get_users_in_context_from_sql($userlist, 'c', 'assignsubmission_comments', 'submission_comments',
+                $context->id);
+    }
+
+    /**
      * Export all user data for this plugin.
      *
      * @param  assign_plugin_request_data $exportdata Data used to determine which context and user to export and other useful
@@ -128,4 +145,20 @@ class provider implements metadataprovider, \mod_assign\privacy\assignsubmission
             [$exportdata->get_context()->id]);
         comments_provider::delete_comments_for_user($contextlist, 'assignsubmission_comments', 'submission_comments');
     }
+
+    /**
+     * Deletes all submissions for the submission ids / userids provided in a context.
+     * assign_plugin_request_data contains:
+     * - context
+     * - assign object
+     * - submission ids (pluginids)
+     * - user ids
+     * @param  assign_plugin_request_data $deletedata A class that contains the relevant information required for deletion.
+     */
+    public static function delete_submissions(assign_plugin_request_data $deletedata) {
+        $userlist = new \core_privacy\local\request\approved_userlist($deletedata->get_context(), 'assignsubmission_comments',
+                $deletedata->get_userids());
+        comments_provider::delete_comments_for_users($userlist, 'assignsubmission_comments', 'submission_comments');
+    }
+
 }

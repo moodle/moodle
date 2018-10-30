@@ -29,7 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
 use \core_privacy\local\metadata\collection;
-use \core_privacy\local\metadata\provider as metadataprovider;
 use \core_privacy\local\request\writer;
 use \core_privacy\local\request\contextlist;
 use \mod_assign\privacy\assign_plugin_request_data;
@@ -41,7 +40,10 @@ use \mod_assign\privacy\assign_plugin_request_data;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements metadataprovider, \mod_assign\privacy\assignsubmission_provider {
+class provider implements
+        \core_privacy\local\metadata\provider,
+        \mod_assign\privacy\assignsubmission_provider,
+        \mod_assign\privacy\assignsubmission_user_provider {
 
     /**
      * Return meta data about this plugin.
@@ -71,6 +73,16 @@ class provider implements metadataprovider, \mod_assign\privacy\assignsubmission
      */
     public static function get_student_user_ids(\mod_assign\privacy\useridlist $useridlist) {
         // No need.
+    }
+
+    /**
+     * If you have tables that contain userids and you can generate entries in your tables without creating an
+     * entry in the assign_submission table then please fill in this method.
+     *
+     * @param  userlist $userlist The userlist object
+     */
+    public static function get_userids_from_context(\core_privacy\local\request\userlist $userlist) {
+        // Not required.
     }
 
     /**
@@ -122,7 +134,7 @@ class provider implements metadataprovider, \mod_assign\privacy\assignsubmission
     }
 
     /**
-     * A call to this method should delete user data (where practicle) using the userid and submission.
+     * A call to this method should delete user data (where practical) using the userid and submission.
      *
      * @param  assign_plugin_request_data $deletedata Details about the user and context to focus the deletion.
      */
@@ -137,7 +149,32 @@ class provider implements metadataprovider, \mod_assign\privacy\assignsubmission
         $fs->delete_area_files($deletedata->get_context()->id, 'assignsubmission_file', ASSIGNSUBMISSION_FILE_FILEAREA,
                 $submissionid);
 
-        $DB->delete_records('assignsubmission_file', ['assignment' => $deletedata->get_assign()->get_instance()->id,
-                'submission' => $submissionid]);
+        $DB->delete_records('assignsubmission_file', ['assignment' => $deletedata->get_assignid(), 'submission' => $submissionid]);
+    }
+
+    /**
+     * Deletes all submissions for the submission ids / userids provided in a context.
+     * assign_plugin_request_data contains:
+     * - context
+     * - assign object
+     * - submission ids (pluginids)
+     * - user ids
+     * @param  assign_plugin_request_data $deletedata A class that contains the relevant information required for deletion.
+     */
+    public static function delete_submissions(assign_plugin_request_data $deletedata) {
+        global $DB;
+
+        \core_plagiarism\privacy\provider::delete_plagiarism_for_users($deletedata->get_userids(), $deletedata->get_context());
+
+        if (empty($deletedata->get_submissionids())) {
+            return;
+        }
+        $fs = get_file_storage();
+        list($sql, $params) = $DB->get_in_or_equal($deletedata->get_submissionids(), SQL_PARAMS_NAMED);
+        $fs->delete_area_files_select($deletedata->get_context()->id, 'assignsubmission_file', ASSIGNSUBMISSION_FILE_FILEAREA,
+                $sql, $params);
+
+        $params['assignid'] = $deletedata->get_assignid();
+        $DB->delete_records_select('assignsubmission_file', "assignment = :assignid AND submission $sql", $params);
     }
 }
