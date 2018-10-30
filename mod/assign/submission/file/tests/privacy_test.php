@@ -172,4 +172,77 @@ class assignsubmission_file_privacy_testcase extends \mod_assign\tests\mod_assig
         // There should be files here.
         $this->assertFalse($plugin2->is_empty($submission2));
     }
+
+    /**
+     * Test deletion of bulk submissions for a context.
+     */
+    public function test_delete_submissions() {
+        global $DB;
+
+        $this->resetAfterTest();
+        // Create course, assignment, submission, and then a feedback comment.
+        $course = $this->getDataGenerator()->create_course();
+        // Student.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user4->id, $course->id, 'student');
+
+        $assign1 = $this->create_instance(['course' => $course]);
+        $assign2 = $this->create_instance(['course' => $course]);
+
+        $context1 = $assign1->get_context();
+        $context2 = $assign2->get_context();
+
+        $student1filename = 'user1file.pdf';
+        list($plugin1, $submission1) = $this->create_file_submission($assign1, $user1, $student1filename);
+        $student2filename = 'user2file.pdf';
+        list($plugin2, $submission2) = $this->create_file_submission($assign1, $user2, $student2filename);
+        $student3filename = 'user3file.pdf';
+        list($plugin3, $submission3) = $this->create_file_submission($assign1, $user3, $student3filename);
+        $student4filename = 'user4file.pdf';
+        list($plugin4, $submission4) = $this->create_file_submission($assign2, $user4, $student4filename);
+        $student5filename = 'user5file.pdf';
+        list($plugin5, $submission5) = $this->create_file_submission($assign2, $user3, $student5filename);
+
+        $submissionids = [
+            $submission1->id,
+            $submission3->id
+        ];
+
+        $userids = [
+            $user1->id,
+            $user3->id
+        ];
+
+        $data = $DB->get_records('files', ['contextid' => $context1->id, 'component' => 'assignsubmission_file']);
+        $this->assertCount(6, $data);
+
+        $data = $DB->get_records('assignsubmission_file', ['assignment' => $assign1->get_instance()->id]);
+        $this->assertCount(3, $data);
+
+        // Records in the second assignment (not being touched).
+        $data = $DB->get_records('assignsubmission_file', ['assignment' => $assign2->get_instance()->id]);
+        $this->assertCount(2, $data);
+
+        $deletedata = new \mod_assign\privacy\assign_plugin_request_data($context1, $assign1);
+        $deletedata->set_userids($userids);
+        $deletedata->populate_submissions_and_grades();
+        \assignsubmission_file\privacy\provider::delete_submissions($deletedata);
+        $data = $DB->get_records('files', ['contextid' => $context1->id, 'component' => 'assignsubmission_file']);
+        $this->assertCount(2, $data);
+
+        // Submission 1 and 3 have been removed. We should be left with submission2.
+        $data = $DB->get_records('assignsubmission_file', ['assignment' => $assign1->get_instance()->id]);
+        $this->assertCount(1, $data);
+
+        // This should be untouched.
+        $data = $DB->get_records('assignsubmission_file', ['assignment' => $assign2->get_instance()->id]);
+        $this->assertCount(2, $data);
+    }
 }
