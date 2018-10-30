@@ -45,14 +45,6 @@ function resource_supports($feature) {
 }
 
 /**
- * Returns all other caps used in module
- * @return array
- */
-function resource_get_extra_capabilities() {
-    return array('moodle/site:accessallgroups');
-}
-
-/**
  * This function is used by the reset_course_userdata function in moodlelib.
  * @param $data the data submitted from the reset course.
  * @return array status array

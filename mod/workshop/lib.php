@@ -1154,15 +1154,6 @@ function workshop_scale_used_anywhere($scaleid) {
     return false;
 }
 
-/**
- * Returns all other caps used in the module
- *
- * @return array
- */
-function workshop_get_extra_capabilities() {
-    return array('moodle/site:accessallgroups');
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Gradebook API                                                              //
 ////////////////////////////////////////////////////////////////////////////////
