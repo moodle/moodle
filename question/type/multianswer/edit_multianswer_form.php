@@ -513,15 +513,12 @@ class qtype_multianswer_edit_form extends question_edit_form {
                         }
                     }
                     if ($subquestion->qtype == 'multichoice' && $answercount < 2) {
-                            $errors[$prefix.'answer[0]'] =
-                                    get_string('notenoughanswers', 'qtype_multichoice', 2);
+                        $errors[$prefix.'answer[0]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
                     } else if ($answercount == 0) {
-                            $errors[$prefix.'answer[0]'] =
-                                    get_string('notenoughanswers', 'question', 1);
+                        $errors[$prefix.'answer[0]'] = get_string('notenoughanswers', 'question', 1);
                     }
                     if ($maxgrade == false) {
-                        $errors[$prefix.'fraction[0]'] =
-                                get_string('fractionsnomax', 'question');
+                        $errors[$prefix.'fraction[0]'] = get_string('fractionsnomax', 'question');
                     }
                     $sub++;
                 }
