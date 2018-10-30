@@ -25,7 +25,7 @@
 function mycourses_get_my_completion($datefrom = 0) {
     global $DB, $USER, $CFG;
 
-    $companyid = iomad::get_my_companyid(context_system::instance());
+    $companyid = iomad::get_my_companyid(context_system::instance(), false);
 
     // Check if there is a iomadcertificate module.
     if ($certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
