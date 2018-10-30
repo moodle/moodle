@@ -504,7 +504,7 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
             if ($currlicensedata->startdate != $data->startdate) {
                 $eventother['oldstartdate'] = $currlicensedata->startdate;
             }
-            if ($currlicensedata->educator != $data->educator) {
+            if ($currlicensedata->type != $data->type) {
                 $eventother['educatorchange'] = true;
             }
             $event = \block_iomad_company_admin\event\company_license_updated::create(array('context' => context_system::instance(),
