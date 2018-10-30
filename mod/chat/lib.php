@@ -1272,16 +1272,6 @@ function chat_reset_userdata($data) {
 }
 
 /**
- * Returns all other caps used in module
- *
- * @return array
- */
-function chat_get_extra_capabilities() {
-    return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
-}
-
-
-/**
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, null if doesn't know
  */
