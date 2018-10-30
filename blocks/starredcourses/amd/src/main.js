@@ -37,6 +37,7 @@ function(
 ) {
 
     var SELECTORS = {
+        STARRED_COURSES_REGION_VIEW: '[data-region="starred-courses-view"]',
         STARRED_COURSES_REGION: '[data-region="starred-courses-view-content"]'
     };
 
@@ -56,7 +57,7 @@ function(
                 courses: courses
             });
         } else {
-            var nocoursesimg = root.attr('data-nocoursesimg');
+            var nocoursesimg = $(SELECTORS.STARRED_COURSES_REGION_VIEW).attr('data-nocoursesimg');
             return Templates.render('block_starredcourses/no-courses', {
                 nocoursesimg: nocoursesimg
             });
@@ -64,14 +65,13 @@ function(
     };
 
     /**
-     * Initialise all of the modules for the starred courses block.
+     * Fetch user's starred courses and reload the content of the block.
      *
-     * @param {object} root The root element for the block.
+     * @param {object} root The root element for the starred view.
      * @param {Number} userid The user id.
      */
-    var init = function(userid, root) {
-        root = $(root);
-        var content = $(SELECTORS.STARRED_COURSES_REGION);
+    var reloadContent = function(root, userid) {
+        var content = root.find(SELECTORS.STARRED_COURSES_REGION);
 
         PagedContentFactory.createWithLimit(
             NUM_COURSES_TOTAL,
@@ -80,29 +80,59 @@ function(
 
                 pagesData.forEach(function(pageData) {
                     var args = {
-                            limit: NUM_COURSES_TOTAL,
-                            offset: pageData.offset,
-                            userid: userid
-                        };
+                        limit: NUM_COURSES_TOTAL,
+                        offset: pageData.offset,
+                        userid: userid
+                    };
 
                     // Load the page data.
-                    var pagePromise = Repository.getStarredCourses(args).then(function (courses) {
+                    var pagePromise = Repository.getStarredCourses(args).then(function(courses) {
                         if (courses.length > 0) {
                             return renderCourses(root, courses);
                         } else {
                             actions.allItemsLoaded(pageData.pageNumber);
                             return renderCourses(root, courses);
                         }
-
                     });
 
                     promises.push(pagePromise);
                 });
 
                 return promises;
-            }).then(function (html, js) {
-                Templates.replaceNodeContents(content, html, js);
+            }).then(function(html, js) {
+                return Templates.replaceNodeContents(content, html, js);
+            }).catch(Notification.exception);
+    };
+
+    /**
+     * Register event listeners for the block.
+     *
+     * @param {object} root The calendar root element
+     * @param {Number} userid The user id.
+     */
+    var registerEventListeners = function(root, userid) {
+        var body = $('body');
+
+        body.on('myoverview-events:course_starred', function() {
+            reloadContent(root, userid);
         });
+
+        body.on('myoverview-events:course_unstarred', function() {
+            reloadContent(root, userid);
+        });
+    };
+
+    /**
+     * Initialise all of the modules for the starred courses block.
+     *
+     * @param {object} root The root element for the block.
+     */
+    var init = function(root) {
+        root = $(root);
+        var userid = root.data('userid');
+
+        registerEventListeners(root, userid);
+        reloadContent(root, userid);
     };
 
     return {
