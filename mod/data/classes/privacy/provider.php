@@ -162,22 +162,7 @@ class provider implements
         $userlist->add_from_sql('userid', $sql, $params);
 
         // Find users with comments.
-        $sql = "SELECT dr.id
-                  FROM {context} c
-                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
-                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-                  JOIN {data} d ON d.id = cm.instance
-                  JOIN {data_records} dr ON dr.dataid = d.id
-                 WHERE c.id = :contextid";
-
-        $params = [
-            'modname'       => 'data',
-            'contextid'     => $context->id,
-            'contextlevel'  => CONTEXT_MODULE,
-        ];
-
-        \core_comment\privacy\provider::get_users_in_context_from_sql(
-            $userlist, 'com', 'mod_data', 'database_entry', $sql, $params);
+        \core_comment\privacy\provider::get_users_in_context_from_sql($userlist, 'com', 'mod_data', 'database_entry', $context->id);
 
         // Find users with ratings.
         $sql = "SELECT dr.id
