@@ -1,0 +1,27 @@
+// question: 0  name: switch category to $course$/Default for New Features
+$CATEGORY: $course$/Default for New Features
+
+// question: 44  name: Moodle activities
+::Moodle activities::[html]Match the activity to the description.{
+	=An activity supporting asynchronous discussions. -> Forum
+	=A teacher asks a question and specifies a choice of multiple responses. -> Choice
+	=A bank of record entries which participants can add to. -> Database
+	=A collection of web pages that anyone can add to or edit. -> Wiki
+	= -> Chat
+}
+
+// question: 43  name: Greeting
+::Greeting::[html]<a href\="http\://demo.moodle.net/file.php/5/media/bonjour.mp3">Listen to this greeting\:</a><br /><br />What language is being spoken?{
+	~English#Sorry, listen again.
+	=French#Yes, well done!
+	~German#Sorry, listen again.
+	~Spanish#Sorry, listen again.
+}
+
+// question: 46  name: Moodle user
+::Moodle user::[html]Anyone who uses Moodle is a ...{
+	=%100%Moodler#
+}
+
+// question: 45  name: Moodle acronym
+::Moodle acronym::[html]Moodle is an acronym for <span style\="font-style\: italic;">Modular Object-Oriented Dynamic Learning Environment</span>.{TRUE}
