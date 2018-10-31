@@ -8593,6 +8593,9 @@ a.dimmed_text:visited,
   #page-admin-report-backups-index .backup-unfinished[href]:focus, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity50 .info.release[href]:focus {
     background-color: #c9302c; }
 
+.custom-select {
+  width: auto; }
+
 .fade.in {
   opacity: 1; }
 
