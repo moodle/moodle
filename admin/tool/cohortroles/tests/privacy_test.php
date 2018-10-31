@@ -30,6 +30,7 @@ use \core_privacy\local\request\writer;
 use \core_privacy\local\request\approved_contextlist;
 use \tool_cohortroles\api;
 use \tool_cohortroles\privacy\provider;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Unit tests for the tool_cohortroles implementation of the privacy API.
@@ -180,15 +181,106 @@ class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_tes
     }
 
     /**
+     * Test that only users within a course context are fetched.
+     */
+    public function test_get_users_in_context() {
+        $component = 'tool_cohortroles';
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+        $usercontext = context_user::instance($user->id);
+
+        $systemcontext = context_system::instance();
+
+        $this->setAdminUser();
+
+        $userlist = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(0, $userlist);
+
+        $nocohortroles = 3;
+        $this->setup_test_scenario_data($user->id, $nocohortroles);
+
+        // The list of users within the system context should contain user.
+        provider::get_users_in_context($userlist);
+        $this->assertCount(1, $userlist);
+        $this->assertTrue(in_array($user->id, $userlist->get_userids()));
+
+        // The list of users within the user context should be empty.
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(0, $userlist2);
+    }
+
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        $component = 'tool_cohortroles';
+
+        // Create user1.
+        $user1 = $this->getDataGenerator()->create_user();
+        // Create user2.
+        $user2 = $this->getDataGenerator()->create_user();
+        // Create user3.
+        $user3 = $this->getDataGenerator()->create_user();
+        $usercontext3 = context_user::instance($user3->id);
+
+        $systemcontext = context_system::instance();
+
+        $this->setAdminUser();
+
+        $nocohortroles = 3;
+        $this->setup_test_scenario_data($user1->id, $nocohortroles);
+        $this->setup_test_scenario_data($user2->id, $nocohortroles, 'Sausage roll 2',
+                'sausageroll2');
+        $this->setup_test_scenario_data($user3->id, $nocohortroles, 'Sausage roll 3',
+                'sausageroll3');
+
+        $userlist1 = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(3, $userlist1);
+        $this->assertTrue(in_array($user1->id, $userlist1->get_userids()));
+        $this->assertTrue(in_array($user2->id, $userlist1->get_userids()));
+        $this->assertTrue(in_array($user3->id, $userlist1->get_userids()));
+
+        // Convert $userlist1 into an approved_contextlist.
+        $approvedlist1 = new approved_userlist($systemcontext, $component, [$user1->id, $user2->id]);
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist1);
+
+        // Re-fetch users in systemcontext.
+        $userlist1 = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist1);
+        // The user data of user1 and user2 in systemcontext should be deleted.
+        // The user data of user3 in systemcontext should be still present.
+        $this->assertCount(1, $userlist1);
+        $this->assertTrue(in_array($user3->id, $userlist1->get_userids()));
+
+        // Convert $userlist1 into an approved_contextlist in the user context.
+        $approvedlist2 = new approved_userlist($usercontext3, $component, $userlist1->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist2);
+        // Re-fetch users in systemcontext.
+        $userlist1 = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist1);
+        // The user data in systemcontext should not be deleted.
+        $this->assertCount(1, $userlist1);
+    }
+
+    /**
      * Helper function to setup tool_cohortroles records for testing a specific user.
      *
      * @param int $userid           The ID of the user used for testing.
      * @param int $nocohortroles    The number of tool_cohortroles to create for the user.
+     * @param string $rolename      The name of the role to be created.
+     * @param string $roleshortname The short name of the role to be created.
      * @throws \core_competency\invalid_persistent_exception
      * @throws coding_exception
      */
-    protected function setup_test_scenario_data($userid, $nocohortroles) {
-        $roleid = create_role('Sausage Roll', 'sausageroll', 'mmmm');
+    protected function setup_test_scenario_data($userid, $nocohortroles, $rolename = 'Sausage Roll',
+                                                $roleshortname = 'sausageroll') {
+        $roleid = create_role($rolename, $roleshortname, 'mmmm');
 
         for ($c = 0; $c < $nocohortroles; $c++) {
             $cohort = $this->getDataGenerator()->create_cohort();
