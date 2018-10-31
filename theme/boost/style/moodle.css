@@ -11134,8 +11134,7 @@ div.editor_atto_toolbar button .icon {
   [data-region="blocks-column"] {
     width: 100%; } }
 
-.block_myoverview .empty-placeholder-image-lg,
-.block_starredcourses .empty-placeholder-image-lg {
+.block .empty-placeholder-image-lg {
   height: 125px; }
 
 .block_myoverview .course-info-container,
@@ -11189,6 +11188,10 @@ div.editor_atto_toolbar button .icon {
   .block_starredcourses #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus,
   #rubric-rubric.gradingform_rubric .block_starredcourses .btn-link.btn-icon.addcriterion:focus {
     background-color: #e9ecef; }
+
+.block_starredcourses .dashboard-card-deck {
+  flex-flow: nowrap;
+  overflow-y: scroll; }
 
 .summaryimage {
   height: 7rem;

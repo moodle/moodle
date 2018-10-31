@@ -39,15 +39,15 @@
     <div class="card dashboard-card" role="listitem">
         <a href="{{viewurl}}" tabindex="-1">
             <div class="card-img dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
-                <span class="sr-only">{{#str}}aria:courseimage, block_myoverview{{/str}}</span>
-                {{> block_myoverview/favourite-icon }}
+                <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
+                {{> core_course/favouriteicon }}
             </div>
         </a>
         <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}">
             <div class="d-flex align-items-start">
                 <div class="card-title mr-2">
                     <a href="{{viewurl}}">
-                        <span class="sr-only">{{#str}}aria:coursename, block_myoverview{{/str}}</span>
+                        <span class="sr-only">{{#str}}aria:coursename, core_course{{/str}}</span>
                         {{#shortentext}}40, {{{fullname}}} {{/shortentext}}
                     </a>
                 </div>

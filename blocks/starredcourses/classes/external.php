@@ -47,8 +47,7 @@ class block_starredcourses_external extends core_course_external {
     public static function get_starred_courses_parameters() {
         return new external_function_parameters([
             'limit' => new external_value(PARAM_INT, 'Limit', VALUE_DEFAULT, 0),
-            'offset' => new external_value(PARAM_INT, 'Offset', VALUE_DEFAULT, 0),
-            'userid' => new external_value(PARAM_INT, 'id of user, empty for current user', VALUE_DEFAULT, 0)
+            'offset' => new external_value(PARAM_INT, 'Offset', VALUE_DEFAULT, 0)
         ]);
     }
 
@@ -63,23 +62,19 @@ class block_starredcourses_external extends core_course_external {
     public static function get_starred_courses($limit, $offset) {
         global $USER, $PAGE;
 
-        $userid = $USER->id;
-
         $params = self::validate_parameters(self::get_starred_courses_parameters(), [
             'limit' => $limit,
-            'offset' => $offset,
-            'userid' => $userid
+            'offset' => $offset
         ]);
 
-        $userid = $params['userid'];
         $limit = $params['limit'];
         $offset = $params['offset'];
 
-        $usercontext = context_user::instance($userid);
+        $usercontext = context_user::instance($USER->id);
 
         self::validate_context($usercontext);
         $PAGE->set_context($usercontext);
-        $output = $PAGE->get_renderer('block_starredcourses');
+        $renderer = $PAGE->get_renderer('core');
 
         // Get the user favourites service, scoped to a single user (their favourites only).
         $userservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
@@ -87,17 +82,21 @@ class block_starredcourses_external extends core_course_external {
         // Get the favourites, by type, for the user.
         $favourites = $userservice->find_favourites_by_type('core_course', 'courses', $offset, $limit);
 
-        $results = [];
-        foreach ($favourites as $favourite) {
-            $courseid = $favourite->itemid;
-            if (!isset($results[$courseid])) {
-                $exporter = new course_summary_exporter(get_course($courseid),
-                    ['context' => \context_course::instance($courseid), 'isfavourite' => true]);
-                $results[$courseid] = $exporter->export($output);
-            }
-        }
+        // Sort the favourites getting last added first.
+        usort($favourites, function($a, $b) {
+            if ($a->timemodified == $b->timemodified) return 0;
+            return ($a->timemodified > $b->timemodified) ? -1 : 1;
+        });
 
-        return $results;
+        $formattedcourses = array_map(function($favourite) use ($renderer) {
+            $course = get_course($favourite->itemid);
+            $context = \context_course::instance($favourite->itemid);
+
+            $exporter = new course_summary_exporter($course, ['context' => $context, 'isfavourite' => true]);
+            return $exporter->export($renderer);
+        }, $favourites);
+
+        return $formattedcourses;
     }
 
     /**

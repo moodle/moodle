@@ -77,11 +77,12 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
 
 $card-gutter : $card-deck-margin * 2;
 
+.block .empty-placeholder-image-lg {
+    height: 125px;
+}
+
 .block_myoverview,
 .block_starredcourses {
-    .empty-placeholder-image-lg {
-        height: 125px;
-    }
     .course-info-container {
         padding: 0.8rem;
     }
@@ -108,6 +109,13 @@ $card-gutter : $card-deck-margin * 2;
         @include hover-focus {
             background-color: $gray-200;
         }
+    }
+}
+
+.block_starredcourses {
+    .dashboard-card-deck {
+        flex-flow: nowrap;
+        overflow-y: scroll;
     }
 }
 

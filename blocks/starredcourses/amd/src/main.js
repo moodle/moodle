@@ -43,8 +43,6 @@ function(
         STARRED_COURSES_REGION: '[data-region="starred-courses-view-content"]'
     };
 
-    var NUM_COURSES_TOTAL = 5;
-
     /**
      * Render the starred courses.
      *
@@ -76,7 +74,7 @@ function(
         var content = root.find(SELECTORS.STARRED_COURSES_REGION);
 
         var args = {
-            limit: NUM_COURSES_TOTAL,
+            limit: 0,
             offset: 0,
         };
 
