@@ -85,6 +85,7 @@ class repository_nextcloud extends repository {
      * @var ocs_client
      */
     private $systemocsclient = null;
+
     /**
      * Name of the folder for controlled links.
      * @var string
@@ -93,6 +94,7 @@ class repository_nextcloud extends repository {
 
     /**
      * repository_nextcloud constructor.
+     *
      * @param int $repositoryid
      * @param bool|int|stdClass $context
      * @param array $options
@@ -145,6 +147,7 @@ class repository_nextcloud extends repository {
 
     /**
      * Get or initialise an oauth client for the system account.
+     *
      * @return false|oauth2_client False if initialisation was unsuccessful, otherwise an initialised client.
      */
     private function get_system_oauth_client() {
@@ -160,6 +163,7 @@ class repository_nextcloud extends repository {
 
     /**
      * Get or initialise an ocs client for the system account.
+     *
      * @return null|ocs_client Null if initialisation was unsuccessful, otherwise an initialised client.
      */
     private function get_system_ocs_client() {
@@ -179,6 +183,7 @@ class repository_nextcloud extends repository {
 
     /**
      * Initiates the webdav client.
+     *
      * @throws \repository_nextcloud\configuration_exception If configuration is missing (endpoints).
      */
     private function initiate_webdavclient() {
@@ -311,31 +316,18 @@ class repository_nextcloud extends repository {
     }
 
     /**
-     * This method converts the source from the file picker (chosen by the user) into
-     * information, which will be received by methods that fetch files/references from
-     * the Nextcloud server.
+     * This method does not do any translation of the file source.
      *
      * @param string $source source of the file, returned by repository as 'source' and received back from user (not cleaned)
      * @return string file reference, ready to be stored
      */
     public function get_file_reference($source) {
-        $usefilereference = optional_param('usefilereference', false, PARAM_BOOL);
-
-        // A filereference is requested if an alias/shortcut shall be created, i.e. a FILE_REFERENCE option is selected.
-        // Therefore, generate and return a public link to the file.
-        if ($usefilereference) {
-            $reference = $this->get_link($source);
-            $filereturn = new stdClass();
-            $filereturn->type = 'FILE_REFERENCE';
-            $filereturn->link = $reference;
-            return json_encode($filereturn);
-        }
-
-        // Otherwise, the simple relative path to the file is enough.
+        // The simple relative path to the file is enough.
         return $source;
     }
 
-    /** Called when a file is selected as a "access control link".
+    /**
+     * Called when a file is selected as a "access control link".
      * Invoked at MOODLE/repository/repository_ajax.php
      *
      * This is called at the point the reference files are being copied from the draft area to the real area.
@@ -427,10 +419,6 @@ class repository_nextcloud extends repository {
     public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
         $repositoryname = $this->get_name();
         $reference = json_decode($storedfile->get_reference());
-
-        if ($reference->type == 'FILE_REFERENCE') {
-            redirect($reference->link);
-        }
 
         // 1. assure the client and user is logged in.
         if (empty($this->client) || $this->get_system_oauth_client() === false || $this->get_system_ocs_client() === null) {
@@ -552,6 +540,7 @@ class repository_nextcloud extends repository {
 
     /**
      * Get a cached user authenticated oauth client.
+     *
      * @param bool|moodle_url $overrideurl Use this url instead of the repo callback.
      * @return \core\oauth2\client
      */
@@ -570,7 +559,6 @@ class repository_nextcloud extends repository {
         $this->client = \core\oauth2\api::get_user_oauth_client($this->issuer, $returnurl, self::SCOPES);
         return $this->client;
     }
-
 
     /**
      * Prints a simple Login Button which redirects to an authorization window from Nextcloud.
@@ -618,7 +606,6 @@ class repository_nextcloud extends repository {
         $client->is_logged_in();
     }
 
-
     /**
      * Create an instance for this plug-in
      *
@@ -635,7 +622,6 @@ class repository_nextcloud extends repository {
         require_capability('moodle/site:config', context_system::instance());
         return parent::create($type, $userid, $context, $params, $readonly);
     }
-
 
     /**
      * This method adds a select form and additional information to the settings form..
@@ -728,33 +714,32 @@ class repository_nextcloud extends repository {
 
     /**
      * Method to define which file-types are supported (hardcoded can not be changed in Admin Menu)
+     *
      * By default FILE_INTERNAL is supported. In case a system account is connected and an issuer exist,
      * FILE_CONTROLLED_LINK is supported.
+     *
      * FILE_INTERNAL - the file is uploaded/downloaded and stored directly within the Moodle file system.
      * FILE_CONTROLLED_LINK - creates a copy of the file in Nextcloud from which private shares to permitted users will be
      * created. The file itself can not be changed any longer by the owner.
+     *
      * @return int return type bitmask supported
      */
     public function supported_returntypes() {
-        // We can only support access controlled links if the system account is connected.
-        $setting = $this->get_option('supportedreturntypes');
-        $sysisconnected = !empty($this->issuer) && $this->issuer->is_system_account_connected();
-        if ($setting === 'internal') {
+        // We can only support references if the system account is connected.
+        if (!empty($this->issuer) && $this->issuer->is_system_account_connected()) {
+            $setting = $this->get_option('supportedreturntypes');
+            if ($setting === 'internal') {
+                return FILE_INTERNAL;
+            } else if ($setting === 'external') {
+                return FILE_CONTROLLED_LINK;
+            } else {
+                return FILE_CONTROLLED_LINK | FILE_INTERNAL;
+            }
+        } else {
             return FILE_INTERNAL;
         }
-        if ($setting === 'external') {
-            if ($sysisconnected) {
-                return FILE_CONTROLLED_LINK | FILE_REFERENCE | FILE_EXTERNAL;
-            }
-            return FILE_REFERENCE | FILE_EXTERNAL;
-        }
-        // Otherwise all of them are supported (controlled link only with system account).
-        if ($sysisconnected) {
-            return FILE_CONTROLLED_LINK | FILE_INTERNAL | FILE_REFERENCE | FILE_EXTERNAL;
-        }
-        return FILE_INTERNAL | FILE_REFERENCE | FILE_EXTERNAL;
-
     }
+
 
     /**
      * Take the WebDAV `ls()' output and convert it into a format that Moodle's filepicker understands.
@@ -812,6 +797,7 @@ class repository_nextcloud extends repository {
         ksort($folders);
         return array_merge($folders, $files);
     }
+
     /**
      * Print the login in a popup.
      *
@@ -836,10 +822,12 @@ class repository_nextcloud extends repository {
 
         echo $OUTPUT->footer();
     }
+
     /**
      * Prepare response of get_listing; namely
      * - defining setting elements,
      * - filling in the parent path of the currently-viewed directory.
+     *
      * @param string $path Relative path
      * @return array ret array for use as get_listing's $ret
      */
@@ -875,5 +863,28 @@ class repository_nextcloud extends repository {
             }
         }
         return $ret;
+    }
+
+    /**
+     * When a controlled link is clicked in the file picker get the human readable info about this file.
+     *
+     * @param string $reference
+     * @param int $filestatus
+     * @return string
+     */
+    public function get_reference_details($reference, $filestatus = 0) {
+        if ($this->disabled) {
+            throw new repository_exception('cannotdownload', 'repository');
+        }
+        if (empty($reference)) {
+            return get_string('unknownsource', 'repository');
+        }
+        $source = json_decode($reference);
+        $path = '';
+        if (!empty($source->usesystem) && !empty($source->name)) {
+            $path = $source->name;
+        }
+
+        return $path;
     }
 }

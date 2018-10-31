@@ -449,8 +449,8 @@ XML;
 
         // Method get_link correctly raises an exception that contains error code and message.
         $this->expectException(\repository_nextcloud\request_exception::class);
-        $this->expectExceptionMessage(get_string('request_exception', 'repository_nextcloud', array('instance' => $this->repo->get_name(),
-            'errormessage' => sprintf('(%s) %s', '404', 'Msg'))));
+        $params = array('instance' => $this->repo->get_name(), 'errormessage' => sprintf('(%s) %s', '404', 'Msg'));
+        $this->expectExceptionMessage(get_string('request_exception', 'repository_nextcloud', $params));
         $this->repo->get_link($file);
     }
 
@@ -489,70 +489,6 @@ JSON;
      */
     public function test_get_file_reference_withoutoptionalparam() {
         $this->assertEquals('/somefile', $this->repo->get_file_reference('/somefile'));
-    }
-
-    /**
-     * Test get_file reference in case the optional param is set. Therefore has to simulate the get_link method.
-     */
-    public function test_get_file_reference_withoptionalparam() {
-        $_GET['usefilereference'] = true;
-        $filename = '/somefile';
-        // Calls for get link(). Therefore, mocks for get_link are build.
-        $mock = $this->getMockBuilder(\repository_nextcloud\ocs_client::class)->disableOriginalConstructor()->disableOriginalClone(
-            )->getMock();
-        $expectedresponse = <<<XML
-<?xml version="1.0"?>
-<ocs>
- <meta>
-  <status>ok</status>
-  <statuscode>100</statuscode>
-  <message/>
- </meta>
- <data>
-  <id>2</id>
-  <share_type>3</share_type>
-  <uid_owner>admin</uid_owner>
-  <displayname_owner>admin</displayname_owner>
-  <permissions>1</permissions>
-  <stime>1502883721</stime>
-  <parent/>
-  <expiration/>
-  <token>QXbqrJj8DcMaXen</token>
-  <uid_file_owner>admin</uid_file_owner>
-  <displayname_file_owner>admin</displayname_file_owner>
-  <path>/somefile</path>
-  <item_type>file</item_type>
-  <mimetype>application/pdf</mimetype>
-  <storage_id>home::admin</storage_id>
-  <storage>1</storage>
-  <item_source>6</item_source>
-  <file_source>6</file_source>
-  <file_parent>4</file_parent>
-  <file_target>/somefile</file_target>
-  <share_with/>
-  <share_with_displayname/>
-  <name/>
-  <url>https://www.default.test/somefile</url>
-  <mail_send>0</mail_send>
- </data>
-</ocs>
-XML;
-        // Expected Parameters.
-        $ocsquery = ['path' => $filename,
-            'shareType' => \repository_nextcloud\ocs_client::SHARE_TYPE_PUBLIC,
-            'publicUpload' => false,
-            'permissions' => \repository_nextcloud\ocs_client::SHARE_PERMISSION_READ,
-        ];
-
-        // With test whether mock is called with right parameters.
-        $mock->expects($this->once())->method('call')->with('create_share', $ocsquery)->will($this->returnValue($expectedresponse));
-        $this->set_private_property($mock, 'ocsclient');
-
-        $expected = new \stdClass();
-        $expected->type = 'FILE_REFERENCE';
-        $expected->link = 'https://www.default.test' . $filename . '/download';
-        // Method redirects to get_link() and return the suitable value.
-        $this->assertEquals(json_encode($expected), $this->repo->get_file_reference($filename));
     }
 
     /**
@@ -688,11 +624,11 @@ XML;
     /**
      * Test supported_returntypes.
      * FILE_INTERNAL when no system account is connected.
-     * FILE_INTERNAL | FILE_CONTROLLED_LINK | FILE_EXTERNAL | FILE_REFERENCE when a system account is connected.
+     * FILE_INTERNAL | FILE_CONTROLLED_LINK when a system account is connected.
      */
     public function test_supported_returntypes() {
         global $DB;
-        $this->assertEquals(FILE_INTERNAL | FILE_EXTERNAL | FILE_REFERENCE, $this->repo->supported_returntypes());
+        $this->assertEquals(FILE_INTERNAL, $this->repo->supported_returntypes());
         $dataobject = new stdClass();
         $dataobject->timecreated = time();
         $dataobject->timemodified = time();
@@ -705,7 +641,7 @@ XML;
 
         $DB->insert_record('oauth2_system_account', $dataobject);
         // When a system account is registered the file_type FILE_CONTROLLED_LINK is supported.
-        $this->assertEquals(FILE_INTERNAL | FILE_EXTERNAL | FILE_CONTROLLED_LINK | FILE_REFERENCE,
+        $this->assertEquals(FILE_INTERNAL | FILE_CONTROLLED_LINK,
             $this->repo->supported_returntypes());
     }
 
