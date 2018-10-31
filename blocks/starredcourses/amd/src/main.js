@@ -51,7 +51,7 @@ function(
      * @method renderCourses
      * @param {object} root The root element for the starred view.
      * @param {array} courses containing array of returned courses.
-     * @return {promise} Resolved with HTML and JS strings
+     * @returns {promise} Resolved with HTML and JS strings
      */
     var renderCourses = function(root, courses) {
         if (courses.length > 0) {
@@ -59,7 +59,7 @@ function(
                 courses: courses
             });
         } else {
-            var nocoursesimg =root.find(SELECTORS.STARRED_COURSES_REGION_VIEW).attr('data-nocoursesimg');
+            var nocoursesimg = root.find(SELECTORS.STARRED_COURSES_REGION_VIEW).attr('data-nocoursesimg');
             return Templates.render('block_starredcourses/no-courses', {
                 nocoursesimg: nocoursesimg
             });
@@ -70,6 +70,7 @@ function(
      * Fetch user's starred courses and reload the content of the block.
      *
      * @param {object} root The root element for the starred view.
+     * @returns {promise} The updated content for the block.
      */
     var reloadContent = function(root) {
         var content = root.find(SELECTORS.STARRED_COURSES_REGION);
