@@ -66,6 +66,12 @@ if ($hassiteconfig) {
                 new lang_string('requireallenddatesforuserdeletion', 'tool_dataprivacy'),
                 new lang_string('requireallenddatesforuserdeletion_desc', 'tool_dataprivacy'),
                 1));
+
+        // Whether the data retention summary should be shown in the page footer and in the user profile page.
+        $privacysettings->add(new admin_setting_configcheckbox('tool_dataprivacy/showdataretentionsummary',
+            new lang_string('showdataretentionsummary', 'tool_dataprivacy'),
+            new lang_string('showdataretentionsummary_desc', 'tool_dataprivacy'),
+            1));
     }
 }
 
