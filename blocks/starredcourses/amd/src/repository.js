@@ -27,6 +27,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
      *
      * Valid args are:
      * int limit    number of records to retrieve
+     * int offset   the offset of records to retrieve
      *
      * @method getStarredCourses
      * @param {object} args The request arguments

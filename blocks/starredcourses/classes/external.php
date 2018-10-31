@@ -53,19 +53,17 @@ class block_starredcourses_external extends core_course_external {
     }
 
     /**
-     * Get users starred courses appending additional course information like images.
+     * Get users starred courses.
      *
-     * @param  int $limit Limit
+     * @param int $limit Limit
      * @param int $offset Offset
-     * @param  int|null $userid The user's userid to fetch the favourite courses.
+     *
      * @return  array list of courses and warnings
      */
-    public static function get_starred_courses($limit, $offset, $userid = null) {
+    public static function get_starred_courses($limit, $offset) {
         global $USER, $PAGE;
 
-        if (!$userid) {
-            $userid = $USER->id;
-        }
+        $userid = $USER->id;
 
         $params = self::validate_parameters(self::get_starred_courses_parameters(), [
             'limit' => $limit,
@@ -95,18 +93,7 @@ class block_starredcourses_external extends core_course_external {
             if (!isset($results[$courseid])) {
                 $exporter = new course_summary_exporter(get_course($courseid),
                     ['context' => \context_course::instance($courseid)]);
-                $courseinlist = new \core_course_list_element(get_course($courseid));
-                foreach ($courseinlist->get_course_overviewfiles() as $file) {
-                    if ($file->is_valid_image()) {
-                        $url = new moodle_url("/pluginfile.php".'/'.$file->get_contextid(). '/'. $file->get_component(). '/'.
-                            $file->get_filearea(). $file->get_filepath(). $file->get_filename());
-                        $courseimage = $url->__toString();
-                    }
-                }
                 $results[$courseid] = $exporter->export($output);
-                if (!empty($courseimage)) {
-                    $results[$courseid]['courseimage'] = $courseimage;
-                }
             }
         }
 
