@@ -129,6 +129,79 @@ class core_blog_privacy_testcase extends provider_testcase {
         $this->assertTrue(in_array(context_course::instance($c1->id)->id, $contextids));
     }
 
+    /**
+     * Test that user IDs are returned for a specificed course or module context.
+     */
+    public function test_get_users_in_context_course_and_module() {
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $c1ctx = context_course::instance($course->id);
+
+        $post = $this->create_post(['userid' => $user1->id, 'courseid' => $course->id]);
+        $entry = new blog_entry($post->id);
+        $entry->add_association($c1ctx->id);
+
+        // Add a comment from user 2.
+        $comment = $this->get_comment_object(context_user::instance($user1->id), $entry->id);
+        $this->setUser($user2);
+        $comment->add('Nice blog post');
+
+        $userlist = new \core_privacy\local\request\userlist($c1ctx, 'core_blog');
+        provider::get_users_in_context($userlist);
+        $userids = $userlist->get_userids();
+        $this->assertCount(2, $userids);
+
+        // Add an association for a module.
+        $cm1a = $this->getDataGenerator()->create_module('page', ['course' => $course]);
+        $cm1ctx = context_module::instance($cm1a->cmid);
+
+        $post2 = $this->create_post(['userid' => $user2->id, 'courseid' => $course->id]);
+        $entry2 = new blog_entry($post2->id);
+        $entry2->add_association($cm1ctx->id);
+
+        $userlist = new \core_privacy\local\request\userlist($cm1ctx, 'core_blog');
+        provider::get_users_in_context($userlist);
+        $userids = $userlist->get_userids();
+        $this->assertCount(1, $userids);
+    }
+
+    /**
+     * Test that user IDs are returned for a specificed user context.
+     */
+    public function test_get_users_in_context_user_context() {
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $u1ctx = context_user::instance($user1->id);
+
+        $post = $this->create_post(['userid' => $user1->id]);
+        $entry = new blog_entry($post->id);
+
+        // Add a comment from user 2.
+        $comment = $this->get_comment_object($u1ctx, $entry->id);
+        $this->setUser($user2);
+        $comment->add('Another nice blog post');
+
+        $userlist = new \core_privacy\local\request\userlist($u1ctx, 'core_blog');
+        provider::get_users_in_context($userlist);
+        $userids = $userlist->get_userids();
+        $this->assertCount(2, $userids);
+    }
+
+    /**
+     * Test that user IDs are returned for a specificed user context for an external blog.
+     */
+    public function test_get_users_in_context_external_blog() {
+        $user1 = $this->getDataGenerator()->create_user();
+        $u1ctx = context_user::instance($user1->id);
+        $extu1 = $this->create_external_blog(['userid' => $user1->id]);
+
+        $userlist = new \core_privacy\local\request\userlist($u1ctx, 'core_blog');
+        provider::get_users_in_context($userlist);
+        $userids = $userlist->get_userids();
+        $this->assertCount(1, $userids);
+    }
+
     public function test_delete_data_for_user() {
         global $DB;
 
@@ -627,6 +700,135 @@ class core_blog_privacy_testcase extends provider_testcase {
         $path = [get_string('blog', 'core_blog'), get_string('blogentries', 'core_blog'), "ABC ($note->id)"];
         $this->assertEmpty($writer->get_data($path));
 
+    }
+
+    /**
+     * Test that deleting of blog information in a user context works as desired.
+     */
+    public function test_delete_data_for_users_user_context() {
+        global $DB;
+
+        $u1 = $this->getDataGenerator()->create_user();
+        $u2 = $this->getDataGenerator()->create_user();
+        $u3 = $this->getDataGenerator()->create_user();
+        $u4 = $this->getDataGenerator()->create_user();
+        $u5 = $this->getDataGenerator()->create_user();
+
+        $u1ctx = context_user::instance($u1->id);
+
+        $post = $this->create_post(['userid' => $u1->id]);
+        $entry = new blog_entry($post->id);
+
+        $comment = $this->get_comment_object($u1ctx, $entry->id);
+        $this->setUser($u1);
+        $comment->add('Hello, I created the blog');
+        $this->setUser($u2);
+        $comment->add('User 2 making a comment.');
+        $this->setUser($u3);
+        $comment->add('User 3 here.');
+        $this->setUser($u4);
+        $comment->add('User 4 is nice.');
+        $this->setUser($u5);
+        $comment->add('User 5 for the win.');
+
+        // This will only delete the comments made by user 4 and 5.
+        $this->assertCount(5, $DB->get_records('comments', ['contextid' => $u1ctx->id]));
+        $userlist = new \core_privacy\local\request\approved_userlist($u1ctx, 'core_blog', [$u4->id, $u5->id]);
+        provider::delete_data_for_users($userlist);
+        $this->assertCount(3, $DB->get_records('comments', ['contextid' => $u1ctx->id]));
+        $this->assertCount(1, $DB->get_records('post', ['userid' => $u1->id]));
+
+        // As the owner of the post is here everything will be deleted.
+        $userlist = new \core_privacy\local\request\approved_userlist($u1ctx, 'core_blog', [$u1->id, $u2->id]);
+        provider::delete_data_for_users($userlist);
+        $this->assertEmpty($DB->get_records('comments', ['contextid' => $u1ctx->id]));
+        $this->assertEmpty($DB->get_records('post', ['userid' => $u1->id]));
+    }
+
+    /**
+     * Test that deleting of an external blog in a user context works as desired.
+     */
+    public function test_delete_data_for_users_external_blog() {
+        global $DB;
+
+        $u1 = $this->getDataGenerator()->create_user();
+        $u2 = $this->getDataGenerator()->create_user();
+
+        $u1ctx = context_user::instance($u1->id);
+        $u2ctx = context_user::instance($u2->id);
+
+        $post = $this->create_external_blog(['userid' => $u1->id, 'url' => 'https://moodle.org', 'name' => 'Moodle RSS']);
+        $post2 = $this->create_external_blog(['userid' => $u2->id, 'url' => 'https://moodle.com', 'name' => 'Some other thing']);
+
+        // Check that we have two external blogs created.
+        $this->assertCount(2, $DB->get_records('blog_external'));
+        // This will only delete the external blog for user 1.
+        $userlist = new \core_privacy\local\request\approved_userlist($u1ctx, 'core_blog', [$u1->id, $u2->id]);
+        provider::delete_data_for_users($userlist);
+        $this->assertCount(1, $DB->get_records('blog_external'));
+    }
+
+    public function test_delete_data_for_users_course_and_module_context() {
+        global $DB;
+
+        $u1 = $this->getDataGenerator()->create_user();
+        $u2 = $this->getDataGenerator()->create_user();
+        $u3 = $this->getDataGenerator()->create_user();
+        $u4 = $this->getDataGenerator()->create_user();
+        $u5 = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course();
+        $module = $this->getDataGenerator()->create_module('page', ['course' => $course]);
+
+        $u1ctx = context_user::instance($u1->id);
+        $u3ctx = context_user::instance($u3->id);
+        $c1ctx = context_course::instance($course->id);
+        $cm1ctx = context_module::instance($module->cmid);
+
+        // Blog with course association.
+        $post1 = $this->create_post(['userid' => $u1->id, 'courseid' => $course->id]);
+        $entry1 = new blog_entry($post1->id);
+        $entry1->add_association($c1ctx->id);
+
+        // Blog with module association.
+        $post2 = $this->create_post(['userid' => $u3->id, 'courseid' => $course->id]);
+        $entry2 = new blog_entry($post2->id);
+        $entry2->add_association($cm1ctx->id);
+
+        $comment = $this->get_comment_object($u1ctx, $entry1->id);
+        $this->setUser($u1);
+        $comment->add('Hello, I created the blog');
+        $this->setUser($u2);
+        $comment->add('comment on first course blog');
+        $this->setUser($u4);
+        $comment->add('user 4 on course blog');
+
+        $comment = $this->get_comment_object($u3ctx, $entry2->id);
+        $this->setUser($u3);
+        $comment->add('Hello, I created the module blog');
+        $this->setUser($u2);
+        $comment->add('I am commenting on both');
+        $this->setUser($u5);
+        $comment->add('User 5 for modules');
+
+        $this->assertCount(6, $DB->get_records('comments', ['component' => 'blog']));
+        $this->assertCount(2, $DB->get_records('post', ['courseid' => $course->id]));
+        $this->assertCount(2, $DB->get_records('blog_association'));
+
+        // When using the course or module context we are only removing the blog associations and the comments.
+        $userlist = new \core_privacy\local\request\approved_userlist($c1ctx, 'core_blog', [$u2->id, $u1->id, $u5->id]);
+        provider::delete_data_for_users($userlist);
+        // Only one of the blog_associations should be removed. Everything else should be as before.
+        $this->assertCount(6, $DB->get_records('comments', ['component' => 'blog']));
+        $this->assertCount(2, $DB->get_records('post', ['courseid' => $course->id]));
+        $this->assertCount(1, $DB->get_records('blog_association'));
+
+        $userlist = new \core_privacy\local\request\approved_userlist($cm1ctx, 'core_blog', [$u2->id, $u1->id, $u3->id]);
+        provider::delete_data_for_users($userlist);
+        // Now we've removed the other association.
+        $this->assertCount(6, $DB->get_records('comments', ['component' => 'blog']));
+        $this->assertCount(2, $DB->get_records('post', ['courseid' => $course->id]));
+        $this->assertEmpty($DB->get_records('blog_association'));
     }
 
     /**
