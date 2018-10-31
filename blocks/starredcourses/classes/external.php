@@ -92,7 +92,7 @@ class block_starredcourses_external extends core_course_external {
             $courseid = $favourite->itemid;
             if (!isset($results[$courseid])) {
                 $exporter = new course_summary_exporter(get_course($courseid),
-                    ['context' => \context_course::instance($courseid)]);
+                    ['context' => \context_course::instance($courseid), 'isfavourite' => true]);
                 $results[$courseid] = $exporter->export($output);
             }
         }

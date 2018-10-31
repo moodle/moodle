@@ -77,7 +77,8 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
 
 $card-gutter : $card-deck-margin * 2;
 
-.block_myoverview {
+.block_myoverview,
+.block_starredcourses {
     .empty-placeholder-image-lg {
         height: 125px;
     }
