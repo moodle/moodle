@@ -76,7 +76,7 @@ class sco_launched extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/scorm/player.php', array('id' => $this->contextinstanceid, 'scoid' => $this->objectid));
+        return new \moodle_url('/mod/scorm/player.php', array('cm' => $this->contextinstanceid, 'scoid' => $this->objectid));
     }
 
     /**
