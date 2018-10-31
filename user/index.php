@@ -297,6 +297,22 @@ if ($bulkoperations) {
         $displaylist['#addgroupnote'] = get_string('addnewnote', 'notes');
     }
 
+    $params = ['operation' => 'download_participants'];
+
+    $downloadoptions = [];
+    $formats = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
+    foreach ($formats as $format) {
+        if ($format->is_enabled()) {
+            $params = ['operation' => 'download_participants', 'dataformat' => $format->name];
+            $url = new moodle_url('bulkchange.php', $params);
+            $downloadoptions[$url->out(false)] = get_string('dataformat', $format->component);
+        }
+    }
+
+    if (!empty($downloadoptions)) {
+        $displaylist[] = [get_string('downloadas', 'table') => $downloadoptions];
+    }
+
     if ($context->id != $frontpagectx->id) {
         $instances = $manager->get_enrolment_instances();
         $plugins = $manager->get_enrolment_plugins(false);
