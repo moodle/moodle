@@ -32,6 +32,7 @@ use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 use core_badges\privacy\provider;
+use core_privacy\local\request\approved_userlist;
 
 require_once($CFG->libdir . '/badgeslib.php');
 
@@ -397,6 +398,177 @@ class core_badges_privacy_testcase extends provider_testcase {
         $this->assertEquals($b3->name, $data->badges[0]['name']);
         $this->assertEquals($yes, $data->badges[0]['issued_by_you']);
         $this->assertEquals('Manager', $data->badges[0]['issuer_role']);
+    }
+
+    /**
+     * Test that only users within a user, system and course context are fetched.
+     */
+    public function test_get_users_in_context() {
+        $component = 'core_badges';
+
+        // Create course1.
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = context_course::instance($course1->id);
+        // Create course2.
+        $course2 = $this->getDataGenerator()->create_course();
+        $coursecontext2 = context_course::instance($course2->id);
+        // Create user1.
+        $user1 = $this->getDataGenerator()->create_user();
+        $usercontext1 = context_user::instance($user1->id);
+        // Create user2.
+        $user2 = $this->getDataGenerator()->create_user();
+        $usercontext2 = context_user::instance($user2->id);
+        // Create user3.
+        $user3 = $this->getDataGenerator()->create_user();
+        $usercontext3 = context_user::instance($user3->id);
+
+        // The list of users in usercontext1 should not return anything yet (related data still haven't been created).
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(0, $userlist1);
+        // The list of users in coursecontext1 should not return anything yet (related data still haven't been created).
+        $userlist2 = new \core_privacy\local\request\userlist($coursecontext1, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(0, $userlist2);
+        // The list of users in systemcontext should not return anything yet (related data still haven't been created).
+        $systemcontext = context_system::instance();
+        $userlist3 = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist3);
+        $this->assertCount(0, $userlist3);
+
+        // Assert that we find contexts where we created/modified a badge.
+        $this->create_badge(['usercreated' => $user1->id, 'usermodified' => $user2->id]);
+        $badge1 = $this->create_badge(['usercreated' => $user2->id, 'type' => BADGE_TYPE_COURSE, 'courseid' => $course1->id]);
+        $badge2 = $this->create_badge(['usercreated' => $user3->id, 'usermodified' => $user1->id]);
+
+        $this->create_manual_award(['recipientid' => $user2->id, 'issuerid' => $user1->id, 'badgeid' => $badge1->id]);
+        $this->create_manual_award(['recipientid' => $user3->id, 'issuerid' => $user2->id, 'badgeid' => $badge1->id]);
+        $this->create_manual_award(['recipientid' => $user1->id, 'issuerid' => $user2->id, 'badgeid' => $badge2->id]);
+
+        $this->create_backpack(['userid' => $user2->id]);
+        $this->create_issued(['badgeid' => $badge2->id, 'userid' => $user3->id]);
+
+        $crit = $this->create_criteria_manual($badge1->id);
+        $crit->mark_complete($user3->id);
+
+        // The list of users for user context should return user1 and user2.
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(2, $userlist1);
+        $this->assertTrue(in_array($user1->id, $userlist1->get_userids()));
+        $this->assertTrue(in_array($user2->id, $userlist1->get_userids()));
+
+        // The list of users for course context should return user2.
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+        $this->assertTrue(in_array($user2->id, $userlist2->get_userids()));
+
+        // The list of users for system context should return user1, user2 and user3.
+        provider::get_users_in_context($userlist3);
+        $this->assertCount(3, $userlist3);
+        $this->assertTrue(in_array($user1->id, $userlist3->get_userids()));
+        $this->assertTrue(in_array($user2->id, $userlist3->get_userids()));
+        $this->assertTrue(in_array($user3->id, $userlist3->get_userids()));
+    }
+
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        $component = 'core_badges';
+
+        // Create course1.
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = context_course::instance($course1->id);
+        // Create course2.
+        $course2 = $this->getDataGenerator()->create_course();
+        $coursecontext2 = context_course::instance($course2->id);
+        // Create user1.
+        $user1 = $this->getDataGenerator()->create_user();
+        $usercontext1 = context_user::instance($user1->id);
+        // Create user2.
+        $user2 = $this->getDataGenerator()->create_user();
+        $usercontext2 = context_user::instance($user2->id);
+        // Create user3.
+        $user3 = $this->getDataGenerator()->create_user();
+        $usercontext3 = context_user::instance($user3->id);
+
+        $this->create_badge(['usercreated' => $user1->id, 'usermodified' => $user2->id]);
+        $badge1 = $this->create_badge(['usercreated' => $user2->id, 'type' => BADGE_TYPE_COURSE, 'courseid' => $course1->id]);
+        $badge2 = $this->create_badge(['usercreated' => $user3->id, 'type' => BADGE_TYPE_COURSE, 'courseid' => $course2->id,
+            'usermodified' => $user1->id]);
+
+        $this->create_manual_award(['recipientid' => $user2->id, 'issuerid' => $user1->id, 'badgeid' => $badge1->id]);
+        $this->create_manual_award(['recipientid' => $user3->id, 'issuerid' => $user2->id, 'badgeid' => $badge1->id]);
+        $this->create_manual_award(['recipientid' => $user1->id, 'issuerid' => $user2->id, 'badgeid' => $badge2->id]);
+
+        $this->create_backpack(['userid' => $user2->id]);
+        $this->create_issued(['badgeid' => $badge2->id, 'userid' => $user3->id]);
+
+        $crit = $this->create_criteria_manual($badge1->id);
+        $crit->mark_complete($user3->id);
+
+        // The list of users for usercontext2 context should return users.
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(2, $userlist1);
+        $this->assertTrue(in_array($user1->id, $userlist1->get_userids()));
+        $this->assertTrue(in_array($user2->id, $userlist1->get_userids()));
+
+        // The list of users for coursecontext2 context should return users.
+        $userlist2 = new \core_privacy\local\request\userlist($coursecontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(2, $userlist2);
+        $this->assertTrue(in_array($user1->id, $userlist2->get_userids()));
+        $this->assertTrue(in_array($user3->id, $userlist2->get_userids()));
+
+        // The list of users for system context should return users.
+        $systemcontext = context_system::instance();
+        $userlist3 = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist3);
+        $this->assertCount(2, $userlist3);
+        $this->assertTrue(in_array($user1->id, $userlist3->get_userids()));
+        $this->assertTrue(in_array($user2->id, $userlist3->get_userids()));
+
+        // Delete the data for user1 in usercontext2.
+        $approvedlist = new approved_userlist($usercontext2, $component, [$user1->id]);
+        // Delete using delete_data_for_user. No data for users in usercontext2 should be removed.
+        provider::delete_data_for_users($approvedlist);
+        // The list of users for usercontext2 context should still return user1, user2.
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(2, $userlist1);
+        $this->assertTrue(in_array($user1->id, $userlist1->get_userids()));
+        $this->assertTrue(in_array($user2->id, $userlist1->get_userids()));
+
+        // Delete the data for user2 in usercontext2.
+        $approvedlist = new approved_userlist($usercontext2, $component, [$user2->id]);
+        // Delete using delete_data_for_user. The user data in usercontext2 should be removed.
+        provider::delete_data_for_users($approvedlist);
+        // The list of users for usercontext2 context should not return any users.
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(0, $userlist1);
+
+        // The list of users for coursecontext2 context should return the previous users.
+        $userlist2 = new \core_privacy\local\request\userlist($coursecontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(2, $userlist2);
+
+        // The list of users for system context should return the previous users.
+        $systemcontext = context_system::instance();
+        $userlist3 = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist3);
+        $this->assertCount(2, $userlist3);
+
+        // Make sure data is only deleted in the user context, nothing in course or system.
+        // Convert $userlist2 into an approved_contextlist.
+        $approvedlist = new approved_userlist($coursecontext2, $component, $userlist2->get_userids());
+        provider::delete_data_for_users($approvedlist);
+
+        // The list of users for coursecontext2 context should still return the user data.
+        $userlist2 = new \core_privacy\local\request\userlist($coursecontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(2, $userlist2);
     }
 
     /**
