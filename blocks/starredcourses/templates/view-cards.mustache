@@ -26,20 +26,25 @@
         ]
     }
 }}
-<div class="course-card-container d-flex justify-content-around">
-    {{#courses}}
-        <a href="{{viewurl}}">
-            <div class="card starred-course-card mx-1 mb-1">
-                <div class="card-img-top starred-course-img" style='background-image: url("{{{courseimage}}}");'>
-                </div>
-                <div class="card-body starred-course-info-container" id="course-info-container-{{id}}">
-                    <div class="d-flex">
-                        <div class="card-title d-inline-block text-truncate">
-                            {{{fullname}}}
-                        </div>
-                    </div>
-                </div>
+<div class="card-deck dashboard-card-deck" role="list">
+{{#courses}}
+    <div class="card dashboard-card" role="listitem">
+        <a href="{{viewurl}}" tabindex="-1">
+            <div class="card-img dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
+                <span class="sr-only">{{#str}}aria:courseimage, block_myoverview{{/str}}</span>
+                {{> block_myoverview/favourite-icon }}
             </div>
         </a>
-    {{/courses}}
+        <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}">
+            <div class="d-flex align-items-start">
+                <div class="card-title mr-2">
+                    <a href="{{viewurl}}">
+                        <span class="sr-only">{{#str}}aria:coursename, block_myoverview{{/str}}</span>
+                        {{#shortentext}}40, {{{fullname}}} {{/shortentext}}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{{/courses}}
 </div>
