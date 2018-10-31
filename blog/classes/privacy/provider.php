@@ -188,10 +188,12 @@ class provider implements
             }, $posts);
             $userlist->add_users($userids);
 
-            // Add any user's who posted on the blog.
-            list($insql, $inparams) = $DB->get_in_or_equal(array_keys($posts), SQL_PARAMS_NAMED);
-            \core_comment\privacy\provider::get_users_in_context_from_sql($userlist, 'c', 'blog', 'format_blog', null, $insql,
+            if (!empty($posts)) {
+                // Add any user's who posted on the blog.
+                list($insql, $inparams) = $DB->get_in_or_equal(array_keys($posts), SQL_PARAMS_NAMED);
+                \core_comment\privacy\provider::get_users_in_context_from_sql($userlist, 'c', 'blog', 'format_blog', null, $insql,
                     $inparams);
+            }
         } else if ($context->contextlevel == CONTEXT_USER) {
             $params = ['userid' => $context->instanceid];
 
