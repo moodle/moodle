@@ -93,6 +93,37 @@ class core_block_privacy_testcase extends provider_testcase {
         $this->assertTrue(in_array($blockmentees->context->id, $contextids));
     }
 
+    /**
+     * Test that user IDs are returned for a given context.
+     */
+    public function test_get_users_in_context() {
+        global $DB;
+        $u1 = $this->getDataGenerator()->create_user();
+        $u2 = $this->getDataGenerator()->create_user();
+        $u3 = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $manager = $this->get_block_manager(['region-a'], context_course::instance($course->id));
+        $manager->add_block('myprofile', 'region-a', 0, false);
+        $manager->load_blocks();
+        $blockmyprofile = $manager->get_blocks_for_region('region-a')[0];
+
+        $this->set_hidden_pref($blockmyprofile, true, $u1->id);
+        $this->set_hidden_pref($blockmyprofile, true, $u3->id);
+        $this->set_docked_pref($blockmyprofile, true, $u2->id);
+        $this->set_docked_pref($blockmyprofile, true, $u3->id);
+
+        $records = $DB->get_records('block_instances', ['blockname' => 'myprofile']);
+        $record = array_shift($records);
+        $blockcontext = context_block::instance($record->id);
+
+        $userlist = new \core_privacy\local\request\userlist($blockcontext, 'core_block');
+        provider::get_users_in_context($userlist);
+        $this->assertCount(3, $userlist->get_userids());
+    }
+
+
     public function test_delete_data_for_user() {
         global $DB;
         $dg = $this->getDataGenerator();
@@ -264,6 +295,47 @@ class core_block_privacy_testcase extends provider_testcase {
             'name' => "docked_block_instance_{$blockmentees->instance->id}"]));
         $this->assertTrue($DB->record_exists('user_preferences', ['userid' => $u2->id,
             'name' => "docked_block_instance_{$blockmentees->instance->id}"]));
+    }
+
+    /**
+     * Test the deletion of data related to a context and a list of users.
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+        $u1 = $this->getDataGenerator()->create_user();
+        $u2 = $this->getDataGenerator()->create_user();
+        $u3 = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $manager = $this->get_block_manager(['region-a'], context_course::instance($course->id));
+        $manager->add_block('myprofile', 'region-a', 0, false);
+        $manager->load_blocks();
+        $blockmyprofile = $manager->get_blocks_for_region('region-a')[0];
+
+        $this->set_hidden_pref($blockmyprofile, true, $u1->id);
+        $this->set_hidden_pref($blockmyprofile, true, $u3->id);
+        $this->set_docked_pref($blockmyprofile, true, $u2->id);
+        $this->set_docked_pref($blockmyprofile, true, $u3->id);
+
+        $records = $DB->get_records('block_instances', ['blockname' => 'myprofile']);
+        $record = array_shift($records);
+        $blockcontext = context_block::instance($record->id);
+
+        $userlist = new \core_privacy\local\request\userlist($blockcontext, 'core_block');
+        provider::get_users_in_context($userlist);
+        $this->assertCount(3, $userlist->get_userids());
+
+        // Delete preferences for user 1 and 3 for the my profile block.
+        $userlist = new \core_privacy\local\request\approved_userlist($blockcontext, 'core_block', [$u1->id, $u3->id]);
+        provider::delete_data_for_users($userlist);
+
+        // Only user 2's preference is left.
+        $this->assertCount(1, $DB->get_records('user_preferences',
+                ['name' => "docked_block_instance_{$blockcontext->instanceid}"]));
+        // All of these are gone.
+        $this->assertEmpty($DB->get_records('user_preferences',
+                ['name' => "block{$blockcontext->instanceid}hidden"]));
     }
 
     public function test_export_data_for_user() {
