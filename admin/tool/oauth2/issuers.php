@@ -86,15 +86,36 @@ if ($mform && $mform->is_cancelled()) {
         $mform->display();
         echo $OUTPUT->footer();
     }
+} else if ($action == 'savetemplate') {
+
+    $type = required_param('type', PARAM_ALPHA);
+    $mform = new \tool_oauth2\form\issuer(null, ['persistent' => $issuer, 'type' => $type]);
+    if ($mform->is_cancelled()) {
+        redirect(new moodle_url('/admin/tool/oauth2/issuers.php'));
+    }
+    if ($mform->is_submitted() && $data = $mform->get_data()) {
+        $issuer = new core\oauth2\issuer(0, $data);
+        $issuer->create();
+        $issuer = core\oauth2\api::create_endpoints_for_standard_issuer($type, $issuer);
+        redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
+    } else {
+        echo $OUTPUT->header();
+        $mform->display();
+        echo $OUTPUT->footer();
+    }
+
 } else if ($action == 'edittemplate') {
 
     $type = required_param('type', PARAM_ALPHA);
     $docs = required_param('docslink', PARAM_ALPHAEXT);
     require_sesskey();
-    $issuer = core\oauth2\api::create_standard_issuer($type);
-    $params = ['action' => 'edit', 'id' => $issuer->get('id'), 'docslink' => $docs];
-    $editurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
-    redirect($editurl, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
+    $issuer = core\oauth2\api::init_standard_issuer($type);
+    $mform = new \tool_oauth2\form\issuer(null, ['persistent' => $issuer, 'type' => $type]);
+
+    echo $OUTPUT->header();
+    $mform->display();
+    echo $OUTPUT->footer();
+
 } else if ($action == 'enable') {
 
     require_sesskey();
@@ -170,6 +191,11 @@ if ($mform && $mform->is_cancelled()) {
     $params = ['action' => 'edittemplate', 'type' => 'facebook', 'sesskey' => sesskey(), 'docslink' => $docs];
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
     echo $renderer->single_button($addurl, get_string('createnewfacebookissuer', 'tool_oauth2'));
+    $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['action' => 'edit']);
+    $docs = 'admin/tool/oauth2/issuers/nextcloud';
+    $params = ['action' => 'edittemplate', 'type' => 'nextcloud', 'sesskey' => sesskey(), 'docslink' => $docs];
+    $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
+    echo $renderer->single_button($addurl, get_string('createnewnextcloudissuer', 'tool_oauth2'));
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['action' => 'edit']);
     echo $renderer->single_button($addurl, get_string('createnewissuer', 'tool_oauth2'));
     echo $OUTPUT->footer();

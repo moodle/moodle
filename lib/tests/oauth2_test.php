@@ -42,12 +42,17 @@ class core_oauth2_testcase extends advanced_testcase {
         \core\oauth2\api::create_standard_issuer('google');
         \core\oauth2\api::create_standard_issuer('facebook');
         \core\oauth2\api::create_standard_issuer('microsoft');
+        \core\oauth2\api::create_standard_issuer('nextcloud', 'https://dummy.local/nextcloud/');
+
+        $this->expectException(\moodle_exception::class);
+        \core\oauth2\api::create_standard_issuer('nextcloud');
 
         $issuers = \core\oauth2\api::get_all_issuers();
 
         $this->assertEquals($issuers[0]->get('name'), 'Google');
         $this->assertEquals($issuers[1]->get('name'), 'Facebook');
         $this->assertEquals($issuers[2]->get('name'), 'Microsoft');
+        $this->assertEquals($issuers[3]->get('name'), 'Nextcloud');
 
         \core\oauth2\api::move_down_issuer($issuers[0]->get('id'));
 
@@ -56,6 +61,7 @@ class core_oauth2_testcase extends advanced_testcase {
         $this->assertEquals($issuers[0]->get('name'), 'Facebook');
         $this->assertEquals($issuers[1]->get('name'), 'Google');
         $this->assertEquals($issuers[2]->get('name'), 'Microsoft');
+        $this->assertEquals($issuers[3]->get('name'), 'Nextcloud');
 
         \core\oauth2\api::delete_issuer($issuers[1]->get('id'));
 
@@ -63,6 +69,7 @@ class core_oauth2_testcase extends advanced_testcase {
 
         $this->assertEquals($issuers[0]->get('name'), 'Facebook');
         $this->assertEquals($issuers[1]->get('name'), 'Microsoft');
+        $this->assertEquals($issuers[2]->get('name'), 'Nextcloud');
     }
 
     /**

@@ -1879,7 +1879,7 @@ class core_plugin_manager {
 
             'repository' => array(
                 'areafiles', 'boxnet', 'coursefiles', 'dropbox', 'equella', 'filesystem',
-                'flickr', 'flickr_public', 'googledocs', 'local', 'merlot',
+                'flickr', 'flickr_public', 'googledocs', 'local', 'merlot', 'nextcloud',
                 'onedrive', 'picasa', 'recent', 'skydrive', 's3', 'upload', 'url', 'user', 'webdav',
                 'wikimedia', 'youtube'
             ),

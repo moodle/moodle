@@ -41,7 +41,38 @@ class issuer extends persistent {
     protected static $persistentclass = 'core\\oauth2\\issuer';
 
     /** @var array $fieldstoremove */
-    protected static $fieldstoremove = array('submitbutton', 'action');
+    protected static $fieldstoremove = array('type', 'submitbutton', 'action');
+
+    /** @var string $type */
+    protected $type;
+
+    /**
+     * Constructor.
+     *
+     * The 'persistent' has to be passed as custom data when 'editing'.
+     * If a standard issuer is created the type can be passed as custom data, which alters the form according to the
+     * type.
+     *
+     * Note that in order for your persistent to be reloaded after form submission you should
+     * either override the URL to include the ID to your resource, or add the ID to the form
+     * fields.
+     *
+     * @param mixed $action
+     * @param mixed $customdata
+     * @param string $method
+     * @param string $target
+     * @param mixed $attributes
+     * @param bool $editable
+     * @param array $ajaxformdata
+     */
+    public function __construct($action = null, $customdata = null, $method = 'post', $target = '', $attributes = null,
+                                $editable = true, array $ajaxformdata = null) {
+        // The type variable defines, if we are in the creation process of a standard issuer.
+        if (array_key_exists('type', $customdata)) {
+            $this->type = $customdata['type'];
+        }
+        parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
+    }
 
     /**
      * Define the form - called by parent constructor
@@ -108,6 +139,9 @@ class issuer extends persistent {
         $mform->addElement('text', 'baseurl', get_string('issuerbaseurl', 'tool_oauth2'));
         $mform->addRule('baseurl', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
         $mform->addHelpButton('baseurl', 'issuerbaseurl', 'tool_oauth2');
+        if ($this->type && $this->type == 'nextcloud') {
+            $mform->addRule('baseurl', null, 'required', null, 'client');
+        }
 
         // Allowed Domains.
         $mform->addElement('text', 'alloweddomains', get_string('issueralloweddomains', 'tool_oauth2'));
@@ -130,8 +164,16 @@ class issuer extends persistent {
         $mform->addElement('hidden', 'sortorder');
         $mform->setType('sortorder', PARAM_INT);
 
-        $mform->addElement('hidden', 'action', 'edit');
-        $mform->setType('action', PARAM_ALPHA);
+        if ($this->type) {
+            $mform->addElement('hidden', 'action', 'savetemplate');
+            $mform->setType('action', PARAM_ALPHA);
+
+            $mform->addElement('hidden', 'type', $this->_customdata['type']);
+            $mform->setType('type', PARAM_ALPHA);
+        } else {
+            $mform->addElement('hidden', 'action', 'edit');
+            $mform->setType('action', PARAM_ALPHA);
+        }
 
         $mform->addElement('hidden', 'enabled', $issuer->get('enabled'));
         $mform->setType('enabled', PARAM_BOOL);
