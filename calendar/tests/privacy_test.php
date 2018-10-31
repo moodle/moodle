@@ -104,7 +104,7 @@ class core_calendar_privacy_testcase extends provider_testcase {
 
         // Add a Calendar Subscription and Group Calendar Event to Course 3.
         $this->create_test_calendar_subscription('course', 'https://calendar.google.com/', $user->id, 0, $course3->id);
-        $this->create_test_standard_calendar_event('group', $user->id, time(), '', 0, $course1->id, $course3group->id);
+        $this->create_test_standard_calendar_event('group', $user->id, time(), '', 0, $course3->id, $course3group->id);
 
         // The user will be in these contexts.
         $usercontextids = [
