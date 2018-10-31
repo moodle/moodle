@@ -601,6 +601,14 @@ class assign_feedback_comments extends assign_feedback_plugin {
     }
 
     /**
+     * Get file areas returns a list of areas this plugin stores files
+     * @return array - An array of fileareas (keys) and descriptions (values)
+     */
+    public function get_file_areas() {
+        return array(ASSIGNFEEDBACK_COMMENTS_FILEAREA => $this->get_name());
+    }
+
+    /**
      * Return a description of external params suitable for uploading an feedback comment from a webservice.
      *
      * @return external_description|null
