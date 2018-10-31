@@ -475,7 +475,7 @@ define(function() {
      */
     function Polygon(label, points) {
         Shape.call(this, label, 0, 0);
-        this.points = points ? Array.from(points) : [new Point(10, 10), new Point(40, 10), new Point(10, 40)];
+        this.points = points ? points.slice() : [new Point(10, 10), new Point(40, 10), new Point(10, 40)];
         this.normalizeShape();
     }
     Polygon.prototype = new Shape();
