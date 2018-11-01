@@ -236,6 +236,13 @@ img.resize {
     text-decoration: none;
 }
 
+.dropdown-toggle {
+    // Bootstrap turns off focus outlines for menu buttons. This turns them back on the same as links.
+    &:focus {
+        @include tab-focus();
+    }
+}
+
 .action-menu {
     white-space: nowrap;
 }

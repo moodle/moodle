@@ -78,7 +78,7 @@
     }
 }}
 <div class="dropdown d-inline">
-    <a tabindex="0" class="btn {{triggerextraclasses}} dropdown-toggle" id="dropdown-{{instance}}" aria-label="{{title}}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-controls="action-menu-{{instance}}-menu">{{{actiontext}}}{{{menutrigger}}}{{#icon}}{{#pix}}{{key}},{{component}},{{title}}{{/pix}}{{/icon}}{{#rawicon}}{{{.}}}{{/rawicon}}{{#menutrigger}}<b class="caret"></b>{{/menutrigger}}</a>
+    <a tabindex="0" class="{{triggerextraclasses}} dropdown-toggle icon-no-margin" id="dropdown-{{instance}}" aria-label="{{title}}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-controls="action-menu-{{instance}}-menu">{{{actiontext}}}{{{menutrigger}}}{{#icon}}{{#pix}}{{key}},{{component}},{{title}}{{/pix}}{{/icon}}{{#rawicon}}{{{.}}}{{/rawicon}}{{#menutrigger}}<b class="caret"></b>{{/menutrigger}}</a>
     {{#secondary}}
         <div class="dropdown-menu dropdown-menu-right {{classes}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}} id="dropdown-menu-{{instance}}">
             {{#items}}{{!
