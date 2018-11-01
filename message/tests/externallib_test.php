@@ -4550,4 +4550,31 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($user2->id, $request2->userid);
         $this->assertEquals($user3->id, $request2->requesteduserid);
     }
+
+    /**
+     * Test returning members in a conversation when you are not a member.
+     */
+    public function test_get_conversation_members_not_a_member() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // This user will not be in the conversation.
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id,
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->setUser($user3);
+
+        $this->expectException('moodle_exception');
+        core_message_external::get_conversation_members($user3->id, $conversationid);
+    }
 }
