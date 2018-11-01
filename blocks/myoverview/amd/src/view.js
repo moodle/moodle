@@ -522,7 +522,7 @@ function(
 
     /**
      * Intialise the courses list and cards views on page load.
-     * 
+     *
      * @param {object} root The root element for the courses view.
      */
     var init = function(root) {
