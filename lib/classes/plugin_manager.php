@@ -1721,7 +1721,7 @@ class core_plugin_manager {
                 'private_files', 'quiz_results', 'recent_activity',
                 'rss_client', 'search_forums', 'section_links',
                 'selfcompletion', 'settings', 'site_main_menu',
-                'social_activities', 'tag_flickr', 'tag_youtube', 'tags', 'timeline'
+                'social_activities', 'starredcourses', 'tag_flickr', 'tag_youtube', 'tags', 'timeline'
             ),
 
             'booktool' => array(

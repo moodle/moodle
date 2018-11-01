@@ -340,6 +340,7 @@
     }
 }
 
+.block_starredcourses,
 .block_myoverview {
 
     .empty-placeholder-image-lg {
@@ -387,6 +388,13 @@
     }
 }
 
+.block_starredcourses {
+    .dashboard-card-deck {
+        flex-flow: nowrap;
+        overflow-y: scroll;
+    }
+}
+
 .dashboard-card-deck {
     box-sizing: border-box;
     *,
@@ -419,7 +427,7 @@
 
     @media (min-width: 1200px) {
         .dashboard-card {
-            flex-basis: ~"calc(33% - 0.5rem)";
+            flex-basis: ~"calc(33.333% - 0.5rem)";
         }
     }
 }

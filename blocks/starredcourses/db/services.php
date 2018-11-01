@@ -15,18 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'course', language 'en', branch 'MOODLE_20_STABLE'
+ * File description.
  *
- * @package   core_course
- * @copyright 2018 Adrian Greeve <adriangreeve.com>
+ * @package   block_starredcourses
+ * @copyright 2018 Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['aria:courseimage'] = 'Course image:';
-$string['aria:coursename'] = 'Course name:';
-$string['aria:favourite'] = 'Course is starred';
-$string['favourite'] = 'Starred course';
-$string['notfavourite'] = 'Not starred';
-$string['privacy:perpage'] = 'The number of courses to show per page.';
-$string['privacy:completionpath'] = 'Course completion';
-$string['privacy:metadata:completionsummary'] = 'The course contains completion information about the user.';
+defined('MOODLE_INTERNAL') || die();
+
+$functions = array(
+
+    'block_starredcourses_get_starred_courses' => array(
+        'classpath' => 'block/starredcourses/classes/external.php',
+        'classname'   => 'block_starredcourses_external',
+        'methodname'  => 'get_starred_courses',
+        'description' => 'Get users starred courses.',
+        'type'        => 'read',
+        'ajax'        => true,
+    ),
+);
+

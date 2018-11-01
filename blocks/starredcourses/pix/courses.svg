@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="157 -1305 148 125" preserveAspectRatio="xMinYMid meet">
+    <defs>
+        <style>
+            .cls-1 {
+            clip-path: url(#clip-Courses);
+            }
+            .cls-2 {
+            fill: #eee;
+            }
+            .cls-3 {
+            fill: #c4c8cc;
+            }
+            .cls-4 {
+            fill: #fff;
+            }
+        </style>
+        <clipPath id="clip-Courses">
+            <rect x="157" y="-1305" width="148" height="125"/>
+        </clipPath>
+    </defs>
+    <g id="Courses" class="cls-1">
+        <g id="Group_44" data-name="Group 44" transform="translate(-268 -1781)">
+            <ellipse id="Ellipse_41" data-name="Ellipse 41" class="cls-2" cx="74" cy="14.785" rx="74" ry="14.785" transform="translate(425 571.43)"/>
+            <rect id="Rectangle_87" data-name="Rectangle 87" class="cls-3" width="95.097" height="110.215" transform="translate(451.909 476)"/>
+            <g id="Group_43" data-name="Group 43" transform="translate(464.04 494)">
+                <rect id="Rectangle_88" data-name="Rectangle 88" class="cls-4" width="31.043" height="34" transform="translate(0)"/>
+                <rect id="Rectangle_89" data-name="Rectangle 89" class="cls-4" width="31.043" height="34" transform="translate(0 42)"/>
+                <rect id="Rectangle_90" data-name="Rectangle 90" class="cls-4" width="31.067" height="34" transform="translate(39.005)"/>
+                <rect id="Rectangle_91" data-name="Rectangle 91" class="cls-4" width="31.067" height="34" transform="translate(39.005 42)"/>
+                <rect id="Rectangle_92" data-name="Rectangle 92" class="cls-3" width="23.023" height="3.18" transform="translate(3.081 16.549)"/>
+                <rect id="Rectangle_93" data-name="Rectangle 93" class="cls-3" width="23.023" height="3.18" transform="translate(3.081 58.549)"/>
+                <rect id="Rectangle_94" data-name="Rectangle 94" class="cls-3" width="23.023" height="3.18" transform="translate(43.122 16.549)"/>
+                <rect id="Rectangle_95" data-name="Rectangle 95" class="cls-3" width="23.023" height="3.18" transform="translate(43.122 58.549)"/>
+                <rect id="Rectangle_96" data-name="Rectangle 96" class="cls-3" width="14.014" height="3.18" transform="translate(3.081 21.825)"/>
+                <rect id="Rectangle_97" data-name="Rectangle 97" class="cls-3" width="18.845" height="3.18" transform="translate(3.081 26.825)"/>
+                <rect id="Rectangle_98" data-name="Rectangle 98" class="cls-3" width="14.014" height="3.18" transform="translate(3.081 63.825)"/>
+                <rect id="Rectangle_99" data-name="Rectangle 99" class="cls-3" width="18.845" height="3.18" transform="translate(3.081 68.825)"/>
+                <rect id="Rectangle_100" data-name="Rectangle 100" class="cls-3" width="14.014" height="3.18" transform="translate(43.122 21.825)"/>
+                <rect id="Rectangle_101" data-name="Rectangle 101" class="cls-3" width="18.845" height="3.18" transform="translate(43.122 26.825)"/>
+                <rect id="Rectangle_102" data-name="Rectangle 102" class="cls-3" width="14.014" height="3.18" transform="translate(43.122 63.825)"/>
+                <rect id="Rectangle_103" data-name="Rectangle 103" class="cls-3" width="18.845" height="3.18" transform="translate(43.122 68.825)"/>
+                <ellipse id="Ellipse_42" data-name="Ellipse 42" class="cls-3" cx="5.658" cy="5.652" rx="5.658" ry="5.652" transform="translate(3.003 3.55)"/>
+                <ellipse id="Ellipse_43" data-name="Ellipse 43" class="cls-3" cx="5.658" cy="5.652" rx="5.658" ry="5.652" transform="translate(3.003 45.55)"/>
+                <ellipse id="Ellipse_44" data-name="Ellipse 44" class="cls-3" cx="5.658" cy="5.652" rx="5.658" ry="5.652" transform="translate(43.044 3.55)"/>
+                <ellipse id="Ellipse_45" data-name="Ellipse 45" class="cls-3" cx="5.658" cy="5.652" rx="5.658" ry="5.652" transform="translate(43.044 45.55)"/>
+            </g>
+        </g>
+    </g>
+</svg>

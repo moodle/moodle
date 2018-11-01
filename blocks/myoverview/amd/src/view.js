@@ -26,17 +26,21 @@ define(
     'jquery',
     'block_myoverview/repository',
     'core/paged_content_factory',
+    'core/pubsub',
     'core/custom_interaction_events',
     'core/notification',
     'core/templates',
+    'core_course/events'
 ],
 function(
     $,
     Repository,
     PagedContentFactory,
+    PubSub,
     CustomEvents,
     Notification,
-    Templates
+    Templates,
+    CourseEvents
 ) {
 
     var SELECTORS = {
@@ -197,6 +201,7 @@ function(
 
         setCourseFavouriteState(courseId, true).then(function(success) {
             if (success) {
+                PubSub.publish(CourseEvents.favourited);
                 removeAction.removeClass('hidden');
                 addAction.addClass('hidden');
                 showFavouriteIcon(root, courseId);
@@ -219,6 +224,7 @@ function(
 
         setCourseFavouriteState(courseId, false).then(function(success) {
             if (success) {
+                PubSub.publish(CourseEvents.unfavorited);
                 removeAction.addClass('hidden');
                 addAction.removeClass('hidden');
                 hideFavouriteIcon(root, courseId);

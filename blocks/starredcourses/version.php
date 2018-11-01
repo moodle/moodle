@@ -15,18 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'course', language 'en', branch 'MOODLE_20_STABLE'
+ * Starred courses block version details.
  *
- * @package   core_course
- * @copyright 2018 Adrian Greeve <adriangreeve.com>
+ * @package   block_starredcourses
+ * @copyright 2018 Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die;
 
-$string['aria:courseimage'] = 'Course image:';
-$string['aria:coursename'] = 'Course name:';
-$string['aria:favourite'] = 'Course is starred';
-$string['favourite'] = 'Starred course';
-$string['notfavourite'] = 'Not starred';
-$string['privacy:perpage'] = 'The number of courses to show per page.';
-$string['privacy:completionpath'] = 'Course completion';
-$string['privacy:metadata:completionsummary'] = 'The course contains completion information about the user.';
+$plugin->version = 2018051402;
+$plugin->requires  = 2018050800;
+$plugin->component = 'block_starredcourses';

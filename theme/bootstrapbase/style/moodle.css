@@ -16546,13 +16546,16 @@ body {
   height: 35px;
   width: 35px;
 }
+.block_starredcourses .empty-placeholder-image-lg,
 .block_myoverview .empty-placeholder-image-lg {
   height: 125px;
 }
+.block_starredcourses .course-info-container,
 .block_myoverview .course-info-container {
   flex: 1 1 auto;
   padding: 0.8rem;
 }
+.block_starredcourses .dashboard-card-footer,
 .block_myoverview .dashboard-card-footer {
   padding: 0.8rem;
   background-color: #f5f5f5;
@@ -16564,13 +16567,16 @@ body {
   -moz-border-radius-bottomleft: 4px;
   border-bottom-left-radius: 4px;
 }
+.block_starredcourses .progress,
 .block_myoverview .progress {
   height: 0.5rem;
   margin-bottom: 0;
 }
+.block_starredcourses .list-group,
 .block_myoverview .list-group {
   margin: 0;
 }
+.block_starredcourses .course-listitem,
 .block_myoverview .course-listitem {
   display: block;
   padding: 0.75rem 1.25rem;
@@ -16581,6 +16587,7 @@ body {
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
+.block_starredcourses .course-summaryitem,
 .block_myoverview .course-summaryitem {
   padding: 0.5rem;
   background-color: #fff;
@@ -16589,13 +16596,19 @@ body {
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
+.block_starredcourses .summary img,
 .block_myoverview .summary img {
   max-width: 100%;
 }
 @media (max-width: 576px) {
+  .block_starredcourses .summaryimage,
   .block_myoverview .summaryimage {
     max-height: 7rem;
   }
+}
+.block_starredcourses .dashboard-card-deck {
+  flex-flow: nowrap;
+  overflow-y: scroll;
 }
 .dashboard-card-deck {
   box-sizing: border-box;
@@ -16630,7 +16643,7 @@ body {
 }
 @media (min-width: 1200px) {
   .dashboard-card-deck .dashboard-card {
-    flex-basis: calc(33% - 0.5rem);
+    flex-basis: calc(33.333% - 0.5rem);
   }
 }
 @media (min-width: 768px) {

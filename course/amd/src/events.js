@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,18 +14,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'course', language 'en', branch 'MOODLE_20_STABLE'
+ * Contain the events the course component can trigger.
  *
- * @package   core_course
- * @copyright 2018 Adrian Greeve <adriangreeve.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @module     core_course/events
+ * @package    core_course
+ * @copyright  2018 Simey Lameze <simey@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-$string['aria:courseimage'] = 'Course image:';
-$string['aria:coursename'] = 'Course name:';
-$string['aria:favourite'] = 'Course is starred';
-$string['favourite'] = 'Starred course';
-$string['notfavourite'] = 'Not starred';
-$string['privacy:perpage'] = 'The number of courses to show per page.';
-$string['privacy:completionpath'] = 'Course completion';
-$string['privacy:metadata:completionsummary'] = 'The course contains completion information about the user.';
+define([], function() {
+    return {
+        favourited: 'core_course:favourited',
+        unfavorited: 'core_course:unfavorited',
+    };
+});

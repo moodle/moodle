@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_myoverview/favourite-icon
+    @template core_course/favouriteicon
 
     This template renders the favourite icon for a course.
 
@@ -35,15 +35,15 @@
             data-region="is-favourite"
             aria-hidden="{{^isfavourite}}true{{/isfavourite}}{{#isfavourite}}false{{/isfavourite}}"
             >
-            {{#pix}} i/star, core, {{#str}} favourite, block_myoverview {{/str}} {{/pix}}
-            <span class="sr-only">{{#str}} aria:favourite, block_myoverview {{/str}}</span>
+            {{#pix}} i/star, core, {{#str}} favourite, core_course {{/str}} {{/pix}}
+            <span class="sr-only">{{#str}} aria:favourite, core_course {{/str}}</span>
         </span>
         <span
             {{#isfavourite}}class="hidden"{{/isfavourite}}
             data-region="not-favourite"
             aria-hidden="{{^isfavourite}}false{{/isfavourite}}{{#isfavourite}}true{{/isfavourite}}"
             >
-            {{#pix}} i/empty, core, {{#str}} notfavourite, block_myoverview {{/str}} {{/pix}}
+            {{#pix}} i/empty, core, {{#str}} notfavourite, core_course {{/str}} {{/pix}}
         </span>
     </div>
 </div>
