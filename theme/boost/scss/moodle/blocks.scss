@@ -125,6 +125,43 @@ $card-gutter : $card-deck-margin * 2;
     background-size: cover;
 }
 
+[data-region="blocks-column"] {
+    .block_recentlyaccesseditems {
+        .dashboard-card-deck {
+            height: unset;
+        }
+    }
+}
+
+.block_recentlyaccesseditems {
+    [data-region="recentlyaccesseditems-view-content"] {
+        overflow-x: hidden;
+    }
+    .dashboard-card {
+        height: 75px;
+    }
+    .dashboard-card-deck {
+        @include media-breakpoint-up(sm) {
+            height: 75px;
+            overflow: hidden;
+        }
+    }
+    .course-info-container {
+        padding: 0.8rem;
+    }
+    .empty-placeholder-image-lg {
+        height: 125px;
+    }
+    a,
+    a:hover {
+        text-decoration: none;
+        color: unset;
+    }
+    .block-controls ~ .content {
+        margin-top: 2rem !important;
+    }
+}
+
 .dashboard-card-deck .dashboard-card {
     margin-bottom: $card-gutter;
     flex-basis: 100%;

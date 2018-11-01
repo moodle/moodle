@@ -16610,6 +16610,48 @@ body {
   flex-flow: nowrap;
   overflow-y: scroll;
 }
+.block_recentlyaccesseditems [data-region="recentlyaccesseditems-view-content"] {
+  overflow-x: hidden;
+}
+.block_recentlyaccesseditems .dashboard-card {
+  height: 75px;
+}
+@media (min-width: 576px) {
+  .block_recentlyaccesseditems .dashboard-card-deck {
+    height: 75px;
+    overflow: hidden;
+  }
+}
+.block_recentlyaccesseditems .empty-placeholder-image-lg {
+  height: 125px;
+}
+.block_recentlyaccesseditems .course-info-container {
+  flex: 1 1 auto;
+  padding: 0.8rem;
+}
+.block_recentlyaccesseditems .icon-size-4 .icon {
+  height: auto;
+  width: auto;
+  background-image: unset;
+  box-sizing: unset;
+}
+.block_recentlyaccesseditems .icon-size-4 {
+  background-image: unset;
+  height: unset;
+  width: unset;
+}
+.block_recentlyaccesseditems .ml-1 {
+  margin-left: 10px;
+}
+.block_recentlyaccesseditems h6 {
+  font-size: .9375rem;
+  margin-bottom: 0;
+}
+.block_recentlyaccesseditems a,
+.block_recentlyaccesseditems a:hover {
+  text-decoration: none;
+  color: unset;
+}
 .dashboard-card-deck {
   box-sizing: border-box;
   display: flex;
@@ -16647,10 +16689,13 @@ body {
   }
 }
 @media (min-width: 768px) {
-  #block-region-side-post .dashboard-card-deck {
+  #block-region-side-post .dashboard-card-deck,
+  #block-region-side-pre .dashboard-card-deck {
     margin: 0;
+    height: unset;
   }
-  #block-region-side-post .dashboard-card-deck .dashboard-card {
+  #block-region-side-post .dashboard-card-deck .dashboard-card,
+  #block-region-side-pre .dashboard-card-deck .dashboard-card {
     flex-basis: 100%;
     margin-left: 0;
     margin-right: 0;
