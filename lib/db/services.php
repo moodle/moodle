@@ -1054,6 +1054,15 @@ $functions = array(
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
         'ajax' => true,
     ),
+    'core_message_get_conversation_members' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'get_conversation_members',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Retrieve a list of members in a conversation',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax' => true,
+    ),
     'core_message_get_unread_conversations_count' => array(
         'classname' => 'core_message_external',
         'methodname' => 'get_unread_conversations_count',

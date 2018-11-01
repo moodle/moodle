@@ -668,6 +668,76 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Returns get conversation members parameters description.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_conversation_members_parameters() {
+        return new external_function_parameters(
+            [
+                'userid' => new external_value(PARAM_INT, 'The id of the user we are performing this action on behalf of'),
+                'conversationid' => new external_value(PARAM_INT, 'The id of the conversation'),
+                'includecontactrequests' => new external_value(PARAM_BOOL, 'Do we want to include contact requests?',
+                    VALUE_DEFAULT, false),
+                'limitfrom' => new external_value(PARAM_INT, 'Limit from', VALUE_DEFAULT, 0),
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0)
+            ]
+        );
+    }
+
+    /**
+     * Returns a list of conversation members.
+     *
+     * @param int $userid The user we are returning the conversation members for, used by helper::get_member_info.
+     * @param int $conversationid The id of the conversation
+     * @param bool $includecontactrequests Do we want to include contact requests with this data?
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return array
+     */
+    public static function get_conversation_members(int $userid, int $conversationid, bool $includecontactrequests = false,
+                                                    int $limitfrom = 0, int $limitnum = 0) {
+        global $CFG, $USER;
+
+        // Check if messaging is enabled.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $userid) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
+
+        $params = [
+            'userid' => $userid,
+            'conversationid' => $conversationid,
+            'includecontactrequests' => $includecontactrequests,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ];
+        self::validate_parameters(self::get_conversation_members_parameters(), $params);
+
+        return \core_message\api::get_conversation_members($userid, $conversationid, $includecontactrequests,
+            $limitfrom, $limitnum);
+    }
+
+    /**
+     * Returns the get conversation members return description.
+     *
+     * @return external_description
+     */
+    public static function get_conversation_members_returns() {
+        return new external_multiple_structure(
+            self::get_conversation_member_structure(true)
+        );
+    }
+
+    /**
      * Creates a contact request parameters description.
      *
      * @return external_function_parameters
@@ -899,21 +969,37 @@ class core_message_external extends external_api {
     /**
      * Return the structure of a conversation member.
      *
+     * @param bool $includecontactrequests Are we including contact requests?
      * @return external_single_structure
      * @since Moodle 3.6
      */
-    private static function get_conversation_member_structure() {
+    private static function get_conversation_member_structure(bool $includecontactrequests = false) {
+        $result = [
+            'id' => new external_value(PARAM_INT, 'The user id'),
+            'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
+            'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
+            'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
+            'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
+            'showonlinestatus' => new external_value(PARAM_BOOL, 'Show the user\'s online status?'),
+            'isblocked' => new external_value(PARAM_BOOL, 'If the user has been blocked'),
+            'iscontact' => new external_value(PARAM_BOOL, 'Is the user a contact?'),
+        ];
+
+        if ($includecontactrequests) {
+            $result['contactrequests'] = new external_multiple_structure(
+                new external_single_structure(
+                    [
+                        'id' => new external_value(PARAM_INT, 'The id of the message'),
+                        'userid' => new external_value(PARAM_INT, 'The id of the user who sent the message'),
+                        'requesteduserid' => new external_value(PARAM_RAW, 'The text of the message'),
+                        'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the message'),
+                    ]
+                ), 'The contact requests', VALUE_OPTIONAL
+            );
+        }
+
         return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'The user id'),
-                'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
-                'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
-                'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
-                'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
-                'showonlinestatus' => new external_value(PARAM_BOOL, 'Show the user\'s online status?'),
-                'isblocked' => new external_value(PARAM_BOOL, 'If the user has been blocked'),
-                'iscontact' => new external_value(PARAM_BOOL, 'Is the user a contact?')
-            )
+            $result
         );
     }
 
