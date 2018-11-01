@@ -106,6 +106,9 @@ if ($contactsfirst) {
     $conversations = \core_message\api::get_contacts($user1->id, 0, 20);
 } else {
     $conversations = \core_message\api::get_conversations($user1->id, 0, 20);
+
+    // Format the conversations in the legacy style, as the get_conversations method has since been changed.
+    $conversations = \core_message\helper::get_conversations_legacy_formatter($conversations);
 }
 $messages = [];
 if (!$user2realuser) {

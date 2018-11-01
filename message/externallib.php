@@ -869,6 +869,34 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Return the structure of a conversation.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.6
+     */
+    private static function get_conversation_structure() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'The conversation id'),
+                'name' => new external_value(PARAM_NOTAGS, 'The conversation name, if set', VALUE_DEFAULT, null),
+                'subname' => new external_value(PARAM_NOTAGS, 'A subtitle for the conversation name, if set', VALUE_DEFAULT, null),
+                'type' => new external_value(PARAM_INT, 'The type of the conversation (1=individual,2=group)'),
+                'membercount' => new external_value(PARAM_INT, 'Total number of conversation members'),
+                'isfavourite' => new external_value(PARAM_BOOL, 'If the user marked conversation this conversation as a favourite'),
+                'isread' => new external_value(PARAM_BOOL, 'If the user has read all messages in the conversation'),
+                'unreadcount' => new external_value(PARAM_INT, 'The number of unread messages in this conversation',
+                    VALUE_DEFAULT, null),
+                'members' => new external_multiple_structure(
+                    self::get_conversation_member_structure()
+                ),
+                'messages' => new external_multiple_structure(
+                    self::get_conversation_message_structure()
+                ),
+            )
+        );
+    }
+
+    /**
      * Return the structure of a conversation member.
      *
      * @return external_single_structure
@@ -1166,8 +1194,86 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Get conversations parameters.
+     *
+     * @return external_function_parameters
+     * @since 3.6
+     */
+    public static function get_conversations_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing conversations for'),
+                'limitfrom' => new external_value(PARAM_INT, 'The offset to start at', VALUE_DEFAULT, 0),
+                'limitnum' => new external_value(PARAM_INT, 'Limit number of conversations to this', VALUE_DEFAULT, 0),
+                'type' => new external_value(PARAM_INT, 'Filter by type', VALUE_DEFAULT, null),
+                'favourites' => new external_value(PARAM_BOOL, 'Whether to restrict the results to contain NO favourite
+                conversations (false), ONLY favourite conversation (true), or ignore any restriction altogether (null)',
+                    VALUE_DEFAULT, null),
+
+            )
+        );
+    }
+
+    /**
+     * Get the list of conversations for the user.
+     *
+     * @param int $userid The id of the user who is performing the search
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @param int|null $type
+     * @param bool|null $favourites
+     * @return stdClass
+     * @throws \moodle_exception if the messaging feature is disabled on the site.
+     * @since 3.2
+     */
+    public static function get_conversations($userid, $limitfrom = 0, $limitnum = 0, int $type = null, bool $favourites = null) {
+        global $CFG, $USER;
+
+        // All the standard BL checks.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $params = array(
+            'userid' => $userid,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum,
+            'type' => $type,
+            'favourites' => $favourites
+        );
+        self::validate_parameters(self::get_conversations_parameters(), $params);
+
+        $systemcontext = context_system::instance();
+        self::validate_context($systemcontext);
+
+        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
+
+        $conversations = \core_message\api::get_conversations($userid, $limitfrom, $limitnum, $type, $favourites);
+        return (object) ['conversations' => $conversations];
+    }
+
+    /**
+     * Get conversations returns.
+     *
+     * @return external_single_structure
+     * @since 3.6
+     */
+    public static function get_conversations_returns() {
+        return new external_single_structure(
+            [
+                'conversations' => new external_multiple_structure(
+                    self::get_conversation_structure()
+                )
+            ]
+        );
+    }
+
+    /**
      * The messagearea conversations parameters.
      *
+     * @deprecated since 3.6
      * @return external_function_parameters
      * @since 3.2
      */
@@ -1184,6 +1290,13 @@ class core_message_external extends external_api {
     /**
      * Get messagearea conversations.
      *
+     * NOTE FOR FINAL DEPRECATION:
+     * When removing this method, please also consider removal of get_conversations_legacy_formatter()
+     * from the \core_message\helper class. This helper method was used solely to format the new get_conversations() return data
+     * into the old format used here, and in message/index.php. If we no longer need either of these, then that method can be
+     * removed.
+     *
+     * @deprecated since 3.6
      * @param int $userid The id of the user who we are viewing conversations for
      * @param int $limitfrom
      * @param int $limitnum
@@ -1214,6 +1327,10 @@ class core_message_external extends external_api {
         }
 
         $conversations = \core_message\api::get_conversations($userid, $limitfrom, $limitnum);
+
+        // Format the conversations in the legacy style, as the get_conversations method has since been changed.
+        $conversations = \core_message\helper::get_conversations_legacy_formatter($conversations);
+
         $conversations = new \core_message\output\messagearea\contacts(null, $conversations);
 
         $renderer = $PAGE->get_renderer('core_message');
@@ -1223,6 +1340,7 @@ class core_message_external extends external_api {
     /**
      * The messagearea conversations return structure.
      *
+     * @deprecated since 3.6
      * @return external_single_structure
      * @since 3.2
      */
@@ -1234,6 +1352,15 @@ class core_message_external extends external_api {
                 )
             )
         );
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function data_for_messagearea_conversations_is_deprecated() {
+        return true;
     }
 
     /**
