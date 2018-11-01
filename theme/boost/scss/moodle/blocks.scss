@@ -127,8 +127,10 @@ $card-gutter : $card-deck-margin * 2;
 
 [data-region="blocks-column"] {
     .block_recentlyaccesseditems {
-        .dashboard-card-deck {
-            height: unset;
+        @include media-breakpoint-up(xl) {
+            .dashboard-card-deck {
+                height: unset;
+            }
         }
     }
 }

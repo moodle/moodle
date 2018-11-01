@@ -11201,8 +11201,9 @@ div.editor_atto_toolbar button .icon {
   background-position: center;
   background-size: cover; }
 
-[data-region="blocks-column"] .block_recentlyaccesseditems .dashboard-card-deck {
-  height: unset; }
+@media (min-width: 1200px) {
+  [data-region="blocks-column"] .block_recentlyaccesseditems .dashboard-card-deck {
+    height: unset; } }
 
 .block_recentlyaccesseditems [data-region="recentlyaccesseditems-view-content"] {
   overflow-x: hidden; }
