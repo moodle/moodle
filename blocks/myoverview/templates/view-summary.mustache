@@ -36,7 +36,9 @@
 }}
 <div role="list">
 {{#courses}}
-    <div class="course-summaryitem m-b-1 p-2" role="listitem">
+    <div class="course-summaryitem m-b-1 p-2" role="listitem"
+        data-region="course-content"
+        data-course-id="{{{id}}}">
         <div class="row-fluid d-flex">
             <a href="{{viewurl}}" class="col-sm-4 col-xl-3 span4 position-relative" tabindex="-1">
                 <div class="position-absolute">

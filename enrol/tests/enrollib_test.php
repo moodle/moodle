@@ -605,6 +605,60 @@ class core_enrollib_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests the enrol_get_my_courses function when using the $includehidden parameter, which
+     * should remove any courses hidden from the user's timeline
+     *
+     * @throws coding_exception
+     * @throws dml_exception
+     */
+    public function test_enrol_get_my_courses_include_hidden() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Create test user and 4 courses, two of which have guest access enabled.
+        $user = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course(
+            (object)array('shortname' => 'X',
+                'enrol_guest_status_0' => ENROL_INSTANCE_DISABLED,
+                'enrol_guest_password_0' => ''));
+        $course2 = $this->getDataGenerator()->create_course(
+            (object)array('shortname' => 'Z',
+                'enrol_guest_status_0' => ENROL_INSTANCE_ENABLED,
+                'enrol_guest_password_0' => ''));
+        $course3 = $this->getDataGenerator()->create_course(
+            (object)array('shortname' => 'Y',
+                'enrol_guest_status_0' => ENROL_INSTANCE_ENABLED,
+                'enrol_guest_password_0' => 'frog'));
+        $course4 = $this->getDataGenerator()->create_course(
+            (object)array('shortname' => 'W',
+                'enrol_guest_status_0' => ENROL_INSTANCE_DISABLED,
+                'enrol_guest_password_0' => ''));
+
+        // User is enrolled in first course.
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course3->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course4->id);
+
+        // Check enrol_get_my_courses basic use (without include hidden provided).
+        $this->setUser($user);
+        $courses = enrol_get_my_courses();
+        $this->assertEquals([$course4->id, $course3->id, $course2->id, $course1->id], array_keys($courses));
+
+        // Hide a course.
+        set_user_preference('block_myoverview_hidden_course_' . $course3->id, true);
+
+        // Hidden course shouldn't be returned.
+        $courses = enrol_get_my_courses(null, null, 0, [], false, 0, [$course3->id]);
+        $this->assertEquals([$course4->id, $course2->id, $course1->id], array_keys($courses));
+
+        // Offset should take into account hidden course.
+        $courses = enrol_get_my_courses(null, null, 0, [], false, 2, [$course3->id]);
+        $this->assertEquals([$course1->id], array_keys($courses));
+    }
+
+    /**
      * Tests the enrol_get_my_courses function when using the $allaccessible parameter, which
      * includes a wider range of courses (enrolled courses + other accessible ones).
      */

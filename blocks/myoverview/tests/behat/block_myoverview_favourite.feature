@@ -28,11 +28,11 @@ Feature: The my overview block allows users to favourite their courses
     When I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I click on "Star this course" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I reload the page
-    Then "//div[@role='listitem' and contains(.,'Course 2')]//span[@data-region='is-favourite' and @aria-hidden='false']" "xpath_element" should exist
-    And "//div[@role='listitem' and contains(.,'Course 2')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should not exist
-    And "//div[@role='listitem' and contains(.,'Course 2')]//span[@data-region='not-favourite' and @aria-hidden='true']" "xpath_element" should exist
-    And "//div[@role='listitem' and contains(.,'Course 1')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should exist
-    And "//div[@role='listitem' and contains(.,'Course 3')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should exist
+    Then "//div[@class='card dashboard-card' and contains(.,'Course 2')]//span[@data-region='is-favourite' and @aria-hidden='false']" "xpath_element" should exist
+    And "//div[@class='card dashboard-card' and contains(.,'Course 2')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should not exist
+    And "//div[@class='card dashboard-card' and contains(.,'Course 2')]//span[@data-region='not-favourite' and @aria-hidden='true']" "xpath_element" should exist
+    And "//div[@class='card dashboard-card' and contains(.,'Course 1')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should exist
+    And "//div[@class='card dashboard-card' and contains(.,'Course 3')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should exist
     And I log out
 
   Scenario: Star a course and switch display to list

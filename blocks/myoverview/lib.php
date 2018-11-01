@@ -32,6 +32,7 @@ define('BLOCK_MYOVERVIEW_GROUPING_INPROGRESS', 'inprogress');
 define('BLOCK_MYOVERVIEW_GROUPING_FUTURE', 'future');
 define('BLOCK_MYOVERVIEW_GROUPING_PAST', 'past');
 define('BLOCK_MYOVERVIEW_GROUPING_FAVOURITES', 'favourites');
+define('BLOCK_MYOVERVIEW_GROUPING_HIDDEN', 'hidden');
 
 /**
  * Constants for the user preferences sorting options
@@ -62,7 +63,8 @@ function block_myoverview_user_preferences() {
             BLOCK_MYOVERVIEW_GROUPING_INPROGRESS,
             BLOCK_MYOVERVIEW_GROUPING_FUTURE,
             BLOCK_MYOVERVIEW_GROUPING_PAST,
-            BLOCK_MYOVERVIEW_GROUPING_FAVOURITES
+            BLOCK_MYOVERVIEW_GROUPING_FAVOURITES,
+            BLOCK_MYOVERVIEW_GROUPING_HIDDEN
         )
     );
     $preferences['block_myoverview_user_sort_preference'] = array(
@@ -84,5 +86,14 @@ function block_myoverview_user_preferences() {
             BLOCK_MYOVERVIEW_VIEW_SUMMARY
         )
     );
+
+    $preferences['/^block_myoverview_hidden_course_(\d)+$/'] = array(
+        'isregex' => true,
+        'choices' => array(0, 1),
+        'type' => PARAM_INT,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => 'none'
+    );
+
     return $preferences;
 }

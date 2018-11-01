@@ -71,7 +71,8 @@ class course_summary_exporter extends \core\external\exporter {
             'courseimage' => $courseimage,
             'progress' => $progress,
             'hasprogress' => $hasprogress,
-            'isfavourite' => $this->related['isfavourite']
+            'isfavourite' => $this->related['isfavourite'],
+            'hidden' => boolval(get_user_preferences('block_myoverview_hidden_course_' . $this->data->id, 0))
         );
     }
 
@@ -136,6 +137,9 @@ class course_summary_exporter extends \core\external\exporter {
                 'type' => PARAM_BOOL
             ),
             'isfavourite' => array(
+                'type' => PARAM_BOOL
+            ),
+            'hidden' => array(
                 'type' => PARAM_BOOL
             )
         );

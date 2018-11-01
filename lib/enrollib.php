@@ -560,9 +560,11 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
  * @param array $courseids the list of course ids to filter by
  * @param bool $allaccessible Include courses user is not enrolled in, but can access
  * @param int $offset Offset the result set by this number
+ * @param array $excludecourses IDs of hidden courses to exclude from search
  * @return array
  */
-function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $courseids = [], $allaccessible = false, $offset = 0) {
+function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $courseids = [], $allaccessible = false,
+    $offset = 0, $excludecourses = []) {
     global $DB, $USER, $CFG;
 
     if ($sort === null) {
@@ -650,6 +652,12 @@ function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $coursei
 
     if (!empty($courseids)) {
         list($courseidssql, $courseidsparams) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+        $wheres = sprintf("%s AND c.id %s", $wheres, $courseidssql);
+        $params = array_merge($params, $courseidsparams);
+    }
+
+    if (!empty($excludecourses)) {
+        list($courseidssql, $courseidsparams) = $DB->get_in_or_equal($excludecourses, SQL_PARAMS_NAMED, 'param', false);
         $wheres = sprintf("%s AND c.id %s", $wheres, $courseidssql);
         $params = array_merge($params, $courseidsparams);
     }

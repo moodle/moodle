@@ -26,13 +26,15 @@ define(
     'jquery',
     'core/custom_interaction_events',
     'block_myoverview/repository',
-    'block_myoverview/view'
+    'block_myoverview/view',
+    'block_myoverview/selectors'
 ],
 function(
     $,
     CustomEvents,
     Repository,
-    View
+    View,
+    Selectors
 ) {
 
     var SELECTORS = {
@@ -71,10 +73,8 @@ function(
      * Event listener for the Display filter (cards, list).
      *
      * @param {object} root The root element for the overview block
-     * @param {object} viewRoot The root element for displaying courses.
-     * @param {object} viewContent content The content element for the courses view.
      */
-    var registerSelector = function(root, viewRoot, viewContent) {
+    var registerSelector = function(root) {
 
         var Selector = root.find(SELECTORS.FILTERS);
 
@@ -91,16 +91,13 @@ function(
                 }
 
                 var filter = option.attr('data-filter');
-                var attributename = 'data-' + filter;
-                var value = option.attr('data-value');
                 var pref = option.attr('data-pref');
 
-                viewRoot.attr(attributename, value);
-
+                root.find(Selectors.courseView.region).attr('data-' + filter, option.attr('data-value'));
                 updatePreferences(filter, pref);
 
                 // Reset the views.
-                View.init(viewRoot, viewContent);
+                View.init(root);
 
                 data.originalEvent.preventDefault();
             }
@@ -118,12 +115,11 @@ function(
                 }
 
                 var filter = option.attr('data-display-option');
-                var value = option.attr('data-value');
                 var pref = option.attr('data-pref');
 
+                root.find(Selectors.courseView.region).attr('data-display', option.attr('data-value'));
                 updatePreferences(filter, pref);
-                viewRoot.attr('data-display', value);
-                View.reset(viewRoot, viewContent);
+                View.reset(root);
                 data.originalEvent.preventDefault();
             }
         );
@@ -134,12 +130,10 @@ function(
      * the navigation elements.
      *
      * @param {object} root The root element for the myoverview block
-     * @param {object} viewRoot The root element for the myoverview block
-     * @param {object} viewContent The content element for the myoverview block
      */
-    var init = function(root, viewRoot, viewContent) {
+    var init = function(root) {
         root = $(root);
-        registerSelector(root, viewRoot, viewContent);
+        registerSelector(root);
     };
 
     return {

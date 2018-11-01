@@ -21,7 +21,8 @@
 
     Example context (json):
     {
-        "isfavourite": true
+        "isfavourite": true,
+        "hidden": true
     }
 }}
 <div class="ml-auto dropdown">
@@ -44,6 +45,16 @@
             <li class="{{^isfavourite}}hidden{{/isfavourite}}" data-action="remove-favourite" data-course-id="{{id}}">
                 <a class="dropdown-item p-a-1" href="#">
                     {{#str}} removefromfavourites, block_myoverview {{/str}}
+                </a>
+            </li>
+            <li class="{{^hidden}}hidden{{/hidden}}" data-action="hide-course" data-course-id="{{id}}">
+                <a class="dropdown-item p-a-1" href="#">
+                    {{#str}} aria:hidecourse, block_myoverview, {{fullname}} {{/str}}
+                </a>
+            </li>
+            <li class="{{#hidden}}hidden{{/hidden}}" data-action="show-course" data-course-id="{{id}}">
+                <a class="dropdown-item p-a-1" href="#">
+                    {{#str}} aria:showcourse, block_myoverview, {{fullname}} {{/str}}
                 </a>
             </li>
         </ul>

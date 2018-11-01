@@ -36,7 +36,9 @@
 
 <ul class="list-group">
 {{#courses}}
-    <li class="list-group-item course-listitem">
+    <li class="list-group-item course-listitem"
+        data-region="course-content"
+        data-course-id="{{{id}}}">
         <div class="row-fluid">
             <div class="{{#hasprogress}}col-6 span6{{/hasprogress}}{{^hasprogress}}col-11 span11{{/hasprogress}} p-l-0">
                 <div class="d-flex align-items-center">

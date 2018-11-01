@@ -78,4 +78,23 @@ class block_myoverview_privacy_testcase extends \core_privacy\tests\provider_tes
             array('block_myoverview_user_view_preference', 'summary')
         );
     }
+
+    public function test_export_user_preferences_with_hidden_courses() {
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+        $name = "block_myoverview_hidden_course_1";
+
+        set_user_preference($name, 1, $user);
+        provider::export_user_preferences($user->id);
+        $writer = writer::with_context(\context_system::instance());
+        $blockpreferences = $writer->get_user_preferences('block_myoverview');
+
+        $this->assertEquals(
+            get_string("privacy:request:preference:set", 'block_myoverview', (object) [
+                'name' => $name,
+                'value' => 1,
+            ]),
+            $blockpreferences->{$name}->description
+        );
+    }
 }
