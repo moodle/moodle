@@ -713,6 +713,11 @@ class core_message_external extends external_api {
             throw new required_capability_exception($context, $capability, 'nopermissions', '');
         }
 
+        // The user needs to be a part of the conversation before querying who the members are.
+        if (!\core_message\api::is_user_in_conversation($userid, $conversationid)) {
+            throw new moodle_exception('You are not a member of this conversation.');
+        }
+
         $params = [
             'userid' => $userid,
             'conversationid' => $conversationid,
