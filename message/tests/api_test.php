@@ -2878,6 +2878,380 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Verify the expected behaviour of the can_send_message_to_conversation() method for authenticated users with default settings.
+     */
+    public function test_can_send_message_to_conversation_basic() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Create an individual conversation between user1 and user2.
+        $ic1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+
+        // Create a group conversation between and users 1, 2 and 3.
+        $gc1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id,
+                $user3->id
+            ]
+        );
+
+        // For group conversations, there are no user privacy checks, so only membership in the conversation is needed.
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $gc1->id));
+
+        // For individual conversations, the default privacy setting of 'only contacts and course members' applies.
+        // Users are not in the same course, nor are they contacts, so messages cannot be sent.
+        $this->assertFalse(\core_message\api::can_send_message_to_conversation($user1->id, $ic1->id));
+
+        // Enrol the users into the same course.
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+
+        // After enrolling users to the course, they should be able to message them with the default privacy setting.
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $ic1->id));
+    }
+
+    /**
+     * Verify the behaviour of can_send_message_to_conversation() for authenticated users without the sendmessage capability.
+     */
+    public function test_can_send_message_to_conversation_sendmessage_cap() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Enrol the users into the same course.
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+
+        // Create an individual conversation between user1 and user2.
+        $ic1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+
+        // Group conversation between and users 1, 2 and 3.
+        $gc1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id,
+                $user3->id
+            ]
+        );
+
+        // Default settings - user1 can send a message to both conversations.
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $ic1->id));
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $gc1->id));
+
+        // Remove the capability to send a message.
+        $roleids = $DB->get_records_menu('role', null, '', 'shortname, id');
+        unassign_capability('moodle/site:sendmessage', $roleids['user'], context_system::instance());
+
+        // Verify that a user cannot send a message to either an individual or a group conversation.
+        $this->assertFalse(\core_message\api::can_send_message_to_conversation($user1->id, $ic1->id));
+        $this->assertFalse(\core_message\api::can_send_message_to_conversation($user1->id, $gc1->id));
+    }
+
+    /**
+     * Verify the behaviour of can_send_message_to_conversation() for authenticated users without the messageanyuser capability.
+     */
+    public function test_can_send_message_to_conversation_messageanyuser_cap() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Enrol the users into the same course.
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+
+        // Create an individual conversation between user1 and user2.
+        $ic1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+
+        // Group conversation between and users 1, 2 and 3.
+        $gc1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id,
+                $user3->id
+            ]
+        );
+
+        // Update the message preference for user2, so they can only be messaged by contacts.
+        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS, $user2->id);
+
+        // Verify that the user cannot be contacted in the individual conversation and that groups are unaffected.
+        $this->assertFalse(\core_message\api::can_send_message_to_conversation($user1->id, $ic1->id));
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $gc1->id));
+
+        // Assign the 'messageanyuser' capability to user1 at system context.
+        $systemcontext = context_system::instance();
+        $authenticateduser = $DB->get_record('role', ['shortname' => 'user']);
+        assign_capability('moodle/site:messageanyuser', CAP_ALLOW, $authenticateduser->id, $systemcontext->id);
+
+        // Check that user1 can now message user2 due to the capability, and that group conversations is again unaffected.
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $ic1->id));
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $gc1->id));
+    }
+
+    /**
+     * Test verifying that users cannot send messages to conversations they are not a part of.
+     */
+    public function test_can_post_message_to_conversation_non_member() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Enrol the users into the same course.
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course->id);
+
+        // Create an individual conversation between user1 and user2.
+        $ic1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+
+        // Create a group conversation between and users 1, 2 and 3.
+        $gc1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id,
+                $user3->id
+            ]
+        );
+
+        // Verify, non members cannot send a message.
+        $this->assertFalse(\core_message\api::can_send_message_to_conversation($user4->id, $gc1->id));
+        $this->assertFalse(\core_message\api::can_send_message_to_conversation($user4->id, $ic1->id));
+    }
+
+    /**
+     * Test verifying the behaviour of the can_send_message_to_conversation method when privacy is set to contacts only.
+     */
+    public function test_can_send_message_to_conversation_privacy_contacts_only() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Create an individual conversation between user1 and user2.
+        $ic1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+
+        // Create a group conversation between and users 1, 2 and 3.
+        $gc1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id,
+                $user3->id
+            ]
+        );
+
+        // Set the message privacy preference to 'contacts only' for user 2.
+        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS, $user2->id);
+
+        // Verify that user1 cannot send a message to the individual conversation, but that the group conversation is unaffected.
+        $this->assertFalse(\core_message\api::can_send_message_to_conversation($user1->id, $ic1->id));
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $gc1->id));
+
+        // Now, simulate a contact request (and approval) between user1 and user2.
+        \core_message\api::create_contact_request($user1->id, $user2->id);
+        \core_message\api::confirm_contact_request($user1->id, $user2->id);
+
+        // Verify user1 can now message user2 again via their individual conversation.
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $ic1->id));
+    }
+
+    /**
+     * Test verifying the behaviour of the can_send_message_to_conversation method when privacy is set to contacts / course members.
+     */
+    public function test_can_send_message_to_conversation_privacy_contacts_course() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Set the message privacy preference to 'contacts + course members' for user 2.
+        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER, $user2->id);
+
+        // Create an individual conversation between user1 and user2.
+        $ic1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+
+        // Create a group conversation between and users 1, 2 and 3.
+        $gc1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id,
+                $user3->id
+            ]
+        );
+
+        // Verify that users in a group conversation can message one another (i.e. privacy controls ignored).
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $gc1->id));
+
+        // Verify that user1 can not message user2 unless they are either contacts, or share a course.
+        $this->assertFalse(\core_message\api::can_send_message_to_conversation($user1->id, $ic1->id));
+
+        // Enrol the users into the same course.
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+
+        // Verify that user1 can send a message to user2, based on the shared course, without being a contact.
+        $this->assertFalse(\core_message\api::is_contact($user1->id, $user2->id));
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $ic1->id));
+    }
+
+    /**
+     * Test verifying the behaviour of the can_send_message_to_conversation method when privacy is set to any user.
+     */
+    public function test_can_send_message_to_conversation_privacy_sitewide() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Create an individual conversation between user1 and user2.
+        $ic1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+
+        // Create a group conversation between and users 1, 2 and 3.
+        $gc1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id,
+                $user3->id
+            ]
+        );
+
+        // By default, the messaging privacy dictates that users can only be contacted by contacts, and members of their courses.
+        // Verify also, that groups are not restricted in this way.
+        $this->assertFalse(\core_message\api::can_send_message_to_conversation($user1->id, $ic1->id));
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $gc1->id));
+
+        // Enable site-wide messagging privacy setting.
+        // This enables a privacy option for users, allowing them to choose to be contactable by anybody on the site.
+        set_config('messagingallusers', true);
+
+        // Set the second user's preference to receive messages from everybody.
+        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_SITE, $user2->id);
+
+        // Check that user1 can send user2 a message, and that the group conversation is unaffected.
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $ic1->id));
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $gc1->id));
+
+        // Disable site-wide messagging privacy setting. The user will be able to receive messages from contacts
+        // and members sharing a course with her.
+        set_config('messagingallusers', false);
+
+        // As site-wide messaging setting is disabled, the value for user2 will be changed to MESSAGE_PRIVACY_COURSEMEMBER.
+        // Verify also that the group conversation is unaffected.
+        $this->assertFalse(\core_message\api::can_send_message_to_conversation($user1->id, $ic1->id));
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $gc1->id));
+    }
+
+    /**
+     * Test verifying the behaviour of the can_send_message_to_conversation method when a user is blocked.
+     */
+    public function test_can_send_message_to_conversation_when_blocked() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Create an individual conversation between user1 and user2.
+        $ic1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+
+        // Create a group conversation between and users 1, 2 and 3.
+        $gc1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id,
+                $user3->id
+            ]
+        );
+
+        // Enrol the users into the same course.
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+
+        // Block the second user.
+        \core_message\api::block_user($user1->id, $user2->id);
+
+        // Check that user2 can not send user1 a message in their individual conversation.
+        $this->assertFalse(\core_message\api::can_send_message_to_conversation($user2->id, $ic1->id));
+
+        // Verify that group conversations are unaffected.
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user1->id, $gc1->id));
+        $this->assertTrue(\core_message\api::can_send_message_to_conversation($user2->id, $gc1->id));
+    }
+
+    /**
      * Tests get_user_privacy_messaging_preference method.
      */
     public function test_get_user_privacy_messaging_preference() {

@@ -1432,6 +1432,50 @@ class api {
     }
 
     /**
+     * Determines if a user is permitted to send a message to a given conversation.
+     * If no sender is provided then it defaults to the logged in user.
+     *
+     * @param int $userid the id of the user on which the checks will be applied.
+     * @param int $conversationid the id of the conversation we wish to check.
+     * @return bool true if the user can send a message to the conversation, false otherwise.
+     * @throws \moodle_exception
+     */
+    public static function can_send_message_to_conversation(int $userid, int $conversationid) : bool {
+        global $DB;
+
+        $systemcontext = \context_system::instance();
+        if (!has_capability('moodle/site:sendmessage', $systemcontext, $userid)) {
+            return false;
+        }
+
+        if (!self::is_user_in_conversation($userid, $conversationid)) {
+            return false;
+        }
+
+        // User can post messages and is in the conversation, but we need to check the conversation type to
+        // know whether or not to check the user privacy settings via can_contact_user().
+        $conversation = $DB->get_record('message_conversations', ['id' => $conversationid], '*', MUST_EXIST);
+        if ($conversation->type == self::MESSAGE_CONVERSATION_TYPE_GROUP) {
+            return true;
+        } else if ($conversation->type == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL) {
+            // Get the other user in the conversation.
+            $members = self::get_conversation_members($userid, $conversationid);
+            $otheruser = array_filter($members, function($member) use($userid) {
+                return $member->id != $userid;
+            });
+            $otheruser = reset($otheruser);
+
+            // Spoof the stdClass for now - can_contact_user() only uses the ids.
+            $user = (object) ['id' => $userid];
+            $otheruser = (object) ['id' => $otheruser->id];
+
+            return self::can_contact_user($otheruser, $user);
+        } else {
+            throw new \moodle_exception("Invalid conversation type '$conversation->type'.");
+        }
+    }
+
+    /**
      * Get the messaging preference for a user.
      * If the user has not any messaging privacy preference:
      * - When $CFG->messagingallusers = false the default user preference is MESSAGE_PRIVACY_COURSEMEMBER.
