@@ -4153,7 +4153,7 @@ EOD;
     }
 
     public function context_header($headerinfo = null, $headinglevel = 1) {
-        global $DB, $USER, $CFG, $COURSE;
+        global $DB, $USER, $CFG;
         require_once($CFG->dirroot . '/user/lib.php');
         $context = $this->page->context;
         $heading = null;
@@ -4163,13 +4163,6 @@ EOD;
         // Make sure to use the heading if it has been set.
         if (isset($headerinfo['heading'])) {
             $heading = $headerinfo['heading'];
-        }
-
-        // Show a course image if enabled.
-        if ($context->contextlevel == CONTEXT_COURSE && get_config('moodlecourse', 'showcourseimages')) {
-            $exporter = new core_course\external\course_summary_exporter($COURSE, ['context' => $context]);
-            $courseinfo = $exporter->export($this);
-            $imagedata = $this->render_from_template('core/course_header_image', $courseinfo);
         }
 
         // The user context currently has images and buttons. Other contexts may follow.

@@ -2666,12 +2666,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018102900.00);
     }
 
-    if ($oldversion < 2018102900.01) {
-        // Show course images by default.
-        set_config('showcourseimages', 1, 'moodlecourse');
-        upgrade_main_savepoint(true, 2018102900.01);
-    }
-
     if ($oldversion < 2018110500.01) {
         // Define fields to be added to the 'badge' table.
         $tablebadge = new xmldb_table('badge');
@@ -2767,6 +2761,14 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2018110500.01);
+    }
+
+    if ($oldversion < 2018110700.01) {
+        // This config setting added and then removed.
+        unset_config('showcourseimages', 'moodlecourse');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018110700.01);
     }
 
     return true;
