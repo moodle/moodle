@@ -184,7 +184,7 @@ class provider implements
         $userid = $context->instanceid;
 
         // Messages are in the user context.
-        // For the sake of performance, there is no need to call add_from_sql for each of the bellow cases.
+        // For the sake of performance, there is no need to call add_from_sql for each of the below cases.
         // It is enough to add the user's context as soon as we come to the conclusion that the user has some data.
         // Also, the order of checking is sorted by the probability of occurrence (just by guess).
 
@@ -298,10 +298,8 @@ class provider implements
     protected static function delete_user_data(int $userid) {
         global $DB;
 
-        $DB->delete_records_select('message', 'useridfrom = ? AND notification = 0', [$userid]);
-        $DB->delete_records_select('message_read', 'useridfrom = ? AND notification = 0', [$userid]);
-        $DB->delete_records_select('message', '(useridfrom = ? OR useridto = ?) AND notification = 1', [$userid, $userid]);
-        $DB->delete_records_select('message_read', '(useridfrom = ? OR useridto = ?) AND notification = 1', [$userid, $userid]);
+        $DB->delete_records_select('message', 'useridfrom = ? OR (useridto = ? AND notification = 1)', [$userid, $userid]);
+        $DB->delete_records_select('message_read', 'useridfrom = ? OR (useridto = ? AND notification = 1)', [$userid, $userid]);
         $DB->delete_records_select('message_contacts', 'userid = ? OR contactid = ?', [$userid, $userid]);
     }
 
