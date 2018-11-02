@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Privacy test for core_role
  *
@@ -21,13 +22,16 @@
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die();
+
 use \core_role\privacy\provider;
 use \core_privacy\local\request\approved_contextlist;
 use \core_privacy\local\request\writer;
 use \core_privacy\tests\provider_testcase;
 use \core_privacy\local\request\transform;
 use \tool_cohortroles\api;
+use \core_privacy\local\request\approved_userlist;
 
 /**
  * Privacy test for core_role
@@ -54,6 +58,7 @@ class core_role_privacy_testcase extends provider_testcase {
         $this->assertEquals(get_string('privacy:metadata:preference:showadvanced', 'core_role'),
             $prefs->definerole_showadvanced->description);
     }
+
     /**
      * Check all contexts are returned if there is any user data for this user.
      */
@@ -231,6 +236,7 @@ class core_role_privacy_testcase extends provider_testcase {
             }
         }
     }
+
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
@@ -316,6 +322,7 @@ class core_role_privacy_testcase extends provider_testcase {
         $count = $DB->count_records('role_assignments', ['contextid' => $usercontext2->id]);
         $this->assertEquals(0, $count);
     }
+
     /**
      * Test for provider::delete_data_for_user().
      */
@@ -373,6 +380,7 @@ class core_role_privacy_testcase extends provider_testcase {
         $count = $DB->count_records('role_assignments', ['modifierid' => $user->id]);
         $this->assertEquals(2, $count);
     }
+
     /**
      * Export for a user with a key against a script where no instance is specified.
      */
@@ -426,6 +434,7 @@ class core_role_privacy_testcase extends provider_testcase {
         $exported = $writer->get_related_data($subcontextteacher, 'cohortroles');
         $this->assertEquals($user2->id, reset($exported)->userid);
     }
+
     /**
      * Test for provider::delete_user_role_to_cohort().
      */
@@ -460,6 +469,267 @@ class core_role_privacy_testcase extends provider_testcase {
         $count = $DB->count_records('role_assignments', ['userid' => $user->id, 'component' => 'tool_cohortroles']);
         $this->assertEquals(0, $count);
     }
+
+    /**
+     * Test that only users within a course context are fetched.
+     */
+    public function test_get_users_in_context() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $component = 'core_role';
+
+        $this->setAdminUser();
+        $admin = \core_user::get_user_by_username('admin');
+        // Create user1.
+        $user1 = $this->getDataGenerator()->create_user();
+        $usercontext1 = \context_user::instance($user1->id);
+        // Create user2.
+        $user2 = $this->getDataGenerator()->create_user();
+        $usercontext2 = \context_user::instance($user2->id);
+        // Create course1.
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = \context_course::instance($course1->id);
+        // Create course category.
+        $coursecat = $this->getDataGenerator()->create_category();
+        $coursecatcontext = \context_coursecat::instance($coursecat->id);
+        // Create chat module.
+        $cm = $this->getDataGenerator()->create_module('chat', ['course' => $course1->id]);
+        $cmcontext = \context_module::instance($cm->cmid);
+
+        $systemcontext = \context_system::instance();
+        // Create a block.
+        $block = $this->getDataGenerator()->create_block('online_users');
+        $blockcontext = \context_block::instance($block->id);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'), '*', MUST_EXIST);
+
+        // Role assignments CONTEXT_COURSE.
+        role_assign($studentrole->id, $user1->id, $coursecontext1->id);
+        role_assign($studentrole->id, $user2->id, $coursecontext1->id);
+        // Role assignments CONTEXT_COURSECAT.
+        role_assign($studentrole->id, $user2->id, $coursecatcontext->id);
+        // Role assignments CONTEXT_SYSTEM.
+        role_assign($studentrole->id, $user1->id, $systemcontext->id);
+        // Role assignments CONTEXT_MODULE.
+        role_assign($studentrole->id, $user2->id, $cmcontext->id);
+        // Role assigments CONTEXT_BLOCK.
+        role_assign($studentrole->id, $user1->id, $blockcontext->id);
+        // Role assigments CONTEXT_USER.
+        role_assign($managerrole->id, $user1->id, $usercontext2->id);
+
+        // Role capabilities.
+        $this->setUser($user1);
+        assign_capability('moodle/backup:backupcourse', CAP_ALLOW, $studentrole->id, $cmcontext->id);
+
+        // The user list for usercontext1 should not return any users.
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(0, $userlist1);
+        // The user list for usercontext2 should user1 and admin (role creator).
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(2, $userlist2);
+        $expected = [
+            $user1->id,
+            $admin->id
+        ];
+        $this->assertEquals($expected, $userlist2->get_userids(), '', 0.0, 10, true);
+
+        // The user list for coursecontext1 should user1, user2 and admin (role creator).
+        $userlist3 = new \core_privacy\local\request\userlist($coursecontext1, $component);
+        provider::get_users_in_context($userlist3);
+        $this->assertCount(3, $userlist3);
+        $expected = [
+            $user1->id,
+            $user2->id,
+            $admin->id
+        ];
+        $this->assertEquals($expected, $userlist3->get_userids(), '', 0.0, 10, true);
+
+        // The user list for coursecatcontext should user2 and admin (role creator).
+        $userlist4 = new \core_privacy\local\request\userlist($coursecatcontext, $component);
+        provider::get_users_in_context($userlist4);
+        $this->assertCount(2, $userlist4);
+        $expected = [
+            $user2->id,
+            $admin->id
+        ];
+        $this->assertEquals($expected, $userlist4->get_userids(), '', 0.0, 10, true);
+
+        // The user list for systemcontext should user1 and admin (role creator).
+        $userlist6 = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist6);
+        $this->assertCount(2, $userlist6);
+        $expected = [
+            $user1->id,
+            $admin->id
+        ];
+        $this->assertEquals($expected, $userlist6->get_userids(), '', 0.0, 10, true);
+
+        // The user list for cmcontext should user1, user2 and admin (role creator).
+        $userlist7 = new \core_privacy\local\request\userlist($cmcontext, $component);
+        provider::get_users_in_context($userlist7);
+        $this->assertCount(3, $userlist7);
+        $expected = [
+            $user1->id,
+            $user2->id,
+            $admin->id
+        ];
+        $this->assertEquals($expected, $userlist7->get_userids(), '', 0.0, 10, true);
+
+        // The user list for blockcontext should user1 and admin (role creator).
+        $userlist8 = new \core_privacy\local\request\userlist($blockcontext, $component);
+        provider::get_users_in_context($userlist8);
+        $this->assertCount(2, $userlist8);
+        $expected = [
+            $user1->id,
+            $admin->id
+        ];
+        $this->assertEquals($expected, $userlist8->get_userids(), '', 0.0, 10, true);
+    }
+
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $component = 'core_role';
+
+        $this->setAdminUser();
+        $admin = \core_user::get_user_by_username('admin');
+        // Create user1.
+        $user1 = $this->getDataGenerator()->create_user();
+        // Create user2.
+        $user2 = $this->getDataGenerator()->create_user();
+        $usercontext2 = \context_user::instance($user2->id);
+        // Create course1.
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = \context_course::instance($course1->id);
+        // Create course category.
+        $coursecat = $this->getDataGenerator()->create_category();
+        $coursecatcontext = \context_coursecat::instance($coursecat->id);
+        // Create chat module.
+        $cm = $this->getDataGenerator()->create_module('chat', ['course' => $course1->id]);
+        $cmcontext = \context_module::instance($cm->cmid);
+
+        $systemcontext = \context_system::instance();
+        // Create a block.
+        $block = $this->getDataGenerator()->create_block('online_users');
+        $blockcontext = \context_block::instance($block->id);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'), '*', MUST_EXIST);
+
+        // Role assignments CONTEXT_COURSE.
+        role_assign($studentrole->id, $user1->id, $coursecontext1->id);
+        role_assign($studentrole->id, $user2->id, $coursecontext1->id);
+        // Role assignments CONTEXT_COURSECAT.
+        role_assign($studentrole->id, $user2->id, $coursecatcontext->id);
+        // Role assignments CONTEXT_SYSTEM.
+        role_assign($studentrole->id, $user1->id, $systemcontext->id);
+        // Role assignments CONTEXT_MODULE.
+        role_assign($studentrole->id, $user2->id, $cmcontext->id);
+        // Role assigments CONTEXT_BLOCK.
+        role_assign($studentrole->id, $user1->id, $blockcontext->id);
+        // Role assigments CONTEXT_USER.
+        role_assign($managerrole->id, $user1->id, $usercontext2->id);
+
+        // Role capabilities.
+        $this->setUser($user1);
+        assign_capability('moodle/backup:backupcourse', CAP_ALLOW, $studentrole->id, $cmcontext->id);
+
+        // The user list for usercontext2 should user1 and admin (role creator).
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(2, $userlist1);
+        // The user list for coursecontext1 should user1, user2 and admin (role creator).
+        $userlist2 = new \core_privacy\local\request\userlist($coursecontext1, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(3, $userlist2);
+        // The user list for coursecatcontext should user2 and admin (role creator).
+        $userlist3 = new \core_privacy\local\request\userlist($coursecatcontext, $component);
+        provider::get_users_in_context($userlist3);
+        $this->assertCount(2, $userlist3);
+        // The user list for systemcontext should user1 and admin (role creator).
+        $userlist4 = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist4);
+        $this->assertCount(2, $userlist4);
+        // The user list for cmcontext should user1, user2 and admin (role creator).
+        $userlist5 = new \core_privacy\local\request\userlist($cmcontext, $component);
+        provider::get_users_in_context($userlist5);
+        $this->assertCount(3, $userlist5);
+        // The user list for blockcontext should user1 and admin (role creator).
+        $userlist6 = new \core_privacy\local\request\userlist($blockcontext, $component);
+        provider::get_users_in_context($userlist6);
+        $this->assertCount(2, $userlist6);
+
+        // Convert $userlist1 into an approved_contextlist.
+        $approvedlist1 = new approved_userlist($usercontext2, $component, $userlist1->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist1);
+        // Re-fetch users in usercontext2.
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(0, $userlist1);
+
+        // Convert $userlist2 into an approved_contextlist.
+        $approvedlist2 = new approved_userlist($coursecontext1, $component, $userlist2->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist2);
+        // Re-fetch users in coursecontext1.
+        $userlist2 = new \core_privacy\local\request\userlist($coursecontext1, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(0, $userlist2);
+
+        // Convert $userlist3 into an approved_contextlist.
+        $approvedlist3 = new approved_userlist($coursecatcontext, $component, $userlist3->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist3);
+        // Re-fetch users in coursecatcontext.
+        $userlist3 = new \core_privacy\local\request\userlist($coursecatcontext, $component);
+        provider::get_users_in_context($userlist3);
+        $this->assertCount(0, $userlist3);
+
+        // Convert $userlist4 into an approved_contextlist.
+        $approvedlist4 = new approved_userlist($systemcontext, $component, $userlist4->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist4);
+        // Re-fetch users in systemcontext.
+        $userlist4 = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist4);
+        // The data from role_capabilities should still be present. The user list should return the admin user.
+        $this->assertCount(1, $userlist4);
+        $expected = [$admin->id];
+        $this->assertEquals($expected, $userlist4->get_userids());
+
+        // Convert $userlist5 into an approved_contextlist.
+        $approvedlist5 = new approved_userlist($cmcontext, $component, $userlist5->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist5);
+        // Re-fetch users in cmcontext.
+        $userlist5 = new \core_privacy\local\request\userlist($cmcontext, $component);
+        provider::get_users_in_context($userlist5);
+        // The data from role_capabilities should still be present. The user list should return user1.
+        $this->assertCount(1, $userlist5);
+        $expected = [$user1->id];
+        $this->assertEquals($expected, $userlist5->get_userids());
+
+        // Convert $userlist6 into an approved_contextlist.
+        $approvedlist6 = new approved_userlist($blockcontext, $component, $userlist6->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist6);
+        // Re-fetch users in blockcontext.
+        $userlist6 = new \core_privacy\local\request\userlist($blockcontext, $component);
+        provider::get_users_in_context($userlist6);
+        $this->assertCount(0, $userlist6);
+    }
+
     /**
      * Supoort function to get all the localised roles name
      * in a simple array for testing.
