@@ -222,10 +222,6 @@ input[type="checkbox"].tool_lp_scale_proficient {
     display: none;
 }
 
-.user-competency-course-navigation {
-    width: 240px;
-}
-
 .user-competency-course-navigation span {
     max-width: 100%;
     overflow: hidden;
