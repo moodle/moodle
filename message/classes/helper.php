@@ -482,11 +482,12 @@ class helper {
      *
      * @param int $referenceuserid the id of the user which check contact and blocked status.
      * @param array $userids
+     * @param bool $includecontactrequests Do we want to include contact requests with this data?
      * @return array the array of objects containing member info, indexed by userid.
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public static function get_member_info(int $referenceuserid, array $userids) : array {
+    public static function get_member_info(int $referenceuserid, array $userids, bool $includecontactrequests = false) : array {
         global $DB, $PAGE;
 
         // Prevent exception being thrown when array is empty.
@@ -532,6 +533,25 @@ class helper {
 
             $members[$data->id] = $data;
         }
+
+        // Check if we want to include contact requests as well.
+        if (!empty($members) && $includecontactrequests) {
+            list($useridsql, $usersparams) = $DB->get_in_or_equal($userids);
+
+            $wheresql = "(userid $useridsql OR requesteduserid $useridsql)";
+            if ($contactrequests = $DB->get_records_select('message_contact_requests', $wheresql,
+                array_merge($usersparams, $usersparams), 'timecreated ASC, id ASC')) {
+                foreach ($contactrequests as $contactrequest) {
+                    if (isset($members[$contactrequest->userid])) {
+                        $members[$contactrequest->userid]->contactrequests[] = $contactrequest;
+                    }
+                    if (isset($members[$contactrequest->requesteduserid])) {
+                        $members[$contactrequest->requesteduserid]->contactrequests[] = $contactrequest;
+                    }
+                }
+            }
+        }
+
         return $members;
     }
 
