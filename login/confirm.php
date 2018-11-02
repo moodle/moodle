@@ -79,6 +79,14 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
             complete_user_login($user);
 
             \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
+
+            // Check where to go, $redirect has a higher preference.
+            if (!empty($redirect)) {
+                if (!empty($SESSION->wantsurl)) {
+                    unset($SESSION->wantsurl);
+                }
+                redirect($redirect);
+            }
         }
 
         $PAGE->navbar->add(get_string("confirmed"));
