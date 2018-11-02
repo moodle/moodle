@@ -483,11 +483,14 @@ class helper {
      * @param int $referenceuserid the id of the user which check contact and blocked status.
      * @param array $userids
      * @param bool $includecontactrequests Do we want to include contact requests with this data?
+     * @param bool $includeprivacyinfo Do we want to include whether the user can message another, and if the user
+     *             requires a contact.
      * @return array the array of objects containing member info, indexed by userid.
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public static function get_member_info(int $referenceuserid, array $userids, bool $includecontactrequests = false) : array {
+    public static function get_member_info(int $referenceuserid, array $userids, bool $includecontactrequests = false,
+                                           bool $includeprivacyinfo = false) : array {
         global $DB, $PAGE;
 
         // Prevent exception being thrown when array is empty.
@@ -530,6 +533,21 @@ class helper {
             $data->isblocked = ($member->blockedid) ? true : false;
 
             $data->isdeleted = ($member->deleted) ? true : false;
+
+            $data->requirescontact = null;
+            $data->canmessage = null;
+            if ($includeprivacyinfo) {
+                $privacysetting = api::get_user_privacy_messaging_preference($member->id);
+                $data->requirescontact = $privacysetting == api::MESSAGE_PRIVACY_ONLYCONTACTS;
+
+                $recipient = new \stdClass();
+                $recipient->id = $member->id;
+
+                $sender = new \stdClass();
+                $sender->id = $referenceuserid;
+
+                $data->canmessage = api::can_post_message($recipient, $sender);
+            }
 
             $members[$data->id] = $data;
         }
