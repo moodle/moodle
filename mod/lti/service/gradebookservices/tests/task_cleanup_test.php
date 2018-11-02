@@ -50,6 +50,8 @@ class ltiservice_gradebookservices_cleanup_task_testcase extends advanced_testca
     public function test_cleanup_task() {
         global $DB;
 
+        $this->setAdminuser();
+
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 

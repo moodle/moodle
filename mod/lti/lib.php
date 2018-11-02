@@ -103,6 +103,8 @@ function lti_add_instance($lti, $mform) {
         $lti->typeid = $lti->urlmatchedtypeid;
     }
 
+    lti_require_type_access($lti);
+
     if (!isset($lti->instructorchoiceacceptgrades) || $lti->instructorchoiceacceptgrades != LTI_SETTING_ALWAYS) {
         // The instance does not accept grades back from the provider, so set to "No grade" value 0.
         $lti->grade = 0;
@@ -165,6 +167,8 @@ function lti_update_instance($lti, $mform) {
         $lti->typeid = $lti->urlmatchedtypeid;
     }
 
+    lti_require_type_access($lti);
+
     $completiontimeexpected = !empty($lti->completionexpected) ? $lti->completionexpected : null;
     \core_completion\api::update_completion_date_event($lti->coursemodule, 'lti', $lti->id, $completiontimeexpected);
 
@@ -219,7 +223,9 @@ function lti_get_shortcuts($defaultitem) {
     require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
     $types = lti_get_configured_types($COURSE->id, $defaultitem->link->param('sr'));
-    $types[] = $defaultitem;
+    if (has_capability('mod/lti:adddefaultinstance', context_course::instance($COURSE->id))) {
+        $types[] = $defaultitem;
+    }
 
     // Add items defined in ltisource plugins.
     foreach (core_component::get_plugin_list('ltisource') as $pluginname => $dir) {

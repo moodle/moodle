@@ -289,6 +289,32 @@ class mod_lti_mod_form extends moodleform_mod {
         }
 
         $PAGE->requires->js_init_call('M.mod_lti.editor.init', array(json_encode($jsinfo)), true, $module);
+
+        // Show configuration details only if not preset (when new) or user has the capabilities to do so (when editing).
+        $ctxcourse = context_course::instance($COURSE->id);
+        if (optional_param('update', 0, PARAM_INT)) {
+            $listtypes = has_capability('mod/lti:addgloballypreconfigedtoolinstance', $ctxcourse);
+            $listoptions = has_capability('mod/lti:adddefaultinstance', $ctxcourse);
+        } else {
+            $listtypes = !$typeid;
+            $listoptions = !$typeid && has_capability('mod/lti:adddefaultinstance', $ctxcourse);
+        }
+        if (!$listtypes) {
+            $mform->removeElement('typeid');
+            $mform->addElement('hidden', 'typeid', $typeid);
+            $mform->setType('typeid', PARAM_INT);
+        }
+        if (!$listoptions) {
+            $mform->removeElement('selectcontent');
+            $mform->removeElement('toolurl');
+            $mform->removeElement('securetoolurl');
+            $mform->removeElement('launchcontainer');
+            $mform->removeElement('resourcekey');
+            $mform->removeElement('password');
+            $mform->removeElement('instructorcustomparameters');
+            $mform->removeElement('icon');
+            $mform->removeElement('secureicon');
+        }
     }
 
 }

@@ -91,6 +91,26 @@ $capabilities = array(
         )
     ),
 
+    // The ability to a globally preconfigured instance to the course.
+    'mod/lti:addgloballypreconfigedtoolinstance' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    // The ability to add a default instance (i.e. not from a preconfigured tool) to the course.
+    'mod/lti:adddefaultinstance' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     // The ability to request the administrator to configure a particular
     // External tool globally.
     'mod/lti:requesttooladd' => array(

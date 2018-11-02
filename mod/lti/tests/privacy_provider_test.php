@@ -86,6 +86,8 @@ class mod_lti_privacy_provider_testcase extends \core_privacy\tests\provider_tes
     public function test_get_contexts_for_userid() {
         $this->resetAfterTest();
 
+        $this->setAdminuser();
+
         $course = $this->getDataGenerator()->create_course();
 
         // The LTI activity the user will have submitted something for.
@@ -117,6 +119,8 @@ class mod_lti_privacy_provider_testcase extends \core_privacy\tests\provider_tes
      */
     public function test_get_users_in_context() {
         $this->resetAfterTest();
+
+        $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course();
         $component = 'mod_lti';
@@ -158,6 +162,8 @@ class mod_lti_privacy_provider_testcase extends \core_privacy\tests\provider_tes
      */
     public function test_export_for_context_submissions() {
         $this->resetAfterTest();
+
+        $this->setAdminuser();
 
         $course = $this->getDataGenerator()->create_course();
 
@@ -266,6 +272,8 @@ class mod_lti_privacy_provider_testcase extends \core_privacy\tests\provider_tes
 
         $this->resetAfterTest();
 
+        $this->setAdminuser();
+
         $course = $this->getDataGenerator()->create_course();
 
         $lti = $this->getDataGenerator()->create_module('lti', array('course' => $course->id));
@@ -297,6 +305,8 @@ class mod_lti_privacy_provider_testcase extends \core_privacy\tests\provider_tes
         global $DB;
 
         $this->resetAfterTest();
+
+        $this->setAdminuser();
 
         $course = $this->getDataGenerator()->create_course();
 
@@ -337,6 +347,8 @@ class mod_lti_privacy_provider_testcase extends \core_privacy\tests\provider_tes
         $component = 'mod_lti';
 
         $this->resetAfterTest();
+
+        $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course();
 

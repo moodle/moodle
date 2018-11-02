@@ -204,7 +204,7 @@ class mod_lti_locallib_testcase extends advanced_testcase {
     public function test_lti_buid_request_resource_link_id() {
         $this->resetAfterTest();
 
-        self::setUser($this->getDataGenerator()->create_user());
+        $this->setAdminUser();
         $course   = $this->getDataGenerator()->create_course();
         $instance = $this->getDataGenerator()->create_module('lti', array(
             'intro'       => "<p>This</p>\nhas\r\n<p>some</p>\nnew\n\rlines",
@@ -243,7 +243,7 @@ class mod_lti_locallib_testcase extends advanced_testcase {
     public function test_lti_build_request_description() {
         $this->resetAfterTest();
 
-        self::setUser($this->getDataGenerator()->create_user());
+        $this->setAdminUser();
         $course   = $this->getDataGenerator()->create_course();
         $instance = $this->getDataGenerator()->create_module('lti', array(
             'intro'       => "<p>This</p>\nhas\r\n<p>some</p>\nnew\n\rlines",

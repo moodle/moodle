@@ -2129,10 +2129,21 @@ function lti_get_lti_types_by_course($courseid, $coursevisible = null) {
     }
 
     list($coursevisiblesql, $coursevisparams) = $DB->get_in_or_equal($coursevisible, SQL_PARAMS_NAMED, 'coursevisible');
+    $courseconds = [];
+    if (has_capability('mod/lti:adddefaultinstance', context_course::instance($courseid))) {
+        $courseconds[] = "course = :courseid";
+    }
+    if (has_capability('mod/lti:addgloballypreconfigedtoolinstance', context_course::instance($courseid))) {
+        $courseconds[] = "course = :siteid";
+    }
+    if (!$courseconds) {
+        return [];
+    }
+    $coursecond = implode(" OR ", $courseconds);
     $query = "SELECT *
                 FROM {lti_types}
                WHERE coursevisible $coursevisiblesql
-                 AND (course = :siteid OR course = :courseid)
+                 AND ($coursecond)
                  AND state = :active";
 
     return $DB->get_records_sql($query,
@@ -2149,7 +2160,9 @@ function lti_get_types_for_add_instance() {
     $admintypes = lti_get_lti_types_by_course($COURSE->id);
 
     $types = array();
-    $types[0] = (object)array('name' => get_string('automatic', 'lti'), 'course' => 0, 'toolproxyid' => null);
+    if (has_capability('mod/lti:adddefaultinstance', context_course::instance($COURSE->id))) {
+        $types[0] = (object)array('name' => get_string('automatic', 'lti'), 'course' => 0, 'toolproxyid' => null);
+    }
 
     foreach ($admintypes as $type) {
         $types[$type->id] = $type;
@@ -4247,4 +4260,30 @@ function lti_new_access_token($typeid, $scopes) {
 
     return $newtoken;
 
+}
+
+/**
+ * Checks if user can add tool. Throws a capability exception otherwise.
+ * @param object $lti
+ * @return void
+ * @throws required_capability_exception
+ */
+function lti_require_type_access($lti) {
+    global $DB, $SITE;
+
+    if (empty($lti->typeid)) {
+        // This is not a global tool.
+        require_capability('mod/lti:adddefaultinstance', context_course::instance($lti->course));
+        return;
+    }
+
+    $toolcourseid = $DB->get_field('lti_types', 'course', ['id' => $lti->typeid], MUST_EXIST);
+    if ($toolcourseid != $SITE->id) {
+        // Not a global tool.
+        require_capability('mod/lti:adddefaultinstance', context_course::instance($lti->course));
+        return;
+    }
+
+    // This is a global tool.
+    require_capability('mod/lti:addgloballypreconfigedtoolinstance', context_course::instance($lti->course));
 }
