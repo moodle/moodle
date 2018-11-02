@@ -489,6 +489,11 @@ class helper {
     public static function get_member_info(int $referenceuserid, array $userids) : array {
         global $DB, $PAGE;
 
+        // Prevent exception being thrown when array is empty.
+        if (empty($userids)) {
+            return [];
+        }
+
         list($useridsql, $usersparams) = $DB->get_in_or_equal($userids);
         $userfields = \user_picture::fields('u', array('lastaccess'));
         $userssql = "SELECT $userfields, u.deleted, mc.id AS contactid, mub.id AS blockedid
