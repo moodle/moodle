@@ -2252,6 +2252,33 @@ function question_make_export_url($contextid, $categoryid, $format, $withcategor
 }
 
 /**
+ * Get the URL to export a single question (exportone.php).
+ *
+ * @param stdClass|question_definition $question the question definition as obtained from
+ *      question_bank::load_question_data() or question_bank::make_question().
+ *      (Only ->id and ->contextid are used.)
+ * @return moodle_url the requested URL.
+ */
+function question_get_export_single_question_url($question) {
+    $params = ['id' => $question->id, 'sesskey' => sesskey()];
+    $context = context::instance_by_id($question->contextid);
+    switch ($context->contextlevel) {
+        case CONTEXT_MODULE:
+            $params['cmid'] = $context->instanceid;
+            break;
+
+        case CONTEXT_COURSE:
+            $params['courseid'] = $context->instanceid;
+            break;
+
+        default:
+            $params['courseid'] = SITEID;
+    }
+
+    return new moodle_url('/question/exportone.php', $params);
+}
+
+/**
  * Return a list of page types
  * @param string $pagetype current page type
  * @param stdClass $parentcontext Block's parent context
