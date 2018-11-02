@@ -237,7 +237,7 @@ class logstore_standard_privacy_testcase extends provider_testcase {
         $this->assertEquals(1, $DB->count_records('logstore_standard_log', ['userid' => $u2->id]));
     }
 
-    public function test_delete_data_for_all_users() {
+    public function test_delete_data_for_userlist() {
         global $DB;
 
         $u1 = $this->getDataGenerator()->create_user();
@@ -269,7 +269,7 @@ class logstore_standard_privacy_testcase extends provider_testcase {
         $this->assertEquals(4, $DB->count_records('logstore_standard_log'));
 
         $userlist = new \core_privacy\local\request\approved_userlist($sysctx, 'logstore_standard_log', [$u1->id, $u3->id]);
-        provider::delete_data_for_all_users($userlist);
+        provider::delete_data_for_userlist($userlist);
         // We should have a record for u2 and u4.
         $this->assertEquals(2, $DB->count_records('logstore_standard_log'));
 

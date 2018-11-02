@@ -285,7 +285,7 @@ class logstore_database_privacy_testcase extends provider_testcase {
     /**
      * Check that data is removed for the listed users in a given context.
      */
-    public function test_delete_data_for_all_users() {
+    public function test_delete_data_for_userlist() {
         global $DB;
 
         $u1 = $this->getDataGenerator()->create_user();
@@ -317,7 +317,7 @@ class logstore_database_privacy_testcase extends provider_testcase {
         $this->assertEquals(4, $DB->count_records('logstore_standard_log'));
 
         $userlist = new \core_privacy\local\request\approved_userlist($sysctx, 'logstore_database', [$u1->id, $u3->id]);
-        provider::delete_data_for_all_users($userlist);
+        provider::delete_data_for_userlist($userlist);
         // We should have a record for u2 and u4.
         $this->assertEquals(2, $DB->count_records('logstore_standard_log'));
 
