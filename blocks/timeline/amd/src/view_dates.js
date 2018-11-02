@@ -25,16 +25,62 @@ define(
 [
     'jquery',
     'core/str',
-    'block_timeline/event_list'
+    'block_timeline/event_list',
+    'core/pubsub',
+    'core/paged_content_events'
 ],
 function(
     $,
     Str,
-    EventList
+    EventList,
+    PubSub,
+    PagedContentEvents
 ) {
 
     var SELECTORS = {
         EVENT_LIST_CONTAINER: '[data-region="event-list-container"]',
+    };
+
+    var DEFAULT_PAGE_LIMIT = [5, 10, 25];
+
+    /**
+     * Generate a paged content array of limits taking into account user preferences
+     *
+     * @param {object} root The root element for the timeline dates view.
+     * @return {array} Array of limit objects
+     */
+    var getPagingLimits = function(root) {
+        var limitPref = parseInt(root.data('limit'), 10);
+        var isDefaultSet = false;
+        var limits = DEFAULT_PAGE_LIMIT.map(function(value) {
+            if (limitPref == value) {
+                isDefaultSet = true;
+            }
+
+            return {
+                value: value,
+                active: limitPref == value
+            };
+        });
+
+        if (!isDefaultSet) {
+            limits[0].active = true;
+        }
+
+        return limits;
+    };
+
+    /**
+     * Setup the listeners for the timeline block
+     *
+     * @param {string} root view dates container
+     * @param {string} namespace The namespace for the paged content
+     */
+    var registerEventListeners = function(root, namespace) {
+        var event = namespace + PagedContentEvents.SET_ITEMS_PER_PAGE_LIMIT;
+        PubSub.subscribe(event, function(limit) {
+            $(root).data('limit', limit);
+        });
     };
 
     /**
@@ -44,14 +90,22 @@ function(
      */
     var load = function(root) {
         var eventListContainer = root.find(SELECTORS.EVENT_LIST_CONTAINER);
+        var namespace = $(eventListContainer).attr('id') + "user_block_timeline" + Math.random();
+        registerEventListeners(root, namespace);
+
+        var limits = getPagingLimits(root);
+        var config = {
+            persistentLimitKey: "block_timeline_user_limit_preference",
+            eventNamespace: namespace
+        };
         Str.get_string('ariaeventlistpaginationnavdates', 'block_timeline')
             .then(function(string) {
-                EventList.init(eventListContainer, [5, 10, 25], {}, string);
+                EventList.init(eventListContainer, limits, {}, string, config);
                 return string;
             })
             .catch(function() {
                 // Ignore if we can't load the string. Still init the event list.
-                EventList.init(eventListContainer, [5, 10, 25]);
+                EventList.init(eventListContainer, limits, {}, "", config);
             });
     };
 
@@ -65,7 +119,7 @@ function(
         root = $(root);
         if (root.hasClass('active')) {
             load(root);
-            root.attr('data-seen', true);
+            root.data('seen', true);
         }
     };
 
@@ -79,7 +133,7 @@ function(
         root.removeAttr('data-seen');
         if (root.hasClass('active')) {
             load(root);
-            root.attr('data-seen', true);
+            root.data('seen', true);
         }
     };
 
@@ -89,9 +143,9 @@ function(
      * @param {object} root The root element for the timeline courses view.
      */
     var shown = function(root) {
-        if (!root.attr('data-seen')) {
+        if (!root.data('seen')) {
             load(root);
-            root.attr('data-seen', true);
+            root.data('seen', true);
         }
     };
 

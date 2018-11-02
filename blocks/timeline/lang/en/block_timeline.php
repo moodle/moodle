@@ -49,3 +49,4 @@ $string['timeline'] = 'Timeline';
 $string['viewcourse'] = 'View course';
 $string['privacy:metadata:timelinesortpreference'] = 'The user sort preference for the timeline block.';
 $string['privacy:metadata:timelinefilterpreference'] = 'The user day filter preference for the timeline block.';
+$string['privacy:metadata:timelinelimitpreference'] = 'The user page limit preference for the timeline block.';

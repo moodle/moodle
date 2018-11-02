@@ -49,62 +49,39 @@ class block_timeline_privacy_testcase extends \core_privacy\tests\provider_testc
     }
 
     /**
-     * Test that the preference courses is exported properly.
+     * Test the export_user_preferences given different inputs
+     *
+     * @param string $type The name of the user preference to get/set
+     * @param string $value The value you are storing
+     * @param string $expected The expected value override
+     *
+     * @dataProvider user_preference_provider
      */
-    public function test_export_user_preferences_date_sort_preference() {
+    public function test_export_user_preferences($type, $value, $expected) {
         $this->resetAfterTest();
-
         $user = $this->getDataGenerator()->create_user();
-        set_user_preference('block_timeline_user_sort_preference', 'sortbydates', $user);
-
+        set_user_preference($type, $value, $user);
         provider::export_user_preferences($user->id);
         $writer = writer::with_context(\context_system::instance());
         $blockpreferences = $writer->get_user_preferences('block_timeline');
-        $this->assertEquals('Sort by dates', $blockpreferences->block_timeline_user_sort_preference->value);
+        if (!$expected) {
+            $expected = get_string($value, 'block_timeline');
+        }
+        $this->assertEquals($expected, $blockpreferences->{$type}->value);
     }
 
     /**
-     * Test that the preference timeline is exported properly.
+     * Create an array of valid user preferences for the timeline block.
+     *
+     * @return array Array of valid user preferences.
      */
-    public function test_export_user_preferences_course_sort_preference() {
-        $this->resetAfterTest();
-
-        $user = $this->getDataGenerator()->create_user();
-        set_user_preference('block_timeline_user_sort_preference', 'sortbycourses', $user);
-
-        provider::export_user_preferences($user->id);
-        $writer = writer::with_context(\context_system::instance());
-        $blockpreferences = $writer->get_user_preferences('block_timeline');
-        $this->assertEquals('Sort by courses', $blockpreferences->block_timeline_user_sort_preference->value);
-    }
-
-    /**
-     * Test that the preference timeline is exported properly.
-     */
-    public function test_export_user_preferences_7day_filter_preference() {
-        $this->resetAfterTest();
-
-        $user = $this->getDataGenerator()->create_user();
-        set_user_preference('block_timeline_user_filter_preference', 'next7days', $user);
-
-        provider::export_user_preferences($user->id);
-        $writer = writer::with_context(\context_system::instance());
-        $blockpreferences = $writer->get_user_preferences('block_timeline');
-        $this->assertEquals('Next 7 days', $blockpreferences->block_timeline_user_filter_preference->value);
-    }
-
-    /**
-     * Test that the preference timeline is exported properly.
-     */
-    public function test_export_user_preferences_all_filter_preference() {
-        $this->resetAfterTest();
-
-        $user = $this->getDataGenerator()->create_user();
-        set_user_preference('block_timeline_user_filter_preference', 'all', $user);
-
-        provider::export_user_preferences($user->id);
-        $writer = writer::with_context(\context_system::instance());
-        $blockpreferences = $writer->get_user_preferences('block_timeline');
-        $this->assertEquals('All', $blockpreferences->block_timeline_user_filter_preference->value);
+    public function user_preference_provider() {
+        return array(
+            array('block_timeline_user_sort_preference', 'sortbydates', ''),
+            array('block_timeline_user_sort_preference', 'sortbycourses', ''),
+            array('block_timeline_user_sort_preference', 'next7days', ''),
+            array('block_timeline_user_sort_preference', 'all', ''),
+            array('block_timeline_user_limit_preference', 5, 5),
+        );
     }
 }

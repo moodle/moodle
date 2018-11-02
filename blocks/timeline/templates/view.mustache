@@ -42,12 +42,13 @@
         "next3months": false,
         "next6months": false,
         "daysoffset": -14,
-        "dayslimit": false
+        "dayslimit": false,
+        "limit": 0
     }
 }}
 <div data-region="timeline-view">
     <div class="tab-content">
-        <div class="tab-pane {{#sorttimelinedates}}active show{{/sorttimelinedates}} fade" data-region="view-dates" id="view_dates_{{uniqid}}">
+        <div class="tab-pane {{#sorttimelinedates}}active show{{/sorttimelinedates}} fade" data-limit="{{limit}}" data-region="view-dates" id="view_dates_{{uniqid}}">
             {{> block_timeline/view-dates }}
         </div>
         <div

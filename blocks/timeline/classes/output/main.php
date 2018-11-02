@@ -55,14 +55,21 @@ class main implements renderable, templatable {
     public $order;
 
     /**
+     * @var string The current limit preference
+     */
+    public $limit;
+
+    /**
      * main constructor.
      *
      * @param string $order Constant sort value from ../timeline/lib.php
-     * @param string $filter Constant sort value from ../timeline/lib.php
+     * @param string $filter Constant filter value from ../timeline/lib.php
+     * @param string $limit Constant limit value from ../timeline/lib.php
      */
-    public function __construct($order, $filter) {
+    public function __construct($order, $filter, $limit) {
         $this->order = $order ? $order : BLOCK_TIMELINE_SORT_BY_DATES;
         $this->filter = $filter ? $filter : BLOCK_TIMELINE_FILTER_BY_7_DAYS;
+        $this->limit = $limit ? $limit : BLOCK_TIMELINE_LIMIT_DEFAULT;
     }
 
     /**
@@ -165,6 +172,7 @@ class main implements renderable, templatable {
             'hasdaysoffset' => true,
             'hasdayslimit' => $offsets['dayslimit'] !== false ,
             'nodayslimit' => $offsets['dayslimit'] === false ,
+            'limit' => $this->limit
         ];
         return array_merge($contextvariables, $filters, $offsets);
     }
