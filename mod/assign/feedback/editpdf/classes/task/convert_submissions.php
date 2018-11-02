@@ -108,7 +108,7 @@ class convert_submissions extends scheduled_task {
                         case combined_document::STATUS_READY:
                         case combined_document::STATUS_PENDING_INPUT:
                             // The document has not been converted yet or is somehow still ready.
-                            continue;
+                            continue 2;
                     }
                     document_services::get_page_images_for_attempt(
                             $assignment,

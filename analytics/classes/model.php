@@ -795,7 +795,7 @@ class model {
                         // skip it and do nothing with it.
                         debugging($this->model->id . ' model predictions processor could not process the sample with id ' .
                             $sampleinfo[0], DEBUG_DEVELOPER);
-                        continue;
+                        continue 2;
                     case 2:
                         // Prediction processors that do not return a prediction score will have the maximum prediction
                         // score.

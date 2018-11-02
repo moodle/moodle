@@ -8,6 +8,8 @@ All the files from the folder lib/Less are copied in
 this directory. Only exception made for the directory
 '.easymin' which is not included.
 
+Verify that https://github.com/oyejorge/less.php/pull/367 has been applied to the imported version or apply it locally.
+
 Also copy the license file from the project root.
 
 Licensed under the Apache license 2.0.

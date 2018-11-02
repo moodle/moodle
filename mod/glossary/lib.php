@@ -4314,10 +4314,9 @@ function mod_glossary_get_completion_active_rule_descriptions($cm) {
     foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
         switch ($key) {
             case 'completionentries':
-                if (empty($val)) {
-                    continue;
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionentriesdesc', 'glossary', $val);
                 }
-                $descriptions[] = get_string('completionentriesdesc', 'glossary', $val);
                 break;
             default:
                 break;

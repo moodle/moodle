@@ -251,7 +251,7 @@ class provider implements
 
                         if (empty($entryids)) {
                             // This should not happen, as the user context should not have been reported then.
-                            continue;
+                            continue 2;
                         }
 
                         list($insql, $inparams) = $DB->get_in_or_equal($entryids, SQL_PARAMS_NAMED);

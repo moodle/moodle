@@ -1453,10 +1453,9 @@ function mod_choice_get_completion_active_rule_descriptions($cm) {
     foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
         switch ($key) {
             case 'completionsubmit':
-                if (empty($val)) {
-                    continue;
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionsubmit', 'choice');
                 }
-                $descriptions[] = get_string('completionsubmit', 'choice');
                 break;
             default:
                 break;

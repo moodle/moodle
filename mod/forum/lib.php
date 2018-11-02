@@ -8563,22 +8563,19 @@ function mod_forum_get_completion_active_rule_descriptions($cm) {
     foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
         switch ($key) {
             case 'completiondiscussions':
-                if (empty($val)) {
-                    continue;
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completiondiscussionsdesc', 'forum', $val);
                 }
-                $descriptions[] = get_string('completiondiscussionsdesc', 'forum', $val);
                 break;
             case 'completionreplies':
-                if (empty($val)) {
-                    continue;
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionrepliesdesc', 'forum', $val);
                 }
-                $descriptions[] = get_string('completionrepliesdesc', 'forum', $val);
                 break;
             case 'completionposts':
-                if (empty($val)) {
-                    continue;
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionpostsdesc', 'forum', $val);
                 }
-                $descriptions[] = get_string('completionpostsdesc', 'forum', $val);
                 break;
             default:
                 break;

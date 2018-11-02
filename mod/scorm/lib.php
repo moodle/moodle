@@ -1778,30 +1778,27 @@ function mod_scorm_get_completion_active_rule_descriptions($cm) {
     foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
         switch ($key) {
             case 'completionstatusrequired':
-                if (is_null($val)) {
-                    continue;
-                }
-                // Determine the selected statuses using a bitwise operation.
-                $cvalues = array();
-                foreach (scorm_status_options(true) as $bit => $string) {
-                    if (($val & $bit) == $bit) {
-                        $cvalues[] = $string;
+                if (!is_null($val)) {
+                    // Determine the selected statuses using a bitwise operation.
+                    $cvalues = array();
+                    foreach (scorm_status_options(true) as $bit => $string) {
+                        if (($val & $bit) == $bit) {
+                            $cvalues[] = $string;
+                        }
                     }
+                    $statusstring = implode(', ', $cvalues);
+                    $descriptions[] = get_string('completionstatusrequireddesc', 'scorm', $statusstring);
                 }
-                $statusstring = implode(', ', $cvalues);
-                $descriptions[] = get_string('completionstatusrequireddesc', 'scorm', $statusstring);
                 break;
             case 'completionscorerequired':
-                if (is_null($val)) {
-                    continue;
+                if (!is_null($val)) {
+                    $descriptions[] = get_string('completionscorerequireddesc', 'scorm', $val);
                 }
-                $descriptions[] = get_string('completionscorerequireddesc', 'scorm', $val);
                 break;
             case 'completionstatusallscos':
-                if (empty($val)) {
-                    continue;
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionstatusallscos', 'scorm');
                 }
-                $descriptions[] = get_string('completionstatusallscos', 'scorm');
                 break;
             default:
                 break;
