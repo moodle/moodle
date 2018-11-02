@@ -307,9 +307,9 @@ class logstore_legacy_privacy_testcase extends provider_testcase {
     }
 
     /**
-     * Test the deletion of data for users in a context.
+     * Test the deletion of data for a list of users in a context.
      */
-    public function test_delete_data_for_all_users() {
+    public function test_delete_data_for_userlist() {
         global $DB;
 
         $u1 = $this->getDataGenerator()->create_user();
@@ -352,19 +352,19 @@ class logstore_legacy_privacy_testcase extends provider_testcase {
         // System context deleting one user.
         $this->assertEquals(3, $DB->count_records('log', ['cmid' => 0, 'course' => 0]));
         $userlist = new \core_privacy\local\request\approved_userlist($sysctx, 'logstore_legacy', [$u2->id]);
-        provider::delete_data_for_all_users($userlist);
+        provider::delete_data_for_userlist($userlist);
         $this->assertEquals(1, $DB->count_records('log', ['cmid' => 0, 'course' => 0]));
 
         // Course context deleting one user.
         $this->assertEquals(2, $DB->count_records('log', ['cmid' => 0, 'course' => $course->id]));
         $userlist = new \core_privacy\local\request\approved_userlist($c1ctx, 'logstore_legacy', [$u1->id]);
-        provider::delete_data_for_all_users($userlist);
+        provider::delete_data_for_userlist($userlist);
         $this->assertEquals(1, $DB->count_records('log', ['cmid' => 0, 'course' => $course->id]));
 
         // Module context deleting two users.
         $this->assertEquals(3, $DB->count_records('log', ['cmid' => $module->cmid, 'course' => $course->id]));
         $userlist = new \core_privacy\local\request\approved_userlist($cm1ctx, 'logstore_legacy', [$u1->id, $u3->id]);
-        provider::delete_data_for_all_users($userlist);
+        provider::delete_data_for_userlist($userlist);
         $this->assertEquals(1, $DB->count_records('log', ['cmid' => $module->cmid, 'course' => $course->id]));
     }
 

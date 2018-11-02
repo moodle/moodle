@@ -125,7 +125,7 @@ trait moodle_database_export_and_delete {
      *
      * @param \core_privacy\local\request\approved_userlist $contextlist The approved contexts and user information to delete information for.
      */
-    public static function delete_data_for_all_users(\core_privacy\local\request\approved_userlist $userlist) {
+    public static function delete_data_for_userlist(\core_privacy\local\request\approved_userlist $userlist) {
         list($db, $table) = static::get_database_and_table();
         if (!$db || !$table) {
             return;

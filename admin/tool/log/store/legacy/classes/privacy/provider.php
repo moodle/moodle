@@ -187,12 +187,12 @@ class provider implements
 
 
     /**
-     * Delete all data for all users in the specified context.
+     * Delete all data for a list of users in the specified context.
      *
      * @param \core_privacy\local\request\approved_userlist $userlist The specific context and users to delete data for.
      * @return void
      */
-    public static function delete_data_for_all_users(\core_privacy\local\request\approved_userlist $userlist) {
+    public static function delete_data_for_userlist(\core_privacy\local\request\approved_userlist $userlist) {
         global $DB;
         list($sql, $params) = static::get_sql_where_from_contexts([$userlist->get_context()]);
         if (empty($sql)) {
