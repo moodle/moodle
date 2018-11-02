@@ -928,6 +928,40 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test confirming the behaviour of get_conversations() when users delete all messages.
+     */
+    public function test_get_conversations_deleted_messages() {
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        $conversations = \core_message\api::get_conversations($user1->id);
+        $this->assertCount(6, $conversations);
+
+        // Delete all messages from a group conversation the user is in - it should be returned.
+        $this->assertTrue(\core_message\api::is_user_in_conversation($user1->id, $gc2->id));
+        $convmessages = \core_message\api::get_conversation_messages($user1->id, $gc2->id);
+        $messages = $convmessages['messages'];
+        foreach ($messages as $message) {
+            \core_message\api::delete_message($user1->id, $message->id);
+        }
+        $conversations = \core_message\api::get_conversations($user1->id);
+        $this->assertCount(6, $conversations);
+        $this->assertContains($gc2->id, array_column($conversations, 'id'));
+
+        // Delete all messages from an individual conversation the user is in - it should not be returned.
+        $this->assertTrue(\core_message\api::is_user_in_conversation($user1->id, $ic1->id));
+        $convmessages = \core_message\api::get_conversation_messages($user1->id, $ic1->id);
+        $messages = $convmessages['messages'];
+        foreach ($messages as $message) {
+            \core_message\api::delete_message($user1->id, $message->id);
+        }
+        $conversations = \core_message\api::get_conversations($user1->id);
+        $this->assertCount(5, $conversations);
+        $this->assertNotContains($ic1->id, array_column($conversations, 'id'));
+    }
+
+    /**
      * Test verifying the behaviour of get_conversations() when fetching favourite conversations.
      */
     public function test_get_conversations_favourite_conversations() {
