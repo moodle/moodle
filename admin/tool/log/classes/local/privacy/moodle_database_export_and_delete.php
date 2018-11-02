@@ -120,4 +120,19 @@ trait moodle_database_export_and_delete {
         $db->delete_records_select($table, "userid = :userid AND contextid $insql", $params);
     }
 
+    /**
+     * Delete all user data for the specified users, in the specified context.
+     *
+     * @param \core_privacy\local\request\approved_userlist $contextlist The approved contexts and user information to delete information for.
+     */
+    public static function delete_data_for_userlist(\core_privacy\local\request\approved_userlist $userlist) {
+        list($db, $table) = static::get_database_and_table();
+        if (!$db || !$table) {
+            return;
+        }
+        list($insql, $inparams) = $db->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+        $params = array_merge($inparams, ['contextid' => $userlist->get_context()->id]);
+        $db->delete_records_select($table, "contextid = :contextid AND userid $insql", $params);
+    }
+
 }

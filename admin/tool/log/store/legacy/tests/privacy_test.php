@@ -87,6 +87,71 @@ class logstore_legacy_privacy_testcase extends provider_testcase {
         $this->assert_contextlist_equals($this->get_contextlist_for_user($u3), [$sysctx]);
     }
 
+    /**
+     * Test returning user IDs for a given context.
+     */
+    public function test_add_userids_for_context() {
+        $u1 = $this->getDataGenerator()->create_user();
+        $u2 = $this->getDataGenerator()->create_user();
+        $u3 = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $module = $this->getDataGenerator()->create_module('url', ['course' => $course]);
+        $sysctx = context_system::instance();
+        $c1ctx = context_course::instance($course->id);
+        $cm1ctx = context_module::instance($module->cmid);
+
+        $userctx = context_user::instance($u1->id);
+
+        $this->enable_logging();
+        $manager = get_log_manager(true);
+
+        $this->setUser($u1);
+        $e = unittest_executed::create(['context' => $sysctx, 'other' => ['sample' => 1]]);
+        $e->trigger();
+        $this->setUser($u2);
+        $e = unittest_executed::create(['context' => $sysctx, 'other' => ['sample' => 2]]);
+        $e->trigger();
+        $e = unittest_executed::create(['context' => $sysctx, 'other' => ['sample' => 3]]);
+        $e->trigger();
+        $this->setUser($u3);
+        $e = unittest_executed::create(['context' => $c1ctx, 'other' => ['sample' => 4]]);
+        $e->trigger();
+        $this->setUser($u1);
+        $e = unittest_executed::create(['context' => $c1ctx, 'other' => ['sample' => 5]]);
+        $e->trigger();
+        $e = unittest_executed::create(['context' => $cm1ctx, 'other' => ['sample' => 6]]);
+        $e->trigger();
+        $this->setUser($u2);
+        $e = unittest_executed::create(['context' => $cm1ctx, 'other' => ['sample' => 7]]);
+        $e->trigger();
+        $this->setUser($u3);
+        $e = unittest_executed::create(['context' => $cm1ctx, 'other' => ['sample' => 8]]);
+        $e->trigger();
+
+        // Start with system and check that each of the contexts returns what we expected.
+        $userlist = new \core_privacy\local\request\userlist($sysctx, 'logstore_legacy');
+        provider::add_userids_for_context($userlist);
+        $systemuserids = $userlist->get_userids();
+        $this->assertCount(2, $systemuserids);
+        $this->assertNotFalse(array_search($u1->id, $systemuserids));
+        $this->assertNotFalse(array_search($u2->id, $systemuserids));
+        // Check the course context.
+        $userlist = new \core_privacy\local\request\userlist($c1ctx, 'logstore_legacy');
+        provider::add_userids_for_context($userlist);
+        $courseuserids = $userlist->get_userids();
+        $this->assertCount(2, $courseuserids);
+        $this->assertNotFalse(array_search($u1->id, $courseuserids));
+        $this->assertNotFalse(array_search($u3->id, $courseuserids));
+        // Check the module context.
+        $userlist = new \core_privacy\local\request\userlist($cm1ctx, 'logstore_legacy');
+        provider::add_userids_for_context($userlist);
+        $moduleuserids = $userlist->get_userids();
+        $this->assertCount(3, $moduleuserids);
+        $this->assertNotFalse(array_search($u1->id, $moduleuserids));
+        $this->assertNotFalse(array_search($u2->id, $moduleuserids));
+        $this->assertNotFalse(array_search($u3->id, $moduleuserids));
+    }
+
     public function test_delete_data_for_user() {
         global $DB;
 
@@ -239,6 +304,68 @@ class logstore_legacy_privacy_testcase extends provider_testcase {
         $this->assertFalse($DB->record_exists('log', ['cmid' => 0, 'course' => 0]));
         $this->assertEquals(0, $DB->count_records('log', ['userid' => $u1->id]));
         $this->assertEquals(0, $DB->count_records('log', ['userid' => $u2->id]));
+    }
+
+    /**
+     * Test the deletion of data for a list of users in a context.
+     */
+    public function test_delete_data_for_userlist() {
+        global $DB;
+
+        $u1 = $this->getDataGenerator()->create_user();
+        $u2 = $this->getDataGenerator()->create_user();
+        $u3 = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $module = $this->getDataGenerator()->create_module('url', ['course' => $course]);
+        $sysctx = context_system::instance();
+        $c1ctx = context_course::instance($course->id);
+        $cm1ctx = context_module::instance($module->cmid);
+
+        $userctx = context_user::instance($u1->id);
+
+        $this->enable_logging();
+        $manager = get_log_manager(true);
+
+        $this->setUser($u1);
+        $e = unittest_executed::create(['context' => $sysctx, 'other' => ['sample' => 1]]);
+        $e->trigger();
+        $this->setUser($u2);
+        $e = unittest_executed::create(['context' => $sysctx, 'other' => ['sample' => 2]]);
+        $e->trigger();
+        $e = unittest_executed::create(['context' => $sysctx, 'other' => ['sample' => 3]]);
+        $e->trigger();
+        $this->setUser($u3);
+        $e = unittest_executed::create(['context' => $c1ctx, 'other' => ['sample' => 4]]);
+        $e->trigger();
+        $this->setUser($u1);
+        $e = unittest_executed::create(['context' => $c1ctx, 'other' => ['sample' => 5]]);
+        $e->trigger();
+        $e = unittest_executed::create(['context' => $cm1ctx, 'other' => ['sample' => 6]]);
+        $e->trigger();
+        $this->setUser($u2);
+        $e = unittest_executed::create(['context' => $cm1ctx, 'other' => ['sample' => 7]]);
+        $e->trigger();
+        $this->setUser($u3);
+        $e = unittest_executed::create(['context' => $cm1ctx, 'other' => ['sample' => 8]]);
+        $e->trigger();
+
+        // System context deleting one user.
+        $this->assertEquals(3, $DB->count_records('log', ['cmid' => 0, 'course' => 0]));
+        $userlist = new \core_privacy\local\request\approved_userlist($sysctx, 'logstore_legacy', [$u2->id]);
+        provider::delete_data_for_userlist($userlist);
+        $this->assertEquals(1, $DB->count_records('log', ['cmid' => 0, 'course' => 0]));
+
+        // Course context deleting one user.
+        $this->assertEquals(2, $DB->count_records('log', ['cmid' => 0, 'course' => $course->id]));
+        $userlist = new \core_privacy\local\request\approved_userlist($c1ctx, 'logstore_legacy', [$u1->id]);
+        provider::delete_data_for_userlist($userlist);
+        $this->assertEquals(1, $DB->count_records('log', ['cmid' => 0, 'course' => $course->id]));
+
+        // Module context deleting two users.
+        $this->assertEquals(3, $DB->count_records('log', ['cmid' => $module->cmid, 'course' => $course->id]));
+        $userlist = new \core_privacy\local\request\approved_userlist($cm1ctx, 'logstore_legacy', [$u1->id, $u3->id]);
+        provider::delete_data_for_userlist($userlist);
+        $this->assertEquals(1, $DB->count_records('log', ['cmid' => $module->cmid, 'course' => $course->id]));
     }
 
     public function test_export_data_for_user() {
