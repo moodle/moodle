@@ -151,6 +151,55 @@ class logstore_database_privacy_testcase extends provider_testcase {
         $this->assert_contextlist_equals($this->get_contextlist_for_user($admin), [$sysctx, $c1ctx, $c2ctx]);
     }
 
+    /**
+     * Check that user IDs are returned for a given context.
+     */
+    public function test_add_userids_for_context() {
+        $admin = \core_user::get_user(2);
+        $u1 = $this->getDataGenerator()->create_user();
+        $u2 = $this->getDataGenerator()->create_user();
+        $u3 = $this->getDataGenerator()->create_user();
+        $u4 = $this->getDataGenerator()->create_user();
+
+        $c1 = $this->getDataGenerator()->create_course();
+
+        $sysctx = context_system::instance();
+        $c1ctx = context_course::instance($c1->id);
+
+        $this->enable_logging();
+        $manager = get_log_manager(true);
+
+        $userlist = new \core_privacy\local\request\userlist($sysctx, 'logstore_database');
+        $userids = $userlist->get_userids();
+        $this->assertEmpty($userids);
+        provider::add_userids_for_context($userlist);
+        $userids = $userlist->get_userids();
+        $this->assertEmpty($userids);
+        // User one should be added (userid).
+        $this->setUser($u1);
+        $e = \logstore_database\event\unittest_executed::create(['context' => $sysctx]);
+        $e->trigger();
+        // User two (userids) and three (relateduserid) should be added.
+        $this->setUser($u2);
+        $e = \logstore_database\event\unittest_executed::create(['context' => $sysctx, 'relateduserid' => $u3->id]);
+        $e->trigger();
+        // The admin user should be added (realuserid).
+        $this->setAdminUser();
+        \core\session\manager::loginas($u2->id, context_system::instance());
+        $e = \logstore_database\event\unittest_executed::create(['context' => $sysctx]);
+        $e->trigger();
+        // Set off an event in a different context. User 4 should not be returned below.
+        $this->setUser($u4);
+        $e = \logstore_database\event\unittest_executed::create(['context' => $c1ctx]);
+        $e->trigger();
+
+        provider::add_userids_for_context($userlist);
+        $userids = $userlist->get_userids();
+        $this->assertCount(4, $userids);
+        $expectedresult = [$admin->id, $u1->id, $u2->id, $u3->id];
+        $this->assertEmpty(array_diff($expectedresult, $userids));
+    }
+
     public function test_delete_data_for_user() {
         global $DB;
         $u1 = $this->getDataGenerator()->create_user();
@@ -231,6 +280,51 @@ class logstore_database_privacy_testcase extends provider_testcase {
         $this->assertFalse($DB->record_exists('logstore_standard_log', ['contextid' => $c1ctx->id]));
         $this->assertEquals(1, $DB->count_records('logstore_standard_log', ['userid' => $u1->id]));
         $this->assertEquals(1, $DB->count_records('logstore_standard_log', ['userid' => $u2->id]));
+    }
+
+    /**
+     * Check that data is removed for the listed users in a given context.
+     */
+    public function test_delete_data_for_userlist() {
+        global $DB;
+
+        $u1 = $this->getDataGenerator()->create_user();
+        $u2 = $this->getDataGenerator()->create_user();
+        $u3 = $this->getDataGenerator()->create_user();
+        $u4 = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course();
+        $sysctx = context_system::instance();
+        $c1ctx = context_course::instance($course->id);
+
+        $this->enable_logging();
+        $manager = get_log_manager(true);
+
+        $this->setUser($u1);
+        $e = \logstore_database\event\unittest_executed::create(['context' => $sysctx]);
+        $e->trigger();
+        $this->setUser($u2);
+        $e = \logstore_database\event\unittest_executed::create(['context' => $sysctx]);
+        $e->trigger();
+        $this->setUser($u3);
+        $e = \logstore_database\event\unittest_executed::create(['context' => $sysctx]);
+        $e->trigger();
+        $this->setUser($u4);
+        $e = \logstore_database\event\unittest_executed::create(['context' => $c1ctx]);
+        $e->trigger();
+
+        // Check that four records were created.
+        $this->assertEquals(4, $DB->count_records('logstore_standard_log'));
+
+        $userlist = new \core_privacy\local\request\approved_userlist($sysctx, 'logstore_database', [$u1->id, $u3->id]);
+        provider::delete_data_for_userlist($userlist);
+        // We should have a record for u2 and u4.
+        $this->assertEquals(2, $DB->count_records('logstore_standard_log'));
+
+        $records = $DB->get_records('logstore_standard_log', ['contextid' => $sysctx->id]);
+        $this->assertCount(1, $records);
+        $currentrecord = array_shift($records);
+        $this->assertEquals($u2->id, $currentrecord->userid);
     }
 
     public function test_export_data_for_user() {
