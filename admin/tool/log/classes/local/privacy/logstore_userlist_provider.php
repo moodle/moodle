@@ -48,10 +48,10 @@ interface logstore_userlist_provider extends \core_privacy\local\request\plugin\
 
 
     /**
-     * Delete all data for all users in the specified context.
+     * Delete all data for a list of users in the specified context.
      *
      * @param \core_privacy\local\request\approved_userlist $userlist The specific context and users to delete data for.
      * @return void
      */
-    public static function delete_data_for_all_users(\core_privacy\local\request\approved_userlist $userlist);
+    public static function delete_data_for_userlist(\core_privacy\local\request\approved_userlist $userlist);
 }

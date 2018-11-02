@@ -117,7 +117,7 @@ class provider implements
      */
     public static function delete_data_for_users(\core_privacy\local\request\approved_userlist $userlist) {
         $interface = \tool_log\local\privacy\logstore_userlist_provider::class;
-        static::call_subplugins_method_with_args('delete_data_for_all_users', [$userlist], $interface);
+        static::call_subplugins_method_with_args('delete_data_for_userlist', [$userlist], $interface);
     }
 
     /**
