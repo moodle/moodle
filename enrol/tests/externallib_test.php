@@ -360,6 +360,7 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
      */
     public function test_get_users_courses() {
         global $CFG, $DB;
+        require_once($CFG->dirroot . '/completion/criteria/completion_criteria_self.php');
 
         $this->resetAfterTest(true);
         $CFG->enablecompletion = 1;
@@ -404,9 +405,23 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         );
         $DB->insert_record('user_lastaccess', $lastaccess);
 
-        // Force completion.
+        // Force completion, setting at least one criteria.
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_self.php');
+        $criteriadata = new stdClass();
+        $criteriadata->id = $course1->id;
+        // Self completion.
+        $criteriadata->criteria_self = 1;
+
+        $criterion = new completion_criteria_self();
+        $criterion->update_config($criteriadata);
+
         $ccompletion = new completion_completion(array('course' => $course1->id, 'userid' => $student->id));
         $ccompletion->mark_complete();
+
+        // Set course hidden and favourited.
+        set_user_preference('block_myoverview_hidden_course_' . $course1->id, 1, $student);
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($student->id));
+        $ufservice->create_favourite('core_course', 'courses', $course1->id, \context_system::instance());
 
         $this->setUser($student);
         // Call the external function.
@@ -437,6 +452,9 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($timenow, $courseenrol['lastaccess']);
                 $this->assertEquals(100.0, $courseenrol['progress']);
                 $this->assertEquals(true, $courseenrol['completed']);
+                $this->assertTrue($courseenrol['completionhascriteria']);
+                $this->assertTrue($courseenrol['hidden']);
+                $this->assertTrue($courseenrol['isfavourite']);
             } else {
                 // Check language pack. Should be empty since an incorrect one was used when creating the course.
                 $this->assertEmpty($courseenrol['lang']);
@@ -445,6 +463,9 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertEquals(0, $courseenrol['lastaccess']);
                 $this->assertEquals(0, $courseenrol['progress']);
                 $this->assertEquals(false, $courseenrol['completed']);
+                $this->assertFalse($courseenrol['completionhascriteria']);
+                $this->assertFalse($courseenrol['hidden']);
+                $this->assertFalse($courseenrol['isfavourite']);
             }
         }
 
@@ -458,8 +479,14 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
             if ($courseenrol['id'] == $course1->id) {
                 $this->assertEquals($timenow, $courseenrol['lastaccess']);
                 $this->assertEquals(100.0, $courseenrol['progress']);
+                $this->assertTrue($courseenrol['completionhascriteria']);
+                $this->assertFalse($courseenrol['isfavourite']);    // This always false.
+                $this->assertFalse($courseenrol['hidden']); // This always false.
             } else {
                 $this->assertEquals(0, $courseenrol['progress']);
+                $this->assertFalse($courseenrol['completionhascriteria']);
+                $this->assertFalse($courseenrol['isfavourite']);    // This always false.
+                $this->assertFalse($courseenrol['hidden']); // This always false.
             }
         }
 
