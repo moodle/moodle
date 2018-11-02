@@ -43,7 +43,8 @@ use tool_log\log\manager;
  */
 class provider implements
     \core_privacy\local\metadata\provider,
-    \core_privacy\local\request\subsystem\provider {
+    \core_privacy\local\request\subsystem\provider,
+    \core_privacy\local\request\core_userlist_provider {
 
     /**
      * Returns metadata.
@@ -66,6 +67,17 @@ class provider implements
         $contextlist = new \core_privacy\local\request\contextlist();
         static::call_subplugins_method_with_args('add_contexts_for_userid', [$contextlist, $userid]);
         return $contextlist;
+    }
+
+    /**
+     * Get the list of contexts that contain user information for the specified user.
+     *
+     * @param   \core_privacy\local\request\userlist    $userlist   The userlist containing the list of users who have data in
+     * this context/plugin combination.
+     */
+    public static function get_users_in_context(\core_privacy\local\request\userlist $userlist) {
+        $interface = \tool_log\local\privacy\logstore_userlist_provider::class;
+        static::call_subplugins_method_with_args('add_userids_for_context', [$userlist], $interface);
     }
 
     /**
@@ -98,15 +110,28 @@ class provider implements
     }
 
     /**
+     * Delete multiple users within a single context.
+     *
+     * @param \core_privacy\local\request\approved_userlist $userlist The approved context and user information to delete
+     * information for.
+     */
+    public static function delete_data_for_users(\core_privacy\local\request\approved_userlist $userlist) {
+        $interface = \tool_log\local\privacy\logstore_userlist_provider::class;
+        static::call_subplugins_method_with_args('delete_data_for_userlist', [$userlist], $interface);
+    }
+
+    /**
      * Invoke the subplugins method with arguments.
      *
      * @param string $method The method name.
      * @param array $args The arguments.
+     * @param string $interface The interface to use. By default uses the logstore_provider.
      * @return void
      */
-    protected static function call_subplugins_method_with_args($method, array $args = []) {
-        $interface = \tool_log\local\privacy\logstore_provider::class;
+    protected static function call_subplugins_method_with_args($method, array $args = [], string $interface = null) {
+        if (!isset($interface)) {
+            $interface = \tool_log\local\privacy\logstore_provider::class;
+        }
         \core_privacy\manager::plugintype_class_callback('logstore', $interface, $method, $args);
     }
-
 }
