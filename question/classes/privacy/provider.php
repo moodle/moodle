@@ -360,21 +360,18 @@ class provider implements
 
         // A user may have created or updated a question.
         // Questions are linked against a question category, which has a contextid field.
-        $sql = "SELECT q.createdby AS userid
+        $sql = "SELECT q.createdby, q.modifiedby
                   FROM {question} q
-                  JOIN {question_categories} cat ON cat.id = q.category
-                 WHERE cat.contextid = :contextid
-                 UNION
-                SELECT q.modifiedby AS userid
-                  FROM {question} q
-                  JOIN {question_categories} cat ON cat.id = q.category
-                 WHERE cat.contextid = :contextidagain";
+                  JOIN {question_categories} cat
+                       ON cat.id = q.category
+                 WHERE cat.contextid = :contextid";
+
         $params = [
-            'contextid'      => $context->id,
-            'contextidagain' => $context->id,
+            'contextid' => $context->id
         ];
 
-        $userlist->add_from_sql('userid', $sql, $params);
+        $userlist->add_from_sql('createdby', $sql, $params);
+        $userlist->add_from_sql('modifiedby', $sql, $params);
     }
 
     /**
