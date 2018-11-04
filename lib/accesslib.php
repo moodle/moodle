@@ -6778,12 +6778,39 @@ class context_module extends context {
         if (!empty($extra)) {
             $extra = "OR name $extra";
         }
+
+        // Fetch the list of modules, and remove this one.
+        $components = \core_component::get_component_list();
+        $componentnames = $components['mod'];
+        unset($componentnames["mod_{$module->name}"]);
+        $componentnames = array_keys($componentnames);
+
+        // Exclude all other modules.
+        list($notcompsql, $notcompparams) = $DB->get_in_or_equal($componentnames, SQL_PARAMS_NAMED, 'notcomp', false);
+        $params = array_merge($params, $notcompparams);
+
+
+        // Exclude other component submodules.
+        $i = 0;
+        $ignorecomponents = [];
+        foreach ($componentnames as $mod) {
+            if ($subplugins = \core_component::get_subplugins($mod)) {
+                foreach (array_keys($subplugins) as $subplugintype) {
+                    $paramname = "notlike{$i}";
+                    $ignorecomponents[] = $DB->sql_like('component', ":{$paramname}", true, true, true);
+                    $params[$paramname] = "{$subplugintype}_%";
+                    $i++;
+                }
+            }
+        }
+        $notlikesql = "(" . implode(' AND ', $ignorecomponents) . ")";
+
         $sql = "SELECT *
                   FROM {capabilities}
                  WHERE (contextlevel = ".CONTEXT_MODULE."
-                       AND (component = :component OR component = 'moodle'))
+                   AND component {$notcompsql}
+                   AND {$notlikesql})
                        $extra";
-        $params['component'] = "mod_$module->name";
 
         return $DB->get_records_sql($sql.' '.$sort, $params);
     }
