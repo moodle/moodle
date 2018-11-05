@@ -101,6 +101,9 @@ $card-gutter : $card-deck-margin * 2;
             color: $blue;
         }
     }
+    .card .coursemenubtn {
+        margin-top: -0.5rem;
+    }
     a,
     .btn-link {
         color: inherit;

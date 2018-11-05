@@ -16253,6 +16253,10 @@ body {
 .block_myoverview img.icon {
   padding: 0;
 }
+.block_starredcourses .card .coursemenubtn,
+.block_myoverview .card .coursemenubtn {
+  margin-top: -0.5rem;
+}
 @media (max-width: 576px) {
   .block_starredcourses .summaryimage,
   .block_recentlyaccesseditems .summaryimage,
@@ -21921,4 +21925,16 @@ ul.indented-list {
 }
 .mt-auto {
   margin-top: auto;
+}
+.mr-2 {
+  margin-right: 7px !important;
+}
+.icon-size-3 {
+  height: 36px !important;
+  width: 36px !important;
+}
+.icon-size-3 img {
+  height: 16px !important;
+  width: 16px !important;
+  padding-right: 0;
 }

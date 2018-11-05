@@ -11168,6 +11168,18 @@ div.editor_atto_toolbar button .icon {
   .block_starredcourses .icon.fa-star {
     color: #1177d1; }
 
+.block_myoverview .card .coursemenubtn, .block_myoverview #page-enrol-users #filterform .coursemenubtn, #page-enrol-users .block_myoverview #filterform .coursemenubtn, .block_myoverview .que .history .coursemenubtn, .que .block_myoverview .history .coursemenubtn, .block_myoverview .userprofile .profile_tree section .coursemenubtn, .userprofile .profile_tree .block_myoverview section .coursemenubtn, .block_myoverview .groupinfobox .coursemenubtn, .block_myoverview .well .coursemenubtn,
+.block_starredcourses .card .coursemenubtn,
+.block_starredcourses #page-enrol-users #filterform .coursemenubtn,
+#page-enrol-users .block_starredcourses #filterform .coursemenubtn,
+.block_starredcourses .que .history .coursemenubtn,
+.que .block_starredcourses .history .coursemenubtn,
+.block_starredcourses .userprofile .profile_tree section .coursemenubtn,
+.userprofile .profile_tree .block_starredcourses section .coursemenubtn,
+.block_starredcourses .groupinfobox .coursemenubtn,
+.block_starredcourses .well .coursemenubtn {
+  margin-top: -0.5rem; }
+
 .block_myoverview a,
 .block_myoverview .btn-link,
 .block_starredcourses a,
