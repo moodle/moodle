@@ -558,10 +558,11 @@ class api {
         $conversationset = $DB->get_recordset_sql($sql, $params, $limitfrom, $limitnum);
 
         $conversations = [];
-        $uniquemembers = [];
         $members = [];
+        $individualmembers = [];
+        $groupmembers = [];
         foreach ($conversationset as $conversation) {
-            $conversations[] = $conversation;
+            $conversations[$conversation->id] = $conversation;
             $members[$conversation->id] = [];
         }
         $conversationset->close();
@@ -597,7 +598,7 @@ class api {
             if ($conversation->conversationtype == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL) {
                 if (!is_null($conversation->useridfrom) && $conversation->useridfrom != $userid) {
                     $members[$conversation->id][$conversation->useridfrom] = $conversation->useridfrom;
-                    $uniquemembers[$conversation->useridfrom] = $conversation->useridfrom;
+                    $individualmembers[$conversation->useridfrom] = $conversation->useridfrom;
                 } else {
                     $individualconversations[] = $conversation->id;
                 }
@@ -605,7 +606,7 @@ class api {
                 // If we have a recent message, the sender is our member.
                 if (!is_null($conversation->useridfrom)) {
                     $members[$conversation->id][$conversation->useridfrom] = $conversation->useridfrom;
-                    $uniquemembers[$conversation->useridfrom] = $conversation->useridfrom;
+                    $groupmembers[$conversation->useridfrom] = $conversation->useridfrom;
                 }
             }
         }
@@ -623,10 +624,9 @@ class api {
 
             foreach ($conversationmembers as $mid => $member) {
                 $members[$member->conversationid][$member->userid] = $member->userid;
-                $uniquemembers[$member->userid] = $member->userid;
+                $individualmembers[$member->userid] = $member->userid;
             }
         }
-        $memberids = array_values($uniquemembers);
 
         // We could fail early here if we're sure that:
         // a) we have no otherusers for all the conversations (users may have been deleted)
@@ -636,8 +636,17 @@ class api {
         // needs to be done in a separate query to avoid doing a join on the messages tables and the user
         // tables because on large sites these tables are massive which results in extremely slow
         // performance (typically due to join buffer exhaustion).
-        if (!empty($memberids)) {
-            $memberinfo = helper::get_member_info($userid, $memberids);
+        if (!empty($individualmembers) || !empty($groupmembers)) {
+            // Now, we want to remove any duplicates from the group members array. For individual members we will
+            // be doing a more extensive call as we want their contact requests as well as privacy information,
+            // which is not necessary for group conversations.
+            $diffgroupmembers = array_diff($groupmembers, $individualmembers);
+
+            $individualmemberinfo = helper::get_member_info($userid, $individualmembers, true, true);
+            $groupmemberinfo = helper::get_member_info($userid, $diffgroupmembers);
+
+            // Don't use array_merge, as we lose array keys.
+            $memberinfo = $individualmemberinfo + $groupmemberinfo;
 
             // Update the members array with the member information.
             $deletedmembers = [];
@@ -648,7 +657,15 @@ class api {
                         if ($memberinfo[$memberid]->isdeleted) {
                             $deletedmembers[$convid][] = $memberid;
                         }
-                        $members[$convid][$key] = $memberinfo[$memberid];
+
+                        $members[$convid][$key] = clone $memberinfo[$memberid];
+
+                        if ($conversations[$convid]->conversationtype == self::MESSAGE_CONVERSATION_TYPE_GROUP) {
+                            // Remove data we don't need for group.
+                            $members[$convid][$key]->requirescontact = null;
+                            $members[$convid][$key]->canmessage = null;
+                            $members[$convid][$key]->contactrequests = [];
+                        }
                     }
                 }
             }

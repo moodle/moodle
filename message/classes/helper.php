@@ -549,6 +549,9 @@ class helper {
                 $data->canmessage = api::can_post_message($recipient, $sender);
             }
 
+            // Populate the contact requests, even if we don't need them.
+            $data->contactrequests = [];
+
             $members[$data->id] = $data;
         }
 
