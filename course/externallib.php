@@ -3951,7 +3951,8 @@ class core_course_external extends external_api {
         $recentcourses = array_map(function($course) use ($renderer) {
             context_helper::preload_from_record($course);
             $context = context_course::instance($course->id);
-            $exporter = new course_summary_exporter($course, ['context' => $context]);
+            $isfavourite = !empty($course->component);
+            $exporter = new course_summary_exporter($course, ['context' => $context, 'isfavourite' => $isfavourite]);
             return $exporter->export($renderer);
         }, $courses);
 

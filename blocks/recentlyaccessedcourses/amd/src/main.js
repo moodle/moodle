@@ -27,13 +27,17 @@ define(
         'jquery',
         'core_course/repository',
         'core/templates',
-        'core/notification'
+        'core/notification',
+        'core/pubsub',
+        'core_course/events'
     ],
     function(
         $,
         CoursesRepository,
         Templates,
-        Notification
+        Notification,
+        PubSub,
+        CourseEvents
     ) {
 
         var SELECTORS = {
@@ -77,19 +81,20 @@ define(
         };
 
         /**
-         * Get and show the recent courses into the block.
+         * Fetch user's recently accessed courses and reload the content of the block.
          *
-         * @param {int} userid User from which the courses will be obtained
-         * @param {object} root The root element for the recentlyaccessedcourses block.
+         * @param {int} userid User whose courses will be shown
+         * @param {object} root The root element for the recentlyaccessedcourses view.
+         * @returns {promise} The updated content for the block.
          */
-        var init = function(userid, root) {
-            root = $(root);
+        var reloadContent = function(userid, root) {
+
             var recentcoursesViewRoot = root.find(SELECTORS.COURSES_VIEW);
             var recentcoursesViewContent = root.find(SELECTORS.COURSES_VIEW_CONTENT);
 
             var coursesPromise = getRecentCourses(userid, NUM_COURSES_TOTAL);
 
-            coursesPromise.then(function(courses) {
+            return coursesPromise.then(function(courses) {
                 var pagedContentPromise = renderCourses(recentcoursesViewRoot, courses);
 
                 pagedContentPromise.then(function(html, js) {
@@ -97,6 +102,35 @@ define(
                 }).catch(Notification.exception);
                 return coursesPromise;
             }).catch(Notification.exception);
+        };
+
+        /**
+         * Register event listeners for the block.
+         *
+         * @param {int} userid User whose courses will be shown
+         * @param {object} root The root element for the recentlyaccessedcourses block.
+         */
+        var registerEventListeners = function(userid, root) {
+            PubSub.subscribe(CourseEvents.favourited, function() {
+                reloadContent(userid, root);
+            });
+
+            PubSub.subscribe(CourseEvents.unfavorited, function() {
+                reloadContent(userid, root);
+            });
+        };
+
+        /**
+         * Get and show the recent courses into the block.
+         *
+         * @param {int} userid User from which the courses will be obtained
+         * @param {object} root The root element for the recentlyaccessedcourses block.
+         */
+        var init = function(userid, root) {
+            root = $(root);
+
+            registerEventListeners(userid, root);
+            reloadContent(userid, root);
         };
 
         return {

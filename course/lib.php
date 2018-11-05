@@ -4548,7 +4548,7 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
     }
 
     $basefields = array('id', 'idnumber', 'summary', 'summaryformat', 'startdate', 'enddate', 'category',
-            'shortname', 'fullname', 'userid', 'timeaccess');
+            'shortname', 'fullname', 'timeaccess', 'component');
 
     $sort = trim($sort);
     if (empty($sort)) {
@@ -4571,9 +4571,16 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
 
     $sql = "SELECT $ctxfields, $coursefields
               FROM {course} c
-              JOIN {context} ctx ON ctx.contextlevel = :contextlevel
+              JOIN {context} ctx
+                   ON ctx.contextlevel = :contextlevel
                    AND ctx.instanceid = c.id
-              JOIN {user_lastaccess} ul ON ul.courseid = c.id
+              JOIN {user_lastaccess} ul
+                   ON ul.courseid = c.id
+         LEFT JOIN {favourite} f
+                   ON f.component = 'core_course'
+                   AND f.itemtype = 'courses'
+                   AND f.userid = ul.userid
+                   AND f.itemid = ul.courseid
              WHERE ul.userid = :userid
           $orderby";
     $params = ['userid' => $userid, 'contextlevel' => CONTEXT_COURSE];

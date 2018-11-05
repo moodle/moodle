@@ -26,7 +26,8 @@
                 "name": "Assignment due 1",
                 "viewurl": "https://moodlesite/course/view.php?id=2",
                 "courseimageurl": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
-                "fullname": "course 3"
+                "fullname": "course 3",
+                "isfavourite": true
             }
         ]
     }
@@ -34,16 +35,20 @@
 
 <div class="card-deck dashboard-card-deck" role="list">
     {{#courses}}
-        <a href="{{viewurl}}" title="{{fullname}}" class="card dashboard-card" role="list-item">
-            <div class="card-img-top dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
-            </div>
-            <div class="card-body pr-1 course-info-container">
-                <div class="d-flex">
-                    <div class="card-title d-inline-block text-truncate">
-                        {{{fullname}}}
+        <div class="card dashboard-card" role="listitem">
+            <a href="{{viewurl}}" title="{{fullname}}">
+                <div class="card-img-top dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
+                    <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
+                    {{>core_course/favouriteicon }}
+                </div>
+                <div class="card-body pr-1 course-info-container">
+                    <div class="d-flex">
+                        <div class="card-title d-inline-block text-truncate">
+                            {{{fullname}}}
+                        </div>
                     </div>
                 </div>
-            </div>
-        </a>
+            </a>
+        </div>
     {{/courses}}
 </div>
