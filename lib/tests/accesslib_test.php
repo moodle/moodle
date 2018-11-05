@@ -3373,7 +3373,8 @@ class core_accesslib_testcase extends advanced_testcase {
         $actual = context_system::instance()->get_capabilities();
 
         // Just test a few representative capabilities.
-        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames'];
+        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
+                'repository/upload:view'];
 
         $this->assert_capability_list_contains($expectedcapabilities, $actual);
     }
@@ -3389,7 +3390,8 @@ class core_accesslib_testcase extends advanced_testcase {
         $actual = context_coursecat::instance($cat->id)->get_capabilities();
 
         // Just test a few representative capabilities.
-        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames'];
+        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
+                'repository/upload:view'];
 
         $this->assert_capability_list_contains($expectedcapabilities, $actual);
     }
@@ -3406,7 +3408,8 @@ class core_accesslib_testcase extends advanced_testcase {
         $actual = context_course::instance($course->id)->get_capabilities();
 
         // Just test a few representative capabilities.
-        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames'];
+        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
+                'repository/upload:view'];
 
         $this->assert_capability_list_contains($expectedcapabilities, $actual);
     }
@@ -3424,7 +3427,8 @@ class core_accesslib_testcase extends advanced_testcase {
         $actual = context_module::instance($page->cmid)->get_capabilities();
 
         // Just test a few representative capabilities.
-        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames'];
+        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
+                'repository/upload:view'];
 
         $this->assert_capability_list_contains($expectedcapabilities, $actual);
     }
