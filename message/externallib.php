@@ -3953,4 +3953,78 @@ class core_message_external extends external_api {
     public static function unset_favourite_conversations_returns() {
         return new external_warnings();
     }
+
+    /**
+     * Returns description of method parameters for get_member_info() method.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_member_info_parameters() {
+        return new external_function_parameters(
+            array(
+                'referenceuserid' => new external_value(PARAM_INT, 'id of the user'),
+                'userids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'id of members to get')
+                ),
+                'includecontactrequests' => new external_value(PARAM_BOOL, 'include contact requests in response', VALUE_DEFAULT, false),
+                'includeprivacyinfo' => new external_value(PARAM_BOOL, 'include privacy info in response', VALUE_DEFAULT, false)
+            )
+        );
+    }
+
+    /**
+     * Returns conversation member info for the supplied users, relative to the supplied referenceuserid.
+     *
+     * This is the basic structure used when returning members, and includes information about the relationship between each member
+     * and the referenceuser, such as a whether the referenceuser has marked the member as a contact, or has blocked them.
+     *
+     * @param int $referenceuserid the id of the user which check contact and blocked status.
+     * @param array $userids
+     * @return array the array of objects containing member info.
+     * @throws moodle_exception if messaging is disabled or if the user cannot perform the action.
+     */
+    public static function get_member_info(
+        int $referenceuserid,
+        array $userids,
+        bool $includecontactrequests = false,
+        bool $includeprivacyinfo = false
+    ) {
+        global $CFG, $USER;
+
+        // All the business logic checks that really shouldn't be in here.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+        $params = [
+            'referenceuserid' => $referenceuserid,
+            'userids' => $userids,
+            'includecontactrequests' => $includecontactrequests,
+            'includeprivacyinfo' => $includeprivacyinfo
+        ];
+        $params = self::validate_parameters(self::get_member_info_parameters(), $params);
+        $systemcontext = context_system::instance();
+        self::validate_context($systemcontext);
+
+        if (($USER->id != $referenceuserid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
+
+        return \core_message\helper::get_member_info(
+            $params['referenceuserid'],
+            $params['userids'],
+            $params['includecontactrequests'],
+            $params['includeprivacyinfo']
+        );
+    }
+
+    /**
+     * Get member info return description.
+     *
+     * @return external_description
+     */
+    public static function get_member_info_returns() {
+        return new external_multiple_structure(
+            self::get_conversation_member_structure(true)
+        );
+    }
 }

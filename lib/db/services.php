@@ -1105,6 +1105,15 @@ $functions = array(
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
         'ajax' => true,
     ),
+    'core_message_get_member_info' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'get_member_info',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Retrieve a user message profiles',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax' => true,
+    ),
     'core_message_get_unread_conversations_count' => array(
         'classname' => 'core_message_external',
         'methodname' => 'get_unread_conversations_count',
