@@ -205,6 +205,53 @@ class mod_workshop_privacy_provider_testcase extends advanced_testcase {
     }
 
     /**
+     * Test {@link \mod_workshop\privacy\provider::get_users_in_context()} implementation.
+     */
+    public function test_get_users_in_context() {
+
+        $cm11 = get_coursemodule_from_instance('workshop', $this->workshop11->id);
+        $cm12 = get_coursemodule_from_instance('workshop', $this->workshop12->id);
+        $cm21 = get_coursemodule_from_instance('workshop', $this->workshop21->id);
+
+        $context11 = context_module::instance($cm11->id);
+        $context12 = context_module::instance($cm12->id);
+        $context21 = context_module::instance($cm21->id);
+
+        // Users in the workshop11.
+        $userlist11 = new \core_privacy\local\request\userlist($context11, 'mod_workshop');
+        \mod_workshop\privacy\provider::get_users_in_context($userlist11);
+        $expected11 = [
+            $this->student1->id, // Student1 has data in workshop11 (author + self reviewer).
+            $this->student2->id, // Student2 has data in workshop11 (reviewer).
+            $this->student3->id, // Student3 has data in workshop11 (reviewer).
+        ];
+        $actual11 = $userlist11->get_userids();
+        $this->assertEquals($expected11, $actual11, '', 0, 10, true);
+
+        // Users in the workshop12.
+        $userlist12 = new \core_privacy\local\request\userlist($context12, 'mod_workshop');
+        \mod_workshop\privacy\provider::get_users_in_context($userlist12);
+        $expected12 = [
+            $this->student1->id, // Student1 has data in workshop12 (author).
+            $this->student2->id, // Student2 has data in workshop12 (reviewer).
+            $this->teacher4->id, // Teacher4 has data in workshop12 (gradeoverby).
+        ];
+        $actual12 = $userlist12->get_userids();
+        $this->assertEquals($expected12, $actual12, '', 0, 10, true);
+
+        // Users in the workshop21.
+        $userlist21 = new \core_privacy\local\request\userlist($context21, 'mod_workshop');
+        \mod_workshop\privacy\provider::get_users_in_context($userlist21);
+        $expected21 = [
+            $this->student1->id, // Student1 has data in workshop21 (reviewer).
+            $this->student2->id, // Student2 has data in workshop21 (author).
+            $this->teacher4->id, // Teacher4 has data in workshop21 (gradinggradeoverby).
+        ];
+        $actual21 = $userlist21->get_userids();
+        $this->assertEquals($expected21, $actual21, '', 0, 10, true);
+    }
+
+    /**
      * Test {@link \mod_workshop\privacy\provider::export_user_data()} implementation.
      */
     public function test_export_user_data_1() {
@@ -374,6 +421,118 @@ class mod_workshop_privacy_provider_testcase extends advanced_testcase {
                 $this->assertEquals(get_string('privacy:request:delete:content', 'mod_workshop'), $assessment->feedbackauthor);
                 $this->assertNotEquals(get_string('privacy:request:delete:content', 'mod_workshop'), $assessment->feedbackreviewer);
             }
+        }
+    }
+
+    /**
+     * Test {@link \mod_workshop\privacy\provider::delete_data_for_users()} implementation.
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+
+        // Student1 has submissions in two workshops.
+        $this->assertFalse($this->is_submission_erased($this->submission111));
+        $this->assertFalse($this->is_submission_erased($this->submission121));
+
+        // Student1 has self-assessed one their submission.
+        $this->assertFalse($this->is_given_assessment_erased($this->assessment1111));
+        $this->assertFalse($this->is_received_assessment_erased($this->assessment1111));
+
+        // Student2 and student3 peer-assessed student1's submission.
+        $this->assertFalse($this->is_given_assessment_erased($this->assessment1112));
+        $this->assertFalse($this->is_given_assessment_erased($this->assessment1113));
+
+        // Delete data owned by student1 and student3 in the workshop11.
+
+        $context11 = \context_module::instance($this->workshop11->cmid);
+
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($context11, 'mod_workshop', [
+            $this->student1->id,
+            $this->student3->id,
+        ]);
+        \mod_workshop\privacy\provider::delete_data_for_users($approveduserlist);
+
+        // Student1's submission is erased in workshop11 but not in the other workshop12.
+        $this->assertTrue($this->is_submission_erased($this->submission111));
+        $this->assertFalse($this->is_submission_erased($this->submission121));
+
+        // Student1's self-assessment is erased.
+        $this->assertTrue($this->is_given_assessment_erased($this->assessment1111));
+        $this->assertTrue($this->is_received_assessment_erased($this->assessment1111));
+
+        // Student1's received peer-assessments are also erased because they are "owned" by the recipient of the assessment.
+        $this->assertTrue($this->is_received_assessment_erased($this->assessment1112));
+        $this->assertTrue($this->is_received_assessment_erased($this->assessment1113));
+
+        // Student2's owned data in the given assessment are not erased.
+        $this->assertFalse($this->is_given_assessment_erased($this->assessment1112));
+
+        // Student3's owned data in the given assessment were erased because she/he was in the userlist.
+        $this->assertTrue($this->is_given_assessment_erased($this->assessment1113));
+
+        // Personal data in other contexts are not affected.
+        $this->assertFalse($this->is_submission_erased($this->submission121));
+        $this->assertFalse($this->is_given_assessment_erased($this->assessment2121));
+        $this->assertFalse($this->is_received_assessment_erased($this->assessment2121));
+    }
+
+    /**
+     * Check if the given submission has the author's personal data erased.
+     *
+     * @param int $submissionid Identifier of the submission.
+     * @return boolean
+     */
+    protected function is_submission_erased(int $submissionid) {
+        global $DB;
+
+        $submission = $DB->get_record('workshop_submissions', ['id' => $submissionid], 'id, title, content', MUST_EXIST);
+
+        $titledeleted = $submission->title === get_string('privacy:request:delete:title', 'mod_workshop');
+        $contentdeleted = $submission->content === get_string('privacy:request:delete:content', 'mod_workshop');
+
+        if ($titledeleted && $contentdeleted) {
+            return true;
+
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Check is the received assessment has recipient's (author's) personal data erased.
+     *
+     * @param int $assessmentid Identifier of the assessment.
+     * @return boolean
+     */
+    protected function is_received_assessment_erased(int $assessmentid) {
+        global $DB;
+
+        $assessment = $DB->get_record('workshop_assessments', ['id' => $assessmentid], 'id, feedbackauthor', MUST_EXIST);
+
+        if ($assessment->feedbackauthor === get_string('privacy:request:delete:content', 'mod_workshop')) {
+            return true;
+
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Check is the given assessment has reviewer's personal data erased.
+     *
+     * @param int $assessmentid Identifier of the assessment.
+     * @return boolean
+     */
+    protected function is_given_assessment_erased(int $assessmentid) {
+        global $DB;
+
+        $assessment = $DB->get_record('workshop_assessments', ['id' => $assessmentid], 'id, feedbackreviewer', MUST_EXIST);
+
+        if ($assessment->feedbackreviewer === get_string('privacy:request:delete:content', 'mod_workshop')) {
+            return true;
+
+        } else {
+            return false;
         }
     }
 }
