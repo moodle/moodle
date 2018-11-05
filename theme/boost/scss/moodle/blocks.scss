@@ -166,8 +166,10 @@ $card-gutter : $card-deck-margin * 2;
 
 .dashboard-card-deck .dashboard-card {
     margin-bottom: $card-gutter;
-    flex-basis: 100%;
+    flex-basis: auto;
+    width: 100%;
     flex-grow: 0;
+    flex-shrink: 0;
     .dashboard-card-img {
         height: 7rem;
         background-position: center;
@@ -181,22 +183,22 @@ $card-gutter : $card-deck-margin * 2;
 .dashboard-card-deck {
     @include media-breakpoint-up(sm) {
         .dashboard-card {
-            flex-basis: calc(50% - #{$card-gutter});
+            width: calc(50% - #{$card-gutter});
         }
     }
     @include media-breakpoint-up(md) {
         .dashboard-card {
-            flex-basis: calc(33.33% - #{$card-gutter});
+            width: calc(33.33% - #{$card-gutter});
         }
     }
     @include media-breakpoint-up(lg) {
         .dashboard-card {
-            flex-basis: calc(25% - #{$card-gutter});
+            width: calc(25% - #{$card-gutter});
         }
     }
     @include media-breakpoint-up(xl) {
         .dashboard-card {
-            flex-basis: calc(20% - #{$card-gutter});
+            width: calc(20% - #{$card-gutter});
         }
     }
 }
@@ -205,12 +207,12 @@ $card-gutter : $card-deck-margin * 2;
     .dashboard-card-deck {
         @include media-breakpoint-up(lg) {
             .dashboard-card {
-                flex-basis: calc(33.33% - #{$card-gutter});
+                width: calc(33.33% - #{$card-gutter});
             }
         }
         @include media-breakpoint-up(xl) {
             .dashboard-card {
-                flex-basis: calc(25% - #{$card-gutter});
+                width: calc(25% - #{$card-gutter});
             }
         }
     }
@@ -220,12 +222,12 @@ body.drawer-open-left #region-main.has-blocks {
     .dashboard-card-deck {
         @include media-breakpoint-up(lg) {
             .dashboard-card {
-                flex-basis: calc(33.33% - #{$card-gutter});
+                width: calc(33.33% - #{$card-gutter});
             }
         }
         @media (min-width: 1400px) {
             .dashboard-card {
-                flex-basis: calc(25% - #{$card-gutter});
+                width: calc(25% - #{$card-gutter});
             }
         }
     }
@@ -236,7 +238,7 @@ body.drawer-open-left #region-main.has-blocks {
         .dashboard-card-deck {
             margin: 0;
             .dashboard-card {
-                flex-basis: 100% !important;
+                width: 100% !important;
                 margin-left: 0;
                 margin-right: 0;
             }

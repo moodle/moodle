@@ -458,7 +458,8 @@
         flex-grow: 0;
         flex-shrink: 0;
         min-width: 0;
-        flex-basis: 100%;
+        width: 100%;
+        flex-basis: auto;
     }
     @media (min-width: 576px) {
         .dashboard-card {
@@ -466,13 +467,13 @@
             flex-direction: column;
             margin-right: 0.25rem;
             margin-left: 0.25rem;
-            flex-basis: ~"calc(50% - 0.6rem)";
+            width: ~"calc(50% - 0.5rem)";
         }
     }
 
     @media (min-width: 1200px) {
         .dashboard-card {
-            flex-basis: ~"calc(33.333% - 0.5rem)";
+            width: ~"calc(33.333% - 0.5rem)";
         }
     }
 }
@@ -483,7 +484,7 @@
         margin: 0;
         height: unset;
         .dashboard-card {
-            flex-basis: 100%;
+            width: 100%;
             margin-left: 0;
             margin-right: 0;
         }
