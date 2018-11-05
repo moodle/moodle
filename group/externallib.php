@@ -1550,7 +1550,7 @@ class core_group_external extends external_api {
             try {
                 self::validate_context($context);
             } catch (Exception $e) {
-                $exceptionparam = new sdtClass();
+                $exceptionparam = new stdClass();
                 $exceptionparam->message = $e->getMessage();
                 $exceptionparam->courseid = $group->courseid;
                 throw new moodle_exception('errorcoursecontextnotvalid', 'webservice', '', $exceptionparam);
