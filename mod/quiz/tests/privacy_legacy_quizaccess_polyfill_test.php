@@ -73,7 +73,7 @@ class core_privacy_legacy_quizaccess_polyfill_test extends advanced_testcase {
     }
 
     /**
-     * Test the _delete_quizaccess_for_context shim.
+     * Test the _delete_quizaccess_for_user shim.
      */
     public function test_delete_quizaccess_for_user() {
         $context = context_system::instance();
@@ -89,6 +89,23 @@ class core_privacy_legacy_quizaccess_polyfill_test extends advanced_testcase {
         test_privacy_legacy_quizaccess_polyfill_provider::$mock = $mock;
         test_privacy_legacy_quizaccess_polyfill_provider::delete_quizaccess_data_for_user($quiz, $user);
     }
+
+    /**
+     * Test the _delete_quizaccess_for_users shim.
+     */
+    public function test_delete_quizaccess_for_users() {
+        $context = $this->createMock(context_module::class);
+        $user = (object) [];
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($context, 'mod_quiz', [$user]);
+
+        $mock = $this->createMock(test_privacy_legacy_quizaccess_polyfill_mock_wrapper::class);
+        $mock->expects($this->once())
+            ->method('get_return_value')
+            ->with('_delete_quizaccess_data_for_users', [$approveduserlist]);
+
+        test_privacy_legacy_quizaccess_polyfill_provider::$mock = $mock;
+        test_privacy_legacy_quizaccess_polyfill_provider::delete_quizaccess_data_for_users($approveduserlist);
+    }
 }
 
 /**
@@ -99,7 +116,8 @@ class core_privacy_legacy_quizaccess_polyfill_test extends advanced_testcase {
  */
 class test_privacy_legacy_quizaccess_polyfill_provider implements
         \core_privacy\local\metadata\provider,
-        \mod_quiz\privacy\quizaccess_provider {
+        \mod_quiz\privacy\quizaccess_provider,
+        \mod_quiz\privacy\quizaccess_user_provider {
 
     use \mod_quiz\privacy\legacy_quizaccess_polyfill;
     use \core_privacy\local\legacy_polyfill;
@@ -135,6 +153,15 @@ class test_privacy_legacy_quizaccess_polyfill_provider implements
      * @param   \stdClass       $user The user to export data for
      */
     protected static function _delete_quizaccess_data_for_user($quiz, $user) {
+        static::$mock->get_return_value(__FUNCTION__, func_get_args());
+    }
+
+    /**
+     * Delete all user data for the specified users, in the specified context.
+     *
+     * @param   \core_privacy\local\request\approved_userlist   $userlist
+     */
+    protected static function _delete_quizaccess_data_for_users($userlist) {
         static::$mock->get_return_value(__FUNCTION__, func_get_args());
     }
 

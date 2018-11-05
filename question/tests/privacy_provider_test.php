@@ -425,4 +425,115 @@ class core_question_privacy_provider_testcase extends \core_privacy\tests\provid
         $this->assertEquals($user->id, $qrecord->createdby);
         $this->assertEquals($user->id, $qrecord->modifiedby);
     }
+
+    /**
+     * Test for provider::get_users_in_context().
+     */
+    public function test_get_users_in_context() {
+        $this->resetAfterTest();
+
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        // Create three test users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        // Create one question as each user in different contexts.
+        $this->setUser($user1);
+        $user1data = $questiongenerator->setup_course_and_questions();
+        $this->setUser($user2);
+        $user2data = $questiongenerator->setup_course_and_questions();
+
+        $course1context = \context_course::instance($user1data[1]->id);
+        $course1questions = $user1data[3];
+
+        // Log in as user3 and update the questions in course1.
+        $this->setUser($user3);
+
+        foreach ($course1questions as $question) {
+            $questiongenerator->update_question($question);
+        }
+
+        $userlist = new \core_privacy\local\request\userlist($course1context, 'core_question');
+        provider::get_users_in_context($userlist);
+
+        // User1 has created questions and user3 has edited them.
+        $this->assertCount(2, $userlist);
+        $this->assertEquals(
+                [$user1->id, $user3->id],
+                $userlist->get_userids(),
+                '', 0.0, 10, true);
+    }
+
+    /**
+     * Test for provider::delete_data_for_users().
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        // Create three test users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        // Create one question as each user in different contexts.
+        $this->setUser($user1);
+        $course1data = $questiongenerator->setup_course_and_questions();
+        $course1 = $course1data[1];
+        $course1qcat = $course1data[2];
+        $course1questions = $course1data[3];
+        $course1context = \context_course::instance($course1->id);
+
+        // Log in as user2 and update the questions in course1.
+        $this->setUser($user2);
+
+        foreach ($course1questions as $question) {
+            $questiongenerator->update_question($question);
+        }
+
+        // Add 2 more questions to course1 by user3.
+        $this->setUser($user3);
+        $questiongenerator->create_question('shortanswer', null, ['category' => $course1qcat->id]);
+        $questiongenerator->create_question('shortanswer', null, ['category' => $course1qcat->id]);
+
+        // Now, log in as user1 again, and then create a new course and add questions to that.
+        $this->setUser($user1);
+        $questiongenerator->setup_course_and_questions();
+
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($course1context, 'core_question',
+                [$user1->id, $user2->id]);
+        provider::delete_data_for_users($approveduserlist);
+
+        // Now, there should be no question related to user1 or user2 in course1.
+        $this->assertEquals(
+                0,
+                $DB->count_records_sql("SELECT COUNT(q.id)
+                                          FROM {question} q
+                                          JOIN {question_categories} qc ON q.category = qc.id
+                                         WHERE qc.contextid = ?
+                                               AND (q.createdby = ? OR q.modifiedby = ? OR q.createdby = ? OR q.modifiedby = ?)",
+                        [$course1context->id, $user1->id, $user1->id, $user2->id, $user2->id])
+        );
+
+        // User3 data in course1 should not change.
+        $this->assertEquals(
+                2,
+                $DB->count_records_sql("SELECT COUNT(q.id)
+                                          FROM {question} q
+                                          JOIN {question_categories} qc ON q.category = qc.id
+                                         WHERE qc.contextid = ? AND (q.createdby = ? OR q.modifiedby = ?)",
+                        [$course1context->id, $user3->id, $user3->id])
+        );
+
+        // User1 has authored 2 questions in another course.
+        $this->assertEquals(
+                2,
+                $DB->count_records_select('question', "createdby = ? OR modifiedby = ?", [$user1->id, $user1->id])
+        );
+    }
 }
