@@ -1486,4 +1486,96 @@ class core_group_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.6
+     */
+    public static function update_groups_parameters() {
+        return new external_function_parameters(
+            array(
+                'groups' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'ID of the group'),
+                            'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                            'description' => new external_value(PARAM_RAW, 'group description text', VALUE_OPTIONAL),
+                            'descriptionformat' => new external_format_value('description', VALUE_DEFAULT),
+                            'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase', VALUE_OPTIONAL),
+                            'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL)
+                        )
+                    ), 'List of group objects. A group is found by the id, then all other details provided will be updated.'
+                )
+            )
+        );
+    }
+
+    /**
+     * Update groups
+     *
+     * @param array $groups
+     * @return null
+     * @since Moodle 3.6
+     */
+    public static function update_groups($groups) {
+        global $CFG, $DB;
+        require_once("$CFG->dirroot/group/lib.php");
+
+        $params = self::validate_parameters(self::update_groups_parameters(), array('groups' => $groups));
+
+        $transaction = $DB->start_delegated_transaction();
+
+        foreach ($params['groups'] as $group) {
+            $group = (object)$group;
+
+            if (trim($group->name) == '') {
+                throw new invalid_parameter_exception('Invalid group name');
+            }
+
+            if (! $currentgroup = $DB->get_record('groups', array('id' => $group->id))) {
+                throw new invalid_parameter_exception("Group $group->id does not exist");
+            }
+
+            // Check if the modified group name already exists in the course.
+            if ($group->name != $currentgroup->name and
+                    $DB->get_record('groups', array('courseid' => $currentgroup->courseid, 'name' => $group->name))) {
+                throw new invalid_parameter_exception('A different group with the same name already exists in the course');
+            }
+
+            $group->courseid = $currentgroup->courseid;
+
+            // Now security checks.
+            $context = context_course::instance($group->courseid);
+            try {
+                self::validate_context($context);
+            } catch (Exception $e) {
+                $exceptionparam = new sdtClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->courseid = $group->courseid;
+                throw new moodle_exception('errorcoursecontextnotvalid', 'webservice', '', $exceptionparam);
+            }
+            require_capability('moodle/course:managegroups', $context);
+
+            if (!empty($group->description)) {
+                $group->descriptionformat = external_validate_format($group->descriptionformat);
+            }
+
+            groups_update_group($group);
+        }
+
+        $transaction->allow_commit();
+
+        return null;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return null
+     * @since Moodle 3.6
+     */
+    public static function update_groups_returns() {
+        return null;
+    }
 }

@@ -847,6 +847,14 @@ $functions = array(
         'description' => 'Updates existing groupings',
         'type' => 'write',
     ),
+    'core_group_update_groups' => array(
+        'classname' => 'core_group_external',
+        'methodname' => 'update_groups',
+        'classpath' => 'group/externallib.php',
+        'description' => 'Updates existing groups.',
+        'type' => 'write',
+        'capabilities' => 'moodle/course:managegroups'
+    ),
     'core_message_block_user' => array(
         'classname' => 'core_message_external',
         'methodname' => 'block_user',
