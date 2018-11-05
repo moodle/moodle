@@ -248,6 +248,160 @@ class core_grades_privacy_testcase extends provider_testcase {
         $this->assertArrayHasKey(context_user::instance($u2->id)->id, $contexts);
     }
 
+    /**
+     * Test that the appropriate user IDs are returned for a given context.
+     */
+    public function test_get_users_in_context_gradebook_edits() {
+        $dg = $this->getDataGenerator();
+
+        $c1 = $dg->create_course();
+        $c2 = $dg->create_course();
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u4 = $dg->create_user();
+        $u5 = $dg->create_user();
+        $u6 = $dg->create_user();
+        $u7 = $dg->create_user();
+        $u8 = $dg->create_user();
+        $u9 = $dg->create_user();
+        $u10 = $dg->create_user();
+        $u11 = $dg->create_user();
+
+        $sysctx = context_system::instance();
+        $c1ctx = context_course::instance($c1->id);
+        $c2ctx = context_course::instance($c2->id);
+
+        // Create some stuff.
+        $gi1a = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi1b = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi2a = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+        $gc1a = new grade_category($dg->create_grade_category(['courseid' => $c1->id]), false);
+        $gc1b = new grade_category($dg->create_grade_category(['courseid' => $c1->id]), false);
+        $gc2a = new grade_category($dg->create_grade_category(['courseid' => $c2->id]), false);
+        $go2 = new grade_outcome($dg->create_grade_outcome(['courseid' => $c2->id, 'shortname' => 'go2',
+            'fullname' => 'go2']), false);
+
+        $go0 = new grade_outcome(['shortname' => 'go0', 'fullname' => 'go0', 'usermodified' => $u1->id]);
+        $go0->insert();
+        $go1 = new grade_outcome(['shortname' => 'go1', 'fullname' => 'go1', 'courseid' => $c1->id, 'usermodified' => $u11->id]);
+        $go1->insert();
+
+        // Create scales.
+        $s1 = new grade_scale(['name' => 's1', 'scale' => 'a,b', 'userid' => $u7->id, 'courseid' => 0, 'description' => '']);
+        $s1->insert();
+        $s2 = new grade_scale(['name' => 's2', 'scale' => 'a,b', 'userid' => $u8->id, 'courseid' => $c1->id, 'description' => '']);
+        $s2->insert();
+
+        // User 2 creates history.
+        $this->setUser($u2);
+        $go0->shortname .= ' edited';
+        $go0->update();
+        $gc1a->fullname .= ' edited';
+        $gc1a->update();
+
+        // User 3 creates history.
+        $this->setUser($u3);
+        $go1->shortname .= ' edited';
+        $go1->update();
+        $gc2a->fullname .= ' a';
+        $gc2a->update();
+
+        // User 4 updates an outcome in course (creates history).
+        $this->setUser($u4);
+        $go2->shortname .= ' edited';
+        $go2->update();
+
+        // User 5 updates an item.
+        $this->setUser($u5);
+        $gi1a->itemname .= ' edited';
+        $gi1a->update();
+
+        // User 6 creates history.
+        $this->setUser($u6);
+        $gi2a->delete();
+
+        // User 9 creates history.
+        $this->setUser($u9);
+        $s1->name .= ' edited';
+        $s1->update();
+
+        $userlist = new \core_privacy\local\request\userlist($sysctx, 'core_grades');
+        provider::get_users_in_context($userlist);
+        $systemcontextuserids = [$u1->id, $u2->id, $u7->id, $u9->id];
+        $this->assertEquals($systemcontextuserids, $userlist->get_userids());
+
+        $userlist = new \core_privacy\local\request\userlist($c1ctx, 'core_grades');
+        provider::get_users_in_context($userlist);
+        $course1userids = [$u11->id, $u3->id, $u8->id, $u5->id, $u2->id];
+        $this->assertEquals($course1userids, $userlist->get_userids());
+
+        $userlist = new \core_privacy\local\request\userlist($c2ctx, 'core_grades');
+        provider::get_users_in_context($userlist);
+        $course2userids = [$u4->id, $u6->id, $u3->id];
+        $this->assertEquals($course2userids, $userlist->get_userids());
+    }
+
+    /**
+     * Test that the appropriate user IDs are returned for a given context.
+     */
+    public function test_get_users_in_context_grades_and_history() {
+        $dg = $this->getDataGenerator();
+
+        $c1 = $dg->create_course();
+        $c2 = $dg->create_course();
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u4 = $dg->create_user();
+        $u5 = $dg->create_user();
+        $u6 = $dg->create_user();
+
+        $c1ctx = context_course::instance($c1->id);
+        $c2ctx = context_course::instance($c2->id);
+        $u2ctx = context_user::instance($u2->id);
+
+        // Create some stuff.
+        $gi1a = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi1b = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi2a = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+        $gi2b = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+
+        // User 1 is graded in course 1.
+        $gi1a->update_final_grade($u1->id, 1, 'test');
+
+        // User 2 is graded in course 2.
+        $gi2a->update_final_grade($u2->id, 10, 'test');
+
+        // User 3 is set as modifier.
+        $gi1a->update_final_grade($u1->id, 1, 'test', '', FORMAT_MOODLE, $u3->id);
+
+        // User 4 is set as modifier, and creates history..
+        $this->setUser($u4);
+        $gi1a->update_final_grade($u2->id, 1, 'test');
+
+        // User 5 creates history, user 6 is the known modifier, and we delete the item.
+        $this->setUser($u5);
+        $gi2b->update_final_grade($u2->id, 1, 'test', '', FORMAT_PLAIN, $u6->id);
+        $gi2b->delete();
+
+        $userlist = new \core_privacy\local\request\userlist($c1ctx, 'core_grades');
+        provider::get_users_in_context($userlist);
+        $course1userids = [$u1->id, $u2->id, $u3->id, $u4->id];
+        $this->assertEquals($course1userids, $userlist->get_userids());
+
+        $userlist = new \core_privacy\local\request\userlist($c2ctx, 'core_grades');
+        provider::get_users_in_context($userlist);
+        $course2userids = [$u5->id, $u2->id];
+        $this->assertEquals($course2userids, $userlist->get_userids());
+
+        $userlist = new \core_privacy\local\request\userlist($u2ctx, 'core_grades');
+        provider::get_users_in_context($userlist);
+        $this->assertEquals([$u2->id], $userlist->get_userids());
+    }
+
     public function test_delete_data_for_all_users_in_context() {
         global $DB;
         $dg = $this->getDataGenerator();
@@ -366,6 +520,80 @@ class core_grades_privacy_testcase extends provider_testcase {
         $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi2a->id]));
         $this->assertFalse($DB->record_exists('grade_grades_history', ['userid' => $u1->id, 'itemid' => $gi2b->id]));
         $this->assertTrue($DB->record_exists('grade_grades_history', ['userid' => $u2->id, 'itemid' => $gi2b->id]));
+    }
+
+    /**
+     * Test deleting multiple users for a context works.
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+        $dg = $this->getDataGenerator();
+
+        $c1 = $dg->create_course();
+        $c2 = $dg->create_course();
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u4 = $dg->create_user();
+        $u1ctx = context_user::instance($u1->id);
+        $u2ctx = context_user::instance($u2->id);
+        $c1ctx = context_course::instance($c1->id);
+        $c2ctx = context_course::instance($c2->id);
+
+        // Create some stuff.
+        $gi1a = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi1b = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi2a = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+        $gi2b = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+
+        $gi1a->update_final_grade($u1->id, 1, 'test');
+        $gi1a->update_final_grade($u2->id, 1, 'test');
+        $gi1a->update_final_grade($u3->id, 1, 'test');
+        $gi1b->update_final_grade($u1->id, 1, 'test');
+        $gi1b->update_final_grade($u4->id, 1, 'test');
+        $gi2a->update_final_grade($u1->id, 1, 'test');
+        $gi2a->update_final_grade($u2->id, 1, 'test');
+        $gi2a->update_final_grade($u4->id, 1, 'test');
+        $gi2b->update_final_grade($u1->id, 1, 'test');
+        $gi2b->update_final_grade($u2->id, 1, 'test');
+        $gi2b->update_final_grade($u3->id, 1, 'test');
+        $gi2b->delete();
+
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi1a->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi1a->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u3->id, 'itemid' => $gi1a->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi1b->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u4->id, 'itemid' => $gi1b->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi2a->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi2a->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u4->id, 'itemid' => $gi2a->id]));
+        $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi2b->id]));
+        $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi2b->id]));
+        $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u3->id, 'itemid' => $gi2b->id]));
+
+        $userlist = new \core_privacy\local\request\approved_userlist($c1ctx, 'core_grades', [$u1->id, $u2->id]);
+        provider::delete_data_for_users($userlist);
+
+        $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi1a->id]));
+        $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi1a->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u3->id, 'itemid' => $gi1a->id]));
+        $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi1b->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u4->id, 'itemid' => $gi1b->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi2a->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi2a->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u4->id, 'itemid' => $gi2a->id]));
+
+        $userlist = new \core_privacy\local\request\approved_userlist($c2ctx, 'core_grades', [$u2->id, $u4->id]);
+        provider::delete_data_for_users($userlist);
+
+        $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi1a->id]));
+        $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi1a->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u3->id, 'itemid' => $gi1a->id]));
+        $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi1b->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u4->id, 'itemid' => $gi1b->id]));
+        $this->assertTrue($DB->record_exists('grade_grades', ['userid' => $u1->id, 'itemid' => $gi2a->id]));
+        $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u2->id, 'itemid' => $gi2a->id]));
+        $this->assertFalse($DB->record_exists('grade_grades', ['userid' => $u4->id, 'itemid' => $gi2a->id]));
     }
 
     public function test_export_data_for_user_about_grades_and_history() {
