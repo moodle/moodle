@@ -37,28 +37,32 @@ require_once($CFG->dirroot.'/question/type/ordering/question.php');
 class qtype_ordering_edit_form extends question_edit_form {
 
     /** Rows count in answer field */
-    const NUM_ANS_ROWS = 2;
+    const TEXTFIELD_ROWS = 2;
 
     /** Cols count in answer field */
-    const NUM_ANS_COLS = 60;
+    const TEXTFIELD_COLS = 60;
 
     /** Number of answers in question by default */
-    const NUM_ANS_DEFAULT = 6;
+    const NUM_ITEMS_DEFAULT = 6;
 
-    /** Minimal number of answers to show */
-    const NUM_ANS_MIN = 3;
+    /** Minimum number of answers to show */
+    const NUM_ITEMS_MIN = 3;
 
     /** Number of answers to add on demand */
-    const NUM_ANS_ADD = 3;
+    const NUM_ITEMS_ADD = 1;
 
     /**
-     * Unique name for this question type
-     *
-     * @return the question type name, should be the same as the name() method
-     *      in the question type class.
+     * qtype is plugin name without leading "qtype_"
      */
     public function qtype() {
         return 'ordering';
+    }
+
+    /**
+     * Plugin name is class name without trailing "_edit_form"
+     */
+    public function plugin_name() {
+        return 'qtype_ordering';
     }
 
     /**
@@ -130,12 +134,11 @@ class qtype_ordering_edit_form extends question_edit_form {
                 array('onclick' => 'skipClientValidation = true;'));
         $options[$name] = array('type' => PARAM_RAW);
 
-        $repeats = $this->get_answer_repeats($this->question);
-        $label = get_string('addmoreanswers', $plugin, self::NUM_ANS_ADD); // Button text.
-        $this->repeat_elements($elements, $repeats, $options, 'countanswers', 'addanswers', self::NUM_ANS_ADD, $label);
+        $this->add_repeat_elements($mform, $name, $elements, $options);
 
+        $repeats = $this->get_answer_repeats($this->question);
         if (optional_param('addanswers', 0, PARAM_RAW)) {
-            $repeats += self::NUM_ANS_ADD;
+            $repeats += optional_param('addanswerscount', 0, PARAM_INT);
         }
 
         // Adjust HTML editor and removal buttons.
@@ -162,10 +165,10 @@ class qtype_ordering_edit_form extends question_edit_form {
         if (isset($question->id)) {
             $repeats = count($question->options->answers);
         } else {
-            $repeats = self::NUM_ANS_DEFAULT;
+            $repeats = self::NUM_ITEMS_DEFAULT;
         }
-        if ($repeats < self::NUM_ANS_MIN) {
-            $repeats = self::NUM_ANS_MIN;
+        if ($repeats < self::NUM_ITEMS_MIN) {
+            $repeats = self::NUM_ITEMS_MIN;
         }
         return $repeats;
     }
@@ -177,8 +180,8 @@ class qtype_ordering_edit_form extends question_edit_form {
      */
     protected function get_editor_attributes() {
         return array(
-            'rows'  => self::NUM_ANS_ROWS,
-            'cols'  => self::NUM_ANS_COLS
+            'rows'  => self::TEXTFIELD_ROWS,
+            'cols'  => self::TEXTFIELD_COLS
         );
     }
 
@@ -416,38 +419,68 @@ class qtype_ordering_edit_form extends question_edit_form {
         return set_user_preferences(array("qtype_ordering_$name" => $value));
     }
 
+
     /**
-     * This javascript could be useful for inserting buttons
-     * into the form once it has loaded in the browser
-     * however this means that the buttons are not recognized
-     * by the Moodle Form API
+     * Get array of countable item types
+     *
+     * @return array(type => description)
      */
-    protected function unused_js() {
-        $removeeditor = 'Remove HTML editor';
-        $js = '';
-        $js .= '<script type="text/javascript">'."\n";
-        $js .= "//<![CDATA[\n";
-        $js .= "    var formatname = new RegExp('answer\\\\[(\\\\d+)\\\\]\\\\[format\\\\]');\n";
-        $js .= "    var inputs = document.getElementsByTagName('INPUT');\n";
-        $js .= "    for (var i=0; i<inputs.length; i++) {\n";
-        $js .= "        var input = inputs[i];\n";
-        $js .= "        if (input.type && input.type=='hidden') {\n";
-        $js .= "            var m = formatname.exec(input.name);\n";
-        $js .= "            if (m && m.length) {\n";
-        $js .= "                var submit = document.createElement('INPUT');\n";
-        $js .= "                submit.type = 'submit';\n";
-        $js .= "                submit.value = '$removeeditor';\n";
-        $js .= "                submit.format = input;\n";
-        $js .= "                submit.onclick = function() {\n";
-        $js .= "                    skipClientValidation = true;\n";
-        $js .= "                    this.format.value = 0;\n";
-        $js .= "                };\n";
-        $js .= "                input.parentNode.insertBefore(submit, input.nextSibling);\n";
-        $js .= "            }\n";
-        $js .= "        }\n";
-        $js .= "    }\n";
-        $js .= "//]]>\n";
-        $js .= "</script>\n";
-        $mform->addElement('html', $js);
+    protected function get_addcount_options($type, $max=10) {
+
+        // cache plugin name
+        $plugin = $this->plugin_name();
+
+        // generate options
+        $options = array();
+        for ($i=1; $i<=$max; $i++) {
+            if ($i==1) {
+                $options[$i] = get_string('addsingle'.$type, $plugin);
+            } else {
+                $options[$i] = get_string('addmultiple'.$type.'s', $plugin, $i);
+            }
+        }
+        return $options;
+    }
+
+    /**
+     * Add repeated elements with a button allowing a selectable number of new elements
+     *
+     * @param object $mform the Moodle form object
+     * @return voide, but will update $mform
+     */
+    protected function add_repeat_elements($mform, $type, $elements, $options) {
+
+        // cache plugin name
+        $plugin = $this->plugin_name();
+
+        // cache element names
+        $types = $type.'s';
+        $addtypes = 'add'.$types;
+        $counttypes = 'count'.$types;
+        $addtypescount = $addtypes.'count';
+        $addtypesgroup = $addtypes.'group';
+
+        $repeats = $this->get_answer_repeats($this->question);
+
+        $count = optional_param($addtypescount, self::NUM_ITEMS_ADD, PARAM_INT);
+
+        $label = ($count==1 ? 'addsingle'.$type : 'addmultiple'.$types);
+        $label = get_string($label, $plugin, $count);
+
+        $this->repeat_elements($elements, $repeats, $options, $counttypes, $addtypes, $count, $label, true);
+
+        // remove the original "Add xxx" button ...
+        $mform->removeElement($addtypes);
+
+        // ... and replace it with "Add" button + select group
+        $options = $this->get_addcount_options($type);
+        $mform->addGroup(array(
+            $mform->createElement('submit', $addtypes, get_string('add')),
+            $mform->createElement('select', $addtypescount, '', $options)
+        ), $addtypesgroup, '', ' ', false);
+
+        // set default value and type of select element
+        $mform->setDefault($addtypescount, $count);
+        $mform->setType($addtypescount, PARAM_INT);
     }
 }

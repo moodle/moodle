@@ -33,7 +33,8 @@ $string['editingordering'] = 'Editing ordering question';
 $string['addingordering'] = 'Adding a Ordering question';
 
 $string['absoluteposition'] = 'Absolute position';
-$string['addmoreanswers'] = 'Add {$a} more items';
+$string['addmultipleanswers'] = 'Add {$a} more items';
+$string['addsingleanswer'] = 'Add one more item';
 $string['allornothing'] = 'All or nothing';
 $string['answer'] = 'Item text';
 $string['answerheader'] = 'Draggable item {no}';
