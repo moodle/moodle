@@ -36,19 +36,22 @@
 <div class="card-deck dashboard-card-deck" role="list">
     {{#courses}}
         <div class="card dashboard-card" role="listitem">
-            <a href="{{viewurl}}" title="{{fullname}}">
-                <div class="card-img-top dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
+            <a href="{{viewurl}}" tabindex="-1">
+                <div class="card-img dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
                     <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
                 </div>
-                <div class="card-body pr-1 course-info-container">
-                    <div class="d-flex">
-                        <div class="card-title d-inline-block text-truncate">
-                            {{> core_course/favouriteicon }}
-                            {{{fullname}}}
-                        </div>
+            </a>
+            <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
+                <div class="d-flex align-items-start">
+                    <div class="card-title mb-0 mr-2">
+                        {{> core_course/favouriteicon }}
+                        <a href="{{viewurl}}" class="coursename">
+                            <span class="sr-only">{{#str}}aria:coursename, core_course{{/str}}</span>
+                            {{#shortentext}}40, {{{fullname}}} {{/shortentext}}
+                        </a>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
     {{/courses}}
 </div>

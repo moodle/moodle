@@ -16250,12 +16250,22 @@ body {
   max-width: 100%;
 }
 .block_starredcourses img.icon,
+.block_recentlyaccesseditems img.icon,
+.block_recentlyaccessedcourses img.icon,
 .block_myoverview img.icon {
   padding: 0;
 }
 .block_starredcourses .card .coursemenubtn,
+.block_recentlyaccesseditems .card .coursemenubtn,
+.block_recentlyaccessedcourses .card .coursemenubtn,
 .block_myoverview .card .coursemenubtn {
   margin-top: -0.5rem;
+}
+.block_starredcourses a.coursename,
+.block_recentlyaccesseditems a.coursename,
+.block_recentlyaccessedcourses a.coursename,
+.block_myoverview a.coursename {
+  color: #333;
 }
 @media (max-width: 576px) {
   .block_starredcourses .summaryimage,
