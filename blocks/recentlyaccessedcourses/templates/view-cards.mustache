@@ -33,9 +33,9 @@
     }
 }}
 
-<div class="card-deck dashboard-card-deck" role="list">
+<div class="card-deck dashboard-card-deck one-row" role="list">
     {{#courses}}
-        <div class="card dashboard-card" role="listitem">
+        <div class="card dashboard-card m-b-1" role="listitem">
             <a href="{{viewurl}}" tabindex="-1">
                 <div class="card-img dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
                     <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>

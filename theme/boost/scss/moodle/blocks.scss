@@ -81,10 +81,7 @@ $card-gutter : $card-deck-margin * 2;
     height: 125px;
 }
 
-.block_myoverview,
-.block_starredcourses,
-.block_recentlyaccesseditems,
-.block_recentlyaccessedcourses {
+.block .block-cards {
     .course-info-container {
         padding: 0.8rem;
     }
@@ -120,13 +117,9 @@ $card-gutter : $card-deck-margin * 2;
     }
 }
 
-.block_starredcourses,
-.block_recentlyaccesseditems,
-.block_recentlyaccessedcourses {
-    .dashboard-card-deck {
-        flex-flow: nowrap;
-        overflow-y: scroll;
-    }
+.dashboard-card-deck.one-row {
+    flex-flow: nowrap;
+    overflow-y: scroll;
 }
 
 .summaryimage {
@@ -213,6 +206,14 @@ body.drawer-open-left #region-main.has-blocks {
                 margin-right: 0;
             }
         }
+    }
+}
+
+.block_recentlyaccesseditems {
+    img.icon {
+        height: auto;
+        width: auto;
+        margin-right: 6px;
     }
 }
 

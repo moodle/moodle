@@ -11140,150 +11140,37 @@ div.editor_atto_toolbar button .icon {
 .block .empty-placeholder-image-lg {
   height: 125px; }
 
-.block_myoverview .course-info-container,
-.block_starredcourses .course-info-container,
-.block_recentlyaccesseditems .course-info-container,
-.block_recentlyaccessedcourses .course-info-container {
+.block .block-cards .course-info-container {
   padding: 0.8rem; }
 
-.block_myoverview .progress,
-.block_starredcourses .progress,
-.block_recentlyaccesseditems .progress,
-.block_recentlyaccessedcourses .progress {
+.block .block-cards .progress {
   height: 0.5rem; }
 
-.block_myoverview .course-summaryitem,
-.block_starredcourses .course-summaryitem,
-.block_recentlyaccesseditems .course-summaryitem,
-.block_recentlyaccessedcourses .course-summaryitem {
+.block .block-cards .course-summaryitem {
   border: 1px solid #dee2e6;
   background-color: #fff; }
 
-.block_myoverview .icon,
-.block_starredcourses .icon,
-.block_recentlyaccesseditems .icon,
-.block_recentlyaccessedcourses .icon {
+.block .block-cards .icon {
   margin-right: 0; }
-  .block_myoverview .icon.fa-star,
-  .block_starredcourses .icon.fa-star,
-  .block_recentlyaccesseditems .icon.fa-star,
-  .block_recentlyaccessedcourses .icon.fa-star {
+  .block .block-cards .icon.fa-star {
     color: #1177d1; }
 
-.block_myoverview .card .coursemenubtn, .block_myoverview #page-enrol-users #filterform .coursemenubtn, #page-enrol-users .block_myoverview #filterform .coursemenubtn, .block_myoverview .que .history .coursemenubtn, .que .block_myoverview .history .coursemenubtn, .block_myoverview .userprofile .profile_tree section .coursemenubtn, .userprofile .profile_tree .block_myoverview section .coursemenubtn, .block_myoverview .groupinfobox .coursemenubtn, .block_myoverview .well .coursemenubtn,
-.block_starredcourses .card .coursemenubtn,
-.block_starredcourses #page-enrol-users #filterform .coursemenubtn,
-#page-enrol-users .block_starredcourses #filterform .coursemenubtn,
-.block_starredcourses .que .history .coursemenubtn,
-.que .block_starredcourses .history .coursemenubtn,
-.block_starredcourses .userprofile .profile_tree section .coursemenubtn,
-.userprofile .profile_tree .block_starredcourses section .coursemenubtn,
-.block_starredcourses .groupinfobox .coursemenubtn,
-.block_starredcourses .well .coursemenubtn,
-.block_recentlyaccesseditems .card .coursemenubtn,
-.block_recentlyaccesseditems #page-enrol-users #filterform .coursemenubtn,
-#page-enrol-users .block_recentlyaccesseditems #filterform .coursemenubtn,
-.block_recentlyaccesseditems .que .history .coursemenubtn,
-.que .block_recentlyaccesseditems .history .coursemenubtn,
-.block_recentlyaccesseditems .userprofile .profile_tree section .coursemenubtn,
-.userprofile .profile_tree .block_recentlyaccesseditems section .coursemenubtn,
-.block_recentlyaccesseditems .groupinfobox .coursemenubtn,
-.block_recentlyaccesseditems .well .coursemenubtn,
-.block_recentlyaccessedcourses .card .coursemenubtn,
-.block_recentlyaccessedcourses #page-enrol-users #filterform .coursemenubtn,
-#page-enrol-users .block_recentlyaccessedcourses #filterform .coursemenubtn,
-.block_recentlyaccessedcourses .que .history .coursemenubtn,
-.que .block_recentlyaccessedcourses .history .coursemenubtn,
-.block_recentlyaccessedcourses .userprofile .profile_tree section .coursemenubtn,
-.userprofile .profile_tree .block_recentlyaccessedcourses section .coursemenubtn,
-.block_recentlyaccessedcourses .groupinfobox .coursemenubtn,
-.block_recentlyaccessedcourses .well .coursemenubtn {
+.block .block-cards .card .coursemenubtn, .block .block-cards #page-enrol-users #filterform .coursemenubtn, #page-enrol-users .block .block-cards #filterform .coursemenubtn, .block .block-cards .que .history .coursemenubtn, .que .block .block-cards .history .coursemenubtn, .block .block-cards .userprofile .profile_tree section .coursemenubtn, .userprofile .profile_tree .block .block-cards section .coursemenubtn, .block .block-cards .groupinfobox .coursemenubtn, .block .block-cards .well .coursemenubtn {
   margin-top: -0.5rem; }
 
-.block_myoverview a.coursename,
-.block_myoverview .btn-link,
-.block_starredcourses a.coursename,
-.block_starredcourses .btn-link,
-.block_recentlyaccesseditems a.coursename,
-.block_recentlyaccesseditems .btn-link,
-.block_recentlyaccessedcourses a.coursename,
-.block_recentlyaccessedcourses .btn-link {
+.block .block-cards a.coursename,
+.block .block-cards .btn-link {
   color: inherit; }
 
-.block_myoverview .btn.btn-link.btn-icon, .block_myoverview #page-grade-grading-manage .actions .btn-link.btn-icon.action, #page-grade-grading-manage .actions .block_myoverview .btn-link.btn-icon.action, .block_myoverview #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_myoverview input.btn-link.btn-icon, .block_myoverview #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .block_myoverview .btn-link.btn-icon.addcriterion,
-.block_starredcourses .btn.btn-link.btn-icon,
-.block_starredcourses #page-grade-grading-manage .actions .btn-link.btn-icon.action,
-#page-grade-grading-manage .actions .block_starredcourses .btn-link.btn-icon.action,
-.block_starredcourses #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon,
-#rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_starredcourses input.btn-link.btn-icon,
-.block_starredcourses #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion,
-#rubric-rubric.gradingform_rubric .block_starredcourses .btn-link.btn-icon.addcriterion,
-.block_recentlyaccesseditems .btn.btn-link.btn-icon,
-.block_recentlyaccesseditems #page-grade-grading-manage .actions .btn-link.btn-icon.action,
-#page-grade-grading-manage .actions .block_recentlyaccesseditems .btn-link.btn-icon.action,
-.block_recentlyaccesseditems #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon,
-#rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_recentlyaccesseditems input.btn-link.btn-icon,
-.block_recentlyaccesseditems #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion,
-#rubric-rubric.gradingform_rubric .block_recentlyaccesseditems .btn-link.btn-icon.addcriterion,
-.block_recentlyaccessedcourses .btn.btn-link.btn-icon,
-.block_recentlyaccessedcourses #page-grade-grading-manage .actions .btn-link.btn-icon.action,
-#page-grade-grading-manage .actions .block_recentlyaccessedcourses .btn-link.btn-icon.action,
-.block_recentlyaccessedcourses #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon,
-#rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_recentlyaccessedcourses input.btn-link.btn-icon,
-.block_recentlyaccessedcourses #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion,
-#rubric-rubric.gradingform_rubric .block_recentlyaccessedcourses .btn-link.btn-icon.addcriterion {
+.block .block-cards .btn.btn-link.btn-icon, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion {
   height: 36px;
   width: 36px;
   padding: 0;
   border-radius: 50%; }
-  .block_myoverview .btn.btn-link.btn-icon:hover, .block_myoverview #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover, #page-grade-grading-manage .actions .block_myoverview .btn-link.btn-icon.action:hover, .block_myoverview #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_myoverview input.btn-link.btn-icon:hover, .block_myoverview #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .block_myoverview .btn-link.btn-icon.addcriterion:hover, .block_myoverview .btn.btn-link.btn-icon:focus, .block_myoverview #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus, #page-grade-grading-manage .actions .block_myoverview .btn-link.btn-icon.action:focus, .block_myoverview #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_myoverview input.btn-link.btn-icon:focus, .block_myoverview #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .block_myoverview .btn-link.btn-icon.addcriterion:focus,
-  .block_starredcourses .btn.btn-link.btn-icon:hover,
-  .block_starredcourses #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover,
-  #page-grade-grading-manage .actions .block_starredcourses .btn-link.btn-icon.action:hover,
-  .block_starredcourses #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover,
-  #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_starredcourses input.btn-link.btn-icon:hover,
-  .block_starredcourses #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover,
-  #rubric-rubric.gradingform_rubric .block_starredcourses .btn-link.btn-icon.addcriterion:hover,
-  .block_starredcourses .btn.btn-link.btn-icon:focus,
-  .block_starredcourses #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus,
-  #page-grade-grading-manage .actions .block_starredcourses .btn-link.btn-icon.action:focus,
-  .block_starredcourses #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus,
-  #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_starredcourses input.btn-link.btn-icon:focus,
-  .block_starredcourses #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus,
-  #rubric-rubric.gradingform_rubric .block_starredcourses .btn-link.btn-icon.addcriterion:focus,
-  .block_recentlyaccesseditems .btn.btn-link.btn-icon:hover,
-  .block_recentlyaccesseditems #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover,
-  #page-grade-grading-manage .actions .block_recentlyaccesseditems .btn-link.btn-icon.action:hover,
-  .block_recentlyaccesseditems #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover,
-  #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_recentlyaccesseditems input.btn-link.btn-icon:hover,
-  .block_recentlyaccesseditems #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover,
-  #rubric-rubric.gradingform_rubric .block_recentlyaccesseditems .btn-link.btn-icon.addcriterion:hover,
-  .block_recentlyaccesseditems .btn.btn-link.btn-icon:focus,
-  .block_recentlyaccesseditems #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus,
-  #page-grade-grading-manage .actions .block_recentlyaccesseditems .btn-link.btn-icon.action:focus,
-  .block_recentlyaccesseditems #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus,
-  #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_recentlyaccesseditems input.btn-link.btn-icon:focus,
-  .block_recentlyaccesseditems #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus,
-  #rubric-rubric.gradingform_rubric .block_recentlyaccesseditems .btn-link.btn-icon.addcriterion:focus,
-  .block_recentlyaccessedcourses .btn.btn-link.btn-icon:hover,
-  .block_recentlyaccessedcourses #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover,
-  #page-grade-grading-manage .actions .block_recentlyaccessedcourses .btn-link.btn-icon.action:hover,
-  .block_recentlyaccessedcourses #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover,
-  #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_recentlyaccessedcourses input.btn-link.btn-icon:hover,
-  .block_recentlyaccessedcourses #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover,
-  #rubric-rubric.gradingform_rubric .block_recentlyaccessedcourses .btn-link.btn-icon.addcriterion:hover,
-  .block_recentlyaccessedcourses .btn.btn-link.btn-icon:focus,
-  .block_recentlyaccessedcourses #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus,
-  #page-grade-grading-manage .actions .block_recentlyaccessedcourses .btn-link.btn-icon.action:focus,
-  .block_recentlyaccessedcourses #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus,
-  #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block_recentlyaccessedcourses input.btn-link.btn-icon:focus,
-  .block_recentlyaccessedcourses #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus,
-  #rubric-rubric.gradingform_rubric .block_recentlyaccessedcourses .btn-link.btn-icon.addcriterion:focus {
+  .block .block-cards .btn.btn-link.btn-icon:hover, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action:hover, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon:hover, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion:hover, .block .block-cards .btn.btn-link.btn-icon:focus, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action:focus, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon:focus, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion:focus {
     background-color: #e9ecef; }
 
-.block_starredcourses .dashboard-card-deck,
-.block_recentlyaccesseditems .dashboard-card-deck,
-.block_recentlyaccessedcourses .dashboard-card-deck {
+.dashboard-card-deck.one-row {
   flex-flow: nowrap;
   overflow-y: scroll; }
 
@@ -11343,6 +11230,11 @@ div.editor_atto_toolbar button .icon {
       flex-basis: 100% !important;
       margin-left: 0;
       margin-right: 0; } }
+
+.block_recentlyaccesseditems img.icon {
+  height: auto;
+  width: auto;
+  margin-right: 6px; }
 
 .block_settings .block_tree [aria-expanded="true"],
 .block_settings .block_tree [aria-expanded="true"].emptybranch,

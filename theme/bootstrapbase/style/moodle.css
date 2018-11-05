@@ -16181,23 +16181,14 @@ body {
   display: block;
   width: 100%;
 }
-.block_starredcourses .empty-placeholder-image-lg,
-.block_recentlyaccesseditems .empty-placeholder-image-lg,
-.block_recentlyaccessedcourses .empty-placeholder-image-lg,
-.block_myoverview .empty-placeholder-image-lg {
+.block .block-cards .empty-placeholder-image-lg {
   height: 125px;
 }
-.block_starredcourses .course-info-container,
-.block_recentlyaccesseditems .course-info-container,
-.block_recentlyaccessedcourses .course-info-container,
-.block_myoverview .course-info-container {
+.block .block-cards .course-info-container {
   flex: 1 1 auto;
   padding: 0.8rem;
 }
-.block_starredcourses .dashboard-card-footer,
-.block_recentlyaccesseditems .dashboard-card-footer,
-.block_recentlyaccessedcourses .dashboard-card-footer,
-.block_myoverview .dashboard-card-footer {
+.block .block-cards .dashboard-card-footer {
   padding: 0.8rem;
   -webkit-border-bottom-right-radius: 4px;
   -moz-border-radius-bottomright: 4px;
@@ -16206,23 +16197,14 @@ body {
   -moz-border-radius-bottomleft: 4px;
   border-bottom-left-radius: 4px;
 }
-.block_starredcourses .progress,
-.block_recentlyaccesseditems .progress,
-.block_recentlyaccessedcourses .progress,
-.block_myoverview .progress {
+.block .block-cards .progress {
   height: 0.5rem;
   margin-bottom: 0;
 }
-.block_starredcourses .list-group,
-.block_recentlyaccesseditems .list-group,
-.block_recentlyaccessedcourses .list-group,
-.block_myoverview .list-group {
+.block .block-cards .list-group {
   margin: 0;
 }
-.block_starredcourses .course-listitem,
-.block_recentlyaccesseditems .course-listitem,
-.block_recentlyaccessedcourses .course-listitem,
-.block_myoverview .course-listitem {
+.block .block-cards .course-listitem {
   display: block;
   padding: 0.75rem 1.25rem;
   margin-bottom: 0.5rem;
@@ -16232,10 +16214,7 @@ body {
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
-.block_starredcourses .course-summaryitem,
-.block_recentlyaccesseditems .course-summaryitem,
-.block_recentlyaccessedcourses .course-summaryitem,
-.block_myoverview .course-summaryitem {
+.block .block-cards .course-summaryitem {
   padding: 0.5rem;
   background-color: #fff;
   border: 1px solid #ddd;
@@ -16243,54 +16222,26 @@ body {
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
-.block_starredcourses .summary img,
-.block_recentlyaccesseditems .summary img,
-.block_recentlyaccessedcourses .summary img,
-.block_myoverview .summary img {
+.block .block-cards .summary img {
   max-width: 100%;
 }
-.block_starredcourses img.icon,
-.block_recentlyaccesseditems img.icon,
-.block_recentlyaccessedcourses img.icon,
-.block_myoverview img.icon {
+.block .block-cards img.icon {
   padding: 0;
 }
-.block_starredcourses .card .coursemenubtn,
-.block_recentlyaccesseditems .card .coursemenubtn,
-.block_recentlyaccessedcourses .card .coursemenubtn,
-.block_myoverview .card .coursemenubtn {
+.block .block-cards .card .coursemenubtn {
   margin-top: -0.5rem;
 }
-.block_starredcourses a.coursename,
-.block_recentlyaccesseditems a.coursename,
-.block_recentlyaccessedcourses a.coursename,
-.block_myoverview a.coursename {
+.block .block-cards a.coursename {
   color: #333;
 }
-@media (max-width: 576px) {
-  .block_starredcourses .summaryimage,
-  .block_recentlyaccesseditems .summaryimage,
-  .block_recentlyaccessedcourses .summaryimage,
-  .block_myoverview .summaryimage {
-    max-height: 7rem;
-  }
-}
-.block_starredcourses .dashboard-card-deck,
-.block_recentlyaccesseditems .dashboard-card-deck,
-.block_recentlyaccessedcourses .dashboard-card-deck {
+.dashboard-card-deck.one-row {
   flex-flow: nowrap;
   overflow-y: scroll;
 }
-.block_recentlyaccesseditems .icon-size-4 .icon {
+.block_recentlyaccesseditems img.icon {
   height: auto;
   width: auto;
-  background-image: unset;
-  box-sizing: unset;
-}
-.block_recentlyaccesseditems .icon-size-4 {
-  background-image: unset;
-  height: unset;
-  width: unset;
+  margin-right: 6px;
 }
 .block_recentlyaccesseditems .ml-1 {
   margin-left: 10px;
