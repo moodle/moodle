@@ -34,3 +34,15 @@ Feature: Test importing questions from GIFT format.
     And I set the field "id_format_gift" to "1"
     And I press "Export questions to file"
     And following "click here" should download between "1500" and "1800" bytes
+
+  @javascript @_file_upload
+  Scenario: import a GIFT file which specifies the category
+    When I navigate to "Question bank > Import" in current page administration
+    And I set the field "id_format_gift" to "1"
+    And I upload "question/format/gift/tests/fixtures/questions_in_category.gift.txt" file to "Import" filemanager
+    And I press "id_submitbutton"
+    Then I should see "Parsing questions from import file."
+    And I should see "Importing 4 questions from file"
+    And I should see "Match the activity to the description."
+    When I press "Continue"
+    Then I should see "Moodle activities"
