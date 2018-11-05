@@ -11164,6 +11164,9 @@ div.editor_atto_toolbar button .icon {
 .block_recentlyaccesseditems .icon,
 .block_recentlyaccessedcourses .icon {
   margin-right: 0; }
+  .block_myoverview .icon.fa-star,
+  .block_starredcourses .icon.fa-star {
+    color: #1177d1; }
 
 .block_myoverview a,
 .block_myoverview .btn-link,

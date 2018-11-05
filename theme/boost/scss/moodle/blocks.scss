@@ -97,6 +97,9 @@ $card-gutter : $card-deck-margin * 2;
     }
     .icon {
         margin-right: 0;
+        &.fa-star {
+            color: $blue;
+        }
     }
     a,
     .btn-link {

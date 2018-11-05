@@ -32,13 +32,13 @@
         <a href="{{viewurl}}" tabindex="-1">
             <div class="card-img dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
                 <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
-                {{>core_course/favouriteicon }}
             </div>
         </a>
         <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}">
             <div class="d-flex align-items-start">
                 <div class="card-title mr-2">
-                    <a href="{{viewurl}}">
+                    {{>core_course/favouriteicon }}
+                    <a href="{{viewurl}}" class="coursename">
                         <span class="sr-only">{{#str}}aria:coursename, core_course{{/str}}</span>
                         {{#shortentext}}40, {{{fullname}}} {{/shortentext}}
                     </a>

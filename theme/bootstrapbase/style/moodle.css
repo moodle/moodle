@@ -16249,6 +16249,10 @@ body {
 .block_myoverview .summary img {
   max-width: 100%;
 }
+.block_starredcourses img.icon,
+.block_myoverview img.icon {
+  padding: 0;
+}
 @media (max-width: 576px) {
   .block_starredcourses .summaryimage,
   .block_recentlyaccesseditems .summaryimage,

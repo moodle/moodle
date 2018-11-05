@@ -41,19 +41,19 @@
         data-course-id="{{{id}}}">
         <div class="row-fluid d-flex">
             <a href="{{viewurl}}" class="col-sm-4 col-xl-3 span4 position-relative" tabindex="-1">
-                <div class="position-absolute">
-                    {{> core_course/favouriteicon }}
-                </div>
                 <div class="card-img-top summaryimage" style='background-image: url("{{{courseimage}}}");'>
                     <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
                 </div>
             </a>
             <div class="col-sm-8 col-xl-9 span8 align-self-stretch d-flex flex-column">
-                <div class="d-flex">
-                    <a href="{{viewurl}}">
-                        <span class="sr-only">{{#str}}aria:coursename, core_course{{/str}}</span>
-                        <h4>{{{fullname}}}</h4>
-                    </a>
+                <div class="d-flex mb-1">
+                    <div class="d-block">
+                        {{> core_course/favouriteicon }}
+                        <a href="{{viewurl}}" class="coursename">
+                            <span class="sr-only">{{#str}}aria:coursename, core_course{{/str}}</span>
+                            <h4 class="d-inline">{{{fullname}}}</h4>
+                        </a>
+                    </div>
                     {{> block_myoverview/course-action-menu }}
                 </div>
                 <div class="summary">

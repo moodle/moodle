@@ -39,11 +39,11 @@
             <a href="{{viewurl}}" title="{{fullname}}">
                 <div class="card-img-top dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
                     <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
-                    {{>core_course/favouriteicon }}
                 </div>
                 <div class="card-body pr-1 course-info-container">
                     <div class="d-flex">
                         <div class="card-title d-inline-block text-truncate">
+                            {{> core_course/favouriteicon }}
                             {{{fullname}}}
                         </div>
                     </div>

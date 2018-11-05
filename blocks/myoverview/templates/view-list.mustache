@@ -40,8 +40,8 @@
         data-region="course-content"
         data-course-id="{{{id}}}">
         <div class="row-fluid">
-            <div class="{{#hasprogress}}col-md-6 span6{{/hasprogress}}{{^hasprogress}}col-md-11 span11{{/hasprogress}} p-l-0">
-                <div class="d-flex align-items-center">
+            <div class="{{#hasprogress}}col-md-6 span6{{/hasprogress}}{{^hasprogress}}col-md-11 span11{{/hasprogress}} d-flex align-items-center">
+                <div class="d-block">
                     {{> core_course/favouriteicon }}
                     <a href="{{viewurl}}">
                         <span class="sr-only">{{#str}}aria:coursename, core_course{{/str}}</span>
