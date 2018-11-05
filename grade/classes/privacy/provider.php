@@ -50,7 +50,8 @@ require_once($CFG->libdir . '/gradelib.php');
  */
 class provider implements
     \core_privacy\local\metadata\provider,
-    \core_privacy\local\request\subsystem\provider {
+    \core_privacy\local\request\subsystem\provider,
+    \core_privacy\local\request\core_userlist_provider {
 
     /**
      * Returns metadata.
@@ -257,6 +258,101 @@ class provider implements
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of contexts that contain user information for the specified user.
+     *
+     * @param   \core_privacy\local\request\userlist    $userlist   The userlist containing the list of users who have data
+     * in this context/plugin combination.
+     */
+    public static function get_users_in_context(\core_privacy\local\request\userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if ($context->contextlevel == CONTEXT_COURSE) {
+            $params = ['contextinstanceid' => $context->instanceid];
+
+            $sql = "SELECT usermodified
+                      FROM {grade_outcomes}
+                     WHERE courseid = :contextinstanceid";
+            $userlist->add_from_sql('usermodified', $sql, $params);
+
+            $sql = "SELECT loggeduser
+                      FROM {grade_outcomes_history}
+                     WHERE courseid = :contextinstanceid";
+            $userlist->add_from_sql('loggeduser', $sql, $params);
+
+            $sql = "SELECT userid
+                      FROM {scale}
+                     WHERE courseid = :contextinstanceid";
+            $userlist->add_from_sql('userid', $sql, $params);
+
+            $sql = "SELECT loggeduser, userid
+                      FROM {scale_history}
+                     WHERE courseid = :contextinstanceid";
+            $userlist->add_from_sql('loggeduser', $sql, $params);
+            $userlist->add_from_sql('userid', $sql, $params);
+
+            $sql = "SELECT loggeduser
+                      FROM {grade_items_history}
+                     WHERE courseid = :contextinstanceid";
+            $userlist->add_from_sql('loggeduser', $sql, $params);
+
+            $sql = "SELECT ggh.userid
+                      FROM {grade_grades_history} ggh
+                      JOIN {grade_items} gi ON ggh.itemid = gi.id
+                     WHERE gi.courseid = :contextinstanceid";
+            $userlist->add_from_sql('userid', $sql, $params);
+
+            $sql = "SELECT gg.userid, gg.usermodified
+                      FROM {grade_grades} gg
+                      JOIN {grade_items} gi ON gg.itemid = gi.id
+                     WHERE gi.courseid = :contextinstanceid";
+            $userlist->add_from_sql('userid', $sql, $params);
+            $userlist->add_from_sql('usermodified', $sql, $params);
+
+            $sql = "SELECT loggeduser
+                      FROM {grade_categories_history}
+                     WHERE courseid = :contextinstanceid";
+            $userlist->add_from_sql('loggeduser', $sql, $params);
+        }
+
+        // None of these are currently used (user deletion).
+        if ($context->contextlevel == CONTEXT_SYSTEM) {
+            $params = ['contextinstanceid' => 0];
+
+            $sql = "SELECT usermodified
+                      FROM {grade_outcomes}
+                     WHERE (courseid IS NULL OR courseid < 1)";
+            $userlist->add_from_sql('usermodified', $sql, []);
+
+            $sql = "SELECT loggeduser
+                      FROM {grade_outcomes_history}
+                     WHERE (courseid IS NULL OR courseid < 1)";
+            $userlist->add_from_sql('loggeduser', $sql, []);
+
+            $sql = "SELECT userid
+                      FROM {scale}
+                     WHERE courseid = :contextinstanceid";
+            $userlist->add_from_sql('userid', $sql, $params);
+
+            $sql = "SELECT loggeduser, userid
+                      FROM {scale_history}
+                     WHERE courseid = :contextinstanceid";
+            $userlist->add_from_sql('loggeduser', $sql, $params);
+            $userlist->add_from_sql('userid', $sql, $params);
+        }
+
+        if ($context->contextlevel == CONTEXT_USER) {
+            // If the grade item has been removed and we have an orphan entry then we link to the
+            // user context.
+            $sql = "SELECT ggh.userid
+                      FROM {grade_grades_history} ggh
+                 LEFT JOIN {grade_items} gi ON ggh.itemid = gi.id
+                     WHERE gi.id IS NULL
+                       AND ggh.userid = :contextinstanceid";
+            $userlist->add_from_sql('userid', $sql, ['contextinstanceid' => $context->instanceid]);
+        }
     }
 
     /**
@@ -593,6 +689,43 @@ class provider implements
         $params = array_merge($inparams, ['userid' => $userid]);
         $DB->delete_records_select('grade_grades', "itemid $insql AND userid = :userid", $params);
         $DB->delete_records_select('grade_grades_history', "itemid $insql AND userid = :userid", $params);
+    }
+
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   \core_privacy\local\request\approved_userlist $userlist The approved context and user information to
+     * delete information for.
+     */
+    public static function delete_data_for_users(\core_privacy\local\request\approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        $userids = $userlist->get_userids();
+        if ($context->contextlevel == CONTEXT_USER) {
+            if (array_search($context->instanceid, $userids) !== false) {
+                static::delete_orphan_historical_grades($context->instanceid);
+            }
+            return;
+        }
+
+        if ($context->contextlevel != CONTEXT_COURSE) {
+            return;
+        }
+
+        $itemids = static::get_item_ids_from_course_ids([$context->instanceid]);
+        if (empty($itemids)) {
+            // Our job here is done!
+            return;
+        }
+
+        // Delete all the grades.
+        list($itemsql, $itemparams) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED);
+        list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        $params = array_merge($itemparams, $userparams);
+        $DB->delete_records_select('grade_grades', "itemid $itemsql AND userid $usersql", $params);
+        $DB->delete_records_select('grade_grades_history', "itemid $itemsql AND userid $usersql", $params);
     }
 
     /**
