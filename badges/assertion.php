@@ -35,7 +35,7 @@ if (empty($CFG->enablebadges)) {
 
 $hash = required_param('b', PARAM_ALPHANUM); // Issued badge unique hash for badge assertion.
 $action = optional_param('action', null, PARAM_BOOL); // Generates badge class if true.
-$obversion = optional_param('obversion', 1, PARAM_INT); // For control format OB specification version.
+$obversion = optional_param('obversion', OPEN_BADGES_V1, PARAM_INT); // For control format OB specification version.
 
 $assertion = new core_badges_assertion($hash, $obversion);
 
@@ -50,7 +50,7 @@ if (!is_null($action)) {
     } else { // Revoked badge.
         header("HTTP/1.0 410 Gone");
         $assertion = array();
-        if ($obversion == 2) {
+        if ($obversion == OPEN_BADGES_V2) {
             $assertionurl = new moodle_url('/badges/assertion.php', array('b' => $hash));
             $assertion['id'] = $assertionurl->out();
         }

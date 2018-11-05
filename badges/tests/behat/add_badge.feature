@@ -82,7 +82,7 @@ Feature: Add badges to the system
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     And I follow "Related badges (0)"
-    And I should see "This badge does not have an related badge."
+    And I should see "This badge does not have related badges."
     And I press "Add related badge"
     And I follow "Related badges"
     And I wait until the page is ready

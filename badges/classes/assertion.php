@@ -49,7 +49,7 @@ class core_badges_assertion {
     private $_url;
 
     /** @var int $obversion to control version JSON-LD. */
-    private $_obversion = 1;
+    private $_obversion = OPEN_BADGES_V1;
 
     /**
      * Constructs with issued badge unique hash.
@@ -57,7 +57,7 @@ class core_badges_assertion {
      * @param string $hash Badge unique hash from badge_issued table.
      * @param int $obversion to control version JSON-LD.
      */
-    public function __construct($hash, $obversion = 1) {
+    public function __construct($hash, $obversion = OPEN_BADGES_V1) {
         global $DB;
 
         $this->_data = $DB->get_record_sql('
@@ -256,7 +256,7 @@ class core_badges_assertion {
      */
     protected function embed_data_badge_version2 (&$json, $type = OPEN_BADGES_V2_TYPE_ASSERTION) {
         // Specification Version 2.0.
-        if ($this->_obversion == 2) {
+        if ($this->_obversion == OPEN_BADGES_V2) {
             $badge = new badge($this->_data->id);
             if (empty($this->_data->courseid)) {
                 $context = context_system::instance();
@@ -265,10 +265,13 @@ class core_badges_assertion {
             }
 
             $hash = $this->_data->uniquehash;
-            $assertionsurl = new moodle_url('/badges/assertion.php', array('b' => $hash, 'obversion' => 2));
-            $classurl = new moodle_url('/badges/assertion.php', array('b' => $hash, 'action' => 1, 'obversion' => 2));
+            $assertionsurl = new moodle_url('/badges/assertion.php', array('b' => $hash, 'obversion' => $this->_obversion));
+            $classurl = new moodle_url(
+                '/badges/assertion.php',
+                array('b' => $hash, 'action' => 1, 'obversion' => $this->_obversion)
+            );
             $issuerurl = new moodle_url('/badges/assertion.php', array('b' => $this->_data->uniquehash, 'action' => 0,
-                'obversion' => 2));
+                'obversion' => $this->_obversion));
             // For assertion.
             if ($type == OPEN_BADGES_V2_TYPE_ASSERTION) {
                 $json['@context'] = OPEN_BADGES_V2_CONTEXT;

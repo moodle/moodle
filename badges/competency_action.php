@@ -32,6 +32,9 @@ $action = optional_param('action', 'remove', PARAM_TEXT); // Remove.
 require_login();
 $return = new moodle_url('/badges/competency.php', array('id' => $badgeid));
 $badge = new badge($badgeid);
+$context = $badge->get_context();
+require_capability('moodle/badges:configuredetails', $context);
+
 if ($action == 'remove') {
     $badge->delete_alignment($alignmentid);
 }

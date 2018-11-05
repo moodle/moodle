@@ -99,6 +99,12 @@ define('BADGE_MESSAGE_MONTHLY', 4);
 define('BADGE_BACKPACKURL', 'https://backpack.openbadges.org');
 
 /*
+ * Open Badges specifications.
+ */
+define('OPEN_BADGES_V1', 1);
+define('OPEN_BADGES_V2', 2);
+
+/*
  * Only use for Open Badges 2.0 specification
  */
 define('OPEN_BADGES_V2_CONTEXT', 'https://w3id.org/openbadges/v2');
@@ -708,6 +714,11 @@ class badge {
         $badgecontext = $this->get_context();
         $fs->delete_area_files($badgecontext->id, 'badges', 'badgeimage', $this->id);
 
+        // Delete endorsements, competencies and related badges.
+        $DB->delete_records('badge_endorsement', array('badgeid' => $this->id));
+        $DB->delete_records('badge_related', array('badgeid' => $this->id));
+        $DB->delete_records('badge_competencies', array('badgeid' => $this->id));
+
         // Finally, remove badge itself.
         $DB->delete_records('badge', array('id' => $this->id));
 
@@ -805,9 +816,9 @@ class badge {
      * @param int $alignmentid ID competency alignment.
      * @return bool A status for delete a competency alignment.
      */
-    public function delete_alignment($alignmentid = 0) {
+    public function delete_alignment($alignmentid) {
         global $DB;
-        return $DB->delete_records('badge_competencies', array('id' => $alignmentid));
+        return $DB->delete_records('badge_competencies', array('badgeid' => $this->id, 'id' => $alignmentid));
     }
 
     /**

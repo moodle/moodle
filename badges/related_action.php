@@ -32,6 +32,9 @@ $action = optional_param('action', 'remove', PARAM_TEXT); // Add, remove option.
 require_login();
 $return = new moodle_url('/badges/related.php', array('id' => $badgeid));
 $badge = new badge($badgeid);
+$context = $badge->get_context();
+require_capability('moodle/badges:configuredetails', $context);
+
 if ($action == 'remove') {
     $badge->delete_related_badge($relatedid);
 }

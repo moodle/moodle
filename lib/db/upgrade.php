@@ -2649,7 +2649,6 @@ function xmldb_main_upgrade($oldversion) {
             $dbman->add_index($table, $index);
         }
 
-        // Main savepoint reached.
         upgrade_main_savepoint(true, 2018102300.02);
     }
 
@@ -2679,8 +2678,10 @@ function xmldb_main_upgrade($oldversion) {
         $fieldversion = new xmldb_field('version', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'nextcron');
         $fieldlanguage = new xmldb_field('language', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'version');
         $fieldimageauthorname = new xmldb_field('imageauthorname', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'language');
-        $fieldimageauthoremail =  new xmldb_field('imageauthoremail', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'imageauthorname');
-        $fieldimageauthorurl = new xmldb_field('imageauthorurl', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'imageauthoremail');
+        $fieldimageauthoremail = new xmldb_field('imageauthoremail', XMLDB_TYPE_CHAR, '255', null, null,
+            null, null, 'imageauthorname');
+        $fieldimageauthorurl = new xmldb_field('imageauthorurl', XMLDB_TYPE_CHAR, '255', null, null,
+            null, null, 'imageauthoremail');
         $fieldimagecaption = new xmldb_field('imagecaption', XMLDB_TYPE_TEXT, null, null, null, null, null, 'imageauthorurl');
 
         if (!$dbman->field_exists($tablebadge, $fieldversion)) {
@@ -2734,7 +2735,9 @@ function xmldb_main_upgrade($oldversion) {
 
         // Adding keys to table badge_related.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-        $table->add_key('relatedbadge', XMLDB_KEY_FOREIGN, ['badgeid'], 'badge', ['id']);
+        $table->add_key('badgeid', XMLDB_KEY_FOREIGN, ['badgeid'], 'badge', ['id']);
+        $table->add_key('relatedbadgeid', XMLDB_KEY_FOREIGN, ['relatedbadgeid'], 'badge', ['id']);
+        $table->add_key('badgeid-relatedbadgeid', XMLDB_KEY_UNIQUE, ['badgeid', 'relatedbadgeid']);
 
         // Conditionally launch create table for badge_related.
         if (!$dbman->table_exists($table)) {

@@ -165,28 +165,27 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
     public function test_clone_badge() {
         $badge = new badge($this->badgeid);
         $newid = $badge->make_clone();
-        $cloned_badge = new badge($newid);
+        $clonedbadge = new badge($newid);
 
-        $this->assertEquals($badge->description, $cloned_badge->description);
-        $this->assertEquals($badge->issuercontact, $cloned_badge->issuercontact);
-        $this->assertEquals($badge->issuername, $cloned_badge->issuername);
-        $this->assertEquals($badge->issuercontact, $cloned_badge->issuercontact);
-        $this->assertEquals($badge->issuerurl, $cloned_badge->issuerurl);
-        $this->assertEquals($badge->expiredate, $cloned_badge->expiredate);
-        $this->assertEquals($badge->expireperiod, $cloned_badge->expireperiod);
-        $this->assertEquals($badge->type, $cloned_badge->type);
-        $this->assertEquals($badge->courseid, $cloned_badge->courseid);
-        $this->assertEquals($badge->message, $cloned_badge->message);
-        $this->assertEquals($badge->messagesubject, $cloned_badge->messagesubject);
-        $this->assertEquals($badge->attachment, $cloned_badge->attachment);
-        $this->assertEquals($badge->notification, $cloned_badge->notification);
-        $this->assertEquals($badge->version, $cloned_badge->version);
-        $this->assertEquals($badge->language, $cloned_badge->language);
-        $this->assertEquals($badge->imagecaption, $cloned_badge->imagecaption);
-        $this->assertEquals($badge->imageauthorname, $cloned_badge->imageauthorname);
-        $this->assertEquals($badge->imageauthoremail, $cloned_badge->imageauthoremail);
-        $this->assertEquals($badge->imageauthorurl, $cloned_badge->imageauthorurl);
-
+        $this->assertEquals($badge->description, $clonedbadge->description);
+        $this->assertEquals($badge->issuercontact, $clonedbadge->issuercontact);
+        $this->assertEquals($badge->issuername, $clonedbadge->issuername);
+        $this->assertEquals($badge->issuercontact, $clonedbadge->issuercontact);
+        $this->assertEquals($badge->issuerurl, $clonedbadge->issuerurl);
+        $this->assertEquals($badge->expiredate, $clonedbadge->expiredate);
+        $this->assertEquals($badge->expireperiod, $clonedbadge->expireperiod);
+        $this->assertEquals($badge->type, $clonedbadge->type);
+        $this->assertEquals($badge->courseid, $clonedbadge->courseid);
+        $this->assertEquals($badge->message, $clonedbadge->message);
+        $this->assertEquals($badge->messagesubject, $clonedbadge->messagesubject);
+        $this->assertEquals($badge->attachment, $clonedbadge->attachment);
+        $this->assertEquals($badge->notification, $clonedbadge->notification);
+        $this->assertEquals($badge->version, $clonedbadge->version);
+        $this->assertEquals($badge->language, $clonedbadge->language);
+        $this->assertEquals($badge->imagecaption, $clonedbadge->imagecaption);
+        $this->assertEquals($badge->imageauthorname, $clonedbadge->imageauthorname);
+        $this->assertEquals($badge->imageauthoremail, $clonedbadge->imageauthoremail);
+        $this->assertEquals($badge->imageauthorurl, $clonedbadge->imageauthorurl);
     }
 
     public function test_badge_status() {
@@ -626,7 +625,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         // Test Openbadge specification version 2.
         // Get assertion version 2.
         $award = reset($awards);
-        $assertion2 = new core_badges_assertion($award->uniquehash, 2);
+        $assertion2 = new core_badges_assertion($award->uniquehash, OPEN_BADGES_V2);
         $testassertion2 = $this->assertion2;
 
         // Make sure JSON strings have the same structure.
@@ -746,7 +745,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         // Insert an related badge.
         $badge->add_related_badges([$newid1, $newid2, $newid3]);
         $this->assertCount(3, $badge->get_related_badges());
-        
+
         // Only get related is active.
         $clonedbage1 = new badge($newid1);
         $clonedbage1->status = BADGE_STATUS_ACTIVE;
