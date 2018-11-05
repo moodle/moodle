@@ -1,4 +1,4 @@
-@core @message @javascript
+@core @core_message @javascript
 Feature: Messaging preferences
   In order to be notified of messages
   As a user
