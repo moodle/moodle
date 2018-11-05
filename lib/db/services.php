@@ -1086,6 +1086,7 @@ $functions = array(
         'description' => 'Retrieve a list of conversations for a user',
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax' => true
     ),
     'core_message_get_conversation' => array(
         'classname' => 'core_message_external',

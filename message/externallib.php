@@ -1609,7 +1609,7 @@ class core_message_external extends external_api {
         return new external_single_structure(
             [
                 'conversations' => new external_multiple_structure(
-                    self::get_conversation_structure()
+                    self::get_conversation_structure(true)
                 )
             ]
         );
