@@ -16366,6 +16366,10 @@ body {
 }
 .summaryimage {
   height: 7rem;
+  width: 7rem;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
   background-position: center;
   background-size: cover;
 }
