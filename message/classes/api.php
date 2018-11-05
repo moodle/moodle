@@ -802,6 +802,121 @@ class api {
     }
 
     /**
+     * Return a conversation.
+     *
+     * @param int $userid The user id to get the conversation for
+     * @param int $conversationid The id of the conversation to fetch
+     * @param bool $includecontactrequests Should contact requests be included between members
+     * @param bool $includeprivacyinfo Should privacy info be included between members
+     * @param int $memberlimit Limit number of members to load
+     * @param int $memberoffset Offset members by this amount
+     * @param int $messagelimit Limit number of messages to load
+     * @param int $messageoffset Offset the messages
+     * @param bool $newestmessagesfirst Order messages by newest first
+     * @return \stdClass
+     */
+    public static function get_conversation(
+        int $userid,
+        int $conversationid,
+        bool $includecontactrequests = false,
+        bool $includeprivacyinfo = false,
+        int $memberlimit = 0,
+        int $memberoffset = 0,
+        int $messagelimit = 0,
+        int $messageoffset = 0,
+        bool $newestmessagesfirst = true
+    ) {
+        global $USER, $DB;
+
+        $systemcontext = \context_system::instance();
+        $canreadallmessages = has_capability('moodle/site:readallmessages', $systemcontext);
+        if (($USER->id != $userid) && !$canreadallmessages) {
+            throw new \moodle_exception('You do not have permission to perform this action.');
+        }
+
+        $conversation = $DB->get_record('message_conversations', ['id' => $conversationid]);
+        if (!$conversation) {
+            return null;
+        }
+
+        $isconversationmember = $DB->record_exists(
+            'message_conversation_members',
+            [
+                'conversationid' => $conversationid,
+                'userid' => $userid
+            ]
+        );
+
+        if (!$isconversationmember && !$canreadallmessages) {
+            throw new \moodle_exception('You do not have permission to view this conversation.');
+        }
+
+        $members = self::get_conversation_members(
+            $userid,
+            $conversationid,
+            $includecontactrequests,
+            $memberoffset,
+            $memberlimit
+        );
+        // Strip out the requesting user to match what get_conversations does.
+        $members = array_filter($members, function($member) use ($userid) {
+            return $member->id != $userid;
+        });
+
+        $messages = self::get_conversation_messages(
+            $userid,
+            $conversationid,
+            $messageoffset,
+            $messagelimit,
+            $newestmessagesfirst ? 'timecreated DESC' : 'timecreated ASC'
+        );
+
+        $service = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($userid));
+        $isfavourite = $service->favourite_exists('core_message', 'message_conversations', $conversationid, $systemcontext);
+
+        $convextrafields = self::get_linked_conversation_extra_fields([$conversation]);
+        $subname = isset($convextrafields[$conversationid]) ? $convextrafields[$conversationid]['subname'] : null;
+        $imageurl = isset($convextrafields[$conversationid]) ? $convextrafields[$conversationid]['imageurl'] : null;
+
+        $unreadcountssql = 'SELECT count(m.id)
+                              FROM {messages} m
+                        INNER JOIN {message_conversations} mc
+                                ON mc.id = m.conversationid
+                         LEFT JOIN {message_user_actions} mua
+                                ON (mua.messageid = m.id AND mua.userid = ? AND
+                                   (mua.action = ? OR mua.action = ?))
+                             WHERE m.conversationid = ?
+                               AND m.useridfrom != ?
+                               AND mua.id is NULL';
+        $unreadcount = $DB->count_records_sql(
+            $unreadcountssql,
+            [
+                $userid,
+                self::MESSAGE_ACTION_READ,
+                self::MESSAGE_ACTION_DELETED,
+                $conversationid,
+                $userid
+            ]
+        );
+
+        $membercount = $DB->count_records('message_conversation_members', ['conversationid' => $conversationid]);
+
+        return (object) [
+            'id' => $conversation->id,
+            'name' => $conversation->name,
+            'subname' => $subname,
+            'imageurl' => $imageurl,
+            'type' => $conversation->type,
+            'membercount' => $membercount,
+            'isfavourite' => $isfavourite,
+            'isread' => empty($unreadcount),
+            'unreadcount' => $unreadcount,
+            'members' => $members,
+            'messages' => $messages['messages']
+        ];
+    }
+
+    /**
      * Mark a conversation as a favourite for the given user.
      *
      * @param int $conversationid the id of the conversation to mark as a favourite.

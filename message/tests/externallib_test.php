@@ -5632,4 +5632,185 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->expectException(\moodle_exception::class);
         $writtenmessages = core_message_external::send_messages_to_conversation($gc1->id, $messages);
     }
+
+    /**
+     * Test getting a conversation that doesn't exist.
+     */
+    public function test_get_conversation_no_conversation() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $name = 'lol conversation';
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id,
+            ],
+            $name
+        );
+        $conversationid = $conversation->id;
+
+        $this->setUser($user1);
+
+        $this->expectException('moodle_exception');
+        $conv = core_message_external::get_conversation($user1->id, $conversationid + 1);
+        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+    }
+
+    /**
+     * Test getting a conversation with no messages.
+     */
+    public function test_get_conversation_no_messages() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $name = 'lol conversation';
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id,
+            ],
+            $name
+        );
+        $conversationid = $conversation->id;
+
+        $this->setUser($user1);
+
+        $conv = core_message_external::get_conversation($user1->id, $conversationid);
+        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+
+        $conv = (array) $conv;
+        $this->assertEquals($conversationid, $conv['id']);
+        $this->assertEquals($name, $conv['name']);
+        $this->assertArrayHasKey('subname', $conv);
+        $this->assertEquals(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $conv['type']);
+        $this->assertEquals(2, $conv['membercount']);
+        $this->assertEquals(false, $conv['isfavourite']);
+        $this->assertEquals(true, $conv['isread']);
+        $this->assertEquals(0, $conv['unreadcount']);
+        $this->assertCount(1, $conv['members']);
+        foreach ($conv['members'] as $member) {
+            $member = (array) $member;
+            $this->assertArrayHasKey('id', $member);
+            $this->assertArrayHasKey('fullname', $member);
+            $this->assertArrayHasKey('profileimageurl', $member);
+            $this->assertArrayHasKey('profileimageurlsmall', $member);
+            $this->assertArrayHasKey('isonline', $member);
+            $this->assertArrayHasKey('showonlinestatus', $member);
+            $this->assertArrayHasKey('isblocked', $member);
+            $this->assertArrayHasKey('iscontact', $member);
+        }
+        $this->assertEmpty($conv['messages']);
+    }
+
+    /**
+     * Test getting a conversation with messages.
+     */
+    public function test_get_conversation_with_messages() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Some random conversation.
+        $otherconversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id,
+            ]
+        );
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id,
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $time = time();
+        $message1id = testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'A', $time - 10);
+        $message2id = testhelper::send_fake_message_to_conversation($user2, $conversation->id, 'B', $time - 5);
+        $message3id = testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'C', $time);
+
+        // Add some messages to the other convo to make sure they aren't included.
+        testhelper::send_fake_message_to_conversation($user1, $otherconversation->id, 'foo');
+
+        $this->setUser($user1);
+
+        // Test newest first.
+        $conv = core_message_external::get_conversation(
+            $user1->id,
+            $conversationid,
+            false,
+            false,
+            0,
+            0,
+            0,
+            0,
+            true
+        );
+        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+
+        $conv = (array) $conv;
+        $this->assertEquals(false, $conv['isread']);
+        $this->assertEquals(1, $conv['unreadcount']);
+        $this->assertCount(3, $conv['messages']);
+        $this->assertEquals($message3id, $conv['messages'][0]->id);
+        $this->assertEquals($user1->id, $conv['messages'][0]->useridfrom);
+        $this->assertEquals($message2id, $conv['messages'][1]->id);
+        $this->assertEquals($user2->id, $conv['messages'][1]->useridfrom);
+        $this->assertEquals($message1id, $conv['messages'][2]->id);
+        $this->assertEquals($user1->id, $conv['messages'][2]->useridfrom);
+
+        // Test newest last.
+        $conv = core_message_external::get_conversation(
+            $user1->id,
+            $conversationid,
+            false,
+            false,
+            0,
+            0,
+            0,
+            0,
+            false
+        );
+        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+
+        $conv = (array) $conv;
+        $this->assertCount(3, $conv['messages']);
+        $this->assertEquals($message3id, $conv['messages'][2]->id);
+        $this->assertEquals($user1->id, $conv['messages'][2]->useridfrom);
+        $this->assertEquals($message2id, $conv['messages'][1]->id);
+        $this->assertEquals($user2->id, $conv['messages'][1]->useridfrom);
+        $this->assertEquals($message1id, $conv['messages'][0]->id);
+        $this->assertEquals($user1->id, $conv['messages'][0]->useridfrom);
+
+        // Test message offest and limit.
+        $conv = core_message_external::get_conversation(
+            $user1->id,
+            $conversationid,
+            false,
+            false,
+            0,
+            0,
+            1,
+            1,
+            true
+        );
+        external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+
+        $conv = (array) $conv;
+        $this->assertCount(1, $conv['messages']);
+        $this->assertEquals($message2id, $conv['messages'][0]->id);
+        $this->assertEquals($user2->id, $conv['messages'][0]->useridfrom);
+    }
 }

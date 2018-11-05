@@ -1050,7 +1050,6 @@ class core_message_external extends external_api {
      * @return external_single_structure
      * @since Moodle 3.6
      */
-
     private static function get_conversation_structure() {
         return new external_single_structure(
             array(
@@ -1614,6 +1613,106 @@ class core_message_external extends external_api {
                 )
             ]
         );
+    }
+
+    /**
+     * Get conversation parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_conversation_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing conversations for'),
+                'conversationid' => new external_value(PARAM_INT, 'The id of the conversation to fetch'),
+                'includecontactrequests' => new external_value(PARAM_BOOL, 'Include contact requests in the members'),
+                'includeprivacyinfo' => new external_value(PARAM_BOOL, 'Include privacy info in the members'),
+                'memberlimit' => new external_value(PARAM_INT, 'Limit for number of members', VALUE_DEFAULT, 0),
+                'memberoffset' => new external_value(PARAM_INT, 'Offset for member list', VALUE_DEFAULT, 0),
+                'messagelimit' => new external_value(PARAM_INT, 'Limit for number of messages', VALUE_DEFAULT, 100),
+                'messageoffset' => new external_value(PARAM_INT, 'Offset for messages list', VALUE_DEFAULT, 0),
+                'newestmessagesfirst' => new external_value(PARAM_BOOL, 'Order messages by newest first', VALUE_DEFAULT, true)
+            )
+        );
+    }
+
+    /**
+     * Get a single conversation.
+     *
+     * @param int $userid The user id to get the conversation for
+     * @param int $conversationid The id of the conversation to fetch
+     * @param bool $includecontactrequests Should contact requests be included between members
+     * @param bool $includeprivacyinfo Should privacy info be included between members
+     * @param int $memberlimit Limit number of members to load
+     * @param int $memberoffset Offset members by this amount
+     * @param int $messagelimit Limit number of messages to load
+     * @param int $messageoffset Offset the messages
+     * @param bool $newestmessagesfirst Order messages by newest first
+     * @return stdClass
+     * @throws \moodle_exception if the messaging feature is disabled on the site.
+     */
+    public static function get_conversation(
+        int $userid,
+        int $conversationid,
+        bool $includecontactrequests = false,
+        bool $includeprivacyinfo = false,
+        int $memberlimit = 0,
+        int $memberoffset = 0,
+        int $messagelimit = 0,
+        int $messageoffset = 0,
+        bool $newestmessagesfirst = true
+    ) {
+        global $CFG, $DB, $USER;
+
+        // All the standard BL checks.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $params = [
+            'userid' => $userid,
+            'conversationid' => $conversationid,
+            'includecontactrequests' => $includecontactrequests,
+            'includeprivacyinfo' => $includeprivacyinfo,
+            'memberlimit' => $memberlimit,
+            'memberoffset' => $memberoffset,
+            'messagelimit' => $messagelimit,
+            'messageoffset' => $messageoffset,
+            'newestmessagesfirst' => $newestmessagesfirst
+        ];
+        self::validate_parameters(self::get_conversation_parameters(), $params);
+
+        $systemcontext = context_system::instance();
+        self::validate_context($systemcontext);
+
+        $conversation = \core_message\api::get_conversation(
+            $params['userid'],
+            $params['conversationid'],
+            $params['includecontactrequests'],
+            $params['includeprivacyinfo'],
+            $params['memberlimit'],
+            $params['memberoffset'],
+            $params['messagelimit'],
+            $params['messageoffset'],
+            $params['newestmessagesfirst']
+        );
+
+        if ($conversation) {
+            return $conversation;
+        } else {
+            // We have to throw an exception here because the external functions annoyingly
+            // don't accept null to be returned for a single structure.
+            throw new \moodle_exception('Conversation does not exist');
+        }
+    }
+
+    /**
+     * Get conversation returns.
+     *
+     * @return external_single_structure
+     */
+    public static function get_conversation_returns() {
+        return self::get_conversation_structure();
     }
 
     /**
