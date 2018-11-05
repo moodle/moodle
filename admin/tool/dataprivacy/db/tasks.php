@@ -50,5 +50,13 @@ $tasks = array(
         'day' => '*',
         'dayofweek' => '*',
         'month' => '*'
+    ), array(
+        'classname' => 'tool_dataprivacy\task\delete_existing_deleted_users',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => 'R',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
     ),
 );
