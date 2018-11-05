@@ -76,7 +76,6 @@ class process_data_request_task extends adhoc_task {
 
         // Get the user details now. We might not be able to retrieve it later if it's a deletion processing.
         $foruser = core_user::get_user($request->userid);
-        $usercontext = \context_user::instance($foruser->id);
 
         // Update the status of this request as pre-processing.
         mtrace('Processing request...');
@@ -86,6 +85,14 @@ class process_data_request_task extends adhoc_task {
         if ($request->type == api::DATAREQUEST_TYPE_EXPORT) {
             // Run as the user performing the export.
             cron_setup_user($foruser);
+
+            // Get the user context.
+            $usercontext = \context_user::instance($foruser->id, IGNORE_MISSING);
+            if (!$usercontext) {
+                mtrace("Request {$requestid} cannot be processed due to a missing user context instance for the user
+                    with ID {$foruser->id}. Skipping...");
+                return;
+            }
 
             // Get the collection of approved_contextlist objects needed for core_privacy data export.
             $approvedclcollection = api::get_approved_contextlist_collection_for_request($requestpersistent);
@@ -195,12 +202,19 @@ class process_data_request_task extends adhoc_task {
 
         // Send message to the user involved.
         if ($notifyuser) {
+            $messagesent = false;
             if ($emailonly) {
-                email_to_user($foruser, $dpo, $subject, $message->fullmessage, $messagehtml);
+                // Do not sent an email if the user has been deleted. The user email has been previously deleted.
+                if (!$foruser->deleted) {
+                    $messagesent = email_to_user($foruser, $dpo, $subject, $message->fullmessage, $messagehtml);
+                }
             } else {
-                message_send($message);
+                $messagesent = message_send($message);
             }
-            mtrace('Message sent to user: ' . $messagetextdata['username']);
+
+            if ($messagesent) {
+                mtrace('Message sent to user: ' . $messagetextdata['username']);
+            }
         }
 
         // Send to requester as well in some circumstances.
