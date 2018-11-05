@@ -4529,3 +4529,69 @@ function get_hidden_courses_on_timeline($user = null) {
 
     return $ids;
 }
+
+/**
+ * Returns a list of the most recently courses accessed by a user
+ *
+ * @param int $userid User id from which the courses will be obtained
+ * @param int $limit Restrict result set to this amount
+ * @param int $offset Skip this number of records from the start of the result set
+ * @param string|null $sort SQL string for sorting
+ * @return array
+ */
+function course_get_recent_courses(int $userid = null, int $limit = 0, int $offset = 0, string $sort = null) {
+
+    global $CFG, $USER, $DB;
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    $basefields = array('id', 'idnumber', 'summary', 'summaryformat', 'startdate', 'enddate', 'category',
+            'shortname', 'fullname', 'userid', 'timeaccess');
+
+    $sort = trim($sort);
+    if (empty($sort)) {
+        $sort = 'timeaccess DESC';
+    } else {
+        $rawsorts = explode(',', $sort);
+        $sorts = array();
+        foreach ($rawsorts as $rawsort) {
+            $rawsort = trim($rawsort);
+            $sorts[] = trim($rawsort);
+        }
+        $sort = implode(',', $sorts);
+    }
+
+    $orderby = "ORDER BY $sort";
+
+    $ctxfields = context_helper::get_preload_record_columns_sql('ctx');
+
+    $coursefields = 'c.' .join(',', $basefields);
+
+    $sql = "SELECT $ctxfields, $coursefields
+              FROM {course} c
+              JOIN {context} ctx ON ctx.contextlevel = :contextlevel
+                   AND ctx.instanceid = c.id
+              JOIN {user_lastaccess} ul ON ul.courseid = c.id
+             WHERE ul.userid = :userid
+          $orderby";
+    $params = ['userid' => $userid, 'contextlevel' => CONTEXT_COURSE];
+
+    $recentcourses = $DB->get_records_sql($sql, $params, $offset, $limit);
+
+    // Filter courses if last access field is hidden.
+    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+
+    if ($userid != $USER->id && isset($hiddenfields['lastaccess'])) {
+        $recentcourses = array_filter($recentcourses, function($course) {
+            context_helper::preload_from_record($course);
+            $context = context_course::instance($course->id, IGNORE_MISSING);
+            // If last access was a hidden field, a user requesting info about another user would need permission to view hidden
+            // fields.
+            return has_capability('moodle/course:viewhiddenuserfields', $context);
+        });
+    }
+
+    return $recentcourses;
+}

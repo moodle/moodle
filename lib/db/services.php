@@ -544,6 +544,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'core_course_get_recent_courses' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'get_recent_courses',
+        'classpath' => 'course/externallib.php',
+        'description' => 'List of courses a user has accessed most recently.',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'core_enrol_get_course_enrolment_methods' => array(
         'classname' => 'core_enrol_external',
         'methodname' => 'get_course_enrolment_methods',
