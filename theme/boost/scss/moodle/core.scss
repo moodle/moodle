@@ -2168,15 +2168,12 @@ $switch-transition: .2s all !default;
     position: relative;
 
     input {
-        position: absolute;
-        height: 1px;
+        float: left;
         width: 1px;
-        background: none;
-        border: 0;
-        clip: rect(0 0 0 0);
-        clip-path: inset(50%);
-        overflow: hidden;
+        transform: translateX(1px);
         padding: 0;
+        margin: 0;
+        opacity: 0;
 
         + label {
             position: relative;

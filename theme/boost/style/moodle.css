@@ -10471,15 +10471,12 @@ div.editor_atto_toolbar button .icon {
 .switch {
   position: relative; }
   .switch input {
-    position: absolute;
-    height: 1px;
+    float: left;
     width: 1px;
-    background: none;
-    border: 0;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    overflow: hidden;
-    padding: 0; }
+    transform: translateX(1px);
+    padding: 0;
+    margin: 0;
+    opacity: 0; }
     .switch input + label {
       position: relative;
       min-height: 1.725rem;
@@ -14073,6 +14070,143 @@ a.ygtvspacer:hover {
       opacity: 1;
       visibility: visible;
       transition: right 0.25s; } }
+
+.message-drawer {
+  position: fixed;
+  top: 50px;
+  right: 0;
+  height: calc(100% - 50px);
+  width: 320px;
+  z-index: 1030;
+  box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease-in-out; }
+  .message-drawer.hidden {
+    display: block;
+    right: -320px; }
+  .message-drawer .header-container {
+    flex-shrink: 0; }
+  .message-drawer .body-container {
+    flex: 1;
+    overflow: hidden; }
+    .message-drawer .body-container > * {
+      position: absolute;
+      right: 0;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      opacity: 1;
+      transition: all 0.2s ease-in-out; }
+      .message-drawer .body-container > *.hidden {
+        display: block;
+        left: 320px;
+        right: -320px;
+        opacity: 0;
+        visibility: hidden; }
+        .message-drawer .body-container > *.hidden.previous {
+          left: -320px;
+          right: 320px; }
+  .message-drawer .footer-container {
+    flex-shrink: 0;
+    overflow-x: hidden; }
+    .message-drawer .footer-container > * {
+      max-height: 2000px;
+      opacity: 1;
+      transition: all 0.2s ease-in-out; }
+      .message-drawer .footer-container > *.hidden {
+        display: block;
+        max-height: 0;
+        opacity: 0;
+        padding: 0 !important;
+        /* stylelint-disable-line declaration-no-important */
+        border: 0 !important;
+        /* stylelint-disable-line declaration-no-important */
+        visibility: hidden;
+        transform: translate(320px);
+        transition: all .2s ease-in-out, max-height .2s .2s ease-in-out; }
+        .message-drawer .footer-container > *.hidden.previous {
+          transform: translate(-320px); }
+  .message-drawer .matchtext {
+    background-color: #b5d9f9;
+    color: #373a3c;
+    height: 1.5rem; }
+  .message-drawer .contact-status {
+    position: absolute;
+    left: 39px;
+    top: 39px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%; }
+    .message-drawer .contact-status.online {
+      border: 1px solid #fff;
+      background-color: #5cb85c; }
+  .message-drawer .message p {
+    margin: 0; }
+  .message-drawer .clickable {
+    cursor: pointer; }
+    .message-drawer .clickable:hover {
+      box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.05), 3px 3px 5px -2px rgba(0, 0, 0, 0.1), 1px 1px 5px 0 rgba(0, 0, 0, 0.03); }
+  .message-drawer a,
+  .message-drawer .btn-link {
+    color: inherit; }
+  .message-drawer .icon {
+    margin-right: 0; }
+  .message-drawer .overview-section-toggle .collapsed-icon-container {
+    display: none; }
+  .message-drawer .overview-section-toggle .expanded-icon-container {
+    display: inline-block; }
+  .message-drawer .overview-section-toggle.collapsed .collapsed-icon-container {
+    display: inline-block; }
+  .message-drawer .overview-section-toggle.collapsed .expanded-icon-container {
+    display: none; }
+  .message-drawer .btn.btn-link.btn-icon, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.action, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.action, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.addcriterion {
+    height: 16px;
+    width: 16px;
+    padding: 0;
+    border-radius: 50%;
+    flex-shrink: 0; }
+    .message-drawer .btn.btn-link.btn-icon:hover, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.action:hover, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon:hover, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.addcriterion:hover, .message-drawer .btn.btn-link.btn-icon:focus, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.action:focus, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon:focus, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.addcriterion:focus {
+      background-color: #e9ecef; }
+    .message-drawer .btn.btn-link.btn-icon.icon-size-0, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-0.action, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.icon-size-0.action, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-0, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon.icon-size-0, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-0.addcriterion, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.icon-size-0.addcriterion {
+      height: 20px !important;
+      /* stylelint-disable-line declaration-no-important */
+      width: 20px !important;
+      /* stylelint-disable-line declaration-no-important */ }
+    .message-drawer .btn.btn-link.btn-icon.icon-size-1, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-1.action, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.icon-size-1.action, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-1, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon.icon-size-1, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-1.addcriterion, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.icon-size-1.addcriterion {
+      height: 24px !important;
+      /* stylelint-disable-line declaration-no-important */
+      width: 24px !important;
+      /* stylelint-disable-line declaration-no-important */ }
+    .message-drawer .btn.btn-link.btn-icon.icon-size-2, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-2.action, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.icon-size-2.action, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-2, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon.icon-size-2, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-2.addcriterion, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.icon-size-2.addcriterion {
+      height: 28px !important;
+      /* stylelint-disable-line declaration-no-important */
+      width: 28px !important;
+      /* stylelint-disable-line declaration-no-important */ }
+    .message-drawer .btn.btn-link.btn-icon.icon-size-3, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-3.action, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.icon-size-3.action, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-3, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon.icon-size-3, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-3.addcriterion, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.icon-size-3.addcriterion {
+      height: 36px !important;
+      /* stylelint-disable-line declaration-no-important */
+      width: 36px !important;
+      /* stylelint-disable-line declaration-no-important */ }
+    .message-drawer .btn.btn-link.btn-icon.icon-size-4, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-4.action, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.icon-size-4.action, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-4, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon.icon-size-4, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-4.addcriterion, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.icon-size-4.addcriterion {
+      height: 44px !important;
+      /* stylelint-disable-line declaration-no-important */
+      width: 44px !important;
+      /* stylelint-disable-line declaration-no-important */ }
+    .message-drawer .btn.btn-link.btn-icon.icon-size-5, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-5.action, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.icon-size-5.action, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-5, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon.icon-size-5, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-5.addcriterion, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.icon-size-5.addcriterion {
+      height: 68px !important;
+      /* stylelint-disable-line declaration-no-important */
+      width: 68px !important;
+      /* stylelint-disable-line declaration-no-important */ }
+  .message-drawer .view-overview-body .section {
+    display: block; }
+    .message-drawer .view-overview-body .section.expanded {
+      display: flex; }
+  .message-drawer .view-conversation .content-message-container img {
+    max-width: 100%; }
+
+.dir-rtl .message-drawer {
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08); }
 
 @media (max-width: 480px) {
   .messaging-area-container .messaging-area .messages-area.editing .messages-header {

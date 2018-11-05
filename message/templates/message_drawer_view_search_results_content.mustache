@@ -1,0 +1,76 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/message_drawer_view_search_results_content
+
+    This template will render the search results content in the search page
+    of the message drawer.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * userid The logged in user id
+    * urls The URLs for the popover
+
+    Example context (json):
+    {}
+
+}}
+
+<div class="d-flex flex-column">
+    <div class="mb-3 bg-white p-2">
+        <div data-region="contacts-container">
+            <h4 class="h6">{{#str}} contacts, core_message {{/str}}</h4>
+            <div class="list-group" data-region="list"></div>
+            <p class="hidden" data-region="no-results-container">
+                {{#str}} searchnocontactsfound, core_message {{/str}}
+            </p>
+        </div>
+        <div data-region="non-contacts-container">
+            <h4 class="h6">{{#str}} noncontacts, core_message {{/str}}</h4>
+            <div class="list-group" data-region="list"></div>
+            <p class="hidden" data-region="no-results-container">
+                {{#str}} searchnononcontactsfound, core_message {{/str}}
+            </p>
+        </div>
+        <div class="text-right">
+            <button class="btn btn-link text-primary" data-action="load-more-users">
+                <span data-region="button-text">{{#str}} loadmore, core_message {{/str}}</span>
+                <span data-region="loading-icon-container" class="hidden">{{> core/loading }}</span>
+            </button>
+        </div>
+    </div>
+    <div class="bg-white p-2">
+        <div data-region="messages-container">
+            <h4 class="h6">{{#str}} messages, core_message {{/str}}</h4>
+            <div class="list-group" data-region="list"></div>
+            <p class="hidden" data-region="no-results-container">
+                {{#str}} searchnomessagesfound, core_message {{/str}}
+            </p>
+        </div>
+        <div class="text-right">
+            <button class="btn btn-link text-primary" data-action="load-more-messages">
+                <span data-region="button-text">{{#str}} loadmore, core_message {{/str}}</span>
+                <span data-region="loading-icon-container" class="hidden">{{> core/loading }}</span>
+            </button>
+        </div>
+    </div>
+</div>
