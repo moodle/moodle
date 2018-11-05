@@ -25,7 +25,7 @@
  */
 
 $string['allowedtypes'] = 'Allowed types';
-$string['allowedtypes_desc'] = 'Which recording buttons should appear in Atto';
+$string['allowedtypes_desc'] = 'Which recording buttons should appear in Atto. In addition to this setting, there are also capabilities which can control access to the buttons to particular users in particular contexts.';
 $string['attachrecording'] = 'Attach recording';
 $string['audioandvideo'] = 'Audio and video';
 $string['audiobitrate'] = 'Audio bitrate';
@@ -61,6 +61,8 @@ $string['pluginname'] = 'RecordRTC';
 $string['privacy:metadata'] = 'The RecordRTC plugin does not store any personal data.';
 $string['recordagain'] = 'Record again';
 $string['recordingfailed'] = 'Recording failed, try again';
+$string['recordrtc:recordaudio'] = 'Record audio directly into the text editor';
+$string['recordrtc:recordvideo'] = 'Record video directly into the text editor';
 $string['settings'] = 'RecordRTC settings';
 $string['startrecording'] = 'Start recording';
 $string['stoprecording'] = 'Stop recording';
