@@ -5313,4 +5313,171 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         core_message_external::get_conversation_members($user3->id, $conversationid);
     }
+
+    /**
+     * Test verifying multiple messages can be sent to an individual conversation.
+     */
+    public function test_send_messages_to_conversation_individual() {
+        $this->resetAfterTest(true);
+
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // Enrol the users in the same course, so the default privacy controls (course + contacts) can be used.
+        $course1 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course1->id);
+
+        // The user making the request.
+        $this->setUser($user1);
+
+        // Try to send a message as user1 to a conversation user1 is a a part of.
+        $messages = [
+            [
+                'text' => 'a message from user 1',
+                'textformat' => FORMAT_MOODLE
+            ],
+            [
+                'text' => 'another message from user 1',
+                'textformat' => FORMAT_MOODLE
+            ],
+        ];
+        // Redirect messages.
+        // This marks messages as read, but we can still observe and verify the number of conversation recipients,
+        // based on the message_viewed events generated as part of marking the message as read for each user.
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+        $writtenmessages = core_message_external::send_messages_to_conversation($ic1->id, $messages);
+
+        external_api::clean_returnvalue(core_message_external::send_messages_to_conversation_returns(), $writtenmessages);
+
+        $this->assertCount(2, $writtenmessages);
+        $this->assertObjectHasAttribute('id', $writtenmessages[0]);
+        $this->assertEquals($user1->id, $writtenmessages[0]->useridfrom);
+        $this->assertEquals($messages[0]['text'], $writtenmessages[0]->text);
+        $this->assertNotEmpty($writtenmessages[0]->timecreated);
+
+        $this->assertObjectHasAttribute('id', $writtenmessages[1]);
+        $this->assertEquals($user1->id, $writtenmessages[1]->useridfrom);
+        $this->assertEquals($messages[1]['text'], $writtenmessages[1]->text);
+        $this->assertNotEmpty($writtenmessages[1]->timecreated);
+    }
+
+    /**
+     * Test verifying multiple messages can be sent to an group conversation.
+     */
+    public function test_send_messages_to_conversation_group() {
+        $this->resetAfterTest(true);
+
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // Enrol the users in the same course, so the default privacy controls (course + contacts) can be used.
+        $course1 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course1->id);
+
+        // The user making the request.
+        $this->setUser($user1);
+
+        // Try to send a message as user1 to a conversation user1 is a a part of.
+        $messages = [
+            [
+                'text' => 'a message from user 1 to group conv',
+                'textformat' => FORMAT_MOODLE
+            ],
+            [
+                'text' => 'another message from user 1 to group conv',
+                'textformat' => FORMAT_MOODLE
+            ],
+        ];
+        // Redirect messages.
+        // This marks messages as read, but we can still observe and verify the number of conversation recipients,
+        // based on the message_viewed events generated as part of marking the message as read for each user.
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+        $writtenmessages = core_message_external::send_messages_to_conversation($gc2->id, $messages);
+
+        external_api::clean_returnvalue(core_message_external::send_messages_to_conversation_returns(), $writtenmessages);
+
+        $this->assertCount(2, $writtenmessages);
+        $this->assertObjectHasAttribute('id', $writtenmessages[0]);
+        $this->assertEquals($user1->id, $writtenmessages[0]->useridfrom);
+        $this->assertEquals($messages[0]['text'], $writtenmessages[0]->text);
+        $this->assertNotEmpty($writtenmessages[0]->timecreated);
+
+        $this->assertObjectHasAttribute('id', $writtenmessages[1]);
+        $this->assertEquals($user1->id, $writtenmessages[1]->useridfrom);
+        $this->assertEquals($messages[1]['text'], $writtenmessages[1]->text);
+        $this->assertNotEmpty($writtenmessages[1]->timecreated);
+    }
+
+    /**
+     * Test verifying multiple messages can not be sent to a non existent conversation.
+     */
+    public function test_send_messages_to_conversation_non_existent_conversation() {
+        $this->resetAfterTest(true);
+
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // The user making the request.
+        $this->setUser($user1);
+
+        // Try to send a message as user1 to a conversation user1 is a a part of.
+        $messages = [
+            [
+                'text' => 'a message from user 1',
+                'textformat' => FORMAT_MOODLE
+            ],
+            [
+                'text' => 'another message from user 1',
+                'textformat' => FORMAT_MOODLE
+            ],
+        ];
+        $this->expectException(\moodle_exception::class);
+        $writtenmessages = core_message_external::send_messages_to_conversation(0, $messages);
+    }
+
+    /**
+     * Test verifying multiple messages can not be sent to a conversation by a non-member.
+     */
+    public function test_send_messages_to_conversation_non_member() {
+        $this->resetAfterTest(true);
+
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // Enrol the users in the same course, so the default privacy controls (course + contacts) can be used.
+        $course1 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course1->id);
+
+        // The user making the request. This user is not a member of group conversation 1 (gc1).
+        $this->setUser($user1);
+
+        // Try to send a message as user1 to a conversation user1 is a a part of.
+        $messages = [
+            [
+                'text' => 'a message from user 1 to group conv',
+                'textformat' => FORMAT_MOODLE
+            ],
+            [
+                'text' => 'another message from user 1 to group conv',
+                'textformat' => FORMAT_MOODLE
+            ],
+        ];
+        $this->expectException(\moodle_exception::class);
+        $writtenmessages = core_message_external::send_messages_to_conversation($gc1->id, $messages);
+    }
 }

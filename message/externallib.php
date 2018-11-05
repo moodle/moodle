@@ -39,6 +39,76 @@ require_once($CFG->dirroot . "/message/lib.php");
  * @since Moodle 2.2
  */
 class core_message_external extends external_api {
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.6
+     */
+    public static function send_messages_to_conversation_parameters() {
+        return new external_function_parameters(
+            array(
+                'conversationid' => new external_value(PARAM_INT, 'id of the conversation'),
+                'messages' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'text' => new external_value(PARAM_RAW, 'the text of the message'),
+                            'textformat' => new external_format_value('text', VALUE_DEFAULT, FORMAT_MOODLE),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Send messages from the current USER to a conversation.
+     *
+     * This conversation may be any type of conversation, individual or group.
+     *
+     * @param int $conversationid the id of the conversation to which the messages will be sent.
+     * @param array $messages An array of message to send.
+     * @return array the array of messages which were sent (created).
+     * @since Moodle 3.6
+     */
+    public static function send_messages_to_conversation(int $conversationid, array $messages = []) {
+        global $CFG, $USER;
+
+        // Check if messaging is enabled.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = self::validate_parameters(self::send_messages_to_conversation_parameters(), [
+            'conversationid' => $conversationid,
+            'messages' => $messages
+        ]);
+
+        $messages = [];
+        foreach ($params['messages'] as $message) {
+            $messages[] = \core_message\api::send_message_to_conversation($USER->id, $params['conversationid'], $message['text'],
+                $message['textformat']);
+        }
+
+        return $messages;
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     * @since Moodle 3.6
+     */
+    public static function send_messages_to_conversation_returns() {
+        return new external_multiple_structure(
+            self::get_conversation_message_structure()
+        );
+    }
+
 
     /**
      * Returns description of method parameters
