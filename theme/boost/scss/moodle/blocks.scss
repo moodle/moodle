@@ -82,7 +82,9 @@ $card-gutter : $card-deck-margin * 2;
 }
 
 .block_myoverview,
-.block_starredcourses {
+.block_starredcourses,
+.block_recentlyaccesseditems,
+.block_recentlyaccessedcourses {
     .course-info-container {
         padding: 0.8rem;
     }
@@ -112,7 +114,9 @@ $card-gutter : $card-deck-margin * 2;
     }
 }
 
-.block_starredcourses {
+.block_starredcourses,
+.block_recentlyaccesseditems,
+.block_recentlyaccessedcourses {
     .dashboard-card-deck {
         flex-flow: nowrap;
         overflow-y: scroll;
@@ -123,45 +127,6 @@ $card-gutter : $card-deck-margin * 2;
     height: 7rem;
     background-position: center;
     background-size: cover;
-}
-
-[data-region="blocks-column"] {
-    .block_recentlyaccesseditems {
-        @include media-breakpoint-up(xl) {
-            .dashboard-card-deck {
-                height: unset;
-            }
-        }
-    }
-}
-
-.block_recentlyaccesseditems {
-    [data-region="recentlyaccesseditems-view-content"] {
-        overflow-x: hidden;
-    }
-    .dashboard-card {
-        height: 75px;
-    }
-    .dashboard-card-deck {
-        @include media-breakpoint-up(sm) {
-            height: 75px;
-            overflow: hidden;
-        }
-    }
-    .course-info-container {
-        padding: 0.8rem;
-    }
-    .empty-placeholder-image-lg {
-        height: 125px;
-    }
-    a,
-    a:hover {
-        text-decoration: none;
-        color: unset;
-    }
-    .block-controls ~ .content {
-        margin-top: 2rem !important;
-    }
 }
 
 .dashboard-card-deck .dashboard-card {
