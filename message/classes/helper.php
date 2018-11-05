@@ -218,10 +218,13 @@ class helper {
         $memberids = array_unique(array_map(function($message) {
             return $message->useridfrom;
         }, $messages));
-        // Get members information.
-        $arrmembers = self::get_member_info($userid, $memberids);
-        // Add the members to the conversation.
-        $conversation['members'] = $arrmembers;
+
+        if (!empty($memberids)) {
+            // Get members information.
+            $conversation['members'] = self::get_member_info($userid, $memberids);
+        } else {
+            $conversation['members'] = array();
+        }
 
         return $conversation;
     }

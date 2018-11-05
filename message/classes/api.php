@@ -1036,12 +1036,8 @@ class api {
             }
         }
 
-        $arrmessages = array();
-        if ($messages = helper::get_conversation_messages($userid, $convid, 0, $limitfrom, $limitnum, $sort, $timefrom, $timeto)) {
-            $arrmessages = helper::format_conversation_messages($userid, $convid, $messages);
-        }
-
-        return $arrmessages;
+        $messages = helper::get_conversation_messages($userid, $convid, 0, $limitfrom, $limitnum, $sort, $timefrom, $timeto);
+        return helper::format_conversation_messages($userid, $convid, $messages);
     }
 
     /**
