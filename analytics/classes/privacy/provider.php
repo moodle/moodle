@@ -28,8 +28,10 @@ use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\context;
 use core_privacy\local\request\contextlist;
+use core_privacy\local\request\userlist;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -39,7 +41,10 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\plugin\provider {
+class provider implements
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\core_userlist_provider,
+        \core_privacy\local\request\plugin\provider {
 
     /**
      * Returns meta data about this system.
@@ -126,12 +131,60 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
             $contextlist->add_from_sql($sql, ['userid' => $userid, 'analysersamplesorigin' => $analyser->get_samples_origin()]);
         }
 
-        // We can leave this out of the loop as there is no analyser-dependant stuff.
-        list($sql, $params) = self::analytics_prediction_actions_sql($userid, array_keys($models));
+        // We can leave this out of the loop as there is no analyser-dependent stuff.
+        list($sql, $params) = self::analytics_prediction_actions_user_sql($userid, array_keys($models));
         $sql = "SELECT DISTINCT ap.contextid" . $sql;
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        $models = self::get_models_with_user_data();
+
+        foreach ($models as $modelid => $model) {
+
+            $analyser = $model->get_analyser(['notimesplitting' => true]);
+
+            // Analytics predictions.
+            $params = [
+                'contextid' => $context->id,
+                'modelid' => $modelid,
+            ];
+            $joinusersql = $analyser->join_sample_user('ap');
+            $sql = "SELECT u.id AS userid
+                      FROM {analytics_predictions} ap
+                           {$joinusersql}
+                     WHERE ap.contextid = :contextid
+                       AND ap.modelid = :modelid";
+            $userlist->add_from_sql('userid', $sql, $params);
+
+            // Indicator calculations.
+            $params = [
+                'contextid' => $context->id,
+                'analysersamplesorigin' => $analyser->get_samples_origin(),
+            ];
+            $joinusersql = $analyser->join_sample_user('aic');
+            $sql = "SELECT u.id AS userid
+                      FROM {analytics_indicator_calc} aic
+                           {$joinusersql}
+                     WHERE aic.contextid = :contextid
+                       AND aic.sampleorigin = :analysersamplesorigin";
+            $userlist->add_from_sql('userid', $sql, $params);
+        }
+
+        // We can leave this out of the loop as there is no analyser-dependent stuff.
+        list($sql, $params) = self::analytics_prediction_actions_context_sql($context->id, array_keys($models));
+        $sql = "SELECT apa.userid" . $sql;
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -215,7 +268,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
 
         // Analytics predictions.
         // Provided contexts are ignored as we export all user-related stuff.
-        list($sql, $params) = self::analytics_prediction_actions_sql($userid, $modelids, $contextsql);
+        list($sql, $params) = self::analytics_prediction_actions_user_sql($userid, $modelids, $contextsql);
         $sql = "SELECT apa.*, ap.modelid, ap.contextid, $ctxfields" . $sql;
         $predictionactions = $DB->get_recordset_sql($sql, $params + $contextparams);
         foreach ($predictionactions as $predictionaction) {
@@ -282,7 +335,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
         list ($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
 
         // Analytics prediction actions.
-        list($sql, $apaparams) = self::analytics_prediction_actions_sql($userid, $modelids, $contextsql);
+        list($sql, $apaparams) = self::analytics_prediction_actions_user_sql($userid, $modelids, $contextsql);
         $sql = "SELECT apa.id " . $sql;
 
         $predictionactionids = $DB->get_fieldset_sql($sql, $apaparams + $contextparams);
@@ -323,6 +376,70 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
     }
 
     /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        $models = self::get_models_with_user_data();
+        $modelids = array_keys($models);
+        list($usersinsql, $baseparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+
+        // Analytics prediction actions.
+        list($sql, $apaparams) = self::analytics_prediction_actions_context_sql($context->id, $modelids, $usersinsql);
+        $sql = "SELECT apa.id" . $sql;
+        $predictionactionids = $DB->get_fieldset_sql($sql, $baseparams + $apaparams);
+
+        if ($predictionactionids) {
+            list ($predictionactionidssql, $params) = $DB->get_in_or_equal($predictionactionids);
+            $DB->delete_records_select('analytics_prediction_actions', "id {$predictionactionidssql}", $params);
+        }
+
+        $baseparams['contextid'] = $context->id;
+
+        foreach ($models as $modelid => $model) {
+            $analyser = $model->get_analyser(['notimesplitting' => true]);
+
+            // Analytics predictions.
+            $joinusersql = $analyser->join_sample_user('ap');
+            $sql = "SELECT DISTINCT ap.id
+                      FROM {analytics_predictions} ap
+                           {$joinusersql}
+                     WHERE ap.contextid = :contextid
+                       AND ap.modelid = :modelid
+                       AND u.id {$usersinsql}";
+            $params = $baseparams;
+            $params['modelid'] = $modelid;
+            $predictionids = $DB->get_fieldset_sql($sql, $params);
+
+            if ($predictionids) {
+                list($predictionidssql, $params) = $DB->get_in_or_equal($predictionids, SQL_PARAMS_NAMED);
+                $DB->delete_records_select('analytics_predictions', "id {$predictionidssql}", $params);
+            }
+
+            // Indicator calculations.
+            $joinusersql = $analyser->join_sample_user('aic');
+            $sql = "SELECT DISTINCT aic.id
+                      FROM {analytics_indicator_calc} aic
+                           {$joinusersql}
+                     WHERE aic.contextid = :contextid
+                       AND aic.sampleorigin = :analysersamplesorigin
+                       AND u.id {$usersinsql}";
+            $params = $baseparams;
+            $params['analysersamplesorigin'] = $analyser->get_samples_origin();
+            $indicatorcalcids = $DB->get_fieldset_sql($sql, $params);
+
+            if ($indicatorcalcids) {
+                list ($indicatorcalcidssql, $params) = $DB->get_in_or_equal($indicatorcalcids, SQL_PARAMS_NAMED);
+                $DB->delete_records_select('analytics_indicator_calc', "id $indicatorcalcidssql", $params);
+            }
+        }
+    }
+
+    /**
      * Returns a list of models with user data.
      *
      * @return \core_analytics\model[]
@@ -339,14 +456,14 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
     }
 
     /**
-     * Returns the sql query to query analytics_prediction_actions table.
+     * Returns the sql query to query analytics_prediction_actions table by user ID.
      *
-     * @param int $userid
-     * @param int[] $modelids
-     * @param string $contextsql
-     * @return array sql string in [0] and params in [1]
+     * @param int $userid The user ID of the analytics prediction.
+     * @param int[] $modelids Model IDs to include in the SQL.
+     * @param string $contextsql Optional "in or equal" SQL to also query by context ID(s).
+     * @return array sql string in [0] and params in [1].
      */
-    private static function analytics_prediction_actions_sql($userid, $modelids, $contextsql = false) {
+    private static function analytics_prediction_actions_user_sql($userid, $modelids, $contextsql = false) {
         global $DB;
 
         list($insql, $params) = $DB->get_in_or_equal($modelids, SQL_PARAMS_NAMED);
@@ -359,6 +476,31 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
 
         if ($contextsql) {
             $sql .= " AND ap.contextid $contextsql";
+        }
+
+        return [$sql, $params];
+    }
+
+    /**
+     * Returns the sql query to query analytics_prediction_actions table by context ID.
+     *
+     * @param int $contextid The context ID of the analytics prediction.
+     * @param int[] $modelids Model IDs to include in the SQL.
+     * @param string $usersql Optional "in or equal" SQL to also query by user ID(s).
+     * @return array sql string in [0] and params in [1].
+     */
+    private static function analytics_prediction_actions_context_sql($contextid, $modelids, $usersql = false) {
+        global $DB;
+
+        list($insql, $params) = $DB->get_in_or_equal($modelids, SQL_PARAMS_NAMED);
+        $sql = " FROM {analytics_predictions} ap
+                  JOIN {analytics_prediction_actions} apa ON apa.predictionid = ap.id
+                 WHERE ap.contextid = :contextid
+                   AND ap.modelid {$insql}";
+        $params['contextid'] = $contextid;
+
+        if ($usersql) {
+            $sql .= " AND apa.userid {$usersql}";
         }
 
         return [$sql, $params];
