@@ -62,6 +62,9 @@ class data_requests_table extends table_sql {
     /** @var \tool_dataprivacy\data_request[] Array of data request persistents. */
     protected $datarequests = [];
 
+    /** @var \stdClass[] List of userids and whether they have any ongoing active requests. */
+    protected $ongoingrequests = [];
+
     /** @var int The number of data request to be displayed per page. */
     protected $perpage;
 
@@ -247,6 +250,20 @@ class data_requests_table extends table_sql {
                 break;
         }
 
+        if ($this->manage) {
+            $persistent = $this->datarequests[$requestid];
+            $canreset = $persistent->is_active() || empty($this->ongoingrequests[$data->foruser->id]->{$data->type});
+            $canreset = $canreset && $persistent->is_resettable();
+            if ($canreset) {
+                $reseturl = new moodle_url('/admin/tool/dataprivacy/resubmitrequest.php', [
+                        'requestid' => $requestid,
+                    ]);
+                $actiondata = ['data-action' => 'reset', 'data-requestid' => $requestid];
+                $actiontext = get_string('resubmitrequestasnew', 'tool_dataprivacy');
+                $actions[] = new action_menu_link_secondary($reseturl, null, $actiontext, $actiondata);
+            }
+        }
+
         $actionsmenu = new action_menu($actions);
         $actionsmenu->set_menu_trigger(get_string('actions'));
         $actionsmenu->set_owner_selector('request-actions-' . $requestid);
@@ -284,11 +301,18 @@ class data_requests_table extends table_sql {
         $context = \context_system::instance();
         $renderer = $PAGE->get_renderer('tool_dataprivacy');
 
+        $forusers = [];
         foreach ($datarequests as $persistent) {
             $this->datarequests[$persistent->get('id')] = $persistent;
             $exporter = new data_request_exporter($persistent, ['context' => $context]);
             $this->rawdata[] = $exporter->export($renderer);
+            $forusers[] = $persistent->get('userid');
         }
+
+        // Fetch the list of all ongoing requests for the users currently shown.
+        // This is used to determine whether any non-active request can be resubmitted.
+        // There can only be one ongoing request of a type for each user.
+        $this->ongoingrequests = api::find_ongoing_request_types_for_users($forusers);
 
         // Set initial bars.
         if ($useinitialsbar) {
