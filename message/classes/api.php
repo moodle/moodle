@@ -276,14 +276,17 @@ class api {
     }
 
     /**
-     * Gets the subnames for any conversations linked to components.
+     * Gets extra fields, like image url and subname for any conversations linked to components.
      *
      * The subname is like a subtitle for the conversation, to compliment it's name.
+     * The imageurl is the location of the image for the conversation, as might be seen on a listing of conversations for a user.
      *
      * @param array $conversations a list of conversations records.
      * @return array the array of subnames, index by conversation id.
+     * @throws \coding_exception
+     * @throws \dml_exception
      */
-    protected static function get_linked_conversation_subnames(array $conversations) {
+    protected static function get_linked_conversation_extra_fields(array $conversations) : array {
         global $DB;
 
         $linkedconversations = [];
@@ -299,11 +302,11 @@ class api {
 
         // TODO: MDL-63814: Working out the subname for linked conversations should be done in a generic way.
         // Get the itemid, but only for course group linked conversation for now.
-        $convsubnames = [];
+        $extrafields = [];
         if (!empty($linkeditems = $linkedconversations['core_group']['groups'])) { // Format: [conversationid => itemid].
             // Get the name of the course to which the group belongs.
             list ($groupidsql, $groupidparams) = $DB->get_in_or_equal(array_values($linkeditems), SQL_PARAMS_NAMED, 'groupid');
-            $sql = "SELECT g.id, c.shortname
+            $sql = "SELECT g.*, c.shortname as courseshortname
                       FROM {groups} g
                       JOIN {course} c
                         ON g.courseid = c.id
@@ -311,11 +314,16 @@ class api {
             $courseinfo = $DB->get_records_sql($sql, $groupidparams);
             foreach ($linkeditems as $convid => $groupid) {
                 if (array_key_exists($groupid, $courseinfo)) {
-                    $convsubnames[$convid] = format_string($courseinfo[$groupid]->shortname);
+                    $group = $courseinfo[$groupid];
+                    // Subname.
+                    $extrafields[$convid]['subname'] = format_string($courseinfo[$groupid]->courseshortname);
+
+                    // Imageurl.
+                    $extrafields[$convid]['imageurl'] = get_group_picture_url($group, $group->courseid, true)->out(false);
                 }
             }
         }
-        return $convsubnames;
+        return $extrafields;
     }
 
 
@@ -431,10 +439,12 @@ class api {
             return [];
         }
 
-        // COMPONENT-LINKED CONVERSATION SUBNAME.
-        // This subname will vary, depending on the component which created the linked conversation.
+        // COMPONENT-LINKED CONVERSATION FIELDS.
+        // Conversations linked to components may have extra information, such as:
+        // - subname: Essentially a subtitle for the conversation. So you'd have "name: subname".
+        // - imageurl: A URL to the image for the linked conversation.
         // For now, this is ONLY course groups.
-        $convsubnames = self::get_linked_conversation_subnames($conversations);
+        $convextrafields = self::get_linked_conversation_extra_fields($conversations);
 
         // MEMBERS.
         // Ideally, we want to get 1 member for each conversation, but this depends on the type and whether there is a recent
@@ -555,7 +565,8 @@ class api {
             $conv = new \stdClass();
             $conv->id = $conversation->id;
             $conv->name = $conversation->conversationname;
-            $conv->subname = $convsubnames[$conv->id] ?? null;
+            $conv->subname = $convextrafields[$conv->id]['subname'] ?? null;
+            $conv->imageurl = $convextrafields[$conv->id]['imageurl'] ?? null;
             $conv->type = $conversation->conversationtype;
             $conv->membercount = $membercounts[$conv->id]->membercount;
             $conv->isfavourite = in_array($conv->id, $favouriteconversationids);

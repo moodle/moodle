@@ -792,6 +792,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             $this->assertObjectHasAttribute('id', $conv);
             $this->assertObjectHasAttribute('name', $conv);
             $this->assertObjectHasAttribute('subname', $conv);
+            $this->assertObjectHasAttribute('imageurl', $conv);
             $this->assertObjectHasAttribute('type', $conv);
             $this->assertObjectHasAttribute('isfavourite', $conv);
             $this->assertObjectHasAttribute('membercount', $conv);
@@ -1016,6 +1017,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
      * Test verifying that group linked conversations are returned and contain a subname matching the course name.
      */
     public function test_get_conversations_group_linked() {
+        global $CFG;
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -1028,14 +1031,21 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
         $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
         $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
-        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 1));
+        $group1 = $this->getDataGenerator()->create_group([
+            'courseid' => $course1->id,
+            'enablemessaging' => 1,
+            'picturepath' => $CFG->dirroot . '/lib/tests/fixtures/gd-logo.png'
+        ]);
 
         // Add users to group1.
         $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id));
         $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user2->id));
 
         $conversations = \core_message\api::get_conversations($user1->id);
+        $this->assertEquals(2, $conversations[0]->membercount);
         $this->assertEquals($course1->shortname, $conversations[0]->subname);
+        $groupimageurl = get_group_picture_url($group1, $group1->courseid, true);
+        $this->assertEquals($groupimageurl, $conversations[0]->imageurl);
     }
 
    /**
