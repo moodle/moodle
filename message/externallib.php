@@ -204,17 +204,17 @@ class core_message_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $capability = 'moodle/site:manageallmessaging';
-        if (($USER->id != $userid) && !has_capability($capability, $context)) {
-            throw new required_capability_exception($context, $capability, 'nopermissions', '');
-        }
-
         $params = array('userids' => $userids, 'userid' => $userid);
         $params = self::validate_parameters(self::create_contacts_parameters(), $params);
 
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['userid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
+
         $warnings = array();
         foreach ($params['userids'] as $id) {
-            if (!message_add_contact($id, 0, $userid)) {
+            if (!message_add_contact($id, 0, $params['userid'])) {
                 $warnings[] = array(
                     'item' => 'user',
                     'itemid' => $id,
@@ -289,16 +289,16 @@ class core_message_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $capability = 'moodle/site:manageallmessaging';
-        if (($USER->id != $userid) && !has_capability($capability, $context)) {
-            throw new required_capability_exception($context, $capability, 'nopermissions', '');
-        }
-
         $params = array('userids' => $userids, 'userid' => $userid);
         $params = self::validate_parameters(self::delete_contacts_parameters(), $params);
 
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['userid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
+
         foreach ($params['userids'] as $id) {
-            \core_message\api::remove_contact($userid, $id);
+            \core_message\api::remove_contact($params['userid'], $id);
         }
 
         return null;
@@ -347,13 +347,13 @@ class core_message_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $capability = 'moodle/site:manageallmessaging';
-        if (($USER->id != $userid) && !has_capability($capability, $context)) {
-            throw new required_capability_exception($context, $capability, 'nopermissions', '');
-        }
-
         $params = ['userid' => $userid, 'blockeduserid' => $blockeduserid];
         $params = self::validate_parameters(self::block_user_parameters(), $params);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['userid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
 
         if (!\core_message\api::is_blocked($params['userid'], $params['blockeduserid'])) {
             \core_message\api::block_user($params['userid'], $params['blockeduserid']);
@@ -403,13 +403,13 @@ class core_message_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $capability = 'moodle/site:manageallmessaging';
-        if (($USER->id != $userid) && !has_capability($capability, $context)) {
-            throw new required_capability_exception($context, $capability, 'nopermissions', '');
-        }
-
         $params = ['userid' => $userid, 'unblockeduserid' => $unblockeduserid];
         $params = self::validate_parameters(self::unblock_user_parameters(), $params);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['userid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
 
         \core_message\api::unblock_user($params['userid'], $params['unblockeduserid']);
 
@@ -470,17 +470,17 @@ class core_message_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $capability = 'moodle/site:manageallmessaging';
-        if (($USER->id != $userid) && !has_capability($capability, $context)) {
-            throw new required_capability_exception($context, $capability, 'nopermissions', '');
-        }
-
         $params = array('userids' => $userids, 'userid' => $userid);
         $params = self::validate_parameters(self::block_contacts_parameters(), $params);
 
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['userid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
+
         $warnings = array();
         foreach ($params['userids'] as $id) {
-            if (!message_block_contact($id, $userid)) {
+            if (!message_block_contact($id, $params['userid'])) {
                 $warnings[] = array(
                     'item' => 'user',
                     'itemid' => $id,
@@ -556,16 +556,16 @@ class core_message_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $capability = 'moodle/site:manageallmessaging';
-        if (($USER->id != $userid) && !has_capability($capability, $context)) {
-            throw new required_capability_exception($context, $capability, 'nopermissions', '');
-        }
-
         $params = array('userids' => $userids, 'userid' => $userid);
         $params = self::validate_parameters(self::unblock_contacts_parameters(), $params);
 
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['userid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
+
         foreach ($params['userids'] as $id) {
-            message_unblock_contact($id, $userid);
+            message_unblock_contact($id, $params['userid']);
         }
 
         return null;
@@ -626,13 +626,13 @@ class core_message_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $capability = 'moodle/site:manageallmessaging';
-        if (($USER->id != $userid) && !has_capability($capability, $context)) {
-            throw new required_capability_exception($context, $capability, 'nopermissions', '');
-        }
-
         $params = ['userid' => $userid];
         $params = self::validate_parameters(self::get_contact_requests_parameters(), $params);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['userid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
 
         return \core_message\api::get_contact_requests($params['userid']);
     }
@@ -708,16 +708,6 @@ class core_message_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $capability = 'moodle/site:manageallmessaging';
-        if (($USER->id != $userid) && !has_capability($capability, $context)) {
-            throw new required_capability_exception($context, $capability, 'nopermissions', '');
-        }
-
-        // The user needs to be a part of the conversation before querying who the members are.
-        if (!\core_message\api::is_user_in_conversation($userid, $conversationid)) {
-            throw new moodle_exception('You are not a member of this conversation.');
-        }
-
         $params = [
             'userid' => $userid,
             'conversationid' => $conversationid,
@@ -725,10 +715,21 @@ class core_message_external extends external_api {
             'limitfrom' => $limitfrom,
             'limitnum' => $limitnum
         ];
-        self::validate_parameters(self::get_conversation_members_parameters(), $params);
+        $params = self::validate_parameters(self::get_conversation_members_parameters(), $params);
 
-        return \core_message\api::get_conversation_members($userid, $conversationid, $includecontactrequests,
-            $limitfrom, $limitnum);
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['userid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
+
+        // The user needs to be a part of the conversation before querying who the members are.
+        if (!\core_message\api::is_user_in_conversation($params['userid'], $params['conversationid'])) {
+            throw new moodle_exception('You are not a member of this conversation.');
+        }
+
+
+        return \core_message\api::get_conversation_members($params['userid'], $params['conversationid'], $params['includecontactrequests'],
+            $params['limitfrom'], $params['limitnum']);
     }
 
     /**
@@ -774,13 +775,13 @@ class core_message_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $capability = 'moodle/site:manageallmessaging';
-        if (($USER->id != $userid) && !has_capability($capability, $context)) {
-            throw new required_capability_exception($context, $capability, 'nopermissions', '');
-        }
-
         $params = ['userid' => $userid, 'requesteduserid' => $requesteduserid];
         $params = self::validate_parameters(self::create_contact_request_parameters(), $params);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['userid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
 
         if (!\core_message\api::can_create_contact($params['userid'], $params['requesteduserid'])) {
             $warning[] = [
@@ -840,13 +841,13 @@ class core_message_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $capability = 'moodle/site:manageallmessaging';
-        if (($USER->id != $requesteduserid) && !has_capability($capability, $context)) {
-            throw new required_capability_exception($context, $capability, 'nopermissions', '');
-        }
-
         $params = ['userid' => $userid, 'requesteduserid' => $requesteduserid];
         $params = self::validate_parameters(self::confirm_contact_request_parameters(), $params);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['requesteduserid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
 
         \core_message\api::confirm_contact_request($params['userid'], $params['requesteduserid']);
 
@@ -894,13 +895,13 @@ class core_message_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $capability = 'moodle/site:manageallmessaging';
-        if (($USER->id != $requesteduserid) && !has_capability($capability, $context)) {
-            throw new required_capability_exception($context, $capability, 'nopermissions', '');
-        }
-
         $params = ['userid' => $userid, 'requesteduserid' => $requesteduserid];
         $params = self::validate_parameters(self::decline_contact_request_parameters(), $params);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['requesteduserid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
 
         \core_message\api::decline_contact_request($params['userid'], $params['requesteduserid']);
 
@@ -1096,14 +1097,20 @@ class core_message_external extends external_api {
             'limitfrom' => $limitfrom,
             'limitnum' => $limitnum
         );
-        self::validate_parameters(self::data_for_messagearea_search_users_in_course_parameters(), $params);
+        $params = self::validate_parameters(self::data_for_messagearea_search_users_in_course_parameters(), $params);
         self::validate_context($systemcontext);
 
-        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+        if (($USER->id != $params['userid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        $users = \core_message\api::search_users_in_course($userid, $courseid, $search, $limitfrom, $limitnum);
+        $users = \core_message\api::search_users_in_course(
+            $params['userid'],
+            $params['courseid'],
+            $params['search'],
+            $params['limitfrom'],
+            $params['limitnum']
+        );
         $results = new \core_message\output\messagearea\user_search_results($users);
 
         $renderer = $PAGE->get_renderer('core_message');
@@ -1167,14 +1174,19 @@ class core_message_external extends external_api {
             'search' => $search,
             'limitnum' => $limitnum
         );
-        self::validate_parameters(self::data_for_messagearea_search_users_parameters(), $params);
+        $params = self::validate_parameters(self::data_for_messagearea_search_users_parameters(), $params);
         self::validate_context($systemcontext);
 
-        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+        if (($USER->id != $params['userid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        list($contacts, $courses, $noncontacts) = \core_message\api::search_users($userid, $search, $limitnum);
+        list($contacts, $courses, $noncontacts) = \core_message\api::search_users(
+            $params['userid'],
+            $params['search'],
+            $params['limitnum']
+        );
+
         $search = new \core_message\output\messagearea\user_search_results($contacts, $courses, $noncontacts);
 
         $renderer = $PAGE->get_renderer('core_message');
@@ -1254,14 +1266,19 @@ class core_message_external extends external_api {
             'limitnum' => $limitnum
 
         );
-        self::validate_parameters(self::data_for_messagearea_search_messages_parameters(), $params);
+        $params = self::validate_parameters(self::data_for_messagearea_search_messages_parameters(), $params);
         self::validate_context($systemcontext);
 
-        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+        if (($USER->id != $params['userid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        $messages = \core_message\api::search_messages($userid, $search, $limitfrom, $limitnum);
+        $messages = \core_message\api::search_messages(
+            $params['userid'],
+            $params['search'],
+            $params['limitfrom'],
+            $params['limitnum']
+        );
         $results = new \core_message\output\messagearea\message_search_results($messages);
 
         $renderer = $PAGE->get_renderer('core_message');
@@ -1332,16 +1349,23 @@ class core_message_external extends external_api {
             'type' => $type,
             'favourites' => $favourites
         );
-        self::validate_parameters(self::get_conversations_parameters(), $params);
+        $params = self::validate_parameters(self::get_conversations_parameters(), $params);
 
         $systemcontext = context_system::instance();
         self::validate_context($systemcontext);
 
-        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+        if (($USER->id != $params['userid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        $conversations = \core_message\api::get_conversations($userid, $limitfrom, $limitnum, $type, $favourites);
+        $conversations = \core_message\api::get_conversations(
+            $params['userid'],
+            $params['limitfrom'],
+            $params['limitnum'],
+            $params['type'],
+            $params['favourites']
+        );
+
         return (object) ['conversations' => $conversations];
     }
 
@@ -1410,14 +1434,14 @@ class core_message_external extends external_api {
             'limitfrom' => $limitfrom,
             'limitnum' => $limitnum
         );
-        self::validate_parameters(self::data_for_messagearea_conversations_parameters(), $params);
+        $params = self::validate_parameters(self::data_for_messagearea_conversations_parameters(), $params);
         self::validate_context($systemcontext);
 
-        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+        if (($USER->id != $params['userid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        $conversations = \core_message\api::get_conversations($userid, $limitfrom, $limitnum);
+        $conversations = \core_message\api::get_conversations($params['userid'], $params['limitfrom'], $params['limitnum']);
 
         // Format the conversations in the legacy style, as the get_conversations method has since been changed.
         $conversations = \core_message\helper::get_conversations_legacy_formatter($conversations);
@@ -1489,14 +1513,14 @@ class core_message_external extends external_api {
             'limitfrom' => $limitfrom,
             'limitnum' => $limitnum
         );
-        self::validate_parameters(self::data_for_messagearea_contacts_parameters(), $params);
+        $params = self::validate_parameters(self::data_for_messagearea_contacts_parameters(), $params);
         self::validate_context($systemcontext);
 
-        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+        if (($USER->id != $params['userid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        $contacts = \core_message\api::get_contacts($userid, $limitfrom, $limitnum);
+        $contacts = \core_message\api::get_contacts($params['userid'], $params['limitfrom'], $params['limitnum']);
         $contacts = new \core_message\output\messagearea\contacts(null, $contacts);
 
         $renderer = $PAGE->get_renderer('core_message');
@@ -1564,14 +1588,14 @@ class core_message_external extends external_api {
             'newest' => $newest,
             'timefrom' => $timefrom,
         );
-        self::validate_parameters(self::data_for_messagearea_messages_parameters(), $params);
+        $params = self::validate_parameters(self::data_for_messagearea_messages_parameters(), $params);
         self::validate_context($systemcontext);
 
-        if (($USER->id != $currentuserid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+        if (($USER->id != $params['currentuserid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        if ($newest) {
+        if ($params['newest']) {
             $sort = 'timecreated DESC';
         } else {
             $sort = 'timecreated ASC';
@@ -1585,21 +1609,21 @@ class core_message_external extends external_api {
         // case those messages will be lost.
         //
         // Instead we ignore the current time in the result set to ensure that second is allowed to finish.
-        if (!empty($timefrom)) {
+        if (!empty($params['timefrom'])) {
             $timeto = time() - 1;
         } else {
             $timeto = 0;
         }
 
         // No requesting messages from the current time, as stated above.
-        if ($timefrom == time()) {
+        if ($params['timefrom'] == time()) {
             $messages = [];
         } else {
-            $messages = \core_message\api::get_messages($currentuserid, $otheruserid, $limitfrom,
-                                                        $limitnum, $sort, $timefrom, $timeto);
+            $messages = \core_message\api::get_messages($params['currentuserid'], $params['otheruserid'], $params['limitfrom'],
+                                                        $params['limitnum'], $sort, $params['timefrom'], $timeto);
         }
 
-        $messages = new \core_message\output\messagearea\messages($currentuserid, $otheruserid, $messages);
+        $messages = new \core_message\output\messagearea\messages($params['currentuserid'], $params['otheruserid'], $messages);
 
         $renderer = $PAGE->get_renderer('core_message');
         return $messages->export_for_template($renderer);
@@ -1681,10 +1705,10 @@ class core_message_external extends external_api {
             'newest' => $newest,
             'timefrom' => $timefrom,
         );
-        self::validate_parameters(self::get_conversation_messages_parameters(), $params);
+        $params = self::validate_parameters(self::get_conversation_messages_parameters(), $params);
         self::validate_context($systemcontext);
 
-        if (($USER->id != $currentuserid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+        if (($USER->id != $params['currentuserid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
@@ -1698,14 +1722,20 @@ class core_message_external extends external_api {
         // case those messages will be lost.
         //
         // Instead we ignore the current time in the result set to ensure that second is allowed to finish.
-        $timeto = empty($timefrom) ? 0 : time() - 1;
+        $timeto = empty($params['timefrom']) ? 0 : time() - 1;
 
         // No requesting messages from the current time, as stated above.
-        if ($timefrom == time()) {
+        if ($params['timefrom'] == time()) {
             $messages = [];
         } else {
-            $messages = \core_message\api::get_conversation_messages($currentuserid, $convid, $limitfrom,
-                                                        $limitnum, $sort, $timefrom, $timeto);
+            $messages = \core_message\api::get_conversation_messages(
+                $params['currentuserid'],
+                $params['convid'],
+                $params['limitfrom'],
+                $params['limitnum'],
+                $sort,
+                $params['timefrom'],
+                $timeto);
         }
 
         return $messages;
@@ -1769,14 +1799,14 @@ class core_message_external extends external_api {
             'currentuserid' => $currentuserid,
             'otheruserid' => $otheruserid
         );
-        self::validate_parameters(self::data_for_messagearea_get_most_recent_message_parameters(), $params);
+        $params = self::validate_parameters(self::data_for_messagearea_get_most_recent_message_parameters(), $params);
         self::validate_context($systemcontext);
 
-        if (($USER->id != $currentuserid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+        if (($USER->id != $params['currentuserid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        $message = \core_message\api::get_most_recent_message($currentuserid, $otheruserid);
+        $message = \core_message\api::get_most_recent_message($params['currentuserid'], $params['otheruserid']);
         $message = new \core_message\output\messagearea\message($message);
 
         $renderer = $PAGE->get_renderer('core_message');
@@ -1831,14 +1861,14 @@ class core_message_external extends external_api {
             'currentuserid' => $currentuserid,
             'otheruserid' => $otheruserid
         );
-        self::validate_parameters(self::data_for_messagearea_get_profile_parameters(), $params);
+        $params = self::validate_parameters(self::data_for_messagearea_get_profile_parameters(), $params);
         self::validate_context($systemcontext);
 
-        if (($USER->id != $currentuserid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+        if (($USER->id != $params['currentuserid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        $profile = \core_message\api::get_profile($currentuserid, $otheruserid);
+        $profile = \core_message\api::get_profile($params['currentuserid'], $params['otheruserid']);
         $profile = new \core_message\output\messagearea\profile($profile);
 
         $renderer = $PAGE->get_renderer('core_message');
@@ -2914,8 +2944,8 @@ class core_message_external extends external_api {
         $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
         core_user::require_active_user($user);
 
-        if (\core_message\api::can_mark_all_messages_as_read($userid, $conversationid)) {
-            \core_message\api::mark_all_messages_as_read($userid, $conversationid);
+        if (\core_message\api::can_mark_all_messages_as_read($params['userid'], $params['conversationid'])) {
+            \core_message\api::mark_all_messages_as_read($params['userid'], $params['conversationid']);
         } else {
             throw new moodle_exception('accessdenied', 'admin');
         }
@@ -2982,7 +3012,7 @@ class core_message_external extends external_api {
         $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
         core_user::require_active_user($user);
 
-        if (!$conversationid = \core_message\api::get_conversation_between_users([$userid, $otheruserid])) {
+        if (!$conversationid = \core_message\api::get_conversation_between_users([$params['userid'], $params['otheruserid']])) {
             return [];
         }
 
@@ -3075,7 +3105,7 @@ class core_message_external extends external_api {
         $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
         core_user::require_active_user($user);
 
-        foreach ($conversationids as $conversationid) {
+        foreach ($params['conversationids'] as $conversationid) {
             if (\core_message\api::can_delete_conversation($user->id, $conversationid)) {
                 \core_message\api::delete_conversation_by_id($user->id, $conversationid);
             } else {
@@ -3148,8 +3178,8 @@ class core_message_external extends external_api {
         $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
         core_user::require_active_user($user);
 
-        if (\core_message\api::can_delete_message($user->id, $messageid)) {
-            $status = \core_message\api::delete_message($user->id, $messageid);
+        if (\core_message\api::can_delete_message($user->id, $params['messageid'])) {
+            $status = \core_message\api::delete_message($user->id, $params['messageid']);
         } else {
             throw new moodle_exception('You do not have permission to delete this message');
         }
@@ -3230,11 +3260,11 @@ class core_message_external extends external_api {
 
         $user = self::validate_preferences_permissions($params['userid']);
 
-        $processor = get_message_processor($name);
+        $processor = get_message_processor($params['name']);
         $preferences = [];
         $form = new stdClass();
 
-        foreach ($formvalues as $formvalue) {
+        foreach ($params['formvalues'] as $formvalue) {
             // Curly braces to ensure interpretation is consistent between
             // php 5 and php 7.
             $form->{$formvalue['name']} = $formvalue['value'];
@@ -3243,7 +3273,7 @@ class core_message_external extends external_api {
         $processor->process_form($form, $preferences);
 
         if (!empty($preferences)) {
-            set_user_preferences($preferences, $userid);
+            set_user_preferences($preferences, $params['userid']);
         }
     }
 
@@ -3305,7 +3335,7 @@ class core_message_external extends external_api {
         core_user::require_active_user($user);
         self::validate_context(context_user::instance($params['userid']));
 
-        $processor = get_message_processor($name);
+        $processor = get_message_processor($params['name']);
 
         $processoroutput = new \core_message\output\processor($processor, $user);
         $renderer = $PAGE->get_renderer('core_message');
@@ -3607,7 +3637,7 @@ class core_message_external extends external_api {
         $systemcontext = context_system::instance();
         self::validate_context($systemcontext);
 
-        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+        if (($USER->id != $params['userid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
@@ -3666,7 +3696,7 @@ class core_message_external extends external_api {
         $systemcontext = context_system::instance();
         self::validate_context($systemcontext);
 
-        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+        if (($USER->id != $params['userid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
