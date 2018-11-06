@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 use core_course\external\course_summary_exporter;
 
 require_once("$CFG->libdir/externallib.php");
+require_once("lib.php");
 
 /**
  * Course external functions
@@ -3885,5 +3886,86 @@ class core_course_external extends external_api {
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.6
+     */
+    public static function get_recent_courses_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'id of the user, default to current user', VALUE_DEFAULT, 0),
+                'limit' => new external_value(PARAM_INT, 'result set limit', VALUE_DEFAULT, 0),
+                'offset' => new external_value(PARAM_INT, 'Result set offset', VALUE_DEFAULT, 0),
+                'sort' => new external_value(PARAM_TEXT, 'Sort string', VALUE_DEFAULT, null)
+            )
+        );
+    }
+
+    /**
+     * Get last accessed courses adding additional course information like images.
+     *
+     * @param int $userid User id from which the courses will be obtained
+     * @param int $limit Restrict result set to this amount
+     * @param int $offset Skip this number of records from the start of the result set
+     * @param string|null $sort SQL string for sorting
+     * @return array List of courses
+     * @throws  invalid_parameter_exception
+     */
+    public static function get_recent_courses(int $userid = 0, int $limit = 0, int $offset = 0, string $sort = null) {
+        global $USER, $PAGE;
+
+        if (empty($userid)) {
+            $userid = $USER->id;
+        }
+
+        $params = self::validate_parameters(self::get_recent_courses_parameters(),
+            array(
+                'userid' => $userid,
+                'limit' => $limit,
+                'offset' => $offset,
+                'sort' => $sort
+            )
+        );
+
+        $userid = $params['userid'];
+        $limit = $params['limit'];
+        $offset = $params['offset'];
+        $sort = $params['sort'];
+
+        $usercontext = context_user::instance($userid);
+
+        self::validate_context($usercontext);
+
+        if ($userid != $USER->id and !has_capability('moodle/user:viewdetails', $usercontext)) {
+            return array();
+        }
+
+        $courses = course_get_recent_courses($userid, $limit, $offset, $sort);
+
+        $renderer = $PAGE->get_renderer('core');
+
+        $recentcourses = array_map(function($course) use ($renderer) {
+            context_helper::preload_from_record($course);
+            $context = context_course::instance($course->id);
+            $isfavourite = !empty($course->component);
+            $exporter = new course_summary_exporter($course, ['context' => $context, 'isfavourite' => $isfavourite]);
+            return $exporter->export($renderer);
+        }, $courses);
+
+        return $recentcourses;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.6
+     */
+    public static function get_recent_courses_returns() {
+        return new external_multiple_structure(course_summary_exporter::get_read_structure(), 'Courses');
     }
 }

@@ -16547,15 +16547,21 @@ body {
   width: 35px;
 }
 .block_starredcourses .empty-placeholder-image-lg,
+.block_recentlyaccesseditems .empty-placeholder-image-lg,
+.block_recentlyaccessedcourses .empty-placeholder-image-lg,
 .block_myoverview .empty-placeholder-image-lg {
   height: 125px;
 }
 .block_starredcourses .course-info-container,
+.block_recentlyaccesseditems .course-info-container,
+.block_recentlyaccessedcourses .course-info-container,
 .block_myoverview .course-info-container {
   flex: 1 1 auto;
   padding: 0.8rem;
 }
 .block_starredcourses .dashboard-card-footer,
+.block_recentlyaccesseditems .dashboard-card-footer,
+.block_recentlyaccessedcourses .dashboard-card-footer,
 .block_myoverview .dashboard-card-footer {
   padding: 0.8rem;
   background-color: #f5f5f5;
@@ -16568,15 +16574,21 @@ body {
   border-bottom-left-radius: 4px;
 }
 .block_starredcourses .progress,
+.block_recentlyaccesseditems .progress,
+.block_recentlyaccessedcourses .progress,
 .block_myoverview .progress {
   height: 0.5rem;
   margin-bottom: 0;
 }
 .block_starredcourses .list-group,
+.block_recentlyaccesseditems .list-group,
+.block_recentlyaccessedcourses .list-group,
 .block_myoverview .list-group {
   margin: 0;
 }
 .block_starredcourses .course-listitem,
+.block_recentlyaccesseditems .course-listitem,
+.block_recentlyaccessedcourses .course-listitem,
 .block_myoverview .course-listitem {
   display: block;
   padding: 0.75rem 1.25rem;
@@ -16588,6 +16600,8 @@ body {
   border-radius: 4px;
 }
 .block_starredcourses .course-summaryitem,
+.block_recentlyaccesseditems .course-summaryitem,
+.block_recentlyaccessedcourses .course-summaryitem,
 .block_myoverview .course-summaryitem {
   padding: 0.5rem;
   background-color: #fff;
@@ -16597,37 +16611,24 @@ body {
   border-radius: 4px;
 }
 .block_starredcourses .summary img,
+.block_recentlyaccesseditems .summary img,
+.block_recentlyaccessedcourses .summary img,
 .block_myoverview .summary img {
   max-width: 100%;
 }
 @media (max-width: 576px) {
   .block_starredcourses .summaryimage,
+  .block_recentlyaccesseditems .summaryimage,
+  .block_recentlyaccessedcourses .summaryimage,
   .block_myoverview .summaryimage {
     max-height: 7rem;
   }
 }
-.block_starredcourses .dashboard-card-deck {
+.block_starredcourses .dashboard-card-deck,
+.block_recentlyaccesseditems .dashboard-card-deck,
+.block_recentlyaccessedcourses .dashboard-card-deck {
   flex-flow: nowrap;
   overflow-y: scroll;
-}
-.block_recentlyaccesseditems [data-region="recentlyaccesseditems-view-content"] {
-  overflow-x: hidden;
-}
-.block_recentlyaccesseditems .dashboard-card {
-  height: 75px;
-}
-@media (min-width: 576px) {
-  .block_recentlyaccesseditems .dashboard-card-deck {
-    height: 75px;
-    overflow: hidden;
-  }
-}
-.block_recentlyaccesseditems .empty-placeholder-image-lg {
-  height: 125px;
-}
-.block_recentlyaccesseditems .course-info-container {
-  flex: 1 1 auto;
-  padding: 0.8rem;
 }
 .block_recentlyaccesseditems .icon-size-4 .icon {
   height: auto;

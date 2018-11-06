@@ -341,8 +341,9 @@
 }
 
 .block_starredcourses,
+.block_recentlyaccesseditems,
+.block_recentlyaccessedcourses,
 .block_myoverview {
-
     .empty-placeholder-image-lg {
         height: 125px;
     }
@@ -388,7 +389,9 @@
     }
 }
 
-.block_starredcourses {
+.block_starredcourses,
+.block_recentlyaccesseditems,
+.block_recentlyaccessedcourses {
     .dashboard-card-deck {
         flex-flow: nowrap;
         overflow-y: scroll;
@@ -396,25 +399,6 @@
 }
 
 .block_recentlyaccesseditems {
-    [data-region="recentlyaccesseditems-view-content"] {
-        overflow-x: hidden;
-    }
-    .dashboard-card {
-        height: 75px;
-    }
-    .dashboard-card-deck {
-        @media (min-width: 576px) {
-            height: 75px;
-            overflow: hidden;
-        }
-    }
-    .empty-placeholder-image-lg {
-        height: 125px;
-    }
-    .course-info-container {
-        flex: 1 1 auto;
-        padding: 0.8rem;
-    }
     .icon-size-4 .icon {
         height: auto;
         width: auto;
