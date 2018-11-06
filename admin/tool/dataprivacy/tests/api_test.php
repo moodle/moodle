@@ -608,7 +608,6 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $datarequest = api::create_data_request($user->id, api::DATAREQUEST_TYPE_EXPORT, $comment);
         $this->assertEquals($user->id, $datarequest->get('userid'));
         $this->assertEquals($USER->id, $datarequest->get('requestedby'));
-        $this->assertEquals($USER->id, $datarequest->get('dpo'));
         $this->assertEquals(api::DATAREQUEST_TYPE_EXPORT, $datarequest->get('type'));
         $this->assertEquals(api::DATAREQUEST_STATUS_PENDING, $datarequest->get('status'));
         $this->assertEquals($comment, $datarequest->get('comments'));
