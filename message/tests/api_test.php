@@ -4503,7 +4503,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(true, $member1->showonlinestatus);
         $this->assertEquals(false, $member1->iscontact);
         $this->assertEquals(false, $member1->isblocked);
-        $this->assertCount(3, $member1->contactrequests);
+        $this->assertCount(2, $member1->contactrequests);
 
         $this->assertEquals($user2->id, $member2->id);
         $this->assertEquals(fullname($user2), $member2->fullname);
@@ -4511,7 +4511,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(true, $member2->showonlinestatus);
         $this->assertEquals(true, $member2->iscontact);
         $this->assertEquals(false, $member2->isblocked);
-        $this->assertCount(2, $member2->contactrequests);
+        $this->assertCount(1, $member2->contactrequests);
 
         $this->assertEquals($user3->id, $member3->id);
         $this->assertEquals(fullname($user3), $member3->fullname);
@@ -4519,12 +4519,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(true, $member3->showonlinestatus);
         $this->assertEquals(false, $member3->iscontact);
         $this->assertEquals(true, $member3->isblocked);
-        $this->assertCount(2, $member3->contactrequests);
+        $this->assertCount(1, $member3->contactrequests);
 
         // Confirm the contact requests are OK.
         $request1 = array_shift($member1->contactrequests);
         $request2 = array_shift($member1->contactrequests);
-        $request3 = array_shift($member1->contactrequests);
 
         $this->assertEquals($user1->id, $request1->userid);
         $this->assertEquals($user2->id, $request1->requesteduserid);
@@ -4532,26 +4531,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals($user1->id, $request2->userid);
         $this->assertEquals($user3->id, $request2->requesteduserid);
 
-        $this->assertEquals($user1->id, $request3->userid);
-        $this->assertEquals($user4->id, $request3->requesteduserid);
-
         $request1 = array_shift($member2->contactrequests);
-        $request2 = array_shift($member2->contactrequests);
 
         $this->assertEquals($user1->id, $request1->userid);
         $this->assertEquals($user2->id, $request1->requesteduserid);
 
-        $this->assertEquals($user2->id, $request2->userid);
-        $this->assertEquals($user3->id, $request2->requesteduserid);
-
         $request1 = array_shift($member3->contactrequests);
-        $request2 = array_shift($member3->contactrequests);
 
         $this->assertEquals($user1->id, $request1->userid);
         $this->assertEquals($user3->id, $request1->requesteduserid);
-
-        $this->assertEquals($user2->id, $request2->userid);
-        $this->assertEquals($user3->id, $request2->requesteduserid);
     }
 
     /**

@@ -538,9 +538,10 @@ class helper {
         if (!empty($members) && $includecontactrequests) {
             list($useridsql, $usersparams) = $DB->get_in_or_equal($userids);
 
-            $wheresql = "(userid $useridsql OR requesteduserid $useridsql)";
-            if ($contactrequests = $DB->get_records_select('message_contact_requests', $wheresql,
-                array_merge($usersparams, $usersparams), 'timecreated ASC, id ASC')) {
+            $wheresql = "(userid $useridsql AND requesteduserid = ?) OR (userid = ? AND requesteduserid $useridsql)";
+            $params = array_merge($usersparams, [$referenceuserid, $referenceuserid], $usersparams);
+            if ($contactrequests = $DB->get_records_select('message_contact_requests', $wheresql, $params,
+                    'timecreated ASC, id ASC')) {
                 foreach ($contactrequests as $contactrequest) {
                     if (isset($members[$contactrequest->userid])) {
                         $members[$contactrequest->userid]->contactrequests[] = $contactrequest;
