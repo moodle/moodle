@@ -53,6 +53,10 @@ class tool_dataprivacy_task_testcase extends data_privacy_testcase {
 
         $this->resetAfterTest();
         $this->setAdminUser();
+
+        // Enable automatic creation of delete data requests.
+        set_config('automaticdeletionrequests', 1, 'tool_dataprivacy');
+
         // Create a user.
         $user = $this->getDataGenerator()->create_user();
         // Mark the user as deleted.
@@ -71,6 +75,35 @@ class tool_dataprivacy_task_testcase extends data_privacy_testcase {
 
     /**
      * Ensure that a delete data request for pre-existing deleted users
+     * is not being created when automatic creation of delete data requests is disabled.
+     */
+    public function test_delete_existing_deleted_users_task_automatic_creation_disabled() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Disable automatic creation of delete data requests.
+        set_config('automaticdeletionrequests', 0, 'tool_dataprivacy');
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+        // Mark the user as deleted.
+        $user->deleted = 1;
+        $DB->update_record('user', $user);
+
+        // The user should not have a delete data request.
+        $this->assertCount(0, api::get_data_requests($user->id, [],
+            [api::DATAREQUEST_TYPE_DELETE]));
+
+        $this->execute_task('tool_dataprivacy\task\delete_existing_deleted_users');
+        // After running the scheduled task, the deleted user should still not have a delete data request.
+        $this->assertCount(0, api::get_data_requests($user->id, [],
+            [api::DATAREQUEST_TYPE_DELETE]));
+    }
+
+    /**
+     * Ensure that a delete data request for pre-existing deleted users
      * is created when there are existing non-delete data requests
      * for that particular user.
      */
@@ -79,6 +112,10 @@ class tool_dataprivacy_task_testcase extends data_privacy_testcase {
 
         $this->resetAfterTest();
         $this->setAdminUser();
+
+        // Enable automatic creation of delete data requests.
+        set_config('automaticdeletionrequests', 1, 'tool_dataprivacy');
+
         // Create a user.
         $user = $this->getDataGenerator()->create_user();
         // Create export data request for the user.
@@ -106,8 +143,14 @@ class tool_dataprivacy_task_testcase extends data_privacy_testcase {
      * for that particular user.
      */
     public function test_delete_existing_deleted_users_task_existing_ongoing_delete_data_requests() {
+        global $DB;
+
         $this->resetAfterTest();
         $this->setAdminUser();
+
+        // Enable automatic creation of delete data requests.
+        set_config('automaticdeletionrequests', 1, 'tool_dataprivacy');
+
         // Create a user.
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
@@ -120,9 +163,10 @@ class tool_dataprivacy_task_testcase extends data_privacy_testcase {
         $this->assertCount(1, api::get_data_requests($user->id,
                 [api::DATAREQUEST_STATUS_AWAITING_APPROVAL], [api::DATAREQUEST_TYPE_DELETE]));
 
-        $this->setAdminUser();
-        // Delete the user.
-        delete_user($user);
+        // Mark the user as deleted.
+        $user->deleted = 1;
+        $DB->update_record('user', $user);
+
         // The user should still have the existing ongoing delete data request.
         $this->assertCount(1, \tool_dataprivacy\api::get_data_requests($user->id,
                 [api::DATAREQUEST_STATUS_AWAITING_APPROVAL], [api::DATAREQUEST_TYPE_DELETE]));
@@ -142,8 +186,14 @@ class tool_dataprivacy_task_testcase extends data_privacy_testcase {
      * for that particular user.
      */
     public function test_delete_existing_deleted_users_task_existing_finished_delete_data_requests() {
+        global $DB;
+
         $this->resetAfterTest();
         $this->setAdminUser();
+
+        // Enable automatic creation of delete data requests.
+        set_config('automaticdeletionrequests', 1, 'tool_dataprivacy');
+
         // Create a user.
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
@@ -158,9 +208,10 @@ class tool_dataprivacy_task_testcase extends data_privacy_testcase {
         // The user should not have an ongoing data requests.
         $this->assertFalse(api::has_ongoing_request($user->id, api::DATAREQUEST_TYPE_DELETE));
 
-        $this->setAdminUser();
-        // Delete the user.
-        delete_user($user);
+        // Mark the user as deleted.
+        $user->deleted = 1;
+        $DB->update_record('user', $user);
+
         // The user should still have the existing finished delete data request.
         $this->assertCount(1, \tool_dataprivacy\api::get_data_requests($user->id,
                 [api::DATAREQUEST_STATUS_CANCELLED], [api::DATAREQUEST_TYPE_DELETE]));
