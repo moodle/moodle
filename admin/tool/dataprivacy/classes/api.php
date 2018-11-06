@@ -437,8 +437,8 @@ class api {
             self::DATAREQUEST_STATUS_EXPIRED,
             self::DATAREQUEST_STATUS_DELETED,
         ];
-        list($insql, $inparams) = $DB->get_in_or_equal($nonpendingstatuses, SQL_PARAMS_NAMED);
-        $select = 'type = :type AND userid = :userid AND status NOT ' . $insql;
+        list($insql, $inparams) = $DB->get_in_or_equal($nonpendingstatuses, SQL_PARAMS_NAMED, 'st', false);
+        $select = "type = :type AND userid = :userid AND status {$insql}";
         $params = array_merge([
             'type' => $type,
             'userid' => $userid
