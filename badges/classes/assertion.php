@@ -34,6 +34,8 @@ defined('MOODLE_INTERNAL') || die();
  * - Badge Class (general information about a badge and what it is intended to represent)
  * - Issuer Class (general information of an issuing organisation)
  */
+require_once($CFG->libdir . '/badgeslib.php');
+require_once($CFG->dirroot . '/badges/renderer.php');
 
 /**
  * Class that represents badge assertion.
@@ -46,12 +48,16 @@ class core_badges_assertion {
     /** @var moodle_url Issued badge url */
     private $_url;
 
+    /** @var int $obversion to control version JSON-LD. */
+    private $_obversion = OPEN_BADGES_V1;
+
     /**
      * Constructs with issued badge unique hash.
      *
      * @param string $hash Badge unique hash from badge_issued table.
+     * @param int $obversion to control version JSON-LD.
      */
-    public function __construct($hash) {
+    public function __construct($hash, $obversion = OPEN_BADGES_V1) {
         global $DB;
 
         $this->_data = $DB->get_record_sql('
@@ -78,6 +84,7 @@ class core_badges_assertion {
         } else {
             $this->_url = new moodle_url('/badges/badge.php');
         }
+        $this->_obversion = $obversion;
     }
 
     /**
@@ -111,6 +118,7 @@ class core_badges_assertion {
             if (!empty($this->_data->dateexpire)) {
                 $assertion['expires'] = $this->_data->dateexpire;
             }
+            $this->embed_data_badge_version2($assertion, OPEN_BADGES_V2_TYPE_ASSERTION);
         }
         return $assertion;
     }
@@ -136,6 +144,7 @@ class core_badges_assertion {
             $class['image'] = moodle_url::make_pluginfile_url($context->id, 'badges', 'badgeimage', $this->_data->id, '/', 'f1')->out(false);
             $class['criteria'] = $this->_url->out(false); // Currently issued badge URL.
             $class['issuer'] = $issuerurl->out(false);
+            $this->embed_data_badge_version2($class, OPEN_BADGES_V2_TYPE_BADGE);
         }
         return $class;
     }
@@ -156,7 +165,169 @@ class core_badges_assertion {
                 $issuer['email'] = $this->_data->issuercontact;
             }
         }
+        $this->embed_data_badge_version2($issuer, OPEN_BADGES_V2_TYPE_ISSUER);
         return $issuer;
     }
 
+    /**
+     * Get related badges of the badge.
+     *
+     * @param badge $badge Badge object.
+     * @return array|bool List related badges.
+     */
+    public function get_related_badges(badge $badge) {
+        global $DB;
+        $arraybadges = array();
+        $relatedbadges = $badge->get_related_badges(true);
+        if ($relatedbadges) {
+            foreach ($relatedbadges as $rb) {
+                $url = new moodle_url('/badges/badge_json.php', array('id' => $rb->id));
+                $arraybadges[] = array(
+                    'id'        => $url->out(false),
+                    'version'   => $rb->version,
+                    '@language' => $rb->language
+                );
+            }
+        }
+        return $arraybadges;
+    }
+
+    /**
+     * Get endorsement of the badge.
+     *
+     * @return false|stdClass Endorsement information.
+     */
+    public function get_endorsement() {
+        global $DB;
+        $endorsement = array();
+        $record = $DB->get_record_select('badge_endorsement', 'badgeid = ?', array($this->_data->id));
+        return $record;
+    }
+
+    /**
+     * Get criteria of badge class.
+     *
+     * @return array|string Criteria information.
+     */
+    public function get_criteria_badge_class() {
+        $badge = new badge($this->_data->id);
+        $narrative = $badge->markdown_badge_criteria();
+        if (!empty($narrative)) {
+            $criteria = array();
+            $criteria['id'] = $this->_url->out(false);
+            $criteria['narrative'] = $narrative;
+            return $criteria;
+        } else {
+            return $this->_url->out(false);
+        }
+    }
+
+    /**
+     * Get competencies alignment of the badge.
+     *
+     * @return array competencies information.
+     */
+    public function get_competencies_alignment() {
+        global $DB;
+        $badgeid = $this->_data->id;
+        $alignments = array();
+        $items = $DB->get_records_select('badge_competencies', 'badgeid = ?', array($badgeid));
+        foreach ($items as $item) {
+            $alignment = array('targetName' => $item->targetname, 'targetUrl' => $item->targeturl);
+            if ($item->targetdescription) {
+                $alignment['targetDescription'] = $item->targetdescription;
+            }
+            if ($item->targetframework) {
+                $alignment['targetFramework'] = $item->targetframework;
+            }
+            if ($item->targetcode) {
+                $alignment['targetCode'] = $item->targetcode;
+            }
+            $alignments[] = $alignment;
+        }
+        return $alignments;
+    }
+
+    /**
+     * Embed data of Open Badges Specification Version 2.0 to json.
+     *
+     * @param array $json for assertion, badges, issuer.
+     * @param string $type Content type.
+     */
+    protected function embed_data_badge_version2 (&$json, $type = OPEN_BADGES_V2_TYPE_ASSERTION) {
+        // Specification Version 2.0.
+        if ($this->_obversion == OPEN_BADGES_V2) {
+            $badge = new badge($this->_data->id);
+            if (empty($this->_data->courseid)) {
+                $context = context_system::instance();
+            } else {
+                $context = context_course::instance($this->_data->courseid);
+            }
+
+            $hash = $this->_data->uniquehash;
+            $assertionsurl = new moodle_url('/badges/assertion.php', array('b' => $hash, 'obversion' => $this->_obversion));
+            $classurl = new moodle_url(
+                '/badges/assertion.php',
+                array('b' => $hash, 'action' => 1, 'obversion' => $this->_obversion)
+            );
+            $issuerurl = new moodle_url('/badges/assertion.php', array('b' => $this->_data->uniquehash, 'action' => 0,
+                'obversion' => $this->_obversion));
+            // For assertion.
+            if ($type == OPEN_BADGES_V2_TYPE_ASSERTION) {
+                $json['@context'] = OPEN_BADGES_V2_CONTEXT;
+                $json['type'] = OPEN_BADGES_V2_TYPE_ASSERTION;
+                $json['id'] = $assertionsurl->out(false);
+                $json['badge'] = $this->get_badge_class();
+                $json['issuedOn'] = date('c', $this->_data->dateissued);
+                if (!empty($this->_data->dateexpire)) {
+                    $json['expires'] = date('c', $this->_data->dateexpire);
+                }
+                unset($json['uid']);
+            }
+
+            // For Badge.
+            if ($type == OPEN_BADGES_V2_TYPE_BADGE) {
+                $json['@context'] = OPEN_BADGES_V2_CONTEXT;
+                $json['id'] = $classurl->out(false);
+                $json['type'] = OPEN_BADGES_V2_TYPE_BADGE;
+                $json['version'] = $this->_data->version;
+                $json['criteria'] = $this->get_criteria_badge_class();
+                $json['issuer'] = $this->get_issuer();
+                $json['@language'] = $this->_data->language;
+                if (!empty($relatedbadges = $this->get_related_badges($badge))) {
+                    $json['related'] = $relatedbadges;
+                }
+                if ($endorsement = $this->get_endorsement()) {
+                    $endorsementurl = new moodle_url('/badges/endorsement_json.php', array('id' => $this->_data->id));
+                    $json['endorsement'] = $endorsementurl->out(false);
+                }
+                if ($competencies = $this->get_competencies_alignment()) {
+                    $json['alignment'] = $competencies;
+                }
+                if ($this->_data->imageauthorname ||
+                        $this->_data->imageauthoremail ||
+                        $this->_data->imageauthorurl ||
+                        $this->_data->imagecaption) {
+                    $urlimage = moodle_url::make_pluginfile_url($context->id,
+                        'badges', 'badgeimage', $this->_data->id, '/', 'f1')->out(false);
+                    $json['image'] = array();
+                    $json['image']['id'] = $urlimage;
+                    if ($this->_data->imageauthorname || $this->_data->imageauthoremail || $this->_data->imageauthorurl) {
+                        $authorimage = new moodle_url('/badges/image_author_json.php', array('id' => $this->_data->id));
+                        $json['image']['author'] = $authorimage->out(false);
+                    }
+                    if ($this->_data->imagecaption) {
+                        $json['image']['caption'] = $this->_data->imagecaption;
+                    }
+                }
+            }
+
+            // For issuer.
+            if ($type == OPEN_BADGES_V2_TYPE_ISSUER) {
+                $json['@context'] = OPEN_BADGES_V2_CONTEXT;
+                $json['id'] = $issuerurl->out(false);
+                $json['type'] = OPEN_BADGES_V2_TYPE_ISSUER;
+            }
+        }
+    }
 }

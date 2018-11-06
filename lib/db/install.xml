@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20181022" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20181105" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -3039,6 +3039,12 @@
         <FIELD NAME="notification" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Message when badge is awarded"/>
         <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Badge status: 0 = inactive, 1 = active, 2 = active+locked, 3 = inactive+locked, 4 = archived"/>
         <FIELD NAME="nextcron" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="version" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="language" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="imageauthorname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="imageauthoremail" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="imageauthorurl" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="imagecaption" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -3115,6 +3121,22 @@
         <KEY NAME="fk_issuedid" TYPE="foreign" FIELDS="issuedid" REFTABLE="badge_issued" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="badge_endorsement" COMMENT="Defines endorsement for badge">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="badgeid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="issuername" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="issuerurl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="issueremail" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="claimid" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="claimcomment" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="dateissued" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="endorsementbadge" TYPE="foreign" FIELDS="badgeid" REFTABLE="badge" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
     <TABLE NAME="badge_manual_award" COMMENT="Track manual award criteria for badges">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
@@ -3156,6 +3178,34 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="fk_backpackid" TYPE="foreign" FIELDS="backpackid" REFTABLE="badge_backpack" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="badge_competencies" COMMENT="Defines competencies alignment for badges">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="badgeid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="targetname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="targeturl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="targetdescription" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="targetframework" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="targetcode" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="competenciesbadge" TYPE="foreign" FIELDS="badgeid" REFTABLE="badge" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="badge_related" COMMENT="Defines badge related for badges">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="badgeid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="relatedbadgeid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="badgeid" TYPE="foreign" FIELDS="badgeid" REFTABLE="badge" REFFIELDS="id"/>
+        <KEY NAME="relatedbadgeid" TYPE="foreign" FIELDS="relatedbadgeid" REFTABLE="badge" REFFIELDS="id"/>
+        <KEY NAME="badgeid-relatedbadgeid" TYPE="unique" FIELDS="badgeid, relatedbadgeid"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="user_devices" COMMENT="This table stores user's mobile devices information in order to send PUSH notifications">

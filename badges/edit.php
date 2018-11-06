@@ -84,15 +84,21 @@ $editoroptions = array(
         );
 $badge = file_prepare_standard_editor($badge, 'message', $editoroptions, $context);
 
-$form_class = 'edit_' . $action . '_form';
-$form = new $form_class($currenturl, array('badge' => $badge, 'action' => $action, 'editoroptions' => $editoroptions));
+$formclass = 'edit_' . $action . '_form';
+$form = new $formclass($currenturl, array('badge' => $badge, 'action' => $action, 'editoroptions' => $editoroptions));
 
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/badges/overview.php', array('id' => $badgeid)));
 } else if ($form->is_submitted() && $form->is_validated() && ($data = $form->get_data())) {
     if ($action == 'details') {
         $badge->name = $data->name;
+        $badge->version = trim($data->version);
+        $badge->language = $data->language;
         $badge->description = $data->description;
+        $badge->imageauthorname = $data->imageauthorname;
+        $badge->imageauthoremail = $data->imageauthoremail;
+        $badge->imageauthorurl = $data->imageauthorurl;
+        $badge->imagecaption = $data->imagecaption;
         $badge->usermodified = $USER->id;
         $badge->issuername = $data->issuername;
         $badge->issuerurl = $data->issuerurl;

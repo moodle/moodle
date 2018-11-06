@@ -45,6 +45,7 @@ class edit_details_form extends moodleform {
         $mform = $this->_form;
         $badge = (isset($this->_customdata['badge'])) ? $this->_customdata['badge'] : false;
         $action = $this->_customdata['action'];
+        $languages = get_string_manager()->get_list_of_languages();
 
         $mform->addElement('header', 'badgedetails', get_string('badgedetails', 'badges'));
         $mform->addElement('text', 'name', get_string('name'), array('size' => '70'));
@@ -52,6 +53,12 @@ class edit_details_form extends moodleform {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+
+        $mform->addElement('text', 'version', get_string('version', 'badges'), array('size' => '70'));
+        $mform->setType('version', PARAM_TEXT);
+        $mform->addHelpButton('version', 'version', 'badges');
+        $mform->addElement('select', 'language', get_string('language'), $languages);
+        $mform->addHelpButton('language', 'language', 'badges');
 
         $mform->addElement('textarea', 'description', get_string('description', 'badges'), 'wrap="virtual" rows="8" cols="70"');
         $mform->setType('description', PARAM_NOTAGS);
@@ -68,6 +75,18 @@ class edit_details_form extends moodleform {
             $mform->insertElementBefore($currentimage, 'image');
         }
         $mform->addHelpButton('image', 'badgeimage', 'badges');
+        $mform->addElement('text', 'imageauthorname', get_string('imageauthorname', 'badges'), array('size' => '70'));
+        $mform->setType('imageauthorname', PARAM_TEXT);
+        $mform->addHelpButton('imageauthorname', 'imageauthorname', 'badges');
+        $mform->addElement('text', 'imageauthoremail', get_string('imageauthoremail', 'badges'), array('size' => '70'));
+        $mform->setType('imageauthoremail', PARAM_TEXT);
+        $mform->addHelpButton('imageauthoremail', 'imageauthoremail', 'badges');
+        $mform->addElement('text', 'imageauthorurl', get_string('imageauthorurl', 'badges'), array('size' => '70'));
+        $mform->setType('imageauthorurl', PARAM_URL);
+        $mform->addHelpButton('imageauthorurl', 'imageauthorurl', 'badges');
+        $mform->addElement('text', 'imagecaption', get_string('imagecaption', 'badges'), array('size' => '70'));
+        $mform->setType('imagecaption', PARAM_TEXT);
+        $mform->addHelpButton('imagecaption', 'imagecaption', 'badges');
 
         $mform->addElement('header', 'issuerdetails', get_string('issuerdetails', 'badges'));
 
@@ -118,6 +137,7 @@ class edit_details_form extends moodleform {
         $mform->setType('action', PARAM_TEXT);
 
         if ($action == 'new') {
+            $mform->setDefault('language', $CFG->lang);
             $this->add_action_buttons(true, get_string('createbutton', 'badges'));
         } else {
             // Add hidden fields.
@@ -172,6 +192,10 @@ class edit_details_form extends moodleform {
 
         if ($data['expiry'] == 1 && $data['expiredate'] <= time()) {
             $errors['expirydategr'] = get_string('error:invalidexpiredate', 'badges');
+        }
+
+        if ($data['imageauthoremail'] && !validate_email($data['imageauthoremail'])) {
+            $errors['imageauthoremail'] = get_string('invalidemail');
         }
 
         // Check for duplicate badge names.
