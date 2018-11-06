@@ -227,25 +227,24 @@ class api {
      * @param int $foruser The user whom the request is being made for.
      * @param int $type The request type.
      * @param string $comments Request comments.
+     * @param int $creationmethod The creation method of the data request.
      * @return data_request
      * @throws invalid_persistent_exception
      * @throws coding_exception
      */
-    public static function create_data_request($foruser, $type, $comments = '') {
-        global $USER;
+    public static function create_data_request($foruser, $type, $comments = '',
+                                               $creationmethod = data_request::DATAREQUEST_CREATION_MANUAL) {
+        global $USER, $ADMIN;
 
         $datarequest = new data_request();
         // The user the request is being made for.
         $datarequest->set('userid', $foruser);
 
-        $requestinguser = $USER->id;
-        // Check when the user is making a request on behalf of another.
-        if ($requestinguser != $foruser) {
-            if (self::is_site_dpo($requestinguser)) {
-                // The user making the request is a DPO. Should be fine.
-                $datarequest->set('dpo', $requestinguser);
-            }
-        }
+        // The cron is considered to be a guest user when it creates a data request.
+        // NOTE: This should probably be changed. We should leave the default value for $requestinguser if
+        // the request is not explicitly created by a specific user.
+        $requestinguser = (isguestuser() && $creationmethod == data_request::DATAREQUEST_CREATION_AUTO) ?
+                $ADMIN->id : $USER->id;
         // The user making the request.
         $datarequest->set('requestedby', $requestinguser);
         // Set status.
