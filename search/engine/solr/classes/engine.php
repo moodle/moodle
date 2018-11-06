@@ -1170,7 +1170,13 @@ class engine extends \core_search\engine {
 
         if ($CFG->proxyhost && !is_proxybypass('http://' . $this->config->server_hostname . '/')) {
             $options['proxy_host'] = $CFG->proxyhost;
-            $options['proxy_port'] = $CFG->proxyport;
+            if (!empty($CFG->proxyport)) {
+                $options['proxy_port'] = $CFG->proxyport;
+            }
+            if (!empty($CFG->proxyuser) && !empty($CFG->proxypassword)) {
+                $options['proxy_login'] = $CFG->proxyuser;
+                $options['proxy_password'] = $CFG->proxypassword;
+            }
         }
 
         if (!class_exists('\SolrClient')) {
