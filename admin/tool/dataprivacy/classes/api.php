@@ -448,6 +448,48 @@ class api {
     }
 
     /**
+     * Find whether any ongoing requests exist for a set of users.
+     *
+     * @param   array   $userids
+     * @return  array
+     */
+    public static function find_ongoing_request_types_for_users(array $userids) : array {
+        global $DB;
+
+        if (empty($userids)) {
+            return [];
+        }
+
+        // Check if the user already has an incomplete data request of the same type.
+        $nonpendingstatuses = [
+            self::DATAREQUEST_STATUS_COMPLETE,
+            self::DATAREQUEST_STATUS_CANCELLED,
+            self::DATAREQUEST_STATUS_REJECTED,
+            self::DATAREQUEST_STATUS_DOWNLOAD_READY,
+            self::DATAREQUEST_STATUS_EXPIRED,
+            self::DATAREQUEST_STATUS_DELETED,
+        ];
+        list($statusinsql, $statusparams) = $DB->get_in_or_equal($nonpendingstatuses, SQL_PARAMS_NAMED, 'st', false);
+        list($userinsql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'us');
+
+        $select = "userid {$userinsql} AND status {$statusinsql}";
+        $params = array_merge($statusparams, $userparams);
+
+        $requests = $DB->get_records_select(data_request::TABLE, $select, $params, 'userid', 'id, userid, type');
+
+        $returnval = [];
+        foreach ($userids as $userid) {
+            $returnval[$userid] = (object) [];
+        }
+
+        foreach ($requests as $request) {
+            $returnval[$request->userid]->{$request->type} = true;
+        }
+
+        return $returnval;
+    }
+
+    /**
      * Determines whether a request is active or not based on its status.
      *
      * @param int $status The request status.
