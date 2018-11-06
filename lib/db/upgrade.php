@@ -2672,7 +2672,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018102900.01);
     }
 
-    if ($oldversion < 2018110300.01) {
+    if ($oldversion < 2018110500.01) {
         // Define fields to be added to the 'badge' table.
         $tablebadge = new xmldb_table('badge');
         $fieldversion = new xmldb_field('version', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'nextcron');
@@ -2766,7 +2766,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2018110300.01);
+        upgrade_main_savepoint(true, 2018110500.01);
     }
 
     return true;
