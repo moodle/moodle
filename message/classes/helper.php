@@ -507,11 +507,11 @@ class helper {
         $userssql = "SELECT $userfields, u.deleted, mc.id AS contactid, mub.id AS blockedid
                        FROM {user} u
                   LEFT JOIN {message_contacts} mc
-                         ON (mc.userid = ? AND mc.contactid = u.id)
+                         ON ((mc.userid = ? AND mc.contactid = u.id) OR (mc.userid = u.id AND mc.contactid = ?))
                   LEFT JOIN {message_users_blocked} mub
                          ON (mub.userid = ? AND mub.blockeduserid = u.id)
                       WHERE u.id $useridsql";
-        $usersparams = array_merge([$referenceuserid, $referenceuserid], $usersparams);
+        $usersparams = array_merge([$referenceuserid, $referenceuserid, $referenceuserid], $usersparams);
         $otherusers = $DB->get_records_sql($userssql, $usersparams);
 
         $members = [];
