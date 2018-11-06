@@ -3196,7 +3196,7 @@ class core_message_external extends external_api {
      * @since 3.6
      */
     public static function mark_all_conversation_messages_as_read_returns() {
-        return new external_warnings();
+        return null;
     }
 
     /**
