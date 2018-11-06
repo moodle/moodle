@@ -21,6 +21,9 @@ Feature: Access to full profiles of users
       | student2 | C1 | student |
       | teacher1 | C1 | editingteacher |
       | student3 | C2 | student |
+    And the following config values are set as admin:
+      | messaging | 1 |
+      | messagingallusers | 1 |
 
   Scenario: Viewing full profiles with default settings
     When I log in as "student1"
