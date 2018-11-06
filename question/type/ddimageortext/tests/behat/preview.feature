@@ -30,7 +30,7 @@ Feature: Preview a drag-drop onto image question
     And I switch to "questionpreview" window
     # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
     # Keep window large else drag will scroll the window to find element.
-    And I change window size to "large"
+    And I change window size to "medium"
     And I wait "2" seconds
     # Odd, but the <br>s go to nothing, not a space.
     And I drag "mountainbelt" to place "1" in the drag and drop onto image question
@@ -51,7 +51,7 @@ Feature: Preview a drag-drop onto image question
     When I click on "Preview" "link" in the "Drag onto image" "table_row"
     And I switch to "questionpreview" window
     # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
-    And I change window size to "large"
+    And I change window size to "medium"
     And I wait "2" seconds
     And I type "       " on place "1" in the drag and drop onto image question
     And I type "       " on place "2" in the drag and drop onto image question

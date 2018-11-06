@@ -66,8 +66,9 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
         $img = html_writer::empty_tag('img', array(
                 'src' => $bgimage, 'class' => 'dropbackground',
                 'alt' => get_string('dropbackground', 'qtype_ddimageortext')));
+        $dropzones = html_writer::tag('div', '', array('class' => 'dropzones'));
 
-        $droparea = html_writer::tag('div', $img, array('class' => 'droparea'));
+        $droparea = html_writer::tag('div', $img . $dropzones, array('class' => 'droparea'));
 
         $dragimagehomes = '';
         foreach ($question->choices as $groupno => $group) {
@@ -77,13 +78,11 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
                 $dragimageurl = self::get_url_for_image($qa, 'dragimage', $dragimage->id);
                 $classes = array("group{$groupno}",
                                  'draghome',
-                                 "dragitemhomes{$dragimage->no}",
                                  "choice{$choiceno}");
                 if ($dragimage->infinite) {
                     $classes[] = 'infinite';
                 }
                 if ($dragimageurl === null) {
-                    $classes[] = 'yui3-cssfonts';
                     $dragimagehomesgroup .= html_writer::tag('div', $dragimage->text,
                             array('src' => $dragimageurl, 'class' => join(' ', $classes)));
                 } else {
@@ -96,31 +95,27 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
                     array('class' => 'dragitemgroup' . $groupno));
         }
 
+        $draghomes = html_writer::tag('div', $dragimagehomes, array('class' => 'draghomes'));
         $dragitemsclass = 'dragitems';
         if ($options->readonly) {
             $dragitemsclass .= ' readonly';
         }
-        $dragitems = html_writer::tag('div', $dragimagehomes, array('class' => $dragitemsclass));
-        $dropzones = html_writer::tag('div', '', array('class' => 'dropzones'));
+        $dragitems = html_writer::tag('div', '', array('class' => $dragitemsclass));
 
         $hiddens = '';
         foreach ($question->places as $placeno => $place) {
             $varname = $question->field($placeno);
-            list($fieldname, $html) = $this->hidden_field_for_qt_var($qa, $varname);
+            list($fieldname, $html) = $this->hidden_field_for_qt_var($qa, $varname, null,
+                    ['placeinput', 'place' . $placeno, 'group' . $place->group]);
             $hiddens .= $html;
             $question->places[$placeno]->fieldname = $fieldname;
         }
         $output .= html_writer::tag('div',
-                $droparea . $dragitems . $dropzones . $hiddens, array('class' => 'ddarea'));
-        $topnode = 'div#q'.$qa->get_slot().' div.ddarea';
-        $params = array('drops' => $question->places,
-                        'topnode' => $topnode,
-                        'readonly' => $options->readonly);
+                $droparea . $draghomes. $dragitems . $hiddens, array('class' => 'ddarea'));
 
         $PAGE->requires->string_for_js('blank', 'qtype_ddimageortext');
-        $PAGE->requires->yui_module('moodle-qtype_ddimageortext-dd',
-                                        'M.qtype_ddimageortext.init_question',
-                                        array($params));
+        $PAGE->requires->js_call_amd('qtype_ddimageortext/question', 'init',
+                ['q' . $qa->get_slot(), $options->readonly, $question->places]);
 
         if ($qa->get_state() == question_state::$invalid) {
             $output .= html_writer::nonempty_tag('div',

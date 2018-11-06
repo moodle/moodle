@@ -3,28 +3,73 @@
     display: block;
 }
 
-.que.ddimageortext div.droparea img,
-form.mform fieldset#id_previewareaheader div.droparea img {
+.que.ddimageortext div.ddarea,
+form.mform fieldset#id_previewareaheader div.ddarea {
+    text-align: center;
+}
+
+.que.ddimageortext div.droparea,
+form.mform fieldset#id_previewareaheader div.ddarea {
+    position: relative;
+}
+
+.que.ddimageortext .dropbackground,
+form.mform fieldset#id_previewareaheader .dropbackground {
     border: 1px solid #000;
     max-width: none;
+    margin: 0 auto;
+}
+
+.que.ddimageortext .dropzone {
+    position: absolute;
+    opacity: 0.5;
+    border: 1px solid black;
+    z-index: 1;
+}
+
+.que.ddimageortext .dropzone:focus,
+.que.ddimageortext .dropzone.valid-drag-over-drop {
+    border-color: #0a0;
+    box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
+    outline: 0;
 }
 
 .que.ddimageortext .draghome,
-form.mform fieldset#id_previewareaheader .draghome {
+.que.ddimageortext .drag,
+form.mform fieldset#id_previewareaheader .droppreview {
+    border: 1px solid black;
+    display: inline-block;
+    font: 13px/1.231 arial, helvetica, clean, sans-serif;
+}
+
+.que.ddimageortext .draghome {
     vertical-align: top;
     margin: 5px;
     visibility: hidden;
-}
-
-.que.ddimageortext div.draghome,
-form.mform fieldset#id_previewareaheader div.draghome {
-    border: 1px solid black;
-    cursor: move;
-    background-color: #b0c4de;
-    display: inline-block;
     height: auto;
     width: auto;
-    zoom: 1;
+}
+
+.que.ddimageortext .dragitems,
+form.mform fieldset#id_previewareaheader .dragitems {
+    height: 0;
+}
+
+.que.ddimageortext .drag,
+form.mform fieldset#id_previewareaheader .droppreview {
+    position: absolute;
+    cursor: move;
+    z-index: 2;
+}
+
+.que.ddimageortext .dragitems.readonly .drag {
+    cursor: auto;
+}
+
+form.mform fieldset#id_previewareaheader .drag.beingdragged,
+.que.ddimageortext .drag.beingdragged {
+    z-index: 3;
+    box-shadow: 3px 3px 4px #000;
 }
 
 .que.ddimageortext .group1,
@@ -67,51 +112,6 @@ form.mform fieldset#id_previewareaheader .group8 {
     background-color: #f0e68c;
 }
 
-.que.ddimageortext .drag,
-form.mform fieldset#id_previewareaheader .drag {
-    border: 1px solid black;
-    cursor: move;
-    z-index: 2;
-}
-
-.que.ddimageortext .dragitems.readonly .drag {
-    cursor: auto;
-}
-
-.que.ddimageortext div.ddarea,
-form.mform fieldset#id_previewareaheader div.ddarea {
-    text-align: center;
-}
-
-.que.ddimageortext .dropbackground,
-form.mform fieldset#id_previewareaheader .dropbackground {
-    margin: 0 auto;
-}
-
-.que.ddimageortext .dropzone {
-    border: 1px solid black;
-    position: absolute;
-    z-index: 1;
-}
-
-.que.ddimageortext .dropzone:focus,
-.que.ddimageortext .dropzone.yui3-dd-drop-over.yui3-dd-drop-active-valid {
-    border-color: #0a0;
-    box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
-}
-
-.que.ddimageortext div.dragitems div.draghome,
-.que.ddimageortext div.dragitems div.drag,
-form.mform fieldset#id_previewareaheader div.draghome,
-form.mform fieldset#id_previewareaheader div.drag {
-    font: 13px/1.231 arial, helvetica, clean, sans-serif;
-}
-
-form.mform fieldset#id_previewareaheader div.drag.yui3-dd-dragging,
-.que.ddimageortext div.drag.yui3-dd-dragging {
-    z-index: 3;
-    box-shadow: 3px 3px 4px #000;
-}
 /* Editing form. Style repeated elements*/
 /*Top*/
 body#page-question-type-ddimageortext div[id^=fgroup_id_][id*=drags_] {
