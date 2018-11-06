@@ -70,27 +70,6 @@ class initiate_data_request_task extends adhoc_task {
             return;
         }
 
-        $requestedby = $datarequest->get('requestedby');
-        $valid = true;
-        $comment = '';
-        $foruser = $datarequest->get('userid');
-        if ($foruser != $requestedby) {
-            if (!$valid = api::can_create_data_request_for_user($foruser, $requestedby)) {
-                $params = (object)[
-                    'requestedby' => $requestedby,
-                    'userid' => $foruser
-                ];
-                $comment = get_string('errornocapabilitytorequestforothers', 'tool_dataprivacy', $params);
-                mtrace($comment);
-            }
-        }
-        // Reject the request outright if it's invalid.
-        if (!$valid) {
-            $dpo = $datarequest->get('dpo');
-            api::update_request_status($requestid, api::DATAREQUEST_STATUS_REJECTED, $dpo, $comment);
-            return;
-        }
-
         // Update the status of this request as pre-processing.
         mtrace('Generating the contexts containing personal data for the user...');
         api::update_request_status($requestid, api::DATAREQUEST_STATUS_PREPROCESSING);
