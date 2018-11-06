@@ -113,7 +113,7 @@ if ($badge->status != BADGE_STATUS_INACTIVE) {
         }
     } else if ($action == 0) {
         // Get the content for issuer.
-        $json = $badge->get_json_issuer_related_badge();
+        $json = $badge->get_badge_issuer();
     }
 } else {
     // The badge doen't exist or not accessible for the users.
