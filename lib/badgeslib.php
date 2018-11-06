@@ -716,7 +716,12 @@ class badge {
 
         // Delete endorsements, competencies and related badges.
         $DB->delete_records('badge_endorsement', array('badgeid' => $this->id));
-        $DB->delete_records('badge_related', array('badgeid' => $this->id));
+        $relatedsql = 'badgeid = :badgeid OR relatedbadgeid = :relatedbadgeid';
+        $relatedparams = array(
+            'badgeid' => $this->id,
+            'relatedbadgeid' => $this->id
+        );
+        $DB->delete_records_select('badge_related', $relatedsql, $relatedparams);
         $DB->delete_records('badge_competencies', array('badgeid' => $this->id));
 
         // Finally, remove badge itself.

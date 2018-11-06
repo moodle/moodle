@@ -203,6 +203,45 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $this->assertAttributeEquals(BADGE_STATUS_ARCHIVED, 'status', $badge);
     }
 
+    /**
+     * Really delete the badge.
+     */
+    public function test_delete_badge_for_real() {
+        global $DB;
+
+        $badge = new badge($this->badgeid);
+
+        $newid1 = $badge->make_clone();
+        $newid2 = $badge->make_clone();
+        $newid3 = $badge->make_clone();
+
+        // Insert related badges to badge 1.
+        $badge->add_related_badges([$newid1, $newid2, $newid3]);
+
+        // Another badge.
+        $badge2 = new badge($newid2);
+        // Make badge 1 related for badge 2.
+        $badge2->add_related_badges([$this->badgeid]);
+
+        // Confirm that the records about this badge about its relations have been removed as well.
+        $relatedsql = 'badgeid = :badgeid OR relatedbadgeid = :relatedbadgeid';
+        $relatedparams = array(
+            'badgeid' => $this->badgeid,
+            'relatedbadgeid' => $this->badgeid
+        );
+        // Badge 1 has 4 related records. 3 where it's the badgeid, 1 where it's the relatedbadgeid.
+        $this->assertEquals(4, $DB->count_records_select('badge_related', $relatedsql, $relatedparams));
+
+        // Delete the badge for real.
+        $badge->delete(false);
+
+        // Confirm that the badge itself has been removed.
+        $this->assertFalse($DB->record_exists('badge', ['id' => $this->badgeid]));
+
+        // Confirm that the records about this badge about its relations have been removed as well.
+        $this->assertFalse($DB->record_exists_select('badge_related', $relatedsql, $relatedparams));
+    }
+
     public function test_create_badge_criteria() {
         $badge = new badge($this->badgeid);
         $criteria_overall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id));
