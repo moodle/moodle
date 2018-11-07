@@ -136,7 +136,6 @@ class helper {
     public static function get_request_statuses() {
         return [
             api::DATAREQUEST_STATUS_PENDING => get_string('statuspending', 'tool_dataprivacy'),
-            api::DATAREQUEST_STATUS_PREPROCESSING => get_string('statuspreprocessing', 'tool_dataprivacy'),
             api::DATAREQUEST_STATUS_AWAITING_APPROVAL => get_string('statusawaitingapproval', 'tool_dataprivacy'),
             api::DATAREQUEST_STATUS_APPROVED => get_string('statusapproved', 'tool_dataprivacy'),
             api::DATAREQUEST_STATUS_PROCESSING => get_string('statusprocessing', 'tool_dataprivacy'),

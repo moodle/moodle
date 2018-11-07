@@ -281,4 +281,54 @@ class behat_tool_dataprivacy extends behat_base {
             'categoryid' => $category->get('id'),
         ]);
     }
+
+    /**
+     * Create a dataprivacy request.
+     *
+     * @Given /^I create a dataprivacy "(?P<type_string>(?:[^"]|\\")*)" request for "(?P<user_string>(?:[^"]|\\")*)"$/
+     *
+     * @param string $type The type of request to create (delete, or export)
+     * @param string $username The username to create for
+     */
+    public function i_create_a_dataprivacy_request_for($type, $username) {
+        if ($type === 'delete') {
+            $type = \tool_dataprivacy\api::DATAREQUEST_TYPE_DELETE;
+        } else if ($type === 'export') {
+            $type = \tool_dataprivacy\api::DATAREQUEST_TYPE_EXPORT;
+        } else {
+            throw new \Behat\Behat\Tester\Exception\ExpectationException("Unknown request type '{$type}'");
+        }
+
+        $user = \core_user::get_user_by_username($username);
+
+        \tool_dataprivacy\api::create_data_request($user->id, $type);
+    }
+
+    /**
+     * Approve a dataprivacy request.
+     *
+     * @Given /^I approve a dataprivacy "(?P<type_string>(?:[^"]|\\")*)" request for "(?P<user_string>(?:[^"]|\\")*)"$/
+     *
+     * @param string $type The type of request to create (delete, or export)
+     * @param string $username The username to create for
+     */
+    public function i_approve_a_dataprivacy_request_for($type, $username) {
+        if ($type === 'delete') {
+            $type = \tool_dataprivacy\api::DATAREQUEST_TYPE_DELETE;
+        } else if ($type === 'export') {
+            $type = \tool_dataprivacy\api::DATAREQUEST_TYPE_EXPORT;
+        } else {
+            throw new \Behat\Behat\Tester\Exception\ExpectationException("Unknown request type '{$type}'");
+        }
+
+        $user = \core_user::get_user_by_username($username);
+
+        $request = \tool_dataprivacy\data_request::get_record([
+            'userid'    => $user->id,
+            'type'      => $type,
+            'status'    => \tool_dataprivacy\api::DATAREQUEST_STATUS_AWAITING_APPROVAL,
+        ]);
+
+        \tool_dataprivacy\api::approve_data_request($request->get('id'));
+    }
 }

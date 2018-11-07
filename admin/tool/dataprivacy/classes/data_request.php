@@ -83,10 +83,9 @@ class data_request extends persistent {
                 'type' => PARAM_INT
             ],
             'status' => [
-                'default' => api::DATAREQUEST_STATUS_PENDING,
+                'default' => api::DATAREQUEST_STATUS_AWAITING_APPROVAL,
                 'choices' => [
                     api::DATAREQUEST_STATUS_PENDING,
-                    api::DATAREQUEST_STATUS_PREPROCESSING,
                     api::DATAREQUEST_STATUS_AWAITING_APPROVAL,
                     api::DATAREQUEST_STATUS_APPROVED,
                     api::DATAREQUEST_STATUS_PROCESSING,
