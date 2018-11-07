@@ -3022,14 +3022,11 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertContains($user1->id, $membersid);
         $this->assertContains($user2->id, $membersid);
         $this->assertContains($user3->id, $membersid);
-        $this->assertNotContains($user4->id, $membersid);
-        $this->assertNotContains($user5->id, $membersid);
+
         $membersfullnames = [$members[0]['fullname'], $members[1]['fullname'], $members[2]['fullname']];
         $this->assertContains(fullname($user1), $membersfullnames);
         $this->assertContains(fullname($user2), $membersfullnames);
         $this->assertContains(fullname($user3), $membersfullnames);
-        $this->assertNotContains(fullname($user4), $membersfullnames);
-        $this->assertNotContains(fullname($user5), $membersfullnames);
 
         // Confirm the messages data is correct.
         $messages = $result['messages'];
@@ -3154,7 +3151,6 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertContains($user1->id, $membersid);
         $this->assertContains($user2->id, $membersid);
         $this->assertContains($user3->id, $membersid);
-        $this->assertNotContains($user4->id, $membersid);
 
         // Confirm the message data is correct.
         $messages = $result['messages'];
