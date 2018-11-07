@@ -155,7 +155,11 @@ if (!empty($user2->id)) {
     $year = '';
 
     // Parse the messages to add missing fields for backward compatibility.
-    $messages = array_map(function($message) use ($user1, $user2, $USER, $day, $month, $year) {
+    $messages = array_reverse($messages);
+    $day = '';
+    $month = '';
+    $year = '';
+    foreach ($messages as $message) {
         // Add useridto.
         if (empty($message->useridto)) {
             if ($message->useridfrom == $user1->id) {
@@ -168,22 +172,21 @@ if (!empty($user2->id)) {
         // Add currentuserid.
         $message->currentuserid = $USER->id;
 
-        // Add displayblocktime.
+        // Check if we are now viewing a different block period.
+        $message->displayblocktime = false;
         $date = usergetdate($message->timecreated);
         if ($day != $date['mday'] || $month != $date['month'] || $year != $date['year']) {
             $day = $date['mday'];
             $month = $date['month'];
             $year = $date['year'];
             $message->displayblocktime = true;
-        } else {
-            $message->displayblocktime = false;
+            $message->blocktime = userdate($message->timecreated, get_string('strftimedaydate'));
         }
+
         // We don't have this information here so, for now, we leave an empty value.
         // This is a temporary solution because a new UI is being built in MDL-63303.
         $message->timeread = 0;
-
-        return $message;
-    }, $messages);
+    }
 }
 
 $pollmin = !empty($CFG->messagingminpoll) ? $CFG->messagingminpoll : MESSAGE_DEFAULT_MIN_POLL_IN_SECONDS;
