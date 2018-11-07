@@ -542,6 +542,18 @@ EOD;
 
         $id = groups_create_group((object)$record);
 
+        // Allow tests to set group pictures.
+        if (!empty($record['picturepath'])) {
+            require_once($CFG->dirroot . '/lib/gdlib.php');
+            $grouppicture = process_new_icon(\context_course::instance($record['courseid']), 'group', 'icon', $id,
+                $record['picturepath']);
+
+            $DB->set_field('groups', 'picture', $grouppicture, ['id' => $id]);
+
+            // Invalidate the group data as we've updated the group record.
+            cache_helper::invalidate_by_definition('core', 'groupdata', array(), [$record['courseid']]);
+        }
+
         return $DB->get_record('groups', array('id'=>$id));
     }
 
