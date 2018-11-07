@@ -110,7 +110,7 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing{
 
 
 		// Compile rules and rulesets
-		$nodeRuleCnt = count($rulesetNode->rules);
+		$nodeRuleCnt = $rulesetNode->rules?count($rulesetNode->rules):0;
 		for( $i = 0; $i < $nodeRuleCnt; ){
 			$rule = $rulesetNode->rules[$i];
 
