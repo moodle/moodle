@@ -33,6 +33,7 @@ $functions = array(
         'description' => 'Get users starred courses.',
         'type'        => 'read',
         'ajax'        => true,
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
 );
 

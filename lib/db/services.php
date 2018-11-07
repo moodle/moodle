@@ -542,7 +542,8 @@ $functions = array(
         'classpath' => 'course/externallib.php',
         'description' => 'List of enrolled courses for the given timeline classification (past, inprogress, or future).',
         'type' => 'read',
-        'ajax' => true
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_course_get_recent_courses' => array(
         'classname' => 'core_course_external',
@@ -550,7 +551,17 @@ $functions = array(
         'classpath' => 'course/externallib.php',
         'description' => 'List of courses a user has accessed most recently.',
         'type' => 'read',
-        'ajax' => true
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+    'core_course_set_favourite_courses' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'set_favourite_courses',
+        'classpath' => 'course/externallib.php',
+        'description' => 'Add a list of courses to the list of favourite courses.',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_enrol_get_course_enrolment_methods' => array(
         'classname' => 'core_enrol_external',
@@ -2319,14 +2330,6 @@ $functions = array(
         'type'        => 'read',
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
-    'core_course_set_favourite_courses' => array(
-        'classname' => 'core_course_external',
-        'methodname' => 'set_favourite_courses',
-        'classpath' => 'course/externallib.php',
-        'description' => 'Add a list of courses to the list of favourite courses.',
-        'type' => 'read',
-        'ajax' => true
-    )
 );
 
 $services = array(
