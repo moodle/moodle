@@ -1,4 +1,4 @@
-@core @message @javascript
+@core @core_message @javascript
 Feature: Search users
   In order to communicate with fellow users
   As a user

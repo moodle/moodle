@@ -1,4 +1,4 @@
-@message @message_popup
+@core_message @message_popup
 Feature: Message popover preferences
   In order to modify my message preferences
   As a user
