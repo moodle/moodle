@@ -715,6 +715,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
      * Test verifying get_conversations when no limits, offsets, type filters or favourite restrictions are used.
      */
     public function test_get_conversations_no_restrictions() {
+        global $DB;
         // No conversations should exist yet.
         $user1 = self::getDataGenerator()->create_user();
         $this->assertEquals([], \core_message\api::get_conversations($user1->id));
@@ -741,7 +742,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertCount(1, $conversations[0]->members);
         $this->assertEquals(4, $conversations[0]->membercount);
         $this->assertCount(1, $conversations[0]->messages);
-        $this->assertEquals("Message 14", $conversations[0]->messages[0]->text);
+        $message = $DB->get_record('messages', ['id' => $conversations[0]->messages[0]->id]);
+        $expectedmessagetext = message_format_message_text($message);
+        $this->assertEquals($expectedmessagetext, $conversations[0]->messages[0]->text);
         $this->assertEquals($user1->id, $conversations[0]->messages[0]->useridfrom);
 
         $this->assertEquals($gc2->id, $conversations[1]->id);
@@ -750,7 +753,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertCount(1, $conversations[1]->members);
         $this->assertEquals(3, $conversations[1]->membercount);
         $this->assertCount(1, $conversations[1]->messages);
-        $this->assertEquals("Message 11", $conversations[1]->messages[0]->text);
+        $message = $DB->get_record('messages', ['id' => $conversations[1]->messages[0]->id]);
+        $expectedmessagetext = message_format_message_text($message);
+        $this->assertEquals($expectedmessagetext, $conversations[1]->messages[0]->text);
         $this->assertEquals($user4->id, $conversations[1]->messages[0]->useridfrom);
 
         $this->assertEquals($ic2->id, $conversations[2]->id);
@@ -760,7 +765,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals($user3->id, $conversations[2]->members[$user3->id]->id);
         $this->assertEquals(2, $conversations[2]->membercount);
         $this->assertCount(1, $conversations[2]->messages);
-        $this->assertEquals("Message 4", $conversations[2]->messages[0]->text);
+        $message = $DB->get_record('messages', ['id' => $conversations[2]->messages[0]->id]);
+        $expectedmessagetext = message_format_message_text($message);
+        $this->assertEquals($expectedmessagetext, $conversations[2]->messages[0]->text);
         $this->assertEquals($user1->id, $conversations[2]->messages[0]->useridfrom);
 
         $this->assertEquals($ic1->id, $conversations[3]->id);
@@ -769,7 +776,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertCount(1, $conversations[3]->members);
         $this->assertEquals(2, $conversations[3]->membercount);
         $this->assertCount(1, $conversations[3]->messages);
-        $this->assertEquals("Message 2", $conversations[3]->messages[0]->text);
+        $message = $DB->get_record('messages', ['id' => $conversations[3]->messages[0]->id]);
+        $expectedmessagetext = message_format_message_text($message);
+        $this->assertEquals($expectedmessagetext, $conversations[3]->messages[0]->text);
         $this->assertEquals($user2->id, $conversations[3]->messages[0]->useridfrom);
 
         // Of the groups without messages, we expect to see the most recently created first.
@@ -817,6 +826,34 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 $this->assertObjectHasAttribute('timecreated', $message);
             }
         }
+    }
+
+    /**
+     * Test verifying that html format messages are supported, and that message_format_message_text() is being called appropriately.
+     */
+    public function test_get_conversations_message_format() {
+        global $DB;
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Create conversation.
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]
+        );
+
+        // Send some messages back and forth.
+        $time = 1;
+        testhelper::send_fake_message_to_conversation($user2, $conversation->id, 'Sup mang?', $time + 1);
+        $mid = testhelper::send_fake_message_to_conversation($user1, $conversation->id, '<a href="#">A link</a>', $time + 2);
+
+        // Verify the format of the html message.
+        $message = $DB->get_record('messages', ['id' => $mid]);
+        $expectedmessagetext = message_format_message_text($message);
+        $conversations = \core_message\api::get_conversations($user1->id);
+        $messages = $conversations[0]->messages;
+        $this->assertEquals($expectedmessagetext, $messages[0]->text);
     }
 
     /**
@@ -1112,14 +1149,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                         array(
                             'messageposition'   => 0,
                             'with'              => 'user3',
-                            'subject'           => 'S5',
+                            'subject'           => '<p>S5</p>',
                             'unreadcount'       => 0,
                         ),
                         // User1 has also conversed with user2. The most recent message is S2.
                         array(
                             'messageposition'   => 1,
                             'with'              => 'user2',
-                            'subject'           => 'S2',
+                            'subject'           => '<p>S2</p>',
                             'unreadcount'       => 1,
                         ),
                     ),
@@ -1128,7 +1165,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                         array(
                             'messageposition'   => 0,
                             'with'              => 'user1',
-                            'subject'           => 'S2',
+                            'subject'           => '<p>S2</p>',
                             'unreadcount'       => 2,
                         ),
                     ),
@@ -1137,7 +1174,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                         array(
                             'messageposition'   => 0,
                             'with'              => 'user1',
-                            'subject'           => 'S5',
+                            'subject'           => '<p>S5</p>',
                             'unreadcount'       => 0,
                         ),
                     ),
@@ -1184,7 +1221,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                         array(
                             'messageposition'   => 0,
                             'with'              => 'user2',
-                            'subject'           => 'S4',
+                            'subject'           => '<p>S4</p>',
                             'unreadcount'       => 0,
                         ),
                     ),
@@ -1193,7 +1230,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                         array(
                             'messageposition'   => 0,
                             'with'              => 'user1',
-                            'subject'           => 'S4',
+                            'subject'           => '<p>S4</p>',
                             'unreadcount'       => 2,
                         ),
                     ),
@@ -1243,7 +1280,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                         array(
                             'messageposition'   => 0,
                             'with'              => 'user2',
-                            'subject'           => 'S2',
+                            'subject'           => '<p>S2</p>',
                             'unreadcount'       => 0,
                         ),
                     ),
@@ -1251,7 +1288,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                         array(
                             'messageposition'   => 0,
                             'with'              => 'user1',
-                            'subject'           => 'S2',
+                            'subject'           => '<p>S2</p>',
                             'unreadcount'       => 2
                         ),
                     ),
@@ -1328,7 +1365,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                         array(
                             'messageposition'   => 0,
                             'with'              => 'user2',
-                            'subject'           => 'S8',
+                            'subject'           => '<p>S8</p>',
                             'unreadcount'       => 1,
                         ),
                     ),
@@ -1336,7 +1373,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                         array(
                             'messageposition'   => 0,
                             'with'              => 'user1',
-                            'subject'           => 'S8',
+                            'subject'           => '<p>S8</p>',
                             'unreadcount'       => 3,
                         ),
                     ),
