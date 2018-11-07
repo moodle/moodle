@@ -386,7 +386,8 @@ class api {
         $typesql = !is_null($type) ? " AND mc.type = :convtype " : "";
 
         $sql = "SELECT m.id as messageid, mc.id as id, mc.name as conversationname, mc.type as conversationtype, m.useridfrom,
-                       m.smallmessage, m.timecreated, mc.component, mc.itemtype, mc.itemid
+                       m.smallmessage, m.fullmessage, m.fullmessageformat, m.fullmessagehtml, m.timecreated, mc.component,
+                       mc.itemtype, mc.itemid
                   FROM {message_conversations} mc
             INNER JOIN {message_conversation_members} mcm
                     ON (mcm.conversationid = mc.id AND mcm.userid = :userid3)
@@ -568,7 +569,7 @@ class api {
             if ($conversation->smallmessage) {
                 $msg = new \stdClass();
                 $msg->id = $conversation->messageid;
-                $msg->text = clean_param($conversation->smallmessage, PARAM_NOTAGS);
+                $msg->text = message_format_message_text($conversation);
                 $msg->useridfrom = $conversation->useridfrom;
                 $msg->timecreated = $conversation->timecreated;
                 $conv->messages[] = $msg;

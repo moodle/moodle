@@ -552,7 +552,7 @@ class helper {
             $data->profileimageurl = $conv->members[$otheruser->id]->profileimageurl;
             $data->profileimageurlsmall = $conv->members[$otheruser->id]->profileimageurlsmall;
             $data->ismessaging = isset($conv->messages[0]->text) ? true : false;
-            $data->lastmessage = $conv->messages[0]->text ?? null;
+            $data->lastmessage = $conv->messages[0]->text ? clean_param($conv->messages[0]->text, PARAM_NOTAGS) : null;
             $data->messageid = $conv->messages[0]->id ?? null;
             $data->isonline = $conv->members[$otheruser->id]->isonline ?? null;
             $data->isblocked = $conv->members[$otheruser->id]->isblocked ?? null;
