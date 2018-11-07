@@ -1,4 +1,4 @@
-@message @message_popup
+@core_message @message_popup
 Feature: Notification popover preferences
   In order to modify my notification preferences
   As a user
