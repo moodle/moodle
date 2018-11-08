@@ -45,7 +45,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('commerce_enable_external',
                                                     get_string('useexternalshop', 'block_iomad_commerce'),
                                                     get_string('useexternalshop_help', 'block_iomad_commerce'),
-                                                    1));
+                                                    0));
 
     $settings->add(new admin_setting_configtext('commerce_externalshop_url',
                                             get_string('commerce_externalshop_url', 'block_iomad_commerce'),
