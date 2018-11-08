@@ -1818,6 +1818,43 @@ function xmldb_local_iomad_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
+        // Perform clear up on courses data which may have become out of step.
+
+        $sql = 'SELECT ic.courseid FROM {iomad_courses} ic
+                LEFT OUTER JOIN {course} c ON c.id = ic.courseid
+                WHERE c.id IS NULL';
+        $deletedcourses = $DB->get_fieldset_sql($sql);
+
+        foreach ($deletedcourses as $deletedcourse) {
+
+            // Clear everything from the iomad_courses table.
+            $DB->delete_records('iomad_courses', array('courseid' => $deletedcourse));
+
+            // Remove the course from company allocation tables.
+            $DB->delete_records('company_course', array('courseid' => $deletedcourse));
+
+            // Remove the course from company created course tables.
+            $DB->delete_records('company_created_courses', array('courseid' => $deletedcourse));
+
+            // Remove the course from company shared courses tables.
+            $DB->delete_records('company_shared_courses', array('courseid' => $deletedcourse));
+
+            // Deal with licenses allocations.
+            $DB->delete_records('companylicense_users', array('licensecourseid' => $deletedcourse));
+            $courselicenses = $DB->get_records('companylicense_courses', array('courseid' => $deletedcourse));
+            foreach ($courselicenses as $courselicense) {
+                // Delete the course from the license.
+                $DB->delete_record('companylicense_courses', array('id' => $courselicense->id));
+                // Does the license have any courses left?
+                if ($DB->get_records('companylicense_courses', array('licensid' => $courselicense->licenseid))) {
+                    company::update_license_usage($courselicense->licenseid);
+                } else {
+                    // Delete the license.  It no longer is valid.
+                    $DB->delete_records('companylicense', array('id' => $courselicense->licenseid));
+                }
+            }
+        }
+
         // Iomad savepoint reached.
         upgrade_plugin_savepoint(true, 2018122700, 'local', 'iomad');
     }

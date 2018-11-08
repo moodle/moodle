@@ -2844,7 +2844,7 @@ class company {
 
         // Deal with licenses allocations.
         $DB->delete_records('companylicense_users', array('licensecourseid' => $event->courseid));
-        $courselicenses = $DB->get_records('//companylicense_courses', array('courseid' => $event->courseid));
+        $courselicenses = $DB->get_records('companylicense_courses', array('courseid' => $event->courseid));
         foreach ($courselicenses as $courselicense) {
             // Delete the course from the license.
             $DB->delete_record('companylicense_courses', array('id' => $courselicense->id));

@@ -66,6 +66,18 @@ $observers = array(
     ),
 
     array(
+        'eventname'   => '\core\event\course_deleted',
+        'callback'    => 'local_iomad_observer::course_deleted',
+        'includefile' => '/local/iomad/classes/observer.php'
+    ),
+
+    array(
+        'eventname'   => '\core\event\user_deleted',
+        'callback'    => 'local_iomad_observer::user_deleted',
+        'includefile' => '/local/iomad/classes/observer.php'
+    ),
+
+    array(
         'eventname'   => '\block_iomad_company_admin\event\company_updated',
         'callback'    => 'local_iomad_observer::company_updated',
         'includefile' => '/local/iomad/classes/observer.php'
