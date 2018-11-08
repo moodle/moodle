@@ -88,13 +88,19 @@ class initiate_data_request_task extends adhoc_task {
         // Get the list of the site Data Protection Officers.
         $dpos = api::get_site_dpos();
 
-        // Email the data request to the Data Protection Officer(s)/Admin(s).
-        foreach ($dpos as $dpo) {
-            $dponame = fullname($dpo);
-            if (api::notify_dpo($dpo, $datarequest)) {
-                mtrace('Message sent to DPO: ' . $dponame);
-            } else {
-                mtrace('A problem was encountered while sending the message to the DPO: ' . $dponame);
+        // We should prevent DPO(s)/Admin(s) being flooded with notifications for each request when bulk delete
+        // data requests are being created.
+        // NOTE: This should be improved, we should not totally disable the notifications for automatically
+        // created requests. Possibly, we should create one notification for these such cases.
+        if ($datarequest->get('creationmethod') != data_request::DATAREQUEST_CREATION_AUTO) {
+            // Email the data request to the Data Protection Officer(s)/Admin(s).
+            foreach ($dpos as $dpo) {
+                $dponame = fullname($dpo);
+                if (api::notify_dpo($dpo, $datarequest)) {
+                    mtrace('Message sent to DPO: ' . $dponame);
+                } else {
+                    mtrace('A problem was encountered while sending the message to the DPO: ' . $dponame);
+                }
             }
         }
     }
