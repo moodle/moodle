@@ -35,6 +35,7 @@ define([], function() {
         CONVERSATION_READ: 'message-drawer-conversation-read',
         CONVERSATION_SET_FAVOURITE: 'message-drawer-conversation-set-favourite',
         CONVERSATION_UNSET_FAVOURITE: 'message-drawer-conversation-unset-favourite',
+        PREFERENCES_UPDATED: 'message-drawer-preferences-updated',
         ROUTE_CHANGED: 'message-drawer-route-change',
         SHOW: 'message-drawer-show',
         HIDE: 'message-drawer-hide',

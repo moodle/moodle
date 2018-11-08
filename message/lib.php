@@ -736,6 +736,11 @@ function core_message_user_preferences() {
             return $value;
         }
     );
+    $preferences['message_entertosend'] = array(
+        'type' => PARAM_BOOL,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => false
+    );
     $preferences['/^message_provider_([\w\d_]*)_logged(in|off)$/'] = array('isregex' => true, 'type' => PARAM_NOTAGS,
         'null' => NULL_NOT_ALLOWED, 'default' => 'none',
         'permissioncallback' => function ($user, $preferencename) {
@@ -859,6 +864,9 @@ function core_message_before_standard_top_of_body_html() {
     $emailloggedoff = get_user_preferences('message_provider_moodle_instantmessage_loggedoff', 'none', $USER->id);
     $emailenabled = $emailloggedin == 'email' && $emailloggedoff == 'email';
 
+    // Enter to send.
+    $entertosend = get_user_preferences('message_entertosend', false, $USER->id);
+
     return $renderer->render_from_template('core_message/message_drawer', [
         'contactrequestcount' => $requestcount,
         'loggedinuser' => [
@@ -898,7 +906,8 @@ function core_message_before_standard_top_of_body_html() {
         ],
         'settings' => [
             'privacy' => $choices,
-            'emailenabled' => $emailenabled
+            'emailenabled' => $emailenabled,
+            'entertosend' => $entertosend
         ]
     ]);
 }

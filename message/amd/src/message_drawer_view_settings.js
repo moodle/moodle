@@ -25,22 +25,27 @@ define(
     'jquery',
     'core/notification',
     'core/str',
+    'core/pubsub',
     'core_message/message_repository',
     'core/custom_interaction_events',
+    'core_message/message_drawer_events'
 ],
 function(
     $,
     Notification,
     Str,
+    PubSub,
     Repository,
-    CustomEvents
+    CustomEvents,
+    MessageDrawerEvents
 ) {
 
     var SELECTORS = {
         SETTINGS: '[data-region="settings"]',
         PREFERENCE_CONTROL: '[data-region="preference-control"]',
         PRIVACY_PREFERENCE: '[data-preference="blocknoncontacts"] input[type="radio"]',
-        EMAIL_ENABLED_PREFERENCE: '[data-preference="emailnotifications"] input[type="checkbox"]'
+        EMAIL_ENABLED_PREFERENCE: '[data-preference="emailnotifications"] input[type="checkbox"]',
+        ENTER_TO_SEND_PREFERENCE: '[data-preference="entertosend"] input[type="checkbox"]',
     };
 
     var PREFERENCES_EMAIL = {
@@ -89,6 +94,10 @@ function(
                 }, []);
 
                 Repository.savePreferences(loggedInUserId, preferences)
+                    .then(function() {
+                        PubSub.publish(MessageDrawerEvents.PREFERENCES_UPDATED, preferences);
+                        return;
+                    })
                     .catch(Notification.exception);
             }
         );
@@ -103,6 +112,28 @@ function(
                 ];
 
                 Repository.savePreferences(loggedInUserId, preferences)
+                    .then(function() {
+                        PubSub.publish(MessageDrawerEvents.PREFERENCES_UPDATED, preferences);
+                        return;
+                    })
+                    .catch(Notification.exception);
+            }
+        );
+
+        settingsContainer.on(CustomEvents.events.activate, SELECTORS.ENTER_TO_SEND_PREFERENCE, function(e) {
+                var newValue = $(e.target).prop('checked');
+                var preferences = [
+                    {
+                        type: 'message_entertosend',
+                        value: newValue
+                    }
+                ];
+
+                Repository.savePreferences(loggedInUserId, preferences)
+                    .then(function() {
+                        PubSub.publish(MessageDrawerEvents.PREFERENCES_UPDATED, preferences);
+                        return;
+                    })
                     .catch(Notification.exception);
             }
         );

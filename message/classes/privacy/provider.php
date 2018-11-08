@@ -158,7 +158,11 @@ class provider implements
     public static function export_user_preferences(int $userid) {
         $preferences = get_user_preferences(null, null, $userid);
         foreach ($preferences as $name => $value) {
-            if ((substr($name, 0, 16) == 'message_provider') || ($name == 'message_blocknoncontacts')) {
+            if (
+                (substr($name, 0, 16) == 'message_provider') ||
+                ($name == 'message_blocknoncontacts') ||
+                ($name == 'message_entertosend')
+            ) {
                 writer::export_user_preference(
                     'core_message',
                     $name,

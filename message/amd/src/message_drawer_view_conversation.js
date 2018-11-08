@@ -1225,7 +1225,8 @@ function(
             CustomEvents.events.activate
         ]);
         CustomEvents.define(footer, [
-            CustomEvents.events.activate
+            CustomEvents.events.activate,
+            CustomEvents.events.enter
         ]);
         CustomEvents.define(messagesContainer, [
             CustomEvents.events.scrollTop,
@@ -1273,6 +1274,13 @@ function(
             footer.on(CustomEvents.events.activate, selector, handlerFunction);
         });
 
+        footer.on(CustomEvents.events.enter, SELECTORS.MESSAGE_TEXT_AREA, function(e, data) {
+            var enterToSend = footer.attr('data-enter-to-send');
+            if (enterToSend == true) {
+                handleSendMessage(e, data);
+            }
+        });
+
         PubSub.subscribe(MessageDrawerEvents.ROUTE_CHANGED, function(newRouteData) {
             if (newMessagesPollTimer) {
                 if (newRouteData.route == MessageDrawerRoutes.VIEW_CONVERSATION) {
@@ -1280,6 +1288,17 @@ function(
                 } else {
                     newMessagesPollTimer.stop();
                 }
+            }
+        });
+
+        PubSub.subscribe(MessageDrawerEvents.PREFERENCES_UPDATED, function(preferences) {
+            var filteredPreferences = preferences.filter(function(preference) {
+                return preference.type == 'message_entertosend';
+            });
+            var enterToSendPreference = filteredPreferences.length ? filteredPreferences[0] : null;
+
+            if (enterToSendPreference) {
+                footer.attr('data-enter-to-send', enterToSendPreference.value);
             }
         });
     };

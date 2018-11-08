@@ -60,7 +60,7 @@
                 </div>
             {{/privacy}}
         </div>
-        <h3 class="mb-2 mt-5 h6 font-weight-bold">{{#str}}categoryemail, admin{{/str}}</h3>
+        <h3 class="mb-2 mt-4 h6 font-weight-bold">{{#str}}categoryemail, admin{{/str}}</h3>
         <div
             data-region="preference-control"
             data-preference="emailnotifications"
@@ -72,6 +72,21 @@
                 >
                 <label for="email-alerts-{{uniqid}}">
                     {{#str}} emailalert, hub {{/str}}
+                </label>
+            </span>
+        </div>
+        <h3 class="mb-2 mt-4 h6 font-weight-bold">{{#str}} general, core {{/str}}</h3>
+        <div
+            data-region="preference-control"
+            data-preference="entertosend"
+        >
+            <span class="switch">
+                <input type="checkbox"
+                    id="enter-to-send-{{uniqid}}"
+                    {{#entertosend}}checked{{/entertosend}}
+                >
+                <label for="enter-to-send-{{uniqid}}">
+                    {{#str}} useentertosend, core_message {{/str}}
                 </label>
             </span>
         </div>

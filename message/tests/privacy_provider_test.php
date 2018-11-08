@@ -161,6 +161,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         set_user_preference('message_provider_moodle_instantmessage_loggedin', 'airnotifier', $USER->id);
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'popup', $USER->id);
         set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS, $USER->id);
+        set_user_preference('message_entertosend', true, $USER->id);
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'inbound', $user->id);
 
         // Set an unrelated preference.
@@ -175,10 +176,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $prefs = (array) $writer->get_user_preferences('core_message');
 
         // Check only 3 preferences exist.
-        $this->assertCount(3, $prefs);
+        $this->assertCount(4, $prefs);
         $this->assertArrayHasKey('message_provider_moodle_instantmessage_loggedin', $prefs);
         $this->assertArrayHasKey('message_provider_moodle_instantmessage_loggedoff', $prefs);
         $this->assertArrayHasKey('message_blocknoncontacts', $prefs);
+        $this->assertArrayHasKey('message_entertosend', $prefs);
 
         foreach ($prefs as $key => $pref) {
             if ($key == 'message_provider_moodle_instantmessage_loggedin') {
