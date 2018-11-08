@@ -55,6 +55,7 @@ if (\tool_dataprivacy\api::is_site_dpo($USER->id)) {
 
     $types = [];
     $statuses = [];
+    $creationmethods = [];
     foreach ($filtersapplied as $filter) {
         list($category, $value) = explode(':', $filter);
         switch($category) {
@@ -64,10 +65,13 @@ if (\tool_dataprivacy\api::is_site_dpo($USER->id)) {
             case \tool_dataprivacy\local\helper::FILTER_STATUS:
                 $statuses[] = $value;
                 break;
+            case \tool_dataprivacy\local\helper::FILTER_CREATION:
+                $creationmethods[] = $value;
+                break;
         }
     }
 
-    $table = new \tool_dataprivacy\output\data_requests_table(0, $statuses, $types, true);
+    $table = new \tool_dataprivacy\output\data_requests_table(0, $statuses, $types, $creationmethods, true);
     if (!empty($perpage)) {
         set_user_preference(\tool_dataprivacy\local\helper::PREF_REQUEST_PERPAGE, $perpage);
     } else {

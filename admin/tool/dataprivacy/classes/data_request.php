@@ -21,7 +21,9 @@
  * @copyright  2018 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace tool_dataprivacy;
+
 defined('MOODLE_INTERNAL') || die();
 
 use core\persistent;
