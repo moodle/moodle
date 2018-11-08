@@ -140,52 +140,55 @@ if (!empty($user2->id)) {
 
     // Get the conversationid.
     if (!isset($conversationid)) {
-        if (!$conversationid = self::get_conversation_between_users($userids)) {
-            // If the conversationid doesn't exist, throw an exception.
-            throw new moodle_exception('conversationdoesntexist', 'core_message');
+        if (!$conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id])) {
+            // If the individual conversationid doesn't exist, create it.
+            $conversation = \core_message\api::create_conversation(
+                \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+                [$user1->id, $user2->id]
+            );
+            $conversationid = $conversation->id;
         }
     }
 
     $convmessages = \core_message\api::get_conversation_messages($user1->id, $conversationid, 0, 20, 'timecreated DESC');
-    $messages = $convmessages['messages'];
+    $messages = [];
+    if (!empty($convmessages)) {
+        $messages = $convmessages['messages'];
 
-    // Keeps track of the last day, month and year combo we were viewing.
-    $day = '';
-    $month = '';
-    $year = '';
-
-    // Parse the messages to add missing fields for backward compatibility.
-    $messages = array_reverse($messages);
-    $day = '';
-    $month = '';
-    $year = '';
-    foreach ($messages as $message) {
-        // Add useridto.
-        if (empty($message->useridto)) {
-            if ($message->useridfrom == $user1->id) {
-                $message->useridto = $user2->id;
-            } else {
-                $message->useridto = $user1->id;
+        // Parse the messages to add missing fields for backward compatibility.
+        $messages = array_reverse($messages);
+        // Keeps track of the last day, month and year combo we were viewing.
+        $day = '';
+        $month = '';
+        $year = '';
+        foreach ($messages as $message) {
+            // Add useridto.
+            if (empty($message->useridto)) {
+                if ($message->useridfrom == $user1->id) {
+                    $message->useridto = $user2->id;
+                } else {
+                    $message->useridto = $user1->id;
+                }
             }
+
+            // Add currentuserid.
+            $message->currentuserid = $USER->id;
+
+            // Check if we are now viewing a different block period.
+            $message->displayblocktime = false;
+            $date = usergetdate($message->timecreated);
+            if ($day != $date['mday'] || $month != $date['month'] || $year != $date['year']) {
+                $day = $date['mday'];
+                $month = $date['month'];
+                $year = $date['year'];
+                $message->displayblocktime = true;
+                $message->blocktime = userdate($message->timecreated, get_string('strftimedaydate'));
+            }
+
+            // We don't have this information here so, for now, we leave an empty value.
+            // This is a temporary solution because a new UI is being built in MDL-63303.
+            $message->timeread = 0;
         }
-
-        // Add currentuserid.
-        $message->currentuserid = $USER->id;
-
-        // Check if we are now viewing a different block period.
-        $message->displayblocktime = false;
-        $date = usergetdate($message->timecreated);
-        if ($day != $date['mday'] || $month != $date['month'] || $year != $date['year']) {
-            $day = $date['mday'];
-            $month = $date['month'];
-            $year = $date['year'];
-            $message->displayblocktime = true;
-            $message->blocktime = userdate($message->timecreated, get_string('strftimedaydate'));
-        }
-
-        // We don't have this information here so, for now, we leave an empty value.
-        // This is a temporary solution because a new UI is being built in MDL-63303.
-        $message->timeread = 0;
     }
 }
 
