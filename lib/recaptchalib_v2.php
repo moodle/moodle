@@ -48,8 +48,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * The reCAPTCHA URL's
  */
-define('RECAPTCHA_API_URL', 'https://www.google.com/recaptcha/api.js');
-define('RECAPTCHA_VERIFY_URL', 'https://www.google.com/recaptcha/api/siteverify');
+define('RECAPTCHA_API_URL', 'https://www.recaptcha.net/recaptcha/api.js');
+define('RECAPTCHA_VERIFY_URL', 'https://www.recaptcha.net/recaptcha/api/siteverify');
 
 /**
  * Returns the language code the reCAPTCHA element should use.
