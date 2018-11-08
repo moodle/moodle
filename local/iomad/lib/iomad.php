@@ -357,7 +357,7 @@ class iomad {
             if ($company = $DB->get_record( 'company', array('category' => $id) ) ) {
 
                 // If this is not the user's company then do not include.
-                if (!empty( $user->company )) {
+                if (!empty( $user->company->id )) {
                     if ($user->company->id == $company->id) {
                         $iomadcategories[ $id ] = $category;
                     }
