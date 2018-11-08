@@ -62,21 +62,7 @@ class manager {
 
         if (empty($processorlist)) {
             // Trigger event for sending a message or notification - we need to do this before marking as read!
-            if ($eventdata->notification) {
-                \core\event\notification_sent::create_from_ids(
-                    $eventdata->userfrom->id,
-                    $eventdata->userto->id,
-                    $savemessage->id,
-                    $eventdata->courseid
-                )->trigger();
-            } else { // Must be a message.
-                \core\event\message_sent::create_from_ids(
-                    $eventdata->userfrom->id,
-                    $eventdata->userto->id,
-                    $savemessage->id,
-                    $eventdata->courseid
-                )->trigger();
-            }
+            self::trigger_message_events($eventdata, $savemessage);
 
             if ($eventdata->notification or empty($CFG->messaging)) {
                 // If they have deselected all processors and its a notification mark it read. The user doesn't want to be bothered.
@@ -110,7 +96,6 @@ class manager {
 
         // We cannot communicate with external systems in DB transactions,
         // buffer the messages if necessary.
-
         if ($DB->is_transaction_started()) {
             // We need to clone all objects so that devs may not modify it from outside later.
             $eventdata = clone($eventdata);
@@ -125,33 +110,11 @@ class manager {
             return $savemessage->id;
         }
 
-        foreach ($processorlist as $procname) {
-            // Let new messaging class add custom content based on the processor.
-            $proceventdata = ($eventdata instanceof message) ? $eventdata->get_eventobject_for_processor($procname) : $eventdata;
-            $stdproc = new \stdClass();
-            $stdproc->name = $procname;
-            $processor = \core_message\api::get_processed_processor_object($stdproc);
-            if (!$processor->object->send_message($proceventdata)) {
-                debugging('Error calling message processor ' . $procname);
-            }
-        }
+        // Send the message to processors.
+        self::call_processors($eventdata, $processorlist);
 
         // Trigger event for sending a message or notification - we need to do this before marking as read!
-        if ($eventdata->notification) {
-            \core\event\notification_sent::create_from_ids(
-                $eventdata->userfrom->id,
-                $eventdata->userto->id,
-                $savemessage->id,
-                $eventdata->courseid
-            )->trigger();
-        } else { // Must be a message.
-            \core\event\message_sent::create_from_ids(
-                $eventdata->userfrom->id,
-                $eventdata->userto->id,
-                $savemessage->id,
-                $eventdata->courseid
-            )->trigger();
-        }
+        self::trigger_message_events($eventdata, $savemessage);
 
         if (empty($CFG->messaging)) {
             // If they have deselected all processors and its a notification mark it read. The user doesn't want to be bothered.
@@ -199,6 +162,50 @@ class manager {
         foreach ($messages as $message) {
             list($eventdata, $savemessage, $processorlist) = $message;
             self::send_message_to_processors($eventdata, $savemessage, $processorlist);
+        }
+    }
+
+    /**
+     * Trigger an appropriate message creation event, based on the supplied $eventdata and $savemessage.
+     *
+     * @param message $eventdata the eventdata for the message.
+     * @param \stdClass $savemessage the message record.
+     * @throws \coding_exception
+     */
+    protected static function trigger_message_events(message $eventdata, \stdClass $savemessage) {
+        if ($eventdata->notification) {
+            \core\event\notification_sent::create_from_ids(
+                $eventdata->userfrom->id,
+                $eventdata->userto->id,
+                $savemessage->id,
+                $eventdata->courseid
+            )->trigger();
+        } else { // Must be a message.
+            \core\event\message_sent::create_from_ids(
+                $eventdata->userfrom->id,
+                $eventdata->userto->id,
+                $savemessage->id,
+                $eventdata->courseid
+            )->trigger();
+        }
+    }
+
+    /**
+     * For each processor, call it's send_message() method.
+     *
+     * @param message $eventdata the message object.
+     * @param array $processorlist the list of processors for a single user.
+     */
+    protected static function call_processors(message $eventdata, array $processorlist) {
+        foreach ($processorlist as $procname) {
+            // Let new messaging class add custom content based on the processor.
+            $proceventdata = ($eventdata instanceof message) ? $eventdata->get_eventobject_for_processor($procname) : $eventdata;
+            $stdproc = new \stdClass();
+            $stdproc->name = $procname;
+            $processor = \core_message\api::get_processed_processor_object($stdproc);
+            if (!$processor->object->send_message($proceventdata)) {
+                debugging('Error calling message processor ' . $procname);
+            }
         }
     }
 }
