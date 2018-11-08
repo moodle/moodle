@@ -205,10 +205,12 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
         // Define field sensitivedatareasons to be added to tool_dataprivacy_purpose.
         $table = new xmldb_table('tool_dataprivacy_request');
         $field = new xmldb_field('creationmethod', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, 0, 'timemodified');
+
         // Conditionally launch add field sensitivedatareasons.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+
         // Dataprivacy savepoint reached.
         upgrade_plugin_savepoint(true, 2017051554, 'tool', 'dataprivacy');
     }
