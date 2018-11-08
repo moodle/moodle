@@ -3084,7 +3084,7 @@ class company {
                 if ($DB->get_records('companylicense_users', array('userid' => $userid, 'licenseid' => $programlicense->id, 'isusing' => 1))) {
                     continue;
                 } else {
-                    $licencerecords = $DB->get_records('companylicense_users', array('userid' => $userid, 'licenseid' => $programlicense->id));
+                    $licenserecords = $DB->get_records('companylicense_users', array('userid' => $userid, 'licenseid' => $programlicense->id));
 
                     foreach ($licenserecords as $licenserecord) {
                         // Fire the license deleted event.
@@ -3107,7 +3107,8 @@ class company {
         if ($CFG->commerce_enable_external) {
             // Fire off the payload to the external site.
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
-            iomad_commerce::delete_user($event->other['username']);
+            $user = $DB->get_record('user', array('id' => $userid));
+            iomad_commerce::delete_user($user->username);
         }
 
         // Remove the user from any company.
