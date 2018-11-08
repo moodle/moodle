@@ -87,9 +87,15 @@ class metadata_registry {
                             $internaldata['deprecated'] = true;
                         }
 
-                        // Check that the userlist provider is implemented.
+                        // Check that the core_userlist_provider is implemented for all user data providers.
                         if ($componentclass instanceof \core_privacy\local\request\core_user_data_provider
                                 && !$componentclass instanceof \core_privacy\local\request\core_userlist_provider) {
+                            $internaldata['userlistnoncompliance'] = true;
+                        }
+
+                        // Check that any type of userlist_provider is implemented for all shared data providers.
+                        if ($componentclass instanceof \core_privacy\local\request\shared_data_provider
+                                && !$componentclass instanceof \core_privacy\local\request\userlist_provider) {
                             $internaldata['userlistnoncompliance'] = true;
                         }
                     }

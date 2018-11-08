@@ -46,7 +46,9 @@ class provider implements
         // as a result.
 
         // The ratings subsystem provides a data service to other components.
-        \core_privacy\local\request\subsystem\plugin_provider {
+        \core_privacy\local\request\subsystem\plugin_provider,
+        \core_privacy\local\request\shared_userlist_provider
+    {
 
     /**
      * Returns metadata about the ratings subsystem.

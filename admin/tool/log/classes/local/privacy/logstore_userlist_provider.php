@@ -36,7 +36,10 @@ defined('MOODLE_INTERNAL') || die();
  * @author     Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface logstore_userlist_provider extends \core_privacy\local\request\plugin\subplugin_provider {
+interface logstore_userlist_provider extends
+        \core_privacy\local\request\plugin\subplugin_provider,
+        \core_privacy\local\request\shared_userlist_provider
+    {
 
     /**
      * Add user IDs that contain user information for the specified context.
