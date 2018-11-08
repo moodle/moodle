@@ -16,6 +16,9 @@ Feature: Delete messages
       | user     | course | role           |
       | user1    | C1     | student        |
       | user2    | C1     | student        |
+    And the following config values are set as admin:
+      | messaging | 1 |
+      | messagingallusers | 1 |
     And I log in as "user2"
     And I send "User 2 to User 1 message 1" message to "User 1" user
     And I send "User 2 to User 1 message 2" message in the message area

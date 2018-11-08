@@ -9,6 +9,9 @@ Feature: Reply message
       | username | firstname | lastname | email            |
       | user1    | User      | 1        | user1@example.com    |
       | user2    | User      | 2        | user2@example.com    |
+    And the following config values are set as admin:
+      | messaging | 1 |
+      | messagingallusers | 1 |
     And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |
@@ -16,6 +19,9 @@ Feature: Reply message
       | user     | course | role           |
       | user1    | C1     | student        |
       | user2    | C1     | student        |
+    And the following config values are set as admin:
+      | messaging | 1 |
+      | messagingallusers | 1 |
     And I log in as "user2"
     And I send "User 2 to User 1" message to "User 1" user
     And I log out

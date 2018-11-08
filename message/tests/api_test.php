@@ -258,7 +258,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $course5context = context_course::instance($course5->id);
         assign_capability('moodle/course:viewparticipants', CAP_PROHIBIT, $role->id, $course5context->id);
 
-        // Perform a search.
+        // Perform a search $CFG->messagingallusers setting enabled.
+        set_config('messagingallusers', 1);
         list($contacts, $courses, $noncontacts) = \core_message\api::search_users($user1->id, 'search');
 
         // Check that we retrieved the correct contacts.
@@ -274,6 +275,277 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Check that we retrieved the correct non-contacts.
         $this->assertEquals(1, count($noncontacts));
         $this->assertEquals($user5->id, $noncontacts[0]->userid);
+    }
+
+    /**
+     * Tests searching users with empty result.
+     */
+    public function test_search_users_with_empty_result() {
+
+        // Create some users.
+        $user1 = new stdClass();
+        $user1->firstname = 'User';
+        $user1->lastname = 'One';
+        $user1 = self::getDataGenerator()->create_user($user1);
+
+        // Set as the user performing the search.
+        $this->setUser($user1);
+
+        $user2 = new stdClass();
+        $user2->firstname = 'User';
+        $user2->lastname = 'Two';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        // Perform a search $CFG->messagingallusers setting enabled.
+        set_config('messagingallusers', 1);
+        list($contacts, $courses, $noncontacts) = \core_message\api::search_users($user1->id, 'search');
+
+        // Check results are empty.
+        $this->assertEquals(0, count($contacts));
+        $this->assertEquals(0, count($courses));
+        $this->assertEquals(0, count($noncontacts));
+    }
+
+    /**
+     * Tests searching users.
+     */
+    public function test_message_search_users() {
+        // Create some users.
+        $user1 = new stdClass();
+        $user1->firstname = 'User search';
+        $user1->lastname = 'One';
+        $user1 = self::getDataGenerator()->create_user($user1);
+
+        // Set as the user performing the search.
+        $this->setUser($user1);
+
+        $user2 = new stdClass();
+        $user2->firstname = 'User search';
+        $user2->lastname = 'Two';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        $user3 = new stdClass();
+        $user3->firstname = 'User search';
+        $user3->lastname = 'Three';
+        $user3 = self::getDataGenerator()->create_user($user3);
+
+        $user4 = new stdClass();
+        $user4->firstname = 'User';
+        $user4->lastname = 'Four';
+        $user4 = self::getDataGenerator()->create_user($user4);
+
+        $user5 = new stdClass();
+        $user5->firstname = 'User search';
+        $user5->lastname = 'Five';
+        $user5 = self::getDataGenerator()->create_user($user5);
+
+        $user6 = new stdClass();
+        $user6->firstname = 'User search';
+        $user6->lastname = 'Six';
+        $user6 = self::getDataGenerator()->create_user($user6);
+
+        $user7 = new stdClass();
+        $user7->firstname = 'User search';
+        $user7->lastname = 'Seven';
+        $user7 = self::getDataGenerator()->create_user($user7);
+
+        // Add some users as contacts.
+        \core_message\api::add_contact($user1->id, $user2->id);
+        \core_message\api::add_contact($user3->id, $user1->id);
+        \core_message\api::add_contact($user1->id, $user4->id);
+
+        // Create private conversations with some users.
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            array($user1->id, $user6->id));
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            array($user7->id, $user1->id));
+
+        // Perform a search $CFG->messagingallusers setting enabled.
+        set_config('messagingallusers', 1);
+        list($contacts, $noncontacts) = \core_message\api::message_search_users($user1->id, 'search');
+
+        // Check that we retrieved the correct contacts.
+        $this->assertCount(2, $contacts);
+        $this->assertEquals($user3->id, $contacts[0]->id);
+        $this->assertEquals($user2->id, $contacts[1]->id);
+
+        // Check that we retrieved the correct non-contacts.
+        $this->assertCount(3, $noncontacts);
+        $this->assertEquals($user5->id, $noncontacts[0]->id);
+        $this->assertEquals($user7->id, $noncontacts[1]->id);
+        $this->assertEquals($user6->id, $noncontacts[2]->id);
+
+        // Perform a search $CFG->messagingallusers setting disabled.
+        set_config('messagingallusers', 0);
+        list($contacts, $noncontacts) = \core_message\api::message_search_users($user1->id, 'search');
+
+        // Check that we retrieved the correct contacts.
+        $this->assertCount(2, $contacts);
+        $this->assertEquals($user3->id, $contacts[0]->id);
+        $this->assertEquals($user2->id, $contacts[1]->id);
+
+        // Check that we retrieved the correct non-contacts.
+        $this->assertCount(2, $noncontacts);
+        $this->assertEquals($user7->id, $noncontacts[0]->id);
+        $this->assertEquals($user6->id, $noncontacts[1]->id);
+    }
+
+    /**
+     * Tests getting conversations between 2 users.
+     */
+    public function test_get_conversations_between_users() {
+        // Create some users.
+        $user1 = new stdClass();
+        $user1->firstname = 'User';
+        $user1->lastname = 'One';
+        $user1 = self::getDataGenerator()->create_user($user1);
+
+        $user2 = new stdClass();
+        $user2->firstname = 'User';
+        $user2->lastname = 'Two';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        $user3 = new stdClass();
+        $user3->firstname = 'User search';
+        $user3->lastname = 'Three';
+        $user3 = self::getDataGenerator()->create_user($user3);
+
+        $user4 = new stdClass();
+        $user4->firstname = 'User';
+        $user4->lastname = 'Four';
+        $user4 = self::getDataGenerator()->create_user($user4);
+
+        $user5 = new stdClass();
+        $user5->firstname = 'User';
+        $user5->lastname = 'Five';
+        $user5 = self::getDataGenerator()->create_user($user5);
+
+        $user6 = new stdClass();
+        $user6->firstname = 'User search';
+        $user6->lastname = 'Six';
+        $user6 = self::getDataGenerator()->create_user($user6);
+
+        // Add some users as contacts.
+        \core_message\api::add_contact($user1->id, $user2->id);
+        \core_message\api::add_contact($user6->id, $user1->id);
+
+        // Create private conversations with some users.
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            array($user1->id, $user2->id));
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            array($user3->id, $user1->id));
+
+        // Create a group conversation with users.
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            array($user1->id, $user2->id, $user3->id, $user4->id),
+            'Project chat');
+
+        // Check that we retrieved the correct conversations.
+        $this->assertCount(2, \core_message\api::get_conversations_between_users($user1->id, $user2->id));
+        $this->assertCount(2, \core_message\api::get_conversations_between_users($user2->id, $user1->id));
+        $this->assertCount(2, \core_message\api::get_conversations_between_users($user1->id, $user3->id));
+        $this->assertCount(2, \core_message\api::get_conversations_between_users($user3->id, $user1->id));
+        $this->assertCount(1, \core_message\api::get_conversations_between_users($user1->id, $user4->id));
+        $this->assertCount(1, \core_message\api::get_conversations_between_users($user4->id, $user1->id));
+        $this->assertCount(0, \core_message\api::get_conversations_between_users($user1->id, $user5->id));
+        $this->assertCount(0, \core_message\api::get_conversations_between_users($user5->id, $user1->id));
+        $this->assertCount(0, \core_message\api::get_conversations_between_users($user1->id, $user6->id));
+        $this->assertCount(0, \core_message\api::get_conversations_between_users($user6->id, $user1->id));
+    }
+
+    /**
+     * Tests searching users with and without conversations.
+     */
+    public function test_message_search_users_with_and_without_conversations() {
+        // Create some users.
+        $user1 = new stdClass();
+        $user1->firstname = 'User search';
+        $user1->lastname = 'One';
+        $user1 = self::getDataGenerator()->create_user($user1);
+
+        // Set as the user performing the search.
+        $this->setUser($user1);
+
+        $user2 = new stdClass();
+        $user2->firstname = 'User search';
+        $user2->lastname = 'Two';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        $user3 = new stdClass();
+        $user3->firstname = 'User search';
+        $user3->lastname = 'Three';
+        $user3 = self::getDataGenerator()->create_user($user3);
+
+        $user4 = new stdClass();
+        $user4->firstname = 'User';
+        $user4->lastname = 'Four';
+        $user4 = self::getDataGenerator()->create_user($user4);
+
+        $user5 = new stdClass();
+        $user5->firstname = 'User search';
+        $user5->lastname = 'Five';
+        $user5 = self::getDataGenerator()->create_user($user5);
+
+        // Add a user as contact.
+        \core_message\api::add_contact($user1->id, $user2->id);
+
+        // Create private conversations with some users.
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            array($user1->id, $user2->id));
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            array($user3->id, $user1->id));
+
+        // Create a group conversation with users.
+        \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            array($user1->id, $user2->id, $user4->id),
+            'Project chat');
+
+        // Perform a search $CFG->messagingallusers setting enabled.
+        set_config('messagingallusers', 1);
+        list($contacts, $noncontacts) = \core_message\api::message_search_users($user1->id, 'search');
+
+        // Check that we retrieved the correct contacts.
+        $this->assertCount(1, $contacts);
+
+        // Check that we retrieved the correct conversations for contacts.
+        $this->assertCount(2, $contacts[0]->conversations);
+
+        // Check that we retrieved the correct non-contacts.
+        $this->assertCount(2, $noncontacts);
+        $this->assertEquals($user5->id, $noncontacts[0]->id);
+        $this->assertEquals($user3->id, $noncontacts[1]->id);
+
+        // Check that we retrieved the correct conversations for non-contacts.
+        $this->assertCount(0, $noncontacts[0]->conversations);
+        $this->assertCount(1, $noncontacts[1]->conversations);
+    }
+
+    /**
+     * Tests searching users with empty result.
+     */
+    public function test_message_search_users_with_empty_result() {
+
+        // Create some users.
+        $user1 = new stdClass();
+        $user1->firstname = 'User';
+        $user1->lastname = 'One';
+        $user1 = self::getDataGenerator()->create_user($user1);
+
+        // Set as the user performing the search.
+        $this->setUser($user1);
+
+        $user2 = new stdClass();
+        $user2->firstname = 'User';
+        $user2->lastname = 'Two';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        // Perform a search $CFG->messagingallusers setting enabled.
+        set_config('messagingallusers', 1);
+        list($contacts, $noncontacts) = \core_message\api::message_search_users($user1->id, 'search');
+
+        // Check results are empty.
+        $this->assertEquals(0, count($contacts));
+        $this->assertEquals(0, count($noncontacts));
     }
 
     /**

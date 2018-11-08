@@ -35,6 +35,7 @@ information provided here is intended especially for developers.
   - \core_message\api::get_most_recent_message()
   - \core_message\helper::get_messages()
   - \core_message\helper::create_messages()
+  - \core_message\api::search_users()
 * The method \core_message\api::can_delete_conversation() now expects a 'conversationid' to be passed
   as the second parameter.
 * The following web services have been deprecated. Please do not call these any more.
@@ -46,6 +47,9 @@ information provided here is intended especially for developers.
     core_message_external::core_message_mark_all_conversation_messages_as_read() instead.
   - core_message_external::data_for_messagearea_conversations(), please use core_message_external::get_conversations()
     instead
+  - core_message_external::data_for_messagearea_search_users_in_course().
+  - core_message_external::data_for_messagearea_search_users(),
+    please use core_message_external::message_search_users() instead.
 * The following function has been added for getting the privacy messaging preference:
   - get_user_privacy_messaging_preference()
 

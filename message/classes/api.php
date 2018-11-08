@@ -151,6 +151,11 @@ class api {
     /**
      * Handles searching for user in a particular course in the message area.
      *
+     * TODO: This function should be removed once new group messaging UI is in place and old messaging UI is removed.
+     * For now we are not removing/deprecating this function for backwards compatibility with messaging UI.
+     * But we are deprecating data_for_messagearea_search_users_in_course external function.
+     * Followup: MDL-63915
+     *
      * @param int $userid The user id doing the searching
      * @param int $courseid The id of the course we are searching in
      * @param string $search The string the user is searching
@@ -192,6 +197,11 @@ class api {
     /**
      * Handles searching for user in the message area.
      *
+     * TODO: This function should be removed once new group messaging UI is in place and old messaging UI is removed.
+     * For now we are not removing/deprecating this function for backwards compatibility with messaging UI.
+     * But we are deprecating data_for_messagearea_search_users external function.
+     * Followup: MDL-63915
+     *
      * @param int $userid The user id doing the searching
      * @param string $search The string the user is searching
      * @param int $limitnum
@@ -208,22 +218,23 @@ class api {
         $excludeusers = array($userid, $CFG->siteguest);
         list($exclude, $excludeparams) = $DB->get_in_or_equal($excludeusers, SQL_PARAMS_NAMED, 'param', false);
 
+        $params = array('search' => '%' . $search . '%', 'userid1' => $userid, 'userid2' => $userid, 'userid3' => $userid);
+
         // Ok, let's search for contacts first.
         $contacts = array();
         $sql = "SELECT $ufields, mub.id as isuserblocked
-                  FROM {user} u
-                  JOIN {message_contacts} mc
-                    ON u.id = mc.contactid
-             LEFT JOIN {message_users_blocked} mub
-                    ON (mub.userid = :userid2 AND mub.blockeduserid = u.id)
-                 WHERE mc.userid = :userid
-                   AND u.deleted = 0
-                   AND u.confirmed = 1
-                   AND " . $DB->sql_like($fullname, ':search', false) . "
-                   AND u.id $exclude
-              ORDER BY " . $DB->sql_fullname();
-        if ($users = $DB->get_records_sql($sql, array('userid' => $userid, 'userid2' => $userid,
-                'search' => '%' . $search . '%') + $excludeparams, 0, $limitnum)) {
+                FROM {user} u
+                JOIN {message_contacts} mc
+                  ON (u.id = mc.contactid AND mc.userid = :userid1) OR (u.id = mc.userid AND mc.contactid = :userid2)
+           LEFT JOIN {message_users_blocked} mub
+                  ON (mub.userid = :userid3 AND mub.blockeduserid = u.id)
+               WHERE u.deleted = 0
+                 AND u.confirmed = 1
+                 AND " . $DB->sql_like($fullname, ':search', false) . "
+                 AND u.id $exclude
+            ORDER BY " . $DB->sql_fullname();
+
+        if ($users = $DB->get_records_sql($sql, $params + $excludeparams, 0, $limitnum)) {
             foreach ($users as $user) {
                 $user->blocked = $user->isuserblocked ? 1 : 0;
                 $contacts[] = helper::create_contact($user);
@@ -251,28 +262,148 @@ class api {
             }
         }
 
-        // Let's get those non-contacts. Toast them gears boi.
-        // Note - you can only block contacts, so these users will not be blocked, so no need to get that
-        // extra detail from the database.
+        // Let's get those non-contacts.
         $noncontacts = array();
-        $sql = "SELECT $ufields
-                  FROM {user} u
-                 WHERE u.deleted = 0
-                   AND u.confirmed = 1
-                   AND " . $DB->sql_like($fullname, ':search', false) . "
-                   AND u.id $exclude
-                   AND u.id NOT IN (SELECT contactid
-                                      FROM {message_contacts}
-                                     WHERE userid = :userid)
-              ORDER BY " . $DB->sql_fullname();
-        if ($users = $DB->get_records_sql($sql,  array('userid' => $userid, 'search' => '%' . $search . '%') + $excludeparams,
-                0, $limitnum)) {
+        if ($CFG->messagingallusers) {
+            // In case $CFG->messagingallusers is enabled, search for all users site-wide but are not user's contact.
+            $sql = "SELECT $ufields
+                      FROM {user} u
+                 LEFT JOIN {message_users_blocked} mub
+                        ON (mub.userid = :userid1 AND mub.blockeduserid = u.id)
+                     WHERE u.deleted = 0
+                       AND u.confirmed = 1
+                       AND " . $DB->sql_like($fullname, ':search', false) . "
+                       AND u.id $exclude
+                       AND NOT EXISTS (SELECT mc.id
+                                         FROM {message_contacts} mc
+                                        WHERE (mc.userid = u.id AND mc.contactid = :userid2)
+                                           OR (mc.userid = :userid3 AND mc.contactid = u.id))
+                  ORDER BY " . $DB->sql_fullname();
+        } else {
+            // In case $CFG->messagingallusers is disabled, search for users you have a conversation with.
+            // Messaging setting could change, so could exist an old conversation with users you cannot message anymore.
+            $sql = "SELECT $ufields, mub.id as isuserblocked
+                      FROM {user} u
+                 LEFT JOIN {message_users_blocked} mub
+                        ON (mub.userid = :userid1 AND mub.blockeduserid = u.id)
+                INNER JOIN {message_conversation_members} cm
+                        ON u.id = cm.userid
+                INNER JOIN {message_conversation_members} cm2
+                        ON cm.conversationid = cm2.conversationid AND cm2.userid = :userid
+                     WHERE u.deleted = 0
+                       AND u.confirmed = 1
+                       AND " . $DB->sql_like($fullname, ':search', false) . "
+                       AND u.id $exclude
+                       AND NOT EXISTS (SELECT mc.id
+                                         FROM {message_contacts} mc
+                                        WHERE (mc.userid = u.id AND mc.contactid = :userid2)
+                                           OR (mc.userid = :userid3 AND mc.contactid = u.id))
+                  ORDER BY " . $DB->sql_fullname();
+            $params['userid'] = $userid;
+        }
+        if ($users = $DB->get_records_sql($sql,  $params + $excludeparams, 0, $limitnum)) {
             foreach ($users as $user) {
                 $noncontacts[] = helper::create_contact($user);
             }
         }
 
         return array($contacts, $courses, $noncontacts);
+    }
+
+    /**
+     * Handles searching for user.
+     *
+     * @param int $userid The user id doing the searching
+     * @param string $search The string the user is searching
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return array
+     */
+    public static function message_search_users(int $userid, string $search, int $limitfrom = 0, int $limitnum = 1000) : array {
+        global $CFG, $DB;
+
+        // Used to search for contacts.
+        $fullname = $DB->sql_fullname();
+
+        // Users not to include.
+        $excludeusers = array($userid, $CFG->siteguest);
+        list($exclude, $excludeparams) = $DB->get_in_or_equal($excludeusers, SQL_PARAMS_NAMED, 'param', false);
+
+        $params = array('search' => '%' . $search . '%', 'userid1' => $userid, 'userid2' => $userid);
+
+        // Ok, let's search for contacts first.
+        $sql = "SELECT u.id
+                  FROM {user} u
+                  JOIN {message_contacts} mc
+                    ON (u.id = mc.contactid AND mc.userid = :userid1) OR (u.id = mc.userid AND mc.contactid = :userid2)
+                 WHERE u.deleted = 0
+                   AND u.confirmed = 1
+                   AND " . $DB->sql_like($fullname, ':search', false) . "
+                   AND u.id $exclude
+              ORDER BY " . $DB->sql_fullname();
+        $foundusers = $DB->get_records_sql_menu($sql, $params + $excludeparams, $limitfrom, $limitnum);
+
+        $orderedcontacs = array();
+        if (!empty($foundusers)) {
+            $contacts = helper::get_member_info($userid, array_keys($foundusers));
+            // The get_member_info returns an associative array, so is not ordered in the same way.
+            // We need to reorder it again based on query's result.
+            foreach ($foundusers as $key => $value) {
+                $contact = $contacts[$key];
+                $contact->conversations = self::get_conversations_between_users($userid, $key, 0, 1000);
+                $orderedcontacs[] = $contact;
+            }
+        }
+
+        // Let's get those non-contacts.
+        if ($CFG->messagingallusers) {
+            // In case $CFG->messagingallusers is enabled, search for all users site-wide but are not user's contact.
+            $sql = "SELECT u.id
+                      FROM {user} u
+                     WHERE u.deleted = 0
+                       AND u.confirmed = 1
+                       AND " . $DB->sql_like($fullname, ':search', false) . "
+                       AND u.id $exclude
+                       AND NOT EXISTS (SELECT mc.id
+                                         FROM {message_contacts} mc
+                                        WHERE (mc.userid = u.id AND mc.contactid = :userid1)
+                                           OR (mc.userid = :userid2 AND mc.contactid = u.id))
+                  ORDER BY " . $DB->sql_fullname();
+        } else {
+            // In case $CFG->messagingallusers is disabled, search for users you have a conversation with.
+            // Messaging setting could change, so could exist an old conversation with users you cannot message anymore.
+            $sql = "SELECT u.id
+                      FROM {user} u
+                INNER JOIN {message_conversation_members} cm
+                        ON u.id = cm.userid
+                INNER JOIN {message_conversation_members} cm2
+                        ON cm.conversationid = cm2.conversationid AND cm2.userid = :userid
+                     WHERE u.deleted = 0
+                       AND u.confirmed = 1
+                       AND " . $DB->sql_like($fullname, ':search', false) . "
+                       AND u.id $exclude
+                       AND NOT EXISTS (SELECT mc.id
+                                         FROM {message_contacts} mc
+                                        WHERE (mc.userid = u.id AND mc.contactid = :userid1)
+                                           OR (mc.userid = :userid2 AND mc.contactid = u.id))
+                  ORDER BY " . $DB->sql_fullname();
+            $params['userid'] = $userid;
+        }
+        $foundusers = $DB->get_records_sql_menu($sql, $params + $excludeparams, $limitfrom, $limitnum);
+
+        $orderednoncontacs = array();
+        if (!empty($foundusers)) {
+            $noncontacts = helper::get_member_info($userid, array_keys($foundusers));
+            // The get_member_info returns an associative array, so is not ordered in the same way.
+            // We need to reorder it again based on query's result.
+            foreach ($foundusers as $key => $value) {
+                $contact = $noncontacts[$key];
+                $contact->conversations = self::get_conversations_between_users($userid, $key, 0, 1000);
+                $orderednoncontacs[] = $contact;
+            }
+        }
+
+        return array($orderedcontacs, $orderednoncontacs);
     }
 
     /**
@@ -589,6 +720,41 @@ class api {
             $arrconversations[] = $conv;
         }
         return $arrconversations;
+    }
+
+    /**
+     * Returns all conversations between two users
+     *
+     * @param int $userid1 One of the user's id
+     * @param int $userid2 The other user's id
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return array
+     * @throws \dml_exception
+     */
+    public static function get_conversations_between_users(int $userid1, int $userid2,
+                                                           int $limitfrom = 0, int $limitnum = 20) : array {
+
+        global $DB;
+
+        if ($userid1 == $userid2) {
+            return array();
+        }
+
+        // Get all conversation where both user1 and user2 are members.
+        // TODO: Add subname value. Waiting for definite table structure.
+        $sql = "SELECT mc.id, mc.type, mc.name, mc.timecreated
+                  FROM {message_conversations} mc
+            INNER JOIN {message_conversation_members} mcm1
+                    ON mc.id = mcm1.conversationid
+            INNER JOIN {message_conversation_members} mcm2
+                    ON mc.id = mcm2.conversationid
+                 WHERE mcm1.userid = :userid1
+                   AND mcm2.userid = :userid2
+                   AND mc.enabled != 0
+              ORDER BY mc.timecreated DESC";
+
+        return $DB->get_records_sql($sql, array('userid1' => $userid1, 'userid2' => $userid2), $limitfrom, $limitnum);
     }
 
     /**

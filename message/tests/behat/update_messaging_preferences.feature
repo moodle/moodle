@@ -8,6 +8,9 @@ Feature: Messaging preferences
     Given I log in as "admin"
     And I navigate to "Plugins > Message outputs > Manage message outputs" in site administration
     And I click on "//table[contains(@class, 'admintable')]/tbody/tr/td[contains(text(), 'Email')]/following-sibling::td[1]/a" "xpath_element"
+    And the following config values are set as admin:
+      | messaging | 1 |
+      | messagingallusers | 1 |
 
   Scenario: Alter my message preferences
     Given I follow "Preferences" in the user menu

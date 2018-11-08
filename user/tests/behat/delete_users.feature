@@ -20,6 +20,9 @@ Feature: Deleting users
       | user2    | C1     | student        |
       | user3    | C1     | student        |
       | user4    | C1     | student        |
+    And the following config values are set as admin:
+      | messaging | 1 |
+      | messagingallusers | 1 |
 
   @javascript
   Scenario: Deleting one user at a time
