@@ -48,7 +48,8 @@ class provider implements
         \core_privacy\local\request\subsystem\plugin_provider,
         \core_privacy\local\request\core_userlist_provider,
         // We store a userkey for token-based file access.
-        \core_privacy\local\request\subsystem\provider {
+        \core_privacy\local\request\subsystem\provider,
+        \core_privacy\local\request\shared_userlist_provider {
 
     /**
      * Returns metadata.
