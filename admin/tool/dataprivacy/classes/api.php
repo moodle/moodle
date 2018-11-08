@@ -253,6 +253,8 @@ class api {
         $datarequest->set('type', $type);
         // Set request comments.
         $datarequest->set('comments', $comments);
+        // Set the creation method.
+        $datarequest->set('creationmethod', $creationmethod);
 
         // Store subject access request.
         $datarequest->create();
