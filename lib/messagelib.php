@@ -55,7 +55,7 @@ require_once(__DIR__ . '/../message/lib.php');
  * @return mixed the integer ID of the new message or false if there was a problem with submitted data
  */
 function message_send(\core\message\message $eventdata) {
-    global $CFG, $DB;
+    global $CFG, $DB, $SITE;
 
     //new message ID to return
     $messageid = false;
@@ -74,6 +74,89 @@ function message_send(\core\message\message $eventdata) {
         $eventdata->notification = 1;
     }
 
+    // This is a message directed to a conversation, not a specific user as was the way in legacy messaging .
+    // We must call send_message_to_conversation(), which handles per-member processor iteration and triggers
+    // a per-conversation event.
+    if (!$eventdata->notification && $eventdata->convid) {
+        if (!is_object($eventdata->userfrom)) {
+            $eventdata->userfrom = core_user::get_user($eventdata->userfrom);
+        }
+        if (!$eventdata->userfrom) {
+            debugging('Attempt to send msg from unknown user', DEBUG_NORMAL);
+            return false;
+        }
+
+        // Only one message will be saved to the DB.
+        $conversationid = $eventdata->convid;
+        $table = 'messages';
+        $tabledata = new stdClass();
+        $tabledata->courseid = $eventdata->courseid;
+        $tabledata->useridfrom = $eventdata->userfrom->id;
+        $tabledata->conversationid = $conversationid;
+        $tabledata->subject = $eventdata->subject;
+        $tabledata->fullmessage = $eventdata->fullmessage;
+        $tabledata->fullmessageformat = $eventdata->fullmessageformat;
+        $tabledata->fullmessagehtml = $eventdata->fullmessagehtml;
+        $tabledata->smallmessage = $eventdata->smallmessage;
+        $tabledata->timecreated = time();
+
+        if (PHPUNIT_TEST and class_exists('phpunit_util')) {
+            // Add some more tests to make sure the normal code can actually work.
+            $componentdir = core_component::get_component_directory($eventdata->component);
+            if (!$componentdir or !is_dir($componentdir)) {
+                throw new coding_exception('Invalid component specified in message-send(): '.$eventdata->component);
+            }
+            if (!file_exists("$componentdir/db/messages.php")) {
+                throw new coding_exception("$eventdata->component does not contain db/messages.php necessary for message_send()");
+            }
+            $messageproviders = null;
+            include("$componentdir/db/messages.php");
+            if (!isset($messageproviders[$eventdata->name])) {
+                $errormsg = "Missing messaging defaults for event '$eventdata->name' in '$eventdata->component' messages.php file";
+                throw new coding_exception($errormsg);
+            }
+            unset($componentdir);
+            unset($messageproviders);
+            // Now ask phpunit if it wants to catch this message.
+            if (phpunit_util::is_redirecting_messages()) {
+                $messageid = $DB->insert_record($table, $tabledata);
+                $message = $DB->get_record($table, array('id' => $messageid));
+
+                // Mark the message as read for each of the other users.
+                $sql = "SELECT u.*
+                  FROM {message_conversation_members} mcm
+                  JOIN {user} u
+                    ON (mcm.conversationid = :convid AND u.id = mcm.userid AND u.id != :userid)";
+                $otherusers = $DB->get_records_sql($sql, ['convid' => $eventdata->convid, 'userid' => $eventdata->userfrom->id]);
+                foreach ($otherusers as $othermember) {
+                    \core_message\api::mark_message_as_read($othermember->id, $message);
+                }
+
+                // Unit tests need this detail.
+                $message->notification = $eventdata->notification;
+                phpunit_util::message_sent($message);
+                return $messageid;
+            }
+        }
+
+        // Cache messages.
+        if (!empty($eventdata->convid)) {
+            // Cache the timecreated value of the last message in this conversation.
+            $cache = cache::make('core', 'message_time_last_message_between_users');
+            $key = \core_message\helper::get_last_message_time_created_cache_key($eventdata->convid);
+            $cache->set($key, $tabledata->timecreated);
+        }
+
+        // Store unread message just in case we get a fatal error any time later.
+        $tabledata->id = $DB->insert_record($table, $tabledata);
+        $eventdata->savedmessageid = $tabledata->id;
+
+        return \core\message\manager::send_message_to_conversation($eventdata, $tabledata);
+    }
+
+    // Notifications and legacy messaging code:
+    // Most of the next steps are shared by both the legacy message code (those being sent to a single 'userto', not to a
+    // conversation), and for notifications. Any message-specific or notification-specific steps are clearly marked.
     if (!is_object($eventdata->userto)) {
         $eventdata->userto = core_user::get_user($eventdata->userto);
     }
@@ -290,14 +373,13 @@ function message_send(\core\message\message $eventdata) {
         }
     }
 
-    // Only cache messages, not notifications.
-    if (!$eventdata->notification) {
-        if (!empty($eventdata->convid)) {
-            // Cache the timecreated value of the last message in this conversation.
-            $cache = cache::make('core', 'message_time_last_message_between_users');
-            $key = \core_message\helper::get_last_message_time_created_cache_key($eventdata->convid);
-            $cache->set($key, $tabledata->timecreated);
-        }
+    // We have either created or derived a conversationid, which we can use to
+    // update the 'message_time_last_message_between_users' cache.
+    if (!empty($tabledata->conversationid)) {
+        // Cache the timecreated value of the last message in this conversation.
+        $cache = cache::make('core', 'message_time_last_message_between_users');
+        $key = \core_message\helper::get_last_message_time_created_cache_key($tabledata->conversationid);
+        $cache->set($key, $tabledata->timecreated);
     }
 
     // Store unread message just in case we get a fatal error any time later.
