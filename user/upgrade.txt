@@ -4,3 +4,5 @@ This files describes API changes for code that uses the user API.
 
 * The following functions have been finally deprecated and can not be used anymore:
   * useredit_update_picture()
+* core_user_external::update_user_preferences() now allows to unset existing preferences values.
+  If the preference value field is not set, the preference will be unset.
