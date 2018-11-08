@@ -146,22 +146,22 @@ $card-gutter : $card-deck-margin * 2;
 }
 
 .dashboard-card-deck {
-    @include media-breakpoint-up(sm) {
+    @media (min-width: 576px) {
         .dashboard-card {
             width: calc(50% - #{$card-gutter});
         }
     }
-    @include media-breakpoint-up(md) {
+    @media (min-width: 840px) {
         .dashboard-card {
             width: calc(33.33% - #{$card-gutter});
         }
     }
-    @include media-breakpoint-up(lg) {
+    @media (min-width: 1100px) {
         .dashboard-card {
             width: calc(25% - #{$card-gutter});
         }
     }
-    @include media-breakpoint-up(xl) {
+    @media (min-width: 1360px) {
         .dashboard-card {
             width: calc(20% - #{$card-gutter});
         }
@@ -170,12 +170,37 @@ $card-gutter : $card-deck-margin * 2;
 
 #region-main.has-blocks {
     .dashboard-card-deck {
-        @include media-breakpoint-up(lg) {
+        @media (min-width: 1200px) {
             .dashboard-card {
                 width: calc(33.33% - #{$card-gutter});
             }
         }
-        @include media-breakpoint-up(xl) {
+        @media (min-width: 1470px) {
+            .dashboard-card {
+                width: calc(25% - #{$card-gutter});
+            }
+        }
+    }
+}
+
+body.drawer-open-left {
+    .dashboard-card-deck {
+        @media (min-width: 768px) {
+            .dashboard-card {
+                width: calc(100% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 861px) {
+            .dashboard-card {
+                width: calc(50% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 1122px) {
+            .dashboard-card {
+                width: calc(33.33% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 1381px) {
             .dashboard-card {
                 width: calc(25% - #{$card-gutter});
             }
@@ -185,14 +210,19 @@ $card-gutter : $card-deck-margin * 2;
 
 body.drawer-open-left #region-main.has-blocks {
     .dashboard-card-deck {
-        @include media-breakpoint-up(lg) {
+        @media (min-width: 1200px) {
             .dashboard-card {
-                width: calc(33.33% - #{$card-gutter});
+                width: calc(100% - #{$card-gutter});
             }
         }
-        @media (min-width: 1400px) {
+        @media (min-width: 1236px) {
             .dashboard-card {
-                width: calc(25% - #{$card-gutter});
+                width: calc(50% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 1497px) {
+            .dashboard-card {
+                width: calc(33.33% - #{$card-gutter});
             }
         }
     }
@@ -201,11 +231,10 @@ body.drawer-open-left #region-main.has-blocks {
 @media (min-width: 1200px) {
     #block-region-side-pre {
         .dashboard-card-deck {
-            margin: 0;
+            margin-left: 0;
+            margin-right: 0;
             .dashboard-card {
-                width: 100% !important;
-                margin-left: 0;
-                margin-right: 0;
+                width: calc(100% - #{$card-gutter}) !important;
             }
         }
     }
