@@ -45,6 +45,9 @@ class manager {
     /** @var array buffer of pending messages */
     protected static $buffer = array();
 
+    /** @var array buffer of pending messages to conversations */
+    protected static $convmessagebuffer = array();
+
     /**
      * Used for calling processors, and generating event data when sending a message to a conversation.
      *
@@ -239,13 +242,48 @@ class manager {
                     }
                 }
             }
-            // Send the localised eventdata to each processor for the current member.
-            self::call_processors($localisedeventdata, $processorlist);
+            // Batch up the localised event data and processor list for all users into a local buffer.
+            $eventprocmaps[] = [clone($localisedeventdata), $processorlist];
         }
-        // Trigger the event using the original message eventdata as events don't need any of the localised information.
-        self::trigger_message_events($eventdata, $savemessage);
+        // Then pass it off as one item of work, to be processed by send_conversation_message_to_processors(), which will
+        // handle all transaction buffering logic.
+        self::send_conversation_message_to_processors($eventprocmaps, $eventdata, $savemessage);
 
         return $savemessage->id;
+    }
+
+    /**
+     * Takes a list of localised event data, and tries to send them to their respective member's message processors.
+     *
+     * Input format:
+     *  [CONVID => [$localisedeventdata, $savemessage, $processorlist], ].
+     *
+     * @param array $eventprocmaps the array of localised event data and processors for each member of the conversation.
+     * @param message $eventdata the original conversation message eventdata
+     * @param \stdClass $savemessage the saved message record.
+     * @throws \coding_exception
+     */
+    protected static function send_conversation_message_to_processors(array $eventprocmaps, message $eventdata,
+                                                                      \stdClass $savemessage) {
+        global $DB;
+
+        // We cannot communicate with external systems in DB transactions,
+        // buffer the messages if necessary.
+        if ($DB->is_transaction_started()) {
+            // Buffer this group conversation message and it's record.
+            self::$convmessagebuffer[] = [$eventprocmaps, $eventdata, $savemessage];
+            return;
+        }
+
+        // Send each localised version of the event data to each member's respective processors.
+        foreach ($eventprocmaps as $eventprocmap) {
+            $eventdata = $eventprocmap[0];
+            $processorlist = $eventprocmap[1];
+            self::call_processors($eventdata, $processorlist);
+        }
+
+        // Trigger event for sending a message or notification - we need to do this before marking as read!
+        self::trigger_message_events($eventdata, $savemessage);
     }
 
     /**
@@ -339,7 +377,7 @@ class manager {
      * Note: to be used from DML layer only.
      */
     public static function database_transaction_commited() {
-        if (!self::$buffer) {
+        if (!self::$buffer && !self::$convmessagebuffer) {
             return;
         }
         self::process_buffer();
@@ -359,13 +397,20 @@ class manager {
      * Sent out any buffered messages if necessary.
      */
     protected static function process_buffer() {
-        // Reset the buffer first in case we get exception from processor.
+        // Reset the buffers first in case we get exception from processor.
         $messages = self::$buffer;
         self::$buffer = array();
+        $convmessages = self::$convmessagebuffer;
+        self::$convmessagebuffer = array();
 
         foreach ($messages as $message) {
             list($eventdata, $savemessage, $processorlist) = $message;
             self::send_message_to_processors($eventdata, $savemessage, $processorlist);
+        }
+
+        foreach ($convmessages as $convmessage) {
+            list($eventprocmap, $eventdata, $savemessage) = $convmessage;
+            self::send_conversation_message_to_processors($eventprocmap, $eventdata, $savemessage);
         }
     }
 

@@ -916,6 +916,71 @@ class core_messagelib_testcase extends advanced_testcase {
         $sink->clear();
     }
 
+    /**
+     * Verify that sending a message to a conversation is an action which can be buffered by the manager if in a DB transaction.
+     *
+     * This should defer all processor calls (for 2 members in this case), and event creation (1 event).
+     */
+    public function test_send_message_to_conversation_group_with_buffering() {
+        global $DB, $CFG;
+        $this->preventResetByRollback();
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        set_config('allowedemaildomains', 'example.com');
+
+        // Create a conversation.
+        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id], 'Group project discussion');
+
+        // Test basic email redirection.
+        $this->assertFileExists("$CFG->dirroot/message/output/email/version.php");
+        $this->assertFileExists("$CFG->dirroot/message/output/popup/version.php");
+
+        $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email' AND name <> 'popup'");
+        get_message_processors(true, true);
+
+        $eventsink = $this->redirectEvents();
+
+        // Will always use the pop-up processor.
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user3);
+
+        $message = new \core\message\message();
+        $message->courseid          = 1;
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->convid            = $conversation->id;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '0';
+
+        $transaction = $DB->start_delegated_transaction();
+        $sink = $this->redirectEmails();
+        $messageid = message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(0, $emails);
+        $savedmessage = $DB->get_record('messages', array('id' => $messageid), '*', MUST_EXIST);
+        $sink->clear();
+        $this->assertFalse($DB->record_exists('message_user_actions', array()));
+        $DB->delete_records('messages', array());
+        $events = $eventsink->get_events();
+        $this->assertCount(0, $events);
+        $eventsink->clear();
+        $transaction->allow_commit();
+        $events = $eventsink->get_events();
+        $emails = $sink->get_messages();
+        $this->assertCount(2, $emails);
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf('\core\event\group_message_sent', $events[0]);
+    }
+
     public function test_rollback() {
         global $DB;
 
