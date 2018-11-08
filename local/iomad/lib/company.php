@@ -2899,6 +2899,10 @@ class company {
         $userid = $event->relateduserid;
         $user = $DB->get_record('user', array('id' => $userid));
         $company = self::get_company_byuserid($user->id);
+        if (empty($company)) {
+            return true;
+        }
+
         if ($DB->get_record('company_users', array('userid'=> $user->id, 'companyid' => $company->id, 'managertype' => 1))) {
             $user->manager = 'yes';
             $user->country = $company->country;
