@@ -186,6 +186,7 @@ $string['touserdoesntexist'] = 'You can not send a message to a user id ({$a}) t
 $string['unblockcontact'] = 'Unblock contact';
 $string['unknownuser'] = 'Unknown user';
 $string['unreadnotification'] = 'Unread notification: {$a}';
+$string['unreadnewgroupconversationmessage'] = 'New message from {$a->name} in {$a->conversationname}';
 $string['unreadnewmessage'] = 'New message from {$a}';
 $string['usercantbemessaged'] = 'You can\'t message {$a} due to their message preferences. Try adding them as a contact.';
 $string['viewfullnotification'] = 'View full notification';
