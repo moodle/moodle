@@ -1818,7 +1818,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Retrieve the messages.
         $messages = \core_message\api::get_messages($user1->id, $user2->id);
-        $this->assertDebuggingCalledCount(3);
 
         // Confirm the message data is correct.
         $this->assertEquals(4, count($messages));
@@ -2341,7 +2340,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Retrieve the most recent messages.
         $message = \core_message\api::get_most_recent_message($user1->id, $user2->id);
-        $this->assertDebuggingCalledCount(3);
 
         // Check the results are correct.
         $this->assertEquals($user2->id, $message->useridfrom);
@@ -3109,7 +3107,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Retrieve the messages from $time, which should be all of them.
         $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', $time);
-        $this->assertDebuggingCalledCount(3);
 
         // Confirm the message data is correct.
         $this->assertEquals(4, count($messages));
@@ -3126,7 +3123,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Retrieve the messages from $time + 3, which should only be the 2 last messages.
         $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', $time + 3);
-        $this->assertDebuggingCalledCount(3);
 
         // Confirm the message data is correct.
         $this->assertEquals(2, count($messages));
@@ -3158,7 +3154,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Retrieve the messages up until $time + 4, which should be all of them.
         $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', 0, $time + 4);
-        $this->assertDebuggingCalledCount(3);
 
         // Confirm the message data is correct.
         $this->assertEquals(4, count($messages));
@@ -3175,7 +3170,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Retrieve the messages up until $time + 2, which should be the first two.
         $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', 0, $time + 2);
-        $this->assertDebuggingCalledCount(3);
 
         // Confirm the message data is correct.
         $this->assertEquals(2, count($messages));
@@ -3207,7 +3201,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Retrieve the messages from $time + 2 up until $time + 3, which should be 2nd and 3rd message.
         $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', $time + 2, $time + 3);
-        $this->assertDebuggingCalledCount(3);
 
         // Confirm the message data is correct.
         $this->assertEquals(2, count($messages));

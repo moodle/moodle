@@ -37,7 +37,10 @@ class helper {
     /**
      * Helper function to retrieve the messages between two users
      *
-     * @deprecated since 3.6
+     * TODO: This function should be removed once the new group messaging UI is in place and the old messaging UI is removed.
+     * For now we are not removing/deprecating this function for backwards compatibility with messaging UI.
+     * Followup: MDL-63915
+     *
      * @param int $userid the current user
      * @param int $otheruserid the other user
      * @param int $timedeleted the time the message was deleted
@@ -50,9 +53,6 @@ class helper {
      */
     public static function get_messages($userid, $otheruserid, $timedeleted = 0, $limitfrom = 0, $limitnum = 0,
                                         $sort = 'timecreated ASC', $timefrom = 0, $timeto = 0) {
-        debugging('\core_message\helper::get_messages() is deprecated, please use ' .
-            '\core_message\helper::get_conversation_messages() instead.', DEBUG_DEVELOPER);
-
         global $DB;
 
         $hash = self::get_conversation_hash([$userid, $otheruserid]);
@@ -229,15 +229,15 @@ class helper {
     /**
      * Helper function to return an array of messages.
      *
-     * @deprecated since 3.6
+     * TODO: This function should be removed once the new group messaging UI is in place and the old messaging UI is removed.
+     * For now we are not removing/deprecating this function for backwards compatibility with messaging UI.
+     * Followup: MDL-63915
+     *
      * @param int $userid
      * @param array $messages
      * @return array
      */
     public static function create_messages($userid, $messages) {
-        debugging('\core_message\helper::create_messages() is deprecated, please use ' .
-            '\core_message\helper::create_conversation_messages() instead.', DEBUG_DEVELOPER);
-
         // Store the messages.
         $arrmessages = array();
 

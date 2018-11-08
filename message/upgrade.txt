@@ -31,11 +31,6 @@ information provided here is intended especially for developers.
   - \core_message\api::delete_conversation()
   - \core_message\api::is_user_non_contact_blocked()
   - \core_message\api::create_conversation_between_users()
-  - \core_message\api::get_messages()
-  - \core_message\api::get_most_recent_message()
-  - \core_message\helper::get_messages()
-  - \core_message\helper::create_messages()
-  - \core_message\api::search_users()
 * The method \core_message\api::can_delete_conversation() now expects a 'conversationid' to be passed
   as the second parameter.
 * The following web services have been deprecated. Please do not call these any more.
