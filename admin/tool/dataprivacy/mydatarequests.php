@@ -55,7 +55,7 @@ $PAGE->set_title($title);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
 
-$requests = tool_dataprivacy\api::get_data_requests($USER->id, [], [], 'timecreated DESC');
+$requests = tool_dataprivacy\api::get_data_requests($USER->id, [], [], [], 'timecreated DESC');
 $requestlist = new tool_dataprivacy\output\my_data_requests_page($requests);
 $requestlistoutput = $PAGE->get_renderer('tool_dataprivacy');
 echo $requestlistoutput->render($requestlist);

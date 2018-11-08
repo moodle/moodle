@@ -136,6 +136,8 @@ class provider implements
             $data->type = tool_helper::get_shortened_request_type_string($record->type);
             // Status.
             $data->status = tool_helper::get_request_status_string($record->status);
+            // Creation method.
+            $data->creationmethod = tool_helper::get_request_creation_method_string($record->creationmethod);
             // Comments.
             $data->comments = $record->comments;
             // The DPO's comment about this request.
@@ -193,6 +195,10 @@ class provider implements
                     case tool_helper::FILTER_STATUS:
                         $option->category = get_string('requeststatus', 'tool_dataprivacy');
                         $option->name = tool_helper::get_request_status_string($value);
+                        break;
+                    case tool_helper::FILTER_CREATION:
+                        $option->category = get_string('requestcreation', 'tool_dataprivacy');
+                        $option->name = tool_helper::get_request_creation_method_string($value);
                         break;
                 }
                 $descriptions[] = get_string('filteroption', 'tool_dataprivacy', $option);
