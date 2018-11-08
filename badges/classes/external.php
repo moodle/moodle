@@ -137,6 +137,12 @@ class core_badges_external extends external_api {
                     'uniquehash' => $badge->uniquehash,
                     'dateissued' => $badge->dateissued,
                     'dateexpire' => $badge->dateexpire,
+                    'version' => $badge->version,
+                    'language' => $badge->language,
+                    'imageauthorname' => $badge->imageauthorname,
+                    'imageauthoremail' => $badge->imageauthoremail,
+                    'imageauthorurl' => $badge->imageauthorurl,
+                    'imagecaption' => $badge->imagecaption,
                 );
             }
 

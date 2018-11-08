@@ -183,6 +183,42 @@ class user_badge_exporter extends exporter {
                 'description' => 'User email',
                 'optional' => true,
             ],
+            'version' => [
+                'type' => PARAM_TEXT,
+                'description' => 'Version',
+                'optional' => true,
+                'null' => NULL_ALLOWED,
+            ],
+            'language' => [
+                'type' => PARAM_NOTAGS,
+                'description' => 'Language',
+                'optional' => true,
+                'null' => NULL_ALLOWED,
+            ],
+            'imageauthorname' => [
+                'type' => PARAM_TEXT,
+                'description' => 'Name of the image author',
+                'optional' => true,
+                'null' => NULL_ALLOWED,
+            ],
+            'imageauthoremail' => [
+                'type' => PARAM_TEXT,
+                'description' => 'Email of the image author',
+                'optional' => true,
+                'null' => NULL_ALLOWED,
+            ],
+            'imageauthorurl' => [
+                'type' => PARAM_URL,
+                'description' => 'URL of the image author',
+                'optional' => true,
+                'null' => NULL_ALLOWED,
+            ],
+            'imagecaption' => [
+                'type' => PARAM_TEXT,
+                'description' => 'Caption of the image',
+                'optional' => true,
+                'null' => NULL_ALLOWED,
+            ],
         ];
     }
 

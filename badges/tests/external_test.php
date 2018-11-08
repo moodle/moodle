@@ -85,6 +85,12 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
         $badge->attachment = 1;
         $badge->notification = 0;
         $badge->status = BADGE_STATUS_ACTIVE;
+        $badge->version = '1';
+        $badge->language = 'en';
+        $badge->imageauthorname = 'Image author';
+        $badge->imageauthoremail = 'imageauthor@example.com';
+        $badge->imageauthorurl = 'http://image-author-url.domain.co.nz';
+        $badge->imagecaption = 'Caption';
 
         $badgeid = $DB->insert_record('badge', $badge, true);
         $badge = new badge($badgeid);
@@ -116,15 +122,26 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
 
         $this->setUser($this->student);
 
+        $badges = (array) badges_get_user_badges($this->student->id);
+        $expectedbadges = array();
+
+        foreach ($badges as $badge) {
+            $context = ($badge->type == BADGE_TYPE_SITE) ? context_system::instance() : context_course::instance($badge->courseid);
+            $badge->badgeurl = moodle_url::make_webservice_pluginfile_url($context->id, 'badges', 'badgeimage', $badge->id, '/',
+                                                                            'f1')->out(false);
+
+            $expectedbadges[] = (array) $badge;
+        }
+
         $result = core_badges_external::get_user_badges();
         $result = external_api::clean_returnvalue(core_badges_external::get_user_badges_returns(), $result);
-        $this->assertCount(2, $result['badges']);
+        $this->assertEquals($expectedbadges, $result['badges']);
 
         // Pagination and filtering.
         $result = core_badges_external::get_user_badges(0, $this->course->id, 0, 1, '', true);
         $result = external_api::clean_returnvalue(core_badges_external::get_user_badges_returns(), $result);
         $this->assertCount(1, $result['badges']);
-        $this->assertEquals($this->course->id, $result['badges'][0]['courseid']);
+        $this->assertEquals($expectedbadges[1], $result['badges'][0]);
     }
 
     /**
