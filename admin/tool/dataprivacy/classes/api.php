@@ -225,13 +225,21 @@ class api {
      * @param int $type The request type.
      * @param string $comments Request comments.
      * @param int $creationmethod The creation method of the data request.
+     * @param bool $notify Notify DPOs of this pending request.
      * @return data_request
      * @throws invalid_persistent_exception
      * @throws coding_exception
      */
     public static function create_data_request($foruser, $type, $comments = '',
-                                               $creationmethod = data_request::DATAREQUEST_CREATION_MANUAL) {
+            $creationmethod = data_request::DATAREQUEST_CREATION_MANUAL,
+            $notify = null
+        ) {
         global $USER, $ADMIN;
+
+        if (null === $notify && data_request::DATAREQUEST_CREATION_AUTO == $creationmethod) {
+            // If the request was automatically created, then do not notify unless explicitly set.
+            $notify = false;
+        }
 
         $datarequest = new data_request();
         // The user the request is being made for.
@@ -255,6 +263,16 @@ class api {
 
         // Store subject access request.
         $datarequest->create();
+
+        if ($notify) {
+            // Get the list of the site Data Protection Officers.
+            $dpos = api::get_site_dpos();
+
+            // Email the data request to the Data Protection Officer(s)/Admin(s).
+            foreach ($dpos as $dpo) {
+                api::notify_dpo($dpo, $datarequest);
+            }
+        }
 
         return $datarequest;
     }
