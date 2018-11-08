@@ -43,21 +43,6 @@ function message_popup_render_navbar_output(\renderer_base $renderer) {
 
     $output = '';
 
-    // Add the messages popover.
-    if (!empty($CFG->messaging)) {
-        $unreadcount = \core_message\api::count_unread_conversations($USER);
-        $context = [
-            'userid' => $USER->id,
-            'unreadcount' => $unreadcount,
-            'urls' => [
-                'seeall' => (new moodle_url('/message/index.php'))->out(),
-                'writeamessage' => (new moodle_url('/message/index.php', ['contactsfirst' => 1]))->out(),
-                'preferences' => (new moodle_url('/message/edit.php', ['id' => $USER->id]))->out(),
-            ],
-        ];
-        $output .= $renderer->render_from_template('message_popup/message_popover', $context);
-    }
-
     // Add the notifications popover.
     $enabled = \core_message\api::is_processor_enabled("popup");
     if ($enabled) {
