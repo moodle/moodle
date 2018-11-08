@@ -786,11 +786,13 @@ class expired_contexts_manager {
         $parents = $context->get_parent_contexts(true);
         foreach ($parents as $parent) {
             if ($parent instanceof \context_course) {
+                // This is a context within a course. Check whether _this context_ is expired as a function of a course.
                 return self::is_course_context_expired($context);
             }
 
             if ($parent instanceof \context_user) {
-                return self::are_user_context_dependencies_expired($context);
+                // This is a context within a user. Check whether the _user_ has expired.
+                return self::are_user_context_dependencies_expired($parent);
             }
         }
 
@@ -810,12 +812,13 @@ class expired_contexts_manager {
     }
 
     /**
-     * Determine whether the supplied course context has expired.
+     * Determine whether the supplied course-related context has expired.
+     * Note: This is not necessarily a _course_ context, but a context which is _within_ a course.
      *
-     * @param   \context_course $context
+     * @param   \context        $context
      * @return  bool
      */
-    protected static function is_course_context_expired(\context_course $context) : bool {
+    protected static function is_course_context_expired(\context $context) : bool {
         $expiryrecords = self::get_nested_expiry_info_for_courses($context->path);
 
         return !empty($expiryrecords[$context->path]) && $expiryrecords[$context->path]->info->is_fully_expired();
@@ -890,11 +893,13 @@ class expired_contexts_manager {
         $parents = $context->get_parent_contexts(true);
         foreach ($parents as $parent) {
             if ($parent instanceof \context_course) {
-                return self::is_course_context_expired_or_unprotected_for_user($parent, $user);
+                // This is a context within a course. Check whether _this context_ is expired as a function of a course.
+                return self::is_course_context_expired_or_unprotected_for_user($context, $user);
             }
 
             if ($parent instanceof \context_user) {
-                return self::are_user_context_dependencies_expired($context);
+                // This is a context within a user. Check whether the _user_ has expired.
+                return self::are_user_context_dependencies_expired($parent);
             }
         }
 
@@ -902,13 +907,14 @@ class expired_contexts_manager {
     }
 
     /**
-     * Determine whether the supplied course context has expired, or is unprotected.
+     * Determine whether the supplied course-related context has expired, or is unprotected.
+     * Note: This is not necessarily a _course_ context, but a context which is _within_ a course.
      *
-     * @param   \context_course $context
+     * @param   \context        $context
      * @param   \stdClass       $user
      * @return  bool
      */
-    protected static function is_course_context_expired_or_unprotected_for_user(\context_course $context, \stdClass $user) {
+    protected static function is_course_context_expired_or_unprotected_for_user(\context $context, \stdClass $user) {
         $expiryrecords = self::get_nested_expiry_info_for_courses($context->path);
 
         $info = $expiryrecords[$context->path]->info;
