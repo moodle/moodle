@@ -16030,6 +16030,10 @@ body {
 .editing .block .header .commands img.actionmenu {
   width: auto;
 }
+.editing .block .header .commands .toggle-display[role="menuitem"] img.icon {
+  width: 22px;
+  vertical-align: middle;
+}
 .jsenabled .block.hidden .content {
   display: none;
 }
