@@ -57,8 +57,10 @@ class delete_existing_deleted_users extends scheduled_task {
     public function execute() {
         global $DB;
 
-        // Select all deleted users that do not have any delete data requests created for them.
-        $sql = "SELECT DISTINCT(u.id)
+        // Automatic creation of deletion requests must be enabled.
+        if (get_config('tool_dataprivacy', 'automaticdeletionrequests')) {
+            // Select all deleted users that do not have any delete data requests created for them.
+            $sql = "SELECT DISTINCT(u.id)
                   FROM {user} u
              LEFT JOIN {tool_dataprivacy_request} r
                        ON u.id = r.userid
@@ -66,23 +68,24 @@ class delete_existing_deleted_users extends scheduled_task {
                        AND (r.id IS NULL
                            OR r.type != ?)";
 
-        $params = [
-            1,
-            api::DATAREQUEST_TYPE_DELETE
-        ];
+            $params = [
+                1,
+                api::DATAREQUEST_TYPE_DELETE
+            ];
 
-        $deletedusers = $DB->get_records_sql($sql, $params);
-        $createdrequests = 0;
+            $deletedusers = $DB->get_records_sql($sql, $params);
+            $createdrequests = 0;
 
-        foreach ($deletedusers as $user) {
-            api::create_data_request($user->id, api::DATAREQUEST_TYPE_DELETE,
+            foreach ($deletedusers as $user) {
+                api::create_data_request($user->id, api::DATAREQUEST_TYPE_DELETE,
                     get_string('datarequestcreatedfromscheduledtask', 'tool_dataprivacy'),
                     data_request::DATAREQUEST_CREATION_AUTO);
-            $createdrequests++;
-        }
+                $createdrequests++;
+            }
 
-        if ($createdrequests > 0) {
-            mtrace($createdrequests . ' delete data request(s) created for existing deleted users');
+            if ($createdrequests > 0) {
+                mtrace($createdrequests . ' delete data request(s) created for existing deleted users');
+            }
         }
     }
 }
