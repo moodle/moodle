@@ -97,7 +97,7 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
             api::set_contextlevel($record);
         } else {
             list($purposevar, ) = data_registry::var_names_from_context(
-                    \context_helper::get_class_for_level(CONTEXT_COURSE)
+                    \context_helper::get_class_for_level($contextlevel)
                 );
             set_config($purposevar, $purpose->get('id'), 'tool_dataprivacy');
         }
@@ -1719,18 +1719,17 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $manager->set_progress(new \null_progress_trace());
         $manager->method('get_privacy_manager')->willReturn($mockprivacymanager);
 
-        $purposes->course->set('retentionperiod', 'P5Y');
-        $purposes->course->save();
+        // Changing the retention period to a longer period will remove the expired_context record.
+        $purposes->activity->set('retentionperiod', 'P5Y');
+        $purposes->activity->save();
 
         list($processedcourses, $processedusers) = $manager->process_approved_deletions();
 
         $this->assertEquals(0, $processedcourses);
         $this->assertEquals(0, $processedusers);
 
+        $this->expectException('dml_missing_record_exception');
         $updatedcontext = new expired_context($expiredcontext->get('id'));
-
-        // No change - we just can't process it until the children have finished.
-        $this->assertEquals(expired_context::STATUS_APPROVED, $updatedcontext->get('status'));
     }
 
     /**
@@ -2186,8 +2185,6 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
      * Test the is_context_expired functions when supplied with the system context.
      */
     public function test_is_context_expired_system() {
-        global $DB;
-
         $this->resetAfterTest();
         $this->setup_basics('PT1H', 'PT1H', 'P1D');
         $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
@@ -2198,11 +2195,37 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the is_context_expired functions when supplied with a block in the user context.
+     *
+     * Children of a user context always follow the user expiry rather than any context level defaults (e.g. at the
+     * block level.
+     */
+    public function test_is_context_expired_user_block() {
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1H', 'PT1H', 'P1D');
+        $purposes->block = $this->create_and_set_purpose_for_contextlevel('P5Y', CONTEXT_BLOCK);
+
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+        $this->setUser($user);
+        $block = $this->create_user_block('Title', 'Content', FORMAT_PLAIN);
+        $blockcontext = \context_block::instance($block->instance->id);
+        $this->setUser();
+
+        // Protected flags have no bearing on expiry of user subcontexts.
+        $this->assertTrue(expired_contexts_manager::is_context_expired($blockcontext));
+
+        $purposes->block->set('protected', 1)->save();
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($blockcontext, $user));
+
+        $purposes->block->set('protected', 0)->save();
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($blockcontext, $user));
+    }
+
+    /**
      * Test the is_context_expired functions when supplied with an expired course.
      */
     public function test_is_context_expired_course_expired() {
-        global $DB;
-
         $this->resetAfterTest();
 
         $purposes = $this->setup_basics('PT1H', 'PT1H', 'P1D');
@@ -2226,8 +2249,6 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
      * Test the is_context_expired functions when supplied with an unexpired course.
      */
     public function test_is_context_expired_course_unexpired() {
-        global $DB;
-
         $this->resetAfterTest();
 
         $purposes = $this->setup_basics('PT1H', 'PT1H', 'P1D');
@@ -2245,6 +2266,42 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
 
         $purposes->course->set('protected', 0)->save();
         $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $user));
+    }
+
+    /**
+     * Test the is_context_expired functions when supplied with an unexpired course and a child context in the course which is protected.
+     *
+     * When a child context has a specific purpose set, then that purpose should be respected with respect to the
+     * course.
+     *
+     * If the course is still within the expiry period for the child context, then that child's protected flag should be
+     * respected, even when the course may have expired.
+     */
+    public function test_is_child_context_expired_course_unexpired_with_child() {
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1H', 'PT1H', 'P1D', 'P1D');
+        $purposes->course->set('protected', 0)->save();
+        $purposes->activity->set('protected', 1)->save();
+
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() + WEEKSECS]);
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+
+        $coursecontext = \context_course::instance($course->id);
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+        $forumcontext = \context_module::instance($cm->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $this->assertFalse(expired_contexts_manager::is_context_expired($coursecontext));
+        $this->assertFalse(expired_contexts_manager::is_context_expired($forumcontext));
+
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($coursecontext, $user));
+        $this->assertFalse(expired_contexts_manager::is_context_expired_or_unprotected_for_user($forumcontext, $user));
+
+        $purposes->activity->set('protected', 0)->save();
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($forumcontext, $user));
     }
 
     /**
