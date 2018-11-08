@@ -15,7 +15,9 @@
 }
 
 .que.ddmarker .dragitems .draghome {
+    display: inline-block;
     margin: 10px;
+    vertical-align: top;
 }
 
 .que.ddmarker .dragitems {
