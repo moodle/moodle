@@ -74,15 +74,17 @@ class data_requests_table extends table_sql {
      * @param int $userid The user ID
      * @param int[] $statuses
      * @param int[] $types
+     * @param int[] $creationmethods
      * @param bool $manage
      * @throws coding_exception
      */
-    public function __construct($userid = 0, $statuses = [], $types = [], $manage = false) {
+    public function __construct($userid = 0, $statuses = [], $types = [], $creationmethods = [], $manage = false) {
         parent::__construct('data-requests-table');
 
         $this->userid = $userid;
         $this->statuses = $statuses;
         $this->types = $types;
+        $this->creationmethods = $creationmethods;
         $this->manage = $manage;
 
         $checkboxattrs = [
@@ -273,11 +275,12 @@ class data_requests_table extends table_sql {
         $sort = $this->get_sql_sort();
 
         // Get data requests from the given conditions.
-        $datarequests = api::get_data_requests($this->userid, $this->statuses, $this->types, $sort,
-                $this->get_page_start(), $this->get_page_size());
+        $datarequests = api::get_data_requests($this->userid, $this->statuses, $this->types,
+                $this->creationmethods, $sort, $this->get_page_start(), $this->get_page_size());
 
         // Count data requests from the given conditions.
-        $total = api::get_data_requests_count($this->userid, $this->statuses, $this->types);
+        $total = api::get_data_requests_count($this->userid, $this->statuses, $this->types,
+                $this->creationmethods);
         $this->pagesize($pagesize, $total);
 
         $this->rawdata = [];
