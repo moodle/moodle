@@ -220,16 +220,18 @@ if ($mform->is_cancelled()) {
         }
 
         // Deal with program license.
-        if (!empty($formdata->licenseid) && empty($formdata->licensecourses)) {
+        if (!empty($formdata->licenseid)) {
             if ($DB->get_record('companylicense', array('id' => $formdata->licenseid, 'program' => 1))) {
                 // This is a program of courses.  Set them!
                 $formdata->licensecourses = $DB->get_records_sql_menu("SELECT c.id, clc.courseid FROM {companylicense_courses} clc
                                                                        JOIN {course} c ON (clc.courseid = c.id
                                                                        AND clc.licenseid = :licenseid)",
                                                                        array('licenseid' => $formdata->licenseid));
+            } else {
+                $formdata->licensecourses = optional_param_array('licensecourses', array(), PARAM_INT);
             }
         } else {
-            $formdata->licensecourses = optional_param_array('licensecourses', array(), PARAM_INT);
+            $formdata->licensecourses = array();
         }
 
         // Print the header.
@@ -945,7 +947,7 @@ if ($mform->is_cancelled()) {
                     $numlicenses++;
         
                     $count++;
-                    $DB->insert_record('companylicense_users',
+                    $userlicid = $DB->insert_record('companylicense_users',
                                         array('userid' => $user->id,
                                               'licenseid' => $formdata->licenseid,
                                               'licensecourseid' => $licensecourse,
@@ -955,7 +957,7 @@ if ($mform->is_cancelled()) {
                     $eventother = array('licenseid' => $formdata->licenseid,
                                     'duedate' => $timestamp);
                     $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($licensecourse),
-                                                                                                  'objectid' => $formdata->licenseid,
+                                                                                                  'objectid' => $userlicid,
                                                                                                   'courseid' => $licensecourse,
                                                                                                   'userid' => $user->id,
                                                                                                   'other' => $eventother));
