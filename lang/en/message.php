@@ -52,6 +52,7 @@ $string['emailtagline'] = 'This is a copy of a message sent to you at "{$a->site
 $string['enabled'] = 'Enabled';
 $string['errorcallingprocessor'] = 'Error calling defined output';
 $string['errortranslatingdefault'] = 'Error translating default setting provided by plugin, using system defaults instead.';
+$string['eventgroupmessagesent'] = 'Group message sent';
 $string['eventnotificationviewed'] = 'Notification viewed';
 $string['eventnotificationsent'] = 'Notification sent';
 $string['eventmessagecontactadded'] = 'Message contact added';

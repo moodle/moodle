@@ -239,6 +239,101 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test the group message sent event.
+     *
+     * We can't test events in any testing of the message_send() function as there is a conditional PHPUNIT check in message_send,
+     * resulting in fake messages being generated and captured under test. As a result, none of the events code, nor message
+     * processor code is called during testing.
+     */
+    public function test_group_message_sent() {
+        $event = \core\event\group_message_sent::create([
+            'objectid' => 3,
+            'userid' => 1,
+            'context'  => context_system::instance(),
+            'other' => [
+                'courseid' => 4,
+                'conversationid' => 54
+            ]
+        ]);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\group_message_sent', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+        $url = new moodle_url('/message/index.php');
+        $this->assertEquals($url, $event->get_url());
+        $this->assertEquals(3, $event->objectid);
+        $this->assertEquals(4, $event->other['courseid']);
+        $this->assertEquals(54, $event->other['conversationid']);
+    }
+
+    /**
+     * Test the group message sent event when created without a courseid.
+     */
+    public function test_group_message_sent_without_other_courseid() {
+        // Creating a message_sent event without other[courseid] leads to exception.
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('The \'courseid\' value must be set in other');
+
+        $event = \core\event\group_message_sent::create([
+            'userid' => 1,
+            'objectid' => 3,
+            'context'  => context_system::instance(),
+            'relateduserid' => 2,
+            'other' => [
+                'conversationid' => 34
+            ]
+        ]);
+    }
+
+    /**
+     * Test the group message sent event when created without a conversationid.
+     */
+    public function test_group_message_sent_without_other_conversationid() {
+        // Creating a message_sent event without other[courseid] leads to exception.
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('The \'conversationid\' value must be set in other');
+
+        $event = \core\event\group_message_sent::create([
+            'userid' => 1,
+            'objectid' => 3,
+            'context'  => context_system::instance(),
+            'relateduserid' => 2,
+            'other' => [
+                'courseid' => 44,
+            ]
+        ]);
+    }
+
+    /**
+     * Test the group message sent event using the create_from_ids() method.
+     */
+    public function test_group_message_sent_via_create_from_ids() {
+        // Fields are: userfromid, conversationid, messageid, courseid.
+        $event = \core\event\group_message_sent::create_from_ids(1, 2, 3, 4);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\group_message_sent', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+        $this->assertEquals(new moodle_url('/message/index.php'), $event->get_url());
+        $this->assertEquals(1, $event->userid);
+        $this->assertEquals(2, $event->other['conversationid']);
+        $this->assertEquals(3, $event->objectid);
+        $this->assertEquals(4, $event->other['courseid']);
+    }
+
+    /**
      * Test the message viewed event.
      */
     public function test_message_viewed() {
