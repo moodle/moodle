@@ -218,6 +218,20 @@ if ($mform->is_cancelled()) {
             $cir->cleanup(true);
             redirect($returnurl);
         }
+
+        // Deal with program license.
+        if (!empty($formdata->licenseid) && empty($formdata->licensecourses)) {
+            if ($DB->get_record('companylicense', array('id' => $formdata->licenseid, 'program' => 1))) {
+                // This is a program of courses.  Set them!
+                $formdata->licensecourses = $DB->get_records_sql_menu("SELECT c.id, clc.courseid FROM {companylicense_courses} clc
+                                                                       JOIN {course} c ON (clc.courseid = c.id
+                                                                       AND clc.licenseid = :licenseid)",
+                                                                       array('licenseid' => $formdata->licenseid));
+            }
+        } else {
+            $formdata->licensecourses = optional_param_array('licensecourses', array(), PARAM_INT);
+        }
+
         // Print the header.
         echo $output->header();
         echo $output->heading(get_string('uploadusersresult', 'tool_uploaduser'));
@@ -901,24 +915,13 @@ if ($mform->is_cancelled()) {
                 company_user::enrol($user, array_keys($formdata->selectedcourses) );
             }
 
-            // Deal with program license.
-            if (!empty($formdata->licenseid) && empty($formdata->licensecourses)) {
-                if ($DB->get_record('companylicense', array('id' => $formdata->licenseid, 'program' => 1))) {
-                    // This is a program of courses.  Set them!
-                    $formdata->licensecourses = $DB->get_records_sql_menu("SELECT c.id, clc.courseid FROM {companylicense_courses} clc
-                                                                          JOIN {course} c ON (clc.courseid = c.id
-                                                                          AND clc.licenseid = :licenseid)",
-                                                                          array('licenseid' => $formdata->licenseid));
-                }
-            }
-
             // Assign and licenses.
             if (!empty($formdata->licenseid)) {
-                $formdata->licensecourses = optional_param_array('licensecourses', array(), PARAM_INT);
                 $timestamp = time();
                 $licenserecord = (array) $DB->get_record('companylicense', array('id' => $formdata->licenseid));
                 $count = $licenserecord['used'];
                 $numberoflicenses = $licenserecord['allocation'];
+
                 foreach ($formdata->licensecourses as $licensecourse) {
                     if ($count >= $numberoflicenses) {
                         // Set the used amount.
@@ -941,14 +944,12 @@ if ($mform->is_cancelled()) {
                     $allow = true;
                     $numlicenses++;
         
-                    if ($allow) {
-                        $count++;
-                        $DB->insert_record('companylicense_users',
-                                            array('userid' => $user->id,
-                                                  'licenseid' => $formdata->licenseid,
-                                                  'licensecourseid' => $licensecourse,
-                                                  'issuedate' => time()));
-                    }
+                    $count++;
+                    $DB->insert_record('companylicense_users',
+                                        array('userid' => $user->id,
+                                              'licenseid' => $formdata->licenseid,
+                                              'licensecourseid' => $licensecourse,
+                                              'issuedate' => time()));
 
                     // Create an event.
                     $eventother = array('licenseid' => $formdata->licenseid,
