@@ -1590,6 +1590,7 @@ class core_message_external extends external_api {
     /**
      * The messagearea contacts return parameters.
      *
+     * @deprecated since 3.6
      * @return external_function_parameters
      * @since 3.2
      */
@@ -1600,6 +1601,7 @@ class core_message_external extends external_api {
     /**
      * Get messagearea contacts parameters.
      *
+     * @deprecated since 3.6
      * @param int $userid The id of the user who we are viewing conversations for
      * @param int $limitfrom
      * @param int $limitnum
@@ -1639,6 +1641,7 @@ class core_message_external extends external_api {
     /**
      * The messagearea contacts return structure.
      *
+     * @deprecated since 3.6
      * @return external_single_structure
      * @since 3.2
      */
@@ -1647,8 +1650,18 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function data_for_messagearea_contacts_is_deprecated() {
+        return true;
+    }
+
+    /**
      * The messagearea messages parameters.
      *
+     * @deprecated since 3.6
      * @return external_function_parameters
      * @since 3.2
      */
@@ -1669,6 +1682,7 @@ class core_message_external extends external_api {
     /**
      * Get messagearea messages.
      *
+     * @deprecated since 3.6
      * @param int $currentuserid The current user's id
      * @param int $otheruserid The other user's id
      * @param int $limitfrom
@@ -1741,6 +1755,7 @@ class core_message_external extends external_api {
     /**
      * The messagearea messages return structure.
      *
+     * @deprecated since 3.6
      * @return external_single_structure
      * @since 3.2
      */
@@ -1760,6 +1775,15 @@ class core_message_external extends external_api {
                 'isblocked' => new external_value(PARAM_BOOL, 'Is this user blocked by the current user?', VALUE_DEFAULT, false),
             )
         );
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function data_for_messagearea_messages_is_deprecated() {
+        return true;
     }
 
     /**
@@ -1867,6 +1891,7 @@ class core_message_external extends external_api {
     /**
      * The get most recent message return parameters.
      *
+     * @deprecated since 3.6
      * @return external_function_parameters
      * @since 3.2
      */
@@ -1882,6 +1907,7 @@ class core_message_external extends external_api {
     /**
      * Get the most recent message in a conversation.
      *
+     * @deprecated since 3.6
      * @param int $currentuserid The current user's id
      * @param int $otheruserid The other user's id
      * @return stdClass
@@ -1919,6 +1945,7 @@ class core_message_external extends external_api {
     /**
      * The get most recent message return structure.
      *
+     * @deprecated since 3.6
      * @return external_single_structure
      * @since 3.2
      */
@@ -1927,8 +1954,18 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function data_for_messagearea_get_most_recent_message_is_deprecated() {
+        return true;
+    }
+
+    /**
      * The get profile parameters.
      *
+     * @deprecated since 3.6
      * @return external_function_parameters
      * @since 3.2
      */
@@ -1944,6 +1981,7 @@ class core_message_external extends external_api {
     /**
      * Get the profile information for a contact.
      *
+     * @deprecated since 3.6
      * @param int $currentuserid The current user's id
      * @param int $otheruserid The id of the user whose profile we are viewing
      * @return stdClass
@@ -1981,6 +2019,7 @@ class core_message_external extends external_api {
     /**
      * The get profile return structure.
      *
+     * @deprecated since 3.6
      * @return external_single_structure
      * @since 3.2
      */
@@ -2000,6 +2039,15 @@ class core_message_external extends external_api {
                 'iscontact' => new external_value(PARAM_BOOL, 'Is the user a contact?')
             )
         );
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function data_for_messagearea_get_profile_is_deprecated() {
+        return true;
     }
 
     /**
