@@ -30,7 +30,10 @@ use core_privacy\local\request\userlist;
 
 defined('MOODLE_INTERNAL') || die();
 
-interface assignsubmission_user_provider extends \core_privacy\local\request\plugin\subplugin_provider {
+interface assignsubmission_user_provider extends
+        \core_privacy\local\request\plugin\subplugin_provider,
+        \core_privacy\local\request\shared_userlist_provider
+    {
 
     /**
      * If you have tables that contain userids and you can generate entries in your tables without creating an

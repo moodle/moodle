@@ -33,7 +33,13 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2018 Marina Glancy
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface datafield_provider extends \core_privacy\local\request\plugin\subplugin_provider {
+interface datafield_provider extends
+        \core_privacy\local\request\plugin\subplugin_provider,
+
+        // The data subplugins do not need to do anything themselves for the shared_userlist.
+        // This is all handled by the parent plugin.
+        \core_privacy\local\request\shared_userlist_provider
+    {
 
     /**
      * Exports data about one record in {data_content} table.

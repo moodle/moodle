@@ -34,7 +34,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 interface portfolio_provider extends
         // The portfolio_provider should be implemented by plugins which only provide information to a subsystem.
-        \core_privacy\local\request\plugin\subsystem_provider {
+        \core_privacy\local\request\plugin\subsystem_provider,
+
+        // The implementation for prtfolios is handled in the subsystem itself.
+        \core_privacy\local\request\shared_userlist_provider {
 
     /**
      * Export all portfolio data from each portfolio plugin for the specified userid and context.
