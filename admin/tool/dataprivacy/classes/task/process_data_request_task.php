@@ -88,6 +88,7 @@ class process_data_request_task extends adhoc_task {
         mtrace('Processing request...');
         api::update_request_status($requestid, api::DATAREQUEST_STATUS_PROCESSING);
         $completestatus = api::DATAREQUEST_STATUS_COMPLETE;
+        $deleteuser = false;
 
         if ($request->type == api::DATAREQUEST_TYPE_EXPORT) {
             // Get the user context.
@@ -131,6 +132,7 @@ class process_data_request_task extends adhoc_task {
 
             $manager->delete_data_for_user($approvedclcollection);
             $completestatus = api::DATAREQUEST_STATUS_DELETED;
+            $deleteuser = !$foruser->deleted;
         }
 
         // When the preparation of the metadata finishes, update the request status to awaiting approval.
@@ -263,7 +265,7 @@ class process_data_request_task extends adhoc_task {
             }
         }
 
-        if ($request->type == api::DATAREQUEST_TYPE_DELETE) {
+        if ($deleteuser) {
             // Delete the user.
             delete_user($foruser);
         }
