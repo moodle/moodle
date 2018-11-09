@@ -239,6 +239,8 @@ class api {
         if (null === $notify && data_request::DATAREQUEST_CREATION_AUTO == $creationmethod) {
             // If the request was automatically created, then do not notify unless explicitly set.
             $notify = false;
+        } else {
+            $notify = true;
         }
 
         $datarequest = new data_request();
