@@ -306,11 +306,13 @@ class helper {
         // Store the message if we have it.
         $data->ismessaging = false;
         $data->lastmessage = null;
+        $data->lastmessagedate = null;
         $data->messageid = null;
         if (isset($contact->smallmessage)) {
             $data->ismessaging = true;
             // Strip the HTML tags from the message for displaying in the contact area.
             $data->lastmessage = clean_param($contact->smallmessage, PARAM_NOTAGS);
+            $data->lastmessagedate = $contact->timecreated;
             $data->useridfrom = $contact->useridfrom;
             if (isset($contact->messageid)) {
                 $data->messageid = $contact->messageid;
@@ -608,6 +610,7 @@ class helper {
             $data->profileimageurlsmall = $conv->members[$otheruser->id]->profileimageurlsmall;
             $data->ismessaging = isset($conv->messages[0]->text) ? true : false;
             $data->lastmessage = $conv->messages[0]->text ? clean_param($conv->messages[0]->text, PARAM_NOTAGS) : null;
+            $data->lastmessagedate = $conv->messages[0]->timecreated ?? null;
             $data->messageid = $conv->messages[0]->id ?? null;
             $data->isonline = $conv->members[$otheruser->id]->isonline ?? null;
             $data->isblocked = $conv->members[$otheruser->id]->isblocked ?? null;
