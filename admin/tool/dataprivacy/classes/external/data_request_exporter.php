@@ -164,9 +164,6 @@ class data_request_exporter extends persistent_exporter {
                 // Request can be manually completed for general enquiry requests.
                 $values['canmarkcomplete'] = $requesttype == api::DATAREQUEST_TYPE_OTHERS;
                 break;
-            case api::DATAREQUEST_STATUS_PREPROCESSING:
-                $values['statuslabelclass'] = 'label-default';
-                break;
             case api::DATAREQUEST_STATUS_AWAITING_APPROVAL:
                 $values['statuslabelclass'] = 'label-info';
                 // DPO can review the request once it's ready.

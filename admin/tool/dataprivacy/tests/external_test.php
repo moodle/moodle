@@ -94,6 +94,7 @@ class tool_dataprivacy_external_testcase extends externallib_advanced_testcase {
         // Test data request creation.
         $this->setUser($requester);
         $datarequest = api::create_data_request($requester->id, api::DATAREQUEST_TYPE_EXPORT, $comment);
+        $datarequest->set('status', api::DATAREQUEST_STATUS_CANCELLED)->save();
 
         // Admin as DPO. (The default when no one's assigned as a DPO in the site).
         $this->setAdminUser();
@@ -356,6 +357,7 @@ class tool_dataprivacy_external_testcase extends externallib_advanced_testcase {
 
         $this->setUser($requester);
         $datarequest = api::create_data_request($requester->id, api::DATAREQUEST_TYPE_EXPORT, $comment);
+        $datarequest->set('status', api::DATAREQUEST_STATUS_CANCELLED)->save();
 
         // Admin as DPO. (The default when no one's assigned as a DPO in the site).
         $this->setAdminUser();

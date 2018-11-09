@@ -34,9 +34,6 @@ Feature: Data delete from the privacy API
     And I set the field "Type" to "Delete all of my personal data"
     And I press "Save changes"
     Then I should see "Victim User 1"
-    And I should see "Pending" in the "Victim User 1" "table_row"
-    And I run all adhoc tasks
-    And I reload the page
     And I should see "Awaiting approval" in the "Victim User 1" "table_row"
     And I open the action menu in "Victim User 1" "table_row"
     And I follow "Approve request"
@@ -59,9 +56,6 @@ Feature: Data delete from the privacy API
     And I set the field "Type" to "Delete all of my personal data"
     And I press "Save changes"
     Then I should see "Delete all of my personal data"
-    And I should see "Pending" in the "Delete all of my personal data" "table_row"
-    And I run all adhoc tasks
-    And I reload the page
     And I should see "Awaiting approval" in the "Delete all of my personal data" "table_row"
 
     And I log out
@@ -97,9 +91,6 @@ Feature: Data delete from the privacy API
     And I set the field "Type" to "Delete all of my personal data"
     And I press "Save changes"
     Then I should see "Victim User 1"
-    And I should see "Pending" in the "Victim User 1" "table_row"
-    And I run all adhoc tasks
-    And I reload the page
     And I should see "Awaiting approval" in the "Victim User 1" "table_row"
 
     And I log out

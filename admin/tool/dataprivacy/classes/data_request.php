@@ -83,10 +83,9 @@ class data_request extends persistent {
                 'type' => PARAM_INT
             ],
             'status' => [
-                'default' => api::DATAREQUEST_STATUS_PENDING,
+                'default' => api::DATAREQUEST_STATUS_AWAITING_APPROVAL,
                 'choices' => [
                     api::DATAREQUEST_STATUS_PENDING,
-                    api::DATAREQUEST_STATUS_PREPROCESSING,
                     api::DATAREQUEST_STATUS_AWAITING_APPROVAL,
                     api::DATAREQUEST_STATUS_APPROVED,
                     api::DATAREQUEST_STATUS_PROCESSING,
@@ -278,7 +277,14 @@ class data_request extends persistent {
         $currentdata = $this->to_record();
         unset($currentdata->id);
 
-        $clone = api::create_data_request($this->get('userid'), $this->get('type'));
+        // Clone the original request, but do not notify.
+        $clone = api::create_data_request(
+                $this->get('userid'),
+                $this->get('type'),
+                $this->get('comments'),
+                $this->get('creationmethod'),
+                false
+            );
         $clone->set('comments', $this->get('comments'));
         $clone->set('dpo', $this->get('dpo'));
         $clone->set('requestedby', $this->get('requestedby'));

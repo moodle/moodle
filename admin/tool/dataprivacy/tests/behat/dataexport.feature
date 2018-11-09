@@ -30,9 +30,6 @@ Feature: Data export from the privacy API
     And I set the field "User" to "Victim User 1"
     And I press "Save changes"
     Then I should see "Victim User 1"
-    And I should see "Pending" in the "Victim User 1" "table_row"
-    And I run all adhoc tasks
-    And I reload the page
     And I should see "Awaiting approval" in the "Victim User 1" "table_row"
     And I open the action menu in "Victim User 1" "table_row"
     And I follow "Approve request"
@@ -59,9 +56,6 @@ Feature: Data export from the privacy API
     And I follow "New request"
     And I press "Save changes"
     Then I should see "Export all of my personal data"
-    And I should see "Pending" in the "Export all of my personal data" "table_row"
-    And I run all adhoc tasks
-    And I reload the page
     And I should see "Awaiting approval" in the "Export all of my personal data" "table_row"
 
     And I log out
@@ -99,9 +93,6 @@ Feature: Data export from the privacy API
     And I set the field "User" to "Victim User 1"
     And I press "Save changes"
     Then I should see "Victim User 1"
-    And I should see "Pending" in the "Victim User 1" "table_row"
-    And I run all adhoc tasks
-    And I reload the page
     And I should see "Awaiting approval" in the "Victim User 1" "table_row"
 
     And I log out

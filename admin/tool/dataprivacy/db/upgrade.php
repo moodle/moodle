@@ -262,5 +262,42 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018100406, 'tool', 'dataprivacy');
     }
 
+
+    if ($oldversion < 2018110700) {
+        // Define table tool_dataprivacy_ctxlst_ctx to be dropped.
+        $table = new xmldb_table('tool_dataprivacy_ctxlst_ctx');
+
+        // Conditionally launch drop table for tool_dataprivacy_ctxlst_ctx.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Define table tool_dataprivacy_rqst_ctxlst to be dropped.
+        $table = new xmldb_table('tool_dataprivacy_rqst_ctxlst');
+
+        // Conditionally launch drop table for tool_dataprivacy_rqst_ctxlst.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Define table tool_dataprivacy_contextlist to be dropped.
+        $table = new xmldb_table('tool_dataprivacy_contextlist');
+
+        // Conditionally launch drop table for tool_dataprivacy_contextlist.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Update all requests which were in states Pending, or Pre-Processing, to Awaiting approval.
+        $DB->set_field('tool_dataprivacy_request', 'status', 2, ['status' => 0]);
+        $DB->set_field('tool_dataprivacy_request', 'status', 2, ['status' => 1]);
+
+        // Remove the old initiate_data_request_task adhoc entries.
+        $DB->delete_records('task_adhoc', ['classname' => '\tool_dataprivacy\task\initiate_data_request_task']);
+
+        // Dataprivacy savepoint reached.
+        upgrade_plugin_savepoint(true, 2018110700, 'tool', 'dataprivacy');
+    }
+
     return true;
 }
