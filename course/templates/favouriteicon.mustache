@@ -25,25 +25,16 @@
         "isfavourite": true
     }
 }}
-<div id="favorite-icon-{{ id }}"
+<span id="favorite-icon-{{ id }}-{{uniqid}}"
     data-region="favourite-icon"
     data-course-id="{{id}}"
     >
-    <div class="btn btn-link favouritebtn p-2">
-        <span
-            {{^isfavourite}}class="hidden"{{/isfavourite}}
-            data-region="is-favourite"
-            aria-hidden="{{^isfavourite}}true{{/isfavourite}}{{#isfavourite}}false{{/isfavourite}}"
-            >
-            {{#pix}} i/star, core, {{#str}} favourite, core_course {{/str}} {{/pix}}
-            <span class="sr-only">{{#str}} aria:favourite, core_course {{/str}}</span>
-        </span>
-        <span
-            {{#isfavourite}}class="hidden"{{/isfavourite}}
-            data-region="not-favourite"
-            aria-hidden="{{^isfavourite}}false{{/isfavourite}}{{#isfavourite}}true{{/isfavourite}}"
-            >
-            {{#pix}} i/empty, core, {{#str}} notfavourite, core_course {{/str}} {{/pix}}
-        </span>
-    </div>
-</div>
+    <span
+        class="{{^isfavourite}}hidden{{/isfavourite}}"
+        data-region="is-favourite"
+        aria-hidden="{{^isfavourite}}true{{/isfavourite}}{{#isfavourite}}false{{/isfavourite}}"
+        >
+        {{#pix}} i/star, core, {{#str}} favourite, core_course {{/str}} {{/pix}}
+        <span class="sr-only">{{#str}} aria:favourite, core_course {{/str}}</span>
+    </span>
+</span>

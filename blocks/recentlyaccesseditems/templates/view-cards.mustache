@@ -40,21 +40,17 @@
     }
 }}
 
-<div class="card-deck dashboard-card-deck" role="list">
+<div class="card-deck dashboard-card-deck one-row" role="list">
     {{#items}}
-        <a
-                class="card dashboard-card py-2 pl-0 pr-0"
-                href="{{{viewurl}}}"
-                title="{{name}}"
-        >
+        <a class="card dashboard-card m-b-1 py-2 coursename" href="{{{viewurl}}}">
             <div class="card-body course-info-container">
-                <div class="d-flex">
-                    <div class="icon-size-4 d-flex align-self-center">
+                <div class="d-flex text-truncate">
+                    <div class="d-flex align-self-center">
                         {{{icon}}}
                     </div>
                     <div class="w-100 line-height-3 text-truncate ml-2">
-                        <h6 class="mb-0">{{{name}}}</h6>
-                        <small class="text-muted m-b-0">{{{coursename}}}</small>
+                        <h6 class="mb-0 text-truncate">{{{name}}}</h6>
+                        <small class="text-muted text-truncate m-b-0">{{{coursename}}}</small>
                     </div>
                 </div>
             </div>

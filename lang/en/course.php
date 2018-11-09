@@ -26,7 +26,6 @@ $string['aria:courseimage'] = 'Course image:';
 $string['aria:coursename'] = 'Course name:';
 $string['aria:favourite'] = 'Course is starred';
 $string['favourite'] = 'Starred course';
-$string['notfavourite'] = 'Not starred';
 $string['privacy:perpage'] = 'The number of courses to show per page.';
 $string['privacy:completionpath'] = 'Course completion';
 $string['privacy:metadata:completionsummary'] = 'The course contains completion information about the user.';

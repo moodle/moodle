@@ -30,7 +30,6 @@ Feature: The my overview block allows users to favourite their courses
     And I reload the page
     Then "//div[@class='card dashboard-card' and contains(.,'Course 2')]//span[@data-region='is-favourite' and @aria-hidden='false']" "xpath_element" should exist
     And "//div[@class='card dashboard-card' and contains(.,'Course 2')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should not exist
-    And "//div[@class='card dashboard-card' and contains(.,'Course 2')]//span[@data-region='not-favourite' and @aria-hidden='true']" "xpath_element" should exist
     And "//div[@class='card dashboard-card' and contains(.,'Course 1')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should exist
     And "//div[@class='card dashboard-card' and contains(.,'Course 3')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should exist
     And I log out
@@ -45,7 +44,6 @@ Feature: The my overview block allows users to favourite their courses
     And I reload the page
     Then "//li[contains(concat(' ', normalize-space(@class), ' '), 'list-group-item') and contains(.,'Course 5')]//span[@data-region='is-favourite' and @aria-hidden='false']" "xpath_element" should exist
     And "//li[contains(concat(' ', normalize-space(@class), ' '), 'list-group-item') and contains(.,'Course 5')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should not exist
-    And "//li[contains(concat(' ', normalize-space(@class), ' '), 'list-group-item') and contains(.,'Course 5')]//span[@data-region='not-favourite' and @aria-hidden='true']" "xpath_element" should exist
     And "//li[contains(concat(' ', normalize-space(@class), ' '), 'list-group-item') and contains(.,'Course 1')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should exist
     And "//li[contains(concat(' ', normalize-space(@class), ' '), 'list-group-item') and contains(.,'Course 3')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should exist
     And I log out
@@ -60,7 +58,6 @@ Feature: The my overview block allows users to favourite their courses
     And I reload the page
     Then "//div[contains(concat(' ', normalize-space(@class), ' '), 'course-summaryitem') and contains(.,'Course 5')]//span[@data-region='is-favourite' and @aria-hidden='false']" "xpath_element" should exist
     And "//div[contains(concat(' ', normalize-space(@class), ' '), 'course-summaryitem') and contains(.,'Course 5')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should not exist
-    And "//div[contains(concat(' ', normalize-space(@class), ' '), 'course-summaryitem') and contains(.,'Course 5')]//span[@data-region='not-favourite' and @aria-hidden='true']" "xpath_element" should exist
     And "//div[contains(concat(' ', normalize-space(@class), ' '), 'course-summaryitem') and contains(.,'Course 1')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should exist
     And "//div[contains(concat(' ', normalize-space(@class), ' '), 'course-summaryitem') and contains(.,'Course 3')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should exist
     And I log out
