@@ -189,7 +189,7 @@ class tool_dataprivacy_data_request_testcase extends data_privacy_testcase {
         $this->assertEquals('Foo', $newrequest->get('comments'));
         $this->assertEquals(42, $newrequest->get('requestedby'));
         $this->assertEquals(98, $newrequest->get('dpo'));
-        $this->assertEquals(api::DATAREQUEST_STATUS_PENDING, $newrequest->get('status'));
+        $this->assertEquals(api::DATAREQUEST_STATUS_AWAITING_APPROVAL, $newrequest->get('status'));
         $this->assertEquals(api::DATAREQUEST_TYPE_DELETE, $newrequest->get('type'));
 
         $this->assertEquals(api::DATAREQUEST_STATUS_REJECTED, $uut->get('status'));
@@ -213,7 +213,7 @@ class tool_dataprivacy_data_request_testcase extends data_privacy_testcase {
         $this->assertEquals('Foo', $newrequest->get('comments'));
         $this->assertEquals(42, $newrequest->get('requestedby'));
         $this->assertEquals(98, $newrequest->get('dpo'));
-        $this->assertEquals(api::DATAREQUEST_STATUS_PENDING, $newrequest->get('status'));
+        $this->assertEquals(api::DATAREQUEST_STATUS_AWAITING_APPROVAL, $newrequest->get('status'));
         $this->assertEquals(api::DATAREQUEST_TYPE_DELETE, $newrequest->get('type'));
 
         $this->assertEquals(api::DATAREQUEST_STATUS_REJECTED, $uut->get('status'));
