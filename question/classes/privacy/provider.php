@@ -61,7 +61,10 @@ class provider implements
     \core_privacy\local\request\subsystem\plugin_provider,
 
     // This plugin is capable of determining which users have data within it.
-    \core_privacy\local\request\core_userlist_provider
+    \core_privacy\local\request\core_userlist_provider,
+
+    // This plugin is capable of determining which users have data within it for the plugins it provides data to.
+    \core_privacy\local\request\shared_userlist_provider
 {
 
     /**

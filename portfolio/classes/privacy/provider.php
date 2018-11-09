@@ -45,7 +45,9 @@ class provider implements
         \core_privacy\local\request\plugin\provider,
         \core_privacy\local\request\core_userlist_provider,
         // The portfolio subsystem will be called by other components.
-        \core_privacy\local\request\subsystem\plugin_provider {
+        \core_privacy\local\request\subsystem\plugin_provider,
+
+        \core_privacy\local\request\shared_userlist_provider {
 
     /**
      * Returns meta data about this system.
