@@ -20,6 +20,13 @@ Feature: Data delete from the privacy API
       | parent | tired | User         | victim    |
     And the following config values are set as admin:
       | contactdataprotectionofficer | 1  | tool_dataprivacy |
+    And the following data privacy "categories" exist:
+      | name          |
+      | Site category |
+    And the following data privacy "purposes" exist:
+      | name         | retentionperiod |
+      | Site purpose | P10Y           |
+    And I set the site category and purpose to "Site category" and "Site purpose"
 
   @javascript
   Scenario: As admin, delete a user and their data

@@ -890,6 +890,11 @@ class expired_contexts_manager {
      * @return  bool
      */
     public static function is_context_expired_or_unprotected_for_user(\context $context, \stdClass $user) : bool {
+        // User/course contexts can't expire if no purpose is set in the system context.
+        if (!data_registry::defaults_set()) {
+            return false;
+        }
+
         $parents = $context->get_parent_contexts(true);
         foreach ($parents as $parent) {
             if ($parent instanceof \context_course) {
