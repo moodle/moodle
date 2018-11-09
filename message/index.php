@@ -128,10 +128,12 @@ if (!$user2realuser) {
 
 // Mark the conversation as read.
 if (!empty($user2->id)) {
+    $hasbeenreadallmessages = false;
     if ($currentuser && isset($conversations[$user2->id])) {
         // Mark the conversation we are loading as read.
         if ($conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id])) {
             \core_message\api::mark_all_messages_as_read($user1->id, $conversationid);
+            $hasbeenreadallmessages = true;
         }
 
         // Ensure the UI knows it's read as well.
@@ -185,9 +187,17 @@ if (!empty($user2->id)) {
                 $message->blocktime = userdate($message->timecreated, get_string('strftimedaydate'));
             }
 
-            // We don't have this information here so, for now, we leave an empty value.
+            // We don't have this information here so, for now, we leave an empty value or the current time.
             // This is a temporary solution because a new UI is being built in MDL-63303.
             $message->timeread = 0;
+            if ($hasbeenreadallmessages && $message->useridfrom != $user1->id) {
+                // As all the messages sent by the other user have been marked as read previously, we will change
+                // timeread to the current time to avoid the last message will be duplicated after calling to the
+                // core_message_data_for_messagearea_messages via javascript.
+                // We only need to change that to the other user, because for the current user, messages are always
+                // marked as unread.
+                $message->timeread = time();
+            }
         }
     }
 }
