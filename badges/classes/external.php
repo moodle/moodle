@@ -124,9 +124,10 @@ class core_badges_external extends external_api {
 
         foreach ($userbadges as $badge) {
             $context = ($badge->type == BADGE_TYPE_SITE) ? context_system::instance() : context_course::instance($badge->courseid);
+            $canconfiguredetails = has_capability('moodle/badges:configuredetails', $context);
 
             // If the user is viewing another user's badge and doesn't have the right capability return only part of the data.
-            if ($USER->id != $user->id and !has_capability('moodle/badges:configuredetails', $context)) {
+            if ($USER->id != $user->id and !$canconfiguredetails) {
                 $badge = (object) array(
                     'id' => $badge->id,
                     'name' => $badge->name,
@@ -146,7 +147,40 @@ class core_badges_external extends external_api {
                 );
             }
 
-            $exporter = new user_badge_exporter($badge, array('context' => $context));
+            // Create a badge instance to be able to get the endorsement and other info.
+            $badgeinstance = new badge($badge->id);
+            $endorsement = $badgeinstance->get_endorsement();
+            $competencies = $badgeinstance->get_alignment();
+            $relatedbadges = $badgeinstance->get_related_badges();
+
+            if (!$canconfiguredetails) {
+                // Return only the properties visible by the user.
+
+                if (!empty($competencies)) {
+                    foreach ($competencies as $competency) {
+                        unset($competency->targetdescription);
+                        unset($competency->targetframework);
+                        unset($competency->targetcode);
+                    }
+                }
+
+                if (!empty($relatedbadges)) {
+                    foreach ($relatedbadges as $relatedbadge) {
+                        unset($relatedbadge->version);
+                        unset($relatedbadge->language);
+                        unset($relatedbadge->type);
+                    }
+                }
+            }
+
+            $related = array(
+                'context' => $context,
+                'endorsement' => $endorsement ? $endorsement : null,
+                'competencies' => $competencies,
+                'relatedbadges' => $relatedbadges,
+            );
+
+            $exporter = new user_badge_exporter($badge, $related);
             $result['badges'][] = $exporter->export($PAGE->get_renderer('core'));
         }
 

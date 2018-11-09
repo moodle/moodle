@@ -1,6 +1,10 @@
 This files describes API changes in /badges/*,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+
+* The WebService core_badges_get_user_badges now returns more information for each badge: notification, nextcron, email, version, language, imageauthorname, imageauthoremail, imageauthorurl, imagecaption, endorsement, competencies and relatedbadges.
+
 === 2.7 ===
 
 * get_completed_criteria_sql() - This method was added to award_criteria class and must be overriden
