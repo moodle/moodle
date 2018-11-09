@@ -450,7 +450,10 @@ class api {
                     $extrafields[$convid]['subname'] = format_string($courseinfo[$groupid]->courseshortname);
 
                     // Imageurl.
-                    $extrafields[$convid]['imageurl'] = get_group_picture_url($group, $group->courseid, true)->out(false);
+                    $extrafields[$convid]['imageurl'] = '';
+                    if ($url = get_group_picture_url($group, $group->courseid, true)) {
+                        $extrafields[$convid]['imageurl'] = $url->out(false);
+                    }
                 }
             }
         }
