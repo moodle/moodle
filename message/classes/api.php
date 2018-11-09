@@ -1002,6 +1002,21 @@ class api {
     }
 
     /**
+     * Returns the contacts count.
+     *
+     * @param int $userid The user id
+     * @return array
+     */
+    public static function count_contacts(int $userid) : int {
+        global $DB;
+
+        $sql = "SELECT COUNT(id)
+                  FROM {message_contacts}
+                 WHERE userid = ? OR contactid = ?";
+        return $DB->count_records_sql($sql, [$userid, $userid]);
+    }
+
+    /**
      * Returns the an array of the users the given user is in a conversation
      * with who are a contact and the number of unread messages.
      *

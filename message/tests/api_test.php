@@ -5834,6 +5834,35 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test the count_contacts() function.
+     */
+    public function test_count_contacts() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->assertEquals(0, \core_message\api::count_contacts($user1->id));
+
+        \core_message\api::create_contact_request($user1->id, $user2->id);
+
+        // Still zero until the request is confirmed.
+        $this->assertEquals(0, \core_message\api::count_contacts($user1->id));
+
+        \core_message\api::confirm_contact_request($user1->id, $user2->id);
+
+        $this->assertEquals(1, \core_message\api::count_contacts($user1->id));
+
+        \core_message\api::create_contact_request($user3->id, $user1->id);
+
+        // Still one until the request is confirmed.
+        $this->assertEquals(1, \core_message\api::count_contacts($user1->id));
+
+        \core_message\api::confirm_contact_request($user3->id, $user1->id);
+
+        $this->assertEquals(2, \core_message\api::count_contacts($user1->id));
+    }
+
+    /**
      * Comparison function for sorting contacts.
      *
      * @param stdClass $a
