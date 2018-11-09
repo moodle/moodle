@@ -3673,6 +3673,37 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test getting contact requests when there are none.
+     */
+    public function test_get_contact_requests_no_requests() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+
+        $requests = \core_message\api::get_contact_requests($user1->id);
+
+        $this->assertEmpty($requests);
+    }
+
+    /**
+     * Test getting contact requests with limits.
+     */
+    public function test_get_contact_requests_with_limits() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        \core_message\api::create_contact_request($user2->id, $user1->id);
+        \core_message\api::create_contact_request($user3->id, $user1->id);
+
+        $requests = \core_message\api::get_contact_requests($user1->id, 0, 1);
+
+        $this->assertCount(1, $requests);
+    }
+
+    /**
      * Test adding contacts.
      */
     public function test_add_contact() {

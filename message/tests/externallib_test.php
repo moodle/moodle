@@ -584,6 +584,43 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test getting contact requests when there are none.
+     */
+    public function test_get_contact_requests_no_requests() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        $requests = core_message_external::get_contact_requests($user1->id);
+        $requests = external_api::clean_returnvalue(core_message_external::get_contact_requests_returns(), $requests);
+
+        $this->assertEmpty($requests);
+    }
+
+    /**
+     * Test getting contact requests with limits.
+     */
+    public function test_get_contact_requests_with_limits() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        \core_message\api::create_contact_request($user2->id, $user1->id);
+        \core_message\api::create_contact_request($user3->id, $user1->id);
+
+        $requests = core_message_external::get_contact_requests($user1->id, 0, 1);
+        $requests = external_api::clean_returnvalue(core_message_external::get_contact_requests_returns(), $requests);
+
+        $this->assertCount(1, $requests);
+    }
+
+    /**
      * Test getting contact requests with messaging disabled.
      */
     public function test_get_contact_requests_messaging_disabled() {
