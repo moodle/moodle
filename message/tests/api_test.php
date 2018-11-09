@@ -1335,7 +1335,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         $course1 = $this->getDataGenerator()->create_course();
 
-        // Create a group with a linked conversation.
+        // Create a group with a linked conversation and a valid image.
         $this->setAdminUser();
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
         $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
@@ -1350,10 +1350,28 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id));
         $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user2->id));
 
+        // Verify the group with the image works as expected.
         $conversations = \core_message\api::get_conversations($user1->id);
         $this->assertEquals(2, $conversations[0]->membercount);
         $this->assertEquals($course1->shortname, $conversations[0]->subname);
         $groupimageurl = get_group_picture_url($group1, $group1->courseid, true);
+        $this->assertEquals($groupimageurl, $conversations[0]->imageurl);
+
+        // Create a group with a linked conversation and without any image.
+        $group2 = $this->getDataGenerator()->create_group([
+            'courseid' => $course1->id,
+            'enablemessaging' => 1,
+        ]);
+
+        // Add users to group2.
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group2->id, 'userid' => $user2->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group2->id, 'userid' => $user3->id));
+
+        // Verify the group without any image works as expected too.
+        $conversations = \core_message\api::get_conversations($user3->id);
+        $this->assertEquals(2, $conversations[0]->membercount);
+        $this->assertEquals($course1->shortname, $conversations[0]->subname);
+        $groupimageurl = get_group_picture_url($group2, $group2->courseid, true);
         $this->assertEquals($groupimageurl, $conversations[0]->imageurl);
     }
 
