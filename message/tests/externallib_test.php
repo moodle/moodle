@@ -574,14 +574,13 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $request = reset($requests);
 
         $this->assertEquals($user2->id, $request['id']);
-        $this->assertEquals($user2->picture, $request['picture']);
-        $this->assertEquals($user2->firstname, $request['firstname']);
-        $this->assertEquals($user2->lastname, $request['lastname']);
-        $this->assertEquals($user2->firstnamephonetic, $request['firstnamephonetic']);
-        $this->assertEquals($user2->lastnamephonetic, $request['lastnamephonetic']);
-        $this->assertEquals($user2->middlename, $request['middlename']);
-        $this->assertEquals($user2->alternatename, $request['alternatename']);
-        $this->assertEquals($user2->email, $request['email']);
+        $this->assertEquals(fullname($user2), $request['fullname']);
+        $this->assertArrayHasKey('profileimageurl', $request);
+        $this->assertArrayHasKey('profileimageurlsmall', $request);
+        $this->assertArrayHasKey('isonline', $request);
+        $this->assertArrayHasKey('showonlinestatus', $request);
+        $this->assertArrayHasKey('isblocked', $request);
+        $this->assertArrayHasKey('iscontact', $request);
     }
 
     /**

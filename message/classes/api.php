@@ -1853,19 +1853,19 @@ class api {
     public static function get_contact_requests(int $userid) : array {
         global $DB;
 
-        $ufields = \user_picture::fields('u');
-        $sql = "SELECT $ufields, mcr.id as contactrequestid
-                  FROM {user} u
-                  JOIN {message_contact_requests} mcr
-                    ON u.id = mcr.userid
+        $sql = "SELECT mcr.userid
+                  FROM {message_contact_requests} mcr
              LEFT JOIN {message_users_blocked} mub
-                    ON (mub.userid = ? AND mub.blockeduserid = u.id)
+                    ON (mub.userid = ? AND mub.blockeduserid = mcr.userid)
                  WHERE mcr.requesteduserid = ?
-                   AND u.deleted = 0
                    AND mub.id is NULL
               ORDER BY mcr.timecreated DESC";
+        if ($contactrequests = $DB->get_records_sql($sql, [$userid, $userid])) {
+            $userids = array_keys($contactrequests);
+            return helper::get_member_info($userid, $userids);
+        }
 
-        return $DB->get_records_sql($sql, [$userid, $userid]);
+        return [];
     }
 
     /**

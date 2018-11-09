@@ -644,26 +644,7 @@ class core_message_external extends external_api {
      */
     public static function get_contact_requests_returns() {
         return new external_multiple_structure(
-            new external_single_structure(
-                [
-                    'id' => new external_value(core_user::get_property_type('id'), 'ID of the user'),
-                    'contactrequestid' => new external_value(PARAM_INT, 'The ID of the contact request'),
-                    'picture' => new external_value(core_user::get_property_type('picture'), 'The picture'),
-                    'firstname' => new external_value(core_user::get_property_type('firstname'),
-                        'The first name(s) of the user'),
-                    'lastname' => new external_value(core_user::get_property_type('lastname'),
-                        'The family name of the user'),
-                    'firstnamephonetic' => new external_value(core_user::get_property_type('firstnamephonetic'),
-                        'The phonetic first name of the user'),
-                    'lastnamephonetic' => new external_value(core_user::get_property_type('lastnamephonetic'),
-                        'The phonetic last name of the user'),
-                    'middlename' => new external_value(core_user::get_property_type('middlename'),
-                        'The middle name of the user'),
-                    'alternatename' => new external_value(core_user::get_property_type('alternatename'),
-                        'The alternate name of the user'),
-                    'email' => new external_value(core_user::get_property_type('email'), 'An email address')
-                ]
-            )
+            self::get_conversation_member_structure()
         );
     }
 
