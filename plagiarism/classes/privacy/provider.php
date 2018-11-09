@@ -40,7 +40,9 @@ class provider implements
         \core_privacy\local\metadata\provider,
 
         // The Plagiarism subsystem will be called by other components and will forward requests to each plagiarism plugin implementing its APIs.
-        \core_privacy\local\request\subsystem\plugin_provider {
+        \core_privacy\local\request\subsystem\plugin_provider,
+        \core_privacy\local\request\shared_userlist_provider
+    {
 
     /**
      * Returns meta data about this system.

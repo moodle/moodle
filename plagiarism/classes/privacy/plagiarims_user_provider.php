@@ -34,7 +34,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 interface plagiarism_user_provider extends
         // The plagiarism_provider should be implemented by plugins which only provide information to a subsystem.
-        \core_privacy\local\request\plugin\subsystem_provider {
+        \core_privacy\local\request\plugin\subsystem_provider,
+        \core_privacy\local\request\shared_userlist_provider {
 
     /**
      * Delete all user information for the provided users and context.

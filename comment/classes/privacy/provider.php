@@ -37,7 +37,11 @@ use \core_privacy\local\request\userlist;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\subsystem\plugin_provider {
+class provider implements
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\subsystem\plugin_provider,
+        \core_privacy\local\request\shared_userlist_provider
+    {
 
     /**
      * Returns meta data about this system.

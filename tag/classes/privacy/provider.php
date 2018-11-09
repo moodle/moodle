@@ -51,7 +51,10 @@ class provider implements
         \core_privacy\local\request\core_userlist_provider,
 
         // The tag subsystem may have data that belongs to this user.
-        \core_privacy\local\request\plugin\provider {
+        \core_privacy\local\request\plugin\provider,
+
+        \core_privacy\local\request\shared_userlist_provider
+    {
 
     /**
      * Returns meta data about this system.
