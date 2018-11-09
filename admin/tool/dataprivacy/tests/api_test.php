@@ -2052,4 +2052,116 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
             'category' => $cat,
         ];
     }
+
+    /**
+     * Ensure that the find_ongoing_request_types_for_users only returns requests which are active.
+     */
+    public function test_find_ongoing_request_types_for_users() {
+        $this->resetAfterTest();
+
+        // Create users and their requests:.
+        // - u1 has no requests of any type.
+        // - u2 has one rejected export request.
+        // - u3 has one rejected other request.
+        // - u4 has one rejected delete request.
+        // - u5 has one active and one rejected export request.
+        // - u6 has one active and one rejected other request.
+        // - u7 has one active and one rejected delete request.
+        // - u8 has one active export, and one active delete request.
+        $u1 = $this->getDataGenerator()->create_user();
+        $u1expect = (object) [];
+
+        $u2 = $this->getDataGenerator()->create_user();
+        $this->create_request_with_type_and_status($u2->id, api::DATAREQUEST_TYPE_EXPORT, api::DATAREQUEST_STATUS_REJECTED);
+        $u2expect = (object) [];
+
+        $u3 = $this->getDataGenerator()->create_user();
+        $this->create_request_with_type_and_status($u3->id, api::DATAREQUEST_TYPE_OTHERS, api::DATAREQUEST_STATUS_REJECTED);
+        $u3expect = (object) [];
+
+        $u4 = $this->getDataGenerator()->create_user();
+        $this->create_request_with_type_and_status($u4->id, api::DATAREQUEST_TYPE_DELETE, api::DATAREQUEST_STATUS_REJECTED);
+        $u4expect = (object) [];
+
+        $u5 = $this->getDataGenerator()->create_user();
+        $this->create_request_with_type_and_status($u5->id, api::DATAREQUEST_TYPE_EXPORT, api::DATAREQUEST_STATUS_REJECTED);
+        $this->create_request_with_type_and_status($u5->id, api::DATAREQUEST_TYPE_EXPORT, api::DATAREQUEST_STATUS_APPROVED);
+        $u5expect = (object) [
+            api::DATAREQUEST_TYPE_EXPORT => true,
+        ];
+
+        $u6 = $this->getDataGenerator()->create_user();
+        $this->create_request_with_type_and_status($u6->id, api::DATAREQUEST_TYPE_OTHERS, api::DATAREQUEST_STATUS_REJECTED);
+        $this->create_request_with_type_and_status($u6->id, api::DATAREQUEST_TYPE_OTHERS, api::DATAREQUEST_STATUS_APPROVED);
+        $u6expect = (object) [
+            api::DATAREQUEST_TYPE_OTHERS => true,
+        ];
+
+        $u7 = $this->getDataGenerator()->create_user();
+        $this->create_request_with_type_and_status($u7->id, api::DATAREQUEST_TYPE_DELETE, api::DATAREQUEST_STATUS_REJECTED);
+        $this->create_request_with_type_and_status($u7->id, api::DATAREQUEST_TYPE_DELETE, api::DATAREQUEST_STATUS_APPROVED);
+        $u7expect = (object) [
+            api::DATAREQUEST_TYPE_DELETE => true,
+        ];
+
+        $u8 = $this->getDataGenerator()->create_user();
+        $this->create_request_with_type_and_status($u8->id, api::DATAREQUEST_TYPE_EXPORT, api::DATAREQUEST_STATUS_APPROVED);
+        $this->create_request_with_type_and_status($u8->id, api::DATAREQUEST_TYPE_DELETE, api::DATAREQUEST_STATUS_APPROVED);
+        $u8expect = (object) [
+            api::DATAREQUEST_TYPE_EXPORT => true,
+            api::DATAREQUEST_TYPE_DELETE => true,
+        ];
+
+        // Test with no users specified.
+        $result = api::find_ongoing_request_types_for_users([]);
+        $this->assertEquals([], $result);
+
+        // Fetch a subset of the users.
+        $result = api::find_ongoing_request_types_for_users([$u3->id, $u4->id, $u5->id]);
+        $this->assertEquals([
+                $u3->id => $u3expect,
+                $u4->id => $u4expect,
+                $u5->id => $u5expect,
+            ], $result);
+
+        // Fetch the empty user.
+        $result = api::find_ongoing_request_types_for_users([$u1->id]);
+        $this->assertEquals([
+                $u1->id => $u1expect,
+            ], $result);
+
+        // Fetch all.
+        $result = api::find_ongoing_request_types_for_users(
+            [$u1->id, $u2->id, $u3->id, $u4->id, $u5->id, $u6->id, $u7->id, $u8->id]);
+        $this->assertEquals([
+                $u1->id => $u1expect,
+                $u2->id => $u2expect,
+                $u3->id => $u3expect,
+                $u4->id => $u4expect,
+                $u5->id => $u5expect,
+                $u6->id => $u6expect,
+                $u7->id => $u7expect,
+                $u8->id => $u8expect,
+            ], $result);
+    }
+
+    /**
+     * Create  a new data request for the user with the type and status specified.
+     *
+     * @param   int     $userid
+     * @param   int     $type
+     * @param   int     $status
+     * @return  \tool_dataprivacy\data_request
+     */
+    protected function create_request_with_type_and_status(int $userid, int $type, int $status) : \tool_dataprivacy\data_request {
+        $request = new \tool_dataprivacy\data_request(0, (object) [
+            'userid' => $userid,
+            'type' => $type,
+            'status' => $status,
+        ]);
+
+        $request->save();
+
+        return $request;
+    }
 }
