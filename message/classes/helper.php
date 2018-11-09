@@ -540,6 +540,10 @@ class helper {
         // Transform new data format back into the old format, just for BC during the deprecation life cycle.
         $tmp = [];
         foreach ($conversations as $id => $conv) {
+            // Only individual conversations were supported in legacy messaging.
+            if ($conv->type != \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL) {
+                continue;
+            }
             $data = new \stdClass();
             // The logic for the 'other user' is as follows:
             // If a conversation is of type 'individual', the other user is always the member who is not the current user.
