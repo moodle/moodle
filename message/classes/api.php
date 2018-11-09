@@ -1848,9 +1848,11 @@ class api {
      * It will not include blocked users.
      *
      * @param int $userid
+     * @param int $limitfrom
+     * @param int $limitnum
      * @return array The list of contact requests
      */
-    public static function get_contact_requests(int $userid) : array {
+    public static function get_contact_requests(int $userid, int $limitfrom = 0, int $limitnum = 0) : array {
         global $DB;
 
         $sql = "SELECT mcr.userid
@@ -1859,8 +1861,8 @@ class api {
                     ON (mub.userid = ? AND mub.blockeduserid = mcr.userid)
                  WHERE mcr.requesteduserid = ?
                    AND mub.id is NULL
-              ORDER BY mcr.timecreated DESC";
-        if ($contactrequests = $DB->get_records_sql($sql, [$userid, $userid])) {
+              ORDER BY mcr.timecreated ASC";
+        if ($contactrequests = $DB->get_records_sql($sql, [$userid, $userid], $limitfrom, $limitnum)) {
             $userids = array_keys($contactrequests);
             return helper::get_member_info($userid, $userids);
         }

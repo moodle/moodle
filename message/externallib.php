@@ -599,7 +599,9 @@ class core_message_external extends external_api {
     public static function get_contact_requests_parameters() {
         return new external_function_parameters(
             [
-                'userid' => new external_value(PARAM_INT, 'The id of the user we want the requests for')
+                'userid' => new external_value(PARAM_INT, 'The id of the user we want the requests for'),
+                'limitfrom' => new external_value(PARAM_INT, 'Limit from', VALUE_DEFAULT, 0),
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0)
             ]
         );
     }
@@ -613,8 +615,10 @@ class core_message_external extends external_api {
      * It will not include blocked users.
      *
      * @param int $userid The id of the user we want to get the contact requests for
+     * @param int $limitfrom
+     * @param int $limitnum
      */
-    public static function get_contact_requests(int $userid) {
+    public static function get_contact_requests(int $userid, int $limitfrom = 0, int $limitnum = 0) {
         global $CFG, $USER;
 
         // Check if messaging is enabled.
@@ -631,10 +635,14 @@ class core_message_external extends external_api {
             throw new required_capability_exception($context, $capability, 'nopermissions', '');
         }
 
-        $params = ['userid' => $userid];
+        $params = [
+            'userid' => $userid,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ];
         $params = self::validate_parameters(self::get_contact_requests_parameters(), $params);
 
-        return \core_message\api::get_contact_requests($params['userid']);
+        return \core_message\api::get_contact_requests($params['userid'], $params['limitfrom'], $params['limitnum']);
     }
 
     /**
