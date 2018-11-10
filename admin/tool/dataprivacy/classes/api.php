@@ -235,7 +235,7 @@ class api {
      */
     public static function create_data_request($foruser, $type, $comments = '',
                                                $creationmethod = data_request::DATAREQUEST_CREATION_MANUAL) {
-        global $USER, $ADMIN;
+        global $USER;
 
         $datarequest = new data_request();
         // The user the request is being made for.
@@ -245,7 +245,7 @@ class api {
         // NOTE: This should probably be changed. We should leave the default value for $requestinguser if
         // the request is not explicitly created by a specific user.
         $requestinguser = (isguestuser() && $creationmethod == data_request::DATAREQUEST_CREATION_AUTO) ?
-                $ADMIN->id : $USER->id;
+                get_admin()->id : $USER->id;
         // The user making the request.
         $datarequest->set('requestedby', $requestinguser);
         // Set status.

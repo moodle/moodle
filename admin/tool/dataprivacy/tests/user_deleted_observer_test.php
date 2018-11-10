@@ -81,6 +81,7 @@ class tool_dataprivacy_user_deleted_observer_testcase extends advanced_testcase 
      */
     public function test_create_delete_data_request_export_data_request_preexists() {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         // Enable automatic creation of delete data requests.
         set_config('automaticdeletionrequests', 1, 'tool_dataprivacy');
@@ -106,6 +107,7 @@ class tool_dataprivacy_user_deleted_observer_testcase extends advanced_testcase 
      */
     public function test_create_delete_data_request_ongoing_delete_data_request_preexists() {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         // Enable automatic creation of delete data requests.
         set_config('automaticdeletionrequests', 1, 'tool_dataprivacy');
@@ -130,6 +132,7 @@ class tool_dataprivacy_user_deleted_observer_testcase extends advanced_testcase 
      */
     public function test_create_delete_data_request_canceled_delete_data_request_preexists() {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         // Enable automatic creation of delete data requests.
         set_config('automaticdeletionrequests', 1, 'tool_dataprivacy');
@@ -159,6 +162,7 @@ class tool_dataprivacy_user_deleted_observer_testcase extends advanced_testcase 
      */
     public function test_create_delete_data_request_completed_delete_data_request_preexists() {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         // Enable automatic creation of delete data requests.
         set_config('automaticdeletionrequests', 1, 'tool_dataprivacy');
