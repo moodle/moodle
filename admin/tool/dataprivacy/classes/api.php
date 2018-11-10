@@ -234,13 +234,16 @@ class api {
             $creationmethod = data_request::DATAREQUEST_CREATION_MANUAL,
             $notify = null
         ) {
-        global $USER, $ADMIN;
+        global $USER;
 
-        if (null === $notify && data_request::DATAREQUEST_CREATION_AUTO == $creationmethod) {
-            // If the request was automatically created, then do not notify unless explicitly set.
-            $notify = false;
-        } else {
-            $notify = true;
+        if (null === $notify) {
+            // Only if notifications have not been decided by caller.
+            if ( data_request::DATAREQUEST_CREATION_AUTO == $creationmethod) {
+                // If the request was automatically created, then do not notify unless explicitly set.
+                $notify = false;
+            } else {
+                $notify = true;
+            }
         }
 
         $datarequest = new data_request();
@@ -251,7 +254,7 @@ class api {
         // NOTE: This should probably be changed. We should leave the default value for $requestinguser if
         // the request is not explicitly created by a specific user.
         $requestinguser = (isguestuser() && $creationmethod == data_request::DATAREQUEST_CREATION_AUTO) ?
-                $ADMIN->id : $USER->id;
+                get_admin()->id : $USER->id;
         // The user making the request.
         $datarequest->set('requestedby', $requestinguser);
         // Set status.
