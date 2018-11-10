@@ -80,12 +80,12 @@ class data_registry {
         if (!empty($pluginname)) {
             list($purposevar, $categoryvar) = self::var_names_from_context($classname);
             // If the plugin-level doesn't have a default purpose set, try the context level.
-            if ($purposeid === false) {
+            if ($purposeid == false) {
                 $purposeid = get_config('tool_dataprivacy', $purposevar);
             }
 
             // If the plugin-level doesn't have a default category set, try the context level.
-            if ($categoryid === false) {
+            if ($categoryid == false) {
                 $categoryid = get_config('tool_dataprivacy', $categoryvar);
             }
         }
@@ -184,11 +184,11 @@ class data_registry {
         }
         $fieldname = $element . 'id';
 
-        if (!empty($forcedvalue) && ($forcedvalue === context_instance::INHERIT)) {
+        if (!empty($forcedvalue) && ($forcedvalue == context_instance::INHERIT)) {
             // Do not include the current context when calculating the value.
             // This has the effect that an inheritted value is calculated.
             $parentcontextids = $context->get_parent_context_ids(false);
-        } else if (!empty($forcedvalue) && ($forcedvalue !== context_instance::NOTSET)) {
+        } else if (!empty($forcedvalue) && ($forcedvalue != context_instance::NOTSET)) {
             return self::get_element_instance($element, $forcedvalue);
         } else {
             // Fetch all parent contexts, including self.
@@ -237,7 +237,7 @@ class data_registry {
                 $checkcontextlevel = true;
             }
 
-            if (!empty($forcedvalue) && context_instance::NOTSET === $forcedvalue) {
+            if (!empty($forcedvalue) && context_instance::NOTSET == $forcedvalue) {
                 $checkcontextlevel = true;
             }
 
@@ -249,7 +249,7 @@ class data_registry {
 
                 $instancevalue = $$fieldname;
 
-                if (context_instance::NOTSET !== $instancevalue && context_instance::INHERIT !== $instancevalue) {
+                if (context_instance::NOTSET != $instancevalue && context_instance::INHERIT != $instancevalue) {
                     // There is an actual value. Return it.
                     return self::get_element_instance($element, $instancevalue);
                 }
@@ -290,7 +290,7 @@ class data_registry {
         list($purposeid, $categoryid) = self::get_effective_default_contextlevel_purpose_and_category($contextlevel);
 
         // Note: The $$fieldname points to either $purposeid, or $categoryid.
-        if (context_instance::NOTSET !== $$fieldname && context_instance::INHERIT !== $$fieldname) {
+        if (context_instance::NOTSET != $$fieldname && context_instance::INHERIT != $$fieldname) {
             // There is a specific value set.
             return self::get_element_instance($element, $$fieldname);
         }
@@ -325,7 +325,7 @@ class data_registry {
             list($parentpurposeid, $parentcategoryid) = self::get_defaults(CONTEXT_SYSTEM);
 
             if (context_instance::INHERIT == $purposeid || context_instance::NOTSET == $purposeid) {
-                $purposeid = $parentpurposeid;
+                $purposeid = (int)$parentpurposeid;
             }
 
             if (context_instance::INHERIT == $categoryid || context_instance::NOTSET == $categoryid) {
