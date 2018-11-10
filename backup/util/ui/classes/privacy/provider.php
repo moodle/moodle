@@ -34,6 +34,8 @@ use core_privacy\local\request\approved_userlist;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+
 /**
  * Privacy Subsystem implementation for core_backup.
  *
