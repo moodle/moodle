@@ -964,7 +964,7 @@ class core_message_external extends external_api {
                 'unreadcount' => new external_value(PARAM_INT, 'The number of unread messages in this conversation',
                     VALUE_DEFAULT, null),
                 'members' => new external_multiple_structure(
-                    self::get_conversation_member_structure()
+                    self::get_conversation_member_structure(true)
                 ),
                 'messages' => new external_multiple_structure(
                     self::get_conversation_message_structure()
@@ -992,6 +992,8 @@ class core_message_external extends external_api {
             'showonlinestatus' => new external_value(PARAM_BOOL, 'Show the user\'s online status?'),
             'isblocked' => new external_value(PARAM_BOOL, 'If the user has been blocked'),
             'iscontact' => new external_value(PARAM_BOOL, 'Is the user a contact?'),
+            'canmessage' => new external_value(PARAM_BOOL, 'If the user can be messaged'),
+            'requirescontact' => new external_value(PARAM_BOOL, 'If the user requires to be contacts'),
         ];
 
         if ($includecontactrequests) {

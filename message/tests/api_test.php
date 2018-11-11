@@ -1089,6 +1089,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 $this->assertObjectHasAttribute('showonlinestatus', $member);
                 $this->assertObjectHasAttribute('isblocked', $member);
                 $this->assertObjectHasAttribute('iscontact', $member);
+                $this->assertObjectHasAttribute('canmessage', $member);
+                $this->assertObjectHasAttribute('requirescontact', $member);
+                $this->assertObjectHasAttribute('contactrequests', $member);
             }
             $this->assertObjectHasAttribute('messages', $conv);
             foreach ($conv->messages as $message) {
@@ -1320,6 +1323,65 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         foreach ($conversations as $conv) {
             $this->assertFalse($conv->isfavourite);
         }
+    }
+
+    /**
+     * Test verifying get_conversations when there are users in a group and/or individual conversation. The reason this
+     * test is performed is because we do not need as much data for group conversations (saving DB calls), so we want
+     * to confirm this happens.
+     */
+    public function test_get_conversations_user_in_group_and_individual_chat() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ],
+            'Individual conversation'
+        );
+
+        testhelper::send_fake_message_to_conversation($user1, $conversation->id);
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [
+                $user1->id,
+                $user2->id,
+            ],
+            'Group conversation'
+        );
+
+        testhelper::send_fake_message_to_conversation($user1, $conversation->id);
+
+        \core_message\api::create_contact_request($user1->id, $user2->id);
+        \core_message\api::create_contact_request($user1->id, $user3->id);
+
+        $conversations = \core_message\api::get_conversations($user2->id);
+
+        $groupconversation = array_shift($conversations);
+        $individualconversation = array_shift($conversations);
+
+        $this->assertEquals('Group conversation', $groupconversation->name);
+        $this->assertEquals('Individual conversation', $individualconversation->name);
+
+        $this->assertCount(1, $groupconversation->members);
+        $this->assertCount(1, $individualconversation->members);
+
+        $groupmember = reset($groupconversation->members);
+        $this->assertNull($groupmember->requirescontact);
+        $this->assertNull($groupmember->canmessage);
+        $this->assertEmpty($groupmember->contactrequests);
+
+        $individualmember = reset($individualconversation->members);
+        $this->assertNotNull($individualmember->requirescontact);
+        $this->assertNotNull($individualmember->canmessage);
+        $this->assertNotEmpty($individualmember->contactrequests);
     }
 
     /**
@@ -4450,7 +4512,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(true, $member1->showonlinestatus);
         $this->assertEquals(false, $member1->iscontact);
         $this->assertEquals(false, $member1->isblocked);
-        $this->assertObjectNotHasAttribute('contactrequests', $member1);
+        $this->assertObjectHasAttribute('contactrequests', $member1);
+        $this->assertEmpty($member1->contactrequests);
 
         $this->assertEquals($user2->id, $member2->id);
         $this->assertEquals(fullname($user2), $member2->fullname);
@@ -4458,7 +4521,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(true, $member2->showonlinestatus);
         $this->assertEquals(true, $member2->iscontact);
         $this->assertEquals(false, $member2->isblocked);
-        $this->assertObjectNotHasAttribute('contactrequests', $member2);
+        $this->assertObjectHasAttribute('contactrequests', $member2);
+        $this->assertEmpty($member2->contactrequests);
 
         $this->assertEquals($user3->id, $member3->id);
         $this->assertEquals(fullname($user3), $member3->fullname);
@@ -4466,7 +4530,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(true, $member3->showonlinestatus);
         $this->assertEquals(false, $member3->iscontact);
         $this->assertEquals(true, $member3->isblocked);
-        $this->assertObjectNotHasAttribute('contactrequests', $member3);
+        $this->assertObjectHasAttribute('contactrequests', $member3);
+        $this->assertEmpty($member3->contactrequests);
     }
 
     /**
@@ -4521,7 +4586,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(true, $member1->showonlinestatus);
         $this->assertEquals(false, $member1->iscontact);
         $this->assertEquals(false, $member1->isblocked);
-        $this->assertCount(3, $member1->contactrequests);
+        $this->assertCount(2, $member1->contactrequests);
 
         $this->assertEquals($user2->id, $member2->id);
         $this->assertEquals(fullname($user2), $member2->fullname);
@@ -4529,7 +4594,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(true, $member2->showonlinestatus);
         $this->assertEquals(true, $member2->iscontact);
         $this->assertEquals(false, $member2->isblocked);
-        $this->assertCount(2, $member2->contactrequests);
+        $this->assertCount(1, $member2->contactrequests);
 
         $this->assertEquals($user3->id, $member3->id);
         $this->assertEquals(fullname($user3), $member3->fullname);
@@ -4537,12 +4602,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(true, $member3->showonlinestatus);
         $this->assertEquals(false, $member3->iscontact);
         $this->assertEquals(true, $member3->isblocked);
-        $this->assertCount(2, $member3->contactrequests);
+        $this->assertCount(1, $member3->contactrequests);
 
         // Confirm the contact requests are OK.
         $request1 = array_shift($member1->contactrequests);
         $request2 = array_shift($member1->contactrequests);
-        $request3 = array_shift($member1->contactrequests);
 
         $this->assertEquals($user1->id, $request1->userid);
         $this->assertEquals($user2->id, $request1->requesteduserid);
@@ -4550,26 +4614,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals($user1->id, $request2->userid);
         $this->assertEquals($user3->id, $request2->requesteduserid);
 
-        $this->assertEquals($user1->id, $request3->userid);
-        $this->assertEquals($user4->id, $request3->requesteduserid);
-
         $request1 = array_shift($member2->contactrequests);
-        $request2 = array_shift($member2->contactrequests);
 
         $this->assertEquals($user1->id, $request1->userid);
         $this->assertEquals($user2->id, $request1->requesteduserid);
 
-        $this->assertEquals($user2->id, $request2->userid);
-        $this->assertEquals($user3->id, $request2->requesteduserid);
-
         $request1 = array_shift($member3->contactrequests);
-        $request2 = array_shift($member3->contactrequests);
 
         $this->assertEquals($user1->id, $request1->userid);
         $this->assertEquals($user3->id, $request1->requesteduserid);
-
-        $this->assertEquals($user2->id, $request2->userid);
-        $this->assertEquals($user3->id, $request2->requesteduserid);
     }
 
     /**
