@@ -119,7 +119,7 @@ $card-gutter : $card-deck-margin * 2;
 
 .dashboard-card-deck.one-row {
     flex-flow: nowrap;
-    overflow-y: scroll;
+    overflow-x: scroll;
 }
 
 .summaryimage {

@@ -16230,7 +16230,7 @@ body {
 }
 .dashboard-card-deck.one-row {
   flex-flow: nowrap;
-  overflow-y: scroll;
+  overflow-x: scroll;
 }
 .block_recentlyaccesseditems img.icon {
   height: auto;
