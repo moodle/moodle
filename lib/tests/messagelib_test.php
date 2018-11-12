@@ -65,7 +65,7 @@ class core_messagelib_testcase extends advanced_testcase {
         message_send($message);
         $emails = $sink->get_messages();
         $email = reset($emails);
-        $this->assertEquals($email->subject, 'message subject 1');
+        $this->assertEquals(get_string('unreadnewmessage', 'message', fullname(get_admin())), $email->subject);
     }
     public function test_message_get_providers_for_user() {
         global $CFG, $DB;
@@ -548,7 +548,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $savedmessage = $DB->get_record('messages', array('id' => $messageid), '*', MUST_EXIST);
         $this->assertSame($user1->email, $email->from);
         $this->assertSame($user2->email, $email->to);
-        $this->assertSame($message->subject, $email->subject);
+        $this->assertSame(get_string('unreadnewmessage', 'message', fullname($user1)), $email->subject);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
         $sink->clear();
@@ -581,7 +581,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $savedmessage = $DB->get_record('messages', array('id' => $messageid), '*', MUST_EXIST);
         $this->assertSame($user1->email, $email->from);
         $this->assertSame($user2->email, $email->to);
-        $this->assertSame($message->subject, $email->subject);
+        $this->assertSame(get_string('unreadnewmessage', 'message', fullname($user1)), $email->subject);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
         $sink->clear();
@@ -730,6 +730,255 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertCount(1, $events);
         $this->assertInstanceOf('\core\event\message_sent', $events[0]);
         $sink->clear();
+    }
+
+    /**
+     * Tests calling message_send() with $eventdata representing a message to an individual conversation.
+     *
+     * This test will verify:
+     * - that the 'messages' record is created.
+     * - that the processors will be called for each conversation member, except the sender.
+     * - the a single event will be generated - 'message_sent'
+     *
+     * Note: We won't redirect/capture messages in this test because doing so causes message_send() to return early, before
+     * processors and events code is called. We need to test this code here, as we generally redirect messages elsewhere and we
+     * need to be sure this is covered.
+     */
+    public function test_message_send_to_conversation_individual() {
+        global $DB;
+        $this->preventResetByRollback();
+        $this->resetAfterTest();
+
+        // Create some users and a conversation between them.
+        $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
+        $user2 = $this->getDataGenerator()->create_user();
+        set_config('allowedemaildomains', 'example.com');
+        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id], '1:1 project discussion');
+
+        // Generate the message.
+        $message = new \core\message\message();
+        $message->courseid          = 1;
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->convid            = $conversation->id;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '0';
+
+        // Content specific to the email processor.
+        $content = array('*' => array('header' => ' test ', 'footer' => ' test '));
+        $message->set_additional_content('email', $content);
+
+        // Ensure we're going to hit the email processor for this user.
+        $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email'");
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+
+        // Now, send a message and verify the message processors (in this case, email) are hit.
+        $sink = $this->redirectEmails();
+        $messageid = message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(1, $emails);
+        $email = reset($emails);
+
+        // Verify the record was created in 'messages'.
+        $recordexists = $DB->record_exists('messages', ['id' => $messageid]);
+        $this->assertTrue($recordexists);
+
+        // Verify the email information.
+        $this->assertSame($user1->email, $email->from);
+        $this->assertSame($user2->email, $email->to);
+
+        // The message subject is generated during the call for conversation messages,
+        // as the conversation may have many members having different lang preferences.
+        $this->assertSame(get_string('unreadnewmessage', 'message', fullname($user1)), $email->subject);
+
+        // The email content will have had an emailtagline appended to it, based on lang prefs,
+        // so verify the expected beginning and ends.
+        $this->assertNotEmpty($email->header);
+        $this->assertNotEmpty($email->body);
+        $this->assertRegExp('/test message body.*test/s', $email->body);
+        $sink->clear();
+
+        // Now, send the message again, and verify that the event fired includes the courseid and conversationid.
+        $eventsink = $this->redirectEvents();
+        $messageid = message_send($message);
+        $events = $eventsink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf(\core\event\message_sent::class, $event);
+        $this->assertEquals($user1->id, $event->userid);
+        $this->assertEquals($user2->id, $event->relateduserid);
+        $this->assertEquals($message->courseid, $event->other['courseid']);
+
+        $eventsink->clear();
+        $sink->clear();
+    }
+
+    /**
+     * Tests calling message_send() with $eventdata representing a message to an group conversation.
+     *
+     * This test will verify:
+     * - that the 'messages' record is created.
+     * - that the processors will be called for each conversation member, except the sender.
+     * - the a single event will be generated - 'group_message_sent'
+     *
+     * Note: We won't redirect/capture messages in this test because doing so causes message_send() to return early, before
+     * processors and events code is called. We need to test this code here, as we generally redirect messages elsewhere and we
+     * need to be sure this is covered.
+     */
+    public function test_message_send_to_conversation_group() {
+        global $DB, $CFG, $SITE;
+        $this->preventResetByRollback();
+        $this->resetAfterTest();
+
+        // Create some users and a conversation between them.
+        $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        set_config('allowedemaildomains', 'example.com');
+        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id], 'Group project discussion');
+
+        // Generate the message.
+        $message = new \core\message\message();
+        $message->courseid          = 1;
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->convid            = $conversation->id;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '0';
+
+        // Content specific to the email processor.
+        $content = array('*' => array('header' => ' test ', 'footer' => ' test '));
+        $message->set_additional_content('email', $content);
+
+        // Ensure we're going to hit the email processor for the recipient users.
+        $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email'");
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user3);
+
+        // Now, send a message and verify the message processors (in this case, email) are hit.
+        $sink = $this->redirectEmails();
+        $messageid = message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(2, $emails);
+
+        // Verify the record was created in 'messages'.
+        $recordexists = $DB->record_exists('messages', ['id' => $messageid]);
+        $this->assertTrue($recordexists);
+
+        // Verify the email information. Ordering is not guaranteed.
+        $members = [$user2->email => '', $user3->email => ''];
+        $email = $emails[0];
+        $this->assertSame($user1->email, $email->from);
+        $this->assertArrayHasKey($email->to, $members);
+        unset($members[$email->to]);
+
+        $email = $emails[1];
+        $this->assertSame($user1->email, $email->from);
+        $this->assertArrayHasKey($email->to, $members);
+        unset($members[$email->to]);
+
+        // The message subject is generated during the call for conversation messages,
+        // as the conversation may have many members having different lang preferences.
+        $tmp = (object) ['name' => fullname($user1), 'conversationname' => $conversation->name];
+        $this->assertSame(get_string('unreadnewgroupconversationmessage', 'message', $tmp), $email->subject);
+
+        // The email content will have had an emailtagline appended to it, based on lang prefs,
+        // so verify the expected beginning and ends.
+        $this->assertNotEmpty($email->header);
+        $this->assertNotEmpty($email->body);
+        $this->assertRegExp('/test message body.*test/s', $email->body);
+        $sink->clear();
+
+        // Now, send the message again, and verify that the event fired includes the courseid and conversationid.
+        $eventsink = $this->redirectEvents();
+        $messageid = message_send($message);
+        $events = $eventsink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf(\core\event\group_message_sent::class, $event);
+        $this->assertEquals($user1->id, $event->userid);
+        $this->assertNull($event->relateduserid);
+        $this->assertEquals($message->courseid, $event->other['courseid']);
+        $this->assertEquals($message->convid, $event->other['conversationid']);
+        $eventsink->clear();
+        $sink->clear();
+    }
+
+    /**
+     * Verify that sending a message to a conversation is an action which can be buffered by the manager if in a DB transaction.
+     *
+     * This should defer all processor calls (for 2 members in this case), and event creation (1 event).
+     */
+    public function test_send_message_to_conversation_group_with_buffering() {
+        global $DB, $CFG;
+        $this->preventResetByRollback();
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        set_config('allowedemaildomains', 'example.com');
+
+        // Create a conversation.
+        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id], 'Group project discussion');
+
+        // Test basic email redirection.
+        $this->assertFileExists("$CFG->dirroot/message/output/email/version.php");
+        $this->assertFileExists("$CFG->dirroot/message/output/popup/version.php");
+
+        $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email' AND name <> 'popup'");
+        get_message_processors(true, true);
+
+        $eventsink = $this->redirectEvents();
+
+        // Will always use the pop-up processor.
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user3);
+
+        $message = new \core\message\message();
+        $message->courseid          = 1;
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->convid            = $conversation->id;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '0';
+
+        $transaction = $DB->start_delegated_transaction();
+        $sink = $this->redirectEmails();
+        $messageid = message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(0, $emails);
+        $savedmessage = $DB->get_record('messages', array('id' => $messageid), '*', MUST_EXIST);
+        $sink->clear();
+        $this->assertFalse($DB->record_exists('message_user_actions', array()));
+        $DB->delete_records('messages', array());
+        $events = $eventsink->get_events();
+        $this->assertCount(0, $events);
+        $eventsink->clear();
+        $transaction->allow_commit();
+        $events = $eventsink->get_events();
+        $emails = $sink->get_messages();
+        $this->assertCount(2, $emails);
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf('\core\event\group_message_sent', $events[0]);
     }
 
     public function test_rollback() {

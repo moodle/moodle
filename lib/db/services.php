@@ -1195,6 +1195,16 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_message_send_messages_to_conversation' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'send_messages_to_conversation',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Send messages to an existing conversation between users',
+        'type' => 'write',
+        'capabilities' => 'moodle/site:sendmessage',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_message_get_conversation_messages' => array(
         'classname' => 'core_message_external',
         'methodname' => 'get_conversation_messages',

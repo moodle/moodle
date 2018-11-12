@@ -1454,7 +1454,103 @@ class api {
         }
 
         // Check if the recipient can be messaged by the sender.
-        return (self::can_contact_user($recipient, $sender));
+        return (self::can_contact_user($recipient->id, $sender->id));
+    }
+
+    /**
+     * Determines if a user is permitted to send a message to a given conversation.
+     * If no sender is provided then it defaults to the logged in user.
+     *
+     * @param int $userid the id of the user on which the checks will be applied.
+     * @param int $conversationid the id of the conversation we wish to check.
+     * @return bool true if the user can send a message to the conversation, false otherwise.
+     * @throws \moodle_exception
+     */
+    public static function can_send_message_to_conversation(int $userid, int $conversationid) : bool {
+        global $DB;
+
+        $systemcontext = \context_system::instance();
+        if (!has_capability('moodle/site:sendmessage', $systemcontext, $userid)) {
+            return false;
+        }
+
+        if (!self::is_user_in_conversation($userid, $conversationid)) {
+            return false;
+        }
+
+        // User can post messages and is in the conversation, but we need to check the conversation type to
+        // know whether or not to check the user privacy settings via can_contact_user().
+        $conversation = $DB->get_record('message_conversations', ['id' => $conversationid], '*', MUST_EXIST);
+        if ($conversation->type == self::MESSAGE_CONVERSATION_TYPE_GROUP) {
+            return true;
+        } else if ($conversation->type == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL) {
+            // Get the other user in the conversation.
+            $members = self::get_conversation_members($userid, $conversationid);
+            $otheruser = array_filter($members, function($member) use($userid) {
+                return $member->id != $userid;
+            });
+            $otheruser = reset($otheruser);
+
+            return self::can_contact_user($otheruser->id, $userid);
+        } else {
+            throw new \moodle_exception("Invalid conversation type '$conversation->type'.");
+        }
+    }
+
+    /**
+     * Send a message from a user to a conversation.
+     *
+     * This method will create the basic eventdata and delegate to message creation to message_send.
+     * The message_send() method is responsible for event data that is specific to each recipient.
+     *
+     * @param int $userid the sender id.
+     * @param int $conversationid the conversation id.
+     * @param string $message the message to send.
+     * @param int $format the format of the message to send.
+     * @return \stdClass the message created.
+     * @throws \coding_exception
+     * @throws \moodle_exception if the user is not permitted to send a message to the conversation.
+     */
+    public static function send_message_to_conversation(int $userid, int $conversationid, string $message,
+                                                        int $format) : \stdClass {
+        global $DB;
+
+        if (!self::can_send_message_to_conversation($userid, $conversationid)) {
+            throw new \moodle_exception("User $userid cannot send a message to conversation $conversationid");
+        }
+
+        $eventdata = new \core\message\message();
+        $eventdata->courseid         = 1;
+        $eventdata->component        = 'moodle';
+        $eventdata->name             = 'instantmessage';
+        $eventdata->userfrom         = $userid;
+        $eventdata->convid           = $conversationid;
+
+        if ($format == FORMAT_HTML) {
+            $eventdata->fullmessagehtml  = $message;
+            // Some message processors may revert to sending plain text even if html is supplied,
+            // so we keep both plain and html versions if we're intending to send html.
+            $eventdata->fullmessage = html_to_text($eventdata->fullmessagehtml);
+        } else {
+            $eventdata->fullmessage      = $message;
+            $eventdata->fullmessagehtml  = '';
+        }
+
+        $eventdata->fullmessageformat = $format;
+        $eventdata->smallmessage = $message; // Store the message unfiltered. Clean up on output.
+
+        $eventdata->timecreated     = time();
+        $eventdata->notification    = 0;
+        $messageid = message_send($eventdata);
+
+        $messagerecord = $DB->get_record('messages', ['id' => $messageid], 'id, useridfrom, fullmessage, timecreated');
+        $message = (object) [
+            'id' => $messagerecord->id,
+            'useridfrom' => $messagerecord->useridfrom,
+            'text' => $messagerecord->fullmessage,
+            'timecreated' => $messagerecord->timecreated
+        ];
+        return $message;
     }
 
     /**
@@ -2258,12 +2354,12 @@ class api {
     /**
      * Checks if the sender can message the recipient.
      *
-     * @param \stdClass $recipient The user object.
-     * @param \stdClass $sender The user object.
+     * @param int $recipientid
+     * @param int $senderid
      * @return bool true if recipient hasn't blocked sender and sender can contact to recipient, false otherwise.
      */
-    protected static function can_contact_user(\stdClass $recipient, \stdClass $sender) : bool {
-        if (has_capability('moodle/site:messageanyuser', \context_system::instance(), $sender->id)) {
+    protected static function can_contact_user(int $recipientid, int $senderid) : bool {
+        if (has_capability('moodle/site:messageanyuser', \context_system::instance(), $senderid)) {
             // The sender has the ability to contact any user across the entire site.
             return true;
         }
@@ -2271,7 +2367,7 @@ class api {
         // The initial value of $cancontact is null to indicate that a value has not been determined.
         $cancontact = null;
 
-        if (self::is_blocked($recipient->id, $sender->id)) {
+        if (self::is_blocked($recipientid, $senderid)) {
             // The recipient has specifically blocked this sender.
             $cancontact = false;
         }
@@ -2285,7 +2381,7 @@ class api {
             //
             // The Site option is only possible when the messagingallusers site setting is also enabled.
 
-            $privacypreference = self::get_user_privacy_messaging_preference($recipient->id);
+            $privacypreference = self::get_user_privacy_messaging_preference($recipientid);
             if (self::MESSAGE_PRIVACY_SITE === $privacypreference) {
                 // The user preference is to allow any user to contact them.
                 // No need to check anything else.
@@ -2293,12 +2389,12 @@ class api {
             } else {
                 // This user only allows their own contacts, and possibly course peers, to contact them.
                 // If the users are contacts then we can avoid the more expensive shared courses check.
-                $cancontact = self::is_contact($sender->id, $recipient->id);
+                $cancontact = self::is_contact($senderid, $recipientid);
 
                 if (!$cancontact && self::MESSAGE_PRIVACY_COURSEMEMBER === $privacypreference) {
                     // The users are not contacts and the user allows course member messaging.
                     // Check whether these two users share any course together.
-                    $sharedcourses = enrol_get_shared_courses($recipient->id, $sender->id, true);
+                    $sharedcourses = enrol_get_shared_courses($recipientid, $senderid, true);
                     $cancontact = (!empty($sharedcourses));
                 }
             }
@@ -2311,12 +2407,12 @@ class api {
 
             // Note: You cannot use empty($sharedcourses) here because this may be an empty array.
             if (null === $sharedcourses) {
-                $sharedcourses = enrol_get_shared_courses($recipient->id, $sender->id, true);
+                $sharedcourses = enrol_get_shared_courses($recipientid, $senderid, true);
             }
 
             foreach ($sharedcourses as $course) {
                 // Note: enrol_get_shared_courses will preload any shared context.
-                if (has_capability('moodle/site:messageanyuser', \context_course::instance($course->id), $sender->id)) {
+                if (has_capability('moodle/site:messageanyuser', \context_course::instance($course->id), $senderid)) {
                     $cancontact = true;
                     break;
                 }
