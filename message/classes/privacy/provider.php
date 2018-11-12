@@ -157,6 +157,9 @@ class provider implements
         $items->add_user_preference('core_message_messageprovider_settings',
             'privacy:metadata:preference:core_message_settings');
 
+        // Add favourite conversations.
+        $items->link_subsystem('core_favourites', 'privacy:metadata:core_favourites');
+
         return $items;
     }
 
@@ -224,6 +227,9 @@ class provider implements
             $contextlist->add_user_context($userid);
         }
 
+        // Add favourite conversations.
+        \core_favourites\privacy\provider::add_contexts_for_userid($contextlist, $userid, 'core_message', 'message_conversations');
+
         return $contextlist;
     }
 
@@ -272,6 +278,16 @@ class provider implements
 
         if ($hasdata) {
             $userlist->add_user($userid);
+        }
+
+        // Add favourite conversations.
+        $component = $userlist->get_component();
+        if ($component != 'core_message') {
+            $userlist->set_component('core_message');
+        }
+        \core_favourites\privacy\provider::add_userids_for_context($userlist, 'message_conversations');
+        if ($component != 'core_message') {
+            $userlist->set_component($component);
         }
     }
 
@@ -407,6 +423,10 @@ class provider implements
         }
 
         $contextlist->add_from_sql($sql, $params);
+
+        // Add favourite conversations. We don't need to filter by itemid because for now they are in the system context.
+        \core_favourites\privacy\provider::add_contexts_for_userid($contextlist, $userid, 'core_message', 'message_conversations');
+
     }
 
     /**
@@ -435,6 +455,16 @@ class provider implements
         }
 
         $userlist->add_from_sql('userid', $sql, $params);
+
+        // Add favourite conversations.
+        $component = $userlist->get_component();
+        if ($component != 'core_message') {
+            $userlist->set_component('core_message');
+        }
+        \core_favourites\privacy\provider::add_userids_for_context($userlist, 'message_conversations');
+        if ($component != 'core_message') {
+            $userlist->set_component($component);
+        }
     }
 
     /**
@@ -518,6 +548,15 @@ class provider implements
             $conversationids = array_keys($conversationids);
             $messageids = $DB->get_records_list('messages', 'conversationid', $conversationids);
             $messageids = array_keys($messageids);
+
+            // Delete these favourite conversations to all the users.
+            foreach ($conversationids as $conversationid) {
+                \core_favourites\privacy\provider::delete_favourites_for_all_users(
+                    $context,
+                    'core_message',
+                    'message_conversations',
+                    $conversationid);
+            }
 
             // Delete messages and user_actions.
             $DB->delete_records_list('message_user_actions', 'messageid', $messageids);
@@ -629,6 +668,13 @@ class provider implements
             $sql = "conversationid $conversationidsql AND userid $useridsql";
             // Reuse the $params var because it contains the useridparams and the conversationids.
             $DB->delete_records_select('message_conversation_members', $sql, $params);
+
+            // Delete the favourite conversations.
+            $userlist = new \core_privacy\local\request\approved_userlist($context, 'core_message', $userids);
+            \core_favourites\privacy\provider::delete_favourites_for_userlist(
+                $userlist,
+                'message_conversations'
+            );
         }
     }
 
@@ -712,6 +758,24 @@ class provider implements
             $sql = "conversationid $conversationidsql AND userid = :userid";
             // Reuse the $params var because it contains the userid and the conversationids.
             $DB->delete_records_select('message_conversation_members', $sql, $params);
+
+            // Delete the favourite conversations.
+            if (empty($contextids) && empty($component) && empty($itemtype) && empty($itemid)) {
+                // Favourites for individual conversations are stored into the user context.
+                $favouritectxids = [\context_user::instance($userid)->id];
+            } else {
+                $favouritectxids = $contextids;
+            }
+            $contextlist = new \core_privacy\local\request\approved_contextlist(
+                \core_user::get_user($userid),
+                'core_message',
+                $favouritectxids
+            );
+            \core_favourites\privacy\provider::delete_favourites_for_user(
+                $contextlist,
+                'core_message',
+                'message_conversations'
+            );
         }
     }
 
@@ -874,6 +938,9 @@ class provider implements
                     $subcontext,
                     [get_string('messages', 'core_message'), $otherusertext]
                 );
+
+                // Get the context for the favourite conversation.
+                $conversationctx = \context_user::instance($userid);
             } else {
                 // Conversations with context are stored in 'Messages | <Conversation item type> | <Conversation name>'.
                 if (get_string_manager()->string_exists($conversation->itemtype, $conversation->component)) {
@@ -888,10 +955,21 @@ class provider implements
                     $subcontext,
                     [get_string('messages', 'core_message'), $itemtypestring, $conversationname]
                 );
+
+                // Get the context for the favourite conversation.
+                $conversationctx = \context::instance_by_id($conversation->contextid);
             }
 
             // Export the conversation messages.
             writer::with_context($context)->export_data($subcontext, (object) $messagedata);
+
+            // Get user's favourites information for the particular conversation.
+            $conversationfavourite = \core_favourites\privacy\provider::get_favourites_info_for_user($userid, $conversationctx,
+                'core_message', 'message_conversations', $conversation->id);
+            if ($conversationfavourite) {
+                // If the conversation has been favorited by the user, include it in the export.
+                writer::with_context($context)->export_related_data($subcontext, 'starred', (object) $conversationfavourite);
+            }
         }
     }
 

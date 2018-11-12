@@ -107,6 +107,7 @@ $string['outputenabled'] = 'Output enabled';
 $string['outputnotavailable'] = 'Not available';
 $string['outputnotconfigured'] = 'Not configured';
 $string['permitted'] = 'Permitted';
+$string['privacy:metadata:core_favourites'] = 'The conversations starred by the user';
 $string['privacy:metadata:messages'] = 'Messages';
 $string['privacy:metadata:messages:conversationid'] = 'The ID of the conversation';
 $string['privacy:metadata:messages:fullmessage'] = 'The full message';

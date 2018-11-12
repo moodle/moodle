@@ -172,9 +172,11 @@ class provider implements
      * @param \context $context The context to which deletion is scoped.
      * @param string $component The favourite's component name.
      * @param string $itemtype The favourite's itemtype.
+     * @param int $itemid Optional itemid associated with component.
      * @throws \dml_exception if any errors are encountered during deletion.
      */
-    public static function delete_favourites_for_all_users(\context $context, string $component, string $itemtype) {
+    public static function delete_favourites_for_all_users(\context $context, string $component, string $itemtype,
+                                                           int $itemid = 0) {
         global $DB;
 
         $params = [
@@ -184,6 +186,11 @@ class provider implements
         ];
 
         $select = "component = :component AND itemtype =:itemtype AND contextid = :contextid";
+
+        if (!empty($itemid)) {
+            $select .= " AND itemid = :itemid";
+            $params['itemid'] = $itemid;
+        }
         $DB->delete_records_select('favourite', $select, $params);
     }
 
@@ -193,10 +200,11 @@ class provider implements
      * @param \core_privacy\local\request\approved_userlist $userlist The approved contexts and user information
      * to delete information for.
      * @param string $itemtype The favourite's itemtype.
+     * @param int $itemid Optional itemid associated with component.
      * @throws \dml_exception if any errors are encountered during deletion.
      */
     public static function delete_favourites_for_userlist(\core_privacy\local\request\approved_userlist $userlist,
-                                                          string $itemtype) {
+                                                          string $itemtype, int $itemid = 0) {
         global $DB;
 
         $userids = $userlist->get_userids();
@@ -217,6 +225,11 @@ class provider implements
         $params += $userparams;
         $select = "component = :component AND itemtype = :itemtype AND contextid = :contextid AND userid $usersql";
 
+        if (!empty($itemid)) {
+            $select .= " AND itemid = :itemid";
+            $params['itemid'] = $itemid;
+        }
+
         $DB->delete_records_select('favourite', $select, $params);
     }
 
@@ -224,12 +237,14 @@ class provider implements
      * Delete all favourites for the specified user, in the specified contexts.
      *
      * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
-     * @param string $component
-     * @param string $itemtype
+     * @param string $component The favourite's component name.
+     * @param string $itemtype The favourite's itemtype.
+     * @param int $itemid Optional itemid associated with component.
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public static function delete_favourites_for_user(approved_contextlist $contextlist, string $component, string $itemtype) {
+    public static function delete_favourites_for_user(approved_contextlist $contextlist, string $component, string $itemtype,
+                                                      int $itemid = 0) {
         global $DB;
 
         $userid = $contextlist->get_user()->id;
@@ -244,6 +259,12 @@ class provider implements
         $params += $inparams;
 
         $select = "userid = :userid AND component = :component AND itemtype =:itemtype AND contextid $insql";
+
+        if (!empty($itemid)) {
+            $select .= " AND itemid = :itemid";
+            $params['itemid'] = $itemid;
+        }
+
         $DB->delete_records_select('favourite', $select, $params);
     }
 }

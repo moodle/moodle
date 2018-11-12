@@ -47,7 +47,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $collection = new collection('core_message');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();
-        $this->assertCount(8, $itemcollection);
+        $this->assertCount(9, $itemcollection);
 
         $messagestable = array_shift($itemcollection);
         $this->assertEquals('messages', $messagestable->get_name());
@@ -72,6 +72,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $usersettings = array_shift($itemcollection);
         $this->assertEquals('core_message_messageprovider_settings', $usersettings->get_name());
+
+        $favouriteconversations = array_shift($itemcollection);
+        $this->assertEquals('core_favourites', $favouriteconversations->get_name());
+        $this->assertEquals('privacy:metadata:core_favourites', $favouriteconversations->get_summary());
 
         $privacyfields = $messagestable->get_privacy_fields();
         $this->assertArrayHasKey('useridfrom', $privacyfields);
@@ -1570,7 +1574,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->getDataGenerator()->create_group_member(array('groupid' => $group1a->id, 'userid' => $user3->id));
         $this->getDataGenerator()->create_group_member(array('groupid' => $group2a->id, 'userid' => $user1->id));
 
+        // Send some private messages between user 1 and user 2.
+        $pm1id = $this->create_message($user1->id, $user2->id, $now);
+
         // Get conversation.
+        $iconversation1id = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
         $component = 'core_group';
         $itemtype = 'groups';
         $conversation1 = \core_message\api::get_conversation_by_area(
@@ -1580,6 +1588,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
             $coursecontext1->id
         );
 
+        // Make favourite some conversations.
+        \core_message\api::set_favourite_conversation($conversation1->id, $user1->id);
+        \core_message\api::set_favourite_conversation($iconversation1id, $user2->id);
+
         // Send some messages to the conversation.
         $m1 = testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'Message 1', $now + 1);
         $m2 = testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'Message 2', $now + 2);
@@ -1588,9 +1600,6 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $dbm1 = $DB->get_record('messages', ['id' => $m1]);
         $dbm2 = $DB->get_record('messages', ['id' => $m2]);
         $dbm3 = $DB->get_record('messages', ['id' => $m3]);
-
-        // Send some private messages between user 1 and user 2.
-        $pm1id = $this->create_message($user1->id, $user2->id, $now);
 
         // Mark as read and delete some messages.
         \core_message\api::mark_message_as_read($user1->id, $dbm3, $now + 5);
@@ -1645,6 +1654,18 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(transform::datetime($now + 5), $m3->timeread);
         $this->assertArrayNotHasKey('timedeleted', (array) $m3);
 
+        // Confirm the favourite group conversation is correct.
+        $favourite = (array) $writer->get_related_data([
+            get_string('messages', 'core_message'),
+            get_string($conversation1->itemtype, $conversation1->component),
+            get_string('privacy:export:conversationprefix', 'core_message') . $conversation1->name
+        ], 'starred');
+        $this->assertCount(4, $favourite);
+        $this->assertEquals(get_string('yes'), $favourite['starred']);
+
+        // Reset writer before exporting conversations for user2.
+        writer::reset();
+
         // Export all the conversations related to the groups in course1 for user2.
         provider::export_conversations($user2->id, 'core_group', 'groups', $coursecontext1);
 
@@ -1693,6 +1714,14 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(transform::datetime($now + 3), $m3->timecreated);
         $this->assertEquals('-', $m3->timeread);
         $this->assertArrayNotHasKey('timedeleted', (array) $m3);
+
+        // Confirm there are no favourite group conversation for user2.
+        $favourite = (array) $writer->get_related_data([
+            get_string('messages', 'core_message'),
+            get_string($conversation1->itemtype, $conversation1->component),
+            $conversation1->name
+        ], 'starred');
+        $this->assertCount(0, $favourite);
     }
 
     /**
@@ -1765,7 +1794,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->getDataGenerator()->create_group_member(array('groupid' => $group2a->id, 'userid' => $user1->id));
         $this->getDataGenerator()->create_group_member(array('groupid' => $group2a->id, 'userid' => $user2->id));
 
-        // Get conversation.
+        // Get conversations.
+        $iconversation1id = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
         $conversation1 = \core_message\api::get_conversation_by_area(
             $component,
             $itemtype,
@@ -1778,6 +1808,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
             $group2a->id,
             $coursecontext2->id
         );
+
+        // Make favourite some conversations.
+        \core_message\api::set_favourite_conversation($iconversation1id, $user1->id);
+        \core_message\api::set_favourite_conversation($conversation1->id, $user1->id);
+        \core_message\api::set_favourite_conversation($conversation1->id, $user2->id);
 
         // Send some messages to the conversation.
         $gm1 = testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'Message 1.1', $now + 1);
@@ -1819,6 +1854,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 5 notifications - 3 notifications + 2 for the contact request.
         $this->assertEquals(5, $DB->count_records('notifications'));
 
+        // There should be 3 favourite conversations.
+        $this->assertEquals(3, $DB->count_records('favourite'));
+
         // Delete conversations for all users in course1.
         provider::delete_conversations_for_all_users($coursecontext1, $component, $itemtype);
 
@@ -1858,6 +1896,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         // There should be 6 conversation members - (2 + 2) individual + 2 group.
         $this->assertEquals(6, $DB->count_records('message_conversation_members'));
+
+        // There should be 1 favourite conversation - the individual one.
+        $this->assertEquals(1, $DB->count_records('favourite'));
     }
 
     /**
@@ -1930,7 +1971,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->getDataGenerator()->create_group_member(array('groupid' => $group2a->id, 'userid' => $user1->id));
         $this->getDataGenerator()->create_group_member(array('groupid' => $group2a->id, 'userid' => $user2->id));
 
-        // Get conversation.
+        // Get conversations.
+        $iconversation1id = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
         $conversation1 = \core_message\api::get_conversation_by_area(
             $component,
             $itemtype,
@@ -1943,6 +1985,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
             $group2a->id,
             $coursecontext2->id
         );
+
+        // Make favourite some conversations.
+        \core_message\api::set_favourite_conversation($iconversation1id, $user1->id);
+        \core_message\api::set_favourite_conversation($conversation1->id, $user1->id);
+        \core_message\api::set_favourite_conversation($conversation1->id, $user2->id);
 
         // Send some messages to the conversation.
         $gm1 = testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'Message 1.1', $now + 1);
@@ -1980,6 +2027,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 5 notifications - 3 notifications + 2 for the contact request.
         $this->assertEquals(5, $DB->count_records('notifications'));
 
+        // There should be 3 favourite conversations.
+        $this->assertEquals(3, $DB->count_records('favourite'));
+
         // Delete group conversations for all users in system context.
         provider::delete_conversations_for_all_users($systemcontext, $component, $itemtype);
 
@@ -1992,6 +2042,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
         $this->assertEquals(5, $DB->count_records('notifications'));
+        $this->assertEquals(3, $DB->count_records('favourite'));
 
         // Delete individual conversations for all users in system context.
         provider::delete_conversations_for_all_users($systemcontext, '', '');
@@ -2005,6 +2056,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
         $this->assertEquals(5, $DB->count_records('notifications'));
+        $this->assertEquals(3, $DB->count_records('favourite'));
     }
 
     /**
@@ -2093,6 +2145,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
             $coursecontext2->id
         );
 
+        // Make favourite some conversations.
+        \core_message\api::set_favourite_conversation($iconversation1id, $user1->id);
+        \core_message\api::set_favourite_conversation($conversation1->id, $user1->id);
+        \core_message\api::set_favourite_conversation($conversation1->id, $user2->id);
+
         // Send some messages to the conversation.
         $gm1 = testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'Message 1.1', $now + 1);
         $gm2 = testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'Message 1.2', $now + 2);
@@ -2129,6 +2186,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 5 notifications - 3 notifications + 2 for the contact request.
         $this->assertEquals(5, $DB->count_records('notifications'));
 
+        // There should be 3 favourite conversations.
+        $this->assertEquals(3, $DB->count_records('favourite'));
+
         // Delete group conversations for all users in user context.
         provider::delete_conversations_for_all_users($user1context, $component, $itemtype);
 
@@ -2141,6 +2201,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
         $this->assertEquals(5, $DB->count_records('notifications'));
+        $this->assertEquals(3, $DB->count_records('favourite'));
 
         // Delete individual conversations for all users in user context.
         provider::delete_conversations_for_all_users($user1context, '', '');
@@ -2154,6 +2215,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
         $this->assertEquals(5, $DB->count_records('notifications'));
+        $this->assertEquals(3, $DB->count_records('favourite'));
     }
 
     /**
@@ -2224,12 +2286,18 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->getDataGenerator()->create_group_member(array('groupid' => $group1a->id, 'userid' => $user3->id));
 
         // Get conversation.
+        $iconversation1id = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
         $conversation1 = \core_message\api::get_conversation_by_area(
             $component,
             $itemtype,
             $group1a->id,
             $coursecontext1->id
         );
+
+        // Make favourite some conversations.
+        \core_message\api::set_favourite_conversation($iconversation1id, $user1->id);
+        \core_message\api::set_favourite_conversation($conversation1->id, $user1->id);
+        \core_message\api::set_favourite_conversation($conversation1->id, $user2->id);
 
         // Send some messages to the conversation.
         $gm1 = testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'Message 1', $now + 1);
@@ -2269,6 +2337,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
                 return $member->userid;
         }, $members);
         $this->assertContains($user1->id, $members);
+
+        // There should be three favourite conversations.
+        $this->assertEquals(3, $DB->count_records('favourite'));
 
         // Delete group conversations for user1 in course1 and course2.
         $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist($user1, 'core_message',
@@ -2313,6 +2384,17 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
                 return $member->userid;
         }, $members);
         $this->assertNotContains($user1->id, $members);
+
+        // There should be 2 favourite conversations - 2 group.
+        $this->assertEquals(2, $DB->count_records('favourite'));
+        $favourites = $DB->get_records('favourite');
+        foreach ($favourites as $favourite) {
+            if ($favourite->userid == $user1->id) {
+                $this->assertEquals($iconversation1id, $favourite->itemid);
+            } else if ($favourite->userid == $user2->id) {
+                $this->assertEquals($conversation1->id, $favourite->itemid);
+            }
+        }
     }
 
 
@@ -2387,12 +2469,18 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->getDataGenerator()->create_group_member(array('groupid' => $group1a->id, 'userid' => $user4->id));
 
         // Get conversation.
+        $iconversation1id = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
         $conversation1 = \core_message\api::get_conversation_by_area(
             $component,
             $itemtype,
             $group1a->id,
             $coursecontext1->id
         );
+
+        // Make favourite some conversations.
+        \core_message\api::set_favourite_conversation($iconversation1id, $user1->id);
+        \core_message\api::set_favourite_conversation($conversation1->id, $user1->id);
+        \core_message\api::set_favourite_conversation($conversation1->id, $user3->id);
 
         // Send some messages to the conversation.
         $gm1 = testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'Message 1', $now + 1);
@@ -2434,6 +2522,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertContains($user1->id, $members);
         $this->assertContains($user4->id, $members);
 
+        // There should be 3 favourite conversations.
+        $this->assertEquals(3, $DB->count_records('favourite'));
+
         // Delete group conversations for user1 and user2 in course2 context.
         $approveduserlist = new \core_privacy\local\request\approved_userlist($coursecontext2, 'core_message',
                 [$user1->id, $user2->id]);
@@ -2448,6 +2539,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(8, $DB->count_records('message_conversation_members'));
+        $this->assertEquals(3, $DB->count_records('favourite'));
 
         // Delete group conversations for user4 in course1 context.
         $approveduserlist = new \core_privacy\local\request\approved_userlist($coursecontext1, 'core_message',
@@ -2462,6 +2554,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(6, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
         $this->assertEquals(4, $DB->count_records('message_conversations'));
+        $this->assertEquals(3, $DB->count_records('favourite'));
         // There should be 7 conversation members - (2 + 2) private + 3 group.
         $this->assertEquals(7, $DB->count_records('message_conversation_members'));
 
@@ -2509,6 +2602,17 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         }, $members);
         $this->assertNotContains($user1->id, $members);
         $this->assertNotContains($user2->id, $members);
+
+        // There should be 2 favourite conversations - user1 individual + user3 group.
+        $this->assertEquals(2, $DB->count_records('favourite'));
+        $favourites = $DB->get_records('favourite');
+        foreach ($favourites as $favourite) {
+            if ($favourite->userid == $user1->id) {
+                $this->assertEquals($iconversation1id, $favourite->itemid);
+            } else if ($favourite->userid == $user3->id) {
+                $this->assertEquals($conversation1->id, $favourite->itemid);
+            }
+        }
     }
 
     /**
