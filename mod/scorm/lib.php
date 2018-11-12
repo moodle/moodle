@@ -1453,9 +1453,18 @@ function scorm_check_mode($scorm, &$newattempt, &$attempt, $userid, &$mode) {
 
     if ($scorm->forcenewattempt == SCORM_FORCEATTEMPT_ALWAYS) {
         // This SCORM is configured to force a new attempt on every re-entry.
-        $attempt++;
         $newattempt = 'on';
         $mode = 'normal';
+        if ($attempt == 1) {
+            // Check if the user has any existing data or if this is really the first attempt.
+            $exists = $DB->record_exists('scorm_scoes_track', array('userid' => $userid, 'scormid' => $scorm->id));
+            if (!$exists) {
+                // No records yet - Attempt should == 1.
+                return;
+            }
+        }
+        $attempt++;
+
         return;
     }
     // Check if the scorm module is incomplete (used to validate user request to start a new attempt).
