@@ -366,7 +366,8 @@ class core_user_external extends external_api {
                     new external_single_structure(
                         array(
                             'type'  => new external_value(PARAM_RAW, 'The name of the preference'),
-                            'value' => new external_value(PARAM_RAW, 'The value of the preference')
+                            'value' => new external_value(PARAM_RAW, 'The value of the preference, do not set this field if you
+                                want to remove (unset) the current value.', VALUE_DEFAULT, null),
                         )
                     ), 'User preferences', VALUE_DEFAULT, array()
                 )
@@ -383,7 +384,7 @@ class core_user_external extends external_api {
      * @return null
      * @since Moodle 3.2
      */
-    public static function update_user_preferences($userid, $emailstop = null, $preferences = array()) {
+    public static function update_user_preferences($userid = 0, $emailstop = null, $preferences = array()) {
         global $USER, $CFG;
 
         require_once($CFG->dirroot . '/user/lib.php');
@@ -401,7 +402,8 @@ class core_user_external extends external_api {
             'emailstop' => $emailstop,
             'preferences' => $preferences
         );
-        self::validate_parameters(self::update_user_preferences_parameters(), $params);
+        $params = self::validate_parameters(self::update_user_preferences_parameters(), $params);
+        $preferences = $params['preferences'];
 
         // Preferences.
         if (!empty($preferences)) {

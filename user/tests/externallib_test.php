@@ -1240,6 +1240,40 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test update_user_preferences unsetting an existing preference.
+     */
+    public function test_update_user_preferences_unset() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $user = self::getDataGenerator()->create_user();
+
+        // Save users preferences.
+        $this->setAdminUser();
+        $preferences = array(
+            array(
+                'name' => 'htmleditor',
+                'value' => 'atto',
+                'userid' => $user->id,
+            )
+        );
+
+        $result = core_user_external::set_user_preferences($preferences);
+        $result = external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(1, $result['saved']);
+
+        // Get preference from DB to avoid cache.
+        $this->assertEquals('atto', $DB->get_field('user_preferences', 'value',
+            array('userid' => $user->id, 'name' => 'htmleditor')));
+
+        // Now, unset.
+        $result = core_user_external::update_user_preferences($user->id, null, array(array('type' => 'htmleditor')));
+
+        $this->assertEquals(0, $DB->count_records('user_preferences', array('userid' => $user->id, 'name' => 'htmleditor')));
+    }
+
+    /**
      * Test agree_site_policy
      */
     public function test_agree_site_policy() {
