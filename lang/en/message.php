@@ -153,6 +153,7 @@ $string['privacy:metadata:notifications:useridfrom'] = 'The ID of the user who s
 $string['privacy:metadata:notifications:useridto'] = 'The ID of the user who received the notification';
 $string['privacy:metadata:preference:core_message_settings'] = 'Settings related to messaging';
 $string['privacy:request:preference:set'] = 'The value of the setting \'{$a->name}\' was \'{$a->value}\'';
+$string['privacy:export:conversationprefix'] = 'Conversation: ';
 $string['processorsettings'] = 'Processor settings';
 $string['removecontact'] = 'Remove contact';
 $string['removecoursefilter'] = 'Remove filter for course {$a}';
