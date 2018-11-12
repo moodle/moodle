@@ -37,16 +37,16 @@ if (empty($CFG->messaging)) {
     print_error('disabled', 'message');
 }
 
-$id = optional_param('id', '', PARAM_INT); // The id of the request.
+$userid = optional_param('userid', '', PARAM_INT); // The userid of the request.
 $action = optional_param('action', '', PARAM_ALPHA);
 
 // Confirm the request is able to be approved/disapproved.
-if ($id) {
-    $request = $DB->get_record('message_contact_requests', ['id' => $id, 'requesteduserid' => $USER->id], '*', MUST_EXIST);
+if ($userid) {
+    $request = $DB->get_record('message_contact_requests', ['userid' => $userid, 'requesteduserid' => $USER->id], '*', MUST_EXIST);
 }
 
 // Use external functions as these are what we will be using in the new UI.
-if ($id && $action && confirm_sesskey()) {
+if ($userid && $action && confirm_sesskey()) {
     if ($action == 'approve') {
         core_message_external::confirm_contact_request($request->userid, $USER->id);
     } else if ($action == 'decline') {
@@ -67,13 +67,13 @@ $table->head = $headers;
 // Use external functions as these are what we will be using in the new UI.
 if ($contactrequests = core_message_external::get_contact_requests($USER->id)) {
     foreach ($contactrequests as $contactrequest) {
-        $approvelink = new moodle_url('/message/pendingcontactrequests.php', ['id' => $contactrequest->contactrequestid,
+        $approvelink = new moodle_url('/message/pendingcontactrequests.php', ['userid' => $contactrequest->id,
             'action' => 'approve', 'sesskey' => sesskey()]);
-        $declinelink = new moodle_url('/message/pendingcontactrequests.php', ['id' => $contactrequest->contactrequestid,
+        $declinelink = new moodle_url('/message/pendingcontactrequests.php', ['userid' => $contactrequest->id,
             'action' => 'decline', 'sesskey' => sesskey()]);
 
         $cells = array();
-        $cells[] = fullname($contactrequest);
+        $cells[] = $contactrequest->fullname;
         $cells[] = html_writer::link($approvelink, get_string('approve')) . " | " .
             html_writer::link($declinelink, get_string('cancel'));
         $table->data[] = new html_table_row($cells);
