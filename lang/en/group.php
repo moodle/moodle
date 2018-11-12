@@ -175,6 +175,7 @@ $string['overview'] = 'Overview';
 $string['potentialmembers'] = 'Potential members: {$a}';
 $string['potentialmembs'] = 'Potential members';
 $string['printerfriendly'] = 'Printer-friendly display';
+$string['privacy:metadata:core_message'] = 'The group conversations';
 $string['privacy:metadata:groups'] = 'A record of group membership.';
 $string['privacy:metadata:groups:groupid'] = 'The ID of the group.';
 $string['privacy:metadata:groups:timeadded'] = 'The timestamp indicating when the user was added to the group.';
