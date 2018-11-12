@@ -151,7 +151,7 @@ class api {
     /**
      * Handles searching for user in a particular course in the message area.
      *
-     * TODO: This function should be removed once new group messaging UI is in place and old messaging UI is removed.
+     * TODO: This function should be removed once the new group messaging UI is in place and the old messaging UI is removed.
      * For now we are not removing/deprecating this function for backwards compatibility with messaging UI.
      * But we are deprecating data_for_messagearea_search_users_in_course external function.
      * Followup: MDL-63915
@@ -197,7 +197,7 @@ class api {
     /**
      * Handles searching for user in the message area.
      *
-     * TODO: This function should be removed once new group messaging UI is in place and old messaging UI is removed.
+     * TODO: This function should be removed once the new group messaging UI is in place and the old messaging UI is removed.
      * For now we are not removing/deprecating this function for backwards compatibility with messaging UI.
      * But we are deprecating data_for_messagearea_search_users external function.
      * Followup: MDL-63915
@@ -808,6 +808,10 @@ class api {
     /**
      * Returns the contacts to display in the contacts area.
      *
+     * TODO: This function should be removed once the new group messaging UI is in place and the old messaging UI is removed.
+     * For now we are not removing/deprecating this function for backwards compatibility with messaging UI.
+     * Followup: MDL-63915
+     *
      * @param int $userid The user id
      * @param int $limitfrom
      * @param int $limitnum
@@ -929,7 +933,10 @@ class api {
     /**
      * Returns the messages to display in the message area.
      *
-     * @deprecated since 3.6
+     * TODO: This function should be removed once the new group messaging UI is in place and the old messaging UI is removed.
+     * For now we are not removing/deprecating this function for backwards compatibility with messaging UI.
+     * Followup: MDL-63915
+     *
      * @param int $userid the current user
      * @param int $otheruserid the other user
      * @param int $limitfrom
@@ -941,8 +948,6 @@ class api {
      */
     public static function get_messages($userid, $otheruserid, $limitfrom = 0, $limitnum = 0,
             $sort = 'timecreated ASC', $timefrom = 0, $timeto = 0) {
-        debugging('\core_message\api::get_messages() is deprecated, please use ' .
-            '\core_message\api::get_conversation_messages() instead.', DEBUG_DEVELOPER);
 
         if (!empty($timefrom)) {
             // Get the conversation between userid and otheruserid.
@@ -1013,15 +1018,15 @@ class api {
     /**
      * Returns the most recent message between two users.
      *
-     * @deprecated since 3.6
+     * TODO: This function should be removed once the new group messaging UI is in place and the old messaging UI is removed.
+     * For now we are not removing/deprecating this function for backwards compatibility with messaging UI.
+     * Followup: MDL-63915
+     *
      * @param int $userid the current user
      * @param int $otheruserid the other user
      * @return \stdClass|null
      */
     public static function get_most_recent_message($userid, $otheruserid) {
-        debugging('\core_message\api::get_most_recent_message() is deprecated, please use ' .
-            '\core_message\api::get_most_recent_conversation_message() instead.', DEBUG_DEVELOPER);
-
         // We want two messages here so we get an accurate 'blocktime' value.
         if ($messages = helper::get_messages($userid, $otheruserid, 0, 0, 2, 'timecreated DESC')) {
             // Swap the order so we now have them in historical order.
@@ -1057,6 +1062,10 @@ class api {
 
     /**
      * Returns the profile information for a contact for a user.
+     *
+     * TODO: This function should be removed once the new group messaging UI is in place and the old messaging UI is removed.
+     * For now we are not removing/deprecating this function for backwards compatibility with messaging UI.
+     * Followup: MDL-63915
      *
      * @param int $userid The user id
      * @param int $otheruserid The id of the user whose profile we want to view.

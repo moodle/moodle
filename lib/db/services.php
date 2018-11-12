@@ -1037,7 +1037,8 @@ $functions = array(
         'classname' => 'core_message_external',
         'methodname' => 'data_for_messagearea_contacts',
         'classpath' => 'message/externallib.php',
-        'description' => 'Retrieve the template data for the contact list',
+        'description' => '** DEPRECATED ** Please do not call this function any more.
+                          Retrieve the template data for the contact list',
         'type' => 'read',
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
@@ -1046,7 +1047,8 @@ $functions = array(
         'classname' => 'core_message_external',
         'methodname' => 'data_for_messagearea_messages',
         'classpath' => 'message/externallib.php',
-        'description' => 'Retrieve the template data for the messages',
+        'description' => '** DEPRECATED ** Please do not call this function any more.
+                          Retrieve the template data for the messages',
         'type' => 'read',
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
@@ -1055,7 +1057,8 @@ $functions = array(
         'classname' => 'core_message_external',
         'methodname' => 'data_for_messagearea_get_most_recent_message',
         'classpath' => 'message/externallib.php',
-        'description' => 'Retrieve the template data for the most recent message',
+        'description' => '** DEPRECATED ** Please do not call this function any more.
+                          Retrieve the template data for the most recent message',
         'type' => 'read',
         'ajax' => true,
     ),
@@ -1063,7 +1066,8 @@ $functions = array(
         'classname' => 'core_message_external',
         'methodname' => 'data_for_messagearea_get_profile',
         'classpath' => 'message/externallib.php',
-        'description' => 'Retrieve the template data for the users\'s profile',
+        'description' => '** DEPRECATED ** Please do not call this function any more.
+                          Retrieve the template data for the users\'s profile',
         'type' => 'read',
         'ajax' => true,
     ),
