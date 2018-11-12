@@ -154,48 +154,8 @@ function message_send(\core\message\message $eventdata) {
         $tabledata->smallmessage = $eventdata->smallmessage;
         $tabledata->timecreated = time();
 
-        if (PHPUNIT_TEST and class_exists('phpunit_util')) {
-            // Add some more tests to make sure the normal code can actually work.
-            $componentdir = core_component::get_component_directory($eventdata->component);
-            if (!$componentdir or !is_dir($componentdir)) {
-                throw new coding_exception('Invalid component specified in message-send(): '.$eventdata->component);
-            }
-            if (!file_exists("$componentdir/db/messages.php")) {
-                throw new coding_exception("$eventdata->component does not contain db/messages.php necessary for message_send()");
-            }
-            $messageproviders = null;
-            include("$componentdir/db/messages.php");
-            if (!isset($messageproviders[$eventdata->name])) {
-                $errormsg = "Missing messaging defaults for event '$eventdata->name' in '$eventdata->component' messages.php file";
-                throw new coding_exception($errormsg);
-            }
-            unset($componentdir);
-            unset($messageproviders);
-            // Now ask phpunit if it wants to catch this message.
-            if (phpunit_util::is_redirecting_messages()) {
-                $messageid = $DB->insert_record($table, $tabledata);
-                $message = $DB->get_record($table, array('id' => $messageid));
-
-                // Add the useridto attribute for BC.
-                if (isset($eventdata->userto)) {
-                    $message->useridto = $eventdata->userto->id;
-                }
-
-                // Mark the message as read for each of the other users.
-                $sql = "SELECT u.*
-                  FROM {message_conversation_members} mcm
-                  JOIN {user} u
-                    ON (mcm.conversationid = :convid AND u.id = mcm.userid AND u.id != :userid)";
-                $otherusers = $DB->get_records_sql($sql, ['convid' => $eventdata->convid, 'userid' => $eventdata->userfrom->id]);
-                foreach ($otherusers as $othermember) {
-                    \core_message\api::mark_message_as_read($othermember->id, $message);
-                }
-
-                // Unit tests need this detail.
-                $message->notification = $eventdata->notification;
-                phpunit_util::message_sent($message);
-                return $messageid;
-            }
+        if ($messageid = message_handle_phpunit_redirection($eventdata, $table, $tabledata)) {
+            return $messageid;
         }
 
         // Cache messages.
@@ -291,38 +251,8 @@ function message_send(\core\message\message $eventdata) {
         $tabledata->contexturlname = null;
     }
 
-    if (PHPUNIT_TEST and class_exists('phpunit_util')) {
-        // Add some more tests to make sure the normal code can actually work.
-        $componentdir = core_component::get_component_directory($eventdata->component);
-        if (!$componentdir or !is_dir($componentdir)) {
-            throw new coding_exception('Invalid component specified in message-send(): '.$eventdata->component);
-        }
-        if (!file_exists("$componentdir/db/messages.php")) {
-            throw new coding_exception("$eventdata->component does not contain db/messages.php necessary for message_send()");
-        }
-        $messageproviders = null;
-        include("$componentdir/db/messages.php");
-        if (!isset($messageproviders[$eventdata->name])) {
-            throw new coding_exception("Missing messaging defaults for event '$eventdata->name' in '$eventdata->component' messages.php file");
-        }
-        unset($componentdir);
-        unset($messageproviders);
-        // Now ask phpunit if it wants to catch this message.
-        if (phpunit_util::is_redirecting_messages()) {
-            $messageid = $DB->insert_record($table, $tabledata);
-            $message = $DB->get_record($table, array('id' => $messageid));
-
-            // Add the useridto attribute for BC.
-            $message->useridto = $eventdata->userto->id;
-
-            // Mark the notification as read.
-            \core_message\api::mark_notification_as_read($message);
-
-            // Unit tests need this detail.
-            $message->notification = $eventdata->notification;
-            phpunit_util::message_sent($message);
-            return $messageid;
-        }
+    if ($messageid = message_handle_phpunit_redirection($eventdata, $table, $tabledata)) {
+        return $messageid;
     }
 
     // Fetch enabled processors.
@@ -384,6 +314,68 @@ function message_send(\core\message\message $eventdata) {
 
     // Let the manager do the sending or buffering when db transaction in progress.
     return \core\message\manager::send_message($eventdata, $tabledata, $processorlist);
+}
+
+/**
+ * Helper method containing the PHPUnit specific code, used to redirect and capture messages/notifications.
+ *
+ * @param \core\message\message $eventdata the message object
+ * @param string $table the table to store the tabledata in, either messages or notifications.
+ * @param stdClass $tabledata the data to be stored when creating the message/notification.
+ * @return int the id of the stored message.
+ */
+function message_handle_phpunit_redirection(\core\message\message $eventdata, string $table, \stdClass $tabledata) {
+    global $DB;
+    if (PHPUNIT_TEST and class_exists('phpunit_util')) {
+        // Add some more tests to make sure the normal code can actually work.
+        $componentdir = core_component::get_component_directory($eventdata->component);
+        if (!$componentdir or !is_dir($componentdir)) {
+            throw new coding_exception('Invalid component specified in message-send(): '.$eventdata->component);
+        }
+        if (!file_exists("$componentdir/db/messages.php")) {
+            throw new coding_exception("$eventdata->component does not contain db/messages.php necessary for message_send()");
+        }
+        $messageproviders = null;
+        include("$componentdir/db/messages.php");
+        if (!isset($messageproviders[$eventdata->name])) {
+            throw new coding_exception("Missing messaging defaults for event '$eventdata->name' in '$eventdata->component' " .
+                "messages.php file");
+        }
+        unset($componentdir);
+        unset($messageproviders);
+        // Now ask phpunit if it wants to catch this message.
+        if (phpunit_util::is_redirecting_messages()) {
+            $messageid = $DB->insert_record($table, $tabledata);
+            $message = $DB->get_record($table, array('id' => $messageid));
+
+            if ($eventdata->notification) {
+                // Add the useridto attribute for BC.
+                $message->useridto = $eventdata->userto->id;
+
+                // Mark the notification as read.
+                \core_message\api::mark_notification_as_read($message);
+            } else {
+                // Add the useridto attribute for BC.
+                if (isset($eventdata->userto)) {
+                    $message->useridto = $eventdata->userto->id;
+                }
+                // Mark the message as read for each of the other users.
+                $sql = "SELECT u.*
+                  FROM {message_conversation_members} mcm
+                  JOIN {user} u
+                    ON (mcm.conversationid = :convid AND u.id = mcm.userid AND u.id != :userid)";
+                $otherusers = $DB->get_records_sql($sql, ['convid' => $eventdata->convid, 'userid' => $eventdata->userfrom->id]);
+                foreach ($otherusers as $othermember) {
+                    \core_message\api::mark_message_as_read($othermember->id, $message);
+                }
+            }
+
+            // Unit tests need this detail.
+            $message->notification = $eventdata->notification;
+            phpunit_util::message_sent($message);
+            return $messageid;
+        }
+    }
 }
 
 /**
