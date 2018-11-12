@@ -780,7 +780,7 @@ function scorm_grade_user($scorm, $userid) {
 
     switch ($scorm->whatgrade) {
         case FIRSTATTEMPT:
-            return scorm_grade_user_attempt($scorm, $userid, 1);
+            return scorm_grade_user_attempt($scorm, $userid, scorm_get_first_attempt($scorm->id, $userid));
         break;
         case LASTATTEMPT:
             return scorm_grade_user_attempt($scorm, $userid, scorm_get_last_completed_attempt($scorm->id, $userid));
@@ -842,6 +842,30 @@ function scorm_get_last_attempt($scormid, $userid) {
     $sql = "SELECT MAX(attempt)
               FROM {scorm_scoes_track}
              WHERE userid = ? AND scormid = ?";
+    $lastattempt = $DB->get_field_sql($sql, array($userid, $scormid));
+    if (empty($lastattempt)) {
+        return '1';
+    } else {
+        return $lastattempt;
+    }
+}
+
+/**
+ * Returns the first attempt used - if no attempts yet, returns 1 for first attempt.
+ *
+ * @param int $scormid the id of the scorm.
+ * @param int $userid the id of the user.
+ *
+ * @return int The first attempt number.
+ */
+function scorm_get_first_attempt($scormid, $userid) {
+    global $DB;
+
+    // Find the first attempt number for the given user id and scorm id.
+    $sql = "SELECT MIN(attempt)
+              FROM {scorm_scoes_track}
+             WHERE userid = ? AND scormid = ?";
+
     $lastattempt = $DB->get_field_sql($sql, array($userid, $scormid));
     if (empty($lastattempt)) {
         return '1';
