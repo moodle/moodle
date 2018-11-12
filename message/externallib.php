@@ -599,7 +599,9 @@ class core_message_external extends external_api {
     public static function get_contact_requests_parameters() {
         return new external_function_parameters(
             [
-                'userid' => new external_value(PARAM_INT, 'The id of the user we want the requests for')
+                'userid' => new external_value(PARAM_INT, 'The id of the user we want the requests for'),
+                'limitfrom' => new external_value(PARAM_INT, 'Limit from', VALUE_DEFAULT, 0),
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0)
             ]
         );
     }
@@ -613,8 +615,10 @@ class core_message_external extends external_api {
      * It will not include blocked users.
      *
      * @param int $userid The id of the user we want to get the contact requests for
+     * @param int $limitfrom
+     * @param int $limitnum
      */
-    public static function get_contact_requests(int $userid) {
+    public static function get_contact_requests(int $userid, int $limitfrom = 0, int $limitnum = 0) {
         global $CFG, $USER;
 
         // Check if messaging is enabled.
@@ -631,10 +635,14 @@ class core_message_external extends external_api {
             throw new required_capability_exception($context, $capability, 'nopermissions', '');
         }
 
-        $params = ['userid' => $userid];
+        $params = [
+            'userid' => $userid,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ];
         $params = self::validate_parameters(self::get_contact_requests_parameters(), $params);
 
-        return \core_message\api::get_contact_requests($params['userid']);
+        return \core_message\api::get_contact_requests($params['userid'], $params['limitfrom'], $params['limitnum']);
     }
 
     /**
@@ -644,26 +652,7 @@ class core_message_external extends external_api {
      */
     public static function get_contact_requests_returns() {
         return new external_multiple_structure(
-            new external_single_structure(
-                [
-                    'id' => new external_value(core_user::get_property_type('id'), 'ID of the user'),
-                    'contactrequestid' => new external_value(PARAM_INT, 'The ID of the contact request'),
-                    'picture' => new external_value(core_user::get_property_type('picture'), 'The picture'),
-                    'firstname' => new external_value(core_user::get_property_type('firstname'),
-                        'The first name(s) of the user'),
-                    'lastname' => new external_value(core_user::get_property_type('lastname'),
-                        'The family name of the user'),
-                    'firstnamephonetic' => new external_value(core_user::get_property_type('firstnamephonetic'),
-                        'The phonetic first name of the user'),
-                    'lastnamephonetic' => new external_value(core_user::get_property_type('lastnamephonetic'),
-                        'The phonetic last name of the user'),
-                    'middlename' => new external_value(core_user::get_property_type('middlename'),
-                        'The middle name of the user'),
-                    'alternatename' => new external_value(core_user::get_property_type('alternatename'),
-                        'The alternate name of the user'),
-                    'email' => new external_value(core_user::get_property_type('email'), 'An email address')
-                ]
-            )
+            self::get_conversation_member_structure()
         );
     }
 

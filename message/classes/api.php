@@ -2046,24 +2046,26 @@ class api {
      * It will not include blocked users.
      *
      * @param int $userid
+     * @param int $limitfrom
+     * @param int $limitnum
      * @return array The list of contact requests
      */
-    public static function get_contact_requests(int $userid) : array {
+    public static function get_contact_requests(int $userid, int $limitfrom = 0, int $limitnum = 0) : array {
         global $DB;
 
-        $ufields = \user_picture::fields('u');
-        $sql = "SELECT $ufields, mcr.id as contactrequestid
-                  FROM {user} u
-                  JOIN {message_contact_requests} mcr
-                    ON u.id = mcr.userid
+        $sql = "SELECT mcr.userid
+                  FROM {message_contact_requests} mcr
              LEFT JOIN {message_users_blocked} mub
-                    ON (mub.userid = ? AND mub.blockeduserid = u.id)
+                    ON (mub.userid = ? AND mub.blockeduserid = mcr.userid)
                  WHERE mcr.requesteduserid = ?
-                   AND u.deleted = 0
                    AND mub.id is NULL
-              ORDER BY mcr.timecreated DESC";
+              ORDER BY mcr.timecreated ASC";
+        if ($contactrequests = $DB->get_records_sql($sql, [$userid, $userid], $limitfrom, $limitnum)) {
+            $userids = array_keys($contactrequests);
+            return helper::get_member_info($userid, $userids);
+        }
 
-        return $DB->get_records_sql($sql, [$userid, $userid]);
+        return [];
     }
 
     /**
