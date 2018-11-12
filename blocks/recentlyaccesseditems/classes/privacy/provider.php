@@ -69,9 +69,12 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
         $params = ['userid' => $userid, 'contextuser' => CONTEXT_USER];
-        $sql = "SELECT id
-                  FROM {context}
-                 WHERE instanceid = :userid and contextlevel = :contextuser";
+        $sql = "SELECT c.id
+                  FROM {context} c
+                  JOIN {block_recentlyaccesseditems} b
+                    ON b.userid = c.instanceid
+                 WHERE c.instanceid = :userid
+                   AND c.contextlevel = :contextuser";
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, $params);
         return $contextlist;
