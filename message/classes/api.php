@@ -294,8 +294,13 @@ class api {
      * @param int $limitnum
      * @return array
      */
-    public static function message_search_users(int $userid, string $search, int $limitfrom = 0, int $limitnum = 1000) : array {
+    public static function message_search_users(int $userid, string $search, int $limitfrom = 0, int $limitnum = 20) : array {
         global $CFG, $DB;
+
+        // Check if messaging is enabled.
+        if (empty($CFG->messaging)) {
+            throw new \moodle_exception('disabled', 'message');
+        }
 
         // Used to search for contacts.
         $fullname = $DB->sql_fullname();
@@ -318,7 +323,7 @@ class api {
               ORDER BY " . $DB->sql_fullname();
         $foundusers = $DB->get_records_sql_menu($sql, $params + $excludeparams, $limitfrom, $limitnum);
 
-        $orderedcontacs = array();
+        $orderedcontacts = array();
         if (!empty($foundusers)) {
             $contacts = helper::get_member_info($userid, array_keys($foundusers));
             // The get_member_info returns an associative array, so is not ordered in the same way.
@@ -326,47 +331,93 @@ class api {
             foreach ($foundusers as $key => $value) {
                 $contact = $contacts[$key];
                 $contact->conversations = self::get_conversations_between_users($userid, $key, 0, 1000);
-                $orderedcontacs[] = $contact;
+                $orderedcontacts[] = $contact;
             }
         }
 
         // Let's get those non-contacts.
+        // If site wide messaging is enabled, we just fetch any matched users which are non-contacts.
         if ($CFG->messagingallusers) {
-            // In case $CFG->messagingallusers is enabled, search for all users site-wide but are not user's contact.
             $sql = "SELECT u.id
-                      FROM {user} u
-                     WHERE u.deleted = 0
-                       AND u.confirmed = 1
-                       AND " . $DB->sql_like($fullname, ':search', false) . "
-                       AND u.id $exclude
-                       AND NOT EXISTS (SELECT mc.id
-                                         FROM {message_contacts} mc
-                                        WHERE (mc.userid = u.id AND mc.contactid = :userid1)
-                                           OR (mc.userid = :userid2 AND mc.contactid = u.id))
-                  ORDER BY " . $DB->sql_fullname();
-        } else {
-            // In case $CFG->messagingallusers is disabled, search for users you have a conversation with.
-            // Messaging setting could change, so could exist an old conversation with users you cannot message anymore.
-            $sql = "SELECT u.id
-                      FROM {user} u
-                INNER JOIN {message_conversation_members} cm
-                        ON u.id = cm.userid
-                INNER JOIN {message_conversation_members} cm2
-                        ON cm.conversationid = cm2.conversationid AND cm2.userid = :userid
-                     WHERE u.deleted = 0
-                       AND u.confirmed = 1
-                       AND " . $DB->sql_like($fullname, ':search', false) . "
-                       AND u.id $exclude
-                       AND NOT EXISTS (SELECT mc.id
-                                         FROM {message_contacts} mc
-                                        WHERE (mc.userid = u.id AND mc.contactid = :userid1)
-                                           OR (mc.userid = :userid2 AND mc.contactid = u.id))
-                  ORDER BY " . $DB->sql_fullname();
-            $params['userid'] = $userid;
-        }
-        $foundusers = $DB->get_records_sql_menu($sql, $params + $excludeparams, $limitfrom, $limitnum);
+                  FROM {user} u
+                 WHERE u.deleted = 0
+                   AND u.confirmed = 1
+                   AND " . $DB->sql_like($fullname, ':search', false) . "
+                   AND u.id $exclude
+                   AND NOT EXISTS (SELECT mc.id
+                                     FROM {message_contacts} mc
+                                    WHERE (mc.userid = u.id AND mc.contactid = :userid1)
+                                       OR (mc.userid = :userid2 AND mc.contactid = u.id))
+              ORDER BY " . $DB->sql_fullname();
 
-        $orderednoncontacs = array();
+            $foundusers = $DB->get_records_sql($sql, $params + $excludeparams, $limitfrom, $limitnum);
+        } else {
+            require_once($CFG->dirroot . '/user/lib.php');
+            // If site-wide messaging is disabled, then we should only be able to search for users who we are allowed to see.
+            // Because we can't achieve all the required visibility checks in SQL, we'll iterate through the non-contact records
+            // and stop once we have enough matching the 'visible' criteria.
+            // TODO: MDL-63983 - Improve the performance of non-contact searches when site-wide messaging is disabled (default).
+
+            // Use a local generator to achieve this iteration.
+            $getnoncontactusers = function ($limitfrom = 0, $limitnum = 0) use($fullname, $exclude, $params, $excludeparams) {
+                global $DB;
+                $sql = "SELECT u.*
+                      FROM {user} u
+                     WHERE u.deleted = 0
+                       AND u.confirmed = 1
+                       AND " . $DB->sql_like($fullname, ':search', false) . "
+                       AND u.id $exclude
+                       AND NOT EXISTS (SELECT mc.id
+                                         FROM {message_contacts} mc
+                                        WHERE (mc.userid = u.id AND mc.contactid = :userid1)
+                                           OR (mc.userid = :userid2 AND mc.contactid = u.id))
+                  ORDER BY " . $DB->sql_fullname();
+                while ($records = $DB->get_records_sql($sql, $params + $excludeparams, $limitfrom, $limitnum)) {
+                    yield $records;
+                    $limitfrom += $limitnum;
+                }
+            };
+
+            // Fetch in batches of $limitnum * 2 to improve the chances of matching a user without going back to the DB.
+            // The generator cannot function without a sensible limiter, so set one if this is not set.
+            $batchlimit = ($limitnum == 0) ? 20 : $limitnum;
+
+            // We need to make the offset param work with the generator.
+            // Basically, if we want to get say 10 records starting at the 40th record, we need to see 50 records and return only
+            // those after the 40th record. We can never pass the method's offset param to the generator as we need to manage the
+            // position within those valid records ourselves.
+            // See MDL-63983 dealing with performance improvements to this area of code.
+            $noofvalidseenrecords = 0;
+            $returnedusers = [];
+            foreach ($getnoncontactusers(0, $batchlimit) as $users) {
+                foreach ($users as $id => $user) {
+                    $userdetails = \user_get_user_details_courses($user);
+
+                    // Return the user only if the searched field is returned.
+                    // Otherwise it means that the $USER was not allowed to search the returned user.
+                    if (!empty($userdetails) and !empty($userdetails['fullname'])) {
+                        // We know we've matched, but only save the record if it's within the offset area we need.
+                        if ($limitfrom == 0) {
+                            // No offset specified, so just save.
+                            $returnedusers[$id] = $user;
+                        } else {
+                            // There is an offset in play.
+                            // If we've passed enough records already (> offset value), then we can save this one.
+                            if ($noofvalidseenrecords >= $limitfrom) {
+                                $returnedusers[$id] = $user;
+                            }
+                        }
+                        if (count($returnedusers) == $limitnum) {
+                            break 2;
+                        }
+                        $noofvalidseenrecords++;
+                    }
+                }
+            }
+            $foundusers = $returnedusers;
+        }
+
+        $orderednoncontacts = array();
         if (!empty($foundusers)) {
             $noncontacts = helper::get_member_info($userid, array_keys($foundusers));
             // The get_member_info returns an associative array, so is not ordered in the same way.
@@ -374,11 +425,11 @@ class api {
             foreach ($foundusers as $key => $value) {
                 $contact = $noncontacts[$key];
                 $contact->conversations = self::get_conversations_between_users($userid, $key, 0, 1000);
-                $orderednoncontacs[] = $contact;
+                $orderednoncontacts[] = $contact;
             }
         }
 
-        return array($orderedcontacs, $orderednoncontacs);
+        return array($orderedcontacts, $orderednoncontacts);
     }
 
     /**
