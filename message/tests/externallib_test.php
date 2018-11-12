@@ -4817,6 +4817,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertArrayHasKey('showonlinestatus', $member);
                 $this->assertArrayHasKey('isblocked', $member);
                 $this->assertArrayHasKey('iscontact', $member);
+                $this->assertArrayHasKey('isdeleted', $member);
                 $this->assertArrayHasKey('canmessage', $member);
                 $this->assertArrayHasKey('requirescontact', $member);
                 $this->assertArrayHasKey('contactrequests', $member);

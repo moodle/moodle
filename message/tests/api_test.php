@@ -1089,6 +1089,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 $this->assertObjectHasAttribute('showonlinestatus', $member);
                 $this->assertObjectHasAttribute('isblocked', $member);
                 $this->assertObjectHasAttribute('iscontact', $member);
+                $this->assertObjectHasAttribute('isdeleted', $member);
                 $this->assertObjectHasAttribute('canmessage', $member);
                 $this->assertObjectHasAttribute('requirescontact', $member);
                 $this->assertObjectHasAttribute('contactrequests', $member);
