@@ -78,7 +78,7 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
 $card-gutter : $card-deck-margin * 2;
 
 .block .empty-placeholder-image-lg {
-    height: 125px;
+    height: 5rem;
 }
 
 .block .block-cards {
@@ -216,6 +216,15 @@ body.drawer-open-left #region-main.has-blocks {
         height: auto;
         width: auto;
         margin-right: 6px;
+    }
+}
+
+.block_myoverview {
+    .content {
+        min-height: 19.35rem;
+    }
+    .paged-content-page-container {
+        min-height: 13rem;
     }
 }
 

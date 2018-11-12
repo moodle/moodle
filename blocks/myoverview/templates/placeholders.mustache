@@ -1,0 +1,99 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/placeholders
+
+    This template renders the loading placeholders for the myoverview block.
+
+    Example context (json):
+    {}
+}}
+<div data-region="loading-placeholder-content" aria-hidden="true">
+    {{#cards}}
+    <div class="card-deck dashboard-card-deck one-row" style="height: 13rem">
+        <div class="card dashboard-card border-0">
+            <div class="card-img-top bg-pulse-grey w-100" style="height: 7rem">
+            </div>
+            <div class="card-body course-info-container">
+                <div class="bg-pulse-grey w-100" style="height: 1rem"></div>
+            </div>
+        </div>
+        <div class="card dashboard-card border-0">
+            <div class="card-img-top bg-pulse-grey w-100" style="height: 7rem">
+            </div>
+            <div class="card-body course-info-container">
+                <div class="bg-pulse-grey w-100" style="height: 1rem"></div>
+            </div>
+        </div>
+        <div class="card dashboard-card border-0">
+            <div class="card-img-top bg-pulse-grey w-100" style="height: 7rem">
+            </div>
+            <div class="card-body course-info-container">
+                <div class="bg-pulse-grey w-100" style="height: 1rem"></div>
+            </div>
+        </div>
+        <div class="card dashboard-card border-0">
+            <div class="card-img-top bg-pulse-grey w-100" style="height: 7rem">
+            </div>
+            <div class="card-body course-info-container">
+                <div class="bg-pulse-grey w-100" style="height: 1rem"></div>
+            </div>
+        </div>
+    </div>
+    {{/cards}}
+    {{#list}}
+    <ul class="list-group">
+        <li class="list-group-item course-listitem">
+            <div class="col-md-6 span6 p-0 d-flex align-items-center">
+                <div class="bg-pulse-grey rounded-circle mr-2" style="height: 1rem; width: 1rem;"></div>
+                <div class="bg-pulse-grey w-50" style="height: 1rem; margin: 0.5rem 0"></div>
+            </div>
+        </li>
+        <li class="list-group-item course-listitem">
+            <div class="col-md-6 span6 p-0 d-flex align-items-center">
+                <div class="bg-pulse-grey rounded-circle mr-2" style="height: 1rem; width: 1rem;"></div>
+                <div class="bg-pulse-grey w-50" style="height: 1rem; margin: 0.5rem 0"></div>
+            </div>
+        </li>
+        <li class="list-group-item course-listitem">
+            <div class="col-md-6 span6 p-0 d-flex align-items-center">
+                <div class="bg-pulse-grey rounded-circle mr-2" style="height: 1rem; width: 1rem;"></div>
+                <div class="bg-pulse-grey w-50" style="height: 1rem; margin: 0.5rem 0"></div>
+            </div>
+        </li>
+        <li class="list-group-item course-listitem">
+            <div class="col-md-6 span6 p-0 d-flex align-items-center">
+                <div class="bg-pulse-grey rounded-circle mr-2" style="height: 1rem; width: 1rem;"></div>
+                <div class="bg-pulse-grey w-50" style="height: 1rem; margin: 0.5rem 0"></div>
+            </div>
+        </li>
+    </ul>
+    {{/list}}
+    {{#summary}}
+    <div class="course-summaryitem m-b-1 p-2">
+        <div class="d-flex">
+            <div class="d-flex">
+                <div class="bg-pulse-grey rounded-circle m-0 p-0 m-r-1" style="height: 7rem; width: 7rem;"></div>
+            </div>
+            <div class="d-flex w-100 flex-column">
+                <div class="bg-pulse-grey w-50 m-b-1" style="height: 1rem; margin: 0.5rem 0"></div>
+                <div class="bg-pulse-grey w-100" style="height: 13rem"></div>
+            </div>
+        </div>
+    </div>
+    {{/summary}}
+</div>
