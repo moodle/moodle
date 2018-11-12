@@ -86,7 +86,7 @@ class manager {
                   FROM {message_conversation_members} mcm
                   JOIN {user} u
                     ON (mcm.conversationid = :convid AND u.id = mcm.userid)
-              ORDER BY id desc";
+              ORDER BY u.id desc";
         $members = $DB->get_records_sql($sql, ['convid' => $eventdata->convid]);
         if (empty($members)) {
             throw new \moodle_exception("Conversation has no members or does not exist.");
