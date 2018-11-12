@@ -516,12 +516,10 @@ class api {
         // If we need to return ONLY favourites, or NO favourites, generate the SQL snippet.
         $favouritesql = "";
         $favouriteparams = [];
-        if (is_bool($favourites)) {
-            if (!empty($favouriteconversationids)) {
-                list ($insql, $inparams) = $DB->get_in_or_equal($favouriteconversationids, SQL_PARAMS_NAMED, 'favouriteids');
-                $favouritesql = $favourites ? " AND mc.id {$insql} " : " AND mc.id NOT {$insql} ";
-                $favouriteparams = $inparams;
-            }
+        if (null !== $favourites && !empty($favouriteconversationids)) {
+            list ($insql, $favouriteparams) =
+                    $DB->get_in_or_equal($favouriteconversationids, SQL_PARAMS_NAMED, 'favouriteids', $favourites);
+            $favouritesql = " AND mc.id {$insql} ";
         }
 
         // If we need to restrict type, generate the SQL snippet.

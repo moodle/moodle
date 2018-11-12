@@ -1276,6 +1276,51 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test verifying the behaviour of get_conversations() when fetching favourite conversations with only a single
+     * favourite.
+     */
+    public function test_get_conversations_favourite_conversations_single() {
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // Mark a single conversation as favourites.
+        \core_message\api::set_favourite_conversation($ic2->id, $user1->id);
+
+        // Get the conversation, first with no restrictions, confirming the favourite status of the conversations.
+        $conversations = \core_message\api::get_conversations($user1->id);
+        $this->assertCount(6, $conversations);
+        foreach ($conversations as $conv) {
+            if (in_array($conv->id, [$ic2->id])) {
+                $this->assertTrue($conv->isfavourite);
+            } else {
+                $this->assertFalse($conv->isfavourite);
+            }
+        }
+
+        // Now, get ONLY favourite conversations.
+        $conversations = \core_message\api::get_conversations($user1->id, 0, 20, null, true);
+        $this->assertCount(1, $conversations);
+        foreach ($conversations as $conv) {
+            $this->assertTrue($conv->isfavourite);
+            $this->assertEquals($ic2->id, $conv->id);
+        }
+
+        // Now, try ONLY favourites of type 'group'.
+        $conversations = \core_message\api::get_conversations($user1->id, 0, 20,
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP, true);
+        $this->assertEmpty($conversations);
+
+        // And NO favourite conversations.
+        $conversations = \core_message\api::get_conversations($user1->id, 0, 20, null, false);
+        $this->assertCount(5, $conversations);
+        foreach ($conversations as $conv) {
+            $this->assertFalse($conv->isfavourite);
+            $this->assertNotEquals($ic2, $conv->id);
+        }
+    }
+
+    /**
      * Test verifying the behaviour of get_conversations() when fetching favourite conversations.
      */
     public function test_get_conversations_favourite_conversations() {
@@ -1293,13 +1338,16 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         \core_message\api::set_favourite_conversation($ic1->id, $user1->id);
         \core_message\api::set_favourite_conversation($gc2->id, $user1->id);
         \core_message\api::set_favourite_conversation($gc5->id, $user1->id);
+        $favouriteids = [$ic1->id, $gc2->id, $gc5->id];
 
         // Get the conversations, first with no restrictions, confirming the favourite status of the conversations.
         $conversations = \core_message\api::get_conversations($user1->id);
         $this->assertCount(6, $conversations);
         foreach ($conversations as $conv) {
-            if (in_array($conv->id, [$ic1->id, $gc2->id, $gc5->id])) {
+            if (in_array($conv->id, $favouriteids)) {
                 $this->assertTrue($conv->isfavourite);
+            } else {
+                $this->assertFalse($conv->isfavourite);
             }
         }
 
@@ -1308,6 +1356,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertCount(3, $conversations);
         foreach ($conversations as $conv) {
             $this->assertTrue($conv->isfavourite);
+            $this->assertNotFalse(array_search($conv->id, $favouriteids));
         }
 
         // Now, try ONLY favourites of type 'group'.
@@ -1316,6 +1365,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertCount(2, $conversations);
         foreach ($conversations as $conv) {
             $this->assertTrue($conv->isfavourite);
+            $this->assertNotFalse(array_search($conv->id, [$gc2->id, $gc5->id]));
         }
 
         // And NO favourite conversations.
@@ -1323,6 +1373,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertCount(3, $conversations);
         foreach ($conversations as $conv) {
             $this->assertFalse($conv->isfavourite);
+            $this->assertFalse(array_search($conv->id, $favouriteids));
         }
     }
 
