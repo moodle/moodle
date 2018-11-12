@@ -1051,6 +1051,7 @@ class core_message_external extends external_api {
             'showonlinestatus' => new external_value(PARAM_BOOL, 'Show the user\'s online status?'),
             'isblocked' => new external_value(PARAM_BOOL, 'If the user has been blocked'),
             'iscontact' => new external_value(PARAM_BOOL, 'Is the user a contact?'),
+            'isdeleted' => new external_value(PARAM_BOOL, 'Is the user deleted?'),
             'canmessage' => new external_value(PARAM_BOOL, 'If the user can be messaged'),
             'requirescontact' => new external_value(PARAM_BOOL, 'If the user requires to be contacts'),
         ];
