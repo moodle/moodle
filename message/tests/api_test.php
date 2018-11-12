@@ -4947,6 +4947,146 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test verifying that messages can be sent to existing individual conversations.
+     */
+    public function test_send_message_to_conversation_individual_conversation() {
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // Enrol the users into the same course so the privacy checks will pass using default (contact+course members) setting.
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course->id);
+
+        // Redirect messages.
+        // This marks messages as read, but we can still observe and verify the number of conversation recipients,
+        // based on the message_viewed events generated as part of marking the message as read for each user.
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+
+        // Send a message to an individual conversation.
+        $sink = $this->redirectEvents();
+        $message1 = \core_message\api::send_message_to_conversation($user1->id, $ic1->id, 'this is a message', FORMAT_MOODLE);
+        $events = $sink->get_events();
+
+        // Verify the message returned.
+        $this->assertInstanceOf(\stdClass::class, $message1);
+        $this->assertObjectHasAttribute('id', $message1);
+        $this->assertAttributeEquals($user1->id, 'useridfrom', $message1);
+        $this->assertAttributeEquals('this is a message', 'text', $message1);
+        $this->assertObjectHasAttribute('timecreated', $message1);
+
+        // Verify events. Note: the event is a message read event because of an if (PHPUNIT) conditional within message_send(),
+        // however, we can still determine the number and ids of any recipients this way.
+        $this->assertCount(1, $events);
+        $userids = array_column($events, 'userid');
+        $this->assertNotContains($user1->id, $userids);
+        $this->assertContains($user2->id, $userids);
+    }
+
+    /**
+     * Test verifying that messages can be sent to existing group conversations.
+     */
+    public function test_send_message_to_conversation_group_conversation() {
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // Enrol the users into the same course so the privacy checks will pass using default (contact+course members) setting.
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course->id);
+
+        // Redirect messages.
+        // This marks messages as read, but we can still observe and verify the number of conversation recipients,
+        // based on the message_viewed events generated as part of marking the message as read for each user.
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+
+        // Send a message to a group conversation.
+        $sink = $this->redirectEvents();
+        $message1 = \core_message\api::send_message_to_conversation($user1->id, $gc2->id, 'message to the group', FORMAT_MOODLE);
+        $events = $sink->get_events();
+
+        // Verify the message returned.
+        $this->assertInstanceOf(\stdClass::class, $message1);
+        $this->assertObjectHasAttribute('id', $message1);
+        $this->assertAttributeEquals($user1->id, 'useridfrom', $message1);
+        $this->assertAttributeEquals('message to the group', 'text', $message1);
+        $this->assertObjectHasAttribute('timecreated', $message1);
+
+        // Verify events. Note: the event is a message read event because of an if (PHPUNIT) conditional within message_send(),
+        // however, we can still determine the number and ids of any recipients this way.
+        $this->assertCount(2, $events);
+        $userids = array_column($events, 'userid');
+        $this->assertNotContains($user1->id, $userids);
+        $this->assertContains($user3->id, $userids);
+        $this->assertContains($user4->id, $userids);
+    }
+
+    /**
+     * Test verifying that messages cannot be sent to conversations that don't exist.
+     */
+    public function test_send_message_to_conversation_non_existent_conversation() {
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        $this->expectException(\moodle_exception::class);
+        \core_message\api::send_message_to_conversation($user1->id, 0, 'test', FORMAT_MOODLE);
+    }
+
+    /**
+     * Test verifying that messages cannot be sent to conversations by users who are not members.
+     */
+    public function test_send_message_to_conversation_non_member() {
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // Enrol the users into the same course so the privacy checks will pass using default (contact+course members) setting.
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course->id);
+
+        $this->expectException(\moodle_exception::class);
+        \core_message\api::send_message_to_conversation($user3->id, $ic1->id, 'test', FORMAT_MOODLE);
+    }
+
+    /**
+     * Test verifying that messages cannot be sent to conversations by users who are not members.
+     */
+    public function test_send_message_to_conversation_blocked_user() {
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // Enrol the users into the same course so the privacy checks will pass using default (contact+course members) setting.
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course->id);
+
+        // User 1 blocks user 2.
+        \core_message\api::block_user($user1->id, $user2->id);
+
+        // Verify that a message can be sent to any group conversation in which user1 and user2 are members.
+        $this->assertNotEmpty(\core_message\api::send_message_to_conversation($user1->id, $gc2->id, 'Hey guys', FORMAT_PLAIN));
+
+        // User 2 cannot send a message to the conversation with user 1.
+        $this->expectException(\moodle_exception::class);
+        \core_message\api::send_message_to_conversation($user2->id, $ic1->id, 'test', FORMAT_MOODLE);
+    }
+
+    /**
      * Comparison function for sorting contacts.
      *
      * @param stdClass $a

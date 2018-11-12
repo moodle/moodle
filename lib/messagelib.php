@@ -74,17 +74,71 @@ function message_send(\core\message\message $eventdata) {
         $eventdata->notification = 1;
     }
 
-    // This is a message directed to a conversation, not a specific user as was the way in legacy messaging .
-    // We must call send_message_to_conversation(), which handles per-member processor iteration and triggers
-    // a per-conversation event.
-    if (!$eventdata->notification && $eventdata->convid) {
-        if (!is_object($eventdata->userfrom)) {
-            $eventdata->userfrom = core_user::get_user($eventdata->userfrom);
-        }
-        if (!$eventdata->userfrom) {
-            debugging('Attempt to send msg from unknown user', DEBUG_NORMAL);
+    if (!is_object($eventdata->userfrom)) {
+        $eventdata->userfrom = core_user::get_user($eventdata->userfrom);
+    }
+    if (!$eventdata->userfrom) {
+        debugging('Attempt to send msg from unknown user', DEBUG_NORMAL);
+        return false;
+    }
+
+    // Legacy messages (FROM a single user TO a single user) must be converted into conversation messages.
+    // Then, these will be passed through the conversation messages code below.
+    if (!$eventdata->notification && !$eventdata->convid) {
+        // If messaging is disabled at the site level, then the 'instantmessage' provider is always disabled.
+        // Given this is the only 'message' type message provider, we can exit now if this is the case.
+        // Don't waste processing time trying to work out the other conversation member, if it's an individual
+        // conversation, just throw a generic debugging notice and return.
+        if (empty($CFG->messaging) || $eventdata->component !== 'moodle' || $eventdata->name !== 'instantmessage') {
+            debugging('Attempt to send msg from a provider '.$eventdata->component.'/'.$eventdata->name.
+                ' that is inactive or not allowed for the user id='.$eventdata->userto->id, DEBUG_NORMAL);
             return false;
         }
+
+        if (!is_object($eventdata->userto)) {
+            $eventdata->userto = core_user::get_user($eventdata->userto);
+        }
+        if (!$eventdata->userto) {
+            debugging('Attempt to send msg to unknown user', DEBUG_NORMAL);
+            return false;
+        }
+
+        // Verify all necessary data fields are present.
+        if (!isset($eventdata->userto->auth) or !isset($eventdata->userto->suspended)
+            or !isset($eventdata->userto->deleted) or !isset($eventdata->userto->emailstop)) {
+
+            debugging('Necessary properties missing in userto object, fetching full record', DEBUG_DEVELOPER);
+            $eventdata->userto = core_user::get_user($eventdata->userto->id);
+        }
+
+        $usertoisrealuser = (core_user::is_real_user($eventdata->userto->id) != false);
+        // If recipient is internal user (noreply user), and emailstop is set then don't send any msg.
+        if (!$usertoisrealuser && !empty($eventdata->userto->emailstop)) {
+            debugging('Attempt to send msg to internal (noreply) user', DEBUG_NORMAL);
+            return false;
+        }
+
+        if (!$conversationid = \core_message\api::get_conversation_between_users([$eventdata->userfrom->id,
+                                                                                  $eventdata->userto->id])) {
+            $conversation = \core_message\api::create_conversation(
+                \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+                [
+                    $eventdata->userfrom->id,
+                    $eventdata->userto->id
+                ]
+            );
+        }
+        // We either have found a conversation, or created one.
+        $conversationid = $conversationid ? $conversationid : $conversation->id;
+        $eventdata->convid = $conversationid;
+    }
+
+    // This is a message directed to a conversation, not a specific user as was the way in legacy messaging.
+    // The above code has adapted the legacy messages into conversation messages.
+    // We must call send_message_to_conversation(), which handles per-member processor iteration and triggers
+    // a per-conversation event.
+    // All eventdata for messages should now have a convid, as we fixed this above.
+    if (!$eventdata->notification) {
 
         // Only one message will be saved to the DB.
         $conversationid = $eventdata->convid;
@@ -122,6 +176,11 @@ function message_send(\core\message\message $eventdata) {
                 $messageid = $DB->insert_record($table, $tabledata);
                 $message = $DB->get_record($table, array('id' => $messageid));
 
+                // Add the useridto attribute for BC.
+                if (isset($eventdata->userto)) {
+                    $message->useridto = $eventdata->userto->id;
+                }
+
                 // Mark the message as read for each of the other users.
                 $sql = "SELECT u.*
                   FROM {message_conversation_members} mcm
@@ -154,21 +213,12 @@ function message_send(\core\message\message $eventdata) {
         return \core\message\manager::send_message_to_conversation($eventdata, $tabledata);
     }
 
-    // Notifications and legacy messaging code:
-    // Most of the next steps are shared by both the legacy message code (those being sent to a single 'userto', not to a
-    // conversation), and for notifications. Any message-specific or notification-specific steps are clearly marked.
+    // Else the message is a notification.
     if (!is_object($eventdata->userto)) {
         $eventdata->userto = core_user::get_user($eventdata->userto);
     }
-    if (!is_object($eventdata->userfrom)) {
-        $eventdata->userfrom = core_user::get_user($eventdata->userfrom);
-    }
     if (!$eventdata->userto) {
         debugging('Attempt to send msg to unknown user', DEBUG_NORMAL);
-        return false;
-    }
-    if (!$eventdata->userfrom) {
-        debugging('Attempt to send msg from unknown user', DEBUG_NORMAL);
         return false;
     }
 
@@ -216,58 +266,30 @@ function message_send(\core\message\message $eventdata) {
     }
 
     // Check if we are creating a notification or message.
-    if ($eventdata->notification) {
-        $table = 'notifications';
+    $table = 'notifications';
 
-        $tabledata = new stdClass();
-        $tabledata->useridfrom = $eventdata->userfrom->id;
-        $tabledata->useridto = $eventdata->userto->id;
-        $tabledata->subject = $eventdata->subject;
-        $tabledata->fullmessage = $eventdata->fullmessage;
-        $tabledata->fullmessageformat = $eventdata->fullmessageformat;
-        $tabledata->fullmessagehtml = $eventdata->fullmessagehtml;
-        $tabledata->smallmessage = $eventdata->smallmessage;
-        $tabledata->eventtype = $eventdata->name;
-        $tabledata->component = $eventdata->component;
-
-        if (!empty($eventdata->contexturl)) {
-            $tabledata->contexturl = (string)$eventdata->contexturl;
-        } else {
-            $tabledata->contexturl = null;
-        }
-
-        if (!empty($eventdata->contexturlname)) {
-            $tabledata->contexturlname = (string)$eventdata->contexturlname;
-        } else {
-            $tabledata->contexturlname = null;
-        }
+    $tabledata = new stdClass();
+    $tabledata->useridfrom = $eventdata->userfrom->id;
+    $tabledata->useridto = $eventdata->userto->id;
+    $tabledata->subject = $eventdata->subject;
+    $tabledata->fullmessage = $eventdata->fullmessage;
+    $tabledata->fullmessageformat = $eventdata->fullmessageformat;
+    $tabledata->fullmessagehtml = $eventdata->fullmessagehtml;
+    $tabledata->smallmessage = $eventdata->smallmessage;
+    $tabledata->eventtype = $eventdata->name;
+    $tabledata->component = $eventdata->component;
+    $tabledata->timecreated = time();
+    if (!empty($eventdata->contexturl)) {
+        $tabledata->contexturl = (string)$eventdata->contexturl;
     } else {
-        $table = 'messages';
-
-        if (!$conversationid = \core_message\api::get_conversation_between_users([$eventdata->userfrom->id,
-                $eventdata->userto->id])) {
-            $conversation = \core_message\api::create_conversation(
-                \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
-                [
-                    $eventdata->userfrom->id,
-                    $eventdata->userto->id
-                ]
-            );
-            $conversationid = $conversation->id;
-        }
-
-        $tabledata = new stdClass();
-        $tabledata->courseid = $eventdata->courseid;
-        $tabledata->useridfrom = $eventdata->userfrom->id;
-        $tabledata->conversationid = $conversationid;
-        $tabledata->subject = $eventdata->subject;
-        $tabledata->fullmessage = $eventdata->fullmessage;
-        $tabledata->fullmessageformat = $eventdata->fullmessageformat;
-        $tabledata->fullmessagehtml = $eventdata->fullmessagehtml;
-        $tabledata->smallmessage = $eventdata->smallmessage;
+        $tabledata->contexturl = null;
     }
 
-    $tabledata->timecreated = time();
+    if (!empty($eventdata->contexturlname)) {
+        $tabledata->contexturlname = (string)$eventdata->contexturlname;
+    } else {
+        $tabledata->contexturlname = null;
+    }
 
     if (PHPUNIT_TEST and class_exists('phpunit_util')) {
         // Add some more tests to make sure the normal code can actually work.
@@ -293,12 +315,8 @@ function message_send(\core\message\message $eventdata) {
             // Add the useridto attribute for BC.
             $message->useridto = $eventdata->userto->id;
 
-            // Mark the message/notification as read.
-            if ($eventdata->notification) {
-                \core_message\api::mark_notification_as_read($message);
-            } else {
-                \core_message\api::mark_message_as_read($eventdata->userto->id, $message);
-            }
+            // Mark the notification as read.
+            \core_message\api::mark_notification_as_read($message);
 
             // Unit tests need this detail.
             $message->notification = $eventdata->notification;
@@ -308,18 +326,7 @@ function message_send(\core\message\message $eventdata) {
     }
 
     // Fetch enabled processors.
-    // If we are dealing with a message some processors may want to handle it regardless of user and site settings.
-    if (!$eventdata->notification) {
-        $processors = array_filter(get_message_processors(false), function($processor) {
-            if ($processor->object->force_process_messages()) {
-                return true;
-            }
-
-            return ($processor->enabled && $processor->configured);
-        });
-    } else {
-        $processors = get_message_processors(true);
-    }
+    $processors = get_message_processors(true);
 
     // Preset variables
     $processorlist = array();
@@ -352,9 +359,7 @@ function message_send(\core\message\message $eventdata) {
         }
 
         // Populate the list of processors we will be using
-        if (!$eventdata->notification && $processor->object->force_process_messages()) {
-            $processorlist[] = $processor->name;
-        } else if ($permitted == 'forced' && $userisconfigured) {
+        if ($permitted == 'forced' && $userisconfigured) {
             // An admin is forcing users to use this message processor. Use this processor unconditionally.
             $processorlist[] = $processor->name;
         } else if ($permitted == 'permitted' && $userisconfigured && !$eventdata->userto->emailstop) {
@@ -371,15 +376,6 @@ function message_send(\core\message\message $eventdata) {
                 }
             }
         }
-    }
-
-    // We have either created or derived a conversationid, which we can use to
-    // update the 'message_time_last_message_between_users' cache.
-    if (!empty($tabledata->conversationid)) {
-        // Cache the timecreated value of the last message in this conversation.
-        $cache = cache::make('core', 'message_time_last_message_between_users');
-        $key = \core_message\helper::get_last_message_time_created_cache_key($tabledata->conversationid);
-        $cache->set($key, $tabledata->timecreated);
     }
 
     // Store unread message just in case we get a fatal error any time later.

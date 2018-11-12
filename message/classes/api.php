@@ -1472,6 +1472,62 @@ class api {
     }
 
     /**
+     * Send a message from a user to a conversation.
+     *
+     * This method will create the basic eventdata and delegate to message creation to message_send.
+     * The message_send() method is responsible for event data that is specific to each recipient.
+     *
+     * @param int $userid the sender id.
+     * @param int $conversationid the conversation id.
+     * @param string $message the message to send.
+     * @param int $format the format of the message to send.
+     * @return \stdClass the message created.
+     * @throws \coding_exception
+     * @throws \moodle_exception if the user is not permitted to send a message to the conversation.
+     */
+    public static function send_message_to_conversation(int $userid, int $conversationid, string $message,
+                                                        int $format) : \stdClass {
+        global $DB;
+
+        if (!self::can_send_message_to_conversation($userid, $conversationid)) {
+            throw new \moodle_exception("User $userid cannot send a message to conversation $conversationid");
+        }
+
+        $eventdata = new \core\message\message();
+        $eventdata->courseid         = 1;
+        $eventdata->component        = 'moodle';
+        $eventdata->name             = 'instantmessage';
+        $eventdata->userfrom         = $userid;
+        $eventdata->convid           = $conversationid;
+
+        if ($format == FORMAT_HTML) {
+            $eventdata->fullmessagehtml  = $message;
+            // Some message processors may revert to sending plain text even if html is supplied,
+            // so we keep both plain and html versions if we're intending to send html.
+            $eventdata->fullmessage = html_to_text($eventdata->fullmessagehtml);
+        } else {
+            $eventdata->fullmessage      = $message;
+            $eventdata->fullmessagehtml  = '';
+        }
+
+        $eventdata->fullmessageformat = $format;
+        $eventdata->smallmessage = $message; // Store the message unfiltered. Clean up on output.
+
+        $eventdata->timecreated     = time();
+        $eventdata->notification    = 0;
+        $messageid = message_send($eventdata);
+
+        $messagerecord = $DB->get_record('messages', ['id' => $messageid], 'id, useridfrom, fullmessage, timecreated');
+        $message = (object) [
+            'id' => $messagerecord->id,
+            'useridfrom' => $messagerecord->useridfrom,
+            'text' => $messagerecord->fullmessage,
+            'timecreated' => $messagerecord->timecreated
+        ];
+        return $message;
+    }
+
+    /**
      * Get the messaging preference for a user.
      * If the user has not any messaging privacy preference:
      * - When $CFG->messagingallusers = false the default user preference is MESSAGE_PRIVACY_COURSEMEMBER.
