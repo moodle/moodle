@@ -11172,7 +11172,7 @@ div.editor_atto_toolbar button .icon {
 
 .dashboard-card-deck.one-row {
   flex-flow: nowrap;
-  overflow-y: scroll; }
+  overflow-x: scroll; }
 
 .summaryimage {
   height: 7rem;
