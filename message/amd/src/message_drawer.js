@@ -220,6 +220,11 @@ function(
             Router.go(Routes.VIEW_CONVERSATION, conversationId);
         });
 
+        PubSub.subscribe(Events.CREATE_CONVERSATION_WITH_USER, function(userId) {
+            show(root);
+            Router.go(Routes.VIEW_CONVERSATION, null, 'create', userId);
+        });
+
         PubSub.subscribe(Events.SHOW_SETTINGS, function() {
             show(root);
             Router.go(Routes.VIEW_SETTINGS);

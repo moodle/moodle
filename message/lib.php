@@ -820,7 +820,6 @@ function core_message_before_standard_top_of_body_html() {
     }
 
     $renderer = $PAGE->get_renderer('core');
-    $unreadconversationcount = \core_message\api::count_unread_conversations($USER);
     $individualconversationcount = \core_message\api::count_conversations(
         $USER,
         \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
@@ -875,15 +874,15 @@ function core_message_before_standard_top_of_body_html() {
         ],
         'overview' => [
             'messages' => [
-                'expanded' => false,
+                'expanded' => empty($favouriteconversationcount) && empty($groupconversationcount),
                 'count' => [
-                    'unread' => $unreadconversationcount,
+                    'unread' => 0, // TODO: fix me.
                     'total' => $individualconversationcount
                 ],
                 'placeholders' => array_fill(0, $individualconversationcount, true)
             ],
             'groupmessages' => [
-                'expanded' => false,
+                'expanded' => empty($favouriteconversationcount) && !empty($groupconversationcount),
                 'count' => [
                     'unread' => 0, // TODO: fix me.
                     'total' => $groupconversationcount
@@ -891,7 +890,7 @@ function core_message_before_standard_top_of_body_html() {
                 'placeholders' => array_fill(0, $groupconversationcount, true)
             ],
             'favourites' => [
-                'expanded' => true,
+                'expanded' => !empty($favouriteconversationcount),
                 'count' => [
                     'unread' => 0, // TODO: fix me.
                     'total' => $favouriteconversationcount

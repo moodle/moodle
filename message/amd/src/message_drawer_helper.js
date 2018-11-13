@@ -32,6 +32,13 @@ function(
 ) {
 
     /**
+     * Trigger an event to create a new conversation in the message drawer.
+     */
+    var createConversationWithUser = function(userId) {
+        PubSub.publish(MessageDrawerEvents.CREATE_CONVERSATION_WITH_USER, userId);
+    };
+
+    /**
      * Trigger an event to show the message drawer.
      */
     var show = function() {
@@ -55,6 +62,7 @@ function(
     };
 
     return {
+        createConversationWithUser: createConversationWithUser,
         show: show,
         showConversation: showConversation,
         showSettings: showSettings

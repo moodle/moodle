@@ -1494,7 +1494,7 @@ function(
         var conversationId = null;
 
         // Check what we were given to identify the conversation.
-        if (typeof conversationOrId == 'object') {
+        if (conversationOrId && conversationOrId !== null && typeof conversationOrId == 'object') {
             conversation = conversationOrId;
             conversationId = parseInt(conversation.id, 10);
         } else {

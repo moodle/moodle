@@ -23,6 +23,7 @@
  */
 define([], function() {
     return {
+        CREATE_CONVERSATION_WITH_USER: 'message-drawer-create-conversation-with-user',
         CONTACT_BLOCKED: 'message-drawer-contact-blocked',
         CONTACT_UNBLOCKED: 'message-drawer-contact-unblocked',
         CONTACT_ADDED: 'message-drawer-contact-added',
