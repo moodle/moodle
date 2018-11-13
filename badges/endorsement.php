@@ -63,6 +63,10 @@ $output = $PAGE->get_renderer('core', 'badges');
 $msg = optional_param('msg', '', PARAM_TEXT);
 $emsg = optional_param('emsg', '', PARAM_TEXT);
 
+if ($msg !== '') {
+    $msg = get_string($msg, 'badges');
+}
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading(print_badge_image($badge, $context, 'small') . ' ' . $badge->name);
 
