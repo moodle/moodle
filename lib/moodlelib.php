@@ -2763,7 +2763,10 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             $PAGE->set_course($course);
         }
         // Set accesstime or the user will appear offline which messes up messaging.
-        user_accesstime_log($course->id);
+        // Do not update access time for webservice or ajax requests.
+        if (!WS_SERVER && !AJAX_SCRIPT) {
+            user_accesstime_log($course->id);
+        }
         return;
     }
 
@@ -2972,7 +2975,10 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     }
 
     // Finally access granted, update lastaccess times.
-    user_accesstime_log($course->id);
+    // Do not update access time for webservice or ajax requests.
+    if (!WS_SERVER && !AJAX_SCRIPT) {
+        user_accesstime_log($course->id);
+    }
 }
 
 

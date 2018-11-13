@@ -165,6 +165,7 @@ the groupid field.
   until all settings have been set. The additional parameters are used recursively and shouldn't be need to be explicitly passed in when calling
   the function from other parts of Moodle.
   The return value: $settingsoutput is an array of setting names and the values that were set by the function.
+* Webservices no longer update the lastaccess time for a user in a course. Call core_course_view_course() manually if needed.
 
 === 3.5 ===
 
