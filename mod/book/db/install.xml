@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/book/db" VERSION="20120515" COMMENT="XMLDB file for Moodle mod_book"
+<XMLDB PATH="mod/book/db" VERSION="20200907" COMMENT="XMLDB file for Moodle mod_book"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -39,6 +39,9 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="bookid" UNIQUE="false" FIELDS="bookid"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>
