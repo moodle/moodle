@@ -166,6 +166,7 @@ the groupid field.
   the function from other parts of Moodle.
   The return value: $settingsoutput is an array of setting names and the values that were set by the function.
 * Webservices no longer update the lastaccess time for a user in a course. Call core_course_view_course() manually if needed.
+* A new field has been added to the context table. Please ensure that any contxt preloading uses get_preload_record_columns_sql or get_preload_record_columns to fetch the list of columns.
 
 === 3.5 ===
 

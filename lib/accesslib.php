@@ -478,6 +478,21 @@ function has_capability($capability, context $context, $user = null, $doanything
         }
     }
 
+    // Check whether context locking is enabled.
+    if (!empty($CFG->contextlocking)) {
+        if ($capinfo->captype === 'write' && $context->locked) {
+            // Context locking applies to any write capability in a locked context.
+            // It does not apply to moodle/site:managecontextlocks - this is to allow context locking to be unlocked.
+            if ($capinfo->name !== 'moodle/site:managecontextlocks') {
+                // It applies to all users who are not site admins.
+                // It also applies to site admins when contextlockappliestoadmin is set.
+                if (!is_siteadmin($userid) || !empty($CFG->contextlockappliestoadmin)) {
+                    return false;
+                }
+            }
+        }
+    }
+
     // somehow make sure the user is not deleted and actually exists
     if ($userid != 0) {
         if ($userid == $USER->id and isset($USER->deleted)) {
@@ -4728,6 +4743,15 @@ abstract class context extends stdClass implements IteratorAggregate {
     protected $_depth;
 
     /**
+     * Whether this context is locked or not.
+     *
+     * Can be accessed publicly through $context->locked.
+     *
+     * @var int
+     */
+    protected $_locked;
+
+    /**
      * @var array Context caching info
      */
     private static $cache_contextsbyid = array();
@@ -4862,22 +4886,40 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param stdClass $rec
      * @return void (modifies $rec)
      */
-     protected static function preload_from_record(stdClass $rec) {
-         if (empty($rec->ctxid) or empty($rec->ctxlevel) or !isset($rec->ctxinstance) or empty($rec->ctxpath) or empty($rec->ctxdepth)) {
-             // $rec does not have enough data, passed here repeatedly or context does not exist yet
-             return;
-         }
+    protected static function preload_from_record(stdClass $rec) {
+        $notenoughdata = false;
+        $notenoughdata = $notenoughdata || empty($rec->ctxid);
+        $notenoughdata = $notenoughdata || empty($rec->ctxlevel);
+        $notenoughdata = $notenoughdata || !isset($rec->ctxinstance);
+        $notenoughdata = $notenoughdata || empty($rec->ctxpath);
+        $notenoughdata = $notenoughdata || empty($rec->ctxdepth);
+        $notenoughdata = $notenoughdata || !isset($rec->ctxlocked);
+        if ($notenoughdata) {
+            // The record does not have enough data, passed here repeatedly or context does not exist yet.
+            if (isset($rec->ctxid) && !isset($rec->ctxlocked)) {
+                debugging('Locked value missing. Code is possibly not usings the getter properly.', DEBUG_DEVELOPER);
+            }
+            return;
+        }
 
-         // note: in PHP5 the objects are passed by reference, no need to return $rec
-         $record = new stdClass();
-         $record->id           = $rec->ctxid;       unset($rec->ctxid);
-         $record->contextlevel = $rec->ctxlevel;    unset($rec->ctxlevel);
-         $record->instanceid   = $rec->ctxinstance; unset($rec->ctxinstance);
-         $record->path         = $rec->ctxpath;     unset($rec->ctxpath);
-         $record->depth        = $rec->ctxdepth;    unset($rec->ctxdepth);
+        $record = (object) [
+            'id'            => $rec->ctxid,
+            'contextlevel'  => $rec->ctxlevel,
+            'instanceid'    => $rec->ctxinstance,
+            'path'          => $rec->ctxpath,
+            'depth'         => $rec->ctxdepth,
+            'locked'        => $rec->ctxlocked,
+        ];
 
-         return context::create_instance_from_record($record);
-     }
+        unset($rec->ctxid);
+        unset($rec->ctxlevel);
+        unset($rec->ctxinstance);
+        unset($rec->ctxpath);
+        unset($rec->ctxdepth);
+        unset($rec->ctxlocked);
+
+        return context::create_instance_from_record($record);
+    }
 
 
     // ====== magic methods =======
@@ -4898,11 +4940,18 @@ abstract class context extends stdClass implements IteratorAggregate {
      */
     public function __get($name) {
         switch ($name) {
-            case 'id':           return $this->_id;
-            case 'contextlevel': return $this->_contextlevel;
-            case 'instanceid':   return $this->_instanceid;
-            case 'path':         return $this->_path;
-            case 'depth':        return $this->_depth;
+            case 'id':
+                return $this->_id;
+            case 'contextlevel':
+                return $this->_contextlevel;
+            case 'instanceid':
+                return $this->_instanceid;
+            case 'path':
+                return $this->_path;
+            case 'depth':
+                return $this->_depth;
+            case 'locked':
+                return $this->is_locked();
 
             default:
                 debugging('Invalid context property accessed! '.$name);
@@ -4917,19 +4966,26 @@ abstract class context extends stdClass implements IteratorAggregate {
      */
     public function __isset($name) {
         switch ($name) {
-            case 'id':           return isset($this->_id);
-            case 'contextlevel': return isset($this->_contextlevel);
-            case 'instanceid':   return isset($this->_instanceid);
-            case 'path':         return isset($this->_path);
-            case 'depth':        return isset($this->_depth);
-
-            default: return false;
+            case 'id':
+                return isset($this->_id);
+            case 'contextlevel':
+                return isset($this->_contextlevel);
+            case 'instanceid':
+                return isset($this->_instanceid);
+            case 'path':
+                return isset($this->_path);
+            case 'depth':
+                return isset($this->_depth);
+            case 'locked':
+                // Locked is always set.
+                return true;
+            default:
+                return false;
         }
-
     }
 
     /**
-     * ALl properties are read only, sorry.
+     * All properties are read only, sorry.
      * @param string $name
      */
     public function __unset($name) {
@@ -4950,7 +5006,8 @@ abstract class context extends stdClass implements IteratorAggregate {
             'contextlevel' => $this->contextlevel,
             'instanceid'   => $this->instanceid,
             'path'         => $this->path,
-            'depth'        => $this->depth
+            'depth'        => $this->depth,
+            'locked'       => $this->locked,
         );
         return new ArrayIterator($ret);
     }
@@ -4969,6 +5026,12 @@ abstract class context extends stdClass implements IteratorAggregate {
         $this->_instanceid   = $record->instanceid;
         $this->_path         = $record->path;
         $this->_depth        = $record->depth;
+
+        if (isset($record->locked)) {
+            $this->_locked = $record->locked;
+        } else if (!during_initial_install() && !moodle_needs_upgrading()) {
+            debugging('Locked value missing. Code is possibly not usings the getter properly.', DEBUG_DEVELOPER);
+        }
     }
 
     /**
@@ -5011,12 +5074,13 @@ abstract class context extends stdClass implements IteratorAggregate {
         if ($dbfamily == 'mysql') {
             $updatesql = "UPDATE {context} ct, {context_temp} temp
                              SET ct.path     = temp.path,
-                                 ct.depth    = temp.depth
+                                 ct.depth    = temp.depth,
+                                 ct.locked   = temp.locked
                            WHERE ct.id = temp.id";
         } else if ($dbfamily == 'oracle') {
             $updatesql = "UPDATE {context} ct
-                             SET (ct.path, ct.depth) =
-                                 (SELECT temp.path, temp.depth
+                             SET (ct.path, ct.depth, ct.locked) =
+                                 (SELECT temp.path, temp.depth, temp.locked
                                     FROM {context_temp} temp
                                    WHERE temp.id=ct.id)
                            WHERE EXISTS (SELECT 'x'
@@ -5025,14 +5089,16 @@ abstract class context extends stdClass implements IteratorAggregate {
         } else if ($dbfamily == 'postgres' or $dbfamily == 'mssql') {
             $updatesql = "UPDATE {context}
                              SET path     = temp.path,
-                                 depth    = temp.depth
+                                 depth    = temp.depth,
+                                 locked   = temp.locked
                             FROM {context_temp} temp
                            WHERE temp.id={context}.id";
         } else {
             // sqlite and others
             $updatesql = "UPDATE {context}
                              SET path     = (SELECT path FROM {context_temp} WHERE id = {context}.id),
-                                 depth    = (SELECT depth FROM {context_temp} WHERE id = {context}.id)
+                                 depth    = (SELECT depth FROM {context_temp} WHERE id = {context}.id),
+                                 locked   = (SELECT locked FROM {context_temp} WHERE id = {context}.id)
                              WHERE id IN (SELECT id FROM {context_temp})";
         }
 
@@ -5116,6 +5182,27 @@ abstract class context extends stdClass implements IteratorAggregate {
         context::reset_caches();
 
         $trans->allow_commit();
+    }
+
+    /**
+     * Set whether this context has been locked or not.
+     *
+     * @param   bool    $locked
+     * @return  $this
+     */
+    public function set_locked(bool $locked) {
+        global $DB;
+
+        if ($this->_locked == $locked) {
+            return $this;
+        }
+
+        $this->_locked = $locked;
+        $DB->set_field('context', 'locked', (int) $locked, ['id' => $this->id]);
+        $this->mark_dirty();
+        self::reset_caches();
+
+        return $this;
     }
 
     /**
@@ -5239,6 +5326,7 @@ abstract class context extends stdClass implements IteratorAggregate {
         $record->instanceid   = $instanceid;
         $record->depth        = 0;
         $record->path         = null; //not known before insert
+        $record->locked       = 0;
 
         $record->id = $DB->insert_record('context', $record);
 
@@ -5264,6 +5352,23 @@ abstract class context extends stdClass implements IteratorAggregate {
     public function get_context_name($withprefix = true, $short = false) {
         // must be implemented in all context levels
         throw new coding_exception('can not get name of abstract context');
+    }
+
+    /**
+     * Whether the current context is locked.
+     *
+     * @return  bool
+     */
+    public function is_locked() {
+        if ($this->_locked) {
+            return true;
+        }
+
+        if ($parent = $this->get_parent_context()) {
+            return $parent->is_locked();
+        }
+
+        return false;
     }
 
     /**
@@ -5724,7 +5829,14 @@ class context_helper extends context {
      * @return array (table.column=>alias, ...)
      */
     public static function get_preload_record_columns($tablealias) {
-        return array("$tablealias.id"=>"ctxid", "$tablealias.path"=>"ctxpath", "$tablealias.depth"=>"ctxdepth", "$tablealias.contextlevel"=>"ctxlevel", "$tablealias.instanceid"=>"ctxinstance");
+        return [
+            "$tablealias.id" => "ctxid",
+            "$tablealias.path" => "ctxpath",
+            "$tablealias.depth" => "ctxdepth",
+            "$tablealias.contextlevel" => "ctxlevel",
+            "$tablealias.instanceid" => "ctxinstance",
+            "$tablealias.locked" => "ctxlocked",
+        ];
     }
 
     /**
@@ -5737,7 +5849,12 @@ class context_helper extends context {
      * @return string
      */
     public static function get_preload_record_columns_sql($tablealias) {
-        return "$tablealias.id AS ctxid, $tablealias.path AS ctxpath, $tablealias.depth AS ctxdepth, $tablealias.contextlevel AS ctxlevel, $tablealias.instanceid AS ctxinstance";
+        return "$tablealias.id AS ctxid, " .
+               "$tablealias.path AS ctxpath, " .
+               "$tablealias.depth AS ctxdepth, " .
+               "$tablealias.contextlevel AS ctxlevel, " .
+               "$tablealias.instanceid AS ctxinstance, " .
+               "$tablealias.locked AS ctxlocked";
     }
 
     /**
@@ -5920,11 +6037,11 @@ class context_system extends context {
                 $record->instanceid   = 0;
                 $record->path         = '/'.SYSCONTEXTID;
                 $record->depth        = 1;
+                $record->locked       = 0;
                 context::$systemcontext = new context_system($record);
             }
             return context::$systemcontext;
         }
-
 
         try {
             // We ignore the strictness completely because system context must exist except during install.
@@ -5943,7 +6060,8 @@ class context_system extends context {
             $record->contextlevel = CONTEXT_SYSTEM;
             $record->instanceid   = 0;
             $record->depth        = 1;
-            $record->path         = null; //not known before insert
+            $record->path         = null; // Not known before insert.
+            $record->locked       = 0;
 
             try {
                 if ($DB->count_records('context')) {
@@ -5974,6 +6092,10 @@ class context_system extends context {
             $record->depth = 1;
             $record->path  = '/'.$record->id;
             $DB->update_record('context', $record);
+        }
+
+        if (empty($record->locked)) {
+            $record->locked = 0;
         }
 
         if (!defined('SYSCONTEXTID')) {
@@ -6055,6 +6177,18 @@ class context_system extends context {
             $record->path     = '/'.$record->id;
             $DB->update_record('context', $record);
         }
+    }
+
+    /**
+     * Set whether this context has been locked or not.
+     *
+     * @param   bool    $locked
+     * @return  $this
+     */
+    public function set_locked(bool $locked) {
+        throw new \coding_exception('It is not possible to lock the system context');
+
+        return $this;
     }
 }
 
@@ -6458,8 +6592,8 @@ class context_coursecat extends context {
             // Deeper categories - one query per depthlevel
             $maxdepth = $DB->get_field_sql("SELECT MAX(depth) FROM {course_categories}");
             for ($n=2; $n<=$maxdepth; $n++) {
-                $sql = "INSERT INTO {context_temp} (id, path, depth)
-                        SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
+                $sql = "INSERT INTO {context_temp} (id, path, depth, locked)
+                        SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1, ctx.locked
                           FROM {context} ctx
                           JOIN {course_categories} cc ON (cc.id = ctx.instanceid AND ctx.contextlevel = ".CONTEXT_COURSECAT." AND cc.depth = $n)
                           JOIN {context} pctx ON (pctx.instanceid = cc.parent AND pctx.contextlevel = ".CONTEXT_COURSECAT.")
@@ -6682,8 +6816,8 @@ class context_course extends context {
             $DB->execute($sql);
 
             // standard courses
-            $sql = "INSERT INTO {context_temp} (id, path, depth)
-                    SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
+            $sql = "INSERT INTO {context_temp} (id, path, depth, locked)
+                    SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1, ctx.locked
                       FROM {context} ctx
                       JOIN {course} c ON (c.id = ctx.instanceid AND ctx.contextlevel = ".CONTEXT_COURSE." AND c.category <> 0)
                       JOIN {context} pctx ON (pctx.instanceid = c.category AND pctx.contextlevel = ".CONTEXT_COURSECAT.")
@@ -6951,8 +7085,8 @@ class context_module extends context {
                 $ctxemptyclause = "AND (ctx.path IS NULL OR ctx.depth = 0)";
             }
 
-            $sql = "INSERT INTO {context_temp} (id, path, depth)
-                    SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
+            $sql = "INSERT INTO {context_temp} (id, path, depth, locked)
+                    SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1, ctx.locked
                       FROM {context} ctx
                       JOIN {course_modules} cm ON (cm.id = ctx.instanceid AND ctx.contextlevel = ".CONTEXT_MODULE.")
                       JOIN {context} pctx ON (pctx.instanceid = cm.course AND pctx.contextlevel = ".CONTEXT_COURSE.")
@@ -7172,8 +7306,8 @@ class context_block extends context {
             }
 
             // pctx.path IS NOT NULL prevents fatal problems with broken block instances that point to invalid context parent
-            $sql = "INSERT INTO {context_temp} (id, path, depth)
-                    SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
+            $sql = "INSERT INTO {context_temp} (id, path, depth, locked)
+                    SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1, ctx.locked
                       FROM {context} ctx
                       JOIN {block_instances} bi ON (bi.id = ctx.instanceid AND ctx.contextlevel = ".CONTEXT_BLOCK.")
                       JOIN {context} pctx ON (pctx.id = bi.parentcontextid)

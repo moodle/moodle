@@ -238,6 +238,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 $record->visible = 1;
                 $record->depth = 0;
                 $record->path = '';
+                $record->locked = 0;
                 self::$coursecat0 = new self($record);
             }
             return self::$coursecat0;
@@ -2458,6 +2459,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         $context = $this->get_context();
         $a['xi'] = $context->id;
         $a['xp'] = $context->path;
+        $a['xl'] = $context->locked;
         return $a;
     }
 
@@ -2486,6 +2488,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         $record->ctxdepth = $record->depth + 1;
         $record->ctxlevel = CONTEXT_COURSECAT;
         $record->ctxinstance = $record->id;
+        $record->ctxlocked = $a['xl'];
         return new self($record, true);
     }
 

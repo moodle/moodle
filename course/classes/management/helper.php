@@ -168,6 +168,8 @@ class helper {
      * @return array
      */
     public static function get_category_listitem_actions(\core_course_category $category) {
+        global $CFG;
+
         $manageurl = new \moodle_url('/course/management.php', array('categoryid' => $category->id));
         $baseurl = new \moodle_url($manageurl, array('sesskey' => \sesskey()));
         $actions = array();
@@ -278,6 +280,28 @@ class helper {
                 'icon' => new \pix_icon('i/checkpermissions', new \lang_string('checkpermissions', 'role')),
                 'string' => new \lang_string('checkpermissions', 'role')
             );
+        }
+
+        // Context locking.
+        if (!empty($CFG->contextlocking) && has_capability('moodle/site:managecontextlocks', $category->get_context())) {
+            $parentcontext = $category->get_context()->get_parent_context();
+            if (empty($parentcontext) || !$parentcontext->locked) {
+                if ($category->get_context()->locked) {
+                    $lockicon = 'i/unlock';
+                    $lockstring = get_string('managecontextunlock', 'admin');
+                } else {
+                    $lockicon = 'i/lock';
+                    $lockstring = get_string('managecontextlock', 'admin');
+                }
+                $actions['managecontextlock'] = [
+                    'url' => new \moodle_url('/admin/lock.php', [
+                            'id' => $category->get_context()->id,
+                            'returnurl' => $manageurl->out_as_local_url(false),
+                        ]),
+                    'icon' => new \pix_icon($lockicon, $lockstring),
+                    'string' => $lockstring,
+                ];
+            }
         }
 
         // Cohorts.
