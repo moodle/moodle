@@ -1023,7 +1023,9 @@ class page_requirements_manager {
         if ($CFG->debugdeveloper) {
             $toomanyparamslimit = 1024;
             if (strlen($strparams) > $toomanyparamslimit) {
-                debugging('Too many params passed to js_call_amd("' . $fullmodule . '", "' . $func . '")', DEBUG_DEVELOPER);
+                debugging('Too much data passed as arguments to js_call_amd("' . $fullmodule . '", "' . $func .
+                        '"). Generally there are better ways to pass lots of data from PHP to JavaScript, for example via Ajax, data attributes, ... . ' .
+                        'This warning is triggered if the argument string becomes longer than ' . $toomanyparamslimit . ' characters.', DEBUG_DEVELOPER);
             }
         }
 
