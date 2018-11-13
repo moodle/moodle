@@ -480,8 +480,16 @@ function has_capability($capability, context $context, $user = null, $doanything
 
     // Check whether context locking is enabled.
     if (!empty($CFG->contextlocking)) {
-        if ($capinfo->captype === 'write' && $context->locked && $capinfo->name !== 'moodle/site:managecontextlocks') {
-            return false;
+        if ($capinfo->captype === 'write' && $context->locked) {
+            // Context locking applies to any write capability in a locked context.
+            // It does not apply to moodle/site:managecontextlocks - this is to allow context locking to be unlocked.
+            if ($capinfo->name !== 'moodle/site:managecontextlocks') {
+                // It applies to all users who are not site admins.
+                // It also applies to site admins when contextlockappliestoadmin is set.
+                if (!is_siteadmin($userid) || !empty($CFG->contextlockappliestoadmin)) {
+                    return false;
+                }
+            }
         }
     }
 
