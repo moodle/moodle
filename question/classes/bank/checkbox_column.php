@@ -34,13 +34,14 @@ class checkbox_column extends column_base {
     }
 
     protected function get_title() {
-        return '<input type="checkbox" disabled="disabled" id="qbheadercheckbox" />';
+        return '<input type="checkbox" disabled="disabled" id="qbheadercheckbox" name="qbheadercheckbox" />' .
+                '<label class="accesshide" for="qbheadercheckbox">' . get_string('selectall', 'moodle') . '</label>';
     }
 
     protected function get_title_tip() {
         global $PAGE;
         $PAGE->requires->strings_for_js(array('selectall', 'deselectall'), 'moodle');
-        $PAGE->requires->yui_module('moodle-question-qbankmanager', 'M.question.qbankmanager.init');
+        $PAGE->requires->js_call_amd('core_question/qbankmanager', 'init');
         return get_string('selectquestionsforbulk', 'question');
 
     }
