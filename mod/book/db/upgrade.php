@@ -30,7 +30,9 @@ defined('MOODLE_INTERNAL') || die;
  * @return bool always true
  */
 function xmldb_book_upgrade($oldversion) {
-    global $CFG;
+    global $CFG, $DB;
+
+    $dbman = $DB->get_manager();
 
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.
@@ -46,6 +48,15 @@ function xmldb_book_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2020100100) {
+        $table = new xmldb_table('book_chapters');
+        $index = new xmldb_index('bookid', XMLDB_INDEX_NOTUNIQUE, ['bookid']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        upgrade_mod_savepoint(true, 2020100100, 'book');
+    }
 
     return true;
 }
