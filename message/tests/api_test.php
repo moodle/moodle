@@ -3946,6 +3946,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test creating an invalid conversation.
+     */
+    public function test_create_conversation_invalid() {
+        $this->expectException('moodle_exception');
+        \core_message\api::create_conversation(3, [1, 2, 3]);
+    }
+
+    /**
      * Test creating an individual conversation with too many members.
      */
     public function test_create_conversation_individual_too_many_members() {
