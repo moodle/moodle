@@ -2435,7 +2435,7 @@ $capabilities = array(
     // Context locking/unlocking.
     'moodle/site:managecontextlocks' => [
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
         ],
     ],
