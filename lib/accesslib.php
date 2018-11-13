@@ -4744,15 +4744,6 @@ abstract class context extends stdClass implements IteratorAggregate {
     protected $_locked;
 
     /**
-     * Whether any parent of the current context is locked.
-     *
-     * Can be accessed publicly through $context->ancestorlocked.
-     *
-     * @var int
-     */
-    protected $_ancestorlocked;
-
-    /**
      * @var array Context caching info
      */
     private static $cache_contextsbyid = array();
@@ -5366,8 +5357,7 @@ abstract class context extends stdClass implements IteratorAggregate {
         }
 
         if ($parent = $this->get_parent_context()) {
-            $this->_ancestorlocked = $parent->is_locked();
-            return $this->_ancestorlocked;
+            return $parent->is_locked();
         }
 
         return false;
