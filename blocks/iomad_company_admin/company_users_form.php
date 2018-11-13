@@ -110,6 +110,8 @@ class company_users_form extends moodleform {
                             $user = $DB->get_record('user', array('id' => $adduser->id));
                             // Add user to default company department.
                             $company->assign_user_to_company($adduser->id);
+
+                            \core\event\user_updated::create_from_userid($adduser->id)->trigger();
                         }
                     }
 
@@ -136,7 +138,7 @@ class company_users_form extends moodleform {
                         // Deal with the company theme.
                         $DB->set_field('user', 'theme', '', array('id' => $removeuser->id));
 
-
+                        \core\event\user_updated::create_from_userid($removeuser->id)->trigger();
                     }
 
                     $this->potentialusers->invalidate_selected_users();
