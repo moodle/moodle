@@ -242,7 +242,7 @@ foreach ($members as $gpgid=>$groupdata) {
             $line[] = $name;
         } else {
             $line[] = html_writer::tag('span', $name, array('class' => 'group_hoverdescription', 'data-groupid' => $gpid));
-            $hoverevents[$gpid] = $jsdescription;
+            $hoverevents[$gpid] = get_string('descriptiona', null, $jsdescription);
         }
         $fullnames = array();
         foreach ($users as $user) {
