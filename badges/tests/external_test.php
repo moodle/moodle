@@ -155,6 +155,7 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
 
         $badges = (array) badges_get_user_badges($this->student->id);
         $expectedbadges = array();
+        $coursebadge = null;
 
         foreach ($badges as $badge) {
             $context = ($badge->type == BADGE_TYPE_SITE) ? context_system::instance() : context_course::instance($badge->courseid);
@@ -196,6 +197,10 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
             }
 
             $expectedbadges[] = (array) $badge;
+            if (isset($badge->courseid)) {
+                // Save the course badge to be able to compare it in our tests.
+                $coursebadge = (array) $badge;
+            }
         }
 
         $result = core_badges_external::get_user_badges();
@@ -206,7 +211,7 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
         $result = core_badges_external::get_user_badges(0, $this->course->id, 0, 1, '', true);
         $result = external_api::clean_returnvalue(core_badges_external::get_user_badges_returns(), $result);
         $this->assertCount(1, $result['badges']);
-        $this->assertEquals($expectedbadges[1], $result['badges'][0]);
+        $this->assertEquals($coursebadge, $result['badges'][0]);
     }
 
     /**
