@@ -1982,6 +1982,15 @@ class api {
 
         global $DB;
 
+        $validtypes = [
+            self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            self::MESSAGE_CONVERSATION_TYPE_GROUP
+        ];
+
+        if (!in_array($type, $validtypes)) {
+            throw new \moodle_exception('An invalid conversation type was specified.');
+        }
+
         // Sanity check.
         if ($type == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL) {
             if (count($userids) > 2) {
