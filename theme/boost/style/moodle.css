@@ -11197,41 +11197,60 @@ div.editor_atto_toolbar button .icon {
   .dashboard-card-deck .dashboard-card {
     width: calc(50% - 0.5rem); } }
 
-@media (min-width: 768px) {
+@media (min-width: 840px) {
   .dashboard-card-deck .dashboard-card {
     width: calc(33.33% - 0.5rem); } }
 
-@media (min-width: 992px) {
+@media (min-width: 1100px) {
   .dashboard-card-deck .dashboard-card {
     width: calc(25% - 0.5rem); } }
 
-@media (min-width: 1200px) {
+@media (min-width: 1360px) {
   .dashboard-card-deck .dashboard-card {
     width: calc(20% - 0.5rem); } }
 
-@media (min-width: 992px) {
-  #region-main.has-blocks .dashboard-card-deck .dashboard-card {
-    width: calc(33.33% - 0.5rem); } }
-
 @media (min-width: 1200px) {
   #region-main.has-blocks .dashboard-card-deck .dashboard-card {
-    width: calc(25% - 0.5rem); } }
-
-@media (min-width: 992px) {
-  body.drawer-open-left #region-main.has-blocks .dashboard-card-deck .dashboard-card {
     width: calc(33.33% - 0.5rem); } }
 
-@media (min-width: 1400px) {
-  body.drawer-open-left #region-main.has-blocks .dashboard-card-deck .dashboard-card {
+@media (min-width: 1470px) {
+  #region-main.has-blocks .dashboard-card-deck .dashboard-card {
     width: calc(25% - 0.5rem); } }
+
+@media (min-width: 768px) {
+  body.drawer-open-left .dashboard-card-deck .dashboard-card {
+    width: calc(100% - 0.5rem); } }
+
+@media (min-width: 861px) {
+  body.drawer-open-left .dashboard-card-deck .dashboard-card {
+    width: calc(50% - 0.5rem); } }
+
+@media (min-width: 1122px) {
+  body.drawer-open-left .dashboard-card-deck .dashboard-card {
+    width: calc(33.33% - 0.5rem); } }
+
+@media (min-width: 1381px) {
+  body.drawer-open-left .dashboard-card-deck .dashboard-card {
+    width: calc(25% - 0.5rem); } }
+
+@media (min-width: 1200px) {
+  body.drawer-open-left #region-main.has-blocks .dashboard-card-deck .dashboard-card {
+    width: calc(100% - 0.5rem); } }
+
+@media (min-width: 1236px) {
+  body.drawer-open-left #region-main.has-blocks .dashboard-card-deck .dashboard-card {
+    width: calc(50% - 0.5rem); } }
+
+@media (min-width: 1497px) {
+  body.drawer-open-left #region-main.has-blocks .dashboard-card-deck .dashboard-card {
+    width: calc(33.33% - 0.5rem); } }
 
 @media (min-width: 1200px) {
   #block-region-side-pre .dashboard-card-deck {
-    margin: 0; }
+    margin-left: 0;
+    margin-right: 0; }
     #block-region-side-pre .dashboard-card-deck .dashboard-card {
-      width: 100% !important;
-      margin-left: 0;
-      margin-right: 0; } }
+      width: calc(100% - 0.5rem) !important; } }
 
 .block_recentlyaccesseditems img.icon {
   height: auto;
