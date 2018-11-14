@@ -29,7 +29,9 @@ defined('MOODLE_INTERNAL') || die();
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\transform;
 use \core_privacy\local\request\contextlist;
+use \core_privacy\local\request\userlist;
 use \core_privacy\local\request\approved_contextlist;
+use \core_privacy\local\request\approved_userlist;
 use \core_privacy\local\request\writer;
 
 /**
@@ -39,7 +41,10 @@ use \core_privacy\local\request\writer;
  * @copyright  2018 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\subsystem\provider {
+class provider implements
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\core_userlist_provider,
+        \core_privacy\local\request\plugin\provider {
 
     /**
      * Returns information about the user data stored in this component.
@@ -69,12 +74,34 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
         $params = ['userid' => $userid, 'contextuser' => CONTEXT_USER];
-        $sql = "SELECT id
-                  FROM {context}
-                 WHERE instanceid = :userid and contextlevel = :contextuser";
+        $sql = "SELECT c.id
+                  FROM {context} c
+                  JOIN {block_recentlyaccesseditems} b
+                    ON b.userid = c.instanceid
+                 WHERE c.instanceid = :userid
+                   AND c.contextlevel = :contextuser";
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, $params);
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users within a specific context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_user) {
+            return;
+        }
+
+        if ($DB->record_exists('block_recentlyaccesseditems', ['userid' => $context->instanceid])) {
+            $userlist->add_user($context->instanceid);
+        }
     }
 
     /**
@@ -146,6 +173,21 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
             if ($context->contextlevel == CONTEXT_USER && $contextlist->get_user()->id == $context->instanceid) {
                 $DB->delete_records('block_recentlyaccesseditems', ['userid' => $context->instanceid]);
             }
+        }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if ($context instanceof \context_user && in_array($context->instanceid, $userlist->get_userids())) {
+            $DB->delete_records('block_recentlyaccesseditems', ['userid' => $context->instanceid]);
         }
     }
 }
