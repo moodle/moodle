@@ -2658,6 +2658,10 @@ function xmldb_main_upgrade($oldversion) {
         $field = new xmldb_field('predictionsprocessor', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'timesplitting');
 
         // Conditionally launch add field predictionsprocessor.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2018102900.00);
     }
