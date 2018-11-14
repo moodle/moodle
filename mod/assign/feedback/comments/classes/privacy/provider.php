@@ -107,17 +107,17 @@ class provider implements
         $gradeid = $exportdata->get_pluginobject()->id;
         $comments = $plugin->get_feedback_comments($gradeid);
         if ($comments && !empty($comments->commenttext)) {
+            $currentpath = array_merge(
+                $exportdata->get_subcontext(),
+                [get_string('privacy:commentpath', 'assignfeedback_comments')]
+            );
+
             $comments->commenttext = writer::with_context($assign->get_context())->rewrite_pluginfile_urls(
-                [],
+                $currentpath,
                 ASSIGNFEEDBACK_COMMENTS_COMPONENT,
                 ASSIGNFEEDBACK_COMMENTS_FILEAREA,
                 $gradeid,
                 $comments->commenttext
-            );
-
-            $currentpath = array_merge(
-                $exportdata->get_subcontext(),
-                [get_string('privacy:commentpath', 'assignfeedback_comments')]
             );
             $data = (object)
             [
