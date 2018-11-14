@@ -116,7 +116,7 @@ function(
                 if (!hasFocus) {
                     // This page doesn't have focus yet so focus the first focusable
                     // element in the new view.
-                    newConfig.elements[0].find(SELECTORS.CAN_RECEIVE_FOCUS).first().focus();
+                    newConfig.elements[0].find(SELECTORS.CAN_RECEIVE_FOCUS).filter(':visible').first().focus();
                 }
             }
         }

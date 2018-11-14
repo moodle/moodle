@@ -598,7 +598,7 @@ function(
                 var newState = StateManager.addMembers(viewState, [profile]);
                 newState = StateManager.removePendingBlockUsersById(newState, [userId]);
                 newState = StateManager.setLoadingConfirmAction(newState, false);
-                PubSub.publish(MessageDrawerEvents.CONTACT_BLOCKED, newState.id);
+                PubSub.publish(MessageDrawerEvents.CONTACT_BLOCKED, userId);
                 return render(newState);
             });
     };
@@ -634,7 +634,7 @@ function(
                 var newState = StateManager.addMembers(viewState, [profile]);
                 newState = StateManager.removePendingUnblockUsersById(newState, [userId]);
                 newState = StateManager.setLoadingConfirmAction(newState, false);
-                PubSub.publish(MessageDrawerEvents.CONTACT_UNBLOCKED, newState.id);
+                PubSub.publish(MessageDrawerEvents.CONTACT_UNBLOCKED, userId);
                 return render(newState);
             });
     };

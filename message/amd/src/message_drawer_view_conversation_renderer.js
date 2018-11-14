@@ -992,7 +992,7 @@ function(
             showConfirmDialogueContainer(header);
         }
 
-        dialogue.find(SELECTORS.CAN_RECEIVE_FOCUS).first().focus();
+        dialogue.find(SELECTORS.CAN_RECEIVE_FOCUS).filter(':visible').first().focus();
     };
 
     /**

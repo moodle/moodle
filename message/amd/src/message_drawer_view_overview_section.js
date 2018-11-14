@@ -128,6 +128,7 @@ function(
                     return carry;
                 }, null);
 
+                formattedConversation.userid = otherUser.id;
                 formattedConversation.showonlinestatus = otherUser.showonlinestatus;
                 formattedConversation.isonline = otherUser.isosnline;
                 formattedConversation.isblocked = otherUser.isblocked;
@@ -254,6 +255,17 @@ function(
     };
 
     /**
+     * Get a contact / conversation element from a user id.
+     *
+     * @param  {Object} root Overview messages container element.
+     * @param  {Number} userId The user id.
+     * @return {Object} Conversation element.
+     */
+    var getConversationElementFromUserId = function(root, userId) {
+        return root.find('[data-user-id="' + userId + '"]');
+    };
+
+    /**
      * Show the contact is blocked icon.
      *
      * @param  {Object} conversationElement The conversation element.
@@ -303,8 +315,7 @@ function(
                 element.find(SELECTORS.LAST_MESSAGE).html(lastMessage);
                 element.find(SELECTORS.LAST_MESSAGE_DATE).text(dateString).removeClass('hidden');
                 return dateString;
-            })
-            .catch(Notification.exception);
+            });
     };
 
     /**
@@ -412,15 +423,15 @@ function(
             setCollapsed(root);
         });
 
-        PubSub.subscribe(MessageDrawerEvents.CONTACT_BLOCKED, function(conversationId) {
-            var conversationElement = getConversationElement(root, conversationId);
+        PubSub.subscribe(MessageDrawerEvents.CONTACT_BLOCKED, function(userId) {
+            var conversationElement = getConversationElementFromUserId(root, userId);
             if (conversationElement.length) {
                 blockContact(conversationElement);
             }
         });
 
-        PubSub.subscribe(MessageDrawerEvents.CONTACT_UNBLOCKED, function(conversationId) {
-            var conversationElement = getConversationElement(root, conversationId);
+        PubSub.subscribe(MessageDrawerEvents.CONTACT_UNBLOCKED, function(userId) {
+            var conversationElement = getConversationElementFromUserId(root, userId);
             if (conversationElement.length) {
                 unblockContact(conversationElement);
             }

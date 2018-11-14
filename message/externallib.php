@@ -90,8 +90,13 @@ class core_message_external extends external_api {
 
         $messages = [];
         foreach ($params['messages'] as $message) {
-            $messages[] = \core_message\api::send_message_to_conversation($USER->id, $params['conversationid'], $message['text'],
+            $createdmessage = \core_message\api::send_message_to_conversation($USER->id, $params['conversationid'], $message['text'],
                 $message['textformat']);
+            $createdmessage->text = message_format_message_text((object) [
+                'smallmessage' => $createdmessage->text,
+                'fullmessageformat' => external_validate_format($message['textformat'])
+            ]);
+            $messages[] = $createdmessage;
         }
 
         return $messages;

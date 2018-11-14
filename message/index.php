@@ -107,10 +107,12 @@ if ($currentuser) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('messages', 'message'));
     $conversationid = empty($user2id) ? null : \core_message\api::get_conversation_between_users([$USER->id, $user2id]);
-    if (empty($conversationid)) {
+    if (empty($conversationid) && !empty($user2id)) {
         $PAGE->requires->js_call_amd('core_message/message_drawer_helper', 'createConversationWithUser', [$user2id]);
-    } else {
+    } else if (!empty($conversationid)) {
         $PAGE->requires->js_call_amd('core_message/message_drawer_helper', 'showConversation', [$conversationid]);
+    } else {
+        $PAGE->requires->js_call_amd('core_message/message_drawer_helper', 'show');
     }
     echo $OUTPUT->footer();
     exit();

@@ -37,45 +37,12 @@
 {{< core_message/message_drawer_lazy_load_list }}
     {{$emptymessage}}{{#str}} nocontactrequests, core_message {{/str}}{{/emptymessage}}
     {{$placeholder}}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-        {{> core_message/message_drawer_contacts_list_item_placeholder }}
+        {{#contacts}}
+                {{#sectioncontacts}}
+                    {{#placeholders}}
+                        {{> core_message/message_drawer_contacts_list_item_placeholder }}
+                    {{/placeholders}}
+            {{/sectioncontacts}}
+        {{/contacts}}
     {{/placeholder}}
 {{/ core_message/message_drawer_lazy_load_list }}

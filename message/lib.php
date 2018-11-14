@@ -901,7 +901,10 @@ function core_message_before_standard_top_of_body_html() {
         'contacts' => [
             'sectioncontacts' => [
                 'placeholders' => array_fill(0, $contactscount > 50 ? 50 : $contactscount, true)
-            ]
+            ],
+            'sectionrequests' => [
+                'placeholders' => array_fill(0, $requestcount > 50 ? 50 : $requestcount, true)
+            ],
         ],
         'settings' => [
             'privacy' => $choices,
