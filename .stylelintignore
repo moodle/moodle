@@ -2,6 +2,7 @@
 theme/bootstrapbase/style/
 theme/clean/style/custom.css
 theme/more/style/custom.css
+theme/boost/style/moodle.css
 node_modules/
 vendor/
 admin/tool/policy/amd/src/jquery-eu-cookie-law-popup.js
