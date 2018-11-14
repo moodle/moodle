@@ -1,5 +1,5 @@
 @core
-Feature: Context locks apply to child contexts
+Feature: Context freezing apply to child contexts
   In order to preserve content
   As a manager
   I can disbale writes at different areas
@@ -36,12 +36,12 @@ Feature: Context locks apply to child contexts
       | teacher   | courseb   | editingteacher |
       | student1  | courseb   | student        |
 
-  Scenario: Lock course module module should lock just that module
+  Scenario: Freeze course module module should freeze just that module
     Given I log in as "admin"
     And I am on "courseaa1" course homepage
     And I follow "faa1"
     And I should see "Add a new discussion topic"
-    When I follow "Lock this context"
+    When I follow "Freeze this context"
     And I click on "Continue" "button"
     Then I should not see "Add a new discussion topic"
     When I am on "courseaa1" course homepage
@@ -90,20 +90,20 @@ Feature: Context locks apply to child contexts
     When I follow "fb"
     Then I should see "Add a new discussion topic"
 
-  Scenario: Lock course should lock all children
+  Scenario: Freeze course should freeze all children
     Given I log in as "admin"
     And I am on "courseaa1" course homepage
     And I should see "Turn editing on"
-    When I follow "Lock this context"
+    When I follow "Freeze this context"
     And I click on "Continue" "button"
     Then I should not see "Turn editing on"
     Then I should not see "Add a new discussion topic"
     When I am on "courseaa1" course homepage
     Then I should not see "Turn editing on"
-    And I should see "Unlock this context"
+    And I should see "Unfreeze this context"
     When I follow "faa1b"
     Then I should not see "Add a new discussion topic"
-    And I should not see "Unlock this context"
+    And I should not see "Unfreeze this context"
     When I am on "courseaa2" course homepage
     Then I should see "Turn editing on"
     When I follow "faa2"
@@ -146,7 +146,7 @@ Feature: Context locks apply to child contexts
     When I follow "fb"
     Then I should see "Add a new discussion topic"
 
-  Scenario: Lock course category should lock all children
+  Scenario: Freeze course category should freeze all children
     Given I log in as "admin"
     And I go to the courses management page
     And I click on "managecontextlock" action for "cata" in management category listing
@@ -156,15 +156,15 @@ Feature: Context locks apply to child contexts
     Then I should not see "Add a new discussion topic"
     When I am on "courseaa1" course homepage
     Then I should not see "Turn editing on"
-    And I should not see "Unlock this context"
+    And I should not see "Unfreeze this context"
     When I follow "faa1b"
     Then I should not see "Add a new discussion topic"
-    And I should not see "Unlock this context"
+    And I should not see "Unfreeze this context"
     When I am on "courseaa2" course homepage
     Then I should not see "Turn editing on"
     When I follow "faa2"
     Then I should not see "Add a new discussion topic"
-    And I should not see "Unlock this context"
+    And I should not see "Unfreeze this context"
     When I am on "courseb" course homepage
     Then I should see "Turn editing on"
     When I follow "fb"
