@@ -150,8 +150,7 @@ class core_badges_renderer extends plugin_renderer_base {
         $dl[get_string('description', 'badges')] = $badge->description;
         $dl[get_string('createdon', 'search')] = userdate($badge->timecreated);
         $dl[get_string('badgeimage', 'badges')] = print_badge_image($badge, $context, 'large');
-        $dl[get_string('imageauthorname', 'badges')] =
-            html_writer::link($badge->imageauthorname, $badge->imageauthorname, array('target' => '_blank'));
+        $dl[get_string('imageauthorname', 'badges')] = $badge->imageauthorname;
         $dl[get_string('imageauthoremail', 'badges')] =
             html_writer::tag('a', $badge->imageauthoremail, array('href' => 'mailto:' . $badge->imageauthoremail));
         $dl[get_string('imageauthorurl', 'badges')] =
@@ -352,8 +351,7 @@ class core_badges_renderer extends plugin_renderer_base {
         $dl[get_string('version', 'badges')] = $badge->version;
         $dl[get_string('language')] = $languages[$badge->language];
         $dl[get_string('description', 'badges')] = $badge->description;
-        $dl[get_string('imageauthorname', 'badges')] =
-            html_writer::link($badge->imageauthorname, $badge->imageauthorname, array('target' => '_blank'));
+        $dl[get_string('imageauthorname', 'badges')] = $badge->imageauthorname;
         $dl[get_string('imageauthoremail', 'badges')] =
             html_writer::tag('a', $badge->imageauthoremail, array('href' => 'mailto:' . $badge->imageauthoremail));
         $dl[get_string('imageauthorurl', 'badges')] =
@@ -1048,7 +1046,8 @@ class core_badges_renderer extends plugin_renderer_base {
         $output .= $this->heading(get_string('endorsement', 'badges'), 3);
         if (!empty($endorsement)) {
             $dl[get_string('issuername', 'badges')] = $endorsement->issuername;
-            $dl[get_string('issueremail', 'badges')] = $endorsement->issueremail;
+            $dl[get_string('issueremail', 'badges')] =
+                html_writer::tag('a', $endorsement->issueremail, array('href' => 'mailto:' . $endorsement->issueremail));
             $dl[get_string('issuerurl', 'badges')] = html_writer::link($endorsement->issuerurl, $endorsement->issuerurl,
                 array('target' => '_blank'));
             $dl[get_string('dateawarded', 'badges')] = date('c', $endorsement->dateissued);
