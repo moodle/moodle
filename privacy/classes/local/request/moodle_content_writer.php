@@ -635,16 +635,9 @@ class moodle_content_writer implements content_writer {
         $this->copy_data($moodleimgpath, ['pix', 'moodlelogo.svg']);
 
         // Additional required css.
-        // Determine what direction to show the data export page according to the user preference.
-        $rtl = right_to_left();
-        if (!$rtl) {
-            $bootstrapdestination = 'bootstrap.min.css';
-            $this->write_url_content('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css',
-                    $bootstrapdestination);
-        } else {
-            $rtldestination = 'rtlbootstrap.min.css';
-            $this->write_url_content('https://cdn.rtlcss.com/bootstrap/v4.0.0/css/bootstrap.min.css', $rtldestination);
-        }
+        $csspath = ['theme', 'boost', 'style', 'moodle.css'];
+        $destination = ['moodle.css'];
+        $this->copy_data($csspath, $destination);
 
         $csspath = ['privacy', 'export_files', 'general.css'];
         $destination = ['general.css'];
@@ -666,6 +659,7 @@ class moodle_content_writer implements content_writer {
         $siteurl = $CFG->wwwroot;
 
         // Create custom index.html file.
+        $rtl = right_to_left();
         $htmlpage = new \core_privacy\output\exported_html_page($navigationhtml, $systemname, $fullusername, $rtl, $siteurl);
         $outputpage = $output->render_html_page($htmlpage);
         $this->write_data('index.html', $outputpage);
@@ -719,23 +713,5 @@ class moodle_content_writer implements content_writer {
             $content .= fread($filepointer, filesize($filepath));
         }
         return $content;
-    }
-
-    /**
-     * Write url files to the export.
-     *
-     * @param  string $url  Url of the file.
-     * @param  string $path Path to store the file.
-     */
-    protected function write_url_content(string $url, string $path) {
-        $filepointer = fopen($url, 'r');
-        $targetpath = $this->path . DIRECTORY_SEPARATOR . $path;
-        check_dir_exists(dirname($targetpath), true, true);
-        $status = file_put_contents($targetpath, $filepointer);
-        if ($status === false) {
-            // There was an error. Throw an exception to allow the download status to remain as requiring download.
-            throw new \moodle_exception('Content download was incomplete');
-        }
-        $this->files[$path] = $targetpath;
     }
 }
