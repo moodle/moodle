@@ -192,52 +192,55 @@ class manager {
             }
 
             // Fill in the array of processors to be used based on default and user preferences.
+            // This applies only to individual conversations. Messages to group conversations ignore processors.
             $processorlist = [];
-            foreach ($processors as $processor) {
-                // Skip adding processors for internal user, if processor doesn't support sending message to internal user.
-                if (!$usertoisrealuser && !$processor->object->can_send_to_any_users()) {
-                    continue;
-                }
+            if ($conv->type == \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL) {
+                foreach ($processors as $processor) {
+                    // Skip adding processors for internal user, if processor doesn't support sending message to internal user.
+                    if (!$usertoisrealuser && !$processor->object->can_send_to_any_users()) {
+                        continue;
+                    }
 
-                // First find out permissions.
-                $defaultpreference = $processor->name.'_provider_'.$preferencebase.'_permitted';
-                if (isset($defaultpreferences->{$defaultpreference})) {
-                    $permitted = $defaultpreferences->{$defaultpreference};
-                } else {
-                    // MDL-25114 They supplied an $eventdata->component $eventdata->name combination which doesn't
-                    // exist in the message_provider table (thus there is no default settings for them).
-                    $preferrormsg = "Could not load preference $defaultpreference. Make sure the component and name you supplied
+                    // First find out permissions.
+                    $defaultpreference = $processor->name . '_provider_' . $preferencebase . '_permitted';
+                    if (isset($defaultpreferences->{$defaultpreference})) {
+                        $permitted = $defaultpreferences->{$defaultpreference};
+                    } else {
+                        // MDL-25114 They supplied an $eventdata->component $eventdata->name combination which doesn't
+                        // exist in the message_provider table (thus there is no default settings for them).
+                        $preferrormsg = "Could not load preference $defaultpreference. Make sure the component and name you supplied
                     to message_send() are valid.";
-                    throw new coding_exception($preferrormsg);
-                }
+                        throw new coding_exception($preferrormsg);
+                    }
 
-                // Find out if user has configured this output.
-                // Some processors cannot function without settings from the user.
-                $userisconfigured = $processor->object->is_user_configured($recipient);
+                    // Find out if user has configured this output.
+                    // Some processors cannot function without settings from the user.
+                    $userisconfigured = $processor->object->is_user_configured($recipient);
 
-                // DEBUG: notify if we are forcing unconfigured output.
-                if ($permitted == 'forced' && !$userisconfigured) {
-                    debugging('Attempt to force message delivery to user who has "'.$processor->name.'" output unconfigured',
-                        DEBUG_NORMAL);
-                }
+                    // DEBUG: notify if we are forcing unconfigured output.
+                    if ($permitted == 'forced' && !$userisconfigured) {
+                        debugging('Attempt to force message delivery to user who has "' . $processor->name .
+                            '" output unconfigured', DEBUG_NORMAL);
+                    }
 
-                // Populate the list of processors we will be using.
-                if (!$eventdata->notification && $processor->object->force_process_messages()) {
-                    $processorlist[] = $processor->name;
-                } else if ($permitted == 'forced' && $userisconfigured) {
-                    // An admin is forcing users to use this message processor. Use this processor unconditionally.
-                    $processorlist[] = $processor->name;
-                } else if ($permitted == 'permitted' && $userisconfigured && !$recipient->emailstop) {
-                    // User has not disabled notifications.
-                    // See if user set any notification preferences, otherwise use site default ones.
-                    $userpreferencename = 'message_provider_'.$preferencebase.'_'.$userstate;
-                    if ($userpreference = get_user_preferences($userpreferencename, null, $recipient)) {
-                        if (in_array($processor->name, explode(',', $userpreference))) {
-                            $processorlist[] = $processor->name;
-                        }
-                    } else if (isset($defaultpreferences->{$userpreferencename})) {
-                        if (in_array($processor->name, explode(',', $defaultpreferences->{$userpreferencename}))) {
-                            $processorlist[] = $processor->name;
+                    // Populate the list of processors we will be using.
+                    if (!$eventdata->notification && $processor->object->force_process_messages()) {
+                        $processorlist[] = $processor->name;
+                    } else if ($permitted == 'forced' && $userisconfigured) {
+                        // An admin is forcing users to use this message processor. Use this processor unconditionally.
+                        $processorlist[] = $processor->name;
+                    } else if ($permitted == 'permitted' && $userisconfigured && !$recipient->emailstop) {
+                        // User has not disabled notifications.
+                        // See if user set any notification preferences, otherwise use site default ones.
+                        $userpreferencename = 'message_provider_' . $preferencebase . '_' . $userstate;
+                        if ($userpreference = get_user_preferences($userpreferencename, null, $recipient)) {
+                            if (in_array($processor->name, explode(',', $userpreference))) {
+                                $processorlist[] = $processor->name;
+                            }
+                        } else if (isset($defaultpreferences->{$userpreferencename})) {
+                            if (in_array($processor->name, explode(',', $defaultpreferences->{$userpreferencename}))) {
+                                $processorlist[] = $processor->name;
+                            }
                         }
                     }
                 }

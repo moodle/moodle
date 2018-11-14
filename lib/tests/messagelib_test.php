@@ -832,7 +832,7 @@ class core_messagelib_testcase extends advanced_testcase {
      * need to be sure this is covered.
      */
     public function test_message_send_to_conversation_group() {
-        global $DB, $CFG, $SITE;
+        global $DB;
         $this->preventResetByRollback();
         $this->resetAfterTest();
 
@@ -862,44 +862,20 @@ class core_messagelib_testcase extends advanced_testcase {
         $content = array('*' => array('header' => ' test ', 'footer' => ' test '));
         $message->set_additional_content('email', $content);
 
-        // Ensure we're going to hit the email processor for the recipient users.
+        // Ensure the email processor is enabled for the recipient users.
         $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email'");
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user3);
 
-        // Now, send a message and verify the message processors (in this case, email) are hit.
+        // Now, send a message and verify the email processor is NOT hit.
         $sink = $this->redirectEmails();
         $messageid = message_send($message);
         $emails = $sink->get_messages();
-        $this->assertCount(2, $emails);
+        $this->assertCount(0, $emails);
 
         // Verify the record was created in 'messages'.
         $recordexists = $DB->record_exists('messages', ['id' => $messageid]);
         $this->assertTrue($recordexists);
-
-        // Verify the email information. Ordering is not guaranteed.
-        $members = [$user2->email => '', $user3->email => ''];
-        $email = $emails[0];
-        $this->assertSame($user1->email, $email->from);
-        $this->assertArrayHasKey($email->to, $members);
-        unset($members[$email->to]);
-
-        $email = $emails[1];
-        $this->assertSame($user1->email, $email->from);
-        $this->assertArrayHasKey($email->to, $members);
-        unset($members[$email->to]);
-
-        // The message subject is generated during the call for conversation messages,
-        // as the conversation may have many members having different lang preferences.
-        $tmp = (object) ['name' => fullname($user1), 'conversationname' => $conversation->name];
-        $this->assertSame(get_string('unreadnewgroupconversationmessage', 'message', $tmp), $email->subject);
-
-        // The email content will have had an emailtagline appended to it, based on lang prefs,
-        // so verify the expected beginning and ends.
-        $this->assertNotEmpty($email->header);
-        $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/test message body.*test/s', $email->body);
-        $sink->clear();
 
         // Now, send the message again, and verify that the event fired includes the courseid and conversationid.
         $eventsink = $this->redirectEvents();
@@ -976,7 +952,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $transaction->allow_commit();
         $events = $eventsink->get_events();
         $emails = $sink->get_messages();
-        $this->assertCount(2, $emails);
+        $this->assertCount(0, $emails); // Email processor is disabled for messages to group conversations.
         $this->assertCount(1, $events);
         $this->assertInstanceOf('\core\event\group_message_sent', $events[0]);
     }
