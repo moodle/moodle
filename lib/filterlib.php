@@ -1278,7 +1278,7 @@ function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagscl
     // for things that have already been matched on this page.
     static $usedphrases = [];
 
-    $ignoretags = array();  // To store all the enclosig tags to be completely ignored.
+    $ignoretags = array();  // To store all the enclosing tags to be completely ignored.
     $tags = array();        // To store all the simple tags to be ignored.
 
     if (!$linkarrayalreadyprepared) {
@@ -1418,8 +1418,15 @@ function filter_prepare_phrases_for_filtering(array $linkarray) {
         // Quote any regular expression characters and the delimiter in the work phrase to be searched.
         $linkobject->workregexp = preg_quote($linkobject->workregexp, '/');
 
+        // If we ony want to match entire words then add \b assertions. However, only
+        // do this if the first or last thing in the phrase to match is a word character.
         if ($linkobject->fullmatch) {
-            $linkobject->workregexp = '\b' . $linkobject->workregexp . '\b';
+            if (preg_match('~^\w~', $linkobject->workregexp)) {
+                $linkobject->workregexp = '\b' . $linkobject->workregexp;
+            }
+            if (preg_match('~\w$~', $linkobject->workregexp)) {
+                $linkobject->workregexp = $linkobject->workregexp . '\b';
+            }
         }
 
         $linkobject->workregexp = '/(' . $linkobject->workregexp . ')/s';
