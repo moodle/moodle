@@ -2923,4 +2923,57 @@ class api {
 
         return [];
     }
+
+    /**
+     * Get the unread counts for all conversations for the user, sorted by type, and including favourites.
+     *
+     * @param int $userid the id of the user whose conversations we'll check.
+     * @return array the unread counts for each conversation, indexed by type.
+     */
+    public static function get_unread_conversation_counts(int $userid) : array {
+        global $DB;
+
+        // Get all conversations the user is in, and check unread.
+        $unreadcountssql = 'SELECT conv.id, conv.type, indcounts.unreadcount
+                              FROM {message_conversations} conv
+                        INNER JOIN (
+                                      SELECT m.conversationid, count(m.id) as unreadcount
+                                        FROM {messages} m
+                                  INNER JOIN {message_conversations} mc
+                                          ON mc.id = m.conversationid
+                                  INNER JOIN {message_conversation_members} mcm
+                                          ON m.conversationid = mcm.conversationid
+                                   LEFT JOIN {message_user_actions} mua
+                                          ON (mua.messageid = m.id AND mua.userid = ? AND
+                                             (mua.action = ? OR mua.action = ?))
+                                       WHERE mcm.userid = ?
+                                         AND m.useridfrom != ?
+                                         AND mua.id is NULL
+                                    GROUP BY m.conversationid
+                                   ) indcounts
+                                ON indcounts.conversationid = conv.id
+                             WHERE conv.enabled = 1';
+
+        $unreadcounts = $DB->get_records_sql($unreadcountssql, [$userid, self::MESSAGE_ACTION_READ, self::MESSAGE_ACTION_DELETED,
+            $userid, $userid]);
+
+        // Get favourites, so we can track these separately.
+        $service = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($userid));
+        $favouriteconversations = $service->find_favourites_by_type('core_message', 'message_conversations');
+        $favouriteconvids = array_flip(array_column($favouriteconversations, 'itemid'));
+
+        // Assemble the return array.
+        $counts = ['favourites' => 0, 'types' => [
+            self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
+            self::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+        ]];
+        foreach ($unreadcounts as $convid => $info) {
+            $counts['types'][$info->type]++;
+            if (isset($favouriteconvids[$convid])) {
+                $counts['favourites']++;
+            }
+        }
+
+        return $counts;
+    }
 }

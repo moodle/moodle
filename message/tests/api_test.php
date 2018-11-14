@@ -5866,6 +5866,88 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test verifying the correctness of unread counts returned.
+     */
+    public function test_get_unread_conversations_count() {
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // Mark a couple as favourites.
+        \core_message\api::set_favourite_conversation($ic1->id, $user1->id);
+        \core_message\api::set_favourite_conversation($gc2->id, $user1->id);
+
+        $counts = \core_message\api::get_unread_conversation_counts($user1->id);
+        $this->assertEquals(2, $counts['favourites']);
+        $this->assertEquals(2, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
+        $this->assertEquals(2, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
+
+        \core_message\api::mark_all_messages_as_read($user1->id, $ic1->id);
+
+        // Mark a conversation as read and confirm it's not included in the unread counts for its respective type.
+        $counts = \core_message\api::get_unread_conversation_counts($user1->id);
+        $this->assertEquals(1, $counts['favourites']);
+        $this->assertEquals(1, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
+        $this->assertEquals(2, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
+    }
+
+    /**
+     * Test verifying the unread counts are 0 if no conversations exist.
+     */
+    public function test_get_unread_conversations_count_no_conversations() {
+        $user1 = self::getDataGenerator()->create_user();
+        $counts = \core_message\api::get_unread_conversation_counts($user1->id);
+        $this->assertEquals(0, $counts['favourites']);
+        $this->assertEquals(0, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
+        $this->assertEquals(0, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
+    }
+
+    /**
+     * Test verifying that those linked conversations which have been disabled are excluded from unread counts.
+     */
+    public function test_get_unread_conversations_count_disabled_conversations() {
+        global $DB;
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+
+        // Create a group with a linked conversation and a valid image.
+        $this->setAdminUser();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+        $group1 = $this->getDataGenerator()->create_group([
+            'courseid' => $course1->id,
+            'enablemessaging' => 1,
+        ]);
+
+        // Add users to group1.
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user2->id));
+
+        $conversations = \core_message\api::get_conversations($user1->id);
+        $convid = $conversations[0]->id;
+
+        // Send a message to the group conversation as user 2.
+        testhelper::send_fake_message_to_conversation($user2, $convid, 'Hello world!');
+
+        // Verify the unread count is 1.
+        $counts = \core_message\api::get_unread_conversation_counts($user1->id);
+        $this->assertEquals(1, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
+
+        // Now, disabled the linked conversation.
+        $DB->set_field('message_conversations', 'enabled', false, ['id' => $convid]);
+
+        // Verify the unread count is no longer 1 as the conversation has been excluded.
+        $counts = \core_message\api::get_unread_conversation_counts($user1->id);
+        $this->assertEquals(0, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
+    }
+
+    /**
      * Comparison function for sorting contacts.
      *
      * @param stdClass $a
