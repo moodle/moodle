@@ -115,7 +115,9 @@ class edit_key extends XMLDBAction {
         }
         $o.= '      <tr valign="top"><td><label for="name" accesskey="n">Name:</label></td><td colspan="2"><input name="name" type="text" size="'.xmldb_field::NAME_MAX_LENGTH.'" id="name"' . $disabled . ' value="' . s($key->getName()) . '" /></td></tr>';
         // XMLDB key comment
-        $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td colspan="2"><textarea name="comment" rows="3" cols="80" id="comment">' . s($key->getComment()) . '</textarea></td></tr>';
+        $o .= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td colspan="2">
+                     <textarea name="comment" rows="3" cols="80" id="comment" class="form-control">' .
+                     s($key->getComment()) . '</textarea></td></tr>';
         // xmldb_key Type
         $typeoptions = array (XMLDB_KEY_PRIMARY => $key->getXMLDBKeyName(XMLDB_KEY_PRIMARY),
                               XMLDB_KEY_UNIQUE  => $key->getXMLDBKeyName(XMLDB_KEY_UNIQUE),
@@ -139,7 +141,8 @@ class edit_key extends XMLDBAction {
         $o.= '      <tr valign="top"><td><label for="reffields" accesskey="t">Reffields:</label></td>';
         $o.= '        <td colspan="2"><input name="reffields" type="text" size="40" maxlength="80" id="reffields" value="' . s(implode(', ', $key->getRefFields())) . '" /></td></tr>';
         // Change button
-        $o.= '      <tr valign="top"><td>&nbsp;</td><td colspan="2"><input type="submit" value="' .$this->str['change'] . '" /></td></tr>';
+        $o .= '      <tr valign="top"><td>&nbsp;</td><td colspan="2"><input type="submit" value="' .
+                     $this->str['change'] . '" class="btn btn-secondary"/></td></tr>';
         $o.= '    </table>';
         $o.= '</div></form>';
         // Calculate the buttons

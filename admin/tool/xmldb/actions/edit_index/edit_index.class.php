@@ -115,7 +115,9 @@ class edit_index extends XMLDBAction {
         }
         $o.= '      <tr valign="top"><td><label for="name" accesskey="n">Name:</label></td><td colspan="2"><input name="name" type="text" size="'.xmldb_field::NAME_MAX_LENGTH.'" id="name"' . $disabled . ' value="' . s($index->getName()) . '" /></td></tr>';
         // XMLDB key comment
-        $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td colspan="2"><textarea name="comment" rows="3" cols="80" id="comment">' . s($index->getComment()) . '</textarea></td></tr>';
+        $o .= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td colspan="2">
+                     <textarea name="comment" rows="3" cols="80" id="comment" class="form-control">' .
+                     s($index->getComment()) . '</textarea></td></tr>';
         // xmldb_index Type
         $typeoptions = array (0 => 'not unique',
                               1 => 'unique');
@@ -129,7 +131,8 @@ class edit_index extends XMLDBAction {
         $o.= '      <tr valign="top"><td><label for="hints" accesskey="h">Hints:</label></td>';
         $o.= '        <td colspan="2"><input name="hints" type="text" size="40" maxlength="80" id="hints" value="' . s(implode(', ', $index->getHints())) . '" /></td></tr>';
         // Change button
-        $o.= '      <tr valign="top"><td>&nbsp;</td><td colspan="2"><input type="submit" value="' .$this->str['change'] . '" /></td></tr>';
+        $o .= '      <tr valign="top"><td>&nbsp;</td><td colspan="2"><input type="submit" value="' .
+                     $this->str['change'] . '" class="btn btn-secondary"/></td></tr>';
         $o.= '    </table>';
         $o.= '</div></form>';
         // Calculate the buttons

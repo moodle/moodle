@@ -169,7 +169,7 @@ class view_table_php extends XMLDBAction {
         $o.= '</div></form>';
 
         $o.= '    <table id="phpcode" class="boxaligncenter" cellpadding="5">';
-        $o.= '      <tr><td><textarea cols="80" rows="32">';
+        $o .= '      <tr><td><textarea cols="80" rows="32" class="form-control">';
         // Check we have selected some field/key/index from the popup
         if ($fieldkeyindexparam == 'fieldshead' || $fieldkeyindexparam == 'keyshead' || $fieldkeyindexparam == 'indexeshead') {
             $o.= s($this->str['selectonefieldkeyindex']);

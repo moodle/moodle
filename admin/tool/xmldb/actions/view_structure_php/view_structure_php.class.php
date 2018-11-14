@@ -119,7 +119,7 @@ class view_structure_php extends XMLDBAction {
         $o.= '    </table>';
         $o.= '</div></form>';
         $o.= '    <table id="phpcode" class="boxaligncenter" cellpadding="5">';
-        $o.= '      <tr><td><textarea cols="80" rows="32">';
+        $o .= '      <tr><td><textarea cols="80" rows="32" class="form-control">';
         // Based on current params, call the needed function
         switch ($commandparam) {
             case 'create_table':

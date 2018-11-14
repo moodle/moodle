@@ -93,7 +93,7 @@ class view_table_sql extends XMLDBAction {
         $o = $b;
 
         $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
-        $o.= '      <tr><td><textarea cols="80" rows="32">';
+        $o .= '      <tr><td><textarea cols="80" rows="32" class="form-control">';
 
         // Get an array of statements
         if ($starr = $DB->get_manager()->generator->getCreateTableSQL($table)) {

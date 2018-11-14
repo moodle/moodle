@@ -118,8 +118,11 @@ class edit_xml_file extends XMLDBAction {
                 $o .= '    <table id="formelements">';
                 $o.= '      <tr valign="top"><td>Path:</td><td>' . s($structure->getPath()) . '</td></tr>';
                 $o.= '      <tr valign="top"><td>Version:</td><td>' . s($structure->getVersion()) . '</td></tr>';
-                $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td><textarea name="comment" rows="3" cols="80" id="comment">' . $structure->getComment() . '</textarea></td></tr>';
-                $o.= '      <tr><td>&nbsp;</td><td><input type="submit" value="' .$this->str['change'] . '" /></td></tr>';
+                $o .= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td>
+                             <textarea name="comment" rows="3" cols="80" id="comment" class="form-control">' .
+                             $structure->getComment() . '</textarea></td></tr>';
+                $o .= '      <tr><td>&nbsp;</td><td><input type="submit" value="' . $this->str['change'] .
+                             '"class="btn btn-secondary" /></td></tr>';
                 $o.= '    </table>';
                 $o.= '</div></form>';
                 // Calculate the pending changes / save message
