@@ -192,6 +192,52 @@ class filter_glossary_filter_testcase extends advanced_testcase {
         $this->assertEquals($glossary->name . ': normal', $matches[2][2]);
     }
 
+    /**
+     * Test brackets.
+     */
+    public function test_brackets() {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        // Enable glossary filter at top level.
+        filter_set_global_state('glossary', TEXTFILTER_ON);
+        $CFG->glossary_linkentries = 1;
+
+        // Create a test course.
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        // Create a glossary.
+        $glossary = $this->getDataGenerator()->create_module('glossary',
+                array('course' => $course->id, 'mainglossary' => 1));
+
+        // Create two entries with ampersands and one normal entry.
+        /** @var mod_glossary_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $simple = $generator->create_content($glossary, array('concept' => 'simple'));
+        $withbrackets = $generator->create_content($glossary, array('concept' => 'more complex (perhaps)'));
+        $test2 = $generator->create_content($glossary, array('concept' => 'Test (2)'));
+
+        // Format text with all three entries in HTML.
+        $html = '<p>Some thigns are simple. Others are more complex (perhaps). Test (2).</p>';
+        $filtered = format_text($html, FORMAT_HTML, array('context' => $context));
+
+        // Find all the glossary links in the result.
+        $matches = array();
+        preg_match_all('~eid=([0-9]+).*?title="(.*?)"~', $filtered, $matches);
+
+        // There should be 3 glossary links.
+        $this->assertEquals(3, count($matches[1]));
+        $this->assertEquals($simple->id, $matches[1][0]);
+        $this->assertEquals($withbrackets->id, $matches[1][1]);
+        $this->assertEquals($test2->id, $matches[1][2]);
+
+        // Check text and escaping of title attribute.
+        $this->assertEquals($glossary->name . ': simple', $matches[2][0]);
+        $this->assertEquals($glossary->name . ': more complex (perhaps)', $matches[2][1]);
+        $this->assertEquals($glossary->name . ': Test (2)', $matches[2][2]);
+    }
+
     public function test_exclude_excludes_link_to_entry_with_alias() {
         global $CFG, $GLOSSARY_EXCLUDEENTRY;
 
