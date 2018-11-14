@@ -109,7 +109,7 @@ class grade_export_txt extends grade_export {
                 }
 
                 if ($this->export_feedback) {
-                    $exportdata[] = $this->format_feedback($userdata->feedbacks[$itemid]);
+                    $exportdata[] = $this->format_feedback($userdata->feedbacks[$itemid], $grade);
                 }
             }
             // Time exported.

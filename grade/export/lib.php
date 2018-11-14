@@ -282,10 +282,24 @@ abstract class grade_export {
     /**
      * Returns formatted grade feedback
      * @param object $feedback object with properties feedback and feedbackformat
+     * @param object $grade Grade object with grade properties
      * @return string
      */
-    public function format_feedback($feedback) {
-        return strip_tags(format_text($feedback->feedback, $feedback->feedbackformat));
+    public function format_feedback($feedback, $grade = null) {
+        $string = $feedback->feedback;
+        if (!empty($grade)) {
+            // Rewrite links to get the export working for 36, refer MDL-63488.
+            $string = file_rewrite_pluginfile_urls(
+                $feedback->feedback,
+                'pluginfile.php',
+                $grade->get_context()->id,
+                GRADE_FILE_COMPONENT,
+                GRADE_FEEDBACK_FILEAREA,
+                $grade->id
+            );
+        }
+
+        return strip_tags(format_text($string, $feedback->feedbackformat));
     }
 
     /**
