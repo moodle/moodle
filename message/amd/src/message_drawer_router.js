@@ -184,6 +184,8 @@ function(
                                 // Update the aria label for the back button.
                                 element.find(SELECTORS.ROUTES_BACK).attr('aria-label', label);
                             });
+
+                            return;
                         });
                     })
                     .catch(function() {

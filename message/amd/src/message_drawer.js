@@ -229,6 +229,18 @@ function(
             show(root);
             Router.go(Routes.VIEW_SETTINGS);
         });
+
+        PubSub.subscribe(Events.PREFERENCES_UPDATED, function(preferences) {
+            var filteredPreferences = preferences.filter(function(preference) {
+                return preference.type == 'message_entertosend';
+            });
+            var enterToSendPreference = filteredPreferences.length ? filteredPreferences[0] : null;
+
+            if (enterToSendPreference) {
+                var viewConversationFooter = root.find(SELECTORS.FOOTER_CONTAINER).find(SELECTORS.VIEW_CONVERSATION);
+                viewConversationFooter.attr('data-enter-to-send', enterToSendPreference.value);
+            }
+        });
     };
 
     /**

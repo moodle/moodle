@@ -130,7 +130,7 @@ function(
 
                 formattedConversation.userid = otherUser.id;
                 formattedConversation.showonlinestatus = otherUser.showonlinestatus;
-                formattedConversation.isonline = otherUser.isosnline;
+                formattedConversation.isonline = otherUser.isonline;
                 formattedConversation.isblocked = otherUser.isblocked;
             }
 
@@ -353,6 +353,9 @@ function(
             lastmessage: text,
             imageurl: conversation.imageUrl,
         };
+
+        // Cache the conversation.
+        loadedConversationsById[conversation.id] = conversation;
 
         return Templates.render(TEMPLATES.CONVERSATIONS_LIST, {conversations: [formattedConversation]})
             .then(function(html) {

@@ -637,33 +637,28 @@ function(
      * @return {Promise} Messages rendering promises.
      */
     var renderAddMessages = function(header, body, footer, messages, datesCache) {
-        var messagesRenderPromises = messages.map(function(data) {
-            var formattedMessages = formatMessagesForTemplate([data.value], datesCache);
-            return Templates.render(TEMPLATES.MESSAGE, formattedMessages[0]);
+        var messagesData = messages.map(function(data) {
+            return data.value;
         });
+        var formattedMessages = formatMessagesForTemplate(messagesData, datesCache);
 
-        return $.when.apply($, messagesRenderPromises).then(function() {
-            // Wait until all of the rendering is done for each of the messages
-            // to ensure they are added to the page in the correct order.
-            messages.forEach(function(data, index) {
-                messagesRenderPromises[index]
-                    .then(function(html) {
-                        if (data.before) {
-                            var element = getMessageElement(body, data.before.id);
-                            return $(html).insertBefore(element);
-                        } else {
-                            var dayContainer = getDayElement(body, data.day.timestamp);
-                            var dayMessagesContainer = dayContainer.find(SELECTORS.DAY_MESSAGES_CONTAINER);
-                            return dayMessagesContainer.append(html);
-                        }
-                    })
-                    .catch(function() {
-                        // Silently ignore failed renders.
-                    });
+        return Templates.render(TEMPLATES.MESSAGES, {messages: formattedMessages})
+            .then(function(html) {
+                var messageList = $(html);
+                messages.forEach(function(data) {
+                    var messageHtml = messageList.find('[data-message-id="' + data.value.id + '"]');
+                    if (data.before) {
+                        var element = getMessageElement(body, data.before.id);
+                        return messageHtml.insertBefore(element);
+                    } else {
+                        var dayContainer = getDayElement(body, data.day.timestamp);
+                        var dayMessagesContainer = dayContainer.find(SELECTORS.DAY_MESSAGES_CONTAINER);
+                        return dayMessagesContainer.append(messageHtml);
+                    }
+                });
+
+                return;
             });
-
-            return;
-        });
     };
 
     /**

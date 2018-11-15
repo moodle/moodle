@@ -209,7 +209,11 @@ function(
 
             messagesDiff.missingFromA.forEach(function(message) {
                 var before = findPositionInArray(dayCurrent.messages, function(candidate) {
-                    return message.timeCreated < candidate.timeCreated;
+                    if (message.timeCreated == candidate.timeCreated) {
+                        return message.id < candidate.id;
+                    } else {
+                        return message.timeCreated < candidate.timeCreated;
+                    }
                 });
 
                 add.push({

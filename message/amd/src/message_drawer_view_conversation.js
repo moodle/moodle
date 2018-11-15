@@ -97,6 +97,8 @@ function(
     var loadedAllMessages = false;
     var messagesOffset = 0;
     var newMessagesPollTimer = null;
+    // If the UI is currently resetting.
+    var isResetting = true;
     // This is the render function which will be generated when this module is
     // first called. See generateRenderFunction for details.
     var render = null;
@@ -470,7 +472,9 @@ function(
                 if (!limit) {
                     return result;
                 } else if (result.messages.length > limit) {
-                    result.messages = result.messages.slice(1);
+                    // Ignore the last result which was just to test if there are more
+                    // to load.
+                    result.messages = result.messages.slice(0, -1);
                 } else {
                     setLoadedAllMessages(true);
                 }
@@ -509,7 +513,7 @@ function(
             var messages = viewState.messages;
             var mostRecentMessage = messages.length ? messages[messages.length - 1] : null;
 
-            if (mostRecentMessage) {
+            if (mostRecentMessage && !isResetting) {
                 // There may be multiple messages with the same time created value since
                 // the accuracy is only down to the second. The server will include these
                 // messages in the result (since it does a >= comparison on time from) so
@@ -547,6 +551,8 @@ function(
                         }
                     });
             }
+
+            return $.Deferred().resolve().promise();
         };
     };
 
@@ -1236,7 +1242,8 @@ function(
         messagesContainer.on(CustomEvents.events.scrollTop, function(e, data) {
             var hasMembers = Object.keys(viewState.members).length > 1;
 
-            if (!isLoadingMoreMessages && !hasLoadedAllMessages() && hasMembers) {
+            if (!isResetting && !isLoadingMoreMessages && !hasLoadedAllMessages() && hasMembers) {
+                isLoadingMoreMessages = true;
                 var newState = StateManager.setLoadingMessages(viewState, true);
                 render(newState)
                     .then(function() {
@@ -1276,29 +1283,16 @@ function(
 
         footer.on(CustomEvents.events.enter, SELECTORS.MESSAGE_TEXT_AREA, function(e, data) {
             var enterToSend = footer.attr('data-enter-to-send');
-            if (enterToSend == true) {
+            if (enterToSend && enterToSend != 'false' && enterToSend != '0') {
                 handleSendMessage(e, data);
             }
         });
 
         PubSub.subscribe(MessageDrawerEvents.ROUTE_CHANGED, function(newRouteData) {
             if (newMessagesPollTimer) {
-                if (newRouteData.route == MessageDrawerRoutes.VIEW_CONVERSATION) {
-                    newMessagesPollTimer.restart();
-                } else {
+                if (newRouteData.route != MessageDrawerRoutes.VIEW_CONVERSATION) {
                     newMessagesPollTimer.stop();
                 }
-            }
-        });
-
-        PubSub.subscribe(MessageDrawerEvents.PREFERENCES_UPDATED, function(preferences) {
-            var filteredPreferences = preferences.filter(function(preference) {
-                return preference.type == 'message_entertosend';
-            });
-            var enterToSendPreference = filteredPreferences.length ? filteredPreferences[0] : null;
-
-            if (enterToSendPreference) {
-                footer.attr('data-enter-to-send', enterToSendPreference.value);
             }
         });
     };
@@ -1529,6 +1523,7 @@ function(
         if (isNewConversation) {
             // Reset all of the states back to the beginning if we're loading a new
             // conversation.
+            isResetting = true;
             var renderPromise = null;
             var loggedInUserProfile = getLoggedInUserProfile(body);
             if (conversation) {
@@ -1541,12 +1536,22 @@ function(
 
             return renderPromise
                 .then(function() {
+                    isResetting = false;
                     // Focus the first element that can receieve it in the header.
                     header.find(Constants.SELECTORS.CAN_RECEIVE_FOCUS).first().focus();
                     return;
                 })
-                .catch(Notification.exception);
-        } else if (viewState.type == CONVERSATION_TYPES.PRIVATE && action) {
+                .catch(function(error) {
+                    isResetting = false;
+                    Notification.exception(error);
+                });
+        }
+
+        // We're not loading a new conversation so we should reset the poll timer to try to load
+        // new messages.
+        resetMessagePollTimer(conversationId);
+
+        if (viewState.type == CONVERSATION_TYPES.PRIVATE && action) {
             // There are special actions that the user can perform in a private (aka 1-to-1)
             // conversation.
             var currentOtherUserId = getOtherUserId();

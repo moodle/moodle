@@ -446,6 +446,10 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
 
     /**
      * Send messages to a conversation.
+     *
+     * @param {int} conversationId The conversation id
+     * @param {string[]} messages List of messages to send
+     * @return {object} jQuery promise
      */
     var sendMessagesToConversation = function(conversationId, messages) {
         var formattedMessages = messages.map(function(message) {
@@ -466,6 +470,10 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
 
     /**
      * Send a message to a conversation.
+     *
+     * @param {int} conversationId The conversation id
+     * @param {string} text The message text
+     * @return {object} jQuery promise
      */
     var sendMessageToConversation = function(conversationId, text) {
         return sendMessagesToConversation(conversationId, [text])
