@@ -28,6 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/message/lib.php');
 
+use \core_message\tests\helper as testhelper;
+
 /**
  * Test api's in message lib.
  *
@@ -406,4 +408,81 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $this->assertCount(1, message_search_users(0, 'user1'));
         $this->assertCount(2, message_search_users(0, 'user'));
     }
+
+    /**
+     * Test message_get_messages.
+     */
+    public function test_message_get_messages() {
+        $this->resetAfterTest(true);
+
+        // Set this user as the admin.
+        $this->setAdminUser();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        \core_message\api::add_contact($user1->id, $user2->id);
+        \core_message\api::add_contact($user1->id, $user3->id);
+
+        // Create some individual conversations.
+        $ic1 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]);
+        $ic2 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user3->id]);
+
+        // Send some messages to individual conversations.
+        $im1 = testhelper::send_fake_message_to_conversation($user1, $ic1->id, 'Message 1');
+        $im2 = testhelper::send_fake_message_to_conversation($user2, $ic1->id, 'Message 2');
+        $im3 = testhelper::send_fake_message_to_conversation($user1, $ic1->id, 'Message 3');
+        $im4 = testhelper::send_fake_message_to_conversation($user1, $ic2->id, 'Message 4');
+
+        // Retrieve all messages sent from user1 to user2.
+        $lastmessages = message_get_messages($user2->id, $user1->id, 0, false);
+        $this->assertCount(2, $lastmessages);
+        $this->assertArrayHasKey($im1, $lastmessages);
+        $this->assertArrayHasKey($im3, $lastmessages);
+
+        // Create some group conversations.
+        $gc1 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id], 'Group chat');
+
+        // Send some messages to group conversations.
+        $gm1 = testhelper::send_fake_message_to_conversation($user1, $gc1->id, 'Group message 1');
+
+        // Retrieve all messages sent from user1 to user2 (the result should be the same as before, because only individual
+        // conversations should be considered by the message_get_messages function).
+        $lastmessages = message_get_messages($user2->id, $user1->id, 0, false);
+        $this->assertCount(2, $lastmessages);
+        $this->assertArrayHasKey($im1, $lastmessages);
+        $this->assertArrayHasKey($im3, $lastmessages);
+    }
+
+    /**
+     * Test message_get_messages with only group conversations between users.
+     */
+    public function test_message_get_messages_only_group_conversations() {
+        $this->resetAfterTest(true);
+
+        // Set this user as the admin.
+        $this->setAdminUser();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Create some group conversations.
+        $gc1 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id], 'Group chat');
+
+        // Send some messages to group conversations.
+        $gm1 = testhelper::send_fake_message_to_conversation($user1, $gc1->id, 'Group message 1');
+        $gm2 = testhelper::send_fake_message_to_conversation($user2, $gc1->id, 'Group message 2');
+
+        // Retrieve all messages sent from user1 to user2. There shouldn't be messages, because only individual
+        // conversations should be considered by the message_get_messages function.
+        $lastmessages = message_get_messages($user2->id, $user1->id, 0, false);
+        $this->assertCount(0, $lastmessages);
+    }
+
 }
