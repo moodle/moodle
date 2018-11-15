@@ -1050,7 +1050,7 @@ class core_badges_renderer extends plugin_renderer_base {
                 html_writer::tag('a', $endorsement->issueremail, array('href' => 'mailto:' . $endorsement->issueremail));
             $dl[get_string('issuerurl', 'badges')] = html_writer::link($endorsement->issuerurl, $endorsement->issuerurl,
                 array('target' => '_blank'));
-            $dl[get_string('dateawarded', 'badges')] = date('c', $endorsement->dateissued);
+            $dl[get_string('dateawarded', 'badges')] = userdate($endorsement->dateissued);
             $dl[get_string('claimid', 'badges')] = html_writer::link($endorsement->claimid, $endorsement->claimid,
             array('target' => '_blank'));
             $dl[get_string('claimcomment', 'badges')] = $endorsement->claimcomment;
