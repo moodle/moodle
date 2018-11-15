@@ -31,7 +31,6 @@ redirect_if_major_upgrade_required();
 
 $testsession = optional_param('testsession', 0, PARAM_INT); // test session works properly
 $anchor      = optional_param('anchor', '', PARAM_RAW);      // Used to restore hash anchor to wantsurl.
-$logintoken  = optional_param('logintoken', '', PARAM_RAW);       // Used to validate the request.
 
 $resendconfirmemail = optional_param('resendconfirmemail', false, PARAM_BOOL);
 
@@ -140,6 +139,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
         $frm = false;
     } else {
         if (empty($errormsg)) {
+            $logintoken = isset($frm->logintoken) ? $frm->logintoken : '';
             $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode, $logintoken);
         }
     }
