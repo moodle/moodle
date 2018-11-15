@@ -1366,12 +1366,7 @@ class core_message_external extends external_api {
      * @since 3.6
      */
     public static function message_search_users($userid, $search, $limitfrom = 0, $limitnum = 0) {
-        global $CFG, $USER;
-
-        // Check if messaging is enabled.
-        if (empty($CFG->messaging)) {
-            throw new moodle_exception('disabled', 'message');
-        }
+        global $USER;
 
         $systemcontext = context_system::instance();
 
