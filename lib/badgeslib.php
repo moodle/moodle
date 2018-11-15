@@ -761,7 +761,10 @@ class badge {
      */
     public function delete_related_badge($relatedid) {
         global $DB;
-        return $DB->delete_records('badge_related', array('badgeid' => $this->id, 'relatedbadgeid' => $relatedid));
+        $sql = "(badgeid = :badgeid AND relatedbadgeid = :relatedid) OR " .
+               "(badgeid = :relatedid2 AND relatedbadgeid = :badgeid2)";
+        $params = ['badgeid' => $this->id, 'badgeid2' => $this->id, 'relatedid' => $relatedid, 'relatedid2' => $relatedid];
+        return $DB->delete_records_select('badge_related', $sql, $params);
     }
 
     /**
@@ -771,7 +774,11 @@ class badge {
      */
     public function has_related() {
         global $DB;
-        return $DB->record_exists('badge_related', array('badgeid' => $this->id));
+        $sql = "SELECT DISTINCT b.id
+                    FROM {badge_related} br
+                    JOIN {badge} b ON (br.relatedbadgeid = b.id OR br.badgeid = b.id)
+                   WHERE (br.badgeid = :badgeid OR br.relatedbadgeid = :badgeid2) AND b.id != :badgeid3";
+        return $DB->record_exists_sql($sql, ['badgeid' => $this->id, 'badgeid2' => $this->id, 'badgeid3' => $this->id]);
     }
 
     /**
@@ -783,11 +790,11 @@ class badge {
     public function get_related_badges(bool $activeonly = false) {
         global $DB;
 
-        $params = array('badgeid' => $this->id);
-        $query = "SELECT b.id, b.name, b.version, b.language, b.type
+        $params = array('badgeid' => $this->id, 'badgeid2' => $this->id, 'badgeid3' => $this->id);
+        $query = "SELECT DISTINCT b.id, b.name, b.version, b.language, b.type
                     FROM {badge_related} br
-                    JOIN {badge} b ON b.id = br.relatedbadgeid
-                   WHERE br.badgeid = :badgeid";
+                    JOIN {badge} b ON (br.relatedbadgeid = b.id OR br.badgeid = b.id)
+                   WHERE (br.badgeid = :badgeid OR br.relatedbadgeid = :badgeid2) AND b.id != :badgeid3";
         if ($activeonly) {
             $query .= " AND b.status <> :status";
             $params['status'] = BADGE_STATUS_INACTIVE;
