@@ -283,7 +283,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I press "Consent"
     And I should see "Accepting policy"
     And I should see "One"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Accepting policy" "dialogue"
     And I should not see "Accepting policy"
     And I click on "Select" "checkbox" in the "User Two" "table_row"
     And I press "Consent"

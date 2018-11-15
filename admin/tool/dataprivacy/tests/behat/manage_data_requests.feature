@@ -21,14 +21,14 @@ Feature: Manage data requests
     And I should see "Contact the privacy officer"
     And I click on "Contact the privacy officer" "link"
     And I set the field "Message" to "Hi PO! Can others access my information on your site?"
-    And I press "Send"
+    And I click on "Send" "button" in the "Contact the privacy officer" "dialogue"
     And I should see "Your request has been submitted to the privacy officer"
     And I log out
     And I log in as "student2"
     And I follow "Profile" in the user menu
     And I click on "Contact the privacy officer" "link"
     And I set the field "Message" to "Dear Mr. Privacy Officer, I'd like to know more about GDPR. Thanks!"
-    And I press "Send"
+    And I click on "Send" "button" in the "Contact the privacy officer" "dialogue"
     And I should see "Your request has been submitted to the privacy officer"
     And I log out
     When I log in as "admin"

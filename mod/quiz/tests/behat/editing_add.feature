@@ -130,7 +130,7 @@ Feature: Edit quiz page - adding things
     # Create the Essay 01 question.
     When I press "Create a new question ..."
     And I set the field "item_qtype_essay" to "1"
-    And I press "Add"
+    And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
     Then I should see "Adding an Essay question"
     And I set the field "Question name" to "Essay 01"
     And I set the field "Question text" to "Please write 100 words about Essay 01"
