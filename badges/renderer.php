@@ -403,28 +403,27 @@ class core_badges_renderer extends plugin_renderer_base {
 
         $dl[get_string('evidence', 'badges')] = get_string('completioninfo', 'badges') . html_writer::alist($items, array(), 'ul');
         $output .= $this->definition_list($dl);
-        $output .= self::print_badge_endorsement($badge);
+        $endorsement = $badge->get_endorsement();
+        if (!empty($endorsement)) {
+            $output .= self::print_badge_endorsement($badge);
+        }
         $relatedbadges = $badge->get_related_badges();
-        $output .= $this->heading(get_string('relatedbages', 'badges'), 3);
         if (!empty($relatedbadges)) {
+            $output .= $this->heading(get_string('relatedbages', 'badges'), 3);
             $items = array();
             foreach ($relatedbadges as $related) {
                 $items[] = $related->name;
             }
             $output .= html_writer::alist($items, array(), 'ul');
-        } else {
-            $output .= get_string('norelated', 'badges');
         }
-        $output .= $this->heading(get_string('alignment', 'badges'), 3);
         $competencies = $badge->get_alignment();
         if (!empty($competencies)) {
+            $output .= $this->heading(get_string('alignment', 'badges'), 3);
             $items = array();
             foreach ($competencies as $competency) {
                 $items[] = html_writer::link($competency->targeturl, $competency->targetname, array('target' => '_blank'));
             }
             $output .= html_writer::alist($items, array(), 'ul');
-        } else {
-            $output .= get_string('noalignment', 'badges');
         }
         $output .= html_writer::end_tag('div');
 
