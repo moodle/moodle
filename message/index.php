@@ -99,6 +99,27 @@ $usernode->remove();
 $settings = $PAGE->settingsnav->find('messages', null);
 $settings->make_active();
 
+if ($currentuser) {
+    // We're in the pprocess of deprecating this page however we haven't replaced the functionality
+    // for the admin (or user with correct capabilities) to view other user's conversations. For the
+    // time being this page will simply open the message drawer unless it's the admin user case just
+    // mentioned. In that case we will render the old UI for backwards compatibility.
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('messages', 'message'));
+    $conversationid = empty($user2id) ? null : \core_message\api::get_conversation_between_users([$USER->id, $user2id]);
+    if (empty($conversationid) && !empty($user2id)) {
+        $PAGE->requires->js_call_amd('core_message/message_drawer_helper', 'createConversationWithUser', [$user2id]);
+    } else if (!empty($conversationid)) {
+        $PAGE->requires->js_call_amd('core_message/message_drawer_helper', 'showConversation', [$conversationid]);
+    } else {
+        $PAGE->requires->js_call_amd('core_message/message_drawer_helper', 'show');
+    }
+    echo $OUTPUT->footer();
+    exit();
+}
+
+// The only time we should get here is if it's an admin type user viewing another user's messages.
+
 // Get the renderer and the information we are going to be use.
 $renderer = $PAGE->get_renderer('core_message');
 $requestedconversation = false;

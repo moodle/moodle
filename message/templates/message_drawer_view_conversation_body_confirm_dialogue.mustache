@@ -1,0 +1,78 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/message_drawer_view_conversation_body_confirm_dialogue
+
+    This template will render the confirmation dialogue inside the conversation page of
+    the message drawer.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * userid The logged in user id
+    * urls The URLs for the popover
+
+    Example context (json):
+    {}
+
+}}
+
+<div class="p-3 bg-white" data-region="confirm-dialogue" role="alert">
+    <h3 class="h6 hidden" data-region="dialogue-header"></h3>
+    <p class="text-muted" data-region="dialogue-text"></p>
+    <button type="button" class="btn btn-primary btn-block hidden" data-action="confirm-block">
+        <span data-region="dialogue-button-text">{{#str}} block, core {{/str}}</span>
+        <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
+    </button>
+    <button type="button" class="btn btn-primary btn-block hidden" data-action="confirm-unblock">
+        <span data-region="dialogue-button-text">{{#str}} unblock, core_message {{/str}}</span>
+        <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
+    </button>
+    <button type="button" class="btn btn-primary btn-block hidden" data-action="confirm-remove-contact">
+        <span data-region="dialogue-button-text">{{#str}} remove, core {{/str}}</span>
+        <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
+    </button>
+    <button type="button" class="btn btn-primary btn-block hidden" data-action="confirm-add-contact">
+        <span data-region="dialogue-button-text">{{#str}} add, core {{/str}}</span>
+        <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
+    </button>
+    <button type="button" class="btn btn-primary btn-block hidden" data-action="confirm-delete-selected-messages">
+        <span data-region="dialogue-button-text">{{#str}} delete, core {{/str}}</span>
+        <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
+    </button>
+    <button type="button" class="btn btn-primary btn-block hidden" data-action="confirm-delete-conversation">
+        <span data-region="dialogue-button-text">{{#str}} delete, core {{/str}}</span>
+        <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
+    </button>
+    <button type="button" class="btn btn-primary btn-block hidden" data-action="request-add-contact">
+        <span data-region="dialogue-button-text">{{#str}} sendcontactrequest, core_message {{/str}}</span>
+        <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
+    </button>
+    <button type="button" class="btn btn-primary btn-block hidden" data-action="accept-contact-request">
+        <span data-region="dialogue-button-text">{{#str}} acceptandaddcontact, core_message {{/str}}</span>
+        <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
+    </button>
+    <button type="button" class="btn btn-secondary btn-block hidden" data-action="decline-contact-request">
+        <span data-region="dialogue-button-text">{{#str}} decline, core_message {{/str}}</span>
+        <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
+    </button>
+    <button type="button" class="btn btn-secondary btn-block" data-action="cancel-confirm">{{#str}} cancel, core {{/str}}</button>
+</div>

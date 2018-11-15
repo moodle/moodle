@@ -950,7 +950,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Favourite the first conversation as user 1.
         $conversationid1 = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
-        \core_message\api::set_favourite_conversation($conversationid1, $user1->id);
+        $favourite = \core_message\api::set_favourite_conversation($conversationid1, $user1->id);
 
         // Verify we have a single favourite conversation a user 1.
         $this->assertCount(1, \core_message\api::get_conversations($user1->id, 0, 20, null, true));
@@ -958,9 +958,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Verify we have no favourites as user2, despite being a member in that conversation.
         $this->assertCount(0, \core_message\api::get_conversations($user2->id, 0, 20, null, true));
 
-        // Try to favourite the same conversation again.
-        $this->expectException(\moodle_exception::class);
-        \core_message\api::set_favourite_conversation($conversationid1, $user1->id);
+        // Try to favourite the same conversation again should just return the existing favourite.
+        $repeatresult = \core_message\api::set_favourite_conversation($conversationid1, $user1->id);
+        $this->assertEquals($favourite->id, $repeatresult->id);
     }
 
     /**
@@ -4570,13 +4570,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
-        \core_message\api::create_contact_request($user1->id, $user2->id);
-
-        $request = $DB->get_records('message_contact_requests');
-
-        $this->assertCount(1, $request);
-
-        $request = reset($request);
+        $request = \core_message\api::create_contact_request($user1->id, $user2->id);
 
         $this->assertEquals($user1->id, $request->userid);
         $this->assertEquals($user2->id, $request->requesteduserid);
@@ -4628,6 +4622,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
      * Test retrieving contact requests.
      */
     public function test_get_contact_requests() {
+        global $PAGE;
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -4643,6 +4639,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertCount(1, $requests);
 
         $request = reset($requests);
+        $userpicture = new \user_picture($user2);
+        $profileimageurl = $userpicture->get_url($PAGE)->out(false);
 
         $this->assertEquals($user2->id, $request->id);
         $this->assertEquals(fullname($user2), $request->fullname);
@@ -4817,6 +4815,78 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         $this->assertTrue(\core_message\api::does_contact_request_exist($user1->id, $user2->id));
         $this->assertTrue(\core_message\api::does_contact_request_exist($user2->id, $user1->id));
+    }
+
+    /**
+     * Test the count_received_contact_requests() function.
+     */
+    public function test_count_received_contact_requests() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        $this->assertEquals(0, \core_message\api::count_received_contact_requests($user1));
+
+        \core_message\api::create_contact_request($user2->id, $user1->id);
+
+        $this->assertEquals(1, \core_message\api::count_received_contact_requests($user1));
+
+        \core_message\api::create_contact_request($user3->id, $user1->id);
+
+        $this->assertEquals(2, \core_message\api::count_received_contact_requests($user1));
+
+        \core_message\api::create_contact_request($user1->id, $user4->id);
+        // Function should ignore sent requests.
+        $this->assertEquals(2, \core_message\api::count_received_contact_requests($user1));
+    }
+
+    /**
+     * Test the get_contact_requests_between_users() function.
+     */
+    public function test_get_contact_requests_between_users() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        $this->assertEquals([], \core_message\api::get_contact_requests_between_users($user1->id, $user2->id));
+
+        $request1 = \core_message\api::create_contact_request($user2->id, $user1->id);
+        $results = \core_message\api::get_contact_requests_between_users($user1->id, $user2->id);
+        $results = array_values($results);
+
+        $this->assertCount(1, $results);
+        $result = $results[0];
+        $this->assertEquals($request1->id, $result->id);
+
+        $request2 = \core_message\api::create_contact_request($user1->id, $user2->id);
+        $results = \core_message\api::get_contact_requests_between_users($user1->id, $user2->id);
+        $results = array_values($results);
+
+        $this->assertCount(2, $results);
+        $actual = [(int) $results[0]->id, (int) $results[1]->id];
+        $expected = [(int) $request1->id, (int) $request2->id];
+
+        sort($actual);
+        sort($expected);
+
+        $this->assertEquals($expected, $actual);
+
+        // Request from a different user.
+        \core_message\api::create_contact_request($user3->id, $user1->id);
+
+        $results = \core_message\api::get_contact_requests_between_users($user1->id, $user2->id);
+        $results = array_values($results);
+
+        $this->assertCount(2, $results);
+        $actual = [(int) $results[0]->id, (int) $results[1]->id];
+        $expected = [(int) $request1->id, (int) $request2->id];
+
+        sort($actual);
+        sort($expected);
+
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -5081,6 +5151,148 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(
                 $newname,
                 $DB->get_field('message_conversations', 'name', ['id' => $conversation->id])
+        );
+    }
+
+
+    /**
+     * Test an empty array returned when no args given.
+     */
+    public function test_get_individual_conversations_between_users_no_user_sets() {
+        $this->assertEmpty(\core_message\api::get_individual_conversations_between_users([]));
+    }
+
+    /**
+     * Test a conversation is not returned if there is none.
+     */
+    public function test_get_individual_conversations_between_users_no_conversation() {
+        $generator = $this->getDataGenerator();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+
+        $this->assertEquals(
+            [null],
+            \core_message\api::get_individual_conversations_between_users([[$user1->id, $user2->id]])
+        );
+    }
+
+    /**
+     * Test the result set includes null if there is no conversation between users.
+     */
+    public function test_get_individual_conversations_between_users_partial_conversations() {
+        $generator = $this->getDataGenerator();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+        $type = \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
+
+        $conversation1 = \core_message\api::create_conversation($type, [$user1->id, $user2->id]);
+        $conversation2 = \core_message\api::create_conversation($type, [$user1->id, $user3->id]);
+
+        $results = \core_message\api::get_individual_conversations_between_users([
+            [$user1->id, $user2->id],
+            [$user2->id, $user3->id],
+            [$user1->id, $user3->id]
+        ]);
+
+        $result = array_map(function($result) {
+            if ($result) {
+                return $result->id;
+            } else {
+                return $result;
+            }
+        }, $results);
+
+        $this->assertEquals(
+            [$conversation1->id, null, $conversation2->id],
+            $result
+        );
+    }
+
+    /**
+     * Test all conversations are returned if each set has a conversation.
+     */
+    public function test_get_individual_conversations_between_users_all_conversations() {
+        $generator = $this->getDataGenerator();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+        $type = \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
+
+        $conversation1 = \core_message\api::create_conversation($type, [$user1->id, $user2->id]);
+        $conversation2 = \core_message\api::create_conversation($type, [$user2->id, $user3->id]);
+        $conversation3 = \core_message\api::create_conversation($type, [$user1->id, $user3->id]);
+
+        $results = \core_message\api::get_individual_conversations_between_users([
+            [$user1->id, $user2->id],
+            [$user2->id, $user3->id],
+            [$user1->id, $user3->id]
+        ]);
+
+        $result = array_map(function($result) {
+            if ($result) {
+                return $result->id;
+            } else {
+                return $result;
+            }
+        }, $results);
+
+        $this->assertEquals(
+            [$conversation1->id, $conversation2->id, $conversation3->id],
+            $result
+        );
+    }
+
+    /**
+     * Test that the results are ordered to match the order of the parameters.
+     */
+    public function test_get_individual_conversations_between_users_ordering() {
+        $generator = $this->getDataGenerator();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+        $type = \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
+
+        $conversation1 = \core_message\api::create_conversation($type, [$user1->id, $user2->id]);
+        $conversation2 = \core_message\api::create_conversation($type, [$user2->id, $user3->id]);
+        $conversation3 = \core_message\api::create_conversation($type, [$user1->id, $user3->id]);
+
+        $results = \core_message\api::get_individual_conversations_between_users([
+            [$user1->id, $user2->id],
+            [$user2->id, $user3->id],
+            [$user1->id, $user3->id]
+        ]);
+
+        $result = array_map(function($result) {
+            if ($result) {
+                return $result->id;
+            } else {
+                return $result;
+            }
+        }, $results);
+
+        $this->assertEquals(
+            [$conversation1->id, $conversation2->id, $conversation3->id],
+            $result
+        );
+
+        $results = \core_message\api::get_individual_conversations_between_users([
+            [$user2->id, $user3->id],
+            [$user1->id, $user2->id],
+            [$user1->id, $user3->id]
+        ]);
+
+        $result = array_map(function($result) {
+            if ($result) {
+                return $result->id;
+            } else {
+                return $result;
+            }
+        }, $results);
+
+        $this->assertEquals(
+            [$conversation2->id, $conversation1->id, $conversation3->id],
+            $result
         );
     }
 
@@ -5384,6 +5596,270 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // User 2 cannot send a message to the conversation with user 1.
         $this->expectException(\moodle_exception::class);
         \core_message\api::send_message_to_conversation($user2->id, $ic1->id, 'test', FORMAT_MOODLE);
+    }
+
+    /**
+     * Data provider for test_count_conversations().
+     */
+    public function test_count_conversations_test_cases() {
+        $typeindividual = \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
+        $typegroup = \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP;
+        list($user1, $user2, $user3, $user4, $user5) = [0, 1, 2, 3, 4];
+        $conversations = [
+            [
+                'type' => $typeindividual,
+                'users' => [$user1, $user2],
+                'messages' => [$user1, $user2],
+                'favourites' => [$user1]
+            ],
+            [
+                'type' => $typeindividual,
+                'users' => [$user1, $user3],
+                'messages' => [$user1, $user1],
+                'favourites' => []
+            ],
+            [
+                'type' => $typegroup,
+                'users' => [$user1, $user2, $user3, $user4],
+                'messages' => [$user1, $user2, $user3, $user4],
+                'favourites' => []
+            ],
+        ];
+
+        return [
+            'No conversations' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => null,
+                'delete' => [],
+                'arguments' => [$user5],
+                'expected' => 0
+            ],
+            'No individual conversations' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => null,
+                'delete' => [],
+                'arguments' => [$user4, $typeindividual],
+                'expected' => 0
+            ],
+            'No individual conversations, 1 group conversation' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => null,
+                'delete' => [],
+                'arguments' => [$user4],
+                'expected' => 1
+            ],
+            '1 - Multiple individual conversations, 1 group conversation' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => null,
+                'delete' => [],
+                'arguments' => [$user1, $typegroup],
+                'expected' => 1
+            ],
+            '2 - Multiple individual conversations, 1 group conversation' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => null,
+                'delete' => [],
+                'arguments' => [$user2, $typegroup],
+                'expected' => 1
+            ],
+            '3 - Multiple individual conversations, 1 group conversation' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => null,
+                'delete' => [],
+                'arguments' => [$user3, $typegroup],
+                'expected' => 1
+            ],
+            '4 - Multiple individual conversations, 1 group conversation' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => null,
+                'delete' => [],
+                'arguments' => [$user4, $typegroup],
+                'expected' => 1
+            ],
+            'Individual exclude favourites' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => null,
+                'delete' => [],
+                'arguments' => [$user1, $typeindividual, true],
+                'expected' => 1
+            ],
+            'Individual include favourites' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => null,
+                'delete' => [],
+                'arguments' => [$user1, $typeindividual, false],
+                'expected' => 2
+            ],
+            'All exclude favourites' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => null,
+                'delete' => [],
+                'arguments' => [$user1, null, true],
+                'expected' => 2
+            ],
+            'All include favourites' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => null,
+                'delete' => [],
+                'arguments' => [$user1, null, false],
+                'expected' => 3
+            ],
+            'Delete single message individual' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => $user1,
+                'delete' => [1],
+                'arguments' => [$user1, $typeindividual],
+                'expected' => 2
+            ],
+            'Delete single message all' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => $user1,
+                'delete' => [1],
+                'arguments' => [$user1, null],
+                'expected' => 3
+            ],
+            'Delete all message individual conversation include favourites' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => $user1,
+                'delete' => [2, 3],
+                'arguments' => [$user1, $typeindividual, false],
+                'expected' => 1
+            ],
+            'Delete all message individual conversation exclude favourites' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => $user1,
+                'delete' => [2, 3],
+                'arguments' => [$user1, $typeindividual, true],
+                'expected' => 0
+            ],
+            'Delete all message individual conversation include favourites diff user' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => $user1,
+                'delete' => [2, 3],
+                'arguments' => [$user2, $typeindividual, false],
+                'expected' => 1
+            ],
+            'Delete all message individual conversation exclude favourites diff user' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => $user1,
+                'delete' => [2, 3],
+                'arguments' => [$user2, $typeindividual, true],
+                'expected' => 1
+            ],
+            'Delete all message group conversation include favourites' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => $user1,
+                'delete' => [4, 5, 6, 7],
+                'arguments' => [$user1, $typegroup, false],
+                'expected' => 1
+            ],
+            'Delete all message group conversation include favourites' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => $user1,
+                'delete' => [4, 5, 6, 7],
+                'arguments' => [$user1, null, false],
+                'expected' => 3
+            ],
+            'Delete all message group conversation exclude favourites' => [
+                'conversationConfigs' => $conversations,
+                'deleteuser' => $user1,
+                'delete' => [4, 5, 6, 7],
+                'arguments' => [$user1, null, true],
+                'expected' => 2
+            ]
+        ];
+    }
+
+    /**
+     * Test the count_conversations() function.
+     *
+     * @dataProvider test_count_conversations_test_cases()
+     * @param array $conversationconfigs Conversations to create
+     * @param int $deleteuser The user who is deleting the messages
+     * @param array $delete The list of messages to delete (by index)
+     * @param array $arguments Arguments for the count conversations function
+     * @param int $expected The expected result
+     */
+    public function test_count_conversations(
+        $conversationconfigs,
+        $deleteuser,
+        $delete,
+        $arguments,
+        $expected
+    ) {
+        $generator = $this->getDataGenerator();
+        $users = [
+            $generator->create_user(),
+            $generator->create_user(),
+            $generator->create_user(),
+            $generator->create_user(),
+            $generator->create_user()
+        ];
+
+        $user = $users[$arguments[0]];
+        $deleteuser = !is_null($deleteuser) ? $users[$deleteuser] : null;
+        $arguments[0] = $user;
+        $systemcontext = \context_system::instance();
+        $conversations = [];
+        $messageids = [];
+
+        foreach ($conversationconfigs as $config) {
+            $conversation = \core_message\api::create_conversation(
+                $config['type'],
+                array_map(function($userindex) use ($users) {
+                    return $users[$userindex]->id;
+                }, $config['users'])
+            );
+
+            foreach ($config['messages'] as $userfromindex) {
+                $userfrom = $users[$userfromindex];
+                $messageids[] = testhelper::send_fake_message_to_conversation($userfrom, $conversation->id);
+            }
+
+            foreach ($config['favourites'] as $userfromindex) {
+                $userfrom = $users[$userfromindex];
+                $usercontext = \context_user::instance($userfrom->id);
+                $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+                $ufservice->create_favourite('core_message', 'message_conversations', $conversation->id, $systemcontext);
+            }
+
+            $conversations[] = $conversation;
+        }
+
+        foreach ($delete as $messageindex) {
+            \core_message\api::delete_message($deleteuser->id, $messageids[$messageindex]);
+        }
+
+        $this->assertEquals($expected, \core_message\api::count_conversations(...$arguments));
+    }
+
+    /**
+     * Test the count_contacts() function.
+     */
+    public function test_count_contacts() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->assertEquals(0, \core_message\api::count_contacts($user1->id));
+
+        \core_message\api::create_contact_request($user1->id, $user2->id);
+
+        // Still zero until the request is confirmed.
+        $this->assertEquals(0, \core_message\api::count_contacts($user1->id));
+
+        \core_message\api::confirm_contact_request($user1->id, $user2->id);
+
+        $this->assertEquals(1, \core_message\api::count_contacts($user1->id));
+
+        \core_message\api::create_contact_request($user3->id, $user1->id);
+
+        // Still one until the request is confirmed.
+        $this->assertEquals(1, \core_message\api::count_contacts($user1->id));
+
+        \core_message\api::confirm_contact_request($user3->id, $user1->id);
+
+        $this->assertEquals(2, \core_message\api::count_contacts($user1->id));
     }
 
     /**

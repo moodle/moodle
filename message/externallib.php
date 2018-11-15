@@ -90,8 +90,13 @@ class core_message_external extends external_api {
 
         $messages = [];
         foreach ($params['messages'] as $message) {
-            $messages[] = \core_message\api::send_message_to_conversation($USER->id, $params['conversationid'], $message['text'],
+            $createdmessage = \core_message\api::send_message_to_conversation($USER->id, $params['conversationid'], $message['text'],
                 $message['textformat']);
+            $createdmessage->text = message_format_message_text((object) [
+                'smallmessage' => $createdmessage->text,
+                'fullmessageformat' => external_validate_format($message['textformat'])
+            ]);
+            $messages[] = $createdmessage;
         }
 
         return $messages;
@@ -164,6 +169,7 @@ class core_message_external extends external_api {
         $tousers = $DB->get_records_select("user", "id " . $sqluserids . " AND deleted = 0", $sqlparams);
 
         $resultmessages = array();
+        $messageids = array();
         foreach ($params['messages'] as $message) {
             $resultmsg = array(); //the infos about the success of the operation
 
@@ -197,6 +203,12 @@ class core_message_external extends external_api {
             }
             if ($success) {
                 $resultmsg['msgid'] = $success;
+                $resultmsg['text'] = message_format_message_text((object) [
+                    'smallmessage' => $message['text'],
+                    'fullmessageformat' => external_validate_format($message['textformat'])
+                ]);
+                $resultmsg['timecreated'] = time();
+                $messageids[] = $success;
             } else {
                 // WARNINGS: for backward compatibility we return this errormessage.
                 //          We should have thrown exceptions as these errors prevent results to be returned.
@@ -206,6 +218,16 @@ class core_message_external extends external_api {
             }
 
             $resultmessages[] = $resultmsg;
+        }
+
+        if (!empty($messageids)) {
+            $messagerecords = $DB->get_records_list('messages', 'id', $messageids, '', 'id, conversationid');
+            $resultmessages = array_map(function($resultmessage) use ($messagerecords, $USER) {
+                $id = $resultmessage['msgid'];
+                $resultmessage['conversationid'] = isset($messagerecords[$id]) ? $messagerecords[$id]->conversationid : null;
+                $resultmessage['useridfrom'] = $USER->id;
+                return $resultmessage;
+            }, $resultmessages);
         }
 
         return $resultmessages;
@@ -223,7 +245,11 @@ class core_message_external extends external_api {
                 array(
                     'msgid' => new external_value(PARAM_INT, 'test this to know if it succeeds:  id of the created message if it succeeded, -1 when failed'),
                     'clientmsgid' => new external_value(PARAM_ALPHANUMEXT, 'your own id for the message', VALUE_OPTIONAL),
-                    'errormessage' => new external_value(PARAM_TEXT, 'error message - if it failed', VALUE_OPTIONAL)
+                    'errormessage' => new external_value(PARAM_TEXT, 'error message - if it failed', VALUE_OPTIONAL),
+                    'text' => new external_value(PARAM_RAW, 'The text of the message', VALUE_OPTIONAL),
+                    'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the message', VALUE_OPTIONAL),
+                    'conversationid' => new external_value(PARAM_INT, 'The conversation id for this message', VALUE_OPTIONAL),
+                    'useridfrom' => new external_value(PARAM_INT, 'The user id who sent the message', VALUE_OPTIONAL),
                 )
             )
         );
@@ -738,6 +764,8 @@ class core_message_external extends external_api {
                 'conversationid' => new external_value(PARAM_INT, 'The id of the conversation'),
                 'includecontactrequests' => new external_value(PARAM_BOOL, 'Do we want to include contact requests?',
                     VALUE_DEFAULT, false),
+                'includeprivacyinfo' => new external_value(PARAM_BOOL, 'Do we want to include privacy info?',
+                    VALUE_DEFAULT, false),
                 'limitfrom' => new external_value(PARAM_INT, 'Limit from', VALUE_DEFAULT, 0),
                 'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0)
             ]
@@ -750,12 +778,13 @@ class core_message_external extends external_api {
      * @param int $userid The user we are returning the conversation members for, used by helper::get_member_info.
      * @param int $conversationid The id of the conversation
      * @param bool $includecontactrequests Do we want to include contact requests with this data?
+     * @param bool $includeprivacyinfo Do we want to include privacy info?
      * @param int $limitfrom
      * @param int $limitnum
      * @return array
      */
     public static function get_conversation_members(int $userid, int $conversationid, bool $includecontactrequests = false,
-                                                    int $limitfrom = 0, int $limitnum = 0) {
+                                                    bool $includeprivacyinfo = false, int $limitfrom = 0, int $limitnum = 0) {
         global $CFG, $USER;
 
         // Check if messaging is enabled.
@@ -771,6 +800,7 @@ class core_message_external extends external_api {
             'userid' => $userid,
             'conversationid' => $conversationid,
             'includecontactrequests' => $includecontactrequests,
+            'includeprivacyinfo' => $includeprivacyinfo,
             'limitfrom' => $limitfrom,
             'limitnum' => $limitnum
         ];
@@ -786,9 +816,8 @@ class core_message_external extends external_api {
             throw new moodle_exception('You are not a member of this conversation.');
         }
 
-
         return \core_message\api::get_conversation_members($params['userid'], $params['conversationid'], $params['includecontactrequests'],
-            $params['limitfrom'], $params['limitnum']);
+            $params['includeprivacyinfo'], $params['limitfrom'], $params['limitnum']);
     }
 
     /**
@@ -842,21 +871,27 @@ class core_message_external extends external_api {
             throw new required_capability_exception($context, $capability, 'nopermissions', '');
         }
 
+        $result = [
+            'warnings' => []
+        ];
+
         if (!\core_message\api::can_create_contact($params['userid'], $params['requesteduserid'])) {
-            $warning[] = [
+            $result['warnings'][] = [
                 'item' => 'user',
                 'itemid' => $params['requesteduserid'],
                 'warningcode' => 'cannotcreatecontactrequest',
                 'message' => 'You are unable to create a contact request for this user'
             ];
-            return $warning;
+        } else {
+            if ($requests = \core_message\api::get_contact_requests_between_users($params['userid'], $params['requesteduserid'])) {
+                // There should only ever be one but just in case there are multiple then we can return the first.
+                $result['request'] = array_shift($requests);
+            } else {
+                $result['request'] = \core_message\api::create_contact_request($params['userid'], $params['requesteduserid']);
+            }
         }
 
-        if (!\core_message\api::does_contact_request_exist($params['userid'], $params['requesteduserid'])) {
-            \core_message\api::create_contact_request($params['userid'], $params['requesteduserid']);
-        }
-
-        return [];
+        return $result;
     }
 
     /**
@@ -865,7 +900,21 @@ class core_message_external extends external_api {
      * @return external_description
      */
     public static function create_contact_request_returns() {
-        return new external_warnings();
+        return new external_single_structure(
+            array(
+                'request' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'Message id'),
+                        'userid' => new external_value(PARAM_INT, 'User from id'),
+                        'requesteduserid' => new external_value(PARAM_INT, 'User to id'),
+                        'timecreated' => new external_value(PARAM_INT, 'Time created'),
+                    ),
+                    'request record',
+                    VALUE_OPTIONAL
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
     }
 
     /**
@@ -992,6 +1041,7 @@ class core_message_external extends external_api {
                 'ismessaging' => new external_value(PARAM_BOOL, 'If we are messaging the user'),
                 'sentfromcurrentuser' => new external_value(PARAM_BOOL, 'Was the last message sent from the current user?'),
                 'lastmessage' => new external_value(PARAM_NOTAGS, 'The user\'s last message'),
+                'lastmessagedate' => new external_value(PARAM_INT, 'Timestamp for last message', VALUE_DEFAULT, null),
                 'messageid' => new external_value(PARAM_INT, 'The unique search message id', VALUE_DEFAULT, null),
                 'showonlinestatus' => new external_value(PARAM_BOOL, 'Show the user\'s online status?'),
                 'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
@@ -1009,7 +1059,6 @@ class core_message_external extends external_api {
      * @return external_single_structure
      * @since Moodle 3.6
      */
-
     private static function get_conversation_structure() {
         return new external_single_structure(
             array(
@@ -1569,10 +1618,215 @@ class core_message_external extends external_api {
         return new external_single_structure(
             [
                 'conversations' => new external_multiple_structure(
-                    self::get_conversation_structure()
+                    self::get_conversation_structure(true)
                 )
             ]
         );
+    }
+
+    /**
+     * Get conversation parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_conversation_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing conversations for'),
+                'conversationid' => new external_value(PARAM_INT, 'The id of the conversation to fetch'),
+                'includecontactrequests' => new external_value(PARAM_BOOL, 'Include contact requests in the members'),
+                'includeprivacyinfo' => new external_value(PARAM_BOOL, 'Include privacy info in the members'),
+                'memberlimit' => new external_value(PARAM_INT, 'Limit for number of members', VALUE_DEFAULT, 0),
+                'memberoffset' => new external_value(PARAM_INT, 'Offset for member list', VALUE_DEFAULT, 0),
+                'messagelimit' => new external_value(PARAM_INT, 'Limit for number of messages', VALUE_DEFAULT, 100),
+                'messageoffset' => new external_value(PARAM_INT, 'Offset for messages list', VALUE_DEFAULT, 0),
+                'newestmessagesfirst' => new external_value(PARAM_BOOL, 'Order messages by newest first', VALUE_DEFAULT, true)
+            )
+        );
+    }
+
+    /**
+     * Get a single conversation.
+     *
+     * @param int $userid The user id to get the conversation for
+     * @param int $conversationid The id of the conversation to fetch
+     * @param bool $includecontactrequests Should contact requests be included between members
+     * @param bool $includeprivacyinfo Should privacy info be included between members
+     * @param int $memberlimit Limit number of members to load
+     * @param int $memberoffset Offset members by this amount
+     * @param int $messagelimit Limit number of messages to load
+     * @param int $messageoffset Offset the messages
+     * @param bool $newestmessagesfirst Order messages by newest first
+     * @return stdClass
+     * @throws \moodle_exception if the messaging feature is disabled on the site.
+     */
+    public static function get_conversation(
+        int $userid,
+        int $conversationid,
+        bool $includecontactrequests = false,
+        bool $includeprivacyinfo = false,
+        int $memberlimit = 0,
+        int $memberoffset = 0,
+        int $messagelimit = 0,
+        int $messageoffset = 0,
+        bool $newestmessagesfirst = true
+    ) {
+        global $CFG, $DB, $USER;
+
+        // All the standard BL checks.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $params = [
+            'userid' => $userid,
+            'conversationid' => $conversationid,
+            'includecontactrequests' => $includecontactrequests,
+            'includeprivacyinfo' => $includeprivacyinfo,
+            'memberlimit' => $memberlimit,
+            'memberoffset' => $memberoffset,
+            'messagelimit' => $messagelimit,
+            'messageoffset' => $messageoffset,
+            'newestmessagesfirst' => $newestmessagesfirst
+        ];
+        self::validate_parameters(self::get_conversation_parameters(), $params);
+
+        $systemcontext = context_system::instance();
+        self::validate_context($systemcontext);
+
+        $conversation = \core_message\api::get_conversation(
+            $params['userid'],
+            $params['conversationid'],
+            $params['includecontactrequests'],
+            $params['includeprivacyinfo'],
+            $params['memberlimit'],
+            $params['memberoffset'],
+            $params['messagelimit'],
+            $params['messageoffset'],
+            $params['newestmessagesfirst']
+        );
+
+        if ($conversation) {
+            return $conversation;
+        } else {
+            // We have to throw an exception here because the external functions annoyingly
+            // don't accept null to be returned for a single structure.
+            throw new \moodle_exception('Conversation does not exist');
+        }
+    }
+
+    /**
+     * Get conversation returns.
+     *
+     * @return external_single_structure
+     */
+    public static function get_conversation_returns() {
+        return self::get_conversation_structure();
+    }
+
+    /**
+     * Get conversation parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_conversation_between_users_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing conversations for'),
+                'otheruserid' => new external_value(PARAM_INT, 'The other user id'),
+                'includecontactrequests' => new external_value(PARAM_BOOL, 'Include contact requests in the members'),
+                'includeprivacyinfo' => new external_value(PARAM_BOOL, 'Include privacy info in the members'),
+                'memberlimit' => new external_value(PARAM_INT, 'Limit for number of members', VALUE_DEFAULT, 0),
+                'memberoffset' => new external_value(PARAM_INT, 'Offset for member list', VALUE_DEFAULT, 0),
+                'messagelimit' => new external_value(PARAM_INT, 'Limit for number of messages', VALUE_DEFAULT, 100),
+                'messageoffset' => new external_value(PARAM_INT, 'Offset for messages list', VALUE_DEFAULT, 0),
+                'newestmessagesfirst' => new external_value(PARAM_BOOL, 'Order messages by newest first', VALUE_DEFAULT, true)
+            )
+        );
+    }
+
+    /**
+     * Get a single conversation between users.
+     *
+     * @param int $userid The user id to get the conversation for
+     * @param int $otheruserid The other user id
+     * @param bool $includecontactrequests Should contact requests be included between members
+     * @param bool $includeprivacyinfo Should privacy info be included between members
+     * @param int $memberlimit Limit number of members to load
+     * @param int $memberoffset Offset members by this amount
+     * @param int $messagelimit Limit number of messages to load
+     * @param int $messageoffset Offset the messages
+     * @param bool $newestmessagesfirst Order messages by newest first
+     * @return stdClass
+     * @throws \moodle_exception if the messaging feature is disabled on the site.
+     */
+    public static function get_conversation_between_users(
+        int $userid,
+        int $otheruserid,
+        bool $includecontactrequests = false,
+        bool $includeprivacyinfo = false,
+        int $memberlimit = 0,
+        int $memberoffset = 0,
+        int $messagelimit = 0,
+        int $messageoffset = 0,
+        bool $newestmessagesfirst = true
+    ) {
+        global $CFG, $DB, $USER;
+
+        // All the standard BL checks.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $params = [
+            'userid' => $userid,
+            'otheruserid' => $otheruserid,
+            'includecontactrequests' => $includecontactrequests,
+            'includeprivacyinfo' => $includeprivacyinfo,
+            'memberlimit' => $memberlimit,
+            'memberoffset' => $memberoffset,
+            'messagelimit' => $messagelimit,
+            'messageoffset' => $messageoffset,
+            'newestmessagesfirst' => $newestmessagesfirst
+        ];
+        self::validate_parameters(self::get_conversation_between_users_parameters(), $params);
+
+        $systemcontext = context_system::instance();
+        self::validate_context($systemcontext);
+
+        $conversationid = \core_message\api::get_conversation_between_users([$params['userid'], $params['otheruserid']]);
+        $conversation = null;
+
+        if ($conversationid) {
+            $conversation = \core_message\api::get_conversation(
+                $params['userid'],
+                $conversationid,
+                $params['includecontactrequests'],
+                $params['includeprivacyinfo'],
+                $params['memberlimit'],
+                $params['memberoffset'],
+                $params['messagelimit'],
+                $params['messageoffset'],
+                $params['newestmessagesfirst']
+            );
+        }
+
+        if ($conversation) {
+            return $conversation;
+        } else {
+            // We have to throw an exception here because the external functions annoyingly
+            // don't accept null to be returned for a single structure.
+            throw new \moodle_exception('Conversation does not exist');
+        }
+    }
+
+    /**
+     * Get conversation returns.
+     *
+     * @return external_single_structure
+     */
+    public static function get_conversation_between_users_returns() {
+        return self::get_conversation_structure(true);
     }
 
     /**
@@ -3196,7 +3450,7 @@ class core_message_external extends external_api {
      * @since 3.6
      */
     public static function mark_all_conversation_messages_as_read_returns() {
-        return new external_warnings();
+        return null;
     }
 
     /**
@@ -3952,5 +4206,79 @@ class core_message_external extends external_api {
      */
     public static function unset_favourite_conversations_returns() {
         return new external_warnings();
+    }
+
+    /**
+     * Returns description of method parameters for get_member_info() method.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_member_info_parameters() {
+        return new external_function_parameters(
+            array(
+                'referenceuserid' => new external_value(PARAM_INT, 'id of the user'),
+                'userids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'id of members to get')
+                ),
+                'includecontactrequests' => new external_value(PARAM_BOOL, 'include contact requests in response', VALUE_DEFAULT, false),
+                'includeprivacyinfo' => new external_value(PARAM_BOOL, 'include privacy info in response', VALUE_DEFAULT, false)
+            )
+        );
+    }
+
+    /**
+     * Returns conversation member info for the supplied users, relative to the supplied referenceuserid.
+     *
+     * This is the basic structure used when returning members, and includes information about the relationship between each member
+     * and the referenceuser, such as a whether the referenceuser has marked the member as a contact, or has blocked them.
+     *
+     * @param int $referenceuserid the id of the user which check contact and blocked status.
+     * @param array $userids
+     * @return array the array of objects containing member info.
+     * @throws moodle_exception if messaging is disabled or if the user cannot perform the action.
+     */
+    public static function get_member_info(
+        int $referenceuserid,
+        array $userids,
+        bool $includecontactrequests = false,
+        bool $includeprivacyinfo = false
+    ) {
+        global $CFG, $USER;
+
+        // All the business logic checks that really shouldn't be in here.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+        $params = [
+            'referenceuserid' => $referenceuserid,
+            'userids' => $userids,
+            'includecontactrequests' => $includecontactrequests,
+            'includeprivacyinfo' => $includeprivacyinfo
+        ];
+        $params = self::validate_parameters(self::get_member_info_parameters(), $params);
+        $systemcontext = context_system::instance();
+        self::validate_context($systemcontext);
+
+        if (($USER->id != $referenceuserid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
+
+        return \core_message\helper::get_member_info(
+            $params['referenceuserid'],
+            $params['userids'],
+            $params['includecontactrequests'],
+            $params['includeprivacyinfo']
+        );
+    }
+
+    /**
+     * Get member info return description.
+     *
+     * @return external_description
+     */
+    public static function get_member_info_returns() {
+        return new external_multiple_structure(
+            self::get_conversation_member_structure(true)
+        );
     }
 }

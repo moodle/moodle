@@ -736,6 +736,11 @@ function core_message_user_preferences() {
             return $value;
         }
     );
+    $preferences['message_entertosend'] = array(
+        'type' => PARAM_BOOL,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => false
+    );
     $preferences['/^message_provider_([\w\d_]*)_logged(in|off)$/'] = array('isregex' => true, 'type' => PARAM_NOTAGS,
         'null' => NULL_NOT_ALLOWED, 'default' => 'none',
         'permissioncallback' => function ($user, $preferencename) {
@@ -762,4 +767,149 @@ function core_message_user_preferences() {
             return $parts ? join(',', $parts) : 'none';
         });
     return $preferences;
+}
+
+/**
+ * Renders the popup.
+ *
+ * @param renderer_base $renderer
+ * @return string The HTML
+ */
+function core_message_render_navbar_output(\renderer_base $renderer) {
+    global $USER, $CFG;
+
+    // Early bail out conditions.
+    if (!isloggedin() || isguestuser() || user_not_fully_set_up($USER) ||
+        get_user_preferences('auth_forcepasswordchange') ||
+        (!$USER->policyagreed && !is_siteadmin() &&
+            ($manager = new \core_privacy\local\sitepolicy\manager()) && $manager->is_defined())) {
+        return '';
+    }
+
+    $output = '';
+
+    // Add the messages popover.
+    if (!empty($CFG->messaging)) {
+        $unreadcount = \core_message\api::count_unread_conversations($USER);
+        $requestcount = \core_message\api::count_received_contact_requests($USER);
+        $context = [
+            'userid' => $USER->id,
+            'unreadcount' => $unreadcount + $requestcount
+        ];
+        $output .= $renderer->render_from_template('core_message/message_popover', $context);
+    }
+
+    return $output;
+}
+
+/**
+ * Render the message drawer to be included in the top of the body of
+ * each page.
+ *
+ * @return string HTML
+ */
+function core_message_standard_after_main_region_html() {
+    global $USER, $CFG, $PAGE;
+
+    // Early bail out conditions.
+    if (empty($CFG->messaging) || !isloggedin() || isguestuser() || user_not_fully_set_up($USER) ||
+        get_user_preferences('auth_forcepasswordchange') ||
+        (!$USER->policyagreed && !is_siteadmin() &&
+            ($manager = new \core_privacy\local\sitepolicy\manager()) && $manager->is_defined())) {
+        return '';
+    }
+
+    $renderer = $PAGE->get_renderer('core');
+    $individualconversationcount = \core_message\api::count_conversations(
+        $USER,
+        \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+        true
+    );
+    $groupconversationcount = \core_message\api::count_conversations(
+        $USER,
+        \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+        true
+    );
+    $systemcontext = \context_system::instance();
+    $usercontext = \context_user::instance($USER->id);
+    $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+    $favouriteconversationcount = $ufservice->count_favourites_by_type('core_message', 'message_conversations', $systemcontext);
+    $requestcount = \core_message\api::count_received_contact_requests($USER);
+    $contactscount = \core_message\api::count_contacts($USER->id);
+
+    // Get the privacy settings options for being messaged.
+    $privacysetting = \core_message\api::get_user_privacy_messaging_preference($USER->id);
+    $choices = [];
+    $choices[] = [
+        'value' => \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS,
+        'text' => get_string('contactableprivacy_onlycontacts', 'message'),
+        'checked' => ($privacysetting == \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS)
+    ];
+    $choices[] = [
+        'value' => \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER,
+        'text' => get_string('contactableprivacy_coursemember', 'message'),
+        'checked' => ($privacysetting == \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER)
+    ];
+    if (!empty($CFG->messagingallusers)) {
+        // Add the MESSAGE_PRIVACY_SITE option when site-wide messaging between users is enabled.
+        $choices[] = [
+            'value' => \core_message\api::MESSAGE_PRIVACY_SITE,
+            'text' => get_string('contactableprivacy_site', 'message'),
+            'checked' => ($privacysetting == \core_message\api::MESSAGE_PRIVACY_SITE)
+        ];
+    }
+    // Email settings.
+    $emailloggedin = get_user_preferences('message_provider_moodle_instantmessage_loggedin', 'none', $USER->id);
+    $emailloggedoff = get_user_preferences('message_provider_moodle_instantmessage_loggedoff', 'none', $USER->id);
+    $emailenabled = $emailloggedin == 'email' && $emailloggedoff == 'email';
+
+    // Enter to send.
+    $entertosend = get_user_preferences('message_entertosend', false, $USER->id);
+
+    return $renderer->render_from_template('core_message/message_drawer', [
+        'contactrequestcount' => $requestcount,
+        'loggedinuser' => [
+            'id' => $USER->id,
+            'midnight' => usergetmidnight(time())
+        ],
+        'overview' => [
+            'messages' => [
+                'expanded' => empty($favouriteconversationcount) && empty($groupconversationcount),
+                'count' => [
+                    'unread' => 0, // TODO: fix me.
+                    'total' => $individualconversationcount
+                ],
+                'placeholders' => array_fill(0, $individualconversationcount, true)
+            ],
+            'groupmessages' => [
+                'expanded' => empty($favouriteconversationcount) && !empty($groupconversationcount),
+                'count' => [
+                    'unread' => 0, // TODO: fix me.
+                    'total' => $groupconversationcount
+                ],
+                'placeholders' => array_fill(0, $groupconversationcount, true)
+            ],
+            'favourites' => [
+                'expanded' => !empty($favouriteconversationcount),
+                'count' => [
+                    'unread' => 0, // TODO: fix me.
+                    'total' => $favouriteconversationcount
+                ],
+                'placeholders' => array_fill(0, $favouriteconversationcount, true)
+            ],
+        ],
+        'contacts' => [
+            'sectioncontacts' => [
+                'placeholders' => array_fill(0, $contactscount > 50 ? 50 : $contactscount, true)
+            ],
+            'sectionrequests' => [
+                'placeholders' => array_fill(0, $requestcount > 50 ? 50 : $requestcount, true)
+            ],
+        ],
+        'settings' => [
+            'privacy' => $choices,
+            'emailenabled' => $emailenabled,
+            'entertosend' => $entertosend
+        ]
+    ]);
 }

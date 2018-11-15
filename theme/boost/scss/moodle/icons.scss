@@ -90,6 +90,7 @@ $iconsizes: map-merge((
         .icon {
             height: $length !important; /* stylelint-disable-line declaration-no-important */
             width: $length !important; /* stylelint-disable-line declaration-no-important */
+            font-size: $length !important; /* stylelint-disable-line declaration-no-important */
         }
     }
 }

@@ -1086,6 +1086,25 @@ $functions = array(
         'description' => 'Retrieve a list of conversations for a user',
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax' => true
+    ),
+    'core_message_get_conversation' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'get_conversation',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Retrieve a conversation for a user',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax' => true
+    ),
+    'core_message_get_conversation_between_users' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'get_conversation_between_users',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Retrieve a conversation for a user between another user',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax' => true
     ),
     'core_message_get_messages' => array(
         'classname' => 'core_message_external',
@@ -1101,6 +1120,15 @@ $functions = array(
         'methodname' => 'get_conversation_members',
         'classpath' => 'message/externallib.php',
         'description' => 'Retrieve a list of members in a conversation',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax' => true,
+    ),
+    'core_message_get_member_info' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'get_member_info',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Retrieve a user message profiles',
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
         'ajax' => true,
@@ -1257,6 +1285,7 @@ $functions = array(
         'classpath' => 'message/externallib.php',
         'description' => 'Mark a conversation or group of conversations as favourites/starred conversations.',
         'type' => 'write',
+        'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_unset_favourite_conversations' => array(
@@ -1265,6 +1294,7 @@ $functions = array(
         'classpath' => 'message/externallib.php',
         'description' => 'Unset a conversation or group of conversations as favourites/starred conversations.',
         'type' => 'write',
+        'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_notes_create_notes' => array(
@@ -1541,6 +1571,7 @@ $functions = array(
         'classpath' => 'user/externallib.php',
         'description' => 'Return user preferences.',
         'type' => 'read',
+        'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_user_update_picture' => array(

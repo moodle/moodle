@@ -185,13 +185,13 @@ XPATH
 .//*[self::label or self::div[contains(concat(' ', @class, ' '), ' fstaticlabel ')]][contains(., %locator%)]/ancestor::*[contains(concat(' ', @class, ' '), ' fitem ')]
 XPATH
         , 'message_area_region' => <<<XPATH
-.//div[@data-region='messaging-area']/descendant::*[@data-region = %locator%]
+.//div[@data-region='message-drawer']/descendant::*[@data-region = %locator%]
 XPATH
         , 'message_area_region_content' => <<<XPATH
-.//div[@data-region='messaging-area']/descendant::*[@data-region-content = %locator%]
+.//div[@data-region='message-drawer']/descendant::*[@data-region-content = %locator%]
 XPATH
         , 'message_area_action' => <<<XPATH
-.//div[@data-region='messaging-area']/descendant::*[@data-action = %locator%]
+.//div[@data-region='message-drawer']/descendant::*[@data-action = %locator%]
 XPATH
         , 'autocomplete_selection' => <<<XPATH
 .//div[contains(concat(' ', normalize-space(@class), ' '), concat(' ', 'form-autocomplete-selection', ' '))]/span[@role='listitem'][contains(normalize-space(.), %locator%)]

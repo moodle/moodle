@@ -27,6 +27,7 @@ require_once($CFG->dirroot . '/message/lib.php');
 require_once($CFG->dirroot . '/user/lib.php');
 
 $userid = optional_param('id', 0, PARAM_INT);    // User id.
+$currentuser = true;
 
 if (!$userid) {
     $userid = $USER->id;
@@ -58,6 +59,7 @@ if ($user->id == $USER->id) {
     //editing own message profile
     require_capability('moodle/user:editownmessageprofile', $systemcontext);
 } else {
+    $currentuser = false;
     // teachers, parents, etc.
     require_capability('moodle/user:editmessageprofile', $personalcontext);
     // no editing of guest user account
@@ -77,11 +79,16 @@ $strmessaging = get_string('messagepreferences', 'message');
 $PAGE->set_title($strmessaging);
 $PAGE->set_heading(fullname($user));
 
-// Grab the renderer
-$renderer = $PAGE->get_renderer('core', 'message');
-$messagingoptions = $renderer->render_user_message_preferences($user);
-
 echo $OUTPUT->header();
-echo $messagingoptions;
+if ($currentuser) {
+    // Open the message drawer to show the settings.
+    echo $OUTPUT->heading(get_string('messagepreferences', 'core_message'));
+    $PAGE->requires->js_call_amd('core_message/message_drawer_helper', 'showSettings');
+} else {
+    // Viewing another user's preferences so render the old page.
+    $renderer = $PAGE->get_renderer('core', 'message');
+    echo $renderer->render_user_message_preferences($user);
+}
+
 echo $OUTPUT->footer();
 

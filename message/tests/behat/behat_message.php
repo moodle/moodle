@@ -71,28 +71,30 @@ class behat_message extends behat_base {
         // Visit home page and follow messages.
         $this->execute("behat_general::i_am_on_homepage");
 
-        $this->execute("behat_navigation::i_follow_in_the_user_menu", get_string('messages', 'message'));
+        $this->execute("behat_general::i_click_on", [get_string('togglemessagemenu', 'core_message'), 'link']);
 
-        $this->execute('behat_general::i_click_on', array("contacts-view", 'message_area_action'));
+        $this->execute('behat_general::i_click_on', [get_string('search', 'core'), 'field']);
 
-        $this->execute('behat_general::wait_until_the_page_is_ready');
-
-        $this->execute('behat_forms::i_set_the_field_to',
-            array(get_string('searchforuserorcourse', 'message'), $this->escape($userfullname))
+        $this->execute('behat_forms::i_set_the_field_with_xpath_to',
+            [
+                "//*[@data-region='message-drawer']//input[@data-region='search-input']",
+                $this->escape($userfullname)
+            ]
         );
+
+        $this->execute('behat_general::i_click_on', ['[data-action="search"]', 'css_element']);
 
         $this->execute('behat_general::wait_until_the_page_is_ready');
 
         // Need to limit the click to the search results because the 'view-contact-profile' elements
         // can occur in two separate divs on the page.
         $this->execute('behat_general::i_click_on_in_the',
-            array(
-                "//div[@data-action='view-contact-msg']
-                [./div[contains(normalize-space(.), '" . $this->escape($userfullname) . "')]]",
-                'xpath_element',
-                "[data-region='messaging-area'] [data-region='search-results-area']",
+            [
+                $this->escape($userfullname),
+                'link',
+                "[data-region='message-drawer'] [data-region='search-results-container']",
                 "css_element",
-            )
+            ]
         );
 
         $this->execute('behat_general::wait_until_the_page_is_ready');
@@ -113,7 +115,14 @@ class behat_message extends behat_base {
             array("//textarea[@data-region='send-message-txt']", $this->escape($messagecontent))
         );
 
-        $this->execute("behat_forms::press_button", get_string('send', 'message'));
+        $this->execute('behat_general::i_click_on_in_the',
+            [
+                '[data-action="send-message"]',
+                'css_element',
+                "[data-region='message-drawer'] [data-region='footer-container'] [data-region='view-conversation']",
+                "css_element",
+            ]
+        );
     }
 
     /**

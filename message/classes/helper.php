@@ -218,10 +218,13 @@ class helper {
         $memberids = array_unique(array_map(function($message) {
             return $message->useridfrom;
         }, $messages));
-        // Get members information.
-        $arrmembers = self::get_member_info($userid, $memberids);
-        // Add the members to the conversation.
-        $conversation['members'] = $arrmembers;
+
+        if (!empty($memberids)) {
+            // Get members information.
+            $conversation['members'] = self::get_member_info($userid, $memberids);
+        } else {
+            $conversation['members'] = array();
+        }
 
         return $conversation;
     }
@@ -303,11 +306,13 @@ class helper {
         // Store the message if we have it.
         $data->ismessaging = false;
         $data->lastmessage = null;
+        $data->lastmessagedate = null;
         $data->messageid = null;
         if (isset($contact->smallmessage)) {
             $data->ismessaging = true;
             // Strip the HTML tags from the message for displaying in the contact area.
             $data->lastmessage = clean_param($contact->smallmessage, PARAM_NOTAGS);
+            $data->lastmessagedate = $contact->timecreated;
             $data->useridfrom = $contact->useridfrom;
             if (isset($contact->messageid)) {
                 $data->messageid = $contact->messageid;
@@ -504,11 +509,11 @@ class helper {
         $userssql = "SELECT $userfields, u.deleted, mc.id AS contactid, mub.id AS blockedid
                        FROM {user} u
                   LEFT JOIN {message_contacts} mc
-                         ON (mc.userid = ? AND mc.contactid = u.id)
+                         ON ((mc.userid = ? AND mc.contactid = u.id) OR (mc.userid = u.id AND mc.contactid = ?))
                   LEFT JOIN {message_users_blocked} mub
                          ON (mub.userid = ? AND mub.blockeduserid = u.id)
                       WHERE u.id $useridsql";
-        $usersparams = array_merge([$referenceuserid, $referenceuserid], $usersparams);
+        $usersparams = array_merge([$referenceuserid, $referenceuserid, $referenceuserid], $usersparams);
         $otherusers = $DB->get_records_sql($userssql, $usersparams);
 
         $members = [];
@@ -605,6 +610,7 @@ class helper {
             $data->profileimageurlsmall = $conv->members[$otheruser->id]->profileimageurlsmall;
             $data->ismessaging = isset($conv->messages[0]->text) ? true : false;
             $data->lastmessage = $conv->messages[0]->text ? clean_param($conv->messages[0]->text, PARAM_NOTAGS) : null;
+            $data->lastmessagedate = $conv->messages[0]->timecreated ?? null;
             $data->messageid = $conv->messages[0]->id ?? null;
             $data->isonline = $conv->members[$otheruser->id]->isonline ?? null;
             $data->isblocked = $conv->members[$otheruser->id]->isblocked ?? null;

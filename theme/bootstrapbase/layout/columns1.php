@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -68,6 +69,8 @@ echo $OUTPUT->doctype() ?>
             ?>
         </section>
     </div>
+
+    <?php echo $OUTPUT->standard_after_main_region_html() ?>
 
     <footer id="page-footer">
         <div id="course-footer"><?php echo $OUTPUT->course_footer(); ?></div>

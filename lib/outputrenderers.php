@@ -705,6 +705,14 @@ class core_renderer extends renderer_base {
             $output .= "\n".$CFG->additionalhtmltopofbody;
         }
 
+        // Give subsystems an opportunity to inject extra html content. The callback
+        // must always return a string containing valid html.
+        foreach (\core_component::get_core_subsystems() as $name => $path) {
+            if ($path) {
+                $output .= component_callback($name, 'before_standard_top_of_body_html', [], '');
+            }
+        }
+
         // Give plugins an opportunity to inject extra html content. The callback
         // must always return a string containing valid html.
         $pluginswithfunction = get_plugins_with_function('before_standard_top_of_body_html', 'lib.php');
@@ -935,6 +943,39 @@ class core_renderer extends renderer_base {
             $output .= "\n".$CFG->additionalhtmlfooter;
         }
         $output .= $this->unique_end_html_token;
+        return $output;
+    }
+
+    /**
+     * The standard HTML that should be output just before the <footer> tag.
+     * Designed to be called in theme layout.php files.
+     *
+     * @return string HTML fragment.
+     */
+    public function standard_after_main_region_html() {
+        global $CFG;
+        $output = '';
+        if ($this->page->pagelayout !== 'embedded' && !empty($CFG->additionalhtmlbottomofbody)) {
+            $output .= "\n".$CFG->additionalhtmlbottomofbody;
+        }
+
+        // Give subsystems an opportunity to inject extra html content. The callback
+        // must always return a string containing valid html.
+        foreach (\core_component::get_core_subsystems() as $name => $path) {
+            if ($path) {
+                $output .= component_callback($name, 'standard_after_main_region_html', [], '');
+            }
+        }
+
+        // Give plugins an opportunity to inject extra html content. The callback
+        // must always return a string containing valid html.
+        $pluginswithfunction = get_plugins_with_function('standard_after_main_region_html', 'lib.php');
+        foreach ($pluginswithfunction as $plugins) {
+            foreach ($plugins as $function) {
+                $output .= $function();
+            }
+        }
+
         return $output;
     }
 
@@ -3266,6 +3307,14 @@ EOD;
      */
     public function navbar_plugin_output() {
         $output = '';
+
+        // Give subsystems an opportunity to inject extra html content. The callback
+        // must always return a string containing valid html.
+        foreach (\core_component::get_core_subsystems() as $name => $path) {
+            if ($path) {
+                $output .= component_callback($name, 'render_navbar_output', [$this], '');
+            }
+        }
 
         if ($pluginsfunction = get_plugins_with_function('render_navbar_output')) {
             foreach ($pluginsfunction as $plugintype => $plugins) {

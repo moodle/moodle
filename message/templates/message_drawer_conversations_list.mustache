@@ -1,0 +1,93 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/message_drawer_conversations_list
+
+    This template will render a list of conversations for the message drawer.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * userid The logged in user id
+    * urls The URLs for the popover
+
+    Example context (json):
+    {}
+
+}}
+
+{{#conversations}}
+    <a
+        href="#"
+        class="p-2 d-flex list-group-item list-group-item-action border-0 align-items-center"
+        data-conversation-id="{{id}}"
+        {{#userid}}
+            data-user-id="{{.}}"
+        {{/userid}}
+    >
+        {{#imageurl}}
+            <img
+                class="rounded-circle"
+                src="{{{.}}}"
+                alt="{{name}}"
+                aria-hidden="true"
+                style="height: 38px"
+            >
+        {{/imageurl}}
+        {{#showonlinestatus}}
+            <span class="contact-status {{#isonline}}online{{/isonline}}"></span>
+        {{/showonlinestatus}}
+        <div class="w-100 text-truncate ml-2">
+            <div class="d-flex">
+                <strong class="m-0 text-truncate">{{name}}</strong>
+                <span class="{{^isblocked}}hidden{{/isblocked}}" data-region="contact-icon-blocked">
+                    {{#pix}} t/block, core, {{#str}} contactblocked, message {{/str}} {{/pix}}
+                </span>
+                <div
+                    class="ml-auto small {{^lastmessagedate}}hidden{{/lastmessagedate}}"
+                    data-region="last-message-date"
+                >
+                    {{#lastmessagedate}}
+                        {{#userdate}} {{.}}, {{#str}} strftimetime24, core_langconfig  {{/str}} {{/userdate}}
+                    {{/lastmessagedate}}
+                </div>
+            </div>
+            {{#subname}}
+                <p class="m-0 text-truncate">{{.}}</p>
+            {{/subname}}
+            <p class="m-0 font-weight-light text-truncate" data-region="last-message">
+                {{#sentfromcurrentuser}}{{#str}} you, core_message {{/str}}{{/sentfromcurrentuser}}
+                {{lastmessage}}
+            </p>
+        </div>
+
+        <span
+            class="badge badge-pill badge-primary bg-primary rounded-circle {{^unreadcount}}hidden{{/unreadcount}}"
+            data-region="unread-count"
+        >
+            {{unreadcount}}
+        </span>
+
+        <div class="text-muted">
+            {{> core_message/message_drawer_icon_forward }}
+        </div>
+    </a>
+{{/conversations}}
