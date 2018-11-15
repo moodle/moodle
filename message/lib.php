@@ -808,7 +808,7 @@ function core_message_render_navbar_output(\renderer_base $renderer) {
  *
  * @return string HTML
  */
-function core_message_before_standard_top_of_body_html() {
+function core_message_standard_after_main_region_html() {
     global $USER, $CFG, $PAGE;
 
     // Early bail out conditions.
