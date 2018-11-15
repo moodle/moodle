@@ -160,6 +160,16 @@ function(
     var getLoggedInUserProfile = function(body) {
         return {
             id: parseInt(body.attr('data-user-id'), 10),
+            fullname: null,
+            profileimageurl: null,
+            profileimageurlsmall: null,
+            isonline:  null,
+            showonlinestatus: null,
+            isblocked: null,
+            iscontact: null,
+            isdeleted: null,
+            canmessage:  null,
+            requirescontact: null,
             contactrequests: []
         };
     };

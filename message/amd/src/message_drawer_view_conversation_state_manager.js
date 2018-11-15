@@ -77,6 +77,31 @@ define(['jquery'], function($) {
     };
 
     /**
+     * Format members to be used in a state.
+     *
+     * @param  {Array} members The messages to format.
+     * @return {Array} Formatted members.
+     */
+    var formatMembers = function(members) {
+        return members.map(function(member) {
+            return {
+                id: member.id,
+                fullname: member.fullname,
+                profileimageurl: member.profileimageurl,
+                profileimageurlsmall: member.profileimageurlsmall,
+                isonline:  member.isonline,
+                showonlinestatus: member.showonlinestatus,
+                isblocked: member.isblocked,
+                iscontact: member.iscontact,
+                isdeleted: member.isdeleted,
+                canmessage:  member.canmessage,
+                requirescontact: member.requirescontact,
+                contactrequests: member.contactrequests || []
+            };
+        });
+    };
+
+    /**
      * Create an initial (blank) state.
      *
      * @param  {Number} midnight Midnight time.
@@ -190,7 +215,8 @@ define(['jquery'], function($) {
      */
     var addMembers = function(state, members) {
         var newState = cloneState(state);
-        members.forEach(function(member) {
+        var formattedMembers = formatMembers(members);
+        formattedMembers.forEach(function(member) {
             newState.members[member.id] = member;
         });
         return newState;
