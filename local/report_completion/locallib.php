@@ -230,9 +230,9 @@ class report_completion {
             // get the current list of populated ids.
             $idlistsql = "SELECT lit2.id FROM {local_iomad_track} lit2 JOIN {".$tempcomptablename."} tt2
                           ON (lit2.courseid = tt2.courseid AND lit2.userid=tt2.userid AND lit2.timecompleted = tt2.timecompleted
-                          AND lit2.timestarted = tt2.timestarted AND lit2.finalscore = tt2.finalscore)";
+                          AND lit2.timestarted = tt2.timestarted)";
             if (!empty($courseid)) {
-            $idlistsql .= " AND lit2.courseid = ".$courseid;
+                $idlistsql .= " AND lit2.courseid = ".$courseid;
             } 
             $idlist = implode(',', array_keys($DB->get_records_sql($idlistsql)));
             
