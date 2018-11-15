@@ -58,7 +58,7 @@ Feature: Edit user enrolment
     And I should see "Student 1" in the "Full name" "table_row"
     And I should see "Active" in the "//td[@class='user-enrol-status']" "xpath_element"
     And I should see "Manual enrolments" in the "Enrolment method" "table_row"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Enrolment details" "dialogue"
     And I click on "Manual enrolments" "icon" in the "student2" "table_row"
     And I should see "Enrolment details"
     And I should see "Student 2" in the "Full name" "table_row"

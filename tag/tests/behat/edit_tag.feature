@@ -177,7 +177,7 @@ Feature: Users can edit tags to add description or rename
     And I set the field "New name for tag Turtle" to "DOG"
     And I press key "13" in the field "New name for tag Turtle"
     And I should see "The tag name is already in use. Do you want to combine these tags?"
-    And I press "Cancel"
+    And I click on "Cancel" "button in the "Confirm" "dialogue"
     And "New name for tag" "field" should not exist
     And I should see "Turtle"
     And I should see "Dog"

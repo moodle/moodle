@@ -44,7 +44,7 @@ Feature: availability_group
     Then "Group" "button" should exist in the "Add restriction..." "dialogue"
 
     # Page P1 any group.
-    Given I click on "Group" "button"
+    Given I click on "Group" "button" in the "Add restriction..." "dialogue"
     And I set the field "Group" to "(Any group)"
     And I click on ".availability-item .availability-eye img" "css_element"
     And I set the following fields to these values:
@@ -61,7 +61,7 @@ Feature: availability_group
       | Page content | x  |
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
-    And I click on "Group" "button"
+    And I click on "Group" "button" in the "Add restriction..." "dialogue"
     And I set the field "Group" to "G1"
     And I click on ".availability-item .availability-eye img" "css_element"
     And I click on "Save and return to course" "button"
@@ -74,7 +74,7 @@ Feature: availability_group
       | Page content | x  |
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
-    And I click on "Group" "button"
+    And I click on "Group" "button" in the "Add restriction..." "dialogue"
     And I set the field "Group" to "G2"
     And I click on ".availability-item .availability-eye img" "css_element"
     And I click on "Save and return to course" "button"
