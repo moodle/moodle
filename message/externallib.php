@@ -1106,30 +1106,26 @@ class core_message_external extends external_api {
             'requirescontact' => new external_value(PARAM_BOOL, 'If the user requires to be contacts'),
         ];
 
-        if ($includecontactrequests) {
-            $result['contactrequests'] = new external_multiple_structure(
-                new external_single_structure(
-                    [
-                        'id' => new external_value(PARAM_INT, 'The id of the message'),
-                        'userid' => new external_value(PARAM_INT, 'The id of the user who sent the message'),
-                        'requesteduserid' => new external_value(PARAM_RAW, 'The text of the message'),
-                        'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the message'),
-                    ]
-                ), 'The contact requests', VALUE_OPTIONAL
-            );
-        }
+        $result['contactrequests'] = new external_multiple_structure(
+            new external_single_structure(
+                [
+                    'id' => new external_value(PARAM_INT, 'The id of the message'),
+                    'userid' => new external_value(PARAM_INT, 'The id of the user who sent the message'),
+                    'requesteduserid' => new external_value(PARAM_RAW, 'The text of the message'),
+                    'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the message'),
+                ]
+            ), 'The contact requests', VALUE_OPTIONAL
+        );
 
-        if ($includeconversations) {
-            $result['conversations'] = new external_multiple_structure(new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'Conversations id'),
-                    'type' => new external_value(PARAM_INT, 'Conversation type: private or public'),
-                    'name' => new external_value(PARAM_TEXT, 'Multilang compatible conversation name'. VALUE_OPTIONAL),
-                    'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the conversation'),
-                ), 'information about conversation', VALUE_OPTIONAL),
-                'Conversations between users', VALUE_OPTIONAL
-            );
-        }
+        $result['conversations'] = new external_multiple_structure(new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'Conversations id'),
+                'type' => new external_value(PARAM_INT, 'Conversation type: private or public'),
+                'name' => new external_value(PARAM_TEXT, 'Multilang compatible conversation name'. VALUE_OPTIONAL),
+                'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the conversation'),
+            ), 'information about conversation', VALUE_OPTIONAL),
+            'Conversations between users', VALUE_OPTIONAL
+        );
 
         return new external_single_structure(
             $result
