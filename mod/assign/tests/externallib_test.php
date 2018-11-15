@@ -373,6 +373,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create a student with an online text submission.
         // First attempt.
         $student = self::getDataGenerator()->create_user();
+        $teacher = self::getDataGenerator()->create_user();
         $submission = new stdClass();
         $submission->assignment = $assign1->id;
         $submission->userid = $student->id;
@@ -402,32 +403,32 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $onlinetextsubmission->assignment = $assign1->id;
         $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
 
-        // Create manual enrolment record.
-        $manualenroldata['enrol'] = 'manual';
-        $manualenroldata['status'] = 0;
-        $manualenroldata['courseid'] = $course1->id;
-        $enrolid = $DB->insert_record('enrol', $manualenroldata);
-
-        // Create a teacher and give them capabilities.
-        $context = context_course::instance($course1->id);
-        $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
-        $context = context_module::instance($assign1->cmid);
-        $this->assignUserCapability('mod/assign:grade', $context->id, $roleid);
-
-        // Create the teacher's enrolment record.
-        $userenrolmentdata['status'] = 0;
-        $userenrolmentdata['enrolid'] = $enrolid;
-        $userenrolmentdata['userid'] = $USER->id;
-        $DB->insert_record('user_enrolments', $userenrolmentdata);
+        // Enrol the teacher in the course.
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($teacher->id, $course1->id, $teacherrole->id);
+        $this->setUser($teacher);
 
         $assignmentids[] = $assign1->id;
         $result = mod_assign_external::get_submissions($assignmentids);
         $result = external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
 
-        // Check the online text submission is returned.
+        // Check the online text submission is NOT returned because the student is not yet enrolled in the course.
         $this->assertEquals(1, count($result['assignments']));
         $assignment = $result['assignments'][0];
         $this->assertEquals($assign1->id, $assignment['assignmentid']);
+        $this->assertEquals(0, count($assignment['submissions']));
+
+        // Enrol the student in the course.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id);
+
+        $result = mod_assign_external::get_submissions($assignmentids);
+        $result = external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
+
+        $this->assertEquals(1, count($result['assignments']));
+        $assignment = $result['assignments'][0];
+        $this->assertEquals($assign1->id, $assignment['assignmentid']);
+        // Now, we get the submission because the user is enrolled.
         $this->assertEquals(1, count($assignment['submissions']));
         $submission = $assignment['submissions'][0];
         $this->assertEquals($sid, $submission['id']);
