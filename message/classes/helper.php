@@ -531,8 +531,12 @@ class helper {
             $data->profileimageurlsmall = $userpicture->get_url($PAGE)->out(false);
 
             // Set online status indicators.
-            $data->isonline = self::show_online_status($member) ? self::is_online($member->lastaccess) : null;
-            $data->showonlinestatus = is_null($data->isonline) ? false : true;
+            $data->isonline = false;
+            $data->showonlinestatus = false;
+            if (!$member->deleted) {
+                $data->isonline = self::show_online_status($member) ? self::is_online($member->lastaccess) : null;
+                $data->showonlinestatus = is_null($data->isonline) ? false : true;
+            }
 
             // Set contact and blocked status indicators.
             $data->iscontact = ($member->contactid) ? true : false;

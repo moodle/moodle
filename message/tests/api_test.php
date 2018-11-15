@@ -1370,6 +1370,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // We should have 5, as $ic1 drops off the list.
         // Group conversations remain albeit with less members.
         delete_user($user2);
+        // This is to confirm an exception is not thrown when a user AND the user context is deleted.
+        // We no longer delete the user context, but historically we did.
+        context_helper::delete_instance(CONTEXT_USER, $user2->id);
         $conversations = \core_message\api::get_conversations($user1->id);
         $this->assertCount(5, $conversations);
         $this->assertEquals($gc3->id, $conversations[0]->id);
