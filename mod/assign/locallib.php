@@ -8754,13 +8754,23 @@ class assign {
     }
 
     /**
-     * Update the module completion status (set it viewed).
+     * Update the module completion status (set it viewed) and trigger module viewed event.
      *
      * @since Moodle 3.2
      */
     public function set_module_viewed() {
         $completion = new completion_info($this->get_course());
         $completion->set_module_viewed($this->get_course_module());
+
+        // Trigger the course module viewed event.
+        $assigninstance = $this->get_instance();
+        $event = \mod_assign\event\course_module_viewed::create(array(
+                'objectid' => $assigninstance->id,
+                'context' => $this->get_context()
+        ));
+
+        $event->add_record_snapshot('assign', $assigninstance);
+        $event->trigger();
     }
 
     /**
