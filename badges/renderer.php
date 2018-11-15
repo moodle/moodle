@@ -348,15 +348,25 @@ class core_badges_renderer extends plugin_renderer_base {
         $output .= $this->output->heading(get_string('badgedetails', 'badges'), 3);
         $dl = array();
         $dl[get_string('name')] = $badge->name;
-        $dl[get_string('version', 'badges')] = $badge->version;
+        if (!empty($badge->version)) {
+            $dl[get_string('version', 'badges')] = $badge->version;
+        }
         $dl[get_string('language')] = $languages[$badge->language];
         $dl[get_string('description', 'badges')] = $badge->description;
-        $dl[get_string('imageauthorname', 'badges')] = $badge->imageauthorname;
-        $dl[get_string('imageauthoremail', 'badges')] =
-            html_writer::tag('a', $badge->imageauthoremail, array('href' => 'mailto:' . $badge->imageauthoremail));
-        $dl[get_string('imageauthorurl', 'badges')] =
-            html_writer::link($badge->imageauthorurl, $badge->imageauthorurl, array('target' => '_blank'));
-        $dl[get_string('imagecaption', 'badges')] = $badge->imagecaption;
+        if (!empty($badge->imageauthorname)) {
+            $dl[get_string('imageauthorname', 'badges')] = $badge->imageauthorname;
+        }
+        if (!empty($badge->imageauthoremail)) {
+            $dl[get_string('imageauthoremail', 'badges')] =
+                    html_writer::tag('a', $badge->imageauthoremail, array('href' => 'mailto:' . $badge->imageauthoremail));
+        }
+        if (!empty($badge->imageauthorurl)) {
+            $dl[get_string('imageauthorurl', 'badges')] =
+                    html_writer::link($badge->imageauthorurl, $badge->imageauthorurl, array('target' => '_blank'));
+        }
+        if (!empty($badge->imagecaption)) {
+            $dl[get_string('imagecaption', 'badges')] = $badge->imagecaption;
+        }
 
         if ($badge->type == BADGE_TYPE_COURSE && isset($badge->courseid)) {
             $coursename = $DB->get_field('course', 'fullname', array('id' => $badge->courseid));
