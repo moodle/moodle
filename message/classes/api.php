@@ -1797,7 +1797,7 @@ class api {
      * @return int    The default messaging preference.
      */
     public static function get_user_privacy_messaging_preference(int $userid) : int {
-        global $CFG;
+        global $CFG, $USER;
 
         // When $CFG->messagingallusers is enabled, default value for the messaging preference will be "Anyone on the site";
         // otherwise, the default value will be "My contacts and anyone in my courses".
@@ -1806,7 +1806,12 @@ class api {
         } else {
             $defaultprefvalue = self::MESSAGE_PRIVACY_SITE;
         }
-        $privacypreference = get_user_preferences('message_blocknoncontacts', $defaultprefvalue, $userid);
+        if ($userid == $USER->id) {
+            $user = $USER;
+        } else {
+            $user = $userid;
+        }
+        $privacypreference = get_user_preferences('message_blocknoncontacts', $defaultprefvalue, $user);
 
         // When the $CFG->messagingallusers privacy setting is disabled, MESSAGE_PRIVACY_SITE is
         // also disabled, so it has to be replaced to MESSAGE_PRIVACY_COURSEMEMBER.

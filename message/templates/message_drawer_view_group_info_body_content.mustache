@@ -54,7 +54,7 @@
     <h2 class="mt-2 mb-0 text-center text-truncate h4">{{name}}</h2>
     {{#subname}}<h3 class="mt-2 mb-0 text-center text-truncate h5">{{.}}</h3>{{/subname}}
 </div>
-<h3 class="border-bottom h6 mt-3 px-3 py-2 mb-0 font-weight-bold">{{#str}} participants, core_message {{/str}}</h3>
+<h3 class="border-bottom h6 mt-3 px-3 py-2 mb-0 font-weight-bold">{{#str}} otherparticipants, core_message {{/str}}</h3>
 <div class="pt-1 bg-white" data-region="members-list-container" style="overflow-y: auto">
     {{< core_message/message_drawer_lazy_load_list }}
         {{$rootattributes}}

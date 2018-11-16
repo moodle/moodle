@@ -14095,38 +14095,10 @@ a.ygtvspacer:hover {
       right: 0;
       left: 0;
       top: 0;
-      bottom: 0;
-      opacity: 1;
-      transition: all 0.2s ease-in-out; }
-      .message-drawer .body-container > *.hidden {
-        display: block;
-        left: 320px;
-        right: -320px;
-        opacity: 0;
-        visibility: hidden; }
-        .message-drawer .body-container > *.hidden.previous {
-          left: -320px;
-          right: 320px; }
+      bottom: 0; }
   .message-drawer .footer-container {
     flex-shrink: 0;
     overflow-x: hidden; }
-    .message-drawer .footer-container > * {
-      max-height: 2000px;
-      opacity: 1;
-      transition: all 0.2s ease-in-out; }
-      .message-drawer .footer-container > *.hidden {
-        display: block;
-        max-height: 0;
-        opacity: 0;
-        padding: 0 !important;
-        /* stylelint-disable-line declaration-no-important */
-        border: 0 !important;
-        /* stylelint-disable-line declaration-no-important */
-        visibility: hidden;
-        transform: translate(320px);
-        transition: all .2s ease-in-out, max-height .2s .2s ease-in-out; }
-        .message-drawer .footer-container > *.hidden.previous {
-          transform: translate(-320px); }
   .message-drawer .matchtext {
     background-color: #b5d9f9;
     color: #373a3c;

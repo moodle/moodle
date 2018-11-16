@@ -99,6 +99,8 @@ function(
     var newMessagesPollTimer = null;
     // If the UI is currently resetting.
     var isResetting = true;
+    // If the UI is currently sending a message.
+    var isSendingMessage = false;
     // This is the render function which will be generated when this module is
     // first called. See generateRenderFunction for details.
     var render = null;
@@ -523,7 +525,7 @@ function(
             var messages = viewState.messages;
             var mostRecentMessage = messages.length ? messages[messages.length - 1] : null;
 
-            if (mostRecentMessage && !isResetting) {
+            if (mostRecentMessage && !isResetting && !isSendingMessage) {
                 // There may be multiple messages with the same time created value since
                 // the accuracy is only down to the second. The server will include these
                 // messages in the result (since it does a >= comparison on time from) so
@@ -555,6 +557,10 @@ function(
                             // If we found some results then restart the polling timer
                             // because the other user might be sending messages.
                             newMessagesPollTimer.restart();
+                            // We've also got a new last message so publish that for other
+                            // components to update.
+                            var conversation = formatConversationForEvent(viewState);
+                            PubSub.publish(MessageDrawerEvents.CONVERSATION_NEW_LAST_MESSAGE, conversation);
                             return markConversationAsRead(conversationId);
                         } else {
                             return result;
@@ -950,6 +956,7 @@ function(
      * @return {Promise} Renderer promise.
      */
     var sendMessage = function(conversationId, text) {
+        isSendingMessage = true;
         var newState = StateManager.setSendingMessage(viewState, true);
         var newConversationId = null;
         return render(newState)
@@ -983,11 +990,13 @@ function(
 
                 return render(newState)
                     .then(function() {
+                        isSendingMessage = false;
                         PubSub.publish(MessageDrawerEvents.CONVERSATION_NEW_LAST_MESSAGE, conversation);
                         return;
                     });
             })
             .catch(function(error) {
+                isSendingMessage = false;
                 var newState = StateManager.setSendingMessage(viewState, false);
                 render(newState);
                 Notification.exception(error);

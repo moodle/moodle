@@ -859,12 +859,12 @@ function core_message_standard_after_main_region_html() {
         ];
     }
     // Email settings.
-    $emailloggedin = get_user_preferences('message_provider_moodle_instantmessage_loggedin', 'none', $USER->id);
-    $emailloggedoff = get_user_preferences('message_provider_moodle_instantmessage_loggedoff', 'none', $USER->id);
-    $emailenabled = $emailloggedin == 'email' && $emailloggedoff == 'email';
+    $emailloggedin = get_user_preferences('message_provider_moodle_instantmessage_loggedin', 'none', $USER);
+    $emailloggedoff = get_user_preferences('message_provider_moodle_instantmessage_loggedoff', 'none', $USER);
+    $emailenabled = $emailloggedin == 'email' || $emailloggedoff == 'email';
 
     // Enter to send.
-    $entertosend = get_user_preferences('message_entertosend', false, $USER->id);
+    $entertosend = get_user_preferences('message_entertosend', false, $USER);
 
     return $renderer->render_from_template('core_message/message_drawer', [
         'contactrequestcount' => $requestcount,
