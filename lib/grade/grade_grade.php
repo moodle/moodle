@@ -1067,7 +1067,7 @@ class grade_grade extends grade_object {
      *
      * @param int|null $historyid
      */
-    protected function update_feedback_files(int $historyid = null){
+    protected function update_feedback_files(int $historyid = null) {
         global $CFG;
 
         // We only support feedback files for modules atm.
@@ -1082,6 +1082,23 @@ class grade_grade extends grade_object {
             if (empty($CFG->disablegradehistory) && $historyid) {
                 $this->copy_feedback_files($context, GRADE_HISTORY_FEEDBACK_FILEAREA, $historyid);
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * Handles deleting feedback files in the gradebook.
+     */
+    protected function delete_feedback_files() {
+        // We only support feedback files for modules atm.
+        if ($this->grade_item && $this->grade_item->is_external_item()) {
+            $context = $this->get_context();
+
+            $fs = new file_storage();
+            $fs->delete_area_files($context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA, $this->id);
+
+            // Grade history only gets deleted when we delete the whole grade item.
         }
 
         return true;

@@ -113,9 +113,32 @@ class core_grade_item_testcase extends grade_base_testcase {
         $grade_item = new grade_item($this->grade_items[7], false); // Use a grade item not touched by previous (or future) tests.
         $this->assertTrue(method_exists($grade_item, 'delete'));
 
+        // Add two files.
+        $dummy = array(
+            'contextid' => $grade_item->get_context()->id,
+            'component' => GRADE_FILE_COMPONENT,
+            'filearea' => GRADE_HISTORY_FEEDBACK_FILEAREA,
+            'itemid' => 1,
+            'filepath' => '/',
+            'filename' => 'feedback1.txt'
+        );
+
+        $fs = get_file_storage();
+        $fs->create_file_from_string($dummy, '');
+
+        $dummy['itemid'] = 2;
+        $fs->create_file_from_string($dummy, '');
+
+        $files = $fs->get_area_files($grade_item->get_context()->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        // Includes directories.
+        $this->assertCount(4, $files);
+
         $this->assertTrue($grade_item->delete());
 
         $this->assertFalse($DB->get_record('grade_items', array('id' => $grade_item->id)));
+
+        $files = $fs->get_area_files($grade_item->get_context()->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEmpty($files);
 
         // Keep our reference collection the same as the database.
         unset($this->grade_items[7]);
