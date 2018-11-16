@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+  <!-- question: 0  -->
+  <question type="category">
+    <category>
+      <text>$course$/Test questions</text>
+
+    </category>
+  </question>
+
+  <!-- question: 1357  -->
+  <question type="ordering">
+    <name>
+      <text>dd-ordering 1</text>
+    </name>
+    <questiontext format="html">
+      <text>Put these words in order.</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>The correct answer is "Modular Object Oriented Dynamic Learning Environment".</p>]]></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber>dd1</idnumber>
+    <layouttype>HORIZONTAL</layouttype>
+    <selecttype>ALL</selecttype>
+    <selectcount>0</selectcount>
+    <gradingtype>ABSOLUTE_POSITION</gradingtype>
+    <showgrading>SHOW</showgrading>
+    <correctfeedback format="html">
+      <text>Your answer is correct.</text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text>Your answer is partially correct.</text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text>Your answer is incorrect.</text>
+    </incorrectfeedback>
+    <answer fraction="1.0000000" format="moodle_auto_format">
+      <text>Modular</text>
+    </answer>
+    <answer fraction="2.0000000" format="moodle_auto_format">
+      <text>Object</text>
+    </answer>
+    <answer fraction="3.0000000" format="moodle_auto_format">
+      <text>Oriented</text>
+    </answer>
+    <answer fraction="4.0000000" format="moodle_auto_format">
+      <text>Dynamic</text>
+    </answer>
+    <answer fraction="5.0000000" format="moodle_auto_format">
+      <text>Learning</text>
+    </answer>
+    <answer fraction="6.0000000" format="moodle_auto_format">
+      <text>Environment</text>
+    </answer>
+  </question>
+</quiz>
