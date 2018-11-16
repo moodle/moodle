@@ -1707,7 +1707,7 @@ class core_message_external extends external_api {
         } else {
             // We have to throw an exception here because the external functions annoyingly
             // don't accept null to be returned for a single structure.
-            throw new \moodle_exception('Conversation does not exist');
+            throw new \moodle_exception('conversationdoesntexist');
         }
     }
 
@@ -1812,7 +1812,7 @@ class core_message_external extends external_api {
         } else {
             // We have to throw an exception here because the external functions annoyingly
             // don't accept null to be returned for a single structure.
-            throw new \moodle_exception('Conversation does not exist');
+            throw new \moodle_exception('conversationdoesntexist');
         }
     }
 
