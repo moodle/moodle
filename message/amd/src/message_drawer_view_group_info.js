@@ -108,7 +108,10 @@ function(
 
                     offset = offset + limit;
 
-                    return members;
+                    // Filter out the logged in user so that they don't appear in the list.
+                    return members.filter(function(member) {
+                        return member.id != userId;
+                    });
                 });
         };
     };

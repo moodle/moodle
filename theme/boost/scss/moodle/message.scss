@@ -1225,48 +1225,12 @@ $message-drawer-width: 320px;
             left: 0;
             top: 0;
             bottom: 0;
-            opacity: 1;
-            @include transition();
-
-            &.hidden {
-                display: block;
-                left: $message-drawer-width;
-                right: $message-drawer-width * -1;
-                opacity: 0;
-                visibility: hidden;
-
-                &.previous {
-                    left: $message-drawer-width * -1;
-                    right: $message-drawer-width;
-                }
-            }
         }
     }
 
     .footer-container {
         flex-shrink: 0;
         overflow-x: hidden;
-
-        & > * {
-            max-height: 2000px;
-            opacity: 1;
-            @include transition();
-
-            &.hidden {
-                display: block;
-                max-height: 0;
-                opacity: 0;
-                padding: 0 !important; /* stylelint-disable-line declaration-no-important */
-                border: 0 !important; /* stylelint-disable-line declaration-no-important */
-                visibility: hidden;
-                transform: translate(#{$message-drawer-width});
-                transition: all .2s ease-in-out, max-height .2s .2s ease-in-out;
-
-                &.previous {
-                    transform: translate(#{($message-drawer-width * -1)});
-                }
-            }
-        }
     }
 
     .matchtext {
