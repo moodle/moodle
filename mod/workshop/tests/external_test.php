@@ -1451,6 +1451,7 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $result = mod_workshop_external::get_reviewer_assessments($this->workshop->id, $this->student->id);
         $result = external_api::clean_returnvalue(mod_workshop_external::get_reviewer_assessments_returns(), $result);
         $this->assertCount(2, $result['assessments']);
+        $this->assertArrayNotHasKey('feedbackreviewer', $result['assessments'][0]);
     }
 
     /**
