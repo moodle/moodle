@@ -732,6 +732,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
         $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
 
+        $convid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        $conv2id = \core_message\api::get_conversation_between_users([$user1->id, $user3->id]);
+
         // Block user 3.
         \core_message\api::block_user($user1->id, $user3->id);
 
@@ -755,6 +758,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertFalse($message1->isread);
         $this->assertFalse($message1->isblocked);
         $this->assertNull($message1->unreadcount);
+        $this->assertEquals($convid, $message1->conversationid);
 
         $this->assertEquals($user2->id, $message2->userid);
         $this->assertEquals($user1->id, $message2->useridfrom);
@@ -766,6 +770,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertTrue($message2->isread);
         $this->assertFalse($message2->isblocked);
         $this->assertNull($message2->unreadcount);
+        $this->assertEquals($convid, $message2->conversationid);
 
         $this->assertEquals($user3->id, $message3->userid);
         $this->assertEquals($user3->id, $message3->useridfrom);
@@ -777,6 +782,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertFalse($message3->isread);
         $this->assertTrue($message3->isblocked);
         $this->assertNull($message3->unreadcount);
+        $this->assertEquals($conv2id, $message3->conversationid);
     }
 
     /**

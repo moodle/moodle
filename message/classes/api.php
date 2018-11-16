@@ -100,8 +100,8 @@ class api {
         $ufields2 = \user_picture::fields('u2', array('lastaccess'), 'userto_id', 'userto_');
 
         $sql = "SELECT m.id, m.useridfrom, mcm.userid as useridto, m.subject, m.fullmessage, m.fullmessagehtml, m.fullmessageformat,
-                       m.smallmessage, m.timecreated, 0 as isread, $ufields, mub.id as userfrom_blocked, $ufields2,
-                       mub2.id as userto_blocked
+                       m.smallmessage, m.conversationid, m.timecreated, 0 as isread, $ufields, mub.id as userfrom_blocked,
+                       $ufields2, mub2.id as userto_blocked
                   FROM {messages} m
             INNER JOIN {user} u
                     ON u.id = m.useridfrom

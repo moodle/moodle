@@ -1049,6 +1049,7 @@ class core_message_external extends external_api {
                 'isblocked' => new external_value(PARAM_BOOL, 'If the user has been blocked'),
                 'unreadcount' => new external_value(PARAM_INT, 'The number of unread messages in this conversation',
                     VALUE_DEFAULT, null),
+                'conversationid' => new external_value(PARAM_INT, 'The id of the conversation', VALUE_DEFAULT, null),
             )
         );
     }

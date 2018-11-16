@@ -326,6 +326,7 @@ class helper {
         $data->isblocked = isset($contact->blocked) ? (bool) $contact->blocked : false;
         $data->isread = isset($contact->isread) ? (bool) $contact->isread : false;
         $data->unreadcount = isset($contact->unreadcount) ? $contact->unreadcount : null;
+        $data->conversationid = $contact->conversationid ?? null;
 
         return $data;
     }

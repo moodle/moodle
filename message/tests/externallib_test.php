@@ -2653,13 +2653,13 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
         $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
         $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+        $convid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
 
         // Perform a search.
         $result = core_message_external::data_for_messagearea_search_messages($user1->id, 'o');
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_search_messages_returns(),
-            $result);
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_search_messages_returns(), $result);
 
         // Confirm the data is correct.
         $messages = $result['contacts'];
@@ -2678,6 +2678,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertFalse($message1['isread']);
         $this->assertFalse($message1['isblocked']);
         $this->assertNull($message1['unreadcount']);
+        $this->assertEquals($convid, $message1['conversationid']);
 
         $this->assertEquals($user2->id, $message2['userid']);
         $this->assertEquals(fullname($user2), $message2['fullname']);
@@ -2689,6 +2690,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertTrue($message2['isread']);
         $this->assertFalse($message2['isblocked']);
         $this->assertNull($message2['unreadcount']);
+        $this->assertEquals($convid, $message2['conversationid']);
     }
 
     /**
