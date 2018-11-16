@@ -3823,12 +3823,14 @@ class core_course_external extends external_api {
 
             $warning = [];
 
-            $favouriteexists = $ufservice->favourite_exists('core_course', 'courses', $course['id'], \context_system::instance());
+            $favouriteexists = $ufservice->favourite_exists('core_course', 'courses', $course['id'],
+                    \context_course::instance($course['id']));
 
             if ($course['favourite']) {
                 if (!$favouriteexists) {
                     try {
-                        $ufservice->create_favourite('core_course', 'courses', $course['id'], \context_system::instance());
+                        $ufservice->create_favourite('core_course', 'courses', $course['id'],
+                                \context_course::instance($course['id']));
                     } catch (Exception $e) {
                         $warning['courseid'] = $course['id'];
                         if ($e instanceof moodle_exception) {
@@ -3849,7 +3851,8 @@ class core_course_external extends external_api {
             } else {
                 if ($favouriteexists) {
                     try {
-                        $ufservice->delete_favourite('core_course', 'courses', $course['id'], \context_system::instance());
+                        $ufservice->delete_favourite('core_course', 'courses', $course['id'],
+                                \context_course::instance($course['id']));
                     } catch (Exception $e) {
                         $warning['courseid'] = $course['id'];
                         if ($e instanceof moodle_exception) {
