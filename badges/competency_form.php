@@ -76,4 +76,19 @@ class competency_alignment_form extends moodleform {
             }
         }
     }
+
+    /**
+     * Validate the data from the form.
+     *
+     * @param  array $data form data
+     * @param  array $files form files
+     * @return array An array of error messages.
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        if (!empty($data['targeturl']) && !preg_match('@^https?://.+@', $data['targeturl'])) {
+            $errors['targeturl'] = get_string('invalidurl', 'badges');
+        }
+        return $errors;
+    }
 }
