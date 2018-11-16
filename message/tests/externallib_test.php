@@ -5077,7 +5077,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
      */
     public function test_get_conversations_group_linked() {
         $this->resetAfterTest();
-        global $CFG;
+        global $CFG, $DB;
 
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
@@ -5109,6 +5109,13 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($course1->shortname, $conversations[0]['subname']);
         $groupimageurl = get_group_picture_url($group1, $group1->courseid, true);
         $this->assertEquals($groupimageurl, $conversations[0]['imageurl']);
+
+        // Now, disable the conversation linked to the group and verify it's no longer returned.
+        $DB->set_field('message_conversations', 'enabled', 0, ['id' => $conversations[0]['id']]);
+        $result = core_message_external::get_conversations($user1->id, 0, 20, null, false);
+        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $conversations = $result['conversations'];
+        $this->assertCount(0, $conversations);
     }
 
     /**
