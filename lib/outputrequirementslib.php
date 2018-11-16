@@ -999,37 +999,47 @@ class page_requirements_manager {
     }
 
     /**
-     * This function creates a minimal JS script that requires and calls a single function from an AMD module with arguments.
-     * If it is called multiple times, it will be executed multiple times.
+     * Load an AMD module and eventually call its method.
      *
-     * @param string $fullmodule The format for module names is <component name>/<module name>.
-     * @param string $func The function from the module to call
-     * @param array $params The params to pass to the function. They will be json encoded, so no nasty classes/types please.
+     * This function creates a minimal inline JS snippet that requires an AMD module and eventually calls a single
+     * function from the module with given arguments. If it is called multiple times, it will be create multiple
+     * snippets.
+     *
+     * @param string $fullmodule The name of the AMD module to load, formatted as <component name>/<module name>.
+     * @param string $func Optional function from the module to call, defaults to just loading the AMD module.
+     * @param array $params The params to pass to the function (will be serialized into JSON).
      */
-    public function js_call_amd($fullmodule, $func, $params = array()) {
+    public function js_call_amd($fullmodule, $func = null, $params = array()) {
         global $CFG;
 
         list($component, $module) = explode('/', $fullmodule, 2);
 
         $component = clean_param($component, PARAM_COMPONENT);
         $module = clean_param($module, PARAM_ALPHANUMEXT);
-        $func = clean_param($func, PARAM_ALPHANUMEXT);
 
-        $jsonparams = array();
-        foreach ($params as $param) {
-            $jsonparams[] = json_encode($param);
-        }
-        $strparams = implode(', ', $jsonparams);
-        if ($CFG->debugdeveloper) {
-            $toomanyparamslimit = 1024;
-            if (strlen($strparams) > $toomanyparamslimit) {
-                debugging('Too much data passed as arguments to js_call_amd("' . $fullmodule . '", "' . $func .
-                        '"). Generally there are better ways to pass lots of data from PHP to JavaScript, for example via Ajax, data attributes, ... . ' .
-                        'This warning is triggered if the argument string becomes longer than ' . $toomanyparamslimit . ' characters.', DEBUG_DEVELOPER);
+        if ($func !== null) {
+            $func = clean_param($func, PARAM_ALPHANUMEXT);
+
+            $jsonparams = array();
+            foreach ($params as $param) {
+                $jsonparams[] = json_encode($param);
             }
-        }
+            $strparams = implode(', ', $jsonparams);
+            if ($CFG->debugdeveloper) {
+                $toomanyparamslimit = 1024;
+                if (strlen($strparams) > $toomanyparamslimit) {
+                    debugging('Too much data passed as arguments to js_call_amd("' . $fullmodule . '", "' . $func .
+                        '"). Generally there are better ways to pass lots of data from PHP to JavaScript, for example via Ajax, ' .
+                        'data attributes, ... . This warning is triggered if the argument string becomes longer than ' .
+                        $toomanyparamslimit . ' characters.', DEBUG_DEVELOPER);
+                }
+            }
 
-        $js = 'require(["' . $component . '/' . $module . '"], function(amd) { amd.' . $func . '(' . $strparams . '); });';
+            $js = 'require(["' . $component . '/' . $module . '"], function(amd) { amd.' . $func . '(' . $strparams . '); });';
+
+        } else {
+            $js = 'require(["' . $component . '/' . $module . '"]);';
+        }
 
         $this->js_amd_inline($js);
     }
