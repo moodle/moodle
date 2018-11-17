@@ -22,7 +22,7 @@ Feature: Test creating a drag and drop onto image question
   Scenario: Create a drag and drop onto image question
     When I press "Create a new question ..."
     And I set the field "Drag and drop onto image" to "1"
-    And I click on "Add" "button" in the "Choose a new question type to add" "dialogue"
+    And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
     And I set the field "Question name" to "Drag and drop onto image 001"
     And I set the field "Question text" to "Identify the features in this cross-section."
     And I set the field "General feedback" to "The locations are now labelled on the diagram below."

@@ -120,7 +120,7 @@ Feature: Basic recycle bin functionality
     And I should see "Test assign 2"
     When I click on "Delete all" "link"
     Then I should see "Are you sure you want to delete all items from the recycle bin?"
-    And I click on "Cancel" "button" in the "Add restriction..." "dialogue"
+    And I click on "Cancel" "button" in the "Confirmation" "dialogue"
     And I should see "Test assign 1"
     And I should see "Test assign 2"
     And I click on "Delete all" "link"
