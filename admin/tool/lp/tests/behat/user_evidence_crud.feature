@@ -53,10 +53,10 @@ Feature: Manage evidence of prior learning
     And I follow "Evidence of prior learning"
     And I should see "List of evidence"
     And I click on "Delete" of edit menu in the "Evidence-4" row
-    And I click on "Cancel" "button"
+    And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I click on "Delete" of edit menu in the "Evidence-4" row
     And "Confirm" "dialogue" should be visible
-    When I click on "Delete" "button"
+    When I click on "Delete" "button" in the "Confirm" "dialogue"
     And I wait until the page is ready
     Then I should not see "Evidence-4"
 

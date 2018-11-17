@@ -25,7 +25,7 @@ Feature: The questions can be tagged
     And I navigate to "Question bank > Questions" in current page administration
     And I press "Create a new question ..."
     And I set the field "item_qtype_truefalse" to "1"
-    And I click on "Add" "button" in the "Confirm" "dialogue"
+    And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
     And I expand all fieldsets
     And I open the autocomplete suggestions list
     Then "foo" "autocomplete_suggestions" should exist
