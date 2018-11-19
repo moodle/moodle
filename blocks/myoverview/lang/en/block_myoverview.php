@@ -60,6 +60,7 @@ $string['pluginname'] = 'Course overview';
 $string['privacy:metadata:overviewsortpreference'] = 'The Course overview block sort preference.';
 $string['privacy:metadata:overviewviewpreference'] = 'The Course overview block view preference.';
 $string['privacy:metadata:overviewgroupingpreference'] = 'The Course overview block grouping preference.';
+$string['privacy:metadata:overviewpagingpreference'] = 'The Course overview block paging preference.';
 $string['removefromfavourites'] = 'Unstar this course';
 $string['summary'] = 'Summary';
 $string['title'] = 'Title';

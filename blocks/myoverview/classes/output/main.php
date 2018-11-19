@@ -60,6 +60,13 @@ class main implements renderable, templatable {
     private $view;
 
     /**
+     * Store the paging preference
+     *
+     * @var string String matching the paging constants defined in myoverview/lib.php
+     */
+    private $paging;
+
+    /**
      * main constructor.
      * Initialize the user preferences
      *
@@ -67,10 +74,11 @@ class main implements renderable, templatable {
      * @param string $sort Sort user preference
      * @param string $view Display user preference
      */
-    public function __construct($grouping, $sort, $view) {
+    public function __construct($grouping, $sort, $view, $paging) {
         $this->grouping = $grouping ? $grouping : BLOCK_MYOVERVIEW_GROUPING_ALL;
         $this->sort = $sort ? $sort : BLOCK_MYOVERVIEW_SORTING_TITLE;
         $this->view = $view ? $view : BLOCK_MYOVERVIEW_VIEW_CARD;
+        $this->paging = $paging ? $paging : BLOCK_MYOVERVIEW_PAGING_12;
     }
 
     /**
@@ -101,7 +109,8 @@ class main implements renderable, templatable {
             'nocoursesimg' => $nocoursesurl,
             'grouping' => $this->grouping,
             'sort' => $this->sort == BLOCK_MYOVERVIEW_SORTING_TITLE ? 'fullname' : 'ul.timeaccess desc',
-            'view' => $this->view
+            'view' => $this->view,
+            'paging' => $this->paging
         ];
 
         $preferences = $this->get_preferences_as_booleans();

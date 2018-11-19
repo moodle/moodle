@@ -49,6 +49,8 @@ class provider implements \core_privacy\local\metadata\provider, user_preference
         $collection->add_user_preference('block_myoverview_user_view_preference', 'privacy:metadata:overviewviewpreference');
         $collection->add_user_preference('block_myoverview_user_grouping_preference',
             'privacy:metadata:overviewgroupingpreference');
+        $collection->add_user_preference('block_myoverview_user_paging_preference',
+            'privacy:metadata:overviewpagingpreference');
         return $collection;
     }
     /**
@@ -93,6 +95,14 @@ class provider implements \core_privacy\local\metadata\provider, user_preference
                     ])
                 );
             }
+        }
+
+        $preference = get_user_preferences('block_myoverview_user_paging_preference', null, $userid);
+        if (isset($preference)) {
+            \core_privacy\local\request\writer::export_user_preference('block_myoverview',
+                'block_myoverview_user_paging_preference',
+                $preference,
+                get_string('privacy:metadata:overviewpagingpreference', 'block_myoverview'));
         }
     }
 }
