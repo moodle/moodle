@@ -82,9 +82,12 @@ class edit_relatedbadge_form extends moodleform {
         $sql = "SELECT b.id, b.name, b.version, b.language, b.type
                   FROM {badge} b
                  WHERE b.id <> :badgeid
-                       AND b.id NOT IN (SELECT br.relatedbadgeid
-                  FROM {badge_related} br WHERE br.badgeid = :badgeid1)";
-        $params = array('badgeid' => $badge->id, 'badgeid1' => $badge->id);
+                       AND b.id NOT IN (
+                            SELECT DISTINCT b.id
+                              FROM {badge_related} br
+                              JOIN {badge} b ON (br.relatedbadgeid = b.id OR br.badgeid = b.id)
+                             WHERE (br.badgeid = :badgeid2 OR br.relatedbadgeid = :badgeid3) AND b.id != :badgeid4)";
+        $params = ['badgeid' => $badge->id, 'badgeid2' => $badge->id, 'badgeid3' => $badge->id, 'badgeid4' => $badge->id];
         if ($badge->type == BADGE_TYPE_COURSE) {
             $sql .= " AND (b.courseid = :courseid OR b.type = :badgetype)";
             $params['courseid'] = $badge->courseid;
