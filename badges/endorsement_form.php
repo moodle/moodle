@@ -86,6 +86,12 @@ class endorsement_form extends moodleform {
         if ($data['issueremail'] && !validate_email($data['issueremail'])) {
             $errors['issueremail'] = get_string('invalidemail');
         }
+        if ($data['issuerurl'] && !preg_match('@^https?://.+@', $data['issuerurl'])) {
+            $errors['issuerurl'] = get_string('invalidurl', 'badges');
+        }
+        if ($data['claimid'] && !preg_match('@^https?://.+@', $data['claimid'])) {
+            $errors['claimid'] = get_string('invalidurl', 'badges');
+        }
         return $errors;
     }
 }

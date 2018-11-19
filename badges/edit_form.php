@@ -211,6 +211,10 @@ class edit_details_form extends moodleform {
             $errors['name'] = get_string('error:duplicatename', 'badges');
         }
 
+        if ($data['imageauthorurl'] && !preg_match('@^https?://.+@', $data['imageauthorurl'])) {
+            $errors['imageauthorurl'] = get_string('invalidurl', 'badges');
+        }
+
         return $errors;
     }
 }
