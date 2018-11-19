@@ -3928,6 +3928,22 @@
         <INDEX NAME="predictionidanduseridandactionname" UNIQUE="false" FIELDS="predictionid, userid, actionname"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="oauth2_access_token" COMMENT="Stores access tokens for system accounts in order to be able to use a single token across multiple sessions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time this record was created."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time this record was modified."/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who modified this record."/>
+        <FIELD NAME="issuerid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Corresponding oauth2 issuer"/>
+        <FIELD NAME="token" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="access token"/>
+        <FIELD NAME="expires" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Expiry timestamp (according to the issuer)"/>
+        <FIELD NAME="scope" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="issueridkey" TYPE="foreign-unique" FIELDS="issuerid" REFTABLE="oauth2_issuer" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
     <TABLE NAME="analytics_used_analysables" COMMENT="List of analysables used by each model">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
