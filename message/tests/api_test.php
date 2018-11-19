@@ -5879,22 +5879,27 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
 
+        // Without favourites.
+        $counts = \core_message\api::get_unread_conversation_counts($user1->id);
+        $this->assertEquals(0, $counts['favourites']);
+        $this->assertEquals(2, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
+        $this->assertEquals(2, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
+
         // Mark a couple as favourites.
         \core_message\api::set_favourite_conversation($ic1->id, $user1->id);
         \core_message\api::set_favourite_conversation($gc2->id, $user1->id);
 
         $counts = \core_message\api::get_unread_conversation_counts($user1->id);
         $this->assertEquals(2, $counts['favourites']);
-        $this->assertEquals(2, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
-        $this->assertEquals(2, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
-
-        \core_message\api::mark_all_messages_as_read($user1->id, $ic1->id);
+        $this->assertEquals(1, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
+        $this->assertEquals(1, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
 
         // Mark a conversation as read and confirm it's not included in the unread counts for its respective type.
+        \core_message\api::mark_all_messages_as_read($user1->id, $ic1->id);
         $counts = \core_message\api::get_unread_conversation_counts($user1->id);
         $this->assertEquals(1, $counts['favourites']);
         $this->assertEquals(1, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
-        $this->assertEquals(2, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
+        $this->assertEquals(1, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
     }
 
     /**

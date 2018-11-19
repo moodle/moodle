@@ -2968,10 +2968,11 @@ class api {
             self::MESSAGE_CONVERSATION_TYPE_GROUP => 0
         ]];
         foreach ($unreadcounts as $convid => $info) {
-            $counts['types'][$info->type]++;
             if (isset($favouriteconvids[$convid])) {
                 $counts['favourites']++;
+                continue;
             }
+            $counts['types'][$info->type]++;
         }
 
         return $counts;
