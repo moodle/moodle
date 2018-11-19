@@ -118,6 +118,7 @@ class api {
      * @param int|null $timesortto The end timesort value (inclusive)
      * @param int|null $aftereventid Only return events after this one
      * @param int $limitnum Limit results to this amount (between 1 and 50)
+     * @param bool $lmittononsuspendedevents Limit course events to courses the user is active in (not suspended).
      * @return array A list of action_event_interface objects
      * @throws \moodle_exception
      */
@@ -125,7 +126,8 @@ class api {
         $timesortfrom = null,
         $timesortto = null,
         $aftereventid = null,
-        $limitnum = 20
+        $limitnum = 20,
+        $limittononsuspendedevents = false
     ) {
         global $USER;
 
@@ -144,7 +146,8 @@ class api {
             $afterevent = $event;
         }
 
-        return $vault->get_action_events_by_timesort($USER, $timesortfrom, $timesortto, $afterevent, $limitnum);
+        return $vault->get_action_events_by_timesort($USER, $timesortfrom, $timesortto, $afterevent, $limitnum,
+                $limittononsuspendedevents);
     }
 
     /**
