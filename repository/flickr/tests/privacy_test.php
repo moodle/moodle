@@ -64,18 +64,11 @@ class repository_flickr_privacy_testcase extends provider_testcase {
         $this->assertFalse($writer->has_any_data());
 
         // Test exporting of Flickr repository user preferences *with* OAuth token/secret preference configured.
-        $preference = (object) [
-            'userid' => $user->id,
-            'name' => 'repository_flickr_access_token',
-            'value' => 'dummy flickr oauth access token'
-        ];
-        $DB->insert_record('user_preferences', $preference);
-        $preference = (object) [
-            'userid' => $user->id,
-            'name' => 'repository_flickr_access_token_secret',
-            'value' => 'dummy flickr oauth access token secret'
-        ];
-        $DB->insert_record('user_preferences', $preference);
+        set_user_preferences([
+            'repository_flickr_access_token' => 'dummy flickr oauth access token',
+            'repository_flickr_access_token_secret' => 'dummy flickr oauth access token secret',
+        ], $user->id);
+
         provider::export_user_preferences($user->id);
         $writer = writer::with_context($contextuser);
 
