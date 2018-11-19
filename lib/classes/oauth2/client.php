@@ -175,7 +175,13 @@ class client extends \oauth2_client {
             }
             // Update values from $token. Don't use from_record because that would skip validation.
             $persistedtoken->set('token', $token->token);
-            $persistedtoken->set('expires', $token->expires);
+            if (isset($token->expires)) {
+                $persistedtoken->set('expires', $token->expires);
+            } else {
+                // Assume an arbitrary time span of 1 week for access tokens without expiration.
+                // The "refresh_system_tokens_task" is run hourly (by default), so the token probably won't last that long.
+                $persistedtoken->set('expires', time() + WEEKSECS);
+            }
             $persistedtoken->set('scope', $token->scope);
             $persistedtoken->save();
         } else {
