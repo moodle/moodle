@@ -300,6 +300,7 @@ function(
      * @param {Number} daysOffset How many days (from midnight) to offset the results from
      * @param {int|undefined} daysLimit How many dates (from midnight) to limit the result to
      * @param {string} paginationAriaLabel String to set as the aria label for the pagination bar.
+     * @param {object} additionalConfig Additional config options to pass to pagedContentFactory
      * @return {object} jQuery promise.
      */
     var createPagedContent = function(
@@ -310,7 +311,8 @@ function(
         courseId,
         daysOffset,
         daysLimit,
-        paginationAriaLabel
+        paginationAriaLabel,
+        additionalConfig
     ) {
         // Remember the last event id we loaded on each page because we can't
         // use the offset value since the backend can skip events if the user doesn't
@@ -318,7 +320,7 @@ function(
         // based on the last seen event id.
         var lastIds = {'1': 0};
         var hasContent = false;
-        var config = $.extend({}, DEFAULT_PAGED_CONTENT_CONFIG);
+        var config = $.extend({}, DEFAULT_PAGED_CONTENT_CONFIG, additionalConfig);
 
         return Str.get_string(
                 'ariaeventlistpagelimit',
@@ -396,8 +398,9 @@ function(
      * @param {int|array} pageLimit A single limit or list of limits as options for the paged content
      * @param {object} preloadedPages An object of preloaded page data. Page number as key, data promise as value.
      * @param {string} paginationAriaLabel String to set as the aria label for the pagination bar.
+     * @param {object} additionalConfig Additional config options to pass to pagedContentFactory
      */
-    var init = function(root, pageLimit, preloadedPages, paginationAriaLabel) {
+    var init = function(root, pageLimit, preloadedPages, paginationAriaLabel, additionalConfig) {
         root = $(root);
 
         // Create a promise that will be resolved once the first set of page
@@ -425,7 +428,8 @@ function(
         }
 
         // Created the paged content element.
-        createPagedContent(pageLimit, preloadedPages, midnight, firstLoad, courseId, daysOffset, daysLimit, paginationAriaLabel)
+        return createPagedContent(pageLimit, preloadedPages, midnight, firstLoad, courseId, daysOffset, daysLimit,
+                paginationAriaLabel, additionalConfig)
             .then(function(html, js) {
                 html = $(html);
                 // Hide the content for now.

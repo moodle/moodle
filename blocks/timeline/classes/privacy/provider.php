@@ -44,6 +44,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
     public static function get_metadata(collection $collection) : collection {
         $collection->add_user_preference('block_timeline_user_sort_preference', 'privacy:metadata:timelinesortpreference');
         $collection->add_user_preference('block_timeline_user_filter_preference', 'privacy:metadata:timelinefilterpreference');
+        $collection->add_user_preference('block_timeline_user_limit_preference', 'privacy:metadata:timelinelimitpreference');
         return $collection;
     }
 
@@ -66,6 +67,14 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
             \core_privacy\local\request\writer::export_user_preference('block_timeline', 'block_timeline_user_filter_preference',
                     get_string($preference, 'block_timeline'),
                     get_string('privacy:metadata:timelinefilterpreference', 'block_timeline')
+            );
+        }
+
+        $preference = get_user_preferences('block_timeline_user_limit_preference', null, $userid);
+        if (isset($preference)) {
+            \core_privacy\local\request\writer::export_user_preference('block_timeline', 'block_timeline_user_limit_preference',
+                    $preference,
+                    get_string('privacy:metadata:timelinelimitpreference', 'block_timeline')
             );
         }
     }

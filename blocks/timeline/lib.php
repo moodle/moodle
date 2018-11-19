@@ -38,6 +38,7 @@ define('BLOCK_TIMELINE_FILTER_BY_7_DAYS', 'next7days');
 define('BLOCK_TIMELINE_FILTER_BY_30_DAYS', 'next30days');
 define('BLOCK_TIMELINE_FILTER_BY_3_MONTHS', 'next3months');
 define('BLOCK_TIMELINE_FILTER_BY_6_MONTHS', 'next6months');
+define('BLOCK_TIMELINE_LIMIT_DEFAULT', 2);
 
 /**
  * Returns the name of the user preferences as well as the details this plugin uses.
@@ -64,6 +65,12 @@ function block_timeline_user_preferences() {
                 BLOCK_TIMELINE_FILTER_BY_3_MONTHS,
                 BLOCK_TIMELINE_FILTER_BY_6_MONTHS
         )
+    );
+
+    $preferences['block_timeline_user_limit_preference'] = array(
+        'null' => NULL_NOT_ALLOWED,
+        'default' => BLOCK_TIMELINE_LIMIT_DEFAULT,
+        'type' => PARAM_INT
     );
 
     return $preferences;
