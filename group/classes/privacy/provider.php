@@ -68,6 +68,8 @@ class provider implements
             'timeadded' => 'privacy:metadata:groups:timeadded',
         ], 'privacy:metadata:groups');
 
+        $collection->link_subsystem('core_message', 'privacy:metadata:core_message');
+
         return $collection;
     }
 
@@ -88,7 +90,7 @@ class provider implements
 
         $subcontext[] = get_string('groups', 'core_group');
 
-        $sql = "SELECT gm.id, gm.timeadded, gm.userid, g.name
+        $sql = "SELECT gm.id, gm.timeadded, gm.userid, g.name, gm.groupid
                   FROM {groups_members} gm
                   JOIN {groups} g ON gm.groupid = g.id
                  WHERE g.courseid = :courseid
@@ -107,7 +109,7 @@ class provider implements
 
         $groups = $DB->get_records_sql($sql, $params);
 
-        $groups = array_map(function($group) {
+        $groupstoexport = array_map(function($group) {
             return (object) [
                 'name' => format_string($group->name),
                 'timeadded' => transform::datetime($group->timeadded),
@@ -117,8 +119,14 @@ class provider implements
         if (!empty($groups)) {
             \core_privacy\local\request\writer::with_context($context)
                     ->export_data($subcontext, (object) [
-                        'groups' => $groups,
+                        'groups' => $groupstoexport,
                     ]);
+
+            foreach ($groups as $group) {
+                // Export associated conversations to this group.
+                \core_message\privacy\provider::export_conversations($USER->id, 'core_group', 'groups',
+                    $context, [], $group->groupid);
+            }
         }
     }
 
@@ -148,6 +156,13 @@ class provider implements
             $params['itemid'] = $itemid;
         }
 
+        // Delete the group conversations.
+        $groups = $DB->get_records_select('groups_members', $select, $params);
+        foreach ($groups as $group) {
+            \core_message\privacy\provider::delete_conversations_for_all_users($context, 'core_group', 'groups', $group->groupid);
+        }
+
+        // Remove members from the group.
         $DB->delete_records_select('groups_members', $select, $params);
 
         // Purge the group and grouping cache for users.
@@ -191,6 +206,13 @@ class provider implements
             $params['itemid'] = $itemid;
         }
 
+        // Delete the group conversations.
+        $groups = $DB->get_records_select('groups_members', $select, $params);
+        foreach ($groups as $group) {
+            \core_message\privacy\provider::delete_conversations_for_user($contextlist, 'core_group', 'groups', $group->groupid);
+        }
+
+        // Remove members from the group.
         $DB->delete_records_select('groups_members', $select, $params);
 
         // Invalidate the group and grouping cache for the user.
@@ -227,6 +249,9 @@ class provider implements
         }
 
         $userlist->add_from_sql('userid', $sql, $params);
+
+        // Get the users with some group conversation in this context.
+        \core_message\privacy\provider::add_conversations_in_context($userlist, 'core_group', 'groups', $itemid);
     }
 
     /**
@@ -256,6 +281,12 @@ class provider implements
         if ($itemid) {
             $select .= ' AND itemid = :itemid';
             $params['itemid'] = $itemid;
+        }
+
+        // Delete the group conversations for these users.
+        $groups = $DB->get_records_select('groups_members', $select, $params);
+        foreach ($groups as $group) {
+            \core_message\privacy\provider::delete_conversations_for_users($userlist, 'core_group', 'groups', $group->groupid);
         }
 
         $DB->delete_records_select('groups_members', $select, $params);
@@ -293,6 +324,9 @@ class provider implements
         }
 
         $contextlist->add_from_sql($sql, $params);
+
+        // Get the contexts where the userid has group conversations.
+        \core_message\privacy\provider::add_contexts_for_conversations($contextlist, $userid, 'core_group', 'groups', $itemid);
 
         return $contextlist;
     }
