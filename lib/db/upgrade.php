@@ -2784,5 +2784,25 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018111300.01);
     }
 
+    if ($oldversion < 2018111300.02) {
+        // Update favourited conversations, so they are saved in the proper context instead of the system.
+        $sql = "SELECT f.*, mc.contextid as conversationctx
+                  FROM {favourite} f
+                  JOIN {message_conversations} mc
+                    ON mc.id = f.itemid";
+        $favouritedconversations = $DB->get_records_sql($sql);
+        foreach ($favouritedconversations as $fc) {
+            if (empty($fc->conversationctx)) {
+                $conversationidctx = \context_user::instance($fc->userid)->id;
+            } else {
+                $conversationidctx = $fc->conversationctx;
+            }
+
+            $DB->set_field('favourite', 'contextid', $conversationidctx, ['id' => $fc->id]);
+        }
+
+        upgrade_main_savepoint(true, 2018111300.02);
+    }
+
     return true;
 }

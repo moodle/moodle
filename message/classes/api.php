@@ -784,11 +784,24 @@ class api {
      * @throws \moodle_exception if the user or conversation don't exist.
      */
     public static function set_favourite_conversation(int $conversationid, int $userid) : favourite {
+        global $DB;
+
         if (!self::is_user_in_conversation($userid, $conversationid)) {
             throw new \moodle_exception("Conversation doesn't exist or user is not a member");
         }
-        $ufservice = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($userid));
-        return $ufservice->create_favourite('core_message', 'message_conversations', $conversationid, \context_system::instance());
+        // Get the context for this conversation.
+        $conversation = $DB->get_record('message_conversations', ['id' => $conversationid]);
+        $userctx = \context_user::instance($userid);
+        if (empty($conversation->contextid)) {
+            // When the conversation hasn't any contextid value defined, the favourite will be added to the user context.
+            $conversationctx = $userctx;
+        } else {
+            // If the contextid is defined, the favourite will be added there.
+            $conversationctx = \context::instance_by_id($conversation->contextid);
+        }
+
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context($userctx);
+        return $ufservice->create_favourite('core_message', 'message_conversations', $conversationid, $conversationctx);
     }
 
     /**
@@ -799,8 +812,21 @@ class api {
      * @throws \moodle_exception if the favourite does not exist for the user.
      */
     public static function unset_favourite_conversation(int $conversationid, int $userid) {
-        $ufservice = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($userid));
-        $ufservice->delete_favourite('core_message', 'message_conversations', $conversationid, \context_system::instance());
+        global $DB;
+
+        // Get the context for this conversation.
+        $conversation = $DB->get_records('message_conversations', ['id' => $conversationid]);
+        $userctx = \context_user::instance($userid);
+        if (empty($conversation->contextid)) {
+            // When the conversation hasn't any contextid value defined, the favourite will be added to the user context.
+            $conversationctx = $userctx;
+        } else {
+            // If the contextid is defined, the favourite will be added there.
+            $conversationctx = \context::instance_by_id($conversation->contextid);
+        }
+
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context($userctx);
+        $ufservice->delete_favourite('core_message', 'message_conversations', $conversationid, $conversationctx);
     }
 
     /**
