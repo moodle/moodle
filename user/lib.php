@@ -246,7 +246,7 @@ function user_get_default_fields() {
         'institution', 'interests', 'firstaccess', 'lastaccess', 'auth', 'confirmed',
         'idnumber', 'lang', 'theme', 'timezone', 'mailformat', 'description', 'descriptionformat',
         'city', 'url', 'country', 'profileimageurlsmall', 'profileimageurl', 'customfields',
-        'groups', 'roles', 'preferences', 'enrolledcourses', 'suspended'
+        'groups', 'roles', 'preferences', 'enrolledcourses', 'suspended', 'lastcourseaccess'
     );
 }
 
@@ -468,6 +468,15 @@ function user_get_user_details($user, $course = null, array $userfields = array(
             $userdetails['lastaccess'] = $user->lastaccess;
         } else {
             $userdetails['lastaccess'] = 0;
+        }
+    }
+
+    // Hidden fields restriction to lastaccess field applies to both site and course access time.
+    if (in_array('lastcourseaccess', $userfields) && (!isset($hiddenfields['lastaccess']) or $isadmin)) {
+        if (isset($user->lastcourseaccess)) {
+            $userdetails['lastcourseaccess'] = $user->lastcourseaccess;
+        } else {
+            $userdetails['lastcourseaccess'] = 0;
         }
     }
 
