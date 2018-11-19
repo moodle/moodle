@@ -55,6 +55,7 @@ class provider implements
      */
     public static function get_metadata(collection $collection) : collection {
         $collection->add_subsystem_link('core_completion', [], 'privacy:metadata:completionsummary');
+        $collection->add_subsystem_link('core_favourites', [], 'privacy:metadata:favouritessummary');
         $collection->add_user_preference('coursecat_management_perpage', 'privacy:perpage');
         return $collection;
     }
@@ -75,6 +76,9 @@ class provider implements
         $params['contextcourse'] = CONTEXT_COURSE;
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, $params);
+
+        \core_favourites\privacy\provider::add_contexts_for_userid($contextlist, $userid, 'core_course', 'courses');
+
         return $contextlist;
     }
 
@@ -86,11 +90,12 @@ class provider implements
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
 
-        if (!is_a($context, \context_course::class)) {
+        if (!$context instanceof \context_course) {
             return;
         }
 
         \core_completion\privacy\provider::add_course_completion_users_to_userlist($userlist);
+        \core_favourites\privacy\provider::add_userids_for_context($userlist, 'courses');
     }
 
     /**
@@ -111,10 +116,18 @@ class provider implements
                 WHERE ctx.id $select";
 
         $courses = $DB->get_recordset_sql($sql, $params);
+
         foreach ($courses as $course) {
             $coursecompletion = \core_completion\privacy\provider::get_course_completion_info($contextlist->get_user(), $course);
             writer::with_context(\context_course::instance($course->id))->export_data(
                     [get_string('privacy:completionpath', 'course')], (object) $coursecompletion);
+            // Get user's favourites information for the particular course.
+            $coursefavourite = \core_favourites\privacy\provider::get_favourites_info_for_user($contextlist->get_user()->id,
+                    \context_course::instance($course->id), 'core_course', 'courses', $course->id);
+            if ($coursefavourite) { // If the course has been favourited by the user, include it in the export.
+                writer::with_context(\context_course::instance($course->id))->export_data(
+                        [get_string('privacy:favouritespath', 'course')], (object) $coursefavourite);
+            }
         }
         $courses->close();
     }
@@ -217,10 +230,14 @@ class provider implements
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         // Check what context we've been delivered.
-        if ($context->contextlevel == CONTEXT_COURSE) {
-            // Delete course completion data.
-            \core_completion\privacy\provider::delete_completion(null, $context->instanceid);
+        if (!$context instanceof \context_course) {
+            return;
         }
+        // Delete course completion data.
+        \core_completion\privacy\provider::delete_completion(null, $context->instanceid);
+        // Delete course favourite data.
+        \core_favourites\privacy\provider::delete_favourites_for_all_users($context, 'core_course',
+                'courses');
     }
 
     /**
@@ -230,9 +247,13 @@ class provider implements
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
         foreach ($contextlist as $context) {
-            if ($context->contextlevel == CONTEXT_COURSE) {
+            // Check what context we've been delivered.
+            if ($context instanceof \context_course) {
                 // Delete course completion data.
                 \core_completion\privacy\provider::delete_completion($contextlist->get_user(), $context->instanceid);
+                // Delete course favourite data.
+                \core_favourites\privacy\provider::delete_favourites_for_user($contextlist, 'core_course',
+                    'courses');
             }
         }
     }
@@ -243,12 +264,15 @@ class provider implements
      * @param   approved_userlist       $userlist The approved context and user information to delete information for.
      */
     public static function delete_data_for_users(approved_userlist $userlist) {
-        global $DB;
         $context = $userlist->get_context();
 
-        if ($context->contextlevel == CONTEXT_COURSE) {
-            // Delete course completion data.
-            \core_completion\privacy\provider::delete_completion_by_approved_userlist($userlist, $context->instanceid);
+        // Check what context we've been delivered.
+        if (!$context instanceof \context_course) {
+            return;
         }
+        // Delete course completion data.
+        \core_completion\privacy\provider::delete_completion_by_approved_userlist($userlist, $context->instanceid);
+        // Delete course favourite data.
+        \core_favourites\privacy\provider::delete_favourites_for_userlist($userlist, 'courses');
     }
 }

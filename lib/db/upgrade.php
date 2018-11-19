@@ -2794,5 +2794,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018111301.00);
     }
 
+    if ($oldversion < 2018111900.00) {
+        // Update favourited courses, so they are saved in the particular course context instead of the system.
+        $favouritedcourses = $DB->get_records('favourite', ['component' => 'core_course', 'itemtype' => 'courses']);
+
+        foreach ($favouritedcourses as $fc) {
+            $coursecontext = \context_course::instance($fc->itemid);
+            $fc->contextid = $coursecontext->id;
+            $DB->update_record('favourite', $fc);
+        }
+
+        upgrade_main_savepoint(true, 2018111900.00);
+    }
+
     return true;
 }

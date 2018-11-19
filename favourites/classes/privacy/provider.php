@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\context;
 use \core_privacy\local\request\approved_contextlist;
+use \core_privacy\local\request\transform;
 
 /**
  * Privacy class for requesting user data.
@@ -36,7 +37,10 @@ use \core_privacy\local\request\approved_contextlist;
  * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\subsystem\plugin_provider {
+class provider implements
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\subsystem\plugin_provider,
+        \core_privacy\local\request\shared_userlist_provider {
 
     /**
      * Returns metadata about this system.
@@ -86,11 +90,80 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
                   FROM {favourite} f
                  WHERE userid = :userid
                    AND component = :component";
+
+        $params = ['userid' => $userid, 'component' => $component];
+
         if (!is_null($itemtype)) {
             $sql .= " AND itemtype = :itemtype";
+            $params['itemtype'] = $itemtype;
         }
-        $params = ['userid' => $userid, 'component' => $component, 'itemtype' => $itemtype];
+
         $contextlist->add_from_sql($sql, $params);
+    }
+
+    /**
+     * Add users to a userlist who have favourites within the specified context.
+     *
+     * @param \core_privacy\local\request\userlist $userlist The userlist to add the users to.
+     * @param string $itemtype the type of the favourited items.
+     * @return void
+     */
+    public static function add_userids_for_context(\core_privacy\local\request\userlist $userlist,
+                                                   string $itemtype = null) {
+        if (empty($userlist)) {
+            return;
+        }
+
+        $params = [
+            'contextid' => $userlist->get_context()->id,
+            'component' => $userlist->get_component()
+        ];
+
+        $sql = "SELECT userid
+                  FROM {favourite}
+                 WHERE contextid = :contextid
+                       AND component = :component";
+
+        if (!is_null($itemtype)) {
+            $sql .= " AND itemtype = :itemtype";
+            $params['itemtype'] = $itemtype;
+        }
+
+        $userlist->add_from_sql('userid', $sql, $params);
+    }
+
+    /**
+     * Get favourites data for the specified user in the specified component, item type and item ID.
+     *
+     * @param int $userid The id of the user in scope.
+     * @param \context $context The context to which data is scoped.
+     * @param string $component The favourite's component name.
+     * @param string $itemtype The favourite's item type.
+     * @param int $itemid The favourite's item ID.
+     * @return array|null
+     */
+    public static function get_favourites_info_for_user(int $userid, \context $context,
+                                                        string $component, string $itemtype, int $itemid) {
+        global $DB;
+
+        $params = [
+            'userid' => $userid,
+            'component' => $component,
+            'itemtype' => $itemtype,
+            'itemid' => $itemid,
+            'contextid' => $context->id
+        ];
+
+        if (!$favourited = $DB->get_record('favourite', $params)) {
+            return;
+        }
+
+        return [
+            'starred' => transform::yesno(true),
+            'ordering' => $favourited->ordering,
+            'timecreated' => transform::datetime($favourited->timecreated),
+            'timemodified' => transform::datetime($favourited->timemodified)
+        ];
     }
 
     /**
@@ -111,6 +184,39 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
         ];
 
         $select = "component = :component AND itemtype =:itemtype AND contextid = :contextid";
+        $DB->delete_records_select('favourite', $select, $params);
+    }
+
+    /**
+     * Delete all favourites for the specified users in the specified context, component area and item type.
+     *
+     * @param \core_privacy\local\request\approved_userlist $userlist The approved contexts and user information
+     * to delete information for.
+     * @param string $itemtype The favourite's itemtype.
+     * @throws \dml_exception if any errors are encountered during deletion.
+     */
+    public static function delete_favourites_for_userlist(\core_privacy\local\request\approved_userlist $userlist,
+                                                          string $itemtype) {
+        global $DB;
+
+        $userids = $userlist->get_userids();
+
+        if (empty($userids)) {
+            return;
+        }
+
+        $context = $userlist->get_context();
+        list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+
+        $params = [
+            'component' => $userlist->get_component(),
+            'itemtype' => $itemtype,
+            'contextid' => $context->id
+        ];
+
+        $params += $userparams;
+        $select = "component = :component AND itemtype = :itemtype AND contextid = :contextid AND userid $usersql";
+
         $DB->delete_records_select('favourite', $select, $params);
     }
 
