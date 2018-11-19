@@ -69,7 +69,7 @@ class main implements renderable, templatable {
     public function __construct($order, $filter, $limit) {
         $this->order = $order ? $order : BLOCK_TIMELINE_SORT_BY_DATES;
         $this->filter = $filter ? $filter : BLOCK_TIMELINE_FILTER_BY_7_DAYS;
-        $this->limit = $limit ? $limit : BLOCK_TIMELINE_LIMIT_DEFAULT;
+        $this->limit = $limit ? $limit : BLOCK_TIMELINE_ACTIVITIES_LIMIT_DEFAULT;
     }
 
     /**
