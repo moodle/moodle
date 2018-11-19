@@ -577,7 +577,8 @@ class api {
                     ON lastmessage.conversationid = mc.id
             LEFT JOIN {messages} m
                    ON m.id = lastmessage.messageid
-                WHERE mc.id IS NOT NULL $typesql $favouritesql
+                WHERE mc.id IS NOT NULL
+                  AND mc.enabled = 1 $typesql $favouritesql
               ORDER BY (CASE WHEN m.timecreated IS NULL THEN 0 ELSE 1 END) DESC, m.timecreated DESC, id DESC";
 
         $params = array_merge($favouriteparams, ['userid' => $userid, 'action' => self::MESSAGE_ACTION_DELETED,
