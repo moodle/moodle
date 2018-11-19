@@ -109,6 +109,11 @@ class contact implements templatable, renderable {
     public $unreadcount;
 
     /**
+     * @var int The id of the conversation to which to message belongs.
+     */
+    public $conversationid;
+
+    /**
      * Constructor.
      *
      * @param \stdClass $contact
@@ -127,6 +132,7 @@ class contact implements templatable, renderable {
         $this->isblocked = $contact->isblocked;
         $this->isread = $contact->isread;
         $this->unreadcount = $contact->unreadcount;
+        $this->conversationid = $contact->conversationid ?? null;
     }
 
     public function export_for_template(\renderer_base $output) {
@@ -152,6 +158,7 @@ class contact implements templatable, renderable {
         $contact->isblocked = $this->isblocked;
         $contact->isread = $this->isread;
         $contact->unreadcount = $this->unreadcount;
+        $contact->conversationid = $this->conversationid;
 
         return $contact;
     }
