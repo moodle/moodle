@@ -866,6 +866,9 @@ function core_message_standard_after_main_region_html() {
     // Enter to send.
     $entertosend = get_user_preferences('message_entertosend', false, $USER);
 
+    // Get the unread counts for the current user.
+    $unreadcounts = \core_message\api::get_unread_conversation_counts($USER->id);
+
     return $renderer->render_from_template('core_message/message_drawer', [
         'contactrequestcount' => $requestcount,
         'loggedinuser' => [
@@ -876,7 +879,7 @@ function core_message_standard_after_main_region_html() {
             'messages' => [
                 'expanded' => empty($favouriteconversationcount) && empty($groupconversationcount),
                 'count' => [
-                    'unread' => 0, // TODO: fix me.
+                    'unread' => $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL],
                     'total' => $individualconversationcount
                 ],
                 'placeholders' => array_fill(0, $individualconversationcount, true)
@@ -884,7 +887,7 @@ function core_message_standard_after_main_region_html() {
             'groupmessages' => [
                 'expanded' => empty($favouriteconversationcount) && !empty($groupconversationcount),
                 'count' => [
-                    'unread' => 0, // TODO: fix me.
+                    'unread' => $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP],
                     'total' => $groupconversationcount
                 ],
                 'placeholders' => array_fill(0, $groupconversationcount, true)
@@ -892,7 +895,7 @@ function core_message_standard_after_main_region_html() {
             'favourites' => [
                 'expanded' => !empty($favouriteconversationcount),
                 'count' => [
-                    'unread' => 0, // TODO: fix me.
+                    'unread' => $unreadcounts['favourites'],
                     'total' => $favouriteconversationcount
                 ],
                 'placeholders' => array_fill(0, $favouriteconversationcount, true)
