@@ -61,6 +61,7 @@ $string['editmessages'] = 'Edit messages';
 $string['emailtagline'] = 'This is a copy of a message sent to you at "{$a->sitename}". Go to {$a->url} to reply.';
 $string['enabled'] = 'Enabled';
 $string['errorcallingprocessor'] = 'Error calling defined output';
+$string['errorconversationdoesnotexist'] = 'Conversation does not exist';
 $string['errortranslatingdefault'] = 'Error translating default setting provided by plugin, using system defaults instead.';
 $string['eventgroupmessagesent'] = 'Group message sent';
 $string['eventnotificationviewed'] = 'Notification viewed';
