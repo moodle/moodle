@@ -82,7 +82,7 @@ Feature: Add badges to the system
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     And I follow "Related badges (0)"
-    And I should see "This badge does not have related badges."
+    And I should see "This badge does not have any related badges."
     And I press "Add related badge"
     And I follow "Related badges"
     And I wait until the page is ready
@@ -109,11 +109,11 @@ Feature: Add badges to the system
     And I should see "Endorsement"
     And I follow "Endorsement"
     And I set the following fields to these values:
-      | Name | Endorser |
+      | Endorser name | Endorser |
       | Email | endorsement@example.com |
       | Issuer URL | http://example.com  |
       | Claim URL | http://claimurl.example.com |
-      | Endorsement Comment | Test Endorsement Comment |
+      | Endorsement comment | Test Endorsement comment |
     And I press "Save changes"
     Then I should see "Changes saved"
 
@@ -134,13 +134,13 @@ Feature: Add badges to the system
     Then I should see "Test Badge"
     And I should see "Endorsement"
     And I follow "Competencies (0)"
-    And I should see "This badge does not have a competencies alignment."
-    And I press "Add competency alignment"
-    And I follow "Competencies alignment"
+    And I should see "This badge does not have any competencies specified."
+    And I press "Add competency"
+    And I follow "Competency"
     And I wait until the page is ready
-    And I follow "Competencies alignment"
+    And I follow "Competency"
     And I set the following fields to these values:
-      | Name | Test Badge Competencies |
+      | Competency name | Test Badge Competencies |
       | URL | https://competencies.example.com |
       | Description | Test Badge Competencies description |
     When I press "Save changes"
