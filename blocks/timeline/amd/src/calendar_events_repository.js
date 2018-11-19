@@ -145,6 +145,8 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             args.timesortto = args.endtime;
             delete args.endtime;
         }
+        // Don't show events related to courses that the user is suspended in.
+        args.limittononsuspendedevents = true;
 
         var request = {
             methodname: 'core_calendar_get_action_events_by_timesort',
