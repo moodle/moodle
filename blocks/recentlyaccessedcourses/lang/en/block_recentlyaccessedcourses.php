@@ -22,6 +22,6 @@
  */
 $string['nocourses'] = 'No recent courses';
 $string['pluginname'] = 'Recently accessed courses';
-$string['privacy:metadata'] = 'The timeline block does not store any personal data.';
+$string['privacy:metadata'] = 'The Recently accessed courses block does not store any personal data.';
 $string['recentlyaccessedcourses:addinstance'] = 'Add a new Recently accessed courses block';
-$string['recentlyaccessedcourses:myaddinstance'] = 'Add a new Recently accessed courses block to Dashboard';
+$string['recentlyaccessedcourses:myaddinstance'] = 'Add a new recently accessed courses block to Dashboard';

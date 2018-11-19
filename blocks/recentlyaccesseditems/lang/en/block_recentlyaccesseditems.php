@@ -22,11 +22,11 @@
  */
 $string['noitems'] = 'No recent items';
 $string['pluginname'] = 'Recently accessed items';
-$string['privacy:metadata:cmid'] = 'The course module id';
+$string['privacy:metadata:cmid'] = 'The ID of the activity or resource';
 $string['privacy:metadata:courseid'] = 'Course the item belongs to';
-$string['privacy:metadata:block_recentlyaccesseditemstablesummary'] = 'Information about the last time a user accessed an item.';
-$string['privacy:metadata:timeaccess'] = 'The time of the last access to the item by the user.';
-$string['privacy:metadata:userid'] = 'User who accessed the item';
+$string['privacy:metadata:block_recentlyaccesseditemstablesummary'] = 'The Recently accessed items block stores information about items that the user accessed recently';
+$string['privacy:metadata:timeaccess'] = 'The time when the user last accessed the item';
+$string['privacy:metadata:userid'] = 'The ID of the user who accessed the item';
 $string['privacy:recentlyaccesseditemspath'] = 'Recently accessed items';
 $string['recentlyaccesseditems:addinstance'] = 'Add a new recently accessed items block';
 $string['recentlyaccesseditems:myaddinstance'] = 'Add a new recently accessed items block to Dashboard';
