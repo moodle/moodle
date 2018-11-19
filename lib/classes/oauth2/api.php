@@ -319,7 +319,9 @@ class api {
     public static function create_endpoints_for_standard_issuer($type, $issuer) {
         require_capability('moodle/site:config', context_system::instance());
         if ($type == 'google') {
-            return self::create_endpoints_for_google($issuer);
+            $issuer = self::create_endpoints_for_google($issuer);
+            self::discover_endpoints($issuer);
+            return $issuer;
         } else if ($type == 'microsoft') {
             return self::create_endpoints_for_microsoft($issuer);
         } else if ($type == 'facebook') {
