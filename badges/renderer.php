@@ -722,8 +722,10 @@ class core_badges_renderer extends plugin_renderer_base {
         }
 
         if (has_capability('moodle/badges:configuredetails', $context)) {
-            $related = $DB->count_records_sql("SELECT COUNT(br.badgeid)
-                      FROM {badge_related} br WHERE br.badgeid = :badgeid", array('badgeid' => $badgeid));
+            $sql = "SELECT COUNT(br.badgeid)
+                      FROM {badge_related} br
+                     WHERE (br.badgeid = :badgeid OR br.relatedbadgeid = :badgeid2)";
+            $related = $DB->count_records_sql($sql, ['badgeid' => $badgeid, 'badgeid2' => $badgeid]);
             $row[] = new tabobject('brelated',
                 new moodle_url('/badges/related.php', array('id' => $badgeid)),
                 get_string('brelated', 'badges', $related)
