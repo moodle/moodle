@@ -1278,6 +1278,7 @@ $functions = array(
         'type' => 'read',
         'capabilities' => 'moodle/user:editownmessageprofile',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax' => true
     ),
     'core_message_set_favourite_conversations' => array(
         'classname' => 'core_message_external',
