@@ -234,13 +234,13 @@ abstract class backup_cron_automated_helper {
             // Summary.
             $message .= get_string('summary') . "\n";
             $message .= "==================================================\n";
-            $message .= '  ' . get_string('courses') . '; ' . array_sum($count) . "\n";
-            $message .= '  ' . get_string('ok') . '; ' . $count[self::BACKUP_STATUS_OK] . "\n";
-            $message .= '  ' . get_string('skipped') . '; ' . $count[self::BACKUP_STATUS_SKIPPED] . "\n";
-            $message .= '  ' . get_string('error') . '; ' . $count[self::BACKUP_STATUS_ERROR] . "\n";
-            $message .= '  ' . get_string('unfinished') . '; ' . $count[self::BACKUP_STATUS_UNFINISHED] . "\n";
-            $message .= '  ' . get_string('warning') . '; ' . $count[self::BACKUP_STATUS_WARNING] . "\n";
-            $message .= '  ' . get_string('backupnotyetrun') . '; ' . $count[self::BACKUP_STATUS_NOTYETRUN]."\n\n";
+            $message .= '  ' . get_string('courses') . ': ' . array_sum($count) . "\n";
+            $message .= '  ' . get_string('ok') . ': ' . $count[self::BACKUP_STATUS_OK] . "\n";
+            $message .= '  ' . get_string('skipped') . ': ' . $count[self::BACKUP_STATUS_SKIPPED] . "\n";
+            $message .= '  ' . get_string('error') . ': ' . $count[self::BACKUP_STATUS_ERROR] . "\n";
+            $message .= '  ' . get_string('unfinished') . ': ' . $count[self::BACKUP_STATUS_UNFINISHED] . "\n";
+            $message .= '  ' . get_string('warning') . ': ' . $count[self::BACKUP_STATUS_WARNING] . "\n";
+            $message .= '  ' . get_string('backupnotyetrun') . ': ' . $count[self::BACKUP_STATUS_NOTYETRUN]."\n\n";
 
             //Reference
             if ($haserrors) {
