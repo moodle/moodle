@@ -1030,6 +1030,36 @@ class api {
     }
 
     /**
+     * Get the contacts for a given user.
+     *
+     * @param int $userid
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return array An array of contacts
+     */
+    public static function get_user_contacts(int $userid, int $limitfrom = 0, int $limitnum = 0) {
+        global $DB;
+
+        $sql = "SELECT *
+                  FROM {message_contacts} mc
+                 WHERE mc.userid = ? OR mc.contactid = ?
+              ORDER BY timecreated DESC, id ASC";
+        if ($contacts = $DB->get_records_sql($sql, [$userid, $userid], $limitfrom, $limitnum)) {
+            $userids = [];
+            foreach ($contacts as $contact) {
+                if ($contact->userid == $userid) {
+                    $userids[] = $contact->contactid;
+                } else {
+                    $userids[] = $contact->userid;
+                }
+            }
+            return helper::get_member_info($userid, $userids);
+        }
+
+        return [];
+    }
+
+    /**
      * Returns the contacts count.
      *
      * @param int $userid The user id
