@@ -963,7 +963,7 @@ class api {
         global $DB;
 
         // Get the context for this conversation.
-        $conversation = $DB->get_records('message_conversations', ['id' => $conversationid]);
+        $conversation = $DB->get_record('message_conversations', ['id' => $conversationid]);
         $userctx = \context_user::instance($userid);
         if (empty($conversation->contextid)) {
             // When the conversation hasn't any contextid value defined, the favourite will be added to the user context.
