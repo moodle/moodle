@@ -42,13 +42,7 @@
     }
 }}
 <li class="media">
-    <a
-        class="media"
-        href="{{{action.url}}}"
-        title="{{name}}"
-        data-region="event-list-item"
-        aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": "{{name}}", "course": "{{course.fullnamedisplay}}", "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'
-    >
+    <div class="media" data-region="event-list-item">
         <div class="icon-size-4 pull-left">
             {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
         </div>
@@ -56,8 +50,18 @@
             {{#userdate}} {{timesort}}, {{#str}} strftimetime24, core_langconfig {{/str}} {{/userdate}}
         </small>
         <div class="text-truncate line-height-3 media-body">
-            <h6 class="text-truncate m-0">{{{name}}}</h6>
-            <small class="text-muted text-truncate">{{{course.fullnamedisplay}}}</small>
+            <a href="{{url}}"
+               title="{{name}}"
+               aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": "{{name}}", "course": "{{course.fullnamedisplay}}", "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'
+            >
+                <h6 class="text-truncate m-0">{{{name}}}</h6>
+                <small class="text-muted text-truncate">{{{course.fullnamedisplay}}}</small>
+            </a>
+            {{#action.actionable}}
+            <h6 class="m-b-0 pt-2">
+                <a href="{{{action.url}}}" aria-label="{{{action.name}}}" title="{{{action.name}}}" class="list-group-item-action">{{{action.name}}}</a>
+            </h6>
+            {{/action.actionable}}
         </div>
-    </a>
+    </div>
 </li>
