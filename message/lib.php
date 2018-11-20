@@ -866,6 +866,25 @@ function core_message_standard_after_main_region_html() {
     // Enter to send.
     $entertosend = get_user_preferences('message_entertosend', false, $USER);
 
+    // Get the unread counts for the current user.
+    $unreadcounts = \core_message\api::get_unread_conversation_counts($USER->id);
+
+    // Determine which section will be expanded.
+    // Default behaviour - if no unread counts exist.
+    $favouritesexpanded = !empty($favouriteconversationcount);
+    $groupmessagesexpanded = empty($favouriteconversationcount) && !empty($groupconversationcount);
+    $messagesexpanded = empty($favouriteconversationcount) && empty($groupconversationcount);
+
+    // There is an unread conversation somewhere, so that takes priority.
+    if ($unreadcounts['favourites'] > 0 || $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP] > 0 ||
+            $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL] > 0) {
+        $favouritesexpanded = $unreadcounts['favourites'] > 0;
+        $groupmessagesexpanded = !$favouritesexpanded &&
+            $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP] > 0;
+        $messagesexpanded = !$groupmessagesexpanded && !$favouritesexpanded &&
+            $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL] > 0;
+    }
+
     return $renderer->render_from_template('core_message/message_drawer', [
         'contactrequestcount' => $requestcount,
         'loggedinuser' => [
@@ -874,25 +893,25 @@ function core_message_standard_after_main_region_html() {
         ],
         'overview' => [
             'messages' => [
-                'expanded' => empty($favouriteconversationcount) && empty($groupconversationcount),
+                'expanded' => $messagesexpanded,
                 'count' => [
-                    'unread' => 0, // TODO: fix me.
+                    'unread' => $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL],
                     'total' => $individualconversationcount
                 ],
                 'placeholders' => array_fill(0, $individualconversationcount, true)
             ],
             'groupmessages' => [
-                'expanded' => empty($favouriteconversationcount) && !empty($groupconversationcount),
+                'expanded' => $groupmessagesexpanded,
                 'count' => [
-                    'unread' => 0, // TODO: fix me.
+                    'unread' => $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP],
                     'total' => $groupconversationcount
                 ],
                 'placeholders' => array_fill(0, $groupconversationcount, true)
             ],
             'favourites' => [
-                'expanded' => !empty($favouriteconversationcount),
+                'expanded' => $favouritesexpanded,
                 'count' => [
-                    'unread' => 0, // TODO: fix me.
+                    'unread' => $unreadcounts['favourites'],
                     'total' => $favouriteconversationcount
                 ],
                 'placeholders' => array_fill(0, $favouriteconversationcount, true)
