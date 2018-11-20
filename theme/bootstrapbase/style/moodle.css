@@ -16367,6 +16367,12 @@ body {
   text-decoration: none;
   color: unset;
 }
+.block_myoverview .content {
+  min-height: 19.35rem;
+}
+.block_myoverview .paged-content-page-container {
+  min-height: 13rem;
+}
 .dashboard-card-deck {
   box-sizing: border-box;
   display: flex;

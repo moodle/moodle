@@ -10525,6 +10525,9 @@ div.editor_atto_toolbar button .icon {
     .switch input:disabled + label::before {
       background-color: #e9ecef; }
 
+.paged-content-page-container {
+  min-height: 3.125rem; }
+
 .icon {
   font-size: 16px;
   width: 16px;
@@ -11207,7 +11210,7 @@ div.editor_atto_toolbar button .icon {
     width: 100%; } }
 
 .block .empty-placeholder-image-lg {
-  height: 125px; }
+  height: 5rem; }
 
 .block .block-cards .course-info-container {
   padding: 0.8rem; }
@@ -11325,6 +11328,12 @@ div.editor_atto_toolbar button .icon {
   height: auto;
   width: auto;
   margin-right: 6px; }
+
+.block_myoverview .content {
+  min-height: 19.35rem; }
+
+.block_myoverview .paged-content-page-container {
+  min-height: 13rem; }
 
 .block_settings .block_tree [aria-expanded="true"],
 .block_settings .block_tree [aria-expanded="true"].emptybranch,
