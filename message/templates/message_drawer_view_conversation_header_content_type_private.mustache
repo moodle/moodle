@@ -78,10 +78,10 @@
             <a class="dropdown-item" href="#" data-action="view-contact">
                 {{#str}} info, core_message {{/str}}
             </a>
-            <a class="dropdown-item {{#isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-favourite">
+            <a class="dropdown-item {{#isfavourite}}hidden{{/isfavourite}} {{^showfavourite}}hidden{{/showfavourite}}" href="#" data-action="confirm-favourite">
                 {{#str}} addtofavourites, core_message {{/str}}
             </a>
-            <a class="dropdown-item {{^isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-unfavourite">
+            <a class="dropdown-item {{^isfavourite}}hidden{{/isfavourite}} {{^showfavourite}}hidden{{/showfavourite}}" href="#" data-action="confirm-unfavourite">
                 {{#str}} removefromfavourites, core_message {{/str}}
             </a>
             <a class="dropdown-item {{#isblocked}}hidden{{/isblocked}}" href="#" data-action="request-block">

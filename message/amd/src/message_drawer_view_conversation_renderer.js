@@ -1224,15 +1224,27 @@ function(
      * @param {Object} footer The footer container element.
      * @param {Bool} isFavourite is this conversation a favourite.
      */
-    var renderIsFavourite = function(header, body, footer, isFavourite) {
-        if (isFavourite) {
-            header.find(SELECTORS.FAVOURITE_ICON_CONTAINER).removeClass('hidden');
-            header.find(SELECTORS.ACTION_CONFIRM_FAVOURITE).addClass('hidden');
-            header.find(SELECTORS.ACTION_CONFIRM_UNFAVOURITE).removeClass('hidden');
-        } else {
-            header.find(SELECTORS.FAVOURITE_ICON_CONTAINER).addClass('hidden');
-            header.find(SELECTORS.ACTION_CONFIRM_FAVOURITE).removeClass('hidden');
-            header.find(SELECTORS.ACTION_CONFIRM_UNFAVOURITE).addClass('hidden');
+    var renderIsFavourite = function(header, body, footer, state) {
+        var favouriteIcon = header.find(SELECTORS.FAVOURITE_ICON_CONTAINER);
+        var addFavourite = header.find(SELECTORS.ACTION_CONFIRM_FAVOURITE);
+        var removeFavourite = header.find(SELECTORS.ACTION_CONFIRM_UNFAVOURITE);
+
+        switch (state) {
+            case 'hide':
+                favouriteIcon.addClass('hidden');
+                addFavourite.addClass('hidden');
+                removeFavourite.addClass('hidden');
+                break;
+            case 'show-add':
+                favouriteIcon.addClass('hidden');
+                addFavourite.removeClass('hidden');
+                removeFavourite.addClass('hidden');
+                break;
+            case 'show-remove':
+                favouriteIcon.removeClass('hidden');
+                addFavourite.addClass('hidden');
+                removeFavourite.removeClass('hidden');
+                break;
         }
     };
 
