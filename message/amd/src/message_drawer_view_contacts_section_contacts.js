@@ -94,7 +94,7 @@ function(
     var load = function(listRoot, userId) {
         return MessageRepository.getContacts(userId, (limit + 1), offset)
             .then(function(result) {
-                return result.contacts;
+                return result;
             })
             .then(function(contacts) {
                 if (contacts.length > limit) {

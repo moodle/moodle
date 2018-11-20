@@ -132,7 +132,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
         }
 
         var request = {
-            methodname: 'core_message_data_for_messagearea_contacts',
+            methodname: 'core_message_get_user_contacts',
             args: args
         };
 
