@@ -1845,8 +1845,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 9 conversation members - (2 + 2) individual + (3 + 2) group.
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
 
-        // There should be 5 notifications - 3 notifications + 2 for the contact request.
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        // There should be 3 notifications.
+        $this->assertEquals(3, $DB->count_records('notifications'));
 
         // There should be 3 favourite conversations.
         $this->assertEquals(3, $DB->count_records('favourite'));
@@ -1863,8 +1863,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be still 2 blocked users.
         $this->assertEquals(2, $DB->count_records('message_users_blocked'));
 
-        // There should be still 5 notifications - 3 notifications + 2 for the contact request.
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        // There should be 3 notifications.
+        $this->assertEquals(3, $DB->count_records('notifications'));
 
         // There should be 5 messages - 3 individual - 2 group (course2).
         $this->assertEquals(5, $DB->count_records('messages'));
@@ -2018,8 +2018,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 9 conversation members - (2 + 2) individual + (3 + 2) group.
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
 
-        // There should be 5 notifications - 3 notifications + 2 for the contact request.
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        // There should be 3 notifications.
+        $this->assertEquals(3, $DB->count_records('notifications'));
 
         // There should be 3 favourite conversations.
         $this->assertEquals(3, $DB->count_records('favourite'));
@@ -2035,7 +2035,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        $this->assertEquals(3, $DB->count_records('notifications'));
         $this->assertEquals(3, $DB->count_records('favourite'));
 
         // Delete individual conversations for all users in system context.
@@ -2049,7 +2049,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        $this->assertEquals(3, $DB->count_records('notifications'));
         $this->assertEquals(3, $DB->count_records('favourite'));
     }
 
@@ -2177,8 +2177,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 9 conversation members - (2 + 2) individual + (3 + 2) group.
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
 
-        // There should be 5 notifications - 3 notifications + 2 for the contact request.
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        // There should be 3 notifications.
+        $this->assertEquals(3, $DB->count_records('notifications'));
 
         // There should be 3 favourite conversations.
         $this->assertEquals(3, $DB->count_records('favourite'));
@@ -2194,7 +2194,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        $this->assertEquals(3, $DB->count_records('notifications'));
         $this->assertEquals(3, $DB->count_records('favourite'));
 
         // Delete individual conversations for all users in user context.
@@ -2208,7 +2208,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        $this->assertEquals(3, $DB->count_records('notifications'));
         $this->assertEquals(3, $DB->count_records('favourite'));
     }
 
@@ -2312,8 +2312,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 2 blocked users.
         $this->assertEquals(2, $DB->count_records('message_users_blocked'));
 
-        // There should be 3 notifications + 2 for the contact request.
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        // There should be 3 notifications.
+        $this->assertEquals(3, $DB->count_records('notifications'));
 
         // There should be 6 messages.
         $this->assertEquals(6, $DB->count_records('messages'));
@@ -2349,8 +2349,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be still 2 blocked users.
         $this->assertEquals(2, $DB->count_records('message_users_blocked'));
 
-        // There should be still 3 notifications + 2 for the contact request.
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        // There should be 3 notifications.
+        $this->assertEquals(3, $DB->count_records('notifications'));
 
         // There should be 4 messages - 3 private + 1 group sent by user2.
         $this->assertEquals(4, $DB->count_records('messages'));
@@ -2495,8 +2495,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 2 blocked users.
         $this->assertEquals(2, $DB->count_records('message_users_blocked'));
 
-        // There should be 3 notifications + 2 for the contact request.
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        // There should be 3 notifications.
+        $this->assertEquals(3, $DB->count_records('notifications'));
 
         // There should be 6 messages.
         $this->assertEquals(6, $DB->count_records('messages'));
@@ -2528,7 +2528,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(2, $DB->count_records('message_contacts'));
         $this->assertEquals(2, $DB->count_records('message_contact_requests'));
         $this->assertEquals(2, $DB->count_records('message_users_blocked'));
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        $this->assertEquals(3, $DB->count_records('notifications'));
         $this->assertEquals(6, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
         $this->assertEquals(4, $DB->count_records('message_conversations'));
@@ -2544,7 +2544,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(2, $DB->count_records('message_contacts'));
         $this->assertEquals(2, $DB->count_records('message_contact_requests'));
         $this->assertEquals(2, $DB->count_records('message_users_blocked'));
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        $this->assertEquals(3, $DB->count_records('notifications'));
         $this->assertEquals(6, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
         $this->assertEquals(4, $DB->count_records('message_conversations'));
@@ -2566,8 +2566,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be still 2 blocked users.
         $this->assertEquals(2, $DB->count_records('message_users_blocked'));
 
-        // There should be still 3 notifications + 2 for the contact request.
-        $this->assertEquals(5, $DB->count_records('notifications'));
+        // There should be 3 notifications.
+        $this->assertEquals(3, $DB->count_records('notifications'));
 
         // There should be 4 messages - 3 private + 1 group sent by user3.
         $this->assertEquals(4, $DB->count_records('messages'));
