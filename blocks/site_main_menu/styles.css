@@ -2,7 +2,7 @@
     clear: both;
 }
 
-.block_site_main_menu.block.list_block .unlist > li > .column {
+.block_site_main_menu.block .content > .unlist > li > .column {
     /* Made specific to win over .block.list_block .unlist > li > .column. */
     width: 100%;
     display: table;
