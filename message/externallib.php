@@ -2391,6 +2391,7 @@ class core_message_external extends external_api {
     /**
      * Get contacts parameters description.
      *
+     * @deprecated since 3.6
      * @return external_function_parameters
      * @since Moodle 2.5
      */
@@ -2401,6 +2402,7 @@ class core_message_external extends external_api {
     /**
      * Get contacts.
      *
+     * @deprecated since 3.6
      * @return external_description
      * @since Moodle 2.5
      */
@@ -2482,6 +2484,7 @@ class core_message_external extends external_api {
     /**
      * Get contacts return description.
      *
+     * @deprecated since 3.6
      * @return external_description
      * @since Moodle 2.5
      */
@@ -2526,6 +2529,15 @@ class core_message_external extends external_api {
                 )
             )
         );
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_contacts_is_deprecated() {
+        return true;
     }
 
     /**

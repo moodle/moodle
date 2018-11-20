@@ -1075,7 +1075,8 @@ $functions = array(
         'classname' => 'core_message_external',
         'methodname' => 'get_contacts',
         'classpath' => 'message/externallib.php',
-        'description' => 'Retrieve the contact list',
+        'description' => '** DEPRECATED ** Please do not call this function any more.
+                          Retrieve the contact list',
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
