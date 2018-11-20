@@ -1200,7 +1200,7 @@ class flexible_table {
      * This function is not part of the public api.
      */
     function print_headers() {
-        global $CFG, $OUTPUT;
+        global $CFG, $OUTPUT, $PAGE;
 
         echo html_writer::start_tag('thead');
         echo html_writer::start_tag('tr');
@@ -1222,7 +1222,7 @@ class flexible_table {
 
                 case 'fullname':
                     // Check the full name display for sortable fields.
-                    if (has_capability('moodle/site:viewfullnames', context_system::instance())) {
+                    if (has_capability('moodle/site:viewfullnames', $PAGE->context)) {
                         $nameformat = $CFG->alternativefullnameformat;
                     } else {
                         $nameformat = $CFG->fullnamedisplay;
