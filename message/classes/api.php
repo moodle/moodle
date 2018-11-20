@@ -944,7 +944,12 @@ class api {
         }
 
         $ufservice = \core_favourites\service_factory::get_service_for_user_context($userctx);
-        return $ufservice->create_favourite('core_message', 'message_conversations', $conversationid, $conversationctx);
+
+        if ($favourite = $ufservice->get_favourite('core_message', 'message_conversations', $conversationid, $conversationctx)) {
+            return $favourite;
+        } else {
+            return $ufservice->create_favourite('core_message', 'message_conversations', $conversationid, $conversationctx);
+        }
     }
 
     /**
