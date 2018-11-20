@@ -202,6 +202,17 @@ class provider_testcase extends advanced_testcase {
     }
 
     /**
+     * Ensure that providers do not throw an error when processing a deleted user.
+     *
+     * @dataProvider    is_user_data_provider
+     * @param   string  $component
+     */
+    public function test_userdata_provider_implements_userlist($component) {
+        $classname = manager::get_provider_classname_for_component($component);
+        $this->assertTrue(is_subclass_of($classname, \core_privacy\local\request\core_userlist_provider::class));
+    }
+
+    /**
      * Data provider for the metadata\provider tests.
      *
      * @return array
