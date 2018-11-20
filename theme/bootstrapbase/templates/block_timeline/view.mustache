@@ -47,7 +47,7 @@
 }}
 <div data-region="timeline-view">
     <div class="tab-content" style="overflow: visible">
-        <div class="tab-pane {{#sorttimelinedates}}active in{{/sorttimelinedates}} fade" data-region="view-dates" id="view_dates_{{uniqid}}">
+        <div class="tab-pane {{#sorttimelinedates}}active in{{/sorttimelinedates}} fade" data-limit="{{limit}}" data-region="view-dates" id="view_dates_{{uniqid}}">
             {{> block_timeline/view-dates }}
         </div>
         <div
