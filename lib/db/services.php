@@ -1080,6 +1080,15 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_message_get_user_contacts' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'get_user_contacts',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Retrieve the contact list',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_message_get_conversations' => array(
         'classname' => 'core_message_external',
         'methodname' => 'get_conversations',

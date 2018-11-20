@@ -3192,6 +3192,193 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Tests retrieving contacts.
+     */
+    public function test_get_user_contacts() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+
+        // Set as the user.
+        $this->setUser($user1);
+
+        $user2 = new stdClass();
+        $user2->firstname = 'User';
+        $user2->lastname = 'A';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        $user3 = new stdClass();
+        $user3->firstname = 'User';
+        $user3->lastname = 'B';
+        $user3 = self::getDataGenerator()->create_user($user3);
+
+        $user4 = new stdClass();
+        $user4->firstname = 'User';
+        $user4->lastname = 'C';
+        $user4 = self::getDataGenerator()->create_user($user4);
+
+        $user5 = new stdClass();
+        $user5->firstname = 'User';
+        $user5->lastname = 'D';
+        $user5 = self::getDataGenerator()->create_user($user5);
+
+        // Add some users as contacts.
+        \core_message\api::add_contact($user1->id, $user2->id);
+        \core_message\api::add_contact($user1->id, $user3->id);
+        \core_message\api::add_contact($user1->id, $user4->id);
+
+        // Retrieve the contacts.
+        $result = core_message_external::get_user_contacts($user1->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::get_user_contacts_returns(),
+            $result);
+
+        // Confirm the data is correct.
+        $contacts = $result;
+        usort($contacts, ['static', 'sort_contacts_id']);
+        $this->assertCount(3, $contacts);
+
+        $contact1 = array_shift($contacts);
+        $contact2 = array_shift($contacts);
+        $contact3 = array_shift($contacts);
+
+        $this->assertEquals($user2->id, $contact1['id']);
+        $this->assertEquals(fullname($user2), $contact1['fullname']);
+        $this->assertTrue($contact1['iscontact']);
+
+        $this->assertEquals($user3->id, $contact2['id']);
+        $this->assertEquals(fullname($user3), $contact2['fullname']);
+        $this->assertTrue($contact2['iscontact']);
+
+        $this->assertEquals($user4->id, $contact3['id']);
+        $this->assertEquals(fullname($user4), $contact3['fullname']);
+        $this->assertTrue($contact3['iscontact']);
+    }
+
+    /**
+     * Tests retrieving contacts as another user.
+     */
+    public function test_get_user_contacts_as_other_user() {
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+
+        $user2 = new stdClass();
+        $user2->firstname = 'User';
+        $user2->lastname = 'A';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        $user3 = new stdClass();
+        $user3->firstname = 'User';
+        $user3->lastname = 'B';
+        $user3 = self::getDataGenerator()->create_user($user3);
+
+        $user4 = new stdClass();
+        $user4->firstname = 'User';
+        $user4->lastname = 'C';
+        $user4 = self::getDataGenerator()->create_user($user4);
+
+        $user5 = new stdClass();
+        $user5->firstname = 'User';
+        $user5->lastname = 'D';
+        $user5 = self::getDataGenerator()->create_user($user5);
+
+        // Add some users as contacts.
+        \core_message\api::add_contact($user1->id, $user2->id);
+        \core_message\api::add_contact($user1->id, $user3->id);
+        \core_message\api::add_contact($user1->id, $user4->id);
+
+        // Retrieve the contacts.
+        $result = core_message_external::get_user_contacts($user1->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::get_user_contacts_returns(),
+            $result);
+
+        // Confirm the data is correct.
+        $contacts = $result;
+        usort($contacts, ['static', 'sort_contacts_id']);
+        $this->assertCount(3, $contacts);
+
+        $contact1 = array_shift($contacts);
+        $contact2 = array_shift($contacts);
+        $contact3 = array_shift($contacts);
+
+        $this->assertEquals($user2->id, $contact1['id']);
+        $this->assertEquals(fullname($user2), $contact1['fullname']);
+        $this->assertTrue($contact1['iscontact']);
+
+        $this->assertEquals($user3->id, $contact2['id']);
+        $this->assertEquals(fullname($user3), $contact2['fullname']);
+        $this->assertTrue($contact2['iscontact']);
+
+        $this->assertEquals($user4->id, $contact3['id']);
+        $this->assertEquals(fullname($user4), $contact3['fullname']);
+        $this->assertTrue($contact3['iscontact']);
+    }
+
+    /**
+     * Tests retrieving contacts as another user without the proper capabilities.
+     */
+    public function test_get_user_contacts_as_other_user_without_cap() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person retrieving the contacts for another user.
+        $this->setUser($user1);
+
+        // Perform the WS call and ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::get_user_contacts($user2->id);
+    }
+
+    /**
+     * Tests retrieving contacts with messaging disabled.
+     */
+    public function test_get_user_contacts_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Create some skeleton data just so we can call the WS.
+        $user = self::getDataGenerator()->create_user();
+
+        // The person retrieving the contacts.
+        $this->setUser($user);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Perform the WS call and ensure we are shown that it is disabled.
+        $this->expectException('moodle_exception');
+        core_message_external::get_user_contacts($user->id);
+    }
+
+    /**
+     * Test getting contacts when there are no results.
+     */
+    public function test_get_user_contacts_no_results() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        $requests = core_message_external::get_user_contacts($user1->id);
+        $requests = external_api::clean_returnvalue(core_message_external::get_user_contacts_returns(), $requests);
+
+        $this->assertEmpty($requests);
+    }
+
+    /**
      * Tests retrieving messages.
      */
     public function test_messagearea_messages() {
@@ -4562,6 +4749,17 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
      */
     protected static function sort_contacts($a, $b) {
         return $a['userid'] > $b['userid'];
+    }
+
+    /**
+     * Comparison function for sorting contacts.
+     *
+     * @param array $a
+     * @param array $b
+     * @return bool
+     */
+    protected static function sort_contacts_id($a, $b) {
+        return $a['id'] > $b['id'];
     }
 
     /**
