@@ -1107,11 +1107,13 @@ class mod_assign_renderer extends plugin_renderer_base {
                 $cell2 = new html_table_cell(userdate($grade->timemodified));
                 $t->data[] = new html_table_row(array($cell1, $cell2));
 
-                // Graded by.
-                $cell1 = new html_table_cell($gradedbystr);
-                $cell2 = new html_table_cell($this->output->user_picture($grade->grader) .
-                                             $this->output->spacer(array('width'=>30)) . fullname($grade->grader));
-                $t->data[] = new html_table_row(array($cell1, $cell2));
+                // Graded by set to a real user. Not set can be empty or -1.
+                if (!empty($grade->grader) && is_object($grade->grader)) {
+                    $cell1 = new html_table_cell($gradedbystr);
+                    $cell2 = new html_table_cell($this->output->user_picture($grade->grader) .
+                                                 $this->output->spacer(array('width' => 30)) . fullname($grade->grader));
+                    $t->data[] = new html_table_row(array($cell1, $cell2));
+                }
 
                 // Feedback from plugins.
                 foreach ($history->feedbackplugins as $plugin) {
