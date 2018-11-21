@@ -33,16 +33,10 @@
     {}
 
 }}
-<div class="h-100 view-overview-body" aria-hidden="false" data-region="view-overview">
+<div class="h-100 view-overview-body" aria-hidden="false" data-region="view-overview" data-user-id="{{loggedinuser.id}}">
     <div id="message-drawer-view-overview-container" class="d-flex flex-column h-100" style="overflow-y: auto">
-        {{#overview.favourites}}
             {{> core_message/message_drawer_view_overview_section_favourites }}
-        {{/overview.favourites}}
-        {{#overview.groupmessages}}
             {{> core_message/message_drawer_view_overview_section_group_messages }}
-        {{/overview.groupmessages}}
-        {{#overview.messages}}
             {{> core_message/message_drawer_view_overview_section_messages }}
-        {{/overview.messages}}
     </div>
 </div>
