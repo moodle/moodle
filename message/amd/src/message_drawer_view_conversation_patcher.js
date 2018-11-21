@@ -298,6 +298,8 @@ function(
                     totalmembercount: newState.totalMemberCount,
                     imageurl: newState.imageUrl,
                     isfavourite: newState.isFavourite,
+                    // Don't show favouriting if we don't have a conversation.
+                    showfavourite: newState.id !== null,
                     userid: newOtherUser.id,
                     showonlinestatus: newOtherUser.showonlinestatus,
                     isonline: newOtherUser.isonline,
@@ -334,7 +336,9 @@ function(
                     subname: newState.subname,
                     totalmembercount: totalMemberCount,
                     imageurl: newState.imageUrl,
-                    isfavourite: newState.isFavourite
+                    isfavourite: newState.isFavourite,
+                    // Don't show favouriting if we don't have a conversation.
+                    showfavourite: newState.id !== null
                 }
             };
         }
@@ -619,13 +623,23 @@ function(
         var oldIsFavourite = state.isFavourite;
         var newIsFavourite = newState.isFavourite;
 
-        if (oldIsFavourite == newIsFavourite) {
+        if (state.id === null && newState.id === null) {
+            // The conversation isn't yet created so don't change anything.
+            return null;
+        } else if (state.id === null && newState.id !== null) {
+            // The conversation was created so we can show the add favourite button.
+            return 'show-add';
+        } else if (state.id !== null && newState.id === null) {
+            // We're changing from a created conversation to a new conversation so hide
+            // the favouriting functionality for now.
+            return 'hide';
+        } else if (oldIsFavourite == newIsFavourite) {
             // No change.
             return null;
         } else if (!oldIsFavourite && newIsFavourite) {
-            return true;
+            return 'show-remove';
         } else if (oldIsFavourite && !newIsFavourite) {
-            return false;
+            return 'show-add';
         } else {
             return null;
         }

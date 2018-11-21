@@ -82,12 +82,12 @@
                     {{#str}} groupinfo, core_message {{/str}}
                 </a>
             </li>
-            <li class="{{#isfavourite}}hidden{{/isfavourite}}" data-action="confirm-favourite">
+            <li class="{{#isfavourite}}hidden{{/isfavourite}} {{^showfavourite}}hidden{{/showfavourite}}" data-action="confirm-favourite">
                 <a class="dropdown-item" href="#">
                     {{#str}} addtofavourites, core_message {{/str}}
                 </a>
             </li>
-            <li class="{{^isfavourite}}hidden{{/isfavourite}}" data-action="confirm-unfavourite">
+            <li class="{{^isfavourite}}hidden{{/isfavourite}} {{^showfavourite}}hidden{{/showfavourite}}" data-action="confirm-unfavourite">
                 <a class="dropdown-item" href="#">
                     {{#str}} removefromfavourites, core_message {{/str}}
                 </a>
