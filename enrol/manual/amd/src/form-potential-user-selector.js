@@ -49,6 +49,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str'], function($, Ajax, 
         transport: function(selector, query, success, failure) {
             var promise;
             var courseid = $(selector).attr('courseid');
+            var userfields = $(selector).attr('userfields').split(',');
             if (typeof courseid === "undefined") {
                 courseid = '1';
             }
@@ -78,7 +79,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str'], function($, Ajax, 
                     $.each(results, function(index, user) {
                         var ctx = user,
                             identity = [];
-                        $.each(['idnumber', 'email', 'phone1', 'phone2', 'department', 'institution'], function(i, k) {
+                        $.each(userfields, function(i, k) {
                             if (typeof user[k] !== 'undefined' && user[k] !== '') {
                                 ctx.hasidentity = true;
                                 identity.push(user[k]);
