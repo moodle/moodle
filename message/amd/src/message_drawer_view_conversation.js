@@ -926,8 +926,8 @@ function(
         // Search the list of the logged in user's contact requests to find the
         // one from this user.
         var loggedInUserId = viewState.loggedInUserId;
-        var requests = viewState.members[loggedInUserId].contactrequests.filter(function(request) {
-            return request.userid == userId;
+        var requests = viewState.members[userId].contactrequests.filter(function(request) {
+            return request.requesteduserid == loggedInUserId;
         });
         var request = requests[0];
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
