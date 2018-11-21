@@ -1,0 +1,75 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/message_drawer_view_settings_body_content
+
+    This template will render the content for the body of the settings page in the message drawer.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * userid The logged in user id
+    * urls The URLs for the popover
+
+    Example context (json):
+    {}
+
+}}
+
+{{#settings}}
+<div data-region="settings" class="p-3">
+    <h3 class="h6 font-weight-bold">{{#str}} privacy, message {{/str}}</h3>
+    <p>{{#str}} privacy_desc, message {{/str}}</p>
+    <div data-preference="blocknoncontacts" class="mb-3">
+        {{#privacy}}
+            <div class="custom-control custom-radio mb-2">
+                <input
+                    type="radio"
+                    name="message_blocknoncontacts"
+                    class="custom-control-input"
+                    id="block-noncontacts-{{uniqid}}-{{value}}"
+                    value="{{value}}"
+                >
+                <label class="custom-control-label ml-2" for="block-noncontacts-{{uniqid}}-{{value}}">
+                    {{text}}
+                </label>
+            </div>
+        {{/privacy}}
+    </div>
+
+    <div class="hidden" data-region="notification-preference-container">
+        <h3 class="mb-2 mt-4 h6 font-weight-bold">{{#str}} notificationpreferences, core_message {{/str}}</h3>
+    </div>
+
+    <h3 class="mb-2 mt-4 h6 font-weight-bold">{{#str}} general, core {{/str}}</h3>
+    <div data-preference="entertosend">
+        <span class="switch">
+            <input type="checkbox"
+                id="enter-to-send-{{uniqid}}"
+                {{#entertosend}}checked{{/entertosend}}
+            >
+            <label for="enter-to-send-{{uniqid}}">
+                {{#str}} useentertosend, core_message {{/str}}
+            </label>
+        </span>
+    </div>
+</div>
+{{/settings}}

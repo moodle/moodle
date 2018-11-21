@@ -851,31 +851,22 @@ function core_message_standard_after_main_region_html() {
     $requestcount = \core_message\api::count_received_contact_requests($USER);
     $contactscount = \core_message\api::count_contacts($USER->id);
 
-    // Get the privacy settings options for being messaged.
-    $privacysetting = \core_message\api::get_user_privacy_messaging_preference($USER->id);
     $choices = [];
     $choices[] = [
         'value' => \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS,
-        'text' => get_string('contactableprivacy_onlycontacts', 'message'),
-        'checked' => ($privacysetting == \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS)
+        'text' => get_string('contactableprivacy_onlycontacts', 'message')
     ];
     $choices[] = [
         'value' => \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER,
-        'text' => get_string('contactableprivacy_coursemember', 'message'),
-        'checked' => ($privacysetting == \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER)
+        'text' => get_string('contactableprivacy_coursemember', 'message')
     ];
     if (!empty($CFG->messagingallusers)) {
         // Add the MESSAGE_PRIVACY_SITE option when site-wide messaging between users is enabled.
         $choices[] = [
             'value' => \core_message\api::MESSAGE_PRIVACY_SITE,
-            'text' => get_string('contactableprivacy_site', 'message'),
-            'checked' => ($privacysetting == \core_message\api::MESSAGE_PRIVACY_SITE)
+            'text' => get_string('contactableprivacy_site', 'message')
         ];
     }
-    // Email settings.
-    $emailloggedin = get_user_preferences('message_provider_moodle_instantmessage_loggedin', 'none', $USER);
-    $emailloggedoff = get_user_preferences('message_provider_moodle_instantmessage_loggedoff', 'none', $USER);
-    $emailenabled = $emailloggedin == 'email' || $emailloggedoff == 'email';
 
     // Enter to send.
     $entertosend = get_user_preferences('message_entertosend', false, $USER);
@@ -941,7 +932,6 @@ function core_message_standard_after_main_region_html() {
         ],
         'settings' => [
             'privacy' => $choices,
-            'emailenabled' => $emailenabled,
             'entertosend' => $entertosend
         ]
     ]);

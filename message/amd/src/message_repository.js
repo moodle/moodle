@@ -954,6 +954,22 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
         return Ajax.call([request])[0];
     };
 
+    /**
+     * Get the user's message preferences.
+     *
+     * @param {int} userId The user id to load preferences for
+     * @return {object} jQuery promise
+     */
+    var getUserMessagePreferences = function(userId) {
+        var request = {
+            methodname: 'core_message_get_user_message_preferences',
+            args: {
+                userid: userId
+            }
+        };
+        return Ajax.call([request])[0];
+    };
+
     return {
         query: query,
         countUnreadConversations: countUnreadConversations,
@@ -985,6 +1001,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
         setFavouriteConversations: setFavouriteConversations,
         unsetFavouriteConversations: unsetFavouriteConversations,
         getMemberInfo: getMemberInfo,
-        markAllConversationMessagesAsRead: markAllConversationMessagesAsRead
+        markAllConversationMessagesAsRead: markAllConversationMessagesAsRead,
+        getUserMessagePreferences: getUserMessagePreferences
     };
 });

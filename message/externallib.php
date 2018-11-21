@@ -3918,6 +3918,8 @@ class core_message_external extends external_api {
                                                     'displayname' => new external_value(PARAM_TEXT, 'Display name'),
                                                     'name' => new external_value(PARAM_PLUGIN, 'Processor name'),
                                                     'locked' => new external_value(PARAM_BOOL, 'Is locked by admin?'),
+                                                    'lockedmessage' => new external_value(PARAM_TEXT,
+                                                        'Text to display if locked', VALUE_OPTIONAL),
                                                     'userconfigured' => new external_value(PARAM_INT, 'Is configured?'),
                                                     'loggedin' => new external_single_structure(
                                                         array(
@@ -4067,6 +4069,7 @@ class core_message_external extends external_api {
             'warnings' => array(),
             'preferences' => $notificationlistoutput->export_for_template($renderer),
             'blocknoncontacts' => \core_message\api::get_user_privacy_messaging_preference($user->id),
+            'entertosend' => get_user_preferences('message_entertosend', false, $user)
         );
         return $result;
     }
@@ -4082,6 +4085,7 @@ class core_message_external extends external_api {
             array(
                 'preferences' => self::get_preferences_structure(),
                 'blocknoncontacts' => new external_value(PARAM_INT, 'Privacy messaging setting to define who can message you'),
+                'entertosend' => new external_value(PARAM_BOOL, 'User preference for using enter to send messages'),
                 'warnings' => new external_warnings(),
             )
         );
