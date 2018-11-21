@@ -33,19 +33,22 @@
     This is an overridden template
     changing icon "t/collapsedcaret" to "t/collapsed"
     adding ".in" to ".show"
+    adding .accordion-group to the main container div
+    adding expanded to the .accordion-group if required for toggle icons to work.
 
     Example context (json):
     {}
 
 }}
 <div
-    class="accordion-group section border-0"
+    class="accordion-group section border-0 {{#expanded}}expanded{{/expanded}}"
     data-region="{{$region}}{{/region}}"
 >
-    <div id="{{$region}}{{/region}}-toggle" class="card-header p-0" data-region="toggle">
+    <div id="{{$region}}{{/region}}-toggle" class="accordion-heading" data-region="toggle">
         <button
             class="btn btn-link w-100 text-left p-2 m-0 d-flex align-items-center overview-section-toggle {{^expanded}}collapsed{{/expanded}}"
             data-toggle="collapse"
+            data-parent="#message-drawer-view-overview-container"
             data-target="#{{$region}}{{/region}}-target"
             aria-expanded="{{#expanded}}true{{/expanded}}{{^expanded}}false{{/expanded}}"
             aria-controls="{{$region}}{{/region}}-target"
@@ -66,7 +69,7 @@
         </button>
     </div>
     {{< core_message/message_drawer_lazy_load_list }}
-        {{$rootclasses}}collapse border-bottom {{#expanded}}show in{{/expanded}}{{/rootclasses}}
+        {{$rootclasses}} accordion-body collapse border-bottom {{#expanded}}show in{{/expanded}}{{/rootclasses}}
         {{$rootattributes}}
             id="{{$region}}{{/region}}-target"
             aria-labelledby="{{$region}}{{/region}}-toggle"

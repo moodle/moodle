@@ -1289,20 +1289,20 @@
         font-weight: normal;
     }
 
-    .overview-section-toggle {
+    .accordion-group {
         .collapsed-icon-container {
-            display: none;
-        }
-        .expanded-icon-container {
             display: inline-block;
         }
+        .expanded-icon-container {
+            display: none;
+        }
 
-        &.collapsed {
+        &.expanded {
             .collapsed-icon-container {
-                display: inline-block;
+                display: none;
             }
             .expanded-icon-container {
-                display: none;
+                display: inline-block;
             }
         }
     }
@@ -1316,6 +1316,11 @@
                 flex-direction: column;
             }
         }
+    }
+    .onepix {
+        height: 1px;
+        width: 1px;
+        position: absolute;
     }
 
     .view-conversation {

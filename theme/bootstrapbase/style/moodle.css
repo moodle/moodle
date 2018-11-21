@@ -9190,17 +9190,17 @@ a.ygtvspacer:hover {
   font-size: 14px;
   font-weight: normal;
 }
-.message-drawer .overview-section-toggle .collapsed-icon-container {
-  display: none;
-}
-.message-drawer .overview-section-toggle .expanded-icon-container {
+.message-drawer .accordion-group .collapsed-icon-container {
   display: inline-block;
 }
-.message-drawer .overview-section-toggle.collapsed .collapsed-icon-container {
-  display: inline-block;
-}
-.message-drawer .overview-section-toggle.collapsed .expanded-icon-container {
+.message-drawer .accordion-group .expanded-icon-container {
   display: none;
+}
+.message-drawer .accordion-group.expanded .collapsed-icon-container {
+  display: none;
+}
+.message-drawer .accordion-group.expanded .expanded-icon-container {
+  display: inline-block;
 }
 .message-drawer .view-overview-body .section {
   display: block;
@@ -9208,6 +9208,11 @@ a.ygtvspacer:hover {
 .message-drawer .view-overview-body .section.expanded {
   display: flex;
   flex-direction: column;
+}
+.message-drawer .onepix {
+  height: 1px;
+  width: 1px;
+  position: absolute;
 }
 .message-drawer .view-conversation .content-message-container img {
   max-width: 100%;
