@@ -558,6 +558,37 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that if a user is suspended that events related to that course are not shown.
+     * User 1 is suspended. User 2 is active.
+     */
+    public function test_get_action_events_by_timesort_with_suspended_user() {
+        $this->resetAfterTest();
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $this->setAdminuser();
+        $lesson = $this->getDataGenerator()->create_module('lesson', [
+                'name' => 'Lesson 1',
+                'course' => $course->id,
+                'available' => time(),
+                'deadline' => (time() + (60 * 60 * 24 * 5))
+            ]
+        );
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, null, 'manual', 0, 0, ENROL_USER_SUSPENDED);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+
+        $factory = new action_event_test_factory();
+        $strategy = new raw_event_retrieval_strategy();
+        $vault = new event_vault($factory, $strategy);
+
+        $user1events = $vault->get_action_events_by_timesort($user1, null, null, null, 20, true);
+        $this->assertEmpty($user1events);
+        $user2events = $vault->get_action_events_by_timesort($user2, null, null, null, 20, true);
+        $this->assertCount(1, $user2events);
+        $this->assertEquals('Lesson 1 closes', $user2events[0]->get_name());
+    }
+
+    /**
      * Test that get_action_events_by_course returns events after the
      * provided timesort value.
      */
