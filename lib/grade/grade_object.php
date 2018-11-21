@@ -297,9 +297,12 @@ abstract class grade_object {
                 $data->loggeduser   = $USER->id;
                 $DB->insert_record($this->table.'_history', $data);
             }
-            $this->notify_changed(true);
-            return true;
 
+            $this->notify_changed(true);
+
+            $this->delete_feedback_files();
+
+            return true;
         } else {
             return false;
         }
@@ -433,6 +436,12 @@ abstract class grade_object {
      * @param int|null $historyid
      */
     protected function update_feedback_files(int $historyid = null) {
+    }
+
+    /**
+     * Handles deleting feedback files in the gradebook.
+     */
+    protected function delete_feedback_files() {
     }
 
     /**

@@ -129,6 +129,8 @@ class provider implements
             'importonlyfeedback' => 'privacy:metadata:grade_import_values:importonlyfeedback'
         ], 'privacy:metadata:grade_import_values');
 
+        $collection->link_subsystem('core_files', 'privacy:metadata:filepurpose');
+
         return $collection;
     }
 
@@ -482,11 +484,24 @@ class provider implements
         static::recordset_loop_and_export($recordset, 'gi_courseid', [], function($carry, $record) {
             $context = context_course::instance($record->gi_courseid);
             $gg = static::extract_grade_grade_from_record($record);
-            $carry[] = static::transform_grade($gg, $context);
+            $carry[] = static::transform_grade($gg, $context, false);
+
             return $carry;
 
         }, function($courseid, $data) use ($rootpath) {
             $context = context_course::instance($courseid);
+
+            $pathtofiles = [
+                get_string('grades', 'core_grades'),
+                get_string('feedbackfiles', 'core_grades')
+            ];
+            foreach ($data as $key => $grades) {
+                $gg = $grades['gradeobject'];
+                writer::with_context($gg->get_context())->export_area_files($pathtofiles, GRADE_FILE_COMPONENT,
+                    GRADE_FEEDBACK_FILEAREA, $gg->id);
+                unset($data[$key]['gradeobject']); // Do not want to export this later.
+            }
+
             writer::with_context($context)->export_data($rootpath, (object) ['grades' => $data]);
         });
 
@@ -508,13 +523,25 @@ class provider implements
         static::recordset_loop_and_export($recordset, 'gi_courseid', [], function($carry, $record) {
             $context = context_course::instance($record->gi_courseid);
             $gg = static::extract_grade_grade_from_record($record, true);
-            $carry[] = array_merge(static::transform_grade($gg, $context), [
+            $carry[] = array_merge(static::transform_grade($gg, $context, true), [
                 'action' => static::transform_history_action($record->ggh_action)
             ]);
             return $carry;
 
         }, function($courseid, $data) use ($rootpath) {
             $context = context_course::instance($courseid);
+
+            $pathtofiles = [
+                get_string('grades', 'core_grades'),
+                get_string('feedbackhistoryfiles', 'core_grades')
+            ];
+            foreach ($data as $key => $grades) {
+                $gg = $grades['gradeobject'];
+                writer::with_context($gg->get_context())->export_area_files($pathtofiles, GRADE_FILE_COMPONENT,
+                    GRADE_HISTORY_FEEDBACK_FILEAREA, $gg->historyid);
+                unset($data[$key]['gradeobject']); // Do not want to export this later.
+            }
+
             writer::with_context($context)->export_related_data($rootpath, 'history', (object) ['grades' => $data]);
         });
 
@@ -585,7 +612,7 @@ class provider implements
         static::recordset_loop_and_export($recordset, 'gi_courseid', [], function($carry, $record) {
             $context = context_course::instance($record->gi_courseid);
             $gg = static::extract_grade_grade_from_record($record);
-            $carry[] = array_merge(static::transform_grade($gg, $context), [
+            $carry[] = array_merge(static::transform_grade($gg, $context, false), [
                 'userid' => transform::user($gg->userid),
                 'created_or_modified_by_you' => transform::yesno(true),
             ]);
@@ -593,6 +620,18 @@ class provider implements
 
         }, function($courseid, $data) use ($relatedtomepath) {
             $context = context_course::instance($courseid);
+
+            $pathtofiles = [
+                get_string('grades', 'core_grades'),
+                get_string('feedbackfiles', 'core_grades')
+            ];
+            foreach ($data as $key => $grades) {
+                $gg = $grades['gradeobject'];
+                writer::with_context($gg->get_context())->export_area_files($pathtofiles, GRADE_FILE_COMPONENT,
+                    GRADE_FEEDBACK_FILEAREA, $gg->id);
+                unset($data[$key]['gradeobject']); // Do not want to export this later.
+            }
+
             writer::with_context($context)->export_related_data($relatedtomepath, 'grades', (object) ['grades' => $data]);
         });
 
@@ -614,7 +653,7 @@ class provider implements
         static::recordset_loop_and_export($recordset, 'gi_courseid', [], function($carry, $record) use ($userid) {
             $context = context_course::instance($record->gi_courseid);
             $gg = static::extract_grade_grade_from_record($record, true);
-            $carry[] = array_merge(static::transform_grade($gg, $context), [
+            $carry[] = array_merge(static::transform_grade($gg, $context, true), [
                 'userid' => transform::user($gg->userid),
                 'logged_in_user_was_you' => transform::yesno($userid == $record->loggeduser),
                 'author_of_change_was_you' => transform::yesno($userid == $gg->usermodified),
@@ -624,6 +663,18 @@ class provider implements
 
         }, function($courseid, $data) use ($relatedtomepath) {
             $context = context_course::instance($courseid);
+
+            $pathtofiles = [
+                get_string('grades', 'core_grades'),
+                get_string('feedbackhistoryfiles', 'core_grades')
+            ];
+            foreach ($data as $key => $grades) {
+                $gg = $grades['gradeobject'];
+                writer::with_context($gg->get_context())->export_area_files($pathtofiles, GRADE_FILE_COMPONENT,
+                    GRADE_HISTORY_FEEDBACK_FILEAREA, $gg->historyid);
+                unset($data[$key]['gradeobject']); // Do not want to export this later.
+            }
+
             writer::with_context($context)->export_related_data($relatedtomepath, 'grades_history',
                 (object) ['modified_records' => $data]);
         });
@@ -649,6 +700,10 @@ class provider implements
                 if (empty($itemids)) {
                     return;
                 }
+
+                self::delete_files($itemids, true);
+                self::delete_files($itemids, false);
+
                 list($insql, $inparams) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED);
                 $DB->delete_records_select('grade_grades', "itemid $insql", $inparams);
                 $DB->delete_records_select('grade_grades_history', "itemid $insql", $inparams);
@@ -684,9 +739,14 @@ class provider implements
             return;
         }
 
+        // Delete all the files.
+        self::delete_files($itemids, true, [$userid]);
+        self::delete_files($itemids, false, [$userid]);
+
         // Delete all the grades.
         list($insql, $inparams) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED);
         $params = array_merge($inparams, ['userid' => $userid]);
+
         $DB->delete_records_select('grade_grades', "itemid $insql AND userid = :userid", $params);
         $DB->delete_records_select('grade_grades_history', "itemid $insql AND userid = :userid", $params);
     }
@@ -720,10 +780,15 @@ class provider implements
             return;
         }
 
+        // Delete all the files.
+        self::delete_files($itemids, true, $userids);
+        self::delete_files($itemids, false, $userids);
+
         // Delete all the grades.
         list($itemsql, $itemparams) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED);
         list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
         $params = array_merge($itemparams, $userparams);
+
         $DB->delete_records_select('grade_grades', "itemid $itemsql AND userid $usersql", $params);
         $DB->delete_records_select('grade_grades_history', "itemid $itemsql AND userid $usersql", $params);
     }
@@ -748,6 +813,21 @@ class provider implements
             return;
         }
         list($insql, $inparams) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
+
+        // First, let's delete their files.
+        $sql = "
+            SELECT gi.id
+              FROM {grade_grades_history} ggh
+              JOIN {grade_items} gi
+                ON gi.id = ggh.itemid
+             WHERE ggh.userid = :userid";
+        $params = ['userid' => $userid];
+        $gradeitems = $DB->get_records_sql($sql, $params);
+        if ($gradeitems) {
+            $itemids = array_keys($gradeitems);
+            self::delete_files($itemids, true, [$userid]);
+        }
+
         $DB->delete_records_select('grade_grades_history', "id $insql", $inparams);
     }
 
@@ -951,6 +1031,7 @@ class provider implements
         $ggrecord = static::extract_record($record, $prefix);
         if ($ishistory) {
             // The grade history is not a real grade_grade so we remove the ID.
+            $historyid = $ggrecord->id;
             unset($ggrecord->id);
         }
         $gg = new grade_grade($ggrecord, false);
@@ -966,6 +1047,10 @@ class provider implements
             $scalerec = static::extract_record($record, 'sc_');
             $gi->scale = new grade_scale($scalerec, false);
             $gi->scale->load_items();
+        }
+
+        if ($ishistory) {
+            $gg->historyid = $historyid;
         }
 
         return $gg;
@@ -1097,13 +1182,32 @@ class provider implements
      *
      * @param grade_grade $gg The grade object.
      * @param context $context The context.
+     * @param bool $ishistory Whether we're extracting a historical grade.
      * @return array
      */
-    protected static function transform_grade(grade_grade $gg, context $context) {
+    protected static function transform_grade(grade_grade $gg, context $context, bool $ishistory) {
         $gi = $gg->load_grade_item();
         $timemodified = $gg->timemodified ? transform::datetime($gg->timemodified) : null;
         $timecreated = $gg->timecreated ? transform::datetime($gg->timecreated) : $timemodified; // When null we use timemodified.
+
+        $filearea = $ishistory ? GRADE_HISTORY_FEEDBACK_FILEAREA : GRADE_FEEDBACK_FILEAREA;
+        $itemid = $ishistory ? $gg->historyid : $gg->id;
+        $subpath = $ishistory ? get_string('feedbackhistoryfiles', 'core_grades') : get_string('feedbackfiles', 'core_grades');
+
+        $pathtofiles = [
+            get_string('grades', 'core_grades'),
+            $subpath
+        ];
+        $gg->feedback = writer::with_context($gg->get_context())->rewrite_pluginfile_urls(
+            $pathtofiles,
+            GRADE_FILE_COMPONENT,
+            $filearea,
+            $itemid,
+            $gg->feedback
+        );
+
         return [
+            'gradeobject' => $gg,
             'item' => $gi->get_name(),
             'grade' => $gg->finalgrade,
             'grade_formatted' => grade_format_gradevalue($gg->finalgrade, $gi),
@@ -1114,4 +1218,56 @@ class provider implements
         ];
     }
 
+    /**
+     * Handles deleting files for a given list of grade items.
+     *
+     * If an array of userids if given then it handles deleting files for those users.
+     *
+     * @param array $itemids
+     * @param bool $ishistory
+     * @param array|null $userids
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    protected static function delete_files(array $itemids, bool $ishistory, array $userids = null) {
+        global $DB;
+
+        list($iteminnsql, $params) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED);
+        if (!is_null($userids)) {
+            list($userinnsql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+            $params = array_merge($params, $userparams);
+        }
+
+        if ($ishistory) {
+            $gradefields = static::get_fields_sql('grade_grades_history', 'ggh', 'ggh_');
+            $gradetable = 'grade_grades_history';
+            $tableprefix = 'ggh';
+            $filearea = GRADE_HISTORY_FEEDBACK_FILEAREA;
+        } else {
+            $gradefields = static::get_fields_sql('grade_grade', 'gg', 'gg_');
+            $gradetable = 'grade_grades';
+            $tableprefix = 'gg';
+            $filearea = GRADE_FEEDBACK_FILEAREA;
+        }
+
+        $gifields = static::get_fields_sql('grade_item', 'gi', 'gi_');
+
+        $fs = new \file_storage();
+        $sql = "SELECT $gradefields, $gifields
+                  FROM {{$gradetable}} $tableprefix
+                  JOIN {grade_items} gi
+                    ON gi.id = {$tableprefix}.itemid
+                 WHERE gi.id $iteminnsql ";
+        if (!is_null($userids)) {
+            $sql .= "AND {$tableprefix}.userid $userinnsql";
+        }
+
+        $grades = $DB->get_recordset_sql($sql, $params);
+        foreach ($grades as $grade) {
+            $gg = static::extract_grade_grade_from_record($grade, $ishistory);
+            $fileitemid = ($ishistory) ? $gg->historyid : $gg->id;
+            $fs->delete_area_files($gg->get_context()->id, GRADE_FILE_COMPONENT, $filearea, $fileitemid);
+        }
+        $grades->close();
+    }
 }

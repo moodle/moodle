@@ -421,6 +421,13 @@ class grade_item extends grade_object {
             }
         }
 
+        // Delete all the historical files.
+        // We only support feedback files for modules atm.
+        if ($this->is_external_item()) {
+            $fs = new file_storage();
+            $fs->delete_area_files($this->get_context()->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        }
+
         return true;
     }
 
