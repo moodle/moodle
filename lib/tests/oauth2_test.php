@@ -107,9 +107,38 @@ class core_oauth2_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests we can get a logged in oauth client for a system account.
+     * Data provider for \core_oauth2_testcase::test_get_system_oauth_client().
+     *
+     * @return array
      */
-    public function test_get_system_oauth_client() {
+    public function system_oauth_client_provider() {
+        return [
+            [
+                (object) [
+                    'access_token' => 'fdas...',
+                    'token_type' => 'Bearer',
+                    'expires_in' => '3600',
+                    'id_token' => 'llfsd..',
+                ], HOURSECS - 10
+            ],
+            [
+                (object) [
+                    'access_token' => 'fdas...',
+                    'token_type' => 'Bearer',
+                    'id_token' => 'llfsd..',
+                ], WEEKSECS
+            ],
+        ];
+    }
+
+    /**
+     * Tests we can get a logged in oauth client for a system account.
+     *
+     * @dataProvider system_oauth_client_provider
+     * @param stdClass $responsedata The response data to be mocked.
+     * @param int $expiresin The expected expiration time.
+     */
+    public function test_get_system_oauth_client($responsedata, $expiresin) {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -128,17 +157,21 @@ class core_oauth2_testcase extends advanced_testcase {
         $sys->create();
 
         // Fake a response with an access token.
-        $response = json_encode(
-            (object) [
-                'access_token' => 'fdas...',
-                'token_type' => 'Bearer',
-                'expires_in' => '3600',
-                'id_token' => 'llfsd..',
-            ]
-        );
+        $response = json_encode($responsedata);
         curl::mock_response($response);
         $client = \core\oauth2\api::get_system_oauth_client($issuer);
         $this->assertTrue($client->is_logged_in());
+
+        // Check token expiry.
+        $accesstoken = \core\oauth2\access_token::get_record(['issuerid' => $issuer->get('id')]);
+
+        // Get the difference between the actual and expected expiry times.
+        // They might differ by a couple of seconds depending on the timing when the token gets actually processed.
+        $expiresdifference = time() + $expiresin - $accesstoken->get('expires');
+
+        // Assert that the actual token expiration is more or less the same as the expected.
+        $this->assertGreaterThanOrEqual(0, $expiresdifference);
+        $this->assertLessThanOrEqual(3, $expiresdifference);
     }
 
     /**
