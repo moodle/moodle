@@ -71,8 +71,6 @@ $string['archivehelp'] = '<p>This option means that the badge will be marked as 
 <p>If you would like your users to retain access to the earned badges it is important to select this option instead of fully deleting badges.</p>';
 $string['attachment'] = 'Attach badge to message';
 $string['attachment_help'] = 'If enabled, an issued badge will be attached to the recipient\'s email for download. (Attachments must be enabled in Site administration / Server / Email / Outgoing mail configuration to use this option.)';
-$string['authorimage'] = 'Image author';
-$string['authorimage_help'] = 'Author of the image, must be an URL.';
 $string['award'] = 'Award badge';
 $string['awardedtoyou'] = 'Issued to me';
 $string['awardoncron'] = 'Access to the badges was successfully enabled. Too many users can instantly earn this badge. To ensure site performance, this action will take some time to process.';
@@ -278,7 +276,6 @@ $string['error:clone'] = 'Cannot clone the badge.';
 $string['error:duplicatename'] = 'Badge with such name already exists in the system.';
 $string['error:externalbadgedoesntexist'] = 'Badge not found';
 $string['error:guestuseraccess'] = 'You are currently using guest access. To see badges you need to log in with your user account.';
-$string['error:invalidbadgeurl'] = 'Invalid issuer URL format. The URL should have a prefix http:// or https://.';
 $string['error:invalidcriteriatype'] = 'Invalid criteria type.';
 $string['error:invalidexpiredate'] = 'Expiry date has to be in the future.';
 $string['error:invalidexpireperiod'] = 'Expiry period cannot be negative or equal 0.';
@@ -537,3 +534,6 @@ $string['error:badjson'] = 'The connection attempt returned invalid data.';
 $string['error:noassertion'] = 'No assertion was returned by Persona. You may have closed the dialog before completing the login process.';
 $string['error:personaneedsjs'] = 'Currently, Javascript is required to connect to your backpack. If you can, enable Javascript and reload the page.';
 $string['signinwithyouremail'] = 'Sign in with your email';
+
+// Deprecated since Moodle 3.6.
+$string['error:invalidbadgeurl'] = 'Invalid issuer URL format. The URL should have a prefix http:// or https://.';

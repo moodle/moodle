@@ -139,3 +139,4 @@ eventmessagecontactblocked,core_message
 eventmessagecontactunblocked,core_message
 userisblockingyou,core_message
 userisblockingyounoncontact,core_message
+error:invalidbadgeurl,core_badges
