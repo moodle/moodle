@@ -9182,6 +9182,7 @@ a.ygtvspacer:hover {
 }
 .message-drawer .btn-link:hover,
 .message-drawer .btn-link:focus {
+  background-color: #e8e8e8;
   text-decoration: none;
 }
 .message-drawer .message p {

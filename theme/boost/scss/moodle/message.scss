@@ -1272,6 +1272,7 @@ $message-drawer-width: 320px;
     .btn-link {
         &:hover,
         &:focus {
+            background-color: rgba($black, .035);
             text-decoration: none;
         }
     }

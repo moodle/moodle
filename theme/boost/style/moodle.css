@@ -14134,6 +14134,7 @@ a.ygtvspacer:hover {
   .message-drawer .btn-link {
     color: inherit; }
   .message-drawer .btn-link:hover, .message-drawer .btn-link:focus {
+    background-color: rgba(0, 0, 0, 0.035);
     text-decoration: none; }
   .message-drawer .icon {
     margin-right: 0; }
