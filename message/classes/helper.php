@@ -557,7 +557,7 @@ class helper {
                 $sender = new \stdClass();
                 $sender->id = $referenceuserid;
 
-                $data->canmessage = api::can_post_message($recipient, $sender);
+                $data->canmessage = !$data->isdeleted && api::can_post_message($recipient, $sender);
             }
 
             // Populate the contact requests, even if we don't need them.

@@ -5026,20 +5026,21 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->setUser($user1);
 
         // Delete the second user and retrieve the conversations.
-        // We should have 5, as $ic1 drops off the list.
-        // Group conversations remain albeit with less members.
+        // We should have 6 still, as conversations with soft-deleted users are still returned.
+        // Group conversations are also present, albeit with less members.
         delete_user($user2);
         $result = core_message_external::get_conversations($user1->id);
         $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
-        $this->assertCount(5, $conversations);
+        $this->assertCount(6, $conversations);
         $this->assertEquals($gc3->id, $conversations[0]['id']);
         $this->assertcount(1, $conversations[0]['members']);
         $this->assertEquals($gc2->id, $conversations[1]['id']);
         $this->assertcount(1, $conversations[1]['members']);
         $this->assertEquals($ic2->id, $conversations[2]['id']);
-        $this->assertEquals($gc5->id, $conversations[3]['id']);
-        $this->assertEquals($gc4->id, $conversations[4]['id']);
+        $this->assertEquals($ic1->id, $conversations[3]['id']);
+        $this->assertEquals($gc5->id, $conversations[4]['id']);
+        $this->assertEquals($gc4->id, $conversations[5]['id']);
 
         // Delete a user from a group conversation where that user had sent the most recent message.
         // This user will still be present in the members array, as will the message in the messages array.
@@ -5047,7 +5048,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $result = core_message_external::get_conversations($user1->id);
         $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
-        $this->assertCount(5, $conversations);
+        $this->assertCount(6, $conversations);
         $this->assertEquals($gc2->id, $conversations[1]['id']);
         $this->assertcount(1, $conversations[1]['members']);
         $this->assertEquals($user4->id, $conversations[1]['members'][0]['id']);
@@ -5055,19 +5056,21 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($user4->id, $conversations[1]['messages'][0]['useridfrom']);
 
         // Delete the third user and retrieve the conversations.
-        // We should have 4, as $ic1, $ic2 drop off the list.
-        // Group conversations remain albeit with less members.
+        // We should have 6 still, as conversations with soft-deleted users are still returned.
+        // Group conversations are also present, albeit with less members.
         delete_user($user3);
         $result = core_message_external::get_conversations($user1->id);
         $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
         $conversations = $result['conversations'];
-        $this->assertCount(4, $conversations);
+        $this->assertCount(6, $conversations);
         $this->assertEquals($gc3->id, $conversations[0]['id']);
         $this->assertcount(1, $conversations[0]['members']);
         $this->assertEquals($gc2->id, $conversations[1]['id']);
         $this->assertcount(1, $conversations[1]['members']);
-        $this->assertEquals($gc5->id, $conversations[2]['id']);
-        $this->assertEquals($gc4->id, $conversations[3]['id']);
+        $this->assertEquals($ic2->id, $conversations[2]['id']);
+        $this->assertEquals($ic1->id, $conversations[3]['id']);
+        $this->assertEquals($gc5->id, $conversations[4]['id']);
+        $this->assertEquals($gc4->id, $conversations[5]['id']);
     }
 
     /**

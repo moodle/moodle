@@ -730,12 +730,11 @@ class api {
         // Now, create the final return structure.
         $arrconversations = [];
         foreach ($conversations as $conversation) {
-            // Do not include any individual conversation which:
-            // a) Contains a deleted member or
-            // b) Does not contain a recent message for the user (this happens if the user has deleted all messages).
+            // Do not include any individual conversations which do not contain a recent message for the user.
+            // This happens if the user has deleted all messages.
             // Group conversations with deleted users or no messages are always returned.
             if ($conversation->conversationtype == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL
-                    && (isset($deletedmembers[$conversation->id]) || empty($conversation->messageid))) {
+                    && (empty($conversation->messageid))) {
                 continue;
             }
 

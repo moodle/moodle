@@ -925,8 +925,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Retrieve the conversations.
         $conversations = \core_message\api::get_conversations($user1->id, 0, 20, null, true);
 
-        // We should only have one conversation because the other user was deleted.
-        $this->assertCount(1, $conversations);
+        // We should have both conversations, despite the other user being soft-deleted.
+        $this->assertCount(2, $conversations);
 
         // Confirm the conversation is from the non-deleted user.
         $conversation = reset($conversations);
@@ -1373,27 +1373,28 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
 
         // Delete the second user and retrieve the conversations.
-        // We should have 5, as $ic1 drops off the list.
-        // Group conversations remain albeit with less members.
+        // We should have 6 still, as conversations with soft-deleted users are still returned.
+        // Group conversations are also present, albeit with less members.
         delete_user($user2);
         // This is to confirm an exception is not thrown when a user AND the user context is deleted.
         // We no longer delete the user context, but historically we did.
         context_helper::delete_instance(CONTEXT_USER, $user2->id);
         $conversations = \core_message\api::get_conversations($user1->id);
-        $this->assertCount(5, $conversations);
+        $this->assertCount(6, $conversations);
         $this->assertEquals($gc3->id, $conversations[0]->id);
         $this->assertcount(1, $conversations[0]->members);
         $this->assertEquals($gc2->id, $conversations[1]->id);
         $this->assertcount(1, $conversations[1]->members);
         $this->assertEquals($ic2->id, $conversations[2]->id);
-        $this->assertEquals($gc5->id, $conversations[3]->id);
-        $this->assertEquals($gc4->id, $conversations[4]->id);
+        $this->assertEquals($ic1->id, $conversations[3]->id);
+        $this->assertEquals($gc5->id, $conversations[4]->id);
+        $this->assertEquals($gc4->id, $conversations[5]->id);
 
         // Delete a user from a group conversation where that user had sent the most recent message.
         // This user will still be present in the members array, as will the message in the messages array.
         delete_user($user4);
         $conversations = \core_message\api::get_conversations($user1->id);
-        $this->assertCount(5, $conversations);
+        $this->assertCount(6, $conversations);
         $this->assertEquals($gc2->id, $conversations[1]->id);
         $this->assertcount(1, $conversations[1]->members);
         $this->assertEquals($user4->id, $conversations[1]->members[$user4->id]->id);
@@ -1401,17 +1402,19 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals($user4->id, $conversations[1]->messages[0]->useridfrom);
 
         // Delete the third user and retrieve the conversations.
-        // We should have 4, as $ic1, $ic2 drop off the list.
-        // Group conversations remain albeit with less members.
+        // We should have 6 still, as conversations with soft-deleted users are still returned.
+        // Group conversations are also present, albeit with less members.
         delete_user($user3);
         $conversations = \core_message\api::get_conversations($user1->id);
-        $this->assertCount(4, $conversations);
+        $this->assertCount(6, $conversations);
         $this->assertEquals($gc3->id, $conversations[0]->id);
         $this->assertcount(1, $conversations[0]->members);
         $this->assertEquals($gc2->id, $conversations[1]->id);
         $this->assertcount(1, $conversations[1]->members);
-        $this->assertEquals($gc5->id, $conversations[2]->id);
-        $this->assertEquals($gc4->id, $conversations[3]->id);
+        $this->assertEquals($ic2->id, $conversations[2]->id);
+        $this->assertEquals($ic1->id, $conversations[3]->id);
+        $this->assertEquals($gc5->id, $conversations[4]->id);
+        $this->assertEquals($gc4->id, $conversations[5]->id);
     }
 
     /**
