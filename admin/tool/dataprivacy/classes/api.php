@@ -1075,6 +1075,7 @@ class api {
     public static function add_request_contexts_with_status(contextlist_collection $clcollection, int $requestid, int $status) {
         $request = new data_request($requestid);
         $user = \core_user::get_user($request->get('userid'));
+        $isconfigured = data_registry::defaults_set();
         foreach ($clcollection as $contextlist) {
             // Convert the \core_privacy\local\request\contextlist into a contextlist persistent and store it.
             $clp = \tool_dataprivacy\contextlist::from_contextlist($contextlist);
@@ -1083,7 +1084,11 @@ class api {
 
             // Store the associated contexts in the contextlist.
             foreach ($contextlist->get_contextids() as $contextid) {
-                if ($request->get('type') == static::DATAREQUEST_TYPE_DELETE) {
+                if ($isconfigured && self::DATAREQUEST_TYPE_DELETE == $request->get('type')) {
+                    // Data can only be deleted from it if the context is either expired, or unprotected.
+                    // Note: We can only check whether a context is expired or unprotected if the site is configured and
+                    // defaults are set appropriately. If they are not, we treat all contexts as though they are
+                    // unprotected.
                     $context = \context::instance_by_id($contextid);
                     $purpose = static::get_effective_context_purpose($context);
 
@@ -1163,10 +1168,11 @@ class api {
      * @return contextlist_collection the collection of approved_contextlist objects.
      */
     public static function get_approved_contextlist_collection_for_request(data_request $request) : contextlist_collection {
+        global $DB;
         $foruser = core_user::get_user($request->get('userid'));
+        $isconfigured = data_registry::defaults_set();
 
         // Fetch all approved contextlists and create the core_privacy\local\request\contextlist objects here.
-        global $DB;
         $sql = "SELECT cl.component, ctx.contextid
                   FROM {" . request_contextlist::TABLE . "} rcl
                   JOIN {" . contextlist::TABLE . "} cl ON rcl.contextlistid = cl.id
@@ -1190,10 +1196,13 @@ class api {
                 $contexts = [];
             }
 
-            if ($request->get('type') == static::DATAREQUEST_TYPE_DELETE) {
+            if ($isconfigured && $request->get('type') == static::DATAREQUEST_TYPE_DELETE) {
                 $context = \context::instance_by_id($record->contextid);
                 $purpose = static::get_effective_context_purpose($context);
                 // Data can only be deleted from it if the context is either expired, or unprotected.
+                // Note: We can only check whether a context is expired or unprotected if the site is configured and
+                // defaults are set appropriately. If they are not, we treat all contexts as though they are
+                // unprotected.
                 if (!expired_contexts_manager::is_context_expired_or_unprotected_for_user($context, $foruser)) {
                     continue;
                 }
