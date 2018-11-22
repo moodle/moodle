@@ -14187,6 +14187,13 @@ a.ygtvspacer:hover {
       display: flex; }
   .message-drawer .view-conversation .content-message-container img {
     max-width: 100%; }
+  .message-drawer .list-group .list-group-item {
+    border-left: 0;
+    border-right: 0; }
+    .message-drawer .list-group .list-group-item:first-child {
+      border-top: 0; }
+    .message-drawer .list-group .list-group-item:last-child {
+      border-bottom: 0; }
 
 .dir-rtl .message-drawer {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08); }

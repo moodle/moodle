@@ -1330,6 +1330,20 @@
             }
         }
     }
+    .list-group {
+        .list-group-item {
+            border-top: 1px solid #e3e3e3;
+            border-bottom: 1px solid #e3e3e3;
+            margin-bottom: -1px;
+            &:first-child {
+                border-top: 0;
+            }
+            &:last-child {
+                border-bottom: 0;
+                margin-bottom: 0;
+            }
+        }
+    }
 }
 
 @media (max-width: 480px) {

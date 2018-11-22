@@ -9221,6 +9221,18 @@ a.ygtvspacer:hover {
 .message-drawer .view-conversation .content-message-container img {
   max-width: 100%;
 }
+.message-drawer .list-group .list-group-item {
+  border-top: 1px solid #e3e3e3;
+  border-bottom: 1px solid #e3e3e3;
+  margin-bottom: -1px;
+}
+.message-drawer .list-group .list-group-item:first-child {
+  border-top: 0;
+}
+.message-drawer .list-group .list-group-item:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+}
 @media (max-width: 480px) {
   .messaging-area-container .messaging-area .messages-area.editing .messages-header {
     height: 80px;
