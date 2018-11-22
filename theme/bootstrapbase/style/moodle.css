@@ -22281,6 +22281,9 @@ ul.indented-list {
 .position-relative {
   position: relative !important;
 }
+.align-self-start {
+  align-self: flex-start !important;
+}
 .align-self-center {
   align-self: center !important;
 }
