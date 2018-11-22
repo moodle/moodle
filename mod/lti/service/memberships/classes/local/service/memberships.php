@@ -237,8 +237,8 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
 
             foreach ($includedcapabilities as $capabilityname => $capability) {
                 if ($islti2) {
-                    if (!in_array($capabilityname, $enabledcapabilities)) {
-                        continue;
+                    if (in_array($capabilityname, $enabledcapabilities)) {
+                        $member->{$capability['member.field']} = $capability['source.value'];
                     }
                 } else {
                     if (($capability['type'] === 'id')
