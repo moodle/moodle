@@ -37,7 +37,7 @@
 {{#conversations}}
     <a
         href="#"
-        class="p-2 d-flex list-group-item list-group-item-action align-items-center"
+        class="py-0 px-2 d-flex list-group-item list-group-item-action align-items-center"
         data-conversation-id="{{id}}"
         {{#userid}}
             data-user-id="{{.}}"
@@ -45,7 +45,7 @@
     >
         {{#imageurl}}
             <img
-                class="rounded-circle align-self-start"
+                class="rounded-circle align-self-start mt-2"
                 src="{{{.}}}"
                 alt="{{name}}"
                 aria-hidden="true"
@@ -55,20 +55,12 @@
         {{#showonlinestatus}}
             <span class="contact-status {{#isonline}}online{{/isonline}}"></span>
         {{/showonlinestatus}}
-        <div class="w-100 text-truncate ml-2">
+        <div class="w-100 text-truncate ml-2 my-2">
             <div class="d-flex">
                 <strong class="m-0 text-truncate">{{name}}</strong>
                 <span class="{{^isblocked}}hidden{{/isblocked}}" data-region="contact-icon-blocked">
                     {{#pix}} t/block, core, {{#str}} contactblocked, message {{/str}} {{/pix}}
                 </span>
-                <div
-                    class="ml-auto small {{^lastmessagedate}}hidden{{/lastmessagedate}}"
-                    data-region="last-message-date"
-                >
-                    {{#lastmessagedate}}
-                        {{#userdate}} {{.}}, {{#str}} strftimetime24, core_langconfig  {{/str}} {{/userdate}}
-                    {{/lastmessagedate}}
-                </div>
             </div>
             {{#subname}}
                 <p class="m-0 text-truncate">{{.}}</p>
@@ -79,16 +71,28 @@
                 <span class="text-muted">{{lastmessage}}</span>
             </p>
         </div>
+        <div class="d-flex align-self-stretch">
+            <div
+                class="ml-auto small position-absolute text-muted {{^lastmessagedate}}hidden{{/lastmessagedate}}"
+                data-region="last-message-date"
+                style="right: 0.5rem"
+            >
+                {{#lastmessagedate}}
+                    {{#userdate}} {{.}}, {{#str}} strftimetime24, core_langconfig  {{/str}} {{/userdate}}
+                {{/lastmessagedate}}
+            </div>
+            <div class="d-flex align-self-center align-items-center">
+                <span
+                    class="badge badge-pill badge-primary bg-primary {{^unreadcount}}hidden{{/unreadcount}}"
+                    data-region="unread-count"
+                >
+                    {{unreadcount}}
+                </span>
 
-        <span
-            class="badge badge-pill badge-primary bg-primary {{^unreadcount}}hidden{{/unreadcount}}"
-            data-region="unread-count"
-        >
-            {{unreadcount}}
-        </span>
-
-        <div class="text-muted">
-            {{> core_message/message_drawer_icon_forward }}
+                <div class="text-muted ml-auto">
+                    {{> core_message/message_drawer_icon_forward }}
+                </div>
+            </div>
         </div>
     </a>
 {{/conversations}}
