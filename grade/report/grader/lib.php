@@ -1911,7 +1911,7 @@ class grade_report_grader extends grade_report {
 
         // Sourced from tablelib.php
         // Check the full name display for sortable fields.
-        if (has_capability('moodle/site:viewfullnames', context_system::instance())) {
+        if (has_capability('moodle/site:viewfullnames', $this->context)) {
             $nameformat = $CFG->alternativefullnameformat;
         } else {
             $nameformat = $CFG->fullnamedisplay;
