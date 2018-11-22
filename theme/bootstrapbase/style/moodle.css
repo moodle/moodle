@@ -22337,6 +22337,9 @@ ul.indented-list {
   height: 24px !important;
   width: 24px !important;
 }
+.text-muted {
+  color: #999;
+}
 .dir-rtl .dir-rtl-hide {
   display: none;
 }

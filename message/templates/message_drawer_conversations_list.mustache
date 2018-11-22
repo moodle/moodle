@@ -75,7 +75,8 @@
             {{/subname}}
             <p class="m-0 font-weight-light text-truncate" data-region="last-message">
                 {{#sentfromcurrentuser}}{{#str}} you, core_message {{/str}}{{/sentfromcurrentuser}}
-                {{lastmessage}}
+                {{^sentfromcurrentuser}}{{lastsendername}}{{/sentfromcurrentuser}}
+                <span class="text-muted">{{lastmessage}}</span>
             </p>
         </div>
 
