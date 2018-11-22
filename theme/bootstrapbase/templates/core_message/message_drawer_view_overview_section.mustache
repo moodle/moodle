@@ -35,6 +35,7 @@
     adding ".in" to ".show"
     adding .accordion-group to the main container div
     adding expanded to the .accordion-group if required for toggle icons to work.
+    changing span.font-weight-bold to strong
 
     Example context (json):
     {}
@@ -59,7 +60,7 @@
             <span class="expanded-icon-container">
                 {{#pix}} t/expanded, core {{/pix}}
             </span>
-            {{$title}}{{/title}}
+            <strong>{{$title}}{{/title}}</strong>
             <span class="hidden ml-1" data-region="section-total-count-container">
                 (<span data-region="section-total-count">{{count.total}}</span>)
             </span>

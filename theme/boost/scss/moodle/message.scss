@@ -1269,6 +1269,12 @@ $message-drawer-width: 320px;
     .btn-link {
         color: inherit;
     }
+    .btn-link {
+        &:hover,
+        &:focus {
+            text-decoration: none;
+        }
+    }
 
     .icon {
         margin-right: 0;

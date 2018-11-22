@@ -9180,6 +9180,10 @@ a.ygtvspacer:hover {
   text-decoration: none;
   color: inherit;
 }
+.message-drawer .btn-link:hover,
+.message-drawer .btn-link:focus {
+  text-decoration: none;
+}
 .message-drawer .message p {
   margin: 0;
 }

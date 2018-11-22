@@ -14133,6 +14133,8 @@ a.ygtvspacer:hover {
   .message-drawer a,
   .message-drawer .btn-link {
     color: inherit; }
+  .message-drawer .btn-link:hover, .message-drawer .btn-link:focus {
+    text-decoration: none; }
   .message-drawer .icon {
     margin-right: 0; }
   .message-drawer .overview-section-toggle .collapsed-icon-container {
