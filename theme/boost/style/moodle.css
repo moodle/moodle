@@ -16348,20 +16348,26 @@ p.arrow_button {
 /**
  * Grader report.
  */
-.path-grade-report .gradeparent tr .cell {
+.path-grade-report-grader .gradeparent tr .cell {
   background-color: #fff; }
 
-.path-grade-report .gradeparent table,
-.path-grade-report .gradeparent .cell {
+.path-grade-report-grader .gradeparent table,
+.path-grade-report-grader .gradeparent .cell {
   border-color: #dee2e6; }
 
-.path-grade-report .gradeparent tr:nth-of-type(even) .cell,
-.path-grade-report .gradeparent .floater .cell,
-.path-grade-report .gradeparent .avg {
+.path-grade-report-grader .gradeparent tr:nth-of-type(even) .cell,
+.path-grade-report-grader .gradeparent .floater .cell,
+.path-grade-report-grader .gradeparent .avg {
   background-color: #f8f9fa; }
 
-.path-grade-report .gradeparent table .clickable {
+.path-grade-report-grader .gradeparent table .clickable {
   cursor: pointer; }
+
+.path-grade-report-grader #page-header.row {
+  flex: 1 0 auto; }
+
+.path-grade-report-grader #page-wrapper #page {
+  flex-flow: wrap; }
 
 /**
  * User report.
