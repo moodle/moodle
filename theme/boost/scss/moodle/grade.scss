@@ -359,7 +359,7 @@
 /**
  * Grader report.
  */
-.path-grade-report {
+.path-grade-report-grader {
     .gradeparent {
         table {
             @include border-radius($border-radius);
@@ -383,6 +383,12 @@
         table .clickable {
             cursor: pointer;
         }
+    }
+    #page-header.row {
+        flex: 1 0 auto;
+    }
+    #page-wrapper #page {
+        flex-flow: wrap;
     }
 }
 
