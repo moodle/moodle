@@ -1636,6 +1636,48 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that delete requests do not filter out protected purpose contexts if the the site is properly configured.
+     */
+    public function test_get_approved_contextlist_collection_for_collection_delete_course_no_site_config() {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - YEARSECS]);
+        $coursecontext = \context_course::instance($course->id);
+
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+        list(, $forumcm) = get_course_and_cm_from_instance($forum->id, 'forum');
+        $contextforum = \context_module::instance($forumcm->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        // Create the initial contextlist.
+        $initialcollection = new \core_privacy\local\request\contextlist_collection($user->id);
+
+        $contextlist = new \core_privacy\local\request\contextlist();
+        $contextlist->add_from_sql('SELECT id FROM {context} WHERE id = :contextid', ['contextid' => $coursecontext->id]);
+        $contextlist->set_component('tool_dataprivacy');
+        $initialcollection->add_contextlist($contextlist);
+
+        $contextlist = new \core_privacy\local\request\contextlist();
+        $contextlist->add_from_sql('SELECT id FROM {context} WHERE id = :contextid', ['contextid' => $contextforum->id]);
+        $contextlist->set_component('mod_forum');
+        $initialcollection->add_contextlist($contextlist);
+
+        $collection = api::get_approved_contextlist_collection_for_collection(
+                $initialcollection, $user, api::DATAREQUEST_TYPE_DELETE);
+
+        $this->assertCount(2, $collection);
+
+        $list = $collection->get_contextlist_for_component('tool_dataprivacy');
+        $this->assertCount(1, $list);
+
+        $list = $collection->get_contextlist_for_component('mod_forum');
+        $this->assertCount(1, $list);
+    }
+
+    /**
      * Test that delete requests do not filter out protected purpose contexts if they are already expired.
      */
     public function test_get_approved_contextlist_collection_for_collection_delete_course_expired_protected() {
