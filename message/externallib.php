@@ -827,7 +827,7 @@ class core_message_external extends external_api {
      */
     public static function get_conversation_members_returns() {
         return new external_multiple_structure(
-            self::get_conversation_member_structure(true)
+            self::get_conversation_member_structure()
         );
     }
 
@@ -1074,7 +1074,7 @@ class core_message_external extends external_api {
                 'unreadcount' => new external_value(PARAM_INT, 'The number of unread messages in this conversation',
                     VALUE_DEFAULT, null),
                 'members' => new external_multiple_structure(
-                    self::get_conversation_member_structure(true)
+                    self::get_conversation_member_structure()
                 ),
                 'messages' => new external_multiple_structure(
                     self::get_conversation_message_structure()
@@ -1086,13 +1086,10 @@ class core_message_external extends external_api {
     /**
      * Return the structure of a conversation member.
      *
-     * @param bool $includecontactrequests Are we including contact requests?
-     * @param bool $includeconversations Are we including conversations?
      * @return external_single_structure
      * @since Moodle 3.6
      */
-    private static function get_conversation_member_structure(bool $includecontactrequests = false,
-                                                              bool $includeconversations = false) {
+    private static function get_conversation_member_structure() {
         $result = [
             'id' => new external_value(PARAM_INT, 'The user id'),
             'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
@@ -1110,10 +1107,10 @@ class core_message_external extends external_api {
         $result['contactrequests'] = new external_multiple_structure(
             new external_single_structure(
                 [
-                    'id' => new external_value(PARAM_INT, 'The id of the message'),
-                    'userid' => new external_value(PARAM_INT, 'The id of the user who sent the message'),
-                    'requesteduserid' => new external_value(PARAM_RAW, 'The text of the message'),
-                    'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the message'),
+                    'id' => new external_value(PARAM_INT, 'The id of the contact request'),
+                    'userid' => new external_value(PARAM_INT, 'The id of the user who created the contact request'),
+                    'requesteduserid' => new external_value(PARAM_INT, 'The id of the user confirming the request'),
+                    'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the contact request'),
                 ]
             ), 'The contact requests', VALUE_OPTIONAL
         );
@@ -1448,10 +1445,10 @@ class core_message_external extends external_api {
         return new external_single_structure(
             array(
                 'contacts' => new external_multiple_structure(
-                    self::get_conversation_member_structure(false, true)
+                    self::get_conversation_member_structure()
                 ),
                 'noncontacts' => new external_multiple_structure(
-                    self::get_conversation_member_structure(false, true)
+                    self::get_conversation_member_structure()
                 )
             )
         );
@@ -4351,7 +4348,7 @@ class core_message_external extends external_api {
      */
     public static function get_member_info_returns() {
         return new external_multiple_structure(
-            self::get_conversation_member_structure(true)
+            self::get_conversation_member_structure()
         );
     }
 }
