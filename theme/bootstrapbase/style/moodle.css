@@ -9185,6 +9185,9 @@ a.ygtvspacer:hover {
   background-color: #e8e8e8;
   text-decoration: none;
 }
+.message-drawer .accordion-group .collapse.in {
+  overflow-y: auto;
+}
 .message-drawer .message p {
   margin: 0;
 }

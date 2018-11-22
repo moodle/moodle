@@ -14197,6 +14197,10 @@ a.ygtvspacer:hover {
       border-top: 0; }
     .message-drawer .list-group .list-group-item:last-child {
       border-bottom: 0; }
+  .message-drawer .section .collapse {
+    overflow-y: auto; }
+  .message-drawer .section .collapsing {
+    overflow: hidden; }
 
 .dir-rtl .message-drawer {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08); }

@@ -1345,6 +1345,14 @@ $message-drawer-width: 320px;
             border-bottom: 0;
         }
     }
+    .section {
+        .collapse {
+            overflow-y: auto;
+        }
+        .collapsing {
+            overflow: hidden;
+        }
+    }
 }
 
 .dir-rtl {
