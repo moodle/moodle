@@ -2109,6 +2109,66 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Tests retrieving user contacts.
+     */
+    public function test_get_user_contacts() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+
+        // Set as the user.
+        $this->setUser($user1);
+
+        $user2 = new stdClass();
+        $user2->firstname = 'User';
+        $user2->lastname = 'A';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        $user3 = new stdClass();
+        $user3->firstname = 'User';
+        $user3->lastname = 'B';
+        $user3 = self::getDataGenerator()->create_user($user3);
+
+        $user4 = new stdClass();
+        $user4->firstname = 'User';
+        $user4->lastname = 'C';
+        $user4 = self::getDataGenerator()->create_user($user4);
+
+        $user5 = new stdClass();
+        $user5->firstname = 'User';
+        $user5->lastname = 'D';
+        $user5 = self::getDataGenerator()->create_user($user5);
+
+        // Add some users as contacts.
+        \core_message\api::add_contact($user1->id, $user2->id);
+        \core_message\api::add_contact($user1->id, $user3->id);
+        \core_message\api::add_contact($user1->id, $user4->id);
+
+        // Retrieve the contacts.
+        $contacts = \core_message\api::get_user_contacts($user1->id);
+
+        // Confirm the data is correct.
+        $this->assertEquals(3, count($contacts));
+
+        ksort($contacts);
+
+        $contact1 = array_shift($contacts);
+        $contact2 = array_shift($contacts);
+        $contact3 = array_shift($contacts);
+
+        $this->assertEquals($user2->id, $contact1->id);
+        $this->assertEquals(fullname($user2), $contact1->fullname);
+        $this->assertTrue($contact1->iscontact);
+
+        $this->assertEquals($user3->id, $contact2->id);
+        $this->assertEquals(fullname($user3), $contact2->fullname);
+        $this->assertTrue($contact2->iscontact);
+
+        $this->assertEquals($user4->id, $contact3->id);
+        $this->assertEquals(fullname($user4), $contact3->fullname);
+        $this->assertTrue($contact3->iscontact);
+    }
+
+    /**
      * Tests retrieving messages.
      */
     public function test_get_messages() {

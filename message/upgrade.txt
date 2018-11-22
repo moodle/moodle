@@ -49,6 +49,7 @@ information provided here is intended especially for developers.
   - core_message_external::data_for_messagearea_messages().
   - core_message_external::data_for_messagearea_get_most_recent_message().
   - core_message_external::data_for_messagearea_get_profile().
+  - core_message_external::get_contacts().
 * The following function has been added for getting the privacy messaging preference:
   - get_user_privacy_messaging_preference()
 

@@ -2227,6 +2227,66 @@ class core_message_external extends external_api {
     }
 
     /**
+     * The user contacts return parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_user_contacts_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of the user who we retrieving the contacts for'),
+                'limitfrom' => new external_value(PARAM_INT, 'Limit from', VALUE_DEFAULT, 0),
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Get user contacts.
+     *
+     * @param int $userid The id of the user who we are viewing conversations for
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return array
+     * @throws moodle_exception
+     */
+    public static function get_user_contacts(int $userid, int $limitfrom = 0, int $limitnum = 0) {
+        global $CFG, $USER;
+
+        // Check if messaging is enabled.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $systemcontext = context_system::instance();
+
+        $params = array(
+            'userid' => $userid,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        );
+        $params = self::validate_parameters(self::get_user_contacts_parameters(), $params);
+        self::validate_context($systemcontext);
+
+        if (($USER->id != $params['userid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
+
+        return \core_message\api::get_user_contacts($params['userid'], $params['limitfrom'], $params['limitnum']);
+    }
+
+    /**
+     * The user contacts return structure.
+     *
+     * @return external_multiple_structure
+     */
+    public static function get_user_contacts_returns() {
+        return new external_multiple_structure(
+            self::get_conversation_member_structure()
+        );
+    }
+
+    /**
      * The get most recent message return parameters.
      *
      * @deprecated since 3.6
@@ -2391,6 +2451,7 @@ class core_message_external extends external_api {
     /**
      * Get contacts parameters description.
      *
+     * @deprecated since 3.6
      * @return external_function_parameters
      * @since Moodle 2.5
      */
@@ -2401,6 +2462,7 @@ class core_message_external extends external_api {
     /**
      * Get contacts.
      *
+     * @deprecated since 3.6
      * @return external_description
      * @since Moodle 2.5
      */
@@ -2482,6 +2544,7 @@ class core_message_external extends external_api {
     /**
      * Get contacts return description.
      *
+     * @deprecated since 3.6
      * @return external_description
      * @since Moodle 2.5
      */
@@ -2526,6 +2589,15 @@ class core_message_external extends external_api {
                 )
             )
         );
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_contacts_is_deprecated() {
+        return true;
     }
 
     /**
