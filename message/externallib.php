@@ -1107,10 +1107,10 @@ class core_message_external extends external_api {
         $result['contactrequests'] = new external_multiple_structure(
             new external_single_structure(
                 [
-                    'id' => new external_value(PARAM_INT, 'The id of the message'),
-                    'userid' => new external_value(PARAM_INT, 'The id of the user who sent the message'),
-                    'requesteduserid' => new external_value(PARAM_RAW, 'The text of the message'),
-                    'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the message'),
+                    'id' => new external_value(PARAM_INT, 'The id of the contact request'),
+                    'userid' => new external_value(PARAM_INT, 'The id of the user who created the contact request'),
+                    'requesteduserid' => new external_value(PARAM_INT, 'The id of the user confirming the request'),
+                    'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the contact request'),
                 ]
             ), 'The contact requests', VALUE_OPTIONAL
         );
