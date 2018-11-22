@@ -2482,10 +2482,10 @@ class core_renderer extends renderer_base {
      * @return string
      */
     protected function render_user_picture(user_picture $userpicture) {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $DB;
 
         $user = $userpicture->user;
-        $canviewfullnames = has_capability('moodle/site:viewfullnames', $PAGE->context);
+        $canviewfullnames = has_capability('moodle/site:viewfullnames', $this->page->context);
 
         if ($userpicture->alttext) {
             if (!empty($user->imagealt)) {
