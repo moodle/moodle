@@ -41,23 +41,28 @@
         }
     }
 }}
-<a
-    class="list-group-item list-group-item-action flex-column py-2 pl-0 pr-0 border-0"
-    href="{{{action.url}}}"
-    title="{{name}}"
+<div class="list-group-item flex-column py-2 pl-0 pr-0 border-0"
     data-region="event-list-item"
-    aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": "{{name}}", "course": "{{course.fullnamedisplay}}", "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'
->
+    >
     <div class="d-flex">
-        <div class="icon-size-4 d-flex align-self-center">
+        <div class="icon-size-4 d-flex align-self-top">
             {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
         </div>
         <div class="w-100 event-name-container text-truncate line-height-3">
-            <h6 class="event-name text-truncate mb-0">{{{name}}}</h6>
+            <a href="{{url}}"
+               title="{{name}}"
+               aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": "{{name}}", "course": "{{course.fullnamedisplay}}", "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'
+            ><h6 class="event-name text-truncate mb-0">{{{name}}}</h6></a>
             <small class="text-muted text-truncate m-b-0">{{{course.fullnamedisplay}}}</small>
+            {{#action.actionable}}
+            <h6 class="m-b-0 pt-2">
+                <a href="{{{action.url}}}" aria-label="{{{action.name}}}" title="{{{action.name}}}" class="list-group-item-action">{{{action.name}}}</a>
+            </h6>
+            {{/action.actionable}}
         </div>
         <small class="text-right text-nowrap ml-1">
             {{#userdate}} {{timesort}}, {{#str}} strftimetime24, core_langconfig {{/str}} {{/userdate}}
         </small>
+
     </div>
-</a>
+</div>
