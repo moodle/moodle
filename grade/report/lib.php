@@ -49,7 +49,8 @@ abstract class grade_report {
 
     /**
      * The context.
-     * @var int $context
+     *
+     * @var context $context
      */
     public $context;
 
