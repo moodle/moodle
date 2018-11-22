@@ -44,7 +44,7 @@
 >
     <div class="d-flex align-items-center {{^fromloggedinuser}}pb-2{{/fromloggedinuser}}">
         {{^fromloggedinuser}}
-        <div>
+        <div style="flex-shrink: 0">
             <img
                 class="rounded-circle"
                 src="{{{userfrom.profileimageurl}}}"
@@ -53,7 +53,7 @@
                 style="height: 30px"
             >
         </div>
-        <div class="pl-2 pr-2">
+        <div class="text-truncate pl-2 pr-2">
             <h6 class="text-truncate m-0 font-weight-bold">{{userfrom.fullname}}</h6>
         </div>
         {{/fromloggedinuser}}
