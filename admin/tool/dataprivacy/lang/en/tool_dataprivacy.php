@@ -308,6 +308,7 @@ $string['statusrejected'] = 'Rejected';
 $string['subjectscope'] = 'Subject scope';
 $string['subjectscope_help'] = 'The subject scope lists the roles which may be assigned in this context.';
 $string['summary'] = 'Registry configuration summary';
+$string['systemconfignotsetwarning'] = 'A site purpose and category have not been defined. When these are not defined, all data will be removed when processing deletion requests.';
 $string['user'] = 'User';
 $string['userlistnoncompliant'] = 'Userlist provider missing';
 $string['userlistexplanation'] = 'This plugin has the base provider but should also implement the userlist provider for full support of privacy functionality.';
