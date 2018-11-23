@@ -41,7 +41,9 @@ class qtype_ddwtos_edit_form_test extends advanced_testcase {
      *
      * @param string $classname the question form class to instantiate.
      *
-     * @return question_edit_form great a question form instance that can be tested.
+     * @return array with two elements:
+     *      question_edit_form great a question form instance that can be tested.
+     *      stdClass the question category.
      */
     protected function get_form($classname) {
         $this->setAdminUser();
@@ -50,7 +52,7 @@ class qtype_ddwtos_edit_form_test extends advanced_testcase {
         $syscontext = context_system::instance();
         $category = question_make_default_categories(array($syscontext));
         $fakequestion = new stdClass();
-        $fakequestion->qtype = 'stack';
+        $fakequestion->qtype = 'ddwtos'; // Does not actually matter if this is wrong.
         $fakequestion->contextid = $syscontext->id;
         $fakequestion->createdby = 2;
         $fakequestion->category = $category->id;
@@ -61,15 +63,18 @@ class qtype_ddwtos_edit_form_test extends advanced_testcase {
         $fakequestion->formoptions->movecontext = null;
         $fakequestion->formoptions->repeatelements = true;
         $fakequestion->inputs = null;
-        return new $classname(new moodle_url('/'), $fakequestion, $category,
+
+        $form = new $classname(new moodle_url('/'), $fakequestion, $category,
                 new question_edit_contexts($syscontext));
+
+        return [$form, $category];
     }
 
     /**
      * Test the form shows the right number of groups of choices.
      */
     public function test_number_of_choice_groups() {
-        $form = $this->get_form('qtype_ddwtos_edit_form');
+        list($form) = $this->get_form('qtype_ddwtos_edit_form');
         // Use reflection to get the protected property we need.
         $property = new ReflectionProperty('qtype_ddwtos_edit_form', '_form');
         $property->setAccessible(true);
@@ -77,5 +82,33 @@ class qtype_ddwtos_edit_form_test extends advanced_testcase {
         $choices = $mform->getElement('choices[0]');
         $groupoptions = $choices->_elements[1];
         $this->assertCount(8, $groupoptions->_options);
+    }
+
+    /**
+     * Test the form correctly validates the HTML allowed in choices.
+     */
+    public function test_choices_validation() {
+        list($form, $category) = $this->get_form('qtype_ddwtos_edit_form');
+
+        $submitteddata = [
+                'category' => $category->id,
+                'questiontext' => ['text' => 'Test [[1]] question [[2]]', 'format' => FORMAT_HTML],
+                'choices' => [
+                        ['answer' => 'frog'],
+                        ['answer' => '<b>toad</b>'],
+                        ['answer' => '<span lang="fr"><em>chien</em></span>'],
+                        ['answer' => '<textarea>evil!</textarea>'],
+                ],
+        ];
+
+        $errors = $form->validation($submitteddata, []);
+
+        $this->assertArrayNotHasKey('choices[0]', $errors);
+        $this->assertArrayNotHasKey('choices[1]', $errors);
+        $this->assertArrayNotHasKey('choices[2]', $errors);
+        $this->assertEquals('&lt;textarea&gt; is not allowed. ' .
+                '(Only &lt;sub&gt;, &lt;sup&gt;, &lt;b&gt;, &lt;i&gt;, ' .
+                '&lt;em&gt;, &lt;strong&gt;, &lt;span&gt; are permitted.)',
+                $errors['choices[3]']);
     }
 }
