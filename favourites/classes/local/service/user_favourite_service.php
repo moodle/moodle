@@ -111,6 +111,51 @@ class user_favourite_service {
     }
 
     /**
+     * Returns the SQL required to include favourite information for a given component/itemtype combination.
+     *
+     * Generally, find_favourites_by_type() is the recommended way to fetch favourites.
+     *
+     * This method is used to include favourite information in external queries, for items identified by their
+     * component and itemtype, matching itemid to the $joinitemid, and for the user to which this service is scoped.
+     *
+     * It uses a LEFT JOIN to preserve the original records. If you wish to restrict your records, please consider using a
+     * "WHERE {$tablealias}.id IS NOT NULL" in your query.
+     *
+     * Example usage:
+     *
+     * list($sql, $params) = $service->get_join_sql_by_type('core_message', 'message_conversations', 'myfavouritetablealias',
+     *                                                      'conv.id');
+     * Results in $sql:
+     *     "LEFT JOIN {favourite} fav
+     *             ON fav.component = :favouritecomponent
+     *            AND fav.itemtype = :favouriteitemtype
+     *            AND fav.userid = 1234
+     *            AND fav.itemid = conv.id"
+     * and $params:
+     *     ['favouritecomponent' => 'core_message', 'favouriteitemtype' => 'message_conversations']
+     *
+     * @param string $component the frankenstyle component name.
+     * @param string $itemtype the type of the favourited item.
+     * @param string $tablealias the desired alias for the favourites table.
+     * @param string $joinitemid the table and column identifier which the itemid is joined to. E.g. conversation.id.
+     * @return array the list of sql and params, in the format [$sql, $params].
+     */
+    public function get_join_sql_by_type(string $component, string $itemtype, string $tablealias, string $joinitemid) : array {
+        $sql = " LEFT JOIN {favourite} {$tablealias}
+                        ON {$tablealias}.component = :favouritecomponent
+                       AND {$tablealias}.itemtype = :favouriteitemtype
+                       AND {$tablealias}.userid = {$this->userid}
+                       AND {$tablealias}.itemid = {$joinitemid} ";
+
+        $params = [
+            'favouritecomponent' => $component,
+            'favouriteitemtype' => $itemtype,
+        ];
+
+        return [$sql, $params];
+    }
+
+    /**
      * Delete a favourite item from an area and from within a context.
      *
      * E.g. delete a favourite course from the area 'core_course', 'course' with itemid 3 and from within the CONTEXT_USER context.
@@ -186,7 +231,7 @@ class user_favourite_service {
      * @param string $component the frankenstyle component name.
      * @param string $itemtype the type of the favourited item.
      * @param \context|null $context the context of the item which was favourited.
-     * @return favourite|null
+     * @return int
      */
     public function count_favourites_by_type(string $component, string $itemtype, \context $context = null) {
         $criteria = [

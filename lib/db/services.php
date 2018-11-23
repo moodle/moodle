@@ -1125,6 +1125,15 @@ $functions = array(
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
         'ajax' => true,
     ),
+    'core_message_get_conversation_counts' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'get_conversation_counts',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Retrieve a list of conversation counts, indexed by type.',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax' => true,
+    ),
     'core_message_get_conversation_members' => array(
         'classname' => 'core_message_external',
         'methodname' => 'get_conversation_members',

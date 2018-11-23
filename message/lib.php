@@ -834,20 +834,12 @@ function core_message_standard_after_main_region_html() {
     }
 
     $renderer = $PAGE->get_renderer('core');
-    $individualconversationcount = \core_message\api::count_conversations(
-        $USER,
-        \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
-        true
-    );
-    $groupconversationcount = \core_message\api::count_conversations(
-        $USER,
-        \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
-        true
-    );
-    $systemcontext = \context_system::instance();
-    $usercontext = \context_user::instance($USER->id);
-    $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
-    $favouriteconversationcount = $ufservice->count_favourites_by_type('core_message', 'message_conversations', $systemcontext);
+
+    // Get the counts.
+    $conversationcounts = \core_message\api::get_conversation_counts($USER->id);
+    $individualconversationcount = $conversationcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL];
+    $groupconversationcount = $conversationcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP];
+    $favouriteconversationcount = $conversationcounts['favourites'];
     $requestcount = \core_message\api::count_received_contact_requests($USER);
     $contactscount = \core_message\api::count_contacts($USER->id);
 

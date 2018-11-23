@@ -4351,4 +4351,79 @@ class core_message_external extends external_api {
             self::get_conversation_member_structure()
         );
     }
+
+    /**
+     * Returns description of method parameters for get_conversation_counts() method.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_conversation_counts_parameters() {
+        return new external_function_parameters(
+            [
+                'userid' => new external_value(PARAM_INT, 'id of the user, 0 for current user', VALUE_DEFAULT, 0)
+            ]
+        );
+    }
+
+    /**
+     * Returns an array of conversation counts for the various types of conversations, including favourites.
+     *
+     * Return format:
+     * [
+     *     'favourites' => 0,
+     *     'types' => [
+     *          \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
+     *          \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+     *      ]
+     * ]
+     *
+     * @param int $userid the id of the user whose counts we are fetching.
+     * @return array the array of conversation counts, indexed by type.
+     * @throws moodle_exception if the current user cannot perform this action.
+     */
+    public static function get_conversation_counts(int $userid) {
+        global $CFG, $USER;
+
+        // All the business logic checks that really shouldn't be in here.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        if (empty($userid)) {
+            $userid = $USER->id;
+        }
+
+        $params = ['userid' => $userid];
+        $params = self::validate_parameters(self::get_conversation_counts_parameters(), $params);
+
+        $systemcontext = context_system::instance();
+        self::validate_context($systemcontext);
+
+        if (($USER->id != $params['userid']) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
+
+        return \core_message\api::get_conversation_counts($params['userid']);
+    }
+
+    /**
+     * Get conversation counts return description.
+     *
+     * @return external_description
+     */
+    public static function get_conversation_counts_returns() {
+        return new external_single_structure(
+            [
+                'favourites' => new external_value(PARAM_INT, 'Total number of favourite conversations'),
+                'types' => new external_single_structure(
+                    [
+                        \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => new external_value(PARAM_INT,
+                            'Total number of individual conversations'),
+                        \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => new external_value(PARAM_INT,
+                            'Total number of group conversations'),
+                    ]
+                ),
+            ]
+        );
+    }
 }

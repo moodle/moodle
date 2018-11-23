@@ -730,12 +730,11 @@ class api {
         // Now, create the final return structure.
         $arrconversations = [];
         foreach ($conversations as $conversation) {
-            // Do not include any individual conversation which:
-            // a) Contains a deleted member or
-            // b) Does not contain a recent message for the user (this happens if the user has deleted all messages).
+            // Do not include any individual conversations which do not contain a recent message for the user.
+            // This happens if the user has deleted all messages.
             // Group conversations with deleted users or no messages are always returned.
             if ($conversation->conversationtype == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL
-                    && (isset($deletedmembers[$conversation->id]) || empty($conversation->messageid))) {
+                    && (empty($conversation->messageid))) {
                 continue;
             }
 
@@ -1489,78 +1488,80 @@ class api {
      * Returns the count of conversations (collection of messages from a single user) for
      * the given user.
      *
-     * @param \stdClass $user The user who's conversations should be counted
-     * @param int $type The conversation type
-     * @param bool $excludefavourites Exclude favourite conversations
-     * @return int the count of the user's unread conversations
+     * @param int $userid The user whose conversations should be counted.
+     * @return array the array of conversations counts, indexed by type.
      */
-    public static function count_conversations($user, int $type = null, bool $excludefavourites = false) {
+    public static function get_conversation_counts(int $userid) : array {
         global $DB;
 
-        $params = [];
-        $favouritessql = '';
+        // Some restrictions we need to be aware of:
+        // - Individual conversations containing soft-deleted user must be counted.
+        // - Individual conversations containing only deleted messages must NOT be counted.
+        // - Group conversations with 0 messages must be counted.
+        // - Linked conversations which are disabled (enabled = 0) must NOT be counted.
+        // - Any type of conversation can be included in the favourites count, however, the type counts and the favourites count
+        // are mutually exclusive; any conversations which are counted in favourites cannot be counted elsewhere.
 
-        if ($excludefavourites) {
-            $favouritessql = "AND m.conversationid NOT IN (
-                                SELECT itemid
-                                FROM {favourite}
-                                WHERE component = 'core_message'
-                                AND itemtype = 'message_conversations'
-                                AND userid = ?
-                            )";
-            $params[] = $user->id;
+        // First, ask the favourites service to give us the join SQL for favourited conversations,
+        // so we can include favourite information in the query.
+        $usercontext = \context_user::instance($userid);
+        $favservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+        list($favsql, $favparams) = $favservice->get_join_sql_by_type('core_message', 'message_conversations', 'fav', 'mc.id');
+
+        $sql = "SELECT mc.type, fav.itemtype, COUNT(DISTINCT mc.id) as count
+                  FROM {message_conversations} mc
+            INNER JOIN {message_conversation_members} mcm
+                    ON mcm.conversationid = mc.id
+             LEFT JOIN (
+                              SELECT m.conversationid as convid, MAX(m.timecreated) as maxtime
+                                FROM {messages} m
+                          INNER JOIN {message_conversation_members} mcm
+                                  ON mcm.conversationid = m.conversationid
+                           LEFT JOIN {message_user_actions} mua
+                                  ON (mua.messageid = m.id AND mua.userid = :userid AND mua.action = :action)
+                               WHERE mua.id is NULL
+                                 AND mcm.userid = :userid2
+                            GROUP BY m.conversationid
+                       ) maxvisibleconvmessage
+                    ON maxvisibleconvmessage.convid = mc.id
+               $favsql
+                 WHERE mcm.userid = :userid3
+                   AND mc.enabled = :enabled
+                   AND ((mc.type = :individualtype AND maxvisibleconvmessage.convid IS NOT NULL) OR (mc.type = :grouptype))
+              GROUP BY mc.type, fav.itemtype
+              ORDER BY mc.type ASC";
+
+        $params = [
+            'userid' => $userid,
+            'userid2' => $userid,
+            'userid3' => $userid,
+            'userid4' => $userid,
+            'action' => self::MESSAGE_ACTION_DELETED,
+            'enabled' => self::MESSAGE_CONVERSATION_ENABLED,
+            'individualtype' => self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            'grouptype' => self::MESSAGE_CONVERSATION_TYPE_GROUP,
+        ] + $favparams;
+
+        // Assemble the return array.
+        $counts = [
+            'favourites' => 0,
+            'types' => [
+                self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
+                self::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+            ]
+        ];
+
+        $countsrs = $DB->get_recordset_sql($sql, $params);
+        foreach ($countsrs as $key => $val) {
+            if (!empty($val->itemtype)) {
+                $counts['favourites'] = $val->count;
+                continue;
+            }
+            $counts['types'][$val->type] = $val->count;
         }
+        $countsrs->close();
 
-        switch($type) {
-            case null:
-                $params = array_merge([$user->id, self::MESSAGE_ACTION_DELETED, $user->id], $params);
-                $sql = "SELECT COUNT(DISTINCT(m.conversationid))
-                          FROM {messages} m
-                     LEFT JOIN {message_conversations} c
-                            ON m.conversationid = c.id
-                     LEFT JOIN {message_user_actions} ma
-                            ON ma.messageid = m.id
-                     LEFT JOIN {message_conversation_members} mcm
-                            ON m.conversationid = mcm.conversationid
-                         WHERE mcm.userid = ?
-                           AND (
-                                    c.type != " . self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL . "
-                                    OR
-                                    (
-                                        (ma.action IS NULL OR ma.action != ? OR ma.userid != ?)
-                                        AND c.type = " . self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL . "
-                                    )
-                                )
-                               ${favouritessql}";
-                break;
-            case self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL:
-                $params = array_merge([self::MESSAGE_ACTION_DELETED, $user->id, $user->id], $params);
-                $sql = "SELECT COUNT(DISTINCT(m.conversationid))
-                          FROM {messages} m
-                     LEFT JOIN {message_conversations} c
-                            ON m.conversationid = c.id
-                     LEFT JOIN {message_user_actions} ma
-                            ON ma.messageid = m.id
-                     LEFT JOIN {message_conversation_members} mcm
-                            ON m.conversationid = mcm.conversationid
-                         WHERE (ma.action IS NULL OR ma.action != ? OR ma.userid != ?)
-                           AND mcm.userid = ?
-                           AND c.type = " . self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL . "
-                               ${favouritessql}";
-                break;
-            default:
-                $params = array_merge([$user->id, $type], $params);
-                $sql = "SELECT COUNT(m.conversationid)
-                          FROM {message_conversation_members} m
-                     LEFT JOIN {message_conversations} c
-                            ON m.conversationid = c.id
-                         WHERE m.userid = ?
-                           AND c.type = ?
-                               ${favouritessql}";
-
-        }
-
-        return $DB->count_records_sql($sql, $params);
+        return $counts;
     }
 
     /**
