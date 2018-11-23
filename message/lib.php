@@ -805,7 +805,7 @@ function core_message_render_navbar_output(\renderer_base $renderer) {
     // Add the messages popover.
     if (!empty($CFG->messaging)) {
         $unreadcount = \core_message\api::count_unread_conversations($USER);
-        $requestcount = \core_message\api::count_received_contact_requests($USER);
+        $requestcount = \core_message\api::get_received_contact_requests_count($USER->id);
         $context = [
             'userid' => $USER->id,
             'unreadcount' => $unreadcount + $requestcount
@@ -848,7 +848,7 @@ function core_message_standard_after_main_region_html() {
     $usercontext = \context_user::instance($USER->id);
     $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
     $favouriteconversationcount = $ufservice->count_favourites_by_type('core_message', 'message_conversations', $systemcontext);
-    $requestcount = \core_message\api::count_received_contact_requests($USER);
+    $requestcount = \core_message\api::get_received_contact_requests_count($USER->id);
     $contactscount = \core_message\api::count_contacts($USER->id);
 
     // Get the privacy settings options for being messaged.

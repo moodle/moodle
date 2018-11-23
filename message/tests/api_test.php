@@ -4832,27 +4832,27 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Test the count_received_contact_requests() function.
+     * Test the get_received_contact_requests_count() function.
      */
-    public function test_count_received_contact_requests() {
+    public function test_get_received_contact_requests_count() {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
         $user4 = self::getDataGenerator()->create_user();
 
-        $this->assertEquals(0, \core_message\api::count_received_contact_requests($user1));
+        $this->assertEquals(0, \core_message\api::get_received_contact_requests_count($user1->id));
 
         \core_message\api::create_contact_request($user2->id, $user1->id);
 
-        $this->assertEquals(1, \core_message\api::count_received_contact_requests($user1));
+        $this->assertEquals(1, \core_message\api::get_received_contact_requests_count($user1->id));
 
         \core_message\api::create_contact_request($user3->id, $user1->id);
 
-        $this->assertEquals(2, \core_message\api::count_received_contact_requests($user1));
+        $this->assertEquals(2, \core_message\api::get_received_contact_requests_count($user1->id));
 
         \core_message\api::create_contact_request($user1->id, $user4->id);
         // Function should ignore sent requests.
-        $this->assertEquals(2, \core_message\api::count_received_contact_requests($user1));
+        $this->assertEquals(2, \core_message\api::get_received_contact_requests_count($user1->id));
     }
 
     /**
