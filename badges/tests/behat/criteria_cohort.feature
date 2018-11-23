@@ -19,7 +19,7 @@ Feature: Award badges based on cohort
       | user1 | CH1   |
       | user2 | CH2   |
     And I log in as "admin"
-    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Site Badge |
       | Description | Site badge description |
@@ -55,7 +55,7 @@ Feature: Award badges based on cohort
       | user2 | CH1   |
       | user2 | CH3   |
     And I log in as "admin"
-    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Site Badge |
       | Description | Site badge description |
@@ -96,7 +96,7 @@ Feature: Award badges based on cohort
       | user3 | CH2   |
       | user3 | CH3   |
     And I log in as "admin"
-    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Site Badge |
       | Description | Site badge description |
@@ -133,7 +133,7 @@ Feature: Award badges based on cohort
       | user1 | CH1   |
       | user2 | CH2   |
     And I log in as "admin"
-    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Site Badge |
       | Description | Site badge description |
@@ -184,7 +184,7 @@ Feature: Award badges based on cohort
       | user2 | CH2   |
       | user3 | CH2   |
     And I log in as "admin"
-    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Site Badge |
       | Description | Site badge description |
@@ -241,7 +241,7 @@ Feature: Award badges based on cohort
       | user2 | CH2   |
       | user2 | CH2   |
     And I log in as "admin"
-    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Site Badge |
       | Description | Site badge description |
@@ -298,7 +298,7 @@ Feature: Award badges based on cohort
       | user2 | CH1   |
       | user3 | CH2   |
     And I log in as "admin"
-    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Site Badge |
       | Description | Site badge description |
@@ -356,7 +356,7 @@ Feature: Award badges based on cohort
       | user1 | CH2   |
       | user2 | CH2   |
     And I log in as "admin"
-    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Site Badge 1 |
       | Description | Site badge description |
@@ -369,7 +369,7 @@ Feature: Award badges based on cohort
     And I press "Enable access"
     When I press "Continue"
     And I should see "Recipients (1)"
-    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Site Badge 2 |
       | Description | Site badge description |
@@ -411,7 +411,7 @@ Feature: Award badges based on cohort
       | user2    | Second    | User     | second@example.com |
       | user3    | Third     | User     | third@example.com  |
     And I log in as "admin"
-    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Site Badge 1 |
       | Description | Site badge description |
@@ -426,7 +426,7 @@ Feature: Award badges based on cohort
     And I press "Enable access"
     When I press "Continue"
     And I should see "Recipients (0)"
-    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Site Badge 2 |
       | Description | Site badge description |
@@ -440,7 +440,7 @@ Feature: Award badges based on cohort
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    Then I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    Then I navigate to "Users > Accounts >Cohorts" in site administration
     And I add "First User (first@example.com)" user to "CH1" cohort members
     And I add "First User (first@example.com)" user to "CH2" cohort members
     And I add "Second User (second@example.com)" user to "CH2" cohort members

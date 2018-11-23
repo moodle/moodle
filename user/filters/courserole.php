@@ -66,9 +66,7 @@ class user_filter_courserole extends user_filter_type {
      * @return array of course categories
      */
     public function get_course_categories() {
-        global $CFG;
-        require_once($CFG->libdir.'/coursecatlib.php');
-        return array(0 => get_string('anycategory', 'filters')) + coursecat::make_categories_list();
+        return array(0 => get_string('anycategory', 'filters')) + core_course_category::make_categories_list();
     }
 
     /**

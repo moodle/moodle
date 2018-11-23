@@ -686,6 +686,7 @@ class iCalendar_standard extends iCalendar_component {
             'RDATE'   =>  RFC2445_OPTIONAL,
             'RRULE'   =>  RFC2445_OPTIONAL,
             'TZNAME'   =>  RFC2445_OPTIONAL,
+            'TZURL'   =>  RFC2445_OPTIONAL,
             RFC2445_XNAME   =>  RFC2445_OPTIONAL,
         ); 
         parent::__construct();

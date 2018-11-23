@@ -115,7 +115,6 @@ class grade_edit_tree {
         $eid    = $element['eid'];
         $object->name = $this->gtree->get_element_header($element, true, true, true, true, true);
         $object->stripped_name = $this->gtree->get_element_header($element, false, false, false);
-
         $is_category_item = false;
         if ($element['type'] == 'categoryitem' || $element['type'] == 'courseitem') {
             $is_category_item = true;

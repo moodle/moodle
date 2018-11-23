@@ -34,14 +34,14 @@ Feature: In an assignment, the administrator can edit students' submissions
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
-    And I click on "Edit" "link" in the "Student 1" "table_row"
+    And I open the action menu in "Student 1" "table_row"
     And I choose "Edit submission" in the open action menu
     And I set the following fields to these values:
       | Online text | Have you seen the movie Chef? |
     And I press "Save changes"
     And I navigate to "View all submissions" in current page administration
     Then I should see "Have you seen the movie Chef?"
-    And I click on "Edit" "link" in the "Student 1" "table_row"
+    And I open the action menu in "Student 1" "table_row"
     And I choose "Edit submission" in the open action menu
     And I set the following fields to these values:
       | Online text | I have seen the movie chef. |

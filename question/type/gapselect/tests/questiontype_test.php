@@ -79,6 +79,7 @@ class qtype_gapselect_test extends question_testcase {
         $gapselect->stamp = make_unique_id_code();
         $gapselect->version = make_unique_id_code();
         $gapselect->hidden = 0;
+        $gapselect->idnumber = null;
         $gapselect->timecreated = time();
         $gapselect->timemodified = time();
         $gapselect->createdby = $USER->id;
@@ -243,6 +244,7 @@ class qtype_gapselect_test extends question_testcase {
         $qdata = new stdClass();
         $qdata->id = 123;
         $qdata->contextid = \context_system::instance()->id;
+        $qdata->idnumber = null;
         $qdata->qtype = 'gapselect';
         $qdata->name = 'A select missing words question';
         $qdata->questiontext = 'Put these in order: [[1]], [[2]], [[3]].';
@@ -294,6 +296,7 @@ class qtype_gapselect_test extends question_testcase {
     <defaultgrade>3</defaultgrade>
     <penalty>0.3333333</penalty>
     <hidden>0</hidden>
+    <idnumber></idnumber>
     <shuffleanswers>1</shuffleanswers>
     <correctfeedback format="moodle_auto_format">
       <text><![CDATA[<p>Your answer is correct.</p>]]></text>

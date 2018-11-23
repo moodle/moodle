@@ -5,10 +5,12 @@
 // want white default colour.
 $bg-inverse-link-color: #fff !default;
 
-#region-main > .card {
+#region-main {
     overflow-x: auto;
     overflow-y: visible;
-    min-height: 45rem;
+    border: $card-border-width solid $card-border-color;
+    padding: $card-spacer-x;
+    background-color: $body-bg;
 }
 
 .context-header-settings-menu,
@@ -144,6 +146,13 @@ a.autolink.glossary:hover {
 
 .pagelayout-mydashboard.jsenabled .collapsibleregioncaption {
     cursor: pointer;
+}
+
+.pagelayout-mydashboard #region-main {
+    border: 0;
+    padding: 0;
+    background-color: transparent;
+    margin-top: -1px;
 }
 
 .collapsibleregioncaption img {
@@ -1085,17 +1094,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     white-space: nowrap;
     text-align: center;
 }
-
-
-.initialbarlabel {
-    display: inline-block;
-    width: 6em;
-    float: left;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
 
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
@@ -2079,6 +2077,7 @@ $footer-link-color: $bg-inverse-link-color !default;
 
 [data-drag-type="move"] {
     cursor: move;
+    touch-action: none;
 }
 
 .clickable {
@@ -2117,3 +2116,132 @@ div.editor_atto_toolbar button .icon {
     width: auto;
 }
 
+.bg-pulse-grey {
+    animation: bg-pulse-grey 2s infinite linear;
+}
+
+@keyframes bg-pulse-grey {
+    0% {
+        background-color: $gray-100;
+    }
+    50% {
+        background-color: darken($gray-100, 5%);
+    }
+    100% {
+        background-color: $gray-100;
+    }
+}
+
+@each $size, $length in $spacers {
+    .line-height-#{$size} {
+        line-height: $length !important; /* stylelint-disable-line declaration-no-important */
+    }
+}
+
+.dir-rtl {
+    .dir-rtl-hide {
+        display: none;
+    }
+}
+
+.dir-ltr {
+    .dir-ltr-hide {
+        display: none;
+    }
+}
+
+$switch-height: ($input-height-inner * .8) !default;
+$switch-height-half: ($switch-height / 2) !default;
+$switch-border-radius: $switch-height !default;
+$switch-bg: $custom-control-indicator-bg !default;
+$switch-checked-bg: map-get($theme-colors, 'primary') !default;
+$switch-disabled-bg: $custom-control-indicator-disabled-bg !default;
+$switch-disabled-color: $custom-control-label-disabled-color !default;
+$switch-thumb-bg: $white !default;
+$switch-thumb-border-radius: 50% !default;
+$switch-thumb-padding: 2px !default;
+$switch-thumb-padding-double: ($switch-thumb-padding * 2) !default;
+$switch-focus-box-shadow: 0 0 0 $input-btn-focus-width rgba(map-get($theme-colors, 'primary'), .25);
+$switch-transition: .2s all !default;
+
+.switch {
+    position: relative;
+
+    input {
+        float: left;
+        width: 1px;
+        transform: translateX(1px);
+        padding: 0;
+        margin: 0;
+        opacity: 0;
+
+        + label {
+            position: relative;
+            min-height: $switch-height;
+            min-width: $switch-height * 2;
+            line-height: $switch-height;
+            border-radius: $switch-border-radius;
+            display: inline-block;
+            cursor: pointer;
+            outline: none;
+            user-select: none;
+            vertical-align: middle;
+            padding-left: (($switch-height * 2) + .5rem);
+        }
+
+        + label::before,
+        + label::after {
+            content: '';
+            position: absolute;
+            top: calc(50% - #{$switch-height-half});
+            left: 0;
+            width: ($switch-height * 2);
+            height: $switch-height;
+            bottom: 0;
+            display: block;
+        }
+
+        + label::before {
+            right: 0;
+            background-color: $switch-bg;
+            border-radius: $switch-border-radius;
+            transition: $switch-transition;
+        }
+
+        + label::after {
+            margin-top: $switch-thumb-padding;
+            left: $switch-thumb-padding;
+            width: calc(#{$switch-height} - #{$switch-thumb-padding-double});
+            height: calc(#{$switch-height} - #{$switch-thumb-padding-double});
+            border-radius: $switch-thumb-border-radius;
+            background-color: $switch-thumb-bg;
+            transition: $switch-transition;
+        }
+
+        &:checked + label::before {
+            background-color: $switch-checked-bg;
+        }
+
+        &:checked + label::after {
+            margin-left: $switch-height;
+        }
+
+        &:focus + label::before {
+            outline: none;
+            box-shadow: $switch-focus-box-shadow;
+        }
+
+        &:disabled + label {
+            color: $switch-disabled-color;
+            cursor: not-allowed;
+        }
+
+        &:disabled + label::before {
+            background-color: $switch-disabled-bg;
+        }
+    }
+}
+
+.paged-content-page-container {
+    min-height: 3.125rem;
+}

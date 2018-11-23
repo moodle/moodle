@@ -396,7 +396,7 @@ abstract class oauth2_client extends curl {
     /** @var string $scope of the authentication request */
     protected $scope = '';
     /** @var stdClass $accesstoken access token object */
-    private $accesstoken = null;
+    protected $accesstoken = null;
     /** @var string $refreshtoken refresh token string */
     protected $refreshtoken = '';
     /** @var string $mocknextresponse string */

@@ -276,7 +276,9 @@ class grade_outcome extends grade_object {
      * @return string name
      */
     public function get_name() {
-        return format_string($this->fullname);
+        // Grade outcomes can be created at site or course context, so set the filter context appropriately.
+        $context = empty($this->courseid) ? context_system::instance() : context_course::instance($this->courseid);
+        return format_string($this->fullname, false, ["context" => $context]);
     }
 
     /**

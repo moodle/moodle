@@ -771,7 +771,10 @@ class mod_assign_external extends external_api {
                         'plugins' => self::get_plugins_data($assign, $submissionplugins, $submissionrecord),
                         'gradingstatus' => $assign->get_grading_status($submissionrecord->userid)
                     );
-                    $submissions[] = $submission;
+
+                    if ($assign->can_view_submission($submissionrecord->userid)) {
+                        $submissions[] = $submission;
+                    }
                 }
             } else {
                 $warnings[] = array(

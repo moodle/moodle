@@ -25,6 +25,8 @@ namespace tool_dataprivacy\external;
 defined('MOODLE_INTERNAL') || die();
 
 use core\external\persistent_exporter;
+use tool_dataprivacy\category;
+use tool_dataprivacy\context_instance;
 
 /**
  * Class for exporting field data.
@@ -52,5 +54,26 @@ class category_exporter extends persistent_exporter {
         return array(
             'context' => 'context',
         );
+    }
+
+    /**
+     * Utility function that fetches a category name from the given ID.
+     *
+     * @param int $categoryid The category ID. Could be INHERIT (false, -1), NOT_SET (0), or the actual ID.
+     * @return string The purpose name.
+     */
+    public static function get_name($categoryid) {
+        global $PAGE;
+        if ($categoryid === false || $categoryid == context_instance::INHERIT) {
+            return get_string('inherit', 'tool_dataprivacy');
+        } else if ($categoryid == context_instance::NOTSET) {
+            return get_string('notset', 'tool_dataprivacy');
+        } else {
+            $purpose = new category($categoryid);
+            $output = $PAGE->get_renderer('tool_dataprivacy');
+            $exporter = new self($purpose, ['context' => \context_system::instance()]);
+            $data = $exporter->export($output);
+            return $data->name;
+        }
     }
 }

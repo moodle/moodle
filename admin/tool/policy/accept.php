@@ -39,6 +39,10 @@ $context = context_system::instance();
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/admin/tool/policy/accept.php'));
 
+if (!in_array($action, ['accept', 'decline', 'revoke'])) {
+    throw new moodle_exception('invalidaccessparameter');
+}
+
 if ($returnurl) {
     $returnurl = new moodle_url($returnurl);
 } else if (count($userids) == 1) {
@@ -59,14 +63,8 @@ if ($form->is_cancelled()) {
     redirect($returnurl);
 }
 
-if ($action == 'revoke') {
-    $title = get_string('revokedetails', 'tool_policy');
-} else {
-    $title = get_string('consentdetails', 'tool_policy');
-}
-
 $output = $PAGE->get_renderer('tool_policy');
 echo $output->header();
-echo $output->heading($title);
+echo $output->heading(get_string('statusformtitle'.$action, 'tool_policy'));
 $form->display();
 echo $output->footer();

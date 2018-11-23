@@ -22,7 +22,7 @@ Feature: Preview a Trtue/False question
       | Test questions   | truefalse | true-false-001 | true     |
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
 
   @javascript @_switch_window
   Scenario: Preview a True/False question and submit a correct response.

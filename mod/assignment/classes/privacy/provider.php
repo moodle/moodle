@@ -30,6 +30,8 @@ use core_privacy\local\request\contextlist;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 use core_privacy\local\request\helper;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\userlist;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -45,7 +47,8 @@ require_once($CFG->dirroot . '/mod/assignment/lib.php');
 class provider implements
     \core_privacy\local\metadata\provider,
     \core_privacy\local\request\plugin\provider,
-    \core_privacy\local\request\user_preference_provider {
+    \core_privacy\local\request\user_preference_provider,
+    \core_privacy\local\request\core_userlist_provider {
 
     /**
      * Return the fields which contain personal data.
@@ -110,6 +113,43 @@ class provider implements
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+        if ($context->contextlevel != CONTEXT_MODULE) {
+            return;
+        }
+
+        $params = [
+            'modulename' => 'assignment',
+            'contextlevel' => CONTEXT_MODULE,
+            'contextid' => $context->id
+        ];
+        $sql = "SELECT s.userid
+                  FROM {assignment_submissions} s
+                  JOIN {assignment} a ON s.assignment = a.id
+                  JOIN {modules} m ON m.name = :modulename
+                  JOIN {course_modules} cm ON a.id = cm.instance AND cm.module = m.id
+                  JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :contextlevel
+                 WHERE ctx.id = :contextid
+        ";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        $sql = "SELECT s.teacher
+                  FROM {assignment_submissions} s
+                  JOIN {assignment} a ON s.assignment = a.id
+                  JOIN {modules} m ON m.name = :modulename
+                  JOIN {course_modules} cm ON a.id = cm.instance AND cm.module = m.id
+                  JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :contextlevel
+                 WHERE ctx.id = :contextid
+        ";
+        $userlist->add_from_sql('teacher', $sql, $params);
     }
 
     /**
@@ -253,6 +293,43 @@ class provider implements
                 $fs->delete_area_files($contextid, 'mod_assignment', 'submission', $submissionid);
             }
         }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        // If the context isn't for a module then return early.
+        if ($context->contextlevel != CONTEXT_MODULE) {
+            return;
+        }
+        // Fetch the assignment.
+        $assignment = self::get_assignment_by_context($context);
+        $userids = $userlist->get_userids();
+
+        list($inorequalsql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        $params['assignmentid'] = $assignment->id;
+
+        // Get submission ids.
+        $sql = "
+            SELECT s.id
+            FROM {assignment_submissions} s
+            JOIN {assignment} a ON s.assignment = a.id
+            WHERE a.id = :assignmentid
+            AND s.userid $inorequalsql
+        ";
+
+        $submissionids = $DB->get_records_sql($sql, $params);
+        list($submissionidsql, $submissionparams) = $DB->get_in_or_equal(array_keys($submissionids), SQL_PARAMS_NAMED);
+        $fs = get_file_storage();
+        $fs->delete_area_files_select($context->id, 'mod_assignment', 'submission', $submissionidsql, $submissionparams);
+        // Delete related tables.
+        $DB->delete_records_list('assignment_submissions', 'id', array_keys($submissionids));
     }
 
     // Start of helper functions.

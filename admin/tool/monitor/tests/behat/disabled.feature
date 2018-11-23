@@ -6,7 +6,7 @@ Feature: Enable/disable managment of the event monitor
 
   Scenario: Tool is disabled by default.
     Given I log in as "admin"
-    When I navigate to "Event monitoring rules" node in "Site administration > Reports"
+    When I navigate to "Reports > Event monitoring rules" in site administration
     Then I should see "Event monitoring is currently disabled"
     And I should see "Enable"
     And I should not see "Add a new rule"

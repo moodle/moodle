@@ -124,9 +124,9 @@ Feature: Manage plearning plan
     And "Confirm" "dialogue" should be visible
     And "Delete" "button" should exist in the "Confirm" "dialogue"
     And "Cancel" "button" should exist in the "Confirm" "dialogue"
-    And I click on "Cancel" "button"
+    And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I click on "Delete" of edit menu in the "Science plan Year-4" row
     And "Confirm" "dialogue" should be visible
-    When I click on "Delete" "button"
+    When I click on "Delete" "button" in the "Confirm" "dialogue"
     And I wait until the page is ready
     Then I should not see "Science plan Year-4"

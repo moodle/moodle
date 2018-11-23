@@ -40,11 +40,28 @@ function atto_recordrtc_params_for_js($elementid, $options, $fpoptions) {
     if (!$context) {
         $context = context_system::instance();
     }
+
     $sesskey = sesskey();
     $allowedtypes = get_config('atto_recordrtc', 'allowedtypes');
     $audiobitrate = get_config('atto_recordrtc', 'audiobitrate');
     $videobitrate = get_config('atto_recordrtc', 'videobitrate');
     $timelimit = get_config('atto_recordrtc', 'timelimit');
+
+    // Update $allowedtypes to account for capabilities.
+    $audioallowed = $allowedtypes === 'audio' || $allowedtypes === 'both';
+    $videoallowed = $allowedtypes === 'video' || $allowedtypes === 'both';
+    $audioallowed = $audioallowed && has_capability('atto/recordrtc:recordaudio', $context);
+    $videoallowed = $videoallowed && has_capability('atto/recordrtc:recordvideo', $context);
+    if ($audioallowed && $videoallowed) {
+        $allowedtypes = 'both';
+    } else if ($audioallowed) {
+        $allowedtypes = 'audio';
+    } else if ($videoallowed) {
+        $allowedtypes = 'video';
+    } else {
+        $allowedtypes = '';
+    }
+
     $maxrecsize = ini_get('upload_max_filesize');
     $audiortcicon = 'i/audiortc';
     $videortcicon = 'i/videortc';

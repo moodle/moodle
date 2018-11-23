@@ -1,0 +1,68 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_timeline/view
+
+    This template renders the timeline view for the timeline block.
+
+    Example context (json):
+    {
+        "midnight": 1538954668,
+        "coursepages": [
+            {}
+        ],
+        "urls": {
+            "nocourses": "#",
+            "noevents": "#"
+        },
+        "sorttimelinedates": true,
+        "sorttimelinecourses": false,
+        "selectedfilter": "all",
+        "hasdaysoffset": true,
+        "hasdayslimit": false,
+        "nodayslimit": true,
+        "all": true,
+        "overdue": false,
+        "next7days": false,
+        "next30days": false,
+        "next3months": false,
+        "next6months": false,
+        "daysoffset": -14,
+        "dayslimit": false,
+        "limit": 0
+    }
+}}
+<div data-region="timeline-view">
+    <div class="tab-content">
+        <div class="tab-pane {{#sorttimelinedates}}active show{{/sorttimelinedates}} fade" data-limit="{{limit}}" data-region="view-dates" id="view_dates_{{uniqid}}">
+            {{> block_timeline/view-dates }}
+        </div>
+        <div
+            class="tab-pane {{#sorttimelinecourses}}active show{{/sorttimelinecourses}} fade"
+            data-region="view-courses"
+            data-midnight="{{midnight}}"
+            data-limit="2"
+            data-offset="0"
+            data-days-limit="30"
+            data-days-offset="0"
+            data-no-events-url="{{urls.noevents}}"
+            id="view_courses_{{uniqid}}"
+        >
+            {{> block_timeline/view-courses }}
+        </div>
+    </div>
+</div>

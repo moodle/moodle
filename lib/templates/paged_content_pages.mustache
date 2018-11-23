@@ -35,7 +35,12 @@
         ]
     }
 }}
-<div id="{{$pagingcontentid}}page-container-{{uniqid}}{{/pagingcontentid}}" data-region="page-container">
+<div
+    id="{{$pagingcontentid}}page-container-{{uniqid}}{{/pagingcontentid}}"
+    data-region="page-container"
+    class="paged-content-page-container"
+    aria-live="polite"
+>
     {{#pages}}
         {{$paged-content-page}}
             {{> core/paged_content_page }}

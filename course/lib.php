@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/filelib.php');
+require_once($CFG->libdir.'/datalib.php');
 require_once($CFG->dirroot.'/course/format/lib.php');
 
 define('COURSE_MAX_LOGS_PER_PAGE', 1000);       // Records.
@@ -55,9 +56,13 @@ define('FIRSTUSEDEXCELROW', 3);
 define('MOD_CLASS_ACTIVITY', 0);
 define('MOD_CLASS_RESOURCE', 1);
 
+define('COURSE_TIMELINE_ALL', 'all');
 define('COURSE_TIMELINE_PAST', 'past');
 define('COURSE_TIMELINE_INPROGRESS', 'inprogress');
 define('COURSE_TIMELINE_FUTURE', 'future');
+define('COURSE_FAVOURITES', 'favourites');
+define('COURSE_TIMELINE_HIDDEN', 'hidden');
+define('COURSE_DB_QUERY_LIMIT', 1000);
 
 function make_log_url($module, $url) {
     switch ($module) {
@@ -728,15 +733,13 @@ function get_category_or_system_context($categoryid) {
 /**
  * Returns full course categories trees to be used in html_writer::select()
  *
- * Calls {@link coursecat::make_categories_list()} to build the tree and
+ * Calls {@link core_course_category::make_categories_list()} to build the tree and
  * adds whitespace to denote nesting
  *
- * @return array array mapping coursecat id to the display name
+ * @return array array mapping course category id to the display name
  */
 function make_categories_options() {
-    global $CFG;
-    require_once($CFG->libdir. '/coursecatlib.php');
-    $cats = coursecat::make_categories_list('', 0, ' / ');
+    $cats = core_course_category::make_categories_list('', 0, ' / ');
     foreach ($cats as $key => $value) {
         // Prefix the value with the number of spaces equal to category depth (number of separators in the value).
         $cats[$key] = str_repeat('&nbsp;', substr_count($value, ' / ')). $value;
@@ -1170,6 +1173,9 @@ function course_delete_module($cmid, $async = false) {
             $grade_item->delete('moddelete');
         }
     }
+
+    // Delete associated blogs and blog tag instances.
+    blog_remove_associations_for_module($modcontext->id);
 
     // Delete completion and availability data; it is better to do this even if the
     // features are not turned on, in case they were turned on previously (these will be
@@ -2322,14 +2328,14 @@ function save_local_role_names($courseid, $data) {
             $DB->insert_record('role_names', $rolename);
         }
         // This will ensure the course contacts cache is purged..
-        coursecat::role_assignment_changed($roleid, $context);
+        core_course_category::role_assignment_changed($roleid, $context);
     }
 }
 
 /**
  * Returns options to use in course overviewfiles filemanager
  *
- * @param null|stdClass|course_in_list|int $course either object that has 'id' property or just the course id;
+ * @param null|stdClass|core_course_list_element|int $course either object that has 'id' property or just the course id;
  *     may be empty if course does not exist yet (course create form)
  * @return array|null array of options such as maxfiles, maxbytes, accepted_types, etc.
  *     or null if overviewfiles are disabled
@@ -2448,9 +2454,6 @@ function create_course($data, $editoroptions = NULL) {
     fix_course_sortorder();
     // purge appropriate caches in case fix_course_sortorder() did not change anything
     cache_helper::purge_by_event('changesincourse');
-
-    // new context created - better mark it as dirty
-    $context->mark_dirty();
 
     // Trigger a course created event.
     $event = \core\event\course_created::create(array(
@@ -2911,20 +2914,19 @@ class course_request {
      * hidden categories if he has capabilities 'moodle/site:approvecourse' and
      * 'moodle/course:changecategory'
      *
-     * @return coursecat
+     * @return core_course_category
      */
     public function get_category() {
         global $CFG;
-        require_once($CFG->libdir.'/coursecatlib.php');
         // If the category is not set, if the current user does not have the rights to change the category, or if the
         // category does not exist, we set the default category to the course to be approved.
         // The system level is used because the capability moodle/site:approvecourse is based on a system level.
         if (empty($this->properties->category) || !has_capability('moodle/course:changecategory', context_system::instance()) ||
-                (!$category = coursecat::get($this->properties->category, IGNORE_MISSING, true))) {
-            $category = coursecat::get($CFG->defaultrequestcategory, IGNORE_MISSING, true);
+                (!$category = core_course_category::get($this->properties->category, IGNORE_MISSING, true))) {
+            $category = core_course_category::get($CFG->defaultrequestcategory, IGNORE_MISSING, true);
         }
         if (!$category) {
-            $category = coursecat::get_default();
+            $category = core_course_category::get_default();
         }
         return $category;
     }
@@ -3453,11 +3455,18 @@ function duplicate_module($course, $cm) {
     // right below the original one. otherwise it will stay at the
     // end of the section.
     if ($newcmid) {
+        // Proceed with activity renaming before everything else. We don't use APIs here to avoid
+        // triggering a lot of create/update duplicated events.
+        $newcm = get_coursemodule_from_id($cm->modname, $newcmid, $cm->course);
+        // Add ' (copy)' to duplicates. Note we don't cleanup or validate lengths here. It comes
+        // from original name that was valid, so the copy should be too.
+        $newname = get_string('duplicatedmodule', 'moodle', $newcm->name);
+        $DB->set_field($cm->modname, 'name', $newname, ['id' => $newcm->instance]);
+
         $section = $DB->get_record('course_sections', array('id' => $cm->section, 'course' => $cm->course));
         $modarray = explode(",", trim($section->sequence));
         $cmindex = array_search($cm->id, $modarray);
         if ($cmindex !== false && $cmindex < count($modarray) - 1) {
-            $newcm = get_coursemodule_from_id($cm->modname, $newcmid, $cm->course);
             moveto_module($newcm, $section, $modarray[$cmindex + 1]);
         }
 
@@ -3545,7 +3554,7 @@ function course_change_visibility($courseid, $show = true) {
 /**
  * Changes the course sortorder by one, moving it up or down one in respect to sort order.
  *
- * @param stdClass|course_in_list $course
+ * @param stdClass|core_course_list_element $course
  * @param bool $up If set to true the course will be moved up one. Otherwise down one.
  * @return bool
  */
@@ -3657,6 +3666,8 @@ function course_view($context, $sectionnumber = 0) {
 
     $event = \core\event\course_viewed::create($eventdata);
     $event->trigger();
+
+    user_accesstime_log($context->instanceid);
 }
 
 /**
@@ -3674,7 +3685,6 @@ function course_view($context, $sectionnumber = 0) {
  */
 function course_get_tagged_courses($tag, $exclusivemode = false, $fromctx = 0, $ctx = 0, $rec = 1, $page = 0) {
     global $CFG, $PAGE;
-    require_once($CFG->libdir . '/coursecatlib.php');
 
     $perpage = $exclusivemode ? $CFG->coursesperpage : 5;
     $displayoptions = array(
@@ -3684,7 +3694,7 @@ function course_get_tagged_courses($tag, $exclusivemode = false, $fromctx = 0, $
     );
 
     $courserenderer = $PAGE->get_renderer('core', 'course');
-    $totalcount = coursecat::search_courses_count(array('tagid' => $tag->id, 'ctx' => $ctx, 'rec' => $rec));
+    $totalcount = core_course_category::search_courses_count(array('tagid' => $tag->id, 'ctx' => $ctx, 'rec' => $rec));
     $content = $courserenderer->tagged_courses($tag->id, $exclusivemode, $ctx, $rec, $displayoptions);
     $totalpages = ceil($totalcount / $perpage);
 
@@ -3704,6 +3714,41 @@ function core_course_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'activityname') {
         return \core_course\output\course_module_name::update($itemid, $newvalue);
     }
+}
+
+/**
+ * This function calculates the minimum and maximum cutoff values for the timestart of
+ * the given event.
+ *
+ * It will return an array with two values, the first being the minimum cutoff value and
+ * the second being the maximum cutoff value. Either or both values can be null, which
+ * indicates there is no minimum or maximum, respectively.
+ *
+ * If a cutoff is required then the function must return an array containing the cutoff
+ * timestamp and error string to display to the user if the cutoff value is violated.
+ *
+ * A minimum and maximum cutoff return value will look like:
+ * [
+ *     [1505704373, 'The date must be after this date'],
+ *     [1506741172, 'The date must be before this date']
+ * ]
+ *
+ * @param calendar_event $event The calendar event to get the time range for
+ * @param stdClass $course The course object to get the range from
+ * @return array Returns an array with min and max date.
+ */
+function core_course_core_calendar_get_valid_event_timestart_range(\calendar_event $event, $course) {
+    $mindate = null;
+    $maxdate = null;
+
+    if ($course->startdate) {
+        $mindate = [
+            $course->startdate,
+            get_string('errorbeforecoursestart', 'calendar')
+        ];
+    }
+
+    return [$mindate, $maxdate];
 }
 
 /**
@@ -4060,7 +4105,7 @@ function course_classify_for_timeline($course, $user = null, $completioninfo = n
 
     $today = time();
     // End date past.
-    if (!empty($course->enddate) && $course->enddate < $today) {
+    if (!empty($course->enddate) && (course_classify_end_date($course) < $today)) {
         return COURSE_TIMELINE_PAST;
     }
 
@@ -4074,12 +4119,214 @@ function course_classify_for_timeline($course, $user = null, $completioninfo = n
     }
 
     // Start date not reached.
-    if (!empty($course->startdate) && $course->startdate > $today) {
+    if (!empty($course->startdate) && (course_classify_start_date($course) > $today)) {
         return COURSE_TIMELINE_FUTURE;
     }
 
     // Everything else is in progress.
     return COURSE_TIMELINE_INPROGRESS;
+}
+
+/**
+ * This function calculates the end date to use for display classification purposes,
+ * incorporating the grace period, if any.
+ *
+ * @param stdClass $course The course record.
+ * @return int The new enddate.
+ */
+function course_classify_end_date($course) {
+    global $CFG;
+    $coursegraceperiodafter = (empty($CFG->coursegraceperiodafter)) ? 0 : $CFG->coursegraceperiodafter;
+    $enddate = (new \DateTimeImmutable())->setTimestamp($course->enddate)->modify("+{$coursegraceperiodafter} days");
+    return $enddate->getTimestamp();
+}
+
+/**
+ * This function calculates the start date to use for display classification purposes,
+ * incorporating the grace period, if any.
+ *
+ * @param stdClass $course The course record.
+ * @return int The new startdate.
+ */
+function course_classify_start_date($course) {
+    global $CFG;
+    $coursegraceperiodbefore = (empty($CFG->coursegraceperiodbefore)) ? 0 : $CFG->coursegraceperiodbefore;
+    $startdate = (new \DateTimeImmutable())->setTimestamp($course->startdate)->modify("-{$coursegraceperiodbefore} days");
+    return $startdate->getTimestamp();
+}
+
+/**
+ * Group a list of courses into either past, future, or in progress.
+ *
+ * The return value will be an array indexed by the COURSE_TIMELINE_* constants
+ * with each value being an array of courses in that group.
+ * E.g.
+ * [
+ *      COURSE_TIMELINE_PAST => [... list of past courses ...],
+ *      COURSE_TIMELINE_FUTURE => [],
+ *      COURSE_TIMELINE_INPROGRESS => []
+ * ]
+ *
+ * @param array $courses List of courses to be grouped.
+ * @return array
+ */
+function course_classify_courses_for_timeline(array $courses) {
+    return array_reduce($courses, function($carry, $course) {
+        $classification = course_classify_for_timeline($course);
+        array_push($carry[$classification], $course);
+
+        return $carry;
+    }, [
+        COURSE_TIMELINE_PAST => [],
+        COURSE_TIMELINE_FUTURE => [],
+        COURSE_TIMELINE_INPROGRESS => []
+    ]);
+}
+
+/**
+ * Get the list of enrolled courses for the current user.
+ *
+ * This function returns a Generator. The courses will be loaded from the database
+ * in chunks rather than a single query.
+ *
+ * @param int $limit Restrict result set to this amount
+ * @param int $offset Skip this number of records from the start of the result set
+ * @param string|null $sort SQL string for sorting
+ * @param string|null $fields SQL string for fields to be returned
+ * @param int $dbquerylimit The number of records to load per DB request
+ * @param array $includecourses courses ids to be restricted
+ * @param array $hiddencourses courses ids to be excluded
+ * @return Generator
+ */
+function course_get_enrolled_courses_for_logged_in_user(
+    int $limit = 0,
+    int $offset = 0,
+    string $sort = null,
+    string $fields = null,
+    int $dbquerylimit = COURSE_DB_QUERY_LIMIT,
+    array $includecourses = [],
+    array $hiddencourses = []
+) : Generator {
+
+    $haslimit = !empty($limit);
+    $recordsloaded = 0;
+    $querylimit = (!$haslimit || $limit > $dbquerylimit) ? $dbquerylimit : $limit;
+
+    while ($courses = enrol_get_my_courses($fields, $sort, $querylimit, $includecourses, false, $offset, $hiddencourses)) {
+        yield from $courses;
+
+        $recordsloaded += $querylimit;
+
+        if (count($courses) < $querylimit) {
+            break;
+        }
+        if ($haslimit && $recordsloaded >= $limit) {
+            break;
+        }
+
+        $offset += $querylimit;
+    }
+}
+
+/**
+ * Search the given $courses for any that match the given $classification up to the specified
+ * $limit.
+ *
+ * This function will return the subset of courses that match the classification as well as the
+ * number of courses it had to process to build that subset.
+ *
+ * It is recommended that for larger sets of courses this function is given a Generator that loads
+ * the courses from the database in chunks.
+ *
+ * @param array|Traversable $courses List of courses to process
+ * @param string $classification One of the COURSE_TIMELINE_* constants
+ * @param int $limit Limit the number of results to this amount
+ * @return array First value is the filtered courses, second value is the number of courses processed
+ */
+function course_filter_courses_by_timeline_classification(
+    $courses,
+    string $classification,
+    int $limit = 0
+) : array {
+
+    if (!in_array($classification,
+            [COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, COURSE_TIMELINE_INPROGRESS,
+                COURSE_TIMELINE_FUTURE, COURSE_TIMELINE_HIDDEN])) {
+        $message = 'Classification must be one of COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, '
+            . 'COURSE_TIMELINE_INPROGRESS or COURSE_TIMELINE_FUTURE';
+        throw new moodle_exception($message);
+    }
+
+    $filteredcourses = [];
+    $numberofcoursesprocessed = 0;
+    $filtermatches = 0;
+
+    foreach ($courses as $course) {
+        $numberofcoursesprocessed++;
+        $pref = get_user_preferences('block_myoverview_hidden_course_' . $course->id, 0);
+
+        // Added as of MDL-63457 toggle viewability for each user.
+        if (($classification == COURSE_TIMELINE_HIDDEN && $pref) ||
+            (($classification == COURSE_TIMELINE_ALL || $classification == course_classify_for_timeline($course)) && !$pref)) {
+            $filteredcourses[] = $course;
+            $filtermatches++;
+        }
+
+        if ($limit && $filtermatches >= $limit) {
+            // We've found the number of requested courses. No need to continue searching.
+            break;
+        }
+    }
+
+    // Return the number of filtered courses as well as the number of courses that were searched
+    // in order to find the matching courses. This allows the calling code to do some kind of
+    // pagination.
+    return [$filteredcourses, $numberofcoursesprocessed];
+}
+
+/**
+ * Search the given $courses for any that match the given $classification up to the specified
+ * $limit.
+ *
+ * This function will return the subset of courses that are favourites as well as the
+ * number of courses it had to process to build that subset.
+ *
+ * It is recommended that for larger sets of courses this function is given a Generator that loads
+ * the courses from the database in chunks.
+ *
+ * @param array|Traversable $courses List of courses to process
+ * @param array $favouritecourseids Array of favourite courses.
+ * @param int $limit Limit the number of results to this amount
+ * @return array First value is the filtered courses, second value is the number of courses processed
+ */
+function course_filter_courses_by_favourites(
+    $courses,
+    $favouritecourseids,
+    int $limit = 0
+) : array {
+
+    $filteredcourses = [];
+    $numberofcoursesprocessed = 0;
+    $filtermatches = 0;
+
+    foreach ($courses as $course) {
+        $numberofcoursesprocessed++;
+
+        if (in_array($course->id, $favouritecourseids)) {
+            $filteredcourses[] = $course;
+            $filtermatches++;
+        }
+
+        if ($limit && $filtermatches >= $limit) {
+            // We've found the number of requested courses. No need to continue searching.
+            break;
+        }
+    }
+
+    // Return the number of filtered courses as well as the number of courses that were searched
+    // in order to find the matching courses. This allows the calling code to do some kind of
+    // pagination.
+    return [$filteredcourses, $numberofcoursesprocessed];
 }
 
 /**
@@ -4258,4 +4505,103 @@ function can_download_from_backup_filearea($filearea, \context $context, stdClas
 
     }
     return $candownload;
+}
+
+/**
+ * Get a list of hidden courses
+ *
+ * @param int|object|null $user User override to get the filter from. Defaults to current user
+ * @return array $ids List of hidden courses
+ * @throws coding_exception
+ */
+function get_hidden_courses_on_timeline($user = null) {
+    global $USER;
+
+    if (empty($user)) {
+        $user = $USER->id;
+    }
+
+    $preferences = get_user_preferences(null, null, $user);
+    $ids = [];
+    foreach ($preferences as $key => $value) {
+        if (preg_match('/block_myoverview_hidden_course_(\d)+/', $key)) {
+            $id = preg_split('/block_myoverview_hidden_course_/', $key);
+            $ids[] = $id[1];
+        }
+    }
+
+    return $ids;
+}
+
+/**
+ * Returns a list of the most recently courses accessed by a user
+ *
+ * @param int $userid User id from which the courses will be obtained
+ * @param int $limit Restrict result set to this amount
+ * @param int $offset Skip this number of records from the start of the result set
+ * @param string|null $sort SQL string for sorting
+ * @return array
+ */
+function course_get_recent_courses(int $userid = null, int $limit = 0, int $offset = 0, string $sort = null) {
+
+    global $CFG, $USER, $DB;
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    $basefields = array('id', 'idnumber', 'summary', 'summaryformat', 'startdate', 'enddate', 'category',
+            'shortname', 'fullname', 'timeaccess', 'component');
+
+    $sort = trim($sort);
+    if (empty($sort)) {
+        $sort = 'timeaccess DESC';
+    } else {
+        $rawsorts = explode(',', $sort);
+        $sorts = array();
+        foreach ($rawsorts as $rawsort) {
+            $rawsort = trim($rawsort);
+            $sorts[] = trim($rawsort);
+        }
+        $sort = implode(',', $sorts);
+    }
+
+    $orderby = "ORDER BY $sort";
+
+    $ctxfields = context_helper::get_preload_record_columns_sql('ctx');
+
+    $coursefields = 'c.' .join(',', $basefields);
+
+    $sql = "SELECT $ctxfields, $coursefields
+              FROM {course} c
+              JOIN {context} ctx
+                   ON ctx.contextlevel = :contextlevel
+                   AND ctx.instanceid = c.id
+              JOIN {user_lastaccess} ul
+                   ON ul.courseid = c.id
+         LEFT JOIN {favourite} f
+                   ON f.component = 'core_course'
+                   AND f.itemtype = 'courses'
+                   AND f.userid = ul.userid
+                   AND f.itemid = ul.courseid
+             WHERE ul.userid = :userid
+          $orderby";
+    $params = ['userid' => $userid, 'contextlevel' => CONTEXT_COURSE];
+
+    $recentcourses = $DB->get_records_sql($sql, $params, $offset, $limit);
+
+    // Filter courses if last access field is hidden.
+    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+
+    if ($userid != $USER->id && isset($hiddenfields['lastaccess'])) {
+        $recentcourses = array_filter($recentcourses, function($course) {
+            context_helper::preload_from_record($course);
+            $context = context_course::instance($course->id, IGNORE_MISSING);
+            // If last access was a hidden field, a user requesting info about another user would need permission to view hidden
+            // fields.
+            return has_capability('moodle/course:viewhiddenuserfields', $context);
+        });
+    }
+
+    return $recentcourses;
 }

@@ -88,7 +88,7 @@ $THEME->layouts = array(
         'file' => 'columns3.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
-        'options' => array('langmenu' => true),
+        'options' => array('langmenu' => true, 'nocontextheader' => true),
     ),
     // My public page.
     'mypublic' => array(

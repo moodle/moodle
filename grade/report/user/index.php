@@ -91,7 +91,7 @@ grade_regrade_final_grades_if_required($course);
 
 if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all student reports
     $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
-    $currentgroup = groups_get_course_group($course, true);
+    $currentgroup = $gpr->groupid;
 
     if (!$currentgroup) {      // To make some other functions work better later
         $currentgroup = NULL;

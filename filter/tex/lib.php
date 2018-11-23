@@ -29,15 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 function filter_tex_get_executable($debug=false) {
     global $CFG;
 
-    $error_message1 = "Your system is not configured to run mimeTeX. You need to download the appropriate<br />"
-                     ."executable for you ".PHP_OS." platform from <a href=\"http://moodle.org/download/mimetex/\">"
-                     ."http://moodle.org/download/mimetex/</a>, or obtain the C source<br /> "
-                     ."from <a href=\"http://www.forkosh.com/mimetex.zip\">"
-                     ."http://www.forkosh.com/mimetex.zip</a>, compile it and "
-                     ."put the executable into your<br /> moodle/filter/tex/ directory.";
-
-    $error_message2 = "Custom mimetex is not executable!<br /><br />";
-
     if ((PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows")) {
         return "$CFG->dirroot/filter/tex/mimetex.exe";
     }

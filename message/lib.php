@@ -86,11 +86,14 @@ function message_count_unread_messages($user1=null, $user2=null) {
                 ON (mua.messageid = m.id AND mua.userid = ? AND (mua.action = ? OR mua.action = ?))
              WHERE mua.id is NULL
                AND mcm.userid = ?";
-    $params = [$user1->id, \core_message\api::MESSAGE_ACTION_DELETED, \core_message\api::MESSAGE_ACTION_READ,  $user1->id];
+    $params = [$user1->id, \core_message\api::MESSAGE_ACTION_DELETED, \core_message\api::MESSAGE_ACTION_READ, $user1->id];
 
     if (!empty($user2)) {
         $sql .= " AND m.useridfrom = ?";
         $params[] = $user2->id;
+    } else {
+        $sql .= " AND m.useridfrom <> ?";
+        $params[] = $user1->id;
     }
 
     return $DB->count_records_sql($sql, $params);
@@ -149,156 +152,6 @@ function message_format_message_text($message, $forcetexttohtml = false) {
 }
 
 /**
- * Add the selected user as a contact for the current user
- *
- * @param int $contactid the ID of the user to add as a contact
- * @param int $blocked 1 if you wish to block the contact
- * @param int $userid the user ID of the user we want to add the contact for, defaults to current user if not specified.
- * @return bool/int false if the $contactid isnt a valid user id. True if no changes made.
- *                  Otherwise returns the result of update_record() or insert_record()
- */
-function message_add_contact($contactid, $blocked = 0, $userid = 0) {
-    global $USER, $DB;
-
-    if (!$DB->record_exists('user', array('id' => $contactid))) { // invalid userid
-        return false;
-    }
-
-    if (empty($userid)) {
-        $userid = $USER->id;
-    }
-
-    // Check if a record already exists as we may be changing blocking status.
-    if (($contact = $DB->get_record('message_contacts', array('userid' => $userid, 'contactid' => $contactid))) !== false) {
-        // Check if blocking status has been changed.
-        if ($contact->blocked != $blocked) {
-            $contact->blocked = $blocked;
-            $DB->update_record('message_contacts', $contact);
-
-            if ($blocked == 1) {
-                // Trigger event for blocking a contact.
-                $event = \core\event\message_contact_blocked::create(array(
-                    'objectid' => $contact->id,
-                    'userid' => $contact->userid,
-                    'relateduserid' => $contact->contactid,
-                    'context'  => context_user::instance($contact->userid)
-                ));
-                $event->add_record_snapshot('message_contacts', $contact);
-                $event->trigger();
-            } else {
-                // Trigger event for unblocking a contact.
-                $event = \core\event\message_contact_unblocked::create(array(
-                    'objectid' => $contact->id,
-                    'userid' => $contact->userid,
-                    'relateduserid' => $contact->contactid,
-                    'context'  => context_user::instance($contact->userid)
-                ));
-                $event->add_record_snapshot('message_contacts', $contact);
-                $event->trigger();
-            }
-
-            return true;
-        } else {
-            // No change to blocking status.
-            return true;
-        }
-
-    } else {
-        // New contact record.
-        $contact = new stdClass();
-        $contact->userid = $userid;
-        $contact->contactid = $contactid;
-        $contact->blocked = $blocked;
-        $contact->id = $DB->insert_record('message_contacts', $contact);
-
-        $eventparams = array(
-            'objectid' => $contact->id,
-            'userid' => $contact->userid,
-            'relateduserid' => $contact->contactid,
-            'context'  => context_user::instance($contact->userid)
-        );
-
-        if ($blocked) {
-            $event = \core\event\message_contact_blocked::create($eventparams);
-        } else {
-            $event = \core\event\message_contact_added::create($eventparams);
-        }
-        // Trigger event.
-        $event->trigger();
-
-        return true;
-    }
-}
-
-/**
- * remove a contact
- *
- * @param int $contactid the user ID of the contact to remove
- * @param int $userid the user ID of the user we want to remove the contacts for, defaults to current user if not specified.
- * @return bool returns the result of delete_records()
- */
-function message_remove_contact($contactid, $userid = 0) {
-    global $USER, $DB;
-
-    if (empty($userid)) {
-        $userid = $USER->id;
-    }
-
-    if ($contact = $DB->get_record('message_contacts', array('userid' => $userid, 'contactid' => $contactid))) {
-        $DB->delete_records('message_contacts', array('id' => $contact->id));
-
-        // Trigger event for removing a contact.
-        $event = \core\event\message_contact_removed::create(array(
-            'objectid' => $contact->id,
-            'userid' => $contact->userid,
-            'relateduserid' => $contact->contactid,
-            'context'  => context_user::instance($contact->userid)
-        ));
-        $event->add_record_snapshot('message_contacts', $contact);
-        $event->trigger();
-
-        return true;
-    }
-
-    return false;
-}
-
-/**
- * Unblock a contact. Note that this reverts the previously blocked user back to a non-contact.
- *
- * @param int $contactid the user ID of the contact to unblock
- * @param int $userid the user ID of the user we want to unblock the contact for, defaults to current user
- *  if not specified.
- * @return bool returns the result of delete_records()
- */
-function message_unblock_contact($contactid, $userid = 0) {
-    return message_add_contact($contactid, 0, $userid);
-}
-
-/**
- * Block a user.
- *
- * @param int $contactid the user ID of the user to block
- * @param int $userid the user ID of the user we want to unblock the contact for, defaults to current user
- *  if not specified.
- * @return bool
- */
-function message_block_contact($contactid, $userid = 0) {
-    return message_add_contact($contactid, 1, $userid);
-}
-
-/**
- * Load a user's contact record
- *
- * @param int $contactid the user ID of the user whose contact record you want
- * @return array message contacts
- */
-function message_get_contact($contactid) {
-    global $USER, $DB;
-    return $DB->get_record('message_contacts', array('userid' => $USER->id, 'contactid' => $contactid));
-}
-
-/**
  * Search through course users.
  *
  * If $courseids contains the site course then this function searches
@@ -334,6 +187,7 @@ function message_search_users($courseids, $searchtext, $sort='', $exceptions='')
 
     $params = array(
         'userid' => $USER->id,
+        'userid2' => $USER->id,
         'query' => "%$searchtext%"
     );
 
@@ -354,10 +208,12 @@ function message_search_users($courseids, $searchtext, $sort='', $exceptions='')
 
     if (in_array(SITEID, $courseids)) {
         // Search on site level.
-        return $DB->get_records_sql("SELECT $ufields, mc.id as contactlistid, mc.blocked
+        return $DB->get_records_sql("SELECT $ufields, mc.id as contactlistid, mub.id as userblockedid
                                        FROM {user} u
                                        LEFT JOIN {message_contacts} mc
                                             ON mc.contactid = u.id AND mc.userid = :userid
+                                       LEFT JOIN {message_users_blocked} mub
+                                            ON mub.userid = :userid2 AND mub.blockeduserid = u.id
                                       WHERE u.deleted = '0' AND u.confirmed = '1'
                                             AND (".$DB->sql_like($fullname, ':query', false).")
                                             $except
@@ -376,11 +232,13 @@ function message_search_users($courseids, $searchtext, $sort='', $exceptions='')
 
         // Everyone who has a role assignment in this course or higher.
         // TODO: add enabled enrolment join here (skodak)
-        $users = $DB->get_records_sql("SELECT DISTINCT $ufields, mc.id as contactlistid, mc.blocked
+        $users = $DB->get_records_sql("SELECT DISTINCT $ufields, mc.id as contactlistid, mub.id as userblockedid
                                          FROM {user} u
                                          JOIN {role_assignments} ra ON ra.userid = u.id
                                          LEFT JOIN {message_contacts} mc
                                               ON mc.contactid = u.id AND mc.userid = :userid
+                                         LEFT JOIN {message_users_blocked} mub
+                                              ON mub.userid = :userid2 AND mub.blockeduserid = u.id
                                         WHERE u.deleted = '0' AND u.confirmed = '1'
                                               AND (".$DB->sql_like($fullname, ':query', false).")
                                               AND ra.contextid $contextwhere
@@ -667,7 +525,8 @@ function translate_message_default_setting($plugindefault, $processorname) {
 
 /**
  * Get messages sent or/and received by the specified users.
- * Please note that this function return deleted messages too.
+ * Please note that this function return deleted messages too. Besides, only individual conversation messages
+ * are returned to maintain backwards compatibility.
  *
  * @param  int      $useridto       the user id who received the message
  * @param  int      $useridfrom     the user id who sent the message. -10 or -20 for no-reply or support user
@@ -723,8 +582,9 @@ function message_get_messages($useridto, $useridfrom = 0, $notifications = -1, $
                                 $messagejoinsql
                              WHERE mr.useridfrom = ?
                                AND mr.useridfrom != mcm.userid
-                               AND u.deleted = 0 ";
-        $messageparams = array_merge($messagejoinparams, [$useridfrom]);
+                               AND u.deleted = 0
+                               AND mc.type = ? ";
+        $messageparams = array_merge($messagejoinparams, [$useridfrom, \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
 
         // Create the notifications query and params.
         $notificationsql .= "INNER JOIN {user} u
@@ -740,11 +600,23 @@ function message_get_messages($useridto, $useridfrom = 0, $notifications = -1, $
                                $messagejoinsql
                             WHERE mcm.userid = ?
                               AND mr.useridfrom != mcm.userid
-                              AND u.deleted = 0 ";
-        $messageparams = array_merge($messagejoinparams, [$useridto]);
-        if (!empty($useridfrom)) {
+                              AND u.deleted = 0
+                              AND mc.type = ? ";
+        $messageparams = array_merge($messagejoinparams, [$useridto, \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
+
+        // If we're dealing with messages only and both useridto and useridfrom are set,
+        // try to get a conversation between the users. Break early if we can't find one.
+        if (!empty($useridfrom) && $notifications == 0) {
             $messagesql .= " AND mr.useridfrom = ? ";
             $messageparams[] = $useridfrom;
+
+            // There should be an individual conversation between the users. If not, we can return early.
+            $conversationid = \core_message\api::get_conversation_between_users([$useridto, $useridfrom]);
+            if (empty($conversationid)) {
+                return [];
+            }
+            $messagesql .= " AND mc.id = ? ";
+            $messageparams[] = $conversationid;
         }
 
         // Create the notifications query and params.
@@ -858,10 +730,31 @@ function core_message_can_edit_message_profile($user) {
  * @return array
  */
 function core_message_user_preferences() {
-
     $preferences = [];
-    $preferences['message_blocknoncontacts'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 0,
-        'choices' => array(0, 1));
+    $preferences['message_blocknoncontacts'] = array(
+        'type' => PARAM_INT,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => 0,
+        'choices' => array(
+            \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS,
+            \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER,
+            \core_message\api::MESSAGE_PRIVACY_SITE
+        ),
+        'cleancallback' => function ($value) {
+            global $CFG;
+
+            // When site-wide messaging between users is disabled, MESSAGE_PRIVACY_SITE should be converted.
+            if (empty($CFG->messagingallusers) && $value === \core_message\api::MESSAGE_PRIVACY_SITE) {
+                return \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER;
+            }
+            return $value;
+        }
+    );
+    $preferences['message_entertosend'] = array(
+        'type' => PARAM_BOOL,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => false
+    );
     $preferences['/^message_provider_([\w\d_]*)_logged(in|off)$/'] = array('isregex' => true, 'type' => PARAM_NOTAGS,
         'null' => NULL_NOT_ALLOWED, 'default' => 'none',
         'permissioncallback' => function ($user, $preferencename) {
@@ -888,4 +781,150 @@ function core_message_user_preferences() {
             return $parts ? join(',', $parts) : 'none';
         });
     return $preferences;
+}
+
+/**
+ * Renders the popup.
+ *
+ * @param renderer_base $renderer
+ * @return string The HTML
+ */
+function core_message_render_navbar_output(\renderer_base $renderer) {
+    global $USER, $CFG;
+
+    // Early bail out conditions.
+    if (!isloggedin() || isguestuser() || user_not_fully_set_up($USER) ||
+        get_user_preferences('auth_forcepasswordchange') ||
+        (!$USER->policyagreed && !is_siteadmin() &&
+            ($manager = new \core_privacy\local\sitepolicy\manager()) && $manager->is_defined())) {
+        return '';
+    }
+
+    $output = '';
+
+    // Add the messages popover.
+    if (!empty($CFG->messaging)) {
+        $unreadcount = \core_message\api::count_unread_conversations($USER);
+        $requestcount = \core_message\api::get_received_contact_requests_count($USER->id);
+        $context = [
+            'userid' => $USER->id,
+            'unreadcount' => $unreadcount + $requestcount
+        ];
+        $output .= $renderer->render_from_template('core_message/message_popover', $context);
+    }
+
+    return $output;
+}
+
+/**
+ * Render the message drawer to be included in the top of the body of
+ * each page.
+ *
+ * @return string HTML
+ */
+function core_message_standard_after_main_region_html() {
+    global $USER, $CFG, $PAGE;
+
+    // Early bail out conditions.
+    if (empty($CFG->messaging) || !isloggedin() || isguestuser() || user_not_fully_set_up($USER) ||
+        get_user_preferences('auth_forcepasswordchange') ||
+        (!$USER->policyagreed && !is_siteadmin() &&
+            ($manager = new \core_privacy\local\sitepolicy\manager()) && $manager->is_defined())) {
+        return '';
+    }
+
+    $renderer = $PAGE->get_renderer('core');
+
+    // Get the counts.
+    $conversationcounts = \core_message\api::get_conversation_counts($USER->id);
+    $individualconversationcount = $conversationcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL];
+    $groupconversationcount = $conversationcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP];
+    $favouriteconversationcount = $conversationcounts['favourites'];
+    $requestcount = \core_message\api::get_received_contact_requests_count($USER->id);
+    $contactscount = \core_message\api::count_contacts($USER->id);
+
+    $choices = [];
+    $choices[] = [
+        'value' => \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS,
+        'text' => get_string('contactableprivacy_onlycontacts', 'message')
+    ];
+    $choices[] = [
+        'value' => \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER,
+        'text' => get_string('contactableprivacy_coursemember', 'message')
+    ];
+    if (!empty($CFG->messagingallusers)) {
+        // Add the MESSAGE_PRIVACY_SITE option when site-wide messaging between users is enabled.
+        $choices[] = [
+            'value' => \core_message\api::MESSAGE_PRIVACY_SITE,
+            'text' => get_string('contactableprivacy_site', 'message')
+        ];
+    }
+
+    // Enter to send.
+    $entertosend = get_user_preferences('message_entertosend', false, $USER);
+
+    // Get the unread counts for the current user.
+    $unreadcounts = \core_message\api::get_unread_conversation_counts($USER->id);
+
+    // Determine which section will be expanded.
+    // Default behaviour - if no unread counts exist.
+    $favouritesexpanded = !empty($favouriteconversationcount);
+    $groupmessagesexpanded = empty($favouriteconversationcount) && !empty($groupconversationcount);
+    $messagesexpanded = empty($favouriteconversationcount) && empty($groupconversationcount);
+
+    // There is an unread conversation somewhere, so that takes priority.
+    if ($unreadcounts['favourites'] > 0 || $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP] > 0 ||
+            $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL] > 0) {
+        $favouritesexpanded = $unreadcounts['favourites'] > 0;
+        $groupmessagesexpanded = !$favouritesexpanded &&
+            $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP] > 0;
+        $messagesexpanded = !$groupmessagesexpanded && !$favouritesexpanded &&
+            $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL] > 0;
+    }
+
+    return $renderer->render_from_template('core_message/message_drawer', [
+        'contactrequestcount' => $requestcount,
+        'loggedinuser' => [
+            'id' => $USER->id,
+            'midnight' => usergetmidnight(time())
+        ],
+        'overview' => [
+            'messages' => [
+                'expanded' => $messagesexpanded,
+                'count' => [
+                    'unread' => $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL],
+                    'total' => $individualconversationcount
+                ],
+                'placeholders' => array_fill(0, $individualconversationcount, true)
+            ],
+            'groupmessages' => [
+                'expanded' => $groupmessagesexpanded,
+                'count' => [
+                    'unread' => $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP],
+                    'total' => $groupconversationcount
+                ],
+                'placeholders' => array_fill(0, $groupconversationcount, true)
+            ],
+            'favourites' => [
+                'expanded' => $favouritesexpanded,
+                'count' => [
+                    'unread' => $unreadcounts['favourites'],
+                    'total' => $favouriteconversationcount
+                ],
+                'placeholders' => array_fill(0, $favouriteconversationcount, true)
+            ],
+        ],
+        'contacts' => [
+            'sectioncontacts' => [
+                'placeholders' => array_fill(0, $contactscount > 50 ? 50 : $contactscount, true)
+            ],
+            'sectionrequests' => [
+                'placeholders' => array_fill(0, $requestcount > 50 ? 50 : $requestcount, true)
+            ],
+        ],
+        'settings' => [
+            'privacy' => $choices,
+            'entertosend' => $entertosend
+        ]
+    ]);
 }

@@ -258,7 +258,8 @@ class assignfeedback_editpdf_testcase extends advanced_testcase {
 
         $comment = new comment();
 
-        $comment->rawtext = 'Comment text';
+        // Use some different charset in the comment text.
+        $comment->rawtext = 'Testing example: בקלות ואמנות';
         $comment->width = 100;
         $comment->x = 100;
         $comment->y = 100;
@@ -336,6 +337,63 @@ class assignfeedback_editpdf_testcase extends advanced_testcase {
         $file3 = document_services::get_feedback_document($assign->get_instance()->id, $grade->userid, $grade->attemptnumber);
 
         $this->assertEmpty($file3);
+    }
+
+    public function test_conversion_task() {
+        global $DB;
+        $this->require_ghostscript();
+        $this->resetAfterTest();
+        cron_setup_user();
+
+        $task = new \assignfeedback_editpdf\task\convert_submissions;
+
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $assignopts = [
+            'assignsubmission_file_enabled' => 1,
+            'assignsubmission_file_maxfiles' => 1,
+            'assignfeedback_editpdf_enabled' => 1,
+            'assignsubmission_file_maxsizebytes' => 1000000,
+        ];
+        $assign = $this->create_instance($course, $assignopts);
+
+        // Add the standard submission.
+        $this->add_file_submission($student, $assign);
+
+        // Run the conversion task.
+        ob_start();
+        $task->execute();
+        $output = ob_get_clean();
+
+        // Verify it acted on both submissions in the queue.
+        $this->assertContains("Convert 1 submission attempt(s) for assignment {$assign->get_instance()->id}", $output);
+        $this->assertEquals(0, $DB->count_records('assignfeedback_editpdf_queue'));
+
+        // Set a known limit.
+        set_config('conversionattemptlimit', 3);
+
+        // Trigger a re-queue by 'updating' a submission.
+        $submission = $assign->get_user_submission($student->id, true);
+        $plugin = $assign->get_submission_plugin_by_type('file');
+        $plugin->save($submission, (new stdClass));
+
+        // Verify that queued a conversion task.
+        $this->assertEquals(1, $DB->count_records('assignfeedback_editpdf_queue'));
+
+        // Fake some failed attempts for it.
+        $queuerecord = $DB->get_record('assignfeedback_editpdf_queue', ['submissionid' => $submission->id]);
+        $queuerecord->attemptedconversions = 3;
+        $DB->update_record('assignfeedback_editpdf_queue', $queuerecord);
+
+        ob_start();
+        $task->execute();
+        $output = ob_get_clean();
+
+        // Verify that the cron task skipped the submission.
+        $this->assertNotContains("Convert 1 submission attempt(s) for assignment {$assign->get_instance()->id}", $output);
+        // And it removed it from the queue.
+        $this->assertEquals(0, $DB->count_records('assignfeedback_editpdf_queue'));
+
     }
 
     /**

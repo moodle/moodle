@@ -25,7 +25,6 @@
 
 require_once("../config.php");
 require_once($CFG->dirroot. '/course/lib.php');
-require_once($CFG->libdir. '/coursecatlib.php');
 
 $categoryid = optional_param('categoryid', 0, PARAM_INT); // Category id
 $site = get_site();
@@ -38,8 +37,8 @@ if ($categoryid) {
     $category = $PAGE->category;
 } else {
     // Check if there is only one category, if so use that.
-    if (coursecat::count_all() == 1) {
-        $category = coursecat::get_default();
+    if (core_course_category::count_all() == 1) {
+        $category = core_course_category::get_default();
 
         $categoryid = $category->id;
         $PAGE->set_category_by_id($categoryid);

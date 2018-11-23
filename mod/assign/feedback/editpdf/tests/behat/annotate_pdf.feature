@@ -19,7 +19,8 @@ Feature: In an assignment, teacher can annotate PDF files during grading
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "admin"
-    And I navigate to "Annotate PDF" node in "Site administration > Plugins > Activity modules > Assignment > Feedback plugins"
+    And I am on site homepage
+    And I navigate to "Plugins > Activity modules > Assignment > Feedback plugins > Annotate PDF" in site administration
     And I upload "pix/help.png" file to "" filemanager
     And I upload "pix/docs.png" file to "" filemanager
     When I press "Save changes"
@@ -51,7 +52,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
-    And I click on "Edit" "link" in the "Submitted for grading" "table_row"
+    And I open the action menu in "Submitted for grading" "table_row"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
     And I should see "Page 1 of 3"
     And I click on ".navigate-next-button" "css_element"
@@ -126,7 +127,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
-    And I click on "Edit" "link" in the "Student 2" "table_row"
+    And I open the action menu in "Student 2" "table_row"
     And I click on "Grade" "link" in the "Student 2" "table_row"
     And I wait for the complete PDF to load
     And I click on ".linebutton" "css_element"

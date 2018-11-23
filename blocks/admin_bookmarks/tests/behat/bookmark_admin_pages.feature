@@ -6,14 +6,14 @@ Feature: Add a bookmarks to an admin pages
 
   Background:
     Given I log in as "admin"
-    And I navigate to "Scheduled tasks" node in "Site administration > Server"
+    And I navigate to "Server > Scheduled tasks" in site administration
     And I click on "Bookmark this page" "link" in the "Admin bookmarks" "block"
     And I log out
 
   # Test bookmark functionality using the "User profile fields" page as our bookmark.
   Scenario: Admin page can be bookmarked
     Given I log in as "admin"
-    And I navigate to "User profile fields" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts > User profile fields" in site administration
     When I click on "Bookmark this page" "link" in the "Admin bookmarks" "block"
     Then I should see "User profile fields" in the "Admin bookmarks" "block"
     # See the existing bookmark is there too.
@@ -21,14 +21,14 @@ Feature: Add a bookmarks to an admin pages
 
   Scenario: Admin page can be accessed through bookmarks block
     Given I log in as "admin"
-    And I navigate to "Notifications" node in "Site administration"
+    And I navigate to "Notifications" in site administration
     And I click on "Scheduled tasks" "link" in the "Admin bookmarks" "block"
     # Verify that we are on the right page.
     Then I should see "Scheduled tasks" in the "h1" "css_element"
 
   Scenario: Admin page can be removed from bookmarks
     Given I log in as "admin"
-    And I navigate to "Notifications" node in "Site administration"
+    And I navigate to "Notifications" in site administration
     And I click on "Scheduled tasks" "link" in the "Admin bookmarks" "block"
     When I click on "Unbookmark this page" "link" in the "Admin bookmarks" "block"
     Then I should see "Bookmark deleted"

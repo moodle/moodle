@@ -30,7 +30,7 @@ Feature: Filter an outline report
       | ID number| BOOK01 |
 
   Scenario: Filter the outline report by start date
-    Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
+    Given I navigate to "Plugins > Logging > Manage log stores" in site administration
     And "Enable" "link" should exist in the "Legacy log" "table_row"
     And "Disable" "link" should exist in the "Standard log" "table_row"
     And I log out
@@ -49,7 +49,7 @@ Feature: Filter an outline report
     And I log out
     And I log in as "admin"
     And I am on "Course 1" course homepage
-    And I navigate to "Activity report" node in "Course administration > Reports"
+    And I navigate to "Reports > Activity report" in current page administration
     And I should see "2 views by 2 users" in the "Book name" "table_row"
     And I should see "1 views by 1 users" in the "Forum name" "table_row"
     When I set the following fields to these values:
@@ -62,7 +62,7 @@ Feature: Filter an outline report
     And I should see "1 views by 1 users" in the "Forum name" "table_row"
 
   Scenario: Filter the outline report by end date
-    Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
+    Given I navigate to "Plugins > Logging > Manage log stores" in site administration
     And "Enable" "link" should exist in the "Legacy log" "table_row"
     And "Disable" "link" should exist in the "Standard log" "table_row"
     And I log out
@@ -81,7 +81,7 @@ Feature: Filter an outline report
     And I log out
     And I log in as "admin"
     And I am on "Course 1" course homepage
-    And I navigate to "Activity report" node in "Course administration > Reports"
+    And I navigate to "Reports > Activity report" in current page administration
     And I should see "2 views by 2 users" in the "Book name" "table_row"
     And I should see "1 views by 1 users" in the "Forum name" "table_row"
     When I set the following fields to these values:

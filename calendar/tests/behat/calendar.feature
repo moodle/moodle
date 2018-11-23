@@ -106,7 +106,7 @@ Feature: Perform basic calendar functionality
     And I am on "Course 1" course homepage
     When I follow "This month"
     And I click on "Really awesome event!" "link"
-    And I click on "Delete" "button"
+    And I click on "Delete" "button" in the "Really awesome event!" "dialogue"
     And I click on "Delete event" "button"
     And I wait to be redirected
     Then I should not see "Really awesome event!"
@@ -146,8 +146,8 @@ Feature: Perform basic calendar functionality
     Then I should see "Test choice opens"
     And I should see "Test choice closes"
     When I click on "Test choice opens" "link"
-    Then "Delete" "button" should not exist
-    And "Edit" "button" should not exist
+    Then "Delete" "button" should not exist in the "Test choice opens" "dialogue"
+    And "Edit" "button" should not exist in the "Test choice opens" "dialogue"
     And I should see "Course event"
     When I click on "Go to activity" "link"
     And I wait to be redirected
@@ -155,8 +155,8 @@ Feature: Perform basic calendar functionality
     And I am on "Course 1" course homepage
     And I follow "This month"
     When I click on "Test choice closes" "link"
-    Then "Delete" "button" should not exist
-    And "Edit" "button" should not exist
+    Then "Delete" "button" should not exist in the "Test choice closes" "dialogue"
+    And "Edit" "button" should not exist in the "Test choice closes" "dialogue"
     And I should see "Course event"
     When I click on "Go to activity" "link"
     And I wait to be redirected

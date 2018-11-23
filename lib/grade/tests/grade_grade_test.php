@@ -39,6 +39,7 @@ class core_grade_grade_testcase extends grade_base_testcase {
         $this->sub_test_grade_grade_is_locked();
         $this->sub_test_grade_grade_set_hidden();
         $this->sub_test_grade_grade_is_hidden();
+        $this->sub_test_grade_grade_deleted();
     }
 
     protected function sub_test_grade_grade_construct() {
@@ -428,5 +429,81 @@ class core_grade_grade_testcase extends grade_base_testcase {
         $this->assertEquals(100, $gg->get_grade_max());
 
         $CFG->grade_minmaxtouse = $initialminmaxtouse;
+    }
+
+    /**
+     * Tests when a grade_grade has been deleted.
+     */
+    public function sub_test_grade_grade_deleted() {
+        $dg = $this->getDataGenerator();
+
+        // Create the data we need for the tests.
+        $fs = new file_storage();
+        $u1 = $dg->create_user();
+        $c1 = $dg->create_course();
+        $a1 = $dg->create_module('assign', ['course' => $c1->id]);
+        $a1context = context_module::instance($a1->cmid);
+
+        $gi = new grade_item($dg->create_grade_item(
+            [
+                'courseid' => $c1->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $a1->id
+            ]
+        ), false);
+
+        // Add feedback files to copy as our update.
+        $this->add_feedback_file_to_copy();
+
+        $grades['feedback'] = 'Nice feedback!';
+        $grades['feedbackformat'] = FORMAT_MOODLE;
+        $grades['feedbackfiles'] = [
+            'contextid' => 1,
+            'component' => 'test',
+            'filearea' => 'testarea',
+            'itemid' => 1
+        ];
+
+        $grades['userid'] = $u1->id;
+        grade_update('mod/assign', $gi->courseid, $gi->itemtype, $gi->itemmodule, $gi->iteminstance,
+            $gi->itemnumber, $grades);
+
+        // Feedback file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        // History file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+
+        $gg = grade_grade::fetch(array('userid' => $u1->id, 'itemid' => $gi->id));
+
+        $gg->delete();
+
+        // Feedback file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA);
+        $this->assertEquals(0, count($files));
+
+        // History file area.
+        $files = $fs->get_area_files($a1context->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEquals(2, count($files));
+    }
+
+    /**
+     * Creates a feedback file to copy to the gradebook area.
+     */
+    private function add_feedback_file_to_copy() {
+        $dummy = array(
+            'contextid' => 1,
+            'component' => 'test',
+            'filearea' => 'testarea',
+            'itemid' => 1,
+            'filepath' => '/',
+            'filename' => 'feedback1.txt'
+        );
+
+        $fs = get_file_storage();
+        $fs->create_file_from_string($dummy, '');
     }
 }

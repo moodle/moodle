@@ -1340,7 +1340,7 @@ function quiz_update_events($quiz, $override = null) {
                 }
                 $event->name = get_string('quizeventopens', 'quiz', $eventname);
                 // The method calendar_event::create will reuse a db record if the id field is set.
-                calendar_event::create($event);
+                calendar_event::create($event, false);
             }
             if ($timeclose && $addclose) {
                 if ($oldevent = array_shift($oldevents)) {
@@ -1359,7 +1359,7 @@ function quiz_update_events($quiz, $override = null) {
                         $event->priority = $closepriorities[$timeclose];
                     }
                 }
-                calendar_event::create($event);
+                calendar_event::create($event, false);
             }
         }
     }
@@ -2266,16 +2266,14 @@ function mod_quiz_get_completion_active_rule_descriptions($cm) {
     foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
         switch ($key) {
             case 'completionattemptsexhausted':
-                if (empty($val)) {
-                    continue;
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionattemptsexhausteddesc', 'quiz');
                 }
-                $descriptions[] = get_string('completionattemptsexhausteddesc', 'quiz');
                 break;
             case 'completionpass':
-                if (empty($val)) {
-                    continue;
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionpassdesc', 'quiz', format_time($val));
                 }
-                $descriptions[] = get_string('completionpassdesc', 'quiz', format_time($val));
                 break;
             default:
                 break;

@@ -27,6 +27,7 @@
         "next": true,
         "first": true,
         "last": true,
+        "activepagenumber": 1,
         "pages": [
             {
                 "url": "#",
@@ -40,59 +41,147 @@
         ]
     }
 }}
-<div aria-label="{{label}}"
-     class="pagination"
-     id="{{$pagingbarid}}paging-bar-{{uniqid}}{{/pagingbarid}}"
-     data-region="paging-bar"
-     data-items-per-page="{{itemsperpage}}">
+<div data-region="paging-control-container">
+    {{#showitemsperpageselector}}
+        <div
+            id="paging-control-limit-container-{{uniqid}}"
+            data-region="paging-control-limit-container"
+            class="pull-left"
+        >
+            <span class="mr-1">{{#str}} show {{/str}}</span>
+            <div class="btn-group">
+                <button
+                    type="button"
+                    class="btn btn-outline-secondary dropdown-toggle"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    data-action="limit-toggle"
+                    {{#arialabels.itemsperpage}}
+                        aria-label="{{.}}"
+                    {{/arialabels.itemsperpage}}
+                    {{^arialabels.itemsperpage}}
+                        aria-label="{{#str}} pagedcontentpagingbaritemsperpage, core, {{#itemsperpage}}{{#active}}{{value}}{{/active}}{{/itemsperpage}}{{/str}}"
+                    {{/arialabels.itemsperpage}}
+                >
+                    {{#itemsperpage}}
+                        {{#active}}
+                            <span data-active-item-text>{{value}}</span>
+                        {{/active}}
+                    {{/itemsperpage}}
+                    <span data-region="caret" class="caret"></span>
+                </button>
+                <ul
+                    role="menu"
+                    class="dropdown-menu"
+                    data-show-active-item
+                    {{#arialabels.itemsperpagecomponents}}
+                        data-active-item-button-aria-label-components="{{.}}"
+                    {{/arialabels.itemsperpagecomponents}}
+                    {{^arialabels.itemsperpagecomponents}}
+                        data-active-item-button-aria-label-components="pagedcontentpagingbaritemsperpage, core"
+                    {{/arialabels.itemsperpagecomponents}}
+                >
+                    {{#itemsperpage}}
+                        <li class="dropdown-item {{#active}}active{{/active}}" data-limit={{value}}>
+                            <a href="#">
+                                {{#value}}{{.}}{{/value}}
+                                {{^value}}{{#str}} all, core {{/str}}{{/value}}
+                            </a>
+                        </li>
+                    {{/itemsperpage}}
+                </ul>
+            </div>
+        </div>
+    {{/showitemsperpageselector}}
 
-    <ul class="pagination">
-        {{#previous}}
-            {{< core/paged_content_paging_bar_item }}
-                {{$item-content}}
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="sr-only">{{#str}}previous{{/str}}</span>
-                {{/item-content}}
-                {{$attributes}}data-control="previous"{{/attributes}}
-            {{/ core/paged_content_paging_bar_item }}
-        {{/previous}}
-        {{#first}}
-            {{< core/paged_content_paging_bar_item }}
-                {{$item-content}}
-                    <span aria-hidden="true">{{#str}}first{{/str}}</span>
-                    <span class="sr-only">{{#str}}first{{/str}}</span>
-                {{/item-content}}
-                {{$attributes}}data-control="first"{{/attributes}}
-            {{/ core/paged_content_paging_bar_item }}
-        {{/first}}
-        {{#pages}}
-            {{< core/paged_content_paging_bar_item }}
-                {{$attributes}}data-page="true"{{/attributes}}
-            {{/ core/paged_content_paging_bar_item }}
-        {{/pages}}
-        {{#last}}
-            {{< core/paged_content_paging_bar_item }}
-                {{$item-content}}
-                    <span aria-hidden="true">{{#str}}last{{/str}}</span>
-                    <span class="sr-only">{{#str}}last{{/str}}</span>
-                {{/item-content}}
-                {{$attributes}}data-control="last"{{/attributes}}
-            {{/ core/paged_content_paging_bar_item }}
-        {{/last}}
-        {{#next}}
-            {{< core/paged_content_paging_bar_item }}
-                {{$item-content}}
-                    <span aria-hidden="true">&raquo;</span>
-                    <span class="sr-only">{{#str}}next{{/str}}</span>
-                {{/item-content}}
-                {{$attributes}}data-control="next"{{/attributes}}
-            {{/ core/paged_content_paging_bar_item }}
-        {{/next}}
-    </ul>
+    <div
+        aria-label="{{label}}"
+        id="{{$pagingbarid}}paging-bar-{{uniqid}}{{/pagingbarid}}"
+        class="m-0 pagination {{#showitemsperpageselector}}pagination-right{{/showitemsperpageselector}}"
+        data-region="paging-bar"
+        data-ignore-control-while-loading="{{ignorecontrolwhileloading}}"
+        data-hide-control-on-single-page="{{hidecontrolonsinglepage}}"
+        {{#activepagenumber}}
+            data-active-page-number="{{.}}"
+        {{/activepagenumber}}
+        {{^activepagenumber}}
+            data-active-page-number="1"
+        {{/activepagenumber}}
+        {{#showitemsperpageselector}}
+            {{#itemsperpage}}
+                {{#active}}
+                    data-items-per-page="{{value}}"
+                {{/active}}
+            {{/itemsperpage}}
+        {{/showitemsperpageselector}}
+        {{^showitemsperpageselector}}
+            data-items-per-page="{{itemsperpage}}"
+        {{/showitemsperpageselector}}
+        {{#arialabels.paginationnav}}
+            aria-label="{{.}}"
+        {{/arialabels.paginationnav}}
+        {{^arialabels.paginationnav}}
+            aria-label="{{#str}} pagedcontentnavigation, core {{/str}}"
+        {{/arialabels.paginationnav}}
+        {{#arialabels.paginationnavitemcomponents}}
+            data-aria-label-components-pagination-item="{{.}}"
+        {{/arialabels.paginationnavitemcomponents}}
+        {{^arialabels.paginationnavitemcomponents}}
+            data-aria-label-components-pagination-item="pagedcontentnavigationitem, core"
+        {{/arialabels.paginationnavitemcomponents}}
+        {{#arialabels.paginationactivenavitemcomponents}}
+            data-aria-label-components-pagination-active-item="{{.}}"
+        {{/arialabels.paginationactivenavitemcomponents}}
+        {{^arialabels.paginationactivenavitemcomponents}}
+            data-aria-label-components-pagination-active-item="pagedcontentnavigationactiveitem, core"
+        {{/arialabels.paginationactivenavitemcomponents}}
+    >
+
+        <div class="d-inline-block">
+            <ul class="mb-0 d-flex">
+                {{#previous}}
+                    {{< core/paged_content_paging_bar_item }}
+                        {{$item-content}}
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">{{#str}}previous{{/str}}</span>
+                        {{/item-content}}
+                        {{$attributes}}data-control="previous"{{/attributes}}
+                    {{/ core/paged_content_paging_bar_item }}
+                {{/previous}}
+                {{#first}}
+                    {{< core/paged_content_paging_bar_item }}
+                        {{$item-content}}
+                            <span aria-hidden="true">{{#str}}first{{/str}}</span>
+                            <span class="sr-only">{{#str}}first{{/str}}</span>
+                        {{/item-content}}
+                        {{$attributes}}data-control="first"{{/attributes}}
+                    {{/ core/paged_content_paging_bar_item }}
+                {{/first}}
+                {{#pages}}
+                    {{< core/paged_content_paging_bar_item }}
+                        {{$attributes}}data-page="true"{{/attributes}}
+                    {{/ core/paged_content_paging_bar_item }}
+                {{/pages}}
+                {{#last}}
+                    {{< core/paged_content_paging_bar_item }}
+                        {{$item-content}}
+                            <span aria-hidden="true">{{#str}}last{{/str}}</span>
+                            <span class="sr-only">{{#str}}last{{/str}}</span>
+                        {{/item-content}}
+                        {{$attributes}}data-control="last"{{/attributes}}
+                    {{/ core/paged_content_paging_bar_item }}
+                {{/last}}
+                {{#next}}
+                    {{< core/paged_content_paging_bar_item }}
+                        {{$item-content}}
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">{{#str}}next{{/str}}</span>
+                        {{/item-content}}
+                        {{$attributes}}data-control="next"{{/attributes}}
+                    {{/ core/paged_content_paging_bar_item }}
+                {{/next}}
+            </ul>
+        </div>
+    </div>
 </div>
-{{#js}}
-require(['jquery', 'core/paged_content_paging_bar'], function($, PagingControl) {
-    var root = $('#{{$pagingbarid}}paging-bar-{{uniqid}}{{/pagingbarid}}');
-    PagingControl.init(root);
-});
-{{/js}}

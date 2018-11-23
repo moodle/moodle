@@ -2425,4 +2425,21 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
 
 [data-drag-type="move"] {
     cursor: move;
+    touch-action: none;
+}
+
+.bg-pulse-grey {
+    animation: bg-pulse-grey 2s infinite linear;
+}
+
+@keyframes bg-pulse-grey {
+    0% {
+        background-color: @grayLighter;
+    }
+    50% {
+        background-color: darken(@grayLighter, 5%);
+    }
+    100% {
+        background-color: @grayLighter;
+    }
 }

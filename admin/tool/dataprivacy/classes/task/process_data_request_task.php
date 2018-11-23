@@ -74,22 +74,42 @@ class process_data_request_task extends adhoc_task {
             return;
         }
 
+        if (!\tool_dataprivacy\data_registry::defaults_set()) {
+            // Warn if no site purpose is defined.
+            mtrace('Warning: No purpose is defined at the system level. Deletion will delete all.');
+        }
+
+        // Grab the manager.
+        // We set an observer against it to handle failures.
+        $manager = new \core_privacy\manager();
+        $manager->set_observer(new \tool_dataprivacy\manager_observer());
+
         // Get the user details now. We might not be able to retrieve it later if it's a deletion processing.
         $foruser = core_user::get_user($request->userid);
-        $usercontext = \context_user::instance($foruser->id);
 
         // Update the status of this request as pre-processing.
-        mtrace('Processing request...');
+        mtrace('Pre-processing request...');
         api::update_request_status($requestid, api::DATAREQUEST_STATUS_PROCESSING);
+        $contextlistcollection = $manager->get_contexts_for_userid($requestpersistent->get('userid'));
+
+        mtrace('Fetching approved contextlists from collection');
+        $approvedclcollection = api::get_approved_contextlist_collection_for_collection(
+                $contextlistcollection, $foruser, $request->type);
+
+        mtrace('Processing request...');
+        $completestatus = api::DATAREQUEST_STATUS_COMPLETE;
+        $deleteuser = false;
 
         if ($request->type == api::DATAREQUEST_TYPE_EXPORT) {
-            // Get the collection of approved_contextlist objects needed for core_privacy data export.
-            $approvedclcollection = api::get_approved_contextlist_collection_for_request($requestpersistent);
+            // Get the user context.
+            $usercontext = \context_user::instance($foruser->id, IGNORE_MISSING);
+            if (!$usercontext) {
+                mtrace("Request {$requestid} cannot be processed due to a missing user context instance for the user
+                    with ID {$foruser->id}. Skipping...");
+                return;
+            }
 
             // Export the data.
-            $manager = new \core_privacy\manager();
-            $manager->set_observer(new \tool_dataprivacy\manager_observer());
-
             $exportedcontent = $manager->export_user_data($approvedclcollection);
 
             $fs = get_file_storage();
@@ -105,20 +125,19 @@ class process_data_request_task extends adhoc_task {
             $filerecord->author    = fullname($foruser);
             // Save somewhere.
             $thing = $fs->create_file_from_pathname($filerecord, $exportedcontent);
-
+            $completestatus = api::DATAREQUEST_STATUS_DOWNLOAD_READY;
         } else if ($request->type == api::DATAREQUEST_TYPE_DELETE) {
-            // Get the collection of approved_contextlist objects needed for core_privacy data deletion.
-            $approvedclcollection = api::get_approved_contextlist_collection_for_request($requestpersistent);
-
             // Delete the data.
             $manager = new \core_privacy\manager();
             $manager->set_observer(new \tool_dataprivacy\manager_observer());
 
             $manager->delete_data_for_user($approvedclcollection);
+            $completestatus = api::DATAREQUEST_STATUS_DELETED;
+            $deleteuser = !$foruser->deleted;
         }
 
         // When the preparation of the metadata finishes, update the request status to awaiting approval.
-        api::update_request_status($requestid, api::DATAREQUEST_STATUS_COMPLETE);
+        api::update_request_status($requestid, $completestatus);
         mtrace('The processing of the user data request has been completed...');
 
         // Create message to notify the user regarding the processing results.
@@ -189,12 +208,19 @@ class process_data_request_task extends adhoc_task {
 
         // Send message to the user involved.
         if ($notifyuser) {
+            $messagesent = false;
             if ($emailonly) {
-                email_to_user($foruser, $dpo, $subject, $message->fullmessage, $messagehtml);
+                // Do not sent an email if the user has been deleted. The user email has been previously deleted.
+                if (!$foruser->deleted) {
+                    $messagesent = email_to_user($foruser, $dpo, $subject, $message->fullmessage, $messagehtml);
+                }
             } else {
-                message_send($message);
+                $messagesent = message_send($message);
             }
-            mtrace('Message sent to user: ' . $messagetextdata['username']);
+
+            if ($messagesent) {
+                mtrace('Message sent to user: ' . $messagetextdata['username']);
+            }
         }
 
         // Send to requester as well in some circumstances.
@@ -240,7 +266,7 @@ class process_data_request_task extends adhoc_task {
             }
         }
 
-        if ($request->type == api::DATAREQUEST_TYPE_DELETE) {
+        if ($deleteuser) {
             // Delete the user.
             delete_user($foruser);
         }

@@ -68,6 +68,24 @@ class writer {
     }
 
     /**
+     * Create a real content_writer for use by PHPUnit tests,
+     * where a mock writer will not suffice.
+     *
+     * @return  content_writer
+     */
+    public static function setup_real_writer_instance() {
+        if (!PHPUNIT_TEST) {
+            throw new coding_exception('setup_real_writer_instance() is only for use with PHPUnit tests.');
+        }
+
+        $instance = static::instance();
+
+        if (null === $instance->realwriter) {
+            $instance->realwriter = new moodle_content_writer(static::instance());
+        }
+    }
+
+    /**
      * Return an instance of
      */
     protected static final function instance() {

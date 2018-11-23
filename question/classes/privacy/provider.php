@@ -18,17 +18,20 @@
  * Privacy Subsystem implementation for core_question.
  *
  * @package    core_question
+ * @category   privacy
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace core_question\privacy;
 
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\transform;
-use \core_privacy\local\request\contextlist;
-use \core_privacy\local\request\approved_contextlist;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
+use core_privacy\local\request\writer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -55,7 +58,13 @@ class provider implements
     \core_privacy\local\request\subsystem\provider,
 
     // This is a subsysytem which provides information to plugins.
-    \core_privacy\local\request\subsystem\plugin_provider
+    \core_privacy\local\request\subsystem\plugin_provider,
+
+    // This plugin is capable of determining which users have data within it.
+    \core_privacy\local\request\core_userlist_provider,
+
+    // This plugin is capable of determining which users have data within it for the plugins it provides data to.
+    \core_privacy\local\request\shared_userlist_provider
 {
 
     /**
@@ -345,6 +354,30 @@ class provider implements
     }
 
     /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        // A user may have created or updated a question.
+        // Questions are linked against a question category, which has a contextid field.
+        $sql = "SELECT q.createdby, q.modifiedby
+                  FROM {question} q
+                  JOIN {question_categories} cat
+                       ON cat.id = q.category
+                 WHERE cat.contextid = :contextid";
+
+        $params = [
+            'contextid' => $context->id
+        ];
+
+        $userlist->add_from_sql('createdby', $sql, $params);
+        $userlist->add_from_sql('modifiedby', $sql, $params);
+    }
+
+    /**
      * Determine related question usages for a user.
      *
      * @param   string          $prefix     A unique prefix to add to the table alias
@@ -365,6 +398,32 @@ class provider implements
                 "{$prefix}_stepuserid" => $userid,
                 "{$prefix}_usagecomponent" => $component,
             ]);
+    }
+
+    /**
+     * Add the list of users who have rated in the specified constraints.
+     *
+     * @param   userlist    $userlist   The userlist to add the users to.
+     * @param   string      $prefix     A unique prefix to add to the table alias to avoid interference with your own sql.
+     * @param   string      $insql      The SQL to use in a sub-select for the question_usages.id query.
+     * @param   array       $params     The params required for the insql.
+     * @param   int|null    $contextid  An optional context id, in case the $sql query is not already filtered by that.
+     */
+    public static function get_users_in_context_from_sql(userlist $userlist, string $prefix, string $insql, $params,
+            int $contextid = null) {
+
+        $sql = "SELECT {$prefix}_qas.userid
+                  FROM {question_attempt_steps} {$prefix}_qas
+                  JOIN {question_attempts} {$prefix}_qa ON {$prefix}_qas.questionattemptid = {$prefix}_qa.id
+                  JOIN {question_usages} {$prefix}_qu ON {$prefix}_qa.questionusageid = {$prefix}_qu.id
+                 WHERE {$prefix}_qu.id IN ({$insql})";
+
+        if ($contextid) {
+            $sql .= " AND {$prefix}_qu.contextid = :{$prefix}_contextid";
+            $params["{$prefix}_contextid"] = $contextid;
+        }
+
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -475,5 +534,34 @@ class provider implements
         $DB->set_field_select('question', 'modifiedby', 0, "
                 category IN (SELECT id FROM {question_categories} WHERE contextid {$contextsql})
             AND modifiedby = :modifiedby", $contextparams);
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist   $userlist   The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        // Questions are considered to be 'owned' by the institution, even if they were originally written by a specific
+        // user. They are still exported in the list of a users data, but they are not removed.
+        // The userid is instead anonymised.
+
+        $context = $userlist->get_context();
+        $userids = $userlist->get_userids();
+
+        list($createdbysql, $createdbyparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        list($modifiedbysql, $modifiedbyparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+
+        $params = ['contextid' => $context->id];
+
+        $DB->set_field_select('question', 'createdby', 0, "
+                category IN (SELECT id FROM {question_categories} WHERE contextid = :contextid)
+            AND createdby {$createdbysql}", $params + $createdbyparams);
+
+        $DB->set_field_select('question', 'modifiedby', 0, "
+                category IN (SELECT id FROM {question_categories} WHERE contextid = :contextid)
+            AND modifiedby {$modifiedbysql}", $params + $modifiedbyparams);
     }
 }

@@ -72,6 +72,22 @@ class edit_model extends \moodleform {
         $mform->addElement('select', 'timesplitting', get_string('timesplittingmethod', 'analytics'), $timesplittings);
         $mform->addHelpButton('timesplitting', 'timesplittingmethod', 'analytics');
 
+        $defaultprocessor = \core_analytics\manager::get_predictions_processor_name(
+            \core_analytics\manager::get_predictions_processor()
+        );
+        $predictionprocessors = ['' => get_string('defaultpredictoroption', 'analytics', $defaultprocessor)];
+        foreach ($this->_customdata['predictionprocessors'] as $classname => $predictionsprocessor) {
+            if ($predictionsprocessor->is_ready() !== true) {
+                continue;
+            }
+            $optionname = \tool_analytics\output\helper::class_to_option($classname);
+            $predictionprocessors[$optionname] = \core_analytics\manager::get_predictions_processor_name($predictionsprocessor);
+        }
+
+        $mform->addElement('select', 'predictionsprocessor', get_string('predictionsprocessor', 'analytics'),
+            $predictionprocessors);
+        $mform->addHelpButton('predictionsprocessor', 'predictionsprocessor', 'analytics');
+
         $mform->addElement('hidden', 'id', $this->_customdata['id']);
         $mform->setType('id', PARAM_INT);
 

@@ -110,7 +110,7 @@ class grade_export_xls extends grade_export {
                 }
                 // writing feedback if requested
                 if ($this->export_feedback) {
-                    $myxls->write_string($i, $j++, $this->format_feedback($userdata->feedbacks[$itemid]));
+                    $myxls->write_string($i, $j++, $this->format_feedback($userdata->feedbacks[$itemid], $grade));
                 }
             }
             // Time exported.

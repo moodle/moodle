@@ -29,6 +29,7 @@ use \core_privacy\local\request\approved_contextlist;
 use \core_privacy\local\request\writer;
 use \core_privacy\tests\provider_testcase;
 use core_privacy\local\request\transform;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Privacy test for the authentication mnet
@@ -210,5 +211,120 @@ class auth_mnet_privacy_testcase extends provider_testcase {
         $mnetlogrecords = $DB->get_records('mnet_log', array());
         // There should be one (user2).
         $this->assertCount(1, $mnetlogrecords);
+    }
+
+    /**
+     * Test that only users with a user context are fetched.
+     */
+    public function test_get_users_in_context() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $component = 'auth_mnet';
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user(['auth' => 'mnet']);
+        $usercontext = context_user::instance($user->id);
+
+        // The list of users should not return anything yet (related data still haven't been created).
+        $userlist = new \core_privacy\local\request\userlist($usercontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(0, $userlist);
+
+        // Insert mnet_log record.
+        $logrecord = new stdClass();
+        $logrecord->hostid = '';
+        $logrecord->remoteid = 65;
+        $logrecord->time = time();
+        $logrecord->userid = $user->id;
+        $DB->insert_record('mnet_log', $logrecord);
+
+        // The list of users for user context should return the user.
+        provider::get_users_in_context($userlist);
+        $this->assertCount(1, $userlist);
+        $expected = [$user->id];
+        $actual = $userlist->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        // The list of users for system context should not return any users.
+        $systemcontext = context_system::instance();
+        $userlist = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(0, $userlist);
+    }
+
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $component = 'auth_mnet';
+        // Create user1.
+        $user1 = $this->getDataGenerator()->create_user(['auth' => 'mnet']);
+        $usercontext1 = context_user::instance($user1->id);
+        // Create user2.
+        $user2 = $this->getDataGenerator()->create_user(['auth' => 'mnet']);
+        $usercontext2 = context_user::instance($user2->id);
+
+        // Insert mnet_log record.
+        $logrecord1 = new stdClass();
+        $logrecord1->hostid = '';
+        $logrecord1->remoteid = 65;
+        $logrecord1->time = time();
+        $logrecord1->userid = $user1->id;
+        $DB->insert_record('mnet_log', $logrecord1);
+
+        // Insert mnet_log record.
+        $logrecord2 = new stdClass();
+        $logrecord2->hostid = '';
+        $logrecord2->remoteid = 65;
+        $logrecord2->time = time();
+        $logrecord2->userid = $user2->id;
+        $DB->insert_record('mnet_log', $logrecord2);
+
+        // The list of users for usercontext1 should return user1.
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(1, $userlist1);
+        $expected = [$user1->id];
+        $actual = $userlist1->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        // The list of users for usercontext2 should return user2.
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+        $expected = [$user2->id];
+        $actual = $userlist2->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        // Add userlist1 to the approved user list.
+        $approvedlist = new approved_userlist($usercontext1, $component, $userlist1->get_userids());
+
+        // Delete user data using delete_data_for_user for usercontext1.
+        provider::delete_data_for_users($approvedlist);
+
+        // Re-fetch users in usercontext1 - The user list should now be empty.
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(0, $userlist1);
+        // Re-fetch users in usercontext2 - The user list should not be empty (user2).
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+
+        // User data should be only removed in the user context.
+        $systemcontext = context_system::instance();
+        // Add userlist2 to the approved user list in the system context.
+        $approvedlist = new approved_userlist($systemcontext, $component, $userlist2->get_userids());
+        // Delete user1 data using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist);
+        // Re-fetch users in usercontext2 - The user list should not be empty (user2).
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
     }
 }

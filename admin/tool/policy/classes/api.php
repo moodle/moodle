@@ -131,6 +131,8 @@ class api {
 
         $policies = [];
         $versions = [];
+        $optcache = \cache::make('tool_policy', 'policy_optional');
+
         $rs = $DB->get_recordset_sql($sql, $params);
 
         foreach ($rs as $r) {
@@ -149,6 +151,8 @@ class api {
             }
 
             $versions[$r->id][$versiondata->id] = $versiondata;
+
+            $optcache->set($versiondata->id, $versiondata->optional);
         }
 
         $rs->close();
@@ -309,8 +313,8 @@ class api {
             return true;
         }
 
-        // Users have access to all the policies they have ever accepted.
-        if (static::is_user_version_accepted($userid, $policy->id)) {
+        // Users have access to all the policies they have ever accepted/declined.
+        if (static::is_user_version_accepted($userid, $policy->id) !== null) {
             return true;
         }
 
@@ -719,20 +723,22 @@ class api {
     }
 
     /**
-     * Returns version acceptance for this user.
+     * Did the user accept the given policy version?
      *
      * @param int $userid User identifier.
      * @param int $versionid Policy version identifier.
-     * @param array|null $acceptances Iist of policy version acceptances indexed by versionid.
-     * @return bool True if this user has accepted this policy version; false otherwise.
+     * @param array|null $acceptances Pre-loaded list of policy version acceptances indexed by versionid.
+     * @return bool|null True/false if this user accepted/declined the policy; null otherwise.
      */
     public static function is_user_version_accepted($userid, $versionid, $acceptances = null) {
+
         $acceptance = static::get_user_version_acceptance($userid, $versionid, $acceptances);
+
         if (!empty($acceptance)) {
-            return $acceptance->status;
+            return (bool) $acceptance->status;
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -754,14 +760,14 @@ class api {
                 if (isset($acceptances[$policy->currentversion->id])) {
                     $policy->currentversion->acceptance = $acceptances[$policy->currentversion->id];
                 } else {
-                    $policy->currentversion->acceptance = 0;
+                    $policy->currentversion->acceptance = null;
                 }
                 $versions[] = $policy->currentversion;
             }
             foreach ($policy->archivedversions as $version) {
                 if ($version->audience != policy_version::AUDIENCE_GUESTS
                         && static::can_user_view_policy_version($version, $userid)) {
-                    $version->acceptance = isset($acceptances[$version->id]) ? $acceptances[$version->id] : 0;
+                    $version->acceptance = isset($acceptances[$version->id]) ? $acceptances[$version->id] : null;
                     $versions[] = $version;
                 }
             }
@@ -774,14 +780,19 @@ class api {
     }
 
     /**
-     * Checks if user can accept policies for themselves or on behalf of another user
+     * Check if given policies can be accepted by the current user (eventually on behalf of the other user)
      *
-     * @param int $userid
-     * @param bool $throwexception
+     * Currently, the version ids are not relevant and the check is based on permissions only. In the future, additional
+     * conditions can be added (such as policies applying to certain users only).
+     *
+     * @param array $versionids int[] List of policy version ids to check
+     * @param int $userid Accepting policies on this user's behalf (defaults to accepting on self)
+     * @param bool $throwexception Throw exception instead of returning false
      * @return bool
      */
-    public static function can_accept_policies($userid = null, $throwexception = false) {
+    public static function can_accept_policies(array $versionids, $userid = null, $throwexception = false) {
         global $USER;
+
         if (!isloggedin() || isguestuser()) {
             if ($throwexception) {
                 throw new \moodle_exception('noguest');
@@ -789,6 +800,7 @@ class api {
                 return false;
             }
         }
+
         if (!$userid) {
             $userid = $USER->id;
         }
@@ -814,15 +826,48 @@ class api {
     }
 
     /**
-     * Checks if user can revoke policies for themselves or on behalf of another user
+     * Check if given policies can be declined by the current user (eventually on behalf of the other user)
      *
-     * @param int $userid
-     * @param bool $throwexception
+     * Only optional policies can be declined. Otherwise, the permissions are same as for accepting policies.
+     *
+     * @param array $versionids int[] List of policy version ids to check
+     * @param int $userid Declining policies on this user's behalf (defaults to declining by self)
+     * @param bool $throwexception Throw exception instead of returning false
      * @return bool
      */
-    public static function can_revoke_policies($userid = null, $throwexception = false) {
+    public static function can_decline_policies(array $versionids, $userid = null, $throwexception = false) {
+
+        foreach ($versionids as $versionid) {
+            if (static::get_agreement_optional($versionid) == policy_version::AGREEMENT_COMPULSORY) {
+                // Compulsory policies can't be declined (that is what makes them compulsory).
+                if ($throwexception) {
+                    throw new \moodle_exception('errorpolicyversioncompulsory', 'tool_policy');
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        return static::can_accept_policies($versionids, $userid, $throwexception);
+    }
+
+    /**
+     * Check if acceptances to given policies can be revoked by the current user (eventually on behalf of the other user)
+     *
+     * Revoking optional policies is controlled by the same rules as declining them. Compulsory policies can be revoked
+     * only by users with the permission to accept policies on other's behalf. The reasoning behind this is to make sure
+     * the user communicates with the site's privacy officer and is well aware of all consequences of the decision (such
+     * as losing right to access the site).
+     *
+     * @param array $versionids int[] List of policy version ids to check
+     * @param int $userid Revoking policies on this user's behalf (defaults to revoking by self)
+     * @param bool $throwexception Throw exception instead of returning false
+     * @return bool
+     */
+    public static function can_revoke_policies(array $versionids, $userid = null, $throwexception = false) {
         global $USER;
 
+        // Guests' acceptance is not stored so there is nothing to revoke.
         if (!isloggedin() || isguestuser()) {
             if ($throwexception) {
                 throw new \moodle_exception('noguest');
@@ -830,32 +875,84 @@ class api {
                 return false;
             }
         }
-        if (!$userid) {
-            $userid = $USER->id;
+
+        // Sort policies into two sets according the optional flag.
+        $compulsory = [];
+        $optional = [];
+
+        foreach ($versionids as $versionid) {
+            $agreementoptional = static::get_agreement_optional($versionid);
+            if ($agreementoptional == policy_version::AGREEMENT_COMPULSORY) {
+                $compulsory[] = $versionid;
+            } else if ($agreementoptional == policy_version::AGREEMENT_OPTIONAL) {
+                $optional[] = $versionid;
+            } else {
+                throw new \coding_exception('Unexpected optional flag value');
+            }
         }
 
-        // At the moment, current users can't revoke their own policies.
-        // Check capability to revoke on behalf as the real user.
-        $realuser = manager::get_realuser();
-        $usercontext = \context_user::instance($userid);
-        if ($throwexception) {
-            require_capability('tool/policy:acceptbehalf', $usercontext, $realuser);
-            return;
-        } else {
-            return has_capability('tool/policy:acceptbehalf', $usercontext, $realuser);
+        // Check if the user can revoke the optional policies from the list.
+        if ($optional) {
+            if (!static::can_decline_policies($optional, $userid, $throwexception)) {
+                return false;
+            }
         }
+
+        // Check if the user can revoke the compulsory policies from the list.
+        if ($compulsory) {
+            if (!$userid) {
+                $userid = $USER->id;
+            }
+
+            $realuser = manager::get_realuser();
+            $usercontext = \context_user::instance($userid);
+            if ($throwexception) {
+                require_capability('tool/policy:acceptbehalf', $usercontext, $realuser);
+                return;
+            } else {
+                return has_capability('tool/policy:acceptbehalf', $usercontext, $realuser);
+            }
+        }
+
+        return true;
     }
 
     /**
-     * Accepts the current revisions of all policies that the user has not yet accepted
+     * Mark the given policy versions as accepted by the user.
      *
-     * @param array|int $policyversionid
-     * @param int|null $userid
-     * @param string|null $note
-     * @param string|null $lang
+     * @param array|int $policyversionid Policy version id(s) to set acceptance status for.
+     * @param int|null $userid Id of the user accepting the policy version, defaults to the current one.
+     * @param string|null $note Note to be recorded.
+     * @param string|null $lang Language in which the policy was shown, defaults to the current one.
      */
     public static function accept_policies($policyversionid, $userid = null, $note = null, $lang = null) {
+        static::set_acceptances_status($policyversionid, $userid, $note, $lang, 1);
+    }
+
+    /**
+     * Mark the given policy versions as declined by the user.
+     *
+     * @param array|int $policyversionid Policy version id(s) to set acceptance status for.
+     * @param int|null $userid Id of the user accepting the policy version, defaults to the current one.
+     * @param string|null $note Note to be recorded.
+     * @param string|null $lang Language in which the policy was shown, defaults to the current one.
+     */
+    public static function decline_policies($policyversionid, $userid = null, $note = null, $lang = null) {
+        static::set_acceptances_status($policyversionid, $userid, $note, $lang, 0);
+    }
+
+    /**
+     * Mark the given policy versions as accepted or declined by the user.
+     *
+     * @param array|int $policyversionid Policy version id(s) to set acceptance status for.
+     * @param int|null $userid Id of the user accepting the policy version, defaults to the current one.
+     * @param string|null $note Note to be recorded.
+     * @param string|null $lang Language in which the policy was shown, defaults to the current one.
+     * @param int $status The acceptance status, defaults to 1 = accepted
+     */
+    protected static function set_acceptances_status($policyversionid, $userid = null, $note = null, $lang = null, $status = 1) {
         global $DB, $USER;
+
         // Validate arguments and capabilities.
         if (empty($policyversionid)) {
             return;
@@ -865,18 +962,22 @@ class api {
         if (!$userid) {
             $userid = $USER->id;
         }
-        self::can_accept_policies($userid, true);
+        self::can_accept_policies([$policyversionid], $userid, true);
 
         // Retrieve the list of policy versions that need agreement (do not update existing agreements).
         list($sql, $params) = $DB->get_in_or_equal($policyversionid, SQL_PARAMS_NAMED);
         $sql = "SELECT v.id AS versionid, a.*
                   FROM {tool_policy_versions} v
-                  LEFT JOIN {tool_policy_acceptances} a ON a.userid = :userid AND a.policyversionid = v.id
-                  WHERE (a.id IS NULL or a.status <> 1) AND v.id " . $sql;
-        $needacceptance = $DB->get_records_sql($sql, ['userid' => $userid] + $params);
+             LEFT JOIN {tool_policy_acceptances} a ON a.userid = :userid AND a.policyversionid = v.id
+                 WHERE v.id $sql AND (a.id IS NULL OR a.status <> :status)";
+
+        $needacceptance = $DB->get_records_sql($sql, $params + [
+            'userid' => $userid,
+            'status' => $status,
+        ]);
 
         $realuser = manager::get_realuser();
-        $updatedata = ['status' => 1, 'lang' => $lang ?: current_language(),
+        $updatedata = ['status' => $status, 'lang' => $lang ?: current_language(),
             'timemodified' => time(), 'usermodified' => $realuser->id, 'note' => $note];
         foreach ($needacceptance as $versionid => $currentacceptance) {
             unset($currentacceptance->versionid);
@@ -911,23 +1012,30 @@ class api {
             $user = $DB->get_record('user', ['id' => $user], 'id, policyagreed');
         }
 
-        $sql = "SELECT d.id, a.status
+        $sql = "SELECT d.id, v.optional, a.status
                   FROM {tool_policy} d
-                  INNER JOIN {tool_policy_versions} v ON v.policyid = d.id AND v.id = d.currentversionid
-                  LEFT JOIN {tool_policy_acceptances} a ON a.userid = :userid AND a.policyversionid = v.id
-                  WHERE (v.audience = :audience OR v.audience = :audienceall)";
+            INNER JOIN {tool_policy_versions} v ON v.policyid = d.id AND v.id = d.currentversionid
+             LEFT JOIN {tool_policy_acceptances} a ON a.userid = :userid AND a.policyversionid = v.id
+                 WHERE (v.audience = :audience OR v.audience = :audienceall)";
+
         $params = [
             'audience' => policy_version::AUDIENCE_LOGGEDIN,
             'audienceall' => policy_version::AUDIENCE_ALL,
             'userid' => $user->id
         ];
-        $policies = $DB->get_records_sql_menu($sql, $params);
-        $acceptedpolicies = array_filter($policies);
-        $policyagreed = (count($policies) == count($acceptedpolicies)) ? 1 : 0;
 
-        if ($user->policyagreed != $policyagreed) {
-            $user->policyagreed = $policyagreed;
-            $DB->set_field('user', 'policyagreed', $policyagreed, ['id' => $user->id]);
+        $allresponded = true;
+        foreach ($DB->get_records_sql($sql, $params) as $policyacceptance) {
+            if ($policyacceptance->optional == policy_version::AGREEMENT_COMPULSORY && empty($policyacceptance->status)) {
+                $allresponded = false;
+            } else if ($policyacceptance->optional == policy_version::AGREEMENT_OPTIONAL && $policyacceptance->status === null) {
+                $allresponded = false;
+            }
+        }
+
+        if ($user->policyagreed != $allresponded) {
+            $user->policyagreed = $allresponded;
+            $DB->set_field('user', 'policyagreed', $allresponded, ['id' => $user->id]);
         }
     }
 
@@ -943,7 +1051,7 @@ class api {
         if (!$userid) {
             $userid = $USER->id;
         }
-        self::can_accept_policies($userid, true);
+        self::can_accept_policies([$policyversionid], $userid, true);
 
         if ($currentacceptance = $DB->get_record('tool_policy_acceptances',
                 ['policyversionid' => $policyversionid, 'userid' => $userid])) {
@@ -963,7 +1071,7 @@ class api {
      * @param \core\event\user_created $event
      */
     public static function create_acceptances_user_created(\core\event\user_created $event) {
-        global $CFG, $DB;
+        global $USER, $CFG, $DB;
 
         // Do nothing if not set as the site policies handler.
         if (empty($CFG->sitepolicyhandler) || $CFG->sitepolicyhandler !== 'tool_policy') {
@@ -977,28 +1085,59 @@ class api {
         if (!$user->policyagreed) {
             return;
         }
-        // Remove the presignup cache after the user account is created.
+
+        // Cleanup our bits in the presignup cache (we can not rely on them at this stage any more anyway).
         $cache = \cache::make('core', 'presignup');
         $cache->delete('tool_policy_userpolicyagreed');
         $cache->delete('tool_policy_viewedpolicies');
+        $cache->delete('tool_policy_policyversionidsagreed');
 
-        // Get all active policies.
-        $currentpolicyversions = static::get_current_versions_ids(policy_version::AUDIENCE_LOGGEDIN);
-        // Save active policies as accepted by the user.
-        if (!empty($currentpolicyversions)) {
+        // Mark all compulsory policies as implicitly accepted during the signup.
+        if ($policyversions = static::list_current_versions(policy_version::AUDIENCE_LOGGEDIN)) {
             $acceptances = array();
-            foreach ($currentpolicyversions as $policy) {
+            $now = time();
+            foreach ($policyversions as $policyversion) {
+                if ($policyversion->optional == policy_version::AGREEMENT_OPTIONAL) {
+                    continue;
+                }
                 $acceptances[] = array(
-                    'policyversionid' => $policy,
+                    'policyversionid' => $policyversion->id,
                     'userid' => $userid,
                     'status' => 1,
                     'lang' => $lang,
-                    'usermodified' => 0,
-                    'timecreated' => time(),
-                    'timemodified' => time()
+                    'usermodified' => isset($USER->id) ? $USER->id : 0,
+                    'timecreated' => $now,
+                    'timemodified' => $now,
                 );
             }
             $DB->insert_records('tool_policy_acceptances', $acceptances);
         }
+
+        static::update_policyagreed($userid);
+    }
+
+    /**
+     * Returns the value of the optional flag for the given policy version.
+     *
+     * Optimised for being called multiple times by making use of a request cache. The cache is normally populated as a
+     * side effect of calling {@link self::list_policies()} and in most cases should be warm enough for hits.
+     *
+     * @param int $versionid
+     * @return int policy_version::AGREEMENT_COMPULSORY | policy_version::AGREEMENT_OPTIONAL
+     */
+    public static function get_agreement_optional($versionid) {
+        global $DB;
+
+        $optcache = \cache::make('tool_policy', 'policy_optional');
+
+        $hit = $optcache->get($versionid);
+
+        if ($hit === false) {
+            $flags = $DB->get_records_menu('tool_policy_versions', null, '', 'id, optional');
+            $optcache->set_many($flags);
+            $hit = $flags[$versionid];
+        }
+
+        return $hit;
     }
 }

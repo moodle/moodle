@@ -62,5 +62,38 @@ function xmldb_assignfeedback_editpdf_upgrade($oldversion) {
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2018051401) {
+        $table = new xmldb_table('assignfeedback_editpdf_queue');
+        $field = new xmldb_field('attemptedconversions', XMLDB_TYPE_INTEGER, '10', null,
+            XMLDB_NOTNULL, null, 0, 'submissionattempt');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Attempts are removed from the queue after being processed, a duplicate row won't achieve anything productive.
+        // So look for any duplicates and remove them so we can add a unique key.
+        $sql = "SELECT MIN(id) as minid, submissionid, submissionattempt
+                FROM {assignfeedback_editpdf_queue}
+                GROUP BY submissionid, submissionattempt
+                HAVING COUNT(id) > 1";
+
+        if ($duplicatedrows = $DB->get_recordset_sql($sql)) {
+            foreach ($duplicatedrows as $row) {
+                $DB->delete_records_select('assignfeedback_editpdf_queue',
+                    'submissionid = :submissionid AND submissionattempt = :submissionattempt AND id <> :minid', (array)$row);
+            }
+        }
+        $duplicatedrows->close();
+
+        // Define key submissionid-submissionattempt to be added to assignfeedback_editpdf_queue.
+        $table = new xmldb_table('assignfeedback_editpdf_queue');
+        $key = new xmldb_key('submissionid-submissionattempt', XMLDB_KEY_UNIQUE, ['submissionid', 'submissionattempt']);
+
+        $dbman->add_key($table, $key);
+
+        upgrade_plugin_savepoint(true, 2018051401, 'assignfeedback', 'editpdf');
+    }
+
     return true;
 }

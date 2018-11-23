@@ -22,7 +22,7 @@ Feature: Test editing a Matching question
       | Test questions   | match | Matching for editing | foursubq |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
 
   @javascript @_switch_window
   Scenario: Edit a Matching question

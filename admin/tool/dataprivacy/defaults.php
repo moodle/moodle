@@ -32,47 +32,40 @@ $title = get_string('setdefaults', 'tool_dataprivacy');
 
 \tool_dataprivacy\page_helper::setup($url, $title, 'dataregistry');
 
-$levels = \context_helper::get_all_levels();
-// They are set through the context level site and user.
-unset($levels[CONTEXT_SYSTEM]);
-unset($levels[CONTEXT_USER]);
+$mode = optional_param('mode', CONTEXT_COURSECAT, PARAM_INT);
+$classname = context_helper::get_class_for_level($mode);
+list($purposevar, $categoryvar) = \tool_dataprivacy\data_registry::var_names_from_context($classname);
+$purpose = get_config('tool_dataprivacy', $purposevar);
+$category = get_config('tool_dataprivacy', $categoryvar);
 
-$customdata = [
-    'levels' => $levels,
-    'purposes' => \tool_dataprivacy\api::get_purposes(),
-    'categories' => \tool_dataprivacy\api::get_categories(),
-];
-$form = new \tool_dataprivacy\form\defaults($PAGE->url->out(false), $customdata);
+$otherdefaults = [];
+if ($mode == CONTEXT_MODULE) {
+    // Get activity module plugin info.
+    $pluginmanager = core_plugin_manager::instance();
+    $modplugins = $pluginmanager->get_enabled_plugins('mod');
 
-$toform = new stdClass();
-foreach ($levels as $level => $classname) {
-    list($purposevar, $categoryvar) = \tool_dataprivacy\data_registry::var_names_from_context($classname);
-    $toform->{$purposevar} = get_config('tool_dataprivacy', $purposevar);
-    $toform->{$categoryvar} = get_config('tool_dataprivacy', $categoryvar);
-}
-$form->set_data($toform);
-
-$returnurl = new \moodle_url('/admin/tool/dataprivacy/dataregistry.php');
-if ($form->is_cancelled()) {
-    redirect($returnurl);
-} else if ($data = $form->get_data()) {
-
-    foreach ($levels as $level => $classname) {
-
-        list($purposevar, $categoryvar) = \tool_dataprivacy\data_registry::var_names_from_context($classname);
-
-        if (isset($data->{$purposevar})) {
-            set_config($purposevar, $data->{$purposevar}, 'tool_dataprivacy');
+    foreach ($modplugins as $name) {
+        list($purposevar, $categoryvar) = \tool_dataprivacy\data_registry::var_names_from_context($classname, $name);
+        $plugincategory = get_config('tool_dataprivacy', $categoryvar);
+        $pluginpurpose = get_config('tool_dataprivacy', $purposevar);
+        if ($plugincategory === false && $pluginpurpose === false) {
+            // If no purpose and category has been set for this plugin, then there's no need to show this on the list.
+            continue;
         }
-        if (isset($data->{$categoryvar})) {
-            set_config($categoryvar, $data->{$categoryvar}, 'tool_dataprivacy');
-        }
+
+        $displayname = $pluginmanager->plugin_name('mod_' . $name);
+        $otherdefaults[$name] = (object)[
+            'name' => $displayname,
+            'category' => $plugincategory,
+            'purpose' => $pluginpurpose,
+        ];
     }
-    redirect($returnurl, get_string('defaultssaved', 'tool_dataprivacy'),
-        0, \core\output\notification::NOTIFY_SUCCESS);
 }
+
+$defaultspage = new \tool_dataprivacy\output\defaults_page($mode, $category, $purpose, $otherdefaults, true);
 
 $output = $PAGE->get_renderer('tool_dataprivacy');
 echo $output->header();
-$form->display();
+echo $output->heading($title);
+echo $output->render_from_template('tool_dataprivacy/defaults_page', $defaultspage->export_for_template($output));
 echo $output->footer();

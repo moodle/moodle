@@ -115,8 +115,8 @@ class core_question_backup_testcase extends advanced_testcase {
         $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
         $context = context_coursecat::instance($category1->id);
         $qcat = $qgen->create_question_category(array('contextid' => $context->id));
-        $question1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
-        $question2 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
+        $question1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id, 'idnumber' => 'q1'));
+        $question2 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id, 'idnumber' => 'q2'));
 
         // Tag the questions with 2 question tags and 2 course level question tags.
         $qcontext = context::instance_by_id($qcat->contextid);
@@ -144,10 +144,11 @@ class core_question_backup_testcase extends advanced_testcase {
 
         // The questions should remain in the question category they were which is
         // a question category belonging to a course category context.
-        $questions = $DB->get_records('question', array('category' => $qcat->id));
+        $questions = $DB->get_records('question', array('category' => $qcat->id), 'idnumber');
         $this->assertCount(2, $questions);
 
         // Retrieve tags for each question and check if they are assigned at the right context.
+        $qcount = 1;
         foreach ($questions as $question) {
             $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
 
@@ -162,6 +163,10 @@ class core_question_backup_testcase extends advanced_testcase {
                 }
                 $this->assertEquals($expected, $tag->taginstancecontextid);
             }
+
+            // Also check idnumbers have been backed up and restored.
+            $this->assertEquals('q' . $qcount, $question->idnumber);
+            $qcount++;
         }
 
         // Now, again, delete everything including the course category.

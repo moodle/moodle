@@ -196,7 +196,7 @@ if (!empty($groupid)) {
     }
 }
 
-if ($groupid && ($course->groupmode != SEPARATEGROUPS || $canaccessallgroups)) {
+if ($groupid > 0 && ($course->groupmode != SEPARATEGROUPS || $canaccessallgroups)) {
     $grouprenderer = $PAGE->get_renderer('core_group');
     $groupdetailpage = new \core_group\output\group_details($groupid);
     echo $grouprenderer->group_details($groupdetailpage);
@@ -295,6 +295,22 @@ if ($bulkoperations) {
     $displaylist['#messageselect'] = get_string('messageselectadd');
     if (!empty($CFG->enablenotes) && has_capability('moodle/notes:manage', $context) && $context->id != $frontpagectx->id) {
         $displaylist['#addgroupnote'] = get_string('addnewnote', 'notes');
+    }
+
+    $params = ['operation' => 'download_participants'];
+
+    $downloadoptions = [];
+    $formats = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
+    foreach ($formats as $format) {
+        if ($format->is_enabled()) {
+            $params = ['operation' => 'download_participants', 'dataformat' => $format->name];
+            $url = new moodle_url('bulkchange.php', $params);
+            $downloadoptions[$url->out(false)] = get_string('dataformat', $format->component);
+        }
+    }
+
+    if (!empty($downloadoptions)) {
+        $displaylist[] = [get_string('downloadas', 'table') => $downloadoptions];
     }
 
     if ($context->id != $frontpagectx->id) {

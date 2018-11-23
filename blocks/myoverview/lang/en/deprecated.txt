@@ -1,0 +1,15 @@
+defaulttab,block_myoverview
+defaulttab_desc,block_myoverview
+morecourses,block_myoverview
+nocoursesinprogress,block_myoverview
+nocoursesfuture,block_myoverview
+nocoursespast,block_myoverview
+noevents,block_myoverview
+next30days,block_myoverview
+next7days,block_myoverview
+recentlyoverdue,block_myoverview
+sortbycourses,block_myoverview
+sortbydates,block_myoverview
+timeline,block_myoverview
+viewcoursename,block_myoverview
+privacy:metadata:overviewlasttab,block_myoverview

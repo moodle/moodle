@@ -289,12 +289,9 @@ EOD;
      * Create a test course category
      * @param array|stdClass $record
      * @param array $options
-     * @return coursecat course category record
+     * @return core_course_category course category record
      */
     public function create_category($record=null, array $options=null) {
-        global $DB, $CFG;
-        require_once("$CFG->libdir/coursecatlib.php");
-
         $this->categorycount++;
         $i = $this->categorycount;
 
@@ -312,7 +309,7 @@ EOD;
             $record['idnumber'] = '';
         }
 
-        return coursecat::create($record);
+        return core_course_category::create($record);
     }
 
     /**
@@ -544,6 +541,18 @@ EOD;
         }
 
         $id = groups_create_group((object)$record);
+
+        // Allow tests to set group pictures.
+        if (!empty($record['picturepath'])) {
+            require_once($CFG->dirroot . '/lib/gdlib.php');
+            $grouppicture = process_new_icon(\context_course::instance($record['courseid']), 'group', 'icon', $id,
+                $record['picturepath']);
+
+            $DB->set_field('groups', 'picture', $grouppicture, ['id' => $id]);
+
+            // Invalidate the group data as we've updated the group record.
+            cache_helper::invalidate_by_definition('core', 'groupdata', array(), [$record['courseid']]);
+        }
 
         return $DB->get_record('groups', array('id'=>$id));
     }

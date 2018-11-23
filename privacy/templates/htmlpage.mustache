@@ -1,0 +1,105 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_privacy/htmlpage
+
+    Renders the user export html page.
+    This template is not for use within moodle.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * righttoleft
+    * navigation
+    * systemname
+    * timegenerated
+    * username
+
+    Example context (json):
+    {
+        "righttoleft": 0,
+        "navigation": "Navigation html",
+        "systemname": "Test System",
+        "siteurl": "#",
+        "timegenerated": 1536906530,
+        "username": "John Jones"
+    }
+}}
+
+<!DOCTYPE html>
+<html {{#righttoleft}}dir="rtl"{{/righttoleft}}>
+<head>
+    <meta charset="UTF-8">
+    <title>Data export</title>
+    <link rel="stylesheet" type="text/css" href="moodle.css" />
+    <link rel="stylesheet" type="text/css" href="general.css" />
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light border-bottom">
+        <a class="navbar-brand" href="https://moodle.org" title="Moodle">
+            <img class="moodle-logo" src="pix/moodlelogo.svg" alt="Moodle logo" />
+        </a>
+        <span class="navbar-brand">{{#str}}broughtbymoodle, core_privacy{{/str}}</span>
+    </nav>
+    <div id="page" class="container-fluid mt-2">
+
+        {{{navigation}}}
+        <div data-main-content class="jumbotron bg-light border">
+            <h2 class="display-8">{{#str}}viewdata, core_privacy{{/str}}</h2>
+        </div>
+        <script src="js/jquery-3.2.1.min.js"></script>
+        <script src="js/data_index.js"></script>
+        <script src="js/general.js"></script>
+        <script src="js/require.min.js"></script>
+        <script>
+            requirejs.config({
+                "baseUrl": "./",
+                "paths": {
+                    "app": "./",
+                    "jquery": "./js/jquery-3.2.1.min",
+                    "tree": "./js/tree.min"
+                }
+            });
+            var tree;
+
+            require(['tree'], function(t) {
+                var tree = new t('#my-tree');
+                tree.registerEnterCallback(function(item) {
+                    var basenode = $(item[0].childNodes[0]);
+                    if (basenode.attr('data-var') != undefined) {
+                        handleClick(basenode);
+                    } else if (basenode.attr('href') != undefined) {
+                        window.location.href = basenode.attr('href');
+                    }
+                });
+            });
+        </script>
+        <footer class="footer">
+            <div class="container">
+                <hr />
+                <div class="text-center text-muted">{{#str}}exportfrom, core_privacy, <a href="{{{siteurl}}}" title="{{systemname}}">{{systemname}}</a>{{/str}}</div>
+                <div class="text-center text-muted">{{#str}}exporttime, core_privacy, {{#userdate}}{{timegenerated}},{{#str}}strftimedatetime, langconfig{{/str}}{{/userdate}}{{/str}}</div>
+                <div class="text-center text-muted">{{#str}}exportuser, core_privacy, {{username}}{{/str}}</div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

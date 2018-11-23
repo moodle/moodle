@@ -26,7 +26,7 @@ Feature: Adding questions to a quiz from the question bank
       | Test questions   | essay     | question 2 name | teacher1 | Question 2 text |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Questions" node in "Course administration > Question bank"
+    And I navigate to "Question bank > Questions" in current page administration
     And I click on "Edit" "link" in the "question 1 name" "table_row"
     And I set the following fields to these values:
       | Tags | foo |

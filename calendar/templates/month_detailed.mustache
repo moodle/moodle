@@ -83,7 +83,7 @@
                                     <ul>
                                         {{#events}}
                                         {{#underway}}
-                                            <li class="events-underway">[{{name}}]</li>
+                                            <li class="events-underway">[{{{name}}}]</li>
                                         {{/underway}}
                                         {{^underway}}
                                             <li data-region="event-item"
@@ -110,7 +110,7 @@
                                                         &nbsp;
                                                     </span>
                                                     {{> core_calendar/event_icon}}
-                                                    <span class="eventname">{{name}}</span>
+                                                    <span class="eventname">{{{name}}}</span>
                                                 </a>
                                             </li>
                                         {{/underway}}

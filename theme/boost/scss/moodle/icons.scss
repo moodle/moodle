@@ -8,6 +8,18 @@ $icon-height: 16px;
 $icon-big-width: 64px;
 $icon-big-height: 64px;
 
+// stylelint-disable
+$iconsizes: () !default;
+$iconsizes: map-merge((
+  0: 0,
+  1: ($icon-width * .25),
+  2: ($icon-width * .5),
+  3: $icon-width,
+  4: ($icon-width * 1.5),
+  5: ($icon-width * 3)
+), $iconsizes);
+// stylelint-enable
+
 .icon {
     font-size: $icon-height;
     width: $icon-width;
@@ -59,9 +71,28 @@ $icon-big-height: 64px;
     margin: 0;
 }
 
+.icon-no-margin {
+    .icon {
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
 .icon-large > .icon {
     width: ($icon-width * 2);
     height: ($icon-height * 2);
+}
+
+@each $size, $length in $iconsizes {
+    .icon-size-#{$size} {
+        .icon {
+            height: $length !important; /* stylelint-disable-line declaration-no-important */
+            width: $length !important; /* stylelint-disable-line declaration-no-important */
+            font-size: $length !important; /* stylelint-disable-line declaration-no-important */
+        }
+    }
 }
 
 .helplink .icon {

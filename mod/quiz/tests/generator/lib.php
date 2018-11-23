@@ -95,4 +95,79 @@ class mod_quiz_generator extends testing_module_generator {
 
         return parent::create_instance($record, (array)$options);
     }
+
+    /**
+     * Create a quiz attempt for a particular user at a particular course.
+     *
+     * Currently this method can only create a first attempt for each
+     * user at each quiz. TODO remove this limitation.
+     *
+     * @param int $quizid the quiz id (from the mdl_quit table, not cmid).
+     * @param int $userid the user id.
+     * @param array $forcedrandomquestions slot => questionid. Optional,
+     *      used with random questions, to control which one is 'randomly' selected in that slot.
+     * @param array $forcedvariants slot => variantno. Optional. Optional,
+     *      used with question where get_num_variants is > 1, to control which
+     *      variants is 'randomly' selected.
+     * @return stdClass the new attempt.
+     */
+    public function create_attempt($quizid, $userid, array $forcedrandomquestions = [],
+            array $forcedvariants = []) {
+        // Build quiz object and load questions.
+        $quizobj = quiz::create($quizid, $userid);
+
+        if (quiz_get_user_attempts($quizid, $userid, 'all', true)) {
+            throw new coding_exception('mod_quiz_generator is currently limited to only ' .
+                    'be able to create one attempt for each user. (This should be fixed.)');
+        }
+
+        return quiz_prepare_and_start_new_attempt($quizobj, 1, null, false,
+                $forcedrandomquestions, $forcedvariants);
+    }
+
+    /**
+     * Submit responses to a quiz attempt.
+     *
+     * To be realistic, you should ensure that $USER is set to the user whose attempt
+     * it is before calling this.
+     *
+     * @param int $attemptid the id of the attempt which is being
+     * @param array $responses array responses to submit. See description on
+     *      {@link core_question_generator::get_simulated_post_data_for_questions_in_usage()}.
+     * @param bool $checkbutton if simulate a click on the check button for each question, else simulate save.
+     *      This should only be used with behaviours that have a check button.
+     * @param bool $finishattempt if true, the attempt will be submitted.
+     */
+    public function submit_responses($attemptid, array $responses, $checkbutton, $finishattempt) {
+        $questiongenerator = $this->datagenerator->get_plugin_generator('core_question');
+
+        $attemptobj = quiz_attempt::create($attemptid);
+
+        $postdata = $questiongenerator->get_simulated_post_data_for_questions_in_usage(
+                $attemptobj->get_question_usage(), $responses, $checkbutton);
+
+        $attemptobj->process_submitted_actions(time(), false, $postdata);
+
+        // Bit if a hack for interactive behaviour.
+        // TODO handle this in a more plugin-friendly way.
+        if ($checkbutton) {
+            $postdata = [];
+            foreach ($responses as $slot => $notused) {
+                $qa = $attemptobj->get_question_attempt($slot);
+                if ($qa->get_behaviour() instanceof qbehaviour_interactive && $qa->get_behaviour()->is_try_again_state()) {
+                    $postdata[$qa->get_control_field_name('sequencecheck')] = (string)$qa->get_sequence_check_count();
+                    $postdata[$qa->get_flag_field_name()] = (string)(int)$qa->is_flagged();
+                    $postdata[$qa->get_behaviour_field_name('tryagain')] = 1;
+                }
+            }
+
+            if ($postdata) {
+                $attemptobj->process_submitted_actions(time(), false, $postdata);
+            }
+        }
+
+        if ($finishattempt) {
+            $attemptobj->process_finish(time(), false);
+        }
+    }
 }

@@ -16,13 +16,13 @@ Feature: Test creating a drag and drop markers question
       | teacher1 | C1     | editingteacher |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
 
   @javascript @_file_upload
   Scenario: Create a drag and drop markers question
     When I press "Create a new question ..."
     And I set the field "Drag and drop markers" to "1"
-    And I press "Add"
+    And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
     And I set the field "Question name" to "Drag and drop markers"
     And I set the field "Question text" to "Please place the markers on the map of Milton Keynes and be aware that there is more than one railway station."
     And I set the field "General feedback" to "The Open University is at the junction of Brickhill Street and Groveway. There are three railway stations, Wolverton, Milton Keynes Central and Bletchley."

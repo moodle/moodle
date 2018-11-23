@@ -27,7 +27,7 @@ Feature: View the user page for the outline report
       | External URL | http://www.google.com |
 
   Scenario: View the user page when only the legacy log reader is enabled
-    Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
+    Given I navigate to "Plugins > Logging > Manage log stores" in site administration
     And I click on "Enable" "link" in the "Legacy log" "table_row"
     And I click on "Disable" "link" in the "Standard log" "table_row"
     And the following config values are set as admin:
@@ -57,7 +57,7 @@ Feature: View the user page for the outline report
     And I should see "3 views"
 
   Scenario: View the user page when only the standard log reader is enabled
-    Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
+    Given I navigate to "Plugins > Logging > Manage log stores" in site administration
     And "Enable" "link" should exist in the "Legacy log" "table_row"
     And "Disable" "link" should exist in the "Standard log" "table_row"
     And I log out
@@ -85,7 +85,7 @@ Feature: View the user page for the outline report
     And I should see "3 views"
 
   Scenario: View the user page when both the standard and legacy log readers are enabled
-    Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
+    Given I navigate to "Plugins > Logging > Manage log stores" in site administration
     And I click on "Enable" "link" in the "Legacy log" "table_row"
     And "Disable" "link" should exist in the "Standard log" "table_row"
     And the following config values are set as admin:

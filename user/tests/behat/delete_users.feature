@@ -6,16 +6,28 @@ Feature: Deleting users
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | user1 | User | One   | one@example.com |
-      | user2 | User | Two   | two@example.com |
-      | user3 | User | Three | three@example.com |
-      | user4 | User | Four  | four@example.com |
+      | username | firstname | lastname | email             |
+      | user1    | User      | One      | one@example.com   |
+      | user2    | User      | Two      | two@example.com   |
+      | user3    | User      | Three    | three@example.com |
+      | user4    | User      | Four     | four@example.com  |
+    And the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | user1    | C1     | student        |
+      | user2    | C1     | student        |
+      | user3    | C1     | student        |
+      | user4    | C1     | student        |
+    And the following config values are set as admin:
+      | messaging | 1 |
+      | messagingallusers | 1 |
 
   @javascript
   Scenario: Deleting one user at a time
     When I log in as "admin"
-    And I navigate to "Bulk user actions" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts > Bulk user actions" in site administration
     And the "Available" select box should contain "User Four"
     And I set the field "Available" to "User Four"
     And I press "Add to selection"
@@ -31,7 +43,7 @@ Feature: Deleting users
   @javascript
   Scenario: Deleting more than one user at a time
     When I log in as "admin"
-    And I navigate to "Bulk user actions" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts > Bulk user actions" in site administration
     And I set the field "Available" to "User Four"
     And I press "Add to selection"
     And I set the field "Available" to "User Three"
@@ -55,7 +67,7 @@ Feature: Deleting users
     And I send "Message 2 from user3 to user4" message to "User Four" user
     And I log out
     And I log in as "admin"
-    And I navigate to "Bulk user actions" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts > Bulk user actions" in site administration
     And I set the field "Available" to "User One"
     And I press "Add to selection"
     And I set the field "Available" to "User Four"
@@ -64,7 +76,7 @@ Feature: Deleting users
     And I press "Go"
     And I press "Yes"
     Then I should see "Changes saved"
-    And I navigate to "Bulk user actions" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts > Bulk user actions" in site administration
     And I set the field "Available" to "User Two"
     And I press "Add to selection"
     And I set the field "Available" to "User Three"
@@ -78,3 +90,21 @@ Feature: Deleting users
     And the "Available" select box should not contain "User Three"
     And the "Available" select box should not contain "User One"
     And the "Available" select box should not contain "User Two"
+
+  @javascript
+  Scenario: Deleting a bulked user
+    When I log in as "admin"
+    And I navigate to "Users > Accounts > Bulk user actions" in site administration
+    And I set the field "Available" to "User Two"
+    And I press "Add to selection"
+    And I set the field "Available" to "User One"
+    And I press "Add to selection"
+    Then I should see "User One"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I set the following fields to these values:
+      | username | user1 |
+    And I press "Add filter"
+    And I click on "Delete" "link"
+    And I press "Delete"
+    And I navigate to "Users > Accounts > Bulk user actions" in site administration
+    Then I should not see "User One"

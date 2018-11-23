@@ -111,6 +111,13 @@ class restore_workshop_activity_structure_step extends restore_activity_structur
         $data->assessmentstart = $this->apply_date_offset($data->assessmentstart);
         $data->assessmentend = $this->apply_date_offset($data->assessmentend);
 
+        if ($data->nattachments == 0) {
+            // Convert to the new method for disabling file submissions.
+            $data->submissiontypefile = WORKSHOP_SUBMISSION_TYPE_DISABLED;
+            $data->submissiontypetext = WORKSHOP_SUBMISSION_TYPE_REQUIRED;
+            $data->nattachments = 1;
+        }
+
         // insert the workshop record
         $newitemid = $DB->insert_record('workshop', $data);
         // immediately after inserting "activity" record, call this

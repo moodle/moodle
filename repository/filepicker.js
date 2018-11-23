@@ -265,9 +265,8 @@ YUI.add('moodle-core_filepicker', function(Y) {
                         if (root.path == mytreeel.path) {
                             root.origpath = options.filepath;
                             root.origlist = fileslist;
-                        } else if (!root.isLeaf && root.expanded) {
-                            Y.bind(options.treeview_dynload, options.callbackcontext)(root, null);
                         }
+                        // Removed bind as of MDL-62415 as it overwrites the search tree results
                     }
                 }
             } else {

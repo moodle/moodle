@@ -69,6 +69,18 @@ class policy_version extends persistent {
     /** @var int Policy version has been archived. */
     const STATUS_ARCHIVED = 2;
 
+    /** @var int Policy to be accepted together with others on the consent page. */
+    const AGREEMENTSTYLE_CONSENTPAGE = 0;
+
+    /** @var int Policy to be accepted on its own page before reaching the consent page. */
+    const AGREEMENTSTYLE_OWNPAGE = 1;
+
+    /** @var int Users must agree to the policy in order to use the site. */
+    const AGREEMENT_COMPULSORY = 0;
+
+    /** @var int Users may or may not agree to the policy. */
+    const AGREEMENT_OPTIONAL = 1;
+
     /**
      * Return the definition of the properties of this model.
      *
@@ -106,6 +118,22 @@ class policy_version extends persistent {
             'policyid' => [
                 'type' => PARAM_INT,
             ],
+            'agreementstyle' => [
+                'type' => PARAM_INT,
+                'choices' => [
+                    self::AGREEMENTSTYLE_CONSENTPAGE,
+                    self::AGREEMENTSTYLE_OWNPAGE,
+                ],
+                'default' => self::AGREEMENTSTYLE_CONSENTPAGE,
+            ],
+            'optional' => [
+                'type' => PARAM_INT,
+                'choices' => [
+                    self::AGREEMENT_OPTIONAL,
+                    self::AGREEMENT_COMPULSORY,
+                ],
+                'default' => self::AGREEMENT_COMPULSORY,
+            ],
             'revision' => [
                 'type' => PARAM_TEXT,
                 'default' => '',
@@ -139,5 +167,27 @@ class policy_version extends persistent {
                 ],
             ],
         ];
+    }
+
+    /**
+     * Hook to execute after an update.
+     *
+     * @param bool $result Whether or not the update was successful (but it always is)
+     */
+    protected function after_update($result) {
+
+        $optcache = \cache::make('tool_policy', 'policy_optional');
+        $optcache->delete($this->raw_get('id'));
+    }
+
+    /**
+     * Hook to execute after an update.
+     *
+     * @param bool $result Whether or not the update was successful (but it always is)
+     */
+    protected function after_delete($result) {
+
+        $optcache = \cache::make('tool_policy', 'policy_optional');
+        $optcache->delete($this->raw_get('id'));
     }
 }

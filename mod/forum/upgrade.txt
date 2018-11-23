@@ -1,6 +1,9 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+  * forum_print_post should be surrounded with calls to forum_print_post_start and forum_print_post_end to create the proper HTML structure for the post.
+
 === 3.4 ===
   * External function get_forum_discussion_posts now returns an additional field "ratinginfo" containing rating information.
 

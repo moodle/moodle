@@ -179,6 +179,40 @@ class provider_testcase extends advanced_testcase {
     }
 
     /**
+     * Ensure that providers do not throw an error when processing a deleted user.
+     *
+     * @dataProvider    is_user_data_provider
+     * @param   string  $component
+     */
+    public function test_component_understands_deleted_users($component) {
+        $this->resetAfterTest();
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+
+        // Delete the user and their context.
+        delete_user($user);
+        $usercontext = \context_user::instance($user->id);
+        $usercontext->delete();
+
+        $contextlist = manager::component_class_callback($component, \core_privacy\local\request\core_user_data_provider::class,
+                'get_contexts_for_userid', [$user->id]);
+
+        $this->assertInstanceOf(\core_privacy\local\request\contextlist::class, $contextlist);
+    }
+
+    /**
+     * Ensure that providers do not throw an error when processing a deleted user.
+     *
+     * @dataProvider    is_user_data_provider
+     * @param   string  $component
+     */
+    public function test_userdata_provider_implements_userlist($component) {
+        $classname = manager::get_provider_classname_for_component($component);
+        $this->assertTrue(is_subclass_of($classname, \core_privacy\local\request\core_userlist_provider::class));
+    }
+
+    /**
      * Data provider for the metadata\provider tests.
      *
      * @return array
@@ -188,6 +222,20 @@ class provider_testcase extends advanced_testcase {
                 return static::component_implements(
                     $component['classname'],
                     \core_privacy\local\metadata\provider::class
+                );
+        });
+    }
+
+    /**
+     * List of providers which implement the core_user_data_provider.
+     *
+     * @return array
+     */
+    public function is_user_data_provider() {
+        return array_filter($this->get_component_list(), function($component) {
+                return static::component_implements(
+                    $component['classname'],
+                    \core_privacy\local\request\core_user_data_provider::class
                 );
         });
     }

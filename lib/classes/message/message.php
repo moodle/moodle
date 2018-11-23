@@ -34,12 +34,15 @@ defined('MOODLE_INTERNAL') || die();
  *  component string Component name. must exist in message_providers
  *  name string Message type name. must exist in message_providers
  *  userfrom object|int The user sending the message
- *  userto object|int The message recipient
+ *  userto object|int The message recipient. This is mandatory for NOTIFICACIONS and 1:1 personal messages.
  *  subject string The message subject
  *  fullmessage string The full message in a given format
  *  fullmessageformat int The format if the full message (FORMAT_MOODLE, FORMAT_HTML, ..)
  *  fullmessagehtml string The full version (the message processor will choose with one to use)
  *  smallmessage string The small version of the message
+ *
+ * Required parameters of the $eventdata object for PERSONAL MESSAGES:
+ *  convid int The conversation identifier where this message will be sent
  *
  * Optional parameters of the $eventdata object:
  *  notification bool Should the message be considered as a notification rather than a personal message
@@ -70,6 +73,9 @@ class message {
 
     /** @var object|int The user who is sending this message. */
     private $userfrom;
+
+    /** @var int The conversation id where userfrom is sending this message. */
+    private $convid;
 
     /** @var object|int The user who is receiving from which is sending this message. */
     private $userto;
@@ -123,6 +129,7 @@ class message {
         'component',
         'name',
         'userfrom',
+        'convid',
         'userto',
         'subject',
         'fullmessage',

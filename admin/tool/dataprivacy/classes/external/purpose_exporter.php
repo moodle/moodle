@@ -26,9 +26,9 @@ defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
 use core\external\persistent_exporter;
-use DateInterval;
 use Exception;
 use renderer_base;
+use tool_dataprivacy\context_instance;
 use tool_dataprivacy\purpose;
 
 /**
@@ -78,6 +78,9 @@ class purpose_exporter extends persistent_exporter {
                 'multiple' => true,
                 'optional' => true
             ],
+            'roleoverrides' => [
+                'type' => PARAM_TEXT
+            ],
         ];
     }
 
@@ -124,23 +127,35 @@ class purpose_exporter extends persistent_exporter {
 
         $retentionperiod = $this->persistent->get('retentionperiod');
         if ($retentionperiod) {
-            $interval = new DateInterval($retentionperiod);
-
-            // It is one or another.
-            if ($interval->y) {
-                $formattedtime = get_string('numyears', 'moodle', $interval->format('%y'));
-            } else if ($interval->m) {
-                $formattedtime = get_string('nummonths', 'moodle', $interval->format('%m'));
-            } else if ($interval->d) {
-                $formattedtime = get_string('numdays', 'moodle', $interval->format('%d'));
-            } else {
-                $formattedtime = get_string('retentionperiodzero', 'tool_dataprivacy');
-            }
+            $formattedtime = \tool_dataprivacy\api::format_retention_period(new \DateInterval($retentionperiod));
         } else {
             $formattedtime = get_string('retentionperiodnotdefined', 'tool_dataprivacy');
         }
         $values['formattedretentionperiod'] = $formattedtime;
 
+        $values['roleoverrides'] = !empty($this->persistent->get_purpose_overrides());
+
         return $values;
+    }
+
+    /**
+     * Utility function that fetches a purpose name from the given ID.
+     *
+     * @param int $purposeid The purpose ID. Could be INHERIT (false, -1), NOT_SET (0), or the actual ID.
+     * @return string The purpose name.
+     */
+    public static function get_name($purposeid) {
+        global $PAGE;
+        if ($purposeid === false || $purposeid == context_instance::INHERIT) {
+            return get_string('inherit', 'tool_dataprivacy');
+        } else if ($purposeid == context_instance::NOTSET) {
+            return get_string('notset', 'tool_dataprivacy');
+        } else {
+            $purpose = new purpose($purposeid);
+            $output = $PAGE->get_renderer('tool_dataprivacy');
+            $exporter = new self($purpose, ['context' => \context_system::instance()]);
+            $data = $exporter->export($output);
+            return $data->name;
+        }
     }
 }

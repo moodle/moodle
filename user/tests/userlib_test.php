@@ -242,6 +242,55 @@ class core_userliblib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that {@link user_create_user()} throws exception when invalid username is provided.
+     *
+     * @dataProvider data_create_user_invalid_username
+     * @param string $username Invalid username
+     * @param string $expectmessage Expected exception message
+     */
+    public function test_create_user_invalid_username($username, $expectmessage) {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->extendedusernamechars = false;
+
+        $user = [
+            'username' => $username,
+        ];
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage($expectmessage);
+
+        user_create_user($user);
+    }
+
+    /**
+     * Data provider for {@link self::test_create_user_invalid_username()}.
+     *
+     * @return array
+     */
+    public function data_create_user_invalid_username() {
+        return [
+            'empty_string' => [
+                '',
+                'The username cannot be blank',
+            ],
+            'only_whitespace' => [
+                "\t\t  \t\n ",
+                'The username cannot be blank',
+            ],
+            'lower_case' => [
+                'Mudrd8mz',
+                'The username must be in lower case',
+            ],
+            'extended_chars' => [
+                'dmudrák',
+                'The given username contains invalid characters',
+            ],
+        ];
+    }
+
+    /**
      * Test function user_count_login_failures().
      */
     public function test_user_count_login_failures() {
@@ -538,7 +587,6 @@ class core_userliblib_testcase extends advanced_testcase {
 
         // Remove capability moodle/user:viewdetails in course 2.
         assign_capability('moodle/user:viewdetails', CAP_PROHIBIT, $studentrole->id, $coursecontext);
-        $coursecontext->mark_dirty();
         // Set current user to user 1.
         $this->setUser($user1);
         // User 1 can see User 1's profile.
@@ -597,7 +645,6 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->setUser($user8);
         $this->assertFalse(user_can_view_profile($user1));
 
-        $allroles = $DB->get_records_menu('role', array(), 'id', 'archetype, id');
         // Let us test with guest user.
         $this->setGuestUser();
         $CFG->forceloginforprofiles = 1;
@@ -644,13 +691,11 @@ class core_userliblib_testcase extends advanced_testcase {
         $systemcontext = context_system::instance();
         assign_capability('moodle/user:viewdetails', CAP_PREVENT, $managerrole->id, $systemcontext, true);
         assign_capability('moodle/user:viewalldetails', CAP_PREVENT, $managerrole->id, $systemcontext, true);
-        $systemcontext->mark_dirty();
 
         // And override these to 'Allow' in a specific course.
         $course4context = context_course::instance($course4->id);
         assign_capability('moodle/user:viewalldetails', CAP_ALLOW, $managerrole->id, $course4context, true);
         assign_capability('moodle/user:viewdetails', CAP_ALLOW, $managerrole->id, $course4context, true);
-        $course4context->mark_dirty();
 
         // The manager now shouldn't have viewdetails in the system or user context.
         $this->setUser($user9);
@@ -890,6 +935,12 @@ class core_userliblib_testcase extends advanced_testcase {
         $userset = user_get_participants($course->id, $group->id, $accesssince + 1, $roleids['student'], 0, -1, 'searchforthis');
 
         $this->assertEquals($student1->id, $userset->current()->id);
+        $this->assertEquals(1, iterator_count($userset));
+
+        // Search for users without any group.
+        $userset = user_get_participants($course->id, USERSWITHOUTGROUP, 0, $roleids['student'], 0, -1, '');
+
+        $this->assertEquals($student3->id, $userset->current()->id);
         $this->assertEquals(1, iterator_count($userset));
     }
 

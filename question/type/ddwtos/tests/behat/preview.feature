@@ -22,7 +22,7 @@ Feature: Preview a drag-drop into text question
       | Test questions   | ddwtos | Drag to text | fox      |
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
 
   @javascript @_bug_phantomjs
   Scenario: Preview a question using the mouse.
@@ -30,7 +30,7 @@ Feature: Preview a drag-drop into text question
     And I switch to "questionpreview" window
     # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
     # Keep window large else drag will scroll the window to find element.
-    And I change window size to "large"
+    And I change window size to "medium"
     And I wait "2" seconds
     And I drag "quick" to space "1" in the drag and drop into text question
     And I drag "fox" to space "2" in the drag and drop into text question

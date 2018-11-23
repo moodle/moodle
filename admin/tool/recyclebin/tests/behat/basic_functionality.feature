@@ -48,7 +48,7 @@ Feature: Basic recycle bin functionality
       | Assignment name | Test assign |
       | Description | Test |
     And I delete "Test assign" activity
-    When I navigate to "Recycle bin" node in "Course administration"
+    When I navigate to "Recycle bin" in current page administration
     Then I should see "Test assign"
     And I should see "Contents will be permanently deleted after 7 days"
     And I click on "Restore" "link" in the "region-main" "region"
@@ -77,7 +77,7 @@ Feature: Basic recycle bin functionality
     And I go to the courses management page
     And I should see "Course 2" in the "#course-listing" "css_element"
     And I am on "Course 2" course homepage
-    And I navigate to "Groups" node in "Course administration > Users"
+    And I navigate to "Users > Groups" in current page administration
     And I follow "Overview"
     And "Student 1" "text" should exist in the "Group A" "table_row"
     And "Student 2" "text" should exist in the "Group A" "table_row"
@@ -92,10 +92,10 @@ Feature: Basic recycle bin functionality
       | Description | Test |
     And I delete "Test assign" activity
     And I run all adhoc tasks
-    And I navigate to "Recycle bin" node in "Course administration"
+    And I navigate to "Recycle bin" in current page administration
     When I click on "Delete" "link"
     Then I should see "Are you sure you want to delete the selected item from the recycle bin?"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Confirmation" "dialogue"
     And I should see "Test assign"
     And I click on "Delete" "link"
     And I press "Yes"
@@ -115,12 +115,12 @@ Feature: Basic recycle bin functionality
     And I delete "Test assign 1" activity
     And I delete "Test assign 2" activity
     And I run all adhoc tasks
-    And I navigate to "Recycle bin" node in "Course administration"
+    And I navigate to "Recycle bin" in current page administration
     And I should see "Test assign 1"
     And I should see "Test assign 2"
     When I click on "Delete all" "link"
     Then I should see "Are you sure you want to delete all items from the recycle bin?"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Confirmation" "dialogue"
     And I should see "Test assign 1"
     And I should see "Test assign 2"
     And I click on "Delete all" "link"

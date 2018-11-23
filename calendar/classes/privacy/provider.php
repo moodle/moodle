@@ -20,7 +20,9 @@
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace core_calendar\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
 use \core_privacy\local\metadata\collection;
@@ -29,6 +31,8 @@ use \core_privacy\local\request\context;
 use \core_privacy\local\request\contextlist;
 use \core_privacy\local\request\transform;
 use \core_privacy\local\request\writer;
+use \core_privacy\local\request\userlist;
+use \core_privacy\local\request\approved_userlist;
 
 /**
  * Privacy Subsystem for core_calendar implementing metadata, plugin, and user_preference providers.
@@ -38,9 +42,10 @@ use \core_privacy\local\request\writer;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
-    \core_privacy\local\metadata\provider,
-    \core_privacy\local\request\plugin\provider,
-    \core_privacy\local\request\user_preference_provider
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\plugin\provider,
+        \core_privacy\local\request\core_userlist_provider,
+        \core_privacy\local\request\user_preference_provider
 {
 
     /**
@@ -150,6 +155,101 @@ class provider implements
     }
 
     /**
+     * Get the list of users within a specific context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        $allowedcontexts = [
+            CONTEXT_SYSTEM,
+            CONTEXT_COURSECAT,
+            CONTEXT_COURSE,
+            CONTEXT_MODULE,
+            CONTEXT_USER
+        ];
+
+        if (!in_array($context->contextlevel, $allowedcontexts)) {
+            return;
+        }
+
+        $params = [
+            'modulecontext'      => CONTEXT_MODULE,
+            'contextid'          => $context->id,
+        ];
+
+        $sql = "SELECT e.userid
+                  FROM {course_modules} cm
+                  JOIN {modules} m
+                       ON m.id = cm.module
+                  JOIN {event} e
+                       ON e.modulename = m.name
+                          AND e.courseid = cm.course
+                          AND e.instance = cm.instance
+                  JOIN {context} ctx
+                       ON ctx.instanceid = cm.id
+                          AND ctx.contextlevel = :modulecontext
+                 WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Calendar Events can exist at Site, Course Category, Course, Course Group, User, or Course Modules contexts.
+        $params = [
+            'sitecontext'        => CONTEXT_SYSTEM,
+            'categorycontext'    => CONTEXT_COURSECAT,
+            'coursecontext'      => CONTEXT_COURSE,
+            'groupcontext'       => CONTEXT_COURSE,
+            'usercontext'        => CONTEXT_USER,
+            'contextid'          => $context->id
+        ];
+
+        // Get contexts of Calendar Events for the owner.
+        $sql = "SELECT e.userid
+                  FROM {event} e
+                  JOIN {context} ctx
+                       ON (ctx.contextlevel = :sitecontext
+                          AND e.eventtype = 'site')
+                       OR (ctx.contextlevel = :categorycontext
+                          AND ctx.instanceid = e.categoryid
+                          AND e.eventtype = 'category')
+                       OR (ctx.contextlevel = :coursecontext
+                          AND ctx.instanceid = e.courseid
+                          AND e.eventtype = 'course')
+                       OR (ctx.contextlevel = :groupcontext
+                          AND ctx.instanceid = e.courseid
+                          AND e.eventtype = 'group')
+                       OR (ctx.contextlevel = :usercontext
+                          AND ctx.instanceid = e.userid
+                          AND e.eventtype = 'user')
+                 WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Get contexts for Calendar Subscriptions for the owner.
+        $sql = "SELECT s.userid
+                  FROM {event_subscriptions} s
+                  JOIN {context} ctx
+                       ON (ctx.contextlevel = :sitecontext
+                          AND s.eventtype = 'site')
+                       OR (ctx.instanceid = s.categoryid
+                          AND ctx.contextlevel = :categorycontext
+                          AND s.eventtype = 'category')
+                       OR (ctx.instanceid = s.courseid
+                          AND ctx.contextlevel = :coursecontext
+                          AND s.eventtype = 'course')
+                       OR (ctx.instanceid = s.courseid
+                          AND ctx.contextlevel = :groupcontext
+                          AND s.eventtype = 'group')
+                       OR (ctx.instanceid = s.userid
+                          AND ctx.contextlevel = :usercontext
+                          AND s.eventtype = 'user')
+                 WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+    }
+
+    /**
      * Export all user data for the specified user, in the specified contexts.
      *
      * @param   approved_contextlist $contextlist The approved contexts to export information for.
@@ -194,6 +294,42 @@ class provider implements
 
         // Delete all Calendar Subscriptions in the specified context in batches.
         if ($subscriptionids = array_keys(self::get_calendar_subscription_ids_by_context($context))) {
+            self::delete_batch_records('event_subscriptions', 'id', $subscriptionids);
+        }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        $context = $userlist->get_context();
+        $userids = $userlist->get_userids();
+
+        $allowedcontexts = [
+            CONTEXT_SYSTEM,
+            CONTEXT_COURSECAT,
+            CONTEXT_COURSE,
+            CONTEXT_MODULE,
+            CONTEXT_USER
+        ];
+
+        if (!in_array($context->contextlevel, $allowedcontexts)) {
+            return;
+        }
+
+        if (empty($userids)) {
+            return;
+        }
+
+        // Delete all Calendar Events in the specified context in batches.
+        if ($eventids = array_keys(self::get_calendar_event_ids_by_context($context, $userids))) {
+            self::delete_batch_records('event', 'id', $eventids);
+        }
+
+        // Delete all Calendar Subscriptions in the specified context in batches.
+        if ($subscriptionids = array_keys(self::get_calendar_subscription_ids_by_context($context, $userids))) {
             self::delete_batch_records('event_subscriptions', 'id', $subscriptionids);
         }
     }
@@ -334,18 +470,25 @@ class provider implements
     }
 
     /**
-     * Helper function to return all Calendar Event id results for a specified context.
+     * Helper function to return all Calendar Event id results for a specified context and optionally
+     * included user list.
      *
      * @param \context $context
+     * @param array $userids
      * @return array|null
      * @throws \dml_exception
      */
-    protected static function get_calendar_event_ids_by_context(\context $context) {
+    protected static function get_calendar_event_ids_by_context(\context $context, $userids = array()) {
         global $DB;
 
-        // Calendar Events can exist at Site, Course Category, Course, Course Group, User, or Course Modules contexts.
-        $events = null;
+        $whereusersql = '';
+        $userparams = array();
+        if (!empty($userids)) {
+            list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+            $whereusersql = "AND e.userid {$usersql}";
+        }
 
+        // Calendar Events can exist at Site, Course Category, Course, Course Group, User, or Course Modules contexts.
         if ($context->contextlevel == CONTEXT_MODULE) { // Course Module Contexts.
             $params = [
                 'modulecontext'     => $context->contextlevel,
@@ -356,11 +499,17 @@ class provider implements
             $sql = "SELECT DISTINCT
                            e.id AS eventid
                       FROM {context} ctx
-                INNER JOIN {course_modules} cm ON cm.id = ctx.instanceid AND ctx.contextlevel = :modulecontext
-                INNER JOIN {modules} m ON m.id = cm.module
-                INNER JOIN {event} e ON e.modulename = m.name AND e.courseid = cm.course AND e.instance = cm.instance
-                     WHERE ctx.id = :contextid";
-            $events = $DB->get_records_sql($sql, $params);
+                INNER JOIN {course_modules} cm
+                           ON cm.id = ctx.instanceid
+                              AND ctx.contextlevel = :modulecontext
+                INNER JOIN {modules} m
+                           ON m.id = cm.module
+                INNER JOIN {event} e
+                           ON e.modulename = m.name
+                              AND e.courseid = cm.course
+                              AND e.instance = cm.instance
+                     WHERE ctx.id = :contextid
+                           {$whereusersql}";
         } else {                                        // Other Moodle Contexts.
             $params = [
                 'sitecontext'       => CONTEXT_SYSTEM,
@@ -375,26 +524,38 @@ class provider implements
             $sql = "SELECT DISTINCT
                            e.id AS eventid
                       FROM {context} ctx
-                INNER JOIN {event} e ON
-                           (e.eventtype = 'site' AND ctx.contextlevel = :sitecontext) OR
-                           (e.categoryid = ctx.instanceid AND e.eventtype = 'category' AND ctx.contextlevel = :categorycontext) OR
-                           (e.courseid = ctx.instanceid AND (e.eventtype = 'course' OR e.eventtype = 'group' OR e.modulename != '0') AND ctx.contextlevel = :coursecontext) OR
-                           (e.userid = ctx.instanceid AND e.eventtype = 'user' AND ctx.contextlevel = :usercontext)
-                     WHERE ctx.id = :contextid";
-            $events = $DB->get_records_sql($sql, $params);
+                INNER JOIN {event} e
+                           ON (e.eventtype = 'site'
+                              AND ctx.contextlevel = :sitecontext)
+                           OR (e.categoryid = ctx.instanceid
+                              AND e.eventtype = 'category'
+                              AND ctx.contextlevel = :categorycontext)
+                           OR (e.courseid = ctx.instanceid
+                              AND (e.eventtype = 'course'
+                                  OR e.eventtype = 'group'
+                                  OR e.modulename != '0')
+                              AND ctx.contextlevel = :coursecontext)
+                           OR (e.userid = ctx.instanceid
+                              AND e.eventtype = 'user'
+                              AND ctx.contextlevel = :usercontext)
+                     WHERE ctx.id = :contextid
+                           {$whereusersql}";
         }
+        $params += $userparams;
 
-        return $events;
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**
-     * Helper function to return all Calendar Subscription id results for a specified context.
+     * Helper function to return all Calendar Subscription id results for a specified context and optionally
+     * included user list.
      *
      * @param \context $context
+     * @param array $userids
      * @return array
      * @throws \dml_exception
      */
-    protected static function get_calendar_subscription_ids_by_context(\context $context) {
+    protected static function get_calendar_subscription_ids_by_context(\context $context, $userids = array()) {
         global $DB;
 
         // Calendar Subscriptions can exist at Site, Course Category, Course, Course Group, or User contexts.
@@ -407,17 +568,36 @@ class provider implements
             'contextid'         => $context->id
         ];
 
+        $whereusersql = '';
+        $userparams = array();
+        if (!empty($userids)) {
+            list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+            $whereusersql = "AND s.userid {$usersql}";
+        }
+
         // Get Calendar Subscriptions for the specified context.
         $sql = "SELECT DISTINCT
                        s.id AS subscriptionid
                   FROM {context} ctx
-            INNER JOIN {event_subscriptions} s ON
-                       (s.eventtype = 'site' AND ctx.contextlevel = :sitecontext) OR
-                       (s.categoryid = ctx.instanceid AND s.eventtype = 'category' AND ctx.contextlevel = :categorycontext) OR
-                       (s.courseid = ctx.instanceid AND s.eventtype = 'course' AND ctx.contextlevel = :coursecontext) OR
-                       (s.courseid = ctx.instanceid AND s.eventtype = 'group' AND ctx.contextlevel = :groupcontext) OR
-                       (s.userid = ctx.instanceid AND s.eventtype = 'user' AND ctx.contextlevel = :usercontext)
-                 WHERE ctx.id = :contextid";
+            INNER JOIN {event_subscriptions} s
+                       ON (s.eventtype = 'site'
+                          AND ctx.contextlevel = :sitecontext)
+                       OR (s.categoryid = ctx.instanceid
+                          AND s.eventtype = 'category'
+                          AND ctx.contextlevel = :categorycontext)
+                       OR (s.courseid = ctx.instanceid
+                          AND s.eventtype = 'course'
+                          AND ctx.contextlevel = :coursecontext)
+                       OR (s.courseid = ctx.instanceid
+                          AND s.eventtype = 'group'
+                          AND ctx.contextlevel = :groupcontext)
+                       OR (s.userid = ctx.instanceid
+                          AND s.eventtype = 'user'
+                          AND ctx.contextlevel = :usercontext)
+                 WHERE ctx.id = :contextid
+                       {$whereusersql}";
+
+        $params += $userparams;
 
         return $DB->get_records_sql($sql, $params);
     }
@@ -552,5 +732,4 @@ class provider implements
             $DB->delete_records_list($tablename, $field, $batchrecord);
         }
     }
-
 }

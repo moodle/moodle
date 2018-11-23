@@ -101,7 +101,8 @@ class messages implements templatable, renderable {
             $data->messages[] = $message->export_for_template($output);
         }
 
-        $data->isblocked = api::is_user_blocked($this->currentuserid, $this->otheruserid);
+        $blockeduserid = $this->otheruserid ?? $USER->id;
+        $data->isblocked = api::is_blocked($this->currentuserid, $blockeduserid);
 
         return $data;
     }

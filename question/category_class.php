@@ -404,7 +404,8 @@ class question_category_object {
     /**
      * Creates a new category with given params
      */
-    public function add_category($newparent, $newcategory, $newinfo, $return = false, $newinfoformat = FORMAT_HTML) {
+    public function add_category($newparent, $newcategory, $newinfo, $return = false, $newinfoformat = FORMAT_HTML,
+            $idnumber = null) {
         global $DB;
         if (empty($newcategory)) {
             print_error('categorynamecantbeblank', 'question');
@@ -419,6 +420,16 @@ class question_category_object {
             }
         }
 
+        if ((string) $idnumber === '') {
+            $idnumber = null;
+        } else if (!empty($contextid)) {
+            // While this check already exists in the form validation, this is a backstop preventing unnecessary errors.
+            if ($DB->record_exists('question_categories',
+                    ['idnumber' => $idnumber, 'contextid' => $contextid])) {
+                $idnumber = null;
+            }
+        }
+
         $cat = new stdClass();
         $cat->parent = $parentid;
         $cat->contextid = $contextid;
@@ -427,6 +438,9 @@ class question_category_object {
         $cat->infoformat = $newinfoformat;
         $cat->sortorder = 999;
         $cat->stamp = make_unique_id_code();
+        if ($idnumber) {
+            $cat->idnumber = $idnumber;
+        }
         $categoryid = $DB->insert_record("question_categories", $cat);
 
         // Log the creation of this category.
@@ -447,7 +461,8 @@ class question_category_object {
     /**
      * Updates an existing category with given params
      */
-    public function update_category($updateid, $newparent, $newname, $newinfo, $newinfoformat = FORMAT_HTML) {
+    public function update_category($updateid, $newparent, $newname, $newinfo, $newinfoformat = FORMAT_HTML,
+            $idnumber = null) {
         global $CFG, $DB;
         if (empty($newname)) {
             print_error('categorynamecantbeblank', 'question');
@@ -480,6 +495,16 @@ class question_category_object {
             }
         }
 
+        if ((string) $idnumber === '') {
+            $idnumber = null;
+        } else if (!empty($tocontextid)) {
+            // While this check already exists in the form validation, this is a backstop preventing unnecessary errors.
+            if ($DB->record_exists('question_categories',
+                    ['idnumber' => $idnumber, 'contextid' => $tocontextid])) {
+                $idnumber = null;
+            }
+        }
+
         // Update the category record.
         $cat = new stdClass();
         $cat->id = $updateid;
@@ -488,6 +513,9 @@ class question_category_object {
         $cat->infoformat = $newinfoformat;
         $cat->parent = $parentid;
         $cat->contextid = $tocontextid;
+        if ($idnumber) {
+            $cat->idnumber = $idnumber;
+        }
         if ($newstamprequired) {
             $cat->stamp = make_unique_id_code();
         }

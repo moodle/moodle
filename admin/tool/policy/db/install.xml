@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/tool/policy/db" VERSION="20180307" COMMENT="The plugin allows to manage various policy documents that users have to accept to use the site."
+<XMLDB PATH="admin/tool/policy/db" VERSION="20180918" COMMENT="The plugin allows to manage various policy documents that users have to accept to use the site."
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -26,6 +26,8 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp of when the policy version was created."/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp of when the policy version was last modified."/>
         <FIELD NAME="policyid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the policy document we are version of."/>
+        <FIELD NAME="agreementstyle" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="How this agreement should flow: 0 - on the consent page, 1 - on a separate page before reaching the consent page."/>
+        <FIELD NAME="optional" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 - the policy must be accepted to use the site, 1 - accepting the policy is optional"/>
         <FIELD NAME="revision" TYPE="char" LENGTH="1333" NOTNULL="true" SEQUENCE="false" COMMENT="Human readable version of the policy document"/>
         <FIELD NAME="summary" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Policy text summary"/>
         <FIELD NAME="summaryformat" TYPE="int" LENGTH="3" NOTNULL="true" SEQUENCE="false" COMMENT="Format of the summary field"/>

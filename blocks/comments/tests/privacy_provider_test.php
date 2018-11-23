@@ -24,6 +24,7 @@
 
 use core_privacy\local\metadata\collection;
 use block_comments\privacy\provider;
+use core_privacy\local\request\approved_userlist;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -464,5 +465,135 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
                 0,
                 $DB->count_records('comments', ['component' => 'block_comments', 'userid' => $this->student1->id])
         );
+    }
+
+    /**
+     * Test that only users within a course context are fetched.
+     * @group qtesttt
+     */
+    public function test_get_users_in_context() {
+        $component = 'block_comments';
+
+        $coursecontext1 = context_course::instance($this->course1->id);
+        $coursecontext2 = context_course::instance($this->course2->id);
+
+        $userlist1 = new \core_privacy\local\request\userlist($coursecontext1, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(0, $userlist1);
+
+        $userlist2 = new \core_privacy\local\request\userlist($coursecontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(0, $userlist2);
+
+        $this->setUser($this->student12);
+        $this->add_comment('New comment', $coursecontext1);
+        $this->add_comment('New comment', $coursecontext2);
+        $this->setUser($this->student1);
+        $this->add_comment('New comment', $coursecontext1);
+
+        // The list of users should contain user12 and user1.
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(2, $userlist1);
+        $this->assertTrue(in_array($this->student1->id, $userlist1->get_userids()));
+        $this->assertTrue(in_array($this->student12->id, $userlist1->get_userids()));
+
+        // The list of users should contain user12.
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+        $expected = [$this->student12->id];
+        $actual = $userlist2->get_userids();
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        $component = 'block_comments';
+
+        $coursecontext1 = context_course::instance($this->course1->id);
+        $coursecontext2 = context_course::instance($this->course2->id);
+
+        $this->setUser($this->student12);
+        $this->add_comment('New comment', $coursecontext1);
+        $this->add_comment('New comment', $coursecontext2);
+        $this->setUser($this->student1);
+        $this->add_comment('New comment', $coursecontext1);
+
+        $userlist1 = new \core_privacy\local\request\userlist($coursecontext1, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(2, $userlist1);
+
+        $userlist2 = new \core_privacy\local\request\userlist($coursecontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+
+        // Convert $userlist1 into an approved_contextlist.
+        $approvedlist1 = new approved_userlist($coursecontext1, $component, $userlist1->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist1);
+
+        // Re-fetch users in coursecontext1.
+        $userlist1 = new \core_privacy\local\request\userlist($coursecontext1, $component);
+        provider::get_users_in_context($userlist1);
+        // The user data in coursecontext1 should be deleted.
+        $this->assertCount(0, $userlist1);
+
+        // Re-fetch users in coursecontext2.
+        $userlist2 = new \core_privacy\local\request\userlist($coursecontext2, $component);
+        provider::get_users_in_context($userlist2);
+        // The user data in coursecontext2 should be still present.
+        $this->assertCount(1, $userlist2);
+    }
+
+    /**
+     * Test for provider::delete_data_for_user() when there are also comments from other plugins.
+     */
+    public function test_delete_data_for_users_with_comments_from_other_plugins() {
+        $component = 'block_comments';
+
+        $assigngenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $instance = $assigngenerator->create_instance(['course' => $this->course1]);
+        $cm = get_coursemodule_from_instance('assign', $instance->id);
+        $assigncontext = \context_module::instance($cm->id);
+        $assign = new \assign($assigncontext, $cm, $this->course1);
+
+        // Add a comments block in the assignment page.
+        $this->add_comments_block_in_context($assigncontext);
+
+        $submission = $assign->get_user_submission($this->student1->id, true);
+
+        $options = new stdClass();
+        $options->area = 'submission_comments';
+        $options->course = $assign->get_course();
+        $options->context = $assigncontext;
+        $options->itemid = $submission->id;
+        $options->component = 'assignsubmission_comments';
+        $options->showcount = true;
+        $options->displaycancel = true;
+
+        $comment = new comment($options);
+        $comment->set_post_permission(true);
+
+        $this->setUser($this->student1);
+        $comment->add('Comment from student 1');
+
+        $this->add_comment('New comment', $assigncontext);
+        $this->add_comment('New comment', $assigncontext);
+
+        $userlist1 = new \core_privacy\local\request\userlist($assigncontext, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(1, $userlist1);
+
+        // Convert $userlist1 into an approved_contextlist.
+        $approvedlist = new approved_userlist($assigncontext, $component, $userlist1->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist);
+
+        // Re-fetch users in assigncontext.
+        $userlist1 = new \core_privacy\local\request\userlist($assigncontext, $component);
+        provider::get_users_in_context($userlist1);
+        // The user data in assigncontext should be deleted.
+        $this->assertCount(0, $userlist1);
     }
 }

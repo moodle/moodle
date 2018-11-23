@@ -243,6 +243,103 @@ class mod_lesson_lib_testcase extends advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
+    public function test_lesson_core_calendar_provide_event_action_open_as_non_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a lesson activity.
+        $lesson = $this->getDataGenerator()->create_module('lesson', array('course' => $course->id,
+                'available' => time() - DAYSECS, 'deadline' => time() + DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $lesson->id, LESSON_EVENT_TYPE_OPEN);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_lesson_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event is not shown at all.
+        $this->assertNull($actionevent);
+    }
+
+    public function test_lesson_core_calendar_provide_event_action_open_for_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a student.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create a lesson activity.
+        $lesson = $this->getDataGenerator()->create_module('lesson', array('course' => $course->id,
+                'available' => time() - DAYSECS, 'deadline' => time() + DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $lesson->id, LESSON_EVENT_TYPE_OPEN);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for the student.
+        $actionevent = mod_lesson_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('startlesson', 'lesson'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    public function test_lesson_core_calendar_provide_event_action_open_in_hidden_section() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a student.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create a lesson activity.
+        $lesson = $this->getDataGenerator()->create_module('lesson', array('course' => $course->id,
+                'available' => time() - DAYSECS, 'deadline' => time() + DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $lesson->id, LESSON_EVENT_TYPE_OPEN);
+
+        // Set sections 0 as hidden.
+        set_section_visible($course->id, 0, 0);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for the student.
+        $actionevent = mod_lesson_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        // Confirm the event is not shown at all.
+        $this->assertNull($actionevent);
+    }
+
     public function test_lesson_core_calendar_provide_event_action_closed() {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -262,6 +359,43 @@ class mod_lesson_lib_testcase extends advanced_testcase {
 
         // Decorate action event.
         $actionevent = mod_lesson_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('startlesson', 'lesson'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertFalse($actionevent->is_actionable());
+    }
+
+    public function test_lesson_core_calendar_provide_event_action_closed_for_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a student.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create a lesson activity.
+        $lesson = $this->getDataGenerator()->create_module('lesson', array('course' => $course->id,
+                'deadline' => time() - DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $lesson->id, LESSON_EVENT_TYPE_OPEN);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_lesson_core_calendar_provide_event_action($event, $factory, $student->id);
 
         // Confirm the event was decorated.
         $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
@@ -299,6 +433,43 @@ class mod_lesson_lib_testcase extends advanced_testcase {
         $this->assertFalse($actionevent->is_actionable());
     }
 
+    public function test_lesson_core_calendar_provide_event_action_open_in_future_for_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a student.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create a lesson activity.
+        $lesson = $this->getDataGenerator()->create_module('lesson', array('course' => $course->id,
+                'available' => time() + DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $lesson->id, LESSON_EVENT_TYPE_OPEN);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_lesson_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('startlesson', 'lesson'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertFalse($actionevent->is_actionable());
+    }
+
     public function test_lesson_core_calendar_provide_event_action_no_time_specified() {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -317,6 +488,42 @@ class mod_lesson_lib_testcase extends advanced_testcase {
 
         // Decorate action event.
         $actionevent = mod_lesson_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('startlesson', 'lesson'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    public function test_lesson_core_calendar_provide_event_action_no_time_specified_for_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a student.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create a lesson activity.
+        $lesson = $this->getDataGenerator()->create_module('lesson', array('course' => $course->id));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $lesson->id, LESSON_EVENT_TYPE_OPEN);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_lesson_core_calendar_provide_event_action($event, $factory, $student->id);
 
         // Confirm the event was decorated.
         $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
@@ -371,6 +578,57 @@ class mod_lesson_lib_testcase extends advanced_testcase {
 
         // Decorate action event.
         $action = mod_lesson_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm there was no action for the user.
+        $this->assertNull($action);
+    }
+
+    public function test_lesson_core_calendar_provide_event_action_after_attempt_for_user() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create 2 students in the course.
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create a lesson activity.
+        $lesson = $this->getDataGenerator()->create_module('lesson', array('course' => $course->id));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $lesson->id, LESSON_EVENT_TYPE_OPEN);
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        $tfrecord = $generator->create_question_truefalse($lesson);
+
+        // Now, do something in the lesson as student1.
+        $this->setUser($student1);
+        mod_lesson_external::launch_attempt($lesson->id);
+        $data = array(
+            array(
+                'name' => 'answerid',
+                'value' => $DB->get_field('lesson_answers', 'id', array('pageid' => $tfrecord->id, 'jumpto' => -1)),
+            ),
+            array(
+                'name' => '_qf__lesson_display_answer_form_truefalse',
+                'value' => 1,
+            )
+        );
+        mod_lesson_external::process_page($lesson->id, $tfrecord->id, $data);
+        mod_lesson_external::finish_attempt($lesson->id);
+
+        // Now, log in as the other student.
+        $this->setUser($student2);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $action = mod_lesson_core_calendar_provide_event_action($event, $factory, $student1->id);
 
         // Confirm there was no action for the user.
         $this->assertNull($action);
@@ -722,5 +980,28 @@ class mod_lesson_lib_testcase extends advanced_testcase {
         list ($min, $max) = mod_lesson_core_calendar_get_valid_event_timestart_range($event, $lesson);
         $this->assertNull($min);
         $this->assertNull($max);
+    }
+
+    /**
+     * A user who does not have capabilities to add events to the calendar should be able to create an lesson.
+     */
+    public function test_creation_with_no_calendar_capabilities() {
+        $this->resetAfterTest();
+        $course = self::getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $user = self::getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $roleid = self::getDataGenerator()->create_role();
+        self::getDataGenerator()->role_assign($roleid, $user->id, $context->id);
+        assign_capability('moodle/calendar:manageentries', CAP_PROHIBIT, $roleid, $context, true);
+        $generator = self::getDataGenerator()->get_plugin_generator('mod_lesson');
+        // Create an instance as a user without the calendar capabilities.
+        $this->setUser($user);
+        $time = time();
+        $params = array(
+            'course' => $course->id,
+            'available' => $time + 200,
+            'deadline' => $time + 2000,
+        );
+        $generator->create_instance($params);
     }
 }

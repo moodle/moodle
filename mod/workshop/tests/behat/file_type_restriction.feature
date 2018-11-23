@@ -19,8 +19,8 @@ Feature: File types of the submission and feedback attachments can be limitted
       | student1 | c1     | student        |
       | student2 | c1     | student        |
     And the following "activities" exist:
-      | activity | name         | intro                     | course | idnumber  |
-      | workshop | TestWorkshop | Test workshop description | c1     | workshop1 |
+      | activity | name         | intro                     | course | idnumber  | submissiontypetext | submissiontypefile |
+      | workshop | TestWorkshop | Test workshop description | c1     | workshop1 | 2                  | 1                  |
 
   @_file_upload @javascript
   Scenario: Student submission attachments obey the list of allowed file types

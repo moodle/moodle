@@ -1012,6 +1012,19 @@ function choice_print_overview($courses, &$htmlarray) {
 
 
 /**
+ * Get responses of a given user on a given choice.
+ *
+ * @param stdClass $choice Choice record
+ * @param int $userid User id
+ * @return array of choice answers records
+ * @since  Moodle 3.6
+ */
+function choice_get_user_response($choice, $userid) {
+    global $DB;
+    return $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $userid), 'optionid');
+}
+
+/**
  * Get my responses on a given choice.
  *
  * @param stdClass $choice Choice record
@@ -1019,8 +1032,8 @@ function choice_print_overview($courses, &$htmlarray) {
  * @since  Moodle 3.0
  */
 function choice_get_my_response($choice) {
-    global $DB, $USER;
-    return $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id), 'optionid');
+    global $USER;
+    return choice_get_user_response($choice, $USER->id);
 }
 
 
@@ -1216,12 +1229,25 @@ function choice_check_updates_since(cm_info $cm, $from, $filter = array()) {
  *
  * @param calendar_event $event
  * @param \core_calendar\action_factory $factory
+ * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
  * @return \core_calendar\local\event\entities\action_interface|null
  */
 function mod_choice_core_calendar_provide_event_action(calendar_event $event,
-                                                       \core_calendar\action_factory $factory) {
+                                                       \core_calendar\action_factory $factory,
+                                                       int $userid = 0) {
+    global $USER;
 
-    $cm = get_fast_modinfo($event->courseid)->instances['choice'][$event->instance];
+    if (!$userid) {
+        $userid = $USER->id;
+    }
+
+    $cm = get_fast_modinfo($event->courseid, $userid)->instances['choice'][$event->instance];
+
+    if (!$cm->uservisible) {
+        // The module is not visible to the user for any reason.
+        return null;
+    }
+
     $now = time();
 
     if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < $now) {
@@ -1233,7 +1259,7 @@ function mod_choice_core_calendar_provide_event_action(calendar_event $event,
     // in the past.
     $actionable = (empty($cm->customdata['timeopen']) || $cm->customdata['timeopen'] <= $now);
 
-    if ($actionable && choice_get_my_response((object)['id' => $event->instance])) {
+    if ($actionable && choice_get_user_response((object)['id' => $event->instance], $userid)) {
         // There is no action if the user has already submitted their choice.
         return null;
     }
@@ -1427,10 +1453,9 @@ function mod_choice_get_completion_active_rule_descriptions($cm) {
     foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
         switch ($key) {
             case 'completionsubmit':
-                if (empty($val)) {
-                    continue;
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionsubmit', 'choice');
                 }
-                $descriptions[] = get_string('completionsubmit', 'choice');
                 break;
             default:
                 break;

@@ -1,0 +1,71 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/message_drawer_view_conversation_heeader_content_type_private_no_controls
+
+    This template will render the header content of the conversation page without controls in
+    the message message drawer.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * userid The logged in user id
+    * urls The URLs for the popover
+
+    Example context (json):
+    {}
+
+}}
+
+<div class="d-flex align-items-center">
+    <div class="align-self-stretch" >
+        <a class="h-100 mr-2 d-flex align-items-center" href="#" data-route-back>
+            {{> core_message/message_drawer_icon_back }}
+        </a>
+    </div>
+    <div class="d-flex text-truncate">
+        {{#imageurl}}
+            <div class="d-flex align-items-center">
+                <img
+                    class="rounded-circle"
+                    src="{{{.}}}"
+                    alt="{{name}}"
+                    aria-hidden="true"
+                    style="height: 38px"
+                >
+            </div>
+        {{/imageurl}}
+        <div class="w-100 text-truncate ml-2">
+            <div class="d-flex">
+                <strong class="m-0 text-truncate">{{name}}</strong>
+                <span class="{{^isfavourite}}hidden{{/isfavourite}} ml-1 text-primary" data-region="favourite-icon-container">
+                    {{#pix}} i/star-rating, core {{/pix}}
+                </span>
+            </div>
+            {{#showonlinestatus}}
+                <p class="m-0 font-weight-light text-truncate">
+                    {{#isonline}}{{#str}} loggedin, core_message {{/str}}{{/isonline}}
+                    {{^isonline}}{{#str}} loggedoff, core_message {{/str}}{{/isonline}}
+                </p>
+            {{/showonlinestatus}}
+        </div>
+    </div>
+</div>

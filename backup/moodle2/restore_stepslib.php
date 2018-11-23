@@ -3705,6 +3705,10 @@ class restore_activity_grades_structure_step extends restore_structure_step {
     }
 
     protected function process_grade_grade($data) {
+        global $CFG;
+
+        require_once($CFG->libdir . '/grade/constants.php');
+
         $data = (object)($data);
         $olduserid = $data->userid;
         $oldid = $data->id;
@@ -3719,7 +3723,16 @@ class restore_activity_grades_structure_step extends restore_structure_step {
 
             $grade = new grade_grade($data, false);
             $grade->insert('restore');
-            $this->set_mapping('grade_grades', $oldid, $grade->id);
+
+            $this->set_mapping('grade_grades', $oldid, $grade->id, true);
+
+            $this->add_related_files(
+                GRADE_FILE_COMPONENT,
+                GRADE_FEEDBACK_FILEAREA,
+                'grade_grades',
+                null,
+                $oldid
+            );
         } else {
             debugging("Mapped user id not found for user id '{$olduserid}', grade item id '{$data->itemid}'");
         }
@@ -3794,9 +3807,12 @@ class restore_activity_grade_history_structure_step extends restore_structure_st
     }
 
     protected function process_grade_grade($data) {
-        global $DB;
+        global $CFG, $DB;
+
+        require_once($CFG->libdir . '/grade/constants.php');
 
         $data = (object) $data;
+        $oldhistoryid = $data->id;
         $olduserid = $data->userid;
         unset($data->id);
 
@@ -3807,13 +3823,23 @@ class restore_activity_grade_history_structure_step extends restore_structure_st
             $data->oldid = $this->get_mappingid('grade_grades', $data->oldid);
             $data->usermodified = $this->get_mappingid('user', $data->usermodified, null);
             $data->rawscaleid = $this->get_mappingid('scale', $data->rawscaleid);
-            $DB->insert_record('grade_grades_history', $data);
+
+            $newhistoryid = $DB->insert_record('grade_grades_history', $data);
+
+            $this->set_mapping('grade_grades_history', $oldhistoryid, $newhistoryid, true);
+
+            $this->add_related_files(
+                GRADE_FILE_COMPONENT,
+                GRADE_HISTORY_FEEDBACK_FILEAREA,
+                'grade_grades_history',
+                null,
+                $oldhistoryid
+            );
         } else {
             $message = "Mapped user id not found for user id '{$olduserid}', grade item id '{$data->itemid}'";
             $this->log($message, backup::LOG_DEBUG);
         }
     }
-
 }
 
 /**
@@ -4434,6 +4460,12 @@ class restore_create_categories_and_questions extends restore_structure_step {
                 $data->stamp = make_unique_id_code();
             }
 
+            // The idnumber if it exists also needs to be unique within a context or reset it to null.
+            if (!empty($data->idnumber) && $DB->record_exists('question_categories',
+                    ['idnumber' => $data->idnumber, 'contextid' => $data->contextid])) {
+                unset($data->idnumber);
+            }
+
             // Let's create the question_category and save mapping.
             $newitemid = $DB->insert_record('question_categories', $data);
             $this->set_mapping('question_category', $oldid, $newitemid);
@@ -4479,6 +4511,13 @@ class restore_create_categories_and_questions extends restore_structure_step {
 
         // With newitemid = 0, let's create the question
         if (!$questionmapping->newitemid) {
+
+            // The idnumber if it exists also needs to be unique within a category or reset it to null.
+            if (!empty($data->idnumber) && $DB->record_exists('question',
+                    ['idnumber' => $data->idnumber, 'category' => $data->category])) {
+                unset($data->idnumber);
+            }
+
             $newitemid = $DB->insert_record('question', $data);
             $this->set_mapping('question', $oldid, $newitemid);
             // Also annotate them as question_created, we need

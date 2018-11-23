@@ -138,11 +138,9 @@ class cohort_upload_form extends moodleform {
      * @return array
      */
     protected function get_context_options() {
-        global $CFG;
-        require_once($CFG->libdir. '/coursecatlib.php');
         if ($this->contextoptions === null) {
             $this->contextoptions = array();
-            $displaylist = coursecat::make_categories_list('moodle/cohort:manage');
+            $displaylist = core_course_category::make_categories_list('moodle/cohort:manage');
             // We need to index the options array by context id instead of category id and add option for system context.
             $syscontext = context_system::instance();
             if (has_capability('moodle/cohort:manage', $syscontext)) {

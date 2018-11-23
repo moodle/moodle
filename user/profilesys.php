@@ -33,7 +33,6 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $resetall = optional_param('resetall', null, PARAM_BOOL);
 
-require_login();
 
 $header = "$SITE->shortname: ".get_string('publicprofile')." (".get_string('myprofile', 'admin').")";
 

@@ -21,8 +21,8 @@ Feature: Test role visibility for the participants page
 
   Scenario: Check the default roles are visible
     Given I log in as "manager1"
-    And I follow "Course 1"
-    When I navigate to "Enrolled users" node in "Course administration > Users"
+    And I am on "Course 1" course homepage
+    When I navigate to "Users > Enrolled users" in current page administration
     Then "Learner 1" row "Roles" column of "participants" table should contain "Student"
     And "Teacher 1" row "Roles" column of "participants" table should contain "Teacher"
     And "Manager 1" row "Roles" column of "participants" table should contain "Manager"
@@ -31,7 +31,7 @@ Feature: Test role visibility for the participants page
   Scenario: Do not allow managers to view any roles but manager and check they are hidden
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    When I navigate to "Enrolled users" node in "Course administration > Users"
+    When I navigate to "Users > Enrolled users" in current page administration
     Then "Learner 1" row "Roles" column of "participants" table should contain "Student"
     And "Teacher 1" row "Roles" column of "participants" table should contain "Teacher"
     And "Manager 1" row "Roles" column of "participants" table should not contain "Manager"

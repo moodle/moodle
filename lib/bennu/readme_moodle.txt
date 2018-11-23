@@ -26,3 +26,4 @@ Changelog
 7/ added timestamp_to_date function to support zero duration events (16 Sept 2015)
 8/ Updated \iCalendar_event::invariant_holds() to allow for same dtstart and dtend timestamps (13 July 2017)
 9/ MDL-60391: replace create_function() with lambda function for PHP 7.2 compatibility (13 Oct 2017)
+10/ MDL-62914: added handling for TZURL property (13 July 2018)

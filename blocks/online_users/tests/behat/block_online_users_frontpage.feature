@@ -13,7 +13,7 @@ Feature: The online users block allow you to see who is currently online on fron
   Scenario: View the online users block on the front page and see myself
     Given I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
+    And I navigate to "Turn editing on" in current page administration
     When I add the "Online users" block
     Then I should see "Admin User" in the "Online users" "block"
     And I should see "1 online user" in the "Online users" "block"
@@ -21,7 +21,7 @@ Feature: The online users block allow you to see who is currently online on fron
   Scenario: View the online users block on the front page as a logged in user
     Given I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
+    And I navigate to "Turn editing on" in current page administration
     And I add the "Online users" block
     And I log out
     And I log in as "student2"
@@ -36,7 +36,7 @@ Feature: The online users block allow you to see who is currently online on fron
   Scenario: View the online users block on the front page as a guest
     Given I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
+    And I navigate to "Turn editing on" in current page administration
     And I add the "Online users" block
     And I log out
     And I log in as "student2"
@@ -54,7 +54,7 @@ Feature: The online users block allow you to see who is currently online on fron
   Scenario: Hide/show user's online status from/to other users in the online users block on front page
     Given I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
+    And I navigate to "Turn editing on" in current page administration
     And I add the "Online users" block
     And I log out
     When I log in as "student1"

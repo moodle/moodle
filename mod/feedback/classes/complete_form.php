@@ -293,15 +293,22 @@ class mod_feedback_complete_form extends moodleform {
      */
     public function add_form_element($item, $element, $addrequiredrule = true, $setdefaultvalue = true) {
         global $OUTPUT;
-        // Add element to the form.
-        if (is_array($element)) {
-            if ($this->is_frozen() && $element[0] === 'text') {
-                // Convert 'text' element to 'static' when freezing for better display.
-                $element = ['static', $element[1], $element[2]];
+
+        if (is_array($element) && $element[0] == 'group') {
+            // For groups, use the mforms addGroup API.
+            // $element looks like: ['group', $groupinputname, $name, $objects, $separator, $appendname],
+            $element = $this->_form->addGroup($element[3], $element[1], $element[2], $element[4], $element[5]);
+        } else {
+            // Add non-group element to the form.
+            if (is_array($element)) {
+                if ($this->is_frozen() && $element[0] === 'text') {
+                    // Convert 'text' element to 'static' when freezing for better display.
+                    $element = ['static', $element[1], $element[2]];
+                }
+                $element = call_user_func_array(array($this->_form, 'createElement'), $element);
             }
-            $element = call_user_func_array(array($this->_form, 'createElement'), $element);
+            $element = $this->_form->addElement($element);
         }
-        $element = $this->_form->addElement($element);
 
         // Prepend standard CSS classes to the element classes.
         $attributes = $element->getAttributes();

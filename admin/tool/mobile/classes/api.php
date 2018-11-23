@@ -194,10 +194,10 @@ class api {
 
         // Check that we are receiving a moodle_url object, themes can override get_logo_url and may return incorrect values.
         if (($logourl = $OUTPUT->get_logo_url()) && $logourl instanceof moodle_url) {
-            $settings['logourl'] = $logourl->out(false);
+            $settings['logourl'] = clean_param($logourl->out(false), PARAM_URL);
         }
         if (($compactlogourl = $OUTPUT->get_compact_logo_url()) && $compactlogourl instanceof moodle_url) {
-            $settings['compactlogourl'] = $compactlogourl->out(false);
+            $settings['compactlogourl'] = clean_param($compactlogourl->out(false), PARAM_URL);
         }
 
         // Identity providers.
@@ -336,6 +336,7 @@ class api {
         $mainmenu = new lang_string('mainmenu', 'tool_mobile');
         $course = new lang_string('course');
         $modules = new lang_string('managemodules');
+        $blocks = new lang_string('blocks');
         $user = new lang_string('user');
         $files = new lang_string('files');
         $remoteaddons = new lang_string('remoteaddons', 'tool_mobile');
@@ -357,6 +358,25 @@ class api {
             $displayname = core_plugin_manager::instance()->plugin_name($plugin['component']) . " - " . $plugin['addon'];
             $remoteaddonslist['remoteAddOn_' . $plugin['component'] . '_' . $plugin['addon']] = $displayname;
 
+        }
+
+        // Display blocks.
+        $availableblocks = core_plugin_manager::instance()->get_plugins_of_type('block');
+        $courseblocks = array();
+        $appsupportedblocks = array(
+            'activity_modules' => 'CoreBlockDelegate_AddonBlockActivityModules',
+            'site_main_menu' => 'CoreBlockDelegate_AddonBlockSiteMainMenu',
+            'myoverview' => 'CoreBlockDelegate_AddonBlockMyOverview',
+            'timeline' => 'CoreBlockDelegate_AddonBlockTimeline',
+            'recentlyaccessedcourses' => 'CoreBlockDelegate_AddonBlockRecentlyAccessedCourses',
+            'starredcourses' => 'CoreBlockDelegate_AddonBlockStarredCourses',
+            'recentlyaccesseditems' => 'CoreBlockDelegate_AddonBlockRecentlyAccessedItems',
+        );
+
+        foreach ($availableblocks as $block) {
+            if (isset($appsupportedblocks[$block->name])) {
+                $courseblocks[$appsupportedblocks[$block->name]] = $block->displayname;
+            }
         }
 
         $features = array(
@@ -401,6 +421,7 @@ class api {
                 'files_upload' => new lang_string('upload'),
             ),
             "$modules" => $coursemodules,
+            "$blocks" => $courseblocks,
         );
 
         if (!empty($remoteaddonslist)) {

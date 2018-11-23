@@ -44,7 +44,7 @@ class accept_policy extends \moodleform {
      * Defines the form fields.
      */
     public function definition() {
-        global $PAGE;
+        global $PAGE, $USER;
         $mform = $this->_form;
 
         if (empty($this->_customdata['userids']) || !is_array($this->_customdata['userids'])) {
@@ -53,10 +53,10 @@ class accept_policy extends \moodleform {
         if (empty($this->_customdata['versionids']) || !is_array($this->_customdata['versionids'])) {
             throw new \moodle_exception('missingparam', '', '', 'versionids');
         }
-        $revoke = (!empty($this->_customdata['action']) && $this->_customdata['action'] == 'revoke');
+        $action = $this->_customdata['action'];
         $userids = clean_param_array($this->_customdata['userids'], PARAM_INT);
         $versionids = clean_param_array($this->_customdata['versionids'], PARAM_INT);
-        $usernames = $this->validate_and_get_users($userids, $revoke);
+        $usernames = $this->validate_and_get_users($versionids, $userids, $action);
         $versionnames = $this->validate_and_get_versions($versionids);
 
         foreach ($usernames as $userid => $name) {
@@ -71,27 +71,43 @@ class accept_policy extends \moodleform {
 
         $mform->addElement('hidden', 'returnurl');
         $mform->setType('returnurl', PARAM_LOCALURL);
+        $useracceptancelabel = (count($usernames) > 1) ? get_string('acceptanceusers', 'tool_policy') :
+                get_string('user');
+        $mform->addElement('static', 'user', $useracceptancelabel, join(', ', $usernames));
+        $policyacceptancelabel = (count($versionnames) > 1) ? get_string('acceptancepolicies', 'tool_policy') :
+                get_string('policydochdrpolicy', 'tool_policy');
+        $mform->addElement('static', 'policy', $policyacceptancelabel, join(', ', $versionnames));
 
-        $mform->addElement('static', 'user', get_string('acceptanceusers', 'tool_policy'), join(', ', $usernames));
-        $mform->addElement('static', 'policy', get_string('acceptancepolicies', 'tool_policy'),
-            join(', ', $versionnames));
-
-        if ($revoke) {
+        if ($action === 'revoke') {
             $mform->addElement('static', 'ack', '', get_string('revokeacknowledgement', 'tool_policy'));
             $mform->addElement('hidden', 'action', 'revoke');
-            $mform->setType('action', PARAM_ALPHA);
-        } else {
+        } else if ($action === 'accept') {
             $mform->addElement('static', 'ack', '', get_string('acceptanceacknowledgement', 'tool_policy'));
+            $mform->addElement('hidden', 'action', 'accept');
+        } else if ($action === 'decline') {
+            $mform->addElement('static', 'ack', '', get_string('declineacknowledgement', 'tool_policy'));
+            $mform->addElement('hidden', 'action', 'decline');
+        } else {
+            throw new \moodle_exception('invalidaccessparameter');
+        }
+
+        $mform->setType('action', PARAM_ALPHA);
+
+        if (count($usernames) == 1 && isset($usernames[$USER->id])) {
+            // No need to display the acknowledgement if the users are giving/revoking acceptance on their own.
+            $mform->removeElement('ack');
         }
 
         $mform->addElement('textarea', 'note', get_string('acceptancenote', 'tool_policy'));
         $mform->setType('note', PARAM_NOTAGS);
 
         if (!empty($this->_customdata['showbuttons'])) {
-            if ($revoke) {
+            if ($action === 'revoke') {
                 $this->add_action_buttons(true, get_string('irevokethepolicy', 'tool_policy'));
-            } else {
+            } else if ($action === 'accept') {
                 $this->add_action_buttons(true, get_string('iagreetothepolicy', 'tool_policy'));
+            } else if ($action === 'decline') {
+                $this->add_action_buttons(true, get_string('declinethepolicy', 'tool_policy'));
             }
         }
 
@@ -101,12 +117,14 @@ class accept_policy extends \moodleform {
     /**
      * Validate userids and return usernames
      *
+     * @param array $versionids int[] List of policy version ids to process.
      * @param array $userids
-     * @param boolean $revoke True if policies will be revoked; false when policies will be accepted.
+     * @param string $action accept|decline|revoke
      * @return array (userid=>username)
      */
-    protected function validate_and_get_users($userids, $revoke = false) {
+    protected function validate_and_get_users($versionids, $userids, $action) {
         global $DB;
+
         $usernames = [];
         list($sql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
         $params['usercontextlevel'] = CONTEXT_USER;
@@ -124,10 +142,12 @@ class accept_policy extends \moodleform {
                 throw new \moodle_exception('noguest');
             }
             \context_helper::preload_from_record($user);
-            if ($revoke) {
-                api::can_revoke_policies($userid, true);
-            } else {
-                api::can_accept_policies($userid, true);
+            if ($action === 'revoke') {
+                api::can_revoke_policies($versionids, $userid, true);
+            } else if ($action === 'accept') {
+                api::can_accept_policies($versionids, $userid, true);
+            } else if ($action === 'decline') {
+                api::can_decline_policies($versionids, $userid, true);
             }
             $usernames[$userid] = fullname($user);
         }
@@ -164,14 +184,15 @@ class accept_policy extends \moodleform {
      */
     public function process() {
         if ($data = $this->get_data()) {
-            $revoke = (!empty($data->action) && $data->action == 'revoke');
             foreach ($data->userids as $userid) {
-                if ($revoke) {
+                if ($data->action === 'revoke') {
                     foreach ($data->versionids as $versionid) {
                         \tool_policy\api::revoke_acceptance($versionid, $userid, $data->note);
                     }
-                } else {
+                } else if ($data->action === 'accept') {
                     \tool_policy\api::accept_policies($data->versionids, $userid, $data->note);
+                } else if ($data->action === 'decline') {
+                    \tool_policy\api::decline_policies($data->versionids, $userid, $data->note);
                 }
             }
         }

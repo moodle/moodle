@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\transform;
+use \core_privacy\local\request\userlist;
 
 /**
  * Privacy class for requesting user data.
@@ -36,7 +37,11 @@ use \core_privacy\local\request\transform;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\subsystem\plugin_provider {
+class provider implements
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\subsystem\plugin_provider,
+        \core_privacy\local\request\shared_userlist_provider
+    {
 
     /**
      * Returns meta data about this system.
@@ -190,5 +195,77 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
 
         $select = "userid = :userid AND component = :component $areasql $itemsql AND contextid $insql";
         $DB->delete_records_select('comments', $select, $params);
+    }
+
+    /**
+     * Deletes all records for a context from a list of approved users.
+     *
+     * @param  \core_privacy\local\request\approved_userlist $userlist Contains the list of users and
+     * a context to be deleted from.
+     * @param  string $component Component to delete from.
+     * @param  string $commentarea Area to delete from.
+     * @param  int $itemid The item id to delete from.
+     */
+    public static function delete_comments_for_users(\core_privacy\local\request\approved_userlist $userlist,
+            string $component, string $commentarea = null, int $itemid = null) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        $params = [
+            'contextid' => $context->id,
+            'component' => $component,
+        ];
+        $areasql = '';
+        if (isset($commentarea)) {
+            $params['commentarea'] = $commentarea;
+            $areasql = 'AND commentarea = :commentarea';
+        }
+        $itemsql = '';
+        if (isset($itemid)) {
+            $params['itemid'] = $itemid;
+            $itemsql = 'AND itemid = :itemid';
+        }
+        list($insql, $inparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+        $params += $inparams;
+
+        $select = "contextid = :contextid AND component = :component {$areasql} {$itemsql} AND userid {$insql}";
+        $DB->delete_records_select('comments', $select, $params);
+    }
+
+    /**
+     * Add the list of users who have commented in the specified constraints.
+     *
+     * @param   userlist    $userlist The userlist to add the users to.
+     * @param   string      $alias An alias prefix to use for comment selects to avoid interference with your own sql.
+     * @param   string      $component The component to check.
+     * @param   string      $area The comment area to check.
+     * @param   int         $contextid The context id.
+     * @param   string      $insql The SQL to use in a sub-select for the itemid query.
+     * @param   array       $params The params required for the insql.
+     */
+    public static function get_users_in_context_from_sql(
+                userlist $userlist, string $alias, string $component, string $area, int $contextid = null, string $insql = '',
+                array $params = []) {
+
+        if ($insql != '') {
+            $insql = "AND {$alias}.itemid {$insql}";
+        }
+        $contextsql = '';
+        if (isset($contextid)) {
+            $contextsql = "AND {$alias}.contextid = :{$alias}contextid";
+            $params["{$alias}contextid"] = $contextid;
+        }
+
+        // Comment authors.
+        $sql = "SELECT {$alias}.userid
+                  FROM {comments} {$alias}
+                 WHERE {$alias}.component = :{$alias}component
+                   AND {$alias}.commentarea = :{$alias}commentarea
+                   $contextsql $insql";
+
+        $params["{$alias}component"] = $component;
+        $params["{$alias}commentarea"] = $area;
+
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 }

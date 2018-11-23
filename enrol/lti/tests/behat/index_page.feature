@@ -15,7 +15,7 @@ Feature: Check that the page listing the shared external tools is functioning as
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
-    And I navigate to "Manage enrol plugins" node in "Site administration > Plugins > Enrolments"
+    And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
     And I click on "Enable" "link" in the "Publish as LTI tool" "table_row"
     And I log out
 
@@ -25,13 +25,14 @@ Feature: Check that the page listing the shared external tools is functioning as
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
-    And I navigate to "Enrolment methods" node in "Course administration > Users"
+    And I navigate to "Users > Enrolment methods" in current page administration
     And I select "Publish as LTI tool" from the "Add method" singleselect
     And I set the following fields to these values:
       | Custom instance name | Assignment - LTI |
       | Tool to be published | Test assignment name |
     And I press "Add method"
-    And I navigate to "Published as LTI tools" node in "Course administration"
+    And I am on "Course 1" course homepage
+    And I navigate to "Published as LTI tools" in current page administration
     And I should see "Assignment - LTI" in the ".generaltable" "css_element"
     When I click on "Disable" "link" in the "Assignment - LTI" "table_row"
     Then ".dimmed_text" "css_element" should exist in the "Assignment - LTI" "table_row"

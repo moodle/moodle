@@ -121,15 +121,19 @@ class manage_table extends \table_sql {
         $cartridgeurl = $url;
         $secretlabel = get_string('secret', 'enrol_lti');
         $secret = $tool->secret;
+        $launchurl = helper::get_launch_url($tool->id);
+        $launchurllabel = get_string('launchurl', 'enrol_lti');
 
         $data = [
                 "rows" => [
                     [ "label" => $cartridgeurllabel, "text" => $cartridgeurl, "id" => "cartridgeurl", "hidelabel" => false ],
                     [ "label" => $secretlabel, "text" => $secret, "id" => "secret", "hidelabel" => false ],
+                    [ "label" => $launchurllabel, "text" => $launchurl, "id" => "launchurl", "hidelabel" => false ],
                 ]
             ];
 
         $return = $OUTPUT->render_from_template("enrol_lti/copy_grid", $data);
+
         return $return;
     }
 

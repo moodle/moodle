@@ -20,7 +20,7 @@ Feature: Enable Block Completion in a course using manual self completion
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Course completion status" block
     And I add the "Self completion" block
-    And I navigate to "Course completion" node in "Course administration"
+    And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
       | id_criteria_self | 1 |

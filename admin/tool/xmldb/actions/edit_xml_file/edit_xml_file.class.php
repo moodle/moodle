@@ -70,6 +70,7 @@ class edit_xml_file extends XMLDBAction {
      * errormsg and output as necessary
      */
     function invoke() {
+        global $OUTPUT, $PAGE;
         parent::invoke();
 
         $result = true;
@@ -118,8 +119,11 @@ class edit_xml_file extends XMLDBAction {
                 $o .= '    <table id="formelements">';
                 $o.= '      <tr valign="top"><td>Path:</td><td>' . s($structure->getPath()) . '</td></tr>';
                 $o.= '      <tr valign="top"><td>Version:</td><td>' . s($structure->getVersion()) . '</td></tr>';
-                $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td><textarea name="comment" rows="3" cols="80" id="comment">' . $structure->getComment() . '</textarea></td></tr>';
-                $o.= '      <tr><td>&nbsp;</td><td><input type="submit" value="' .$this->str['change'] . '" /></td></tr>';
+                $o .= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td>
+                             <textarea name="comment" rows="3" cols="80" id="comment" class="form-control">' .
+                             $structure->getComment() . '</textarea></td></tr>';
+                $o .= '      <tr><td>&nbsp;</td><td><input type="submit" value="' . $this->str['change'] .
+                             '"class="btn btn-secondary" /></td></tr>';
                 $o.= '    </table>';
                 $o.= '</div></form>';
                 // Calculate the pending changes / save message
@@ -178,26 +182,17 @@ class edit_xml_file extends XMLDBAction {
                     $o .= '<table id="listtables" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
                     $row = 0;
                     foreach ($tables as $table) {
+                        // Drag element for sortorder.
+                        $move = html_writer::span($OUTPUT->render_from_template('core/drag_handle',
+                            ['movetitle' => get_string('movecontent', 'moodle', $table->getName())]), '',
+                            ['data-action' => 'move_updown_table', 'data-dir' => str_replace($CFG->dirroot, '', $dirpath),
+                                'data-table' => $table->getName()]);
                         // The table name (link to edit table)
                         $t = '<a href="index.php?action=edit_table&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">' . $table->getName() . '</a>';
                         // Calculate buttons
                         $b = '</td><td class="button cell">';
                         // The edit button
                         $b .= '<a href="index.php?action=edit_table&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['edit'] . ']</a>';
-                        $b .= '</td><td class="button cell">';
-                        // The up button
-                        if ($table->getPrevious()) {
-                            $b .= '<a href="index.php?action=move_updown_table&amp;direction=up&amp;sesskey=' . sesskey() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['up'] . ']</a>';
-                        } else {
-                            $b .= '[' . $this->str['up'] . ']';
-                        }
-                        $b .= '</td><td class="button cell">';
-                        // The down button
-                        if ($table->getNext()) {
-                            $b .= '<a href="index.php?action=move_updown_table&amp;direction=down&amp;sesskey=' . sesskey() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['down'] . ']</a>';
-                        } else {
-                            $b .= '[' . $this->str['down'] . ']';
-                        }
                         $b .= '</td><td class="button cell">';
                         // The delete button (if we have more than one and it isn't used)
                         if (count($tables) > 1 &&
@@ -216,13 +211,16 @@ class edit_xml_file extends XMLDBAction {
                          }
                         $b .= '</td>';
                         // Print table row
-                        $o .= '<tr class="r' . $row . '"><td class="cell firstcol">' . $t . $b . '</tr>';
+                        $o .= '<tr class="r' . $row . '" data-name="' . s($table->getName()) . '"><td class="cell firstcol">' .
+                            (count($tables) > 1 ? $move : '') .
+                            $t . $b . '</tr>';
                         $row = ($row + 1) % 2;
                     }
                     $o .= '</table>';
                 }
-            // Add the back to main
-            $this->output = $o;
+                // Add the back to main.
+                $this->output = $o;
+                $PAGE->requires->js_call_amd('tool_xmldb/move', 'init', ['listtables', 'move_updown_table']);
             }
         }
 

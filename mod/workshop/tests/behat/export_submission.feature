@@ -19,8 +19,8 @@ Feature: Exporting workshop submissions and assessments to a portfolio
       | student2 | c1     | student        |
       | teacher1 | c1     | editingteacher |
     And the following "activities" exist:
-      | activity | name         | intro                     | course | idnumber  |
-      | workshop | TestWorkshop | Test workshop description | c1     | workshop1 |
+      | activity | name         | intro                     | course | idnumber  | submissiontypefile |
+      | workshop | TestWorkshop | Test workshop description | c1     | workshop1 | 1                  |
     # Admin needs to enable portfolio API and set a portfolio instance first.
     And I log in as "admin"
     And the following config values are set as admin:

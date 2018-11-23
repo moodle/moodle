@@ -99,6 +99,27 @@ $usernode->remove();
 $settings = $PAGE->settingsnav->find('messages', null);
 $settings->make_active();
 
+if ($currentuser) {
+    // We're in the pprocess of deprecating this page however we haven't replaced the functionality
+    // for the admin (or user with correct capabilities) to view other user's conversations. For the
+    // time being this page will simply open the message drawer unless it's the admin user case just
+    // mentioned. In that case we will render the old UI for backwards compatibility.
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('messages', 'message'));
+    $conversationid = empty($user2id) ? null : \core_message\api::get_conversation_between_users([$USER->id, $user2id]);
+    if (empty($conversationid) && !empty($user2id)) {
+        $PAGE->requires->js_call_amd('core_message/message_drawer_helper', 'createConversationWithUser', [$user2id]);
+    } else if (!empty($conversationid)) {
+        $PAGE->requires->js_call_amd('core_message/message_drawer_helper', 'showConversation', [$conversationid]);
+    } else {
+        $PAGE->requires->js_call_amd('core_message/message_drawer_helper', 'show');
+    }
+    echo $OUTPUT->footer();
+    exit();
+}
+
+// The only time we should get here is if it's an admin type user viewing another user's messages.
+
 // Get the renderer and the information we are going to be use.
 $renderer = $PAGE->get_renderer('core_message');
 $requestedconversation = false;
@@ -106,6 +127,9 @@ if ($contactsfirst) {
     $conversations = \core_message\api::get_contacts($user1->id, 0, 20);
 } else {
     $conversations = \core_message\api::get_conversations($user1->id, 0, 20);
+
+    // Format the conversations in the legacy style, as the get_conversations method has since been changed.
+    $conversations = \core_message\helper::get_conversations_legacy_formatter($conversations);
 }
 $messages = [];
 if (!$user2realuser) {
@@ -125,17 +149,78 @@ if (!$user2realuser) {
 
 // Mark the conversation as read.
 if (!empty($user2->id)) {
+    $hasbeenreadallmessages = false;
     if ($currentuser && isset($conversations[$user2->id])) {
         // Mark the conversation we are loading as read.
         if ($conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id])) {
             \core_message\api::mark_all_messages_as_read($user1->id, $conversationid);
+            $hasbeenreadallmessages = true;
         }
 
         // Ensure the UI knows it's read as well.
         $conversations[$user2->id]->isread = 1;
     }
 
-    $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 20, 'timecreated DESC');
+    // Get the conversationid.
+    if (!isset($conversationid)) {
+        if (!$conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id])) {
+            // If the individual conversationid doesn't exist, create it.
+            $conversation = \core_message\api::create_conversation(
+                \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+                [$user1->id, $user2->id]
+            );
+            $conversationid = $conversation->id;
+        }
+    }
+
+    $convmessages = \core_message\api::get_conversation_messages($user1->id, $conversationid, 0, 20, 'timecreated DESC');
+    $messages = [];
+    if (!empty($convmessages)) {
+        $messages = $convmessages['messages'];
+
+        // Parse the messages to add missing fields for backward compatibility.
+        $messages = array_reverse($messages);
+        // Keeps track of the last day, month and year combo we were viewing.
+        $day = '';
+        $month = '';
+        $year = '';
+        foreach ($messages as $message) {
+            // Add useridto.
+            if (empty($message->useridto)) {
+                if ($message->useridfrom == $user1->id) {
+                    $message->useridto = $user2->id;
+                } else {
+                    $message->useridto = $user1->id;
+                }
+            }
+
+            // Add currentuserid.
+            $message->currentuserid = $USER->id;
+
+            // Check if we are now viewing a different block period.
+            $message->displayblocktime = false;
+            $date = usergetdate($message->timecreated);
+            if ($day != $date['mday'] || $month != $date['month'] || $year != $date['year']) {
+                $day = $date['mday'];
+                $month = $date['month'];
+                $year = $date['year'];
+                $message->displayblocktime = true;
+                $message->blocktime = userdate($message->timecreated, get_string('strftimedaydate'));
+            }
+
+            // We don't have this information here so, for now, we leave an empty value or the current time.
+            // This is a temporary solution because a new UI is being built in MDL-63303.
+            $message->timeread = 0;
+            if ($hasbeenreadallmessages && $message->useridfrom != $user1->id) {
+                // As all the messages sent by the other user have been marked as read previously, we will change
+                // timeread to the current time to avoid the last message will be duplicated after calling to the
+                // core_message_data_for_messagearea_messages via javascript.
+                // We only need to change that to the other user, because for the current user, messages are always
+                // marked as unread.
+                $message->timeread = time();
+            }
+        }
+    }
 }
 
 $pollmin = !empty($CFG->messagingminpoll) ? $CFG->messagingminpoll : MESSAGE_DEFAULT_MIN_POLL_IN_SECONDS;

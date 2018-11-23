@@ -4134,6 +4134,12 @@ class action_menu implements renderable, templatable {
     public $actiontext = null;
 
     /**
+     * The string to use for the accessible label for the menu.
+     * @var array
+     */
+    public $actionlabel = null;
+
+    /**
      * An icon to use for the toggling the secondary menu (dropdown).
      * @var actionicon
      */
@@ -4188,6 +4194,16 @@ class action_menu implements renderable, templatable {
         foreach ($actions as $action) {
             $this->add($action);
         }
+    }
+
+    /**
+     * Sets the label for the menu trigger.
+     *
+     * @param string $label The text
+     * @return null
+     */
+    public function set_action_label($label) {
+        $this->actionlabel = $label;
     }
 
     /**
@@ -4293,7 +4309,7 @@ class action_menu implements renderable, templatable {
             $pixicon = '<b class="caret"></b>';
             $linkclasses[] = 'textmenu';
         } else {
-            $title = new lang_string('actions', 'moodle');
+            $title = new lang_string('actionsmenu', 'moodle');
             $this->actionicon = new pix_icon(
                 't/edit_menu',
                 '',
@@ -4312,10 +4328,17 @@ class action_menu implements renderable, templatable {
         if ($this->actiontext) {
             $string = $this->actiontext;
         }
+        $label = '';
+        if ($this->actionlabel) {
+            $label = $this->actionlabel;
+        } else {
+            $label = $title;
+        }
         $actions = $this->primaryactions;
         $attributes = array(
             'class' => implode(' ', $linkclasses),
             'title' => $title,
+            'aria-label' => $label,
             'id' => 'action-menu-toggle-'.$this->instance,
             'role' => 'menuitem'
         );
@@ -4481,9 +4504,17 @@ class action_menu implements renderable, templatable {
         if (!empty($this->menutrigger)) {
             $primary->menutrigger = $this->menutrigger;
             $primary->triggerextraclasses = $this->triggerextraclasses;
+            if ($this->actionlabel) {
+                $primary->title = $this->actionlabel;
+            } else if ($this->actiontext) {
+                $primary->title = $this->actiontext;
+            } else {
+                $primary->title = strip_tags($this->menutrigger);
+            }
         } else {
-            $primary->title = get_string('actions');
-            $actionicon = new pix_icon('t/edit_menu', '', 'moodle', ['class' => 'iconsmall actionmenu', 'title' => '']);
+            $primary->title = get_string('actionsmenu');
+            $iconattributes = ['class' => 'iconsmall actionmenu', 'title' => $primary->title];
+            $actionicon = new pix_icon('t/edit_menu', '', 'moodle', $iconattributes);
         }
 
         if ($actionicon instanceof pix_icon) {

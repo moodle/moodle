@@ -24,6 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// File component for feedback comments.
+define('ASSIGNFEEDBACK_COMMENTS_COMPONENT', 'assignfeedback_comments');
+
+// File area for feedback comments.
+define('ASSIGNFEEDBACK_COMMENTS_FILEAREA', 'feedback');
+
 /**
  * Library class for comment feedback plugin extending feedback plugin base class.
  *
@@ -116,7 +122,15 @@ class assign_feedback_comments extends assign_feedback_plugin {
             }
         }
 
-        if ($commenttext == $data->assignfeedbackcomments_editor['text']) {
+        $formtext = $data->assignfeedbackcomments_editor['text'];
+
+        // Need to convert the form text to use @@PLUGINFILE@@ and format it so we can compare it with what is stored in the DB.
+        if (isset($data->assignfeedbackcomments_editor['itemid'])) {
+            $formtext = file_rewrite_urls_to_pluginfile($formtext, $data->assignfeedbackcomments_editor['itemid']);
+            $formtext = format_text($formtext, FORMAT_HTML);
+        }
+
+        if ($commenttext == $formtext) {
             return false;
         } else {
             return true;
@@ -254,18 +268,47 @@ class assign_feedback_comments extends assign_feedback_plugin {
      *
      * @param stdClass $submission
      * @param stdClass $data - Form data to be filled with the converted submission text and format.
+     * @param stdClass|null $grade
      * @return boolean - True if feedback text was set.
      */
-    protected function convert_submission_text_to_feedback($submission, $data) {
+    protected function convert_submission_text_to_feedback($submission, $data, $grade) {
+        global $DB;
+
         $format = false;
         $text = '';
 
         foreach ($this->assignment->get_submission_plugins() as $plugin) {
             $fields = $plugin->get_editor_fields();
             if ($plugin->is_enabled() && $plugin->is_visible() && !$plugin->is_empty($submission) && !empty($fields)) {
+                $user = $DB->get_record('user', ['id' => $submission->userid]);
+                // Copy the files to the feedback area.
+                if ($files = $plugin->get_files($submission, $user)) {
+                    $fs = get_file_storage();
+                    $component = 'assignfeedback_comments';
+                    $filearea = ASSIGNFEEDBACK_COMMENTS_FILEAREA;
+                    $itemid = $grade->id;
+                    $fieldupdates = [
+                        'component' => $component,
+                        'filearea' => $filearea,
+                        'itemid' => $itemid
+                    ];
+                    foreach ($files as $file) {
+                        if ($file instanceof stored_file) {
+                            // Before we create it, check that it doesn't already exist.
+                            if (!$fs->file_exists(
+                                    $file->get_contextid(),
+                                    $component,
+                                    $filearea,
+                                    $itemid,
+                                    $file->get_filepath(),
+                                    $file->get_filename())) {
+                                $fs->create_file_from_storedfile($fieldupdates, $file);
+                            }
+                        }
+                    }
+                }
                 foreach ($fields as $key => $description) {
-                    $rawtext = strip_pluginfile_content($plugin->get_editor_text($key, $submission->id));
-
+                    $rawtext = clean_text($plugin->get_editor_text($key, $submission->id));
                     $newformat = $plugin->get_editor_format($key, $submission->id);
 
                     if ($format !== false && $newformat != $format) {
@@ -282,8 +325,8 @@ class assign_feedback_comments extends assign_feedback_plugin {
         if ($format === false) {
             $format = FORMAT_HTML;
         }
-        $data->assignfeedbackcomments_editor['text'] = $text;
-        $data->assignfeedbackcomments_editor['format'] = $format;
+        $data->assignfeedbackcomments = $text;
+        $data->assignfeedbackcommentsformat = $format;
 
         return true;
     }
@@ -306,16 +349,29 @@ class assign_feedback_comments extends assign_feedback_plugin {
         }
 
         if ($feedbackcomments && !empty($feedbackcomments->commenttext)) {
-            $data->assignfeedbackcomments_editor['text'] = $feedbackcomments->commenttext;
-            $data->assignfeedbackcomments_editor['format'] = $feedbackcomments->commentformat;
+            $data->assignfeedbackcomments = $feedbackcomments->commenttext;
+            $data->assignfeedbackcommentsformat = $feedbackcomments->commentformat;
         } else {
             // No feedback given yet - maybe we need to copy the text from the submission?
             if (!empty($commentinlinenabled) && $submission) {
-                $this->convert_submission_text_to_feedback($submission, $data);
+                $this->convert_submission_text_to_feedback($submission, $data, $grade);
+            } else { // Set it to empty.
+                $data->assignfeedbackcomments = '';
+                $data->assignfeedbackcommentsformat = FORMAT_HTML;
             }
         }
 
-        $mform->addElement('editor', 'assignfeedbackcomments_editor', $this->get_name(), null, null);
+        file_prepare_standard_editor(
+            $data,
+            'assignfeedbackcomments',
+            $this->get_editor_options(),
+            $this->assignment->get_context(),
+            ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            ASSIGNFEEDBACK_COMMENTS_FILEAREA,
+            $grade->id
+        );
+
+        $mform->addElement('editor', 'assignfeedbackcomments_editor', $this->get_name(), null, $this->get_editor_options());
 
         return true;
     }
@@ -329,15 +385,27 @@ class assign_feedback_comments extends assign_feedback_plugin {
      */
     public function save(stdClass $grade, stdClass $data) {
         global $DB;
+
+        // Save the files.
+        $data = file_postupdate_standard_editor(
+            $data,
+            'assignfeedbackcomments',
+            $this->get_editor_options(),
+            $this->assignment->get_context(),
+            ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            ASSIGNFEEDBACK_COMMENTS_FILEAREA,
+            $grade->id
+        );
+
         $feedbackcomment = $this->get_feedback_comments($grade->id);
         if ($feedbackcomment) {
-            $feedbackcomment->commenttext = $data->assignfeedbackcomments_editor['text'];
-            $feedbackcomment->commentformat = $data->assignfeedbackcomments_editor['format'];
+            $feedbackcomment->commenttext = $data->assignfeedbackcomments;
+            $feedbackcomment->commentformat = $data->assignfeedbackcommentsformat;
             return $DB->update_record('assignfeedback_comments', $feedbackcomment);
         } else {
             $feedbackcomment = new stdClass();
-            $feedbackcomment->commenttext = $data->assignfeedbackcomments_editor['text'];
-            $feedbackcomment->commentformat = $data->assignfeedbackcomments_editor['format'];
+            $feedbackcomment->commenttext = $data->assignfeedbackcomments;
+            $feedbackcomment->commentformat = $data->assignfeedbackcommentsformat;
             $feedbackcomment->grade = $grade->id;
             $feedbackcomment->assignment = $this->assignment->get_instance()->id;
             return $DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0;
@@ -354,12 +422,17 @@ class assign_feedback_comments extends assign_feedback_plugin {
     public function view_summary(stdClass $grade, & $showviewlink) {
         $feedbackcomments = $this->get_feedback_comments($grade->id);
         if ($feedbackcomments) {
-            $text = format_text($feedbackcomments->commenttext,
-                                $feedbackcomments->commentformat,
-                                array('context' => $this->assignment->get_context()));
-            $short = shorten_text($text, 140);
+            $text = $this->rewrite_feedback_comments_urls($feedbackcomments->commenttext, $grade->id);
+            $text = format_text(
+                $text,
+                $feedbackcomments->commentformat,
+                [
+                    'context' => $this->assignment->get_context()
+                ]
+            );
 
             // Show the view all link if the text has been shortened.
+            $short = shorten_text($text, 140);
             $showviewlink = $short != $text;
             return $short;
         }
@@ -375,9 +448,16 @@ class assign_feedback_comments extends assign_feedback_plugin {
     public function view(stdClass $grade) {
         $feedbackcomments = $this->get_feedback_comments($grade->id);
         if ($feedbackcomments) {
-            return format_text($feedbackcomments->commenttext,
-                               $feedbackcomments->commentformat,
-                               array('context' => $this->assignment->get_context()));
+            $text = $this->rewrite_feedback_comments_urls($feedbackcomments->commenttext, $grade->id);
+            $text = format_text(
+                $text,
+                $feedbackcomments->commentformat,
+                [
+                    'context' => $this->assignment->get_context()
+                ]
+            );
+
+            return $text;
         }
         return '';
     }
@@ -483,6 +563,21 @@ class assign_feedback_comments extends assign_feedback_plugin {
     }
 
     /**
+     * Return any files this plugin wishes to save to the gradebook.
+     *
+     * @param stdClass $grade The assign_grades object from the db
+     * @return array
+     */
+    public function files_for_gradebook(stdClass $grade) : array {
+        return [
+            'contextid' => $this->assignment->get_context()->id,
+            'component' => ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            'filearea' => ASSIGNFEEDBACK_COMMENTS_FILEAREA,
+            'itemid' => $grade->id
+        ];
+    }
+
+    /**
      * The assignment has been deleted - cleanup
      *
      * @return bool
@@ -506,6 +601,14 @@ class assign_feedback_comments extends assign_feedback_plugin {
     }
 
     /**
+     * Get file areas returns a list of areas this plugin stores files
+     * @return array - An array of fileareas (keys) and descriptions (values)
+     */
+    public function get_file_areas() {
+        return array(ASSIGNFEEDBACK_COMMENTS_FILEAREA => $this->get_name());
+    }
+
+    /**
      * Return a description of external params suitable for uploading an feedback comment from a webservice.
      *
      * @return external_description|null
@@ -525,5 +628,39 @@ class assign_feedback_comments extends assign_feedback_plugin {
      */
     public function get_config_for_external() {
         return (array) $this->get_config();
+    }
+
+    /**
+     * Convert encoded URLs in $text from the @@PLUGINFILE@@/... form to an actual URL.
+     *
+     * @param string $text the Text to check
+     * @param int $gradeid The grade ID which refers to the id in the gradebook
+     */
+    private function rewrite_feedback_comments_urls(string $text, int $gradeid) {
+        return file_rewrite_pluginfile_urls(
+            $text,
+            'pluginfile.php',
+            $this->assignment->get_context()->id,
+            ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            ASSIGNFEEDBACK_COMMENTS_FILEAREA,
+            $gradeid
+        );
+    }
+
+    /**
+     * File format options.
+     *
+     * @return array
+     */
+    private function get_editor_options() {
+        global $COURSE;
+
+        return [
+            'subdirs' => 1,
+            'maxbytes' => $COURSE->maxbytes,
+            'accepted_types' => '*',
+            'context' => $this->assignment->get_context(),
+            'maxfiles' => EDITOR_UNLIMITED_FILES
+        ];
     }
 }

@@ -37,7 +37,7 @@ Feature: Backup and restore of quizzes
   @javascript @_file_upload
   Scenario: Restore a Moodle 2.8 quiz backup
     When I am on "Course 1" course homepage
-    And I navigate to "Restore" node in "Course administration"
+    And I navigate to "Restore" in current page administration
     And I press "Manage backup files"
     And I upload "mod/quiz/tests/fixtures/moodle_28_quiz.mbz" file to "Files" filemanager
     And I press "Save changes"

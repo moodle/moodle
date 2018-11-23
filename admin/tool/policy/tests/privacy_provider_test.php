@@ -45,6 +45,9 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
     /** @var stdClass The manager user object. */
     protected $manager;
 
+    /** @var context_system The system context instance. */
+    protected $syscontext;
+
     /**
      * Setup function. Will create a user.
      */
@@ -56,11 +59,11 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
 
         // Create manager user.
         $this->manager = $generator->create_user();
-        $syscontext = context_system::instance();
+        $this->syscontext = context_system::instance();
         $rolemanagerid = create_role('Policy manager', 'policymanager', 'Can manage policy documents');
-        assign_capability('tool/policy:managedocs', CAP_ALLOW, $rolemanagerid, $syscontext->id);
-        assign_capability('tool/policy:acceptbehalf', CAP_ALLOW, $rolemanagerid, $syscontext->id);
-        role_assign($rolemanagerid, $this->manager->id, $syscontext->id);
+        assign_capability('tool/policy:managedocs', CAP_ALLOW, $rolemanagerid, $this->syscontext->id);
+        assign_capability('tool/policy:acceptbehalf', CAP_ALLOW, $rolemanagerid, $this->syscontext->id);
+        role_assign($rolemanagerid, $this->manager->id, $this->syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
     }
 
@@ -97,6 +100,88 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
         // There should be user context.
         $contextlist = \tool_policy\privacy\provider::get_contexts_for_userid($this->user->id);
         $this->assertEquals(1, $contextlist->count());
+    }
+
+    /**
+     * Test getting the user IDs within the context related to this plugin.
+     */
+    public function test_get_users_in_context() {
+        global $CFG;
+        $component = 'tool_policy';
+
+        // System context should have nothing before a policy is added.
+        $userlist = new \core_privacy\local\request\userlist($this->syscontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertEmpty($userlist);
+
+        // Create parent and child users.
+        $generator = $this->getDataGenerator();
+        $parentuser = $generator->create_user();
+        $childuser = $generator->create_user();
+
+        // Fetch relevant contexts.
+        $managercontext = \context_user::instance($this->manager->id);
+        $usercontext = $managercontext = \context_user::instance($this->user->id);
+        $parentcontext = $managercontext = \context_user::instance($parentuser->id);
+        $childcontext = $managercontext = \context_user::instance($childuser->id);
+
+        // Assign parent to accept on behalf of the child.
+        $roleparentid = create_role('Parent', 'parent', 'Can accept policies on behalf of their child');
+        assign_capability('tool/policy:acceptbehalf', CAP_ALLOW, $roleparentid, $this->syscontext->id);
+        role_assign($roleparentid, $parentuser->id, $childcontext->id);
+
+        // Create a policy.
+        $this->setUser($this->manager);
+        $CFG->sitepolicyhandler = 'tool_policy';
+        $policy = $this->add_policy();
+        api::make_current($policy->get('id'));
+
+        // Manager should exist in system context now they have created a policy.
+        $userlist = new \core_privacy\local\request\userlist($this->syscontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(1, $userlist);
+        $this->assertEquals([$this->manager->id], $userlist->get_userids());
+
+        // User contexts should be empty before policy acceptances.
+        $userlist = new \core_privacy\local\request\userlist($usercontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertEmpty($userlist);
+
+        $userlist = new \core_privacy\local\request\userlist($parentcontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertEmpty($userlist);
+
+        $userlist = new \core_privacy\local\request\userlist($childcontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertEmpty($userlist);
+
+        // User accepts policy, parent accepts on behalf of child only.
+        $this->setUser($this->user);
+        api::accept_policies([$policy->get('id')]);
+
+        $this->setUser($parentuser);
+        api::accept_policies([$policy->get('id')], $childuser->id);
+
+        // Ensure user is fetched within its user context.
+        $userlist = new \core_privacy\local\request\userlist($usercontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(1, $userlist);
+        $this->assertEquals([$this->user->id], $userlist->get_userids());
+
+        // Ensure parent and child are both found within child's user context.
+        $userlist = new \core_privacy\local\request\userlist($childcontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(2, $userlist);
+        $expected = [$parentuser->id, $childuser->id];
+        $actual = $userlist->get_userids();
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+
+        // Parent has not accepted for itself, so should not be found within its user context.
+        $userlist = new \core_privacy\local\request\userlist($parentcontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(0, $userlist);
     }
 
     public function test_export_agreements() {

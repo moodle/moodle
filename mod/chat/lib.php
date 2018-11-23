@@ -134,7 +134,7 @@ function chat_add_instance($chat) {
         $event->timesort    = $chat->chattime;
         $event->timeduration = 0;
 
-        calendar_event::create($event);
+        calendar_event::create($event, false);
     }
 
     if (!empty($chat->completionexpected)) {
@@ -174,7 +174,7 @@ function chat_update_instance($chat) {
             $event->timesort    = $chat->chattime;
 
             $calendarevent = calendar_event::load($event->id);
-            $calendarevent->update($event);
+            $calendarevent->update($event, false);
         } else {
             // Do not publish this event, so delete it.
             $calendarevent = calendar_event::load($event->id);
@@ -197,7 +197,7 @@ function chat_update_instance($chat) {
             $event->timesort    = $chat->chattime;
             $event->timeduration = 0;
 
-            calendar_event::create($event);
+            calendar_event::create($event, false);
         }
     }
 
@@ -501,7 +501,7 @@ function chat_prepare_update_events($chat, $cm = null) {
     if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id,
             'eventtype' => CHAT_EVENT_TYPE_CHATTIME))) {
         $calendarevent = calendar_event::load($event->id);
-        $calendarevent->update($event);
+        $calendarevent->update($event, false);
     } else if ($chat->schedule > 0) {
         // The chat is scheduled and the event should be published.
         $event->courseid    = $chat->course;
@@ -512,7 +512,7 @@ function chat_prepare_update_events($chat, $cm = null) {
         $event->eventtype   = CHAT_EVENT_TYPE_CHATTIME;
         $event->timeduration = 0;
         $event->visible = $cm->visible;
-        calendar_event::create($event);
+        calendar_event::create($event, false);
     }
 }
 

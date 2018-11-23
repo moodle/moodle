@@ -169,8 +169,14 @@ class mod_chat_lib_testcase extends advanced_testcase {
         $chatsid = chat_login_user($chat->id, 'ajax', 0, $course);
         $chatuser = $DB->get_record('chat_users', ['sid' => $chatsid]);
 
-        // This is when the session starts (when the user enters the chat).
-        $sessionstart = $chatuser->lastping;
+        // Get the messages for this chat session.
+        $messages = chat_get_session_messages($chat->id, false, 0, 0, 'timestamp DESC');
+
+        // We should have just 1 system (enter) messages.
+        $this->assertCount(1, $messages);
+
+        // This is when the session starts (when the first message - enter - has been sent).
+        $sessionstart = reset($messages)->timestamp;
 
         // Send some messages.
         chat_send_chatmessage($chatuser, 'hello!');
@@ -356,5 +362,26 @@ class mod_chat_lib_testcase extends advanced_testcase {
         $event->timestart = time();
 
         return calendar_event::create($event);
+    }
+
+    /**
+     * A user who does not have capabilities to add events to the calendar should be able to create an chat.
+     */
+    public function test_creation_with_no_calendar_capabilities() {
+        $this->resetAfterTest();
+        $course = self::getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $user = self::getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $roleid = self::getDataGenerator()->create_role();
+        self::getDataGenerator()->role_assign($roleid, $user->id, $context->id);
+        assign_capability('moodle/calendar:manageentries', CAP_PROHIBIT, $roleid, $context, true);
+        $generator = self::getDataGenerator()->get_plugin_generator('mod_chat');
+        // Create an instance as a user without the calendar capabilities.
+        $this->setUser($user);
+        $params = array(
+            'course' => $course->id,
+            'chattime' => time() + 500,
+        );
+        $generator->create_instance($params);
     }
 }

@@ -2107,6 +2107,74 @@ class admin_setting_heading extends admin_setting {
     }
 }
 
+/**
+ * No setting - just name and description in same row.
+ *
+ * @copyright 2018 onwards Amaia Anabitarte
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_description extends admin_setting {
+
+    /**
+     * Not a setting, just text
+     *
+     * @param string $name
+     * @param string $visiblename
+     * @param string $description
+     */
+    public function __construct($name, $visiblename, $description) {
+        $this->nosave = true;
+        parent::__construct($name, $visiblename, $description, '');
+    }
+
+    /**
+     * Always returns true
+     *
+     * @return bool Always returns true
+     */
+    public function get_setting() {
+        return true;
+    }
+
+    /**
+     * Always returns true
+     *
+     * @return bool Always returns true
+     */
+    public function get_defaultsetting() {
+        return true;
+    }
+
+    /**
+     * Never write settings
+     *
+     * @param mixed $data Gets converted to str for comparison against yes value
+     * @return string Always returns an empty string
+     */
+    public function write_setting($data) {
+        // Do not write any setting.
+        return '';
+    }
+
+    /**
+     * Returns an HTML string
+     *
+     * @param string $data
+     * @param string $query
+     * @return string Returns an HTML string
+     */
+    public function output_html($data, $query='') {
+        global $OUTPUT;
+
+        $context = new stdClass();
+        $context->title = $this->visiblename;
+        $context->description = $this->description;
+
+        return $OUTPUT->render_from_template('core_admin/setting_description', $context);
+    }
+}
+
+
 
 /**
  * The most flexible setting, the user enters text.
@@ -8006,12 +8074,16 @@ function admin_get_root($reload=false, $requirefulltree=true) {
 
 /**
  * This function applies default settings.
+ * Because setting the defaults of some settings can enable other settings,
+ * this function is called recursively until no more new settings are found.
  *
  * @param object $node, NULL means complete tree, null by default
- * @param bool $unconditional if true overrides all values with defaults, null buy default
+ * @param bool $unconditional if true overrides all values with defaults, true by default
+ * @param array $admindefaultsettings default admin settings to apply. Used recursively
+ * @param array $settingsoutput The names and values of the changed settings. Used recursively
+ * @return array $settingsoutput The names and values of the changed settings
  */
-function admin_apply_default_settings($node=NULL, $unconditional=true) {
-    global $CFG;
+function admin_apply_default_settings($node=null, $unconditional=true, $admindefaultsettings=array(), $settingsoutput=array()) {
 
     if (is_null($node)) {
         core_plugin_manager::reset_caches();
@@ -8021,26 +8093,46 @@ function admin_apply_default_settings($node=NULL, $unconditional=true) {
     if ($node instanceof admin_category) {
         $entries = array_keys($node->children);
         foreach ($entries as $entry) {
-            admin_apply_default_settings($node->children[$entry], $unconditional);
+            $settingsoutput = admin_apply_default_settings(
+                    $node->children[$entry], $unconditional, $admindefaultsettings, $settingsoutput
+                    );
         }
 
     } else if ($node instanceof admin_settingpage) {
-            foreach ($node->settings as $setting) {
-                if (!$unconditional and !is_null($setting->get_setting())) {
-                //do not override existing defaults
-                    continue;
-                }
-                $defaultsetting = $setting->get_defaultsetting();
-                if (is_null($defaultsetting)) {
-                // no value yet - default maybe applied after admin user creation or in upgradesettings
-                    continue;
-                }
+        foreach ($node->settings as $setting) {
+            if (!$unconditional and !is_null($setting->get_setting())) {
+                // Do not override existing defaults.
+                continue;
+            }
+            $defaultsetting = $setting->get_defaultsetting();
+            if (is_null($defaultsetting)) {
+                // No value yet - default maybe applied after admin user creation or in upgradesettings.
+                continue;
+            }
+
+            $settingname = $node->name . '_' . $setting->name; // Get a unique name for the setting.
+
+            if (!array_key_exists($settingname, $admindefaultsettings)) {  // Only update a setting if not already processed.
+                $admindefaultsettings[$settingname] = $settingname;
+                $settingsoutput[$settingname] = $defaultsetting;
+
+                // Set the default for this setting.
                 $setting->write_setting($defaultsetting);
                 $setting->write_setting_flags(null);
+            } else {
+                unset($admindefaultsettings[$settingname]); // Remove processed settings.
             }
         }
+    }
+
+    // Call this function recursively until all settings are processed.
+    if (($node instanceof admin_root) && (!empty($admindefaultsettings))) {
+        $settingsoutput = admin_apply_default_settings(null, $unconditional, $admindefaultsettings, $settingsoutput);
+    }
     // Just in case somebody modifies the list of active plugins directly.
     core_plugin_manager::reset_caches();
+
+    return $settingsoutput;
 }
 
 /**
@@ -8179,6 +8271,15 @@ function admin_search_settings_html($query) {
             continue;
         }
 
+        // Locate the page in the admin root and populate its visiblepath attribute.
+        $path = array();
+        $located = $adminroot->locate($page->name, true);
+        if ($located) {
+            foreach ($located->visiblepath as $pathitem) {
+                array_unshift($path, (string) $pathitem);
+            }
+        }
+
         $sectionsettings = [];
         if (!empty($settings)) {
             foreach ($settings as $setting) {
@@ -8190,6 +8291,7 @@ function admin_search_settings_html($query) {
                     $data = $adminroot->errors[$fullname]->data;
                 } else {
                     $data = $setting->get_setting();
+                    $data = $setting->get_setting();
                 // do not use defaults if settings not available - upgradesettings handles the defaults!
                 }
                 $sectionsettings[] = $setting->output_html($data, $query);
@@ -8198,6 +8300,7 @@ function admin_search_settings_html($query) {
 
         $tpldata->results[] = (object) [
             'title' => $heading,
+            'path' => $path,
             'url' => $headingurl->out(false),
             'settings' => $sectionsettings
         ];

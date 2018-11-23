@@ -788,6 +788,16 @@ $capabilities = array(
         )
     ),
 
+    'moodle/course:creategroupconversations' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     'moodle/course:request' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -2410,5 +2420,23 @@ $capabilities = array(
         'archetypes' => array(
         )
     ),
+    // Allow message any user, regardlesss of the privacy preferences for messaging.
+    'moodle/site:messageanyuser' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
 
+    // Context locking/unlocking.
+    'moodle/site:managecontextlocks' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+        ],
+    ],
 );

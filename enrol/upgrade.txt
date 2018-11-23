@@ -1,6 +1,19 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+
+* External function core_enrol_external::get_users_courses now return more information to avoid multiple queries to build the
+  user dashboard:
+  - displayname: Course display name for lists.
+  - marker: Course section active marker.
+  - completed: Whether the given user completed the course or not.
+  - lastaccess: Last time the user accessed the course.
+  - overviewfiles: Course overview files.
+  - completionhascriteria: Whether completion criteria is set for the course.
+  - isfavourite: Whether the user marked the course as favourite.
+  - hidden: Whether the user hide the course from the dashboard.
+
 === 3.5 ===
 
 * Default sorting in enrol_get_my_courses(), enrol_get_all_users_courses() and enrol_get_users_courses() now respects

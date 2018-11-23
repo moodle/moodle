@@ -22,8 +22,10 @@ Feature: Chat calendar entries
       | activity | name           | intro                 | course | idnumber | schedule |
       | chat     | Test chat name | Test chat description | C1     | chat1    | 0 |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I navigate to "Calendar" node in "Site pages"
+    And I am on "Course 1" course homepage with editing mode on
+   # TODO MDL-57120 site "Calendar" link not accessible without navigation block.
+    And I add the "Navigation" block if not present
+    Given I click on "Calendar" "link" in the "Navigation" "block"
     Then I should not see "Test chat name"
 
   Scenario: Create a chat activity and publish the start date to the calendar
@@ -31,6 +33,8 @@ Feature: Chat calendar entries
       | activity | name           | intro                 | course | idnumber | schedule |
       | chat     | Test chat name | Test chat description | C1     | chat1    | 1 |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I navigate to "Calendar" node in "Site pages"
+    And I am on "Course 1" course homepage with editing mode on
+   # TODO MDL-57120 site "Calendar" link not accessible without navigation block.
+    And I add the "Navigation" block if not present
+    Given I click on "Calendar" "link" in the "Navigation" "block"
     Then I should see "Test chat name"

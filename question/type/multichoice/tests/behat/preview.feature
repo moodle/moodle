@@ -23,7 +23,7 @@ Feature: Preview a Multiple choice question
       | Test questions   | multichoice | Multi-choice-002 | one_of_four |
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
 
   @javascript @_switch_window
   Scenario: Preview a Multiple choice question and submit a partially correct response.

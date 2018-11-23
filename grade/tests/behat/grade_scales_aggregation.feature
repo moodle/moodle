@@ -20,7 +20,7 @@ Feature: Control the aggregation of the scales
     And I set the following administration settings values:
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
       | grade_report_user_showcontributiontocoursetotal | 1 |
-    And I navigate to "Scales" node in "Site administration > Grades"
+    And I navigate to "Grades > Scales" in site administration
     And I press "Add a new scale"
     And I set the following fields to these values:
       | Name  | Letterscale |
@@ -91,7 +91,7 @@ Feature: Control the aggregation of the scales
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Override weight of Grade me" to "1"
     Then the field "Override weight of Grade me" matches value "100.00"
-    And I click on "Edit" "link" in the "Scale me" "table_row"
+    And I open the action menu in "Scale me" "table_row"
     And I click on "Edit settings" "link" in the "Scale me" "table_row"
     And I follow "Show more..."
     And I should not see "Weight adjusted"
@@ -104,7 +104,7 @@ Feature: Control the aggregation of the scales
     And the field "Override weight of Grade me" matches value "95.238"
     And I set the field "Override weight of Scale me" to "1"
     And the field "Override weight of Scale me" matches value "4.8"
-    And I click on "Edit" "link" in the "Scale me" "table_row"
+    And I open the action menu in "Scale me" "table_row"
     And I click on "Edit settings" "link" in the "Scale me" "table_row"
     And I follow "Show more..."
     And I should see "Weight adjusted"

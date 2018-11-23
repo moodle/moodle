@@ -689,6 +689,15 @@ class navigation_node implements renderable {
     }
 
     /**
+     * Used to easily determine if this link in the breadcrumbs is hidden.
+     *
+     * @return boolean
+     */
+    public function is_hidden() {
+        return $this->hidden;
+    }
+
+    /**
      * Gets the CSS class to add to this node to describe its type
      *
      * @return string
@@ -826,6 +835,43 @@ class navigation_node implements renderable {
             return $this->action->url;
         }
         return $this->action;
+    }
+
+    /**
+     * Add the menu item to handle locking and unlocking of a conext.
+     *
+     * @param \navigation_node $node Node to add
+     * @param \context $context The context to be locked
+     */
+    protected function add_context_locking_node(\navigation_node $node, \context $context) {
+        global $CFG;
+        // Manage context locking.
+        if (!empty($CFG->contextlocking) && has_capability('moodle/site:managecontextlocks', $context)) {
+            $parentcontext = $context->get_parent_context();
+            if (empty($parentcontext) || !$parentcontext->locked) {
+                if ($context->locked) {
+                    $lockicon = 'i/unlock';
+                    $lockstring = get_string('managecontextunlock', 'admin');
+                } else {
+                    $lockicon = 'i/lock';
+                    $lockstring = get_string('managecontextlock', 'admin');
+                }
+                $node->add(
+                    $lockstring,
+                    new moodle_url(
+                        '/admin/lock.php',
+                        [
+                            'id' => $context->id,
+                        ]
+                    ),
+                    self::TYPE_SETTING,
+                    null,
+                    'contextlocking',
+                     new pix_icon($lockicon, '')
+                );
+            }
+        }
+
     }
 }
 
@@ -1504,8 +1550,7 @@ class global_navigation extends navigation_node {
     protected function show_my_categories() {
         global $CFG;
         if ($this->showmycategories === null) {
-            require_once('coursecatlib.php');
-            $this->showmycategories = !empty($CFG->navshowmycoursecategories) && coursecat::count_all() > 1;
+            $this->showmycategories = !empty($CFG->navshowmycoursecategories) && core_course_category::count_all() > 1;
         }
         return $this->showmycategories;
     }
@@ -3039,8 +3084,7 @@ class global_navigation extends navigation_node {
             // Array of category IDs that include the categories of the user's courses and the related course categories.
             $fullpathcategoryids = [];
             // Get the course categories for the enrolled courses' category IDs.
-            require_once('coursecatlib.php');
-            $mycoursecategories = coursecat::get_many($categoryids);
+            $mycoursecategories = core_course_category::get_many($categoryids);
             // Loop over each of these categories and build the category tree using each category's path.
             foreach ($mycoursecategories as $mycoursecat) {
                 $pathcategoryids = explode('/', $mycoursecat->path);
@@ -3051,7 +3095,7 @@ class global_navigation extends navigation_node {
             }
 
             // Fetch all of the categories related to the user's courses.
-            $pathcategories = coursecat::get_many($fullpathcategoryids);
+            $pathcategories = core_course_category::get_many($fullpathcategoryids);
             // Loop over each of these categories and build the category tree.
             foreach ($pathcategories as $coursecat) {
                 // No need to process categories that have already been added.
@@ -3108,7 +3152,7 @@ class global_navigation extends navigation_node {
         // Show a link to the course page if there are more courses the user is enrolled in.
         if ($showmorelinkinnav || $showmorelinkinflatnav) {
             // Adding hash to URL so the link is not highlighted in the navigation when clicked.
-            $url = new moodle_url('/my/?myoverviewtab=courses');
+            $url = new moodle_url('/my/');
             $parent = $this->rootnodes['mycourses'];
             $coursenode = $parent->add(get_string('morenavigationlinks'), $url, self::TYPE_CUSTOM, null, self::COURSE_INDEX_PAGE);
 
@@ -3605,11 +3649,10 @@ class navbar extends navigation_node {
     private function get_course_categories() {
         global $CFG;
         require_once($CFG->dirroot.'/course/lib.php');
-        require_once($CFG->libdir.'/coursecatlib.php');
 
         $categories = array();
         $cap = 'moodle/category:viewhiddencategories';
-        $showcategories = coursecat::count_all() > 1;
+        $showcategories = core_course_category::count_all() > 1;
 
         if ($showcategories) {
             foreach ($this->page->categories as $category) {
@@ -4445,6 +4488,9 @@ class settings_navigation extends navigation_node {
                 null, 'gradebooksetup', new pix_icon('i/settings', ''));
         }
 
+        // Add the context locking node.
+        $this->add_context_locking_node($coursenode, $coursecontext);
+
         //  Add outcome if permitted
         if ($adminoptions->outcomes) {
             $url = new moodle_url('/grade/edit/outcome/course.php', array('id'=>$course->id));
@@ -4581,6 +4627,10 @@ class settings_navigation extends navigation_node {
             $url = new moodle_url('/'.$CFG->admin.'/roles/check.php', array('contextid'=>$this->page->cm->context->id));
             $modulenode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING, null, 'rolecheck');
         }
+
+        // Add the context locking node.
+        $this->add_context_locking_node($modulenode, $this->page->cm->context);
+
         // Manage filters
         if (has_capability('moodle/filter:manage', $this->page->cm->context) && count(filter_get_available_in_context($this->page->cm->context))>0) {
             $url = new moodle_url('/filter/manage.php', array('contextid'=>$this->page->cm->context->id));
@@ -5161,6 +5211,9 @@ class settings_navigation extends navigation_node {
                 'checkpermissions', new pix_icon('i/checkpermissions', ''));
         }
 
+        // Add the context locking node.
+        $this->add_context_locking_node($blocknode, $this->context);
+
         return $blocknode;
     }
 
@@ -5222,6 +5275,9 @@ class settings_navigation extends navigation_node {
             $url = new moodle_url('/'.$CFG->admin.'/roles/check.php', array('contextid' => $catcontext->id));
             $categorynode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING, null, 'checkpermissions', new pix_icon('i/checkpermissions', ''));
         }
+
+        // Add the context locking node.
+        $this->add_context_locking_node($categorynode, $catcontext);
 
         // Cohorts
         if (has_any_capability(array('moodle/cohort:view', 'moodle/cohort:manage'), $catcontext)) {

@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_timeline/nav-view-selector
+
+    This template renders the timeline sort selector.
+
+    Example context (json):
+    {}
+}}
+<div data-region="view-selector" class="btn-group">
+    <button type="button" class="btn btn-outline-secondary dropdown-toggle icon-no-margin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{#pix}} i/filter {{/pix}}
+        <span class="sr-only">
+            {{#sorttimelinecourses}}<span data-active-item-text>{{/sorttimelinecourses}}{{#str}} ariaviewselector, block_timeline{{/str}}{{#sorttimelinecourses}}</span>{{/sorttimelinecourses}}
+            {{#sorttimelinedates}}<span data-active-item-text>{{/sorttimelinedates}}{{#str}} sortbydates, block_timeline {{/str}}{{#sorttimelinedates}}</span>{{/sorttimelinedates}}
+        </span>
+    </button>
+    <div role="menu" class="dropdown-menu dropdown-menu-right list-group hidden" data-show-active-item data-skip-active-class="true" >
+        <a
+            class="dropdown-item {{#sorttimelinedates}}active{{/sorttimelinedates}}"
+            href="#view_dates_{{uniqid}}"
+            data-toggle="tab"
+            data-filtername="sortbydates"
+            aria-label="{{#str}} ariaviewselectoroption, block_timeline, {{#str}} sortbydates, block_timeline {{/str}}{{/str}}"
+        >
+            {{#str}} sortbydates, block_timeline {{/str}}
+        </a>
+        <a
+            class="dropdown-item {{#sorttimelinecourses}}active{{/sorttimelinecourses}}"
+            href="#view_courses_{{uniqid}}"
+            data-toggle="tab"
+            data-filtername="sortbycourses"
+            aria-label="{{#str}} ariaviewselectoroption, block_timeline, {{#str}} sortbycourses, block_timeline {{/str}}{{/str}}"
+        >
+            {{#str}} sortbycourses, block_timeline {{/str}}
+        </a>
+    </div>
+</div>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20180427" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20180626" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -25,7 +25,9 @@
         <FIELD NAME="strategy" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The type of the current grading strategy used in this workshop"/>
         <FIELD NAME="evaluation" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The recently used grading evaluation method"/>
         <FIELD NAME="gradedecimals" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Number of digits that should be shown after the decimal point when displaying grades"/>
-        <FIELD NAME="nattachments" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Number of required submission attachments"/>
+        <FIELD NAME="submissiontypetext" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Can students enter text for their submissions? 0 for no, 1 for optional, 2 for required."/>
+        <FIELD NAME="submissiontypefile" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Can students attach files for their submissions? 0 for no, 1 for optional, 2 for required."/>
+        <FIELD NAME="nattachments" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="Maximum number of submission attachments"/>
         <FIELD NAME="submissionfiletypes" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="comma separated list of file extensions"/>
         <FIELD NAME="latesubmissions" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Allow submitting the work after the deadline"/>
         <FIELD NAME="maxbytes" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="100000" SEQUENCE="false" COMMENT="Maximum size of the one attached file"/>

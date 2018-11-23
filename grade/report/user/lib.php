@@ -491,7 +491,7 @@ class grade_report_user extends grade_report {
                     $excluded = ' excluded';
                 }
                 **/
-
+                $canviewall = has_capability('moodle/grade:viewall', $this->context);
                 /// Other class information
                 $class .= $hidden . $excluded;
                 if ($this->switch) { // alter style based on whether aggregation is first or last
@@ -520,6 +520,7 @@ class grade_report_user extends grade_report {
                 $gradeitemdata['categoryid'] = $grade_object->categoryid;
                 $gradeitemdata['outcomeid'] = $grade_object->outcomeid;
                 $gradeitemdata['scaleid'] = $grade_object->outcomeid;
+                $gradeitemdata['locked'] = $canviewall ? $grade_grade->grade_item->is_locked() : null;
 
                 if ($this->showfeedback) {
                     // Copy $class before appending itemcenter as feedback should not be centered
@@ -551,6 +552,8 @@ class grade_report_user extends grade_report {
                     $gradeitemdata['gradeishidden'] = $grade_grade->is_hidden();
                     $gradeitemdata['gradedatesubmitted'] = $grade_grade->get_datesubmitted();
                     $gradeitemdata['gradedategraded'] = $grade_grade->get_dategraded();
+                    $gradeitemdata['gradeislocked'] = $canviewall ? $grade_grade->is_locked() : null;
+                    $gradeitemdata['gradeisoverridden'] = $canviewall ? $grade_grade->is_overridden() : null;
 
                     if ($grade_grade->grade_item->needsupdate) {
                         $data['grade']['class'] = $class.' gradingerror';
@@ -685,16 +688,30 @@ class grade_report_user extends grade_report {
                     $gradeitemdata['feedback'] = '';
                     $gradeitemdata['feedbackformat'] = $grade_grade->feedbackformat;
 
+                    if ($grade_grade->feedback) {
+                        $grade_grade->feedback = file_rewrite_pluginfile_urls(
+                            $grade_grade->feedback,
+                            'pluginfile.php',
+                            $grade_grade->get_context()->id,
+                            GRADE_FILE_COMPONENT,
+                            GRADE_FEEDBACK_FILEAREA,
+                            $grade_grade->id
+                        );
+                    }
+
                     if ($grade_grade->overridden > 0 AND ($type == 'categoryitem' OR $type == 'courseitem')) {
                     $data['feedback']['class'] = $classfeedback.' feedbacktext';
-                        $data['feedback']['content'] = get_string('overridden', 'grades').': ' . format_text($grade_grade->feedback, $grade_grade->feedbackformat);
+                        $data['feedback']['content'] = get_string('overridden', 'grades').': ' .
+                            format_text($grade_grade->feedback, $grade_grade->feedbackformat,
+                                ['context' => $grade_grade->get_context()]);
                         $gradeitemdata['feedback'] = $grade_grade->feedback;
                     } else if (empty($grade_grade->feedback) or (!$this->canviewhidden and $grade_grade->is_hidden())) {
                         $data['feedback']['class'] = $classfeedback.' feedbacktext';
                         $data['feedback']['content'] = '&nbsp;';
                     } else {
                         $data['feedback']['class'] = $classfeedback.' feedbacktext';
-                        $data['feedback']['content'] = format_text($grade_grade->feedback, $grade_grade->feedbackformat);
+                        $data['feedback']['content'] = format_text($grade_grade->feedback, $grade_grade->feedbackformat,
+                            ['context' => $grade_grade->get_context()]);
                         $gradeitemdata['feedback'] = $grade_grade->feedback;
                     }
                     $data['feedback']['headers'] = "$header_cat $header_row feedback";

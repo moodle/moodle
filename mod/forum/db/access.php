@@ -181,7 +181,7 @@ $capabilities = array(
 
     'mod/forum:deleteownpost' => array(
 
-        'captype' => 'read',
+        'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'student' => CAP_ALLOW,
@@ -193,7 +193,7 @@ $capabilities = array(
 
     'mod/forum:deleteanypost' => array(
 
-        'captype' => 'read',
+        'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'teacher' => CAP_ALLOW,
@@ -204,7 +204,7 @@ $capabilities = array(
 
     'mod/forum:splitdiscussions' => array(
 
-        'captype' => 'read',
+        'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'teacher' => CAP_ALLOW,
@@ -215,7 +215,7 @@ $capabilities = array(
 
     'mod/forum:movediscussions' => array(
 
-        'captype' => 'read',
+        'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'teacher' => CAP_ALLOW,
@@ -274,7 +274,7 @@ $capabilities = array(
 
         'riskbitmask' => RISK_SPAM,
 
-        'captype' => 'read',
+        'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'teacher' => CAP_ALLOW,

@@ -1648,6 +1648,7 @@ class core_plugin_manager {
             'qformat' => array('blackboard', 'learnwise'),
             'auth' => array('radius', 'fc', 'nntp', 'pam', 'pop3', 'imap'),
             'block' => array('course_overview', 'messages'),
+            'cachestore' => array('memcache'),
             'enrol' => array('authorize'),
             'report' => array('search'),
             'repository' => array('alfresco'),
@@ -1717,10 +1718,10 @@ class core_plugin_manager {
                 'feedback', 'globalsearch', 'glossary_random', 'html',
                 'login', 'lp', 'mentees', 'mnet_hosts', 'myoverview', 'myprofile',
                 'navigation', 'news_items', 'online_users', 'participants',
-                'private_files', 'quiz_results', 'recent_activity',
-                'rss_client', 'search_forums', 'section_links',
+                'private_files', 'quiz_results', 'recent_activity', 'recentlyaccesseditems',
+                'recentlyaccessedcourses', 'rss_client', 'search_forums', 'section_links',
                 'selfcompletion', 'settings', 'site_main_menu',
-                'social_activities', 'tag_flickr', 'tag_youtube', 'tags'
+                'social_activities', 'starredcourses', 'tag_flickr', 'tag_youtube', 'tags', 'timeline'
             ),
 
             'booktool' => array(
@@ -1732,7 +1733,7 @@ class core_plugin_manager {
             ),
 
             'cachestore' => array(
-                'file', 'memcache', 'memcached', 'mongodb', 'session', 'static', 'apcu', 'redis'
+                'file', 'memcached', 'mongodb', 'session', 'static', 'apcu', 'redis'
             ),
 
             'calendartype' => array(
@@ -1878,7 +1879,7 @@ class core_plugin_manager {
 
             'repository' => array(
                 'areafiles', 'boxnet', 'coursefiles', 'dropbox', 'equella', 'filesystem',
-                'flickr', 'flickr_public', 'googledocs', 'local', 'merlot',
+                'flickr', 'flickr_public', 'googledocs', 'local', 'merlot', 'nextcloud',
                 'onedrive', 'picasa', 'recent', 'skydrive', 's3', 'upload', 'url', 'user', 'webdav',
                 'wikimedia', 'youtube'
             ),

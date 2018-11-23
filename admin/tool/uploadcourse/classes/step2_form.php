@@ -82,7 +82,7 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->addElement('header', 'defaultheader', get_string('defaultvalues', 'tool_uploadcourse'));
         $mform->setExpanded('defaultheader', true);
 
-        $displaylist = coursecat::make_categories_list('moodle/course:create');
+        $displaylist = core_course_category::make_categories_list('moodle/course:create');
         $mform->addElement('select', 'defaults[category]', get_string('coursecategory'), $displaylist);
         $mform->addHelpButton('defaults[category]', 'coursecategory');
 

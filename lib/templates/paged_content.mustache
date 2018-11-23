@@ -53,29 +53,41 @@
     }
 }}
 <div id="paged-content-container-{{uniqid}}" data-region="paged-content-container">
-    {{#pagingbar}}
-        {{> core/paged_content_paging_bar }}
-    {{/pagingbar}}
-    {{#pagingdropdown}}
-        {{> core/paged_content_paging_dropdown }}
-    {{/pagingdropdown}}
+    {{^controlplacementbottom}}
+        <div class="m-b-1">
+            {{#pagingbar}}
+                {{> core/paged_content_paging_bar }}
+            {{/pagingbar}}
+            {{#pagingdropdown}}
+                {{> core/paged_content_paging_dropdown }}
+            {{/pagingdropdown}}
+        </div>
+    {{/controlplacementbottom}}
     {{> core/paged_content_pages }}
+    {{#controlplacementbottom}}
+        <div class="m-t-1">
+            {{#pagingbar}}
+                {{> core/paged_content_paging_bar }}
+            {{/pagingbar}}
+            {{#pagingdropdown}}
+                {{> core/paged_content_paging_dropdown }}
+            {{/pagingdropdown}}
+        </div>
+    {{/controlplacementbottom}}
 </div>
 {{^skipjs}}
 {{#js}}
 require(
 [
     'jquery',
-    'core/paged_content_pages'
+    'core/paged_content'
 ],
 function(
     $,
     PagedContent
 ) {
     var container = $("#paged-content-container-{{uniqid}}");
-    var pagingContent = container.find(PagedContent.rootSelector);
-
-    PagedContent.init(pagingContent, container);
+    PagedContent.init(container);
 });
 {{/js}}
 {{/skipjs}}

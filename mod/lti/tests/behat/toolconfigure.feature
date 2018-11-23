@@ -17,7 +17,7 @@ Feature: Configure tool types
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "admin"
-    And I navigate to "Manage tools" node in "Site administration > Plugins > Activity modules > External tool"
+    And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration
 
   @javascript
   Scenario: Add a tool type from a cartridge URL

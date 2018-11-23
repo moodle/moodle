@@ -12,8 +12,6 @@ $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', 30, PARAM_INT);
 $action       = trim(strtolower(optional_param('action', '', PARAM_ALPHA)));
 
-require_login();
-
 admin_externalpage_setup('ssoaccesscontrol');
 
 if (!extension_loaded('openssl')) {

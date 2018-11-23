@@ -614,6 +614,12 @@ table.quizreviewsummary td.cell {
     border-bottom: lightgrey solid 0.2em;
 }
 
+#page-mod-quiz-report tr.quiz_statistics-summaryrow td.cell {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    border-top: none;
+}
+
 /** Mod quiz edit **/
 #page-mod-quiz-edit .statusbar {
     margin: 0.6em 0.4em;

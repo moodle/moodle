@@ -74,7 +74,7 @@ class memcached extends handler {
         if (empty($this->savepath)) {
             $this->servers = array();
         } else {
-            $this->servers = util::connection_string_to_memcache_servers($this->savepath);
+            $this->servers = self::connection_string_to_memcache_servers($this->savepath);
         }
 
         if (empty($CFG->session_memcached_prefix)) {
@@ -268,4 +268,33 @@ class memcached extends handler {
         }
     }
 
+    /**
+     * Convert a connection string to an array of servers.
+     *
+     * "abc:123, xyz:789" to
+     *  [
+     *      ['abc', '123'],
+     *      ['xyz', '789'],
+     *  ]
+     *
+     * @param   string  $str save_path value containing memcached connection string
+     * @return  array[]
+     */
+    protected static function connection_string_to_memcache_servers(string $str) : array {
+        $servers = [];
+        $parts   = explode(',', $str);
+        foreach ($parts as $part) {
+            $part = trim($part);
+            $pos  = strrpos($part, ':');
+            if ($pos !== false) {
+                $host = substr($part, 0, $pos);
+                $port = substr($part, ($pos + 1));
+            } else {
+                $host = $part;
+                $port = 11211;
+            }
+            $servers[] = [$host, $port];
+        }
+        return $servers;
+    }
 }

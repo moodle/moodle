@@ -60,7 +60,7 @@
                 "typename" : "Data deletion",
                 "comments": "Please delete all of my son's personal data.",
                 "statuslabelclass": "label-success",
-                "statuslabel": "Complete",
+                "statuslabel": "Deleted",
                 "timecreated" : 1517902087,
                 "requestedbyuser" : {
                     "fullname": "Martha Smith",
@@ -85,6 +85,19 @@
                 "comments": "Please let me download my data",
                 "statuslabelclass": "label-info",
                 "statuslabel": "Processing",
+                "timecreated" : 1517902087,
+                "requestedbyuser" : {
+                    "fullname": "Martha Smith",
+                    "profileurl": "#"
+                }
+            },
+            {
+                "id": 6,
+                "typename" : "Data export",
+                "comments": "Please let me download my data",
+                "statuslabelclass": "label",
+                "statuslabel": "Expired",
+                "statuslabeltitle": "Download has expired. Submit a new request if you wish to export your personal data.",
                 "timecreated" : 1517902087,
                 "requestedbyuser" : {
                     "fullname": "Martha Smith",
@@ -127,7 +140,7 @@
                 <td>{{#userdate}} {{timecreated}}, {{#str}} strftimedatetime {{/str}} {{/userdate}}</td>
                 <td><a href="{{requestedbyuser.profileurl}}" title="{{#str}}viewprofile{{/str}}">{{requestedbyuser.fullname}}</a></td>
                 <td>
-                    <span class="label {{statuslabelclass}}">{{statuslabel}}</span>
+                    <span class="label {{statuslabelclass}}" title="{{statuslabeltitle}}">{{statuslabel}}</span>
                 </td>
                 <td>{{comments}}</td>
                 <td>

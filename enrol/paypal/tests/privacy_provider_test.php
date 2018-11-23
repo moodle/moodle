@@ -185,7 +185,7 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
         );
 
         // Enrol student3 in course3 with businessuser3 as the receiver.
-        $paypalplugin->enrol_user($enrolinstance1, $this->student1->id, $studentrole->id);
+        $paypalplugin->enrol_user($enrolinstance1, $this->student3->id, $studentrole->id);
         $this->create_enrol_paypal_record(
             $this->businessuser3,
             $this->receiveruser3,
@@ -662,5 +662,185 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
             'timeupdated'    => $time,
         ];
         $DB->insert_record('enrol_paypal', $paypaldata);
+    }
+
+    /**
+     * Test for provider::get_users_in_context().
+     */
+    public function test_get_users_in_context() {
+        $coursecontext1 = context_course::instance($this->course1->id);
+        $coursecontext2 = context_course::instance($this->course2->id);
+        $coursecontext3 = context_course::instance($this->course3->id);
+
+        $userlist1 = new \core_privacy\local\request\userlist($coursecontext1, 'enrol_paypal');
+        provider::get_users_in_context($userlist1);
+        $this->assertEquals(
+                [
+                    $this->businessuser1->id,
+                    $this->businessuser2->id,
+                    $this->receiveruser1->id,
+                    $this->student1->id,
+                    $this->student12->id
+                ],
+                $userlist1->get_userids(),
+                '', 0.0, 10, true
+        );
+
+        $userlist2 = new \core_privacy\local\request\userlist($coursecontext2, 'enrol_paypal');
+        provider::get_users_in_context($userlist2);
+        $this->assertEquals(
+                [
+                    $this->businessuser1->id,
+                    $this->businessuser2->id,
+                    $this->receiveruser2->id,
+                    $this->student2->id,
+                    $this->student12->id
+                ],
+                $userlist2->get_userids(),
+                '', 0.0, 10, true
+        );
+
+        $userlist3 = new \core_privacy\local\request\userlist($coursecontext3, 'enrol_paypal');
+        provider::get_users_in_context($userlist3);
+        $this->assertEquals(
+                [
+                    $this->businessuser3->id,
+                    $this->receiveruser3->id,
+                    $this->student3->id
+                ],
+                $userlist3->get_userids(),
+                '', 0.0, 10, true
+        );
+    }
+
+    /**
+     * Test for provider::delete_data_for_users().
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+
+        $coursecontext1 = context_course::instance($this->course1->id);
+
+        // Before deletion, we should have 2 PayPal transactions (1 of them for student12) in course1
+        // and 3 PayPal transactions (1 of them for student12) in course2.
+        // Student12 is enrolled in course1 and course2.
+        // There is 1 transaction in course1 and 2 transactions in course2 under the name of businessuser1.
+        $this->assertEquals(
+                2,
+                $DB->count_records('enrol_paypal', ['courseid' => $this->course1->id])
+        );
+        $this->assertEquals(
+                [$this->course1->id, $this->course2->id],
+                $DB->get_fieldset_select('enrol_paypal', 'courseid', 'userid = ?', [$this->student12->id]),
+                '', 0.0, 10, true
+        );
+        $this->assertEquals(
+                [$this->course1->id, $this->course2->id, $this->course2->id],
+                $DB->get_fieldset_select('enrol_paypal', 'courseid', 'business = ?',
+                        [\core_text::strtolower($this->businessuser1->email)]),
+                '', 0.0, 10, true
+        );
+        $this->assertEquals(
+                3,
+                $DB->count_records('enrol_paypal', ['courseid' => $this->course2->id])
+        );
+
+        // Delete data of student12 and businessuser1 in course1.
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($coursecontext1, 'enrol_paypal',
+                [$this->student12->id, $this->businessuser1->id]);
+        provider::delete_data_for_users($approveduserlist);
+
+        // After deletion, PayPal transactions for student12 in course1 should have been deleted.
+        // Now, we should have 1 PayPal transaction (which is not related to student12) in course1.
+        // There should still be 3 PayPal transactions (1 of them for student12) in course2.
+        // Student12 is not enrolled in course1 anymore, but s/he is still enrolled in course2.
+        // There is no transaction in course1 under the name of businessuser1, but the 2 transactions in course2
+        // that were under his/her name are intact.
+        $this->assertEquals(
+                1,
+                $DB->count_records('enrol_paypal', ['courseid' => $this->course1->id])
+        );
+        $this->assertEquals(
+                [$this->course2->id],
+                $DB->get_fieldset_select('enrol_paypal', 'courseid', 'userid = ?', [$this->student12->id]),
+                '', 0.0, 10, true
+        );
+        $this->assertEquals(
+                [$this->course2->id, $this->course2->id],
+                $DB->get_fieldset_select('enrol_paypal', 'courseid', 'business = ?',
+                        [\core_text::strtolower($this->businessuser1->email)]),
+                '', 0.0, 10, true
+        );
+        $this->assertEquals(
+                3,
+                $DB->count_records('enrol_paypal', ['courseid' => $this->course2->id])
+        );
+    }
+
+    /**
+     * Test for provider::delete_data_for_users() for business user deletion.
+     */
+    public function test_delete_data_for_users_business() {
+        global $DB;
+
+        $coursecontext1 = context_course::instance($this->course1->id);
+
+        // Before deletion, there are 3 transactions under the name of businessuser1 and one of them is in course1.
+        $this->assertEquals(3, $DB->count_records('enrol_paypal', ['business' => $this->businessuser1->email]));
+        $transactions = $DB->get_records('enrol_paypal', [
+            'courseid' => $this->course1->id,
+            'business' => $this->businessuser1->email
+        ]);
+        $this->assertCount(1, $transactions);
+        $transaction = reset($transactions);
+
+        // Delete data of businessuser1 in course1.
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($coursecontext1, 'enrol_paypal',
+                [$this->businessuser1->id]);
+        provider::delete_data_for_users($approveduserlist);
+
+        // After deletion, there should be 2 transactions under the name of businessuser1 and none of them should be in course1.
+        $this->assertEquals(2, $DB->count_records('enrol_paypal', ['business' => $this->businessuser1->email]));
+        $this->assertEquals(0, $DB->count_records('enrol_paypal', [
+            'courseid' => $this->course1->id,
+            'business' => $this->businessuser1->email
+        ]));
+
+        // Also, the transaction in course1 that was under the name of businessuser1 should still exist,
+        // but it should not be under the name of businessuser1 anymore.
+        $newtransaction = $DB->get_record('enrol_paypal', ['id' => $transaction->id]);
+        $this->assertEquals('', $newtransaction->business);
+    }
+
+    /**
+     * Test for provider::delete_data_for_users() for receiver user deletion.
+     */
+    public function test_delete_data_for_users_receiver() {
+        global $DB;
+
+        $coursecontext1 = context_course::instance($this->course1->id);
+
+        // Before deletion, there are 2 transactions under the name of receiveruser1 and both of them are in course1.
+        $this->assertEquals(2, $DB->count_records('enrol_paypal', ['receiver_email' => $this->receiveruser1->email]));
+        $transactions = $DB->get_records('enrol_paypal', [
+            'courseid' => $this->course1->id,
+            'receiver_email' => $this->receiveruser1->email
+        ]);
+        $this->assertCount(2, $transactions);
+
+        // Delete data of receiveruser1 in course1.
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($coursecontext1, 'enrol_paypal',
+                [$this->receiveruser1->id]);
+        provider::delete_data_for_users($approveduserlist);
+
+        // After deletion, there should be no transaction under the name of receiveruser1.
+        $this->assertEquals(0, $DB->count_records('enrol_paypal', ['receiver_email' => $this->receiveruser1->email]));
+
+        // Also, the transactions in course1 that were under the name of receiveruser1 should still exist,
+        // but they should not be under the name of receiveruser1 anymore.
+        foreach ($transactions as $transaction) {
+            $newtransaction = $DB->get_record('enrol_paypal', ['id' => $transaction->id]);
+            $this->assertEquals('', $newtransaction->receiver_email);
+        }
     }
 }

@@ -336,4 +336,95 @@ class core_auth_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for resend_confirmation_email.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.6
+     */
+    public static function resend_confirmation_email_parameters() {
+        return new external_function_parameters(
+            array(
+                'username' => new external_value(core_user::get_property_type('username'), 'Username.'),
+                'password' => new external_value(core_user::get_property_type('password'), 'Plain text password.'),
+                'redirect' => new external_value(PARAM_LOCALURL, 'Redirect the user to this site url after confirmation.',
+                    VALUE_DEFAULT, ''),
+            )
+        );
+    }
+
+    /**
+     * Requests resend the confirmation email.
+     *
+     * @param  string $username user name
+     * @param  string $password plain text password
+     * @param  string $redirect redirect the user to this site url after confirmation
+     * @return array warnings and success status
+     * @since Moodle 3.6
+     * @throws moodle_exception
+     */
+    public static function resend_confirmation_email($username, $password, $redirect = '') {
+        global $PAGE;
+
+        $warnings = array();
+        $params = self::validate_parameters(
+            self::resend_confirmation_email_parameters(),
+            array(
+                'username' => $username,
+                'password' => $password,
+                'redirect' => $redirect,
+            )
+        );
+
+        $context = context_system::instance();
+        $PAGE->set_context($context);   // Need by internal APIs.
+        $username = trim(core_text::strtolower($params['username']));
+        $password = $params['password'];
+
+        if (is_restored_user($username)) {
+            throw new moodle_exception('restoredaccountresetpassword', 'webservice');
+        }
+
+        $user = authenticate_user_login($username, $password);
+
+        if (empty($user)) {
+            throw new moodle_exception('invalidlogin');
+        }
+
+        if ($user->confirmed) {
+            throw new moodle_exception('alreadyconfirmed');
+        }
+
+        // Check if we should redirect the user once the user is confirmed.
+        $confirmationurl = null;
+        if (!empty($params['redirect'])) {
+            // Pass via moodle_url to fix thinks like admin links.
+            $redirect = new moodle_url($params['redirect']);
+
+            $confirmationurl = new moodle_url('/login/confirm.php', array('redirect' => $redirect->out()));
+        }
+        $status = send_confirmation_email($user, $confirmationurl);
+
+        return array(
+            'status' => $status,
+            'warnings' => $warnings,
+        );
+    }
+
+    /**
+     * Describes the resend_confirmation_email return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.6
+     */
+    public static function resend_confirmation_email_returns() {
+
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'True if the confirmation email was sent, false otherwise.'),
+                'warnings'  => new external_warnings(),
+            )
+        );
+    }
 }

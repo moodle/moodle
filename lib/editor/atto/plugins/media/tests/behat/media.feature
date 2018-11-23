@@ -31,7 +31,7 @@ Feature: Add media to Atto
     When I click on "Save changes" "button"
     Then "//a[. = 'moodle-logo.webm']" "xpath_element" should exist
 
-  @javascript
+  @javascript @atto_media_video
   Scenario: Insert some media as a plain video
     Given I click on "Video" "link"
     And I click on "Browse repositories..." "button" in the "#id_summary_editor_video .atto_media_source.atto_media_media_source" "css_element"
@@ -46,7 +46,7 @@ Feature: Add media to Atto
     When I click on "Insert media" "button"
     Then "//video[descendant::source[contains(@src, 'moodle-logo.webm')]][descendant::source[contains(@src, 'moodle-logo.mp4')]]" "xpath_element" should exist
 
-  @javascript
+  @javascript @atto_media_video
   Scenario: Insert some media as a video with display settings
     Given I click on "Video" "link"
     And I click on "Browse repositories..." "button" in the "#id_summary_editor_video .atto_media_source.atto_media_media_source" "css_element"
@@ -61,11 +61,12 @@ Feature: Add media to Atto
     And I change window size to "large"
     And I set the field with xpath "//*[contains(concat(' ', normalize-space(@class), ' '), ' atto_media_width_entry ')]" to "420"
     And I set the field with xpath "//*[contains(concat(' ', normalize-space(@class), ' '), ' atto_media_height_entry ')]" to "69"
+    And I set the field "Enter title" to "VideoTitle"
     And I click on "Display options" "link"
     When I click on "Insert media" "button"
-    Then "//video[descendant::source[contains(@src, 'moodle-logo.webm')]][contains(@poster, 'moodle-logo.png')][@width=420][@height=69]" "xpath_element" should exist
+    Then "//video[descendant::source[contains(@src, 'moodle-logo.webm')]][contains(@poster, 'moodle-logo.png')][@width=420][@height=69][@title='VideoTitle']" "xpath_element" should exist
 
-  @javascript
+  @javascript @atto_media_video
   Scenario: Insert some media as a video with advanced settings
     Given I click on "Video" "link"
     And I click on "Browse repositories..." "button" in the "#id_summary_editor_video .atto_media_source.atto_media_media_source" "css_element"
@@ -80,7 +81,7 @@ Feature: Add media to Atto
     When I click on "Insert media" "button"
     Then "//video[descendant::source[contains(@src, 'moodle-logo.webm')]][@controls='true'][@loop='true'][@autoplay='true'][@autoplay='true']" "xpath_element" should exist
 
-  @javascript
+  @javascript @atto_media_video
   Scenario: Insert some media as a video with tracks
     Given I click on "Video" "link"
     And I change window size to "large"
@@ -164,3 +165,40 @@ Feature: Add media to Atto
     And I set the field with xpath "(//*[contains(concat(' ', normalize-space(@class), ' '), ' atto_media_track_default ')])[9]" to "1"
     When I click on "Insert media" "button"
     Then "//video[descendant::source[contains(@src, 'moodle-logo.webm')]][descendant::track[contains(@src, 'pretty-good-sv.vtt')][@kind='subtitles'][@label='Swedish'][@srclang='sv'][@default='true']][descendant::track[contains(@src, 'pretty-good-en.vtt')][@kind='subtitles'][@label='English'][@srclang='en'][not(@default)]][descendant::track[contains(@src, 'pretty-good-sv.vtt')][@kind='captions'][@label='Swedish'][@srclang='sv'][not(@default)]][descendant::track[contains(@src, 'pretty-good-en.vtt')][@kind='captions'][@label='English'][@srclang='en'][@default='true']][descendant::track[contains(@src, 'pretty-good-sv.vtt')][@kind='descriptions'][@label='Swedish'][@srclang='sv'][@default='true']][descendant::track[contains(@src, 'pretty-good-en.vtt')][@kind='descriptions'][@label='English'][@srclang='en'][not(@default)]][descendant::track[contains(@src, 'pretty-good-sv.vtt')][@kind='chapters'][@label='Swedish'][@srclang='sv'][not(@default)]][descendant::track[contains(@src, 'pretty-good-en.vtt')][@kind='chapters'][@label='English'][@srclang='en'][@default='true']][descendant::track[contains(@src, 'pretty-good-sv.vtt')][@kind='metadata'][@label='Swedish'][@srclang='sv'][@default='true']][descendant::track[contains(@src, 'pretty-good-en.vtt')][@kind='metadata'][@label='English'][@srclang='en'][not(@default)]]" "xpath_element" should exist
+
+  @javascript @atto_media_audio
+  Scenario: Insert some media as a plain audio
+    Given I click on "Audio" "link"
+    And I click on "Browse repositories..." "button" in the "#id_summary_editor_audio .atto_media_source.atto_media_media_source" "css_element"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
+    And I click on "moodle-logo.mp4" "link"
+    And I click on "Select this file" "button"
+    When I click on "Insert media" "button"
+    Then "//audio[descendant::source[contains(@src, 'moodle-logo.mp4')]]" "xpath_element" should exist
+
+  @javascript @atto_media_audio
+  Scenario: Insert some media as an audio with display settings
+    Given I click on "Audio" "link"
+    And I click on "Browse repositories..." "button" in the "#id_summary_editor_audio .atto_media_source.atto_media_media_source" "css_element"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
+    And I click on "moodle-logo.mp4" "link"
+    And I click on "Select this file" "button"
+    And I click on "Display options" "link" in the "#id_summary_editor_audio" "css_element"
+    And I set the field "audio_media-title-entry" to "AudioTitle"
+    When I click on "Insert media" "button"
+    Then "//audio[descendant::source[contains(@src, 'moodle-logo.mp4')]][@title='AudioTitle']" "xpath_element" should exist
+
+  @javascript @atto_media_audio
+  Scenario: Insert some media as an audio with advanced settings
+    Given I click on "Audio" "link"
+    And I click on "Browse repositories..." "button" in the "#id_summary_editor_audio .atto_media_source.atto_media_media_source" "css_element"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
+    And I click on "moodle-logo.mp4" "link"
+    And I click on "Select this file" "button"
+    And I click on "Advanced settings" "link" in the "#id_summary_editor_audio" "css_element"
+    And the field "audio_media-controls-toggle" matches value "1"
+    And I set the field "audio_media-autoplay-toggle" to "1"
+    And I set the field "audio_media-mute-toggle" to "1"
+    And I set the field "audio_media-loop-toggle" to "1"
+    When I click on "Insert media" "button"
+    Then "//audio[descendant::source[contains(@src, 'moodle-logo.mp4')]][@controls='true'][@loop='true'][@autoplay='true'][@autoplay='true']" "xpath_element" should exist

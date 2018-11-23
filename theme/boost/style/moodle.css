@@ -2691,7 +2691,8 @@ hr {
   border-top: 1px solid rgba(0, 0, 0, 0.1); }
 
 small,
-.small {
+.small,
+#page-admin-search .adminpagepath li {
   font-size: 80%;
   font-weight: 400; }
 
@@ -5575,25 +5576,25 @@ tbody.collapse.show {
   display: flex;
   flex-direction: column; }
   .card-deck .card, .card-deck #page-enrol-users #filterform, #page-enrol-users .card-deck #filterform, .card-deck .que .history, .que .card-deck .history, .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .card-deck section, .card-deck .groupinfobox, .card-deck .well {
-    margin-bottom: 15px; }
+    margin-bottom: 0.25rem; }
   @media (min-width: 576px) {
     .card-deck {
       flex-flow: row wrap;
-      margin-right: -15px;
-      margin-left: -15px; }
+      margin-right: -0.25rem;
+      margin-left: -0.25rem; }
       .card-deck .card, .card-deck #page-enrol-users #filterform, #page-enrol-users .card-deck #filterform, .card-deck .que .history, .que .card-deck .history, .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .card-deck section, .card-deck .groupinfobox, .card-deck .well {
         display: flex;
         flex: 1 0 0%;
         flex-direction: column;
-        margin-right: 15px;
+        margin-right: 0.25rem;
         margin-bottom: 0;
-        margin-left: 15px; } }
+        margin-left: 0.25rem; } }
 
 .card-group {
   display: flex;
   flex-direction: column; }
   .card-group > .card, #page-enrol-users .card-group > #filterform, .que .card-group > .history, .userprofile .profile_tree .card-group > section, .card-group > .groupinfobox, .card-group > .well {
-    margin-bottom: 15px; }
+    margin-bottom: 0.25rem; }
   @media (min-width: 576px) {
     .card-group {
       flex-flow: row wrap; }
@@ -8448,7 +8449,7 @@ a.dimmed_text:visited,
 .usersuspended a:visited,
 .dimmed_category,
 .dimmed_category a, .tag_feed .media .muted a, #page-admin-qtypes .disabled,
-#page-admin-qbehaviours .disabled, #page-admin-plugins #plugins-control-panel .pluginname .componentname, #page-admin-plugins #plugins-control-panel .version .versionnumber, #page-admin-plugins #plugins-control-panel .notes .requiredby, #plugins-check-page .page-description, #plugins-check-page #plugins-check .requires-ok, #plugins-check-page #plugins-check .displayname .plugindir, #plugins-check-page #plugins-check-available-dependencies .displayname .component, .block .minicalendar td.weekend, .section .activity .stealth, .course-content .section-summary .section-summary-activities .activity-count, .course-content ul li.section.hidden .sectionname > span,
+#page-admin-qbehaviours .disabled, #page-admin-plugins #plugins-control-panel .pluginname .componentname, #page-admin-plugins #plugins-control-panel .version .versionnumber, #page-admin-plugins #plugins-control-panel .notes .requiredby, #plugins-check-page .page-description, #plugins-check-page #plugins-check .requires-ok, #plugins-check-page #plugins-check .displayname .plugindir, #plugins-check-page #plugins-check-available-dependencies .displayname .component, #page-admin-search .adminpagepath li, .block .minicalendar td.weekend, .section .activity .stealth, .course-content .section-summary .section-summary-activities .activity-count, .course-content ul li.section.hidden .sectionname > span,
 .course-content ul li.section.hidden .content > div.summary,
 .course-content ul li.section.hidden .activity .activityinstance, #course-category-listings .listitem[data-visible="0"], #course-category-listings .listitem[data-visible="0"] > div > a, #course-category-listings .listing-pagination-totals.dimmed, .fitem.disabled .fp-btn-choose, .form-defaultinfo,
 .form-label .form-shortname, .formsettingheading .form-horizontal, .no-felement.fstatic, .path-backup .backup_progress .backup_stage {
@@ -8790,10 +8791,12 @@ input[disabled] {
 }
 */
 /* core.less */
-#region-main > .card, #page-enrol-users #region-main > #filterform, .que #region-main > .history, .userprofile .profile_tree #region-main > section, #region-main > .groupinfobox, #region-main > .well {
+#region-main {
   overflow-x: auto;
   overflow-y: visible;
-  min-height: 45rem; }
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  padding: 1.25rem;
+  background-color: #fff; }
 
 .context-header-settings-menu,
 .region-main-settings-menu {
@@ -8881,6 +8884,12 @@ a.autolink.glossary:hover {
 
 .pagelayout-mydashboard.jsenabled .collapsibleregioncaption {
   cursor: pointer; }
+
+.pagelayout-mydashboard #region-main {
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+  margin-top: -1px; }
 
 .collapsibleregioncaption img {
   vertical-align: middle; }
@@ -9660,14 +9669,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   white-space: nowrap;
   text-align: center; }
 
-.initialbarlabel {
-  display: inline-block;
-  width: 6em;
-  float: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap; }
-
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
   background-color: #495057; }
@@ -10394,7 +10395,8 @@ ul {
   top: 0; }
 
 [data-drag-type="move"] {
-  cursor: move; }
+  cursor: move;
+  touch-action: none; }
 
 .clickable {
   cursor: pointer; }
@@ -10424,6 +10426,107 @@ div.editor_atto_toolbar button .icon {
 
 .w-auto {
   width: auto; }
+
+.bg-pulse-grey {
+  animation: bg-pulse-grey 2s infinite linear; }
+
+@keyframes bg-pulse-grey {
+  0% {
+    background-color: #f8f9fa; }
+  50% {
+    background-color: #e9ecef; }
+  100% {
+    background-color: #f8f9fa; } }
+
+.line-height-0 {
+  line-height: 0 !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.line-height-1 {
+  line-height: 0.25rem !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.line-height-2 {
+  line-height: 0.5rem !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.line-height-3 {
+  line-height: 1rem !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.line-height-4 {
+  line-height: 1.5rem !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.line-height-5 {
+  line-height: 3rem !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.dir-rtl .dir-rtl-hide {
+  display: none; }
+
+.dir-ltr .dir-ltr-hide {
+  display: none; }
+
+.switch {
+  position: relative; }
+  .switch input {
+    float: left;
+    width: 1px;
+    transform: translateX(1px);
+    padding: 0;
+    margin: 0;
+    opacity: 0; }
+    .switch input + label {
+      position: relative;
+      min-height: 1.725rem;
+      min-width: 3.45rem;
+      line-height: 1.725rem;
+      border-radius: 1.725rem;
+      display: inline-block;
+      cursor: pointer;
+      outline: none;
+      user-select: none;
+      vertical-align: middle;
+      padding-left: 3.95rem; }
+    .switch input + label::before,
+    .switch input + label::after {
+      content: '';
+      position: absolute;
+      top: calc(50% - 0.8625rem);
+      left: 0;
+      width: 3.45rem;
+      height: 1.725rem;
+      bottom: 0;
+      display: block; }
+    .switch input + label::before {
+      right: 0;
+      background-color: #dee2e6;
+      border-radius: 1.725rem;
+      transition: 0.2s all; }
+    .switch input + label::after {
+      margin-top: 2px;
+      left: 2px;
+      width: calc(1.725rem - 4px);
+      height: calc(1.725rem - 4px);
+      border-radius: 50%;
+      background-color: #fff;
+      transition: 0.2s all; }
+    .switch input:checked + label::before {
+      background-color: #1177d1; }
+    .switch input:checked + label::after {
+      margin-left: 1.725rem; }
+    .switch input:focus + label::before {
+      outline: none;
+      box-shadow: 0 0 0 0.2rem rgba(17, 119, 209, 0.25); }
+    .switch input:disabled + label {
+      color: #868e96;
+      cursor: not-allowed; }
+    .switch input:disabled + label::before {
+      background-color: #e9ecef; }
+
+.paged-content-page-container {
+  min-height: 3.125rem; }
 
 .icon {
   font-size: 16px;
@@ -10461,9 +10564,63 @@ div.editor_atto_toolbar button .icon {
 .icon-no-spacing a > .icon {
   margin: 0; }
 
+.icon-no-margin .icon {
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0; }
+
 .icon-large > .icon {
   width: 32px;
   height: 32px; }
+
+.icon-size-0 .icon {
+  height: 0 !important;
+  /* stylelint-disable-line declaration-no-important */
+  width: 0 !important;
+  /* stylelint-disable-line declaration-no-important */
+  font-size: 0 !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.icon-size-1 .icon {
+  height: 4px !important;
+  /* stylelint-disable-line declaration-no-important */
+  width: 4px !important;
+  /* stylelint-disable-line declaration-no-important */
+  font-size: 4px !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.icon-size-2 .icon {
+  height: 8px !important;
+  /* stylelint-disable-line declaration-no-important */
+  width: 8px !important;
+  /* stylelint-disable-line declaration-no-important */
+  font-size: 8px !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.icon-size-3 .icon {
+  height: 16px !important;
+  /* stylelint-disable-line declaration-no-important */
+  width: 16px !important;
+  /* stylelint-disable-line declaration-no-important */
+  font-size: 16px !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.icon-size-4 .icon {
+  height: 24px !important;
+  /* stylelint-disable-line declaration-no-important */
+  width: 24px !important;
+  /* stylelint-disable-line declaration-no-important */
+  font-size: 24px !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.icon-size-5 .icon {
+  height: 48px !important;
+  /* stylelint-disable-line declaration-no-important */
+  width: 48px !important;
+  /* stylelint-disable-line declaration-no-important */
+  font-size: 48px !important;
+  /* stylelint-disable-line declaration-no-important */ }
 
 .helplink .icon {
   margin-left: 0.5rem; }
@@ -10975,6 +11132,21 @@ div.editor_atto_toolbar button .icon {
 .modal.modal-in-page {
   z-index: 0; }
 
+#page-admin-search .adminpagetitle {
+  margin-bottom: 0;
+  border-bottom: none; }
+
+#page-admin-search .adminpagepath {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem 0; }
+  #page-admin-search .adminpagepath li + li:before {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    content: "/"; }
+
 .blockmovetarget .accesshide {
   position: relative;
   left: initial; }
@@ -10997,7 +11169,7 @@ div.editor_atto_toolbar button .icon {
   color: #373a3c; }
 
 [data-region="blocks-column"] {
-  width: 250px;
+  width: 360px;
   float: right; }
 
 /* We put an absolutely positioned div in a relatively positioned div so it takes up no space */
@@ -11021,314 +11193,147 @@ div.editor_atto_toolbar button .icon {
   border-bottom-left-radius: 0.5rem;
   float: right; }
 
-#region-main {
-  float: left;
-  width: 100%; }
-
 #region-main-settings-menu.has-blocks,
 #region-main.has-blocks {
   display: inline-block;
-  width: calc(100% - 265px); }
+  width: calc(100% - 375px); }
   @media (max-width: 1199.98px) {
     #region-main-settings-menu.has-blocks,
     #region-main.has-blocks {
-      width: 100%; } }
+      width: 100%;
+      /* MDL-63102 - Remove extra space at bottom.
+        If modifying make sure block-region is horizontally stacked when in full screen */
+      display: block; } }
 
 @media (max-width: 1199.98px) {
   [data-region="blocks-column"] {
     width: 100%; } }
 
-.progress-chart-container {
-  height: 70px;
-  width: 70px; }
-  .progress-chart-container .progress-doughnut {
-    position: relative;
-    height: 70px;
-    width: 70px;
-    background-clip: padding-box;
-    border: 15px solid #dee2e6;
-    border-radius: 50%;
-    box-sizing: border-box; }
-    .progress-chart-container .progress-doughnut .progress-text {
-      position: absolute;
-      top: 50%;
-      /*rtl:ignore*/
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: #dee2e6; }
-      .progress-chart-container .progress-doughnut .progress-text.has-percent {
-        color: #ff7518; }
-    .progress-chart-container .progress-doughnut .progress-indicator {
-      position: absolute;
-      top: -15px;
-      left: -15px;
-      height: 70px;
-      width: 70px; }
-      .progress-chart-container .progress-doughnut .progress-indicator svg {
-        position: relative;
-        height: 100%;
-        width: 100%; }
-        .progress-chart-container .progress-doughnut .progress-indicator svg .circle {
-          stroke-width: 15px;
-          stroke: #ff7518;
-          fill: none;
-          stroke-dasharray: 173;
-          stroke-dashoffset: 173;
-          transform: rotate(-90deg);
-          transform-origin: center center; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-1 {
-            stroke-dashoffset: 171.27; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-2 {
-            stroke-dashoffset: 169.54; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-3 {
-            stroke-dashoffset: 167.81; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-4 {
-            stroke-dashoffset: 166.08; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-5 {
-            stroke-dashoffset: 164.35; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-6 {
-            stroke-dashoffset: 162.62; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-7 {
-            stroke-dashoffset: 160.89; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-8 {
-            stroke-dashoffset: 159.16; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-9 {
-            stroke-dashoffset: 157.43; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-10 {
-            stroke-dashoffset: 155.7; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-11 {
-            stroke-dashoffset: 153.97; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-12 {
-            stroke-dashoffset: 152.24; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-13 {
-            stroke-dashoffset: 150.51; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-14 {
-            stroke-dashoffset: 148.78; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-15 {
-            stroke-dashoffset: 147.05; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-16 {
-            stroke-dashoffset: 145.32; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-17 {
-            stroke-dashoffset: 143.59; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-18 {
-            stroke-dashoffset: 141.86; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-19 {
-            stroke-dashoffset: 140.13; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-20 {
-            stroke-dashoffset: 138.4; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-21 {
-            stroke-dashoffset: 136.67; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-22 {
-            stroke-dashoffset: 134.94; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-23 {
-            stroke-dashoffset: 133.21; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-24 {
-            stroke-dashoffset: 131.48; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-25 {
-            stroke-dashoffset: 129.75; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-26 {
-            stroke-dashoffset: 128.02; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-27 {
-            stroke-dashoffset: 126.29; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-28 {
-            stroke-dashoffset: 124.56; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-29 {
-            stroke-dashoffset: 122.83; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-30 {
-            stroke-dashoffset: 121.1; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-31 {
-            stroke-dashoffset: 119.37; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-32 {
-            stroke-dashoffset: 117.64; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-33 {
-            stroke-dashoffset: 115.91; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-34 {
-            stroke-dashoffset: 114.18; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-35 {
-            stroke-dashoffset: 112.45; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-36 {
-            stroke-dashoffset: 110.72; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-37 {
-            stroke-dashoffset: 108.99; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-38 {
-            stroke-dashoffset: 107.26; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-39 {
-            stroke-dashoffset: 105.53; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-40 {
-            stroke-dashoffset: 103.8; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-41 {
-            stroke-dashoffset: 102.07; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-42 {
-            stroke-dashoffset: 100.34; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-43 {
-            stroke-dashoffset: 98.61; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-44 {
-            stroke-dashoffset: 96.88; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-45 {
-            stroke-dashoffset: 95.15; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-46 {
-            stroke-dashoffset: 93.42; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-47 {
-            stroke-dashoffset: 91.69; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-48 {
-            stroke-dashoffset: 89.96; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-49 {
-            stroke-dashoffset: 88.23; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-50 {
-            stroke-dashoffset: 86.5; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-51 {
-            stroke-dashoffset: 84.77; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-52 {
-            stroke-dashoffset: 83.04; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-53 {
-            stroke-dashoffset: 81.31; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-54 {
-            stroke-dashoffset: 79.58; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-55 {
-            stroke-dashoffset: 77.85; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-56 {
-            stroke-dashoffset: 76.12; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-57 {
-            stroke-dashoffset: 74.39; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-58 {
-            stroke-dashoffset: 72.66; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-59 {
-            stroke-dashoffset: 70.93; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-60 {
-            stroke-dashoffset: 69.2; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-61 {
-            stroke-dashoffset: 67.47; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-62 {
-            stroke-dashoffset: 65.74; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-63 {
-            stroke-dashoffset: 64.01; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-64 {
-            stroke-dashoffset: 62.28; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-65 {
-            stroke-dashoffset: 60.55; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-66 {
-            stroke-dashoffset: 58.82; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-67 {
-            stroke-dashoffset: 57.09; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-68 {
-            stroke-dashoffset: 55.36; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-69 {
-            stroke-dashoffset: 53.63; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-70 {
-            stroke-dashoffset: 51.9; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-71 {
-            stroke-dashoffset: 50.17; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-72 {
-            stroke-dashoffset: 48.44; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-73 {
-            stroke-dashoffset: 46.71; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-74 {
-            stroke-dashoffset: 44.98; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-75 {
-            stroke-dashoffset: 43.25; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-76 {
-            stroke-dashoffset: 41.52; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-77 {
-            stroke-dashoffset: 39.79; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-78 {
-            stroke-dashoffset: 38.06; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-79 {
-            stroke-dashoffset: 36.33; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-80 {
-            stroke-dashoffset: 34.6; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-81 {
-            stroke-dashoffset: 32.87; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-82 {
-            stroke-dashoffset: 31.14; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-83 {
-            stroke-dashoffset: 29.41; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-84 {
-            stroke-dashoffset: 27.68; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-85 {
-            stroke-dashoffset: 25.95; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-86 {
-            stroke-dashoffset: 24.22; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-87 {
-            stroke-dashoffset: 22.49; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-88 {
-            stroke-dashoffset: 20.76; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-89 {
-            stroke-dashoffset: 19.03; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-90 {
-            stroke-dashoffset: 17.3; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-91 {
-            stroke-dashoffset: 15.57; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-92 {
-            stroke-dashoffset: 13.84; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-93 {
-            stroke-dashoffset: 12.11; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-94 {
-            stroke-dashoffset: 10.38; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-95 {
-            stroke-dashoffset: 8.65; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-96 {
-            stroke-dashoffset: 6.92; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-97 {
-            stroke-dashoffset: 5.19; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-98 {
-            stroke-dashoffset: 3.46; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-99 {
-            stroke-dashoffset: 1.73; }
-          .progress-chart-container .progress-doughnut .progress-indicator svg .circle.percent-100 {
-            stroke-dashoffset: 0; }
-  .progress-chart-container .no-progress {
-    height: 70px;
-    width: 70px;
-    background-color: #dee2e6;
-    border-radius: 50%;
-    position: relative; }
-    .progress-chart-container .no-progress .icon {
-      position: absolute;
-      top: 50%;
-      /*rtl:ignore*/
-      left: 50%;
-      margin: 0;
-      transform: translate(-63%, -50%);
-      color: #fff;
-      height: 45px;
-      width: 45px;
-      font-size: 45px; }
+.block .empty-placeholder-image-lg {
+  height: 5rem; }
 
-.block_myoverview .event-list-item .event-icon {
-  vertical-align: middle; }
-  .block_myoverview .event-list-item .event-icon::before {
-    content: '';
-    display: inline-block;
-    height: 100%;
-    vertical-align: middle; }
+.block .block-cards .course-info-container {
+  padding: 0.8rem; }
 
-.block_myoverview .event-list-item .event-name-container {
-  vertical-align: middle;
-  max-width: calc(100% - 50px); }
-  .block_myoverview .event-list-item .event-name-container .event-name {
-    display: block; }
+.block .block-cards .progress {
+  height: 0.5rem; }
 
-.block_myoverview .content-centred {
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto; }
+.block .block-cards .course-summaryitem {
+  border: 1px solid #dee2e6;
+  background-color: #fff; }
 
-.block_myoverview .empty-placeholder-image-sm {
-  height: 50px; }
+.block .block-cards .icon {
+  margin-right: 0; }
+  .block .block-cards .icon.fa-star {
+    color: #1177d1; }
 
-.block_myoverview .empty-placeholder-image-lg {
-  height: 125px; }
+.block .block-cards .card .coursemenubtn, .block .block-cards #page-enrol-users #filterform .coursemenubtn, #page-enrol-users .block .block-cards #filterform .coursemenubtn, .block .block-cards .que .history .coursemenubtn, .que .block .block-cards .history .coursemenubtn, .block .block-cards .userprofile .profile_tree section .coursemenubtn, .userprofile .profile_tree .block .block-cards section .coursemenubtn, .block .block-cards .groupinfobox .coursemenubtn, .block .block-cards .well .coursemenubtn {
+  margin-top: -0.5rem; }
 
-.card-deck .card, .card-deck #page-enrol-users #filterform, #page-enrol-users .card-deck #filterform, .card-deck .que .history, .que .card-deck .history, .card-deck .userprofile .profile_tree section, .userprofile .profile_tree .card-deck section, .card-deck .groupinfobox, .card-deck .well {
+.block .block-cards a.coursename,
+.block .block-cards .btn-link {
+  color: inherit; }
+
+.block .block-cards .btn.btn-link.btn-icon, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion {
+  height: 36px;
+  width: 36px;
+  padding: 0;
+  border-radius: 50%; }
+  .block .block-cards .btn.btn-link.btn-icon:hover, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action:hover, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon:hover, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion:hover, .block .block-cards .btn.btn-link.btn-icon:focus, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action:focus, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon:focus, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion:focus {
+    background-color: #e9ecef; }
+
+.dashboard-card-deck.one-row {
+  flex-flow: nowrap;
+  overflow-x: scroll; }
+
+.summaryimage {
+  height: 7rem;
+  width: 7rem;
+  background-position: center;
+  background-size: cover; }
+
+.dashboard-card-deck .dashboard-card {
+  margin-bottom: 0.5rem;
+  flex-basis: auto;
+  width: 100%;
   flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: calc(50% - 30px); }
-
-.card-deck .myoverviewimg {
-  height: 150px; }
-  .card-deck .myoverviewimg.courseimage {
+  flex-shrink: 0; }
+  .dashboard-card-deck .dashboard-card .dashboard-card-img {
+    height: 7rem;
     background-position: center;
     background-size: cover; }
+  .dashboard-card-deck .dashboard-card .dashboard-card-footer {
+    padding: 0.8rem; }
+
+@media (min-width: 576px) {
+  .dashboard-card-deck .dashboard-card {
+    width: calc(50% - 0.5rem); } }
+
+@media (min-width: 840px) {
+  .dashboard-card-deck .dashboard-card {
+    width: calc(33.33% - 0.5rem); } }
+
+@media (min-width: 1100px) {
+  .dashboard-card-deck .dashboard-card {
+    width: calc(25% - 0.5rem); } }
+
+@media (min-width: 1360px) {
+  .dashboard-card-deck .dashboard-card {
+    width: calc(20% - 0.5rem); } }
+
+@media (min-width: 1200px) {
+  #region-main.has-blocks .dashboard-card-deck .dashboard-card {
+    width: calc(33.33% - 0.5rem); } }
+
+@media (min-width: 1470px) {
+  #region-main.has-blocks .dashboard-card-deck .dashboard-card {
+    width: calc(25% - 0.5rem); } }
+
+@media (min-width: 768px) {
+  body.drawer-open-left .dashboard-card-deck .dashboard-card {
+    width: calc(100% - 0.5rem); } }
+
+@media (min-width: 861px) {
+  body.drawer-open-left .dashboard-card-deck .dashboard-card {
+    width: calc(50% - 0.5rem); } }
+
+@media (min-width: 1122px) {
+  body.drawer-open-left .dashboard-card-deck .dashboard-card {
+    width: calc(33.33% - 0.5rem); } }
+
+@media (min-width: 1381px) {
+  body.drawer-open-left .dashboard-card-deck .dashboard-card {
+    width: calc(25% - 0.5rem); } }
+
+@media (min-width: 1200px) {
+  body.drawer-open-left #region-main.has-blocks .dashboard-card-deck .dashboard-card {
+    width: calc(100% - 0.5rem); } }
+
+@media (min-width: 1236px) {
+  body.drawer-open-left #region-main.has-blocks .dashboard-card-deck .dashboard-card {
+    width: calc(50% - 0.5rem); } }
+
+@media (min-width: 1497px) {
+  body.drawer-open-left #region-main.has-blocks .dashboard-card-deck .dashboard-card {
+    width: calc(33.33% - 0.5rem); } }
+
+@media (min-width: 1200px) {
+  #block-region-side-pre .dashboard-card-deck {
+    margin-left: 0;
+    margin-right: 0; }
+    #block-region-side-pre .dashboard-card-deck .dashboard-card {
+      width: calc(100% - 0.5rem) !important; } }
+
+.block_recentlyaccesseditems img.icon {
+  height: auto;
+  width: auto;
+  margin-right: 6px; }
+
+.block_myoverview .content {
+  min-height: 19.35rem; }
+
+.block_myoverview .paged-content-page-container {
+  min-height: 13rem; }
 
 .block_settings .block_tree [aria-expanded="true"],
 .block_settings .block_tree [aria-expanded="true"].emptybranch,
@@ -11856,7 +11861,7 @@ table.calendartable caption {
   padding: 0; }
   .course-content ul.topics li.section,
   .course-content ul.weeks li.section {
-    padding-top: 1rem;
+    margin-top: 1rem;
     padding-bottom: 1rem; }
     .course-content ul.topics li.section .content,
     .course-content ul.weeks li.section .content {
@@ -12496,10 +12501,12 @@ span.editinstructions {
   font-size: 32px; }
 
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
-:target {
-  padding-top: 80px !important;
-  /* stylelint-disable declaration-no-important */
-  margin-top: -50px !important;
+:target::before {
+  content: " ";
+  display: block;
+  height: 60px;
+  /* fixed header height*/
+  margin-top: -60px;
   /* negative fixed header height */ }
 
 .pagelayout-embedded :target {
@@ -12549,6 +12556,9 @@ body.drawer-ease {
 @media (min-width: 768px) {
   body.drawer-open-right {
     margin-right: 285px; } }
+
+#page-my-index {
+  background-color: #f8f9fa; }
 
 .fp-content-center {
   height: 100%;
@@ -14069,6 +14079,115 @@ a.ygtvspacer:hover {
       opacity: 1;
       visibility: visible;
       transition: right 0.25s; } }
+
+.message-drawer {
+  position: fixed;
+  top: 50px;
+  right: 0;
+  height: calc(100% - 50px);
+  width: 320px;
+  z-index: 1020;
+  box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease-in-out; }
+  .message-drawer.hidden {
+    display: block;
+    right: -320px; }
+  .message-drawer .header-container {
+    flex-shrink: 0; }
+  .message-drawer .body-container {
+    flex: 1;
+    overflow: hidden; }
+    .message-drawer .body-container > * {
+      position: absolute;
+      right: 0;
+      left: 0;
+      top: 0;
+      bottom: 0; }
+  .message-drawer .footer-container {
+    flex-shrink: 0;
+    overflow-x: hidden; }
+  .message-drawer .matchtext {
+    background-color: #b5d9f9;
+    color: #373a3c;
+    height: 1.5rem; }
+  .message-drawer .contact-status {
+    position: absolute;
+    left: 39px;
+    top: 39px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%; }
+    .message-drawer .contact-status.online {
+      border: 1px solid #fff;
+      background-color: #5cb85c; }
+  .message-drawer .message p {
+    margin: 0; }
+  .message-drawer .clickable {
+    cursor: pointer; }
+    .message-drawer .clickable:hover {
+      box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.05), 3px 3px 5px -2px rgba(0, 0, 0, 0.1), 1px 1px 5px 0 rgba(0, 0, 0, 0.03); }
+  .message-drawer a,
+  .message-drawer .btn-link {
+    color: inherit; }
+  .message-drawer .icon {
+    margin-right: 0; }
+  .message-drawer .overview-section-toggle .collapsed-icon-container {
+    display: none; }
+  .message-drawer .overview-section-toggle .expanded-icon-container {
+    display: inline-block; }
+  .message-drawer .overview-section-toggle.collapsed .collapsed-icon-container {
+    display: inline-block; }
+  .message-drawer .overview-section-toggle.collapsed .expanded-icon-container {
+    display: none; }
+  .message-drawer .btn.btn-link.btn-icon, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.action, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.action, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.addcriterion {
+    height: 16px;
+    width: 16px;
+    padding: 0;
+    border-radius: 50%;
+    flex-shrink: 0; }
+    .message-drawer .btn.btn-link.btn-icon:hover, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.action:hover, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.action:hover, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:hover, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon:hover, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:hover, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.addcriterion:hover, .message-drawer .btn.btn-link.btn-icon:focus, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.action:focus, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.action:focus, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon:focus, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon:focus, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion:focus, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.addcriterion:focus {
+      background-color: #e9ecef; }
+    .message-drawer .btn.btn-link.btn-icon.icon-size-0, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-0.action, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.icon-size-0.action, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-0, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon.icon-size-0, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-0.addcriterion, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.icon-size-0.addcriterion {
+      height: 20px !important;
+      /* stylelint-disable-line declaration-no-important */
+      width: 20px !important;
+      /* stylelint-disable-line declaration-no-important */ }
+    .message-drawer .btn.btn-link.btn-icon.icon-size-1, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-1.action, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.icon-size-1.action, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-1, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon.icon-size-1, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-1.addcriterion, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.icon-size-1.addcriterion {
+      height: 24px !important;
+      /* stylelint-disable-line declaration-no-important */
+      width: 24px !important;
+      /* stylelint-disable-line declaration-no-important */ }
+    .message-drawer .btn.btn-link.btn-icon.icon-size-2, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-2.action, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.icon-size-2.action, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-2, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon.icon-size-2, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-2.addcriterion, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.icon-size-2.addcriterion {
+      height: 28px !important;
+      /* stylelint-disable-line declaration-no-important */
+      width: 28px !important;
+      /* stylelint-disable-line declaration-no-important */ }
+    .message-drawer .btn.btn-link.btn-icon.icon-size-3, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-3.action, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.icon-size-3.action, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-3, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon.icon-size-3, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-3.addcriterion, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.icon-size-3.addcriterion {
+      height: 36px !important;
+      /* stylelint-disable-line declaration-no-important */
+      width: 36px !important;
+      /* stylelint-disable-line declaration-no-important */ }
+    .message-drawer .btn.btn-link.btn-icon.icon-size-4, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-4.action, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.icon-size-4.action, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-4, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon.icon-size-4, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-4.addcriterion, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.icon-size-4.addcriterion {
+      height: 44px !important;
+      /* stylelint-disable-line declaration-no-important */
+      width: 44px !important;
+      /* stylelint-disable-line declaration-no-important */ }
+    .message-drawer .btn.btn-link.btn-icon.icon-size-5, .message-drawer #page-grade-grading-manage .actions .btn-link.btn-icon.icon-size-5.action, #page-grade-grading-manage .actions .message-drawer .btn-link.btn-icon.icon-size-5.action, .message-drawer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon.icon-size-5, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .message-drawer input.btn-link.btn-icon.icon-size-5, .message-drawer #rubric-rubric.gradingform_rubric .btn-link.btn-icon.icon-size-5.addcriterion, #rubric-rubric.gradingform_rubric .message-drawer .btn-link.btn-icon.icon-size-5.addcriterion {
+      height: 68px !important;
+      /* stylelint-disable-line declaration-no-important */
+      width: 68px !important;
+      /* stylelint-disable-line declaration-no-important */ }
+  .message-drawer .view-overview-body .section {
+    display: block; }
+    .message-drawer .view-overview-body .section.expanded {
+      display: flex; }
+  .message-drawer .view-conversation .content-message-container img {
+    max-width: 100%; }
+
+.dir-rtl .message-drawer {
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08); }
 
 @media (max-width: 480px) {
   .messaging-area-container .messaging-area .messages-area.editing .messages-header {
@@ -16238,20 +16357,26 @@ p.arrow_button {
 /**
  * Grader report.
  */
-.path-grade-report .gradeparent tr .cell {
+.path-grade-report-grader .gradeparent tr .cell {
   background-color: #fff; }
 
-.path-grade-report .gradeparent table,
-.path-grade-report .gradeparent .cell {
+.path-grade-report-grader .gradeparent table,
+.path-grade-report-grader .gradeparent .cell {
   border-color: #dee2e6; }
 
-.path-grade-report .gradeparent tr:nth-of-type(even) .cell,
-.path-grade-report .gradeparent .floater .cell,
-.path-grade-report .gradeparent .avg {
+.path-grade-report-grader .gradeparent tr:nth-of-type(even) .cell,
+.path-grade-report-grader .gradeparent .floater .cell,
+.path-grade-report-grader .gradeparent .avg {
   background-color: #f8f9fa; }
 
-.path-grade-report .gradeparent table .clickable {
+.path-grade-report-grader .gradeparent table .clickable {
   cursor: pointer; }
+
+.path-grade-report-grader #page-header.row {
+  flex: 1 0 auto; }
+
+.path-grade-report-grader #page-wrapper #page {
+  flex-flow: wrap; }
 
 /**
  * User report.
@@ -16490,18 +16615,17 @@ body {
   height: 100%; }
 
 #page-wrapper {
-  min-height: 100%;
-  padding-bottom: 1rem;
-  margin-bottom: -130px; }
-
-#page-wrapper::after {
-  content: "";
-  display: block;
-  min-height: 130px; }
-
-#page-footer {
-  min-height: 130px;
-  text-align: left; }
+  height: 100%;
+  display: flex;
+  flex-direction: column; }
+  #page-wrapper #page {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column; }
+    #page-wrapper #page #page-content {
+      flex: 1 0 auto; }
+  #page-wrapper #page-footer {
+    flex-shrink: 0; }
 
 .popover-region {
   float: right;
@@ -17004,3 +17128,27 @@ body {
 
 .userpicture {
   border-radius: 50%; }
+
+.btn-outline-secondary {
+  color: #868e96;
+  background-color: transparent;
+  background-image: none;
+  border-color: #868e96;
+  border-color: #dee2e6; }
+  .btn-outline-secondary:hover {
+    color: #fff;
+    background-color: #868e96;
+    border-color: #868e96; }
+  .btn-outline-secondary:focus, .btn-outline-secondary.focus {
+    box-shadow: 0 0 0 0.2rem rgba(134, 142, 150, 0.5); }
+  .btn-outline-secondary.disabled, .btn-outline-secondary:disabled {
+    color: #868e96;
+    background-color: transparent; }
+  .btn-outline-secondary:not(:disabled):not(.disabled):active, .btn-outline-secondary:not(:disabled):not(.disabled).active,
+  .show > .btn-outline-secondary.dropdown-toggle {
+    color: #fff;
+    background-color: #868e96;
+    border-color: #868e96; }
+    .btn-outline-secondary:not(:disabled):not(.disabled):active:focus, .btn-outline-secondary:not(:disabled):not(.disabled).active:focus,
+    .show > .btn-outline-secondary.dropdown-toggle:focus {
+      box-shadow: 0 0 0 0.2rem rgba(134, 142, 150, 0.5); }

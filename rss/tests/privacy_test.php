@@ -23,10 +23,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\tests\provider_testcase;
-use \core_rss\privacy\provider;
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\approved_contextlist;
+use core_privacy\tests\provider_testcase;
+use core_rss\privacy\provider;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Unit tests for rss\classes\privacy\provider.php
@@ -126,5 +127,91 @@ class core_rss_testcase extends provider_testcase {
         // After deletion, the user_private_key entries should have been deleted.
         $count = $DB->count_records('user_private_key', ['script' => 'rss']);
         $this->assertEquals(0, $count);
+    }
+
+    /**
+     * Test that only users with a user context are fetched.
+     */
+    public function test_get_users_in_context() {
+        $component = 'core_rss';
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+
+        $usercontext = \context_user::instance($user->id);
+        $userlist = new \core_privacy\local\request\userlist($usercontext, $component);
+        // The list of users should not return anything yet (related data still haven't been created).
+        provider::get_users_in_context($userlist);
+        $this->assertCount(0, $userlist);
+        // Create private access key for user.
+        get_user_key('rss', $user->id);
+
+        // The list of users for user context should return the user.
+        provider::get_users_in_context($userlist);
+        $this->assertCount(1, $userlist);
+        $expected = [$user->id];
+        $actual = $userlist->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        // The list of users for system context should not return any users.
+        $systemcontext = context_system::instance();
+        $userlist = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(0, $userlist);
+    }
+
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        $component = 'core_rss';
+        // Create a user1.
+        $user1 = $this->getDataGenerator()->create_user();
+        $usercontext1 = \context_user::instance($user1->id);
+        // Create list of users with a related user data in usercontext1.
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
+
+        // Create a user1.
+        $user2 = $this->getDataGenerator()->create_user();
+        $usercontext2 = \context_user::instance($user2->id);
+        // Create list of users with a related user data in usercontext2.
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+
+        // Create private access key for user1.
+        get_user_key('rss', $user1->id);
+        // Create private access key for user2.
+        get_user_key('rss', $user2->id);
+
+        // Ensure the user list for usercontext1 contains user1.
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(1, $userlist1);
+        // Ensure the user list for usercontext2 contains user2.
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+
+        // Convert $userlist1 into an approved_contextlist.
+        $approvedlist = new approved_userlist($usercontext1, $component, $userlist1->get_userids());
+
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist);
+
+        // Re-fetch users in usercontext1 - The user list should now be empty.
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(0, $userlist1);
+        // Re-fetch users in usercontext2 - The user list should not be empty (user2).
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(1, $userlist2);
+
+        // User data should be only removed in the user context.
+        $systemcontext = context_system::instance();
+        // Add userlist2 to the approved user list in the system context.
+        $approvedlist = new approved_userlist($systemcontext, $component, $userlist2->get_userids());
+        // Delete user1 data using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist);
+        // Re-fetch users in usercontext2 - The user list should not be empty (user2).
+        $userlist1 = new \core_privacy\local\request\userlist($usercontext2, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(1, $userlist1);
     }
 }

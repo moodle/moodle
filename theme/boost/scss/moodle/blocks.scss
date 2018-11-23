@@ -25,7 +25,7 @@
     }
 }
 
-$blocks-column-width: 250px !default;
+$blocks-column-width: 360px !default;
 
 [data-region="blocks-column"] {
     width: $blocks-column-width;
@@ -57,16 +57,15 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
 }
 
 // Required for IE11 to prevent blocks being pushed under the content.
-#region-main {
-    float: left;
-    width: 100%;
-}
 #region-main-settings-menu.has-blocks,
 #region-main.has-blocks {
     display: inline-block;
     width: calc(100% - #{$blocks-plus-gutter});
     @include media-breakpoint-down(lg) {
         width: 100%;
+        /* MDL-63102 - Remove extra space at bottom.
+        If modifying make sure block-region is horizontally stacked when in full screen */
+        display: block;
     }
 }
 
@@ -76,142 +75,185 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
     }
 }
 
-$chart-size: 70px;
-$doughnut-border-size: 15px;
-$doughnut-dasharray: 173;
-$doughnut-empty-colour: $gray-lighter;
-$doughnut-fill-colour: $brand-warning;
+$card-gutter : $card-deck-margin * 2;
 
-.progress-chart-container {
-    height: $chart-size;
-    width: $chart-size;
+.block .empty-placeholder-image-lg {
+    height: 5rem;
+}
 
-    .progress-doughnut {
-        position: relative;
-        height: $chart-size;
-        width: $chart-size;
-        background-clip: padding-box;
-        border: $doughnut-border-size solid $doughnut-empty-colour;
+.block .block-cards {
+    .course-info-container {
+        padding: 0.8rem;
+    }
+    .progress {
+        height: 0.5rem;
+    }
+    .course-summaryitem {
+        border: $border-width solid $border-color;
+        background-color: $body-bg;
+    }
+    .icon {
+        margin-right: 0;
+        &.fa-star {
+            color: $blue;
+        }
+    }
+    .card .coursemenubtn {
+        margin-top: -0.5rem;
+    }
+    a.coursename,
+    .btn-link {
+        color: inherit;
+    }
+    .btn.btn-link.btn-icon {
+        height: 36px;
+        width: 36px;
+        padding: 0;
         border-radius: 50%;
-        box-sizing: border-box;
 
-        .progress-text {
-            position: absolute;
-            top: 50%;
-            /*rtl:ignore*/
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: $doughnut-empty-colour;
+        @include hover-focus {
+            background-color: $gray-200;
+        }
+    }
+}
 
-            &.has-percent {
-                color: $doughnut-fill-colour;
+.dashboard-card-deck.one-row {
+    flex-flow: nowrap;
+    overflow-x: scroll;
+}
+
+.summaryimage {
+    height: 7rem;
+    width: 7rem;
+    background-position: center;
+    background-size: cover;
+}
+
+.dashboard-card-deck .dashboard-card {
+    margin-bottom: $card-gutter;
+    flex-basis: auto;
+    width: 100%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    .dashboard-card-img {
+        height: 7rem;
+        background-position: center;
+        background-size: cover;
+    }
+    .dashboard-card-footer {
+        padding: 0.8rem;
+    }
+}
+
+.dashboard-card-deck {
+    @media (min-width: 576px) {
+        .dashboard-card {
+            width: calc(50% - #{$card-gutter});
+        }
+    }
+    @media (min-width: 840px) {
+        .dashboard-card {
+            width: calc(33.33% - #{$card-gutter});
+        }
+    }
+    @media (min-width: 1100px) {
+        .dashboard-card {
+            width: calc(25% - #{$card-gutter});
+        }
+    }
+    @media (min-width: 1360px) {
+        .dashboard-card {
+            width: calc(20% - #{$card-gutter});
+        }
+    }
+}
+
+#region-main.has-blocks {
+    .dashboard-card-deck {
+        @media (min-width: 1200px) {
+            .dashboard-card {
+                width: calc(33.33% - #{$card-gutter});
             }
         }
-
-        .progress-indicator {
-            position: absolute;
-            top: ($doughnut-border-size * -1);
-            left: ($doughnut-border-size * -1);
-            height: $chart-size;
-            width: $chart-size;
-
-            svg {
-                position: relative;
-                height: 100%;
-                width: 100%;
-
-                .circle {
-                    stroke-width: $doughnut-border-size;
-                    stroke: $doughnut-fill-colour;
-                    fill: none;
-                    stroke-dasharray: $doughnut-dasharray;
-                    stroke-dashoffset: $doughnut-dasharray;
-                    transform: rotate(-90deg);
-                    transform-origin: center center;
-
-                    @for $i from 1 through 100 {
-                        &.percent-#{$i} {
-                            stroke-dashoffset: $doughnut-dasharray - ($i / 100 * $doughnut-dasharray);
-                        }
-                    }
-                }
+        @media (min-width: 1470px) {
+            .dashboard-card {
+                width: calc(25% - #{$card-gutter});
             }
         }
     }
+}
 
-    .no-progress {
-        height: $chart-size;
-        width: $chart-size;
-        background-color: $doughnut-empty-colour;
-        border-radius: 50%;
-        position: relative;
-
-        .icon {
-            position: absolute;
-            top: 50%;
-            /*rtl:ignore*/
-            left: 50%;
-            margin: 0;
-            transform: translate(-63%, -50%);
-            color: #fff;
-            height: ($chart-size / 2) + 10px;
-            width: ($chart-size / 2) + 10px;
-            font-size: ($chart-size / 2) + 10px;
+body.drawer-open-left {
+    .dashboard-card-deck {
+        @media (min-width: 768px) {
+            .dashboard-card {
+                width: calc(100% - #{$card-gutter});
+            }
         }
+        @media (min-width: 861px) {
+            .dashboard-card {
+                width: calc(50% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 1122px) {
+            .dashboard-card {
+                width: calc(33.33% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 1381px) {
+            .dashboard-card {
+                width: calc(25% - #{$card-gutter});
+            }
+        }
+    }
+}
+
+body.drawer-open-left #region-main.has-blocks {
+    .dashboard-card-deck {
+        @media (min-width: 1200px) {
+            .dashboard-card {
+                width: calc(100% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 1236px) {
+            .dashboard-card {
+                width: calc(50% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 1497px) {
+            .dashboard-card {
+                width: calc(33.33% - #{$card-gutter});
+            }
+        }
+    }
+}
+
+@media (min-width: 1200px) {
+    #block-region-side-pre {
+        .dashboard-card-deck {
+            margin-left: 0;
+            margin-right: 0;
+            .dashboard-card {
+                width: calc(100% - #{$card-gutter}) !important;
+            }
+        }
+    }
+}
+
+.block_recentlyaccesseditems {
+    img.icon {
+        height: auto;
+        width: auto;
+        margin-right: 6px;
     }
 }
 
 .block_myoverview {
-    .event-list-item {
-        .event-icon {
-            vertical-align: middle;
-
-            &::before {
-                content: '';
-                display: inline-block;
-                height: 100%;
-                vertical-align: middle;
-            }
-        }
-
-        .event-name-container {
-            vertical-align: middle;
-            max-width: calc(100% - 50px);
-
-            .event-name {
-                display: block;
-            }
-        }
+    .content {
+        min-height: 19.35rem;
     }
-
-    .content-centred {
-        max-width: 900px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .empty-placeholder-image-sm {
-        height: 50px;
-    }
-
-    .empty-placeholder-image-lg {
-        height: 125px;
-    }
-}
-
-.card-deck {
-    .card {
-        $card-gutter : $card-deck-margin * 2;
-        flex-grow: 0;
-        flex-shrink: 0;
-        flex-basis: calc(50% - #{$card-gutter});
-    }
-    .myoverviewimg {
-        height: 150px;
-        &.courseimage {
-            background-position: center;
-            background-size: cover;
-        }
+    .paged-content-page-container {
+        min-height: 13rem;
     }
 }
 

@@ -49,7 +49,8 @@ require_once($CFG->dirroot . '/blog/locallib.php');
  */
 class provider implements
     \core_privacy\local\metadata\provider,
-    \core_privacy\local\request\subsystem\provider {
+    \core_privacy\local\request\subsystem\provider,
+    \core_privacy\local\request\core_userlist_provider {
 
     /**
      * Returns metadata.
@@ -165,6 +166,53 @@ class provider implements
     }
 
     /**
+     * Get the list of users who have data within a context.
+     *
+     * @param \core_privacy\local\request\userlist $userlist The userlist containing the list of users who have
+     * data in this context/plugin combination.
+     */
+    public static function get_users_in_context(\core_privacy\local\request\userlist $userlist) {
+        global $DB;
+        $context = $userlist->get_context();
+        if ($context->contextlevel == CONTEXT_COURSE || $context->contextlevel == CONTEXT_MODULE) {
+
+            $params = ['contextid' => $context->id];
+
+            $sql = "SELECT p.id, p.userid
+                      FROM {post} p
+                      JOIN {blog_association} ba ON ba.blogid = p.id AND ba.contextid = :contextid";
+
+            $posts = $DB->get_records_sql($sql, $params);
+            $userids = array_map(function($post) {
+                return $post->userid;
+            }, $posts);
+            $userlist->add_users($userids);
+
+            if (!empty($posts)) {
+                // Add any user's who posted on the blog.
+                list($insql, $inparams) = $DB->get_in_or_equal(array_keys($posts), SQL_PARAMS_NAMED);
+                \core_comment\privacy\provider::get_users_in_context_from_sql($userlist, 'c', 'blog', 'format_blog', null, $insql,
+                    $inparams);
+            }
+        } else if ($context->contextlevel == CONTEXT_USER) {
+            $params = ['userid' => $context->instanceid];
+
+            $sql = "SELECT userid
+                      FROM {blog_external}
+                     WHERE userid = :userid";
+            $userlist->add_from_sql('userid', $sql, $params);
+
+            $sql = "SELECT userid
+                      FROM {post}
+                     WHERE userid = :userid";
+            $userlist->add_from_sql('userid', $sql, $params);
+
+            // Add any user's who posted on the blog.
+            \core_comment\privacy\provider::get_users_in_context_from_sql($userlist, 'c', 'blog', 'format_blog', $context->id);
+        }
+    }
+
+    /**
      * Export all user data for the specified user, in the specified contexts.
      *
      * @param approved_contextlist $contextlist The approved contexts to export information for.
@@ -203,7 +251,7 @@ class provider implements
 
                         if (empty($entryids)) {
                             // This should not happen, as the user context should not have been reported then.
-                            continue;
+                            continue 2;
                         }
 
                         list($insql, $inparams) = $DB->get_in_or_equal($entryids, SQL_PARAMS_NAMED);
@@ -414,6 +462,42 @@ class provider implements
 
             list($insql, $inparams) = $DB->get_in_or_equal($associds, SQL_PARAMS_NAMED, 'param', true);
             $DB->delete_records_select('blog_association', "id $insql", $inparams);
+        }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(\core_privacy\local\request\approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        $userids = $userlist->get_userids();
+
+        if ($context->contextlevel == CONTEXT_USER) {
+            // If one of the listed users matches this context then delete the blog, associations, and comments.
+            if (array_search($context->instanceid, $userids) !== false) {
+                self::delete_all_user_data($context);
+                \core_comment\privacy\provider::delete_comments_for_all_users($context, 'blog', 'format_blog');
+                return;
+            }
+            \core_comment\privacy\provider::delete_comments_for_users($userlist, 'blog', 'format_blog');
+        } else {
+            list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+            $sql = "SELECT ba.id
+                      FROM {blog_association} ba
+                      JOIN {post} p ON p.id = ba.blogid
+                     WHERE ba.contextid = :contextid
+                       AND p.userid $insql";
+            $inparams['contextid'] = $context->id;
+            $associds = $DB->get_fieldset_sql($sql, $inparams);
+
+            if (!empty($associds)) {
+                list($insql, $inparams) = $DB->get_in_or_equal($associds, SQL_PARAMS_NAMED, 'param', true);
+                $DB->delete_records_select('blog_association', "id $insql", $inparams);
+            }
         }
     }
 

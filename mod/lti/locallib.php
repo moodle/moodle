@@ -1278,8 +1278,8 @@ function lti_get_custom_parameters($toolproxy, $tool, $params, $parameters) {
  * @return string Parsed value of custom parameter
  */
 function lti_parse_custom_parameter($toolproxy, $tool, $params, $value, $islti2) {
-    // This is required as {${$valarr[0]}->{$valarr[1]}}" may be using the USER var.
-    global $USER;
+    // This is required as {${$valarr[0]}->{$valarr[1]}}" may be using the USER or COURSE var.
+    global $USER, $COURSE;
 
     if ($value) {
         if (substr($value, 0, 1) == '\\') {

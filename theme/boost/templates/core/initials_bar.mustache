@@ -73,24 +73,24 @@
          ]
     }
 }}
-<div class="initialbar {{class}} d-flex">
-    <span class="initialbarlabel">{{title}}</span>
-    <ul class="pagination pagination-sm">
-    {{#current}}
-        <li class="initialbarall page-item">
-            <a class="page-link" href="{{url}}">{{all}}</a>
-        </li>
-    {{/current}}
-    {{^current}}
-        <li class="initialbarall page-item active">
-            <a class="page-link">{{all}}</a>
-        </li>
-    {{/current}}
-    </ul>
-    <div class="initialbargroups d-flex">
+<div class="initialbar {{class}} d-flex flex-wrap justify-content-center justify-content-md-start">
+    <span class="initialbarlabel mr-2">{{title}}</span>
+
+    <div class="initialbargroups d-flex flex-wrap justify-content-center justify-content-md-start">
+        <ul class="pagination pagination-sm">
+        {{#current}}
+            <li class="initialbarall page-item">
+                <a class="page-link" href="{{url}}">{{all}}</a>
+            </li>
+        {{/current}}
+        {{^current}}
+            <li class="initialbarall page-item active">
+                <a class="page-link">{{all}}</a>
+            </li>
+        {{/current}}
+        </ul>
         {{#group}}
             <ul class="pagination pagination-sm">
-
                 {{#letter}}
                     {{#selected}}
                         <li class="page-item active {{name}}"><span class="page-link">{{name}}</span></li>

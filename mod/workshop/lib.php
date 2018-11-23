@@ -34,6 +34,9 @@ define('WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN',   'opensubmission');
 define('WORKSHOP_EVENT_TYPE_SUBMISSION_CLOSE',  'closesubmission');
 define('WORKSHOP_EVENT_TYPE_ASSESSMENT_OPEN',   'openassessment');
 define('WORKSHOP_EVENT_TYPE_ASSESSMENT_CLOSE',  'closeassessment');
+define('WORKSHOP_SUBMISSION_TYPE_DISABLED', 0);
+define('WORKSHOP_SUBMISSION_TYPE_AVAILABLE', 1);
+define('WORKSHOP_SUBMISSION_TYPE_REQUIRED', 2);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Moodle core API                                                            //

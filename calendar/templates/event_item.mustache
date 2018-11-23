@@ -49,14 +49,16 @@
                             {{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}
                         </a>
                     {{/candelete}}
-                    <a href="{{editurl}}" data-action="edit">
-                        {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}
-                    </a>
+                    {{^isactionevent}}
+                        <a href="{{editurl}}" data-action="edit">
+                            {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}
+                        </a>
+                    {{/isactionevent}}
                 {{/canedit}}
             </div>
             {{#icon}}<div class="d-inline-block mt-1 align-top">{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}</div>{{/icon}}
             <div class="d-inline-block">
-                <h3 class="name d-inline-block">{{name}}</h3>
+                <h3 class="name d-inline-block">{{{name}}}</h3>
                 <span class="date pull-xs-right m-r-1">{{{formattedtime}}}</span>
                 <div class="location">{{#location}}{{{location}}}{{/location}}</div>
             </div>

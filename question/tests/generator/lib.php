@@ -51,6 +51,7 @@ class core_question_generator extends component_generator_base {
             'infoformat' => FORMAT_HTML,
             'stamp'      => make_unique_id_code(),
             'sortorder'  => 999,
+            'idnumber'   => null
         );
 
         $record = $this->datagenerator->combine_defaults_and_record($defaults, $record);
@@ -87,6 +88,7 @@ class core_question_generator extends component_generator_base {
         $question->category  = $fromform->category;
         $question->qtype     = $qtype;
         $question->createdby = 0;
+        $question->idnumber = null;
 
         return $this->update_question($question, $which, $overrides);
     }
@@ -151,5 +153,72 @@ class core_question_generator extends component_generator_base {
         );
 
         return array($category, $course, $qcat, $questions);
+    }
+
+    /**
+     * This method can construct what the post data would be to simulate a user submitting
+     * responses to a number of questions within a question usage.
+     *
+     * In the responses array, the array keys are the slot numbers for which a response will
+     * be submitted. You can submit a response to any number of responses within the usage.
+     * There is no need to do them all. The values are a string representation of the response.
+     * The exact meaning of that depends on the particular question type. These strings
+     * are passed to the un_summarise_response method of the question to decode.
+     *
+     * @param question_usage_by_activity $quba the question usage.
+     * @param array $responses the resonses to submit, in the format described above.
+     * @param bool $checkbutton if simulate a click on the check button for each question, else simulate save.
+     *      This should only be used with behaviours that have a check button.
+     * @return array that can be passed to methods like $quba->process_all_actions as simulated POST data.
+     */
+    public function get_simulated_post_data_for_questions_in_usage(
+            question_usage_by_activity $quba, array $responses, $checkbutton) {
+        $postdata = [];
+
+        foreach ($responses as $slot => $responsesummary) {
+            $postdata += $this->get_simulated_post_data_for_question_attempt(
+                    $quba->get_question_attempt($slot), $responsesummary, $checkbutton);
+        }
+
+        return $postdata;
+    }
+
+    /**
+     * This method can construct what the post data would be to simulate a user submitting
+     * responses to one particular question attempt.
+     *
+     * The $responsesummary is a string representation of the response to be submitted.
+     * The exact meaning of that depends on the particular question type. These strings
+     * are passed to the un_summarise_response method of the question to decode.
+     *
+     * @param question_attempt $qa the question attempt for which we are generating POST data.
+     * @param string $responsesummary a textual summary of the response, as described above.
+     * @param bool $checkbutton if simulate a click on the check button, else simulate save.
+     *      This should only be used with behaviours that have a check button.
+     * @return array the simulated post data that can be passed to $quba->process_all_actions.
+     */
+    public function get_simulated_post_data_for_question_attempt(
+            question_attempt $qa, $responsesummary, $checkbutton) {
+
+        $question = $qa->get_question();
+        if (!$question instanceof question_with_responses) {
+            return [];
+        }
+
+        $postdata = [];
+        $postdata[$qa->get_control_field_name('sequencecheck')] = (string)$qa->get_sequence_check_count();
+        $postdata[$qa->get_flag_field_name()] = (string)(int)$qa->is_flagged();
+
+        $response = $question->un_summarise_response($responsesummary);
+        foreach ($response as $name => $value) {
+            $postdata[$qa->get_qt_field_name($name)] = (string)$value;
+        }
+
+        // TODO handle behaviour variables better than this.
+        if ($checkbutton) {
+            $postdata[$qa->get_behaviour_field_name('submit')] = 1;
+        }
+
+        return $postdata;
     }
 }

@@ -32,9 +32,9 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
         'customusermenuitems',
         new lang_string('customusermenuitems', 'admin'),
         new lang_string('configcustomusermenuitems', 'admin'),
-        'grades,grades|/grade/report/mygrades.php|grades
-messages,message|/message/index.php|message
-preferences,moodle|/user/preferences.php|preferences',
+        'grades,grades|/grade/report/mygrades.php|t/grades
+messages,message|/message/index.php|t/message
+preferences,moodle|/user/preferences.php|t/preferences',
         PARAM_RAW,
         '50',
         '10'
@@ -218,6 +218,9 @@ preferences,moodle|/user/preferences.php|preferences',
     // coursecontact is the person responsible for course - usually manages enrolments, receives notification, etc.
     $temp = new admin_settingpage('coursecontact', new lang_string('courses'));
     $temp->add(new admin_setting_special_coursecontact());
+    $temp->add(new admin_setting_configcheckbox('coursecontactduplicates',
+            new lang_string('coursecontactduplicates', 'admin'),
+            new lang_string('coursecontactduplicates_desc', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('courselistshortnames',
             new lang_string('courselistshortnames', 'admin'),
             new lang_string('courselistshortnames_desc', 'admin'), 0));
@@ -227,6 +230,10 @@ preferences,moodle|/user/preferences.php|preferences',
             new lang_string('configcourseoverviewfileslimit', 'admin'), 1, PARAM_INT));
     $temp->add(new admin_setting_configtext('courseoverviewfilesext', new lang_string('courseoverviewfilesext'),
             new lang_string('configcourseoverviewfilesext', 'admin'), '.jpg,.gif,.png'));
+    $temp->add(new admin_setting_configtext('coursegraceperiodbefore', new lang_string('coursegraceperiodbefore', 'admin'),
+        new lang_string('configcoursegraceperiodbefore', 'admin'), 0, PARAM_INT));
+    $temp->add(new admin_setting_configtext('coursegraceperiodafter', new lang_string('coursegraceperiodafter', 'admin'),
+        new lang_string('configcoursegraceperiodafter', 'admin'), 0, PARAM_INT));
     $ADMIN->add('appearance', $temp);
 
     $temp = new admin_settingpage('ajax', new lang_string('ajaxuse'));
@@ -252,4 +259,3 @@ preferences,moodle|/user/preferences.php|preferences',
     $ADMIN->add('appearance', $temp);
 
 } // end of speedup
-

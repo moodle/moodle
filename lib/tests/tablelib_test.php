@@ -141,8 +141,8 @@ class core_tablelib_testcase extends basic_testcase {
         $columns = $this->generate_columns(2);
         $headers = $this->generate_headers(2);
 
-        // Search for pagination controls containing '1.*2</a>.*Next</a>'.
-        $this->expectOutputRegex('/1.*2<\/a>.*' . get_string('next') . '<\/a>/');
+        // Search for pagination controls containing 'page-link"\saria-label="Next"'.
+        $this->expectOutputRegex('/page-link"\saria-label="Next"/');
 
         $this->run_table_test(
             $columns,

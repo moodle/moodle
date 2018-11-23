@@ -30,7 +30,9 @@ use context;
 use context_user;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
 /**
@@ -43,6 +45,7 @@ use core_privacy\local\request\writer;
  */
 class provider implements
     \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\plugin\provider {
 
     /**
@@ -79,6 +82,30 @@ class provider implements
         $contextlist->add_user_context($userid);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if (!is_a($context, \context_user::class)) {
+            return;
+        }
+
+        // Add user if any messagelist data exists.
+        if ($DB->record_exists('messageinbound_messagelist', ['userid' => $context->instanceid])) {
+            // Only using user context, so instance ID will be the only user ID.
+            $userlist->add_user($context->instanceid);
+        }
+
+        // Add users based on userkey (since we also delete those).
+        \core_userkey\privacy\provider::get_user_contexts_with_script($userlist, $context, 'messageinbound_handler');
     }
 
     /**
@@ -140,6 +167,23 @@ class provider implements
         }
 
         static::delete_user_data($contextlist->get_user()->id);
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        $context = $userlist->get_context();
+        $userids = $userlist->get_userids();
+
+        // Since this falls within a user context, only that user should be valid.
+        if ($context->contextlevel != CONTEXT_USER || count($userids) != 1 || $context->instanceid != $userids[0]) {
+            return;
+        }
+
+        static::delete_user_data($userids[0]);
     }
 
     /**

@@ -57,6 +57,14 @@ class qtype_shortanswer_question extends question_graded_by_strategy
         }
     }
 
+    public function un_summarise_response(string $summary) {
+        if (!empty($summary)) {
+            return ['answer' => $summary];
+        } else {
+            return [];
+        }
+    }
+
     public function is_complete_response(array $response) {
         return array_key_exists('answer', $response) &&
                 ($response['answer'] || $response['answer'] === '0');

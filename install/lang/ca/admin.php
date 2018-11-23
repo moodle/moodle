@@ -36,7 +36,7 @@ $string['cliincorrectvalueerror'] = 'Error, valor incorrecte "{$a->value}" per a
 $string['cliincorrectvalueretry'] = 'Valor incorrecte; torneu-ho a provar.';
 $string['clitypevalue'] = 'Valor de tipus';
 $string['clitypevaluedefault'] = 'valor de tipus, premeu la tecla de retorn (<em>Enter</em>) per fer servir un valor per defecte ({$a})';
-$string['cliunknowoption'] = 'Opcions invàlides:
+$string['cliunknowoption'] = 'Opcions no reconegudes:
  {$a}
 L\'opció --help us orientarà.';
 $string['cliyesnoprompt'] = 'Escriu y (significa Sí) o n (significa No)';

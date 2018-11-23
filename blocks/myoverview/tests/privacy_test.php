@@ -13,35 +13,29 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  * Unit tests for the block_myoverview implementation of the privacy API.
  *
  * @package    block_myoverview
  * @category   test
- * @copyright  2018 Adrian Greeve <adriangreeve.com>
+ * @copyright  2018 Peter Dias <peter@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
-
 use \core_privacy\local\request\writer;
 use \block_myoverview\privacy\provider;
-
 /**
  * Unit tests for the block_myoverview implementation of the privacy API.
  *
- * @copyright  2018 Adrian Greeve <adriangreeve.com>
+ * @copyright  2018 Peter Dias <peter@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class block_myoverview_privacy_testcase extends \core_privacy\tests\provider_testcase {
-
     /**
      * Ensure that export_user_preferences returns no data if the user has not visited the myoverview block.
      */
     public function test_export_user_preferences_no_pref() {
         $this->resetAfterTest();
-
         $user = $this->getDataGenerator()->create_user();
         provider::export_user_preferences($user->id);
         $writer = writer::with_context(\context_system::instance());
@@ -49,32 +43,62 @@ class block_myoverview_privacy_testcase extends \core_privacy\tests\provider_tes
     }
 
     /**
-     * Test that the preference courses is exported properly.
+     * Test the export_user_preferences given different inputs
+     *
+     * @param string $type The name of the user preference to get/set
+     * @param string $value The value you are storing
+     *
+     * @dataProvider user_preference_provider
      */
-    public function test_export_user_preferences_course_preference() {
+    public function test_export_user_preferences($type, $value, $expected) {
         $this->resetAfterTest();
-
         $user = $this->getDataGenerator()->create_user();
-        set_user_preference('block_myoverview_last_tab', 'courses', $user);
-
+        set_user_preference($type, $value, $user);
         provider::export_user_preferences($user->id);
         $writer = writer::with_context(\context_system::instance());
         $blockpreferences = $writer->get_user_preferences('block_myoverview');
-        $this->assertEquals('courses', $blockpreferences->block_myoverview_last_tab->value);
+        if (!$expected) {
+            $expected = get_string($value, 'block_myoverview');
+        }
+        $this->assertEquals($expected, $blockpreferences->{$type}->value);
     }
 
     /**
-     * Test that the preference timeline is exported properly.
+     * Create an array of valid user preferences for the myoverview block.
+     *
+     * @return array Array of valid user preferences.
      */
-    public function test_export_user_preferences_timeline_preference() {
+    public function user_preference_provider() {
+        return array(
+            array('block_myoverview_user_sort_preference', 'lastaccessed', ''),
+            array('block_myoverview_user_sort_preference', 'title', ''),
+            array('block_myoverview_user_grouping_preference', 'all', ''),
+            array('block_myoverview_user_grouping_preference', 'inprogress', ''),
+            array('block_myoverview_user_grouping_preference', 'future', ''),
+            array('block_myoverview_user_grouping_preference', 'past', ''),
+            array('block_myoverview_user_view_preference', 'card', ''),
+            array('block_myoverview_user_view_preference', 'list', ''),
+            array('block_myoverview_user_view_preference', 'summary', ''),
+            array('block_myoverview_user_paging_preference', 12, 12)
+        );
+    }
+
+    public function test_export_user_preferences_with_hidden_courses() {
         $this->resetAfterTest();
-
         $user = $this->getDataGenerator()->create_user();
-        set_user_preference('block_myoverview_last_tab', 'timeline', $user);
+        $name = "block_myoverview_hidden_course_1";
 
+        set_user_preference($name, 1, $user);
         provider::export_user_preferences($user->id);
         $writer = writer::with_context(\context_system::instance());
         $blockpreferences = $writer->get_user_preferences('block_myoverview');
-        $this->assertEquals('timeline', $blockpreferences->block_myoverview_last_tab->value);
+
+        $this->assertEquals(
+            get_string("privacy:request:preference:set", 'block_myoverview', (object) [
+                'name' => $name,
+                'value' => 1,
+            ]),
+            $blockpreferences->{$name}->description
+        );
     }
 }

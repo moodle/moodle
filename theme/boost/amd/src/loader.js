@@ -28,7 +28,8 @@ define(['jquery', './tether', 'core/event'], function(jQuery, Tether, Event) {
     window.jQuery = jQuery;
     window.Tether = Tether;
 
-    require(['theme_boost/util',
+    require(['theme_boost/aria',
+            'theme_boost/util',
             'theme_boost/alert',
             'theme_boost/button',
             'theme_boost/carousel',
@@ -39,7 +40,7 @@ define(['jquery', './tether', 'core/event'], function(jQuery, Tether, Event) {
             'theme_boost/tab',
             'theme_boost/tooltip',
             'theme_boost/popover'],
-            function() {
+            function(Aria) {
 
         // We do twice because: https://github.com/twbs/bootstrap/issues/10547
         jQuery('body').popover({
@@ -63,8 +64,11 @@ define(['jquery', './tether', 'core/event'], function(jQuery, Tether, Event) {
                     selector: '[data-toggle="popover"]',
                     trigger: 'focus'
                 });
+
             });
         });
+
+        Aria.init();
     });
 
 

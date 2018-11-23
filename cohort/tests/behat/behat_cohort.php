@@ -50,13 +50,12 @@ class behat_cohort extends behat_base {
         if (!$this->getSession()->getPage()->find('css', 'input#cohort_search_q')) {
 
             // With JS enabled we should expand a few tree nodes.
-            $parentnodes = get_string('administrationsite') . ' > ' .
-                get_string('users', 'admin') . ' > ' .
+            $parentnodes = get_string('users', 'admin') . ' > ' .
                 get_string('accounts', 'admin');
 
             $this->execute("behat_general::i_am_on_homepage");
-            $this->execute("behat_navigation::i_navigate_to_node_in",
-                array(get_string('cohorts', 'cohort'), $parentnodes)
+            $this->execute("behat_navigation::i_navigate_to_in_site_administration",
+                $parentnodes . ' > ' . get_string('cohorts', 'cohort')
             );
         }
 

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+      <text>$course$/Iota</text>
+    </category>
+    <info format="plain_text">
+      <text>This is Iota category for test</text>
+    </info>
+  </question>
+
+<!-- question: 96  -->
+  <question type="truefalse">
+    <name>
+      <text>Iota Question</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Testing Iota Question</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>1.0000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>true</text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>false</text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+  </question>
+
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+      <text>$course$/Iota/Kappa</text>
+    </category>
+    <info format="markdown">
+      <text>This is Kappa category for test</text>
+    </info>
+  </question>
+
+<!-- question: 106  -->
+  <question type="essay">
+    <name>
+      <text>Kappa Essay Question</text>
+    </name>
+    <questiontext format="moodle_auto_format">
+      <text>Testing Kappa Essay Question</text>
+    </questiontext>
+    <generalfeedback format="moodle_auto_format">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.0000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <responseformat>editor</responseformat>
+    <responserequired>1</responserequired>
+    <responsefieldlines>10</responsefieldlines>
+    <attachments>0</attachments>
+    <attachmentsrequired>0</attachmentsrequired>
+    <graderinfo format="html">
+      <text></text>
+    </graderinfo>
+    <responsetemplate format="html">
+      <text></text>
+    </responsetemplate>
+  </question>
+
+<!-- question: 97  -->
+  <question type="truefalse">
+    <name>
+      <text>Kappa Question</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Testing Kappa Question</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>1.0000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>true</text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>false</text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+  </question>
+
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+      <text>$course$/Iota/Kappa/Lambda</text>
+    </category>
+    <info format="moodle_auto_format">
+      <text>This is Lambda category for test</text>
+    </info>
+  </question>
+
+<!-- question: 98  -->
+  <question type="truefalse">
+    <name>
+      <text>Lambda Question</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Testing Lambda Question</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>1.0000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>true</text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>false</text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+  </question>
+
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+      <text>$course$/Iota/Mu</text>
+    </category>
+    <info format="moodle_auto_format">
+      <text>This is Mu category for test</text>
+    </info>
+  </question>
+
+<!-- question: 99  -->
+  <question type="truefalse">
+    <name>
+      <text>Mu Question</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Testing Mu Question</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>1.0000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>true</text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>false</text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+  </question>
+
+</quiz>

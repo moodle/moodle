@@ -18,7 +18,7 @@ Feature: In a report, admin can filter log data
     And I log in as "admin"
 
   Scenario: Filter log report for standard and legacy log reader
-    Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
+    Given I navigate to "Plugins > Logging > Manage log stores" in site administration
     And I click on "Enable" "link" in the "Legacy log" "table_row"
     And the following config values are set as admin:
       | loglegacy | 1 | logstore_legacy |
@@ -30,7 +30,7 @@ Feature: In a report, admin can filter log data
     And I press "Continue"
     And I log out
     And I log in as "admin"
-    When I navigate to "Logs" node in "Site administration > Reports"
+    When I navigate to "Reports > Logs" in site administration
     And I set the field "id" to "Acceptance test site (Site)"
     And I set the field "user" to "All participants"
     And I set the field "logreader" to "Standard log"
@@ -49,14 +49,14 @@ Feature: In a report, admin can filter log data
     And I press "Continue"
     And I log out
     And I log in as "admin"
-    When I navigate to "Logs" node in "Site administration > Reports"
+    When I navigate to "Reports > Logs" in site administration
     And I set the field "id" to "Acceptance test site (Site)"
     And I set the field "user" to "All participants"
     And I press "Get these logs"
     Then I should see "User logged in as another user"
 
   Scenario: Filter log report for legacy log reader
-    Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
+    Given I navigate to "Plugins > Logging > Manage log stores" in site administration
     And I click on "Enable" "link" in the "Legacy log" "table_row"
     And I click on "Disable" "link" in the "Standard log" "table_row"
     And the following config values are set as admin:
@@ -71,7 +71,7 @@ Feature: In a report, admin can filter log data
     And I press "Continue"
     And I log out
     And I log in as "admin"
-    When I navigate to "Logs" node in "Site administration > Reports"
+    When I navigate to "Reports > Logs" in site administration
     And I set the field "id" to "Acceptance test site (Site)"
     And I set the field "user" to "All participants"
     And I press "Get these logs"

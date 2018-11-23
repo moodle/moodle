@@ -90,7 +90,7 @@ trait eventtype {
 
         if (!empty($eventtypes['category'])) {
             $categoryoptions = [];
-            foreach (\coursecat::make_categories_list('moodle/category:manage') as $id => $category) {
+            foreach (\core_course_category::make_categories_list('moodle/category:manage') as $id => $category) {
                 $categoryoptions[$id] = $category;
             }
 

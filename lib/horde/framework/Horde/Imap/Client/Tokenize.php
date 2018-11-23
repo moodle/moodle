@@ -295,7 +295,7 @@ class Horde_Imap_Client_Tokenize implements Iterator
                         // identifier.
                         $binary = true;
                         $text .= $c;
-                        continue;
+                        break;
 
                     case '{':
                         if ($binary) {

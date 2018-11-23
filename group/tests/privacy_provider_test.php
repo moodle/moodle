@@ -45,10 +45,9 @@ class core_group_privacy_provider_testcase extends provider_testcase {
         $collection = new collection('core_group');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();
-        $this->assertCount(1, $itemcollection);
+        $this->assertCount(2, $itemcollection);
 
-        $table = reset($itemcollection);
-
+        $table = array_shift($itemcollection);
         $this->assertEquals('groups_members', $table->get_name());
         $this->assertEquals('privacy:metadata:groups', $table->get_summary());
 
@@ -56,6 +55,10 @@ class core_group_privacy_provider_testcase extends provider_testcase {
         $this->assertArrayHasKey('groupid', $privacyfields);
         $this->assertArrayHasKey('userid', $privacyfields);
         $this->assertArrayHasKey('timeadded', $privacyfields);
+
+        $table = array_shift($itemcollection);
+        $this->assertEquals('core_message', $table->get_name());
+        $this->assertEquals('privacy:metadata:core_message', $table->get_summary());
     }
 
     /**
@@ -509,6 +512,145 @@ class core_group_privacy_provider_testcase extends provider_testcase {
     }
 
     /**
+     * Test for provider::delete_groups_for_users() to delete group memberships of a component.
+     */
+    public function test_delete_groups_for_users_for_component() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+
+        $group1a = $this->getDataGenerator()->create_group(array('courseid' => $course1->id));
+        $group1b = $this->getDataGenerator()->create_group(array('courseid' => $course1->id));
+        $group2a = $this->getDataGenerator()->create_group(array('courseid' => $course2->id));
+        $group2b = $this->getDataGenerator()->create_group(array('courseid' => $course2->id));
+        $group3a = $this->getDataGenerator()->create_group(array('courseid' => $course3->id));
+        $group3b = $this->getDataGenerator()->create_group(array('courseid' => $course3->id));
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, null, 'self');
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id, null, 'self');
+        $this->getDataGenerator()->enrol_user($user1->id, $course3->id, null, 'self');
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id, null, 'self');
+        $this->getDataGenerator()->enrol_user($user2->id, $course2->id, null, 'self');
+        $this->getDataGenerator()->enrol_user($user2->id, $course3->id, null, 'self');
+
+        $this->getDataGenerator()->create_group_member(
+                array('groupid' => $group1a->id, 'userid' => $user1->id, 'component' => 'enrol_self'));
+        $this->getDataGenerator()->create_group_member(
+                array('groupid' => $group1b->id, 'userid' => $user2->id, 'component' => 'enrol_self'));
+        $this->getDataGenerator()->create_group_member(
+                array('groupid' => $group2a->id, 'userid' => $user1->id, 'component' => 'enrol_self'));
+        $this->getDataGenerator()->create_group_member(
+                array('groupid' => $group2b->id, 'userid' => $user2->id, 'component' => 'enrol_self'));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group3a->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group3b->id, 'userid' => $user2->id));
+
+        $this->assertEquals(
+                2,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE g.courseid = ?", [$course1->id])
+        );
+        $this->assertEquals(
+                2,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE g.courseid = ?", [$course2->id])
+        );
+        $this->assertEquals(
+                2,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE g.courseid = ?", [$course2->id])
+        );
+        $this->assertEquals(
+                3,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE gm.userid = ?", [$user1->id])
+        );
+
+        // Delete user1 and user2 from groups in course1.
+        $coursecontext1 = context_course::instance($course1->id);
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($coursecontext1, 'core_group',
+                [$user1->id, $user2->id]);
+        provider::delete_groups_for_users($approveduserlist, 'enrol_self');
+
+        $this->assertEquals(
+                0,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE g.courseid = ?", [$course1->id])
+        );
+        $this->assertEquals(
+                2,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE g.courseid = ?", [$course2->id])
+        );
+        $this->assertEquals(
+                2,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE g.courseid = ?", [$course3->id])
+        );
+        $this->assertEquals(
+                2,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE gm.userid = ?", [$user1->id])
+        );
+
+        // Delete user1 and user2 from course3.
+        $coursecontext3 = context_course::instance($course3->id);
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($coursecontext3, 'core_group',
+                [$user1->id, $user2->id]);
+        provider::delete_groups_for_users($approveduserlist, 'enrol_self');
+        $this->assertEquals(
+                0,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE g.courseid = ?", [$course1->id])
+        );
+        $this->assertEquals(
+                2,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE g.courseid = ?", [$course2->id])
+        );
+        $this->assertEquals(
+                2,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE g.courseid = ?", [$course3->id])
+        );
+        $this->assertEquals(
+                2,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE gm.userid = ?", [$user1->id])
+        );
+    }
+
+    /**
      * Test for provider::delete_groups_for_user() to check deleting from cache.
      */
     public function test_delete_groups_for_user_deletes_cache() {
@@ -579,6 +721,43 @@ class core_group_privacy_provider_testcase extends provider_testcase {
                 [$coursecontext1->id, $coursecontext2->id],
                 $contextlist->get_contextids(),
                 '', 0.0, 10, true);
+    }
+
+    /**
+     * Test for provider::get_contexts_for_userid() when there are group memberships from other components.
+     */
+    public function test_get_contexts_for_userid_component() {
+        $this->resetAfterTest();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course1->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course2->id));
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+
+        $this->getDataGenerator()->create_group_member(
+                array(
+                    'userid' => $user->id,
+                    'groupid' => $group1->id
+                ));
+        $this->getDataGenerator()->create_group_member(
+                array(
+                    'userid' => $user->id,
+                    'groupid' => $group2->id,
+                    'component' => 'enrol_meta'
+                ));
+
+        $coursecontext1 = context_course::instance($course1->id);
+
+        // User is member of some groups in course1 and course2,
+        // but only the membership in course1 is directly managed by core_group.
+        $contextlist = provider::get_contexts_for_userid($user->id);
+        $this->assertEquals([$coursecontext1->id], $contextlist->get_contextids());
     }
 
     /**
@@ -788,5 +967,121 @@ class core_group_privacy_provider_testcase extends provider_testcase {
                                           JOIN {groups} g ON gm.groupid = g.id
                                          WHERE gm.userid = ?", [$user1->id])
         );
+    }
+
+    /**
+     * Test for provider::delete_data_for_users().
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $group1a = $this->getDataGenerator()->create_group(array('courseid' => $course1->id));
+        $group1b = $this->getDataGenerator()->create_group(array('courseid' => $course1->id));
+        $group1c = $this->getDataGenerator()->create_group(array('courseid' => $course1->id));
+        $group2a = $this->getDataGenerator()->create_group(array('courseid' => $course2->id));
+        $group2b = $this->getDataGenerator()->create_group(array('courseid' => $course2->id));
+        $group2c = $this->getDataGenerator()->create_group(array('courseid' => $course2->id));
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course2->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course2->id);
+
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1a->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1b->id, 'userid' => $user2->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1c->id, 'userid' => $user3->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group2a->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group2b->id, 'userid' => $user2->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group2c->id, 'userid' => $user3->id));
+
+        $this->assertEquals(
+                3,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE g.courseid = ?", [$course1->id])
+        );
+        $this->assertEquals(
+                3,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE g.courseid = ?", [$course2->id])
+        );
+
+        $coursecontext1 = context_course::instance($course1->id);
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($coursecontext1, 'core_group',
+                [$user1->id, $user2->id]);
+        provider::delete_data_for_users($approveduserlist);
+
+        $this->assertEquals(
+                [$user3->id],
+                $DB->get_fieldset_sql("SELECT gm.userid
+                                         FROM {groups_members} gm
+                                         JOIN {groups} g ON gm.groupid = g.id
+                                        WHERE g.courseid = ?", [$course1->id])
+        );
+        $this->assertEquals(
+                3,
+                $DB->count_records_sql("SELECT COUNT(gm.id)
+                                          FROM {groups_members} gm
+                                          JOIN {groups} g ON gm.groupid = g.id
+                                         WHERE g.courseid = ?", [$course2->id])
+        );
+    }
+
+    /**
+     * Test for provider::get_users_in_context().
+     */
+    public function test_get_users_in_context() {
+        $this->resetAfterTest();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $group1a = $this->getDataGenerator()->create_group(array('courseid' => $course1->id));
+        $group1b = $this->getDataGenerator()->create_group(array('courseid' => $course1->id));
+        $group2a = $this->getDataGenerator()->create_group(array('courseid' => $course2->id));
+        $group2b = $this->getDataGenerator()->create_group(array('courseid' => $course2->id));
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course2->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course2->id);
+
+        $this->getDataGenerator()->create_group_member(array('userid' => $user1->id, 'groupid' => $group1a->id));
+        $this->getDataGenerator()->create_group_member(array('userid' => $user1->id, 'groupid' => $group2a->id));
+        $this->getDataGenerator()->create_group_member(array('userid' => $user2->id, 'groupid' => $group1b->id));
+        $this->getDataGenerator()->create_group_member(array('userid' => $user2->id, 'groupid' => $group2b->id));
+        $this->getDataGenerator()->create_group_member(array('userid' => $user3->id, 'groupid' => $group2a->id));
+
+        $coursecontext1 = context_course::instance($course1->id);
+
+        $userlist = new \core_privacy\local\request\userlist($coursecontext1, 'core_group');
+        \core_group\privacy\provider::get_users_in_context($userlist);
+
+        // Only user1 and user2. User3 is not member of any group in course1.
+        $this->assertCount(2, $userlist);
+        $this->assertEquals(
+                [$user1->id, $user2->id],
+                $userlist->get_userids(),
+                '', 0.0, 10, true);
     }
 }

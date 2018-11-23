@@ -59,8 +59,17 @@ class data_requests_table extends table_sql {
     /** @var bool Whether this table is being rendered for managing data requests. */
     protected $manage = false;
 
-    /** @var stdClass[] Array of data request persistents. */
+    /** @var \tool_dataprivacy\data_request[] Array of data request persistents. */
     protected $datarequests = [];
+
+    /** @var \stdClass[] List of userids and whether they have any ongoing active requests. */
+    protected $ongoingrequests = [];
+
+    /** @var int The number of data request to be displayed per page. */
+    protected $perpage;
+
+    /** @var int[] The available options for the number of data request to be displayed per page. */
+    protected $perpageoptions = [25, 50, 100, 250];
 
     /**
      * data_requests_table constructor.
@@ -68,18 +77,26 @@ class data_requests_table extends table_sql {
      * @param int $userid The user ID
      * @param int[] $statuses
      * @param int[] $types
+     * @param int[] $creationmethods
      * @param bool $manage
      * @throws coding_exception
      */
-    public function __construct($userid = 0, $statuses = [], $types = [], $manage = false) {
+    public function __construct($userid = 0, $statuses = [], $types = [], $creationmethods = [], $manage = false) {
         parent::__construct('data-requests-table');
 
         $this->userid = $userid;
         $this->statuses = $statuses;
         $this->types = $types;
+        $this->creationmethods = $creationmethods;
         $this->manage = $manage;
 
+        $checkboxattrs = [
+            'title' => get_string('selectall'),
+            'data-action' => 'selectall'
+        ];
+
         $columnheaders = [
+            'select' => html_writer::checkbox('selectall', 1, false, null, $checkboxattrs),
             'type' => get_string('requesttype', 'tool_dataprivacy'),
             'userid' => get_string('user', 'tool_dataprivacy'),
             'timecreated' => get_string('daterequested', 'tool_dataprivacy'),
@@ -91,7 +108,26 @@ class data_requests_table extends table_sql {
 
         $this->define_columns(array_keys($columnheaders));
         $this->define_headers(array_values($columnheaders));
-        $this->no_sorting('actions');
+        $this->no_sorting('select', 'actions');
+    }
+
+    /**
+     * The select column.
+     *
+     * @param stdClass $data The row data.
+     * @return string
+     */
+    public function col_select($data) {
+        if ($data->status == \tool_dataprivacy\api::DATAREQUEST_STATUS_AWAITING_APPROVAL) {
+            $stringdata = [
+                'username' => $data->foruser->fullname,
+                'requesttype' => \core_text::strtolower($data->typenameshort)
+            ];
+
+            return \html_writer::checkbox('requestids[]', $data->id, false, '',
+                    ['class' => 'selectrequests', 'title' => get_string('selectuserdatarequest',
+                    'tool_dataprivacy', $stringdata)]);
+        }
     }
 
     /**
@@ -206,13 +242,27 @@ class data_requests_table extends table_sql {
                 $actiontext = get_string('denyrequest', 'tool_dataprivacy');
                 $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
                 break;
+            case api::DATAREQUEST_STATUS_DOWNLOAD_READY:
+                $userid = $data->foruser->id;
+                $usercontext = \context_user::instance($userid, IGNORE_MISSING);
+                // If user has permission to view download link, show relevant action item.
+                if ($usercontext && api::can_download_data_request_for_user($userid, $data->requestedbyuser->id)) {
+                    $actions[] = api::get_download_link($usercontext, $requestid);
+                }
+                break;
         }
 
-        if ($status == api::DATAREQUEST_STATUS_COMPLETE) {
-            $userid = $data->foruser->id;
-            $usercontext = \context_user::instance($userid, IGNORE_MISSING);
-            if ($usercontext && api::can_download_data_request_for_user($userid, $data->requestedbyuser->id)) {
-                $actions[] = api::get_download_link($usercontext, $requestid);
+        if ($this->manage) {
+            $persistent = $this->datarequests[$requestid];
+            $canreset = $persistent->is_active() || empty($this->ongoingrequests[$data->foruser->id]->{$data->type});
+            $canreset = $canreset && $persistent->is_resettable();
+            if ($canreset) {
+                $reseturl = new moodle_url('/admin/tool/dataprivacy/resubmitrequest.php', [
+                        'requestid' => $requestid,
+                    ]);
+                $actiondata = ['data-action' => 'reset', 'data-requestid' => $requestid];
+                $actiontext = get_string('resubmitrequestasnew', 'tool_dataprivacy');
+                $actions[] = new action_menu_link_secondary($reseturl, null, $actiontext, $actiondata);
             }
         }
 
@@ -236,22 +286,36 @@ class data_requests_table extends table_sql {
     public function query_db($pagesize, $useinitialsbar = true) {
         global $PAGE;
 
-        // Count data requests from the given conditions.
-        $total = api::get_data_requests_count($this->userid, $this->statuses, $this->types);
-        $this->pagesize($pagesize, $total);
+        // Set dummy page total until we fetch full result set.
+        $this->pagesize($pagesize, $pagesize + 1);
 
         $sort = $this->get_sql_sort();
 
         // Get data requests from the given conditions.
-        $datarequests = api::get_data_requests($this->userid, $this->statuses, $this->types, $sort,
-                $this->get_page_start(), $this->get_page_size());
+        $datarequests = api::get_data_requests($this->userid, $this->statuses, $this->types,
+                $this->creationmethods, $sort, $this->get_page_start(), $this->get_page_size());
+
+        // Count data requests from the given conditions.
+        $total = api::get_data_requests_count($this->userid, $this->statuses, $this->types,
+                $this->creationmethods);
+        $this->pagesize($pagesize, $total);
+
         $this->rawdata = [];
         $context = \context_system::instance();
         $renderer = $PAGE->get_renderer('tool_dataprivacy');
+
+        $forusers = [];
         foreach ($datarequests as $persistent) {
+            $this->datarequests[$persistent->get('id')] = $persistent;
             $exporter = new data_request_exporter($persistent, ['context' => $context]);
             $this->rawdata[] = $exporter->export($renderer);
+            $forusers[] = $persistent->get('userid');
         }
+
+        // Fetch the list of all ongoing requests for the users currently shown.
+        // This is used to determine whether any non-active request can be resubmitted.
+        // There can only be one ongoing request of a type for each user.
+        $this->ongoingrequests = api::find_ongoing_request_types_for_users($forusers);
 
         // Set initial bars.
         if ($useinitialsbar) {
@@ -283,5 +347,73 @@ class data_requests_table extends table_sql {
      */
     protected function show_hide_link($column, $index) {
         return '';
+    }
+
+    /**
+     * Override the table's wrap_html_finish method in order to render the bulk actions and
+     * records per page options.
+     */
+    public function wrap_html_finish() {
+        global $OUTPUT;
+
+        $data = new stdClass();
+        $data->options = [
+            [
+                'value' => 0,
+                'name' => ''
+            ],
+            [
+                'value' => \tool_dataprivacy\api::DATAREQUEST_ACTION_APPROVE,
+                'name' => get_string('approve', 'tool_dataprivacy')
+            ],
+            [
+                'value' => \tool_dataprivacy\api::DATAREQUEST_ACTION_REJECT,
+                'name' => get_string('deny', 'tool_dataprivacy')
+            ]
+        ];
+
+        $perpageoptions = array_combine($this->perpageoptions, $this->perpageoptions);
+        $perpageselect = new \single_select(new moodle_url(''), 'perpage',
+                $perpageoptions, get_user_preferences('tool_dataprivacy_request-perpage'), null, 'selectgroup');
+        $perpageselect->label = get_string('perpage', 'moodle');
+        $data->perpage = $OUTPUT->render($perpageselect);
+
+        echo $OUTPUT->render_from_template('tool_dataprivacy/data_requests_bulk_actions', $data);
+    }
+
+    /**
+     * Set the number of data request records to be displayed per page.
+     *
+     * @param int $perpage The number of data request records.
+     */
+    public function set_requests_per_page(int $perpage) {
+        $this->perpage = $perpage;
+    }
+
+    /**
+     * Get the number of data request records to be displayed per page.
+     *
+     * @return int The number of data request records.
+     */
+    public function get_requests_per_page() : int {
+        return $this->perpage;
+    }
+
+    /**
+     * Set the available options for the number of data request to be displayed per page.
+     *
+     * @param array $perpageoptions The available options for the number of data request to be displayed per page.
+     */
+    public function set_requests_per_page_options(array $perpageoptions) {
+        $this->$perpageoptions = $perpageoptions;
+    }
+
+    /**
+     * Get the available options for the number of data request to be displayed per page.
+     *
+     * @return array The available options for the number of data request to be displayed per page.
+     */
+    public function get_requests_per_page_options() : array {
+        return $this->perpageoptions;
     }
 }

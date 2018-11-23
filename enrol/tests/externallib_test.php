@@ -359,9 +359,11 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
      * Test get_users_courses
      */
     public function test_get_users_courses() {
-        global $USER;
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/completion/criteria/completion_criteria_self.php');
 
         $this->resetAfterTest(true);
+        $CFG->enablecompletion = 1;
 
         $timenow = time();
         $coursedata1 = array(
@@ -373,7 +375,8 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
             'enablecompletion' => true,
             'showgrades'       => true,
             'startdate'        => $timenow,
-            'enddate'          => $timenow + WEEKSECS
+            'enddate'          => $timenow + WEEKSECS,
+            'marker'           => 1
         );
 
         $coursedata2 = array(
@@ -383,21 +386,46 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         $course1 = self::getDataGenerator()->create_course($coursedata1);
         $course2 = self::getDataGenerator()->create_course($coursedata2);
         $courses = array($course1, $course2);
+        $contexts = array ($course1->id => context_course::instance($course1->id),
+            $course2->id => context_course::instance($course2->id));
 
-        // Enrol $USER in the courses.
-        // We use the manual plugin.
-        $roleid = null;
-        $contexts = array();
-        foreach ($courses as $course) {
-            $contexts[$course->id] = context_course::instance($course->id);
-            $roleid = $this->assignUserCapability('moodle/course:viewparticipants',
-                    $contexts[$course->id]->id, $roleid);
+        $student = $this->getDataGenerator()->create_user();
+        $otherstudent = $this->getDataGenerator()->create_user();
+        $studentroleid = $DB->get_field('role', 'id', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentroleid);
+        $this->getDataGenerator()->enrol_user($otherstudent->id, $course1->id, $studentroleid);
+        $this->getDataGenerator()->enrol_user($student->id, $course2->id, $studentroleid);
 
-            $this->getDataGenerator()->enrol_user($USER->id, $course->id, $roleid, 'manual');
-        }
+        // Force last access.
+        $timenow = time();
+        $lastaccess = array(
+            'userid' => $student->id,
+            'courseid' => $course1->id,
+            'timeaccess' => $timenow
+        );
+        $DB->insert_record('user_lastaccess', $lastaccess);
 
+        // Force completion, setting at least one criteria.
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_self.php');
+        $criteriadata = new stdClass();
+        $criteriadata->id = $course1->id;
+        // Self completion.
+        $criteriadata->criteria_self = 1;
+
+        $criterion = new completion_criteria_self();
+        $criterion->update_config($criteriadata);
+
+        $ccompletion = new completion_completion(array('course' => $course1->id, 'userid' => $student->id));
+        $ccompletion->mark_complete();
+
+        // Set course hidden and favourited.
+        set_user_preference('block_myoverview_hidden_course_' . $course1->id, 1, $student);
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($student->id));
+        $ufservice->create_favourite('core_course', 'courses', $course1->id, \context_system::instance());
+
+        $this->setUser($student);
         // Call the external function.
-        $enrolledincourses = core_enrol_external::get_users_courses($USER->id);
+        $enrolledincourses = core_enrol_external::get_users_courses($student->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
@@ -418,11 +446,66 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
                 foreach ($coursedata1 as $fieldname => $value) {
                     $this->assertEquals($courseenrol[$fieldname], $course1->$fieldname);
                 }
+                // Text extra fields.
+                $this->assertEquals($course1->fullname, $courseenrol['displayname']);
+                $this->assertEquals([], $courseenrol['overviewfiles']);
+                $this->assertEquals($timenow, $courseenrol['lastaccess']);
+                $this->assertEquals(100.0, $courseenrol['progress']);
+                $this->assertEquals(true, $courseenrol['completed']);
+                $this->assertTrue($courseenrol['completionhascriteria']);
+                $this->assertTrue($courseenrol['hidden']);
+                $this->assertTrue($courseenrol['isfavourite']);
             } else {
                 // Check language pack. Should be empty since an incorrect one was used when creating the course.
                 $this->assertEmpty($courseenrol['lang']);
+                $this->assertEquals($course2->fullname, $courseenrol['displayname']);
+                $this->assertEquals([], $courseenrol['overviewfiles']);
+                $this->assertEquals(0, $courseenrol['lastaccess']);
+                $this->assertEquals(0, $courseenrol['progress']);
+                $this->assertEquals(false, $courseenrol['completed']);
+                $this->assertFalse($courseenrol['completionhascriteria']);
+                $this->assertFalse($courseenrol['hidden']);
+                $this->assertFalse($courseenrol['isfavourite']);
             }
         }
+
+        // Now check that admin users can see all the info.
+        $this->setAdminUser();
+
+        $enrolledincourses = core_enrol_external::get_users_courses($student->id);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        $this->assertEquals(2, count($enrolledincourses));
+        foreach ($enrolledincourses as $courseenrol) {
+            if ($courseenrol['id'] == $course1->id) {
+                $this->assertEquals($timenow, $courseenrol['lastaccess']);
+                $this->assertEquals(100.0, $courseenrol['progress']);
+                $this->assertTrue($courseenrol['completionhascriteria']);
+                $this->assertFalse($courseenrol['isfavourite']);    // This always false.
+                $this->assertFalse($courseenrol['hidden']); // This always false.
+            } else {
+                $this->assertEquals(0, $courseenrol['progress']);
+                $this->assertFalse($courseenrol['completionhascriteria']);
+                $this->assertFalse($courseenrol['isfavourite']);    // This always false.
+                $this->assertFalse($courseenrol['hidden']); // This always false.
+            }
+        }
+
+        // Check other users can't see private info.
+        $this->setUser($otherstudent);
+
+        $enrolledincourses = core_enrol_external::get_users_courses($student->id);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        $this->assertEquals(1, count($enrolledincourses));
+
+        $this->assertEquals($timenow, $enrolledincourses[0]['lastaccess']); // I can see this, not hidden.
+        $this->assertEquals(null, $enrolledincourses[0]['progress']);   // I can't see this, private.
+
+        // Change some global profile visibility fields.
+        $CFG->hiddenuserfields = 'lastaccess';
+        $enrolledincourses = core_enrol_external::get_users_courses($student->id);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+
+        $this->assertEquals(0, $enrolledincourses[0]['lastaccess']); // I can't see this, hidden by global setting.
     }
 
     /**

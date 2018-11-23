@@ -84,9 +84,10 @@ class behat_completion extends behat_base {
      */
     public function go_to_the_current_course_activity_completion_report() {
         $completionnode = get_string('pluginname', 'report_progress');
-        $reportsnode = get_string('courseadministration') . ' > ' . get_string('reports');
+        $reportsnode = get_string('reports');
 
-        $this->execute("behat_navigation::i_navigate_to_node_in", array($completionnode, $reportsnode));
+        $this->execute("behat_navigation::i_navigate_to_in_current_page_administration",
+                $reportsnode . ' > ' . $completionnode);
     }
 
     /**

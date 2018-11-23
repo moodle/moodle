@@ -338,7 +338,7 @@ class xmldb_index extends xmldb_object {
      */
     public function validateDefinition(xmldb_table $xmldb_table=null) {
         if (!$xmldb_table) {
-            return 'Invalid xmldb_index->validateDefinition() call, $xmldb_table si required.';
+            return 'Invalid xmldb_index->validateDefinition() call, $xmldb_table is required.';
         }
 
         $total = 0;

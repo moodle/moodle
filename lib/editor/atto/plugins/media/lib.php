@@ -53,7 +53,7 @@ function atto_media_strings_for_js() {
                                           'descriptionssourcelabel',
                                           'displayoptions',
                                           'entername',
-                                          'entername',
+                                          'entertitle',
                                           'entersource',
                                           'enterurl',
                                           'height',
@@ -79,7 +79,7 @@ function atto_media_strings_for_js() {
                                           'videosourcelabel',
                                           'videowidth',
                                           'width'),
-                                    'atto_media');
+                                          'atto_media');
 }
 
 /**

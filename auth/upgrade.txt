@@ -1,6 +1,10 @@
 This files describes API changes in /auth/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+
+* Login forms generated from Moodle must include a login token to protect automated logins. See \core\session\manager::get_login_token().
+
 === 3.5 ===
 
 * The auth_db and auth_ldap plugins' implementations of update_user_record() have been removed and both now

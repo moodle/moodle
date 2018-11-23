@@ -33,7 +33,7 @@ use moodle_exception;
 use stdClass;
 
 /**
- * Configurable oauth2 client class where the urls come from DB.
+ * Configurable oauth2 client class. URLs come from DB and access tokens from either DB (system accounts) or session (users').
  *
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -150,6 +150,62 @@ class client extends \oauth2_client {
             $name .= '-system';
         }
         return $name;
+    }
+
+    /**
+     * Store a token between requests. Uses session named by get_tokenname for user account tokens
+     * and a database record for system account tokens.
+     *
+     * @param stdClass|null $token token object to store or null to clear
+     */
+    protected function store_token($token) {
+        if (!$this->system) {
+            parent::store_token($token);
+            return;
+        }
+
+        $this->accesstoken = $token;
+
+        // Create or update a DB record with the new token.
+        $persistedtoken = access_token::get_record(['issuerid' => $this->issuer->get('id')]);
+        if ($token !== null) {
+            if (!$persistedtoken) {
+                $persistedtoken = new access_token();
+                $persistedtoken->set('issuerid', $this->issuer->get('id'));
+            }
+            // Update values from $token. Don't use from_record because that would skip validation.
+            $persistedtoken->set('token', $token->token);
+            if (isset($token->expires)) {
+                $persistedtoken->set('expires', $token->expires);
+            } else {
+                // Assume an arbitrary time span of 1 week for access tokens without expiration.
+                // The "refresh_system_tokens_task" is run hourly (by default), so the token probably won't last that long.
+                $persistedtoken->set('expires', time() + WEEKSECS);
+            }
+            $persistedtoken->set('scope', $token->scope);
+            $persistedtoken->save();
+        } else {
+            if ($persistedtoken) {
+                $persistedtoken->delete();
+            }
+        }
+    }
+
+    /**
+     * Retrieve a stored token from session (user accounts) or database (system accounts).
+     *
+     * @return stdClass|null token object
+     */
+    protected function get_stored_token() {
+        if ($this->system) {
+            $token = access_token::get_record(['issuerid' => $this->issuer->get('id')]);
+            if ($token !== false) {
+                return $token->to_record();
+            }
+            return null;
+        }
+
+        return parent::get_stored_token();
     }
 
     /**

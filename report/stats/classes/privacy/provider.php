@@ -29,6 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\contextlist;
 use \core_privacy\local\request\approved_contextlist;
+use \core_privacy\local\request\userlist;
+use \core_privacy\local\request\approved_userlist;
 
 /**
  * Privacy Subsystem for report_stats implementing provider.
@@ -36,7 +38,10 @@ use \core_privacy\local\request\approved_contextlist;
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\subsystem\provider{
+class provider implements
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\core_userlist_provider,
+        \core_privacy\local\request\subsystem\provider{
 
     /**
      * Returns information about the user data stored in this component.
@@ -109,6 +114,51 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users within a specific context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_course) {
+            return;
+        }
+
+        $params = [
+            'contextid' => $context->id,
+            'contextcourse' => CONTEXT_COURSE,
+        ];
+
+        $sql = "SELECT sud.userid
+                  FROM {stats_user_daily} sud
+                  JOIN {context} ctx
+                       ON ctx.instanceid = sud.courseid
+                       AND ctx.contextlevel = :contextcourse
+                 WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        $sql = "SELECT suw.userid
+                  FROM {stats_user_weekly} suw
+                  JOIN {context} ctx
+                       ON ctx.instanceid = suw.courseid
+                       AND ctx.contextlevel = :contextcourse
+                 WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        $sql = "SELECT sum.userid
+                  FROM {stats_user_monthly} sum
+                  JOIN {context} ctx
+                       ON ctx.instanceid = sum.courseid
+                       AND ctx.contextlevel = :contextcourse
+                 WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -201,6 +251,27 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
             if ($context->contextlevel == CONTEXT_COURSE) {
                 static::delete_stats($context->instanceid, $contextlist->get_user()->id);
             }
+        }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if ($context instanceof \context_course) {
+            list($usersql, $userparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+            $select = "courseid = :courseid AND userid {$usersql}";
+            $params = ['courseid' => $context->instanceid] + $userparams;
+
+            $DB->delete_records_select('stats_user_daily', $select, $params);
+            $DB->delete_records_select('stats_user_weekly', $select, $params);
+            $DB->delete_records_select('stats_user_monthly', $select, $params);
         }
     }
 

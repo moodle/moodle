@@ -23,7 +23,7 @@ Feature: Test editing a Multiple choice question
       | Test questions   | multichoice | Single choice for editing   | one_of_four |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
 
   Scenario: Edit a Multiple choice question with multiple response (checkboxes)
     When I click on "Edit" "link" in the "Multiple choice for editing" "table_row"

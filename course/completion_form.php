@@ -138,8 +138,7 @@ class course_completion_form extends moodleform {
 
         if (!empty($courses)) {
             // Get category list.
-            require_once($CFG->libdir. '/coursecatlib.php');
-            $list = coursecat::make_categories_list();
+            $list = core_course_category::make_categories_list();
 
             // Get course list for select box.
             $selectbox = array();

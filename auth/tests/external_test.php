@@ -40,6 +40,9 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  */
 class core_auth_external_testcase extends externallib_advanced_testcase {
 
+    /** @var string Original error log */
+    protected $oldlog;
+
     /**
      * Set up for every test
      */
@@ -48,6 +51,18 @@ class core_auth_external_testcase extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
         $CFG->registerauth = 'email';
+
+        // Discard error logs.
+        $this->oldlog = ini_get('error_log');
+        ini_set('error_log', "$CFG->dataroot/testlog.log");
+    }
+
+    /**
+     * Tear down to restore old logging..
+     */
+    protected function tearDown() {
+        ini_set('error_log', $this->oldlog);
+        parent::tearDown();
     }
 
     /**
@@ -114,5 +129,106 @@ class core_auth_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(
             core_auth_external::is_age_digital_consent_verification_enabled_returns(), $result);
         $this->assertTrue($result['status']);
+    }
+
+    /**
+     * Test resend_confirmation_email.
+     */
+    public function test_resend_confirmation_email() {
+        global $DB;
+
+        $username = 'pepe';
+        $password = 'abcdefAª.ªª!!3';
+        $firstname = 'Pepe';
+        $lastname = 'Pérez';
+        $email = 'myemail@no.zbc';
+
+        // Create new user.
+        $result = auth_email_external::signup_user($username, $password, $firstname, $lastname, $email);
+        $result = external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
+        $this->assertTrue($result['success']);
+        $this->assertEmpty($result['warnings']);
+
+        $result = core_auth_external::resend_confirmation_email($username, $password);
+        $result = external_api::clean_returnvalue(core_auth_external::resend_confirmation_email_returns(), $result);
+        $this->assertTrue($result['status']);
+        $this->assertEmpty($result['warnings']);
+        $confirmed = $DB->get_field('user', 'confirmed', array('username' => $username));
+        $this->assertEquals(0, $confirmed);
+    }
+
+    /**
+     * Test resend_confirmation_email invalid username.
+     */
+    public function test_resend_confirmation_email_invalid_username() {
+
+        $username = 'pepe';
+        $password = 'abcdefAª.ªª!!3';
+        $firstname = 'Pepe';
+        $lastname = 'Pérez';
+        $email = 'myemail@no.zbc';
+
+        // Create new user.
+        $result = auth_email_external::signup_user($username, $password, $firstname, $lastname, $email);
+        $result = external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
+        $this->assertTrue($result['success']);
+        $this->assertEmpty($result['warnings']);
+
+        $_SERVER['HTTP_USER_AGENT'] = 'no browser'; // Hack around missing user agent in CLI scripts.
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage('error/invalidlogin');
+        $result = core_auth_external::resend_confirmation_email('abc', $password);
+    }
+
+    /**
+     * Test resend_confirmation_email invalid password.
+     */
+    public function test_resend_confirmation_email_invalid_password() {
+
+        $username = 'pepe';
+        $password = 'abcdefAª.ªª!!3';
+        $firstname = 'Pepe';
+        $lastname = 'Pérez';
+        $email = 'myemail@no.zbc';
+
+        // Create new user.
+        $result = auth_email_external::signup_user($username, $password, $firstname, $lastname, $email);
+        $result = external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
+        $this->assertTrue($result['success']);
+        $this->assertEmpty($result['warnings']);
+
+        $_SERVER['HTTP_USER_AGENT'] = 'no browser'; // Hack around missing user agent in CLI scripts.
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage('error/invalidlogin');
+        $result = core_auth_external::resend_confirmation_email($username, 'abc');
+    }
+
+    /**
+     * Test resend_confirmation_email already confirmed user.
+     */
+    public function test_resend_confirmation_email_already_confirmed_user() {
+        global $DB;
+
+        $username = 'pepe';
+        $password = 'abcdefAª.ªª!!3';
+        $firstname = 'Pepe';
+        $lastname = 'Pérez';
+        $email = 'myemail@no.zbc';
+
+        // Create new user.
+        $result = auth_email_external::signup_user($username, $password, $firstname, $lastname, $email);
+        $result = external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
+        $this->assertTrue($result['success']);
+        $this->assertEmpty($result['warnings']);
+        $secret = $DB->get_field('user', 'secret', array('username' => $username));
+
+        // Confirm the user.
+        $result = core_auth_external::confirm_user($username, $secret);
+        $result = external_api::clean_returnvalue(core_auth_external::confirm_user_returns(), $result);
+        $this->assertTrue($result['success']);
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage('error/alreadyconfirmed');
+        core_auth_external::resend_confirmation_email($username, $password);
     }
 }

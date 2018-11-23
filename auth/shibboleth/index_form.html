@@ -54,6 +54,7 @@ if ($show_instructions) {
         </div>
         <form action="../../login/index.php" method="post" id="guestlogin">
           <div class="guestform">
+            <input type="hidden" name="logintoken" value="<?php echo s(\core\session\manager::get_login_token()); ?>" />
             <input type="hidden" name="username" value="guest" />
             <input type="hidden" name="password" value="guest" />
             <input type="submit" value="<?php print_string("loginguest") ?>" />

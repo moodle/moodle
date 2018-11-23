@@ -27,85 +27,94 @@ defined('MOODLE_INTERNAL') || die();
 use renderable;
 use renderer_base;
 use templatable;
-use core_completion\progress;
 
 require_once($CFG->dirroot . '/blocks/myoverview/lib.php');
-require_once($CFG->libdir . '/completionlib.php');
 
 /**
  * Class containing data for my overview block.
  *
- * @copyright  2017 Simey Lameze <simey@moodle.com>
+ * @copyright  2018 Bas Brands <bas@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class main implements renderable, templatable {
 
     /**
-     * @var string The tab to display.
+     * Store the grouping preference
+     *
+     * @var string String matching the grouping constants defined in myoverview/lib.php
      */
-    public $tab;
+    private $grouping;
 
     /**
-     * Constructor.
+     * Store the sort preference
      *
-     * @param string $tab The tab to display.
+     * @var string String matching the sort constants defined in myoverview/lib.php
      */
-    public function __construct($tab) {
-        $this->tab = $tab;
+    private $sort;
+
+    /**
+     * Store the view preference
+     *
+     * @var string String matching the view/display constants defined in myoverview/lib.php
+     */
+    private $view;
+
+    /**
+     * Store the paging preference
+     *
+     * @var string String matching the paging constants defined in myoverview/lib.php
+     */
+    private $paging;
+
+    /**
+     * main constructor.
+     * Initialize the user preferences
+     *
+     * @param string $grouping Grouping user preference
+     * @param string $sort Sort user preference
+     * @param string $view Display user preference
+     */
+    public function __construct($grouping, $sort, $view, $paging) {
+        $this->grouping = $grouping ? $grouping : BLOCK_MYOVERVIEW_GROUPING_ALL;
+        $this->sort = $sort ? $sort : BLOCK_MYOVERVIEW_SORTING_TITLE;
+        $this->view = $view ? $view : BLOCK_MYOVERVIEW_VIEW_CARD;
+        $this->paging = $paging ? $paging : BLOCK_MYOVERVIEW_PAGING_12;
+    }
+
+    /**
+     * Get the user preferences as an array to figure out what has been selected
+     *
+     * @return array $preferences Array with the pref as key and value set to true
+     */
+    public function get_preferences_as_booleans() {
+        $preferences = [];
+        $preferences[$this->view] = true;
+        $preferences[$this->sort] = true;
+        $preferences[$this->grouping] = true;
+
+        return $preferences;
     }
 
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param \renderer_base $output
-     * @return stdClass
+     * @return array Context variables for the template
      */
     public function export_for_template(renderer_base $output) {
-        global $USER;
 
-        $courses = enrol_get_my_courses('*');
-        $coursesprogress = [];
-
-        foreach ($courses as $course) {
-
-            $completion = new \completion_info($course);
-
-            // First, let's make sure completion is enabled.
-            if (!$completion->is_enabled()) {
-                continue;
-            }
-
-            $percentage = progress::get_course_progress_percentage($course);
-            if (!is_null($percentage)) {
-                $percentage = floor($percentage);
-            }
-
-            $coursesprogress[$course->id]['completed'] = $completion->is_course_complete($USER->id);
-            $coursesprogress[$course->id]['progress'] = $percentage;
-        }
-
-        $coursesview = new courses_view($courses, $coursesprogress);
         $nocoursesurl = $output->image_url('courses', 'block_myoverview')->out();
-        $noeventsurl = $output->image_url('activities', 'block_myoverview')->out();
 
-        // Now, set the tab we are going to be viewing.
-        $viewingtimeline = false;
-        $viewingcourses = false;
-        if ($this->tab == BLOCK_MYOVERVIEW_TIMELINE_VIEW) {
-            $viewingtimeline = true;
-        } else {
-            $viewingcourses = true;
-        }
-
-        return [
-            'midnight' => usergetmidnight(time()),
-            'coursesview' => $coursesview->export_for_template($output),
-            'urls' => [
-                'nocourses' => $nocoursesurl,
-                'noevents' => $noeventsurl
-            ],
-            'viewingtimeline' => $viewingtimeline,
-            'viewingcourses' => $viewingcourses
+        $defaultvariables = [
+            'nocoursesimg' => $nocoursesurl,
+            'grouping' => $this->grouping,
+            'sort' => $this->sort == BLOCK_MYOVERVIEW_SORTING_TITLE ? 'fullname' : 'ul.timeaccess desc',
+            'view' => $this->view,
+            'paging' => $this->paging
         ];
+
+        $preferences = $this->get_preferences_as_booleans();
+        return array_merge($defaultvariables, $preferences);
+
     }
 }

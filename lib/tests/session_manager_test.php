@@ -571,7 +571,7 @@ class core_session_manager_testcase extends advanced_testcase {
         \core\session\manager::loginas($user->id, context_system::instance());
 
         $this->assertSame($user->id, $USER->id);
-        $this->assertSame(context_system::instance(), $USER->loginascontext);
+        $this->assertEquals(context_system::instance(), $USER->loginascontext);
         $this->assertSame($adminuser->id, $USER->realuser);
         $this->assertSame($GLOBALS['USER'], $_SESSION['USER']);
         $this->assertSame($GLOBALS['USER'], $USER);

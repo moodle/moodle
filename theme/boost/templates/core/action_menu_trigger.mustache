@@ -78,7 +78,7 @@
     }
 }}
 <div class="dropdown">
-    <a href="#" class="{{triggerextraclasses}} dropdown-toggle" id="dropdown-{{instance}}" title="{{title}}" role="menuitem" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <a href="#" tabindex="0" class="{{triggerextraclasses}} dropdown-toggle icon-no-margin" id="dropdown-{{instance}}" aria-label="{{title}}" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" aria-controls="action-menu-{{instance}}-menu">
         {{{actiontext}}}
         {{{menutrigger}}}
             {{#icon}}
@@ -92,7 +92,7 @@
         {{/menutrigger}}
     </a>
     {{#secondary}}
-        <div class="dropdown-menu dropdown-menu-right {{classes}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
+        <div class="dropdown-menu dropdown-menu-right {{classes}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}} id="dropdown-menu-{{instance}}">
             {{#items}}
                 {{#actionmenulink}}
                     <a href="{{url}}" class="dropdown-item {{classes}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}{{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>
@@ -107,7 +107,7 @@
                     </a>
                 {{/actionmenulink}}
                 {{#actionmenufiller}}
-                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-divider" role="presentation"><span class="filler">&nbsp;</span></div>
                 {{/actionmenufiller}}
                 {{^actionmenulink}}
                     {{^actionmenufiller}}

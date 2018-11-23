@@ -131,7 +131,7 @@ class file_browser_testcase extends advanced_testcase {
     public function test_file_info_context_system_hidden() {
 
         // Hide the course category that contains our two courses. Teacher does not have cap to view hidden categories.
-        coursecat::get($this->course1->category)->update(['visible' => 0]);
+        core_course_category::get($this->course1->category)->update(['visible' => 0]);
 
         // We should have two non-empty children in system context (courses).
         $browser = get_file_browser();

@@ -7,11 +7,11 @@ Feature: List the system steps definitions
   Background:
     Given I am on homepage
     And I log in as "admin"
-    And I navigate to "Acceptance testing" node in "Site administration > Development"
+    And I navigate to "Development > Acceptance testing" in site administration
 
   @javascript
   Scenario: Accessing the list
-    Then I should see "Steps definitions"
+    Then I should see "Step definitions"
     And I should not see "There aren't steps definitions matching this filter"
 
   @javascript

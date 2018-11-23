@@ -22,14 +22,9 @@ Feature: Course overview block show users their progress on courses
 
   Scenario: Course progress percentage should not be displayed if completion is not enabled
     Given I log in as "student1"
-    And I click on "Timeline" "link" in the "Course overview" "block"
-    When I click on "Sort by courses" "link" in the "Course overview" "block"
-    Then I should see "Test choice 1 closes" in the "#myoverview_timeline_courses" "css_element"
-    And I should not see "0%" in the "Course overview" "block"
-    And I click on "Courses" "link" in the "Course overview" "block"
-    And I click on "In progress" "link" in the "Course overview" "block"
-    And I should see "Course 1" in the "Course overview" "block"
-    And I should not see "0%" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
+    When I click on "All" "link" in the "Course overview" "block"
+    Then I should not see "0%" in the "Course overview" "block"
     And I log out
 
   Scenario: User complete activity and verify his progress
@@ -42,22 +37,13 @@ Feature: Course overview block show users their progress on courses
       | id_completionview   | 1                                                 |
     And I press "Save and return to course"
     And I log out
-    And I log in as "student1"
-    And I click on "Sort by courses" "link" in the "Course overview" "block"
-    And I should see "Test choice 1 closes" in the "#myoverview_timeline_courses" "css_element"
-    And I should see "0%" in the "Course overview" "block"
-    And I click on "Courses" "link" in the "Course overview" "block"
-    When I click on "In progress" "link" in the "Course overview" "block"
+    When I log in as "student1"
+    And I click on "All" "button" in the "Course overview" "block"
     Then I should see "Course 1" in the "Course overview" "block"
     And I should see "0%" in the "Course overview" "block"
     And I am on "Course 1" course homepage
     And I follow "Test choice 1"
     And I follow "Dashboard" in the user menu
-    And I click on "Timeline" "link" in the "Course overview" "block"
-    And I click on "Sort by courses" "link" in the "Course overview" "block"
-    And I should see "100%" in the "Course overview" "block"
-    And I click on "Courses" "link" in the "Course overview" "block"
-    And I click on "In progress" "link" in the "Course overview" "block"
-    And I should see "Course 1" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
     And I should see "100%" in the "Course overview" "block"
     And I log out

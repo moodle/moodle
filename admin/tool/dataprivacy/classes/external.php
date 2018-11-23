@@ -92,17 +92,30 @@ class external extends external_api {
         ]);
         $requestid = $params['requestid'];
 
-        // Validate context.
+        // Validate context and access to manage the registry.
         $context = context_user::instance($USER->id);
         self::validate_context($context);
 
         // Ensure the request exists.
         $select = 'id = :id AND (userid = :userid OR requestedby = :requestedby)';
         $params = ['id' => $requestid, 'userid' => $USER->id, 'requestedby' => $USER->id];
-        $requestexists = data_request::record_exists_select($select, $params);
+        $requests = data_request::get_records_select($select, $params);
+        $requestexists = count($requests) === 1;
 
         $result = false;
         if ($requestexists) {
+            $request = reset($requests);
+            $datasubject = $request->get('userid');
+
+            if ($datasubject !== $USER->id) {
+                // The user is not the subject. Check that they can cancel this request.
+                if (!api::can_create_data_request_for_user($datasubject)) {
+                    $forusercontext = \context_user::instance($datasubject);
+                    throw new required_capability_exception($forusercontext,
+                            'tool/dataprivacy:makedatarequestsforchildren', 'nopermissions', '');
+                }
+            }
+
             // TODO: Do we want a request to be non-cancellable past a certain point? E.g. When it's already approved/processing.
             $result = api::update_request_status($requestid, api::DATAREQUEST_STATUS_CANCELLED);
         } else {
@@ -257,9 +270,10 @@ class external extends external_api {
         ]);
         $requestid = $params['requestid'];
 
-        // Validate context.
+        // Validate context and access to manage the registry.
         $context = context_system::instance();
         self::validate_context($context);
+        api::check_can_manage_data_registry();
 
         $message = get_string('markedcomplete', 'tool_dataprivacy');
         // Update the data request record.
@@ -422,6 +436,85 @@ class external extends external_api {
     }
 
     /**
+     * Parameter description for bulk_approve_data_requests().
+     *
+     * @since Moodle 3.5
+     * @return external_function_parameters
+     */
+    public static function bulk_approve_data_requests_parameters() {
+        return new external_function_parameters([
+            'requestids' => new external_multiple_structure(
+                new external_value(PARAM_INT, 'The request ID', VALUE_REQUIRED)
+            )
+        ]);
+    }
+
+    /**
+     * Bulk approve bulk data request.
+     *
+     * @since Moodle 3.5
+     * @param array $requestids Array consisting the request ID's.
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     * @throws moodle_exception
+     */
+    public static function bulk_approve_data_requests($requestids) {
+        $warnings = [];
+        $result = false;
+        $params = external_api::validate_parameters(self::bulk_approve_data_requests_parameters(), [
+            'requestids' => $requestids
+        ]);
+        $requestids = $params['requestids'];
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('tool/dataprivacy:managedatarequests', $context);
+
+        foreach ($requestids as $requestid) {
+            // Ensure the request exists.
+            $requestexists = data_request::record_exists($requestid);
+
+            if ($requestexists) {
+                api::approve_data_request($requestid);
+            } else {
+                $warnings[] = [
+                    'item' => $requestid,
+                    'warningcode' => 'errorrequestnotfound',
+                    'message' => get_string('errorrequestnotfound', 'tool_dataprivacy')
+                ];
+            }
+        }
+
+        if (empty($warnings)) {
+            $result = true;
+            // Add notification in the session to be shown when the page is reloaded on the JS side.
+            notification::success(get_string('requestsapproved', 'tool_dataprivacy'));
+        }
+
+        return [
+            'result' => $result,
+            'warnings' => $warnings
+        ];
+    }
+
+    /**
+     * Parameter description for bulk_approve_data_requests().
+     *
+     * @since Moodle 3.5
+     * @return external_description
+     */
+    public static function bulk_approve_data_requests_returns() {
+        return new external_single_structure([
+            'result' => new external_value(PARAM_BOOL, 'The processing result'),
+            'warnings' => new external_warnings()
+        ]);
+    }
+
+    /**
      * Parameter description for deny_data_request().
      *
      * @since Moodle 3.5
@@ -487,6 +580,85 @@ class external extends external_api {
      * @return external_description
      */
     public static function deny_data_request_returns() {
+        return new external_single_structure([
+            'result' => new external_value(PARAM_BOOL, 'The processing result'),
+            'warnings' => new external_warnings()
+        ]);
+    }
+
+    /**
+     * Parameter description for bulk_deny_data_requests().
+     *
+     * @since Moodle 3.5
+     * @return external_function_parameters
+     */
+    public static function bulk_deny_data_requests_parameters() {
+        return new external_function_parameters([
+            'requestids' => new external_multiple_structure(
+                new external_value(PARAM_INT, 'The request ID', VALUE_REQUIRED)
+            )
+        ]);
+    }
+
+    /**
+     * Bulk deny data requests.
+     *
+     * @since Moodle 3.5
+     * @param array $requestids Array consisting of request ID's.
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     * @throws moodle_exception
+     */
+    public static function bulk_deny_data_requests($requestids) {
+        $warnings = [];
+        $result = false;
+        $params = external_api::validate_parameters(self::bulk_deny_data_requests_parameters(), [
+            'requestids' => $requestids
+        ]);
+        $requestids = $params['requestids'];
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('tool/dataprivacy:managedatarequests', $context);
+
+        foreach ($requestids as $requestid) {
+            // Ensure the request exists.
+            $requestexists = data_request::record_exists($requestid);
+
+            if ($requestexists) {
+                api::deny_data_request($requestid);
+            } else {
+                $warnings[] = [
+                    'item' => $requestid,
+                    'warningcode' => 'errorrequestnotfound',
+                    'message' => get_string('errorrequestnotfound', 'tool_dataprivacy')
+                ];
+            }
+        }
+
+        if (empty($warnings)) {
+            $result = true;
+            // Add notification in the session to be shown when the page is reloaded on the JS side.
+            notification::success(get_string('requestsdenied', 'tool_dataprivacy'));
+        }
+
+        return [
+            'result' => $result,
+            'warnings' => $warnings
+        ];
+    }
+
+    /**
+     * Parameter description for bulk_deny_data_requests().
+     *
+     * @since Moodle 3.5
+     * @return external_description
+     */
+    public static function bulk_deny_data_requests_returns() {
         return new external_single_structure([
             'result' => new external_value(PARAM_BOOL, 'The processing result'),
             'warnings' => new external_warnings()
@@ -590,7 +762,9 @@ class external extends external_api {
             'jsonformdata' => $jsonformdata
         ]);
 
+        // Validate context and access to manage the registry.
         self::validate_context(\context_system::instance());
+        api::check_can_manage_data_registry();
 
         $serialiseddata = json_decode($params['jsonformdata']);
         $data = array();
@@ -658,6 +832,10 @@ class external extends external_api {
             'id' => $id
         ]);
 
+        // Validate context and access to manage the registry.
+        self::validate_context(\context_system::instance());
+        api::check_can_manage_data_registry();
+
         $result = api::delete_purpose($params['id']);
 
         return [
@@ -707,7 +885,9 @@ class external extends external_api {
             'jsonformdata' => $jsonformdata
         ]);
 
+        // Validate context and access to manage the registry.
         self::validate_context(\context_system::instance());
+        api::check_can_manage_data_registry();
 
         $serialiseddata = json_decode($params['jsonformdata']);
         $data = array();
@@ -775,6 +955,10 @@ class external extends external_api {
             'id' => $id
         ]);
 
+        // Validate context and access to manage the registry.
+        self::validate_context(\context_system::instance());
+        api::check_can_manage_data_registry();
+
         $result = api::delete_category($params['id']);
 
         return [
@@ -824,8 +1008,9 @@ class external extends external_api {
             'jsonformdata' => $jsonformdata
         ]);
 
-        // Extra permission checkings are delegated to api::set_contextlevel.
+        // Validate context and access to manage the registry.
         self::validate_context(\context_system::instance());
+        api::check_can_manage_data_registry();
 
         $serialiseddata = json_decode($params['jsonformdata']);
         $data = array();
@@ -839,7 +1024,6 @@ class external extends external_api {
             $contextlevel = api::set_contextlevel($validateddata);
         } else if ($errors = $mform->is_validated()) {
             $warnings[] = json_encode($errors);
-            throw new moodle_exception('generalerror');
         }
 
         if ($contextlevel) {
@@ -894,8 +1078,9 @@ class external extends external_api {
             'jsonformdata' => $jsonformdata
         ]);
 
-        // Extra permission checkings are delegated to api::set_context_instance.
+        // Validate context and access to manage the registry.
         self::validate_context(\context_system::instance());
+        api::check_can_manage_data_registry();
 
         $serialiseddata = json_decode($params['jsonformdata']);
         $data = array();
@@ -905,6 +1090,7 @@ class external extends external_api {
         $customdata = \tool_dataprivacy\form\context_instance::get_context_instance_customdata($context);
         $mform = new \tool_dataprivacy\form\context_instance(null, $customdata, 'post', '', null, true, $data);
         if ($validateddata = $mform->get_data()) {
+            api::check_can_manage_data_registry($validateddata->contextid);
             $context = api::set_context_instance($validateddata);
         } else if ($errors = $mform->is_validated()) {
             $warnings[] = json_encode($errors);
@@ -1034,9 +1220,9 @@ class external extends external_api {
         ]);
         $ids = $params['ids'];
 
-        // Validate context.
-        $context = context_system::instance();
-        self::validate_context($context);
+        // Validate context and access to manage the registry.
+        self::validate_context(\context_system::instance());
+        api::check_can_manage_data_registry();
 
         $result = true;
         if (!empty($ids)) {
@@ -1046,24 +1232,27 @@ class external extends external_api {
                 $expiredcontext = new expired_context($id);
                 $targetcontext = context_helper::instance_by_id($expiredcontext->get('contextid'));
 
-                // Fetch this context's child contexts. Make sure that all of the child contexts are flagged for deletion.
-                $childcontexts = $targetcontext->get_child_contexts();
-                foreach ($childcontexts as $child) {
-                    if ($expiredchildcontext = expired_context::get_record(['contextid' => $child->id])) {
-                        // Add this child context to the list for approval.
-                        $expiredcontextstoapprove[] = $expiredchildcontext;
-                    } else {
-                        // This context has not yet been flagged for deletion.
-                        $result = false;
-                        $message = get_string('errorcontexthasunexpiredchildren', 'tool_dataprivacy',
-                            $targetcontext->get_context_name(false));
-                        $warnings[] = [
-                            'item' => 'tool_dataprivacy_ctxexpired',
-                            'warningcode' => 'errorcontexthasunexpiredchildren',
-                            'message' => $message
-                        ];
-                        // Exit the process.
-                        break 2;
+                if (!$targetcontext instanceof \context_user) {
+                    // Fetch this context's child contexts. Make sure that all of the child contexts are flagged for deletion.
+                    // User context children do not need to be considered.
+                    $childcontexts = $targetcontext->get_child_contexts();
+                    foreach ($childcontexts as $child) {
+                        if ($expiredchildcontext = expired_context::get_record(['contextid' => $child->id])) {
+                            // Add this child context to the list for approval.
+                            $expiredcontextstoapprove[] = $expiredchildcontext;
+                        } else {
+                            // This context has not yet been flagged for deletion.
+                            $result = false;
+                            $message = get_string('errorcontexthasunexpiredchildren', 'tool_dataprivacy',
+                                $targetcontext->get_context_name(false));
+                            $warnings[] = [
+                                'item' => 'tool_dataprivacy_ctxexpired',
+                                'warningcode' => 'errorcontexthasunexpiredchildren',
+                                'message' => $message
+                            ];
+                            // Exit the process.
+                            break 2;
+                        }
                     }
                 }
 
@@ -1106,6 +1295,289 @@ class external extends external_api {
     public static function confirm_contexts_for_deletion_returns() {
         return new external_single_structure([
             'result' => new external_value(PARAM_BOOL, 'Whether the record was properly marked for deletion or not'),
+            'warnings' => new external_warnings()
+        ]);
+    }
+
+    /**
+     * Parameters for set_context_defaults().
+     *
+     * @return external_function_parameters
+     */
+    public static function set_context_defaults_parameters() {
+        return new external_function_parameters([
+            'contextlevel' => new external_value(PARAM_INT, 'The context level', VALUE_REQUIRED),
+            'category' => new external_value(PARAM_INT, 'The default category for the given context level', VALUE_REQUIRED),
+            'purpose' => new external_value(PARAM_INT, 'The default purpose for the given context level', VALUE_REQUIRED),
+            'activity' => new external_value(PARAM_PLUGIN, 'The plugin name of the activity', VALUE_DEFAULT, null),
+            'override' => new external_value(PARAM_BOOL, 'Whether to override existing instances with the defaults', VALUE_DEFAULT,
+                false),
+        ]);
+    }
+
+    /**
+     * Updates the default category and purpose for a given context level (and optionally, a plugin).
+     *
+     * @param int $contextlevel The context level.
+     * @param int $category The ID matching the category.
+     * @param int $purpose The ID matching the purpose record.
+     * @param int $activity The name of the activity that we're making a defaults configuration for.
+     * @param bool $override Whether to override the purpose/categories of existing instances to these defaults.
+     * @return array
+     */
+    public static function set_context_defaults($contextlevel, $category, $purpose, $activity, $override) {
+        $warnings = [];
+
+        $params = external_api::validate_parameters(self::set_context_defaults_parameters(), [
+            'contextlevel' => $contextlevel,
+            'category' => $category,
+            'purpose' => $purpose,
+            'activity' => $activity,
+            'override' => $override,
+        ]);
+        $contextlevel = $params['contextlevel'];
+        $category = $params['category'];
+        $purpose = $params['purpose'];
+        $activity = $params['activity'];
+        $override = $params['override'];
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+        api::check_can_manage_data_registry();
+
+        // Set the context defaults.
+        $result = api::set_context_defaults($contextlevel, $category, $purpose, $activity, $override);
+
+        return [
+            'result' => $result,
+            'warnings' => $warnings
+        ];
+    }
+
+    /**
+     * Returns for set_context_defaults().
+     *
+     * @return external_single_structure
+     */
+    public static function set_context_defaults_returns() {
+        return new external_single_structure([
+            'result' => new external_value(PARAM_BOOL, 'Whether the context defaults were successfully set or not'),
+            'warnings' => new external_warnings()
+        ]);
+    }
+
+    /**
+     * Parameters for get_category_options().
+     *
+     * @return external_function_parameters
+     */
+    public static function get_category_options_parameters() {
+        return new external_function_parameters([
+            'includeinherit' => new external_value(PARAM_BOOL, 'Include option "Inherit"', VALUE_DEFAULT, true),
+            'includenotset' => new external_value(PARAM_BOOL, 'Include option "Not set"', VALUE_DEFAULT, false),
+        ]);
+    }
+
+    /**
+     * Fetches a list of data category options containing category IDs as keys and the category name for the value.
+     *
+     * @param bool $includeinherit Whether to include the "Inherit" option.
+     * @param bool $includenotset Whether to include the "Not set" option.
+     * @return array
+     */
+    public static function get_category_options($includeinherit, $includenotset) {
+        $warnings = [];
+
+        $params = self::validate_parameters(self::get_category_options_parameters(), [
+            'includeinherit' => $includeinherit,
+            'includenotset' => $includenotset
+        ]);
+        $includeinherit = $params['includeinherit'];
+        $includenotset = $params['includenotset'];
+
+        $context = context_system::instance();
+        self::validate_context($context);
+        api::check_can_manage_data_registry();
+
+        $categories = api::get_categories();
+        $options = data_registry_page::category_options($categories, $includenotset, $includeinherit);
+        $categoryoptions = [];
+        foreach ($options as $id => $name) {
+            $categoryoptions[] = [
+                'id' => $id,
+                'name' => $name,
+            ];
+        }
+
+        return [
+            'options' => $categoryoptions,
+            'warnings' => $warnings
+        ];
+    }
+
+    /**
+     * Returns for get_category_options().
+     *
+     * @return external_single_structure
+     */
+    public static function get_category_options_returns() {
+        $optiondefinition = new external_single_structure(
+            [
+                'id' => new external_value(PARAM_INT, 'The category ID'),
+                'name' => new external_value(PARAM_TEXT, 'The category name'),
+            ]
+        );
+
+        return new external_single_structure([
+            'options' => new external_multiple_structure($optiondefinition),
+            'warnings' => new external_warnings()
+        ]);
+    }
+
+    /**
+     * Parameters for get_purpose_options().
+     *
+     * @return external_function_parameters
+     */
+    public static function get_purpose_options_parameters() {
+        return new external_function_parameters([
+            'includeinherit' => new external_value(PARAM_BOOL, 'Include option "Inherit"', VALUE_DEFAULT, true),
+            'includenotset' => new external_value(PARAM_BOOL, 'Include option "Not set"', VALUE_DEFAULT, false),
+        ]);
+    }
+
+    /**
+     * Fetches a list of data storage purposes containing purpose IDs as keys and the purpose name for the value.
+     *
+     * @param bool $includeinherit Whether to include the "Inherit" option.
+     * @param bool $includenotset Whether to include the "Not set" option.
+     * @return array
+     */
+    public static function get_purpose_options($includeinherit, $includenotset) {
+        $warnings = [];
+
+        $params = self::validate_parameters(self::get_category_options_parameters(), [
+            'includeinherit' => $includeinherit,
+            'includenotset' => $includenotset
+        ]);
+        $includeinherit = $params['includeinherit'];
+        $includenotset = $params['includenotset'];
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $purposes = api::get_purposes();
+        $options = data_registry_page::purpose_options($purposes, $includenotset, $includeinherit);
+        $purposeoptions = [];
+        foreach ($options as $id => $name) {
+            $purposeoptions[] = [
+                'id' => $id,
+                'name' => $name,
+            ];
+        }
+
+        return [
+            'options' => $purposeoptions,
+            'warnings' => $warnings
+        ];
+    }
+
+    /**
+     * Returns for get_purpose_options().
+     *
+     * @return external_single_structure
+     */
+    public static function get_purpose_options_returns() {
+        $optiondefinition = new external_single_structure(
+            [
+                'id' => new external_value(PARAM_INT, 'The purpose ID'),
+                'name' => new external_value(PARAM_TEXT, 'The purpose name'),
+            ]
+        );
+
+        return new external_single_structure([
+            'options' => new external_multiple_structure($optiondefinition),
+            'warnings' => new external_warnings()
+        ]);
+    }
+
+    /**
+     * Parameters for get_activity_options().
+     *
+     * @return external_function_parameters
+     */
+    public static function get_activity_options_parameters() {
+        return new external_function_parameters([
+            'nodefaults' => new external_value(PARAM_BOOL, 'Whether to fetch all activities or only those without defaults',
+                VALUE_DEFAULT, false),
+        ]);
+    }
+
+    /**
+     * Fetches a list of activity options for setting data registry defaults.
+     *
+     * @param boolean $nodefaults If false, it will fetch all of the activities. Otherwise, it will only fetch the activities
+     *                            that don't have defaults yet (e.g. when adding a new activity module defaults).
+     * @return array
+     */
+    public static function get_activity_options($nodefaults) {
+        $warnings = [];
+
+        $params = self::validate_parameters(self::get_activity_options_parameters(), [
+            'nodefaults' => $nodefaults,
+        ]);
+        $nodefaults = $params['nodefaults'];
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        // Get activity module plugin info.
+        $pluginmanager = \core_plugin_manager::instance();
+        $modplugins = $pluginmanager->get_enabled_plugins('mod');
+        $modoptions = [];
+
+        // Get the module-level defaults. data_registry::get_defaults falls back to this when there are no activity defaults.
+        list($levelpurpose, $levelcategory) = data_registry::get_defaults(CONTEXT_MODULE);
+        foreach ($modplugins as $name) {
+            // Check if we have default purpose and category for this module if we want don't want to fetch everything.
+            if ($nodefaults) {
+                list($purpose, $category) = data_registry::get_defaults(CONTEXT_MODULE, $name);
+                // Compare this with the module-level defaults.
+                if ($purpose !== $levelpurpose || $category !== $levelcategory) {
+                    // If the defaults for this activity has been already set, there's no need to add this in the list of options.
+                    continue;
+                }
+            }
+
+            $displayname = $pluginmanager->plugin_name('mod_' . $name);
+            $modoptions[] = (object)[
+                'name' => $name,
+                'displayname' => $displayname
+            ];
+        }
+
+        return [
+            'options' => $modoptions,
+            'warnings' => $warnings
+        ];
+    }
+
+    /**
+     * Returns for get_category_options().
+     *
+     * @return external_single_structure
+     */
+    public static function get_activity_options_returns() {
+        $optionsdefinition = new external_single_structure(
+            [
+                'name' => new external_value(PARAM_TEXT, 'The plugin name of the activity'),
+                'displayname' => new external_value(PARAM_TEXT, 'The display name of the activity'),
+            ]
+        );
+
+        return new external_single_structure([
+            'options' => new external_multiple_structure($optionsdefinition),
             'warnings' => new external_warnings()
         ]);
     }

@@ -57,6 +57,36 @@ class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_te
     }
 
     /**
+     * Test for provider::get_contexts_for_userid() when there is no quiz attempt at all.
+     */
+    public function test_get_contexts_for_userid_no_attempt_with_override() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_user();
+
+        // Make a quiz with an override.
+        $this->setUser();
+        $quiz = $this->create_test_quiz($course);
+        $DB->insert_record('quiz_overrides', [
+            'quiz' => $quiz->id,
+            'userid' => $user->id,
+            'timeclose' => 1300,
+            'timelimit' => null,
+        ]);
+
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+        $context = \context_module::instance($cm->id);
+
+        // Fetch the contexts - only one context should be returned.
+        $this->setUser();
+        $contextlist = provider::get_contexts_for_userid($user->id);
+        $this->assertCount(1, $contextlist);
+        $this->assertEquals($context, $contextlist->current());
+    }
+
+    /**
      * The export function should handle an empty contextlist properly.
      */
     public function test_export_user_data_no_data() {
@@ -426,5 +456,100 @@ class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_te
         $this->setUser();
 
         return [$quizobj, $quba, $attemptobj];
+    }
+
+    /**
+     * Test for provider::get_users_in_context().
+     */
+    public function test_get_users_in_context() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_user();
+        $anotheruser = $this->getDataGenerator()->create_user();
+        $extrauser = $this->getDataGenerator()->create_user();
+
+        // Make a quiz.
+        $this->setUser();
+        $quiz = $this->create_test_quiz($course);
+
+        // Create an override for user1.
+        $DB->insert_record('quiz_overrides', [
+            'quiz' => $quiz->id,
+            'userid' => $user->id,
+            'timeclose' => 1300,
+            'timelimit' => null,
+        ]);
+
+        // Make an attempt on the quiz as user2.
+        list($quizobj, $quba, $attemptobj) = $this->attempt_quiz($quiz, $anotheruser);
+        $context = $quizobj->get_context();
+
+        // Fetch users - user1 and user2 should be returned.
+        $userlist = new \core_privacy\local\request\userlist($context, 'mod_quiz');
+        \mod_quiz\privacy\provider::get_users_in_context($userlist);
+        $this->assertEquals(
+                [$user->id, $anotheruser->id],
+                $userlist->get_userids(),
+                '', 0.0, 10, true);
+    }
+
+    /**
+     * Test for provider::delete_data_for_users().
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        // Make a quiz in each course.
+        $quiz1 = $this->create_test_quiz($course1);
+        $quiz2 = $this->create_test_quiz($course2);
+
+        // Attempt quiz1 as user1 and user2.
+        list($quiz1obj) = $this->attempt_quiz($quiz1, $user1);
+        $this->attempt_quiz($quiz1, $user2);
+
+        // Create an override in quiz1 for user3.
+        $DB->insert_record('quiz_overrides', [
+            'quiz' => $quiz1->id,
+            'userid' => $user3->id,
+            'timeclose' => 1300,
+            'timelimit' => null,
+        ]);
+
+        // Attempt quiz2 as user1.
+        $this->attempt_quiz($quiz2, $user1);
+
+        // Delete the data for user1 and user3 in course1 and check it is removed.
+        $quiz1context = $quiz1obj->get_context();
+        $approveduserlist = new \core_privacy\local\request\approved_userlist($quiz1context, 'mod_quiz',
+                [$user1->id, $user3->id]);
+        provider::delete_data_for_users($approveduserlist);
+
+        // Only the attempt of user2 should be remained in quiz1.
+        $this->assertEquals(
+                [$user2->id],
+                $DB->get_fieldset_select('quiz_attempts', 'userid', 'quiz = ?', [$quiz1->id])
+        );
+
+        // The attempt that user1 made in quiz2 should be remained.
+        $this->assertEquals(
+                [$user1->id],
+                $DB->get_fieldset_select('quiz_attempts', 'userid', 'quiz = ?', [$quiz2->id])
+        );
+
+        // The quiz override in quiz1 that we had for user3 should be deleted.
+        $this->assertEquals(
+                [],
+                $DB->get_fieldset_select('quiz_overrides', 'userid', 'quiz = ?', [$quiz1->id])
+        );
     }
 }

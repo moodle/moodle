@@ -42,7 +42,7 @@ Feature: Reset all personalised pages to default
 
   Scenario: Reset Dashboard for all users
     Given I log in as "admin"
-    And I navigate to "Default Dashboard page" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Default Dashboard page" in site administration
     And I press "Blocks editing on"
     And I add the "Latest announcements" block
     And I open the "Online users" blocks action menu
@@ -64,7 +64,7 @@ Feature: Reset all personalised pages to default
     And I log out
 
     And I log in as "admin"
-    And I navigate to "Default Dashboard page" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Default Dashboard page" in site administration
     When I press "Reset Dashboard for all users"
     And I should see "All Dashboard pages have been reset to default."
     And I log out
@@ -90,7 +90,7 @@ Feature: Reset all personalised pages to default
 
   Scenario: Reset profile for all users
     Given I log in as "admin"
-    And I navigate to "Default profile page" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Default profile page" in site administration
     And I press "Blocks editing on"
     And I add the "Latest announcements" block
     And I log out
@@ -106,7 +106,7 @@ Feature: Reset all personalised pages to default
     And I log out
 
     And I log in as "admin"
-    And I navigate to "Default profile page" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Default profile page" in site administration
     When I press "Reset profile for all users"
     And I should see "All profile pages have been reset to default."
     And I log out

@@ -84,6 +84,7 @@ if($mform->is_cancelled()) {
     // build header to match the rest of the UI
     $PAGE->set_title($data->name);
     $PAGE->set_heading($course->fullname);
+    $PAGE->force_settings_menu(true);
     echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($data->name), 2);
     echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');

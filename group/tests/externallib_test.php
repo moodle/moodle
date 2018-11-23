@@ -116,6 +116,85 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test update_groups
+     *
+     * @expectedException required_capability_exception
+     */
+    public function test_update_groups() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $course = self::getDataGenerator()->create_course();
+
+        $group1data = array();
+        $group1data['courseid'] = $course->id;
+        $group1data['name'] = 'Group Test 1';
+        $group1data['description'] = 'Group Test 1 description';
+        $group1data['descriptionformat'] = FORMAT_MOODLE;
+        $group1data['enrolmentkey'] = 'Test group enrol secret phrase';
+        $group1data['idnumber'] = 'TEST1';
+        $group2data = array();
+        $group2data['courseid'] = $course->id;
+        $group2data['name'] = 'Group Test 2';
+        $group2data['description'] = 'Group Test 2 description';
+        $group2data['idnumber'] = 'TEST2';
+
+        // Set the required capabilities by the external function.
+        $context = context_course::instance($course->id);
+        $roleid = $this->assignUserCapability('moodle/course:managegroups', $context->id);
+        $this->assignUserCapability('moodle/course:view', $context->id, $roleid);
+
+        // Create the test groups.
+        $group1 = self::getDataGenerator()->create_group($group1data);
+        $group2 = self::getDataGenerator()->create_group($group2data);
+
+        $group1data['id'] = $group1->id;
+        unset($group1data['courseid']);
+        $group2data['id'] = $group2->id;
+        unset($group2data['courseid']);
+
+        // No exceptions should be triggered.
+        $group1data['idnumber'] = 'CHANGED';
+        core_group_external::update_groups(array($group1data));
+        $group2data['description'] = 'Group Test 2 description CHANGED';
+        core_group_external::update_groups(array($group2data));
+
+        foreach ([$group1, $group2] as $group) {
+            $dbgroup = $DB->get_record('groups', array('id' => $group->id), '*', MUST_EXIST);
+            switch ($dbgroup->name) {
+                case $group1data['name']:
+                    $this->assertEquals($dbgroup->idnumber, $group1data['idnumber']);
+                    $groupdescription = $group1data['description'];
+                    break;
+                case $group2data['name']:
+                    $this->assertEquals($dbgroup->idnumber, $group2data['idnumber']);
+                    $groupdescription = $group2data['description'];
+                    break;
+                default:
+                    throw new moodle_exception('unknowngroupname');
+                    break;
+            }
+            $this->assertEquals($dbgroup->description, $groupdescription);
+        }
+
+        // Taken idnumber exception.
+        $group1data['idnumber'] = 'TEST2';
+        try {
+            $groups = core_group_external::update_groups(array($group1data));
+            $this->fail('Exception expected due to already existing idnumber.');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('moodle_exception', $e);
+            $this->assertEquals(get_string('idnumbertaken', 'error'), $e->getMessage());
+        }
+
+        // Call without required capability.
+        $group1data['idnumber'] = 'TEST1';
+        $this->unassignUserCapability('moodle/course:managegroups', $context->id, $roleid);
+        $groups = core_group_external::update_groups(array($group1data));
+    }
+
+    /**
      * Test get_groups
      *
      * @expectedException required_capability_exception
@@ -378,10 +457,12 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $teacher = self::getDataGenerator()->create_user();
 
         $course = self::getDataGenerator()->create_course();
+        $anothercourse = self::getDataGenerator()->create_course();
         $emptycourse = self::getDataGenerator()->create_course();
 
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $this->getDataGenerator()->enrol_user($student1->id, $course->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($student1->id, $anothercourse->id, $studentrole->id);
         $this->getDataGenerator()->enrol_user($student2->id, $course->id, $studentrole->id);
 
         $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
@@ -397,12 +478,30 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $group2data['courseid'] = $course->id;
         $group2data['name'] = 'Group Test 2';
         $group2data['description'] = 'Group Test 2 description';
+        $group3data = array();
+        $group3data['courseid'] = $anothercourse->id;
+        $group3data['name'] = 'Group Test 3';
+        $group3data['description'] = 'Group Test 3 description';
+        $group3data['idnumber'] = 'TEST3';
         $group1 = self::getDataGenerator()->create_group($group1data);
         $group2 = self::getDataGenerator()->create_group($group2data);
+        $group3 = self::getDataGenerator()->create_group($group3data);
 
         groups_add_member($group1->id, $student1->id);
         groups_add_member($group1->id, $student2->id);
         groups_add_member($group2->id, $student1->id);
+        groups_add_member($group3->id, $student1->id);
+
+        // Create a grouping.
+        $groupingdata = array();
+        $groupingdata['courseid'] = $course->id;
+        $groupingdata['name'] = 'Grouping Test';
+        $groupingdata['description'] = 'Grouping Test description';
+        $groupingdata['descriptionformat'] = FORMAT_MOODLE;
+
+        $grouping = self::getDataGenerator()->create_grouping($groupingdata);
+        // Grouping only containing group1.
+        groups_assign_grouping($grouping->id, $group1->id);
 
         $this->setUser($student1);
 
@@ -410,6 +509,22 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that I see my groups.
         $this->assertCount(2, $groups['groups']);
+        $this->assertEquals($course->id, $groups['groups'][0]['courseid']);
+        $this->assertEquals($course->id, $groups['groups'][1]['courseid']);
+
+        // Check that I only see my groups inside the given grouping.
+        $groups = core_group_external::get_course_user_groups($course->id, $student1->id, $grouping->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        // Check that I see my groups in the grouping.
+        $this->assertCount(1, $groups['groups']);
+        $this->assertEquals($group1->id, $groups['groups'][0]['id']);
+
+
+        // Check optional parameters (all student 1 courses and current user).
+        $groups = core_group_external::get_course_user_groups();
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        // Check that I see my groups in all my courses.
+        $this->assertCount(3, $groups['groups']);
 
         $this->setUser($student2);
         $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
@@ -424,34 +539,49 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $this->setUser($teacher);
         $groups = core_group_external::get_course_user_groups($course->id, $student1->id);
         $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
-        // Check that a teacher can see student groups.
+        // Check that a teacher can see student groups in given course.
         $this->assertCount(2, $groups['groups']);
 
         $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
         $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
-        // Check that a teacher can see student groups.
+        // Check that a teacher can see student groups in given course.
         $this->assertCount(1, $groups['groups']);
+
+        $groups = core_group_external::get_course_user_groups(0, $student1->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        // Check that a teacher can see student groups in all the user courses if the teacher is enrolled in the course.
+        $this->assertCount(2, $groups['groups']); // Teacher only see groups in first course.
+        $this->assertCount(1, $groups['warnings']); // Enrolment warnings.
+        $this->assertEquals('1', $groups['warnings'][0]['warningcode']);
+
+        // Enrol teacher in second course.
+        $this->getDataGenerator()->enrol_user($teacher->id, $anothercourse->id, $teacherrole->id);
+        $groups = core_group_external::get_course_user_groups(0, $student1->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        // Check that a teacher can see student groups in all the user courses if the teacher is enrolled in the course.
+        $this->assertCount(3, $groups['groups']);
 
         // Check permissions.
         $this->setUser($student1);
-        try {
-            $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
-        } catch (moodle_exception $e) {
-            $this->assertEquals('accessdenied', $e->errorcode);
-        }
 
-        try {
-            $groups = core_group_external::get_course_user_groups($emptycourse->id, $student2->id);
-        } catch (moodle_exception $e) {
-            $this->assertEquals('requireloginerror', $e->errorcode);
-        }
+        // Student can's see other students group.
+        $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $this->assertCount(1, $groups['warnings']);
+        $this->assertEquals('cannotmanagegroups', $groups['warnings'][0]['warningcode']);
+
+        // Not enrolled course.
+        $groups = core_group_external::get_course_user_groups($emptycourse->id, $student2->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $this->assertCount(1, $groups['warnings']);
+        $this->assertEquals('1', $groups['warnings'][0]['warningcode']);
 
         $this->setUser($teacher);
-        // Check warnings.
+        // Check user checking not enrolled in given course.
         $groups = core_group_external::get_course_user_groups($emptycourse->id, $student1->id);
         $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         $this->assertCount(1, $groups['warnings']);
-
+        $this->assertEquals('notenrolled', $groups['warnings'][0]['warningcode']);
     }
 
     /**

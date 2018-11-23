@@ -50,9 +50,12 @@ class cleanup extends \core\task\scheduled_task {
      * Remove old entries from table block_recent_activity
      */
     public function execute() {
-        global $DB;
+        global $CFG, $DB;
+        require_once("{$CFG->dirroot}/course/lib.php");
+
         // Those entries will never be displayed as RECENT anyway.
-        $DB->delete_records_select('block_recent_activity', 'timecreated < ?',
-            array(time() - COURSE_MAX_RECENT_PERIOD));
+        $DB->delete_records_select('block_recent_activity', 'timecreated < ?', [
+                time() - COURSE_MAX_RECENT_PERIOD,
+            ]);
     }
 }

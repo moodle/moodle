@@ -35,29 +35,14 @@ Feature: Basic use of the Grades report
       | question | page | maxmark |
       | TF1      | 1    |         |
       | TF2      | 1    | 3.0     |
-
-    # Add some attempts
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I press "Attempt quiz now"
-    And I click on "True" "radio" in the "First question" "question"
-    And I click on "False" "radio" in the "Second question" "question"
-    And I press "Finish attempt ..."
-    And I press "Submit all and finish"
-    And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
-    And I log out
-
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I press "Attempt quiz now"
-    And I click on "True" "radio" in the "First question" "question"
-    And I click on "True" "radio" in the "Second question" "question"
-    And I press "Finish attempt ..."
-    And I press "Submit all and finish"
-    And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
-    And I log out
+    And user "student1" has attempted "Quiz 1" with responses:
+      | slot | response |
+      |   1  | True     |
+      |   2  | False    |
+    And user "student2" has attempted "Quiz 1" with responses:
+      | slot | response |
+      |   1  | True     |
+      |   2  | True     |
 
     # Basic check of the Grades report
     When I log in as "teacher1"

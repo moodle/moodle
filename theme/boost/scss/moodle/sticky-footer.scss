@@ -1,7 +1,6 @@
 /**
  * This file contains the styles required to make the footer sticky.
  */
-$footer-min-height: 130px !default;
 
 html,
 body {
@@ -9,18 +8,18 @@ body {
 }
 
 #page-wrapper {
-    min-height: 100%;
-    padding-bottom: $spacer;
-    margin-bottom: -$footer-min-height;
-}
-
-#page-wrapper::after {
-    content: "";
-    display: block;
-    min-height: $footer-min-height;
-}
-
-#page-footer {
-    min-height: $footer-min-height;
-    text-align: left;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    #page {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+        #page-content {
+            flex: 1 0 auto;
+        }
+    }
+    #page-footer {
+        flex-shrink: 0;
+    }
 }

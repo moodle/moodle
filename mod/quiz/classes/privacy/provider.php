@@ -18,19 +18,22 @@
  * Privacy Subsystem implementation for mod_quiz.
  *
  * @package    mod_quiz
+ * @category   privacy
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace mod_quiz\privacy;
 
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\transform;
-use \core_privacy\local\request\contextlist;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\deletion_criteria;
-use \core_privacy\local\metadata\collection;
-use \core_privacy\manager;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\deletion_criteria;
+use core_privacy\local\request\transform;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\userlist;
+use core_privacy\local\request\writer;
+use core_privacy\manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -48,7 +51,10 @@ class provider implements
     \core_privacy\local\metadata\provider,
 
     // This plugin currently implements the original plugin_provider interface.
-    \core_privacy\local\request\plugin\provider {
+    \core_privacy\local\request\plugin\provider,
+
+    // This plugin is capable of determining which users have data within it.
+    \core_privacy\local\request\core_userlist_provider {
 
     /**
      * Get the list of contexts that contain user information for the specified user.
@@ -133,6 +139,30 @@ class provider implements
      * @return  contextlist     $contextlist The contextlist containing the list of contexts used in this plugin.
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
+        $resultset = new contextlist();
+
+        // Users who attempted the quiz.
+        $sql = "SELECT c.id
+                  FROM {context} c
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {quiz} q ON q.id = cm.instance
+                  JOIN {quiz_attempts} qa ON qa.quiz = q.id
+                 WHERE qa.userid = :userid AND qa.preview = 0";
+        $params = ['contextlevel' => CONTEXT_MODULE, 'modname' => 'quiz', 'userid' => $userid];
+        $resultset->add_from_sql($sql, $params);
+
+        // Users with quiz overrides.
+        $sql = "SELECT c.id
+                  FROM {context} c
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {quiz} q ON q.id = cm.instance
+                  JOIN {quiz_overrides} qo ON qo.quiz = q.id
+                 WHERE qo.userid = :userid";
+        $params = ['contextlevel' => CONTEXT_MODULE, 'modname' => 'quiz', 'userid' => $userid];
+        $resultset->add_from_sql($sql, $params);
+
         // Get the SQL used to link indirect question usages for the user.
         // This includes where a user is the manual marker on a question attempt.
         $qubaid = \core_question\privacy\provider::get_related_question_usages_for_user('rel', 'mod_quiz', 'qa.uniqueid', $userid);
@@ -144,33 +174,62 @@ class provider implements
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modname
                   JOIN {quiz} q ON q.id = cm.instance
                   JOIN {quiz_attempts} qa ON qa.quiz = q.id
-             LEFT JOIN {quiz_overrides} qo ON qo.quiz = q.id AND qo.userid = :qouserid
             " . $qubaid->from . "
-            WHERE (
-                qa.userid = :qauserid OR
-                " . $qubaid->where() . " OR
-                qo.id IS NOT NULL
-            ) AND qa.preview = 0
-        ";
-
-        $params = array_merge(
-                [
-                    'contextlevel'      => CONTEXT_MODULE,
-                    'modname'           => 'quiz',
-                    'qauserid'          => $userid,
-                    'qouserid'          => $userid,
-                ],
-                $qubaid->from_where_params()
-            );
-
-        $resultset = new contextlist();
+            WHERE " . $qubaid->where() . " AND qa.preview = 0";
+        $params = ['contextlevel' => CONTEXT_MODULE, 'modname' => 'quiz'] + $qubaid->from_where_params();
         $resultset->add_from_sql($sql, $params);
 
         return $resultset;
     }
 
     /**
-     * Delete all data for all users in the specified context.
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_module) {
+            return;
+        }
+
+        $params = [
+            'cmid'    => $context->instanceid,
+            'modname' => 'quiz',
+        ];
+
+        // Users who attempted the quiz.
+        $sql = "SELECT qa.userid
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {quiz} q ON q.id = cm.instance
+                  JOIN {quiz_attempts} qa ON qa.quiz = q.id
+                 WHERE cm.id = :cmid AND qa.preview = 0";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Users with quiz overrides.
+        $sql = "SELECT qo.userid
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {quiz} q ON q.id = cm.instance
+                  JOIN {quiz_overrides} qo ON qo.quiz = q.id
+                 WHERE cm.id = :cmid";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Question usages in context.
+        // This includes where a user is the manual marker on a question attempt.
+        $sql = "SELECT qa.uniqueid
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {quiz} q ON q.id = cm.instance
+                  JOIN {quiz_attempts} qa ON qa.quiz = q.id
+                 WHERE cm.id = :cmid AND qa.preview = 0";
+        \core_question\privacy\provider::get_users_in_context_from_sql($userlist, 'qn', $sql, $params);
+    }
+
+    /**
+     * Export all user data for the specified user, in the specified contexts.
      *
      * @param   approved_contextlist    $contextlist    The approved contexts to export information for.
      */
@@ -356,6 +415,56 @@ class provider implements
 
             // This will delete all question attempts, quiz attempts, and quiz grades for this quiz.
             quiz_delete_user_attempts($quizobj, $user);
+        }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+
+        if ($context->contextlevel != CONTEXT_MODULE) {
+            // Only quiz module will be handled.
+            return;
+        }
+
+        $cm = get_coursemodule_from_id('quiz', $context->instanceid);
+        if (!$cm) {
+            // Only quiz module will be handled.
+            return;
+        }
+
+        $quizobj = \quiz::create($cm->instance);
+        $quiz = $quizobj->get_quiz();
+
+        $userids = $userlist->get_userids();
+
+        // Handle the 'quizaccess' quizaccess.
+        manager::plugintype_class_callback(
+                'quizaccess',
+                quizaccess_user_provider::class,
+                'delete_quizaccess_data_for_users',
+                [$userlist]
+        );
+
+        foreach ($userids as $userid) {
+            // Remove overrides for this user.
+            $overrides = $DB->get_records('quiz_overrides' , [
+                'quiz' => $quizobj->get_quizid(),
+                'userid' => $userid,
+            ]);
+
+            foreach ($overrides as $override) {
+                quiz_delete_override($quiz, $override->id, false);
+            }
+
+            // This will delete all question attempts, quiz attempts, and quiz grades for this user in the given quiz.
+            quiz_delete_user_attempts($quizobj, (object)['id' => $userid]);
         }
     }
 

@@ -101,7 +101,7 @@ class grade_export_xml extends grade_export {
                 }
 
                 if ($this->export_feedback) {
-                    $feedbackstr = $this->format_feedback($userdata->feedbacks[$itemid]);
+                    $feedbackstr = $this->format_feedback($userdata->feedbacks[$itemid], $grade);
                     fwrite($handle,  "\t\t<feedback>$feedbackstr</feedback>\n");
                 }
                 fwrite($handle,  "\t</result>\n");

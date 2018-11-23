@@ -1180,8 +1180,9 @@ class core_group_external extends external_api {
     public static function get_course_user_groups_parameters() {
         return new external_function_parameters(
             array(
-                'courseid' => new external_value(PARAM_INT, 'id of course'),
-                'userid' => new external_value(PARAM_INT, 'id of user'),
+                'courseid' => new external_value(PARAM_INT,
+                    'Id of course (empty or 0 for all the courses where the user is enrolled).', VALUE_DEFAULT, 0),
+                'userid' => new external_value(PARAM_INT, 'Id of user (empty or 0 for current user).', VALUE_DEFAULT, 0),
                 'groupingid' => new external_value(PARAM_INT, 'returns only groups in the specified grouping', VALUE_DEFAULT, 0)
             )
         );
@@ -1197,7 +1198,7 @@ class core_group_external extends external_api {
      * @return array of group objects (id, name, description, format) and possible warnings.
      * @since Moodle 2.9
      */
-    public static function get_course_user_groups($courseid, $userid, $groupingid = 0) {
+    public static function get_course_user_groups($courseid = 0, $userid = 0, $groupingid = 0) {
         global $USER;
 
         // Warnings array, it can be empty at the end but is mandatory.
@@ -1209,43 +1210,62 @@ class core_group_external extends external_api {
             'groupingid' => $groupingid
         );
         $params = self::validate_parameters(self::get_course_user_groups_parameters(), $params);
+
         $courseid = $params['courseid'];
         $userid = $params['userid'];
         $groupingid = $params['groupingid'];
 
-        // Validate course and user. get_course throws an exception if the course does not exists.
-        $course = get_course($courseid);
-        $user = core_user::get_user($userid, '*', MUST_EXIST);
-        core_user::require_active_user($user);
-
-        // Security checks.
-        $context = context_course::instance($course->id);
-        self::validate_context($context);
-
-         // Check if we have permissions for retrieve the information.
-        if ($user->id != $USER->id) {
-            if (!has_capability('moodle/course:managegroups', $context)) {
-                throw new moodle_exception('accessdenied', 'admin');
-            }
-            // Validate if the user is enrolled in the course.
-            if (!is_enrolled($context, $user->id)) {
-                // We return a warning because the function does not fail for not enrolled users.
-                $warning['item'] = 'course';
-                $warning['itemid'] = $course->id;
-                $warning['warningcode'] = '1';
-                $warning['message'] = "User $user->id is not enrolled in course $course->id";
-                $warnings[] = $warning;
-            }
+        // Validate user.
+        if (empty($userid)) {
+            $userid = $USER->id;
+        } else {
+            $user = core_user::get_user($userid, '*', MUST_EXIST);
+            core_user::require_active_user($user);
         }
 
+        // Get courses.
+        if (empty($courseid)) {
+            $courses = enrol_get_users_courses($userid, true);
+            $checkenrolments = false;   // No need to check enrolments here since they are my courses.
+        } else {
+            $courses = array($courseid => get_course($courseid));
+            $checkenrolments = true;
+        }
+
+        // Security checks.
+        list($courses, $warnings) = external_util::validate_courses(array_keys($courses), $courses, true);
+
         $usergroups = array();
-        if (empty($warnings)) {
-            $groups = groups_get_all_groups($course->id, $user->id, 0, 'g.id, g.name, g.description, g.descriptionformat, g.idnumber');
+        foreach ($courses as $course) {
+             // Check if we have permissions for retrieve the information.
+            if ($userid != $USER->id && !has_capability('moodle/course:managegroups', $course->context)) {
+                $warnings[] = array(
+                    'item' => 'course',
+                    'itemid' => $course->id,
+                    'warningcode' => 'cannotmanagegroups',
+                    'message' => "User $USER->id cannot manage groups in course $course->id",
+                );
+                continue;
+            }
+
+            // Check if the user being check is enrolled in the given course.
+            if ($checkenrolments && !is_enrolled($course->context, $userid)) {
+                // We return a warning because the function does not fail for not enrolled users.
+                $warnings[] = array(
+                    'item' => 'course',
+                    'itemid' => $course->id,
+                    'warningcode' => 'notenrolled',
+                    'message' => "User $userid is not enrolled in course $course->id",
+                );
+            }
+
+            $groups = groups_get_all_groups($course->id, $userid, $groupingid,
+                'g.id, g.name, g.description, g.descriptionformat, g.idnumber');
 
             foreach ($groups as $group) {
                 list($group->description, $group->descriptionformat) =
                     external_format_text($group->description, $group->descriptionformat,
-                            $context->id, 'group', 'description', $group->id);
+                            $course->context->id, 'group', 'description', $group->id);
                 $group->courseid = $course->id;
                 $usergroups[] = $group;
             }
@@ -1466,4 +1486,96 @@ class core_group_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.6
+     */
+    public static function update_groups_parameters() {
+        return new external_function_parameters(
+            array(
+                'groups' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'ID of the group'),
+                            'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                            'description' => new external_value(PARAM_RAW, 'group description text', VALUE_OPTIONAL),
+                            'descriptionformat' => new external_format_value('description', VALUE_DEFAULT),
+                            'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase', VALUE_OPTIONAL),
+                            'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL)
+                        )
+                    ), 'List of group objects. A group is found by the id, then all other details provided will be updated.'
+                )
+            )
+        );
+    }
+
+    /**
+     * Update groups
+     *
+     * @param array $groups
+     * @return null
+     * @since Moodle 3.6
+     */
+    public static function update_groups($groups) {
+        global $CFG, $DB;
+        require_once("$CFG->dirroot/group/lib.php");
+
+        $params = self::validate_parameters(self::update_groups_parameters(), array('groups' => $groups));
+
+        $transaction = $DB->start_delegated_transaction();
+
+        foreach ($params['groups'] as $group) {
+            $group = (object)$group;
+
+            if (trim($group->name) == '') {
+                throw new invalid_parameter_exception('Invalid group name');
+            }
+
+            if (! $currentgroup = $DB->get_record('groups', array('id' => $group->id))) {
+                throw new invalid_parameter_exception("Group $group->id does not exist");
+            }
+
+            // Check if the modified group name already exists in the course.
+            if ($group->name != $currentgroup->name and
+                    $DB->get_record('groups', array('courseid' => $currentgroup->courseid, 'name' => $group->name))) {
+                throw new invalid_parameter_exception('A different group with the same name already exists in the course');
+            }
+
+            $group->courseid = $currentgroup->courseid;
+
+            // Now security checks.
+            $context = context_course::instance($group->courseid);
+            try {
+                self::validate_context($context);
+            } catch (Exception $e) {
+                $exceptionparam = new stdClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->courseid = $group->courseid;
+                throw new moodle_exception('errorcoursecontextnotvalid', 'webservice', '', $exceptionparam);
+            }
+            require_capability('moodle/course:managegroups', $context);
+
+            if (!empty($group->description)) {
+                $group->descriptionformat = external_validate_format($group->descriptionformat);
+            }
+
+            groups_update_group($group);
+        }
+
+        $transaction->allow_commit();
+
+        return null;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return null
+     * @since Moodle 3.6
+     */
+    public static function update_groups_returns() {
+        return null;
+    }
 }

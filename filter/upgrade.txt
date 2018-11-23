@@ -1,6 +1,20 @@
 This file describes API changes in core filter API and plugins,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+
+* Although there is no API change that require you to update your filter,
+  if you use the filter_phrases() helper method, you may wish to take
+  advantage of the changes that were made in MDL-47962 to improve performance.
+
+  Now, instead of having to compute the replacement HTML for each phrase before
+  you construct the filterobject for it. You can instead pass a callback to
+  the filterobject constructor which is only called if the phrase is used.
+
+  To understand how to use this, see the comment on filterobject::__construct and
+  look at the filter_glossary changes as an example:
+  https://github.com/moodle/moodle/commit/5a8c44d000ecc5669db26aefebe447f688e8f2ce
+
 === 3.0 ===
 
 * New argument $skipfilters to filter_manager::filter_text to allow applying

@@ -1,7 +1,20 @@
 This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+
+ * External function core_course_external::get_course_public_information now returns the roles and the primary role of course
+   contacts.
+ * External function core_course_external::get_course_contents now return the following additional file fields:
+   - onclick (onclick javascript action code)
+   - afterlink (after link info to be displayed)
+   - customdata (module custom data (JSON encoded))
+   - completion (to indicate if completion is enabled or not)
+   - completiondata (completion status for the current user in the module)
+ * External function core_group_external::get_course_user_groups now can return all user courses group information.
+
 === 3.5 ===
+
  * There is a new capability 'moodle/course:setforcedlanguage' to control which users can force the course
    language; create_course and update_course functions delegate access control to the caller code; if you
    are calling those functions you may be interested in checking if the logged in user has 'moodle/course:setforcedlanguage' capability.

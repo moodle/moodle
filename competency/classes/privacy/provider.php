@@ -53,9 +53,11 @@ use core_competency\user_evidence;
 use core_competency\user_evidence_competency;
 use core_competency\external\performance_helper;
 use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
 /**
@@ -68,6 +70,7 @@ use core_privacy\local\request\writer;
  */
 class provider implements
     \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\subsystem\provider {
 
     /**
@@ -419,6 +422,166 @@ class provider implements
     }
 
     /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+        $params = ['contextid' => $context->id];
+
+        // Add users who have modified the frameworks and related data in the context.
+        $sql = "
+             SELECT cf.usermodified
+               FROM {" . competency_framework::TABLE . "} cf
+              WHERE cf.contextid = :contextid";
+        $userlist->add_from_sql('usermodified', $sql, $params);
+
+        $sql = "
+             SELECT c.usermodified
+               FROM {" . competency_framework::TABLE . "} cf
+               JOIN {" . competency::TABLE . "} c
+                 ON c.competencyframeworkid = cf.id
+              WHERE cf.contextid = :contextid";
+        $userlist->add_from_sql('usermodified', $sql, $params);
+
+        $sql = "
+             SELECT cr.usermodified
+               FROM {" . competency_framework::TABLE . "} cf
+               JOIN {" . competency::TABLE . "} c
+                 ON c.competencyframeworkid = cf.id
+               JOIN {" . related_competency::TABLE . "} cr
+                 ON cr.competencyid = c.id
+              WHERE cf.contextid = :contextid";
+        $userlist->add_from_sql('usermodified', $sql, $params);
+
+        // Add users who have modified the templates and related data in the context.
+        $sql = "
+             SELECT tpl.usermodified
+               FROM {" . template::TABLE . "} tpl
+              WHERE tpl.contextid = :contextid";
+        $userlist->add_from_sql('usermodified', $sql, $params);
+
+        $sql = "
+             SELECT tch.usermodified
+               FROM {" . template::TABLE . "} tpl
+               JOIN {" . template_cohort::TABLE . "} tch
+                 ON tch.templateid = tpl.id
+              WHERE tpl.contextid = :contextid";
+        $userlist->add_from_sql('usermodified', $sql, $params);
+
+        $sql = "
+             SELECT tc.usermodified
+               FROM {" . template::TABLE . "} tpl
+               JOIN {" . template_competency::TABLE . "} tc
+                 ON tc.templateid = tpl.id
+              WHERE tpl.contextid = :contextid";
+        $userlist->add_from_sql('usermodified', $sql, $params);
+
+        // Add users if userlist is in course context.
+        if (is_a($context, \context_course::class)) {
+            $params = ['courseid' => $context->instanceid];
+
+            $sql = "
+                 SELECT cc.usermodified
+                   FROM {" . course_competency::TABLE . "} cc
+                  WHERE cc.courseid = :courseid";
+            $userlist->add_from_sql('usermodified', $sql, $params);
+
+            $sql = "
+                 SELECT ccs.usermodified
+                   FROM {" . course_competency_settings::TABLE . "} ccs
+                  WHERE ccs.courseid = :courseid";
+            $userlist->add_from_sql('usermodified', $sql, $params);
+
+            $sql = "
+                 SELECT ucc.userid, ucc.usermodified
+                   FROM {" . user_competency_course::TABLE . "} ucc
+                  WHERE ucc.courseid = :courseid";
+            $userlist->add_from_sql('userid', $sql, $params);
+            $userlist->add_from_sql('usermodified', $sql, $params);
+
+        } else if (is_a($context, \context_module::class)) {
+            // Add users if userlist is in module context.
+            $params = ['moduleid' => $context->instanceid];
+
+            $sql = "
+                 SELECT cmc.usermodified
+                   FROM {" . course_module_competency::TABLE . "} cmc
+                  WHERE cmc.cmid = :moduleid";
+            $userlist->add_from_sql('usermodified', $sql, $params);
+
+        } else if (is_a($context, \context_user::class)) {
+            $params = ['userid' => $context->instanceid];
+
+            // Add users through plan related data.
+            $sql = "
+                 SELECT p.userid, p.usermodified, p.reviewerid
+                   FROM {" . plan::TABLE . "} p
+                  WHERE p.userid = :userid";
+            $userlist->add_from_sql('userid', $sql, $params);
+            $userlist->add_from_sql('usermodified', $sql, $params);
+            $userlist->add_from_sql('reviewerid', $sql, $params);
+
+            $sql = "
+                 SELECT pc.usermodified
+                   FROM {" . plan::TABLE . "} p
+                   JOIN {" . plan_competency::TABLE . "} pc
+                     ON pc.planid = p.id
+                  WHERE p.userid = :userid";
+            $userlist->add_from_sql('usermodified', $sql, $params);
+
+            $sql = "
+                 SELECT upc.usermodified
+                   FROM {" . user_competency_plan::TABLE . "} upc
+                  WHERE upc.userid = :userid";
+            $userlist->add_from_sql('usermodified', $sql, $params);
+
+            // Add users through competency data.
+            $sql = "
+                 SELECT uc.userid, uc.usermodified, uc.reviewerid
+                   FROM {" . user_competency::TABLE . "} uc
+                  WHERE uc.userid = :userid";
+            $userlist->add_from_sql('userid', $sql, $params);
+            $userlist->add_from_sql('usermodified', $sql, $params);
+            $userlist->add_from_sql('reviewerid', $sql, $params);
+
+            $sql = "
+                 SELECT e.usermodified, e.actionuserid
+                   FROM {" . user_competency::TABLE . "} uc
+                   JOIN {" . evidence::TABLE . "} e
+                     ON e.usercompetencyid = uc.id
+                  WHERE uc.userid = :userid";
+            $userlist->add_from_sql('usermodified', $sql, $params);
+            $userlist->add_from_sql('actionuserid', $sql, $params);
+
+            // Add users through evidence data.
+            $sql = "
+                 SELECT ue.userid, ue.usermodified
+                   FROM {" . user_evidence::TABLE . "} ue
+                  WHERE ue.userid = :userid";
+            $userlist->add_from_sql('userid', $sql, $params);
+            $userlist->add_from_sql('usermodified', $sql, $params);
+
+            $sql = "
+                 SELECT ue.usermodified
+                   FROM {" . user_evidence::TABLE . "} ue
+                   JOIN {" . user_evidence_competency::TABLE . "} uec
+                     ON uec.userevidenceid = ue.id
+                  WHERE ue.userid = :userid";
+            $userlist->add_from_sql('usermodified', $sql, $params);
+        }
+
+        // Add users who commented in the context.
+        // Note: Comment component must be competency and not core_competency.
+        \core_comment\privacy\provider::get_users_in_context_from_sql(
+                $userlist, 'com', 'competency', 'plan', $context->id);
+
+        \core_comment\privacy\provider::get_users_in_context_from_sql(
+                $userlist, 'com', 'competency', 'user_competency', $context->id);
+    }
+
+    /**
      * Export all user data for the specified user, in the specified contexts.
      *
      * @param approved_contextlist $contextlist The approved contexts to export information for.
@@ -478,8 +641,7 @@ class provider implements
                 break;
 
             case CONTEXT_COURSE:
-                $courseid = $context->instanceid;
-                $DB->delete_records(user_competency_course::TABLE, ['courseid' => $courseid]);
+                static::delete_user_competencies_in_course($context->instanceid);
                 break;
         }
     }
@@ -500,20 +662,50 @@ class provider implements
         foreach ($contextlist as $context) {
             switch ($context->contextlevel) {
                 case CONTEXT_USER:
-                    if ($context->instanceid != $userid) {
+                    if ($context->instanceid == $userid) {
                         // Only delete the user's information when they requested their context to be deleted. We
                         // do not take any action on other user's contexts because we don't own the data there.
-                        continue;
+                        static::delete_user_evidence_of_prior_learning($userid);
+                        static::delete_user_plans($userid);
+                        static::delete_user_competencies($userid);
                     }
-                    static::delete_user_evidence_of_prior_learning($userid);
-                    static::delete_user_plans($userid);
-                    static::delete_user_competencies($userid);
                     break;
 
                 case CONTEXT_COURSE:
-                    static::delete_user_competencies_in_course($userid, $context->instanceid);
+                    static::delete_user_competencies_in_course($context->instanceid, [$userid]);
                     break;
             }
+        }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * Here we only delete the private data of users, not whether they modified, are reviewing,
+     * or are associated with the record on at a second level. Only data directly linked to the
+     * user will be affected.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        $context = $userlist->get_context();
+        $userids = $userlist->get_userids();
+
+        switch ($context->contextlevel) {
+            case CONTEXT_USER:
+                // Only delete the user's information when their context is being deleted.
+                // We do not take any action on other user's contexts because we don't own the data there.
+                if (in_array($context->instanceid, $userids)) {
+                    static::delete_user_evidence_of_prior_learning($context->instanceid);
+                    static::delete_user_plans($context->instanceid);
+                    static::delete_user_competencies($context->instanceid);
+                }
+
+                break;
+
+            case CONTEXT_COURSE:
+                static::delete_user_competencies_in_course($context->instanceid, $userids);
+                break;
         }
     }
 
@@ -602,15 +794,26 @@ class provider implements
     }
 
     /**
-     * Delete the record of competencies for a user in a course.
+     * Delete the record of competencies for user(s) in a course.
      *
-     * @param int $userid The user ID.
      * @param int $courseid The course ID.
+     * @param int[] $userids The user IDs, if deleting for specific user(s).
      * @return void
      */
-    protected static function delete_user_competencies_in_course($userid, $courseid) {
+    protected static function delete_user_competencies_in_course($courseid, $userids = []) {
         global $DB;
-        $DB->delete_records(user_competency_course::TABLE, ['userid' => $userid, 'courseid' => $courseid]);
+
+        $params = ['courseid' => $courseid];
+        $where = "courseid = :courseid";
+
+        if (!empty($userids)) {
+            list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+            $params = $params + $inparams;
+
+            $where .= " AND userid {$insql}";
+        }
+
+        $DB->delete_records_select(user_competency_course::TABLE, $where, $params);
     }
 
     /**

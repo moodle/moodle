@@ -31,7 +31,7 @@ Feature: We can view the logs for any changes to grade letters.
       | id_gradeletter11 | |
       | id_gradeboundary11 | |
     And I press "Save changes"
-    When I navigate to "Live logs" node in "Site administration > Reports"
+    When I navigate to "Reports > Live logs" in site administration
     Then I should see "Grade letter created"
     And I should see "Grade letter updated"
     And I should see "Grade letter deleted"

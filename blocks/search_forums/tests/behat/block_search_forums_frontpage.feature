@@ -10,7 +10,7 @@ Feature: The search forums block allows users to search for forum posts on front
       | student1 | Student | 1 | student1@example.com | S1 |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
+    And I navigate to "Turn editing on" in current page administration
     And I add the "Search forums" block
     And I log out
 

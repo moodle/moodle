@@ -49,7 +49,7 @@ class enrol_self_deleteselectedusers_operation extends enrol_bulk_enrolment_oper
      * @return string
      */
     public function get_title() {
-        return get_string('deleteselectedusers', 'enrol_manual');
+        return get_string('deleteselectedusers', 'enrol_self');
     }
 
     /**
@@ -58,7 +58,7 @@ class enrol_self_deleteselectedusers_operation extends enrol_bulk_enrolment_oper
      *
      * @param string|moodle_url|null $defaultaction
      * @param mixed $defaultcustomdata
-     * @return enrol_manual_editselectedusers_form
+     * @return enrol_self_deleteselectedusers_form
      */
     public function get_form($defaultaction = null, $defaultcustomdata = null) {
         if (!array($defaultcustomdata)) {

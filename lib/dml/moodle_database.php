@@ -1080,7 +1080,7 @@ abstract class moodle_database {
      * Returns detailed information about columns in table. This information is cached internally.
      * @param string $table The table's name.
      * @param bool $usecache Flag to use internal cacheing. The default is true.
-     * @return array of database_column_info objects indexed with column names
+     * @return database_column_info[] of database_column_info objects indexed with column names
      */
     public abstract function get_columns($table, $usecache=true);
 

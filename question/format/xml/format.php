@@ -63,6 +63,7 @@ class qformat_xml extends qformat_default {
     /**
      * Translate human readable format name
      * into internal Moodle code number
+     * Note the reverse function is called get_format.
      * @param string name format name from xml file
      * @return int Moodle format code
      */
@@ -234,6 +235,8 @@ class qformat_xml extends qformat_default {
             $fs->create_file_from_string($filerecord, base64_decode($filedata));
             $qo->questiontext .= ' <img src="@@PLUGINFILE@@/' . $filename . '" />';
         }
+
+        $qo->idnumber = $this->getpath($question, ['#', 'idnumber', 0, '#'], null);
 
         // Restore files in generalfeedback.
         $generalfeedback = $this->import_text_with_files($question,
@@ -909,12 +912,20 @@ class qformat_xml extends qformat_default {
      * import category. The format is:
      * <question type="category">
      *     <category>tom/dick/harry</category>
+     *     <info format="moodle_auto_format"><text>Category description</text></info>
      * </question>
      */
     protected function import_category($question) {
         $qo = new stdClass();
         $qo->qtype = 'category';
         $qo->category = $this->import_text($question['#']['category'][0]['#']['text']);
+        $qo->info = '';
+        $qo->infoformat = FORMAT_MOODLE;
+        if (array_key_exists('info', $question['#'])) {
+            $qo->info = $this->import_text($question['#']['info'][0]['#']['text']);
+            // The import should have the format in human readable form, so translate to machine readable format.
+            $qo->infoformat = $this->trans_format($question['#']['info'][0]['@']['format']);
+        }
         return $qo;
     }
 
@@ -1176,10 +1187,15 @@ class qformat_xml extends qformat_default {
         // Categories are a special case.
         if ($question->qtype == 'category') {
             $categorypath = $this->writetext($question->category);
+            $categoryinfo = $this->writetext($question->info);
+            $infoformat = $this->format($question->infoformat);
             $expout .= "  <question type=\"category\">\n";
             $expout .= "    <category>\n";
-            $expout .= "        {$categorypath}\n";
+            $expout .= "      {$categorypath}";
             $expout .= "    </category>\n";
+            $expout .= "    <info {$infoformat}>\n";
+            $expout .= "      {$categoryinfo}";
+            $expout .= "    </info>\n";
             $expout .= "  </question>\n";
             return $expout;
         }
@@ -1203,6 +1219,7 @@ class qformat_xml extends qformat_default {
         }
         $expout .= "    <penalty>{$question->penalty}</penalty>\n";
         $expout .= "    <hidden>{$question->hidden}</hidden>\n";
+        $expout .= "    <idnumber>{$question->idnumber}</idnumber>\n";
 
         // The rest of the output depends on question type.
         switch($question->qtype) {

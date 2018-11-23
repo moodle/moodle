@@ -109,6 +109,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         set_config('agedigitalconsentverification', 1);
         set_config('autolang', 1);
         set_config('lang', 'a_b');  // Set invalid lang.
+        set_config('disabledfeatures', 'myoverview', 'tool_mobile');
 
         list($authinstructions, $notusedformat) = external_format_text($authinstructions, FORMAT_MOODLE, $context->id);
         $expected['registerauth'] = 'email';
@@ -120,6 +121,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $expected['supportemail'] = $CFG->supportemail;
         $expected['autolang'] = '1';
         $expected['lang'] = ''; // Expect empty because it was set to an invalid lang.
+        $expected['tool_mobile_disabledfeatures'] = 'myoverview';
 
         if ($logourl = $OUTPUT->get_logo_url()) {
             $expected['logourl'] = $logourl->out(false);

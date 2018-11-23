@@ -1,0 +1,55 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_timeline/event-list
+
+    This template renders a list of events for the timeline block.
+
+    Example context (json):
+    {
+    }
+}}
+<div data-region="event-list-container"
+     data-days-offset="{{$daysoffset}}{{#hasdaysoffset}}{{daysoffset}}{{/hasdaysoffset}}{{^hasdaysoffset}}0{{/hasdaysoffset}}{{/daysoffset}}"
+     {{^nodayslimit}}data-days-limit="{{$dayslimit}}{{#hasdayslimit}}{{dayslimit}}{{/hasdayslimit}}{{^hasdayslimit}}30{{/hasdayslimit}}{{/dayslimit}}"{{/nodayslimit}}
+     data-course-id="{{$courseid}}{{/courseid}}"
+     data-midnight="{{midnight}}"
+>
+    <div data-region="event-list-loading-placeholder">
+        <ul class="pl-0 list-group list-group-flush">
+            {{> block_timeline/placeholder-event-list-item }}
+            {{> block_timeline/placeholder-event-list-item }}
+            {{> block_timeline/placeholder-event-list-item }}
+            {{> block_timeline/placeholder-event-list-item }}
+            {{> block_timeline/placeholder-event-list-item }}
+        </ul>
+        <div class="pt-3 d-flex justify-content-between">
+            <div class="w-25 bg-pulse-grey" style="height: 35px"></div>
+            <div class="w-25 bg-pulse-grey" style="height: 35px"></div>
+        </div>
+    </div>
+    <div data-region="event-list-content"></div>
+    <div class="hidden text-xs-center text-center mt-3" data-region="empty-message">
+        <img
+            src="{{urls.noevents}}"
+            alt="{{#str}} noevents, block_timeline {{/str}}"
+            role="presentation"
+            style="height: 70px; width: 70px"
+        >
+        <p class="text-muted m-t-1">{{#str}} noevents, block_timeline {{/str}}</p>
+    </div>
+</div>

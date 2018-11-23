@@ -29,6 +29,7 @@ global $CFG;
 
 use core_privacy\tests\provider_testcase;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 use mod_chat\privacy\provider;
@@ -94,6 +95,71 @@ class mod_chat_privacy_testcase extends provider_testcase {
         $this->assertCount(2, $contextids);
         $this->assertTrue(in_array(context_module::instance($chat1b->cmid)->id, $contextids));
         $this->assertTrue(in_array(context_module::instance($chat2a->cmid)->id, $contextids));
+    }
+
+    /**
+     * Test that only users with relevant contexts are fetched.
+     */
+    public function test_get_users_in_context() {
+        $component = 'mod_chat';
+        $dg = $this->getDataGenerator();
+        $c1 = $dg->create_course();
+        $c2 = $dg->create_course();
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+
+        $chat1a = $dg->create_module('chat', ['course' => $c1]);
+        $chat1b = $dg->create_module('chat', ['course' => $c1]);
+        $chat2a = $dg->create_module('chat', ['course' => $c2]);
+
+        // Logins but no message.
+        $chatuser = $this->login_user_in_course_chat($u1, $c1, $chat1a);
+
+        // Logins and messages.
+        $chatuser = $this->login_user_in_course_chat($u1, $c1, $chat1b);
+        chat_send_chatmessage($chatuser, 'Hello world!');
+
+        // Silent login (no system message).
+        $chatuser = $this->login_user_in_course_chat($u1, $c2, $chat2a, 0, true);
+
+        // Silent login and messages.
+        $chatuser = $this->login_user_in_course_chat($u2, $c1, $chat1b, 0, true);
+        chat_send_chatmessage($chatuser, 'Ça va ?');
+        chat_send_chatmessage($chatuser, 'Moi, ça va.');
+
+        // Silent login and messages.
+        $chatuser = $this->login_user_in_course_chat($u2, $c2, $chat2a);
+        chat_send_chatmessage($chatuser, 'What\'s happening here?');
+
+        $context1a = context_module::instance($chat1a->cmid);
+        $context1b = context_module::instance($chat1b->cmid);
+        $context2a = context_module::instance($chat2a->cmid);
+
+        $userlist1a = new \core_privacy\local\request\userlist($context1a, $component);
+        $userlist1b = new \core_privacy\local\request\userlist($context1b, $component);
+        $userlist2a = new \core_privacy\local\request\userlist($context2a, $component);
+        \mod_chat\privacy\provider::get_users_in_context($userlist1a);
+        \mod_chat\privacy\provider::get_users_in_context($userlist1b);
+        \mod_chat\privacy\provider::get_users_in_context($userlist2a);
+
+        // Ensure correct users are found in relevant contexts.
+        $this->assertCount(1, $userlist1a);
+        $expected = [$u1->id];
+        $actual = $userlist1a->get_userids();
+        $this->assertEquals($expected, $actual);
+
+        $this->assertCount(2, $userlist1b);
+        $expected = [$u1->id, $u2->id];
+        $actual = $userlist1b->get_userids();
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+
+        $this->assertCount(1, $userlist2a);
+        $expected = [$u1->id];
+        $actual = $userlist1a->get_userids();
+        $this->assertEquals($expected, $actual);
     }
 
     public function test_delete_data_for_all_users_in_context() {
@@ -188,6 +254,62 @@ class mod_chat_privacy_testcase extends provider_testcase {
         $this->assert_has_no_data_in_chat($u2, $chat1a);
         $this->assert_has_data_in_chat($u1, $chat1b);
         $this->assert_has_no_data_in_chat($u2, $chat1b);
+    }
+
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+        $component = 'mod_chat';
+        $dg = $this->getDataGenerator();
+        $c1 = $dg->create_course();
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+
+        $chat1 = $dg->create_module('chat', ['course' => $c1]);
+        $chat1context = context_module::instance($chat1->cmid);
+
+        $u1chat1 = $this->login_user_in_course_chat($u1, $c1, $chat1);
+        $u2chat1 = $this->login_user_in_course_chat($u2, $c1, $chat1);
+        $u3chat1 = $this->login_user_in_course_chat($u3, $c1, $chat1);
+        chat_send_chatmessage($u1chat1, 'Ça va ?');
+        chat_send_chatmessage($u2chat1, 'Oui, et toi ?');
+        chat_send_chatmessage($u1chat1, 'Bien merci.');
+        chat_send_chatmessage($u2chat1, 'Pourquoi ils disent omelette "du" fromage ?!');
+        chat_send_chatmessage($u1chat1, 'Aucune idée');
+        chat_send_chatmessage($u3chat1, 'Je ne comprends pas');
+        $this->assert_has_data_in_chat($u1, $chat1);
+        $this->assert_has_data_in_chat($u2, $chat1);
+        $this->assert_has_data_in_chat($u3, $chat1);
+
+        $chat2 = $dg->create_module('chat', ['course' => $c1]);
+
+        $u1chat2 = $this->login_user_in_course_chat($u1, $c1, $chat2);
+        $u2chat2 = $this->login_user_in_course_chat($u2, $c1, $chat2);
+        $u3chat2 = $this->login_user_in_course_chat($u3, $c1, $chat2);
+        chat_send_chatmessage($u1chat2, 'Why do we have a separate chat?');
+        chat_send_chatmessage($u2chat2, 'I have no idea!');
+        chat_send_chatmessage($u3chat2, 'Me either.');
+        $this->assert_has_data_in_chat($u1, $chat2);
+        $this->assert_has_data_in_chat($u2, $chat2);
+        $this->assert_has_data_in_chat($u3, $chat2);
+
+        // Delete user 1 and 2 data from chat 1 context only.
+        $approveduserids = [$u1->id, $u2->id];
+        $approvedlist = new approved_userlist($chat1context, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        // Ensure correct chat data is deleted.
+        $this->assert_has_no_data_in_chat($u1, $chat1);
+        $this->assert_has_no_data_in_chat($u2, $chat1);
+        $this->assert_has_data_in_chat($u3, $chat1);
+
+        $this->assert_has_data_in_chat($u1, $chat2);
+        $this->assert_has_data_in_chat($u2, $chat2);
+        $this->assert_has_data_in_chat($u3, $chat2);
     }
 
     public function test_export_data_for_user() {

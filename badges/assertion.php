@@ -35,8 +35,9 @@ if (empty($CFG->enablebadges)) {
 
 $hash = required_param('b', PARAM_ALPHANUM); // Issued badge unique hash for badge assertion.
 $action = optional_param('action', null, PARAM_BOOL); // Generates badge class if true.
+$obversion = optional_param('obversion', OPEN_BADGES_V1, PARAM_INT); // For control format OB specification version.
 
-$assertion = new core_badges_assertion($hash);
+$assertion = new core_badges_assertion($hash, $obversion);
 
 if (!is_null($action)) {
     // Get badge class or issuer information depending on $action.
@@ -48,11 +49,16 @@ if (!is_null($action)) {
         $json = $assertion->get_badge_assertion();
     } else { // Revoked badge.
         header("HTTP/1.0 410 Gone");
-        echo json_encode(array("revoked" => true));
+        $assertion = array();
+        if ($obversion == OPEN_BADGES_V2) {
+            $assertionurl = new moodle_url('/badges/assertion.php', array('b' => $hash));
+            $assertion['id'] = $assertionurl->out();
+        }
+        $assertion['revoked'] = true;
+        echo json_encode($assertion);
         die();
     }
 }
-
 
 echo $OUTPUT->header();
 echo json_encode($json);

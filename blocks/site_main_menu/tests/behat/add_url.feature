@@ -8,7 +8,7 @@ Feature: Add URL to main menu block
   Scenario: Add a URL in menu block and ensure it appears
     Given I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
+    And I navigate to "Turn editing on" in current page administration
     And I add the "Main menu" block
     When I add a "URL" to section "0" and I fill the form with:
       | Name | google |

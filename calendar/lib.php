@@ -27,8 +27,6 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-require_once($CFG->libdir . '/coursecatlib.php');
-
 /**
  *  These are read by the administration component to provide default values
  */
@@ -428,11 +426,20 @@ class calendar_event {
      * Pass in a object containing the event properties and this function will
      * insert it into the database and deal with any associated files
      *
+     * Capability checking should be performed if the user is directly manipulating the event
+     * and no other capability has been tested. However if the event is not being manipulated
+     * directly by the user and another capability has been checked for them to do this then
+     * capabilites should not be checked.
+     *
+     * For example if a user is editing an event in the calendar the check should be true,
+     * but if you are updating an event in an activities settings are changed then the calendar
+     * capabilites should not be checked.
+     *
      * @see self::create()
      * @see self::update()
      *
      * @param \stdClass $data object of event
-     * @param bool $checkcapability if moodle should check calendar managing capability or not
+     * @param bool $checkcapability If Moodle should check the user can manage the calendar events for this call or not.
      * @return bool event updated
      */
     public function update($data, $checkcapability=true) {
@@ -805,7 +812,7 @@ class calendar_event {
                     $this->editoroptions['maxbytes'] = $course->maxbytes;
                 } else if ($properties->eventtype === 'category') {
                     // First check the course is valid.
-                    \coursecat::get($properties->categoryid, MUST_EXIST, true);
+                    \core_course_category::get($properties->categoryid, MUST_EXIST, true);
                     // Course context.
                     $this->editorcontext = $this->get_context();
                 } else {
@@ -916,10 +923,19 @@ class calendar_event {
     }
 
     /**
-     * Creates a new event and returns an event object
+     * Creates a new event and returns an event object.
+     *
+     * Capability checking should be performed if the user is directly creating the event
+     * and no other capability has been tested. However if the event is not being created
+     * directly by the user and another capability has been checked for them to do this then
+     * capabilites should not be checked.
+     *
+     * For example if a user is creating an event in the calendar the check should be true,
+     * but if you are creating an event in an activity when it is created then the calendar
+     * capabilites should not be checked.
      *
      * @param \stdClass|array $properties An object containing event properties
-     * @param bool $checkcapability Check caps or not
+     * @param bool $checkcapability If Moodle should check the user can manage the calendar events for this call or not.
      * @throws \coding_exception
      *
      * @return calendar_event|bool The event object or false if it failed
@@ -1067,14 +1083,14 @@ class calendar_information {
             }
 
             $courses = [$course->id => $course];
-            $category = (\coursecat::get($course->category, MUST_EXIST, true))->get_db_record();
+            $category = (\core_course_category::get($course->category, MUST_EXIST, true))->get_db_record();
         } else if (!empty($categoryid)) {
             $course = get_site();
             $courses = calendar_get_default_courses(null, 'id, category, groupmode, groupmodeforce');
 
             // Filter available courses to those within this category or it's children.
             $ids = [$categoryid];
-            $category = \coursecat::get($categoryid);
+            $category = \core_course_category::get($categoryid);
             $ids = array_merge($ids, array_keys($category->get_children()));
             $courses = array_filter($courses, function($course) use ($ids) {
                 return array_search($course->category, $ids) !== false;
@@ -1158,7 +1174,7 @@ class calendar_information {
             // A specific course was requested.
             // Fetch the category that this course is in, along with all parents.
             // Do not include child categories of this category, as the user many not have enrolments in those siblings or children.
-            $category = \coursecat::get($course->category, MUST_EXIST, true);
+            $category = \core_course_category::get($course->category, MUST_EXIST, true);
             $this->categoryid = $category->id;
 
             $this->categories = $category->get_parents();
@@ -1166,7 +1182,7 @@ class calendar_information {
         } else if (null !== $category && $category->id > 0) {
             // A specific category was requested.
             // Fetch all parents of this category, along with all children too.
-            $category = \coursecat::get($category->id);
+            $category = \core_course_category::get($category->id);
             $this->categoryid = $category->id;
 
             // Build the category list.
@@ -1188,7 +1204,7 @@ class calendar_information {
             if ($this->categories === false) {
                 // Use the category id as the key in the following array. That way we do not have to remove duplicates.
                 $categories = [];
-                foreach (\coursecat::get_all() as $category) {
+                foreach (\core_course_category::get_all() as $category) {
                     if (isset($coursecategories[$category->id]) ||
                             has_capability('moodle/category:manage', $category->get_context(), $USER, false)) {
                         // If the user has access to a course in this category or can manage the category,
@@ -2177,7 +2193,7 @@ function calendar_view_event_allowed(calendar_event $event) {
         return isset($mycourses[$courseid]);
     } else if ($event->categoryid) {
         // If this is a category we need to be able to see the category.
-        $cat = \coursecat::get($event->categoryid, IGNORE_MISSING);
+        $cat = \core_course_category::get($event->categoryid, IGNORE_MISSING);
         if (!$cat) {
             return false;
         }
@@ -3147,7 +3163,7 @@ function calendar_can_edit_subscription($subscriptionorid) {
     $category = null;
 
     if (!empty($categoryid)) {
-        $category = \coursecat::get($categoryid);
+        $category = \core_course_category::get($categoryid);
     }
     calendar_get_allowed_types($allowed, $courseid, null, $category);
     switch ($subscription->eventtype) {
@@ -3693,7 +3709,7 @@ function calendar_get_allowed_event_types(int $courseid = null) {
     if (has_capability('moodle/calendar:manageownentries', \context_system::instance())) {
         $types['user'] = true;
     }
-    if (coursecat::has_manage_capability_on_any()) {
+    if (core_course_category::has_manage_capability_on_any()) {
         $types['category'] = true;
     }
 
@@ -3728,7 +3744,7 @@ function calendar_get_allowed_event_types(int $courseid = null) {
                 $ctxfields = context_helper::get_preload_record_columns_sql('ctx');
                 $sql = "SELECT
                             c.id, c.visible, {$ctxfields}
-                        FROM {course}
+                        FROM {course} c
                         JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
                 $params = [
                     'contextlevel' => CONTEXT_COURSE,

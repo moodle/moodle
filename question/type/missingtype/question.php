@@ -73,6 +73,10 @@ class qtype_missingtype_question extends question_definition
         return null;
     }
 
+    public function un_summarise_response(string $response) {
+        return [];
+    }
+
     public function classify_response(array $response) {
         return array();
     }

@@ -242,7 +242,8 @@ class core_calendar_external extends external_api {
             $categories = [];
 
             if (!empty($params['events']['categoryids'])) {
-                $catobjs = \coursecat::get_many(array_merge($params['events']['categoryids'], array_keys($coursecategories)));
+                $catobjs = \core_course_category::get_many(
+                    array_merge($params['events']['categoryids'], array_keys($coursecategories)));
                 foreach ($catobjs as $catobj) {
                     if (isset($coursecategories[$catobj->id]) ||
                             has_capability('moodle/category:manage', $catobj->get_context())) {
@@ -267,7 +268,7 @@ class core_calendar_external extends external_api {
                     $categories = array_flip($categories);
                 } else {
                     $categories = [];
-                    foreach (\coursecat::get_all() as $category) {
+                    foreach (\core_course_category::get_all() as $category) {
                         if (isset($coursecategories[$category->id]) ||
                                 has_capability('moodle/category:manage', $category->get_context(), $USER, false)) {
                             // If the user has access to a course in this category or can manage the category,
@@ -403,7 +404,9 @@ class core_calendar_external extends external_api {
                 'timesortfrom' => new external_value(PARAM_INT, 'Time sort from', VALUE_DEFAULT, 0),
                 'timesortto' => new external_value(PARAM_INT, 'Time sort to', VALUE_DEFAULT, null),
                 'aftereventid' => new external_value(PARAM_INT, 'The last seen event id', VALUE_DEFAULT, 0),
-                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 20)
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 20),
+                'limittononsuspendedevents' => new external_value(PARAM_BOOL,
+                        'Limit the events to courses the user is not suspended in', VALUE_DEFAULT, false)
             )
         );
     }
@@ -419,7 +422,7 @@ class core_calendar_external extends external_api {
      * @return array
      */
     public static function get_calendar_action_events_by_timesort($timesortfrom = 0, $timesortto = null,
-                                                       $aftereventid = 0, $limitnum = 20) {
+                                                       $aftereventid = 0, $limitnum = 20, $limittononsuspendedevents = false) {
         global $CFG, $PAGE, $USER;
 
         require_once($CFG->dirroot . '/calendar/lib.php');
@@ -432,6 +435,7 @@ class core_calendar_external extends external_api {
                 'timesortto' => $timesortto,
                 'aftereventid' => $aftereventid,
                 'limitnum' => $limitnum,
+                'limittononsuspendedevents' => $limittononsuspendedevents
             ]
         );
         $context = \context_user::instance($USER->id);
@@ -446,7 +450,8 @@ class core_calendar_external extends external_api {
             $params['timesortfrom'],
             $params['timesortto'],
             $params['aftereventid'],
-            $params['limitnum']
+            $params['limitnum'],
+            $params['limittononsuspendedevents']
         );
 
         $exportercache = new events_related_objects_cache($events);

@@ -85,6 +85,12 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
         $badge->attachment = 1;
         $badge->notification = 0;
         $badge->status = BADGE_STATUS_ACTIVE;
+        $badge->version = '1';
+        $badge->language = 'en';
+        $badge->imageauthorname = 'Image author';
+        $badge->imageauthoremail = 'imageauthor@example.com';
+        $badge->imageauthorurl = 'http://image-author-url.domain.co.nz';
+        $badge->imagecaption = 'Caption';
 
         $badgeid = $DB->insert_record('badge', $badge, true);
         $badge = new badge($badgeid);
@@ -92,6 +98,34 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
 
         // Hack the database to adjust the time each badge was issued.
         $DB->set_field('badge_issued', 'dateissued', $now - 11, array('userid' => $this->student->id, 'badgeid' => $badgeid));
+
+        // Add an endorsement for the badge.
+        $endorsement = new stdClass();
+        $endorsement->badgeid = $badgeid;
+        $endorsement->issuername = 'Issuer name';
+        $endorsement->issuerurl = 'http://endorsement-issuer-url.domain.co.nz';
+        $endorsement->issueremail = 'endorsementissuer@example.com';
+        $endorsement->claimid = 'http://claim-url.domain.co.nz';
+        $endorsement->claimcomment = 'Claim comment';
+        $endorsement->dateissued = $now;
+        $badge->save_endorsement($endorsement);
+
+        // Add 2 competencies.
+        $competency = new stdClass();
+        $competency->badgeid = $badgeid;
+        $competency->targetname = 'Competency 1';
+        $competency->targeturl = 'http://c1-target-url.domain.co.nz';
+        $competency->targetdescription = 'C1 target description';
+        $competency->targetframework = 'C1 framework';
+        $competency->targetcode = 'C1 code';
+        $badge->save_alignment($competency);
+
+        $competency->targetname = 'Competency 2';
+        $competency->targeturl = 'http://c2-target-url.domain.co.nz';
+        $competency->targetdescription = 'C2 target description';
+        $competency->targetframework = 'C2 framework';
+        $competency->targetcode = 'C2 code';
+        $badge->save_alignment($competency);
 
         // Now a course badge.
         $badge->id = null;
@@ -100,12 +134,15 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
         $badge->type = BADGE_TYPE_COURSE;
         $badge->courseid = $this->course->id;
 
-        $badgeid = $DB->insert_record('badge', $badge, true);
-        $badge = new badge($badgeid);
+        $coursebadgeid = $DB->insert_record('badge', $badge, true);
+        $badge = new badge($coursebadgeid);
         $badge->issue($this->student->id, true);
 
         // Hack the database to adjust the time each badge was issued.
-        $DB->set_field('badge_issued', 'dateissued', $now - 11, array('userid' => $this->student->id, 'badgeid' => $badgeid));
+        $DB->set_field('badge_issued', 'dateissued', $now - 11, array('userid' => $this->student->id, 'badgeid' => $coursebadgeid));
+
+        // Make the site badge a related badge.
+        $badge->add_related_badges(array($badgeid));
     }
 
     /**
@@ -116,15 +153,65 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
 
         $this->setUser($this->student);
 
+        $badges = (array) badges_get_user_badges($this->student->id);
+        $expectedbadges = array();
+        $coursebadge = null;
+
+        foreach ($badges as $badge) {
+            $context = ($badge->type == BADGE_TYPE_SITE) ? context_system::instance() : context_course::instance($badge->courseid);
+            $badge->badgeurl = moodle_url::make_webservice_pluginfile_url($context->id, 'badges', 'badgeimage', $badge->id, '/',
+                                                                            'f1')->out(false);
+
+            // Get the endorsement, competencies and related badges.
+            $badgeinstance = new badge($badge->id);
+            $endorsement = $badgeinstance->get_endorsement();
+            $competencies = $badgeinstance->get_alignment();
+            $relatedbadges = $badgeinstance->get_related_badges();
+            $badge->competencies = array();
+            $badge->relatedbadges = array();
+
+            if ($endorsement) {
+                $badge->endorsement = (array) $endorsement;
+            }
+
+            if (!empty($competencies)) {
+                foreach ($competencies as $competency) {
+                    // Students cannot see some fields of the competencies.
+                    unset($competency->targetdescription);
+                    unset($competency->targetframework);
+                    unset($competency->targetcode);
+
+                    $badge->competencies[] = (array) $competency;
+                }
+            }
+
+            if (!empty($relatedbadges)) {
+                foreach ($relatedbadges as $relatedbadge) {
+                    // Students cannot see some fields of the related badges.
+                    unset($relatedbadge->version);
+                    unset($relatedbadge->language);
+                    unset($relatedbadge->type);
+
+                    $badge->relatedbadges[] = (array) $relatedbadge;
+                }
+            }
+
+            $expectedbadges[] = (array) $badge;
+            if (isset($badge->courseid)) {
+                // Save the course badge to be able to compare it in our tests.
+                $coursebadge = (array) $badge;
+            }
+        }
+
         $result = core_badges_external::get_user_badges();
         $result = external_api::clean_returnvalue(core_badges_external::get_user_badges_returns(), $result);
-        $this->assertCount(2, $result['badges']);
+        $this->assertEquals($expectedbadges, $result['badges']);
 
         // Pagination and filtering.
         $result = core_badges_external::get_user_badges(0, $this->course->id, 0, 1, '', true);
         $result = external_api::clean_returnvalue(core_badges_external::get_user_badges_returns(), $result);
         $this->assertCount(1, $result['badges']);
-        $this->assertEquals($this->course->id, $result['badges'][0]['courseid']);
+        $this->assertEquals($coursebadge, $result['badges'][0]);
     }
 
     /**
@@ -143,6 +230,15 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
         foreach ($result['badges'] as $badge) {
             if (isset($badge['type']) and $badge['type'] == BADGE_TYPE_COURSE) {
                 $this->assertTrue(isset($badge['message']));
+
+                // Check that we have permissions to see all the data in competencies and related badges.
+                foreach ($badge['competencies'] as $competency) {
+                    $this->assertTrue(isset($competency['targetdescription']));
+                }
+
+                foreach ($badge['relatedbadges'] as $relatedbadge) {
+                    $this->assertTrue(isset($relatedbadge['type']));
+                }
             } else {
                 $this->assertFalse(isset($badge['message']));
             }

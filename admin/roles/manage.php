@@ -48,7 +48,6 @@ $defineurl = $CFG->wwwroot . '/' . $CFG->admin . '/roles/define.php';
 
 // Check access permissions.
 $systemcontext = context_system::instance();
-require_login();
 require_capability('moodle/role:manage', $systemcontext);
 admin_externalpage_setup('defineroles');
 
@@ -85,12 +84,10 @@ switch ($action) {
             die;
         }
         if (!delete_role($roleid)) {
-            // The delete failed, but mark the context dirty in case.
-            $systemcontext->mark_dirty();
+            // The delete failed.
             print_error('cannotdeleterolewithid', 'error', $baseurl, $roleid);
         }
         // Deleted a role sitewide...
-        $systemcontext->mark_dirty();
         redirect($baseurl);
         break;
 

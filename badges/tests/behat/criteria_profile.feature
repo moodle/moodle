@@ -10,7 +10,7 @@ Feature: Award badges based on user profile field
       | username | firstname | lastname | email           |
       | user1    | First     | User     | first@example.com  |
     And I log in as "admin"
-    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Site Badge |
       | Description | Site badge description |

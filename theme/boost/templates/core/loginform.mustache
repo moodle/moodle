@@ -39,6 +39,7 @@
     * errorformatted - Formatted error,
     * logourl - Flag, logo url,
     * sitename - Name of site.
+    * logintoken - Random token to protect login request.
 
     Example context (json):
     {
@@ -87,7 +88,8 @@
         "cookieshelpiconformatted": "",
         "errorformatted": "",
         "logourl": false,
-        "sitename": "Beer & Chips"
+        "sitename": "Beer & Chips",
+        "logintoken": "randomstring"
     }
 }}
 
@@ -112,7 +114,7 @@
             {{#error}}
                 <div class="loginerrors mt-3">
                     <a href="#" id="loginerrormessage" class="accesshide">{{error}}</a>
-                    <div class="alert alert-danger" role="alert">{{error}}</div>
+                    <div class="alert alert-danger" role="alert" data-aria-autofocus="true">{{error}}</div>
                 </div>
             {{/error}}
 
@@ -121,6 +123,7 @@
                     <form class="mt-3" action="{{loginurl}}" method="post" id="login">
                         <input id="anchor" type="hidden" name="anchor" value="">
                         <script>document.getElementById('anchor').value = location.hash;</script>
+                        <input type="hidden" name="logintoken" value="{{logintoken}}">
                         <div class="form-group">
                             <label for="username" class="sr-only">
                                 {{^canloginbyemail}}
@@ -165,6 +168,7 @@
                         <div class="mt-2">
                             <p>{{#str}}someallowguest{{/str}}</p>
                             <form action="{{loginurl}}" method="post" id="guestlogin">
+                                <input type="hidden" name="logintoken" value="{{logintoken}}">
                                 <input type="hidden" name="username" value="guest" />
                                 <input type="hidden" name="password" value="guest" />
                                 <button class="btn btn-secondary btn-block" type="submit">{{#str}}loginguest{{/str}}</button>

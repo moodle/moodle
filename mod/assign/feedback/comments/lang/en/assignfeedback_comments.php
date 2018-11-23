@@ -30,6 +30,7 @@ $string['pluginname'] = 'Feedback comments';
 $string['privacy:commentpath'] = 'Feedback comments';
 $string['privacy:metadata:assignmentid'] = 'Assignment ID';
 $string['privacy:metadata:commentpurpose'] = 'The comment text.';
+$string['privacy:metadata:filepurpose'] = 'Feedback files from the teacher for the student.';
 $string['privacy:metadata:gradepurpose'] = 'The grade ID associated with the comment.';
 $string['privacy:metadata:tablesummary'] = 'This stores comments made by the graders as feedback for the student on their submission.';
 $string['commentinline'] = 'Comment inline';

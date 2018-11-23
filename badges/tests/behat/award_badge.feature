@@ -20,7 +20,7 @@ Feature: Award badges
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     # Create course badge 1.
-    And I navigate to "Add a new badge" node in "Course administration > Badges"
+    And I navigate to "Badges > Add a new badge" in current page administration
     And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge 1 |
@@ -37,7 +37,8 @@ Feature: Award badges
     And I press "Enable access"
     And I press "Continue"
     # Badge #2
-    And I navigate to "Add a new badge" node in "Course administration > Badges"
+    And I am on "Course 1" course homepage
+    And I navigate to "Badges > Add a new badge" in current page administration
     And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge 2 |
@@ -72,7 +73,7 @@ Feature: Award badges
   @javascript
   Scenario: Award profile badge
     Given I log in as "admin"
-    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Profile Badge |
       | Description | Test badge description |
@@ -110,7 +111,7 @@ Feature: Award badges
       | teacher | teacher | 1 | teacher1@example.com |
       | student | student | 1 | student1@example.com |
     And I log in as "admin"
-    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Site Badge |
       | Description | Site badge description |
@@ -152,7 +153,7 @@ Feature: Award badges
       | student2 | C1 | student |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Add a new badge" node in "Course administration > Badges"
+    And I navigate to "Badges > Add a new badge" in current page administration
     And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
@@ -194,7 +195,7 @@ Feature: Award badges
       | student1 | C1 | student |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" node in "Course administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
@@ -204,7 +205,7 @@ Feature: Award badges
       | Description | Submit your online text |
       | id_completion | 1                     |
     And I am on "Course 1" course homepage
-    And I navigate to "Add a new badge" node in "Course administration > Badges"
+    And I navigate to "Badges > Add a new badge" in current page administration
     And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
@@ -243,7 +244,7 @@ Feature: Award badges
       | student1 | C1 | student |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" node in "Course administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
@@ -253,13 +254,13 @@ Feature: Award badges
       | Description | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1 |
       | id_completion | 1                     |
-    And I navigate to "Course completion" node in "Course administration"
+    And I navigate to "Course completion" in current page administration
     And I set the field "id_overall_aggregation" to "2"
     And I click on "Condition: Activity completion" "link"
     And I set the field "Assignment - Test assignment name" to "1"
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I navigate to "Add a new badge" node in "Course administration > Badges"
+    And I navigate to "Badges > Add a new badge" in current page administration
     And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
@@ -309,7 +310,7 @@ Feature: Award badges
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     # Create course badge 1.
-    And I navigate to "Add a new badge" node in "Course administration > Badges"
+    And I navigate to "Badges > Add a new badge" in current page administration
     And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge 1 |
@@ -334,7 +335,8 @@ Feature: Award badges
     And I follow "Recipients (1)"
     Then I should see "Recipients (1)"
     # Add course badge 2.
-    And I navigate to "Add a new badge" node in "Course administration > Badges"
+    And I am on "Course 1" course homepage
+    And I navigate to "Badges > Add a new badge" in current page administration
     And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge 2 |
@@ -391,7 +393,7 @@ Feature: Award badges
       | student2 | C1 | student |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Add a new badge" node in "Course administration > Badges"
+    And I navigate to "Badges > Add a new badge" in current page administration
     And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |

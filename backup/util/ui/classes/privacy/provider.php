@@ -29,8 +29,12 @@ use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
+use core_privacy\local\request\userlist;
+use core_privacy\local\request\approved_userlist;
 
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 
 /**
  * Privacy Subsystem implementation for core_backup.
@@ -40,6 +44,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class provider implements
     \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\subsystem\provider {
 
     /**
@@ -81,15 +86,112 @@ class provider implements
     public static function get_contexts_for_userid(int $userid) : contextlist {
         $contextlist = new contextlist();
 
-        $sql = "SELECT DISTINCT ctx.id
+        $sql = "SELECT ctx.id
                   FROM {backup_controllers} bc
                   JOIN {context} ctx
-                    ON ctx.instanceid = bc.itemid AND ctx.contextlevel = :contextlevel
+                        ON ctx.instanceid = bc.itemid
+                       AND ctx.contextlevel = :contextlevel
+                       AND bc.type = :type
                  WHERE bc.userid = :userid";
-        $params = ['contextlevel' => CONTEXT_COURSE, 'userid' => $userid];
+        $params = [
+            'contextlevel' => CONTEXT_COURSE,
+            'userid' => $userid,
+            'type' => 'course',
+        ];
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT ctx.id
+                  FROM {backup_controllers} bc
+                  JOIN {course_sections} c
+                        ON bc.itemid = c.id
+                       AND bc.type = :type
+                  JOIN {context} ctx
+                        ON ctx.instanceid = c.course
+                       AND ctx.contextlevel = :contextlevel
+                 WHERE bc.userid = :userid";
+        $params = [
+            'contextlevel' => CONTEXT_COURSE,
+            'userid' => $userid,
+            'type' => 'section',
+        ];
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT ctx.id
+                  FROM {backup_controllers} bc
+                  JOIN {context} ctx
+                        ON ctx.instanceid = bc.itemid
+                       AND ctx.contextlevel = :contextlevel
+                       AND bc.type = :type
+                 WHERE bc.userid = :userid";
+        $params = [
+            'contextlevel' => CONTEXT_MODULE,
+            'userid' => $userid,
+            'type' => 'activity',
+        ];
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users within a specific context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if ($context instanceof \context_course) {
+            $params = [
+                'contextcourse' => CONTEXT_COURSE,
+                'contextid' => $context->id,
+
+            ];
+
+            $sql = "SELECT bc.userid
+                      FROM {backup_controllers} bc
+                      JOIN {context} ctx
+                           ON ctx.instanceid = bc.itemid
+                           AND ctx.contextlevel = :contextcourse
+                     WHERE ctx.id = :contextid
+                           AND bc.type = :typecourse";
+
+            $courseparams = ['typecourse' => 'course'] + $params;
+
+            $userlist->add_from_sql('userid', $sql, $courseparams);
+
+            $sql = "SELECT bc.userid
+                      FROM {backup_controllers} bc
+                      JOIN {course_sections} c
+                           ON bc.itemid = c.id
+                      JOIN {context} ctx
+                           ON ctx.instanceid = c.course
+                           AND ctx.contextlevel = :contextcourse
+                     WHERE ctx.id = :contextid
+                           AND bc.type = :typesection";
+
+            $sectionparams = ['typesection' => 'section'] + $params;
+
+            $userlist->add_from_sql('userid', $sql, $sectionparams);
+        }
+
+        if ($context instanceof \context_module) {
+            $params = [
+                'contextmodule' => CONTEXT_MODULE,
+                'contextid' => $context->id,
+                'typeactivity' => 'activity'
+            ];
+
+            $sql = "SELECT bc.userid
+                      FROM {backup_controllers} bc
+                      JOIN {context} ctx
+                           ON ctx.instanceid = bc.itemid
+                           AND ctx.contextlevel = :contextmodule
+                     WHERE ctx.id = :contextid
+                           AND bc.type = :typeactivity";
+
+            $userlist->add_from_sql('userid', $sql, $params);
+        }
     }
 
     /**
@@ -135,21 +237,71 @@ class provider implements
 
     /**
      * Delete all user data which matches the specified context.
+     * Only dealing with the specific context - not it's child contexts.
      *
      * @param \context $context A user context.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         global $DB;
 
-        if (!$context instanceof \context_course) {
+        if ($context instanceof \context_course) {
+            $sectionsql = "itemid IN (SELECT id FROM {course_sections} WHERE course = ?) AND type = ?";
+            $DB->delete_records_select('backup_controllers', $sectionsql, [$context->instanceid, \backup::TYPE_1SECTION]);
+            $DB->delete_records('backup_controllers', ['itemid' => $context->instanceid, 'type' => \backup::TYPE_1COURSE]);
+        }
+        if ($context instanceof \context_module) {
+            $DB->delete_records('backup_controllers', ['itemid' => $context->instanceid, 'type' => \backup::TYPE_1ACTIVITY]);
+        }
+        return;
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     * Only dealing with the specific context - not it's child contexts.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        if (empty($userlist->get_userids())) {
             return;
         }
 
-        $DB->delete_records('backup_controllers', ['itemid' => $context->instanceid]);
+        $context = $userlist->get_context();
+        if ($context instanceof \context_course) {
+            list($usersql, $userparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+            $select = "itemid = :itemid AND userid {$usersql} AND type = :type";
+            $params = $userparams;
+            $params['itemid'] = $context->instanceid;
+            $params['type'] = \backup::TYPE_1COURSE;
+
+            $DB->delete_records_select('backup_controllers', $select, $params);
+
+            $params = $userparams;
+            $params['course'] = $context->instanceid;
+            $params['type'] = \backup::TYPE_1SECTION;
+            $sectionsql = "itemid IN (SELECT id FROM {course_sections} WHERE course = :course)";
+            $select = $sectionsql . " AND userid {$usersql} AND type = :type";
+            $DB->delete_records_select('backup_controllers', $select, $params);
+        }
+        if ($context instanceof \context_module) {
+            list($usersql, $userparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+            $select = "itemid = :itemid AND userid {$usersql} AND type = :type";
+            $params = $userparams;
+            $params['itemid'] = $context->instanceid;
+            $params['type'] = \backup::TYPE_1ACTIVITY;
+
+            // Delete activity backup data.
+            $select = "itemid = :itemid AND type = :type AND userid {$usersql}";
+            $params = ['itemid' => $context->instanceid, 'type' => 'activity'] + $userparams;
+            $DB->delete_records_select('backup_controllers', $select, $params);
+        }
     }
 
     /**
      * Delete all user data for the specified user, in the specified contexts.
+     * Only dealing with the specific context - not it's child contexts.
      *
      * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
      */
@@ -162,11 +314,37 @@ class provider implements
 
         $userid = $contextlist->get_user()->id;
         foreach ($contextlist->get_contexts() as $context) {
-            if (!$context instanceof \context_course) {
-                continue;
+            if ($context instanceof \context_course) {
+                $select = "itemid = :itemid AND userid = :userid AND type = :type";
+                $params = [
+                    'userid' => $userid,
+                    'itemid' => $context->instanceid,
+                    'type' => \backup::TYPE_1COURSE
+                ];
+
+                $DB->delete_records_select('backup_controllers', $select, $params);
+
+                $params = [
+                    'userid' => $userid,
+                    'course' => $context->instanceid,
+                    'type' => \backup::TYPE_1SECTION
+                ];
+                $sectionsql = "itemid IN (SELECT id FROM {course_sections} WHERE course = :course)";
+                $select = $sectionsql . " AND userid = :userid AND type = :type";
+                $DB->delete_records_select('backup_controllers', $select, $params);
+            }
+            if ($context instanceof \context_module) {
+                list($usersql, $userparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+                $select = "itemid = :itemid AND userid = :userid AND type = :type";
+                $params = [
+                    'itemid' => $context->instanceid,
+                    'userid' => $userid,
+                    'type' => \backup::TYPE_1ACTIVITY
+                ];
+
+                $DB->delete_records_select('backup_controllers', $select, $params);
             }
 
-            $DB->delete_records('backup_controllers', ['itemid' => $context->instanceid, 'userid' => $userid]);
         }
     }
 

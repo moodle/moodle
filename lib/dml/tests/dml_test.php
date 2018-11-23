@@ -2407,6 +2407,68 @@ class core_dml_testcase extends database_driver_testcase {
         }
     }
 
+    public function test_insert_record_with_nullable_unique_index() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('notnull1', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('nullable1', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('nullable2', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('notnull1-nullable1-nullable2', XMLDB_INDEX_UNIQUE,
+                array('notnull1', 'nullable1', 'nullable2'));
+        $dbman->create_table($table);
+
+        // Insert one record. Should be OK (no exception).
+        $DB->insert_record($tablename, (object) ['notnull1' => 1, 'nullable1' => 1, 'nullable2' => 1]);
+
+        $this->assertEquals(1, $DB->count_records($table->getName()));
+        $this->assertEquals(1, $DB->count_records($table->getName(), ['nullable1' => 1]));
+
+        // Inserting a duplicate should fail.
+        try {
+            $DB->insert_record($tablename, (object) ['notnull1' => 1, 'nullable1' => 1, 'nullable2' => 1]);
+            $this->fail('dml_write_exception expected when a record violates a unique index');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('dml_write_exception', $e);
+        }
+
+        $this->assertEquals(1, $DB->count_records($table->getName()));
+        $this->assertEquals(1, $DB->count_records($table->getName(), ['nullable1' => 1]));
+
+        // Inserting a record with nulls in the nullable columns should work.
+        $DB->insert_record($tablename, (object) ['notnull1' => 1, 'nullable1' => null, 'nullable2' => null]);
+
+        $this->assertEquals(2, $DB->count_records($table->getName()));
+        $this->assertEquals(1, $DB->count_records($table->getName(), ['nullable1' => 1]));
+        $this->assertEquals(1, $DB->count_records($table->getName(), ['nullable1' => null]));
+
+        // And it should be possible to insert a duplicate.
+        $DB->insert_record($tablename, (object) ['notnull1' => 1, 'nullable1' => null, 'nullable2' => null]);
+
+        $this->assertEquals(3, $DB->count_records($table->getName()));
+        $this->assertEquals(1, $DB->count_records($table->getName(), ['nullable1' => 1]));
+        $this->assertEquals(2, $DB->count_records($table->getName(), ['nullable1' => null]));
+
+        // Same, but with only one of the nullable columns being null.
+        $DB->insert_record($tablename, (object) ['notnull1' => 1, 'nullable1' => 1, 'nullable2' => null]);
+
+        $this->assertEquals(4, $DB->count_records($table->getName()));
+        $this->assertEquals(2, $DB->count_records($table->getName(), ['nullable1' => 1]));
+        $this->assertEquals(2, $DB->count_records($table->getName(), ['nullable1' => null]));
+
+        $DB->insert_record($tablename, (object) ['notnull1' => 1, 'nullable1' => 1, 'nullable2' => null]);
+
+        $this->assertEquals(5, $DB->count_records($table->getName()));
+        $this->assertEquals(3, $DB->count_records($table->getName(), ['nullable1' => 1]));
+        $this->assertEquals(2, $DB->count_records($table->getName(), ['nullable1' => null]));
+
+    }
+
     public function test_import_record() {
         // All the information in this test is fetched from DB by get_recordset() so we
         // have such method properly tested against nulls, empties and friends...

@@ -10,7 +10,7 @@ Feature: The logged in user block allows users to view their profile information
       | teacher1 | Teacher   | One      | teacher1@example.com | T1       |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
+    And I navigate to "Turn editing on" in current page administration
     And I add the "Logged in user" block
     And I log out
 

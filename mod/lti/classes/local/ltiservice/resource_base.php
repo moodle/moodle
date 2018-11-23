@@ -304,7 +304,7 @@ abstract class resource_base {
 
         if (empty($this->params)) {
             $this->params = array();
-            if (isset($_SERVER['PATH_INFO'])) {
+            if (isset($_SERVER['PATH_INFO']) && !empty($_SERVER['PATH_INFO'])) {
                 $path = explode('/', $_SERVER['PATH_INFO']);
                 $parts = explode('/', $this->get_template());
                 for ($i = 0; $i < count($parts); $i++) {

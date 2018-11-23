@@ -327,7 +327,8 @@ function quiz_report_scale_summarks_as_percentage($rawmark, $quiz, $round = true
     if ($round) {
         $mark = quiz_format_grade($quiz, $mark);
     }
-    return $mark . '%';
+
+    return get_string('percents', 'moodle', $mark);
 }
 
 /**

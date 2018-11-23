@@ -160,12 +160,9 @@ class data_request_exporter extends persistent_exporter {
 
         switch ($this->persistent->get('status')) {
             case api::DATAREQUEST_STATUS_PENDING:
-                $values['statuslabelclass'] = 'label-default';
+                $values['statuslabelclass'] = 'label-info';
                 // Request can be manually completed for general enquiry requests.
                 $values['canmarkcomplete'] = $requesttype == api::DATAREQUEST_TYPE_OTHERS;
-                break;
-            case api::DATAREQUEST_STATUS_PREPROCESSING:
-                $values['statuslabelclass'] = 'label-default';
                 break;
             case api::DATAREQUEST_STATUS_AWAITING_APPROVAL:
                 $values['statuslabelclass'] = 'label-info';
@@ -181,6 +178,8 @@ class data_request_exporter extends persistent_exporter {
                 $values['statuslabelclass'] = 'label-info';
                 break;
             case api::DATAREQUEST_STATUS_COMPLETE:
+            case api::DATAREQUEST_STATUS_DOWNLOAD_READY:
+            case api::DATAREQUEST_STATUS_DELETED:
                 $values['statuslabelclass'] = 'label-success';
                 break;
             case api::DATAREQUEST_STATUS_CANCELLED:
@@ -188,6 +187,9 @@ class data_request_exporter extends persistent_exporter {
                 break;
             case api::DATAREQUEST_STATUS_REJECTED:
                 $values['statuslabelclass'] = 'label-important';
+                break;
+            case api::DATAREQUEST_STATUS_EXPIRED:
+                $values['statuslabelclass'] = 'label-default';
                 break;
         }
 

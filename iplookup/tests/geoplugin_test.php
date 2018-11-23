@@ -47,7 +47,7 @@ class core_iplookup_geoplugin_testcase extends advanced_testcase {
     }
 
     public function test_ipv4() {
-        $result = iplookup_find_location('192.30.255.112');
+        $result = iplookup_find_location('50.0.184.0');
 
         $this->assertEquals('array', gettype($result));
         $this->assertEquals('San Francisco', $result['city']);

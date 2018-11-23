@@ -98,6 +98,22 @@ define('BADGE_MESSAGE_MONTHLY', 4);
  */
 define('BADGE_BACKPACKURL', 'https://backpack.openbadges.org');
 
+/*
+ * Open Badges specifications.
+ */
+define('OPEN_BADGES_V1', 1);
+define('OPEN_BADGES_V2', 2);
+
+/*
+ * Only use for Open Badges 2.0 specification
+ */
+define('OPEN_BADGES_V2_CONTEXT', 'https://w3id.org/openbadges/v2');
+define('OPEN_BADGES_V2_TYPE_ASSERTION', 'Assertion');
+define('OPEN_BADGES_V2_TYPE_BADGE', 'BadgeClass');
+define('OPEN_BADGES_V2_TYPE_ISSUER', 'Issuer');
+define('OPEN_BADGES_V2_TYPE_ENDORSEMENT', 'Endorsement');
+define('OPEN_BADGES_V2_TYPE_AUTHOR', 'Author');
+
 /**
  * Class that represents badge.
  *
@@ -126,6 +142,24 @@ class badge {
     public $notification;
     public $status = 0;
     public $nextcron;
+
+    /** @var string control version of badge */
+    public $version;
+
+    /** @var string language code */
+    public $language;
+
+    /** @var string name image author */
+    public $imageauthorname;
+
+    /** @var string email image author */
+    public $imageauthoremail;
+
+    /** @var string url image author */
+    public $imageauthorurl;
+
+    /** @var string image caption */
+    public $imagecaption;
 
     /** @var array Badge criteria */
     public $criteria = array();
@@ -680,6 +714,16 @@ class badge {
         $badgecontext = $this->get_context();
         $fs->delete_area_files($badgecontext->id, 'badges', 'badgeimage', $this->id);
 
+        // Delete endorsements, competencies and related badges.
+        $DB->delete_records('badge_endorsement', array('badgeid' => $this->id));
+        $relatedsql = 'badgeid = :badgeid OR relatedbadgeid = :relatedbadgeid';
+        $relatedparams = array(
+            'badgeid' => $this->id,
+            'relatedbadgeid' => $this->id
+        );
+        $DB->delete_records_select('badge_related', $relatedsql, $relatedparams);
+        $DB->delete_records('badge_competencies', array('badgeid' => $this->id));
+
         // Finally, remove badge itself.
         $DB->delete_records('badge', array('id' => $this->id));
 
@@ -690,6 +734,215 @@ class badge {
             );
         $event = \core\event\badge_deleted::create($eventparams);
         $event->trigger();
+    }
+
+    /**
+     * Add multiple related badges.
+     *
+     * @param array $relatedids Id of badges.
+     */
+    public function add_related_badges($relatedids) {
+        global $DB;
+        $relatedbadges = array();
+        foreach ($relatedids as $relatedid) {
+            $relatedbadge = new stdClass();
+            $relatedbadge->badgeid = $this->id;
+            $relatedbadge->relatedbadgeid = $relatedid;
+            $relatedbadges[] = $relatedbadge;
+        }
+        $DB->insert_records('badge_related', $relatedbadges);
+    }
+
+    /**
+     * Delete an related badge.
+     *
+     * @param int $relatedid Id related badge.
+     * @return bool A status for delete an related badge.
+     */
+    public function delete_related_badge($relatedid) {
+        global $DB;
+        $sql = "(badgeid = :badgeid AND relatedbadgeid = :relatedid) OR " .
+               "(badgeid = :relatedid2 AND relatedbadgeid = :badgeid2)";
+        $params = ['badgeid' => $this->id, 'badgeid2' => $this->id, 'relatedid' => $relatedid, 'relatedid2' => $relatedid];
+        return $DB->delete_records_select('badge_related', $sql, $params);
+    }
+
+    /**
+     * Checks if badge has related badges.
+     *
+     * @return bool A status related badge.
+     */
+    public function has_related() {
+        global $DB;
+        $sql = "SELECT DISTINCT b.id
+                    FROM {badge_related} br
+                    JOIN {badge} b ON (br.relatedbadgeid = b.id OR br.badgeid = b.id)
+                   WHERE (br.badgeid = :badgeid OR br.relatedbadgeid = :badgeid2) AND b.id != :badgeid3";
+        return $DB->record_exists_sql($sql, ['badgeid' => $this->id, 'badgeid2' => $this->id, 'badgeid3' => $this->id]);
+    }
+
+    /**
+     * Get related badges of badge.
+     *
+     * @param bool $activeonly Do not get the inactive badges when is true.
+     * @return array Related badges information.
+     */
+    public function get_related_badges(bool $activeonly = false) {
+        global $DB;
+
+        $params = array('badgeid' => $this->id, 'badgeid2' => $this->id, 'badgeid3' => $this->id);
+        $query = "SELECT DISTINCT b.id, b.name, b.version, b.language, b.type
+                    FROM {badge_related} br
+                    JOIN {badge} b ON (br.relatedbadgeid = b.id OR br.badgeid = b.id)
+                   WHERE (br.badgeid = :badgeid OR br.relatedbadgeid = :badgeid2) AND b.id != :badgeid3";
+        if ($activeonly) {
+            $query .= " AND b.status <> :status";
+            $params['status'] = BADGE_STATUS_INACTIVE;
+        }
+        $relatedbadges = $DB->get_records_sql($query, $params);
+        return $relatedbadges;
+    }
+
+    /**
+     * Insert/update competency alignment information of badge.
+     *
+     * @param stdClass $alignment Data of a competency alignment.
+     * @param int $alignmentid ID competency alignment.
+     * @return bool|int A status/ID when insert or update data.
+     */
+    public function save_alignment($alignment, $alignmentid = 0) {
+        global $DB;
+
+        $record = $DB->record_exists('badge_competencies', array('id' => $alignmentid));
+        if ($record) {
+            $alignment->id = $alignmentid;
+            return $DB->update_record('badge_competencies', $alignment);
+        } else {
+            return $DB->insert_record('badge_competencies', $alignment, true);
+        }
+    }
+
+    /**
+     * Delete a competency alignment of badge.
+     *
+     * @param int $alignmentid ID competency alignment.
+     * @return bool A status for delete a competency alignment.
+     */
+    public function delete_alignment($alignmentid) {
+        global $DB;
+        return $DB->delete_records('badge_competencies', array('badgeid' => $this->id, 'id' => $alignmentid));
+    }
+
+    /**
+     * Get competencies of badge.
+     *
+     * @return array List content competencies.
+     */
+    public function get_alignment() {
+        global $DB;
+        return $DB->get_records('badge_competencies', array('badgeid' => $this->id));
+    }
+
+    /**
+     * Insert/update Endorsement information of badge.
+     *
+     * @param stdClass $endorsement Data of an endorsement.
+     * @return bool|int A status/ID when insert or update data.
+     */
+    public function save_endorsement($endorsement) {
+        global $DB;
+        $record = $DB->get_record('badge_endorsement', array('badgeid' => $this->id));
+        if ($record) {
+            $endorsement->id = $record->id;
+            return $DB->update_record('badge_endorsement', $endorsement);
+        } else {
+            return $DB->insert_record('badge_endorsement', $endorsement, true);
+        }
+    }
+
+    /**
+     * Get endorsement of badge.
+     *
+     * @return array|stdClass Endorsement information.
+     */
+    public function get_endorsement() {
+        global $DB;
+        return $DB->get_record('badge_endorsement', array('badgeid' => $this->id));
+    }
+
+    /**
+     * Markdown language support for criteria.
+     *
+     * @return string $output Markdown content to output.
+     */
+    public function markdown_badge_criteria() {
+        $agg = $this->get_aggregation_methods();
+        if (empty($this->criteria)) {
+            return get_string('nocriteria', 'badges');
+        }
+        $overalldescr = '';
+        $overall = $this->criteria[BADGE_CRITERIA_TYPE_OVERALL];
+        if (!empty($overall->description)) {
+                $overalldescr = format_text($overall->description, $overall->descriptionformat,
+                    array('context' => $this->get_context())) . '\n';
+        }
+        // Get the condition string.
+        if (count($this->criteria) == 2) {
+            $condition = get_string('criteria_descr', 'badges');
+        } else {
+            $condition = get_string('criteria_descr_' . BADGE_CRITERIA_TYPE_OVERALL, 'badges',
+                core_text::strtoupper($agg[$this->get_aggregation_method()]));
+        }
+        unset($this->criteria[BADGE_CRITERIA_TYPE_OVERALL]);
+        $items = array();
+        // If only one criterion left, make sure its description goe to the top.
+        if (count($this->criteria) == 1) {
+            $c = reset($this->criteria);
+            if (!empty($c->description)) {
+                $overalldescr = $c->description . '\n';
+            }
+            if (count($c->params) == 1) {
+                $items[] = ' * ' . get_string('criteria_descr_single_' . $c->criteriatype, 'badges') .
+                    $c->get_details();
+            } else {
+                $items[] = '* ' . get_string('criteria_descr_' . $c->criteriatype, 'badges',
+                        core_text::strtoupper($agg[$this->get_aggregation_method($c->criteriatype)])) .
+                    $c->get_details();
+            }
+        } else {
+            foreach ($this->criteria as $type => $c) {
+                $criteriadescr = '';
+                if (!empty($c->description)) {
+                    $criteriadescr = $c->description;
+                }
+                if (count($c->params) == 1) {
+                    $items[] = ' * ' . get_string('criteria_descr_single_' . $type, 'badges') .
+                        $c->get_details() . $criteriadescr;
+                } else {
+                    $items[] = '* ' . get_string('criteria_descr_' . $type, 'badges',
+                            core_text::strtoupper($agg[$this->get_aggregation_method($type)])) .
+                        $c->get_details() . $criteriadescr;
+                }
+            }
+        }
+        return strip_tags($overalldescr . $condition . html_writer::alist($items, array(), 'ul'));
+    }
+
+    /**
+     * Define issuer information by format Open Badges specification version 2.
+     *
+     * @return array Issuer informations of the badge.
+     */
+    public function get_badge_issuer() {
+        $issuer = array();
+        $issuerurl = new moodle_url('/badges/badge_json.php', array('id' => $this->id, 'action' => 0));
+        $issuer['name'] = $this->issuername;
+        $issuer['url'] = $this->issuerurl;
+        $issuer['email'] = $this->issuercontact;
+        $issuer['@context'] = OPEN_BADGES_V2_CONTEXT;
+        $issuer['id'] = $issuerurl->out(false);
+        $issuer['type'] = OPEN_BADGES_V2_TYPE_ISSUER;
+        return $issuer;
     }
 }
 
@@ -1054,7 +1307,7 @@ function badges_bake($hash, $badgeid, $userid = 0, $pathhash = false) {
 
     $fs = get_file_storage();
     if (!$fs->file_exists($user_context->id, 'badges', 'userbadge', $badge->id, '/', $hash . '.png')) {
-        if ($file = $fs->get_file($badge_context->id, 'badges', 'badgeimage', $badge->id, '/', 'f1.png')) {
+        if ($file = $fs->get_file($badge_context->id, 'badges', 'badgeimage', $badge->id, '/', 'f3.png')) {
             $contents = $file->get_content();
 
             $filehandler = new PNG_MetaDataHandler($contents);

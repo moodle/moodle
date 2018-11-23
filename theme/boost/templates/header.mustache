@@ -15,16 +15,31 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template boost/header
+
+    This template renders the header.
+
+    Example context (json):
+    {
+        "contextheader": "context_header_html",
+        "settingsmenu": "settings_html",
+        "hasnavbar": false,
+        "navbar": "navbar_if_available",
+        "courseheader": "course_header_html"
+    }
+
     Page header.
 }}
 <header id="page-header" class="row">
     <div class="col-12 pt-3 pb-3">
-        <div class="card">
-            <div class="card-body">
+        <div class="card {{^contextheader}}border-0 bg-transparent{{/contextheader}}">
+            <div class="card-body {{^contextheader}}p-2{{/contextheader}}">
                 <div class="d-flex">
+                    {{#contextheader}}
                     <div class="mr-auto">
-                    {{{contextheader}}}
+                        {{{contextheader}}}
                     </div>
+                    {{/contextheader}}
 
                     {{#settingsmenu}}
                     <div class="context-header-settings-menu">

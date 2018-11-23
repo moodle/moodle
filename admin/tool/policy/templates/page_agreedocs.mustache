@@ -80,6 +80,8 @@
 
 {{#policies}}
 
+<input value="{{id}}" name="listdoc[]" type="hidden">
+
 <div class="agreedoc-policy clearfix m-t-2 m-b-1">
     <h3>{{{name}}}</h3>
     <div class="agreedoc-content">
@@ -90,10 +92,27 @@
             {{# str }}refertofullpolicytext, tool_policy, {{{policymodal}}} {{/ str }}
         </div>
         <div class="agreedoc-form m-t-1">
+            {{#optional}}
+            <div class="agreedoc-radios">
+                <div class="agreedoc-radios-1">
+                    <label>
+                        <input type="radio" name="status{{id}}" value="1" {{#versionagreed}}checked="{{.}}"{{/versionagreed}}>
+                        {{# str }}iagree, tool_policy, {{{name}}} {{/ str }}
+                    </label>
+                </div>
+                <div class="agreedoc-radios-0">
+                    <label>
+                        <input type="radio" name="status{{id}}" value="0" {{#versiondeclined}}checked="{{.}}"{{/versiondeclined}}>
+                        {{# str }}idontagree, tool_policy, {{{name}}} {{/ str }}
+                    </label>
+                </div>
+            </div>
+            {{/optional}}
+            {{^optional}}
             <div class="agreedoc-checkbox">
                 <label>
-                    <input value="{{id}}" name="agreedoc[]" {{#versionagreed}}checked="{{.}}"{{/versionagreed}} type="checkbox">
-                    <strong>{{# str }}iagree, tool_policy, {{{name}}} {{/ str }}</strong>
+                    <input value="1" name="status{{id}}" {{#versionagreed}}checked="{{.}}"{{/versionagreed}} type="checkbox">
+                    {{# str }}iagree, tool_policy, {{{name}}} {{/ str }}
                     <i class="icon fa fa-exclamation-circle text-danger fa-fw" title="{{# str }} required {{/ str }}" ></i>
                 </label>
             </div>
@@ -105,6 +124,7 @@
                         <li><small>{{{.}}}</small></li>
                     {{/versionbehalfsagreed}}
             </ul>
+            {{/optional}}
         </div>
     </div>
 </div>

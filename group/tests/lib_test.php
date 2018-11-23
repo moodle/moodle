@@ -528,4 +528,240 @@ class core_group_lib_testcase extends advanced_testcase {
         }
         $this->assertEquals(2, $DB->count_records('groups_members', array('groupid' => $group6->id)));
     }
+
+    /**
+     * Test groups_create_group enabling a group conversation.
+     */
+    public function test_groups_create_group_with_conversation() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = context_course::instance($course1->id);
+
+        // Create two groups and only one group with enablemessaging = 1.
+        $group1a = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 1));
+        $group1b = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 0));
+
+        $conversations = $DB->get_records('message_conversations',
+            [
+                'contextid' => $coursecontext1->id,
+                'component' => 'core_group',
+                'itemtype' => 'groups',
+                'enabled' => \core_message\api::MESSAGE_CONVERSATION_ENABLED
+            ]
+        );
+        $this->assertCount(1, $conversations);
+
+        $conversation = reset($conversations);
+        // Check groupid was stored in itemid on conversation area.
+        $this->assertEquals($group1a->id, $conversation->itemid);
+
+        $conversations = $DB->get_records('message_conversations', ['id' => $conversation->id]);
+        $this->assertCount(1, $conversations);
+
+        $conversation = reset($conversations);
+
+        // Check group name was stored in conversation.
+        $this->assertEquals($group1a->name, $conversation->name);
+    }
+
+    /**
+     * Test groups_update_group enabling and disabling a group conversation.
+     */
+    public function test_groups_update_group_conversation() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = context_course::instance($course1->id);
+
+        // Create two groups and only one group with enablemessaging = 1.
+        $group1a = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 1));
+        $group1b = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 0));
+
+        $conversations = $DB->get_records('message_conversations',
+            [
+                'contextid' => $coursecontext1->id,
+                'component' => 'core_group',
+                'itemtype' => 'groups',
+                'enabled' => \core_message\api::MESSAGE_CONVERSATION_ENABLED
+            ]
+        );
+        $this->assertCount(1, $conversations);
+
+        // Check that the conversation area is created when group messaging is enabled in the course group.
+        $group1b->enablemessaging = 1;
+        groups_update_group($group1b);
+
+        $conversations = $DB->get_records('message_conversations',
+            [
+                'contextid' => $coursecontext1->id,
+                'component' => 'core_group',
+                'itemtype' => 'groups',
+                'enabled' => \core_message\api::MESSAGE_CONVERSATION_ENABLED
+            ],
+        'id ASC');
+        $this->assertCount(2, $conversations);
+
+        $conversation1a = array_shift($conversations);
+        $conversation1b = array_shift($conversations);
+
+        $conversation1b = $DB->get_record('message_conversations', ['id' => $conversation1b->id]);
+
+        // Check for group1b that group name was stored in conversation.
+        $this->assertEquals($group1b->name, $conversation1b->name);
+
+        $group1b->enablemessaging = 0;
+        groups_update_group($group1b);
+        $this->assertEquals(0, $DB->get_field("message_conversations", "enabled", ['id' => $conversation1b->id]));
+
+        // Check that the name of the conversation is changed when the name of the course group is updated.
+        $group1b->name = 'New group name';
+        groups_update_group($group1b);
+        $conversation1b = $DB->get_record('message_conversations', ['id' => $conversation1b->id]);
+        $this->assertEquals($group1b->name, $conversation1b->name);
+    }
+
+    /**
+     * Test groups_add_member to conversation.
+     */
+    public function test_groups_add_member_conversation() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = context_course::instance($course1->id);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 1));
+
+        // Add users to group1.
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user2->id));
+
+        $conversation = \core_message\api::get_conversation_by_area(
+            'core_group',
+            'groups',
+            $group1->id,
+            $coursecontext1->id
+        );
+
+        // Check if the users has been added to the conversation.
+        $this->assertEquals(2, $DB->count_records('message_conversation_members', ['conversationid' => $conversation->id]));
+
+        // Check if the user has been added to the conversation when the conversation is disabled.
+        \core_message\api::disable_conversation($conversation->id);
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user3->id));
+        $this->assertEquals(3, $DB->count_records('message_conversation_members', ['conversationid' => $conversation->id]));
+    }
+
+    /**
+     * Test groups_remove_member to conversation.
+     */
+    public function test_groups_remove_member_conversation() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = context_course::instance($course1->id);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 1));
+
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user2->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user3->id));
+
+        $conversation = \core_message\api::get_conversation_by_area(
+            'core_group',
+            'groups',
+            $group1->id,
+            $coursecontext1->id
+        );
+
+        // Check if there are three users in the conversation.
+        $this->assertEquals(3, $DB->count_records('message_conversation_members', ['conversationid' => $conversation->id]));
+
+        // Check if after removing one member in the conversation there are two members.
+        groups_remove_member($group1->id, $user1->id);
+        $this->assertEquals(2, $DB->count_records('message_conversation_members', ['conversationid' => $conversation->id]));
+
+        // Check if the user has been removed from the conversation when the conversation is disabled.
+        \core_message\api::disable_conversation($conversation->id);
+        groups_remove_member($group1->id, $user2->id);
+        $this->assertEquals(1, $DB->count_records('message_conversation_members', ['conversationid' => $conversation->id]));
+    }
+
+    /**
+     * Test if you enable group messaging in a group with members these are added to the conversation.
+     */
+    public function test_add_members_group_updated_conversation_enabled() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = context_course::instance($course1->id);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 0));
+
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user2->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user3->id));
+
+        $conversation = \core_message\api::get_conversation_by_area(
+            'core_group',
+            'groups',
+            $group1->id,
+            $coursecontext1->id
+        );
+
+        // No conversation should exist as 'enablemessaging' was set to 0.
+        $this->assertFalse($conversation);
+
+        // Check that the three users are in the conversation when group messaging is enabled in the course group.
+        $group1->enablemessaging = 1;
+        groups_update_group($group1);
+
+        $conversation = \core_message\api::get_conversation_by_area(
+            'core_group',
+            'groups',
+            $group1->id,
+            $coursecontext1->id
+        );
+
+        $this->assertEquals(3, $DB->count_records('message_conversation_members', ['conversationid' => $conversation->id]));
+    }
 }

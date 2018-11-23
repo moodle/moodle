@@ -25,5 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['glossarycategory'] = '{$a->glossary}: Category {$a->category}';
+$string['glossaryconcept'] = '{$a->glossary}: {$a->concept}';
 $string['filtername'] = 'Glossary auto-linking';
 $string['privacy:metadata'] = 'The Glossary auto-linking plugin does not store any personal data.';

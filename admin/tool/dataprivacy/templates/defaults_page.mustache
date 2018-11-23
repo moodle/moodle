@@ -1,0 +1,147 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_dataprivacy/defaults_page
+
+    Manage data registry defaults.
+
+    Classes required for JS:
+
+    Data attributes required for JS:
+
+    Context variables required for this template:
+    * contextlevel Number - The context level.
+    * modecoursecat Boolean - Whether we're displaying defaults for course categories.
+    * modecourse Boolean - Whether we're displaying defaults for courses.
+    * modemodule Boolean - Whether we're displaying defaults for activity modules.
+    * modeblock Boolean - Whether we're displaying defaults for blocks.
+    * coursecaturl String - The URL for the course category defaults tab.
+    * courseurl String - The URL for the course defaults tab.
+    * moduleurl String - The URL for the activity module defaults tab.
+    * blockurl String - The URL for the block defaults tab.
+    * purposeid Number - The purpose ID for this context level.
+    * canedit Boolean - Whether this is being rendered for editing purposes.
+    * categoryid Number - The ID of the default category for this context level.
+    * purposeid Number - The ID of the default purpose for this context level.
+    * category String - The category name.
+    * purpose String - The purpose name.
+    * otherdefaults Array - An array containing the defaults for the activity modules.
+
+    Example context (json):
+    {
+        "contextlevel": 70,
+        "modecoursecat": false,
+        "modecourse": false,
+        "modemodule": true,
+        "modeblock": false,
+        "coursecaturl": "#",
+        "courseurl": "#",
+        "moduleurl": "#",
+        "blockurl": "#",
+        "category": "Awesome default category",
+        "purpose": "Awesome default purpose",
+        "canedit": true,
+        "otherdefaults": [
+            {
+                "name": "Assignment",
+                "category": "Category for activity modules",
+                "purpose": "Assessments"
+            },
+            {
+                "name": "Forum",
+                "category": "Category for activity modules",
+                "purpose": "Social interactions"
+            }
+        ]
+    }
+}}
+<div class="card">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link {{#modecoursecat}}active{{/modecoursecat}}" href="{{coursecaturl}}">{{#str}}categories{{/str}}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{#modecourse}}active{{/modecourse}}" href="{{courseurl}}">{{#str}}courses{{/str}}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{#modemodule}}active{{/modemodule}}" href="{{moduleurl}}">{{#str}}activitymodules{{/str}}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{#modeblock}}active{{/modeblock}}" href="{{blockurl}}">{{#str}}blocks{{/str}}</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body context-level-view">
+        <div class="alert alert-primary" role="alert">
+            {{#str}}defaultsinfo, tool_dataprivacy{{/str}}
+        </div>
+        <h4 class="card-title" id="defaults-header">
+            {{#modecoursecat}}{{#str}}categories{{/str}}{{/modecoursecat}}
+            {{#modecourse}}{{#str}}courses{{/str}}{{/modecourse}}
+            {{#modemodule}}{{#str}}activitymodules{{/str}}{{/modemodule}}
+            {{#modeblock}}{{#str}}blocks{{/str}}{{/modeblock}}
+        </h4>
+        <div>
+            {{> tool_dataprivacy/defaults_display}}
+            {{#canedit}}
+                {{#modemodule}}
+                <button class="btn btn-primary" data-action="new-activity-defaults" data-contextlevel="{{contextlevel}}">
+                    {{#str}}addnewdefaults, tool_dataprivacy{{/str}}
+                </button>
+                {{/modemodule}}
+            {{/canedit}}
+            {{#modemodule}}
+            <table class="m-t-1 table table-striped">
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th scope="col">{{#str}}category, tool_dataprivacy{{/str}}</th>
+                        <th scope="col">{{#str}}purpose, tool_dataprivacy{{/str}}</th>
+                        {{#canedit}}
+                            <th scope="col">{{#str}}actions{{/str}}</th>
+                        {{/canedit}}
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#otherdefaults}}
+                    <tr>
+                        <th scope="row">{{name}}</th>
+                        <td>{{category}}</td>
+                        <td>{{purpose}}</td>
+                        {{#canedit}}
+                            <td>
+                                {{#actions}}
+                                    {{> core/action_menu_link}}
+                                {{/actions}}
+                            </td>
+                        {{/canedit}}
+                    </tr>
+                    {{/otherdefaults}}
+                </tbody>
+            </table>
+            {{/modemodule}}
+        </div>
+    </div>
+</div>
+
+{{#js}}
+// Initialise the JS.
+require(['tool_dataprivacy/defaultsactions'], function(ActionsMod) {
+    ActionsMod.init();
+});
+{{/js}}

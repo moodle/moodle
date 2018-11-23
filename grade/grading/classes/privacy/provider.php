@@ -41,6 +41,8 @@ use \core_privacy\manager;
  */
 class provider implements
     \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\plugin\provider,
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\subsystem\provider {
 
     /**
@@ -108,6 +110,34 @@ class provider implements
     }
 
     /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(\core_privacy\local\request\userlist $userlist) {
+        $context = $userlist->get_context();
+        if ($context->contextlevel != CONTEXT_MODULE) {
+            return;
+        }
+
+        $params = ['contextid' => $context->id];
+
+        $sql = "SELECT d.usercreated, d.usermodified
+                  FROM {grading_definitions} d
+                  JOIN {grading_areas} a ON a.id = d.areaid
+                  WHERE a.contextid = :contextid";
+        $userlist->add_from_sql('usercreated', $sql, $params);
+        $userlist->add_from_sql('usermodified', $sql, $params);
+
+        $sql = "SELECT i.raterid
+                  FROM {grading_definitions} d
+                  JOIN {grading_areas} a ON a.id = d.areaid
+                  JOIN {grading_instances} i ON i.definitionid = d.id
+                  WHERE a.contextid = :contextid";
+        $userlist->add_from_sql('raterid', $sql, $params);
+    }
+
+    /**
      * Export all user data for the specified user, in the specified contexts.
      *
      * @param approved_contextlist $contextlist The approved contexts to export information for.
@@ -130,6 +160,88 @@ class provider implements
         foreach ($contexts as $context) {
             // Export grading definitions created or modified on this context.
             self::export_definitions($context, $subcontext, $userid);
+        }
+    }
+
+    /**
+     * Export all user data related to a context and itemid.
+     *
+     * @param  \context $context    Context to export on.
+     * @param  int      $itemid     Item ID to export on.
+     * @param  array    $subcontext Directory location to export to.
+     */
+    public static function export_item_data(\context $context, int $itemid, array $subcontext) {
+        global $DB;
+
+        $sql = "SELECT gi.id AS instanceid, gd.id AS definitionid, gd.method
+                  FROM {grading_areas} ga
+                  JOIN {grading_definitions} gd ON gd.areaid = ga.id
+                  JOIN {grading_instances} gi ON gi.definitionid = gd.id AND gi.itemid = :itemid
+                 WHERE ga.contextid = :contextid";
+        $params = [
+            'itemid' => $itemid,
+            'contextid' => $context->id,
+        ];
+        $records = $DB->get_recordset_sql($sql, $params);
+        foreach ($records as $record) {
+            $instancedata = manager::component_class_callback(
+                "gradingform_{$record->method}",
+                gradingform_provider_v2::class,
+                'export_gradingform_instance_data',
+                [$context, $record->instanceid, $subcontext]
+            );
+        }
+        $records->close();
+    }
+
+    /**
+     * Deletes all user data related to a context and possibly an itemid.
+     *
+     * @param  \context $context The context to delete on.
+     * @param  int|null $itemid  An optional item ID to refine the deletion.
+     */
+    public static function delete_instance_data(\context $context, int $itemid = null) {
+        if (is_null($itemid)) {
+            self::delete_data_for_instances($context);
+        } else {
+            self::delete_data_for_instances($context, [$itemid]);
+        }
+    }
+
+    /**
+     * Deletes all user data related to a context and possibly itemids.
+     *
+     * @param  \context $context The context to delete on.
+     * @param  array $itemids  An optional list of item IDs to refine the deletion.
+     */
+    public static function delete_data_for_instances(\context $context, array $itemids = []) {
+        global $DB;
+        $itemsql = '';
+        $params = ['contextid' => $context->id];
+        if (!empty($itemids)) {
+            list($itemsql, $itemparams) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED);
+            $params = array_merge($params, $itemparams);
+            $itemsql = "AND itemid $itemsql";
+        }
+        $sql = "SELECT gi.id AS instanceid, gd.id, gd.method
+                  FROM {grading_definitions} gd
+                  JOIN {grading_instances} gi ON gi.definitionid = gd.id
+                  JOIN {grading_areas} ga ON ga.id = gd.areaid
+                 WHERE ga.contextid = :contextid $itemsql";
+        $records = $DB->get_records_sql($sql, $params);
+        if ($records) {
+            $firstrecord = current($records);
+            $method = $firstrecord->method;
+            $instanceids = array_map(function($record) {
+                return $record->instanceid;
+            }, $records);
+            manager::component_class_callback(
+                "gradingform_{$method}",
+                gradingform_provider_v2::class,
+                'delete_gradingform_for_instances',
+                [$instanceids]);
+            // Delete grading_instances rows.
+            $DB->delete_records_list('grading_instances', 'id', $instanceids);
         }
     }
 
@@ -191,6 +303,8 @@ class provider implements
             if (!empty($definition->timecopied)) {
                 $tmpdata['timecopied'] = transform::datetime($definition->timecopied);
             }
+
+            // MDL-63167 - This section is to be removed with the final deprecation of the gradingform_provider interface.
             // Export gradingform information (if needed).
             $instancedata = manager::component_class_callback(
                 "gradingform_{$definition->method}",
@@ -201,6 +315,7 @@ class provider implements
             if (null !== $instancedata) {
                 $tmpdata = array_merge($tmpdata, $instancedata);
             }
+            // End of section to be removed with deprecation.
 
             $defdata[] = (object) $tmpdata;
 
@@ -258,34 +373,44 @@ class provider implements
     }
 
     /**
-     * Delete all use data which matches the specified $context.
+     * No deletion of the advanced grading is done.
      *
-     * We never delete grading content.
-     *
-     * @param context $context A user context.
+     * @param \context $context the context to delete in.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
+        // MDL-63167 - This section is to be removed with the final deprecation of the gradingform_provider interface.
         manager::plugintype_class_callback(
             'gradingform',
             gradingform_provider::class,
             'delete_gradingform_for_context',
             [$context]
         );
+        // End of section to be removed for final deprecation.
     }
 
     /**
-     * Delete all user data for the specified user, in the specified contexts.
+     * Deletion of data in this provider is only related to grades and so can not be
+     * deleted for the creator of the advanced grade criteria.
      *
-     * We never delete grading content.
-     *
-     * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
+     * @param approved_contextlist $contextlist a list of contexts approved for deletion.
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
+        // MDL-63167 - This section is to be removed with the final deprecation of the gradingform_provider interface.
         manager::plugintype_class_callback(
             'gradingform',
             gradingform_provider::class,
             'delete_gradingform_for_userid',
             [$contextlist]
         );
+        // End of section to be removed for final deprecation.
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(\core_privacy\local\request\approved_userlist $userlist) {
+        // The only information left to be deleted here is the grading definitions. Currently we are not deleting these.
     }
 }

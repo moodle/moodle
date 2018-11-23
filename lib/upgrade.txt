@@ -63,6 +63,19 @@ information provided here is intended especially for developers.
 * Following behat steps have been removed from core:
     - I set the field "<field_string>" to multiline
     - I follow "<link_string>"" in the open menu
+* The following behat steps have been deprecated, please do not use these step definitions any more:
+    - behat_navigation.php: i_navigate_to_node_in()
+    - theme/boost/tests/behat/behat_theme_boost_behat_navigation.php: i_navigate_to_node_in()
+  Use one of the following steps instead:
+    - I navigate to "PATH > ITEM" in current page administration
+    - I navigate to "PATH > ITEM" in site administration
+    - I navigate to course participants
+    - I navigate to "TAB1 > TAB2" in the course gradebook
+  If some items are not available without Navigation block at all, one can use combination of:
+    - I add the "Navigation" block if not present
+    - I click on "LINK" "link" in the "Navigation" "block"
+* The core\session\util class has been removed. This contained one function only used by the memcached class which has
+  been moved there instead (connection_string_to_memcache_servers).
 * Removed the lib/password_compat/lib/password.php file.
 * The eventslib.php file has been deleted and its functions have been moved to deprecatedlib.php. The affected functions are:
   - events_get_cached()
@@ -89,6 +102,71 @@ information provided here is intended especially for developers.
   - file_merge_draft_areas()
   - file_replace_file_area_in_text()
   - extract_draft_file_urls_from_text()
+* Class coursecat is now alias to autoloaded class core_course_category, course_in_list is an alias to
+  core_course_list_element, class coursecat_sortable_records is deprecated without replacement.
+* \core_user_external::create_users() and \core_user_external::update_users() can now accept more user profile fields so user
+  creation/update via web service can now be very similar to the edit profile page's functionality. The new fields that have been
+  added are:
+  - maildisplay
+  - interests
+  - url
+  - icq
+  - skype
+  - aim
+  - yahoo
+  - msn
+  - institution
+  - department
+  - phone1
+  - phone2
+  - address
+* New function mark_user_dirty() must be called after changing data that gets cached in user sessions. Examples:
+  - Assigning roles to users.
+  - Unassigning roles from users.
+  - Enrolling users into courses.
+  - Unenrolling users from courses.
+* New optional parameter $context for the groups_get_members_join() function and ability to filter users that are not members of
+any group. Besides, groups_get_members_ids_sql, get_enrolled_sql and get_enrolled_users now accepts -1 (USERSWITHOUTGROUP) for
+the groupid field.
+* Added $CFG->conversionattemptlimit setting to config.php allowing a maximum number of retries before giving up conversion
+  of a given document by the assignfeedback_editpdf\task\convert_submissions task. Default value: 3.
+* The following events have been deprecated and should not be used any more:
+  - message_contact_blocked
+  - message_contact_unblocked
+  The reason for this is because you can now block/unblock users without them necessarily being a contact. These events
+  have been replaced with message_user_blocked and message_user_unblocked respectively.
+* The event message_deleted has been changed, it no longer records the value of the 'useridto' due to
+  the introduction of group messaging. Please, if you have any observers or are triggering this event
+  in your code you will have to make some changes!
+* The gradebook now supports the ability to accept files as feedback. This can be achieved by adding
+  'feedbackfiles' to the $grades parameter passed to grade_update().
+    For example -
+        $grades['feedbackfiles'] = [
+            'contextid' => 1,
+            'component' => 'mod_xyz',
+            'filearea' => 'mod_xyz_feedback',
+            'itemid' => 2
+        ];
+  These files will be then copied to the gradebook file area.
+* Allow users to choose who can message them for privacy reasons, with a 'growing circle of contactability':
+  - Added $CFG->messagingallusers, for enabling messaging to all site users. Default value: 0.
+    When $CFG->messagingallusers = false users can choose being contacted by only contacts or contacts and users sharing a course with them.
+    In that case, the default user preference is MESSAGE_PRIVACY_COURSEMEMBER (users sharing a course).
+    When $CFG->messagingallusers = true users have a new option for the privacy messaging preferences: "Anyone on the site". In that case,
+    the default user preference is MESSAGE_PRIVACY_SITE (all site users).
+  - Added $CFG->keepmessagingallusersenabled setting to config.php to force enabling $CFG->messagingallusers during the upgrading process.
+    Default value: 0.
+    When $CFG->keepmessagingallusersenabled is set to true, $CFG->messagingallusers will be also set to true to enable messaging site users.
+    However, when it is empty, $CFG->messagingallusers will be disabled during the upgrading process, so the users will only be able to
+    message contacts and users sharing a course with them.
+* There has been interface and functional changes to admin_apply_default_settings() (/lib/adminlib.php).  The function now takes two
+  additional optional parameters, $admindefaultsettings and $settingsoutput.  It also has a return value $settingsoutput.
+  The function now does not need to be called twice to ensure all default settings are set.  Instead the function calls itself recursively
+  until all settings have been set. The additional parameters are used recursively and shouldn't be need to be explicitly passed in when calling
+  the function from other parts of Moodle.
+  The return value: $settingsoutput is an array of setting names and the values that were set by the function.
+* Webservices no longer update the lastaccess time for a user in a course. Call core_course_view_course() manually if needed.
+* A new field has been added to the context table. Please ensure that any contxt preloading uses get_preload_record_columns_sql or get_preload_record_columns to fetch the list of columns.
 
 === 3.5 ===
 

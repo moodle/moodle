@@ -40,7 +40,9 @@ class provider implements
         \core_privacy\local\metadata\provider,
 
         // The Plagiarism subsystem will be called by other components and will forward requests to each plagiarism plugin implementing its APIs.
-        \core_privacy\local\request\subsystem\plugin_provider {
+        \core_privacy\local\request\subsystem\plugin_provider,
+        \core_privacy\local\request\shared_userlist_provider
+    {
 
     /**
      * Returns meta data about this system.
@@ -83,6 +85,16 @@ class provider implements
      */
     public static function delete_plagiarism_for_user(int $userid, \context $context) {
         static::call_plugin_method('delete_plagiarism_for_user', [$userid, $context]);
+    }
+
+    /**
+     * Deletes all user content for a user in a context in all plagiarism plugins.
+     *
+     * @param  array    $userids   The users to delete
+     * @param  \context $context   The context to refine the deletion.
+     */
+    public static function delete_plagiarism_for_users(array $userids, \context $context) {
+        static::call_plugin_method('delete_plagiarism_for_users', [$userids, $context]);
     }
 
     /**

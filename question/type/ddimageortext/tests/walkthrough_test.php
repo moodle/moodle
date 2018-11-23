@@ -46,8 +46,7 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
      * @return question_contains_tag_with_attributes the required expectation.
      */
     protected function get_contains_drag_image_home_expectation($dragitemno, $choice, $group) {
-        $class = 'group' . $group;
-        $class .= ' draghome dragitemhomes' . $dragitemno. ' choice'.$choice.' yui3-cssfonts';
+        $class = 'group' . $group . ' draghome choice' . $choice;
 
         $expectedattrs = array();
         $expectedattrs['class'] = $class;

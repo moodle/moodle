@@ -16,7 +16,7 @@ Feature: Add a new custom file type
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
-    And I navigate to "File types" node in "Site administration>Server"
+    And I navigate to "Server > File types" in site administration
     And I press "Add a new file type"
     And I set the following fields to these values:
       | Extension | mdlr |

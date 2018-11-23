@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="157 -1509 148 125" preserveAspectRatio="xMinYMid meet">
+  <defs>
+    <style>
+      .cls-1 {
+        clip-path: url(#clip-Activities);
+      }
+
+      .cls-2 {
+        fill: #eee;
+      }
+
+      .cls-3 {
+        fill: #c4c8cc;
+      }
+
+      .cls-4 {
+        fill: #fff;
+      }
+    </style>
+    <clipPath id="clip-Activities">
+      <rect x="157" y="-1509" width="148" height="125"/>
+    </clipPath>
+  </defs>
+  <g id="Activities" class="cls-1">
+    <g id="Group_42" data-name="Group 42" transform="translate(-268 -1985)">
+      <ellipse id="Ellipse_37" data-name="Ellipse 37" class="cls-2" cx="74" cy="14.785" rx="74" ry="14.785" transform="translate(425 571.43)"/>
+      <rect id="Rectangle_80" data-name="Rectangle 80" class="cls-3" width="94.182" height="110.215" transform="translate(451.909 476)"/>
+      <g id="Group_41" data-name="Group 41" transform="translate(467.043 493)">
+        <rect id="Rectangle_81" data-name="Rectangle 81" class="cls-4" width="44.456" height="5.625" transform="translate(21.16 0.549)"/>
+        <rect id="Rectangle_82" data-name="Rectangle 82" class="cls-4" width="33.342" height="5.625" transform="translate(21.16 11.652)"/>
+        <rect id="Rectangle_83" data-name="Rectangle 83" class="cls-4" width="44.456" height="5.625" transform="translate(21.16 30.772)"/>
+        <rect id="Rectangle_84" data-name="Rectangle 84" class="cls-4" width="33.342" height="5.625" transform="translate(21.16 41.875)"/>
+        <rect id="Rectangle_85" data-name="Rectangle 85" class="cls-4" width="44.456" height="5.625" transform="translate(21.16 61.291)"/>
+        <rect id="Rectangle_86" data-name="Rectangle 86" class="cls-4" width="33.342" height="5.625" transform="translate(21.16 72.393)"/>
+        <ellipse id="Ellipse_38" data-name="Ellipse 38" class="cls-4" cx="7.007" cy="7" rx="7.007" ry="7" transform="translate(0 0)"/>
+        <ellipse id="Ellipse_39" data-name="Ellipse 39" class="cls-4" cx="7.007" cy="7" rx="7.007" ry="7" transform="translate(0 31)"/>
+        <ellipse id="Ellipse_40" data-name="Ellipse 40" class="cls-4" cx="7.007" cy="7" rx="7.007" ry="7" transform="translate(0 61)"/>
+      </g>
+    </g>
+  </g>
+</svg>

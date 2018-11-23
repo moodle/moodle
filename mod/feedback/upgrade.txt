@@ -19,6 +19,8 @@
   * feedback_is_feedback_in_sitecourse_map()
   * feedback_clean_up_sitecourse_map()
   * feedback_print_numeric_option_list()
+* Web Service functions now support an optional courseid parameter (course where user completes the feedback).
+  This new parameter was necessary to support site feedbacks.
 
 === 3.5 ===
 

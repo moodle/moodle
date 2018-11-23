@@ -22,11 +22,13 @@
  */
 namespace tool_mobile\privacy;
 defined('MOODLE_INTERNAL') || die();
-use \core_privacy\local\request\writer;
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\contextlist;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\transform;
+use core_privacy\local\request\writer;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
 
 /**
  * Privacy provider for tool_mobile.
@@ -36,6 +38,7 @@ use \core_privacy\local\request\transform;
  */
 class provider implements
     \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\user_preference_provider,
     \core_privacy\local\request\plugin\provider {
     /**
@@ -70,6 +73,23 @@ class provider implements
 
         return $contextlist;
     }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!is_a($context, \context_user::class)) {
+            return;
+        }
+
+        // Add users based on userkey.
+        \core_userkey\privacy\provider::get_user_contexts_with_script($userlist, $context, 'tool_mobile');
+    }
+
     /**
      * Export all user data for the specified user, in the specified contexts.
      *
@@ -136,6 +156,26 @@ class provider implements
             return;
         }
         $userid = $context->instanceid;
+        // Delete all the userkeys.
+        \core_userkey\privacy\provider::delete_userkeys('tool_mobile', $userid);
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+        $context = $userlist->get_context();
+        $userids = $userlist->get_userids();
+        $userid = reset($userids);
+
+        // Only deleting data for the user ID in that user's user context should be valid.
+        if ($context->contextlevel !== CONTEXT_USER || count($userids) != 1 || $userid != $context->instanceid) {
+            return;
+        }
+
         // Delete all the userkeys.
         \core_userkey\privacy\provider::delete_userkeys('tool_mobile', $userid);
     }

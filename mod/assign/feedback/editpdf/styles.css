@@ -35,6 +35,7 @@
     position: absolute;
     overflow: auto;
     background-color: #ccc;
+    touch-action: none;
 }
 
 .assignfeedback_editpdf_widget {
@@ -388,6 +389,7 @@ ul.assignfeedback_editpdf_menu {
         position: relative;
         margin-bottom: 1em;
         top: 0;
+        max-height: 312px;
     }
 
     .assignfeedback_editpdf_widget .pageheader {

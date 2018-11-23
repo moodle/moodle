@@ -74,6 +74,7 @@ class edit_table extends XMLDBAction {
      * errormsg and output as necessary
      */
     function invoke() {
+        global $OUTPUT, $PAGE;
         parent::invoke();
 
         $result = true;
@@ -131,8 +132,11 @@ class edit_table extends XMLDBAction {
         } else {
             $o.= '      <tr valign="top"><td><label for="name" accesskey="p">Name:</label></td><td><input name="name" type="text" size="'.xmldb_table::NAME_MAX_LENGTH.'" maxlength="'.xmldb_table::NAME_MAX_LENGTH.'" id="name" value="' . s($table->getName()) . '" /></td></tr>';
         }
-        $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td><textarea name="comment" rows="3" cols="80" id="comment">' . s($table->getComment()) . '</textarea></td></tr>';
-        $o.= '      <tr valign="top"><td>&nbsp;</td><td><input type="submit" value="' .$this->str['change'] . '" /></td></tr>';
+        $o .= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td>
+                     <textarea name="comment" rows="3" cols="80" id="comment" class="form-control">' .
+                     s($table->getComment()) . '</textarea></td></tr>';
+        $o .= '      <tr valign="top"><td>&nbsp;</td><td><input type="submit" value="' . $this->str['change'] .
+                     '" class="btn btn-secondary"/></td></tr>';
         $o.= '    </table>';
         $o.= '</div></form>';
         // Calculate the pending changes / save message
@@ -197,6 +201,11 @@ class edit_table extends XMLDBAction {
             $o .= '<table id="listfields" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
             $row = 0;
             foreach ($fields as $field) {
+                // Drag element up/down.
+                $move = (count($fields) > 1) ? html_writer::span($OUTPUT->render_from_template('core/drag_handle',
+                    ['movetitle' => get_string('movecontent', 'moodle', $field->getName())]), '',
+                    ['data-action' => 'move_updown_field', 'data-dir' => str_replace($CFG->dirroot, '', $dirpath),
+                        'data-table' => $table->getName(), 'data-field' => $field->getName()]) : '';
                 // The field name (link to edit - if the field has no uses)
                 if (!$structure->getFieldUses($table->getName(), $field->getName())) {
                     $f = '<a href="index.php?action=edit_field&amp;field=' .$field->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">' . $field->getName() . '</a>';
@@ -210,20 +219,6 @@ class edit_table extends XMLDBAction {
                     $b .= '<a href="index.php?action=edit_field&amp;field=' .$field->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['edit'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['edit'] . ']';
-                }
-                $b .= '</td><td class="button cell">';
-                // The up button
-                if ($field->getPrevious()) {
-                    $b .= '<a href="index.php?action=move_updown_field&amp;direction=up&amp;sesskey=' . sesskey() . '&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['up'] . ']</a>';
-                } else {
-                    $b .= '[' . $this->str['up'] . ']';
-                }
-                $b .= '</td><td class="button cell">';
-                // The down button
-                if ($field->getNext()) {
-                    $b .= '<a href="index.php?action=move_updown_field&amp;direction=down&amp;sesskey=' . sesskey() . '&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['down'] . ']</a>';
-                } else {
-                    $b .= '[' . $this->str['down'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
                 // The delete button (if we have more than one and it isn't used
@@ -243,10 +238,12 @@ class edit_table extends XMLDBAction {
                 // The readable info
                 $r = '</td><td class="readableinfo cell">' . $field->readableInfo() . '</td>';
                 // Print table row
-                $o .= '<tr class="r' . $row . '"><td class="cell firstcol">' . $f . $b . $r . '</tr>';
+                $o .= '<tr class="r' . $row . '" data-name="' . s($field->getName()) . '"><td class="cell firstcol">' . $move .
+                    $f . $b . $r . '</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
+            $PAGE->requires->js_call_amd('tool_xmldb/move', 'init', ['listfields', 'move_updown_field']);
         }
         // Add the keys list
         $keys = $table->getKeys();
@@ -255,6 +252,11 @@ class edit_table extends XMLDBAction {
             $o .= '<table id="listkeys" border="0"  cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
             $row = 0;
             foreach ($keys as $key) {
+                // Drag element up/down.
+                $move = (count($keys) > 1) ? html_writer::span($OUTPUT->render_from_template('core/drag_handle',
+                    ['movetitle' => get_string('movecontent', 'moodle', $key->getName())]), '',
+                    ['data-action' => 'move_updown_key', 'data-dir' => str_replace($CFG->dirroot, '', $dirpath),
+                        'data-table' => $table->getName(), 'data-key' => $key->getName()]) : '';
                 // The key name (link to edit - if the key has no uses)
                 if (!$structure->getKeyUses($table->getName(), $key->getName())) {
                     $k = '<a href="index.php?action=edit_key&amp;key=' .$key->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">' . $key->getName() . '</a>';
@@ -270,20 +272,6 @@ class edit_table extends XMLDBAction {
                     $b .= '[' . $this->str['edit'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
-                // The up button
-                if ($key->getPrevious()) {
-                    $b .= '<a href="index.php?action=move_updown_key&amp;direction=up&amp;sesskey=' . sesskey() . '&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['up'] . ']</a>';
-                } else {
-                    $b .= '[' . $this->str['up'] . ']';
-                }
-                $b .= '</td><td class="button cell">';
-                // The down button
-                if ($key->getNext()) {
-                    $b .= '<a href="index.php?action=move_updown_key&amp;direction=down&amp;sesskey=' . sesskey() . '&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['down'] . ']</a>';
-                } else {
-                    $b .= '[' . $this->str['down'] . ']';
-                }
-                $b .= '</td><td class="button cell">';
                 // The delete button (if the key hasn't uses)
                 if (!$structure->getKeyUses($table->getName(), $key->getName())) {
                     $b .= '<a href="index.php?action=delete_key&amp;sesskey=' . sesskey() . '&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
@@ -296,10 +284,12 @@ class edit_table extends XMLDBAction {
                 // The readable info
                 $r = '</td><td class="readableinfo cell">' . $key->readableInfo() . '</td>';
                 // Print table row
-                $o .= '<tr class="r' . $row . '"><td class="cell firstcol">' . $k . $b . $r .'</tr>';
+                $o .= '<tr class="r' . $row . '" data-name="' . s($key->getName()) . '"><td class="cell firstcol">' .
+                    $move . $k . $b . $r .'</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
+            $PAGE->requires->js_call_amd('tool_xmldb/move', 'init', ['listkeys', 'move_updown_key']);
         }
        // Add the indexes list
         $indexes = $table->getIndexes();
@@ -308,26 +298,17 @@ class edit_table extends XMLDBAction {
             $o .= '<table id="listindexes" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
             $row = 0;
             foreach ($indexes as $index) {
+                // Drag element up/down.
+                $move = (count($indexes) > 1) ? html_writer::span($OUTPUT->render_from_template('core/drag_handle',
+                    ['movetitle' => get_string('movecontent', 'moodle', $index->getName())]), '',
+                    ['data-action' => 'move_updown_index', 'data-dir' => str_replace($CFG->dirroot, '', $dirpath),
+                        'data-table' => $table->getName(), 'data-index' => $index->getName()]) : '';
                 // The index name (link to edit)
                 $i = '<a href="index.php?action=edit_index&amp;index=' .$index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">' . $index->getName() . '</a>';
                 // Calculate buttons
                 $b = '</td><td class="button cell">';
                 // The edit button
                 $b .= '<a href="index.php?action=edit_index&amp;index=' .$index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['edit'] . ']</a>';
-                $b .= '</td><td class="button cell">';
-                // The up button
-                if ($index->getPrevious()) {
-                    $b .= '<a href="index.php?action=move_updown_index&amp;direction=up&amp;sesskey=' . sesskey() . '&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['up'] . ']</a>';
-                } else {
-                    $b .= '[' . $this->str['up'] . ']';
-                }
-                $b .= '</td><td class="button cell">';
-                // The down button
-                if ($index->getNext()) {
-                    $b .= '<a href="index.php?action=move_updown_index&amp;direction=down&amp;sesskey=' . sesskey() . '&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;postaction=edit_table' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['down'] . ']</a>';
-                } else {
-                    $b .= '[' . $this->str['down'] . ']';
-                }
                 $b .= '</td><td class="button cell">';
                 // The delete button
                     $b .= '<a href="index.php?action=delete_index&amp;sesskey=' . sesskey() . '&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
@@ -337,10 +318,12 @@ class edit_table extends XMLDBAction {
                 // The readable info
                 $r = '</td><td class="readableinfo cell">' . $index->readableInfo() . '</td>';
                 // Print table row
-                $o .= '<tr class="r' . $row . '"><td class="cell firstcol">' . $i . $b . $r .'</tr>';
+                $o .= '<tr class="r' . $row . '" data-name="' . s($index->getName()) . '"><td class="cell firstcol">' .
+                    $move . $i . $b . $r .'</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
+            $PAGE->requires->js_call_amd('tool_xmldb/move', 'init', ['listindexes', 'move_updown_index']);
         }
 
         $this->output = $o;

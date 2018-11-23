@@ -113,7 +113,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I follow "Profile" in the user menu
     # User can see his own agreements in the profile.
     And I follow "Policies and agreements"
-    And "Agreed" "icon" should exist in the "This site policy" "table_row"
+    And "Accepted" "text" should exist in the "This site policy" "table_row"
     And I log out
 
   Scenario: Accept policy on sign up, multiple policies
@@ -172,8 +172,8 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I follow "Profile" in the user menu
     # User can see his own agreements in the profile.
     And I follow "Policies and agreements"
-    And "Agreed" "icon" should exist in the "This site policy" "table_row"
-    And "Agreed" "icon" should exist in the "This privacy policy" "table_row"
+    And "Accepted" "text" should exist in the "This site policy" "table_row"
+    And "Accepted" "text" should exist in the "This privacy policy" "table_row"
     And I should not see "This guests policy"
     And I log out
 
@@ -225,7 +225,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I follow "Profile" in the user menu
     # User can see his own agreements in the profile.
     And I follow "Policies and agreements"
-    And "Agreed" "icon" should exist in the "This site policy" "table_row"
+    And "Accepted" "text" should exist in the "This site policy" "table_row"
     And I log out
 
   Scenario: Accept policy on sign up, do not accept all policies
@@ -252,12 +252,12 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the field "I agree to the This privacy policy" to "0"
     And I press "Next"
     Then I should see "Please agree to the following policies"
-    And I should see "Before continuing you must agree to all these policies."
+    And I should see "Before continuing you need to acknowledge all these policies."
     # Confirm that a notification is displayed if only some policies are accepted.
     When I set the field "I agree to the This site policy" to "1"
     And I set the field "I agree to the This privacy policy" to "0"
     Then I should see "Please agree to the following policies"
-    And I should see "Before continuing you must agree to all these policies."
+    And I should see "Before continuing you need to acknowledge all these policies."
 
   Scenario: Accept policy on login, do not accept all policies
     Given the following config values are set as admin:
@@ -284,12 +284,12 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the field "I agree to the This privacy policy" to "0"
     And I press "Next"
     Then I should see "Please agree to the following policies"
-    And I should see "Before continuing you must agree to all these policies."
+    And I should see "Before continuing you need to acknowledge all these policies."
     # Confirm that a notification is displayed if only some policies are accepted.
     When I set the field "I agree to the This site policy" to "1"
     And I set the field "I agree to the This privacy policy" to "0"
     Then I should see "Please agree to the following policies"
-    And I should see "Before continuing you must agree to all these policies."
+    And I should see "Before continuing you need to acknowledge all these policies."
     # Confirm that user can not browse the site (edit their profile).
     When I follow "Profile" in the user menu
     Then I should see "Please agree to the following policies"
@@ -319,7 +319,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I set the field "I agree to the This privacy policy" to "1"
     And I press "Next"
     Then I should not see "Please agree to the following policies"
-    And I should not see "Before continuing you must agree to all these policies."
+    And I should not see "Before continuing you need to acknowledge all these policies."
     # Confirm that user can login and browse the site (edit their profile).
     When I open my profile in edit mode
     Then the field "First name" matches value "User"
@@ -364,7 +364,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I log out
     # Create new policy document.
     And I log in as "admin"
-    And I navigate to "Manage policies" node in "Site administration > Users > Privacy and policies"
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I should see "Policies and agreements"
     And I should see "New policy"
     And I follow "New policy"
@@ -419,8 +419,8 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I log out
     # Create new version of the policy document.
     And I log in as "admin"
-    And I navigate to "Manage policies" node in "Site administration > Users > Privacy and policies"
-    When I follow "Actions"
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
+    # Menu is already open because javascript is disabled.
     Then I should see "View"
     And I should see "Edit"
     And I should see "Set status to \"Inactive\""
@@ -460,7 +460,6 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | This privacy policy | 1    |          | full text3 | short text3 | active   | loggedin |
       | This guests policy  | 0    |          | full text4 | short text4 | active   | guest    |
     And I am on site homepage
-    And I change window size to "large"
     And I follow "Log in"
     When I press "Log in as a guest"
     Then I should see "If you continue browsing this website, you agree to our policies"
@@ -662,5 +661,219 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I follow "Profile" in the user menu
     # User can see his own agreements in the profile.
     And I follow "Policies and agreements"
-    And "Agreed" "icon" should exist in the "This site policy" "table_row"
+    And "Accepted" "text" should exist in the "This site policy" "table_row"
+    And I log out
+
+  Scenario: Accepting policies on sign up, multiple policies with different style of giving ageement.
+    Given the following config values are set as admin:
+      | registerauth      | email       |
+      | passwordpolicy    | 0           |
+      | sitepolicyhandler | tool_policy |
+    And the following policies exist:
+      | name                          | summary                   | content             | agreementstyle  |
+      | Privacy policy                | We scan your thoughts     | Here goes content.  | 0               |
+      | Digital maturity declaration  | You declare be old enough | Here goes content.  | 1               |
+      | Cookies policy                | We eat cookies, srsly     | Here goes content.  | 0               |
+      | Terms of Service              | We teach, you learn       | Here goes content.  | 1               |
+    And I am on site homepage
+    And I follow "Log in"
+    When I press "Create new account"
+    # The first policy with the agreement style "on its own page" must be accepted first.
+    Then I should see "Digital maturity declaration" in the "region-main" "region"
+    And I should see "You declare be old enough"
+    And I should see "Here goes content."
+    And I press "I agree to the Digital maturity declaration"
+    # The second policy with the agreement style "on its own page" must be accepted now.
+    And I should see "Terms of Service" in the "region-main" "region"
+    And I should see "We teach, you learn"
+    And I should see "Here goes content."
+    And I press "I agree to the Terms of Service"
+    # Only now we see the remaining consent page policies.
+    And I should see "Policy 1 out of 2"
+    And I should see "Privacy policy" in the "region-main" "region"
+    And I should see "We scan your thoughts"
+    And I should see "Here goes content."
+    And I press "Next"
+    And I should see "Policy 2 out of 2"
+    And I should see "Cookies policy" in the "region-main" "region"
+    And I should see "We eat cookies, srsly"
+    And I should see "Here goes content."
+    And I press "Next"
+    And I should see "Please agree to the following policies"
+    And I should see "Privacy policy"
+    And I should see "Cookies policy"
+    And I should not see "Digital maturity declaration" in the "region-main" "region"
+    And I should not see "Terms of Service" in the "region-main" "region"
+    And I should not see "Here goes content."
+    And I set the field "I agree to the Privacy policy" to "1"
+    And I set the field "I agree to the Cookies policy" to "1"
+    And I press "Next"
+    And I should see "New account"
+    And I set the following fields to these values:
+      | Username      | user1                 |
+      | Password      | user1                 |
+      | Email address | user1@address.invalid |
+      | Email (again) | user1@address.invalid |
+      | First name    | User1                 |
+      | Surname       | L1                    |
+    And I press "Create my new account"
+    And I should see "Confirm your account"
+    And I should see "An email should have been sent to your address at user1@address.invalid"
+    And I confirm email for "user1"
+    And I should see "Thanks, User1 L1"
+    And I should see "Your registration has been confirmed"
+    And I open my profile in edit mode
+    And the field "First name" matches value "User1"
+    And I log out
+    # Confirm that user can login and browse the site.
+    And I log in as "user1"
+    And I follow "Profile" in the user menu
+    # User can see his own agreements in the profile.
+    And I follow "Policies and agreements"
+    And "Accepted" "text" should exist in the "Privacy policy" "table_row"
+    And "Accepted" "text" should exist in the "Cookies policy" "table_row"
+    And "Accepted" "text" should exist in the "Terms of Service" "table_row"
+    And "Accepted" "text" should exist in the "Digital maturity declaration" "table_row"
+    And I log out
+
+  Scenario: Accepting policies on login, multiple policies with different style of giving ageement.
+    Given the following config values are set as admin:
+      | sitepolicyhandler | tool_policy |
+    And the following policies exist:
+      | name                          | summary                   | content             | agreementstyle  |
+      | Digital maturity declaration  | You declare be old enough | Here goes content.  | 1               |
+      | Privacy policy                | We scan your thoughts     | Here goes content.  | 0               |
+      | Terms of Service              | We teach, you learn       | Here goes content.  | 1               |
+      | Cookies policy                | We eat cookies, srsly     | Here goes content.  | 0               |
+    And the following "users" exist:
+      | username | firstname | lastname | email             |
+      | user1    | User      | One      | user1@example.com |
+    And I log in as "user1"
+    # The first policy with the agreement style "on its own page" must be accepted first.
+    Then I should see "Digital maturity declaration" in the "region-main" "region"
+    And I should see "You declare be old enough"
+    And I should see "Here goes content."
+    And I press "I agree to the Digital maturity declaration"
+    # The second policy with the agreement style "on its own page" must be accepted now.
+    And I should see "Terms of Service" in the "region-main" "region"
+    And I should see "We teach, you learn"
+    And I should see "Here goes content."
+    # If the user logs out now, only the first policy is accepted and we return to the same page.
+    And I log out
+    And I log in as "user1"
+    And I should see "Terms of Service" in the "region-main" "region"
+    And I should see "We teach, you learn"
+    And I should see "Here goes content."
+    And I press "I agree to the Terms of Service"
+    # Only now we see the remaining consent page policies.
+    And I should see "Policy 1 out of 2"
+    And I should see "Privacy policy" in the "region-main" "region"
+    And I should see "We scan your thoughts"
+    And I should see "Here goes content."
+    And I press "Next"
+    And I should see "Policy 2 out of 2"
+    And I should see "Cookies policy" in the "region-main" "region"
+    And I should see "We eat cookies, srsly"
+    And I should see "Here goes content."
+    And I press "Next"
+    And I should see "Please agree to the following policies"
+    And I should see "Privacy policy"
+    And I should see "Cookies policy"
+    And I should not see "Digital maturity declaration" in the "region-main" "region"
+    And I should not see "Terms of Service" in the "region-main" "region"
+    And I should not see "Here goes content."
+    And I set the field "I agree to the Privacy policy" to "1"
+    And I set the field "I agree to the Cookies policy" to "1"
+    And I press "Next"
+    And I follow "Profile" in the user menu
+    # User can see his own agreements in the profile.
+    And I follow "Policies and agreements"
+    And "Accepted" "text" should exist in the "Privacy policy" "table_row"
+    And "Accepted" "text" should exist in the "Cookies policy" "table_row"
+    And "Accepted" "text" should exist in the "Terms of Service" "table_row"
+    And "Accepted" "text" should exist in the "Digital maturity declaration" "table_row"
+    And I log out
+
+  Scenario: Accepting policies on login, all and loggedin policies to be accepted on their own page.
+    Given the following config values are set as admin:
+      | sitepolicyhandler | tool_policy |
+    And the following policies exist:
+      | name                          | summary                   | content             | agreementstyle  | audience  |
+      | Privacy policy                | We scan your thoughts     | Here goes content.  | 1               | all       |
+      | Digital maturity declaration  | You declare be old enough | Here goes content.  | 1               | loggedin  |
+      | Cookies policy                | We eat cookies, srsly     | Here goes content.  | 1               | guest     |
+      | Terms of Service              | We teach, you learn       | Here goes content.  | 1               | all       |
+    And the following "users" exist:
+      | username | firstname | lastname | email             |
+      | user1    | User      | One      | user1@example.com |
+    And I log in as "user1"
+    # All the policies to be displayed one by one with a button to accept each of them prior seeing the next.
+    Then I should see "Privacy policy" in the "region-main" "region"
+    And I should see "We scan your thoughts"
+    And I should see "Here goes content."
+    And I press "I agree to the Privacy policy"
+    And I should see "Digital maturity declaration" in the "region-main" "region"
+    And I should see "You declare be old enough"
+    And I should see "Here goes content."
+    And I press "I agree to the Digital maturity declaration"
+    And I should see "Terms of Service" in the "region-main" "region"
+    And I should see "We teach, you learn"
+    And I should see "Here goes content."
+    And I press "I agree to the Terms of Service"
+    And I follow "Profile" in the user menu
+    And I follow "Policies and agreements"
+    And "Accepted" "text" should exist in the "Privacy policy" "table_row"
+    And "Accepted" "text" should exist in the "Terms of Service" "table_row"
+    And "Accepted" "text" should exist in the "Digital maturity declaration" "table_row"
+    And "Cookies policy" "table_row" should not exist
+    And I log out
+
+  Scenario: Accepting policies on sign up, policies to be accepted on their own page.
+    Given the following config values are set as admin:
+      | registerauth      | email       |
+      | passwordpolicy    | 0           |
+      | sitepolicyhandler | tool_policy |
+    And the following policies exist:
+      | name                          | summary                   | content             | agreementstyle  | audience  |
+      | Privacy policy                | We scan your thoughts     | Here goes content.  | 1               | guest     |
+      | Digital maturity declaration  | You declare be old enough | Here goes content.  | 1               | all       |
+      | Cookies policy                | We eat cookies, srsly     | Here goes content.  | 1               | loggedin  |
+      | Terms of Service              | We teach, you learn       | Here goes content.  | 1               | guest     |
+    And I am on site homepage
+    And I follow "Log in"
+    When I press "Create new account"
+    # All the policies to be displayed one by one with a button to accept each of them prior seeing the next.
+    Then I should see "Digital maturity declaration" in the "region-main" "region"
+    And I should see "You declare be old enough"
+    And I should see "Here goes content."
+    And I press "I agree to the Digital maturity declaration"
+    And I should see "Cookies policy" in the "region-main" "region"
+    And I should see "We eat cookies, srsly"
+    And I press "I agree to the Cookies policy"
+    And I should see "New account"
+    And I set the following fields to these values:
+      | Username      | user1                 |
+      | Password      | user1                 |
+      | Email address | user1@address.invalid |
+      | Email (again) | user1@address.invalid |
+      | First name    | User1                 |
+      | Surname       | L1                    |
+    And I press "Create my new account"
+    And I should see "Confirm your account"
+    And I should see "An email should have been sent to your address at user1@address.invalid"
+    And I confirm email for "user1"
+    And I should see "Thanks, User1 L1"
+    And I should see "Your registration has been confirmed"
+    And I open my profile in edit mode
+    And the field "First name" matches value "User1"
+    And I log out
+    # Confirm that user can login and browse the site.
+    And I log in as "user1"
+    And I follow "Profile" in the user menu
+    # User can see his own agreements in the profile.
+    And I follow "Policies and agreements"
+    And "Accepted" "text" should exist in the "Digital maturity declaration" "table_row"
+    And "Accepted" "text" should exist in the "Cookies policy" "table_row"
+    And "Privacy policy" "table_row" should not exist
+    And "Terms of Service" "table_row" should not exist
     And I log out

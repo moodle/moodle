@@ -26,11 +26,13 @@ namespace mod_wiki\privacy;
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\contextlist;
 use context_user;
 use context;
 use core_privacy\local\request\helper;
 use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
 defined('MOODLE_INTERNAL') || die();
@@ -44,6 +46,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class provider implements
     \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\plugin\provider {
 
     /**
@@ -117,6 +120,71 @@ class provider implements
                 'userid3' => $userid, 'userid4' => $userid, 'commentarea' => 'wiki_page', 'userid5' => $userid]);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!is_a($context, \context_module::class)) {
+            return;
+        }
+
+        $params = [
+            'modname' => 'wiki',
+            'contextlevel' => CONTEXT_MODULE,
+            'contextid' => $context->id,
+        ];
+
+        $sql = "
+          SELECT s.userid
+            FROM {modules} m
+            JOIN {course_modules} cm ON cm.module = m.id AND m.name = :modname
+            JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :contextlevel
+            JOIN {wiki_subwikis} s ON cm.instance = s.wikiid
+            WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        $sql = "
+          SELECT p.userid
+            FROM {modules} m
+            JOIN {course_modules} cm ON cm.module = m.id AND m.name = :modname
+            JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :contextlevel
+            JOIN {wiki_subwikis} s ON cm.instance = s.wikiid
+            JOIN {wiki_pages} p ON p.subwikiid = s.id
+            WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        $sql = "
+          SELECT v.userid
+            FROM {modules} m
+            JOIN {course_modules} cm ON cm.module = m.id AND m.name = :modname
+            JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :contextlevel
+            JOIN {wiki_subwikis} s ON cm.instance = s.wikiid
+            JOIN {wiki_pages} p ON p.subwikiid = s.id
+            JOIN {wiki_versions} v ON v.pageid = p.id
+            WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        $sql = "
+          SELECT l.userid
+            FROM {modules} m
+            JOIN {course_modules} cm ON cm.module = m.id AND m.name = :modname
+            JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :contextlevel
+            JOIN {wiki_subwikis} s ON cm.instance = s.wikiid
+            JOIN {wiki_pages} p ON p.subwikiid = s.id
+            JOIN {wiki_locks} l ON l.pageid = p.id
+            WHERE ctx.id = :contextid";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+        \core_comment\privacy\provider::get_users_in_context_from_sql($userlist, 'com', 'mod_wiki', 'wiki_page', $context->id);
     }
 
     /**
@@ -490,5 +558,75 @@ class provider implements
 
         // Remove comments made by this user on all other wiki pages.
         \core_comment\privacy\provider::delete_comments_for_user($contextlist, 'mod_wiki', 'wiki_page');
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+        $context = $userlist->get_context();
+        $userids = $userlist->get_userids();
+
+        if ($context->contextlevel != CONTEXT_MODULE) {
+            return;
+        }
+
+        // Remove only individual subwikis. Contributions to collaborative wikis is not considered personal contents.
+        list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        $params = [
+            'wiki' => 'wiki',
+            'contextmod' => CONTEXT_MODULE,
+            'contextid' => $context->id,
+        ];
+
+        $params = array_merge($inparams, $params);
+        $sql = "SELECT s.id
+                  FROM {context} ctx
+                  JOIN {course_modules} cm ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextmod
+                  JOIN {modules} m ON m.name = :wiki AND cm.module = m.id
+                  JOIN {wiki_subwikis} s ON s.wikiid = cm.instance
+                 WHERE ctx.id = :contextid
+                   AND s.userid {$insql}";
+
+        $subwikis = $DB->get_fieldset_sql($sql, $params);
+
+        if ($subwikis) {
+            // We found individual subwikis that need to be deleted completely.
+
+            $fs = get_file_storage();
+            foreach ($subwikis as $subwikiid) {
+                $fs->delete_area_files($context->id, 'mod_wiki', 'attachments', $subwikiid);
+                \core_comment\privacy\provider::delete_comments_for_all_users_select(context::instance_by_id($context->id),
+                    'mod_wiki', 'wiki_page', "IN (SELECT id FROM {wiki_pages} WHERE subwikiid=:subwikiid)",
+                    ['subwikiid' => $subwikiid]);
+            }
+
+            list($insql, $inparams) = $DB->get_in_or_equal($subwikis, SQL_PARAMS_NAMED);
+            $params = ['component' => 'mod_wiki', 'itemtype' => 'page'];
+            $params = array_merge($inparams, $params);
+            $sql = "DELETE FROM {tag_instance}
+                          WHERE component=:component
+                            AND itemtype=:itemtype
+                            AND itemid IN
+                                (SELECT id
+                                FROM {wiki_pages}
+                                WHERE subwikiid $insql)";
+
+            $DB->execute($sql, $params);
+
+            $DB->delete_records_select('wiki_locks', "pageid IN (SELECT id FROM {wiki_pages} WHERE subwikiid {$insql})", $params);
+            $DB->delete_records_select('wiki_versions', "pageid IN (SELECT id FROM {wiki_pages} WHERE subwikiid {$insql})",
+                    $params);
+            $DB->delete_records_select('wiki_synonyms', "subwikiid {$insql}", $params);
+            $DB->delete_records_select('wiki_links', "subwikiid {$insql}", $params);
+            $DB->delete_records_select('wiki_pages', "subwikiid {$insql}", $params);
+            $DB->delete_records_select('wiki_subwikis', "id {$insql}", $params);
+        }
+
+        // Remove comments made by this user on all other wiki pages.
+        \core_comment\privacy\provider::delete_comments_for_users($userlist, 'mod_wiki', 'wiki_page');
     }
 }

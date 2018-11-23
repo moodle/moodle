@@ -1,0 +1,56 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/nav-display-selector
+
+    This template renders display dropdown.
+
+    Example context (json):
+    {
+        "cards": true,
+        "list": false,
+        "summary": false
+    }
+}}
+<div class="dropdown m-b-1">
+    <button id="displaydropdown" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+    aria-label="{{#str}} aria:displaydropdown, block_myoverview {{/str}}">
+        {{#pix}} a/view_icon_active {{/pix}}
+        <span class="d-sm-inline-block" data-active-item-text>
+            {{#cards}}{{#str}} card, block_myoverview {{/str}}{{/cards}}
+            {{#list}}{{#str}} list, block_myoverview {{/str}}{{/list}}
+            {{#summary}}{{#str}} summary, block_myoverview {{/str}}{{/summary}}
+        </span>
+    </button>
+    <ul class="dropdown-menu" data-show-active-item aria-labelledby="displaydropdown">
+        <li>
+            <a class="dropdown-item {{#cards}}active{{/cards}}" href="#" data-display-option="display" data-value="cards" data-pref="cards" aria-label="{{#str}} aria:card, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
+            {{#str}} card, block_myoverview {{/str}}
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item {{#list}}active{{/list}}" href="#" data-display-option="display" data-value="list" data-pref="list" aria-label="{{#str}} aria:list, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
+            {{#str}} list, block_myoverview {{/str}}
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item {{#summary}}active{{/summary}}" href="#" data-display-option="display" data-value="summary" data-pref="summary" aria-label="{{#str}} aria:summary, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
+            {{#str}} summary, block_myoverview {{/str}}
+            </a>
+        </li>
+    </ul>
+</div>

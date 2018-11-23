@@ -15,7 +15,7 @@ Feature: Add tools
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
-    And I navigate to "Manage tools" node in "Site administration > Plugins > Activity modules > External tool"
+    And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration
     And I follow "Manage preconfigured tools"
     And I follow "Add preconfigured tool"
     And I set the following fields to these values:

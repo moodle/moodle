@@ -89,6 +89,10 @@ class policydoc extends moodleform {
             api::policy_content_field_options());
         $mform->addRule('content_editor', null, 'required', null, 'client');
 
+        $mform->addElement('selectyesno', 'agreementstyle', get_string('policypriorityagreement', 'tool_policy'));
+
+        $mform->addElement('selectyesno', 'optional', get_string('policydocoptional', 'tool_policy'));
+
         if (!$formdata->id || $formdata->status == policy_version::STATUS_DRAFT) {
             // Creating a new version or editing a draft/archived version.
             $mform->addElement('hidden', 'minorchange');

@@ -4,7 +4,6 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->libdir.'/completionlib.php');
-require_once($CFG->libdir. '/coursecatlib.php');
 
 /**
  * The form for handling editing a course.
@@ -77,7 +76,7 @@ class course_edit_form extends moodleform {
         // Verify permissions to change course category or keep current.
         if (empty($course->id)) {
             if (has_capability('moodle/course:create', $categorycontext)) {
-                $displaylist = coursecat::make_categories_list('moodle/course:create');
+                $displaylist = core_course_category::make_categories_list('moodle/course:create');
                 $mform->addElement('select', 'category', get_string('coursecategory'), $displaylist);
                 $mform->addHelpButton('category', 'coursecategory');
                 $mform->setDefault('category', $category->id);
@@ -88,10 +87,11 @@ class course_edit_form extends moodleform {
             }
         } else {
             if (has_capability('moodle/course:changecategory', $coursecontext)) {
-                $displaylist = coursecat::make_categories_list('moodle/course:changecategory');
+                $displaylist = core_course_category::make_categories_list('moodle/course:changecategory');
                 if (!isset($displaylist[$course->category])) {
                     //always keep current
-                    $displaylist[$course->category] = coursecat::get($course->category, MUST_EXIST, true)->get_formatted_name();
+                    $displaylist[$course->category] = core_course_category::get($course->category, MUST_EXIST, true)
+                        ->get_formatted_name();
                 }
                 $mform->addElement('select', 'category', get_string('coursecategory'), $displaylist);
                 $mform->addHelpButton('category', 'coursecategory');

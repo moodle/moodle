@@ -44,7 +44,8 @@ use tool_log\local\privacy\helper;
  */
 class provider implements
     \core_privacy\local\metadata\provider,
-    \tool_log\local\privacy\logstore_provider {
+    \tool_log\local\privacy\logstore_provider,
+    \tool_log\local\privacy\logstore_userlist_provider {
 
     /**
      * Returns metadata.
@@ -87,6 +88,22 @@ class provider implements
             'userid' => $userid,
         ];
         $contextlist->add_from_sql($sql, $params);
+    }
+
+    /**
+     * Add user IDs that contain user information for the specified context.
+     *
+     * @param \core_privacy\local\request\userlist $userlist The userlist to add the users to.
+     * @return void
+     */
+    public static function add_userids_for_context(\core_privacy\local\request\userlist $userlist) {
+        $context = $userlist->get_context();
+        list($insql, $params) = static::get_sql_where_from_contexts([$context]);
+
+        $sql = "SELECT l.userid
+                  FROM {log} l
+                 WHERE $insql";
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -166,6 +183,24 @@ class provider implements
         }
         $userid = $contextlist->get_user()->id;
         $DB->delete_records_select('log', "$sql AND userid = :userid", array_merge($params, ['userid' => $userid]));
+    }
+
+
+    /**
+     * Delete all data for a list of users in the specified context.
+     *
+     * @param \core_privacy\local\request\approved_userlist $userlist The specific context and users to delete data for.
+     * @return void
+     */
+    public static function delete_data_for_userlist(\core_privacy\local\request\approved_userlist $userlist) {
+        global $DB;
+        list($sql, $params) = static::get_sql_where_from_contexts([$userlist->get_context()]);
+        if (empty($sql)) {
+            return;
+        }
+        list($usersql, $userparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+        $params = array_merge($params, $userparams);
+        $DB->delete_records_select('log', "$sql AND userid $usersql", $params);
     }
 
     /**

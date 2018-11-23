@@ -123,9 +123,6 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
             assign_capability($changedcap, $this->permissions[$changedcap],
                 $this->roleid, $this->context->id, true);
         }
-
-        // Force accessinfo refresh for users visiting this context.
-        $this->context->mark_dirty();
     }
 
     public function display() {

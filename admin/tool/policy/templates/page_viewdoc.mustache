@@ -38,7 +38,8 @@
             "content": "Policy <em>content</em>"
         },
         "returnurl": "#",
-        "editurl": "#"
+        "editurl": "#",
+        "accepturl": "#"
     }
 }}
 
@@ -88,6 +89,12 @@
     {{#editurl}}
         <a role="button" href="{{editurl}}" class="btn">{{#str}} edit {{/str}}</a>
     {{/editurl}}
+    {{#accepturl}}
+        <a role="button" href="{{accepturl}}" class="btn btn-primary">{{#str}} iagree, tool_policy, {{{policy.name}}} {{/str}}</a>
+    {{/accepturl}}
+    {{#declineurl}}
+        <a role="button" href="{{declineurl}}" class="btn btn-link">{{#str}} idontagree, tool_policy, {{{policy.name}}} {{/str}}</a>
+    {{/declineurl}}
 
     <div class="pull-right">
         <a href="#top">

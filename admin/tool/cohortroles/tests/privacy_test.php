@@ -30,6 +30,7 @@ use \core_privacy\local\request\writer;
 use \core_privacy\local\request\approved_contextlist;
 use \tool_cohortroles\api;
 use \tool_cohortroles\privacy\provider;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Unit tests for the tool_cohortroles implementation of the privacy API.
@@ -57,22 +58,36 @@ class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_tes
         $this->setUser($user);
         $this->setAdminUser();
 
-        $nocohortroles = 3;
-        $this->setup_test_scenario_data($user->id, $nocohortroles);
+        // Create course category.
+        $coursecategory = $this->getDataGenerator()->create_category();
+        $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
+        $systemctx = context_system::instance();
+        // Create course.
+        $course = $this->getDataGenerator()->create_course();
+        $coursectx = \context_course::instance($course->id);
+
+        $this->setup_test_scenario_data($user->id, $systemctx, 1);
+        $this->setup_test_scenario_data($user->id, $coursecategoryctx, 1, 'Sausage roll 2',
+            'sausageroll2');
+        $this->setup_test_scenario_data($user->id, $coursectx, 1, 'Sausage roll 3',
+            'sausageroll3');
 
         // Test the User's assigned cohortroles matches 3.
         $cohortroles = $DB->get_records('tool_cohortroles', ['userid' => $user->id]);
-        $this->assertCount($nocohortroles, $cohortroles);
+        $this->assertCount(3, $cohortroles);
 
-        // Test the User's retrieved contextlist contains only one context.
+        // Test the User's retrieved contextlist returns only the system and course category context.
         $contextlist = provider::get_contexts_for_userid($user->id);
         $contexts = $contextlist->get_contexts();
-        $this->assertCount(1, $contexts);
+        $this->assertCount(2, $contexts);
 
-        // Test the User's contexts equal the User's own context.
-        $context = reset($contexts);
-        $this->assertEquals(CONTEXT_USER, $context->contextlevel);
-        $this->assertEquals($user->id, $context->instanceid);
+        $contextlevels = array_column($contexts, 'contextlevel');
+        $expected = [
+            CONTEXT_SYSTEM,
+            CONTEXT_COURSECAT
+        ];
+        // Test the User's contexts equal the system and course category context.
+        $this->assertEquals($expected, $contextlevels, '', 0, 10, true);
     }
 
     /**
@@ -84,26 +99,45 @@ class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_tes
         $this->setUser($user);
         $this->setAdminUser();
 
-        $nocohortroles = 3;
-        $this->setup_test_scenario_data($user->id, $nocohortroles);
+        // Create course category.
+        $coursecategory = $this->getDataGenerator()->create_category();
+        $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
+        $systemctx = context_system::instance();
+        // Create course.
+        $course = $this->getDataGenerator()->create_course();
+        $coursectx = \context_course::instance($course->id);
 
-        // Test the User's retrieved contextlist contains only one context.
+        $this->setup_test_scenario_data($user->id, $systemctx, 1);
+        $this->setup_test_scenario_data($user->id, $coursecategoryctx, 1, 'Sausage roll 2',
+            'sausageroll2');
+        $this->setup_test_scenario_data($user->id, $coursectx, 1, 'Sausage roll 3',
+            'sausageroll3');
+
+        // Test the User's retrieved contextlist contains two contexts.
         $contextlist = provider::get_contexts_for_userid($user->id);
         $contexts = $contextlist->get_contexts();
-        $this->assertCount(1, $contexts);
+        $this->assertCount(2, $contexts);
 
-        // Test the User's contexts equal the User's own context.
-        $context = reset($contexts);
-        $this->assertEquals(CONTEXT_USER, $context->contextlevel);
-        $this->assertEquals($user->id, $context->instanceid);
+        // Add a system, course category and course context to the approved context list.
+        $approvedcontextids = [
+            $systemctx->id,
+            $coursecategoryctx->id,
+            $coursectx->id
+        ];
 
         // Retrieve the User's tool_cohortroles data.
-        $approvedcontextlist = new approved_contextlist($user, 'tool_cohortroles', $contextlist->get_contextids());
+        $approvedcontextlist = new approved_contextlist($user, 'tool_cohortroles', $approvedcontextids);
         provider::export_user_data($approvedcontextlist);
 
-        // Test the tool_cohortroles data is exported at the User context level.
-        $writer = writer::with_context($context);
+        // Test the tool_cohortroles data is exported at the system context level.
+        $writer = writer::with_context($systemctx);
         $this->assertTrue($writer->has_any_data());
+        // Test the tool_cohortroles data is exported at the course category context level.
+        $writer = writer::with_context($coursecategoryctx);
+        $this->assertTrue($writer->has_any_data());
+        // Test the tool_cohortroles data is not exported at the course context level.
+        $writer = writer::with_context($coursectx);
+        $this->assertFalse($writer->has_any_data());
     }
 
     /**
@@ -117,29 +151,52 @@ class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_tes
         $this->setUser($user);
         $this->setAdminUser();
 
-        $nocohortroles = 4;
-        $this->setup_test_scenario_data($user->id, $nocohortroles);
+        // Create course category.
+        $coursecategory = $this->getDataGenerator()->create_category();
+        $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
+        $systemctx = context_system::instance();
 
-        // Test the User's assigned cohortroles matches 4.
+        $this->setup_test_scenario_data($user->id, $systemctx, 1);
+        $this->setup_test_scenario_data($user->id, $coursecategoryctx, 1, 'Sausage roll 2',
+            'sausageroll2');
+
+        // Test the User's assigned cohortroles matches 2.
         $cohortroles = $DB->get_records('tool_cohortroles', ['userid' => $user->id]);
-        $this->assertCount($nocohortroles, $cohortroles);
+        $this->assertCount(2, $cohortroles);
 
-        // Test the User's retrieved contextlist contains only one context.
+        // Test the User's retrieved contextlist contains two contexts.
+        $contextlist = provider::get_contexts_for_userid($user->id);
+        $contexts = $contextlist->get_contexts();
+        $this->assertCount(2, $contexts);
+
+        // Make sure the user data is only being deleted in within the system and course category context.
+        $usercontext = context_user::instance($user->id);
+        // Delete all the User's records in mdl_tool_cohortroles table by the user context.
+        provider::delete_data_for_all_users_in_context($usercontext);
+
+        // Test the cohort roles records in mdl_tool_cohortroles table is still present.
+        $cohortroles = $DB->get_records('tool_cohortroles', ['userid' => $user->id]);
+        $this->assertCount(2, $cohortroles);
+
+        // Delete all the User's records in mdl_tool_cohortroles table by the specified system context.
+        provider::delete_data_for_all_users_in_context($systemctx);
+
+        // The user data in the system context should be deleted.
+        // Test the User's retrieved contextlist contains one context (course category).
         $contextlist = provider::get_contexts_for_userid($user->id);
         $contexts = $contextlist->get_contexts();
         $this->assertCount(1, $contexts);
 
-        // Test the User's contexts equal the User's own context.
-        $context = reset($contexts);
-        $this->assertEquals(CONTEXT_USER, $context->contextlevel);
-        $this->assertEquals($user->id, $context->instanceid);
-
-        // Delete all the User's records in mdl_tool_cohortroles table by the specified User context.
-        provider::delete_data_for_all_users_in_context($context);
+        // Delete all the User's records in mdl_tool_cohortroles table by the specified course category context.
+        provider::delete_data_for_all_users_in_context($coursecategoryctx);
 
         // Test the cohort roles records in mdl_tool_cohortroles table is equals zero.
         $cohortroles = $DB->get_records('tool_cohortroles', ['userid' => $user->id]);
         $this->assertCount(0, $cohortroles);
+
+        $contextlist = provider::get_contexts_for_userid($user->id);
+        $contexts = $contextlist->get_contexts();
+        $this->assertCount(0, $contexts);
     }
 
     /**
@@ -153,24 +210,35 @@ class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_tes
         $this->setUser($user);
         $this->setAdminUser();
 
-        $nocohortroles = 4;
-        $this->setup_test_scenario_data($user->id, $nocohortroles);
+        // Create course category.
+        $coursecategory = $this->getDataGenerator()->create_category();
+        $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
+        $systemctx = context_system::instance();
 
-        // Test the User's assigned cohortroles matches 4.
+        $this->setup_test_scenario_data($user->id, $systemctx, 1);
+        $this->setup_test_scenario_data($user->id, $coursecategoryctx, 1, 'Sausage roll 2',
+            'sausageroll2');
+
+        // Test the User's assigned cohortroles matches 2.
         $cohortroles = $DB->get_records('tool_cohortroles', ['userid' => $user->id]);
-        $this->assertCount($nocohortroles, $cohortroles);
+        $this->assertCount(2, $cohortroles);
 
-        // Test the User's retrieved contextlist contains only one context.
+        // Test the User's retrieved contextlist contains two contexts.
         $contextlist = provider::get_contexts_for_userid($user->id);
         $contexts = $contextlist->get_contexts();
-        $this->assertCount(1, $contexts);
+        $this->assertCount(2, $contexts);
 
-        // Test the User's contexts equal the User's own context.
-        $context = reset($contexts);
-        $this->assertEquals(CONTEXT_USER, $context->contextlevel);
-        $this->assertEquals($user->id, $context->instanceid);
+        // Make sure the user data is only being deleted in within the system and the course category contexts.
+        $usercontext = context_user::instance($user->id);
+        // Delete all the User's records in mdl_tool_cohortroles table by the specified approved context list.
+        $approvedcontextlist = new approved_contextlist($user, 'tool_cohortroles', [$usercontext->id]);
+        provider::delete_data_for_user($approvedcontextlist);
 
-        // Delete all the User's records in mdl_tool_cohortroles table by the specified User approved context list.
+        // Test the cohort roles records in mdl_tool_cohortroles table are still present.
+        $cohortroles = $DB->get_records('tool_cohortroles', ['userid' => $user->id]);
+        $this->assertCount(2, $cohortroles);
+
+        // Delete all the User's records in mdl_tool_cohortroles table by the specified approved context list.
         $approvedcontextlist = new approved_contextlist($user, 'tool_cohortroles', $contextlist->get_contextids());
         provider::delete_data_for_user($approvedcontextlist);
 
@@ -180,18 +248,123 @@ class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_tes
     }
 
     /**
+     * Test that only users within a course context are fetched.
+     */
+    public function test_get_users_in_context() {
+        $component = 'tool_cohortroles';
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+        $usercontext = context_user::instance($user->id);
+
+        // Create course category.
+        $coursecategory = $this->getDataGenerator()->create_category();
+        $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
+        $systemctx = context_system::instance();
+
+        $this->setAdminUser();
+
+        $userlist = new \core_privacy\local\request\userlist($systemctx, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(0, $userlist);
+
+        $this->setup_test_scenario_data($user->id, $systemctx, 1);
+        $this->setup_test_scenario_data($user->id, $coursecategoryctx, 1, 'Sausage roll 2',
+            'sausageroll2');
+
+        // The list of users within the system context should contain user.
+        provider::get_users_in_context($userlist);
+        $this->assertCount(1, $userlist);
+        $this->assertTrue(in_array($user->id, $userlist->get_userids()));
+
+        // The list of users within the course category context should contain user.
+        $userlist = new \core_privacy\local\request\userlist($coursecategoryctx, $component);
+        provider::get_users_in_context($userlist);
+        $this->assertCount(1, $userlist);
+        $this->assertTrue(in_array($user->id, $userlist->get_userids()));
+
+        // The list of users within the user context should be empty.
+        $userlist2 = new \core_privacy\local\request\userlist($usercontext, $component);
+        provider::get_users_in_context($userlist2);
+        $this->assertCount(0, $userlist2);
+    }
+
+    /**
+     * Test that data for users in approved userlist is deleted.
+     */
+    public function test_delete_data_for_users() {
+        $component = 'tool_cohortroles';
+
+        // Create user1.
+        $user1 = $this->getDataGenerator()->create_user();
+        // Create user2.
+        $user2 = $this->getDataGenerator()->create_user();
+        // Create user3.
+        $user3 = $this->getDataGenerator()->create_user();
+        $usercontext3 = context_user::instance($user3->id);
+
+        // Create course category.
+        $coursecategory = $this->getDataGenerator()->create_category();
+        $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
+        $systemctx = context_system::instance();
+
+        $this->setAdminUser();
+
+        $this->setup_test_scenario_data($user1->id, $systemctx, 1);
+        $this->setup_test_scenario_data($user2->id, $systemctx, 1, 'Sausage roll 2',
+                'sausageroll2');
+        $this->setup_test_scenario_data($user3->id, $coursecategoryctx, 1, 'Sausage roll 3',
+                'sausageroll3');
+
+        $userlist1 = new \core_privacy\local\request\userlist($systemctx, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(2, $userlist1);
+        $this->assertTrue(in_array($user1->id, $userlist1->get_userids()));
+        $this->assertTrue(in_array($user2->id, $userlist1->get_userids()));
+
+        // Convert $userlist1 into an approved_contextlist.
+        $approvedlist1 = new approved_userlist($systemctx, $component, [$user1->id]);
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist1);
+
+        // Re-fetch users in systemcontext.
+        $userlist1 = new \core_privacy\local\request\userlist($systemctx, $component);
+        provider::get_users_in_context($userlist1);
+        // The user data of user1in systemcontext should be deleted.
+        // The user data of user2 in systemcontext should be still present.
+        $this->assertCount(1, $userlist1);
+        $this->assertTrue(in_array($user2->id, $userlist1->get_userids()));
+
+        // Convert $userlist1 into an approved_contextlist in the user context.
+        $approvedlist2 = new approved_userlist($usercontext3, $component, $userlist1->get_userids());
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist2);
+        // Re-fetch users in systemcontext.
+        $userlist1 = new \core_privacy\local\request\userlist($systemctx, $component);
+        provider::get_users_in_context($userlist1);
+        // The user data in systemcontext should not be deleted.
+        $this->assertCount(1, $userlist1);
+    }
+
+    /**
      * Helper function to setup tool_cohortroles records for testing a specific user.
      *
      * @param int $userid           The ID of the user used for testing.
      * @param int $nocohortroles    The number of tool_cohortroles to create for the user.
+     * @param string $rolename      The name of the role to be created.
+     * @param string $roleshortname The short name of the role to be created.
      * @throws \core_competency\invalid_persistent_exception
      * @throws coding_exception
      */
-    protected function setup_test_scenario_data($userid, $nocohortroles) {
-        $roleid = create_role('Sausage Roll', 'sausageroll', 'mmmm');
+    protected function setup_test_scenario_data($userid, $context, $nocohortroles, $rolename = 'Sausage Roll',
+                                                $roleshortname = 'sausageroll') {
+        $roleid = create_role($rolename, $roleshortname, 'mmmm');
+
+        $result = new \stdClass();
+        $result->contextid = $context->id;
 
         for ($c = 0; $c < $nocohortroles; $c++) {
-            $cohort = $this->getDataGenerator()->create_cohort();
+            $cohort = $this->getDataGenerator()->create_cohort($result);
 
             $params = (object)array(
                 'userid' => $userid,

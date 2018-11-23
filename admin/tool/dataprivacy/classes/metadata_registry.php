@@ -76,6 +76,31 @@ class metadata_registry {
                 if (isset($contributedplugins[$plugintype][$shortname])) {
                     $internaldata['external'] = true;
                 }
+
+                // Additional interface checks.
+                if (!$manager->is_empty_subsystem($component)) {
+                    $classname = $manager->get_provider_classname_for_component($component);
+                    if (class_exists($classname)) {
+                        $componentclass = new $classname();
+                        // Check if the interface is deprecated.
+                        if ($componentclass instanceof \core_privacy\local\deprecated) {
+                            $internaldata['deprecated'] = true;
+                        }
+
+                        // Check that the core_userlist_provider is implemented for all user data providers.
+                        if ($componentclass instanceof \core_privacy\local\request\core_user_data_provider
+                                && !$componentclass instanceof \core_privacy\local\request\core_userlist_provider) {
+                            $internaldata['userlistnoncompliance'] = true;
+                        }
+
+                        // Check that any type of userlist_provider is implemented for all shared data providers.
+                        if ($componentclass instanceof \core_privacy\local\request\shared_data_provider
+                                && !$componentclass instanceof \core_privacy\local\request\userlist_provider) {
+                            $internaldata['userlistnoncompliance'] = true;
+                        }
+                    }
+                }
+
                 return $internaldata;
             }, $leaves['plugins']);
             $fullyrichtree[$branch]['plugin_type_raw'] = $plugintype;

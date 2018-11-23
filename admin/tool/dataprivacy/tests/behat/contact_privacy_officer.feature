@@ -20,7 +20,7 @@ Feature: Contact the privacy officer
     And I should see "Contact the privacy officer"
     And I click on "Contact the privacy officer" "link"
     And I set the field "Message" to "Hello DPO!"
-    And I press "Send"
+    And I click on "Send" "button" in the "Contact the privacy officer" "dialogue"
     And I should see "Your request has been submitted to the privacy officer"
     And I click on "Data requests" "link"
     And I should see "Hello DPO!" in the "General inquiry" "table_row"

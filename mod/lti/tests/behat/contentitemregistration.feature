@@ -6,7 +6,7 @@ Feature: Create/edit tool configuration that has Content-Item support
 
   Background:
     Given I log in as "admin"
-    And I navigate to "Manage tools" node in "Site administration > Plugins > Activity modules > External tool"
+    And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration
 
   Scenario: Verifying ContentItemSelectionRequest selection support in external tool registration
     When I follow "Manage external tool registrations"

@@ -10,7 +10,7 @@ Feature: Feature: Students can use the recent blog entries block to view recent 
       | student1 | Student | 1 | student1@example.com | S1 |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
+    And I navigate to "Turn editing on" in current page administration
     And I add the "Recent blog entries" block
     # TODO MDL-57120 site "Blogs" link not accessible without navigation block.
     And I add the "Navigation" block if not present
@@ -19,7 +19,7 @@ Feature: Feature: Students can use the recent blog entries block to view recent 
   Scenario: Students use the recent blog entries block to view blogs
     Given I log in as "student1"
     And I am on site homepage
-    And I navigate to "Site blogs" node in "Site pages"
+    And I click on "Site blogs" "link" in the "Navigation" "block"
     And I follow "Add a new entry"
     When I set the following fields to these values:
       | Entry title | S1 First Blog |
@@ -35,7 +35,7 @@ Feature: Feature: Students can use the recent blog entries block to view recent 
   Scenario: Students only see a few entries in the recent blog entries block
     Given I log in as "student1"
     And I am on site homepage
-    And I navigate to "Site blogs" node in "Site pages"
+    And I click on "Site blogs" "link" in the "Navigation" "block"
     And I follow "Add a new entry"
     # Blog 1 of 5
     And I set the following fields to these values:
@@ -89,7 +89,7 @@ Feature: Feature: Students can use the recent blog entries block to view recent 
     Then I log out
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
+    And I navigate to "Turn editing on" in current page administration
     And I configure the "Recent blog entries" block
     And I set the following fields to these values:
       | id_config_numberofrecentblogentries | 2 |

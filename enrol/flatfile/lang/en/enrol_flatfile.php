@@ -63,10 +63,10 @@ It could look something like this:
    add, student, 21, CF101, 1091115000, 1091215000
 </pre>';
 $string['privacy:metadata:enrol_flatfile'] = 'The Flat file (CSV) enrolment plugin may store personal data relating to future enrolments in the enrol_flatfile table.';
-$string['privacy:metadata:enrol_flatfile:action'] = 'The enrolment action expected at the given date.';
+$string['privacy:metadata:enrol_flatfile:action'] = 'The enrolment action expected on the given date';
 $string['privacy:metadata:enrol_flatfile:courseid'] = 'The course ID to which the enrolment relates';
 $string['privacy:metadata:enrol_flatfile:roleid'] = 'The ID of the role to be assigned or unassigned';
-$string['privacy:metadata:enrol_flatfile:timestart'] = 'The time at which the enrolment change starts.';
-$string['privacy:metadata:enrol_flatfile:timeend'] = 'The time at which the enrolment change ends.';
-$string['privacy:metadata:enrol_flatfile:timemodified'] = 'The modification time of this enrolment change.';
+$string['privacy:metadata:enrol_flatfile:timestart'] = 'The time when the enrolment starts';
+$string['privacy:metadata:enrol_flatfile:timeend'] = 'The time when the enrolment ends';
+$string['privacy:metadata:enrol_flatfile:timemodified'] = 'The time when the enrolment is modified';
 $string['privacy:metadata:enrol_flatfile:userid'] = 'The ID of the user to which the role assignment relates';

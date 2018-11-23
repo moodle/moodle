@@ -19,6 +19,39 @@ information provided here is intended especially for developers.
   * message_can_post_message()
   * message_is_user_non_contact_blocked()
   * message_is_user_blocked()
+* The following functions have been deprecated and should not be used any more:
+  - message_add_contact()
+  - message_remove_contact()
+  - message_unblock_contact()
+  - message_block_contact()
+  - message_get_contact()
+  Please see their declaration in lib/deprecatedlib.php to view their alternatives (if applicable).
+* The following methods have been deprecated and should not be used any more:
+  - \core_message\api::is_user_blocked()
+  - \core_message\api::delete_conversation()
+  - \core_message\api::is_user_non_contact_blocked()
+  - \core_message\api::create_conversation_between_users()
+* The method \core_message\api::can_delete_conversation() now expects a 'conversationid' to be passed
+  as the second parameter.
+* The following web services have been deprecated. Please do not call these any more.
+  - core_message_external::block_contacts(), please use core_message_external::block_user() instead.
+  - core_message_external::unblock_contacts(), please use core_message_external::unblock_user() instead.
+  - core_message_external::create_contacts(), please use core_message_external::create_contact_request() instead.
+  - core_message_external::delete_conversation(), please use core_message_external::delete_conversations_by_id() instead.
+  - core_message_external::core_message_mark_all_messages_as_read(), please use
+    core_message_external::core_message_mark_all_conversation_messages_as_read() instead.
+  - core_message_external::data_for_messagearea_conversations(), please use core_message_external::get_conversations()
+    instead
+  - core_message_external::data_for_messagearea_search_users_in_course().
+  - core_message_external::data_for_messagearea_search_users(),
+    please use core_message_external::message_search_users() instead.
+  - core_message_external::data_for_messagearea_contacts().
+  - core_message_external::data_for_messagearea_messages().
+  - core_message_external::data_for_messagearea_get_most_recent_message().
+  - core_message_external::data_for_messagearea_get_profile().
+  - core_message_external::get_contacts().
+* The following function has been added for getting the privacy messaging preference:
+  - get_user_privacy_messaging_preference()
 
 === 3.5 ===
 

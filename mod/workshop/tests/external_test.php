@@ -162,6 +162,8 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $workshop1->instructreviewersformat = 1;
         $workshop1->conclusionfiles = [];
         $workshop1->conclusionformat = 1;
+        $workshop1->submissiontypetext = 1;
+        $workshop1->submissiontypefile = 1;
 
         $workshop2->coursemodule = $workshop2->cmid;
         $workshop2->introformat = 1;
@@ -172,6 +174,8 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         $workshop2->instructreviewersformat = 1;
         $workshop2->conclusionfiles = [];
         $workshop2->conclusionformat = 1;
+        $workshop2->submissiontypetext = 1;
+        $workshop2->submissiontypefile = 1;
 
         foreach ($expectedfields as $field) {
             if (!empty($properties[$field]) && $properties[$field]['type'] == PARAM_BOOL) {
@@ -551,24 +555,35 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
     public function test_add_submission_already_added() {
         $this->setUser($this->student);
 
+        $usercontext = context_user::instance($this->student->id);
+        $fs = get_file_storage();
+        $draftidattach = file_get_unused_draft_itemid();
+        $filerecordattach = [
+            'contextid' => $usercontext->id,
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => $draftidattach,
+            'filepath'  => '/',
+            'filename'  => 'attachement.txt'
+        ];
+        $fs->create_file_from_string($filerecordattach, 'simple text attachment');
+
         // Switch to submission phase.
         $workshop = new workshop($this->workshop, $this->cm, $this->course);
         $workshop->switch_phase(workshop::PHASE_SUBMISSION);
 
         // Create the submission.
-        $result = mod_workshop_external::add_submission($this->workshop->id, 'My submission');
+        $result = mod_workshop_external::add_submission($this->workshop->id, 'My submission', '', FORMAT_MOODLE, 0, $draftidattach);
         $result = external_api::clean_returnvalue(mod_workshop_external::add_submission_returns(), $result);
 
         // Try to create it again.
-        $result = mod_workshop_external::add_submission($this->workshop->id, 'My submission');
+        $result = mod_workshop_external::add_submission($this->workshop->id, 'My submission', '', FORMAT_MOODLE, 0, $draftidattach);
         $result = external_api::clean_returnvalue(mod_workshop_external::add_submission_returns(), $result);
         $this->assertFalse($result['status']);
         $this->assertArrayNotHasKey('submissionid', $result);
-        $this->assertCount(2, $result['warnings']);
+        $this->assertCount(1, $result['warnings']);
         $this->assertEquals('fielderror', $result['warnings'][0]['warningcode']);
-        $this->assertEquals('content_editor', $result['warnings'][0]['item']);
-        $this->assertEquals('fielderror', $result['warnings'][1]['warningcode']);
-        $this->assertEquals('attachment_filemanager', $result['warnings'][1]['item']);
+        $this->assertEquals('title', $result['warnings'][0]['item']);
     }
 
     /**
@@ -587,7 +602,7 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
         // Create a file in a draft area for inline attachments.
         $fs = get_file_storage();
         $draftidinlineattach = file_get_unused_draft_itemid();
-        $usercontext = context_user::instance($this->student->id);
+        $usercontext = context_user::instance($user->id);
         $filenameimg = 'shouldbeanimage.txt';
         $filerecordinline = array(
             'contextid' => $usercontext->id,
@@ -832,7 +847,7 @@ class mod_workshop_external_testcase extends externallib_advanced_testcase {
 
         // Create a couple of submissions with files.
         $firstsubmissionid = $this->create_test_submission($this->student);  // Create submission with files.
-        $secondsubmissionid = $this->create_test_submission($this->anotherstudentg1->id);
+        $secondsubmissionid = $this->create_test_submission($this->anotherstudentg1);
 
         $this->setUser($this->student);
         $result = mod_workshop_external::get_submissions($this->workshop->id);

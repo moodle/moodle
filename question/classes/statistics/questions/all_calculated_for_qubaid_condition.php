@@ -40,12 +40,6 @@ class all_calculated_for_qubaid_condition {
     const TIME_TO_CACHE = 900; // 15 minutes.
 
     /**
-     * The limit of rows of sub-question and variants rows to display on main page of report before switching to showing min,
-     * median and max variants.
-     */
-    const SUBQ_AND_VARIANT_ROW_LIMIT = 10;
-
-    /**
      * @var object[]
      */
     public $subquestions;
@@ -312,42 +306,6 @@ class all_calculated_for_qubaid_condition {
     }
 
     /**
-     * Are there too many rows of sub-questions and / or variant rows.
-     *
-     * @param array $rows the rows we intend to add.
-     * @return bool Are there too many?
-     */
-    protected function too_many_subq_and_or_variant_rows($rows) {
-        return (count($rows) > static::SUBQ_AND_VARIANT_ROW_LIMIT);
-    }
-
-    /**
-     * From a number of calculated instances find the three instances with min, median and maximum facility index values.
-     *
-     * @param calculated[] $questionstats The stats from which to find the ones with minimum, median and maximum facility index.
-     * @return calculated[] 3 stat objects with minimum, median and maximum facility index.
-     */
-    protected function find_min_median_and_max_facility_stats_objects($questionstats) {
-        $facilities = array();
-        foreach ($questionstats as $key => $questionstat) {
-            $facilities[$key] = (float)$questionstat->facility;
-        }
-        asort($facilities);
-        $facilitykeys = array_keys($facilities);
-        $keyformin = $facilitykeys[0];
-        $keyformedian = $facilitykeys[(int)(round(count($facilitykeys) / 2) - 1)];
-        $keyformax = $facilitykeys[count($facilitykeys) - 1];
-        $toreturn = array();
-        foreach (array($keyformin => 'minimumfacility',
-                       $keyformedian => 'medianfacility',
-                       $keyformax => 'maximumfacility') as $key => $stringid) {
-            $questionstats[$key]->minmedianmaxnotice = $stringid;
-            $toreturn[] = $questionstats[$key];
-        }
-        return $toreturn;
-    }
-
-    /**
      * Return all stats for variants of question in slot $slot.
      *
      * @param int $slot The slot no.
@@ -405,39 +363,61 @@ class all_calculated_for_qubaid_condition {
      *
      * @param int $slot the slot no
      * @param bool $limited limit number of variants and sub-questions displayed?
-     * @return calculated|calculated_for_subquestion[] stats to display
+     * @return calculated|calculated_for_subquestion|calculated_question_summary[] stats to display
      */
     protected function all_subq_and_variant_stats_for_slot($slot, $limited) {
         // Random question in this slot?
         if ($this->for_slot($slot)->get_sub_question_ids()) {
-            if ($limited) {
-                $subqvariantstats = $this->all_subq_variants_for_one_slot($slot);
-                if ($this->too_many_subq_and_or_variant_rows($subqvariantstats)) {
-                    // Too many variants from randomly selected questions.
-                    return $this->find_min_median_and_max_facility_stats_objects($subqvariantstats);
-                }
-                $subqstats = $this->all_subqs_for_one_slot($slot);
-                if ($this->too_many_subq_and_or_variant_rows($subqstats)) {
-                    // Too many randomly selected questions.
-                    return $this->find_min_median_and_max_facility_stats_objects($subqstats);
-                }
-            }
             $toreturn = array();
-            $displaynumber = 1;
-            foreach ($this->for_slot($slot)->get_sub_question_ids() as $subqid) {
-                $toreturn[] = $this->make_new_subq_stat_for($displaynumber, $slot, $subqid);
-                if ($variants = $this->for_subq($subqid)->get_variants()) {
-                    foreach ($variants as $variant) {
-                        $toreturn[] = $this->make_new_subq_stat_for($displaynumber, $slot, $subqid, $variant);
-                    }
+
+            if ($limited) {
+                $randomquestioncalculated = $this->for_slot($slot);
+
+                if ($subqvariantstats = $this->all_subq_variants_for_one_slot($slot)) {
+                    // There are some variants from randomly selected questions.
+                    // If we're showing a limited view of the statistics then add a question summary stat
+                    // rather than a stat for each subquestion.
+                    $summarystat = $this->make_new_calculated_question_summary_stat($randomquestioncalculated, $subqvariantstats);
+
+                    $toreturn = array_merge($toreturn, [$summarystat]);
                 }
-                $displaynumber++;
+
+                if ($subqstats = $this->all_subqs_for_one_slot($slot)) {
+                    // There are some randomly selected questions.
+                    // If we're showing a limited view of the statistics then add a question summary stat
+                    // rather than a stat for each subquestion.
+                    $summarystat = $this->make_new_calculated_question_summary_stat($randomquestioncalculated, $subqstats);
+
+                    $toreturn = array_merge($toreturn, [$summarystat]);
+                }
+
+                foreach ($toreturn as $index => $calculated) {
+                    $calculated->subqdisplayorder = $index;
+                }
+            } else {
+                $displaynumber = 1;
+                foreach ($this->for_slot($slot)->get_sub_question_ids() as $subqid) {
+                    $toreturn[] = $this->make_new_subq_stat_for($displaynumber, $slot, $subqid);
+                    if ($variants = $this->for_subq($subqid)->get_variants()) {
+                        foreach ($variants as $variant) {
+                            $toreturn[] = $this->make_new_subq_stat_for($displaynumber, $slot, $subqid, $variant);
+                        }
+                    }
+                    $displaynumber++;
+                }
             }
+
             return $toreturn;
         } else {
             $variantstats = $this->all_variant_stats_for_one_slot($slot);
-            if ($limited && $this->too_many_subq_and_or_variant_rows($variantstats)) {
-                return $this->find_min_median_and_max_facility_stats_objects($variantstats);
+            if ($limited && $variantstats) {
+                $variantquestioncalculated = $this->for_slot($slot);
+
+                // If we're showing a limited view of the statistics then add a question summary stat
+                // rather than a stat for each variation.
+                $summarystat = $this->make_new_calculated_question_summary_stat($variantquestioncalculated, $variantstats);
+
+                return [$summarystat];
             } else {
                 return $variantstats;
             }
@@ -459,5 +439,22 @@ class all_calculated_for_qubaid_condition {
         $slotstat->question->number = $this->for_slot($slot)->question->number;
         $slotstat->subqdisplayorder = $displaynumber;
         return $slotstat;
+    }
+
+    /**
+     * Create a summary calculated object for a calculated question. This is used as a placeholder
+     * to indicate that a calculated question has sub questions or variations to show rather than listing each
+     * subquestion or variation directly.
+     *
+     * @param  calculated $randomquestioncalculated The calculated instance for the random question slot.
+     * @param  calculated[] $subquestionstats The instances of the calculated stats of the questions that are being summarised.
+     * @return calculated_question_summary
+     */
+    protected function make_new_calculated_question_summary_stat($randomquestioncalculated, $subquestionstats) {
+        $question = $randomquestioncalculated->question;
+        $slot = $randomquestioncalculated->slot;
+        $calculatedsummary = new calculated_question_summary($question, $slot, $subquestionstats);
+
+        return $calculatedsummary;
     }
 }

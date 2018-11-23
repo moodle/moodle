@@ -24,6 +24,7 @@
  */
 
 namespace core_badges\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
 use badge;
@@ -37,6 +38,8 @@ use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
+use core_privacy\local\request\userlist;
+use core_privacy\local\request\approved_userlist;
 
 require_once($CFG->libdir . '/badgeslib.php');
 
@@ -50,6 +53,7 @@ require_once($CFG->libdir . '/badgeslib.php');
  */
 class provider implements
     \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\subsystem\provider {
 
     /**
@@ -171,6 +175,78 @@ class provider implements
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users within a specific context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        $allowedcontexts = [
+            CONTEXT_COURSE,
+            CONTEXT_SYSTEM,
+            CONTEXT_USER
+        ];
+
+        if (!in_array($context->contextlevel, $allowedcontexts)) {
+            return;
+        }
+
+        if ($context->contextlevel == CONTEXT_COURSE || $context->contextlevel == CONTEXT_SYSTEM) {
+            // Find the modifications we made on badges (course & system).
+            $params = [
+                'courselevel' => CONTEXT_COURSE,
+                'syscontextid' => SYSCONTEXTID,
+                'typecourse' => BADGE_TYPE_COURSE,
+                'typesite' => BADGE_TYPE_SITE,
+                'contextid' => $context->id,
+            ];
+
+            $sql = "SELECT b.usermodified, b.usercreated
+                      FROM {badge} b
+                      JOIN {context} ctx
+                           ON (b.type = :typecourse AND b.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel)
+                           OR (b.type = :typesite AND ctx.id = :syscontextid)
+                     WHERE ctx.id = :contextid";
+
+            $userlist->add_from_sql('usermodified', $sql, $params);
+            $userlist->add_from_sql('usercreated', $sql, $params);
+        }
+
+        if ($context->contextlevel == CONTEXT_USER) {
+            // Find where we've manually awarded a badge (recipient user context).
+            $params = [
+                'instanceid' => $context->instanceid
+            ];
+
+            $sql = "SELECT issuerid, recipientid
+                      FROM {badge_manual_award}
+                     WHERE recipientid = :instanceid";
+
+            $userlist->add_from_sql('issuerid', $sql, $params);
+            $userlist->add_from_sql('recipientid', $sql, $params);
+
+            $sql = "SELECT userid
+                      FROM {badge_issued}
+                     WHERE userid = :instanceid";
+
+            $userlist->add_from_sql('userid', $sql, $params);
+
+            $sql = "SELECT userid
+                      FROM {badge_criteria_met}
+                     WHERE userid = :instanceid";
+
+            $userlist->add_from_sql('userid', $sql, $params);
+
+            $sql = "SELECT userid
+                      FROM {badge_backpack}
+                     WHERE userid = :instanceid";
+
+            $userlist->add_from_sql('userid', $sql, $params);
+        }
     }
 
     /**
@@ -437,6 +513,24 @@ class provider implements
 
         // Delete all the user data.
         static::delete_user_data($context->instanceid);
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!in_array($context->instanceid, $userlist->get_userids())) {
+            return;
+        }
+
+        if ($context->contextlevel == CONTEXT_USER) {
+            // We can only delete our own data in the user context, nothing in course or system.
+            static::delete_user_data($context->instanceid);
+        }
     }
 
     /**

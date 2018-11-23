@@ -30,7 +30,7 @@ Feature: Test role visibility for the groups management page
   Scenario: Check the default roles are visible
     Given I log in as "manager1"
     And I am on "Course 1" course homepage
-    And I navigate to "Groups" node in "Course administration > Users"
+    And I navigate to "Users > Groups" in current page administration
     When I set the field "groups" to "Group 1 (3)"
     And I press "Show members for group"
     Then "optgroup[label='No roles']" "css_element" should not exist in the "#members" "css_element"
@@ -42,7 +42,7 @@ Feature: Test role visibility for the groups management page
   Scenario: Do not allow managers to view any roles and check they are hidden
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Groups" node in "Course administration > Users"
+    And I navigate to "Users > Groups" in current page administration
     When I set the field "groups" to "Group 1 (3)"
     And I press "Show members for group"
     Then "optgroup[label='No roles']" "css_element" should exist in the "#members" "css_element"

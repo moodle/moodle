@@ -51,7 +51,7 @@ function grade_get_course_grades($courseid, $userid_or_ids=null) {
 
     switch ($grade_item->gradetype) {
         case GRADE_TYPE_NONE:
-            continue;
+            break;
 
         case GRADE_TYPE_VALUE:
             $item->scaleid = 0;
@@ -178,7 +178,7 @@ function grade_get_course_grade($userid, $courseid_or_ids=null) {
 
         switch ($grade_item->gradetype) {
             case GRADE_TYPE_NONE:
-                continue;
+                break;
 
             case GRADE_TYPE_VALUE:
                 $item->scaleid = 0;

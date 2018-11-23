@@ -36,4 +36,6 @@ defined('MOODLE_INTERNAL') || die();
 // The old class name is the key, the new class name is the value.
 // The array must be called $renamedclasses.
 $renamedclasses = array(
+    'course_in_list' => 'core_course_list_element',
+    'coursecat' => 'core_course_category',
 );

@@ -24,9 +24,11 @@
 namespace mod_glossary\privacy;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\deletion_criteria;
 use core_privacy\local\request\helper;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
 defined('MOODLE_INTERNAL') || die();
@@ -39,6 +41,8 @@ defined('MOODLE_INTERNAL') || die();
 class provider implements
     // This plugin stores personal data.
     \core_privacy\local\metadata\provider,
+    // This plugin is capable of determining which users have data within it.
+    \core_privacy\local\request\core_userlist_provider,
     // This plugin is a core_user_data_provider.
     \core_privacy\local\request\plugin\provider {
 
@@ -99,6 +103,58 @@ class provider implements
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     *
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!is_a($context, \context_module::class)) {
+            return;
+        }
+
+        // Find users with glossary entries.
+        $sql = "SELECT ge.userid
+                  FROM {context} c
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {glossary} g ON g.id = cm.instance
+                  JOIN {glossary_entries} ge ON ge.glossaryid = g.id
+                 WHERE c.id = :contextid";
+
+        $params = [
+            'contextid' => $context->id,
+            'contextlevel' => CONTEXT_MODULE,
+            'modname' => 'glossary',
+        ];
+
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Find users with glossary comments.
+        \core_comment\privacy\provider::get_users_in_context_from_sql($userlist, 'com', 'mod_glossary', 'glossary_entry',
+                $context->id);
+
+        // Find users with glossary ratings.
+        $sql = "SELECT ge.id
+                  FROM {context} c
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {glossary} g ON g.id = cm.instance
+                  JOIN {glossary_entries} ge ON ge.glossaryid = g.id
+                 WHERE c.id = :contextid";
+
+        $params = [
+            'contextid' => $context->id,
+            'contextlevel' => CONTEXT_MODULE,
+            'modname' => 'glossary',
+        ];
+
+        \core_rating\privacy\provider::get_users_in_context_from_sql($userlist, 'rat', 'mod_glossary', 'entry', $sql, $params);
     }
 
     /**
@@ -323,5 +379,60 @@ class provider implements
                 $DB->delete_records('glossary_entries', ['glossaryid' => $instanceid, 'userid' => $userid]);
             }
         }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist    $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        $userids = $userlist->get_userids();
+        $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
+        list($userinsql, $userinparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+
+        $glossaryentrieswhere = "glossaryid = :instanceid AND userid {$userinsql}";
+        $userinstanceparams = $userinparams + ['instanceid' => $instanceid];
+
+        $entriesobject = $DB->get_recordset_select('glossary_entries', $glossaryentrieswhere, $userinstanceparams, 'id', 'id');
+        $entries = [];
+
+        foreach ($entriesobject as $entry) {
+            $entries[] = $entry->id;
+        }
+
+        $entriesobject->close();
+
+        if (!$entries) {
+            return;
+        }
+
+        list($insql, $inparams) = $DB->get_in_or_equal($entries, SQL_PARAMS_NAMED);
+
+        // Delete related entry aliases.
+        $DB->delete_records_list('glossary_alias', 'entryid', $entries);
+
+        // Delete related entry categories.
+        $DB->delete_records_list('glossary_entries_categories', 'entryid', $entries);
+
+        // Delete related entry and attachment files.
+        get_file_storage()->delete_area_files_select($context->id, 'mod_glossary', 'entry', $insql, $inparams);
+        get_file_storage()->delete_area_files_select($context->id, 'mod_glossary', 'attachment', $insql, $inparams);
+
+        // Delete user tags related to this glossary.
+        \core_tag\privacy\provider::delete_item_tags_select($context, 'mod_glossary', 'glossary_entries', $insql, $inparams);
+
+        // Delete related ratings.
+        \core_rating\privacy\provider::delete_ratings_select($context, 'mod_glossary', 'entry', $insql, $inparams);
+
+        // Delete comments.
+        \core_comment\privacy\provider::delete_comments_for_users($userlist, 'mod_glossary', 'glossary_entry');
+
+        // Now delete all user related entries.
+        $deletewhere = "glossaryid = :instanceid AND userid {$userinsql}";
+        $DB->delete_records_select('glossary_entries', $deletewhere, $userinstanceparams);
     }
 }

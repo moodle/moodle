@@ -80,6 +80,28 @@ abstract class assign_feedback_plugin extends assign_plugin {
     }
 
     /**
+     * Return any files this plugin wishes to save to the gradebook.
+     *
+     * The array being returned should contain the necessary information to
+     * identify and copy the files.
+     *
+     * eg.
+     *
+     * [
+     *      'contextid' => $modulecontext->id,
+     *      'component' => ASSIGNFEEDBACK_XYZ_COMPONENT,
+     *      'filearea' => ASSIGNFEEDBACK_XYZ_FILEAREA,
+     *      'itemid' => $grade->id
+     * ]
+     *
+     * @param stdClass $grade The assign_grades object from the db
+     * @return array
+     */
+    public function files_for_gradebook(stdClass $grade) : array {
+        return [];
+    }
+
+    /**
      * Override to indicate a plugin supports quickgrading.
      *
      * @return boolean - True if the plugin supports quickgrading

@@ -58,7 +58,7 @@ Feature: Edit user enrolment
     And I should see "Student 1" in the "Full name" "table_row"
     And I should see "Active" in the "//td[@class='user-enrol-status']" "xpath_element"
     And I should see "Manual enrolments" in the "Enrolment method" "table_row"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Enrolment details" "dialogue"
     And I click on "Manual enrolments" "icon" in the "student2" "table_row"
     And I should see "Enrolment details"
     And I should see "Student 2" in the "Full name" "table_row"
@@ -78,7 +78,7 @@ Feature: Edit user enrolment
       | user      | course | role           | status |
       | student3  | C2     | student        |    0   |
     And I log in as "admin"
-    And I navigate to "Manage enrol plugins" node in "Site administration > Plugins > Enrolments"
+    And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
     And I click on "Enable" "link" in the "Course meta link" "table_row"
     And I am on "Course 1" course homepage
     And I add "Course meta link" enrolment method with:

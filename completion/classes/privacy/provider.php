@@ -26,9 +26,11 @@ namespace core_completion\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\transform;
-use \core_privacy\local\request\contextlist;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\userlist;
 
 require_once($CFG->dirroot . '/comment/lib.php');
 
@@ -39,7 +41,11 @@ require_once($CFG->dirroot . '/comment/lib.php');
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\subsystem\plugin_provider {
+class provider implements
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\subsystem\plugin_provider,
+        \core_privacy\local\request\shared_userlist_provider
+    {
 
     /**
      * Returns meta data about this system.
@@ -96,6 +102,38 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
         $params = ["{$prefix}_moduleuserid" => $userid, "{$prefix}_courseuserid" => $userid];
 
         return [$join, $where, $params];
+    }
+
+    /**
+     * Find users' course completion by context and add to the provided userlist.
+     *
+     * @param userlist $userlist The userlist to add to.
+     */
+    public static function add_course_completion_users_to_userlist(userlist $userlist) {
+        $params = [
+            'contextid' => $userlist->get_context()->id,
+            'contextcourse' => CONTEXT_COURSE,
+        ];
+
+        $sql = "SELECT cmc.userid
+                 FROM {context} ctx
+                 JOIN {course} c ON ctx.instanceid = c.id
+                 JOIN {course_completion_criteria} ccc ON ccc.course = c.id
+                 JOIN {course_modules_completion} cmc ON cmc.coursemoduleid = ccc.moduleinstance
+                WHERE ctx.id = :contextid
+                  AND ctx.contextlevel = :contextcourse";
+
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        $sql = "SELECT ccc_compl.userid
+                 FROM {context} ctx
+                 JOIN {course} c ON ctx.instanceid = c.id
+                 JOIN {course_completion_criteria} ccc ON ccc.course = c.id
+                 JOIN {course_completion_crit_compl} ccc_compl ON ccc_compl.criteriaid = ccc.id
+                WHERE ctx.id = :contextid
+                  AND ctx.contextlevel = :contextcourse";
+
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -202,6 +240,54 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
             }
             $DB->delete_records('course_completion_crit_compl', $params);
             $DB->delete_records('course_completions', $params);
+        }
+    }
+
+    /**
+     * Delete completion information for users within an approved userlist.
+     *
+     * @param approved_userlist $userlist The approved userlist of users to delete completion information for.
+     * @param int $courseid The course id. Provide this if you want course completion and activity completion deleted.
+     * @param int $cmid The course module id. Provide this if you only want activity completion deleted.
+     */
+    public static function delete_completion_by_approved_userlist(approved_userlist $userlist, int $courseid = null, int $cmid = null) {
+        global $DB;
+        $userids = $userlist->get_userids();
+
+        if (empty($userids)) {
+            return;
+        }
+
+        list($useridsql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+
+        if (isset($cmid)) {
+            $params['coursemoduleid'] = $cmid;
+
+            // Only delete the record for course modules completion.
+            $sql = "coursemoduleid = :coursemoduleid AND userid {$useridsql}";
+            $DB->delete_records_select('course_modules_completion', $sql, $params);
+            return;
+        }
+
+        if (isset($courseid)) {
+            $params['course'] = $courseid;
+
+            // Find records relating to course modules.
+            $sql = "SELECT cmc.id
+                      FROM {course_completion_criteria} ccc
+                      JOIN {course_modules_completion} cmc ON ccc.moduleinstance = cmc.coursemoduleid
+                     WHERE ccc.course = :course AND cmc.userid {$useridsql}";
+            $recordids = $DB->get_records_sql($sql, $params);
+            $ids = array_keys($recordids);
+            if (!empty($ids)) {
+                list($deletesql, $deleteparams) = $DB->get_in_or_equal($ids);
+                $deletesql = 'id ' . $deletesql;
+                $DB->delete_records_select('course_modules_completion', $deletesql, $deleteparams);
+            }
+
+            $sql = "course = :course AND userid {$useridsql}";
+            $DB->delete_records_select('course_completion_crit_compl', $sql, $params);
+            $DB->delete_records_select('course_completions', $sql, $params);
         }
     }
 }

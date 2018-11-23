@@ -10,7 +10,7 @@ Feature: Login from a block
       | testuser | testpass | Test      | User     | student1@example.com |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
+    And I navigate to "Turn editing on" in current page administration
     And I add the "Login" block
 
   Scenario: Login block visible to non-logged in users

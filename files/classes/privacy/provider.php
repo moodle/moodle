@@ -29,6 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\userlist;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Data provider class.
@@ -42,11 +44,12 @@ use core_privacy\local\request\approved_contextlist;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
-    \core_privacy\local\metadata\provider,
-    \core_privacy\local\request\subsystem\plugin_provider,
-
-    // We store a userkey for token-based file access.
-    \core_privacy\local\request\subsystem\provider {
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\subsystem\plugin_provider,
+        \core_privacy\local\request\core_userlist_provider,
+        // We store a userkey for token-based file access.
+        \core_privacy\local\request\subsystem\provider,
+        \core_privacy\local\request\shared_userlist_provider {
 
     /**
      * Returns metadata.
@@ -101,6 +104,21 @@ class provider implements
     }
 
     /**
+     * Get the list of users within a specific context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_user) {
+            return;
+        }
+
+        \core_userkey\privacy\provider::get_user_contexts_with_script($userlist, $context, 'core_files');
+    }
+
+    /**
      * Export all user data for the specified user, in the specified contexts.
      *
      * @param approved_contextlist $contextlist The approved contexts to export information for.
@@ -138,6 +156,19 @@ class provider implements
 
         // Delete all the userkeys.
         \core_userkey\privacy\provider::delete_userkeys('core_files', $context->instanceid);
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if ($context instanceof \context_user) {
+            \core_userkey\privacy\provider::delete_userkeys('core_files', $context->instanceid);
+        }
     }
 
     /**

@@ -26,8 +26,6 @@ namespace core_grading\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_privacy\local\request\approved_contextlist;
-
 /**
  * The trait used to provide backwards compatability for third-party plugins.
  *
@@ -37,7 +35,30 @@ use core_privacy\local\request\approved_contextlist;
 trait gradingform_legacy_polyfill {
 
     /**
+     * Export user data relating to an instance ID.
+     *
+     * @param  \context $context Context to use with the export writer.
+     * @param  int $instanceid The instance ID to export data for.
+     * @param  array $subcontext The directory to export this data to.
+     */
+    public static function export_gradingform_instance_data(\context $context, int $instanceid, array $subcontext) {
+        static::_export_gradingform_instance_data($context, $instanceid, $subcontext);
+    }
+
+    /**
+     * Deletes all user data related to the provided instance IDs.
+     *
+     * @param  array  $instanceids The instance IDs to delete information from.
+     */
+    public static function delete_gradingform_for_instances(array $instanceids) {
+        static::_delete_gradingform_for_instances($instanceids);
+    }
+
+    /**
      * This method is used to export any user data this sub-plugin has using the object to get the context and userid.
+     *
+     * @deprecated Since Moodle 3.6 MDL-62535 Please use the methods in the gradingform_provider_v2 interface.
+     * @todo MDL-63137 remove this method.
      *
      * @param context $context Context owner of the data.
      * @param stdClass $definition Grading definition entry to export.
@@ -46,25 +67,34 @@ trait gradingform_legacy_polyfill {
      * @return stdClass The data to export.
      */
     public static function get_gradingform_export_data(\context $context, $definition, int $userid) {
+        debugging('This method is deprecated. Please use the gradingform_provider_v2 interface', DEBUG_DEVELOPER);
         return static::_get_gradingform_export_data($context, $definition, $userid);
     }
 
     /**
      * Any call to this method should delete all user data for the context defined.
      *
+     * @deprecated Since Moodle 3.6 MDL-62535 Please use the methods in the gradingform_provider_v2 interface.
+     * @todo MDL-63137 remove this method.
+     *
      * @param context $context Context owner of the data.
      */
     public static function delete_gradingform_for_context(\context $context) {
+        debugging('This method is deprecated. Please use the gradingform_provider_v2 interface', DEBUG_DEVELOPER);
         static::_delete_gradingform_for_context($context);
     }
 
     /**
      * A call to this method should delete user data (where practicle) from the userid and context.
      *
+     * @deprecated Since Moodle 3.6 MDL-62535 Please use the methods in the gradingform_provider_v2 interface.
+     * @todo MDL-63137 remove this method.
+     *
      * @param int $userid The user whose information is to be deleted.
      * @param context $context Context owner of the data.
      */
     public static function delete_gradingform_for_userid(int $userid, \context $context) {
+        debugging('This method is deprecated. Please use the gradingform_provider_v2 interface', DEBUG_DEVELOPER);
         static::_delete_gradingform_for_userid($userid, $context);
     }
 }

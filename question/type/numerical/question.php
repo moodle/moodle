@@ -85,6 +85,20 @@ class qtype_numerical_question extends question_graded_automatically {
         return $resp;
     }
 
+    public function un_summarise_response(string $summary) {
+        if ($this->has_separate_unit_field()) {
+            throw new coding_exception('Sorry, but at the moment un_summarise_response cannot handle the
+                has_separate_unit_field case for numerical questions.
+                    If you need this, you will have to implement it yourself.');
+        }
+
+        if (!empty($summary)) {
+            return ['answer' => $summary];
+        } else {
+            return [];
+        }
+    }
+
     public function is_gradable_response(array $response) {
         return array_key_exists('answer', $response) &&
                 ($response['answer'] || $response['answer'] === '0' || $response['answer'] === 0);

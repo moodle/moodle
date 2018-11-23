@@ -24,7 +24,9 @@
 
 namespace mod_forum\privacy;
 
+use \core_privacy\local\request\userlist;
 use \core_privacy\local\request\approved_contextlist;
+use \core_privacy\local\request\approved_userlist;
 use \core_privacy\local\request\deletion_criteria;
 use \core_privacy\local\request\writer;
 use \core_privacy\local\request\helper as request_helper;
@@ -45,6 +47,9 @@ class provider implements
 
     // This plugin currently implements the original plugin\provider interface.
     \core_privacy\local\request\plugin\provider,
+
+    // This plugin is capable of determining which users have data within it.
+    \core_privacy\local\request\core_userlist_provider,
 
     // This plugin has some sitewide user preferences to export.
     \core_privacy\local\request\user_preference_provider
@@ -144,7 +149,7 @@ class provider implements
      * In the case of forum, that is any forum where the user has made any post, rated any content, or has any preferences.
      *
      * @param   int         $userid     The user to search.
-     * @return  contextlist   $contextlist  The contextlist containing the list of contexts used in this plugin.
+     * @return  contextlist $contextlist  The contextlist containing the list of contexts used in this plugin.
      */
     public static function get_contexts_for_userid(int $userid) : \core_privacy\local\request\contextlist {
         $ratingsql = \core_rating\privacy\provider::get_sql_join('rat', 'mod_forum', 'post', 'p.id', $userid);
@@ -190,6 +195,98 @@ class provider implements
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users within a specific context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!is_a($context, \context_module::class)) {
+            return;
+        }
+
+        $params = [
+            'instanceid'    => $context->instanceid,
+            'modulename'    => 'forum',
+        ];
+
+        // Discussion authors.
+        $sql = "SELECT d.userid
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
+                  JOIN {forum} f ON f.id = cm.instance
+                  JOIN {forum_discussions} d ON d.forum = f.id
+                 WHERE cm.id = :instanceid";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Forum authors.
+        $sql = "SELECT p.userid
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
+                  JOIN {forum} f ON f.id = cm.instance
+                  JOIN {forum_discussions} d ON d.forum = f.id
+                  JOIN {forum_posts} p ON d.id = p.discussion
+                 WHERE cm.id = :instanceid";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Forum post ratings.
+        $sql = "SELECT p.id
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
+                  JOIN {forum} f ON f.id = cm.instance
+                  JOIN {forum_discussions} d ON d.forum = f.id
+                  JOIN {forum_posts} p ON d.id = p.discussion
+                 WHERE cm.id = :instanceid";
+        \core_rating\privacy\provider::get_users_in_context_from_sql($userlist, 'rat', 'mod_forum', 'post', $sql, $params);
+
+        // Forum Digest settings.
+        $sql = "SELECT dig.userid
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
+                  JOIN {forum} f ON f.id = cm.instance
+                  JOIN {forum_digests} dig ON dig.forum = f.id
+                 WHERE cm.id = :instanceid";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Forum Subscriptions.
+        $sql = "SELECT sub.userid
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
+                  JOIN {forum} f ON f.id = cm.instance
+                  JOIN {forum_subscriptions} sub ON sub.forum = f.id
+                 WHERE cm.id = :instanceid";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Discussion subscriptions.
+        $sql = "SELECT dsub.userid
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
+                  JOIN {forum} f ON f.id = cm.instance
+                  JOIN {forum_discussion_subs} dsub ON dsub.forum = f.id
+                 WHERE cm.id = :instanceid";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Read Posts.
+        $sql = "SELECT hasread.userid
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
+                  JOIN {forum} f ON f.id = cm.instance
+                  JOIN {forum_read} hasread ON hasread.forumid = f.id
+                 WHERE cm.id = :instanceid";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Tracking Preferences.
+        $sql = "SELECT pref.userid
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
+                  JOIN {forum} f ON f.id = cm.instance
+                  JOIN {forum_track_prefs} pref ON pref.forumid = f.id
+                 WHERE cm.id = :instanceid";
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -771,6 +868,7 @@ class provider implements
         $DB->delete_records('forum_track_prefs', ['forumid' => $forumid]);
         $DB->delete_records('forum_subscriptions', ['forum' => $forumid]);
         $DB->delete_records('forum_read', ['forumid' => $forumid]);
+        $DB->delete_records('forum_digests', ['forum' => $forumid]);
 
         // Delete all discussion items.
         $DB->delete_records_select(
@@ -831,6 +929,11 @@ class provider implements
                 'userid' => $userid,
             ]);
 
+            $DB->delete_records('forum_digests', [
+                'forum' => $forum->id,
+                'userid' => $userid,
+            ]);
+
             // Delete all discussion items.
             $DB->delete_records_select(
                 'forum_queue',
@@ -846,48 +949,93 @@ class provider implements
                 'userid' => $userid,
             ]);
 
-            $uniquediscussions = $DB->get_recordset('forum_discussions', [
-                    'forum' => $forum->id,
-                    'userid' => $userid,
-                ]);
+            // Do not delete discussion or forum posts.
+            // Instead update them to reflect that the content has been deleted.
+            $postsql = "userid = :userid AND discussion IN (SELECT id FROM {forum_discussions} WHERE forum = :forum)";
+            $postidsql = "SELECT fp.id FROM {forum_posts} fp WHERE {$postsql}";
+            $postparams = [
+                'forum' => $forum->id,
+                'userid' => $userid,
+            ];
 
-            foreach ($uniquediscussions as $discussion) {
-                // Do not delete discussion or forum posts.
-                // Instead update them to reflect that the content has been deleted.
-                $postsql = "userid = :userid AND discussion IN (SELECT id FROM {forum_discussions} WHERE forum = :forum)";
-                $postidsql = "SELECT fp.id FROM {forum_posts} fp WHERE {$postsql}";
-                $postparams = [
-                    'forum' => $forum->id,
-                    'userid' => $userid,
-                ];
+            // Update the subject.
+            $DB->set_field_select('forum_posts', 'subject', '', $postsql, $postparams);
 
-                // Update the subject.
-                $DB->set_field_select('forum_posts', 'subject', '', $postsql, $postparams);
+            // Update the message and its format.
+            $DB->set_field_select('forum_posts', 'message', '', $postsql, $postparams);
+            $DB->set_field_select('forum_posts', 'messageformat', FORMAT_PLAIN, $postsql, $postparams);
 
-                // Update the subject and its format.
-                $DB->set_field_select('forum_posts', 'message', '', $postsql, $postparams);
-                $DB->set_field_select('forum_posts', 'messageformat', FORMAT_PLAIN, $postsql, $postparams);
+            // Mark the post as deleted.
+            $DB->set_field_select('forum_posts', 'deleted', 1, $postsql, $postparams);
 
-                // Mark the post as deleted.
-                $DB->set_field_select('forum_posts', 'deleted', 1, $postsql, $postparams);
+            // Note: Do _not_ delete ratings of other users. Only delete ratings on the users own posts.
+            // Ratings are aggregate fields and deleting the rating of this post will have an effect on the rating
+            // of any post.
+            \core_rating\privacy\provider::delete_ratings_select($context, 'mod_forum', 'post',
+                    "IN ($postidsql)", $postparams);
 
-                // Note: Do _not_ delete ratings of other users. Only delete ratings on the users own posts.
-                // Ratings are aggregate fields and deleting the rating of this post will have an effect on the rating
-                // of any post.
-                \core_rating\privacy\provider::delete_ratings_select($context, 'mod_forum', 'post',
-                        "IN ($postidsql)", $postparams);
+            // Delete all Tags.
+            \core_tag\privacy\provider::delete_item_tags_select($context, 'mod_forum', 'forum_posts',
+                    "IN ($postidsql)", $postparams);
 
-                // Delete all Tags.
-                \core_tag\privacy\provider::delete_item_tags_select($context, 'mod_forum', 'forum_posts',
-                        "IN ($postidsql)", $postparams);
-
-                // Delete all files from the posts.
-                $fs = get_file_storage();
-                $fs->delete_area_files_select($context->id, 'mod_forum', 'post', "IN ($postidsql)", $postparams);
-                $fs->delete_area_files_select($context->id, 'mod_forum', 'attachment', "IN ($postidsql)", $postparams);
-            }
-
-            $uniquediscussions->close();
+            // Delete all files from the posts.
+            $fs = get_file_storage();
+            $fs->delete_area_files_select($context->id, 'mod_forum', 'post', "IN ($postidsql)", $postparams);
+            $fs->delete_area_files_select($context->id, 'mod_forum', 'attachment', "IN ($postidsql)", $postparams);
         }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist       $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+
+        $context = $userlist->get_context();
+        $cm = $DB->get_record('course_modules', ['id' => $context->instanceid]);
+        $forum = $DB->get_record('forum', ['id' => $cm->instance]);
+
+        list($userinsql, $userinparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+        $params = array_merge(['forumid' => $forum->id], $userinparams);
+
+        $DB->delete_records_select('forum_track_prefs', "forumid = :forumid AND userid {$userinsql}", $params);
+        $DB->delete_records_select('forum_subscriptions', "forum = :forumid AND userid {$userinsql}", $params);
+        $DB->delete_records_select('forum_read', "forumid = :forumid AND userid {$userinsql}", $params);
+        $DB->delete_records_select(
+            'forum_queue',
+            "userid {$userinsql} AND discussionid IN (SELECT id FROM {forum_discussions} WHERE forum = :forumid)",
+            $params
+        );
+        $DB->delete_records_select('forum_discussion_subs', "forum = :forumid AND userid {$userinsql}", $params);
+
+        // Do not delete discussion or forum posts.
+        // Instead update them to reflect that the content has been deleted.
+        $postsql = "userid {$userinsql} AND discussion IN (SELECT id FROM {forum_discussions} WHERE forum = :forumid)";
+        $postidsql = "SELECT fp.id FROM {forum_posts} fp WHERE {$postsql}";
+
+        // Update the subject.
+        $DB->set_field_select('forum_posts', 'subject', '', $postsql, $params);
+
+        // Update the subject and its format.
+        $DB->set_field_select('forum_posts', 'message', '', $postsql, $params);
+        $DB->set_field_select('forum_posts', 'messageformat', FORMAT_PLAIN, $postsql, $params);
+
+        // Mark the post as deleted.
+        $DB->set_field_select('forum_posts', 'deleted', 1, $postsql, $params);
+
+        // Note: Do _not_ delete ratings of other users. Only delete ratings on the users own posts.
+        // Ratings are aggregate fields and deleting the rating of this post will have an effect on the rating
+        // of any post.
+        \core_rating\privacy\provider::delete_ratings_select($context, 'mod_forum', 'post', "IN ($postidsql)", $params);
+
+        // Delete all Tags.
+        \core_tag\privacy\provider::delete_item_tags_select($context, 'mod_forum', 'forum_posts', "IN ($postidsql)", $params);
+
+        // Delete all files from the posts.
+        $fs = get_file_storage();
+        $fs->delete_area_files_select($context->id, 'mod_forum', 'post', "IN ($postidsql)", $params);
+        $fs->delete_area_files_select($context->id, 'mod_forum', 'attachment', "IN ($postidsql)", $params);
     }
 }

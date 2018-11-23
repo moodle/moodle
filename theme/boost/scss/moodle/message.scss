@@ -1191,6 +1191,153 @@
     }
 }
 
+// New styles for the messaging UI. Once MDL-63303 is done all CSS above this line should be removed.
+$message-drawer-width: 320px;
+
+.message-drawer {
+    position: fixed;
+    top: $navbar-height;
+    right: 0;
+    height: calc(100% - #{$navbar-height});
+    width: $message-drawer-width;
+    z-index: $zindex-sticky;
+    box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
+    display: flex;
+    flex-direction: column;
+    @include transition();
+
+    &.hidden {
+        display: block;
+        right: $message-drawer-width * -1;
+    }
+
+    .header-container {
+        flex-shrink: 0;
+    }
+
+    .body-container {
+        flex: 1;
+        overflow: hidden;
+
+        & > * {
+            position: absolute;
+            right: 0;
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+    }
+
+    .footer-container {
+        flex-shrink: 0;
+        overflow-x: hidden;
+    }
+
+    .matchtext {
+        background-color: lighten($primary, 40%);
+        color: $body-color;
+        height: 1.5rem;
+    }
+    .contact-status {
+        position: absolute;
+        left: 39px;
+        top: 39px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        &.online {
+            border: 1px solid $body-bg;
+            background-color: $green;
+        }
+    }
+
+    .message {
+        p {
+            margin: 0;
+        }
+    }
+
+    .clickable {
+        cursor: pointer;
+
+        &:hover {
+            box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.05), 3px 3px 5px -2px rgba(0, 0, 0, .1), 1px 1px 5px 0 rgba(0, 0, 0, 0.03);
+        }
+    }
+
+    a,
+    .btn-link {
+        color: inherit;
+    }
+
+    .icon {
+        margin-right: 0;
+    }
+
+    .overview-section-toggle {
+        .collapsed-icon-container {
+            display: none;
+        }
+        .expanded-icon-container {
+            display: inline-block;
+        }
+
+        &.collapsed {
+            .collapsed-icon-container {
+                display: inline-block;
+            }
+            .expanded-icon-container {
+                display: none;
+            }
+        }
+    }
+
+    .btn.btn-link.btn-icon {
+        height: $icon-width;
+        width: $icon-width;
+        padding: 0;
+        border-radius: 50%;
+        flex-shrink: 0;
+
+        @include hover-focus {
+            background-color: $gray-200;
+        }
+
+        @each $size, $length in $iconsizes {
+            &.icon-size-#{$size} {
+                height: ($length + 20px) !important; /* stylelint-disable-line declaration-no-important */
+                width: ($length + 20px) !important; /* stylelint-disable-line declaration-no-important */
+            }
+        }
+    }
+
+    .view-overview-body {
+        .section {
+            display: block;
+
+            &.expanded {
+                display: flex;
+            }
+        }
+    }
+
+    .view-conversation {
+        .content-message-container {
+            img {
+                max-width: 100%;
+            }
+        }
+    }
+}
+
+.dir-rtl {
+    .message-drawer {
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, .08);
+    }
+}
+
+// New styles for the messaging UI. Once MDL-63303 is done all CSS below this line should be removed.
+
 @media (max-width: 480px) {
     .messaging-area-container {
         .messaging-area {

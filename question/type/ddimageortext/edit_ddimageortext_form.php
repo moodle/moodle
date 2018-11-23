@@ -108,20 +108,17 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
 
     public function js_call() {
         global $PAGE;
-        $maxsizes = new stdClass();
-        $maxsizes->bgimage = new stdClass();
-        $maxsizes->bgimage->width = QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXWIDTH;
-        $maxsizes->bgimage->height = QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXHEIGHT;
-        $maxsizes->dragimage = new stdClass();
-        $maxsizes->dragimage->width = QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXWIDTH;
-        $maxsizes->dragimage->height = QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXHEIGHT;
 
-        $params = array('maxsizes' => $maxsizes,
-                        'topnode' => 'fieldset#id_previewareaheader');
-
-        $PAGE->requires->yui_module('moodle-qtype_ddimageortext-form',
-                                        'M.qtype_ddimageortext.init_form',
-                                        array($params));
+        $maxbgimagesize = [
+                'width' => QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXWIDTH,
+                'height' => QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXHEIGHT
+        ];
+        $maxdragimagesize = [
+                'width' => QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXWIDTH,
+                'height' => QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXHEIGHT
+        ];
+        $PAGE->requires->js_call_amd('qtype_ddimageortext/form', 'init',
+                [$maxbgimagesize, $maxdragimagesize]);
     }
 
     // Drag items.
@@ -166,7 +163,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
 
         $draggableimageitem[] = $mform->createElement('text', 'draglabel',
                                                 get_string('label', 'qtype_ddimageortext'),
-                                                array('size' => 30, 'class' => 'tweakcss'));
+                                                array('size' => 30, 'class' => 'tweakcss draglabel'));
         $mform->setType('draglabel', PARAM_RAW); // These are validated manually.
         return $draggableimageitem;
     }

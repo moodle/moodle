@@ -17,7 +17,7 @@ Feature: Enable Block Badges in a course
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     # Issue badge 1 of 2
-    And I navigate to "Add a new badge" node in "Course administration > Badges"
+    And I navigate to "Badges > Add a new badge" in current page administration
     And I set the following fields to these values:
       | id_name | Badge 1 |
       | id_description | Badge 1 |
@@ -34,7 +34,8 @@ Feature: Enable Block Badges in a course
     And I set the field "potentialrecipients[]" to "Teacher 1 (teacher1@example.com)"
     And I press "Award badge"
     # Issue Badge 2 of 2
-    And I navigate to "Add a new badge" node in "Course administration > Badges"
+    And I am on "Course 1" course homepage
+    And I navigate to "Badges > Add a new badge" in current page administration
     And I set the following fields to these values:
       | id_name | Badge 2 |
       | id_description | Badge 2 |

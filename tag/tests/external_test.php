@@ -102,7 +102,6 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
         // User with editing and manage cap can also change the tag name,
         // make it standard and reset flag.
         assign_capability('moodle/tag:manage', CAP_ALLOW, $roleid, $context->id);
-        $context->mark_dirty();
         $this->assertTrue(has_capability('moodle/tag:manage', $context));
         $result = core_tag_external::update_tags(array($updatetag));
         $result = external_api::clean_returnvalue(core_tag_external::update_tags_returns(), $result);

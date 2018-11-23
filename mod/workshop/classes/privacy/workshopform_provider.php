@@ -33,7 +33,10 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2018 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface workshopform_provider extends \core_privacy\local\request\plugin\subplugin_provider {
+interface workshopform_provider extends
+        \core_privacy\local\request\plugin\subplugin_provider,
+        \core_privacy\local\request\shared_userlist_provider
+    {
 
     /**
      * Return details of the filled assessment form.

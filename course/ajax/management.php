@@ -27,7 +27,6 @@
 define('AJAX_SCRIPT', true);
 
 require_once('../../config.php');
-require_once($CFG->dirroot.'/lib/coursecatlib.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
 $action = required_param('action', PARAM_ALPHA);
@@ -55,8 +54,8 @@ switch ($action) {
         $courseid = required_param('courseid', PARAM_INT);
         $categoryid = required_param('categoryid', PARAM_INT);
         $course = get_course($courseid);
-        $oldcategory = coursecat::get($course->category);
-        $category = coursecat::get($categoryid);
+        $oldcategory = core_course_category::get($course->category);
+        $category = core_course_category::get($categoryid);
         $outcome->outcome = \core_course\management\helper::move_courses_into_category($category, $courseid);
         $perpage = (int)get_user_preferences('coursecat_management_perpage', $CFG->coursesperpage);
         $totalcourses = $oldcategory->get_courses_count();
@@ -126,13 +125,13 @@ switch ($action) {
         break;
     case 'expandcategory':
         $categoryid = required_param('categoryid', PARAM_INT);
-        $coursecat = coursecat::get($categoryid);
+        $coursecat = core_course_category::get($categoryid);
         \core_course\management\helper::record_expanded_category($coursecat);
         $outcome->outcome = true;
         break;
     case 'collapsecategory':
         $categoryid = required_param('categoryid', PARAM_INT);
-        $coursecat = coursecat::get($categoryid);
+        $coursecat = core_course_category::get($categoryid);
         \core_course\management\helper::record_expanded_category($coursecat, false);
         $outcome->outcome = true;
         break;
@@ -142,7 +141,7 @@ switch ($action) {
         $renderer = $PAGE->get_renderer('core_course', 'management');
         $outcome->html = html_writer::start_tag('ul',
             array('class' => 'ml', 'role' => 'group', 'id' => 'subcategoriesof'.$categoryid));
-        $coursecat = coursecat::get($categoryid);
+        $coursecat = core_course_category::get($categoryid);
         foreach ($coursecat->get_children() as $subcat) {
             $outcome->html .= $renderer->category_listitem($subcat, array(), $subcat->get_children_count());
         }

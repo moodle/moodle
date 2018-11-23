@@ -90,12 +90,9 @@ class behat_tool_usertours extends behat_base {
      * @Given /^I open the User tour settings page$/
      */
     public function i_open_the_user_tour_settings_page() {
-        $this->execute('behat_navigation::i_navigate_to_node_in', [
-                get_string('usertours', 'tool_usertours'),
-                implode(' > ', [
-                    get_string('administrationsite', 'moodle'),
-                    get_string('appearance', 'admin'),
-                ])
-            ]);
+        $this->execute('behat_navigation::i_navigate_to_in_site_administration',
+                get_string('appearance', 'admin') . ' > ' .
+                get_string('usertours', 'tool_usertours')
+        );
     }
 }

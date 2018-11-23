@@ -42,33 +42,15 @@ class enrol_category_plugin_testcase extends advanced_testcase {
     }
 
     protected function enable_role_sync($roleid) {
-        global $DB;
-
         $syscontext = context_system::instance();
 
-        if ($rc = $DB->record_exists('role_capabilities', array('capability'=>'enrol/category:synchronised', 'roleid'=>$roleid, 'contextid'=>$syscontext->id))) {
-            if ($rc->permission != CAP_ALLOW) {
-                $rc->permission = CAP_ALLOW;
-                $DB->update_record('role_capabilities', $rc);
-            }
-        } else {
-            $rc = new stdClass();
-            $rc->capability = 'enrol/category:synchronised';
-            $rc->roleid = $roleid;
-            $rc->contextid = $syscontext->id;
-            $rc->permission = CAP_ALLOW;
-            $rc->timemodified = time();
-            $rc->modifierid = 0;
-            $DB->insert_record('role_capabilities', $rc);
-        }
+        assign_capability('enrol/category:synchronised', CAP_ALLOW, $roleid, $syscontext, true);
     }
 
     protected function disable_role_sync($roleid) {
-        global $DB;
-
         $syscontext = context_system::instance();
 
-        $DB->delete_records('role_capabilities', array('capability'=>'enrol/category:synchronised', 'roleid'=>$roleid, 'contextid'=>$syscontext->id));
+        unassign_capability('enrol/category:synchronised', $roleid, $syscontext);
     }
 
     /**

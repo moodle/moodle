@@ -907,7 +907,7 @@ class core_tag_tag {
         }
 
         $ordering = $DB->get_field_sql('SELECT MAX(ordering) FROM {tag_instance} ti
-                WHERE ti.itemtype = :itemtype AND ti.itemid = itemid AND
+                WHERE ti.itemtype = :itemtype AND ti.itemid = :itemid AND
                 ti.component = :component' . $usersql, $params);
 
         return $tag->add_instance($component, $itemtype, $itemid, $context, $ordering + 1, $tiuserid);

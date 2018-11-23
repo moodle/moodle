@@ -2211,7 +2211,7 @@ class backup_questions_structure_step extends backup_structure_step {
         $qcategory = new backup_nested_element('question_category', array('id'), array(
             'name', 'contextid', 'contextlevel', 'contextinstanceid',
             'info', 'infoformat', 'stamp', 'parent',
-            'sortorder'));
+            'sortorder', 'idnumber'));
 
         $questions = new backup_nested_element('questions');
 
@@ -2219,7 +2219,7 @@ class backup_questions_structure_step extends backup_structure_step {
             'parent', 'name', 'questiontext', 'questiontextformat',
             'generalfeedback', 'generalfeedbackformat', 'defaultmark', 'penalty',
             'qtype', 'length', 'stamp', 'version',
-            'hidden', 'timecreated', 'timemodified', 'createdby', 'modifiedby'));
+            'hidden', 'timecreated', 'timemodified', 'createdby', 'modifiedby', 'idnumber'));
 
         // attach qtype plugin structure to $question element, only one allowed
         $this->add_plugin_structure('qtype', $question, false);
@@ -2418,6 +2418,9 @@ class backup_activity_grades_structure_step extends backup_structure_step {
     }
 
     protected function define_structure() {
+        global $CFG;
+
+        require_once($CFG->libdir . '/grade/constants.php');
 
         // To know if we are including userinfo
         $userinfo = $this->get_setting_value('userinfo');
@@ -2474,6 +2477,7 @@ class backup_activity_grades_structure_step extends backup_structure_step {
         // This only happens if we are including user info
         if ($userinfo) {
             $grade->set_source_table('grade_grades', array('itemid' => backup::VAR_PARENTID));
+            $grade->annotate_files(GRADE_FILE_COMPONENT, GRADE_FEEDBACK_FILEAREA, 'id');
         }
 
         $letter->set_source_table('grade_letters', array('contextid' => backup::VAR_CONTEXTID));
@@ -2510,6 +2514,9 @@ class backup_activity_grade_history_structure_step extends backup_structure_step
     }
 
     protected function define_structure() {
+        global $CFG;
+
+        require_once($CFG->libdir . '/grade/constants.php');
 
         // Settings to use.
         $userinfo = $this->get_setting_value('userinfo');
@@ -2537,6 +2544,7 @@ class backup_activity_grade_history_structure_step extends backup_structure_step
                                      JOIN {backup_ids_temp} bi ON ggh.itemid = bi.itemid
                                     WHERE bi.backupid = ?
                                       AND bi.itemname = 'grade_item'", array(backup::VAR_BACKUPID));
+            $grade->annotate_files(GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA, 'id');
         }
 
         // Annotations.

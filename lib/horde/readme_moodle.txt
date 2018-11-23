@@ -8,6 +8,9 @@ Description of import of Horde libraries
 # Copy the following script and store it on /tmp, change it's execute bit, and run it, passing
   in your path to Horde (the directory you've cloned the repository):
     /tmp/copyhorde.sh ~/git/ext/horde/
+# Verify that these patches have been applied in the imported version. Apply them locally if not:
+    - https://github.com/horde/Mail/pull/1 (Mail component).
+    - https://github.com/horde/Imap_Client/pull/6 (IMAP Client component).
 
 ====
 #!/bin/sh

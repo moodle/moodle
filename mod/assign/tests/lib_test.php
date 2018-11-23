@@ -1472,4 +1472,29 @@ class mod_assign_lib_testcase extends advanced_testcase {
         // is changed.
         $this->assertNotEmpty($moduleupdatedevents);
     }
+
+    /**
+     * A user who does not have capabilities to add events to the calendar should be able to create an assignment.
+     */
+    public function test_creation_with_no_calendar_capabilities() {
+        $this->resetAfterTest();
+        $course = self::getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $user = self::getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $roleid = self::getDataGenerator()->create_role();
+        self::getDataGenerator()->role_assign($roleid, $user->id, $context->id);
+        assign_capability('moodle/calendar:manageentries', CAP_PROHIBIT, $roleid, $context, true);
+        $generator = self::getDataGenerator()->get_plugin_generator('mod_assign');
+        // Create an instance as a user without the calendar capabilities.
+        $this->setUser($user);
+        $time = time();
+        $params = array(
+            'course' => $course->id,
+            'allowsubmissionsfromdate' => $time,
+            'duedate' => $time + 500,
+            'cutoffdate' => $time + 600,
+            'gradingduedate' => $time + 700,
+        );
+        $generator->create_instance($params);
+    }
 }

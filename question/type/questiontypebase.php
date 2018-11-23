@@ -350,6 +350,19 @@ class question_type {
             $question->defaultmark = $form->defaultmark;
         }
 
+        if (isset($form->idnumber) && ((string) $form->idnumber !== '')) {
+            // While this check already exists in the form validation, this is a backstop preventing unnecessary errors.
+            if (strpos($form->category, ',') !== false) {
+                list($category, $categorycontextid) = explode(',', $form->category);
+            } else {
+                $category = $form->category;
+            }
+            if (!$DB->record_exists('question',
+                    ['idnumber' => $form->idnumber, 'category' => $category])) {
+                $question->idnumber = $form->idnumber;
+            }
+        }
+
         // If the question is new, create it.
         if (empty($question->id)) {
             // Set the unique code.
@@ -851,6 +864,7 @@ class question_type {
         $question->stamp = $questiondata->stamp;
         $question->version = $questiondata->version;
         $question->hidden = $questiondata->hidden;
+        $question->idnumber = $questiondata->idnumber;
         $question->timecreated = $questiondata->timecreated;
         $question->timemodified = $questiondata->timemodified;
         $question->createdby = $questiondata->createdby;

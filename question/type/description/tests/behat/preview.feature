@@ -22,7 +22,7 @@ Feature: Preview a Description question
       | Test questions   | description | description-001 | info     |
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
 
   @javascript @_switch_window
   Scenario: Preview a Description question and submit a correct response.

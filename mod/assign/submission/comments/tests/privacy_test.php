@@ -135,6 +135,53 @@ class assignsubmission_comments_privacy_testcase extends \mod_assign\tests\mod_a
     }
 
     /**
+     * Test returning users related to a given context.
+     */
+    public function test_get_userids_from_context() {
+        // Get a bunch of users making comments.
+        // Some in one context some in another.
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        // Only in first context.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        // First and second context.
+        $user3 = $this->getDataGenerator()->create_user();
+        // Second context only.
+        $user4 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
+        $assign1 = $this->create_instance(['course' => $course]);
+        $assign2 = $this->create_instance(['course' => $course]);
+
+        $assigncontext1 = $assign1->get_context();
+        $assigncontext2 = $assign2->get_context();
+
+        $user1comment = 'Comment from user 1';
+        list($plugin, $submission, $comment) = $this->create_comment_submission($assign1, $user1, $user1comment);
+        $user2comment = 'From user 2';
+        $this->setUser($user2);
+        $comment->add($user2comment);
+        $user3comment = 'User 3 comment';
+        $this->setUser($user3);
+        $comment->add($user3comment);
+        $user4comment = 'Comment from user 4';
+        list($plugin, $submission, $comment) = $this->create_comment_submission($assign2, $user4, $user4comment);
+        $user3secondcomment = 'Comment on user 4 post.';
+        $this->setUser($user3);
+        $comment->add($user3comment);
+
+        $userlist = new \core_privacy\local\request\userlist($assigncontext1, 'assignsubmission_comments');
+        \assignsubmission_comments\privacy\provider::get_userids_from_context($userlist);
+        $userids = $userlist->get_userids();
+        $this->assertCount(3, $userids);
+        // User 1,2 and 3 are the expected ones in the array. User 4 isn't.
+        $this->assertContains($user1->id, $userids);
+        $this->assertContains($user2->id, $userids);
+        $this->assertContains($user3->id, $userids);
+        $this->assertNotContains($user4->id, $userids);
+    }
+
+    /**
      * Test that comments are exported for a user.
      */
     public function test_export_submission_user_data() {
@@ -258,5 +305,56 @@ class assignsubmission_comments_privacy_testcase extends \mod_assign\tests\mod_a
             // Check that none of the comments are from user1.
             $this->assertNotEquals($user1->id, $result->userid);
         }
+    }
+
+    /**
+     * Test deletion of all submissions for a context works.
+     */
+    public function test_delete_submissions() {
+        global $DB;
+        // Get a bunch of users making comments.
+        // Some in one context some in another.
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        // Only in first context.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        // First and second context.
+        $user3 = $this->getDataGenerator()->create_user();
+        // Second context only.
+        $user4 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
+        $assign1 = $this->create_instance(['course' => $course]);
+        $assign2 = $this->create_instance(['course' => $course]);
+
+        $assigncontext1 = $assign1->get_context();
+        $assigncontext2 = $assign2->get_context();
+
+        $user1comment = 'Comment from user 1';
+        list($plugin, $submission, $comment) = $this->create_comment_submission($assign1, $user1, $user1comment);
+        $user2comment = 'From user 2';
+        $this->setUser($user2);
+        $comment->add($user2comment);
+        $user3comment = 'User 3 comment';
+        $this->setUser($user3);
+        $comment->add($user3comment);
+        $user4comment = 'Comment from user 4';
+        list($plugin, $submission, $comment) = $this->create_comment_submission($assign2, $user4, $user4comment);
+        $user3secondcomment = 'Comment on user 4 post.';
+        $this->setUser($user3);
+        $comment->add($user3comment);
+
+        // There should be three entries. One for the first three users.
+        $results = $DB->get_records('comments', ['contextid' => $assigncontext1->id]);
+        $this->assertCount(3, $results);
+
+        $deletedata = new \mod_assign\privacy\assign_plugin_request_data($assigncontext1, $assign1);
+        $deletedata->set_userids([$user1->id, $user3->id]);
+        \assignsubmission_comments\privacy\provider::delete_submissions($deletedata);
+
+        // We should be left with just a comment from user 2.
+        $results = $DB->get_records('comments', ['contextid' => $assigncontext1->id]);
+        $this->assertCount(1, $results);
+        $this->assertEquals($user2comment, current($results)->content);
     }
 }

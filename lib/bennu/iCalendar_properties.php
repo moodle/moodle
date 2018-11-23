@@ -1466,7 +1466,18 @@ class iCalendar_property_tzoffsetto extends iCalendar_property {
     }
 }
 
+class iCalendar_property_tzurl extends iCalendar_property {
 
+    var $name        = 'TZURL';
+    var $val_type    = RFC2445_TYPE_URI;
+
+    function __construct() {
+        parent::__construct();
+        $this->valid_parameters = array(
+                RFC2445_XNAME => RFC2445_OPTIONAL
+        );
+    }
+}
 
 #######################
 /*

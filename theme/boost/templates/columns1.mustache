@@ -45,21 +45,20 @@
     {{{ output.standard_top_of_body_html }}}
 
     <div id="page" class="container-fluid">
-        <div id="page-content" class="row">
+        <div id="page-content" class="row pb-3">
             <div id="region-main-box" class="col-12">
                 <section id="region-main">
-                    <div class="card">
-                        <div class="card-body">
-                            {{{ output.course_content_header }}}
-                            {{{ output.main_content }}}
-                            {{{ output.activity_navigation }}}
-                            {{{ output.course_content_footer }}}
-                        </div>
-                    </div>
+                    {{{ output.course_content_header }}}
+                    {{{ output.main_content }}}
+                    {{{ output.activity_navigation }}}
+                    {{{ output.course_content_footer }}}
                 </section>
             </div>
         </div>
     </div>
+
+    {{{ output.standard_after_main_region_html }}}
+
 </div>
 {{{ output.standard_end_of_body_html }}}
 </body>

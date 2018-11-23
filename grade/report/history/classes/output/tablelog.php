@@ -314,7 +314,20 @@ class tablelog extends \table_sql implements \renderable {
         if ($this->is_downloading()) {
             return $history->feedback;
         } else {
-            return format_text($history->feedback, $history->feedbackformat, array('context' => $this->context));
+            // We need the activity context, not the course context.
+            $gradeitem = $this->gradeitems[$history->itemid];
+            $context = $gradeitem->get_context();
+
+            $feedback = file_rewrite_pluginfile_urls(
+                $history->feedback,
+                'pluginfile.php',
+                $context->id,
+                GRADE_FILE_COMPONENT,
+                GRADE_HISTORY_FEEDBACK_FILEAREA,
+                $history->id
+            );
+
+            return format_text($feedback, $history->feedbackformat, array('context' => $context));
         }
     }
 

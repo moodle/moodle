@@ -23,10 +23,11 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\transform;
-use \core_privacy\local\request\approved_contextlist;
-use \tool_mobile\privacy\provider;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
+use tool_mobile\privacy\provider;
 
 /**
  * Unit tests for the tool_mobile implementation of the privacy API.
@@ -59,6 +60,7 @@ class tool_mobile_privacy_testcase extends \core_privacy\tests\provider_testcase
         $this->assertEquals(get_string('privacy:metadata:preference:tool_mobile_autologin_request_last', 'tool_mobile'),
             $prefs->tool_mobile_autologin_request_last->description);
     }
+
     /**
      * Test getting the context for the user ID related to this plugin.
      */
@@ -70,6 +72,31 @@ class tool_mobile_privacy_testcase extends \core_privacy\tests\provider_testcase
         $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertEquals($context->id, $contextlist->current()->id);
     }
+
+    /**
+     * Test getting the users for a context related to this plugin.
+     */
+    public function test_get_users_in_context() {
+        $component = 'tool_mobile';
+
+        // Create users and Mobile user keys.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $context1 = \context_user::instance($user1->id);
+        $context2 = \context_user::instance($user2->id);
+        $key1 = get_user_key('tool_mobile', $user1->id);
+        $key2 = get_user_key('tool_mobile', $user2->id);
+
+        // Ensure only user1 is found in context1.
+        $userlist = new \core_privacy\local\request\userlist($context1, $component);
+        provider::get_users_in_context($userlist);
+        $userids = $userlist->get_userids();
+        $userid = reset($userids);
+
+        $this->assertCount(1, $userids);
+        $this->assertEquals($user1->id, $userid);
+    }
+
     /**
      * Test that data is exported correctly for this plugin.
      */
@@ -89,6 +116,7 @@ class tool_mobile_privacy_testcase extends \core_privacy\tests\provider_testcase
         $this->assertCount(1, $userkeydata->keys);
         $this->assertEquals($key->script, reset($userkeydata->keys)->script);
     }
+
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
@@ -108,6 +136,7 @@ class tool_mobile_privacy_testcase extends \core_privacy\tests\provider_testcase
         $count = $DB->count_records('user_private_key', ['script' => 'tool_mobile']);
         $this->assertEquals(0, $count);
     }
+
     /**
      * Test for provider::delete_data_for_user().
      */
@@ -128,5 +157,47 @@ class tool_mobile_privacy_testcase extends \core_privacy\tests\provider_testcase
         // After deletion, the user_private_key entries should have been deleted.
         $count = $DB->count_records('user_private_key', ['script' => 'tool_mobile']);
         $this->assertEquals(0, $count);
+    }
+
+    /**
+     * Test for provider::test_delete_data_for_users().
+     */
+    public function test_delete_data_for_users() {
+        global $DB;
+        $component = 'tool_mobile';
+
+        // Create users and Mobile user keys.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $context1 = \context_user::instance($user1->id);
+        $context2 = \context_user::instance($user2->id);
+        $keyvalue1 = get_user_key('tool_mobile', $user1->id);
+        $keyvalue2 = get_user_key('tool_mobile', $user2->id);
+        $key1 = $DB->get_record('user_private_key', ['value' => $keyvalue1]);
+
+        // Before deletion, we should have 2 user_private_keys.
+        $count = $DB->count_records('user_private_key', ['script' => 'tool_mobile']);
+        $this->assertEquals(2, $count);
+
+        // Ensure deleting wrong user in the user context does nothing.
+        $approveduserids = [$user2->id];
+        $approvedlist = new approved_userlist($context1, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        $count = $DB->count_records('user_private_key', ['script' => 'tool_mobile']);
+        $this->assertEquals(2, $count);
+
+        // Delete for user1 in context1.
+        $approveduserids = [$user1->id];
+        $approvedlist = new approved_userlist($context1, $component, $approveduserids);
+        provider::delete_data_for_users($approvedlist);
+
+        // Ensure only user1's data is deleted, user2's remains.
+        $count = $DB->count_records('user_private_key', ['script' => 'tool_mobile']);
+        $this->assertEquals(1, $count);
+
+        $params = ['script' => $component];
+        $userid = $DB->get_field_select('user_private_key', 'userid', 'script = :script', $params);
+        $this->assertEquals($user2->id, $userid);
     }
 }

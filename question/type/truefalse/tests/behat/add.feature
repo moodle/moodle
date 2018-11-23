@@ -16,7 +16,7 @@ Feature: Test creating a True/False question
       | teacher1 | C1     | editingteacher |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
 
   Scenario: Create a True/False question with Correct answer as False
     When I add a "True/False" question filling the form with:

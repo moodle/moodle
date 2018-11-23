@@ -29,7 +29,7 @@ Feature: View cohort list
 
   Scenario: Admin can see system cohorts and all cohorts
     When I log in as "admin"
-    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts >Cohorts" in site administration
     Then I should see "System cohort"
     And I should not see "Cohort in category"
     And I follow "All cohorts"
@@ -41,7 +41,7 @@ Feature: View cohort list
 
   Scenario: Manager can see system cohorts and all cohorts
     When I log in as "user1"
-    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts >Cohorts" in site administration
     Then I should see "System cohort"
     And I should not see "Cohort in category"
     And I follow "All cohorts"

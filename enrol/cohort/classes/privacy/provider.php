@@ -13,18 +13,25 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Privacy Subsystem implementation for enrol_cohort.
  *
  * @package    enrol_cohort
+ * @category   privacy
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace enrol_cohort\privacy;
+
 defined('MOODLE_INTERNAL') || die();
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\contextlist;
-use \core_privacy\local\request\approved_contextlist;
+
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\userlist;
 
 /**
  * Privacy provider for enrol_cohort.
@@ -33,8 +40,15 @@ use \core_privacy\local\request\approved_contextlist;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
-    \core_privacy\local\metadata\provider,
-    \core_privacy\local\request\plugin\provider {
+        // This plugin stores user data.
+        \core_privacy\local\metadata\provider,
+
+        // This plugin contains user's enrolments.
+        \core_privacy\local\request\plugin\provider,
+
+        // This plugin is capable of determining which users have data within it.
+        \core_privacy\local\request\core_userlist_provider {
+
     /**
      * Returns meta data about this system.
      *
@@ -46,6 +60,7 @@ class provider implements
         $collection->add_subsystem_link('core_group', [], 'privacy:metadata:core_group');
         return $collection;
     }
+
     /**
      * Get the list of contexts that contain user information for the specified user.
      *
@@ -53,24 +68,24 @@ class provider implements
      * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
-        $contextlist = new contextlist();
-
-        $sql = "SELECT ctx.id
-                  FROM {groups_members} gm
-                  JOIN {groups} g ON gm.groupid = g.id
-                  JOIN {context} ctx ON g.courseid = ctx.instanceid AND ctx.contextlevel = :contextlevel
-                 WHERE gm.userid = :userid
-                   AND gm.component = 'enrol_cohort'";
-
-        $params = [
-            'contextlevel' => CONTEXT_COURSE,
-            'userid'        => $userid
-        ];
-
-        $contextlist->add_from_sql($sql, $params);
-
-        return $contextlist;
+        return \core_group\privacy\provider::get_contexts_for_group_member($userid, 'enrol_cohort');
     }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+
+        if (!$context instanceof \context_course) {
+            return;
+        }
+
+        \core_group\privacy\provider::get_group_members_in_context($userlist, 'enrol_cohort');
+    }
+
     /**
      * Export all user data for the specified user, in the specified contexts.
      *
@@ -105,6 +120,7 @@ class provider implements
             \core_group\privacy\provider::delete_groups_for_all_users($context, 'enrol_cohort');
         }
     }
+
     /**
      * Delete all user data for the specified user, in the specified contexts.
      *
@@ -116,4 +132,14 @@ class provider implements
         }
         \core_group\privacy\provider::delete_groups_for_user($contextlist, 'enrol_cohort');
     }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param   approved_userlist   $userlist   The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        \core_group\privacy\provider::delete_groups_for_users($userlist, 'enrol_cohort');
+    }
+
 }

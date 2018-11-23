@@ -1,0 +1,71 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/message_drawer_contacts_list
+
+    This template will render a list of contacts for the message drawer.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * userid The logged in user id
+    * urls The URLs for the popover
+
+    Example context (json):
+    {}
+
+}}
+
+{{#contacts}}
+    <a
+        href="#"
+        class="p-2 d-flex list-group-item list-group-item-action border-0"
+        data-route="view-conversation"
+        {{#conversationid}}
+            data-route-param-1="{{.}}"
+        {{/conversationid}}
+        {{^conversationid}}
+            data-route-param-1="false"
+            data-route-param-2="create"
+            data-route-param-3="{{id}}"
+        {{/conversationid}}
+        data-contact-user-id="{{id}}"
+        data-region="contact"
+    >
+        <img
+            class="rounded-circle"
+            src="{{{profileimageurl}}}"
+            alt="{{fullname}}"
+            aria-hidden="true"
+            style="height: 38px"
+        >
+        {{#showonlinestatus}}
+            <span class="contact-status {{#isonline}}online{{/isonline}}"></span>
+        {{/showonlinestatus}}
+        <h6 class="ml-2" data-region="searchable">{{fullname}}</h6>
+        <div
+            class="ml-auto align-self-end {{^isblocked}}hidden{{/isblocked}}"
+            data-region="block-icon-container"
+        >
+            {{#pix}} t/block, core, {{#str}} contactblocked, message {{/str}} {{/pix}}
+        </div>
+    </a>
+{{/contacts}}

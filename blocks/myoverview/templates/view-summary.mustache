@@ -1,0 +1,73 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/view-summary
+
+    This template renders the list view for the myoverview block.
+
+    Example context (json):
+    {
+        "courses": [
+            {
+                "name": "Assignment due 1",
+                "viewurl": "https://moodlesite/course/view.php?id=2",
+                "courseimage": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
+                "fullname": "course 3",
+                "summary": "This course is about assignments",
+                "hasprogress": true,
+                "progress": 10
+            }
+        ]
+    }
+}}
+<div role="list">
+{{#courses}}
+    <div class="course-summaryitem m-b-1 p-2" role="listitem"
+        data-region="course-content"
+        data-course-id="{{{id}}}">
+        <div class="d-flex">
+            <a href="{{viewurl}}" tabindex="-1">
+                <div class="summaryimage rounded-circle m-r-1" style='background-image: url("{{{courseimage}}}");'>
+                    <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
+                </div>
+            </a>
+
+            <div class="align-self-stretch d-flex flex-column w-100">
+                <div class="d-flex mb-1">
+                    <div class="d-block">
+                        {{> core_course/favouriteicon }}
+                        <a href="{{viewurl}}" class="coursename">
+                            <span class="sr-only">{{#str}}aria:coursename, core_course{{/str}}</span>
+                            <h4 class="d-inline">{{{fullname}}}</h4>
+                        </a>
+                    </div>
+                    {{> block_myoverview/course-action-menu }}
+                </div>
+                <div class="summary">
+                    <span class="sr-only">{{#str}}aria:coursesummary, block_myoverview{{/str}}</span>
+                    {{{summary}}}
+                </div>
+                <div class="ml-auto mt-auto w-50 p-t-1">
+                    {{#hasprogress}}
+                        {{> block_myoverview/progress-bar}}
+                    {{/hasprogress}}
+                </div>
+            </div>
+        </div>
+    </div>
+{{/courses}}
+</div>

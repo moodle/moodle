@@ -431,6 +431,9 @@ function upgrade_stale_php_files_present() {
 
     $someexamplesofremovedfiles = array(
         // Removed in 3.6.
+        '/lib/classes/session/memcache.php',
+        '/lib/eventslib.php',
+        '/lib/form/submitlink.php',
         '/lib/medialib.php',
         '/lib/password_compat/lib/password.php',
         // Removed in 3.5.
@@ -2339,6 +2342,22 @@ function check_is_https(environment_results $result) {
 }
 
 /**
+ * Check if the site is using 64 bits PHP.
+ *
+ * @param  environment_results $result
+ * @return environment_results|null updated results object, or null if the site is using 64 bits PHP.
+ */
+function check_sixtyfour_bits(environment_results $result) {
+
+    if (PHP_INT_SIZE === 4) {
+         $result->setInfo('php not 64 bits');
+         $result->setStatus(false);
+         return $result;
+    }
+    return null;
+}
+
+/**
  * Assert the upgrade key is provided, if it is defined.
  *
  * The upgrade key can be defined in the main config.php as $CFG->upgradekey. If
@@ -2623,9 +2642,6 @@ function upgrade_fix_config_auth_plugin_defaults($plugin) {
         include($settingspath);
 
         if ($settings) {
-            // Consistently with what admin/cli/upgrade.php does, apply the default settings twice.
-            // I assume this is done for theoretical cases when a default value depends on an other.
-            admin_apply_default_settings($settings, false);
             admin_apply_default_settings($settings, false);
         }
     }

@@ -6,10 +6,13 @@ $drawer-padding-x: 20px !default;
 $drawer-padding-y: 20px !default;
 $drawer-offscreen-gutter: 20px !default;
 
-:target {
-    padding-top: ($fixed-header-y + 30px) !important; /* stylelint-disable declaration-no-important */
-    margin-top: -$fixed-header-y !important; /* negative fixed header height */
+:target::before {
+    content: " ";
+    display: block;
+    height: ($fixed-header-y + 10px); /* fixed header height*/
+    margin-top: -($fixed-header-y + 10px); /* negative fixed header height */
 }
+
 .pagelayout-embedded :target {
     padding-top: initial;
     margin-top: initial;

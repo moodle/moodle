@@ -64,4 +64,25 @@ class behat_filters extends behat_base {
         }
         filter_set_global_state($filtername, $state);
     }
+
+    /**
+     * Set the global filter target.
+     *
+     * @Given /^the "(?P<filter_name>(?:[^"]|\\")*)" filter applies to "(content|content and headings)"$/
+     *
+     * @param string $filtername the name of a filter, e.g. 'glossary'.
+     * @param string $filtertarget 'content' or 'content and headings'.
+     */
+    public function the_filter_applies_to($filtername, $filtertarget) {
+        switch ($filtertarget) {
+            case 'content and headings':
+                filter_set_applies_to_strings($filtername, 1);
+                break;
+            case 'content':
+                filter_set_applies_to_strings($filtername, 0);
+                break;
+            default:
+                throw new coding_exception('Unknown filter target: ' . $filtertarget);
+        }
+    }
 }

@@ -30,9 +30,6 @@
  */
 
  class block_rss_client extends block_base {
-    /** The maximum time in seconds that cron will wait between attempts to retry failing RSS feeds. */
-    const CLIENT_MAX_SKIPTIME = 43200; // 60 * 60 * 12 seconds.
-
     /** @var bool track whether any of the output feeds have recorded failures */
     private $hasfailedfeeds = false;
 
@@ -281,25 +278,5 @@
         } else {
             return core_text::substr($title, 0, $max - 3) . '...';
         }
-    }
-
-    /**
-     * Calculates a new skip time for a record based on the current skip time.
-     *
-     * @param int $currentskip The curreent skip time of a record.
-     * @return int A new skip time that should be set.
-     */
-    public function calculate_skiptime($currentskip) {
-        // The default time to skiptime.
-        $newskiptime = $this->cron * 1.1;
-        if ($currentskip > 0) {
-            // Double the last time.
-            $newskiptime = $currentskip * 2;
-        }
-        if ($newskiptime > self::CLIENT_MAX_SKIPTIME) {
-            // Do not allow the skip time to increase indefinatly.
-            $newskiptime = self::CLIENT_MAX_SKIPTIME;
-        }
-        return $newskiptime;
     }
 }

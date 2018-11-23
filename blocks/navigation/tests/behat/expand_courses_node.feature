@@ -46,7 +46,7 @@ Feature: Expand the courses nodes within the navigation block
     And I press "Save changes"
     And I turn editing mode off
     And I am on "Course 2" course homepage
-    And I navigate to "Enrolment methods" node in "Course administration > Users"
+    And I navigate to "Users > Enrolment methods" in current page administration
     And I click on "Edit" "link" in the "Guest access" "table_row"
     And I set the following fields to these values:
       | Allow guest access | Yes |

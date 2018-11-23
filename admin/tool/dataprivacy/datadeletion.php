@@ -36,6 +36,7 @@ $title = get_string('datadeletion', 'tool_dataprivacy');
 \tool_dataprivacy\page_helper::setup($url, $title);
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading($title);
 
 if (\tool_dataprivacy\api::is_site_dpo($USER->id)) {
     $table = new \tool_dataprivacy\output\expired_contexts_table($filter);

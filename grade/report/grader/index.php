@@ -65,7 +65,14 @@ require_capability('gradereport/grader:view', $context);
 require_capability('moodle/grade:viewall', $context);
 
 // return tracking object
-$gpr = new grade_plugin_return(array('type'=>'report', 'plugin'=>'grader', 'courseid'=>$courseid, 'page'=>$page));
+$gpr = new grade_plugin_return(
+    array(
+        'type' => 'report',
+        'plugin' => 'grader',
+        'course' => $course,
+        'page' => $page
+    )
+);
 
 // last selected report session tracking
 if (!isset($USER->grade_last_report)) {
@@ -187,6 +194,7 @@ if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') 
     echo '<input type="hidden" value="'.time().'" name="timepageload" />';
     echo '<input type="hidden" value="grader" name="report"/>';
     echo '<input type="hidden" value="'.$page.'" name="page"/>';
+    echo $gpr->get_form_fields();
     echo $reporthtml;
     echo '<div class="submit"><input type="submit" id="gradersubmit" class="btn btn-primary"
         value="'.s(get_string('savechanges')).'" /></div>';

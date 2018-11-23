@@ -1,0 +1,96 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_timeline/nav-day-filter
+
+    This template renders the day range selector for the timeline view.
+
+    Example context (json):
+    {}
+}}
+<div data-region="day-filter" class="dropdown">
+    <button type="button" class="btn btn-outline-secondary dropdown-toggle icon-no-margin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{#pix}} i/duration {{/pix}}
+        <span class="sr-only">
+            {{#str}} ariadayfilter, block_timeline {{/str}}
+            <span data-active-item-text>{{#str}} next30days, block_timeline {{/str}}</span>
+        </span>
+    </button>
+    <div role="menu" class="dropdown-menu" data-show-active-item>
+        <a
+            class="dropdown-item {{#all}} active {{/all}}"
+            href="#"
+            data-from="-14"
+            data-filtername="all"
+            aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} all, core {{/str}}{{/str}}"
+        >
+            {{#str}} all, core {{/str}}
+        </a>
+        <a
+            class="dropdown-item {{#overdue}} active {{/overdue}}"
+            href="#"
+            data-from="-14"
+            data-to="0"
+            data-filtername="overdue"
+            aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} overdue, block_timeline {{/str}}{{/str}}"
+        >
+            {{#str}} overdue, block_timeline {{/str}}
+        </a>
+        <div class="dropdown-divider"></div>
+        <h6 class="dropdown-header">{{#str}} duedate, block_timeline {{/str}}</h6>
+        <a
+            class="dropdown-item {{#next7days}} active {{/next7days}}"
+            href="#"
+            data-from="0"
+            data-to="7"
+            data-filtername="next7days"
+            aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next7days, block_timeline {{/str}}{{/str}}"
+        >
+            {{#str}} next7days, block_timeline {{/str}}
+        </a>
+        <a
+            class="dropdown-item {{#next30days}} active {{/next30days}}"
+            href="#"
+            data-from="0"
+            data-to="30"
+            data-filtername="next30days"
+            aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next30days, block_timeline {{/str}}{{/str}}"
+        >
+            {{#str}} next30days, block_timeline {{/str}}
+        </a>
+        <a
+            class="dropdown-item {{#next3months}} active {{/next3months}}"
+            href="#"
+            data-from="0"
+            data-to="90"
+            data-filtername="next3months"
+            aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next3months, block_timeline {{/str}}{{/str}}"
+        >
+            {{#str}} next3months, block_timeline {{/str}}
+        </a>
+        <a
+            class="dropdown-item {{#next6months}} active {{/next6months}}"
+            href="#"
+            data-from="0"
+            data-to="180"
+            data-filtername="next6months"
+            aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next6months, block_timeline {{/str}}{{/str}}"
+        >
+            {{#str}} next6months, block_timeline {{/str}}
+        </a>
+    </div>
+</div>
