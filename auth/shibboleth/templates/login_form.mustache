@@ -1,0 +1,129 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template auth_shibboleth/login_form
+
+    Template for the Shibboleth authentication plugin's login form.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * adminemail String The Administrator's email address.
+    * cansignup Boolean Whether a new user can sign up for an account.
+    * guestlogin Boolean Whether to show the guest login section.
+    * guestloginurl String The URL for guest login.
+    * idps Array The list of identity providers for the Shibboleth authentication plugin in value-name pairs per IDP.
+    * instructions String Signup instructions.
+    * isvalid Boolean Whether form validation passes.
+    * loginname String The custom login name.
+    * logintoken String The login token.
+    * loginurl String The login URL.
+    * showinstructions Boolean Whether to show additional login instructions.
+    * signupurl String The signup URL.
+
+    Example context (json):
+    {
+        "loginurl": "#",
+        "guestloginurl": "#",
+        "guestlogin": true,
+        "idps": [
+            { "value": 1, "name": "IDP 1" },
+            { "value": 2, "name": "IDP 2", "selected": true },
+            { "value": 3, "name": "IDP 3" }
+        ],
+        "showinstructions": true,
+        "logintoken": "abcde",
+        "adminemail": "admin@example.com",
+        "loginname": "Shib auth",
+        "cansignup": true,
+        "signupurl": "#",
+        "instructions": "Sign up here",
+        "isvalid": false
+    }
+}}
+
+<div class="my-1 my-sm-5"></div>
+<div class="container">
+    <div class="card">
+        <h2 class="card-header">
+            {{#loginname}}{{.}}{{/loginname}}
+            {{^loginname}}{{#str}}auth_shibboleth_login_long, auth_shibboleth{{/str}}{{/loginname}}
+        </h2>
+        <div class="card-body">
+            <div class="row justify-content-center m-l-1 m-r-1 m-b-1">
+                <div class="col-md-5">
+                    <form action="{{loginurl}}" method="post" id="login">
+                        <div class="form-group">
+                            <label for="idp">{{#str}}auth_shibboleth_select_organization, auth_shibboleth{{/str}}</label>
+                            <select id="idp" name="idp" class="form-control input-block-level {{^isvalid}}is-invalid{{/isvalid}}">
+                                <option value="-">{{#str}}auth_shibboleth_select_member, auth_shibboleth{{/str}}</option>
+                                {{#idps}}
+                                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                                {{/idps}}
+                            </select>
+                            <div class="invalid-feedback text-danger m-b-1" {{#isvalid}}hidden{{/isvalid}}>
+                                {{#str}}auth_shibboleth_errormsg, auth_shibboleth{{/str}}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block m-b-1" accesskey="s">
+                            {{#str}}select, moodle{{/str}}
+                        </button>
+                        <p class="form-text text-muted m-t-1 m-b-1">
+                            {{#str}}auth_shib_contact_administrator, auth_shibboleth, {{adminemail}}{{/str}}
+                        </p>
+                    </form>
+                </div>
+                {{#guestlogin}}
+                <div class="col-md-5">
+                    <p>
+                        {{#str}}someallowguest, moodle{{/str}}
+                    </p>
+                    <form action="{{guestloginurl}}" method="post" id="guestlogin">
+                        <div class="guestform">
+                            <input type="hidden" name="logintoken" value="{{logintoken}}">
+                            <input type="hidden" name="username" value="guest">
+                            <input type="hidden" name="password" value="guest">
+                            <button type="submit" class="btn btn-secondary btn-block">
+                                {{#str}}loginguest, moodle{{/str}}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                {{/guestlogin}}
+            </div>
+        </div>
+    </div>
+    {{#showinstructions}}
+    <div class="card m-t-1">
+        <div class="card-body m-l-1 m-r-1 m-b-1">
+            <h2 class="card-title">{{#str}}firsttime, moodle{{/str}}</h2>
+            <p>
+                {{{instructions}}}
+            </p>
+            {{#cansignup}}
+            <form action="{{signupurl}}" method="get" id="signup">
+                <button type="submit" class="btn btn-secondary">{{#str}}startsignup, moodle{{/str}}</button>
+            </form>
+            {{/cansignup}}
+        </div>
+    </div>
+    {{/showinstructions}}
+</div>

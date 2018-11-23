@@ -308,9 +308,9 @@ class auth_plugin_shibboleth extends auth_plugin_base {
 
     /**
      * Sets the standard SAML domain cookie that is also used to preselect
-     * the right entry on the local wayf
+     * the right entry on the local way
      *
-     * @param IdP identifiere
+     * @param string $selectedIDP IDP identifier
      */
     function set_saml_cookie($selectedIDP) {
         if (isset($_COOKIE['_saml_idp']))
@@ -325,9 +325,8 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         setcookie ('_saml_idp', generate_cookie_value($IDPArray), time() + (100*24*3600));
     }
 
-     /**
+    /**
      * Prints the option elements for the select element of the drop down list
-     *
      */
     function print_idp_list(){
         $config = get_config('auth_shibboleth');
