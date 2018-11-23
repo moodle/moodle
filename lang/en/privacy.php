@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['broughtbymoodle'] = 'This data export provided by Moodle';
+$string['broughtbymoodle'] = 'This data export is provided by Moodle.';
 $string['exportfrom'] = 'Exported from {$a}';
 $string['exporttime'] = 'Exported on {$a}';
 $string['exportuser'] = 'Data for {$a}';
