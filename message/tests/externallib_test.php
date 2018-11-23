@@ -6138,7 +6138,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     public function test_get_conversation_counts_test_cases() {
         $typeindividual = \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
         $typegroup = \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP;
-        list($user1, $user2, $user3, $user4, $user5, $user6, $user7) = [0, 1, 2, 3, 4, 5, 6];
+        list($user1, $user2, $user3, $user4, $user5, $user6, $user7, $user8) = [0, 1, 2, 3, 4, 5, 6, 7];
         $conversations = [
             [
                 'type' => $typeindividual,
@@ -6167,6 +6167,13 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
                 'messages' => [$user6, $user7],
                 'favourites' => [$user6],
                 'enabled' => false
+            ],
+            [
+                'type' => $typeindividual,
+                'users' => [$user8, $user8],
+                'messages' => [$user8, $user8],
+                'favourites' => [],
+                'enabled' => null // Individual conversations cannot be disabled.
             ],
         ];
 
@@ -6358,6 +6365,17 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
                 ]],
                 'deletedusers' => []
             ],
+            'Conversation with self' => [
+                'conversationConfigs' => $conversations,
+                'deletemessagesuser' => null,
+                'deletemessages' => [],
+                'arguments' => [$user8],
+                'expected' => ['favourites' => 0, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                ]],
+                'deletedusers' => []
+            ],
         ];
     }
 
@@ -6383,6 +6401,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
         $users = [
+            $generator->create_user(),
             $generator->create_user(),
             $generator->create_user(),
             $generator->create_user(),

@@ -1523,6 +1523,7 @@ class api {
         // Some restrictions we need to be aware of:
         // - Individual conversations containing soft-deleted user must be counted.
         // - Individual conversations containing only deleted messages must NOT be counted.
+        // - Individual conversations which are legacy 'self' conversations (2 members, both the same user) must NOT be counted.
         // - Group conversations with 0 messages must be counted.
         // - Linked conversations which are disabled (enabled = 0) must NOT be counted.
         // - Any type of conversation can be included in the favourites count, however, the type counts and the favourites count
@@ -1538,6 +1539,17 @@ class api {
                   FROM {message_conversations} mc
             INNER JOIN {message_conversation_members} mcm
                     ON mcm.conversationid = mc.id
+            INNER JOIN (
+                              SELECT mcm.conversationid, count(distinct mcm.userid) as membercount
+                                FROM {message_conversation_members} mcm
+                               WHERE mcm.conversationid IN (
+                                        SELECT DISTINCT conversationid
+                                          FROM {message_conversation_members} mcm2
+                                         WHERE userid = :userid5
+                                     )
+                            GROUP BY mcm.conversationid
+                       ) uniquemembercount
+                    ON uniquemembercount.conversationid = mc.id
              LEFT JOIN (
                               SELECT m.conversationid as convid, MAX(m.timecreated) as maxtime
                                 FROM {messages} m
@@ -1553,7 +1565,10 @@ class api {
                $favsql
                  WHERE mcm.userid = :userid3
                    AND mc.enabled = :enabled
-                   AND ((mc.type = :individualtype AND maxvisibleconvmessage.convid IS NOT NULL) OR (mc.type = :grouptype))
+                   AND (
+                          (mc.type = :individualtype AND maxvisibleconvmessage.convid IS NOT NULL AND membercount > 1) OR
+                          (mc.type = :grouptype)
+                       )
               GROUP BY mc.type, fav.itemtype
               ORDER BY mc.type ASC";
 
@@ -1562,6 +1577,7 @@ class api {
             'userid2' => $userid,
             'userid3' => $userid,
             'userid4' => $userid,
+            'userid5' => $userid,
             'action' => self::MESSAGE_ACTION_DELETED,
             'enabled' => self::MESSAGE_CONVERSATION_ENABLED,
             'individualtype' => self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
