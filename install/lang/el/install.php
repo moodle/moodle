@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'Φάκελος διαχειριστή';
 $string['availablelangs'] = 'Λίστα διαθέσιμων πακέτων γλωσσών';
 $string['chooselanguagehead'] = 'Επιλογή γλώσσας';
-$string['chooselanguagesub'] = 'Παρακαλούμε, επιλέξτε γλώσσα για την εγκατάσταση ΜΟΝΟ. Θα μπορείτε να επιλέξετε γλώσσα ιστοσελίδας και χρηστών σε μια μετέπειτα οθόνη.';
+$string['chooselanguagesub'] = 'Παρακαλούμε, επιλέξτε γλώσσα για την εγκατάσταση. Αυτή η γλώσσα θα χρησιμοποιηθεί επίσης ως προεπιλεγμένη γλώσσα για τον ιστότοπο, αν και μπορεί να αλλάξει αργότερα.';
 $string['clialreadyconfigured'] = 'Το αρχείο ρυθμίσεων config.php υπάρχει ήδη. Χρησιμοποιήστε το admin/cli/install_database.php για να εγκαταστήσετε το Moodle για αυτόν τον ιστότοπο.';
 $string['clialreadyinstalled'] = 'Το αρχείο ρυθμίσεων config.php υπάρχει ήδη. Χρησιμοποιήστε το admin/cli/install_database.php για να αναβαθμίσετε το Moodle για αυτόν τον ιστότοπο.';
 $string['cliinstallheader'] = 'Moodle {$a} πρόγραμμα εγκατάστασης γραμμής εντολών';
@@ -75,4 +75,4 @@ $string['welcomep40'] = 'Το πακέτο περιλαμβάνει επίσης
 $string['welcomep50'] = 'Η χρήση όλων των εφαρμογών σε αυτό το πακέτο υπόκειται στις αντίστοιχες άδειες. Ολόκληρο το πακέτο <strong>{$a->installername}</strong> είναι <a href="http://www.opensource.org/docs/definition_plain.html">λογισμικό ανοικτού κώδικα</a> και διανέμεται με την <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> άδεια.';
 $string['welcomep60'] = 'Οι παρακάτω σελίδες θα σας καθοδηγήσουν με εύκολα βήματα στην εγκατάσταση και ρύθμιση του <strong>Moodle</strong> στον υπολογιστή σας. Μπορείτε να δεχθείτε τις προεπιλεγμένες ρυθμίσεις ή προαιρετικά, να τις τροποποιήσετε ανάλογα με τις ανάγκες σας.';
 $string['welcomep70'] = 'Πατήστε το κουμπί "Συνέχεια" για να συνεχίσετε με την εκγατάσταση του <strong>Moodle</strong>.';
-$string['wwwroot'] = 'Διεύθυνση ιστοσελίδας';
+$string['wwwroot'] = 'Διεύθυνση ιστού';
