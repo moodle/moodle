@@ -939,6 +939,15 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_message_get_received_contact_requests_count' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'get_received_contact_requests_count',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Gets the number of received contact requests',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_message_delete_contacts' => array(
         'classname' => 'core_message_external',
         'methodname' => 'delete_contacts',
