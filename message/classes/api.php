@@ -1554,7 +1554,7 @@ class api {
         $countsrs = $DB->get_recordset_sql($sql, $params);
         foreach ($countsrs as $key => $val) {
             if (!empty($val->itemtype)) {
-                $counts['favourites'] = $val->count;
+                $counts['favourites'] += $val->count;
                 continue;
             }
             $counts['types'][$val->type] = $val->count;
