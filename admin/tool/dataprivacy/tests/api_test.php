@@ -1712,6 +1712,48 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that delete requests do not filter out protected purpose contexts if the the site is properly configured.
+     */
+    public function test_add_request_contexts_with_status_delete_course_no_site_config() {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - YEARSECS]);
+        $coursecontext = \context_course::instance($course->id);
+
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+        list(, $forumcm) = get_course_and_cm_from_instance($forum->id, 'forum');
+        $contextforum = \context_module::instance($forumcm->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        // Create the initial contextlist.
+        $initialcollection = new \core_privacy\local\request\contextlist_collection($user->id);
+
+        $contextlist = new \core_privacy\local\request\contextlist();
+        $contextlist->add_from_sql('SELECT id FROM {context} WHERE id = :contextid', ['contextid' => $coursecontext->id]);
+        $contextlist->set_component('tool_dataprivacy');
+        $initialcollection->add_contextlist($contextlist);
+
+        $contextlist = new \core_privacy\local\request\contextlist();
+        $contextlist->add_from_sql('SELECT id FROM {context} WHERE id = :contextid', ['contextid' => $contextforum->id]);
+        $contextlist->set_component('mod_forum');
+        $initialcollection->add_contextlist($contextlist);
+
+        $request = api::create_data_request($user->id, api::DATAREQUEST_TYPE_DELETE);
+        api::add_request_contexts_with_status(
+            $initialcollection, $request->get('id'), contextlist_context::STATUS_APPROVED);
+
+        $newcollection = \tool_dataprivacy\request_contextlist::get_records();
+        $this->assertCount(2, $newcollection);
+        foreach ($newcollection as $contextlist) {
+            $requests = contextlist_context::get_records(['contextlistid' => $contextlist->get('contextlistid')]);
+            $this->assertCount(1, $requests);
+        }
+    }
+
+    /**
      * Test that delete requests do not filter out protected purpose contexts if they are already expired.
      */
     public function test_add_request_contexts_with_status_delete_course_expired_protected() {
@@ -1805,6 +1847,64 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
 
         $requests = contextlist_context::get_records();
         $this->assertCount(1, $requests);
+    }
+
+    /**
+     * Test that delete requests do not filter out protected purpose contexts if the the site is properly configured.
+     */
+    public function test_get_approved_contextlist_collection_for_request_delete_course_no_config() {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - YEARSECS]);
+        $coursecontext = \context_course::instance($course->id);
+
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+        list(, $forumcm) = get_course_and_cm_from_instance($forum->id, 'forum');
+        $contextforum = \context_module::instance($forumcm->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        // Create the initial contextlist.
+        $request = api::create_data_request($user->id, api::DATAREQUEST_TYPE_DELETE);
+        $initialcollection = new \core_privacy\local\request\contextlist_collection($user->id);
+
+        $contextlist = new \tool_dataprivacy\contextlist(0, (object) ['component' => 'tool_dataprivacy']);
+        $contextlist->save();
+        $clcontext = new \tool_dataprivacy\contextlist_context(0, (object) [
+                'contextid' => $coursecontext->id,
+                'status' => contextlist_context::STATUS_APPROVED,
+                'contextlistid' => $contextlist->get('id'),
+            ]);
+        $clcontext->save();
+        $rcl = new \tool_dataprivacy\request_contextlist(0, (object) [
+                'requestid' => $request->get('id'),
+                'contextlistid' => $contextlist->get('id'),
+            ]);
+        $rcl->save();
+
+        $contextlist = new \tool_dataprivacy\contextlist(0, (object) ['component' => 'mod_forum']);
+        $contextlist->save();
+        $clcontext = new \tool_dataprivacy\contextlist_context(0, (object) [
+                'contextid' => $contextforum->id,
+                'status' => contextlist_context::STATUS_APPROVED,
+                'contextlistid' => $contextlist->get('id'),
+            ]);
+        $clcontext->save();
+        $rcl = new \tool_dataprivacy\request_contextlist(0, (object) [
+                'requestid' => $request->get('id'),
+                'contextlistid' => $contextlist->get('id'),
+            ]);
+        $rcl->save();
+
+        $collection = api::get_approved_contextlist_collection_for_request($request);
+        $this->assertCount(2, $collection);
+
+        $list = $collection->get_contextlist_for_component('tool_dataprivacy');
+        $this->assertCount(1, $list);
+
+        $list = $collection->get_contextlist_for_component('mod_forum');
+        $this->assertCount(1, $list);
     }
 
     /**
