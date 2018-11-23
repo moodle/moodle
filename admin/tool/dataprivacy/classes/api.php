@@ -1087,12 +1087,16 @@ class api {
 
         // Create the approved contextlist collection object.
         $approvedcollection = new contextlist_collection($collection->get_userid());
+        $isconfigured = data_registry::defaults_set();
 
         foreach ($collection as $contextlist) {
             $contextids = [];
             foreach ($contextlist as $context) {
-                if (self::DATAREQUEST_TYPE_DELETE == $type) {
+                if ($isconfigured && self::DATAREQUEST_TYPE_DELETE == $type) {
                     // Data can only be deleted from it if the context is either expired, or unprotected.
+                    // Note: We can only check whether a context is expired or unprotected if the site is configured and
+                    // defaults are set appropriately. If they are not, we treat all contexts as though they are
+                    // unprotected.
                     $purpose = static::get_effective_context_purpose($context);
                     if (!expired_contexts_manager::is_context_expired_or_unprotected_for_user($context, $foruser)) {
                         continue;

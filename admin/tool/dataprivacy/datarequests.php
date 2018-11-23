@@ -38,6 +38,10 @@ $title = get_string('datarequests', 'tool_dataprivacy');
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
 
+if (!\tool_dataprivacy\data_registry::defaults_set()) {
+    \core\notification::error(get_string('systemconfignotsetwarning', 'tool_dataprivacy'));
+}
+
 if (\tool_dataprivacy\api::is_site_dpo($USER->id)) {
     $filtersapplied = optional_param_array('request-filters', [-1], PARAM_NOTAGS);
     $filterscleared = optional_param('filters-cleared', 0, PARAM_INT);
