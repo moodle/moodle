@@ -753,6 +753,60 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Returns the number of contact requests the user has received parameters description.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_received_contact_requests_count_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of the user we want to return the number of ' .
+                    'received contact requests for', VALUE_REQUIRED),
+            )
+        );
+    }
+
+    /**
+     * Returns the number of contact requests the user has received.
+     *
+     * @param int $userid The ID of the user we want to return the number of received contact requests for
+     * @return external_value
+     */
+    public static function get_received_contact_requests_count(int $userid) {
+        global $CFG, $USER;
+
+        // Check if messaging is enabled.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = [
+            'userid' => $userid,
+        ];
+        $params = self::validate_parameters(self::get_received_contact_requests_count_parameters(), $params);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['userid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
+
+        return \core_message\api::get_received_contact_requests_count($params['userid']);
+    }
+
+    /**
+     * Returns the number of contact requests the user has received return description.
+     *
+     * @return external_value
+     */
+    public static function get_received_contact_requests_count_returns() {
+        return new external_value(PARAM_INT, 'The number of received contact requests');
+    }
+
+    /**
      * Returns get conversation members parameters description.
      *
      * @return external_function_parameters

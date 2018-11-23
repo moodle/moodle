@@ -664,6 +664,85 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test getting the number of received contact requests.
+     */
+    public function test_get_received_contact_requests_count() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        $contactrequestnumber = core_message_external::get_received_contact_requests_count($user1->id);
+        $contactrequestnumber = external_api::clean_returnvalue(
+            core_message_external::get_received_contact_requests_count_returns(), $contactrequestnumber);
+        $this->assertEquals(0, $contactrequestnumber);
+
+        \core_message\api::create_contact_request($user2->id, $user1->id);
+
+        $contactrequestnumber = core_message_external::get_received_contact_requests_count($user1->id);
+        $contactrequestnumber = external_api::clean_returnvalue(
+            core_message_external::get_received_contact_requests_count_returns(), $contactrequestnumber);
+        $this->assertEquals(1, $contactrequestnumber);
+
+        \core_message\api::create_contact_request($user3->id, $user1->id);
+
+        $contactrequestnumber = core_message_external::get_received_contact_requests_count($user1->id);
+        $contactrequestnumber = external_api::clean_returnvalue(
+            core_message_external::get_received_contact_requests_count_returns(), $contactrequestnumber);
+        $this->assertEquals(2, $contactrequestnumber);
+
+        \core_message\api::create_contact_request($user1->id, $user4->id);
+
+        // Web service should ignore sent requests.
+        $contactrequestnumber = core_message_external::get_received_contact_requests_count($user1->id);
+        $contactrequestnumber = external_api::clean_returnvalue(
+            core_message_external::get_received_contact_requests_count_returns(), $contactrequestnumber);
+        $this->assertEquals(2, $contactrequestnumber);
+    }
+
+    /**
+     * Test getting the number of received contact requests with no permissions.
+     */
+    public function test_get_received_contact_requests_count_no_permission() {
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user2);
+
+        // Ensure an exception is thrown.
+        $this->expectException('required_capability_exception');
+        core_message_external::get_received_contact_requests_count($user1->id);
+    }
+
+    /**
+     * Test getting the number of received contact requests with messaging disabled.
+     */
+    public function test_get_received_contact_requests_count_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::get_received_contact_requests_count($user1->id);
+    }
+
+    /**
      * Test creating a contact request.
      */
     public function test_create_contact_request() {

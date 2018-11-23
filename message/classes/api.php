@@ -2504,14 +2504,14 @@ class api {
     }
 
     /**
-     * Count how many contact requests the user has received.
+     * Returns the number of contact requests the user has received.
      *
-     * @param \stdClass $user The user to fetch contact requests for
+     * @param int $userid The ID of the user we want to return the number of received contact requests for
      * @return int The count
      */
-    public static function count_received_contact_requests(\stdClass $user) : int {
+    public static function get_received_contact_requests_count(int $userid) : int {
         global $DB;
-        return $DB->count_records('message_contact_requests', ['requesteduserid' => $user->id]);
+        return $DB->count_records('message_contact_requests', ['requesteduserid' => $userid]);
     }
 
     /**
