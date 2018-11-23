@@ -360,7 +360,19 @@ function iomadcertificate_get_issue($course, $user, $iomadcertificate, $cm) {
 
     // Check if there is an issue already, should only ever be one
     if ($certissue = $DB->get_record('iomadcertificate_issues', array('userid' => $user->id, 'iomadcertificateid' => $iomadcertificate->id))) {
-        return $certissue;
+        // is this from before the user was enrolled?
+        $enrolinfo = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
+                                          JOIN {enrol} e ON (ue.enrolid = e.id)
+                                          WHERE e.courseid = :courseid
+                                          AND e.status = 0
+                                          AND ue.userid = :userid",
+                                          array('courseid' => $course->id, 'userid' => $user->id));
+        if ($certissue->timecreated > $enrolinfo->timestart) {
+            return $certissue;
+        } else {
+            // No. Remove this record.
+            $DB->delete_records('iomadcertificate_issues', array('id' => $certissue->id));
+        }
     }
 
     // Create new iomadcertificate issue record
@@ -368,7 +380,7 @@ function iomadcertificate_get_issue($course, $user, $iomadcertificate, $cm) {
     $certissue->iomadcertificateid = $iomadcertificate->id;
     $certissue->userid = $user->id;
     $certissue->code = iomadcertificate_generate_code();
-    $certissue->timecreated =  time();
+    $certissue->timecreated = time();
     $certissue->id = $DB->insert_record('iomadcertificate_issues', $certissue);
 
     // Email to the teachers and anyone else
