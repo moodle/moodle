@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ddimageortext_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('fox', 'maths', 'xsection');
+        return array('fox', 'maths', 'xsection', 'mixedlang');
     }
 
     /**
@@ -247,5 +247,40 @@ class qtype_ddimageortext_test_helper extends question_test_helper {
         $fromform->hintshownumcorrect = array(1, 1, 1, 1);
 
         return $fromform;
+    }
+
+    /**
+     * Make a test question where the drag items are a different language than the main question text.
+     *
+     * @return qtype_ddimageortext_question
+     */
+    public function make_ddimageortext_question_mixedlang() {
+        question_bank::load_question_definition_classes('ddimageortext');
+        $dd = new qtype_ddimageortext_question();
+
+        test_question_maker::initialise_a_question($dd);
+
+        $dd->name = 'Question about French in English.';
+        $dd->questiontext = '<p>Complete the blanks in this sentence.</p>' .
+                '<p lang="fr">J\'ai perdu [[1]] plume de [[2]] tante - l\'avez-vous vue?</p>';
+        $dd->generalfeedback = 'This sentence uses each letter of the alphabet.';
+        $dd->qtype = question_bank::get_qtype('ddimageortext');
+
+        $dd->shufflechoices = true;
+
+        test_question_maker::set_standard_combined_feedback_fields($dd);
+
+        $dd->choices = $this->make_choice_structure(array(
+                new qtype_ddimageortext_drag_item('<span lang="fr">la</span>', 1, 1),
+                new qtype_ddimageortext_drag_item('<span lang="fr">ma</span>', 2, 1),
+        ));
+
+        $dd->places = $this->make_place_structure(array(
+                new qtype_ddimageortext_drop_zone('', 1, 1),
+                new qtype_ddimageortext_drop_zone('', 2, 1)
+        ));
+        $dd->rightchoices = array(1 => 1, 2 => 2);
+
+        return $dd;
     }
 }
