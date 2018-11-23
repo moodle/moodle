@@ -759,6 +759,11 @@ class api {
                 continue;
             }
 
+            // Exclude 'self' conversations for now.
+            if (isset($selfconversations[$conversation->id])) {
+                continue;
+            }
+
             $conv = new \stdClass();
             $conv->id = $conversation->id;
             $conv->name = $conversation->conversationname;
