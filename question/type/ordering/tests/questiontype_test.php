@@ -104,4 +104,60 @@ class qtype_ordering_test extends advanced_testcase {
             }
         }
     }
+
+    public function test_get_possible_responses() {
+        $questiondata = test_question_maker::get_question_data('ordering');
+        $possibleresponses = $this->qtype->get_possible_responses($questiondata);
+        $expectedresponseclasses = array(
+            'Modular' => array(
+                    1 => new question_possible_response('Position 1', 0.1666667),
+                    2 => new question_possible_response('Position 2', 0),
+                    3 => new question_possible_response('Position 3', 0),
+                    4 => new question_possible_response('Position 4', 0),
+                    5 => new question_possible_response('Position 5', 0),
+                    6 => new question_possible_response('Position 6', 0),
+            ),
+            'Object' => array(
+                    1 => new question_possible_response('Position 1', 0),
+                    2 => new question_possible_response('Position 2', 0.1666667),
+                    3 => new question_possible_response('Position 3', 0),
+                    4 => new question_possible_response('Position 4', 0),
+                    5 => new question_possible_response('Position 5', 0),
+                    6 => new question_possible_response('Position 6', 0),
+            ),
+            'Oriented' => array(
+                    1 => new question_possible_response('Position 1', 0),
+                    2 => new question_possible_response('Position 2', 0),
+                    3 => new question_possible_response('Position 3', 0.1666667),
+                    4 => new question_possible_response('Position 4', 0),
+                    5 => new question_possible_response('Position 5', 0),
+                    6 => new question_possible_response('Position 6', 0),
+            ),
+            'Dynamic' => array(
+                    1 => new question_possible_response('Position 1', 0),
+                    2 => new question_possible_response('Position 2', 0),
+                    3 => new question_possible_response('Position 3', 0),
+                    4 => new question_possible_response('Position 4', 0.1666667),
+                    5 => new question_possible_response('Position 5', 0),
+                    6 => new question_possible_response('Position 6', 0),
+            ),
+            'Learning' => array(
+                    1 => new question_possible_response('Position 1', 0),
+                    2 => new question_possible_response('Position 2', 0),
+                    3 => new question_possible_response('Position 3', 0),
+                    4 => new question_possible_response('Position 4', 0),
+                    5 => new question_possible_response('Position 5', 0.1666667),
+                    6 => new question_possible_response('Position 6', 0),
+            ),
+            'Environment' => array(
+                    1 => new question_possible_response('Position 1', 0),
+                    2 => new question_possible_response('Position 2', 0),
+                    3 => new question_possible_response('Position 3', 0),
+                    4 => new question_possible_response('Position 4', 0),
+                    5 => new question_possible_response('Position 5', 0),
+                    6 => new question_possible_response('Position 6', 0.1666667),
+            ),
+        );
+        $this->assertEquals($expectedresponseclasses, $possibleresponses, '', 0.0000005);
+    }
 }

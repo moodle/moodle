@@ -24,6 +24,8 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
@@ -377,5 +379,43 @@ class qtype_ordering_question_test extends advanced_testcase {
             }
             $numberofids--;
         }
+    }
+
+    public function test_classify_response_correct() {
+        $question = test_question_maker::make_question('ordering');
+        $question->start_attempt(new question_attempt_step(), 1);
+
+        $response = $this->get_response($question, ['Modular', 'Object', 'Oriented', 'Dynamic', 'Learning', 'Environment']);
+        $classifiedresponse = $question->classify_response($response);
+
+        $expected = [
+                'Modular' => new question_classified_response(1, 'Position 1', 0.1666667),
+                'Object' => new question_classified_response(2, 'Position 2', 0.1666667),
+                'Oriented' => new question_classified_response(3, 'Position 3', 0.1666667),
+                'Dynamic' => new question_classified_response(4, 'Position 4', 0.1666667),
+                'Learning' => new question_classified_response(5, 'Position 5', 0.1666667),
+                'Environment' => new question_classified_response(6, 'Position 6', 0.1666667),
+        ];
+
+        $this->assertEquals($expected, $classifiedresponse, '', 0.0000005);
+    }
+
+    public function test_classify_response_partially_correct() {
+        $question = test_question_maker::make_question('ordering');
+        $question->start_attempt(new question_attempt_step(), 1);
+
+        $response = $this->get_response($question, ['Dynamic', 'Modular', 'Object', 'Oriented', 'Learning', 'Environment']);
+        $classifiedresponse = $question->classify_response($response);
+
+        $expected = [
+                'Modular' => new question_classified_response(2, 'Position 2', 0),
+                'Object' => new question_classified_response(3, 'Position 3', 0),
+                'Oriented' => new question_classified_response(4, 'Position 4', 0),
+                'Dynamic' => new question_classified_response(1, 'Position 1', 0),
+                'Learning' => new question_classified_response(5, 'Position 5', 0.1666667),
+                'Environment' => new question_classified_response(6, 'Position 6', 0.1666667),
+        ];
+
+        $this->assertEquals($expected, $classifiedresponse, '', 0.0000005);
     }
 }

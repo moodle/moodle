@@ -296,17 +296,23 @@ class qtype_ordering extends question_type {
      *      responses to that subquestion.
      */
     public function get_possible_responses($questiondata) {
-        $responses = array();
-        $question = $this->make_question($questiondata);
-        if ($question->correctresponse) {
-			foreach ($question->correctresponse as $position => $answerid) {
-				$responses[] = $position.': '.$question->answers[$answerid]->answer;
-			}
+        $responseclasses = array();
+        $itemcount = count($questiondata->options->answers);
+
+        $position = 0;
+        foreach ($questiondata->options->answers as $answerid => $answer) {
+            $position += 1;
+            $classes = array();
+            for ($i = 1; $i <= $itemcount; $i++) {
+                $classes[$i] = new question_possible_response(
+                        get_string('positionx', 'qtype_ordering', $i),
+                        ($i === $position) / $itemcount);
+            }
+            $responseclasses[question_utils::to_plain_text(
+                    $answer->answer, $answer->answerformat)] = $classes;
         }
-		return array(
-			0 => question_possible_response::no_response(),
-			1 => implode(', ', $responses)
-		);
+
+        return $responseclasses;
     }
 
     /**

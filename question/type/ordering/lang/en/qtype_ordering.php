@@ -80,6 +80,7 @@ $string['longestorderedsubset'] = 'Longest ordered subset';
 $string['noresponsedetails'] = 'Sorry, no details of the response to this question are available.';
 $string['noscore'] = 'No score';
 $string['notenoughanswers'] = 'Ordering questions must have more than {$a} answers.';
+$string['positionx'] = 'Position {$a}';
 $string['relativeallpreviousandnext'] = 'Relative to ALL the previous and next items';
 $string['relativenextexcludelast'] = 'Relative to the next item (excluding last)';
 $string['relativenextincludelast'] = 'Relative to the next item (including last)';

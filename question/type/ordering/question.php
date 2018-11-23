@@ -18,6 +18,7 @@
  * Ordering question definition classes.
  *
  * @package    qtype_ordering
+ *
  * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -251,7 +252,22 @@ class qtype_ordering_question extends question_graded_automatically {
      *      returns an empty array if no analysis is possible.
      */
     public function classify_response(array $response) {
-        return array();
+        $this->update_current_response($response);
+        $fraction = 1 / count($this->correctresponse);
+
+        $classifiedresponse = array();
+        foreach ($this->correctresponse as $position => $answerid) {
+            if (in_array($answerid, $this->currentresponse)) {
+                $currentposition = array_search($answerid, $this->currentresponse);
+            }
+            $answer = $this->answers[$answerid];
+            $classifiedresponse[question_utils::to_plain_text($answer->answer, $answer->answerformat)] =
+                    new question_classified_response($currentposition + 1,
+                            get_string('positionx', 'qtype_ordering', $currentposition + 1),
+                    ($position == $currentposition) * $fraction);
+        }
+
+        return $classifiedresponse;
     }
 
     /**
