@@ -457,7 +457,7 @@ class core_course_renderer extends plugin_renderer_base {
             }
         }
         if ($completionicon) {
-            $formattedname = $mod->get_formatted_name();
+            $formattedname = html_entity_decode($mod->get_formatted_name(), ENT_QUOTES, 'UTF-8');
             if ($completiondata->overrideby) {
                 $args = new stdClass();
                 $args->modname = $formattedname;
@@ -498,7 +498,7 @@ class core_course_renderer extends plugin_renderer_base {
                 $output .= html_writer::empty_tag('input', array(
                     'type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
                 $output .= html_writer::empty_tag('input', array(
-                    'type' => 'hidden', 'name' => 'modulename', 'value' => $mod->name));
+                    'type' => 'hidden', 'name' => 'modulename', 'value' => $formattedname));
                 $output .= html_writer::empty_tag('input', array(
                     'type' => 'hidden', 'name' => 'completionstate', 'value' => $newstate));
                 $output .= html_writer::tag('button',
