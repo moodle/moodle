@@ -11224,8 +11224,6 @@ div.editor_atto_toolbar button .icon {
 
 .block .block-cards .icon {
   margin-right: 0; }
-  .block .block-cards .icon.fa-star {
-    color: #1177d1; }
 
 .block .block-cards .card .coursemenubtn, .block .block-cards #page-enrol-users #filterform .coursemenubtn, #page-enrol-users .block .block-cards #filterform .coursemenubtn, .block .block-cards .que .history .coursemenubtn, .que .block .block-cards .history .coursemenubtn, .block .block-cards .userprofile .profile_tree section .coursemenubtn, .userprofile .profile_tree .block .block-cards section .coursemenubtn, .block .block-cards .groupinfobox .coursemenubtn, .block .block-cards .well .coursemenubtn {
   margin-top: -0.5rem; }
