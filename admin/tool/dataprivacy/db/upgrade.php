@@ -299,5 +299,19 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018110700, 'tool', 'dataprivacy');
     }
 
+    if ($oldversion < 2018112500) {
+        // Delete orphaned data privacy requests.
+        $sql = "SELECT r.id
+                  FROM {tool_dataprivacy_request} r LEFT JOIN {user} u ON r.userid = u.id
+                 WHERE u.id IS NULL";
+        $orphaned = $DB->get_fieldset_sql($sql);
+
+        if ($orphaned) {
+            $DB->delete_records_list('tool_dataprivacy_request', 'id', $orphaned);
+        }
+
+        upgrade_plugin_savepoint(true, 2018112500, 'tool', 'dataprivacy');
+    }
+
     return true;
 }
