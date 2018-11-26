@@ -215,6 +215,10 @@ class qtype_calculatedmulti extends qtype_calculated {
         return parent::make_answer($answer);
     }
 
+    protected function make_hint($hint) {
+        return question_hint_with_parts::load_from_record($hint);
+    }
+
     public function comment_header($question) {
         $strheader = '';
         $delimiter = '';
