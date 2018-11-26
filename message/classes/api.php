@@ -586,6 +586,7 @@ class api {
         $conversationset = $DB->get_recordset_sql($sql, $params, $limitfrom, $limitnum);
 
         $conversations = [];
+        $selfconversations = []; // Used to track legacy conversations with one's self (both conv members the same user).
         $members = [];
         $individualmembers = [];
         $groupmembers = [];
@@ -613,6 +614,9 @@ class api {
         //
         // For 'individual' type conversations between 2 users, regardless of who sent the last message,
         // we want the details of the other member in the conversation (i.e. not the current user).
+        // The only exception to the 'not the current user' rule is for 'self' conversations - a legacy construct in which a user
+        // can message themselves via user bulk actions. Subsequently, there are 2 records for the same user created in the members
+        // table.
         //
         // For 'group' type conversations, we want the details of the member who sent the last message, if there is one.
         // This can be the current user or another group member, but for groups without messages, this will be empty.
@@ -653,6 +657,23 @@ class api {
             foreach ($conversationmembers as $mid => $member) {
                 $members[$member->conversationid][$member->userid] = $member->userid;
                 $individualmembers[$member->userid] = $member->userid;
+            }
+
+            // Self conversations: If any of the individual conversations which were missing members are still missing members,
+            // we know these must be 'self' conversations. This is a legacy scenario, created via user bulk actions.
+            // In such cases, the member returned should be the current user.
+            //
+            // NOTE: Currently, these conversations are not returned by this method, however,
+            // identifying them is important for future reference.
+            foreach ($individualconversations as $indconvid) {
+                if (empty($members[$indconvid])) {
+                    // Keep track of the self conversation (for future use).
+                    $selfconversations[$indconvid] = $indconvid;
+
+                    // Set the member to the current user.
+                    $members[$indconvid][$userid] = $userid;
+                    $individualmembers[$userid] = $userid;
+                }
             }
         }
 
@@ -702,7 +723,7 @@ class api {
         // MEMBER COUNT.
         $cids = array_column($conversations, 'id');
         list ($cidinsql, $cidinparams) = $DB->get_in_or_equal($cids, SQL_PARAMS_NAMED, 'convid');
-        $membercountsql = "SELECT conversationid, count(id) AS membercount
+        $membercountsql = "SELECT conversationid, count(DISTINCT userid) AS membercount
                              FROM {message_conversation_members} mcm
                             WHERE mcm.conversationid $cidinsql
                          GROUP BY mcm.conversationid";
@@ -735,6 +756,11 @@ class api {
             // Group conversations with deleted users or no messages are always returned.
             if ($conversation->conversationtype == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL
                     && (empty($conversation->messageid))) {
+                continue;
+            }
+
+            // Exclude 'self' conversations for now.
+            if (isset($selfconversations[$conversation->id])) {
                 continue;
             }
 
@@ -1497,6 +1523,7 @@ class api {
         // Some restrictions we need to be aware of:
         // - Individual conversations containing soft-deleted user must be counted.
         // - Individual conversations containing only deleted messages must NOT be counted.
+        // - Individual conversations which are legacy 'self' conversations (2 members, both the same user) must NOT be counted.
         // - Group conversations with 0 messages must be counted.
         // - Linked conversations which are disabled (enabled = 0) must NOT be counted.
         // - Any type of conversation can be included in the favourites count, however, the type counts and the favourites count
@@ -1512,6 +1539,17 @@ class api {
                   FROM {message_conversations} mc
             INNER JOIN {message_conversation_members} mcm
                     ON mcm.conversationid = mc.id
+            INNER JOIN (
+                              SELECT mcm.conversationid, count(distinct mcm.userid) as membercount
+                                FROM {message_conversation_members} mcm
+                               WHERE mcm.conversationid IN (
+                                        SELECT DISTINCT conversationid
+                                          FROM {message_conversation_members} mcm2
+                                         WHERE userid = :userid5
+                                     )
+                            GROUP BY mcm.conversationid
+                       ) uniquemembercount
+                    ON uniquemembercount.conversationid = mc.id
              LEFT JOIN (
                               SELECT m.conversationid as convid, MAX(m.timecreated) as maxtime
                                 FROM {messages} m
@@ -1527,7 +1565,10 @@ class api {
                $favsql
                  WHERE mcm.userid = :userid3
                    AND mc.enabled = :enabled
-                   AND ((mc.type = :individualtype AND maxvisibleconvmessage.convid IS NOT NULL) OR (mc.type = :grouptype))
+                   AND (
+                          (mc.type = :individualtype AND maxvisibleconvmessage.convid IS NOT NULL AND membercount > 1) OR
+                          (mc.type = :grouptype)
+                       )
               GROUP BY mc.type, fav.itemtype
               ORDER BY mc.type ASC";
 
@@ -1536,6 +1577,7 @@ class api {
             'userid2' => $userid,
             'userid3' => $userid,
             'userid4' => $userid,
+            'userid5' => $userid,
             'action' => self::MESSAGE_ACTION_DELETED,
             'enabled' => self::MESSAGE_CONVERSATION_ENABLED,
             'individualtype' => self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
