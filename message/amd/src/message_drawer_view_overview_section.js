@@ -194,7 +194,7 @@ function(
                         carry = member.fullname;
                     }
                     return carry;
-                }, null) + ':';
+                }, null);
             }
 
             return formattedConversation;
@@ -363,7 +363,7 @@ function(
         var message = conversation.messages[conversation.messages.length - 1];
         var youString = '';
         var stringRequests = [
-            {key: 'you', component: 'core_message'},
+            {key: 'yousender', component: 'core_message'},
             {key: 'strftimetime24', component: 'core_langconfig'},
         ];
         return Str.get_strings(stringRequests)
@@ -375,17 +375,16 @@ function(
                 return dates[0];
             })
             .then(function(dateString) {
-                var lastMessage = $(message.text).text();
-
-                if (message.fromLoggedInUser) {
-                    lastMessage = youString + ' ' + lastMessage;
-                } else {
-                    lastMessage = message.userFrom.fullname + ': ' + lastMessage;
-                }
-
-                element.find(SELECTORS.LAST_MESSAGE).html(lastMessage);
                 element.find(SELECTORS.LAST_MESSAGE_DATE).text(dateString).removeClass('hidden');
-                return dateString;
+
+                // Now load the last message.
+                return Str.get_string('conversationlastmessage', 'core_message', {
+                    sender: message.fromLoggedInUser ? youString : message.userFrom.fullname,
+                    message: "<span class='text-muted'>" + $(message.text).text() + "</span>"
+                });
+            })
+            .then(function(lastMessage) {
+                return element.find(SELECTORS.LAST_MESSAGE).html(lastMessage);
             });
     };
 

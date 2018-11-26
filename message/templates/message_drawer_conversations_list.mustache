@@ -66,16 +66,34 @@
                 <p class="m-0 text-truncate">{{.}}</p>
             {{/subname}}
             <p class="m-0 font-weight-light text-truncate" data-region="last-message">
-                {{#sentfromcurrentuser}}{{#str}} you, core_message {{/str}}{{/sentfromcurrentuser}}
-                {{^sentfromcurrentuser}}{{lastsendername}}{{/sentfromcurrentuser}}
-                <span class="text-muted">{{lastmessage}}</span>
+                {{#sentfromcurrentuser}}
+                    {{#str}}
+                        conversationlastmessage,
+                        core_message,
+                        {
+                            "sender": "{{#str}} yousender, core_message {{/str}}",
+                            "message": "<span class='text-muted'>{{lastmessage}}</span>"
+                        }
+                    {{/str}}
+                {{/sentfromcurrentuser}}
+                {{^sentfromcurrentuser}}
+                    {{#lastsendername}}
+                        {{#str}}
+                            conversationlastmessage,
+                            core_message,
+                            {
+                                "sender": "{{.}}",
+                                "message": "<span class='text-muted'>{{lastmessage}}</span>"
+                            }
+                        {{/str}}
+                    {{/lastsendername}}
+                {{/sentfromcurrentuser}}
             </p>
         </div>
         <div class="d-flex align-self-stretch">
             <div
-                class="ml-auto small position-absolute text-muted {{^lastmessagedate}}hidden{{/lastmessagedate}}"
+                class="px-2 py-1 small position-absolute position-right text-muted {{^lastmessagedate}}hidden{{/lastmessagedate}}"
                 data-region="last-message-date"
-                style="right: 0.5rem"
             >
                 {{#lastmessagedate}}
                     {{#userdate}} {{.}}, {{#str}} strftimetime24, core_langconfig  {{/str}} {{/userdate}}

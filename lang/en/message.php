@@ -46,6 +46,7 @@ $string['contactblocked'] = 'Contact blocked';
 $string['contactrequests'] = 'Contact requests';
 $string['contactrequestsent'] = 'Contact request sent';
 $string['contacts'] = 'Contacts';
+$string['conversationlastmessage'] = '{$a->sender}: {$a->message}';
 $string['decline'] = 'Decline';
 $string['defaultmessageoutputs'] = 'Default message outputs';
 $string['defaults'] = 'Defaults';
@@ -250,6 +251,7 @@ $string['viewunreadmessageswith'] = 'View unread messages with {$a}';
 $string['writeamessage'] = 'Write a message...';
 $string['wouldliketocontactyou'] = 'Would like to contact you';
 $string['you'] = 'You:';
+$string['yousender'] = 'You';
 $string['youhaveblockeduser'] = 'You have blocked this user in the past';
 $string['yourcontactrequestpending'] = 'Your contact request is pending with {$a}';
 

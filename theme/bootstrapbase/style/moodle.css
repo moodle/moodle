@@ -4827,6 +4827,10 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
   text-decoration: none !important;
   /* stylelint-disable-line declaration-no-important */
 }
+.position-right {
+  right: 0 !important;
+  /* stylelint-disable-line declaration-no-important */
+}
 /* admin.less */
 .formtable tbody th {
   font-weight: normal;
