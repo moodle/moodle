@@ -4,6 +4,7 @@ Feature: Add media to Atto
 
   Background:
     Given I log in as "admin"
+    And I change window size to "large"
     And I follow "Manage private files..."
     And I upload "lib/editor/atto/tests/fixtures/moodle-logo.webm" file to "Files" filemanager
     And I upload "lib/editor/atto/tests/fixtures/moodle-logo.mp4" file to "Files" filemanager
@@ -58,7 +59,6 @@ Feature: Add media to Atto
     And I click on "Private files" "link" in the ".moodle-dialogue-base[aria-hidden='false'] .fp-repo-area" "css_element"
     And I click on "moodle-logo.png" "link"
     And I click on "Select this file" "button" in the ".moodle-dialogue-base[aria-hidden='false']" "css_element"
-    And I change window size to "large"
     And I set the field with xpath "//*[contains(concat(' ', normalize-space(@class), ' '), ' atto_media_width_entry ')]" to "420"
     And I set the field with xpath "//*[contains(concat(' ', normalize-space(@class), ' '), ' atto_media_height_entry ')]" to "69"
     And I set the field "Enter title" to "VideoTitle"
@@ -84,7 +84,6 @@ Feature: Add media to Atto
   @javascript @atto_media_video
   Scenario: Insert some media as a video with tracks
     Given I click on "Video" "link"
-    And I change window size to "large"
     And I click on "Browse repositories..." "button" in the "#id_summary_editor_video .atto_media_source.atto_media_media_source" "css_element"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle-logo.webm" "link"
