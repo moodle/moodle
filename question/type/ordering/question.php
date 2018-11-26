@@ -146,7 +146,7 @@ class qtype_ordering_question extends question_graded_automatically {
             case self::SELECT_CONTIGUOUS:
                 $answerids = array_keys($answers);
                 $offset = mt_rand(0, $countanswers - $selectcount);
-                $answerids = array_slice($answerids, $offset, $selectcount, true);
+                $answerids = array_slice($answerids, $offset, $selectcount);
                 break;
         }
 
