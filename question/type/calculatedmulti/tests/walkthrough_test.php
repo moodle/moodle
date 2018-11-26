@@ -44,8 +44,8 @@ class qtype_calculatedmulti_walkthrough_test extends qbehaviour_walkthrough_test
         $q = test_question_maker::make_question('calculatedmulti', 'singleresponse');
         $q->shuffleanswers = false;
         $q->hints = array(
-            new question_hint(1, 'This is the first hint.', FORMAT_HTML),
-            new question_hint(2, 'This is the second hint.', FORMAT_HTML),
+            new question_hint_with_parts(1, 'This is the first hint.', FORMAT_HTML, true, false),
+            new question_hint_with_parts(2, 'This is the second hint.', FORMAT_HTML, true, false),
         );
         $this->start_attempt_at_question($q, 'interactive', 3, 2);
         $values = $q->vs->get_values();
@@ -108,8 +108,8 @@ class qtype_calculatedmulti_walkthrough_test extends qbehaviour_walkthrough_test
         $q = test_question_maker::make_question('calculatedmulti', 'multiresponse');
         $q->shuffleanswers = false;
         $q->hints = array(
-                new question_hint(1, 'This is the first hint.', FORMAT_HTML),
-                new question_hint(2, 'This is the second hint.', FORMAT_HTML),
+                new question_hint_with_parts(1, 'This is the first hint.', FORMAT_HTML, true, false),
+                new question_hint_with_parts(2, 'This is the second hint.', FORMAT_HTML, true, false),
         );
         $this->start_attempt_at_question($q, 'interactive', 3, 2);
         $values = $q->vs->get_values();
