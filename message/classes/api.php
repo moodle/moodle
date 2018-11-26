@@ -2511,7 +2511,14 @@ class api {
      */
     public static function get_received_contact_requests_count(int $userid) : int {
         global $DB;
-        return $DB->count_records('message_contact_requests', ['requesteduserid' => $userid]);
+        $sql = "SELECT COUNT(mcr.id)
+                  FROM {message_contact_requests} mcr
+             LEFT JOIN {message_users_blocked} mub
+                    ON mub.userid = mcr.requesteduserid AND mub.blockeduserid = mcr.userid
+                 WHERE mcr.requesteduserid = :requesteduserid
+                   AND mub.id IS NULL";
+        $params = ['requesteduserid' => $userid];
+        return $DB->count_records_sql($sql, $params);
     }
 
     /**
