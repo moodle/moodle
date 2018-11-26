@@ -16376,6 +16376,9 @@ body {
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
+.block .block-cards .multiline {
+  white-space: normal;
+}
 .block .block-cards .summary img {
   max-width: 100%;
 }

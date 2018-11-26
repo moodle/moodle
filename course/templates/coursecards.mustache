@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_myoverview/view-list
+    @template block_myoverview/view-cards
 
-    This template renders the list view for the myoverview block.
+    This template renders the cards view for the myoverview block.
 
     Example context (json):
     {
@@ -34,36 +34,37 @@
     }
 }}
 
-<ul class="list-group">
+<div class="card-deck dashboard-card-deck {{$classes}}{{/classes}}" role="list">
 {{#courses}}
-    <li class="list-group-item course-listitem"
+    <div class="card dashboard-card" role="listitem"
         data-region="course-content"
         data-course-id="{{{id}}}">
-        <div class="row-fluid">
-            <div class="{{#hasprogress}}col-md-6 span6{{/hasprogress}}{{^hasprogress}}col-md-11 span11{{/hasprogress}} d-flex align-items-center">
-                <a href="{{viewurl}}" class="coursename">
+        <a href="{{viewurl}}" tabindex="-1">
+            <div class="card-img dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
+                <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
+            </div>
+        </a>
+        <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
+            <div class="d-flex align-items-start">
+                <a href="{{viewurl}}" class="coursename mr-2 text-truncate">
                     <span class="sr-only">
                         {{#str}}aria:courseshortname, core_course{{/str}}
                     </span>
-                    <div class="text-muted muted">
+                    {{#showshortname}}
+                    <div class="text-muted muted w-100 mb-1 text-truncate">
                         {{{shortname}}}
                     </div>
+                    {{/showshortname}}
                     {{> core_course/favouriteicon }}
                     <span class="sr-only">
                         {{#str}}aria:coursename, core_course{{/str}}
                     </span>
-                    {{{fullname}}}
+                    {{$coursename}}{{/coursename}}
                 </a>
-            </div>
-            {{#hasprogress}}
-            <div class="col-md-5 span5 pt-1">
-                {{> block_myoverview/progress-bar}}
-            </div>
-            {{/hasprogress}}
-            <div class="col-md-1 span1 p-0 d-flex">
-                {{> block_myoverview/course-action-menu }}
+                {{$menu}}{{/menu}}
             </div>
         </div>
-    </li>
+        {{$progress}}{{/progress}}
+    </div>
 {{/courses}}
-</ul>
+</div>

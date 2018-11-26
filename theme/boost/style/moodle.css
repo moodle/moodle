@@ -11240,6 +11240,9 @@ div.editor_atto_toolbar button .icon {
 .block .block-cards .btn-link {
   color: inherit; }
 
+.block .block-cards .multiline {
+  white-space: normal; }
+
 .block .block-cards .btn.btn-link.btn-icon, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion {
   height: 36px;
   width: 36px;
