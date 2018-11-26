@@ -27,8 +27,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/question/type/calculated/question.php');
-
+require_once($CFG->dirroot . '/question/type/calculatedmulti/question.php');
+require_once($CFG->dirroot . '/question/type/calculated/tests/helper.php');
 
 /**
  * Test helper class for the calculated multiple-choice question type.
@@ -38,36 +38,91 @@ require_once($CFG->dirroot . '/question/type/calculated/question.php');
  */
 class qtype_calculatedmulti_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('sum');
+        return array('singleresponse', 'multiresponse');
     }
 
     /**
      * Makes a calculated multiple-choice question about summing two numbers.
-     * @return qtype_calculatedmulti_question
+     * @return qtype_calculatedmulti_single_question
      */
-    public function make_calculatedmulti_question_sum() {
-        // TODO.
+    public function make_calculatedmulti_question_singleresponse() {
         question_bank::load_question_definition_classes('calculated');
-        $q = new qtype_calculatedmulti_question();
+        $q = new qtype_calculatedmulti_single_question();
         test_question_maker::initialise_a_question($q);
         $q->name = 'Simple sum';
         $q->questiontext = 'What is {a} + {b}?';
         $q->generalfeedback = 'Generalfeedback: {={a} + {b}} is the right answer.';
+        $q->shuffleanswers = 0;
+        $q->answernumbering = 'abc';
+        $q->layout = 1;
+        $q->correctfeedback = test_question_maker::STANDARD_OVERALL_CORRECT_FEEDBACK;
+        $q->correctfeedbackformat = FORMAT_HTML;
+        $q->partiallycorrectfeedback = test_question_maker::STANDARD_OVERALL_PARTIALLYCORRECT_FEEDBACK;
+        $q->partiallycorrectfeedbackformat = FORMAT_HTML;
+        $q->shownumcorrect = 1;
+        $q->incorrectfeedback = test_question_maker::STANDARD_OVERALL_INCORRECT_FEEDBACK;
+        $q->incorrectfeedbackformat = FORMAT_HTML;
+        $q->shownumcorrect = 1;
         $q->answers = array(
-            13 => new qtype_numerical_answer(13, '{a} + {b}', 1.0, 'Very good.', FORMAT_HTML, 0),
-            14 => new qtype_numerical_answer(14, '{a} - {b}', 0.0, 'Add. not subtract!.',
-                    FORMAT_HTML, 0),
-            17 => new qtype_numerical_answer(17, '*', 0.0, 'Completely wrong.', FORMAT_HTML, 0),
+            13 => new question_answer(13, '{={a} + {b}}', 1.0, 'Very good.', FORMAT_HTML),
+            14 => new question_answer(14, '{={a} - {b}}', 0.0, 'Add. not subtract!', FORMAT_HTML),
+            17 => new question_answer(17, '{={a} + 2 * {b}}', 0.0, 'Just add.', FORMAT_HTML),
         );
-        $q->qtype = question_bank::get_qtype('calculated');
-        $q->unitdisplay = qtype_numerical::UNITNONE;
-        $q->unitgradingtype = 0;
-        $q->unitpenalty = 0;
-        $q->ap = new qtype_numerical_answer_processor(array());
+        $q->answers[13]->correctanswerlength = 2;
+        $q->answers[13]->correctanswerformat = 1;
+        $q->answers[14]->correctanswerlength = 2;
+        $q->answers[14]->correctanswerformat = 1;
+        $q->answers[17]->correctanswerlength = 2;
+        $q->answers[17]->correctanswerformat = 1;
+        $q->qtype = question_bank::get_qtype('calculatedmulti');
 
         $q->datasetloader = new qtype_calculated_test_dataset_loader(0, array(
             array('a' => 1, 'b' => 5),
             array('a' => 3, 'b' => 4),
+        ));
+
+        return $q;
+    }
+
+    /**
+     * Makes a calculated multiple-choice question with multiple right answers.
+     * @return qtype_calculatedmulti_multi_question
+     */
+    public function make_calculatedmulti_question_multiresponse() {
+        question_bank::load_question_definition_classes('calculated');
+        $q = new qtype_calculatedmulti_multi_question();
+        test_question_maker::initialise_a_question($q);
+        $q->name = 'Simple sum';
+        $q->questiontext = 'What is {a} + {b}?';
+        $q->generalfeedback = 'Generalfeedback: {={a} + {b}} is the right answer.';
+        $q->shuffleanswers = 0;
+        $q->answernumbering = 'abc';
+        $q->layout = 1;
+        $q->correctfeedback = test_question_maker::STANDARD_OVERALL_CORRECT_FEEDBACK;
+        $q->correctfeedbackformat = FORMAT_HTML;
+        $q->partiallycorrectfeedback = test_question_maker::STANDARD_OVERALL_PARTIALLYCORRECT_FEEDBACK;
+        $q->partiallycorrectfeedbackformat = FORMAT_HTML;
+        $q->shownumcorrect = 1;
+        $q->incorrectfeedback = test_question_maker::STANDARD_OVERALL_INCORRECT_FEEDBACK;
+        $q->incorrectfeedbackformat = FORMAT_HTML;
+        $q->shownumcorrect = 1;
+        $q->answers = array(
+                13 => new qtype_numerical_answer(13, '{a} + {b}!', 0.5, 'Good', FORMAT_HTML, 0),
+                14 => new qtype_numerical_answer(14, '{={a} + {b}}', 0.5, 'Good',
+                        FORMAT_HTML, 0),
+                17 => new qtype_numerical_answer(17, '{={a} - {b}}', -0.5, 'Wrong.', FORMAT_HTML, 0),
+        );
+        $q->answers[13]->correctanswerlength = 2;
+        $q->answers[13]->correctanswerformat = 1;
+        $q->answers[14]->correctanswerlength = 2;
+        $q->answers[14]->correctanswerformat = 1;
+        $q->answers[17]->correctanswerlength = 2;
+        $q->answers[17]->correctanswerformat = 1;
+        $q->qtype = question_bank::get_qtype('calculatedmulti');
+
+        $q->datasetloader = new qtype_calculated_test_dataset_loader(0, array(
+                array('a' => 1, 'b' => 5),
+                array('a' => 3, 'b' => 4),
         ));
 
         return $q;
