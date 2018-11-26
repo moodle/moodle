@@ -214,6 +214,7 @@ class mod_kalvidpres_mod_form extends moodleform_mod {
             'height' => $height,
             'width' => $width,
             'allowfullscreen' => 'true',
+            'allow' => 'autoplay *; fullscreen *; encrypted-media *'
         );
 
         if ($hide) {

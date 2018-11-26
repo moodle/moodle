@@ -56,7 +56,8 @@ $attr = array(
     'height' => '600px',
     'width' => '100%',
     'allowfullscreen' => 'true',
-    'src' => 'lti_launch.php?courseid='.$courseid
+    'src' => 'lti_launch.php?courseid='.$courseid,
+    'allow' => 'autoplay *; fullscreen *; encrypted-media *',
 );
 echo html_writer::tag('iframe', '', $attr);
 

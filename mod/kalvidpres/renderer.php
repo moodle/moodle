@@ -50,6 +50,7 @@ class mod_kalvidpres_renderer extends plugin_renderer_base {
             'width' => $kalvidpres->width,
             'src' => $url->out(false),
             'allowfullscreen' => 'true',
+            'allow' => 'autoplay *; fullscreen *; encrypted-media *',
         );
 
         $output = html_writer::tag('iframe', '', $attr);
