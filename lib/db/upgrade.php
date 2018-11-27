@@ -2854,5 +2854,22 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018112000.00);
     }
 
+    if ($oldversion < 2018120300.01) {
+        // Update the FB logo URL.
+        $oldurl = 'https://facebookbrand.com/wp-content/themes/fb-branding/prj-fb-branding/assets/images/fb-art.png';
+        $newurl = 'https://facebookbrand.com/wp-content/uploads/2016/05/flogo_rgb_hex-brc-site-250.png';
+
+        $updatesql = "UPDATE {oauth2_issuer}
+                         SET image = :newimage
+                       WHERE image = :oldimage";
+        $params = [
+            'newimage' => $newurl,
+            'oldimage' => $oldurl
+        ];
+        $DB->execute($updatesql, $params);
+
+        upgrade_main_savepoint(true, 2018120300.01);
+    }
+
     return true;
 }
