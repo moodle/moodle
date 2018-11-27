@@ -680,6 +680,7 @@ class course_enrolment_other_users_table extends course_enrolment_table {
             $this->manager->get_moodlepage()->requires->strings_for_js(array(
                     'ajaxoneuserfound',
                     'ajaxxusersfound',
+                    'ajaxxmoreusersfound',
                     'ajaxnext25',
                     'enrol',
                     'enrolmentoptions',
