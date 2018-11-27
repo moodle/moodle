@@ -4755,6 +4755,24 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test the get_contact_requests() function when the user has blocked the sender of the request.
+     */
+    public function test_get_contact_requests_blocked_sender() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // User1 blocks User2.
+        \core_message\api::block_user($user1->id, $user2->id);
+
+        // User2 tries to add User1 as a contact.
+        \core_message\api::create_contact_request($user2->id, $user1->id);
+
+        // Verify we don't see the contact request from the blocked user User2 in the requests for User1.
+        $requests = \core_message\api::get_contact_requests($user1->id);
+        $this->assertEmpty($requests);
+    }
+
+    /**
      * Test getting contact requests when there are none.
      */
     public function test_get_contact_requests_no_requests() {
@@ -4941,6 +4959,23 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         \core_message\api::create_contact_request($user1->id, $user4->id);
         // Function should ignore sent requests.
         $this->assertEquals(2, \core_message\api::get_received_contact_requests_count($user1->id));
+    }
+
+    /**
+     * Test the get_received_contact_requests_count() function when the user has blocked the sender of the request.
+     */
+    public function test_get_received_contact_requests_count_blocked_sender() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // User1 blocks User2.
+        \core_message\api::block_user($user1->id, $user2->id);
+
+        // User2 tries to add User1 as a contact.
+        \core_message\api::create_contact_request($user2->id, $user1->id);
+
+        // Verify we don't see the contact request from the blocked user User2 in the count for User1.
+        $this->assertEquals(0, \core_message\api::get_received_contact_requests_count($user1->id));
     }
 
     /**
