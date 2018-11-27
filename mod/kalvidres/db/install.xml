@@ -12,7 +12,7 @@
         <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="entry_id"/>
         <FIELD NAME="entry_id" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="Kaltura video entry ids" PREVIOUS="introformat" NEXT="video_title"/>
-        <FIELD NAME="video_title" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Video title" PREVIOUS="entry_id" NEXT="uiconf_id"/>
+        <FIELD NAME="video_title" TYPE="char" LENGTH="256" NOTNULL="true" SEQUENCE="false" COMMENT="Video title" PREVIOUS="entry_id" NEXT="uiconf_id"/>
         <FIELD NAME="uiconf_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The player to be used for playback" PREVIOUS="video_title" NEXT="widescreen"/>
         <FIELD NAME="widescreen" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Video playback dimensions widescreen or normal" PREVIOUS="uiconf_id" NEXT="height"/>
         <FIELD NAME="height" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Video height" PREVIOUS="widescreen" NEXT="width"/>
