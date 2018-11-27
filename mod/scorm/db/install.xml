@@ -105,7 +105,6 @@
       <INDEXES>
         <INDEX NAME="userid-scormid-scoid-attempt-element" UNIQUE="true" FIELDS="userid, scormid, scoid, attempt, element"/>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
-        <INDEX NAME="element" UNIQUE="false" FIELDS="element"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="scorm_seq_objective" COMMENT="SCORM2004 objective description">
