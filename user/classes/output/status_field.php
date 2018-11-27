@@ -68,6 +68,9 @@ class status_field implements renderable, templatable {
     /** @var int $timeend The timestamp when the user's enrolment ends. */
     protected $timeend;
 
+    /** @var int $timeenrolled The timestamp when the user was enrolled. */
+    protected $timeenrolled;
+
     /** @var user_enrolment_action[] $enrolactions Array of enrol action objects for the given enrolment method. */
     protected $enrolactions;
 
@@ -89,16 +92,18 @@ class status_field implements renderable, templatable {
      * @param string $status The user enrolment status.
      * @param int|null $timestart The timestamp when the user's enrolment starts.
      * @param int|null $timeend The timestamp when the user's enrolment ends.
+     * @param int|null $timeenrolled The timestamp when the user was enrolled.
      * @param user_enrolment_action[] $enrolactions Array of enrol action objects for the given enrolment method.
      */
     public function __construct($enrolinstancename, $coursename, $fullname, $status, $timestart = null, $timeend = null,
-                                $enrolactions = []) {
+                                $timeenrolled, $enrolactions = []) {
         $this->enrolinstancename = $enrolinstancename;
         $this->coursename = $coursename;
         $this->fullname = $fullname;
         $this->status = $status;
         $this->timestart = $timestart;
         $this->timeend = $timeend;
+        $this->timeenrolled = $timeenrolled;
         $this->enrolactions = $enrolactions;
     }
 
@@ -126,6 +131,9 @@ class status_field implements renderable, templatable {
         }
         if ($this->timeend) {
             $data->timeend = userdate($this->timeend);
+        }
+        if ($this->timeenrolled) {
+            $data->timeenrolled = userdate($this->timeenrolled);
         }
         $data->enrolactions = [];
 
