@@ -9245,6 +9245,9 @@ a.ygtvspacer:hover {
   border-bottom: 0;
   margin-bottom: 0;
 }
+.message-drawer .last-message {
+  min-height: 20px;
+}
 @media (max-width: 480px) {
   .messaging-area-container .messaging-area .messages-area.editing .messages-header {
     height: 80px;

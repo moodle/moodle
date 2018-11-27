@@ -1345,6 +1345,9 @@ $message-drawer-width: 320px;
             border-bottom: 0;
         }
     }
+    .last-message {
+        min-height: 1.5rem;
+    }
     .section {
         .collapse {
             overflow-y: auto;
