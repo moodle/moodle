@@ -2711,14 +2711,6 @@ function calendar_add_subscription($sub) {
         unset($sub->groupcourseid);
     }
 
-    // Pull the group id back out of the value. The form saves the value
-    // as "<courseid>-<groupid>" to allow the javascript to work correctly.
-    if (!empty($sub->groupid)) {
-        list($courseid, $groupid) = explode('-', $sub->groupid);
-        $sub->courseid = $courseid;
-        $sub->groupid = $groupid;
-    }
-
     // Default course id if none is set.
     if (empty($sub->courseid)) {
         if ($sub->eventtype === 'site') {
