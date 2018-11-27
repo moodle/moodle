@@ -453,7 +453,7 @@ class moodle_content_writer implements content_writer {
 
                 $this->write_data($newshortpath, $variablecontent);
             } else {
-                $treekey[$shortpath] = 'No var';
+                $treekey[clean_param($shortpath, PARAM_PATH)] = 'No var';
             }
         }
         return [$tree, $treekey, $allfiles];
@@ -488,11 +488,11 @@ class moodle_content_writer implements content_writer {
             $url = clean_param($url, PARAM_PATH);
             $treeleaf->name = $file;
             $treeleaf->itemtype = 'item';
-            $gokey = $url . DIRECTORY_SEPARATOR . $file;
+            $gokey = clean_param($url . '/' . $file, PARAM_PATH);
             if (isset($treekey[$gokey]) && $treekey[$gokey] !== 'No var') {
                 $treeleaf->datavar = $treekey[$gokey];
             } else {
-                $treeleaf->url = new \moodle_url($url . DIRECTORY_SEPARATOR . $file);
+                $treeleaf->url = new \moodle_url($url . '/' . $file);
             }
         };
 
