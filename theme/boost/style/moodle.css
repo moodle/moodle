@@ -10528,6 +10528,14 @@ div.editor_atto_toolbar button .icon {
 .paged-content-page-container {
   min-height: 3.125rem; }
 
+.text-decoration-none {
+  text-decoration: none !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.position-right {
+  right: 0 !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
 .icon {
   font-size: 16px;
   width: 16px;
@@ -14129,6 +14137,9 @@ a.ygtvspacer:hover {
   .message-drawer a,
   .message-drawer .btn-link {
     color: inherit; }
+  .message-drawer .btn-link:hover, .message-drawer .btn-link:focus {
+    background-color: rgba(0, 0, 0, 0.035);
+    text-decoration: none; }
   .message-drawer .icon {
     margin-right: 0; }
   .message-drawer .overview-section-toggle .collapsed-icon-container {
@@ -14183,6 +14194,17 @@ a.ygtvspacer:hover {
       display: flex; }
   .message-drawer .view-conversation .content-message-container img {
     max-width: 100%; }
+  .message-drawer .list-group .list-group-item {
+    border-left: 0;
+    border-right: 0; }
+    .message-drawer .list-group .list-group-item:first-child {
+      border-top: 0; }
+    .message-drawer .list-group .list-group-item:last-child {
+      border-bottom: 0; }
+  .message-drawer .section .collapse {
+    overflow-y: auto; }
+  .message-drawer .section .collapsing {
+    overflow: hidden; }
 
 .dir-rtl .message-drawer {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08); }

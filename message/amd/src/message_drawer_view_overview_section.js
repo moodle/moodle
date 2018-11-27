@@ -160,7 +160,9 @@ function(
      */
     var render = function(contentContainer, conversations, userId) {
         var formattedConversations = conversations.map(function(conversation) {
+
             var lastMessage = conversation.messages.length ? conversation.messages[conversation.messages.length - 1] : null;
+
             var formattedConversation = {
                 id: conversation.id,
                 imageurl: conversation.imageurl,
@@ -184,6 +186,15 @@ function(
                 formattedConversation.showonlinestatus = otherUser.showonlinestatus;
                 formattedConversation.isonline = otherUser.isonline;
                 formattedConversation.isblocked = otherUser.isblocked;
+            }
+
+            if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PUBLIC) {
+                formattedConversation.lastsendername = conversation.members.reduce(function(carry, member) {
+                    if (!carry && member.id == lastMessage.useridfrom) {
+                        carry = member.fullname;
+                    }
+                    return carry;
+                }, null);
             }
 
             return formattedConversation;
@@ -352,7 +363,7 @@ function(
         var message = conversation.messages[conversation.messages.length - 1];
         var youString = '';
         var stringRequests = [
-            {key: 'you', component: 'core_message'},
+            {key: 'yousender', component: 'core_message'},
             {key: 'strftimetime24', component: 'core_langconfig'},
         ];
         return Str.get_strings(stringRequests)
@@ -364,15 +375,16 @@ function(
                 return dates[0];
             })
             .then(function(dateString) {
-                var lastMessage = $(message.text).text();
-
-                if (message.fromLoggedInUser) {
-                    lastMessage = youString + ' ' + lastMessage;
-                }
-
-                element.find(SELECTORS.LAST_MESSAGE).html(lastMessage);
                 element.find(SELECTORS.LAST_MESSAGE_DATE).text(dateString).removeClass('hidden');
-                return dateString;
+
+                // Now load the last message.
+                return Str.get_string('conversationlastmessage', 'core_message', {
+                    sender: message.fromLoggedInUser ? youString : message.userFrom.fullname,
+                    message: "<span class='text-muted'>" + $(message.text).text() + "</span>"
+                });
+            })
+            .then(function(lastMessage) {
+                return element.find(SELECTORS.LAST_MESSAGE).html(lastMessage);
             });
     };
 

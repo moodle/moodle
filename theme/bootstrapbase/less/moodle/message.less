@@ -1268,7 +1268,16 @@
         text-decoration: none;
         color: inherit;
     }
-
+    .btn-link {
+        &:hover,
+        &:focus {
+            background-color: darken(@wellBackground, 5%);
+            text-decoration: none;
+        }
+    }
+    .accordion-group .collapse.in {
+        overflow-y: auto;
+    }
     .message {
         p {
             margin: 0;
@@ -1327,6 +1336,20 @@
         .content-message-container {
             img {
                 max-width: 100%;
+            }
+        }
+    }
+    .list-group {
+        .list-group-item {
+            border-top: 1px solid #e3e3e3;
+            border-bottom: 1px solid #e3e3e3;
+            margin-bottom: -1px;
+            &:first-child {
+                border-top: 0;
+            }
+            &:last-child {
+                border-bottom: 0;
+                margin-bottom: 0;
             }
         }
     }

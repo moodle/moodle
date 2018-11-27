@@ -39,59 +39,69 @@
 
 }}
 
-<div class="d-flex align-items-center">
-    <div class="align-self-stretch" >
-        <a class="h-100 mr-2 d-flex align-items-center" href="#" data-route-back>
-            {{> core_message/message_drawer_icon_back }}
-        </a>
-    </div>
-    <div class="d-flex text-truncate">
-        <a class="d-flex text-truncate" href="#" data-action="view-group-info">
-            {{#imageurl}}
-                <div class="d-flex align-items-center">
-                    <img
-                        class="rounded-circle"
-                        src="{{{.}}}"
-                        alt="{{name}}"
-                        aria-hidden="true"
-                        style="height: 38px"
-                    >
-                </div>
-            {{/imageurl}}
-            <div class="w-100 text-truncate ml-2">
-                <div class="d-flex">
-                    <strong class="m-0 text-truncate">{{name}}</strong>
-                    <span class="{{^isfavourite}}hidden{{/isfavourite}} ml-1 text-primary" data-region="favourite-icon-container">
-                        {{#pix}} i/star, core {{/pix}}
-                    </span>
-                </div>
-                <p class="m-0 text-truncate">{{subname}}</p>
-                <p class="m-0 font-weight-light text-truncate">
-                    {{#str}} numparticipants, core_message, {{totalmembercount}} {{/str}}
-                </p>
-            </div>
-        </a>
-    </div>
-    <div class="ml-auto dropdown">
-        <button class="btn btn-link btn-icon icon-size-3" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{#pix}} i/moremenu, core {{/pix}}
-        </button>
-        <div class="dropdown-menu pull-right">
-            <li data-action="view-group-info">
-                <a class="dropdown-item" href="#">
-                    {{#str}} groupinfo, core_message {{/str}}
-                </a>
-            </li>
-            <li class="{{#isfavourite}}hidden{{/isfavourite}} {{^showfavourite}}hidden{{/showfavourite}}" data-action="confirm-favourite">
-                <a class="dropdown-item" href="#">
-                    {{#str}} addtofavourites, core_message {{/str}}
-                </a>
-            </li>
-            <li class="{{^isfavourite}}hidden{{/isfavourite}} {{^showfavourite}}hidden{{/showfavourite}}" data-action="confirm-unfavourite">
-                <a class="dropdown-item" href="#">
-                    {{#str}} removefromfavourites, core_message {{/str}}
-                </a>
-            </li>
+<div class="d-flex flex-column">
+    <div class="d-flex align-items-center">
+        <div class="align-self-stretch" >
+            <a class="h-100 mr-2 d-flex align-items-center" href="#" data-route-back>
+                {{> core_message/message_drawer_icon_back }}
+            </a>
         </div>
+        <div class="d-flex text-truncate">
+            <a class="d-flex text-truncate text-decoration-none" href="#" data-action="view-group-info">
+                {{#imageurl}}
+                    <div class="d-flex align-items-center">
+                        <img
+                            class="rounded-circle"
+                            src="{{{.}}}"
+                            alt="{{name}}"
+                            aria-hidden="true"
+                            style="height: 38px"
+                        >
+                    </div>
+                {{/imageurl}}
+                <div class="w-100 text-truncate ml-2">
+                    <div class="d-flex">
+                        <strong class="m-0 text-truncate">{{name}}</strong>
+                        <span class="{{^isfavourite}}hidden{{/isfavourite}} ml-1 text-primary" data-region="favourite-icon-container">
+                            {{#pix}} i/star, core {{/pix}}
+                        </span>
+                    </div>
+                    <p class="m-0 text-truncate">{{subname}}</p>
+                </div>
+            </a>
+        </div>
+        <div class="ml-auto dropdown">
+            <button class="btn btn-link btn-icon icon-size-3" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{#pix}} i/moremenu, core {{/pix}}
+            </button>
+            <ul class="dropdown-menu pull-right">
+                <li data-action="view-group-info">
+                    <a class="dropdown-item" href="#">
+                        {{#str}} groupinfo, core_message {{/str}}
+                    </a>
+                </li>
+                <li class="{{#isfavourite}}hidden{{/isfavourite}}" data-action="confirm-favourite">
+                    <a class="dropdown-item" href="#">
+                        {{#str}} addtofavourites, core_message {{/str}}
+                    </a>
+                </li>
+                <li class="{{^isfavourite}}hidden{{/isfavourite}}" data-action="confirm-unfavourite">
+                    <a class="dropdown-item" href="#">
+                        {{#str}} removefromfavourites, core_message {{/str}}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="d-flex">
+        <!-- These are just placeholder elements to align the text below correctly with the name text above -->
+        <div class="mr-2" style="opacity: 0; visibility: hidden" aria-hidden="true">{{> core_message/message_drawer_icon_back }}</div>
+        {{#imageurl}}<div aria-hidden="true" style="width: 38px"></div>{{/imageurl}}
+        <!-- End placeholders -->
+        <a class="text-decoration-none line-height-3 ml-2" href="#" data-action="view-group-info">
+            <small class="m-0 muted text-truncate">
+                {{#str}} numparticipants, core_message, {{totalmembercount}} {{/str}}
+            </small>
+        </a>
     </div>
 </div>
