@@ -355,6 +355,10 @@ abstract class screen {
             // Optional type.
             if (!empty($msg)) {
                 $warnings[] = $msg;
+                if ($element instanceof \gradereport_singleview\local\ui\finalgrade) {
+                    // This item wasn't changed so don't add to the changecount.
+                    continue;
+                }
             }
             if (preg_match('/_(\d+)_(\d+)/', $varname, $matchelement)) {
                 $changecount[$matchelement[0]] = 1;
