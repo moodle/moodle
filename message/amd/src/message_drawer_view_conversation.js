@@ -436,7 +436,7 @@ function(
                     return loadMessages(conversation.id, messageLimit, messageCount, newestFirst, []);
                 } else {
                     // We've got enough messages. No need to load any more for now.
-                    var newState = StateManager.setLoadingMessages(newState, false);
+                    var newState = StateManager.setLoadingMessages(viewState, false);
                     return render(newState);
                 }
             })
