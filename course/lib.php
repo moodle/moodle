@@ -4578,7 +4578,7 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
     $favservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
     list($favsql, $favparams) = $favservice->get_join_sql_by_type('core_course', 'courses', 'fav', 'ul.courseid');
 
-    $sql = "SELECT $ctxfields, $coursefields
+    $sql = "SELECT $coursefields, $ctxfields
               FROM {course} c
               JOIN {context} ctx
                    ON ctx.contextlevel = :contextlevel
@@ -4587,8 +4587,25 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
                    ON ul.courseid = c.id
             $favsql
              WHERE ul.userid = :userid
-          $orderby";
-    $params = ['userid' => $userid, 'contextlevel' => CONTEXT_COURSE] + $favparams;
+               AND c.visible = :visible
+               AND EXISTS (SELECT e.id
+                             FROM {enrol} e
+                        LEFT JOIN {user_enrolments} ue ON ue.enrolid = e.id
+                            WHERE e.courseid = c.id
+                              AND e.status = :statusenrol
+                              AND ((ue.status = :status
+                                    AND ue.userid = ul.userid
+                                    AND ue.timestart < :now1
+                                    AND (ue.timeend = 0 OR ue.timeend > :now2)
+                                   )
+                                   OR e.enrol = :guestenrol
+                                  )
+                          )
+            $orderby";
+
+    $now = round(time(), -2); // Improves db caching.
+    $params = ['userid' => $userid, 'contextlevel' => CONTEXT_COURSE, 'visible' => 1, 'status' => ENROL_USER_ACTIVE,
+               'statusenrol' => ENROL_INSTANCE_ENABLED, 'guestenrol' => 'guest', 'now1' => $now, 'now2' => $now] + $favparams;
 
     $recentcourses = $DB->get_records_sql($sql, $params, $offset, $limit);
 
