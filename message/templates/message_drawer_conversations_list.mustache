@@ -67,30 +67,14 @@
             {{/subname}}
             <p class="m-0 font-weight-light text-truncate last-message" data-region="last-message">
                 {{#sentfromcurrentuser}}
-                    {{#str}}
-                        conversationlastmessage,
-                        core_message,
-                        {
-                            "sender": "{{#str}} yousender, core_message {{/str}}",
-                            "message": "<span class='text-muted'>{{lastmessage}}</span>"
-                        }
-                    {{/str}}
+                    {{#str}} you, core_message {{/str}}
                 {{/sentfromcurrentuser}}
                 {{^sentfromcurrentuser}}
                     {{#lastsendername}}
-                        {{#str}}
-                            conversationlastmessage,
-                            core_message,
-                            {
-                                "sender": "{{.}}",
-                                "message": "<span class='text-muted'>{{lastmessage}}</span>"
-                            }
-                        {{/str}}
-                    {{/lastsendername}}
-                    {{^lastsendername}}
-                        <span class='text-muted'>{{lastmessage}}</span>
+                        {{#str}} sender, core_message, {{.}} {{/str}}
                     {{/lastsendername}}
                 {{/sentfromcurrentuser}}
+                <span class='text-muted'>{{lastmessage}}</span>
             </p>
         </div>
         <div class="d-flex align-self-stretch">
