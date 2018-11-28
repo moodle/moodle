@@ -107,11 +107,16 @@ class block_iomad_company_admin extends block_base {
 
         // If we don't have one selected pick the first of these.
         if (empty($SESSION->currenteditingcompany)) {
-            // Otherwise, make the first (or only) company the current one
-            $companies = $DB->get_records('company');
-            $firstcompany = reset($companies);
-            $SESSION->currenteditingcompany = $firstcompany->id;
-            $company = $firstcompany->id;
+            if (iomad::is_company_user()) {
+                $company = iomad::companyid();
+                $SESSION->currenteditingcompany = $company;
+            } else {
+                // Otherwise, make the first (or only) company the current one
+                $companies = $DB->get_records('company');
+                $firstcompany = reset($companies);
+                $SESSION->currenteditingcompany = $firstcompany->id;
+                $company = $firstcompany->id;
+            }
         }
     }
 
