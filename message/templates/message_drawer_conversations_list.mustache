@@ -87,6 +87,9 @@
                             }
                         {{/str}}
                     {{/lastsendername}}
+                    {{^lastsendername}}
+                        <span class='text-muted'>{{lastmessage}}</span>
+                    {{/lastsendername}}
                 {{/sentfromcurrentuser}}
             </p>
         </div>
