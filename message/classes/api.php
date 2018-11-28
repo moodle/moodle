@@ -839,6 +839,12 @@ class api {
             return null;
         }
 
+        // Get the context of the conversation. This will be used to check whether the conversation is a favourite.
+        // This will be either 'user' (for individual conversations) or, in the case of linked conversations,
+        // the context stored in the record.
+        $userctx = \context_user::instance($userid);
+        $conversationctx = empty($conversation->contextid) ? $userctx : \context::instance_by_id($conversation->contextid);
+
         $isconversationmember = $DB->record_exists(
             'message_conversation_members',
             [
@@ -873,7 +879,7 @@ class api {
         );
 
         $service = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($userid));
-        $isfavourite = $service->favourite_exists('core_message', 'message_conversations', $conversationid, $systemcontext);
+        $isfavourite = $service->favourite_exists('core_message', 'message_conversations', $conversationid, $conversationctx);
 
         $convextrafields = self::get_linked_conversation_extra_fields([$conversation]);
         $subname = isset($convextrafields[$conversationid]) ? $convextrafields[$conversationid]['subname'] : null;

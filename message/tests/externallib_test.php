@@ -5950,6 +5950,89 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test verifying that the correct favourite information is returned for a non-linked converastion at user context.
+     */
+    public function test_get_conversation_favourited() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Create a conversation between the 2 users.
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id,
+            ],
+            'An individual conversation'
+        );
+
+        // Favourite the conversation as user 1 only.
+        \core_message\api::set_favourite_conversation($conversation->id, $user1->id);
+
+        // Get the conversation for user1 and confirm it's favourited.
+        $this->setUser($user1);
+        $conv = core_message_external::get_conversation($user1->id, $conversation->id);
+        $conv = external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+        $this->assertTrue($conv['isfavourite']);
+
+        // Get the conversation for user2 and confirm it's NOT favourited.
+        $this->setUser($user2);
+        $conv = core_message_external::get_conversation($user2->id, $conversation->id);
+        $conv = external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+        $this->assertFalse($conv['isfavourite']);
+    }
+
+    /**
+     * Test verifying that the correct favourite information is returned for a group-linked conversation at course context.
+     */
+    public function test_get_conversation_favourited_group_linked() {
+        $this->resetAfterTest();
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course1context = \context_course::instance($course1->id);
+
+        // Create a group with a linked conversation and a valid image.
+        $this->setAdminUser();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+        $group1 = $this->getDataGenerator()->create_group([
+            'courseid' => $course1->id,
+            'enablemessaging' => 1
+        ]);
+
+        // Add users to group1.
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user2->id));
+
+        // Verify that the conversation is a group linked conversation in the course context.
+        $conversationrecord = $DB->get_record('message_conversations', ['component' => 'core_group', 'itemtype' => 'groups']);
+        $this->assertEquals($course1context->id, $conversationrecord->contextid);
+
+        // Favourite the conversation as user 1 only.
+        \core_message\api::set_favourite_conversation($conversationrecord->id, $user1->id);
+
+        // Get the conversation for user1 and confirm it's favourited.
+        $this->setUser($user1);
+        $conv = core_message_external::get_conversation($user1->id, $conversationrecord->id);
+        $conv = external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+        $this->assertTrue($conv['isfavourite']);
+
+        // Get the conversation for user2 and confirm it's NOT favourited.
+        $this->setUser($user2);
+        $conv = core_message_external::get_conversation($user2->id, $conversationrecord->id);
+        $conv = external_api::clean_returnvalue(core_message_external::get_conversation_returns(), $conv);
+        $this->assertFalse($conv['isfavourite']);
+    }
+
+    /**
      * Test getting a conversation with no messages.
      */
     public function test_get_conversation_no_messages() {
