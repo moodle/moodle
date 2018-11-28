@@ -16177,10 +16177,13 @@ p.arrow_button {
 
 .path-grade-report-grader #region-main {
   min-width: 100%;
-  width: auto; }
+  width: auto;
+  display: inline-flex; }
   .path-grade-report-grader #region-main > .card, .path-grade-report-grader #page-enrol-users #region-main > #filterform, #page-enrol-users .path-grade-report-grader #region-main > #filterform, .path-grade-report-grader .que #region-main > .history, .que .path-grade-report-grader #region-main > .history, .path-grade-report-grader .userprofile .profile_tree #region-main > section, .userprofile .profile_tree .path-grade-report-grader #region-main > section, .path-grade-report-grader #region-main > .groupinfobox, .path-grade-report-grader #region-main > .well {
     width: auto;
     overflow-x: initial; }
+  .path-grade-report-grader #region-main div[role="main"] {
+    flex: 1 1 auto; }
 
 .path-grade-report-grader [data-region="blocks-column"] {
   width: 100%;
@@ -16393,12 +16396,6 @@ p.arrow_button {
 
 .path-grade-report-grader .gradeparent table .clickable {
   cursor: pointer; }
-
-.path-grade-report-grader #page-header.row {
-  flex: 1 0 auto; }
-
-.path-grade-report-grader #page-wrapper #page {
-  flex-flow: wrap; }
 
 /**
  * User report.
