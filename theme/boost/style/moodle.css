@@ -14203,10 +14203,10 @@ a.ygtvspacer:hover {
       border-bottom: 0; }
   .message-drawer .last-message {
     min-height: 1.5rem; }
-  .message-drawer .section .collapse {
-    overflow-y: auto; }
   .message-drawer .section .collapsing {
     overflow: hidden; }
+  .message-drawer .lazy-load-list {
+    overflow-y: auto; }
 
 .dir-rtl .message-drawer {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08); }
