@@ -42,12 +42,14 @@
         <div class="row-fluid">
             <div class="{{#hasprogress}}col-md-6 span6{{/hasprogress}}{{^hasprogress}}col-md-11 span11{{/hasprogress}} d-flex align-items-center">
                 <a href="{{viewurl}}" class="coursename">
-                    <span class="sr-only">
-                        {{#str}}aria:courseshortname, core_course{{/str}}
-                    </span>
-                    <div class="text-muted muted">
-                        {{{shortname}}}
-                    </div>
+                    {{#showshortname}}
+                        <span class="sr-only">
+                            {{#str}}aria:courseshortname, core_course{{/str}}
+                        </span>
+                        <div class="text-muted muted">
+                            {{{shortname}}}
+                        </div>
+                    {{/showshortname}}
                     {{> core_course/favouriteicon }}
                     <span class="sr-only">
                         {{#str}}aria:coursename, core_course{{/str}}

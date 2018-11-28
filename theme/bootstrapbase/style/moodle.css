@@ -16391,6 +16391,9 @@ body {
 .block .block-cards a.coursename {
   color: #333;
 }
+.block .block-cards .h5 {
+  font-size: 16px;
+}
 .dashboard-card-deck.one-row {
   flex-flow: nowrap;
   overflow-x: scroll;
