@@ -4572,6 +4572,12 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
 
     $coursefields = 'c.' .join(',', $basefields);
 
+    // Ask the favourites service to give us the join SQL for favourited courses,
+    // so we can include favourite information in the query.
+    $usercontext = \context_user::instance($userid);
+    $favservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+    list($favsql, $favparams) = $favservice->get_join_sql_by_type('core_course', 'courses', 'fav', 'ul.courseid');
+
     $sql = "SELECT $ctxfields, $coursefields
               FROM {course} c
               JOIN {context} ctx
@@ -4579,14 +4585,10 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
                    AND ctx.instanceid = c.id
               JOIN {user_lastaccess} ul
                    ON ul.courseid = c.id
-         LEFT JOIN {favourite} f
-                   ON f.component = 'core_course'
-                   AND f.itemtype = 'courses'
-                   AND f.userid = ul.userid
-                   AND f.itemid = ul.courseid
+            $favsql
              WHERE ul.userid = :userid
           $orderby";
-    $params = ['userid' => $userid, 'contextlevel' => CONTEXT_COURSE];
+    $params = ['userid' => $userid, 'contextlevel' => CONTEXT_COURSE] + $favparams;
 
     $recentcourses = $DB->get_records_sql($sql, $params, $offset, $limit);
 
