@@ -410,7 +410,7 @@ class repository_nextcloud extends repository {
      * @param int $lifetime (ignored)
      * @param int $filter (ignored)
      * @param bool $forcedownload (ignored)
-     * @param array $options (ignored)
+     * @param array $options additional options affecting the file serving
      * @throws \repository_nextcloud\configuration_exception
      * @throws \repository_nextcloud\request_exception
      * @throws coding_exception
@@ -428,6 +428,10 @@ class repository_nextcloud extends repository {
         }
 
         if (!$this->client->is_logged_in()) {
+            if (!empty($options['offline'])) {
+                // Right now, we can't download referenced files for offline if the client is not authenticated.
+                send_file_not_found();  // Use this function because it enforces a 404 error.
+            }
             $this->print_login_popup(['style' => 'margin-top: 250px']);
             return;
         }
