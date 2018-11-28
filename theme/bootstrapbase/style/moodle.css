@@ -16376,6 +16376,9 @@ body {
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
+.block .block-cards .multiline {
+  white-space: normal;
+}
 .block .block-cards .summary img {
   max-width: 100%;
 }
@@ -16387,6 +16390,9 @@ body {
 }
 .block .block-cards a.coursename {
   color: #333;
+}
+.block .block-cards .h5 {
+  font-size: 16px;
 }
 .dashboard-card-deck.one-row {
   flex-flow: nowrap;

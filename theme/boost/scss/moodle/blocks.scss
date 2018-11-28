@@ -102,6 +102,9 @@ $card-gutter : $card-deck-margin * 2;
     .btn-link {
         color: inherit;
     }
+    .multiline {
+        white-space: normal;
+    }
     .btn.btn-link.btn-icon {
         height: 36px;
         width: 36px;

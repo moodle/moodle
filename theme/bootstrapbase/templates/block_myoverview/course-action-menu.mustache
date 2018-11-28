@@ -35,24 +35,38 @@
         {{#pix}} i/moremenu, core {{/pix}}
     </button>
     <ul class="dropdown-menu pull-right">
-        <li class="{{#isfavourite}}hidden{{/isfavourite}}" data-action="add-favourite" data-course-id="{{id}}">
+        <li class="{{#isfavourite}}hidden{{/isfavourite}}"
+            data-action="add-favourite"
+            data-course-id="{{id}}"
+            aria-controls="favorite-icon-{{ id }}-{{ uniqid }}"
+            >
             <a class="dropdown-item p-x-1" href="#">
                 {{#pix}} i/star, core, {{#str}} starred, block_myoverview {{/str}} {{/pix}}
                 {{#str}} addtofavourites, block_myoverview {{/str}}
             </a>
         </li>
-        <li class="{{^isfavourite}}hidden{{/isfavourite}}" data-action="remove-favourite" data-course-id="{{id}}">
+        <li class="{{^isfavourite}}hidden{{/isfavourite}}"
+            data-action="remove-favourite"
+            data-course-id="{{id}}"
+            aria-controls="favorite-icon-{{ id }}-{{ uniqid }}"
+            >
             <a class="dropdown-item p-x-1" href="#">
                 {{#str}} removefromfavourites, block_myoverview {{/str}}
             </a>
         </li>
-        <li class="{{^hidden}}hidden{{/hidden}}" data-action="show-course" data-course-id="{{id}}">
+        <li class="{{^hidden}}hidden{{/hidden}}"
+            data-action="show-course"
+            data-course-id="{{id}}"
+            aria-controls="favorite-icon-{{ id }}-{{ uniqid }}">
             <a class="dropdown-item p-x-1" href="#">
                 {{#pix}} i/show, core, {{#str}} hidden, block_myoverview {{/str}} {{/pix}}
                 {{#str}} show, block_myoverview {{/str}}
             </a>
         </li>
-        <li class="{{#hidden}}hidden{{/hidden}}" data-action="hide-course" data-course-id="{{id}}">
+        <li class="{{#hidden}}hidden{{/hidden}}"
+            data-action="hide-course"
+            data-course-id="{{id}}"
+            aria-controls="favorite-icon-{{ id }}-{{ uniqid }}">
             <a class="dropdown-item p-x-1" href="#">
                 {{#pix}} i/hide, core, {{#str}} hidden, block_myoverview {{/str}} {{/pix}}
                 {{#str}} hidecourse, block_myoverview {{/str}}

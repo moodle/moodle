@@ -34,33 +34,20 @@
     }
 }}
 
-<div class="card-deck dashboard-card-deck" role="list">
-{{#courses}}
-    <div class="card dashboard-card" role="listitem"
-        data-region="course-content"
-        data-course-id="{{{id}}}">
-        <a href="{{viewurl}}" tabindex="-1">
-            <div class="card-img dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
-                <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
-            </div>
-        </a>
-        <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}">
-            <div class="d-flex align-items-start">
-                <div class="card-title mb-0 mr-2">
-                    {{> core_course/favouriteicon }}
-                    <a href="{{viewurl}}" class="coursename">
-                        <span class="sr-only">{{#str}}aria:coursename, core_course{{/str}}</span>
-                        {{#shortentext}}30, {{{fullname}}} {{/shortentext}}
-                    </a>
-                </div>
-                {{> block_myoverview/course-action-menu }}
-            </div>
-        </div>
+{{< core_course/coursecards }}
+    {{$menu}}
+        {{> block_myoverview/course-action-menu }}
+    {{/menu}}
+    {{$progress}}
         {{#hasprogress}}
-        <div class="card-footer dashboard-card-footer border-0 bg-white">
-            {{> block_myoverview/progress-bar}}
-        </div>
+            <div class="card-footer dashboard-card-footer border-0 bg-white">
+                {{> block_myoverview/progress-bar}}
+            </div>
         {{/hasprogress}}
-    </div>
-{{/courses}}
-</div>
+    {{/progress}}
+    {{$coursename}}
+        <span class="multiline">
+            {{#shortentext}}50, {{{fullname}}} {{/shortentext}}
+        </span>
+    {{/coursename}}
+{{/ core_course/coursecards }}
