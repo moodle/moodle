@@ -361,14 +361,21 @@ function(
      */
     var updateLastMessage = function(element, conversation) {
         var message = conversation.messages[conversation.messages.length - 1];
-        var youString = '';
+        var senderString = '';
+        var senderStringRequest;
+        if (message.fromLoggedInUser) {
+            senderStringRequest = {key: 'you', component: 'core_message'};
+        } else {
+            senderStringRequest = {key: 'sender', component: 'core_message', param: message.userFrom.fullname};
+        }
+
         var stringRequests = [
-            {key: 'yousender', component: 'core_message'},
+            senderStringRequest,
             {key: 'strftimetime24', component: 'core_langconfig'},
         ];
         return Str.get_strings(stringRequests)
             .then(function(strings) {
-                youString = strings[0];
+                senderString = strings[0];
                 return UserDate.get([{timestamp: message.timeCreated, format: strings[1]}]);
             })
             .then(function(dates) {
@@ -377,13 +384,15 @@ function(
             .then(function(dateString) {
                 element.find(SELECTORS.LAST_MESSAGE_DATE).text(dateString).removeClass('hidden');
 
+                // No need to show sender string for private conversations and where the last message didn't come from you.
+                if (!message.fromLoggedInUser &&
+                        conversation.type === MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE) {
+                    senderString = '';
+                }
+
                 // Now load the last message.
-                return Str.get_string('conversationlastmessage', 'core_message', {
-                    sender: message.fromLoggedInUser ? youString : message.userFrom.fullname,
-                    message: "<span class='text-muted'>" + $(message.text).text() + "</span>"
-                });
-            })
-            .then(function(lastMessage) {
+                var lastMessage = senderString + " <span class='text-muted'>" + $(message.text).text() + "</span>";
+
                 return element.find(SELECTORS.LAST_MESSAGE).html(lastMessage);
             });
     };
