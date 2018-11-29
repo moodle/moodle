@@ -855,7 +855,7 @@ function(
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
         return render(newState)
             .then(function() {
-                return Repository.deleteCoversation(viewState.loggedInUserId, getOtherUserId());
+                return Repository.deleteConversation(viewState.loggedInUserId, viewState.id);
             })
             .then(function() {
                 var newState = StateManager.removeMessages(viewState, viewState.messages);
