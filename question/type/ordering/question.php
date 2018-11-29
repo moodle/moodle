@@ -700,8 +700,11 @@ class qtype_ordering_question extends question_graded_automatically {
      * @param integer $imax the length of the $positions array
      * @param integer $imin (optional, default = 0) the index in $position at which to start checking values
      * @param integer $previous (optional, default = -1) the minimum allowed value. Any values less than this will be skipped.
+     * @param integer $initial (optional, default = -1) the value of the initial item in this subset. Values less than this will be skipped.
+     *
+     * @return array of ordered subsets from within the positions array
      */
-    public function get_ordered_subsets($positions, $contiguous, $imax, $imin=0, $previous=-1) {
+    public function get_ordered_subsets($positions, $contiguous, $imax, $imin=0, $previous=-1, $initial=-1) {
 
         // Var $subsets is the collection of all subsets within $positions.
         $subsets = array();
@@ -714,25 +717,33 @@ class qtype_ordering_question extends question_graded_automatically {
 
             switch (true) {
 
-                case ($previous < 0 || $current == ($previous + 1)):
-                    // First item, or next item in a contiguous sequence
-                    // there is no need to search for $tailsets.
+                case ($current < $initial):
+                    // Current item is less than the initial item, so ignore it.
+                    $tailsets = array();
+                    $prependsubset = false;
+                    $appendtosubset = false;
+                    break;
+
+                case ($previous < 0):
+                case ($current == ($previous + 1)):
+                    // First item, or next item in a contiguous sequence.
+                    // There is no need to search for $tailsets.
                     $tailsets = array();
                     $prependsubset = false;
                     $appendtosubset = true;
                     break;
 
-                case ($current < $previous || ($contiguous && $current > ($previous + 1))):
+                case ($current < $previous):
+                case ($contiguous && $current > ($previous + 1)):
                     // Here $current breaks the sequence, so look for subsets that start here.
-                    $tailsets = $this->get_ordered_subsets($positions, $contiguous, $imax, $i);
+                    $tailsets = $this->get_ordered_subsets($positions, $contiguous, $imax, $i, -1, $current);
                     $prependsubset = false;
                     $appendtosubset = false;
                     break;
 
                 case ($current > $previous):
-                    // A non-contiguous sequence,
-                    // so search for subsets in the tail.
-                    $tailsets = $this->get_ordered_subsets($positions, $contiguous, $imax, $i + 1, $previous);
+                    // A non-contiguous sequence, so search for subsets in the tail.
+                    $tailsets = $this->get_ordered_subsets($positions, $contiguous, $imax, $i + 1, $previous, $current);
                     $prependsubset = true;
                     $appendtosubset = true;
                     break;
