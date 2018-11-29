@@ -428,7 +428,7 @@ class repository_nextcloud extends repository {
         }
 
         if (!$this->client->is_logged_in()) {
-            $this->print_login_popup(['style' => 'margin-top: 250px']);
+            $this->print_login_popup(['style' => 'margin-top: 250px'], $options['embed']);
             return;
         }
 
@@ -803,8 +803,12 @@ class repository_nextcloud extends repository {
      *
      * @param array|null $attr Custom attributes to be applied to popup div.
      */
-    private function print_login_popup($attr = null) {
-        global $OUTPUT;
+    private function print_login_popup($attr = null, $embed = false) {
+        global $OUTPUT, $PAGE;
+
+        if ($embed) {
+            $PAGE->set_pagelayout('embedded');
+        }
 
         $this->client = $this->get_user_oauth_client();
         $url = new moodle_url($this->client->get_login_url());
