@@ -30,9 +30,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p> డేటాబేస్ను సృష్టించలేరు. </ p>
+<p> పేర్కొన్న డేటాబేస్ ఉనికిలో లేదు మరియు ఇచ్చిన యూజర్కు డాటాబేస్ను సృష్టించడానికి అనుమతి లేదు. </ p>
+<p> సైట్ నిర్వాహకుడు డేటాబేస్ కాన్ఫిగరేషన్ను ధృవీకరించాలి. </ p>';
 $string['cannotcreatelangdir'] = 'భాష డైరెక్టరీని సృష్టించలేం';
 $string['cannotcreatetempdir'] = 'టెంప్ డైరెక్టరీని సృష్టించలేం';
 $string['cannotdownloadcomponents'] = 'కాంపొనెంట్లను దించుకోలేరు';
 $string['cannotdownloadzipfile'] = 'ZIP దస్త్రాలను దించుకోలేరు';
 $string['cannotfindcomponent'] = 'కాంపొనెంటు కనబడలేదు';
+$string['cannotsavemd5file'] = 'Md5 ఫైల్ను సేవ్ చేయలేరు';
+$string['cannotsavezipfile'] = 'జిప్ ఫైల్ను సేవ్ చేయడం సాధ్యపడదు';
+$string['cannotunzipfile'] = 'ఫైల్ అన్జిప్ చేయలేరు';
 $string['componentisuptodate'] = 'కాంపొనెంటు తాజాగా ఉంది';
