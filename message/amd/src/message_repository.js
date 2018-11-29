@@ -539,15 +539,15 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
      * Delete a conversation between two users.
      *
      * @param {int} userId The user to delete messages for
-     * @param {int} otherUserId The other member of the conversation
+     * @param {int} conversationId The id of the conversation
      * @return {object} jQuery promise
      */
-    var deleteCoversation = function(userId, otherUserId) {
+    var deleteConversation = function(userId, conversationId) {
         var request = {
-            methodname: 'core_message_delete_conversation',
+            methodname: 'core_message_delete_conversations_by_id',
             args: {
                 userid: userId,
-                otheruserid: otherUserId
+                conversationids: [conversationId]
             }
         };
         return Ajax.call([request])[0];
@@ -1051,7 +1051,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
         savePreferences: savePreferences,
         getPreferences: getPreferences,
         deleteMessages: deleteMessages,
-        deleteCoversation: deleteCoversation,
+        deleteConversation: deleteConversation,
         getContactRequests: getContactRequests,
         acceptContactRequest: acceptContactRequest,
         declineContactRequest: declineContactRequest,
