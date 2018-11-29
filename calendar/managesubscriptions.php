@@ -33,6 +33,7 @@ $categoryid = optional_param('category', null, PARAM_INT);
 // Used for processing subscription actions.
 $subscriptionid = optional_param('id', 0, PARAM_INT);
 $pollinterval  = optional_param('pollinterval', 0, PARAM_INT);
+$groupcourseid  = optional_param('groupcourseid', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_INT);
 
 $url = new moodle_url('/calendar/managesubscriptions.php');
@@ -61,7 +62,22 @@ if (!calendar_user_can_add_event($course)) {
     print_error('errorcannotimport', 'calendar');
 }
 
-$form = new \core_calendar\local\event\forms\managesubscriptions(null, ['courseid' => $course->id]);
+// Populate the 'group' select box based on the given 'groupcourseid', if necessary.
+$groups = [];
+if (!empty($groupcourseid)) {
+    require_once($CFG->libdir . '/grouplib.php');
+    $groupcoursedata = groups_get_course_data($groupcourseid);
+    if (!empty($groupcoursedata->groups)) {
+        foreach ($groupcoursedata->groups as $groupid => $groupdata) {
+            $groups[$groupid] = $groupdata->name;
+        }
+    }
+}
+$customdata = [
+    'courseid' => $course->id,
+    'groups' => $groups,
+];
+$form = new \core_calendar\local\event\forms\managesubscriptions(null, $customdata);
 $form->set_data(array(
     'course' => $course->id
 ));
@@ -71,33 +87,7 @@ $importresults = '';
 $formdata = $form->get_data();
 if (!empty($formdata)) {
     require_sesskey(); // Must have sesskey for all actions.
-    // The course field on group event type is named groupcourseid.
-    // So it's easy to assume it is going to add a subscription as group events.
-    if (isset($formdata->groupcourseid)) {
-        $courseid = $formdata->groupcourseid;
-        // We need to fetch the groups again for group event type.
-        // The groupid gets filtered out as part of the $form->get_data call because there form is originally
-        // constructed without any options for the groups.
-        // Consequently with no options it means there can’t be a valid value so it end up ignoring it.
-        require_once($CFG->libdir . '/grouplib.php');
-        $groupcoursedata = groups_get_course_data($courseid);
-        $groups = [];
-        if (!empty($groupcoursedata->groups)) {
-            foreach ($groupcoursedata->groups as $groupid => $groupdata) {
-                $groups[$groupid] = $groupdata->name;
-            }
-        }
-        $simulatedformdata = [
-            'groups' => $groups,
-            'courseid' => $courseid,
-        ];
-        // As commented above, we need to reconstruct the list of valid group options and recreate the form with
-        // those options for the form validation to recognise that the groupid value in the POST data is valid.
-        $form = new \core_calendar\local\event\forms\managesubscriptions(null, $simulatedformdata);
-    } else {
-        $subscriptionid = calendar_add_subscription($formdata);
-    }
-
+    $subscriptionid = calendar_add_subscription($formdata);
     if ($formdata->importfrom == CALENDAR_IMPORT_FROM_FILE) {
         // Blank the URL if it's a file import.
         $formdata->url = '';
