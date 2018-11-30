@@ -95,8 +95,8 @@ class core_competency_generator extends component_generator_base {
      * @return competency
      */
     public function create_competency($record = null) {
-        $this->frameworkcount++;
-        $i = $this->frameworkcount;
+        $this->competencycount++;
+        $i = $this->competencycount;
         $record = (object) $record;
 
         if (!isset($record->competencyframeworkid)) {
