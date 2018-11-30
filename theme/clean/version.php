@@ -30,9 +30,9 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2018051400;
-$plugin->requires  = 2018050800;
+$plugin->version   = 2018120300;
+$plugin->requires  = 2018112800;
 $plugin->component = 'theme_clean';
 $plugin->dependencies = array(
-    'theme_bootstrapbase'  => 2018050800,
+    'theme_bootstrapbase'  => 2018112800,
 );
