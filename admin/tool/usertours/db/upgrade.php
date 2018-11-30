@@ -35,13 +35,6 @@ use tool_usertours\manager;
 function xmldb_tool_usertours_upgrade($oldversion) {
     global $CFG, $DB;
 
-    if ($oldversion < 2016120501) {
-        // Update the tours shipped with Moodle.
-        manager::update_shipped_tours();
-
-        upgrade_plugin_savepoint(true, 2016120501, 'tool', 'usertours');
-    }
-
     // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -53,6 +46,13 @@ function xmldb_tool_usertours_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2018113000) {
+        // Update the tours shipped with Moodle.
+        manager::update_shipped_tours();
+
+        upgrade_plugin_savepoint(true, 2018113000, 'tool', 'usertours');
+    }
 
     return true;
 }
