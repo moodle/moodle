@@ -40,6 +40,7 @@ class managesubscriptions extends \moodleform {
      * Defines the form used to add calendar subscriptions.
      */
     public function definition() {
+        global $PAGE;
         $mform = $this->_form;
         $eventtypes = calendar_get_allowed_event_types();
         if (in_array(true, $eventtypes, true) === false) {
@@ -86,6 +87,9 @@ class managesubscriptions extends \moodleform {
 
         // Eventtype: 0 = user, 1 = global, anything else = course ID.
         $mform->addElement('submit', 'add', get_string('add'));
+
+        // Add the javascript required to enhance this mform.
+        $PAGE->requires->js_call_amd('core_calendar/event_form', 'init', [$mform->getAttribute('id')]);
     }
 
     /**
