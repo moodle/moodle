@@ -225,8 +225,6 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
     }
 
     protected function data_preprocessing_choice($question, $answer, $key) {
-        // See comment in data_preprocessing_answers.
-        unset($this->_form->_defaultValues['choices[$key][choicegroup]']);
         $question->choices[$key]['answer'] = $answer->answer;
         $question->choices[$key]['choicegroup'] = $answer->feedback;
         return $question;
