@@ -47,11 +47,11 @@ function xmldb_tool_usertours_upgrade($oldversion) {
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2018113000) {
+    if ($oldversion < 2018113002) {
         // Update the tours shipped with Moodle.
         manager::update_shipped_tours();
 
-        upgrade_plugin_savepoint(true, 2018113000, 'tool', 'usertours');
+        upgrade_plugin_savepoint(true, 2018113002, 'tool', 'usertours');
     }
 
     return true;

@@ -796,8 +796,8 @@ class manager {
         // the format filename => version. The version value needs to
         // be increased if the tour has been updated.
         $shippedtours = [
-            '36_dashboard.json' => 1,
-            '36_messaging.json' => 1,
+            '36_dashboard.json' => 3,
+            '36_messaging.json' => 3,
         ];
 
         // These are tours that we used to ship but don't ship any longer.
@@ -834,6 +834,7 @@ class manager {
 
                 if (isset($unshippedtours[$filename])) {
                     if ($version <= $unshippedtours[$filename]) {
+                        $tour = tour::instance($tour->get_id());
                         $tour->set_enabled(tour::DISABLED);
                         $tour->persist();
                     }

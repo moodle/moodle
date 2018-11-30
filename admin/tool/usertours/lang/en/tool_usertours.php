@@ -184,13 +184,13 @@ $string['privacy:request:preference:completed'] = 'You last marked the "{$a->nam
 $string['tour3_title_dashboard'] = 'Your Dashboard';
 $string['tour3_content_dashboard'] = 'Your new Dashboard has many features to help you easily access the information most important to you.';
 $string['tour3_title_timeline'] = 'Timeline block';
-$string['tour3_content_timeline'] = 'The timeline shows your important upcoming events.
+$string['tour3_content_timeline'] = 'The Timeline block shows your important upcoming events.
 
 You can choose to show activities in the next week, month, or further into the future.
 
 You can also show items which are overdue.';
 $string['tour3_title_recentcourses'] = 'Recently accessed courses';
-$string['tour3_content_recentcourses'] = 'The recently accessed courses block shows the courses that you last visited, allowing you to jump straight back in.';
+$string['tour3_content_recentcourses'] = 'The Recently accessed courses block shows the courses that you last visited, allowing you to jump straight back in.';
 $string['tour3_title_overview'] = 'Course overview';
 $string['tour3_content_overview'] = 'The Course overview block shows all of the courses that you are enrolled in.
 
@@ -223,3 +223,6 @@ $string['tour4_title_starred'] = 'Starred';
 $string['tour4_content_starred'] = 'You can choose to star particular conversations to make them easier to find.';
 $string['tour4_title_settings'] = 'Messaging settings';
 $string['tour4_content_settings'] = 'You can access your messaging settings via the cog icon. A new privacy setting allows you to restrict who can message you.';
+
+$string['tour_final_step_title'] = 'End of tour';
+$string['tour_final_step_content'] = 'This is the end of your user tour. It won\'t show again unless you reset it using the link in the footer.';
