@@ -38,9 +38,10 @@ class imscc11_converter extends base_converter {
      * @return null|string backup::FORMAT_IMSCC11 if the Common Cartridge 1.1 is detected, null otherwise
      */
     public static function detect_format($tempdir) {
-        global $CFG;
-
-        $filepath = $CFG->dataroot . '/temp/backup/' . $tempdir;
+        $filepath = make_backup_temp_directory($tempdir, false);
+        if (!is_dir($filepath)) {
+            throw new convert_helper_exception('tmp_backup_directory_not_found', $filepath);
+        }
         $manifest = cc112moodle::get_manifest($filepath);
         if (file_exists($manifest)) {
             // Looks promising, lets load some information.
