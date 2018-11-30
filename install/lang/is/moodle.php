@@ -31,6 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = 'Tungumál';
+$string['moodlelogo'] = 'Moodle merkið';
 $string['next'] = 'Áfram';
 $string['previous'] = 'Til baka';
 $string['reload'] = 'Endurhlaða';
