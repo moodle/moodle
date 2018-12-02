@@ -310,6 +310,17 @@ function kalvidassign_grade_item_update($kalvidassign, $grades = null) {
 }
 
 /**
+ * Update activity grades.
+ *
+ * @param stdClass $kalvidassign database record
+ * @param int $userid specific user only, 0 means all
+ * @param bool $nullifnone - not used
+ */
+function kalvidassign_update_grades($kalvidassign, $userid = 0, $nullifnone = true) {
+    kalvidassign_grade_item_update($kalvidassign, null);
+}
+
+/**
  * Removes all grades from gradebook
  *
  * @global object
