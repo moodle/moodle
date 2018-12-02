@@ -140,7 +140,7 @@ if ($submissionform->is_cancelled()) {
         if ($submission) {
 
             $submissionchanged = strcmp($submission->submissioncomment, $submitted_data->submissioncomment_editor['text']);
-            if ($submission->grade == $submitted_data->xgrade && $submissionchanged) {
+            if ($submission->grade == $submitted_data->xgrade && !$submissionchanged) {
                 $updategrade = false;
             }
             if ($submissionchanged || $updategrade) {
