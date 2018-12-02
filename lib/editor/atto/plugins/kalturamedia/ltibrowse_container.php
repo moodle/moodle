@@ -9,7 +9,7 @@
 
 ?>
 
-<iframe id="kafIframe" src="ltibrowse.php?<?php echo $requestQueryString; ?>" width="100%" height="600" style="border: 0;" allowfullscreen>
+<iframe allow="autoplay *; fullscreen *; encrypted-media *" id="kafIframe" src="ltibrowse.php?<?php echo $requestQueryString; ?>" width="100%" height="600" style="border: 0;" allowfullscreen>
 </iframe>
 <div id="kalturaMediaSubmitButton"></div>
 <script>

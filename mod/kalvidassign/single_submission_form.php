@@ -69,7 +69,8 @@ class kalvidassign_singlesubmission_form extends moodleform {
                 'src' => $this->_generateLtiLaunchLink($submission->source, $submission),
                 'height' => $submission->height,
                 'width' => $submission->width,
-                'allowfullscreen' => "true",
+                'allowfullscreen' => 'true',
+                'allow' => 'autoplay *; fullscreen *; encrypted-media *',
             );
             $mform->addElement('html', html_writer::tag('iframe', '', $attr));
         }

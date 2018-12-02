@@ -52,7 +52,8 @@ $attr = array(
     'height' => '600px',
     'width' => '100%',
     'allowfullscreen' => 'true',
-    'src' => 'lti_launch.php'
+    'src' => 'lti_launch.php',
+    'allow' => 'autoplay *; fullscreen *; encrypted-media *',
 );
 echo html_writer::tag('iframe', '', $attr);
 
