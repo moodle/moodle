@@ -58,6 +58,11 @@ class flexible_table {
     var $headers         = array();
 
     /**
+     * @var string A column which should be considered as a header column.
+     */
+    protected $headercolumn = null;
+
+    /**
      * @var string For create header with help icon.
      */
     private $helpforheaders = array();
@@ -427,6 +432,17 @@ class flexible_table {
      */
     function define_headers($headers) {
         $this->headers = $headers;
+    }
+
+    /**
+     * Mark a specific column as being a table header using the column name defined in define_columns.
+     *
+     * Note: Only one column can be a header, and it will be rendered using a th tag.
+     *
+     * @param   string  $column
+     */
+    public function define_header_column(string $column) {
+        $this->headercolumn = $column;
     }
 
     /**
@@ -1098,6 +1114,18 @@ class flexible_table {
             foreach ($row as $index => $data) {
                 $column = $colbyindex[$index];
 
+                $attributes = [
+                    'class' => "cell c{$index}" . $this->column_class[$column],
+                    'id' => "{$rowid}_c{$index}",
+                    'style' => $this->make_styles_string($this->column_style[$column]),
+                ];
+
+                $celltype = 'td';
+                if ($this->headercolumn && $column == $this->headercolumn) {
+                    $celltype = 'th';
+                    $attributes['scope'] = 'row';
+                }
+
                 if (empty($this->prefs['collapse'][$column])) {
                     if ($this->column_suppress[$column] && $suppress_lastrow !== NULL && $suppress_lastrow[$index] === $data) {
                         $content = '&nbsp;';
@@ -1108,10 +1136,7 @@ class flexible_table {
                     $content = '&nbsp;';
                 }
 
-                $html .= html_writer::tag('td', $content, array(
-                        'class' => 'cell c' . $index . $this->column_class[$column],
-                        'id' => $rowid . '_c' . $index,
-                        'style' => $this->make_styles_string($this->column_style[$column])));
+                $html .= html_writer::tag($celltype, $content, $attributes);
             }
         }
 
