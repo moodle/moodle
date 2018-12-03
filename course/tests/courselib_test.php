@@ -4980,4 +4980,73 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($course->startdate, $min[0]);
         $this->assertNull($max);
     }
+
+    /**
+     * Test the course_get_recent_courses function.
+     */
+    public function test_course_get_recent_courses() {
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        $courses = array();
+        for ($i = 1; $i < 4; $i++) {
+            $courses[]  = $generator->create_course();
+        };
+
+        $student = $generator->create_user();
+
+        foreach ($courses as $course) {
+            $generator->enrol_user($student->id, $course->id, 'student');
+        }
+
+        $this->setUser($student);
+
+        $result = course_get_recent_courses($student->id);
+
+        // No course accessed.
+        $this->assertCount(0, $result);
+
+        foreach ($courses as $course) {
+            $context = context_course::instance($course->id);
+            course_view($context);
+        }
+
+        // Every course accessed.
+        $result = course_get_recent_courses($student->id);
+        $this->assertCount(3, $result);
+
+        // Every course accessed, result limited to 2 courses.
+        $result = course_get_recent_courses($student->id, 2);
+        $this->assertCount(2, $result);
+
+        // Every course accessed, with limit and offset. Should return only the last created course ($course[2]).
+        $result = course_get_recent_courses($student->id, 3, 2);
+        $this->assertCount(1, $result);
+        $this->assertArrayHasKey($courses[2]->id, $result);
+
+        // Every course accessed, order by shortname DESC. The last create course ($course[2]) should have the greater shortname.
+        $result = course_get_recent_courses($student->id, 0, 0, 'shortname DESC');
+        $this->assertCount(3, $result);
+        $this->assertEquals($courses[2]->id, array_shift($result)->id);
+
+        $guestcourse = $generator->create_course(
+            (object)array('shortname' => 'guestcourse',
+                'enrol_guest_status_0' => ENROL_INSTANCE_ENABLED,
+                'enrol_guest_password_0' => ''));
+        $context = context_course::instance($guestcourse->id);
+        course_view($context);
+
+        // Every course accessed, even the not enrolled one.
+        $result = course_get_recent_courses($student->id);
+        $this->assertCount(4, $result);
+
+        // Suspended student.
+        $this->getDataGenerator()->enrol_user($student->id, $courses[0]->id, 'student', 'manual', 0, 0, ENROL_USER_SUSPENDED);
+
+        // The course with suspended enrolment is not returned by the function.
+        $result = course_get_recent_courses($student->id);
+        $this->assertCount(3, $result);
+        $this->assertArrayNotHasKey($courses[0]->id, $result);
+    }
 }

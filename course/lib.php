@@ -4572,21 +4572,40 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
 
     $coursefields = 'c.' .join(',', $basefields);
 
-    $sql = "SELECT $ctxfields, $coursefields
+    // Ask the favourites service to give us the join SQL for favourited courses,
+    // so we can include favourite information in the query.
+    $usercontext = \context_user::instance($userid);
+    $favservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+    list($favsql, $favparams) = $favservice->get_join_sql_by_type('core_course', 'courses', 'fav', 'ul.courseid');
+
+    $sql = "SELECT $coursefields, $ctxfields
               FROM {course} c
               JOIN {context} ctx
                    ON ctx.contextlevel = :contextlevel
                    AND ctx.instanceid = c.id
               JOIN {user_lastaccess} ul
                    ON ul.courseid = c.id
-         LEFT JOIN {favourite} f
-                   ON f.component = 'core_course'
-                   AND f.itemtype = 'courses'
-                   AND f.userid = ul.userid
-                   AND f.itemid = ul.courseid
+            $favsql
              WHERE ul.userid = :userid
-          $orderby";
-    $params = ['userid' => $userid, 'contextlevel' => CONTEXT_COURSE];
+               AND c.visible = :visible
+               AND EXISTS (SELECT e.id
+                             FROM {enrol} e
+                        LEFT JOIN {user_enrolments} ue ON ue.enrolid = e.id
+                            WHERE e.courseid = c.id
+                              AND e.status = :statusenrol
+                              AND ((ue.status = :status
+                                    AND ue.userid = ul.userid
+                                    AND ue.timestart < :now1
+                                    AND (ue.timeend = 0 OR ue.timeend > :now2)
+                                   )
+                                   OR e.enrol = :guestenrol
+                                  )
+                          )
+            $orderby";
+
+    $now = round(time(), -2); // Improves db caching.
+    $params = ['userid' => $userid, 'contextlevel' => CONTEXT_COURSE, 'visible' => 1, 'status' => ENROL_USER_ACTIVE,
+               'statusenrol' => ENROL_INSTANCE_ENABLED, 'guestenrol' => 'guest', 'now1' => $now, 'now2' => $now] + $favparams;
 
     $recentcourses = $DB->get_records_sql($sql, $params, $offset, $limit);
 
