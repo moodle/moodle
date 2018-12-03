@@ -44,14 +44,4 @@ $capabilities = array(
             'user' => CAP_ALLOW
         )
     ),
-
-    // Whether or not a user can see the block.
-    'block/lp:view' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'user' => CAP_ALLOW
-        ),
-    ),
-
 );
