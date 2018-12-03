@@ -291,7 +291,7 @@ class repository_equella extends repository {
 
         foreach (self::get_all_editing_roles() as $role) {
             $mform->addElement('header', 'groupheader_'.$role->shortname, get_string('group', 'repository_equella',
-                format_string($role->name)));
+                role_get_name($role)));
             $mform->addElement('text', "equella_{$role->shortname}_shareid", get_string('sharedid', 'repository_equella'));
             $mform->setType("equella_{$role->shortname}_shareid", PARAM_RAW);
             $mform->addElement('text', "equella_{$role->shortname}_sharedsecret",
