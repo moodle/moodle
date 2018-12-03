@@ -1,28 +1,20 @@
-/* ensure container covers the draggable items */
-.que.ordering div.answer.ordering { overflow: auto; }
+/* Styles for the initial layout of the question. */
+
+/* Ensure container covers the draggable items. */
+.que.ordering div.answer.ordering {
+    overflow: auto;
+}
 
 .que.ordering ul.sortablelist {
-    border           : 1px solid #ccc;
     float            : left;
-    font-family      : Arial, sans-serif;
-    font-size        : 13px;
     list-style-type  : none;
-    margin           : 0px;
+    margin           : 0;
     margin-left      : 5px;
     padding          : 4px 4px 0 4px;
-    width            : 80%;
-}
-.que.ordering ul.sortablelist,
-.que.ordering ul.sortablelist li {
-    -webkit-border-radius: 6px; /* Safari and Chrome */
-    -moz-border-radius: 6px;   /* Firefox */
-    -o-border-radius: 6px;    /* Opera */
-    border-radius: 6px;      /* CSS3 */
 }
 .que.ordering ul.sortablelist li {
-    background-color : #eeeeee;
-    border           : 1px solid #cccccc;
-    border-image     : initial;
+    background-color : #ffffff;
+    border           : 1px solid #000;
     list-style-type  : none;
     margin           : 4px;
     padding          : 6px 12px;
@@ -30,8 +22,10 @@
 .que.ordering ul.sortablelist li.sortableitem {
     position         : relative;
     cursor           : move;
-    touch-action     : none;
-    -ms-touch-action : none;
+}
+.que.ordering ul.sortablelist li.sortableitem:focus {
+    border-color: #0a0;
+    box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
 }
 .que.ordering ul.sortablelist li.horizontal {
     float            : left;
@@ -39,6 +33,33 @@
 .que.ordering ul.sortablelist li.vertical {
     min-height       : 18px;
 }
+
+/* Styles for when things are being dragged. */
+.que.ordering.dragproxy {
+    margin: 0;
+    padding: 0;
+    border: 0 none;
+}
+.que.ordering.dragproxy ul.sortablelist {
+    margin: 0;
+    padding: 0;
+    float: none;
+}
+.que.ordering.dragproxy ul.sortablelist li {
+    margin: 0;
+}
+.que.ordering.dragproxy ul.sortablelist li.horizontal {
+    float: none;
+}
+.item-moving {
+    box-shadow: 3px 3px 4px #000;
+}
+.current-drop {
+    visibility: hidden;
+}
+
+
+/* Styles for feedback. */
 .que.ordering ul.sortablelist li.correct {
     background-color : #dff4d8; /* light green */
     border-color     : #99ff66; /* gentle green */
@@ -59,20 +80,8 @@
     background-color : #ffdddd; /* light red */
     border-color     : #ff7373; /* gentle red */
 }
-.que.ordering ul.sortablelist li.correct,
-.que.ordering ul.sortablelist li.partial66,
-.que.ordering ul.sortablelist li.partial33,
-.que.ordering ul.sortablelist li.partial00,
-.que.ordering ul.sortablelist li.incorrect,
-.que.ordering ul.sortablelist li.unscored {
-    border-style     : solid;
-    border-width     : 4px;
-    margin-bottom    : 4px;
-    margin-top       : 4px;
-}
-
 /*
-    force containing DIV to cover the floating LI elements
+    Force containing DIV to cover the floating LI elements
     Note: if you add "overflow:auto;  to "ol.correctorder"
     then the numbers for the <LI> elements disappear !!
 */
@@ -85,11 +94,13 @@
     margin-right     : 24px;
 }
 .que.ordering div.rightanswer ol.correctorder li.horizontal:first-child {
-    margin-left      : 0px;
+    margin-left      : 0;
 }
 .que.ordering div.rightanswer ol.correctorder li.vertical {
 }
 
 /* the width restriction can be limited to editors for draggable items
    by inserting "fieldset:nth-child(n+4)" before "div.feditor" */
-#page-question-type-ordering form.mform fieldset:nth-child(n+4) div.feditor { max-width: 480px; }
+#page-question-type-ordering form.mform fieldset:nth-child(n+4) div.feditor {
+    max-width: 480px;
+}

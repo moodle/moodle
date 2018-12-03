@@ -92,8 +92,8 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             // Items cannot be dragged in readonly mode.
         } else if (method_exists($PAGE->requires, 'js_call_amd')) {
             // Moodle >= 2.9
-            $params = array($sortableid, $responseid, $ablockid, $axis);
-            $PAGE->requires->js_call_amd('qtype_ordering/ordering', 'init', $params);
+            $params = array($sortableid, $responseid, $axis);
+            $PAGE->requires->js_call_amd('qtype_ordering/reorder', 'init', $params);
         } else {
             // Moodle <= 2.8
             $script = "\n";
