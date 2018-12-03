@@ -79,5 +79,8 @@ function xmldb_quiz_overview_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018061801, 'quiz', 'overview');
     }
 
+    // Automatically generated Moodle v3.6.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
