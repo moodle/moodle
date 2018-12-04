@@ -54,4 +54,18 @@ interface task_logger {
     public static function store_log_for_task(task_base $task, string $logpath, bool $failed,
             int $dbreads, int $dbwrites, float $timestart, float $timeend);
 
+    /**
+     * Whether this task logger has a report available.
+     *
+     * @return  bool
+     */
+    public static function has_log_report() : bool;
+
+    /**
+     * Get any URL available for viewing relevant task log reports.
+     *
+     * @param   string      $classname The task class to fetch for
+     * @return  \moodle_url
+     */
+    public static function get_url_for_task_class(string $classname) : \moodle_url;
 }

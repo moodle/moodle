@@ -144,7 +144,12 @@ class logmanager {
             return false;
         }
 
-        return !empty(self::get_logger_classname());
+        $loggerclass = self::get_logger_classname();
+        if (empty($loggerclass)) {
+            return false;
+        }
+
+        return $loggerclass::is_configured();
     }
 
     /**
@@ -176,7 +181,7 @@ class logmanager {
     }
 
     /**
-     * Whether to use the standard settings fore
+     * Whether to use the standard settings form.
      */
     public static function uses_standard_settings() : bool {
         $classname = self::get_logger_classname();

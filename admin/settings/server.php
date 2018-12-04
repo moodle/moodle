@@ -246,9 +246,16 @@ if (\core\task\logmanager::uses_standard_settings()) {
             PARAM_INT
         )
     );
-
 }
 $ADMIN->add('taskconfig', $temp);
+
+if (empty($CFG->task_log_class) || '\\core\\task\\database_logger' == $CFG->task_log_class) {
+    $ADMIN->add('taskconfig', new admin_externalpage(
+        'tasklogs',
+        new lang_string('tasklogs','admin'),
+        "{$CFG->wwwroot}/{$CFG->admin}/tasklogs.php"
+    ));
+}
 
 // E-mail settings.
 $ADMIN->add('server', new admin_category('email', new lang_string('categoryemail', 'admin')));

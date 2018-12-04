@@ -522,6 +522,11 @@ class task_logging_test_mocked_logger implements \core\task\task_logger {
     public static $storelogfortask = [];
 
     /**
+     * @var bool Whether this logger has a report.
+     */
+    public static $haslogreport = true;
+
+    /**
      * Reset the test class.
      */
     public static function test_reset() {
@@ -553,6 +558,25 @@ class task_logging_test_mocked_logger implements \core\task\task_logger {
     public static function store_log_for_task(\core\task\task_base $task, string $logpath, bool $failed,
             int $dbreads, int $dbwrites, float $timestart, float $timeend) {
         self::$storelogfortask[] = func_get_args();
+    }
+
+    /**
+     * Whether this task logger has a report available.
+     *
+     * @return  bool
+     */
+    public static function has_log_report() : bool {
+        return self::$haslogreport;
+    }
+
+    /**
+     * Get any URL available for viewing relevant task log reports.
+     *
+     * @param   string      $classname The task class to fetch for
+     * @return  \moodle_url
+     */
+    public static function get_url_for_task_class(string $classname) : \moodle_url {
+        return new \moodle_url('');
     }
 
 }

@@ -592,7 +592,7 @@ class manager {
         $task->get_lock()->release();
 
         // Finalise the log output.
-        \core\task\logmanager::finalise_log(true);
+        logmanager::finalise_log(true);
     }
 
     /**
@@ -604,7 +604,7 @@ class manager {
         global $DB;
 
         // Finalise the log output.
-        \core\task\logmanager::finalise_log();
+        logmanager::finalise_log();
 
         // Delete the adhoc task record - it is finished.
         $DB->delete_records('task_adhoc', array('id' => $task->get_id()));
@@ -651,7 +651,7 @@ class manager {
         $task->get_lock()->release();
 
         // Finalise the log output.
-        \core\task\logmanager::finalise_log(true);
+        logmanager::finalise_log(true);
     }
 
     /**
@@ -680,7 +680,7 @@ class manager {
         global $DB;
 
         // Finalise the log output.
-        \core\task\logmanager::finalise_log();
+        logmanager::finalise_log();
 
         $classname = self::get_canonical_class_name($task);
         $record = $DB->get_record('task_scheduled', array('classname' => $classname));
