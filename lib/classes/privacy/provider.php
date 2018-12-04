@@ -88,6 +88,13 @@ class provider implements
                 'userid'        => 'privacy:metadata:task_adhoc:userid',
             ], 'privacy:metadata:task_adhoc');
 
+        // The task_log table stores debugging data for tasks.
+        // These are cleaned regularly and intended purely for debugging.
+        $collection->add_database_table('task_log', [
+                'component'     => 'privacy:metadata:task_log:component',
+                'userid'        => 'privacy:metadata:task_log:userid',
+            ], 'privacy:metadata:task_log');
+
         // The events_queue includes information about pending events tasks.
         // These are stored for short periods whilst being processed into other locations.
         $collection->add_database_table('events_queue', [
