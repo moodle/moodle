@@ -1482,10 +1482,12 @@ class api {
              LEFT JOIN {message_user_actions} mua
                     ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
                  WHERE mcm.userid = ?
+                   AND mc.enabled = ?
                    AND mcm.userid != m.useridfrom
                    AND mua.id is NULL";
 
-        return $DB->count_records_sql($sql, [$user->id, self::MESSAGE_ACTION_READ, $user->id]);
+        return $DB->count_records_sql($sql, [$user->id, self::MESSAGE_ACTION_READ, $user->id,
+            self::MESSAGE_CONVERSATION_ENABLED]);
     }
 
     /**
