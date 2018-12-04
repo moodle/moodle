@@ -2548,5 +2548,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019011500.00);
     }
 
+    if ($oldversion < 2019011501.00) {
+        // Define field output to be added to task_log.
+        $table = new xmldb_table('task_log');
+        $field = new xmldb_field('output', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'result');
+
+        // Conditionally launch add field output.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019011501.00);
+    }
+
     return true;
 }

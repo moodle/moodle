@@ -4,7 +4,6 @@
 
 if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
-
 // "systempaths" settingpage
 $temp = new admin_settingpage('systempaths', new lang_string('systempaths','admin'));
 $temp->add(new admin_setting_configexecutable('pathtophp', new lang_string('pathtophp', 'admin'),
@@ -211,6 +210,45 @@ $temp->add(new admin_setting_configtext('curltimeoutkbitrate', new lang_string('
 
 $ADMIN->add('server', $temp);
 
+
+$ADMIN->add('server', new admin_category('taskconfig', new lang_string('taskadmintitle', 'admin')));
+$temp = new admin_settingpage('tasklogging', new lang_string('tasklogging','admin'));
+$temp->add(
+    new admin_setting_configselect(
+        'task_logmode',
+        new lang_string('task_logmode', 'admin'),
+        new lang_string('task_logmode_desc', 'admin'),
+        \core\task\logmanager::MODE_ALL,
+        [
+            \core\task\logmanager::MODE_ALL => new lang_string('task_logmode_all', 'admin'),
+            \core\task\logmanager::MODE_FAILONLY => new lang_string('task_logmode_failonly', 'admin'),
+            \core\task\logmanager::MODE_NONE => new lang_string('task_logmode_none', 'admin'),
+        ]
+    )
+);
+
+if (\core\task\logmanager::uses_standard_settings()) {
+    $temp->add(
+        new admin_setting_configduration(
+            'task_logretention',
+            new \lang_string('task_logretention', 'admin'),
+            new \lang_string('task_logretention_desc', 'admin'),
+            28 * DAYSECS
+        )
+    );
+
+    $temp->add(
+        new admin_setting_configtext(
+            'task_logretainruns',
+            new \lang_string('task_logretainruns', 'admin'),
+            new \lang_string('task_logretainruns_desc', 'admin'),
+            20,
+            PARAM_INT
+        )
+    );
+
+}
+$ADMIN->add('taskconfig', $temp);
 
 // E-mail settings.
 $ADMIN->add('server', new admin_category('email', new lang_string('categoryemail', 'admin')));

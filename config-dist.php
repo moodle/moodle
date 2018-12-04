@@ -545,6 +545,15 @@ $CFG->admin = 'admin';
 // on a shared file system that supports locking.
 //      $CFG->lock_file_root = $CFG->dataroot . '/lock';
 //
+//
+// Alternative task logging.
+// Since Moodle 3.7 the output of al scheduled and adhoc tasks is stored in the database and it is possible to use an
+// alternative task logging mechanism.
+// To set the alternative task logging mechanism in config.php you can use the following settings, providing the
+// alternative class name that will be auto-loaded.
+//
+//      $CFG->task_log_class = '\\local_mytasklogger\\logger';
+//
 // Moodle 2.9 allows administrators to customise the list of supported file types.
 // To add a new filetype or override the definition of an existing one, set the
 // customfiletypes variable like this:

@@ -93,6 +93,8 @@ function cron_run() {
 function cron_run_inner_scheduled_task(\core\task\task_base $task) {
     global $CFG, $DB;
 
+    \core\task\logmanager::start_logging($task);
+
     $fullname = $task->get_name() . ' (' . get_class($task) . ')';
     mtrace('Execute scheduled task: ' . $fullname);
     cron_trace_time_and_memory();
@@ -144,6 +146,9 @@ function cron_run_inner_scheduled_task(\core\task\task_base $task) {
  */
 function cron_run_inner_adhoc_task(\core\task\adhoc_task $task) {
     global $DB, $CFG;
+
+    \core\task\logmanager::start_logging($task);
+
     mtrace("Execute adhoc task: " . get_class($task));
     cron_trace_time_and_memory();
     $predbqueries = null;

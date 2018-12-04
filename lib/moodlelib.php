@@ -8953,10 +8953,15 @@ function mtrace($string, $eol="\n", $sleep=0) {
         return;
     } else if (defined('STDOUT') && !PHPUNIT_TEST && !defined('BEHAT_TEST')) {
         fwrite(STDOUT, $string.$eol);
+
+        // We must explicitly call the add_line function here.
+        // Uses of fwrite to STDOUT are not picked up by ob_start.
+        \core\task\logmanager::add_line("{$string}{$eol}");
     } else {
         echo $string . $eol;
     }
 
+    // Flush again.
     flush();
 
     // Delay to keep message on user's screen in case of subsequent redirect.
