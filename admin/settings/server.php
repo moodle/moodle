@@ -249,7 +249,7 @@ if (\core\task\logmanager::uses_standard_settings()) {
 }
 $ADMIN->add('taskconfig', $temp);
 
-if (empty($CFG->task_log_class) || '\\core\\task\\database_logger' == $CFG->task_log_class) {
+if (\core\task\logmanager::uses_standard_settings()) {
     $ADMIN->add('taskconfig', new admin_externalpage(
         'tasklogs',
         new lang_string('tasklogs','admin'),

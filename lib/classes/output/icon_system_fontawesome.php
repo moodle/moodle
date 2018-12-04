@@ -99,6 +99,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:e/document_properties' => 'fa-info',
             'core:e/emoticons' => 'fa-smile-o',
             'core:e/find_replace' => 'fa-search-plus',
+            'core:e/file-text' => 'fa-file-text',
             'core:e/forward' => 'fa-arrow-right',
             'core:e/fullpage' => 'fa-arrows-alt',
             'core:e/fullscreen' => 'fa-arrows-alt',

@@ -83,9 +83,17 @@ class task_log_table extends \table_sql {
         $where = [];
         $params = [];
         if (!empty($filter)) {
-            $where[] = $DB->sql_like('classname', ':filter', false, false);
+            $orwhere = [];
             $filter = str_replace('\\', '\\\\', $filter);
-            $params['filter'] = '%' . $DB->sql_like_escape($filter) . '%';
+
+            // Check the class name.
+            $orwhere[] = $DB->sql_like('classname', ':classfilter', false, false);
+            $params['classfilter'] = '%' . $DB->sql_like_escape($filter) . '%';
+
+            $orwhere[] = $DB->sql_like('output', ':outputfilter', false, false);
+            $params['outputfilter'] = '%' . $DB->sql_like_escape($filter) . '%';
+
+            $where[] = "(" . implode(' OR ', $orwhere) . ")";
         }
 
         if (null !== $resultfilter) {

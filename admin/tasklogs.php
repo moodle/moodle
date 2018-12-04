@@ -27,7 +27,7 @@ require_once("{$CFG->libdir}/adminlib.php");
 require_once("{$CFG->libdir}/tablelib.php");
 require_once("{$CFG->libdir}/filelib.php");
 
-$filter = optional_param('filter', '', PARAM_ALPHANUMEXT);
+$filter = optional_param('filter', '', PARAM_RAW);
 $result = optional_param('result', null, PARAM_INT);
 
 $pageurl = new \moodle_url('/admin/tasklogs.php');
@@ -51,13 +51,13 @@ $download = optional_param('download', false, PARAM_BOOL);
 if (null !== $logid) {
     $log = $DB->get_record('task_log', ['id' => $logid], '*', MUST_EXIST);
 
-    $fs = get_file_storage();
-    $file = $fs->get_file(\context_system::instance()->id, 'core', 'task_logs', $log->id, '/', 'log.txt');
+    if ($download) {
+        $filename = str_replace('\\', '_', $log->classname) . "-{$log->id}.log";
+        header("Content-Disposition: attachment; filename=\"{$filename}\"");
+    }
 
-    $filename = str_replace('\\', '_', $log->classname) . "-{$log->id}.log";
-    send_stored_file($file, null, 0, $download, [
-            'filename' => $filename,
-        ]);
+    readstring_accel($log->output, 'text/plain', false);
+    exit;
 }
 
 $renderer = $PAGE->get_renderer('tool_task');
