@@ -1534,7 +1534,8 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         // No 'name' atttribute for form in xhtml strict :
         $attributes = array('action' => $action, 'method' => $method, 'accept-charset' => 'utf-8') + $target;
         if (is_null($this->getAttribute('id'))) {
-            $attributes['id'] = 'mform' . $formcounter;
+            // Append a random id, forms can be loaded in different requests using Fragments API.
+            $attributes['id'] = 'mform' . $formcounter . '_' . random_string();
         }
         $formcounter++;
         $this->updateAttributes($attributes);
