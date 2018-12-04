@@ -2874,5 +2874,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018120300.01);
     }
 
+    if ($oldversion < 2018120300.02) {
+        // Set all individual conversations to enabled.
+        $updatesql = "UPDATE {message_conversations}
+                         SET enabled = :enabled
+                       WHERE type = :type";
+        $DB->execute($updatesql, ['enabled' => 1, 'type' => 1]);
+
+        upgrade_main_savepoint(true, 2018120300.02);
+    }
+
     return true;
 }
