@@ -37,11 +37,11 @@
 
 {{< core_message/message_drawer_view_overview_section }}
     {{$region}}view-overview-messages{{/region}}
-    {{$title}}{{#str}} messages, core_message {{/str}}{{/title}}
+    {{$title}}{{#str}} individualconversations, core_message {{/str}}{{/title}}
     {{$placeholder}}
         <div class="text-center py-2">{{> core/loading }}</div>
     {{/placeholder}}
     {{$emptymessage}}
-        <p class="text-muted mt-2">{{#str}} nomessages, core_message {{/str}}</p>
+        <p class="text-muted mt-2">{{#str}} noindividualconversations, core_message {{/str}}</p>
     {{/emptymessage}}
 {{/ core_message/message_drawer_view_overview_section }}
