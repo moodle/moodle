@@ -1250,10 +1250,6 @@ class core_message_external extends external_api {
      *
      * @deprecated since 3.6
      *
-     * NOTE: We are deprecating this function but not search_users_in_course API function for backwards compatibility
-     * with messaging UI. But should be removed once new group messaging UI is in place and old messaging UI is removed.
-     * Followup: MDL-63915
-     *
      * @param int $userid The id of the user who is performing the search
      * @param int $courseid The id of the course
      * @param string $search The string being searched
@@ -1350,10 +1346,6 @@ class core_message_external extends external_api {
      * Get messagearea search users results.
      *
      * @deprecated since 3.6
-     *
-     * NOTE: We are deprecating this function but not search_users API function for backwards compatibility
-     * with messaging UI. But should be removed once new group messaging UI is in place and old messaging UI is removed.
-     * Followup: MDL-63915
      *
      * @param int $userid The id of the user who is performing the search
      * @param string $search The string being searched

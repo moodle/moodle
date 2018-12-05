@@ -37,9 +37,9 @@ class helper {
     /**
      * Helper function to retrieve the messages between two users
      *
-     * TODO: This function should be removed once the new group messaging UI is in place and the old messaging UI is removed.
-     * For now we are not removing/deprecating this function for backwards compatibility with messaging UI.
-     * Followup: MDL-63915
+     * TODO: This function should be removed once the related web services go through final deprecation.
+     * The related web services are data_for_messagearea_messages AND data_for_messagearea_get_most_recent_message.
+     * Followup: MDL-63261
      *
      * @param int $userid the current user
      * @param int $otheruserid the other user
@@ -232,9 +232,9 @@ class helper {
     /**
      * Helper function to return an array of messages.
      *
-     * TODO: This function should be removed once the new group messaging UI is in place and the old messaging UI is removed.
-     * For now we are not removing/deprecating this function for backwards compatibility with messaging UI.
-     * Followup: MDL-63915
+     * TODO: This function should be removed once the related web services go through final deprecation.
+     * The related web services are data_for_messagearea_messages AND data_for_messagearea_get_most_recent_message.
+     * Followup: MDL-63261
      *
      * @param int $userid
      * @param array $messages
@@ -603,6 +603,10 @@ class helper {
 
     /**
      * Backwards compatibility formatter, transforming the new output of get_conversations() into the old format.
+     *
+     * TODO: This function should be removed once the related web services go through final deprecation.
+     * The related web services are data_for_messagearea_conversations.
+     * Followup: MDL-63261
      *
      * @param array $conversations the array of conversations, which must come from get_conversations().
      * @return array the array of conversations, formatted in the legacy style.
