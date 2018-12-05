@@ -94,9 +94,6 @@ $card-gutter : $card-deck-margin * 2;
     }
     .icon {
         margin-right: 0;
-        &.fa-star {
-            color: $blue;
-        }
     }
     .card .coursemenubtn {
         margin-top: -0.5rem;
@@ -104,6 +101,9 @@ $card-gutter : $card-deck-margin * 2;
     a.coursename,
     .btn-link {
         color: inherit;
+    }
+    .multiline {
+        white-space: normal;
     }
     .btn.btn-link.btn-icon {
         height: 36px;

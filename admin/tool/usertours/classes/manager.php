@@ -697,7 +697,7 @@ class manager {
     }
 
     /**
-     * Move a tour up or down.
+     * Move a tour up or down and redirect once complete.
      *
      * @param   int     $id     The tour to move.
      */
@@ -707,6 +707,19 @@ class manager {
         $direction = required_param('direction', PARAM_INT);
 
         $tour = tour::instance($id);
+        self::_move_tour($tour, $direction);
+
+        redirect(helper::get_list_tour_link());
+    }
+
+    /**
+     * Move a tour up or down.
+     *
+     * @param   tour    $tour   The tour to move.
+     *
+     * @param   int     $direction
+     */
+    protected static function _move_tour(tour $tour, $direction) {
         $currentsortorder   = $tour->get_sortorder();
         $targetsortorder    = $currentsortorder + $direction;
 
@@ -722,8 +735,6 @@ class manager {
 
         $tour->set_sortorder($targetsortorder);
         $tour->persist();
-
-        redirect(helper::get_list_tour_link());
     }
 
     /**
@@ -785,6 +796,13 @@ class manager {
         // the format filename => version. The version value needs to
         // be increased if the tour has been updated.
         $shippedtours = [
+            '36_dashboard.json' => 3,
+            '36_messaging.json' => 3,
+        ];
+
+        // These are tours that we used to ship but don't ship any longer.
+        // We do not remove them, but we do disable them.
+        $unshippedtours = [
             'boost_administrator.json' => 1,
             'boost_course_view.json' => 1,
         ];
@@ -813,12 +831,19 @@ class manager {
                         unset($shippedtours[$filename]);
                     }
                 }
+
+                if (isset($unshippedtours[$filename])) {
+                    if ($version <= $unshippedtours[$filename]) {
+                        $tour = tour::instance($tour->get_id());
+                        $tour->set_enabled(tour::DISABLED);
+                        $tour->persist();
+                    }
+                }
             }
         }
-
         $existingtourrecords->close();
 
-        foreach ($shippedtours as $filename => $version) {
+        foreach (array_reverse($shippedtours) as $filename => $version) {
             $filepath = $CFG->dirroot . "/{$CFG->admin}/tool/usertours/tours/" . $filename;
             $tourjson = file_get_contents($filepath);
             $tour = self::import_tour_from_json($tourjson);
@@ -828,6 +853,11 @@ class manager {
             $tour->set_config(self::CONFIG_SHIPPED_TOUR, true);
             $tour->set_config(self::CONFIG_SHIPPED_FILENAME, $filename);
             $tour->set_config(self::CONFIG_SHIPPED_VERSION, $version);
+
+            // Bump new tours to the top of the list.
+            while ($tour->get_sortorder() > 0) {
+                self::_move_tour($tour, helper::MOVE_UP);
+            }
 
             if (defined('BEHAT_SITE_RUNNING') || (defined('PHPUNIT_TEST') && PHPUNIT_TEST)) {
                 // Disable this tour if this is behat or phpunit.

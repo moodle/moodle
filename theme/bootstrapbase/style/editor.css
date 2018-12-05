@@ -774,8 +774,8 @@ table th[class*="span"],
 .table-hover tbody tr.info:hover > td {
   background-color: #c4e3f3;
 }
-[class^="icon-"]:not([class^="icon-size-"]),
-[class*=" icon-"]:not([class*=" icon-size-"]) {
+[class^="icon-"],
+[class*=" icon-"] {
   display: inline-block;
   width: 14px;
   height: 14px;

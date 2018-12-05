@@ -48,13 +48,21 @@
 
             <div class="align-self-stretch d-flex flex-column w-100">
                 <div class="d-flex mb-1">
-                    <div class="d-block">
+                    <a href="{{viewurl}}" class="coursename">
+                        {{#showshortname}}
+                            <span class="sr-only">
+                                {{#str}}aria:courseshortname, core_course{{/str}}
+                            </span>
+                            <div class="text-muted muted mb-1">
+                                {{{shortname}}}
+                            </div>
+                        {{/showshortname}}
                         {{> core_course/favouriteicon }}
-                        <a href="{{viewurl}}" class="coursename">
-                            <span class="sr-only">{{#str}}aria:coursename, core_course{{/str}}</span>
-                            <h4 class="d-inline">{{{fullname}}}</h4>
-                        </a>
-                    </div>
+                        <span class="sr-only">
+                            {{#str}}aria:coursename, core_course{{/str}}
+                        </span>
+                        <h6 class="d-inline h5">{{{fullname}}}</h4>
+                    </a>
                     {{> block_myoverview/course-action-menu }}
                 </div>
                 <div class="summary">

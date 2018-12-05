@@ -1365,6 +1365,31 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Tests retrieving conversations when a legacy 'self' conversation exists.
+     */
+    public function test_get_conversations_legacy_self_conversations() {
+        global $DB;
+
+        // Create a legacy conversation between one user and themself.
+        $user1 = self::getDataGenerator()->create_user();
+        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user1->id]);
+        testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'Test message to self!');
+
+        // Verify we are in a 'self' conversation state.
+        $members = $DB->get_records('message_conversation_members', ['conversationid' => $conversation->id]);
+        $this->assertCount(2, $members);
+        $member = array_pop($members);
+        $this->assertEquals($user1->id, $member->userid);
+        $member = array_pop($members);
+        $this->assertEquals($user1->id, $member->userid);
+
+        // Verify this conversation is not returned by the method.
+        $conversations = \core_message\api::get_conversations($user1->id);
+        $this->assertCount(0, $conversations);
+    }
+
+    /**
      * Tests retrieving conversations when a conversation contains a deleted user.
      */
     public function test_get_conversations_with_deleted_user() {
@@ -3016,6 +3041,44 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Check the amount for the second user.
         $this->assertEquals(1, core_message\api::count_unread_conversations($user2));
+    }
+
+    /**
+     * Tests counting unread conversations where one conversation is disabled.
+     */
+    public function test_count_unread_conversations_disabled() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // The person wanting the conversation count.
+        $this->setUser($user1);
+
+        // Send some messages back and forth, have some different conversations with different users.
+        $this->send_fake_message($user1, $user2, 'Yo!');
+        $this->send_fake_message($user2, $user1, 'Sup mang?');
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!');
+        $this->send_fake_message($user2, $user1, 'Word.');
+
+        $this->send_fake_message($user1, $user3, 'Booyah');
+        $this->send_fake_message($user3, $user1, 'Whaaat?');
+        $this->send_fake_message($user1, $user3, 'Nothing.');
+        $this->send_fake_message($user3, $user1, 'Cool.');
+
+        $this->send_fake_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?');
+        $this->send_fake_message($user4, $user1, 'Yah brah, it\'s pretty rad.');
+        $this->send_fake_message($user1, $user4, 'Dope.');
+
+        // Let's disable the last conversation.
+        $conversationid = core_message\api::get_conversation_between_users([$user1->id, $user4->id]);
+        core_message\api::disable_conversation($conversationid);
+
+        // Check that the disabled conversation was not included.
+        $this->assertEquals(2, core_message\api::count_unread_conversations());
     }
 
     /**
@@ -4730,6 +4793,24 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test the get_contact_requests() function when the user has blocked the sender of the request.
+     */
+    public function test_get_contact_requests_blocked_sender() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // User1 blocks User2.
+        \core_message\api::block_user($user1->id, $user2->id);
+
+        // User2 tries to add User1 as a contact.
+        \core_message\api::create_contact_request($user2->id, $user1->id);
+
+        // Verify we don't see the contact request from the blocked user User2 in the requests for User1.
+        $requests = \core_message\api::get_contact_requests($user1->id);
+        $this->assertEmpty($requests);
+    }
+
+    /**
      * Test getting contact requests when there are none.
      */
     public function test_get_contact_requests_no_requests() {
@@ -4916,6 +4997,23 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         \core_message\api::create_contact_request($user1->id, $user4->id);
         // Function should ignore sent requests.
         $this->assertEquals(2, \core_message\api::get_received_contact_requests_count($user1->id));
+    }
+
+    /**
+     * Test the get_received_contact_requests_count() function when the user has blocked the sender of the request.
+     */
+    public function test_get_received_contact_requests_count_blocked_sender() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // User1 blocks User2.
+        \core_message\api::block_user($user1->id, $user2->id);
+
+        // User2 tries to add User1 as a contact.
+        \core_message\api::create_contact_request($user2->id, $user1->id);
+
+        // Verify we don't see the contact request from the blocked user User2 in the count for User1.
+        $this->assertEquals(0, \core_message\api::get_received_contact_requests_count($user1->id));
     }
 
     /**
@@ -5681,19 +5779,19 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     public function test_get_conversation_counts_test_cases() {
         $typeindividual = \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
         $typegroup = \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP;
-        list($user1, $user2, $user3, $user4, $user5, $user6, $user7) = [0, 1, 2, 3, 4, 5, 6];
+        list($user1, $user2, $user3, $user4, $user5, $user6, $user7, $user8) = [0, 1, 2, 3, 4, 5, 6, 7];
         $conversations = [
             [
                 'type' => $typeindividual,
                 'users' => [$user1, $user2],
-                'messages' => [$user1, $user2],
+                'messages' => [$user1, $user2, $user2],
                 'favourites' => [$user1],
                 'enabled' => null // Individual conversations cannot be disabled.
             ],
             [
                 'type' => $typeindividual,
                 'users' => [$user1, $user3],
-                'messages' => [$user1, $user1],
+                'messages' => [$user1, $user3, $user1],
                 'favourites' => [],
                 'enabled' => null // Individual conversations cannot be disabled.
             ],
@@ -5706,10 +5804,24 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             ],
             [
                 'type' => $typegroup,
+                'users' => [$user2, $user3, $user4],
+                'messages' => [$user2, $user3, $user4],
+                'favourites' => [],
+                'enabled' => true
+            ],
+            [
+                'type' => $typegroup,
                 'users' => [$user6, $user7],
-                'messages' => [$user6, $user7],
+                'messages' => [$user6, $user7, $user7],
                 'favourites' => [$user6],
                 'enabled' => false
+            ],
+            [
+                'type' => $typeindividual,
+                'users' => [$user8, $user8],
+                'messages' => [$user8, $user8],
+                'favourites' => [],
+                'enabled' => null // Individual conversations cannot be disabled.
             ],
         ];
 
@@ -5719,20 +5831,28 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user5],
-                'expected' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 0, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                ]],
+                'expectedunreadcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
                 ]],
                 'deletedusers' => []
             ],
-            'No individual conversations, 1 group conversation' => [
+            'No individual conversations, 2 group conversations' => [
                 'conversationConfigs' => $conversations,
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user4],
-                'expected' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                ]],
+                'expectedunreadcounts' => ['favourites' => 0, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
                 ]],
                 'deletedusers' => []
             ],
@@ -5741,31 +5861,43 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user1],
-                'expected' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                ]],
+                'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
                 ]],
                 'deletedusers' => []
             ],
-            '1 individual conversation, 1 group conversation' => [
+            '1 individual conversation, 2 group conversations' => [
                 'conversationConfigs' => $conversations,
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user2],
-                'expected' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                ]],
+                'expectedunreadcounts' => ['favourites' => 0, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
                 ]],
                 'deletedusers' => []
             ],
-            '1 group conversation only' => [
+            '2 group conversations only' => [
                 'conversationConfigs' => $conversations,
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user4],
-                'expected' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                ]],
+                'expectedunreadcounts' => ['favourites' => 0, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
                 ]],
                 'deletedusers' => []
             ],
@@ -5774,7 +5906,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => $user1,
                 'deletemessages' => [0],
                 'arguments' => [$user1],
-                'expected' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                ]],
+                'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
                 ]],
@@ -5783,9 +5919,13 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             'All conversation types, delete a message from individual non-favourited, messages remaining' => [
                 'conversationConfigs' => $conversations,
                 'deletemessagesuser' => $user1,
-                'deletemessages' => [2],
+                'deletemessages' => [3],
                 'arguments' => [$user1],
-                'expected' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                ]],
+                'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
                 ]],
@@ -5794,9 +5934,13 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             'All conversation types, delete all messages from individual favourited, no messages remaining' => [
                 'conversationConfigs' => $conversations,
                 'deletemessagesuser' => $user1,
-                'deletemessages' => [0, 1],
+                'deletemessages' => [0, 1, 2],
                 'arguments' => [$user1],
-                'expected' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 0, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                ]],
+                'expectedunreadcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
                 ]],
@@ -5805,9 +5949,13 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             'All conversation types, delete all messages from individual non-favourited, no messages remaining' => [
                 'conversationConfigs' => $conversations,
                 'deletemessagesuser' => $user1,
-                'deletemessages' => [2, 3],
+                'deletemessages' => [3, 4, 5],
                 'arguments' => [$user1],
-                'expected' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                ]],
+                'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
                 ]],
@@ -5816,31 +5964,43 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             'All conversation types, delete all messages from individual favourited, no messages remaining, different user' => [
                 'conversationConfigs' => $conversations,
                 'deletemessagesuser' => $user1,
-                'deletemessages' => [0, 1],
+                'deletemessages' => [0, 1, 2],
                 'arguments' => [$user2],
-                'expected' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                ]],
+                'expectedunreadcounts' => ['favourites' => 0, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
                 ]],
                 'deletedusers' => []
             ],
             'All conversation types, delete all messages from individual non-favourited, no messages remaining, different user' => [
                 'conversationConfigs' => $conversations,
                 'deletemessagesuser' => $user1,
-                'deletemessages' => [2, 3],
+                'deletemessages' => [3, 4, 5],
                 'arguments' => [$user3],
-                'expected' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
-                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
+                ]],
+                'expectedunreadcounts' => ['favourites' => 0, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 2
                 ]],
                 'deletedusers' => []
             ],
             'All conversation types, delete some messages from group non-favourited, messages remaining,' => [
                 'conversationConfigs' => $conversations,
                 'deletemessagesuser' => $user1,
-                'deletemessages' => [4, 5],
+                'deletemessages' => [6, 7],
                 'arguments' => [$user1],
-                'expected' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                ]],
+                'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
                 ]],
@@ -5849,11 +6009,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             'All conversation types, delete all messages from group non-favourited, no messages remaining,' => [
                 'conversationConfigs' => $conversations,
                 'deletemessagesuser' => $user1,
-                'deletemessages' => [4, 5, 6, 7],
+                'deletemessages' => [6, 7, 8, 9],
                 'arguments' => [$user1],
-                'expected' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                ]],
+                'expectedunreadcounts' => ['favourites' => 1, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
                 ]],
                 'deletedusers' => []
             ],
@@ -5862,7 +6026,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user1],
-                'expected' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                ]],
+                'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
                 ]],
@@ -5873,7 +6041,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user1],
-                'expected' => ['favourites' => 1, 'types' => [
+                'expectedcounts' => ['favourites' => 1, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
+                ]],
+                'expectedunreadcounts' => ['favourites' => 1, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 1,
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 1
                 ]],
@@ -5884,7 +6056,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user6],
-                'expected' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 0, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                ]],
+                'expectedunreadcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
                 ]],
@@ -5895,7 +6071,26 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 'deletemessagesuser' => null,
                 'deletemessages' => [],
                 'arguments' => [$user7],
-                'expected' => ['favourites' => 0, 'types' => [
+                'expectedcounts' => ['favourites' => 0, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                ]],
+                'expectedunreadcounts' => ['favourites' => 0, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                ]],
+                'deletedusers' => []
+            ],
+            'Conversation with self' => [
+                'conversationConfigs' => $conversations,
+                'deletemessagesuser' => null,
+                'deletemessages' => [],
+                'arguments' => [$user8],
+                'expectedcounts' => ['favourites' => 0, 'types' => [
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
+                ]],
+                'expectedunreadcounts' => ['favourites' => 0, 'types' => [
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL => 0,
                     \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => 0
                 ]],
@@ -5912,7 +6107,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
      * @param int $deletemessagesuser The user who is deleting the messages
      * @param array $deletemessages The list of messages to delete (by index)
      * @param array $arguments Arguments for the count conversations function
-     * @param array $expected The expected result
+     * @param array $expectedcounts the expected conversation counts
+     * @param array $expectedunreadcounts the expected unread conversation counts
      * @param array $deletedusers the array of users to soft delete.
      */
     public function test_get_conversation_counts(
@@ -5920,11 +6116,13 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $deletemessagesuser,
         $deletemessages,
         $arguments,
-        $expected,
+        $expectedcounts,
+        $expectedunreadcounts,
         $deletedusers
     ) {
         $generator = $this->getDataGenerator();
         $users = [
+            $generator->create_user(),
             $generator->create_user(),
             $generator->create_user(),
             $generator->create_user(),
@@ -5975,10 +6173,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         $counts = \core_message\api::get_conversation_counts(...$arguments);
 
-        $this->assertEquals($expected['favourites'], $counts['favourites']);
-        $this->assertEquals($expected['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL],
+        $this->assertEquals($expectedcounts['favourites'], $counts['favourites']);
+        $this->assertEquals($expectedcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL],
             $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
-        $this->assertEquals($expected['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP],
+        $this->assertEquals($expectedcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP],
             $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
     }
 
@@ -6012,90 +6210,86 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Test verifying the correctness of unread counts returned.
+     * Test the get_unread_conversation_counts() function.
+     *
+     * @dataProvider test_get_conversation_counts_test_cases()
+     * @param array $conversationconfigs Conversations to create
+     * @param int $deletemessagesuser The user who is deleting the messages
+     * @param array $deletemessages The list of messages to delete (by index)
+     * @param array $arguments Arguments for the count conversations function
+     * @param array $expectedcounts the expected conversation counts
+     * @param array $expectedunreadcounts the expected unread conversation counts
+     * @param array $deletedusers the list of users to soft-delete.
      */
-    public function test_get_unread_conversations_count() {
-        // Get a bunch of conversations, some group, some individual and in different states.
-        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
-            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+    public function test_get_unread_conversation_counts(
+        $conversationconfigs,
+        $deletemessagesuser,
+        $deletemessages,
+        $arguments,
+        $expectedcounts,
+        $expectedunreadcounts,
+        $deletedusers
+    ) {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $users = [
+            $generator->create_user(),
+            $generator->create_user(),
+            $generator->create_user(),
+            $generator->create_user(),
+            $generator->create_user(),
+            $generator->create_user(),
+            $generator->create_user(),
+            $generator->create_user()
+        ];
 
-        // Without favourites.
-        $counts = \core_message\api::get_unread_conversation_counts($user1->id);
-        $this->assertEquals(0, $counts['favourites']);
-        $this->assertEquals(2, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
-        $this->assertEquals(2, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
+        $deleteuser = !is_null($deletemessagesuser) ? $users[$deletemessagesuser] : null;
+        $this->setUser($users[$arguments[0]]);
+        $arguments[0] = $users[$arguments[0]]->id;
+        $systemcontext = \context_system::instance();
+        $conversations = [];
+        $messageids = [];
 
-        // Mark a couple as favourites.
-        \core_message\api::set_favourite_conversation($ic1->id, $user1->id);
-        \core_message\api::set_favourite_conversation($gc2->id, $user1->id);
+        foreach ($conversationconfigs as $config) {
+            $conversation = \core_message\api::create_conversation(
+                $config['type'],
+                array_map(function($userindex) use ($users) {
+                    return $users[$userindex]->id;
+                }, $config['users']),
+                null,
+                ($config['enabled'] ?? true)
+            );
 
-        $counts = \core_message\api::get_unread_conversation_counts($user1->id);
-        $this->assertEquals(2, $counts['favourites']);
-        $this->assertEquals(1, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
-        $this->assertEquals(1, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
+            foreach ($config['messages'] as $userfromindex) {
+                $userfrom = $users[$userfromindex];
+                $messageids[] = testhelper::send_fake_message_to_conversation($userfrom, $conversation->id);
+            }
 
-        // Mark a conversation as read and confirm it's not included in the unread counts for its respective type.
-        \core_message\api::mark_all_messages_as_read($user1->id, $ic1->id);
-        $counts = \core_message\api::get_unread_conversation_counts($user1->id);
-        $this->assertEquals(1, $counts['favourites']);
-        $this->assertEquals(1, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
-        $this->assertEquals(1, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
-    }
+            foreach ($config['favourites'] as $userfromindex) {
+                $userfrom = $users[$userfromindex];
+                $usercontext = \context_user::instance($userfrom->id);
+                $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+                $ufservice->create_favourite('core_message', 'message_conversations', $conversation->id, $systemcontext);
+            }
 
-    /**
-     * Test verifying the unread counts are 0 if no conversations exist.
-     */
-    public function test_get_unread_conversations_count_no_conversations() {
-        $user1 = self::getDataGenerator()->create_user();
-        $counts = \core_message\api::get_unread_conversation_counts($user1->id);
-        $this->assertEquals(0, $counts['favourites']);
-        $this->assertEquals(0, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
-        $this->assertEquals(0, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
-    }
+            $conversations[] = $conversation;
+        }
 
-    /**
-     * Test verifying that those linked conversations which have been disabled are excluded from unread counts.
-     */
-    public function test_get_unread_conversations_count_disabled_conversations() {
-        global $DB;
+        foreach ($deletemessages as $messageindex) {
+            \core_message\api::delete_message($deleteuser->id, $messageids[$messageindex]);
+        }
 
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-        $user3 = self::getDataGenerator()->create_user();
+        foreach ($deletedusers as $deleteduser) {
+            delete_user($users[$deleteduser]);
+        }
 
-        $course1 = $this->getDataGenerator()->create_course();
+        $counts = \core_message\api::get_unread_conversation_counts(...$arguments);
 
-        // Create a group with a linked conversation and a valid image.
-        $this->setAdminUser();
-        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
-        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
-        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
-        $group1 = $this->getDataGenerator()->create_group([
-            'courseid' => $course1->id,
-            'enablemessaging' => 1,
-        ]);
-
-        // Add users to group1.
-        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id));
-        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user2->id));
-
-        $conversations = \core_message\api::get_conversations($user1->id);
-        $convid = $conversations[0]->id;
-
-        // Send a message to the group conversation as user 2.
-        testhelper::send_fake_message_to_conversation($user2, $convid, 'Hello world!');
-
-        // Verify the unread count is 1.
-        $counts = \core_message\api::get_unread_conversation_counts($user1->id);
-        $this->assertEquals(1, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
-
-        // Now, disabled the linked conversation.
-        $DB->set_field('message_conversations', 'enabled', false, ['id' => $convid]);
-
-        // Verify the unread count is no longer 1 as the conversation has been excluded.
-        $counts = \core_message\api::get_unread_conversation_counts($user1->id);
-        $this->assertEquals(0, $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
+        $this->assertEquals($expectedunreadcounts['favourites'], $counts['favourites']);
+        $this->assertEquals($expectedunreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL],
+            $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL]);
+        $this->assertEquals($expectedunreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP],
+            $counts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP]);
     }
 
     /**

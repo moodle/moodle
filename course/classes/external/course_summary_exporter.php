@@ -54,7 +54,7 @@ class course_summary_exporter extends \core\external\exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-
+        global $CFG;
         $courseimage = self::get_course_image($this->data);
         if (!$courseimage) {
             $courseimage = self::get_course_pattern($this->data);
@@ -72,7 +72,8 @@ class course_summary_exporter extends \core\external\exporter {
             'progress' => $progress,
             'hasprogress' => $hasprogress,
             'isfavourite' => $this->related['isfavourite'],
-            'hidden' => boolval(get_user_preferences('block_myoverview_hidden_course_' . $this->data->id, 0))
+            'hidden' => boolval(get_user_preferences('block_myoverview_hidden_course_' . $this->data->id, 0)),
+            'showshortname' => $CFG->courselistshortnames ? true : false
         );
     }
 
@@ -145,6 +146,9 @@ class course_summary_exporter extends \core\external\exporter {
             'timeaccess' => array(
                 'type' => PARAM_INT,
                 'optional' => true
+            ),
+            'showshortname' => array(
+                'type' => PARAM_BOOL
             )
         );
     }

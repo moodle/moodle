@@ -539,15 +539,15 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
      * Delete a conversation between two users.
      *
      * @param {int} userId The user to delete messages for
-     * @param {int} otherUserId The other member of the conversation
+     * @param {int} conversationId The id of the conversation
      * @return {object} jQuery promise
      */
-    var deleteCoversation = function(userId, otherUserId) {
+    var deleteConversation = function(userId, conversationId) {
         var request = {
-            methodname: 'core_message_delete_conversation',
+            methodname: 'core_message_delete_conversations_by_id',
             args: {
                 userid: userId,
-                otheruserid: otherUserId
+                conversationids: [conversationId]
             }
         };
         return Ajax.call([request])[0];
@@ -970,6 +970,67 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
         return Ajax.call([request])[0];
     };
 
+    /**
+     * The the count of the user's conversations grouped by type.
+     *
+     * @param {Number} userId The user's id.
+     * @return {Object} jQuery promise.
+     */
+    var getTotalConversationCounts = function(userId) {
+        var request = {
+            methodname: 'core_message_get_conversation_counts',
+            args: {
+                userid: userId
+            }
+        };
+        return Ajax.call([request])[0];
+    };
+
+    /**
+     * The the count of the user's unread conversations grouped by type.
+     *
+     * @param {Number} userId The user's id.
+     * @return {Object} jQuery promise.
+     */
+    var getUnreadConversationCounts = function(userId) {
+        var request = {
+            methodname: 'core_message_get_unread_conversation_counts',
+            args: {
+                userid: userId
+            }
+        };
+        return Ajax.call([request])[0];
+    };
+
+    /**
+     * Get both the unread and total conversation counts in a single request.
+     *
+     * @param {Number} userId The user's id.
+     * @return {Object} jQuery promise.
+     */
+    var getAllConversationCounts = function(userId) {
+        var requests = [
+            {
+                methodname: 'core_message_get_conversation_counts',
+                args: {
+                    userid: userId
+                }
+            },
+            {
+                methodname: 'core_message_get_unread_conversation_counts',
+                args: {
+                    userid: userId
+                }
+            },
+        ];
+        return $.when.apply(null, Ajax.call(requests)).then(function(total, unread) {
+            return {
+                total: total,
+                unread: unread
+            };
+        });
+    };
+
     return {
         query: query,
         countUnreadConversations: countUnreadConversations,
@@ -990,7 +1051,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
         savePreferences: savePreferences,
         getPreferences: getPreferences,
         deleteMessages: deleteMessages,
-        deleteCoversation: deleteCoversation,
+        deleteConversation: deleteConversation,
         getContactRequests: getContactRequests,
         acceptContactRequest: acceptContactRequest,
         declineContactRequest: declineContactRequest,
@@ -1002,6 +1063,9 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
         unsetFavouriteConversations: unsetFavouriteConversations,
         getMemberInfo: getMemberInfo,
         markAllConversationMessagesAsRead: markAllConversationMessagesAsRead,
-        getUserMessagePreferences: getUserMessagePreferences
+        getUserMessagePreferences: getUserMessagePreferences,
+        getTotalConversationCounts: getTotalConversationCounts,
+        getUnreadConversationCounts: getUnreadConversationCounts,
+        getAllConversationCounts: getAllConversationCounts
     };
 });

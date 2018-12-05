@@ -834,12 +834,6 @@ function core_message_standard_after_main_region_html() {
     }
 
     $renderer = $PAGE->get_renderer('core');
-
-    // Get the counts.
-    $conversationcounts = \core_message\api::get_conversation_counts($USER->id);
-    $individualconversationcount = $conversationcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL];
-    $groupconversationcount = $conversationcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP];
-    $favouriteconversationcount = $conversationcounts['favourites'];
     $requestcount = \core_message\api::get_received_contact_requests_count($USER->id);
     $contactscount = \core_message\api::count_contacts($USER->id);
 
@@ -866,53 +860,11 @@ function core_message_standard_after_main_region_html() {
     // Get the unread counts for the current user.
     $unreadcounts = \core_message\api::get_unread_conversation_counts($USER->id);
 
-    // Determine which section will be expanded.
-    // Default behaviour - if no unread counts exist.
-    $favouritesexpanded = !empty($favouriteconversationcount);
-    $groupmessagesexpanded = empty($favouriteconversationcount) && !empty($groupconversationcount);
-    $messagesexpanded = empty($favouriteconversationcount) && empty($groupconversationcount);
-
-    // There is an unread conversation somewhere, so that takes priority.
-    if ($unreadcounts['favourites'] > 0 || $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP] > 0 ||
-            $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL] > 0) {
-        $favouritesexpanded = $unreadcounts['favourites'] > 0;
-        $groupmessagesexpanded = !$favouritesexpanded &&
-            $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP] > 0;
-        $messagesexpanded = !$groupmessagesexpanded && !$favouritesexpanded &&
-            $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL] > 0;
-    }
-
     return $renderer->render_from_template('core_message/message_drawer', [
         'contactrequestcount' => $requestcount,
         'loggedinuser' => [
             'id' => $USER->id,
             'midnight' => usergetmidnight(time())
-        ],
-        'overview' => [
-            'messages' => [
-                'expanded' => $messagesexpanded,
-                'count' => [
-                    'unread' => $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL],
-                    'total' => $individualconversationcount
-                ],
-                'placeholders' => array_fill(0, $individualconversationcount, true)
-            ],
-            'groupmessages' => [
-                'expanded' => $groupmessagesexpanded,
-                'count' => [
-                    'unread' => $unreadcounts['types'][\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP],
-                    'total' => $groupconversationcount
-                ],
-                'placeholders' => array_fill(0, $groupconversationcount, true)
-            ],
-            'favourites' => [
-                'expanded' => $favouritesexpanded,
-                'count' => [
-                    'unread' => $unreadcounts['favourites'],
-                    'total' => $favouriteconversationcount
-                ],
-                'placeholders' => array_fill(0, $favouriteconversationcount, true)
-            ],
         ],
         'contacts' => [
             'sectioncontacts' => [

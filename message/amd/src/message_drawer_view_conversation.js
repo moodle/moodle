@@ -433,15 +433,24 @@ function(
             .then(function() {
                 if (messageCount < messageLimit) {
                     // We haven't got enough messages so let's load some more.
-                    return loadMessages(conversation.id, messageLimit, messageCount, newestFirst, []);
+                    return loadMessages(conversation.id, messageLimit, messageCount, newestFirst, [])
+                        .then(function(result) {
+                            // Give the list of messages to the next handler.
+                            return result.messages;
+                        });
                 } else {
                     // We've got enough messages. No need to load any more for now.
-                    var newState = StateManager.setLoadingMessages(newState, false);
-                    return render(newState);
+                    var newState = StateManager.setLoadingMessages(viewState, false);
+                    return render(newState)
+                        .then(function() {
+                            // Give the list of messages to the next handler.
+                            return conversation.messages;
+                        });
                 }
             })
             .then(function(messages) {
-                setMessagesOffset(messageCount + messageLimit);
+                // Update the offset to reflect the number of messages we've loaded.
+                setMessagesOffset(messages.length);
                 return messages;
             })
             .then(function() {
@@ -855,7 +864,7 @@ function(
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
         return render(newState)
             .then(function() {
-                return Repository.deleteCoversation(viewState.loggedInUserId, getOtherUserId());
+                return Repository.deleteConversation(viewState.loggedInUserId, viewState.id);
             })
             .then(function() {
                 var newState = StateManager.removeMessages(viewState, viewState.messages);

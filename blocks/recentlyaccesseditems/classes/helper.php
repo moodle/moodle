@@ -68,6 +68,9 @@ class helper {
         // Group by courses to reduce get_fast_modinfo requests.
         foreach ($courses as $key => $items) {
             $modinfo = get_fast_modinfo($key);
+            if (!can_access_course($modinfo->get_course(), null, '', true)) {
+                continue;
+            }
             foreach ($items as $key => $item) {
                 // Exclude not visible items.
                 if (!$modinfo->cms[$item->cmid]->uservisible) {

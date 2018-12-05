@@ -60,15 +60,20 @@ function(
         LAST_MESSAGE_DATE: '[data-region="last-message-date"]',
         UNREAD_COUNT: '[data-region="unread-count"]',
         SECTION_TOTAL_COUNT: '[data-region="section-total-count"]',
-        SECTION_UNREAD_COUNT: '[data-region="section-unread-count"]'
+        SECTION_TOTAL_COUNT_CONTAINER: '[data-region="section-total-count-container"]',
+        SECTION_UNREAD_COUNT: '[data-region="section-unread-count"]',
+        PLACEHOLDER_CONTAINER: '[data-region="placeholder-container"]'
     };
 
     var TEMPLATES = {
-        CONVERSATIONS_LIST: 'core_message/message_drawer_conversations_list'
+        CONVERSATIONS_LIST: 'core_message/message_drawer_conversations_list',
+        CONVERSATIONS_LIST_ITEMS_PLACEHOLDER: 'core_message/message_drawer_conversations_list_items_placeholder'
     };
 
     var LOAD_LIMIT = 50;
     var loadedConversationsById = {};
+    var loadedTotalCounts = false;
+    var loadedUnreadCounts = false;
 
     /**
      * Get the section visibility status.
@@ -99,6 +104,53 @@ function(
     };
 
     /**
+     * Render the total count value and show it for the user. Also update the placeholder
+     * HTML for better visuals.
+     *
+     * @param {Object} root The section container element.
+     * @param {Number} count The total count
+     */
+    var renderTotalCount = function(root, count) {
+        var container = root.find(SELECTORS.SECTION_TOTAL_COUNT_CONTAINER);
+        var countElement = container.find(SELECTORS.SECTION_TOTAL_COUNT);
+        countElement.text(count);
+        container.removeClass('hidden');
+
+        var numPlaceholders = count > 20 ? 20 : count;
+        // Array of "true" up to the number of placeholders we want.
+        var placeholders = Array.apply(null, Array(numPlaceholders)).map(function() {
+            return true;
+        });
+
+        // Replace the current placeholder (loading spinner) with some nicer placeholders that
+        // better represent the content.
+        Templates.render(TEMPLATES.CONVERSATIONS_LIST_ITEMS_PLACEHOLDER, {placeholders: placeholders})
+            .then(function(html) {
+                var placeholderContainer = root.find(SELECTORS.PLACEHOLDER_CONTAINER);
+                placeholderContainer.html(html);
+                return;
+            })
+            .catch(function() {
+                // Silently ignore. Doesn't matter if we can't render the placeholders.
+            });
+    };
+
+    /**
+     * Render the unread count value and show it for the user if it's higher than zero.
+     *
+     * @param {Object} root The section container element.
+     * @param {Number} count The unread count
+     */
+    var renderUnreadCount = function(root, count) {
+        var countElement = root.find(SELECTORS.SECTION_UNREAD_COUNT);
+        countElement.text(count);
+
+        if (count > 0) {
+            countElement.removeClass('hidden');
+        }
+    };
+
+    /**
      * Render the messages in the overview page.
      *
      * @param {Object} contentContainer Conversations content container.
@@ -108,7 +160,9 @@ function(
      */
     var render = function(contentContainer, conversations, userId) {
         var formattedConversations = conversations.map(function(conversation) {
+
             var lastMessage = conversation.messages.length ? conversation.messages[conversation.messages.length - 1] : null;
+
             var formattedConversation = {
                 id: conversation.id,
                 imageurl: conversation.imageurl,
@@ -132,6 +186,15 @@ function(
                 formattedConversation.showonlinestatus = otherUser.showonlinestatus;
                 formattedConversation.isonline = otherUser.isonline;
                 formattedConversation.isblocked = otherUser.isblocked;
+            }
+
+            if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PUBLIC) {
+                formattedConversation.lastsendername = conversation.members.reduce(function(carry, member) {
+                    if (!carry && member.id == lastMessage.useridfrom) {
+                        carry = member.fullname;
+                    }
+                    return carry;
+                }, null);
             }
 
             return formattedConversation;
@@ -209,10 +272,12 @@ function(
      * @param  {Object} root Overview messages container element.
      */
     var incrementTotalConversationCount = function(root) {
-        var element = getTotalConversationCountElement(root);
-        var count = parseInt(element.text());
-        count = count + 1;
-        element.text(count);
+        if (loadedTotalCounts) {
+            var element = getTotalConversationCountElement(root);
+            var count = parseInt(element.text());
+            count = count + 1;
+            element.text(count);
+        }
     };
 
     /**
@@ -221,10 +286,12 @@ function(
      * @param  {Object} root Overview messages container element.
      */
     var decrementTotalConversationCount = function(root) {
-        var element = getTotalConversationCountElement(root);
-        var count = parseInt(element.text());
-        count = count - 1;
-        element.text(count);
+        if (loadedTotalCounts) {
+            var element = getTotalConversationCountElement(root);
+            var count = parseInt(element.text());
+            count = count - 1;
+            element.text(count);
+        }
     };
 
     /**
@@ -233,13 +300,15 @@ function(
      * @param  {Object} root Overview messages container element.
      */
     var decrementTotalUnreadConversationCount = function(root) {
-        var element = getTotalUnreadConversationCountElement(root);
-        var count = parseInt(element.text());
-        count = count - 1;
-        element.text(count);
+        if (loadedUnreadCounts) {
+            var element = getTotalUnreadConversationCountElement(root);
+            var count = parseInt(element.text());
+            count = count - 1;
+            element.text(count);
 
-        if (count < 1) {
-            element.addClass('hidden');
+            if (count < 1) {
+                element.addClass('hidden');
+            }
         }
     };
 
@@ -292,29 +361,39 @@ function(
      */
     var updateLastMessage = function(element, conversation) {
         var message = conversation.messages[conversation.messages.length - 1];
-        var youString = '';
+        var senderString = '';
+        var senderStringRequest;
+        if (message.fromLoggedInUser) {
+            senderStringRequest = {key: 'you', component: 'core_message'};
+        } else {
+            senderStringRequest = {key: 'sender', component: 'core_message', param: message.userFrom.fullname};
+        }
+
         var stringRequests = [
-            {key: 'you', component: 'core_message'},
+            senderStringRequest,
             {key: 'strftimetime24', component: 'core_langconfig'},
         ];
         return Str.get_strings(stringRequests)
             .then(function(strings) {
-                youString = strings[0];
+                senderString = strings[0];
                 return UserDate.get([{timestamp: message.timeCreated, format: strings[1]}]);
             })
             .then(function(dates) {
                 return dates[0];
             })
             .then(function(dateString) {
-                var lastMessage = $(message.text).text();
+                element.find(SELECTORS.LAST_MESSAGE_DATE).text(dateString).removeClass('hidden');
 
-                if (message.fromLoggedInUser) {
-                    lastMessage = youString + ' ' + lastMessage;
+                // No need to show sender string for private conversations and where the last message didn't come from you.
+                if (!message.fromLoggedInUser &&
+                        conversation.type === MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE) {
+                    senderString = '';
                 }
 
-                element.find(SELECTORS.LAST_MESSAGE).html(lastMessage);
-                element.find(SELECTORS.LAST_MESSAGE_DATE).text(dateString).removeClass('hidden');
-                return dateString;
+                // Now load the last message.
+                var lastMessage = senderString + " <span class='text-muted'>" + $(message.text).text() + "</span>";
+
+                return element.find(SELECTORS.LAST_MESSAGE).html(lastMessage);
             });
     };
 
@@ -519,8 +598,10 @@ function(
      * @param {Object} root The section container element.
      * @param {Number} type The conversation type for this section
      * @param {Bool} includeFavourites If this section includes favourites
+     * @param {Object} totalCountPromise Resolves wth the total conversations count
+     * @param {Object} unreadCountPromise Resolves wth the unread conversations count
      */
-    var show = function(root, type, includeFavourites) {
+    var show = function(root, type, includeFavourites, totalCountPromise, unreadCountPromise) {
         root = $(root);
 
         if (!root.attr('data-init')) {
@@ -533,11 +614,33 @@ function(
                 LazyLoadList.show(listRoot, loadCallback, render);
             }
 
+            // This is given to us by the calling code because the total counts for all sections
+            // are loaded in a single ajax request rather than one request per section.
+            totalCountPromise.then(function(count) {
+                renderTotalCount(root, count);
+                loadedTotalCounts = true;
+                return;
+            })
+            .catch(function() {
+                // Silently ignore if we can't updated the counts. No need to bother the user.
+            });
+
+            // Same as for total counts.
+            unreadCountPromise.then(function(count) {
+                renderUnreadCount(root, count);
+                loadedTotalCounts = true;
+                return;
+            })
+            .catch(function() {
+                // Silently ignore if we can't updated the counts. No need to bother the user.
+            });
+
             root.attr('data-init', true);
         }
     };
 
     return {
-        show: show
+        show: show,
+        isVisible: isVisible
     };
 });

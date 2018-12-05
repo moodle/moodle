@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_message/message_drawer_conversations_list_item_placeholder
+    @template core_message/message_drawer_conversations_list_items_placeholder
 
     This template will render a placeholder loading element for a message in
     the message drawer.
@@ -34,32 +34,34 @@
     {}
 
 }}
-<div class="p-2 d-flex list-group-item border-0" data-region="placeholder">
-    <div
-        class="rounded-circle bg-pulse-grey"
-        style="height: 38px; width: 38px"
-    >
-    </div>
-    <div class="ml-2 align-self-center" style="flex: 1">
+{{#placeholders}}
+    <div class="p-2 d-flex list-group-item border-0" data-region="placeholder">
         <div
-            class="bg-pulse-grey w-50"
-            style="height: 15px;"
+            class="rounded-circle bg-pulse-grey"
+            style="height: 38px; width: 38px"
+        >
+        </div>
+        <div class="ml-2 align-self-center" style="flex: 1">
+            <div
+                class="bg-pulse-grey w-50"
+                style="height: 15px;"
+            >
+            </div>
+            <div
+                class="bg-pulse-grey mt-1"
+                style="height: 15px; width: 90%"
+            >
+            </div>
+        </div>
+        <div
+            class="bg-pulse-grey align-self-center"
+            style="height: 15px; width: 15px"
         >
         </div>
         <div
-            class="bg-pulse-grey mt-1"
-            style="height: 15px; width: 90%"
+            class="ml-2 bg-pulse-grey align-self-center"
+            style="height: 15px; width: 15px"
         >
         </div>
     </div>
-    <div
-        class="bg-pulse-grey align-self-center"
-        style="height: 15px; width: 15px"
-    >
-    </div>
-    <div
-        class="ml-2 bg-pulse-grey align-self-center"
-        style="height: 15px; width: 15px"
-    >
-    </div>
-</div>
+{{/placeholders}}

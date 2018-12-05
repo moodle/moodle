@@ -170,9 +170,11 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
             }
             $gradestr->itemname = $this->grade->grade_item->get_name();
             $errorstr = get_string($errorstr, 'grades', $gradestr);
+            return $errorstr;
         }
 
+        // Only update grades if there are no errors.
         $gradeitem->update_final_grade($userid, $finalgrade, 'singleview', $feedback, FORMAT_MOODLE);
-        return $errorstr;
+        return '';
     }
 }

@@ -37,7 +37,7 @@
 {{#messages}}
     <a
         href="#"
-        class="p-2 d-flex list-group-item list-group-item-action border-0 align-items-center"
+        class="p-2 d-flex list-group-item list-group-item-action align-items-center"
         data-route="view-conversation"
         {{#conversationid}}
             data-route-param-1="{{.}}"
@@ -84,7 +84,7 @@
         </div>
 
         <span
-            class="badge badge-pill badge-primary bg-primary rounded-circle {{^unreadcount}}hidden{{/unreadcount}}"
+            class="badge badge-pill badge-primary bg-primary {{^unreadcount}}hidden{{/unreadcount}}"
             data-region="unread-count"
         >
             {{unreadcount}}

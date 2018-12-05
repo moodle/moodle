@@ -10528,6 +10528,14 @@ div.editor_atto_toolbar button .icon {
 .paged-content-page-container {
   min-height: 3.125rem; }
 
+.text-decoration-none {
+  text-decoration: none !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.position-right {
+  right: 0 !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
 .icon {
   font-size: 16px;
   width: 16px;
@@ -11224,8 +11232,6 @@ div.editor_atto_toolbar button .icon {
 
 .block .block-cards .icon {
   margin-right: 0; }
-  .block .block-cards .icon.fa-star {
-    color: #1177d1; }
 
 .block .block-cards .card .coursemenubtn, .block .block-cards #page-enrol-users #filterform .coursemenubtn, #page-enrol-users .block .block-cards #filterform .coursemenubtn, .block .block-cards .que .history .coursemenubtn, .que .block .block-cards .history .coursemenubtn, .block .block-cards .userprofile .profile_tree section .coursemenubtn, .userprofile .profile_tree .block .block-cards section .coursemenubtn, .block .block-cards .groupinfobox .coursemenubtn, .block .block-cards .well .coursemenubtn {
   margin-top: -0.5rem; }
@@ -11233,6 +11239,9 @@ div.editor_atto_toolbar button .icon {
 .block .block-cards a.coursename,
 .block .block-cards .btn-link {
   color: inherit; }
+
+.block .block-cards .multiline {
+  white-space: normal; }
 
 .block .block-cards .btn.btn-link.btn-icon, .block .block-cards #page-grade-grading-manage .actions .btn-link.btn-icon.action, #page-grade-grading-manage .actions .block .block-cards .btn-link.btn-icon.action, .block .block-cards #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input.btn-link.btn-icon, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .block .block-cards input.btn-link.btn-icon, .block .block-cards #rubric-rubric.gradingform_rubric .btn-link.btn-icon.addcriterion, #rubric-rubric.gradingform_rubric .block .block-cards .btn-link.btn-icon.addcriterion {
   height: 36px;
@@ -14131,6 +14140,9 @@ a.ygtvspacer:hover {
   .message-drawer a,
   .message-drawer .btn-link {
     color: inherit; }
+  .message-drawer .btn-link:hover, .message-drawer .btn-link:focus {
+    background-color: rgba(0, 0, 0, 0.035);
+    text-decoration: none; }
   .message-drawer .icon {
     margin-right: 0; }
   .message-drawer .overview-section-toggle .collapsed-icon-container {
@@ -14185,6 +14197,19 @@ a.ygtvspacer:hover {
       display: flex; }
   .message-drawer .view-conversation .content-message-container img {
     max-width: 100%; }
+  .message-drawer .list-group .list-group-item {
+    border-left: 0;
+    border-right: 0; }
+    .message-drawer .list-group .list-group-item:first-child {
+      border-top: 0; }
+    .message-drawer .list-group .list-group-item:last-child {
+      border-bottom: 0; }
+  .message-drawer .last-message {
+    min-height: 1.5rem; }
+  .message-drawer .section .collapsing {
+    overflow: hidden; }
+  .message-drawer .lazy-load-list {
+    overflow-y: auto; }
 
 .dir-rtl .message-drawer {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08); }
@@ -16155,10 +16180,13 @@ p.arrow_button {
 
 .path-grade-report-grader #region-main {
   min-width: 100%;
-  width: auto; }
+  width: auto;
+  display: inline-flex; }
   .path-grade-report-grader #region-main > .card, .path-grade-report-grader #page-enrol-users #region-main > #filterform, #page-enrol-users .path-grade-report-grader #region-main > #filterform, .path-grade-report-grader .que #region-main > .history, .que .path-grade-report-grader #region-main > .history, .path-grade-report-grader .userprofile .profile_tree #region-main > section, .userprofile .profile_tree .path-grade-report-grader #region-main > section, .path-grade-report-grader #region-main > .groupinfobox, .path-grade-report-grader #region-main > .well {
     width: auto;
     overflow-x: initial; }
+  .path-grade-report-grader #region-main div[role="main"] {
+    flex: 1 1 auto; }
 
 .path-grade-report-grader [data-region="blocks-column"] {
   width: 100%;
@@ -16371,12 +16399,6 @@ p.arrow_button {
 
 .path-grade-report-grader .gradeparent table .clickable {
   cursor: pointer; }
-
-.path-grade-report-grader #page-header.row {
-  flex: 1 0 auto; }
-
-.path-grade-report-grader #page-wrapper #page {
-  flex-flow: wrap; }
 
 /**
  * User report.

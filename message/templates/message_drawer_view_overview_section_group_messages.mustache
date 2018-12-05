@@ -39,9 +39,7 @@
     {{$region}}view-overview-group-messages{{/region}}
     {{$title}}{{#str}} groupmessages, core_message {{/str}}{{/title}}
     {{$placeholder}}
-        {{#placeholders}}
-            {{> core_message/message_drawer_conversations_list_item_placeholder }}
-        {{/placeholders}}
+        <div class="text-center py-2">{{> core/loading }}</div>
     {{/placeholder}}
     {{$emptymessage}}
         <p class="text-muted mt-2">{{#str}} nogroupmessages, core_message {{/str}}</p>

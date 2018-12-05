@@ -38,11 +38,11 @@
     {{$emptymessage}}{{#str}} nocontactrequests, core_message {{/str}}{{/emptymessage}}
     {{$placeholder}}
         {{#contacts}}
-                {{#sectioncontacts}}
-                    {{#placeholders}}
-                        {{> core_message/message_drawer_contacts_list_item_placeholder }}
-                    {{/placeholders}}
-            {{/sectioncontacts}}
+            {{#sectionrequests}}
+                {{#placeholders}}
+                    {{> core_message/message_drawer_contacts_list_item_placeholder }}
+                {{/placeholders}}
+            {{/sectionrequests}}
         {{/contacts}}
     {{/placeholder}}
 {{/ core_message/message_drawer_lazy_load_list }}

@@ -53,7 +53,10 @@
             <span class="expanded-icon-container">
                 {{#pix}} t/expanded, core {{/pix}}
             </span>
-            {{$title}}{{/title}} (<span data-region="section-total-count">{{count.total}}</span>)
+            <span class="font-weight-bold">{{$title}}{{/title}}</span>
+            <span class="hidden ml-1" data-region="section-total-count-container">
+                (<span data-region="section-total-count">{{count.total}}</span>)
+            </span>
             <span class="hidden ml-2" data-region="loading-icon-container">
                 {{> core/loading }}
             </span>

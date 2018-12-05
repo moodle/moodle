@@ -82,11 +82,14 @@ class manager {
         $localisedeventdata = clone $eventdata;
 
         // Get user records for all members of the conversation.
+        // We must fetch distinct users, because it's possible for a user to message themselves via bulk user actions.
+        // In such cases, there will be 2 records referring to the same user.
         $sql = "SELECT u.*
-                  FROM {message_conversation_members} mcm
-                  JOIN {user} u
-                    ON (mcm.conversationid = :convid AND u.id = mcm.userid)
-              ORDER BY u.id desc";
+                  FROM {user} u
+                 WHERE u.id IN (
+                          SELECT mcm.userid FROM {message_conversation_members} mcm
+                           WHERE mcm.conversationid = :convid
+                 )";
         $members = $DB->get_records_sql($sql, ['convid' => $eventdata->convid]);
         if (empty($members)) {
             throw new \moodle_exception("Conversation has no members or does not exist.");

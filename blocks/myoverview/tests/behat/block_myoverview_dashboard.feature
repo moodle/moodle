@@ -143,12 +143,12 @@ Feature: The my overview block allows users to easily access their courses
     Then I should see "Summary" in the "Course overview" "block"
     And "[data-display='summary']" "css_element" in the "Course overview" "block" should be visible
 
-  Scenario: Title sort persistence
+  Scenario: Course name sort persistence
     Given I log in as "student1"
     And I click on "sortingdropdown" "button" in the "Course overview" "block"
-    And I click on "Title" "link" in the "Course overview" "block"
+    And I click on "Course name" "link" in the "Course overview" "block"
     And I reload the page
-    Then I should see "Title" in the "Course overview" "block"
+    Then I should see "Course name" in the "Course overview" "block"
     And "[data-sort='fullname']" "css_element" in the "Course overview" "block" should be visible
 
   Scenario: Last accessed sort persistence

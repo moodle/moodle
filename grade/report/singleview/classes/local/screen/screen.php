@@ -289,6 +289,8 @@ abstract class screen {
         $progressbar->start_html();
         $progressbar->start_progress(get_string('savegrades', 'gradereport_singleview'), count((array) $data) - 1);
         $changecount = array();
+        // This array is used to determine if the override should be excluded from being counted as a change.
+        $ignorevalues = [];
 
         foreach ($data as $varname => $throw) {
             $progressbar->progress($progress);
@@ -351,10 +353,22 @@ abstract class screen {
             }
 
             $msg = $element->set($posted);
+            // Value to check against our list of matchelements to ignore.
+            $check = explode('_', $varname, 2);
 
             // Optional type.
             if (!empty($msg)) {
                 $warnings[] = $msg;
+                if ($element instanceof \gradereport_singleview\local\ui\finalgrade) {
+                    // Add this value to this list so that the override object that is coming next will also be skipped.
+                    $ignorevalues[$check[1]] = $check[1];
+                    // This item wasn't changed so don't add to the changecount.
+                    continue;
+                }
+            }
+            // Check to see if this value has already been skipped.
+            if (array_key_exists($check[1], $ignorevalues)) {
+                continue;
             }
             if (preg_match('/_(\d+)_(\d+)/', $varname, $matchelement)) {
                 $changecount[$matchelement[0]] = 1;

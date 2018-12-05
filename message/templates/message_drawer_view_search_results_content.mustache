@@ -36,18 +36,18 @@
 }}
 
 <div class="d-flex flex-column">
-    <div class="mb-3 bg-white p-2">
-        <div data-region="contacts-container">
-            <h4 class="h6">{{#str}} contacts, core_message {{/str}}</h4>
+    <div class="mb-3 bg-white">
+        <div data-region="contacts-container"  class="pt-2">
+            <h4 class="h6 px-2">{{#str}} contacts, core_message {{/str}}</h4>
             <div class="list-group" data-region="list"></div>
-            <p class="hidden" data-region="no-results-container">
+            <p class="hidden px-2" data-region="no-results-container">
                 {{#str}} searchnocontactsfound, core_message {{/str}}
             </p>
         </div>
-        <div data-region="non-contacts-container">
-            <h4 class="h6">{{#str}} noncontacts, core_message {{/str}}</h4>
+        <div data-region="non-contacts-container" class="pt-2 border-top">
+            <h4 class="h6 px-2">{{#str}} noncontacts, core_message {{/str}}</h4>
             <div class="list-group" data-region="list"></div>
-            <p class="hidden" data-region="no-results-container">
+            <p class="hidden px-2" data-region="no-results-container">
                 {{#str}} searchnononcontactsfound, core_message {{/str}}
             </p>
         </div>
@@ -58,11 +58,11 @@
             </button>
         </div>
     </div>
-    <div class="bg-white p-2">
+    <div class="bg-white">
         <div data-region="messages-container">
-            <h4 class="h6">{{#str}} messages, core_message {{/str}}</h4>
+            <h4 class="h6 px-2 pt-2">{{#str}} messages, core_message {{/str}}</h4>
             <div class="list-group" data-region="list"></div>
-            <p class="hidden" data-region="no-results-container">
+            <p class="hidden px-2" data-region="no-results-container">
                 {{#str}} searchnomessagesfound, core_message {{/str}}
             </p>
         </div>

@@ -35,9 +35,13 @@
     #region-main {
         min-width: 100%;
         width: auto;
+        display: inline-flex;
         & > .card {
             width: auto;
             overflow-x: initial;
+        }
+        div[role="main"] {
+            flex: 1 1 auto;
         }
     }
     [data-region="blocks-column"] {
@@ -383,12 +387,6 @@
         table .clickable {
             cursor: pointer;
         }
-    }
-    #page-header.row {
-        flex: 1 0 auto;
-    }
-    #page-wrapper #page {
-        flex-flow: wrap;
     }
 }
 

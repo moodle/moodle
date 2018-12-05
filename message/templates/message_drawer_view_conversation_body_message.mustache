@@ -35,7 +35,7 @@
 
 }}
 <div
-    class="message clickable d-flex flex-column p-2 {{#fromloggedinuser}}bg-secondary{{/fromloggedinuser}}{{^fromloggedinuser}}bg-white{{/fromloggedinuser}} rounded mb-2"
+    class="message clickable d-flex flex-column p-2 {{#fromloggedinuser}}bg-secondary{{/fromloggedinuser}}{{^fromloggedinuser}}bg-white{{/fromloggedinuser}} rounded mb-2 mt-2"
     data-region="message"
     data-message-id="{{id}}"
     role="checkbox"
@@ -44,7 +44,7 @@
 >
     <div class="d-flex align-items-center {{^fromloggedinuser}}pb-2{{/fromloggedinuser}}">
         {{^fromloggedinuser}}
-        <div>
+        <div style="flex-shrink: 0">
             <img
                 class="rounded-circle"
                 src="{{{userfrom.profileimageurl}}}"
@@ -53,8 +53,8 @@
                 style="height: 30px"
             >
         </div>
-        <div class="pl-2 pr-2">
-            <h6 class="text-truncate m-0">{{userfrom.fullname}}</h6>
+        <div class="text-truncate pl-2 pr-2">
+            <h6 class="text-truncate m-0 font-weight-bold">{{userfrom.fullname}}</h6>
         </div>
         {{/fromloggedinuser}}
         <div
@@ -63,8 +63,8 @@
         >
             {{formattedtime}}
         </div>
-        <span class="hidden ml-2 small text-primary" data-region="not-selected-icon">{{#pix}} i/unchecked, core {{/pix}}</span>
-        <span class="hidden ml-2 small text-primary" data-region="selected-icon">{{#pix}} i/checked, core {{/pix}}</span>
+        <span class="hidden ml-2 small text-dark" data-region="not-selected-icon">{{#pix}} i/uncheckedcircle, core {{/pix}}</span>
+        <span class="hidden ml-2 small text-primary" data-region="selected-icon">{{#pix}} i/checkedcircle, core {{/pix}}</span>
     </div>
     <div>{{{text}}}</div>
 </div>

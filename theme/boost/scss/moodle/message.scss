@@ -1269,6 +1269,13 @@ $message-drawer-width: 320px;
     .btn-link {
         color: inherit;
     }
+    .btn-link {
+        &:hover,
+        &:focus {
+            background-color: rgba($black, .035);
+            text-decoration: none;
+        }
+    }
 
     .icon {
         margin-right: 0;
@@ -1327,6 +1334,28 @@ $message-drawer-width: 320px;
                 max-width: 100%;
             }
         }
+    }
+    .list-group .list-group-item {
+        border-left: 0;
+        border-right: 0;
+        &:first-child {
+            border-top: 0;
+        }
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+    .last-message {
+        min-height: 1.5rem;
+    }
+    .section {
+        .collapsing {
+            overflow: hidden;
+        }
+    }
+
+    .lazy-load-list {
+        overflow-y: auto;
     }
 }
 
