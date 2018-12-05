@@ -16,3 +16,15 @@
 
 $string['pluginname'] = 'Iomad completion tracking';
 $string['privacy:metadata'] = 'The Local Iomad completion tracking plugin only shows data stored in other locations.';
+$string['privacy:metadata:local_iomad_track:id'] = 'Local iomad track id';
+$string['privacy:metadata:local_iomad_track:courseid'] = 'Local iomad track course id';
+$string['privacy:metadata:local_iomad_track:userid'] = 'Local iomad track user id';
+$string['privacy:metadata:local_iomad_track:timecompleted'] = 'Local iomad track time completed';
+$string['privacy:metadata:local_iomad_track:timeenrolled'] = 'Local iomad track time enrolled';
+$string['privacy:metadata:local_iomad_track:timestarted'] = 'Local iomad track time started';
+$string['privacy:metadata:local_iomad_track:finalscore'] = 'Local iomad track final score';
+$string['privacy:metadata:local_iomad_track'] = 'Local iomad track';
+$string['privacy:metadata:local_iomad_track_certs:id'] = 'Local iomad track certs id';
+$string['privacy:metadata:local_iomad_track_certs:trackid'] = 'Local iomad track certs track id';
+$string['privacy:metadata:local_iomad_track_certs:filename'] = 'Local iomad track certs filename';
+$string['privacy:metadata:local_iomad_track_certs'] = 'Local iomad track certs';

@@ -57,9 +57,9 @@ class provider implements
             [
                 'companyid' => 'privacy:metadata:company_users:companyid',
                 'userid' => 'privacy:metadata:company_users:userid',
-                'managertype' => 'privacy:metadata:company_users:isusing',
-                'departmentid' => 'privacy:metadata:company_users:timecompleted',
-                'suspended' => 'privacy:metadata:company_users:score',
+                'managertype' => 'privacy:metadata:company_users:managertype',
+                'departmentid' => 'privacy:metadata:company_users:departmentid',
+                'suspended' => 'privacy:metadata:company_users:suspended',
             ],
             'privacy:metadata:company_users'
         );

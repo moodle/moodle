@@ -48,13 +48,13 @@ class provider implements
         $items->add_database_table(
             'local_iomad_track',
             [
-                'id' => 'privacy:metadata:choice_answers:id',
-                'courseid' => 'privacy:metadata:choice_answers:courseid',
-                'userid' => 'privacy:metadata:choice_answers:userid',
-                'timecompleted' => 'privacy:metadata:choice_answers:timecompleted',
-                'timeenrolled' => 'privacy:metadata:choice_answers:timeenrolled',
-                'timestarted' => 'privacy:metadata:choice_answers:timestarted',
-                'finalscore' => 'privacy:metadata:choice_answers:finalscore',
+                'id' => 'privacy:metadata:local_iomad_track:id',
+                'courseid' => 'privacy:metadata:local_iomad_track:courseid',
+                'userid' => 'privacy:metadata:local_iomad_track:userid',
+                'timecompleted' => 'privacy:metadata:local_iomad_track:timecompleted',
+                'timeenrolled' => 'privacy:metadata:local_iomad_track:timeenrolled',
+                'timestarted' => 'privacy:metadata:local_iomad_track:timestarted',
+                'finalscore' => 'privacy:metadata:local_iomad_track:finalscore',
             ],
             'privacy:metadata:local_iomad_track'
         );
@@ -62,9 +62,9 @@ class provider implements
         $items->add_database_table(
             'local_iomad_track_certs',
             [
-                'id' => 'privacy:metadata:choice_answers:id',
-                'trackid' => 'privacy:metadata:choice_answers:trackid',
-                'filename' => 'privacy:metadata:choice_answers:filename',
+                'id' => 'privacy:metadata:local_iomad_track_certs:id',
+                'trackid' => 'privacy:metadata:local_iomad_track_certs:trackid',
+                'filename' => 'privacy:metadata:local_iomad_track_certs:filename',
             ],
             'privacy:metadata:local_iomad_track_certs'
         );

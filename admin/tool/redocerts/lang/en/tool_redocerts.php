@@ -26,6 +26,7 @@
 $string['doit'] = 'Yes, do it!';
 $string['notifyfinished'] = '...finished';
 $string['pageheader'] = 'Recreate stored certificates';
+$string['privacy:metadata'] = 'Admin tool redo certs doesn\'t store any user details';
 $string['pluginname'] = 'Recreate stored certificates';
 $string['searchusers'] = 'Select a user';
 $string['searchcourses'] = 'Select a course';
