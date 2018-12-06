@@ -15,19 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the random question type.
+ * Definition of question/type/random scheduled tasks.
  *
- * @package    qtype
- * @subpackage random
- * @copyright  2005 Mark Nielsen
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_random
+ * @category  task
+ * @copyright 2018 Bo Pierce <email.bO.pierce@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'qtype_random';
-$plugin->version   = 2018120301;
-
-$plugin->requires  = 2018112800;
-
-$plugin->maturity  = MATURITY_STABLE;
+$tasks = array(
+    array(
+        'classname' => 'qtype_random\task\remove_unused_questions',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    )
+);
