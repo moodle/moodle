@@ -49,15 +49,6 @@
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * Returns all other caps used in module.
- *
- * @return array
- */
-function lti_get_extra_capabilities() {
-    return array('moodle/site:accessallgroups');
-}
-
-/**
  * List of features supported in URL module
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, false if not, null if doesn't know

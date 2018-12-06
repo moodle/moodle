@@ -64,15 +64,6 @@ function book_get_nav_classes() {
 }
 
 /**
- * Returns all other caps used in module
- * @return array
- */
-function book_get_extra_capabilities() {
-    // used for group-members-only
-    return array('moodle/site:accessallgroups');
-}
-
-/**
  * Add book instance.
  *
  * @param stdClass $data
