@@ -45,3 +45,4 @@ $string['randomqplusnamesystemtags'] = 'Random (Any system-level category, tags:
 $string['randomqplusnametags'] = 'Random ({$a->category} and subcategories, tags: {$a->tags})';
 $string['selectedby'] = '{$a->questionname} selected by {$a->randomname}';
 $string['selectmanualquestions'] = 'Random questions can use manually graded questions';
+$string['taskunusedrandomscleanup'] = 'Remove unused random questions';
