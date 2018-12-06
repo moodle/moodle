@@ -33,3 +33,4 @@ $string['randomqname'] = 'Random ({$a})';
 $string['randomqplusname'] = 'Random ({$a} and subcategories)';
 $string['selectedby'] = '{$a->questionname} selected by {$a->randomname}';
 $string['selectmanualquestions'] = 'Random questions can use manually graded questions';
+$string['taskunusedrandomscleanup'] = 'Remove unused random questions';
