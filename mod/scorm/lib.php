@@ -843,15 +843,6 @@ function scorm_reset_userdata($data) {
 }
 
 /**
- * Returns all other caps used in module
- *
- * @return array
- */
-function scorm_get_extra_capabilities() {
-    return array('moodle/site:accessallgroups');
-}
-
-/**
  * Lists all file areas current user may browse
  *
  * @param object $course
