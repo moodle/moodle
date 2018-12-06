@@ -1799,9 +1799,7 @@ function quiz_supports($feature) {
 function quiz_get_extra_capabilities() {
     global $CFG;
     require_once($CFG->libdir . '/questionlib.php');
-    $caps = question_get_all_capabilities();
-    $caps[] = 'moodle/site:accessallgroups';
-    return $caps;
+    return question_get_all_capabilities();
 }
 
 /**

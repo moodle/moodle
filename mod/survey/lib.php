@@ -771,15 +771,6 @@ function survey_reset_userdata($data) {
 }
 
 /**
- * Returns all other caps used in module
- *
- * @return array
- */
-function survey_get_extra_capabilities() {
-    return array('moodle/site:accessallgroups');
-}
-
-/**
  * @uses FEATURE_GROUPS
  * @uses FEATURE_GROUPINGS
  * @uses FEATURE_MOD_INTRO

@@ -3390,6 +3390,88 @@ class core_accesslib_testcase extends advanced_testcase {
     }
 
     /**
+     * Helper that verifies a list of capabilities, as returned by
+     * $context->get_capabilities() contains certain capabilities.
+     *
+     * @param array $expected a list of capability names
+     * @param array $actual a list of capability info from $context->get_capabilities().
+     */
+    protected function assert_capability_list_contains($expected, $actual) {
+        $actualnames = [];
+        foreach ($actual as $cap) {
+            $actualnames[$cap->name] = $cap->name;
+        }
+        $this->assertArraySubset(array_combine($expected, $expected), $actualnames);
+    }
+
+    /**
+     * Test that context_system::get_capabilities returns capabilities relevant to all modules.
+     */
+    public function test_context_module_caps_returned_by_get_capabilities_in_sys_context() {
+        $actual = context_system::instance()->get_capabilities();
+
+        // Just test a few representative capabilities.
+        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
+                'repository/upload:view', 'atto/recordrtc:recordaudio'];
+
+        $this->assert_capability_list_contains($expectedcapabilities, $actual);
+    }
+
+    /**
+     * Test that context_coursecat::get_capabilities returns capabilities relevant to all modules.
+     */
+    public function test_context_module_caps_returned_by_get_capabilities_in_course_cat_context() {
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+        $cat = $generator->create_category();
+
+        $actual = context_coursecat::instance($cat->id)->get_capabilities();
+
+        // Just test a few representative capabilities.
+        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
+                'repository/upload:view', 'atto/recordrtc:recordaudio'];
+
+        $this->assert_capability_list_contains($expectedcapabilities, $actual);
+    }
+
+    /**
+     * Test that context_course::get_capabilities returns capabilities relevant to all modules.
+     */
+    public function test_context_module_caps_returned_by_get_capabilities_in_course_context() {
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+        $cat = $generator->create_category();
+        $course = $generator->create_course(['category' => $cat->id]);
+
+        $actual = context_course::instance($course->id)->get_capabilities();
+
+        // Just test a few representative capabilities.
+        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
+                'repository/upload:view', 'atto/recordrtc:recordaudio'];
+
+        $this->assert_capability_list_contains($expectedcapabilities, $actual);
+    }
+
+    /**
+     * Test that context_module::get_capabilities returns capabilities relevant to all modules.
+     */
+    public function test_context_module_caps_returned_by_get_capabilities_mod_context() {
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+        $cat = $generator->create_category();
+        $course = $generator->create_course(['category' => $cat->id]);
+        $page = $generator->create_module('page', ['course' => $course->id]);
+
+        $actual = context_module::instance($page->cmid)->get_capabilities();
+
+        // Just test a few representative capabilities.
+        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
+                'repository/upload:view', 'atto/recordrtc:recordaudio'];
+
+        $this->assert_capability_list_contains($expectedcapabilities, $actual);
+    }
+
+    /**
      * Test updating of role capabilities during upgrade
      */
     public function test_update_capabilities() {
