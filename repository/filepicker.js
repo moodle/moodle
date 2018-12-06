@@ -317,6 +317,16 @@ YUI.add('moodle-core_filepicker', function(Y) {
             // TODO add tooltip with o.data['title'] (o.value) or o.data['thumbnail_title']
             return el.getContent();
         }
+        var formatCheckbox = function(o) {
+            var el = Y.Node.create('<div/>');
+            var checkbox = Y.Node.create('<input/>');
+            checkbox.setAttribute('type', 'checkbox')
+                .setAttribute('class', 'mark-for-deletion')
+                .setAttribute('data-fullname', o.data.fullname);
+
+            el.appendChild(checkbox);
+            return el.getContent();
+        };
         /** sorting function for table view */
         var sortFoldersFirst = function(a, b, desc) {
             if (a.get('isfolder') && !b.get('isfolder')) {
@@ -331,6 +341,9 @@ YUI.add('moodle-core_filepicker', function(Y) {
         /** initialize table view */
         var initialize_table_view = function() {
             var cols = [
+                {key: "", label: "<input type='checkbox' id='select-all'/>",
+                    allowHTML: true, formatter: formatCheckbox,
+                    sortable: false},
                 {key: "displayname", label: M.util.get_string('name', 'moodle'), allowHTML: true, formatter: formatTitle,
                     sortable: true, sortFn: sortFoldersFirst},
                 {key: "datemodified", label: M.util.get_string('lastmodified', 'moodle'), allowHTML: true, formatter: formatValue,
@@ -350,7 +363,15 @@ YUI.add('moodle-core_filepicker', function(Y) {
                     }
                     Y.bind(callback, this)(e, record.getAttrs());
                 }
-            }, 'tr', options.callbackcontext, scope.tableview);
+            }, 'tr td:not(:first-child)', options.callbackcontext, scope.tableview);
+            scope.tableview.delegate('change', function(e) {
+                e.preventDefault();
+                if (e.target.get('checked')) {
+                    e.container.all('.mark-for-deletion').setAttribute('checked', true);
+                } else {
+                    e.container.all('.mark-for-deletion').removeAttribute('checked');
+                }
+            }, '#select-all', options.callbackcontext, scope.tableview);
             if (options.rightclickcallback) {
                 scope.tableview.delegate('contextmenu', function (e, tableview) {
                     var record = tableview.getRecord(e.currentTarget.get('id'));

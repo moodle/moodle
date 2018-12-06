@@ -177,6 +177,38 @@ class behat_filepicker extends behat_base {
     }
 
     /**
+     * Marks for deletion the specified file or folder from the specified filemanager field.
+     *
+     * @Given /^I mark for deletion "(?P<file_or_folder_name_string>(?:[^"]|\\")*)" from filemanager$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $name
+     */
+    public function i_mark_for_deletion_from_filemanager($name) {
+        $name = behat_context_helper::escape($name);
+        $okbutton = $this->find('css', "input.mark-for-deletion[data-fullname=$name]");
+        $okbutton->click();
+    }
+
+    /**
+     * Executes delete function and confirms delete
+     *
+     * @Given /^I confirm deletion$/
+     * @throws ExpectationException Thrown by behat_base::find
+     */
+    public function i_confirm_deletion() {
+        $name = get_string('deleteselected');
+
+        // Execute the action.
+        $okbutton = $this->find('css', "a[title='$name']");
+        $okbutton->click();
+
+        // Yes, we are sure.
+        // Using xpath + click instead of pressButton as 'Ok' it is a common string.
+        $okbutton = $this->find('css', 'div.fp-dlg button.fp-dlg-butconfirm');
+        $okbutton->click();
+    }
+
+    /**
      * Makes sure user can see the exact number of elements (files in folders) in the filemanager.
      *
      * @Then /^I should see "(?P<elementscount_number>\d+)" elements in "(?P<filemanagerelement_string>(?:[^"]|\\")*)" filemanager$/

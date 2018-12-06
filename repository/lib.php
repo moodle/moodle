@@ -3209,3 +3209,43 @@ function initialise_filepicker($args) {
     }
     return $return;
 }
+
+/**
+ * Convenience function to handle deletion of files.
+ *
+ * @param object $context The context where the delete is called
+ * @param string $component component
+ * @param string $filearea filearea
+ * @param int $itemid the item id
+ * @param array $files Array of files object with each item having filename/filepath as values
+ * @return array $return Array of strings matching up to the parent directory of the deleted files
+ * @throws coding_exception
+ */
+function repository_delete_selected_files($context, string $component, string $filearea, $itemid, array $files) {
+    $fs = get_file_storage();
+    $return = [];
+
+    foreach ($files as $selectedfile) {
+        $filename = clean_filename($selectedfile->filename);
+        $filepath = clean_param($selectedfile->filepath, PARAM_PATH);
+        $filepath = file_correct_filepath($filepath);
+
+        if ($storedfile = $fs->get_file($context->id, $component, $filearea, $itemid, $filepath, $filename)) {
+            $parentpath = $storedfile->get_parent_directory()->get_filepath();
+            if ($storedfile->is_directory()) {
+                $files = $fs->get_directory_files($context->id, $component, $filearea, $itemid, $filepath, true);
+                foreach ($files as $file) {
+                    $file->delete();
+                }
+                $storedfile->delete();
+                $return[$parentpath] = "";
+            } else {
+                if ($result = $storedfile->delete()) {
+                    $return[$parentpath] = "";
+                }
+            }
+        }
+    }
+
+    return $return;
+}
