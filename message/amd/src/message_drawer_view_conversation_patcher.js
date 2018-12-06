@@ -322,11 +322,10 @@ function(
      * @return {Object} patch
      */
     var buildHeaderPatchTypePublic = function(state, newState) {
-        var totalMemberCount = newState.totalMemberCount;
+        var oldMemberCount = state.totalMemberCount;
+        var newMemberCount = newState.totalMemberCount;
 
-        if (totalMemberCount === null) {
-            return null;
-        } else {
+        if (oldMemberCount != newMemberCount) {
             return {
                 type: Constants.CONVERSATION_TYPES.PUBLIC,
                 showControls: true,
@@ -334,13 +333,15 @@ function(
                     id: newState.id,
                     name: newState.name,
                     subname: newState.subname,
-                    totalmembercount: totalMemberCount,
+                    totalmembercount: newState.totalMemberCount,
                     imageurl: newState.imageUrl,
                     isfavourite: newState.isFavourite,
                     // Don't show favouriting if we don't have a conversation.
                     showfavourite: newState.id !== null
                 }
             };
+        } else {
+            return null;
         }
     };
 
