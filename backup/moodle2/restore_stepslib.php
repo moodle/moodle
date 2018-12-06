@@ -4518,6 +4518,12 @@ class restore_create_categories_and_questions extends restore_structure_step {
                 unset($data->idnumber);
             }
 
+            if ($data->qtype === 'random') {
+                // Ensure that this newly created question is considered by
+                // \qtype_random\task\remove_unused_questions.
+                $data->hidden = 0;
+            }
+
             $newitemid = $DB->insert_record('question', $data);
             $this->set_mapping('question', $oldid, $newitemid);
             // Also annotate them as question_created, we need
