@@ -721,7 +721,12 @@ class auth_plugin_ldap extends auth_plugin_base {
                     continue;
                 }
                 if ($ldappagedresults) {
-                    ldap_control_paged_result_response($ldapconnection, $ldapresult, $ldapcookie);
+                    $pagedresp = ldap_control_paged_result_response($ldapconnection, $ldapresult, $ldapcookie);
+                    // Function ldap_control_paged_result_response() does not overwrite $ldapcookie if it fails, by
+                    // setting this to null we avoid an infinite loop.
+                    if ($pagedresp === false) {
+                        $ldapcookie = null;
+                    }
                 }
                 if ($entry = @ldap_first_entry($ldapconnection, $ldapresult)) {
                     do {
