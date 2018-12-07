@@ -68,12 +68,8 @@ function cron_run() {
         unset($task);
     }
 
-    // Run all adhoc tasks.
-    while (!\core\task\manager::static_caches_cleared_since($timenow) &&
-           $task = \core\task\manager::get_next_adhoc_task($timenow)) {
-        cron_run_inner_adhoc_task($task);
-        unset($task);
-    }
+    // Run adhoc tasks.
+    cron_run_adhoc_tasks($timenow);
 
     mtrace("Cron script completed correctly");
 
@@ -81,6 +77,47 @@ function cron_run() {
     mtrace('Cron completed at ' . date('H:i:s') . '. Memory used ' . display_size(memory_get_usage()) . '.');
     $difftime = microtime_diff($starttime, microtime());
     mtrace("Execution took ".$difftime." seconds");
+}
+
+/**
+ * Execute all queued adhoc tasks, applying necessary concurrency limits and time limits.
+ *
+ * @param   int     $timenow The time this process started.
+ */
+function cron_run_adhoc_tasks(int $timenow) {
+    // Allow a restriction on the number of adhoc task runners at once.
+    $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+    $maxruns = get_config('core', 'task_adhoc_concurrency_limit');
+    $maxruntime = get_config('core', 'task_adhoc_max_runtime');
+
+    $adhoclock = null;
+    for ($run = 0; $run < $maxruns; $run++) {
+        if ($adhoclock = $cronlockfactory->get_lock("adhoc_task_runner_{$run}", 1)) {
+            break;
+        }
+    }
+
+    if (!$adhoclock) {
+        mtrace("Skipping processing of adhoc tasks. Concurrency limit reached.");
+        return;
+    }
+
+    $starttime = time();
+
+    // Run all adhoc tasks.
+    while (!\core\task\manager::static_caches_cleared_since($timenow) &&
+            $task = \core\task\manager::get_next_adhoc_task($timenow)) {
+        cron_run_inner_adhoc_task($task);
+        unset($task);
+
+        if ((time() - $starttime) > $maxruntime) {
+            mtrace("Stopping processing of adhoc tasks as time limit has been reached.");
+            break;
+        }
+    }
+
+    // Release the adhoc task runner lock.
+    $adhoclock->release();
 }
 
 /**
