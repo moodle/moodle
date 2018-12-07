@@ -38,7 +38,7 @@ $string['clitypevalue'] = 'πληκτρολογήστε μια τιμή';
 $string['clitypevaluedefault'] = 'πληκτρολογήστε μια τιμή· πατήστε Enter για να χρησιμοποιήσετε τηνπροεπιλεγμένη τιμή ({$a})';
 $string['cliunknowoption'] = 'Μη αναγνωρίσιμες επιλογές: {$a}<br />
 Παρακαλούμε χρησιμοποιήστε την επιλογή --βοήθεια';
-$string['cliyesnoprompt'] = 'πατώντας ν (σημαίνει ναι) αλλιώς πατώντας ο (σημαίνει όχι)';
+$string['cliyesnoprompt'] = 'πατώντας y (σημαίνει yes=ναι) αλλιώς πατώντας n (σημαίνει no=όχι)';
 $string['environmentrequireinstall'] = 'απαιτείται να εγκατασταθεί/ ενεργοποιηθεί';
 $string['environmentrequireversion'] = 'απαιτείται η έκδοση {$a->needed} ενώ εσείς έχετε την {$a->current}';
 $string['upgradekeyset'] = 'Κλειδί αναβάθμισης (αφήστε κενό για να μην το ορίσετε)';
