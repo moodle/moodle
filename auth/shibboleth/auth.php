@@ -326,39 +326,11 @@ class auth_plugin_shibboleth extends auth_plugin_base {
     }
 
     /**
-     * Prints the option elements for the select element of the drop down list
-     */
-    function print_idp_list(){
-        $config = get_config('auth_shibboleth');
-
-        $IdPs = get_idp_list($config->organization_selection);
-        if (isset($_COOKIE['_saml_idp'])){
-            $idp_cookie = generate_cookie_array($_COOKIE['_saml_idp']);
-            do {
-                $selectedIdP = array_pop($idp_cookie);
-            } while (!isset($IdPs[$selectedIdP]) && count($idp_cookie) > 0);
-
-        } else {
-            $selectedIdP = '-';
-        }
-
-        foreach($IdPs as $IdP => $data){
-            if ($IdP == $selectedIdP){
-                echo '<option value="'.$IdP.'" selected="selected">'.$data[0].'</option>';
-            } else {
-                echo '<option value="'.$IdP.'">'.$data[0].'</option>';
-            }
-        }
-    }
-
-
-     /**
      * Generate array of IdPs from Moodle Shibboleth settings
      *
      * @param string Text containing tuble/triple of IdP entityId, name and (optionally) session initiator
      * @return array Identifier of IdPs and their name/session initiator
      */
-
     function get_idp_list($organization_selection) {
         $idp_list = array();
 
