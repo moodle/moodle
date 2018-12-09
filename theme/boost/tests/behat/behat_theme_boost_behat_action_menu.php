@@ -27,6 +27,8 @@
 
 require_once(__DIR__ . '/../../../../lib/tests/behat/behat_action_menu.php');
 
+use Behat\Mink\Exception\DriverException as DriverException;
+
 /**
  * Steps definitions to open and close action menus (overrides).
  *
