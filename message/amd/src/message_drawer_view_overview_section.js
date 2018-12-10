@@ -625,10 +625,11 @@ function(
                 // Silently ignore if we can't updated the counts. No need to bother the user.
             });
 
-            // Same as for total counts.
+            // This is given to us by the calling code because the unread counts for all sections
+            // are loaded in a single ajax request rather than one request per section.
             unreadCountPromise.then(function(count) {
                 renderUnreadCount(root, count);
-                loadedTotalCounts = true;
+                loadedUnreadCounts = true;
                 return;
             })
             .catch(function() {
