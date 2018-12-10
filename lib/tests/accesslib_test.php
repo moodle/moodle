@@ -3412,7 +3412,7 @@ class core_accesslib_testcase extends advanced_testcase {
 
         // Just test a few representative capabilities.
         $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
-                'repository/upload:view'];
+                'repository/upload:view', 'atto/recordrtc:recordaudio'];
 
         $this->assert_capability_list_contains($expectedcapabilities, $actual);
     }
@@ -3429,7 +3429,7 @@ class core_accesslib_testcase extends advanced_testcase {
 
         // Just test a few representative capabilities.
         $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
-                'repository/upload:view'];
+                'repository/upload:view', 'atto/recordrtc:recordaudio'];
 
         $this->assert_capability_list_contains($expectedcapabilities, $actual);
     }
@@ -3447,7 +3447,7 @@ class core_accesslib_testcase extends advanced_testcase {
 
         // Just test a few representative capabilities.
         $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
-                'repository/upload:view'];
+                'repository/upload:view', 'atto/recordrtc:recordaudio'];
 
         $this->assert_capability_list_contains($expectedcapabilities, $actual);
     }
@@ -3466,7 +3466,7 @@ class core_accesslib_testcase extends advanced_testcase {
 
         // Just test a few representative capabilities.
         $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
-                'repository/upload:view'];
+                'repository/upload:view', 'atto/recordrtc:recordaudio'];
 
         $this->assert_capability_list_contains($expectedcapabilities, $actual);
     }
