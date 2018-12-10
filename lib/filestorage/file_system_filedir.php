@@ -235,12 +235,45 @@ class file_system_filedir extends file_system {
     }
 
     /**
+     * Create a file record from a stored file object.
+     *
+     * This is required in cases where we are recoverying a file
+     * from the trash and we need to also recrete the file record
+     * in the database.
+     *
+     * @param stored_file $file
+     * @return stdClass
+     */
+    protected function create_recovery_record(stored_file $file) {
+        $filerecord = new stdClass();
+
+        $filerecord->contextid = $file->get_contextid();
+        $filerecord->component = $file->get_component();
+        $filerecord->filearea  = $file->get_filearea();
+        $filerecord->itemid    = $file->get_itemid();
+        $filerecord->filepath  = $file->get_filepath();
+        $filerecord->filename  = $file->get_filename();
+        $filerecord->timecreated  = $file->get_timecreated();
+        $filerecord->timemodified = $file->get_timemodified();
+        $filerecord->userid       = empty($file->get_userid()) ? null : $file->get_userid();
+        $filerecord->source       = empty($file->get_source()) ? null : $file->get_source();
+        $filerecord->author       = empty($file->get_author()) ? null : $file->get_author();
+        $filerecord->license      = empty($file->get_license()) ? null : $file->get_license();
+        $filerecord->status       = empty($file->get_status()) ? 0 : $file->get_status();
+        $filerecord->sortorder    = $file->get_sortorder();
+        $filerecord->contenthash  = $file->get_contenthash();
+
+        return $filerecord;
+    }
+
+    /**
      * Tries to recover missing content of file from trash.
      *
      * @param stored_file $file stored_file instance
+     * @param bool $createrecord Create file record for stored file.
      * @return bool success
      */
-    protected function recover_file(stored_file $file) {
+    public function recover_file(stored_file $file, $createrecord=false) {
         $contentfile = $this->get_local_path_from_storedfile($file, false);
 
         if (file_exists($contentfile)) {
@@ -274,9 +307,25 @@ class file_system_filedir extends file_system {
             }
         }
 
-        // Perform a rename - these are generally atomic which gives us big
-        // performance wins, especially for large files.
-        return rename($trashfile, $contentfile);
+        // Restore file from trash and create file record in database if needed.
+        if ($createrecord) {
+            $recoveryrecord = $this->create_recovery_record($file);
+
+            $fs = new file_storage();
+            $fs->create_file_from_pathname($recoveryrecord, $trashfile);
+
+            // Remove copy of file still in trash.
+            // There are no references to this file anywhere so we just unlink it.
+            unlink($trashfile);
+
+        } else {
+            // If record exists in database then perform a rename.
+            // These are generally atomic which gives us big
+            // performance wins, especially for large files.
+            return rename($trashfile, $contentfile);
+        }
+
+        return true;
     }
 
     /**

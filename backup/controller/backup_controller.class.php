@@ -185,6 +185,20 @@ class backup_controller extends base_controller {
         backup_check::check_security($this, false);
     }
 
+    /**
+     * Sets the mode (purpose) of the backup.
+     *
+     * @param int $mode The mode to set.
+     */
+    public function set_mode($mode) {
+        $this->mode = $mode;
+        $this->set_include_files(); // Need to check if files are included as mode may have changed.
+        $this->save_controller();
+        $tbc = self::load_controller($this->backupid);
+        $this->logger = $tbc->logger; // Wakeup loggers.
+        $tbc->plan->destroy(); // Clean plan controller structures, keeping logger alive.
+    }
+
     public function set_status($status) {
         // Note: never save_controller() with the object info after STATUS_EXECUTING or the whole controller,
         // containing all the steps will be sent to DB. 100% (monster) useless.
@@ -407,6 +421,13 @@ class backup_controller extends base_controller {
         // When a backup is intended for the same site, we don't need to include the files.
         // Note, this setting is only used for duplication of an entire course.
         if ($this->get_mode() === backup::MODE_SAMESITE) {
+            $includefiles = false;
+        }
+
+        // If backup is automated and we have set auto backup config to exclude
+        // files then set them to be excluded here.
+        $backupautofiles = (bool)get_config('backup', 'backup_auto_files');
+        if ($this->get_mode() === backup::MODE_AUTOMATED && !$backupautofiles) {
             $includefiles = false;
         }
 

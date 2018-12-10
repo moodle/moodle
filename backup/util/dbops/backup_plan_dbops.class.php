@@ -201,7 +201,8 @@ abstract class backup_plan_dbops extends backup_dbops {
     * @param bool $useidonly only use the ID in the file name
     * @return string The filename to use
     */
-    public static function get_default_backup_filename($format, $type, $id, $users, $anonymised, $useidonly = false) {
+    public static function get_default_backup_filename($format, $type, $id, $users, $anonymised,
+            $useidonly = false, $files = true) {
         global $DB;
 
         // Calculate backup word
@@ -249,6 +250,11 @@ abstract class backup_plan_dbops extends backup_dbops {
             $info = '-nu';
         } else if ($anonymised) {
             $info = '-an';
+        }
+
+        // Indicate if backup doesn't contain files.
+        if (!$files) {
+            $info .= '-nf';
         }
 
         return $backupword . '-' . $format . '-' . $type . '-' .

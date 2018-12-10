@@ -172,7 +172,10 @@ $temp->add(new admin_setting_configselect('tempdatafoldercleanup', new lang_stri
 
 $ADMIN->add('server', $temp);
 
-
+    $temp->add(new admin_setting_configduration('filescleanupperiod',
+        new lang_string('filescleanupperiod', 'admin'),
+        new lang_string('filescleanupperiod_help', 'admin'),
+        86400));
 
 $ADMIN->add('server', new admin_externalpage('environment', new lang_string('environment','admin'), "$CFG->wwwroot/$CFG->admin/environment.php"));
 $ADMIN->add('server', new admin_externalpage('phpinfo', new lang_string('phpinfo'), "$CFG->wwwroot/$CFG->admin/phpinfo.php"));
