@@ -4867,7 +4867,7 @@ class assign {
         if (has_any_capability(array('mod/assign:viewgrades', 'mod/assign:grade'), $this->context)) {
             return true;
         }
-        if ($userid == $USER->id && has_capability('mod/assign:submit', $this->context)) {
+        if ($userid == $USER->id) {
             return true;
         }
         return false;
@@ -5438,8 +5438,9 @@ class assign {
         $o = '';
 
         if ($this->can_view_submission($user->id)) {
-
-            if (has_capability('mod/assign:submit', $this->get_context(), $user, false)) {
+            $cansubmit = has_capability('mod/assign:submit', $this->get_context(), $user, false);
+            if ($cansubmit || $this->get_user_submission($user->id, false) !== false) {
+                // The user can submit, or has a submission.
                 $submissionstatus = $this->get_assign_submission_status_renderable($user, $showlinks);
                 $o .= $this->get_renderer()->render($submissionstatus);
             }
@@ -5468,6 +5469,10 @@ class assign {
      * @return bool
      */
     protected function show_submit_button($submission = null, $teamsubmission = null, $userid = null) {
+        if (!has_capability('mod/assign:submit', $this->get_context(), $userid, false)) {
+            // The user does not have the capability to submit.
+            return false;
+        }
         if ($teamsubmission) {
             if ($teamsubmission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
                 // The assignment submission has been completed.
