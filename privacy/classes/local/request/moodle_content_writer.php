@@ -212,7 +212,8 @@ class moodle_content_writer implements content_writer {
                 [$file->get_filepath()]
             );
             $path = $this->get_path($pathitems, $file->get_filename());
-            check_dir_exists(dirname($path), true, true);
+            $fullpath = $this->get_full_path($pathitems, $file->get_filename());
+            check_dir_exists(dirname($fullpath), true, true);
             $this->files[$path] = $file;
         }
 
