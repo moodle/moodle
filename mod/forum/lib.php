@@ -658,6 +658,12 @@ function forum_cron() {
                     }
                 }
 
+                $coursecontext = context_course::instance($course->id);
+                if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext, $userto->id)) {
+                    // The course is hidden and the user does not have access to it.
+                    continue;
+                }
+
                 // Don't send email if the forum is Q&A and the user has not posted.
                 // Initial topics are still mailed.
                 if ($forum->type == 'qanda' && !forum_get_user_posted_time($discussion->id, $userto->id) && $pid != $discussion->firstpost) {
