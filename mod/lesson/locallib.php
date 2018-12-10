@@ -4181,7 +4181,7 @@ abstract class lesson_page extends lesson_base {
 
                     foreach ($studentanswerresponse as $answer => $response) {
                         // Add a table row containing the answer.
-                        $studentanswer = $this->format_answer($answer, $context, $result->studentanswerformat);
+                        $studentanswer = $this->format_answer($answer, $context, $result->studentanswerformat, $options);
                         $table->data[] = array($studentanswer);
                         // If the response exists, add a table row containing the response. If not, add en empty row.
                         if (!empty(trim($response))) {
@@ -4195,7 +4195,7 @@ abstract class lesson_page extends lesson_base {
                     }
                 } else {
                     // Add a table row containing the answer.
-                    $studentanswer = $this->format_answer($result->studentanswer, $context, $result->studentanswerformat);
+                    $studentanswer = $this->format_answer($result->studentanswer, $context, $result->studentanswerformat, $options);
                     $table->data[] = array($studentanswer);
                     // If the response exists, add a table row containing the response. If not, add en empty row.
                     if (!empty(trim($result->response))) {
@@ -4223,9 +4223,15 @@ abstract class lesson_page extends lesson_base {
      * @param int $answerformat
      * @return string Returns formatted string
      */
-    private function format_answer($answer, $context, $answerformat) {
+    private function format_answer($answer, $context, $answerformat, $options = []) {
 
-        return format_text($answer, $answerformat, array('context' => $context, 'para' => true));
+        if (empty($options)) {
+            $options = [
+                'context' => $context,
+                'para' => true
+            ];
+        }
+        return format_text($answer, $answerformat, $options);
     }
 
     /**
