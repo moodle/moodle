@@ -1290,7 +1290,7 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
  * @param string|array $capability optional, may include a capability name, or array of names.
  *      If an array is provided then this is the equivalent of a logical 'OR',
  *      i.e. the user needs to have one of these capabilities.
- * @param int $group optional, 0 indicates no current group, otherwise the group id
+ * @param int $group optional, 0 indicates no current group and USERSWITHOUTGROUP users without any group; otherwise the group id
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
  * @param int $enrolid The enrolment ID. If not 0, only users enrolled using this enrolment method will be returned.
@@ -1315,9 +1315,12 @@ function get_enrolled_with_capabilities_join(context $context, $prefix = '', $ca
     }
 
     if ($group) {
-        $groupjoin = groups_get_members_join($group, $uid);
+        $groupjoin = groups_get_members_join($group, $uid, $context);
         $joins[] = $groupjoin->joins;
         $params = array_merge($params, $groupjoin->params);
+        if (!empty($groupjoin->wheres)) {
+            $wheres[] = $groupjoin->wheres;
+        }
     }
 
     $joins = implode("\n", $joins);
@@ -1335,7 +1338,7 @@ function get_enrolled_with_capabilities_join(context $context, $prefix = '', $ca
  *
  * @param context $context
  * @param string $withcapability
- * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+ * @param int $groupid 0 means ignore groups, USERSWITHOUTGROUP without any group and any other value limits the result by group id
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
  * @param int $enrolid The enrolment ID. If not 0, only users enrolled using this enrolment method will be returned.
@@ -1461,7 +1464,7 @@ function get_enrolled_join(context $context, $useridcolumn, $onlyactive = false,
  *
  * @param context $context
  * @param string $withcapability
- * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+ * @param int $groupid 0 means ignore groups, USERSWITHOUTGROUP without any group and any other value limits the result by group id
  * @param string $userfields requested user record fields
  * @param string $orderby
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).

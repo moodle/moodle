@@ -939,6 +939,12 @@ class core_userliblib_testcase extends advanced_testcase {
 
         $this->assertEquals($student1->id, $userset->current()->id);
         $this->assertEquals(1, iterator_count($userset));
+
+        // Search for users without any group.
+        $userset = user_get_participants($course->id, USERSWITHOUTGROUP, 0, $roleids['student'], 0, -1, '');
+
+        $this->assertEquals($student3->id, $userset->current()->id);
+        $this->assertEquals(1, iterator_count($userset));
     }
 
     /**
