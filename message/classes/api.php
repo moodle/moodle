@@ -444,7 +444,9 @@ class api {
      * @throws \dml_exception
      */
     protected static function get_linked_conversation_extra_fields(array $conversations) : array {
-        global $DB;
+        global $DB, $PAGE;
+
+        $renderer = $PAGE->get_renderer('core');
 
         $linkedconversations = [];
         foreach ($conversations as $conversation) {
@@ -476,7 +478,7 @@ class api {
                     $extrafields[$convid]['subname'] = format_string($courseinfo[$groupid]->courseshortname);
 
                     // Imageurl.
-                    $extrafields[$convid]['imageurl'] = '';
+                    $extrafields[$convid]['imageurl'] = $renderer->image_url('g/g1')->out(false); // default image.
                     if ($url = get_group_picture_url($group, $group->courseid, true)) {
                         $extrafields[$convid]['imageurl'] = $url->out(false);
                     }
