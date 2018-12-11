@@ -546,9 +546,7 @@ class gradebookservices extends service_base {
         $sql = "DELETE
                   FROM {ltiservice_gradebookservices}
                  WHERE gradeitemid NOT IN (SELECT id
-                                             FROM {grade_items} gi
-                                            WHERE gi.itemtype = 'mod'
-                                              AND gi.itemmodule = 'lti')";
+                                             FROM {grade_items} gi)";
         $DB->execute($sql);
     }
 
