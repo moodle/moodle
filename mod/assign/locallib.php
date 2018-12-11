@@ -5112,6 +5112,9 @@ class assign {
 
             $viewfullnames = has_capability('moodle/site:viewfullnames', $this->get_context());
 
+            if ($grade) {
+                \mod_assign\event\feedback_viewed::create_from_grade($this, $grade)->trigger();
+            }
             $feedbackstatus = new assign_feedback_status($gradefordisplay,
                                                   $gradeddate,
                                                   $grader,
