@@ -10535,6 +10535,10 @@ div.editor_atto_toolbar button .icon {
   right: 0 !important;
   /* stylelint-disable-line declaration-no-important */ }
 
+.overflow-hidden {
+  overflow: hidden !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
 .icon {
   font-size: 16px;
   width: 16px;
@@ -11338,6 +11342,17 @@ div.editor_atto_toolbar button .icon {
     margin-right: 0; }
     #block-region-side-pre .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
       width: calc(100% - 0.5rem) !important; } }
+
+.block_recentlyaccessedcourses .paging-bar-container {
+  margin-top: -2.4rem;
+  justify-content: flex-end; }
+
+@media (max-width: 575.98px) {
+  .block_recentlyaccessedcourses .paging-bar-container {
+    margin-top: 0; } }
+
+#block-region-side-pre .block_recentlyaccessedcourses .paging-bar-container {
+  margin-top: 0; }
 
 .block_recentlyaccesseditems img.icon {
   height: auto;

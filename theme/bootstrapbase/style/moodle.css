@@ -4831,6 +4831,10 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
   right: 0 !important;
   /* stylelint-disable-line declaration-no-important */
 }
+.overflow-hidden {
+  overflow: hidden !important;
+  /* stylelint-disable-line declaration-no-important */
+}
 /* admin.less */
 .formtable tbody th {
   font-weight: normal;
