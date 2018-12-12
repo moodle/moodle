@@ -753,7 +753,9 @@ class auth_plugin_ldap extends auth_plugin_base {
         $count = $DB->count_records_sql('SELECT COUNT(username) AS count, 1 FROM {tmp_extuser}');
         if ($count < 1) {
             print_string('didntgetusersfromldap', 'auth_ldap');
-            exit;
+            $dbman->drop_table($table);
+            $this->ldap_close();
+            return false;
         } else {
             print_string('gotcountrecordsfromldap', 'auth_ldap', $count);
         }
