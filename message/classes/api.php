@@ -309,7 +309,7 @@ class api {
         $excludeusers = array($userid, $CFG->siteguest);
         list($exclude, $excludeparams) = $DB->get_in_or_equal($excludeusers, SQL_PARAMS_NAMED, 'param', false);
 
-        $params = array('search' => '%' . $search . '%', 'userid1' => $userid, 'userid2' => $userid);
+        $params = array('search' => '%' . $DB->sql_like_escape($search) . '%', 'userid1' => $userid, 'userid2' => $userid);
 
         // Ok, let's search for contacts first.
         $sql = "SELECT u.id
