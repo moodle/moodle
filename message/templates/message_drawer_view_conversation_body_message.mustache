@@ -35,13 +35,14 @@
 
 }}
 <div
-    class="message clickable d-flex flex-column p-2 {{#fromloggedinuser}}bg-secondary{{/fromloggedinuser}}{{^fromloggedinuser}}bg-white{{/fromloggedinuser}} rounded mb-2 mt-2"
+    class="message clickable d-flex flex-column p-2 mx-1 position-relative {{#fromloggedinuser}}send bg-secondary{{/fromloggedinuser}}{{^fromloggedinuser}}received bg-white{{/fromloggedinuser}} rounded mb-2 mt-2"
     data-region="message"
     data-message-id="{{id}}"
     role="checkbox"
     aria-checked="false"
     tabindex="0"
 >
+    <div class="tail position-absolute"></div>
     <div class="d-flex align-items-center {{^fromloggedinuser}}pb-2{{/fromloggedinuser}}">
         {{^fromloggedinuser}}
         <div style="flex-shrink: 0">
