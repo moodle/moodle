@@ -1357,7 +1357,26 @@ $message-drawer-width: 320px;
             overflow: hidden;
         }
     }
-
+    .message {
+        .tail {
+            content: '';
+            bottom: 0;
+            width: 0;
+            height: 0;
+            border: 0.5rem solid transparent;
+            position: relative;
+        }
+        &.send .tail {
+            right: 0;
+            margin-right: -0.5rem;
+            border-bottom-color: map-get($theme-colors, 'secondary');
+        }
+        &.received .tail {
+            left: 0;
+            margin-left: -0.5rem;
+            border-bottom-color: $white;
+        }
+    }
     .lazy-load-list {
         overflow-y: auto;
     }

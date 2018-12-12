@@ -1360,6 +1360,26 @@
     .last-message {
         min-height: 20px;
     }
+    .message {
+        .tail {
+            content: '';
+            bottom: 0;
+            width: 0;
+            height: 0;
+            border: 0.5rem solid transparent;
+            position: relative;
+        }
+        &.send .tail {
+            right: 0;
+            margin-right: -0.5rem;
+            border-bottom-color: #e9ecef;
+        }
+        &.received .tail {
+            left: 0;
+            margin-left: -0.5rem;
+            border-bottom-color: @white;
+        }
+    }
 
     .lazy-load-list {
         overflow-y: auto;

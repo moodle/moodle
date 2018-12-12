@@ -14216,6 +14216,21 @@ a.ygtvspacer:hover {
     min-height: 1.5rem; }
   .message-drawer .section .collapsing {
     overflow: hidden; }
+  .message-drawer .message .tail {
+    content: '';
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border: 0.5rem solid transparent;
+    position: relative; }
+  .message-drawer .message.send .tail {
+    right: 0;
+    margin-right: -0.5rem;
+    border-bottom-color: #ced4da; }
+  .message-drawer .message.received .tail {
+    left: 0;
+    margin-left: -0.5rem;
+    border-bottom-color: #fff; }
   .message-drawer .lazy-load-list {
     overflow-y: auto; }
 
