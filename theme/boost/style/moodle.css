@@ -15573,6 +15573,9 @@ div#dock {
     margin-left: 0;
     margin-top: 1rem; }
 
+#page-mod-lesson-view .fitem .felement .custom-select {
+  align-self: flex-start; }
+
 .path-mod-lesson .generaltable td {
   vertical-align: middle; }
   .path-mod-lesson .generaltable td label {

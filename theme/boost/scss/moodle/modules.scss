@@ -252,6 +252,9 @@ div#dock {
             margin-top: 1rem;
         }
     }
+    .fitem .felement .custom-select {
+        align-self: flex-start;
+    }
 }
 .path-mod-lesson .generaltable td {
     vertical-align: middle;
