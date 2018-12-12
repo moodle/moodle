@@ -305,6 +305,22 @@ class assign_submission_file extends assign_submission_plugin {
     }
 
     /**
+     * Remove files from this submission.
+     *
+     * @param stdClass $submission The submission
+     * @return boolean
+     */
+    public function remove(stdClass $submission) {
+        $fs = get_file_storage();
+
+        $fs->delete_area_files($this->assignment->get_context()->id,
+                               'assignsubmission_file',
+                               ASSIGNSUBMISSION_FILE_FILEAREA,
+                               $submission->id);
+        return true;
+    }
+
+    /**
      * Produce a list of files suitable for export that represent this feedback or submission
      *
      * @param stdClass $submission The submission

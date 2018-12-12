@@ -467,7 +467,11 @@ class assign {
             $action = 'editsubmission';
             if ($this->process_save_submission($mform, $notices)) {
                 $action = 'redirect';
-                $nextpageparams['action'] = 'view';
+                if ($this->can_grade()) {
+                    $nextpageparams['action'] = 'grading';
+                } else {
+                    $nextpageparams['action'] = 'view';
+                }
             }
         } else if ($action == 'editprevioussubmission') {
             $action = 'editsubmission';
@@ -479,6 +483,14 @@ class assign {
             $this->process_lock_submission();
             $action = 'redirect';
             $nextpageparams['action'] = 'grading';
+        } else if ($action == 'removesubmission') {
+            $this->process_remove_submission();
+            $action = 'redirect';
+            if ($this->can_grade()) {
+                $nextpageparams['action'] = 'grading';
+            } else {
+                $nextpageparams['action'] = 'view';
+            }
         } else if ($action == 'addattempt') {
             $this->process_add_attempt(required_param('userid', PARAM_INT));
             $action = 'redirect';
@@ -612,6 +624,8 @@ class assign {
             $o .= $this->view_grant_extension($mform);
         } else if ($action == 'revealidentities') {
             $o .= $this->view_reveal_identities_confirm($mform);
+        } else if ($action == 'removesubmissionconfirm') {
+            $o .= $this->view_remove_submission_confirm();
         } else if ($action == 'plugingradingbatchoperation') {
             $o .= $this->view_plugin_grading_batch_operation($mform);
         } else if ($action == 'viewpluginpage') {
@@ -4193,6 +4207,55 @@ class assign {
     }
 
     /**
+     * Show a confirmation page to make sure they want to remove submission data.
+     *
+     * @return string
+     */
+    protected function view_remove_submission_confirm() {
+        global $USER, $DB;
+
+        $userid = optional_param('userid', $USER->id, PARAM_INT);
+
+        if (!$this->can_edit_submission($userid, $USER->id)) {
+            print_error('nopermission');
+        }
+        $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+
+        $o = '';
+        $header = new assign_header($this->get_instance(),
+                                    $this->get_context(),
+                                    false,
+                                    $this->get_course_module()->id);
+        $o .= $this->get_renderer()->render($header);
+
+        $urlparams = array('id' => $this->get_course_module()->id,
+                           'action' => 'removesubmission',
+                           'userid' => $userid,
+                           'sesskey' => sesskey());
+        $confirmurl = new moodle_url('/mod/assign/view.php', $urlparams);
+
+        $urlparams = array('id' => $this->get_course_module()->id,
+                           'action' => 'view');
+        $cancelurl = new moodle_url('/mod/assign/view.php', $urlparams);
+
+        if ($userid == $USER->id) {
+            $confirmstr = get_string('removesubmissionconfirm', 'assign');
+        } else {
+            $name = $this->fullname($user);
+            $confirmstr = get_string('removesubmissionconfirmforstudent', 'assign', $name);
+        }
+        $o .= $this->get_renderer()->confirm($confirmstr,
+                                             $confirmurl,
+                                             $cancelurl);
+        $o .= $this->view_footer();
+
+        \mod_assign\event\remove_submission_form_viewed::create_from_user($this, $user)->trigger();
+
+        return $o;
+    }
+
+
+    /**
      * Show a confirmation page to make sure they want to release student identities.
      *
      * @return string
@@ -4813,6 +4876,8 @@ class assign {
                         $this->process_unlock_submission($userid);
                     } else if ($data->operation == 'reverttodraft') {
                         $this->process_revert_to_draft($userid);
+                    } else if ($data->operation == 'removesubmission') {
+                        $this->process_remove_submission($userid);
                     } else if ($data->operation == 'addattempt') {
                         if (!$this->get_instance()->teamsubmission) {
                             $this->process_add_attempt($userid);
@@ -7738,6 +7803,43 @@ class assign {
     }
 
     /**
+     * Remove any data from the current submission.
+     *
+     * @param int $userid
+     * @return boolean
+     */
+    public function remove_submission($userid) {
+        global $USER;
+
+        if (!$this->can_edit_submission($userid, $USER->id)) {
+            print_error('nopermission');
+        }
+
+        if ($this->get_instance()->teamsubmission) {
+            $submission = $this->get_group_submission($userid, 0, false);
+        } else {
+            $submission = $this->get_user_submission($userid, false);
+        }
+
+        if (!$submission) {
+            return false;
+        }
+
+        // Tell each submission plugin we were saved with no data.
+        $plugins = $this->get_submission_plugins();
+        foreach ($plugins as $plugin) {
+            if ($plugin->is_enabled() && $plugin->is_visible()) {
+                $plugin->remove($submission);
+            }
+        }
+
+        if ($submission->userid != 0) {
+            \mod_assign\event\submission_status_updated::create_from_submission($this, $submission)->trigger();
+        }
+        return true;
+    }
+
+    /**
      * Revert to draft.
      *
      * @param int $userid
@@ -7780,6 +7882,22 @@ class assign {
         }
         \mod_assign\event\submission_status_updated::create_from_submission($this, $submission)->trigger();
         return true;
+    }
+
+    /**
+     * Remove the current submission.
+     *
+     * @param int $userid
+     * @return boolean
+     */
+    protected function process_remove_submission($userid = 0) {
+        require_sesskey();
+
+        if (!$userid) {
+            $userid = required_param('userid', PARAM_INT);
+        }
+
+        return $this->remove_submission($userid);
     }
 
     /**

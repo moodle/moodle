@@ -1,4 +1,6 @@
 This files describes API changes in the assign code.
+=== 3.7 ===
+* Submissions plugins should implement the "remove" function to remove data when "Remove submission" is used.
 
 === 3.6 ===
 * The mod_assign_base_testcase unit test base class has been deprecated.
