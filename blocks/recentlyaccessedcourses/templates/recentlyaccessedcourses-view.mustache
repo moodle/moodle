@@ -25,8 +25,7 @@
     }
 }}
 <div id="recentlyaccessedcourses-view-{{uniqid}}"
-     data-region="recentlyaccessedcourses-view"
-     data-nocoursesimg="{{nocoursesimg}}">
+     data-region="recentlyaccessedcourses-view">
     <div data-region="recentlyaccessedcourses-view-content">
         <div data-region="recentlyaccessedcourses-loading-placeholder">
             <div class="card-deck dashboard-card-deck one-row" style="height: 11.1rem">
@@ -36,5 +35,12 @@
                 {{> core_course/placeholder-course }}
             </div>
         </div>
+    </div>
+    <div class="hidden text-xs-center text-center m-t-3" data-region="empty-message">
+        <img class="empty-placeholder-image-lg m-t-1"
+            src="{{nocoursesimgurl}}"
+            alt="{{#str}} nocourses, block_recentlyaccessedcourses {{/str}}"
+            role="presentation">
+        <p class="text-muted mt-3">{{#str}} nocourses, block_recentlyaccessedcourses {{/str}}</p>
     </div>
 </div>

@@ -41,22 +41,48 @@ define(
     ) {
 
         var SELECTORS = {
+            COURSE_IS_FAVOURITE: '[data-region="is-favourite"]',
             COURSES_VIEW: '[data-region="recentlyaccessedcourses-view"]',
-            COURSES_VIEW_CONTENT: '[data-region="recentlyaccessedcourses-view-content"]'
+            COURSES_VIEW_CONTENT: '[data-region="recentlyaccessedcourses-view-content"]',
+            EMPTY_MESSAGE: '[data-region="empty-message"]'
         };
 
         var NUM_COURSES_TOTAL = 10;
 
         /**
-         * Get enrolled courses from backend.
+         * Show the empty message when no course are found.
          *
-         * @method getRecentCourses
-         * @param {int} userid User from which the courses will be obtained
-         * @param {int} limit Only return this many results
-         * @return {array} Courses user has accessed
+         * @param {object} root The root element for the courses view.
          */
-        var getRecentCourses = function(userid, limit) {
-            return CoursesRepository.getLastAccessedCourses(userid, limit);
+        var showEmptyMessage = function(root) {
+            root.find(SELECTORS.EMPTY_MESSAGE).removeClass('hidden');
+            root.find(SELECTORS.COURSES_VIEW_CONTENT).addClass('hidden');
+        };
+
+        /**
+         * Show the favourite indicator for the given course (if it's in the list).
+         *
+         * @param {object} root The root element for the courses view.
+         * @param {number} courseId The id of the course to be favourited.
+         */
+        var favouriteCourse = function(root, courseId) {
+            var course = root.find('[data-course-id="' + courseId + '"]');
+            if (course.length) {
+                course.find(SELECTORS.COURSE_IS_FAVOURITE).removeClass('hidden');
+            }
+        };
+
+        /**
+         * Hide the favourite indicator for the given course (if it's in the list).
+         *
+         * @param {object} root The root element for the courses view.
+         * @param {number} courseId The id of the course to be unfavourited.
+         */
+        var unfavouriteCourse = function(root, courseId) {
+            var course = root.find('[data-course-id="' + courseId + '"]');
+            if (course.length) {
+                course.find(SELECTORS.COURSE_IS_FAVOURITE).addClass('hidden');
+            }
         };
 
         /**
@@ -68,16 +94,13 @@ define(
          * @return {promise} Resolved with HTML and JS strings
          */
         var renderCourses = function(root, courses) {
-            if (courses.length > 0) {
-                return Templates.render('core_course/view-cards', {
-                    courses: courses
-                });
-            } else {
-                var nocoursesimgurl = root.attr('data-nocoursesimg');
-                return Templates.render('block_recentlyaccessedcourses/no-courses', {
-                    nocoursesimg: nocoursesimgurl
-                });
-            }
+            return Templates.render('core_course/view-cards', {
+                courses: courses
+            })
+            .then(function(html, js) {
+                var contentContainer = root.find(SELECTORS.COURSES_VIEW_CONTENT);
+                return Templates.replaceNodeContents(contentContainer, html, js);
+            });
         };
 
         /**
@@ -87,36 +110,30 @@ define(
          * @param {object} root The root element for the recentlyaccessedcourses view.
          * @returns {promise} The updated content for the block.
          */
-        var reloadContent = function(userid, root) {
-
-            var recentcoursesViewRoot = root.find(SELECTORS.COURSES_VIEW);
-            var recentcoursesViewContent = root.find(SELECTORS.COURSES_VIEW_CONTENT);
-
-            var coursesPromise = getRecentCourses(userid, NUM_COURSES_TOTAL);
-
-            return coursesPromise.then(function(courses) {
-                var pagedContentPromise = renderCourses(recentcoursesViewRoot, courses);
-
-                pagedContentPromise.then(function(html, js) {
-                    return Templates.replaceNodeContents(recentcoursesViewContent, html, js);
-                }).catch(Notification.exception);
-                return coursesPromise;
-            }).catch(Notification.exception);
+        var loadContent = function(userid, root) {
+            CoursesRepository.getLastAccessedCourses(userid, NUM_COURSES_TOTAL)
+                .then(function(courses) {
+                    if (courses.length) {
+                        return renderCourses(root, courses);
+                    } else {
+                        return showEmptyMessage(root);
+                    }
+                })
+                .catch(Notification.exception);
         };
 
         /**
          * Register event listeners for the block.
          *
-         * @param {int} userid User whose courses will be shown
          * @param {object} root The root element for the recentlyaccessedcourses block.
          */
-        var registerEventListeners = function(userid, root) {
-            PubSub.subscribe(CourseEvents.favourited, function() {
-                reloadContent(userid, root);
+        var registerEventListeners = function(root) {
+            PubSub.subscribe(CourseEvents.favourited, function(courseId) {
+                favouriteCourse(root, courseId);
             });
 
-            PubSub.subscribe(CourseEvents.unfavorited, function() {
-                reloadContent(userid, root);
+            PubSub.subscribe(CourseEvents.unfavorited, function(courseId) {
+                unfavouriteCourse(root, courseId);
             });
         };
 
@@ -129,8 +146,8 @@ define(
         var init = function(userid, root) {
             root = $(root);
 
-            registerEventListeners(userid, root);
-            reloadContent(userid, root);
+            registerEventListeners(root);
+            loadContent(userid, root);
         };
 
         return {
