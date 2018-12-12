@@ -213,6 +213,55 @@ class mod_resource_lib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test mod_resource_core_calendar_provide_event_action with user override
+     */
+    public function test_resource_core_calendar_provide_event_action_user_override() {
+        global $CFG, $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $user = $this->getDataGenerator()->create_user();
+        $CFG->enablecompletion = 1;
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $resource = $this->getDataGenerator()->create_module('resource', array('course' => $course->id),
+            array('completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS));
+
+        // Get some additional data.
+        $cm = get_coursemodule_from_instance('resource', $resource->id);
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $resource->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Mark the activity as completed.
+        $completion = new completion_info($course);
+        $completion->set_module_viewed($cm);
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_resource_core_calendar_provide_event_action($event, $factory, $USER->id);
+
+        // Decorate action with a userid override.
+        $actionevent2 = mod_resource_core_calendar_provide_event_action($event, $factory, $user->id);
+
+        // Ensure result was null because it has been marked as completed for the associated user.
+        // Logic was brought across from the "_already_completed" function.
+        $this->assertNull($actionevent);
+
+        // Confirm the event was decorated.
+        $this->assertNotNull($actionevent2);
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent2);
+        $this->assertEquals(get_string('view'), $actionevent2->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent2->get_url());
+        $this->assertEquals(1, $actionevent2->get_item_count());
+        $this->assertTrue($actionevent2->is_actionable());
+    }
+
+    /**
      * Creates an action event.
      *
      * @param int $courseid The course id.
