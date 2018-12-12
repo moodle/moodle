@@ -694,47 +694,61 @@ class qtype_ordering_question extends question_graded_automatically {
      *
      * @param array   $positions
      * @param boolean $contiguous TRUE if searching only for contiguous subsets; otherwise FALSE
-     * @param integer $imax the length of the $positions array
-     * @param integer $imin (optional, default = 0) the index in $position at which to start checking values
-     * @param integer $previous (optional, default = -1) the minimum allowed value. Any values less than this will be skipped.
-     * @param integer $initial (optional, default = -1) the value of the initial item in this subset. Values less than this will be skipped.
      *
-     * @return array of ordered subsets from within the positions array
+     * @return array of ordered subsets from within the $positions array
      */
     public function get_ordered_subsets($positions, $contiguous) {
 
         // Var $subsets is the collection of all subsets within $positions.
         $subsets = array();
 
-        $imin = 0;
-        $imax = count($positions);
-        for ($i = $imin; $i < $imax; $i++) {
-            $added = array();
-            $newsubset = true;
-            $current = $positions[$i];
+        // loop through the $current values at each position
+        foreach ($positions as $i => $current) {
+
+            // is $current a "new" value that cannot be added to any $subsets found so far
+            $isnew = true;
+
+            // an array of new and saved subsets to be added to $subsets
+            $new = array();
+
+            // append the current value to any subsets to which it belongs
+            // i.e. any subset whose end value is less than the current value
             foreach ($subsets as $s => $subset) {
-                $previous = $positions[end($subset)];
+
+                // get value at end of $subset
+                $end = $positions[end($subset)];
+
                 switch (true) {
-                    case ($current == ($previous + 1)):
-                        $newsubset = false;
+
+                    case ($current == ($end + 1)):
+                        // for a contiguous value, we simply append $i to the subset
+                        $isnew = false;
                         $subsets[$s][] = $i;
                         break;
+
                     case $contiguous:
-                        // if the $contiguous flag is set,
-                        // we ignore non-contiguous values
+                        // if the $contiguous flag is set, we ignore non-contiguous values
                         break;
-                    case ($current > $previous):
-                        $newsubset = false;
-                        $added[] = $subset;
+
+                    case ($current > $end):
+                        // for a non-contiguous value, we save the subset so far,
+                        // because a value between $end and $current may be found later,
+                        // and then append $i to the subset
+                        $isnew = false;
+                        $new[] = $subset;
                         $subsets[$s][] = $i;
                         break;
                 }
             }
-            if ($newsubset) {
-                $added[] = array($i);
+
+            // if this is a "new" value, add it as a new subset
+            if ($isnew) {
+                $new[] = array($i);
             }
-            if (count($added)) {
-                $subsets = array_merge($subsets, $added);
+
+            // append any "new" subsets that were found during this iteration
+            if (count($new)) {
+                $subsets = array_merge($subsets, $new);
             }
         }
         return $subsets;
