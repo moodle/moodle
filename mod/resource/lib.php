@@ -559,12 +559,19 @@ function resource_check_updates_since(cm_info $cm, $from, $filter = array()) {
  * @return \core_calendar\local\event\entities\action_interface|null
  */
 function mod_resource_core_calendar_provide_event_action(calendar_event $event,
-                                                      \core_calendar\action_factory $factory) {
-    $cm = get_fast_modinfo($event->courseid)->instances['resource'][$event->instance];
+                                                      \core_calendar\action_factory $factory, $userid = 0) {
+
+    global $USER;
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    $cm = get_fast_modinfo($event->courseid, $userid)->instances['resource'][$event->instance];
 
     $completion = new \completion_info($cm->get_course());
 
-    $completiondata = $completion->get_data($cm, false);
+    $completiondata = $completion->get_data($cm, false, $userid);
 
     if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
         return null;
