@@ -519,6 +519,11 @@ class block_manager {
             }
         }
         $this->regions[$region] = 1;
+
+        // Checking the actual property instead of calling get_default_region as it ends up in a recursive call.
+        if (empty($this->defaultregion)) {
+            $this->set_default_region($region);
+        }
     }
 
     /**
