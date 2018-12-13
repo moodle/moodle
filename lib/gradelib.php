@@ -1128,7 +1128,7 @@ function grade_recover_history_grades($userid, $courseid) {
  *
  * @param int $courseid The course ID
  * @param int $userid If specified try to do a quick regrading of the grades of this user only
- * @param object $updated_item Optional grade item to be marked for regrading
+ * @param object $updated_item Optional grade item to be marked for regrading. It is required if $userid is set.
  * @param \core\progress\base $progress If provided, will be used to update progress on this long operation.
  * @return bool true if ok, array of errors if problems found. Grade item id => error message
  */
@@ -1207,7 +1207,6 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
     $failed = 0;
 
     while (count($finalids) < count($gids)) { // work until all grades are final or error found
-        $count = 0;
         foreach ($gids as $gid) {
             if (in_array($gid, $finalids)) {
                 continue; // already final
@@ -1281,7 +1280,6 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
                 } else {
                     $grade_items[$gid]->needsupdate = 0;
                 }
-                $count++;
                 $finalids[] = $gid;
                 $updatedids[] = $gid;
 
@@ -1291,7 +1289,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
             }
         }
 
-        if ($count == 0) {
+        if (count($finalids) == 0) {
             $failed++;
         } else {
             $failed = 0;
