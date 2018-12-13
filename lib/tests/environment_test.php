@@ -84,6 +84,10 @@ class core_environment_testcase extends advanced_testcase {
             if (in_array($result->info, $sslmessages)) {
                 $this->markTestSkipped('Up-to-date TLS libraries are not necessary for unit testing.');
             }
+            if ($result->info === 'php not 64 bits' && PHP_INT_SIZE == 4) {
+                // If we're on a 32-bit system, skip 64-bit check. 32-bit PHP has PHP_INT_SIZE set to 4.
+                $this->markTestSkipped('64-bit check is not necessary for unit testing.');
+            }
         }
         $info = "{$result->part}:{$result->info}";
         $this->assertTrue($result->getStatus(), "Problem detected in environment ($info), fix all warnings and errors!");
