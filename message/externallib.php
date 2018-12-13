@@ -1147,6 +1147,7 @@ class core_message_external extends external_api {
         $result = [
             'id' => new external_value(PARAM_INT, 'The user id'),
             'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
+            'profileurl' => new external_value(PARAM_URL, 'The link to the user\'s profile page'),
             'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
             'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
             'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
