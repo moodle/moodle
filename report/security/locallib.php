@@ -466,7 +466,7 @@ function report_security_check_riskxss($detailed=false) {
 
     $params = array('capallow'=>CAP_ALLOW);
 
-    $sqlfrom = "FROM (SELECT rcx.*
+    $sqlfrom = "FROM (SELECT DISTINCT rcx.contextid, rcx.roleid
                        FROM {role_capabilities} rcx
                        JOIN {capabilities} cap ON (cap.name = rcx.capability AND ".$DB->sql_bitand('cap.riskbitmask', RISK_XSS)." <> 0)
                        WHERE rcx.permission = :capallow) rc,
@@ -755,7 +755,7 @@ function report_security_check_riskbackup($detailed=false) {
     $params = array('capability'=>'moodle/backup:userinfo', 'permission'=>CAP_ALLOW, 'context1'=>CONTEXT_COURSE, 'context2'=>CONTEXT_COURSE);
 
     $sqluserinfo = "
-        FROM (SELECT rcx.*
+        FROM (SELECT DISTINCT rcx.contextid, rcx.roleid
                 FROM {role_capabilities} rcx
                WHERE rcx.permission = :permission AND rcx.capability = :capability) rc,
              {context} c,
