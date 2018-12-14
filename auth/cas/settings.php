@@ -48,7 +48,9 @@ if ($ADMIN->fulltree) {
         // Authentication method name.
         $settings->add(new admin_setting_configtext('auth_cas/auth_name',
                 get_string('auth_cas_auth_name', 'auth_cas'),
-                get_string('auth_cas_auth_name_description', 'auth_cas'), '', PARAM_RAW_TRIMMED));
+                get_string('auth_cas_auth_name_description', 'auth_cas'),
+                get_string('auth_cas_auth_service', 'auth_cas'),
+                PARAM_RAW_TRIMMED));
 
         // Authentication method logo.
         $opts = array('accepted_types' => array('.png', '.jpg', '.gif', '.webp', '.tiff', '.svg'));

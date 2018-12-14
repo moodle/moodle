@@ -27,6 +27,7 @@ $string['auth_cas_auth_name_description'] = 'Provide a name for the CAS authenti
 $string['auth_cas_auth_logo'] = 'Authentication method logo';
 $string['auth_cas_auth_logo_description'] = 'Provide a logo for the CAS authentication method that is familiar to your users.';
 $string['auth_cas_auth_user_create'] = 'Create users externally';
+$string['auth_cas_auth_service'] = 'CAS';
 $string['auth_cas_baseuri'] = 'URI of the server (nothing if no baseUri)<br />For example, if the CAS server responds to host.domaine.fr/CAS/ then<br />cas_baseuri = CAS/';
 $string['auth_cas_baseuri_key'] = 'Base URI';
 $string['auth_cas_broken_password'] = 'You cannot proceed without changing your password, however there is no available page for changing it. Please contact your Moodle Administrator.';

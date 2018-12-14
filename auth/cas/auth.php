@@ -360,17 +360,27 @@ class auth_plugin_cas extends auth_plugin_ldap {
      * @return array List of arrays with keys url, iconurl and name.
      */
     public function loginpage_idp_list($wantsurl) {
-        global $CFG;
-        $config = get_config('auth_cas');
-        $params = ["authCAS" => "CAS"];
-        $url = new moodle_url(get_login_url(), $params);
-        $iconurl = moodle_url::make_pluginfile_url(context_system::instance()->id,
-                                                   'auth_cas',
-                                                   'logo',
-                                                   null,
-                                                   '/',
-                                                   $config->auth_logo);
-        $result[] = ['url' => $url, 'iconurl' => $iconurl, 'name' => $config->auth_name];
-        return $result;
+        if (empty($this->config->hostname)) {
+            // CAS is not configured.
+            return [];
+        }
+
+        $iconurl = moodle_url::make_pluginfile_url(
+            context_system::instance()->id,
+            'auth_cas',
+            'logo',
+            null,
+            '/',
+            $this->config->auth_logo);
+
+        return [
+            [
+                'url' => new moodle_url(get_login_url(), [
+                        'authCAS' => 'CAS',
+                    ]),
+                'iconurl' => $iconurl,
+                'name' => format_string($this->config->auth_name),
+            ],
+        ];
     }
 }
