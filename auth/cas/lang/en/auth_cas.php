@@ -22,8 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['accesCAS'] = 'CAS users';
-$string['accesNOCAS'] = 'other users';
 $string['auth_cas_auth_name'] = 'Authentication method name';
 $string['auth_cas_auth_name_description'] = 'Provide a name for the CAS authentication method that is familiar to your users.';
 $string['auth_cas_auth_logo'] = 'Authentication method logo';
@@ -79,3 +77,7 @@ $string['noldapserver'] = 'No LDAP server configured for CAS! Syncing disabled.'
 $string['pluginname'] = 'CAS server (SSO)';
 $string['synctask'] = 'CAS users sync job';
 $string['privacy:metadata'] = 'The CAS server (SSO) authentication plugin does not store any personal data.';
+
+// Deprecated since Moodle 3.7.
+$string['accesCAS'] = 'CAS users';
+$string['accesNOCAS'] = 'other users';
