@@ -287,6 +287,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         // Reset the message sink for other tests.
         $this->helper->messagesink = $this->redirectMessages();
         $event = reset($events);
+
         $this->assertEquals($course->id, $event->other['courseid']);
     }
 
