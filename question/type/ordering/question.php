@@ -692,7 +692,7 @@ class qtype_ordering_question extends question_graded_automatically {
     /**
      * Get all ordered subsets in the positions array
      *
-     * @param array   $positions
+     * @param array   $positions maps an item's current position to its correct position
      * @param boolean $contiguous TRUE if searching only for contiguous subsets; otherwise FALSE
      *
      * @return array of ordered subsets from within the $positions array
@@ -702,10 +702,10 @@ class qtype_ordering_question extends question_graded_automatically {
         // Var $subsets is the collection of all subsets within $positions.
         $subsets = array();
 
-        // loop through the $current values at each position
-        foreach ($positions as $i => $current) {
+        // loop through the values at each position
+        foreach ($positions as $p => $value) {
 
-            // is $current a "new" value that cannot be added to any $subsets found so far
+            // is $value a "new" value that cannot be added to any $subsets found so far
             $isnew = true;
 
             // an array of new and saved subsets to be added to $subsets
@@ -720,30 +720,30 @@ class qtype_ordering_question extends question_graded_automatically {
 
                 switch (true) {
 
-                    case ($current == ($end + 1)):
-                        // for a contiguous value, we simply append $i to the subset
+                    case ($value == ($end + 1)):
+                        // for a contiguous value, we simply append $p to the subset
                         $isnew = false;
-                        $subsets[$s][] = $i;
+                        $subsets[$s][] = $p;
                         break;
 
                     case $contiguous:
                         // if the $contiguous flag is set, we ignore non-contiguous values
                         break;
 
-                    case ($current > $end):
+                    case ($value > $end):
                         // for a non-contiguous value, we save the subset so far,
-                        // because a value between $end and $current may be found later,
-                        // and then append $i to the subset
+                        // because a value between $end and $value may be found later,
+                        // and then append $p to the subset
                         $isnew = false;
                         $new[] = $subset;
-                        $subsets[$s][] = $i;
+                        $subsets[$s][] = $p;
                         break;
                 }
             }
 
             // if this is a "new" value, add it as a new subset
             if ($isnew) {
-                $new[] = array($i);
+                $new[] = array($p);
             }
 
             // append any "new" subsets that were found during this iteration
