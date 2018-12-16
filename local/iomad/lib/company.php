@@ -3387,14 +3387,15 @@ class company {
         if (!empty($licenserecord->type)) {
             // This is a subscription license.
             // Update the enrolment end
-            if ($enrolments = $DB->get_records_sql("SELECT e.id FROM {enrol} e
+            if ($enrolments = $DB->get_records_sql("SELECT ue.id FROM {enrol} e
+                                                    JOIN {user_enrolments} ue ON (e.id = ue.enrolid)
                                                     JOIN {companylicense_courses} clc ON (e.courseid = clc.courseid AND e.status = 0)
+                                                    JOIN {companylicense_users} clu ON (ue.userid = clu.userid AND clu.licenseid = clc.licenseid)
                                                     WHERE clc.licenseid = :licenseid",
                                                     array('licenseid' => $licenseid))) {
                 foreach ($enrolments as $enrolid) {
-                    $DB->execute("UPDATE {user_enrolments} SET timeend = :timeend
-                                  WHERE enrolid = :enrolid",
-                                  array('timeend' => $licenserecord->expirydate, 'enrolid' => $enrolid->id));
+                    $DB->set_field('user_enrolments', 'timeend', $licenserecord->expirydate,
+                                  array('id' => $enrolid->id));
                 }
             }
         }
