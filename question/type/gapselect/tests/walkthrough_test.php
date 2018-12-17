@@ -166,4 +166,22 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
                 $this->get_contains_select_expectation('p2',
                         array('' => get_string('choosedots'), '1' => 'mat', '2' => 'bat'), null, true));
     }
+
+    public function test_choices_containing_dollars() {
+
+        // Choices with a currency like entry (e.g. $3) should display.
+        $q = qtype_gapselect_test_helper::make_a_currency_gapselect_question();
+        $q->shufflechoices = false;
+        $this->start_attempt_at_question($q, 'interactive', 1);
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $html = $this->quba->render_question($this->slot, $this->displayoptions);
+        preg_match_all('/<option value="([^>]*)">([^<]*)<\/option>/', $html, $matches);
+        $this->assertEquals('$2', $matches[2][1]);
+        $this->assertEquals('$3', $matches[2][2]);
+        $this->assertEquals('$4.99', $matches[2][3]);
+        $this->assertEquals('-1', $matches[2][4]);
+    }
 }
