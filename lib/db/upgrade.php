@@ -2321,7 +2321,7 @@ function xmldb_main_upgrade($oldversion) {
 
         $updatesql = "UPDATE {oauth2_issuer}
                          SET image = :newimage
-                       WHERE image = :oldimage";
+                       WHERE " . $DB->sql_compare_text('image', 100). " = :oldimage";
         $params = [
             'newimage' => $newurl,
             'oldimage' => $oldurl
