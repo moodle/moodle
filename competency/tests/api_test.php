@@ -2501,6 +2501,10 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
 
+        // Create and assign a current user.
+        $currentuser = $dg->create_user();
+        $this->setUser($currentuser);
+
         // Create a course.
         $course = $dg->create_course();
         $record = array('courseid' => $course->id, 'pushratingstouserplans' => false);
