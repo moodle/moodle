@@ -3,6 +3,13 @@ information provided here is intended especially for theme designer.
 
 === 3.6 ===
 
+* A new callback has been added to the theme layout files allowing plugins to inject their content
+  into the page. For Boost it was added as a mustache variable "{{{ output.standard_after_main_region_html }}}" in
+  templates/columns1.mustache and templates/columns2.mustache. In bootstrapbase it was added as a
+  function call "$OUTPUT->standard_after_main_region_html()" in layout/columns1.php, layout/columns2.php.
+  and layout/columns3.php. Child themes not inheriting these templates should add the function call
+  after the div containing the main content region. Please refer to the messaging drawer UI for an example of
+  making use of this new feature.
 * The body tag has various browser-specific classes for those cases where some
   browser-sniffing is unavoidable. This used not to recognised Microsoft Edge,
   but now it does (class 'edge'). Also, both Safari and Chrome used to be
