@@ -26,6 +26,17 @@
     cursor: move;
 }
 
+.assignfeedback_editpdf_widget .infoicon {
+    display: none;
+}
+
+.assignfeedback_editpdf_widget .warningmessages {
+    position: absolute;
+    margin-left: 20px;
+    margin-right: 20px;
+    bottom: 20px;
+}
+
 .assignfeedback_editpdf_widget .drawingregion {
     border: 1px solid #ccc;
     left: 1em;
@@ -57,17 +68,6 @@
 
 .moodle-dialogue-base .moodle-dialogue.assignfeedback_editpdf_widget .moodle-dialogue-bd {
     padding: 0;
-}
-
-.assignfeedback_editpdf_widget .assignfeedback_editpdf_unsavedchanges.haschanges {
-    display: inline-block;
-}
-
-.assignfeedback_editpdf_widget .assignfeedback_editpdf_unsavedchanges {
-    display: none;
-    position: absolute;
-    left: 20px;
-    top: 60px;
 }
 
 .yui3-colourpicker-hidden,
@@ -229,6 +229,7 @@
     margin-right: 0;
     margin-top: 0;
     border-radius: 4px;
+    width: 30px;
 }
 
 .moodle-dialogue-base .moodle-dialogue.assignfeedback_editpdf_dropdown .moodle-dialogue-bd {
