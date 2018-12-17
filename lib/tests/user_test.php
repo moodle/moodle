@@ -732,4 +732,44 @@ class core_user_testcase extends advanced_testcase {
         $this->assertNotEquals($enuser, $xxuser);
     }
 
+    /**
+     * Test is_real_user method.
+     */
+    public function test_is_real_user() {
+        global $CFG, $USER;
+
+        // Real users are real users.
+        $auser = $this->getDataGenerator()->create_user();
+        $guest = guest_user();
+        $this->assertTrue(\core_user::is_real_user($auser->id));
+        $this->assertTrue(\core_user::is_real_user($auser->id, true));
+        $this->assertTrue(\core_user::is_real_user($guest->id));
+        $this->assertTrue(\core_user::is_real_user($guest->id, true));
+
+        // Non-logged in users are not real users.
+        $this->assertSame(0, $USER->id, 'The non-logged in user should have an ID of 0.');
+        $this->assertFalse(\core_user::is_real_user($USER->id));
+        $this->assertFalse(\core_user::is_real_user($USER->id, true));
+
+        // Other types of logged in users are real users.
+        $this->setAdminUser();
+        $this->assertTrue(\core_user::is_real_user($USER->id));
+        $this->assertTrue(\core_user::is_real_user($USER->id, true));
+        $this->setGuestUser();
+        $this->assertTrue(\core_user::is_real_user($USER->id));
+        $this->assertTrue(\core_user::is_real_user($USER->id, true));
+        $this->setUser($auser);
+        $this->assertTrue(\core_user::is_real_user($USER->id));
+        $this->assertTrue(\core_user::is_real_user($USER->id, true));
+
+        // Fake accounts are not real users.
+        $CFG->noreplyuserid = null;
+        $this->assertFalse(\core_user::is_real_user(core_user::get_noreply_user()->id));
+        $this->assertFalse(\core_user::is_real_user(core_user::get_noreply_user()->id, true));
+        $CFG->supportuserid = null;
+        $CFG->supportemail = 'test@example.com';
+        $this->assertFalse(\core_user::is_real_user(core_user::get_support_user()->id));
+        $this->assertFalse(\core_user::is_real_user(core_user::get_support_user()->id, true));
+    }
+
 }
