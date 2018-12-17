@@ -60,7 +60,7 @@ $alert-border-width:                0 !default;
 
 $theme-colors: (
     primary: $primary,
-    secondary: $gray-200,
+    secondary: $gray-400,
     success: $success,
     info: $info,
     warning: $orange,
@@ -97,3 +97,5 @@ body {
 .userpicture {
     border-radius: 50%;
 }
+
+@include bg-variant(".bg-gray", $gray-200);
