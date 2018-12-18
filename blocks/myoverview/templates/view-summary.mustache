@@ -29,7 +29,8 @@
                 "fullname": "course 3",
                 "summary": "This course is about assignments",
                 "hasprogress": true,
-                "progress": 10
+                "progress": 10,
+                "coursecategory": "Miscellaneous"
             }
         ]
     }
@@ -49,19 +50,24 @@
             <div class="align-self-stretch d-flex flex-column w-100">
                 <div class="d-flex mb-1">
                     <a href="{{viewurl}}" class="coursename">
-                        {{#showshortname}}
+                        <div class="text-muted muted mb-1 d-flex" style="flex-flow:wrap;">
+                            <span class="sr-only">
+                                {{#str}}aria:coursecategory, core_course{{/str}}
+                            </span>
+                            <div>{{{coursecategory}}}</div>
+                            {{#showshortname}}
+                            <div class="pl-1 pr-1">|</div>
                             <span class="sr-only">
                                 {{#str}}aria:courseshortname, core_course{{/str}}
                             </span>
-                            <div class="text-muted muted mb-1">
-                                {{{shortname}}}
-                            </div>
-                        {{/showshortname}}
+                            <div>{{{shortname}}}</div>
+                            {{/showshortname}}
+                        </div>
                         {{> core_course/favouriteicon }}
                         <span class="sr-only">
                             {{#str}}aria:coursename, core_course{{/str}}
                         </span>
-                        <h6 class="d-inline h5">{{{fullname}}}</h4>
+                        <h6 class="d-inline h5">{{{fullname}}}</h6>
                     </a>
                     {{> block_myoverview/course-action-menu }}
                 </div>

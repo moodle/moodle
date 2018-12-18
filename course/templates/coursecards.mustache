@@ -28,7 +28,8 @@
                 "courseimage": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
                 "fullname": "course 3",
                 "hasprogress": true,
-                "progress": 10
+                "progress": 10,
+                "coursecategory": "Miscellaneous"
             }
         ]
     }
@@ -47,14 +48,18 @@
         <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
             <div class="d-flex align-items-start">
                 <a href="{{viewurl}}" class="coursename mr-2 text-truncate">
-                    <span class="sr-only">
-                        {{#str}}aria:courseshortname, core_course{{/str}}
-                    </span>
-                    {{#showshortname}}
-                    <div class="text-muted muted w-100 mb-1 text-truncate">
-                        {{{shortname}}}
+                    <div class="text-muted muted d-flex w-100 mb-1 text-truncate" style="flex-flow:wrap;">
+                        {{$coursecategory}}{{/coursecategory}}
+                        {{#showshortname}}
+                        {{$divider}}{{/divider}}
+                        <span class="sr-only">
+                            {{#str}}aria:courseshortname, core_course{{/str}}
+                        </span>
+                        <div>
+                            {{{shortname}}}
+                        </div>
+                        {{/showshortname}}
                     </div>
-                    {{/showshortname}}
                     {{> core_course/favouriteicon }}
                     <span class="sr-only">
                         {{#str}}aria:coursename, core_course{{/str}}
