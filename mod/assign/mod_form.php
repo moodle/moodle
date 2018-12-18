@@ -200,6 +200,10 @@ class mod_assign_mod_form extends moodleform_mod {
             $mform->freeze('blindmarking');
         }
 
+        $name = get_string('hidegrader', 'assign');
+        $mform->addElement('selectyesno', 'hidegrader', $name);
+        $mform->addHelpButton('hidegrader', 'hidegrader', 'assign');
+
         $name = get_string('markingworkflow', 'assign');
         $mform->addElement('selectyesno', 'markingworkflow', $name);
         $mform->addHelpButton('markingworkflow', 'markingworkflow', 'assign');

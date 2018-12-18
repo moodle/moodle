@@ -174,5 +174,18 @@ function xmldb_assign_upgrade($oldversion) {
     // Automatically generated Moodle v3.6.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2018120500) {
+        // Define field hidegrader to be added to assign.
+        $table = new xmldb_table('assign');
+        $field = new xmldb_field('hidegrader', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'blindmarking');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Assignment savepoint reached.
+        upgrade_mod_savepoint(true, 2018120500, 'assign');
+    }
+
     return true;
 }
