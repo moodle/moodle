@@ -400,8 +400,8 @@ class participants_table extends \table_sql {
                         break;
                 }
 
-                $statusfield = new status_field($instancename, $coursename, $fullname, $status, $timestart, $timeend, $timeenrolled,
-                    $actions);
+                $statusfield = new status_field($instancename, $coursename, $fullname, $status, $timestart, $timeend,
+                    $actions, $timeenrolled);
                 $statusfielddata = $statusfield->set_status($statusval)->export_for_template($OUTPUT);
                 $enrolstatusoutput .= $OUTPUT->render_from_template('core_user/status_field', $statusfielddata);
             }

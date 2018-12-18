@@ -92,19 +92,19 @@ class status_field implements renderable, templatable {
      * @param string $status The user enrolment status.
      * @param int|null $timestart The timestamp when the user's enrolment starts.
      * @param int|null $timeend The timestamp when the user's enrolment ends.
-     * @param int|null $timeenrolled The timestamp when the user was enrolled.
      * @param user_enrolment_action[] $enrolactions Array of enrol action objects for the given enrolment method.
+     * @param int|null $timeenrolled The timestamp when the user was enrolled.
      */
     public function __construct($enrolinstancename, $coursename, $fullname, $status, $timestart = null, $timeend = null,
-                                $timeenrolled, $enrolactions = []) {
+                                $enrolactions = [], $timeenrolled = null) {
         $this->enrolinstancename = $enrolinstancename;
         $this->coursename = $coursename;
         $this->fullname = $fullname;
         $this->status = $status;
         $this->timestart = $timestart;
         $this->timeend = $timeend;
-        $this->timeenrolled = $timeenrolled;
         $this->enrolactions = $enrolactions;
+        $this->timeenrolled = $timeenrolled;
     }
 
     /**
