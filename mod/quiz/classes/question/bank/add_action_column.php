@@ -52,8 +52,4 @@ class add_action_column extends \core_question\bank\action_column_base {
         }
         $this->print_icon('t/add', $this->stradd, $this->qbank->add_to_quiz_url($question->id));
     }
-
-    public function get_required_fields() {
-        return array('q.id');
-    }
 }
