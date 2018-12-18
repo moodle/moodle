@@ -54,6 +54,8 @@ if ($section = optional_param('section', '', PARAM_SAFEDIR) and confirm_sesskey(
             redirect($temp->url, get_string('bookmarkdeleted','admin'));
         } elseif ($temp instanceof admin_settingpage) {
             redirect($CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $section);
+        } else if ($temp instanceof admin_category) {
+            redirect($CFG->wwwroot . '/' . $CFG->admin . '/category.php?category=' . $section);
         } else {
             redirect($CFG->wwwroot);
         }
