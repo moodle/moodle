@@ -51,6 +51,8 @@ class delete_action_column extends action_column_base {
     }
 
     public function get_required_fields() {
-        return array('q.id', 'q.hidden');
+        $required = parent::get_required_fields();
+        $required[] = 'q.hidden';
+        return $required;
     }
 }
