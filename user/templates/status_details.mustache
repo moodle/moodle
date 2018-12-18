@@ -27,6 +27,7 @@
     * statusclass string - The CSS class for the enrolment status.
     * timestart string - Optional. The enrolment time start.
     * timeend string - Optional. The enrolment time end.
+    * timeenrolled string - Optional. The time when the user was enrolled.
 
     Example context (json):
     {
@@ -36,7 +37,8 @@
         "status": "Active",
         "statusclass": "label label-success",
         "timestart": "1 January 2017",
-        "timeend": "31 January 2018"
+        "timeend": "31 January 2018",
+        "timeenrolled": "31 December 2016"
     }
 }}
 <table class="table user-enrol-details">
@@ -94,4 +96,14 @@
         </td>
     </tr>
     {{/timeend}}
+    {{#timeenrolled}}
+    <tr>
+        <th>
+            {{#str}}enroltimecreated, enrol{{/str}}
+        </th>
+        <td class="user-enrol-timeenrolled">
+            {{timeenrolled}}
+        </td>
+    </tr>
+    {{/timeenrolled}}
 </table>

@@ -29,6 +29,7 @@
     * notcurrent boolean - Flag to indicate whether the user's enrolment is active, but not current.
     * timestart string - Optional. The enrolment time start.
     * timeend string - Optional. The enrolment time end.
+    * timeenrolled string - Optional. The time when the user was enrolled.
     * enrolactions array - Optional. Array of enrol actions consisting of:
       * url string - The URL of the enrol action link.
       * attributes array - The array of attributes for the enrol action link.
@@ -43,6 +44,7 @@
         "active": true,
         "timestart": "1 January 2017",
         "timeend": "31 January 2018",
+        "timeenrolled": "31 December 2016",
         "enrolactions": [
             {
                 "url": "#",
@@ -58,7 +60,7 @@
     }
 }}
 <div data-fullname="{{fullname}}" data-coursename="{{coursename}}" data-enrolinstancename="{{enrolinstancename}}"
-     data-status="{{status}}" data-timestart="{{timestart}}" data-timeend="{{timeend}}">
+     data-status="{{status}}" data-timestart="{{timestart}}" data-timeend="{{timeend}}" data-timeenrolled="{{timeenrolled}}">
     <span class="label {{#active}}label-success{{/active}}{{#suspended}}label-warning{{/suspended}}{{#notcurrent}}label-default{{/notcurrent}}">{{status}}</span>
     <a data-action="showdetails" href="#" role="button" tabindex="0">{{!
         }}{{#pix}}docs, core, {{enrolinstancename}}{{/pix}}{{!

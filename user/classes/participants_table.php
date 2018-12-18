@@ -375,6 +375,7 @@ class participants_table extends \table_sql {
             foreach ($userenrolments as $ue) {
                 $timestart = $ue->timestart;
                 $timeend = $ue->timeend;
+                $timeenrolled = $ue->timecreated;
                 $actions = $ue->enrolmentplugin->get_user_enrolment_actions($manager, $ue);
                 $instancename = $ue->enrolmentinstancename;
 
@@ -399,7 +400,8 @@ class participants_table extends \table_sql {
                         break;
                 }
 
-                $statusfield = new status_field($instancename, $coursename, $fullname, $status, $timestart, $timeend, $actions);
+                $statusfield = new status_field($instancename, $coursename, $fullname, $status, $timestart, $timeend,
+                    $actions, $timeenrolled);
                 $statusfielddata = $statusfield->set_status($statusval)->export_for_template($OUTPUT);
                 $enrolstatusoutput .= $OUTPUT->render_from_template('core_user/status_field', $statusfielddata);
             }

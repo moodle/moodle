@@ -202,7 +202,8 @@ define(['core/templates',
                     "status": parentContainer.data('status'),
                     "statusclass": parentContainer.find('span').attr('class'),
                     "timestart": parentContainer.data('timestart'),
-                    "timeend": parentContainer.data('timeend')
+                    "timeend": parentContainer.data('timeend'),
+                    "timeenrolled": parentContainer.data('timeenrolled')
                 };
 
                 // Get default string for the modal and modal type.
