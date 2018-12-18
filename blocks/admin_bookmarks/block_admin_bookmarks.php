@@ -96,6 +96,10 @@ class block_admin_bookmarks extends block_base {
                     $contenturl = new moodle_url($temp->url);
                     $contentlink = html_writer::link($contenturl, $temp->visiblename);
                     $contents[] = html_writer::tag('li', $contentlink);
+                } else if ($temp instanceof admin_category) {
+                    $contenturl = new moodle_url('/admin/category.php', array('category' => $bookmark));
+                    $contentlink = html_writer::link($contenturl, $temp->visiblename);
+                    $contents[] = html_writer::tag('li', $contentlink);
                 }
             }
             $this->content->text = html_writer::tag('ol', implode('', $contents), array('class' => 'list'));
