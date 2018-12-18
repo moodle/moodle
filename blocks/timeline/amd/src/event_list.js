@@ -325,7 +325,7 @@ function(
         return Str.get_string(
                 'ariaeventlistpagelimit',
                 'block_timeline',
-                $.isArray(pageLimit) ? pageLimit[0] : pageLimit
+                $.isArray(pageLimit) ? pageLimit[0].value : pageLimit
             )
             .then(function(string) {
                 config.ariaLabels.itemsperpage = string;
