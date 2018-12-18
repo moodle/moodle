@@ -396,4 +396,33 @@ class page_editor {
         $result = $result && $DB->delete_records('assignfeedback_editpdf_cmnt', $conditions);
         return $result;
     }
+
+    public static function set_page_rotation($gradeid, $pageno, $isrotated, $pathnamehash) {
+        global $DB;
+        $oldrecord = self::get_page_rotation($gradeid, $pageno);
+        if ( $oldrecord == null) {
+            $record = new \stdClass();
+            $record->gradeid = $gradeid;
+            $record->pageno = $pageno;
+            $record->isrotated =  $isrotated;
+            $record->pathnamehash =  $pathnamehash;
+            $DB->insert_record('assignfeedback_editpdf_rot', $record, false);
+        } else {
+            $oldrecord->isrotated =  $isrotated;
+            $oldrecord->pathnamehash =  $pathnamehash;
+            $DB->update_record('assignfeedback_editpdf_rot', $oldrecord, false);
+        }
+    }
+
+    public static function get_page_rotation($gradeid, $pageno) {
+        global $DB;
+        $result = $DB->get_records('assignfeedback_editpdf_rot', array('gradeid' => $gradeid, 'pageno' => $pageno));
+        if (empty($result) || count($result) == 0) {
+            return null;
+        } else {
+            $rotation = reset($result);
+            return $rotation;
+        }
+    }
+
 }

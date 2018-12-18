@@ -71,5 +71,21 @@
         <KEY NAME="submissionid-submissionattempt" TYPE="unique" FIELDS="submissionid, submissionattempt"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="assignfeedback_editpdf_rot" COMMENT="Stores rotation information of a page.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="gradeid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="pageno" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Page number"/>
+        <FIELD NAME="pathnamehash" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="File path hash of the rotated page"/>
+        <FIELD NAME="isrotated" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the page is rotated or not"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="gradeid" TYPE="foreign" FIELDS="gradeid" REFTABLE="assign_grades" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="gradeid_pageno" UNIQUE="false" FIELDS="gradeid, pageno"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>

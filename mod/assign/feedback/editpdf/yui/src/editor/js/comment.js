@@ -618,6 +618,24 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         return (bounds.has_min_width() && bounds.has_min_height());
     };
 
+    /**
+     * Update comment postion when rotating page
+     * @public
+     * @method update_position
+     */
+    this.update_position = function() {
+
+        var node = this.drawable.nodes[0].one('textarea');
+        var container = node.ancestor('div');
+
+        var newlocation = new M.assignfeedback_editpdf.point(this.x, this.y);
+        var windowlocation = this.editor.get_window_coordinates(newlocation);
+
+        container.setX(windowlocation.x);
+        container.setY(windowlocation.y);
+        this.drawable.store_position(container, windowlocation.x, windowlocation.y);
+    };
+
 };
 
 M.assignfeedback_editpdf = M.assignfeedback_editpdf || {};

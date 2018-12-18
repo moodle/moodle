@@ -37,7 +37,8 @@ use DOMDocument;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class document_services {
-
+    /** Compoment name */
+    const COMPONENT = "assignfeedback_editpdf";
     /** File area for generated pdf */
     const FINAL_PDF_FILEAREA = 'download';
     /** File area for combined pdf */
@@ -412,6 +413,11 @@ EOD;
             $record->filename = basename($image);
             $files[$i] = $fs->create_file_from_pathname($record, $tmpdir . '/' . $image);
             @unlink($tmpdir . '/' . $image);
+            // Set page rotation default value.
+            if (!empty($files[$i])) {
+                page_editor::set_page_rotation($grade->id, $i, false, $files[$i]->get_pathnamehash());
+            }
+
         }
         $pdf->Close(); // PDF loaded and never saved/outputted needs to be closed.
 
@@ -637,7 +643,20 @@ EOD;
         $allcomments = array();
 
         for ($i = 0; $i < $pagecount; $i++) {
-            $pdf->copy_page();
+            $pagerotation = page_editor::get_page_rotation($grade->id, $i);
+            $pagemargin = $pdf->getBreakMargin();
+            $autopagebreak = $pdf->getAutoPageBreak();
+            if (empty($pagerotation) || !$pagerotation->isrotated) {
+                $pdf->copy_page();
+            } else {
+                $rotatedimagefile = $fs->get_file_by_hash($pagerotation->pathnamehash);
+                if (empty($rotatedimagefile)) {
+                    $pdf->copy_page();
+                } else {
+                    $pdf->add_image_page($rotatedimagefile);
+                 }
+            }
+
             $comments = page_editor::get_comments($grade->id, $i, false);
             $annotations = page_editor::get_annotations($grade->id, $i, false);
 
@@ -655,6 +674,8 @@ EOD;
                                      $annotation->path,
                                      $stamptmpdir);
             }
+            $pdf->SetAutoPageBreak($autopagebreak, $pagemargin);
+            $pdf->setPageMark();
         }
 
         if (!empty($allcomments)) {
@@ -798,4 +819,132 @@ EOD;
         return $fs->delete_area_files($contextid, $component, $filearea, $itemid);
     }
 
+    /**
+     * Get All files in a File area
+     * @param $assignment Assignment
+     * @param $userid User ID
+     * @param $attemptnumber Attempt Number
+     * @param $filearea File Area
+     * @param string $filepath File Path
+     * @return array
+     */
+    private static function get_files($assignment, $userid, $attemptnumber, $filearea, $filepath = '/') {
+        $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
+        $itemid = $grade->id;
+        $contextid = $assignment->get_context()->id;
+        $component = self::COMPONENT;
+
+        $fs = get_file_storage();
+        $files = $fs->get_directory_files($contextid, $component, $filearea, $itemid, $filepath);
+
+        return $files;
+    }
+
+    /**
+     * @param $contextid Context ID
+     * @param $component Component
+     * @param $filearea File Area
+     * @param $itemid   Item ID
+     * @param $filepath file path of stored file
+     * @param $newfilepath file path of the file to store
+     * @return \stored_file
+     * @throws \file_exception
+     * @throws \stored_file_creation_exception
+     */
+    private static function save_file($assignment, $userid, $attemptnumber, $filearea, $newfilepath, $storedfilepath = '/') {
+        $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
+        $itemid = $grade->id;
+        $contextid = $assignment->get_context()->id;
+
+        $record = new \stdClass();
+        $record->contextid = $contextid;
+        $record->component = self::COMPONENT;
+        $record->filearea = $filearea;
+        $record->itemid = $itemid;
+        $record->filepath = $storedfilepath;
+        $record->filename = basename($newfilepath);
+
+        $fs = get_file_storage();
+
+        $oldfile = $fs->get_file($record->contextid,
+            $record->component,
+            $record->filearea,
+            $record->itemid,
+            $record->filepath,
+            $record->filename);
+
+        $newhash = sha1($newfilepath);
+
+        // Delete old file if exists.
+        if ($oldfile && $newhash !== $oldfile->get_contenthash()) {
+            $oldfile->delete();
+        }
+
+        return $fs->create_file_from_pathname($record, $newfilepath);
+    }
+
+    /**
+     * This function rotate a page, and mark the page as rotated.
+     * @param $assignment Assignment
+     * @param $userid User ID
+     * @param $attemptnumber Attempt Number
+     * @param $index Index of Current Page
+     * @param $rotateleft To determine whether the page is rotated left or right.
+     * @return null|\stored_file return rotated File
+     * @throws \coding_exception
+     * @throws \file_exception
+     * @throws \moodle_exception
+     * @throws \stored_file_creation_exception
+     */
+    public static function rotate_page($assignment, $userid, $attemptnumber, $index, $rotateleft) {
+        $assignment = self::get_assignment_from_param($assignment);
+        // Check permission.
+        if (!$assignment->can_view_submission($userid)) {
+            print_error('nopermission');
+        }
+
+        $filearea = self::PAGE_IMAGE_FILEAREA;
+        $files = self::get_files($assignment, $userid, $attemptnumber, $filearea);
+        if (!empty($files)) {
+            foreach ($files as $file) {
+                preg_match('/' . pdf::IMAGE_PAGE . '([\d]+)\./', $file->get_filename(), $matches);
+                if (empty($matches) or !is_numeric($matches[1])) {
+                    throw new \coding_exception("'" . $file->get_filename()
+                        . "' file hasn't the expected format filename: image_pageXXXX.png.");
+                }
+                $pagenumber = (int)$matches[1];
+
+                if ($pagenumber == $index) {
+                    $source = imagecreatefromstring($file->get_content());
+                    if ($rotateleft) {
+                        $content = imagerotate($source, 90, 0);
+                    } else {
+                        $content = imagerotate($source, -90, 0);
+                    }
+                    $filename = $matches[0].'png';
+                    $tmpdir = make_temp_directory(
+                        self::COMPONENT .'/'
+                        . self::PAGE_IMAGE_FILEAREA .'/'
+                        . self::hash($assignment, $userid, $attemptnumber));
+                    $tempfile = $tmpdir . '/' . time() . '_' . $filename;
+                    imagepng($content, $tempfile);
+
+                    $filearea = self::PAGE_IMAGE_FILEAREA;
+                    $newfile = self::save_file($assignment, $userid, $attemptnumber, $filearea, $tempfile);
+
+                    @unlink($tempfile);
+                    @rmdir($tmpdir);
+                    imagedestroy($source);
+                    imagedestroy($content);
+                    $file->delete();
+                    if (!empty($newfile)) {
+                        $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
+                        page_editor::set_page_rotation($grade->id, $pagenumber, true, $newfile->get_pathnamehash());
+                    }
+                    return $newfile;
+                }
+            }
+        }
+        return null;
+    }
 }

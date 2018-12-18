@@ -46,7 +46,9 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         UNSAVEDCHANGESDIV: '.assignfeedback_editpdf_unsavedchanges',
         UNSAVEDCHANGESINPUT: 'input[name="assignfeedback_editpdf_haschanges"]',
         STAMPSBUTTON: '.currentstampbutton',
-        DIALOGUE: '.' + CSS.DIALOGUE
+        DIALOGUE: '.' + CSS.DIALOGUE,
+        ROTATELEFTBUTTON: '.rotateleftbutton',
+        ROTATERIGHTBUTTON: '.rotaterightbutton'
     },
     SELECTEDBORDERCOLOUR = 'rgba(200, 200, 255, 0.9)',
     SELECTEDFILLCOLOUR = 'rgba(200, 200, 255, 0.5)',
@@ -2995,6 +2997,24 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         return (bounds.has_min_width() && bounds.has_min_height());
     };
 
+    /**
+     * Update comment postion when rotating page
+     * @public
+     * @method update_position
+     */
+    this.update_position = function() {
+
+        var node = this.drawable.nodes[0].one('textarea');
+        var container = node.ancestor('div');
+
+        var newlocation = new M.assignfeedback_editpdf.point(this.x, this.y);
+        var windowlocation = this.editor.get_window_coordinates(newlocation);
+
+        container.setX(windowlocation.x);
+        container.setY(windowlocation.y);
+        this.drawable.store_position(container, windowlocation.x, windowlocation.y);
+    };
+
 };
 
 M.assignfeedback_editpdf = M.assignfeedback_editpdf || {};
@@ -3307,6 +3327,11 @@ var EDITOR = function() {
     EDITOR.superclass.constructor.apply(this, arguments);
 };
 EDITOR.prototype = {
+
+    /**
+     * Store old coordinates of the annotations before rotation happens.
+     */
+    oldannotationcoordinates: null,
 
     /**
      * The dialogue used for all action menu displays.
@@ -4030,6 +4055,8 @@ EDITOR.prototype = {
             annotationcolourbutton,
             searchcommentsbutton,
             expcolcommentsbutton,
+            rotateleftbutton,
+            rotaterightbutton,
             currentstampbutton,
             stampfiles,
             picker,
@@ -4046,6 +4073,17 @@ EDITOR.prototype = {
         if (this.get('readonly')) {
             return;
         }
+
+        // Rotate Left
+        rotateleftbutton = this.get_dialogue_element(SELECTOR.ROTATELEFTBUTTON);
+        rotateleftbutton.on('click', this.rotate_pdf, this, true);
+        rotateleftbutton.on('key', this.rotate_pdf, 'down:13', this, true);
+
+        // Rotate Right
+        rotaterightbutton = this.get_dialogue_element(SELECTOR.ROTATERIGHTBUTTON);
+        rotaterightbutton.on('click', this.rotate_pdf, this, false);
+        rotaterightbutton.on('key', this.rotate_pdf, 'down:13', this, false);
+
         this.disable_touch_scroll();
 
         // Setup the tool buttons.
@@ -4686,6 +4724,105 @@ EDITOR.prototype = {
         for (i = 0; i < this.drawables.length; i++) {
             this.drawables[i].scroll_update(x, y);
         }
+    },
+
+    /**
+     * Calculate degree to rotate
+     * @protected
+     * @param {Object} event javascript event
+     * @param {boolean} left  true if rotating left, false if rotating right
+     * @method rotatepdf
+     */
+    rotate_pdf: function(e, left) {
+        e.preventDefault();
+
+        if (this.get('destroyed')) {
+            return;
+        }
+
+        // Save old coordinates.
+        var i;
+        this.oldannotationcoordinates = [];
+        var annotations = this.pages[this.currentpage].annotations;
+        for (i = 0; i < annotations.length; i++) {
+            var old_annotation = annotations[i];
+            this.oldannotationcoordinates.push([old_annotation.x, old_annotation.y]);
+        }
+
+        var ajaxurl = AJAXBASE, config;
+
+        config = {
+            method: 'post',
+            context: this,
+            sync: false,
+            data: {
+                'sesskey': M.cfg.sesskey,
+                'action': 'rotatepage',
+                'index': this.currentpage,
+                'userid': this.get('userid'),
+                'attemptnumber': this.get('attemptnumber'),
+                'assignmentid': this.get('assignmentid'),
+                'rotateleft': left
+            },
+            on: {
+                success: function(tid, response) {
+                    var jsondata;
+                    try {
+                        jsondata = Y.JSON.parse(response.responseText);
+                        var page = this.pages[this.currentpage];
+                        page.url = jsondata.page.url;
+                        page.width = jsondata.page.width;
+                        page.height = jsondata.page.height;
+                        this.loadingicon.hide();
+
+                        // Change canvas size to fix the new page.
+                        var drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
+                        drawingcanvas.setStyle('backgroundImage', 'url("' + page.url + '")');
+                        drawingcanvas.setStyle('width', page.width + 'px');
+                        drawingcanvas.setStyle('height', page.height + 'px');
+
+                        /**
+                         * Move annotation to old position.
+                         * Reason: When canvas size change
+                         * > Shape annotations move with relation to canvas coordinates
+                         * > Nodes of stamp annotations move with relation to canvas coordinates
+                         * > Presentation (picture) of stamp annotations  stay to document coordinates (stick to its own position)
+                         * > Without relocating the node and presentation of a stamp annotation to the same x,y position,
+                         * the stamp annotation cannot be chosen when using "drag" tool.
+                         * The following code brings all annotations to their old positions with relation to the canvas coordinates.
+                         */
+                        var i;
+                        // Annotations.
+                        var annotations = this.pages[this.currentpage].annotations;
+                        for (i = 0; i < annotations.length; i++) {
+                            if ( this.oldannotationcoordinates && this.oldannotationcoordinates[i]) {
+                                var oldX = this.oldannotationcoordinates[i][0];
+                                var oldY = this.oldannotationcoordinates[i][1];
+                                var annotation = annotations[i];
+                                annotation.move(oldX,  oldY);
+                            }
+                        }
+                        /**
+                         * Update Position of comments with relation to canvas coordinates.
+                         * Without this code, the comments will stay at their positions in windows/document coordinates
+                         *
+                         */
+                        var oldcomments = this.pages[this.currentpage].comments;
+                        for (i = 0; i < oldcomments.length; i++) {
+                            oldcomments[i].update_position();
+                        }
+                        // Save Annotations.
+                        this.save_current_page();
+                    } catch (e) {
+                        return new M.core.exception(e);
+                    }
+                },
+                failure: function(tid, response) {
+                    return new M.core.exception(response.responseText);
+                }
+            }
+        };
+        Y.io(ajaxurl, config);
     },
 
     /**

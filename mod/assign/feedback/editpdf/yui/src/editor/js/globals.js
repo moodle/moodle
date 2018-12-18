@@ -44,7 +44,9 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         UNSAVEDCHANGESDIV: '.assignfeedback_editpdf_unsavedchanges',
         UNSAVEDCHANGESINPUT: 'input[name="assignfeedback_editpdf_haschanges"]',
         STAMPSBUTTON: '.currentstampbutton',
-        DIALOGUE: '.' + CSS.DIALOGUE
+        DIALOGUE: '.' + CSS.DIALOGUE,
+        ROTATELEFTBUTTON: '.rotateleftbutton',
+        ROTATERIGHTBUTTON: '.rotaterightbutton'
     },
     SELECTEDBORDERCOLOUR = 'rgba(200, 200, 255, 0.9)',
     SELECTEDFILLCOLOUR = 'rgba(200, 200, 255, 0.5)',
