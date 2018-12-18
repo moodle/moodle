@@ -1,4 +1,4 @@
-@core @core_question
+@mod @mod_quiz @javascript
 Feature: Adding questions to a quiz from the question bank
   In order to re-use questions
   As a teacher
@@ -21,17 +21,19 @@ Feature: Adding questions to a quiz from the question bank
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name              | user     | questiontext    |
-      | Test questions   | essay     | question 1 name | admin    | Question 1 text |
-      | Test questions   | essay     | question 2 name | teacher1 | Question 2 text |
-    And I log in as "teacher1"
+      | questioncategory | qtype     | name             | user     | questiontext     |
+      | Test questions   | essay     | question 01 name | admin    | Question 01 text |
+      | Test questions   | essay     | question 02 name | teacher1 | Question 02 text |
+
+  Scenario: The questions can be filtered by tag
+    Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Question bank > Questions" in current page administration
-    And I click on "Edit" "link" in the "question 1 name" "table_row"
+    When I navigate to "Question bank > Questions" in current page administration
+    And I click on "Edit" "link" in the "question 01 name" "table_row"
     And I set the following fields to these values:
       | Tags | foo |
     And I press "id_submitbutton"
-    And I click on "Edit" "link" in the "question 2 name" "table_row"
+    And I click on "Edit" "link" in the "question 02 name" "table_row"
     And I set the following fields to these values:
       | Tags | bar |
     And I press "id_submitbutton"
@@ -40,10 +42,41 @@ Feature: Adding questions to a quiz from the question bank
     And I navigate to "Edit quiz" in current page administration
     And I open the "last" add to quiz menu
     And I follow "from question bank"
-
-  @javascript
-  Scenario: The questions can be filtered by tag
-    When I set the field "Filter by tags..." to "foo"
+    And I set the field "Filter by tags..." to "foo"
     And I press key "13" in the field "Filter by tags..."
-    Then I should see "question 1 name" in the "categoryquestions" "table"
-    And I should not see "question 2 name" in the "categoryquestions" "table"
+    Then I should see "question 01 name" in the "categoryquestions" "table"
+    And I should not see "question 02 name" in the "categoryquestions" "table"
+
+  Scenario: The question modal can be paginated
+    Given the following "questions" exist:
+      | questioncategory | qtype     | name             | user     | questiontext     |
+      | Test questions   | essay     | question 03 name | teacher1 | Question 03 text |
+      | Test questions   | essay     | question 04 name | teacher1 | Question 04 text |
+      | Test questions   | essay     | question 05 name | teacher1 | Question 05 text |
+      | Test questions   | essay     | question 06 name | teacher1 | Question 06 text |
+      | Test questions   | essay     | question 07 name | teacher1 | Question 07 text |
+      | Test questions   | essay     | question 08 name | teacher1 | Question 08 text |
+      | Test questions   | essay     | question 09 name | teacher1 | Question 09 text |
+      | Test questions   | essay     | question 10 name | teacher1 | Question 10 text |
+      | Test questions   | essay     | question 11 name | teacher1 | Question 11 text |
+      | Test questions   | essay     | question 12 name | teacher1 | Question 12 text |
+      | Test questions   | essay     | question 13 name | teacher1 | Question 13 text |
+      | Test questions   | essay     | question 14 name | teacher1 | Question 14 text |
+      | Test questions   | essay     | question 15 name | teacher1 | Question 15 text |
+      | Test questions   | essay     | question 16 name | teacher1 | Question 16 text |
+      | Test questions   | essay     | question 17 name | teacher1 | Question 17 text |
+      | Test questions   | essay     | question 18 name | teacher1 | Question 18 text |
+      | Test questions   | essay     | question 19 name | teacher1 | Question 19 text |
+      | Test questions   | essay     | question 20 name | teacher1 | Question 20 text |
+      | Test questions   | essay     | question 21 name | teacher1 | Question 21 text |
+      | Test questions   | essay     | question 22 name | teacher1 | Question 22 text |
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Quiz 1"
+    And I navigate to "Edit quiz" in current page administration
+    And I open the "last" add to quiz menu
+    And I follow "from question bank"
+    And I click on "2" "link" in the ".pagination" "css_element"
+    Then I should see "question 21 name" in the "categoryquestions" "table"
+    And I should see "question 22 name" in the "categoryquestions" "table"
+    And I should not see "question 01 name" in the "categoryquestions" "table"
