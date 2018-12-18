@@ -638,7 +638,7 @@ if (!$users && empty($dodownload)) {
             if (!empty($extrafields)) {
                 foreach($extrafields as $extrafield) {
                     $fieldname = $extrafield->name;
-                    $rowmid .= ",\"$user->$fieldname\"";
+                    $rowmid .= ",\"" . $user->$fieldname ."\"";
                 }
             }
             $rowend = ",\"$strtimecreated\",\"$strfirstaccess\",\"$strlastaccess\",\"$numlogins\"\n";
