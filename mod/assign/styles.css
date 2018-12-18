@@ -760,8 +760,11 @@
 /***** Start rubric *****/
 
 .path-mod-assign [data-region="grade-panel"] .gradingform_rubric {
+    max-width: 100%;
     padding-bottom: 0;
-    max-width: none;
+}
+.path-mod-assign .gradingform_rubric {
+    max-width: calc(100vw - 200px);
 }
 
 .path-mod-assign [data-region="grade-panel"] .gradingform_rubric .criterion .description {
