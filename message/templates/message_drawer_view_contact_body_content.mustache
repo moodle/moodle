@@ -40,14 +40,16 @@
 </a>
 <div class="px-3 pb-3">
     <div class="text-center">
-        <img
-            class="rounded-circle"
-            src="{{profileimageurl}}"
-            aria-hidden="true"
-            alt="{{#str}} pictureof, moodle, {{fullname}} {{/str}}"
-            title="{{#str}} pictureof, moodle, {{fullname}} {{/str}}"
-            style="height: 100px; width: 100px"
-        >
+        <a href="{{{profileurl}}}">
+            <img
+                class="rounded-circle"
+                src="{{profileimageurl}}"
+                aria-hidden="true"
+                alt="{{#str}} pictureof, moodle, {{fullname}} {{/str}}"
+                title="{{#str}} pictureof, moodle, {{fullname}} {{/str}}"
+                style="height: 100px; width: 100px"
+            >
+        </a>
     </div>
     <h2 class="mt-2 text-center text-truncate">{{fullname}}</h2>
     <div class="px-4 mt-4">
