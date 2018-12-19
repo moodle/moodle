@@ -73,7 +73,7 @@ function dndupload_add_to_course($course, $modnames) {
     );
     $vars = array(
         array('courseid' => $course->id,
-              'maxbytes' => get_max_upload_file_size($CFG->maxbytes, $course->maxbytes),
+              'maxbytes' => get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $course->maxbytes),
               'handlers' => $handler->get_js_data(),
               'showstatus' => $showstatus)
     );
@@ -488,7 +488,7 @@ class dndupload_ajax_processor {
 
         // Add the file to a draft file area.
         $draftitemid = file_get_unused_draft_itemid();
-        $maxbytes = get_max_upload_file_size($CFG->maxbytes, $this->course->maxbytes);
+        $maxbytes = get_user_max_upload_file_size($this->context, $CFG->maxbytes, $this->course->maxbytes);
         $types = $this->dnduploadhandler->get_handled_file_types($this->module->name);
         $repo = repository::get_instances(array('type' => 'upload', 'currentcontext' => $this->context));
         if (empty($repo)) {
