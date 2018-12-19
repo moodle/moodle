@@ -589,6 +589,9 @@ class helper {
             }
         }
 
+        // Return member information in the same order as the userids originally provided.
+        $members = array_replace(array_flip($userids), $members);
+
         return $members;
     }
 
