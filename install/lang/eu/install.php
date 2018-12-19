@@ -98,6 +98,6 @@ $string['welcomep50'] = 'Paketeko aplikazio guztien erabilpena dagozkien lizentz
     arautzen dute. <strong>{$a->installername}</strong> aplikazioak
     <a href="http://www.opensource.org/docs/definition_plain.html">kode irekia</a> dauka eta
    <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> lizentziapean banatzen da.';
-$string['welcomep60'] = 'Datozen orriek urrats erraz batzuen bidez gidatuko zaituzte <strong>Moodle</strong> zure ordenagailuan instalatu eta konfiguratzeko. Aholkatzen diren lehentsitako baloreak mantendu edo, nahi izanez gero, alda ditzakezu zure beharrei erantzun diezaieten.';
-$string['welcomep70'] = '"Hurrengoa" botoia sakatu <strong>Moodle</strong>ren konfigurazioarekin jarraitzeko.';
+$string['welcomep60'] = 'Datozen orriek urrats erraz batzuen bidez gidatuko zaituzte <strong>Moodle</strong> zure ordenagailuan instalatu eta konfiguratzeko. Aholkatzen diren lehenetsitako balioak mantendu edo, nahi izanez gero, alda ditzakezu zure beharrei erantzun diezaieten.';
+$string['welcomep70'] = 'Egin klik "Hurrengoa" botoian <strong>Moodle</strong>ren konfigurazioarekin jarraitzeko.';
 $string['wwwroot'] = 'Web helbidea';
