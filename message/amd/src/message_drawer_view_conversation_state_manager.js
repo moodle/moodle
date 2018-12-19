@@ -87,6 +87,7 @@ define(['jquery'], function($) {
             return {
                 id: member.id,
                 fullname: member.fullname,
+                profileurl: member.profileurl,
                 profileimageurl: member.profileimageurl,
                 profileimageurlsmall: member.profileimageurlsmall,
                 isonline:  member.isonline,
