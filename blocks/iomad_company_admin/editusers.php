@@ -196,6 +196,19 @@ if (!$showall && $category = $DB->get_record_sql('select uic.id, uic.name from {
             ${'profile_field_'.$field->shortname} = optional_param('profile_field_'.$field->shortname, null, PARAM_RAW);
         }
     }
+    if ($categories = $DB->get_records_sql("SELECT id FROM {user_info_category} 
+                                                    WHERE id NOT IN (
+                                                     SELECT profileid FROM {company})")) {
+        foreach ($categories as $category) {
+            if ($fields = $DB->get_records('user_info_field', array('categoryid' => $category->id))) {
+                foreach ($fields as $field) {
+                    $fieldnames[$field->id] = 'profile_field_'.$field->shortname;
+                    ${'profile_field_'.$field->shortname} = optional_param('profile_field_'.
+                                                              $field->shortname, null, PARAM_RAW);
+                }
+            }
+        }
+    }
 }
 
 // Deal with the user optional profile search.

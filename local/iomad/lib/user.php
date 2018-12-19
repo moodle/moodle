@@ -963,6 +963,28 @@ class iomad_user_filter_form extends moodleform {
                 }
             }
         }
+
+        // Deal with non company categories.
+        if ($categories = $DB->get_records_sql("SELECT id FROM {user_info_category} 
+                                                WHERE id NOT IN (
+                                                 SELECT profileid FROM {company})")) {
+            foreach ($categories as $category) {
+                // Get fields from company category.
+                if ($fields = $DB->get_records('user_info_field', array('categoryid' => $category->id))) {
+                    // Display the header and the fields.
+                    foreach ($fields as $field) {
+                        require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+                        $newfield = 'profile_field_'.$field->datatype;
+                        $formfield = new $newfield($field->id);
+                        if ($field->datatype == 'datetime') {
+                            $formfield->field->required = false;
+                        }
+                        $formfield->edit_field($mform);
+                    }
+                }
+            }
+        }
+
         if ($useusertype) {
             $usertypearray = array ('a' => get_string('any'),
                                     '0' => get_string('user', 'block_iomad_company_admin'),
