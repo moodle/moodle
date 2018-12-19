@@ -351,7 +351,9 @@ class core_badges_renderer extends plugin_renderer_base {
         if (!empty($badge->version)) {
             $dl[get_string('version', 'badges')] = $badge->version;
         }
-        $dl[get_string('language')] = $languages[$badge->language];
+        if (!empty($badge->language)) {
+            $dl[get_string('language')] = $languages[$badge->language];
+        }
         $dl[get_string('description', 'badges')] = $badge->description;
         if (!empty($badge->imageauthorname)) {
             $dl[get_string('imageauthorname', 'badges')] = $badge->imageauthorname;
