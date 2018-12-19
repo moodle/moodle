@@ -3987,4 +3987,17 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         // Check that submissionstatus_marked 'Graded' message does appear for student.
         $this->assertContains(get_string('submissionstatus_marked', 'assign'), $output2);
     }
+
+    /**
+     * Test the result of get_filters is consistent.
+     */
+    public function test_get_filters() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->create_instance($course);
+        $valid = $assign->get_filters();
+
+        $this->assertEquals(count($valid), 5);
+    }
 }

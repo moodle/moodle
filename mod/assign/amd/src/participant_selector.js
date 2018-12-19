@@ -59,7 +59,14 @@ define(['core/ajax', 'jquery', 'core/templates'], function(ajax, $, templates) {
 
             ajax.call([{
                 methodname: 'mod_assign_list_participants',
-                args: {assignid: assignmentid, groupid: groupid, filter: query, limit: 30, includeenrolments: false}
+                args: {
+                    assignid: assignmentid,
+                    groupid: groupid,
+                    filter: query,
+                    limit: 30,
+                    includeenrolments: false,
+                    tablesort: true
+                }
             }])[0].then(function(results) {
                 var promises = [];
                 var identityfields = $('[data-showuseridentity]').data('showuseridentity').split(',');

@@ -354,14 +354,14 @@
 .path-mod-assign [data-region="configure-filters"] {
     display: none;
     text-align: left;
-    width: auto;
+    width: 480px;
     background-color: #fff;
     background-clip: padding-box;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     border-radius: 6px;
     position: absolute;
     margin-top: 28px;
-    margin-left: -140px;
+    margin-left: -452px;
     padding: 10px 0;
     z-index: 1;
 }
@@ -389,11 +389,6 @@
     right: 13px;
     border-width: 6px;
     border-bottom-color: #fff;
-}
-
-.path-mod-assign [data-region="configure-filters"] label {
-    display: block;
-    padding: 3px 20px;
 }
 
 .path-mod-assign .alignment [data-region="configure-filters"] input {
