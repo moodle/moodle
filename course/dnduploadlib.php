@@ -484,7 +484,7 @@ class dndupload_ajax_processor {
      * to process the file, ask the mod to set itself up, then return the result to the browser
      */
     protected function handle_file_upload() {
-        global $CFG, $PAGE;
+        global $CFG;
 
         // Add the file to a draft file area.
         $draftitemid = file_get_unused_draft_itemid();
