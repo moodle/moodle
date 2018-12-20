@@ -89,4 +89,3 @@ Feature: A teacher can choose whether glossary entries require approval
     Then I should see "Glossary entries"
     And I should see "Just a test concept"
     And I should see "Entry not approved"
-    And I log out
