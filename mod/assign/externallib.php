@@ -474,8 +474,25 @@ class mod_assign_external extends external_api {
                     if ($module->requiresubmissionstatement) {
                         // Submission statement is required, return the submission statement value.
                         $adminconfig = get_config('assign');
-                        list($assignment['submissionstatement'], $assignment['submissionstatementformat']) = external_format_text(
-                                $adminconfig->submissionstatement, FORMAT_MOODLE, $context->id, 'mod_assign', '', 0);
+                        // Single submission.
+                        if (!$module->teamsubmission) {
+                            list($assignment['submissionstatement'], $assignment['submissionstatementformat']) =
+                                external_format_text($adminconfig->submissionstatement, FORMAT_MOODLE, $context->id,
+                                    'mod_assign', '', 0);
+                        } else { // Team submission.
+                            // One user can submit for the whole team.
+                            if (!empty($adminconfig->submissionstatementteamsubmission) && !$module->requireallteammemberssubmit) {
+                                list($assignment['submissionstatement'], $assignment['submissionstatementformat']) =
+                                    external_format_text($adminconfig->submissionstatementteamsubmission,
+                                        FORMAT_MOODLE, $context->id, 'mod_assign', '', 0);
+                            } else if (!empty($adminconfig->submissionstatementteamsubmissionallsubmit) &&
+                                $module->requireallteammemberssubmit) {
+                                // All team members must submit.
+                                list($assignment['submissionstatement'], $assignment['submissionstatementformat']) =
+                                    external_format_text($adminconfig->submissionstatementteamsubmissionallsubmit,
+                                        FORMAT_MOODLE, $context->id, 'mod_assign', '', 0);
+                            }
+                        }
                     }
 
                     $assignmentarray[] = $assignment;
