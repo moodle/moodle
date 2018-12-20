@@ -2692,5 +2692,32 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019011801.02);
     }
 
+    if ($oldversion < 2019011801.03) {
+        // Remove duplicate entries from group memberships.
+        // Find records with multiple userid/groupid combinations and find the highest ID.
+        // Later we will remove all those entries.
+        $sql = "
+            SELECT MIN(id) as minid, userid, groupid
+            FROM {groups_members}
+            GROUP BY userid, groupid
+            HAVING COUNT(id) > 1";
+        if ($duplicatedrows = $DB->get_recordset_sql($sql)) {
+            foreach ($duplicatedrows as $row) {
+                $DB->delete_records_select('groups_members',
+                    'userid = :userid AND groupid = :groupid AND id <> :minid', (array)$row);
+            }
+        }
+        $duplicatedrows->close();
+
+        // Define key useridgroupid (unique) to be added to group_members.
+        $table = new xmldb_table('groups_members');
+        $key = new xmldb_key('useridgroupid', XMLDB_KEY_UNIQUE, array('userid', 'groupid'));
+        // Launch add key useridgroupid.
+        $dbman->add_key($table, $key);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019011801.03);
+    }
+
     return true;
 }
