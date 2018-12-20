@@ -16592,6 +16592,10 @@ form {
 .mform .fitem .fitemtitle div {
   display: inline;
 }
+.mform .fitem .fitemtitle .mediaplugin,
+.mform .fitem .fitemtitle .mediaplugin div {
+  display: block;
+}
 #adminsettings .error,
 .loginpanel .error,
 .mform .error {
