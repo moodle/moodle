@@ -28,9 +28,19 @@ define('NO_OUTPUT_BUFFERING', true);
 require_once('../config.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
+// Restore of large courses requires extra memory. Use the amount configured
+// in admin settings.
+raise_memory_limit(MEMORY_EXTRA);
+
 $contextid   = required_param('contextid', PARAM_INT);
 $stage       = optional_param('stage', restore_ui::STAGE_CONFIRM, PARAM_INT);
 $cancel      = optional_param('cancel', '', PARAM_ALPHA);
+
+// Determine if we are performing realtime for asynchronous backups.
+$backupmode = backup::MODE_GENERAL;
+if (async_helper::is_async_enabled()) {
+    $backupmode = backup::MODE_ASYNC;
+}
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
@@ -70,10 +80,6 @@ $slowprogress->start_progress('', 10);
 // This progress section counts for loading the restore controller.
 $slowprogress->start_progress('', 1, 1);
 
-// Restore of large courses requires extra memory. Use the amount configured
-// in admin settings.
-raise_memory_limit(MEMORY_EXTRA);
-
 if ($stage & restore_ui::STAGE_CONFIRM + restore_ui::STAGE_DESTINATION) {
     $restore = restore_ui::engage_independent_stage($stage, $contextid);
 } else {
@@ -83,7 +89,7 @@ if ($stage & restore_ui::STAGE_CONFIRM + restore_ui::STAGE_DESTINATION) {
         $restore = restore_ui::engage_independent_stage($stage/2, $contextid);
         if ($restore->process()) {
             $rc = new restore_controller($restore->get_filepath(), $restore->get_course_id(), backup::INTERACTIVE_YES,
-                                backup::MODE_GENERAL, $USER->id, $restore->get_target());
+                    $backupmode, $USER->id, $restore->get_target());
         }
     }
     if ($rc) {
@@ -120,7 +126,7 @@ if (!$restore->is_independent()) {
     // Use a temporary (disappearing) progress bar to show the precheck progress if any.
     $precheckprogress = new \core\progress\display_if_slow(get_string('preparingdata', 'backup'));
     $restore->get_controller()->set_progress($precheckprogress);
-    if ($restore->get_stage() == restore_ui::STAGE_PROCESS && !$restore->requires_substage()) {
+    if ($restore->get_stage() == restore_ui::STAGE_PROCESS && !$restore->requires_substage() && $backupmode != backup::MODE_ASYNC) {
         try {
             // Div used to hide the 'progress' step once the page gets onto 'finished'.
             echo html_writer::start_div('', array('id' => 'executionprogress'));
@@ -150,7 +156,35 @@ if (!$restore->is_independent()) {
 }
 
 echo $renderer->progress_bar($restore->get_progress_bar());
-echo $restore->display($renderer);
+
+if ($restore->get_stage() != restore_ui::STAGE_PROCESS) {
+    echo $restore->display($renderer);
+} else if ($restore->get_stage() == restore_ui::STAGE_PROCESS && $restore->requires_substage()) {
+    echo $restore->display($renderer);
+} else if ($restore->get_stage() == restore_ui::STAGE_PROCESS
+        && !$restore->requires_substage()
+        && $backupmode == backup::MODE_ASYNC) {
+    // Asynchronous restore.
+    // Create adhoc task for restore.
+    $restoreid = $restore->get_restoreid();
+    $asynctask = new \core\task\asynchronous_restore_task();
+    $asynctask->set_blocking(false);
+    $asynctask->set_custom_data(array('backupid' => $restoreid));
+    \core\task\manager::queue_adhoc_task($asynctask);
+
+    // Add ajax progress bar and initiate ajax via a template.
+    $courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
+    $restoreurl = new moodle_url('/backup/restorefile.php', array('contextid' => $contextid));
+    $progresssetup = array(
+            'backupid' => $restoreid,
+            'contextid' => $contextid,
+            'courseurl' => $courseurl->out(),
+            'restoreurl' => $restoreurl->out()
+    );
+    echo $renderer->render_from_template('core/async_backup_status', $progresssetup);
+
+}
+
 $restore->destroy();
 unset($restore);
 

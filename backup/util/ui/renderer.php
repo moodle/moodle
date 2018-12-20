@@ -22,6 +22,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die;
+
+global $CFG;
+require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+require_once($CFG->dirroot . '/backup/moodle2/backup_plan_builder.class.php');
+
 /**
  * The primary renderer for the backup.
  *
@@ -64,9 +71,8 @@ class core_backup_renderer extends plugin_renderer_base {
      * @return string HTML content that shows the log
      */
     public function log_display($loghtml) {
-        global $OUTPUT;
         $out = html_writer::start_div('backup_log');
-        $out .= $OUTPUT->heading(get_string('backuplog', 'backup'));
+        $out .= $this->output->heading(get_string('backuplog', 'backup'));
         $out .= html_writer::start_div('backup_log_contents');
         $out .= $loghtml;
         $out .= html_writer::end_div();
@@ -534,6 +540,32 @@ class core_backup_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Generate the status indicator markup for display in the
+     * backup restore file area UI.
+     *
+     * @param int $statuscode The status code of the backup.
+     * @param string $backupid The backup record id.
+     * @return string|boolean $status The status indicator for the operation.
+     */
+    public function get_status_display($statuscode, $backupid) {
+        if ($statuscode == backup::STATUS_AWAITING || $statuscode == backup::STATUS_EXECUTING) {  // Inprogress.
+            $progresssetup = array(
+                    'backupid' => $backupid,
+                    'width' => '100'
+            );
+            $status = $this->render_from_template('core/async_backup_progress', $progresssetup);
+        } else if ($statuscode == backup::STATUS_FINISHED_ERR) { // Error.
+            $icon = $this->output->render(new \pix_icon('i/delete', get_string('failed', 'backup')));
+            $status = \html_writer::span($icon, 'action-icon');
+        } else if ($statuscode == backup::STATUS_FINISHED_OK) { // Complete.
+            $icon = $this->output->render(new \pix_icon('i/checked', get_string('successful', 'backup')));
+            $status = \html_writer::span($icon, 'action-icon');
+        }
+
+        return $status;
+    }
+
+    /**
      * Displays a backup files viewer
      *
      * @global stdClass $USER
@@ -544,12 +576,35 @@ class core_backup_renderer extends plugin_renderer_base {
         global $CFG;
         $files = $viewer->files;
 
+        $async = async_helper::is_async_enabled();
+
+        $tablehead = array(
+                get_string('filename', 'backup'),
+                get_string('time'),
+                get_string('size'),
+                get_string('download'),
+                get_string('restore'));
+        if ($async) {
+            $tablehead[] = get_string('status', 'backup');
+        }
+
         $table = new html_table();
         $table->attributes['class'] = 'backup-files-table generaltable';
-        $table->head = array(get_string('filename', 'backup'), get_string('time'), get_string('size'), get_string('download'), get_string('restore'));
+        $table->head = $tablehead;
         $table->width = '100%';
         $table->data = array();
 
+        // First add in progress asynchronous backups.
+        // Only if asynchronous backups are enabled.
+        // Also only render async status in correct area. Courese OR activity (not both).
+        if ($async
+                && (($viewer->filearea == 'course' && $viewer->currentcontext->contextlevel == CONTEXT_COURSE)
+                || ($viewer->filearea == 'activity' && $viewer->currentcontext->contextlevel == CONTEXT_MODULE))
+                ) {
+                    $table->data = \async_helper::get_async_backups($this, $viewer->currentcontext->instanceid);
+        }
+
+        // Add completed backups.
         foreach ($files as $file) {
             if ($file->is_directory()) {
                 continue;
@@ -585,13 +640,18 @@ class core_backup_renderer extends plugin_renderer_base {
                     $downloadlink = '';
                 }
             }
-            $table->data[] = array(
+            $tabledata = array(
                 $file->get_filename(),
-                userdate($file->get_timemodified()),
-                display_size($file->get_filesize()),
+                userdate ($file->get_timemodified()),
+                display_size ($file->get_filesize()),
                 $downloadlink,
-                $restorelink,
-                );
+                $restorelink
+            );
+            if ($async) {
+                $tabledata[] = $this->get_status_display(backup::STATUS_FINISHED_OK, null);
+            }
+
+            $table->data[] = $tabledata;
         }
 
         $html = html_writer::table($table);
@@ -852,6 +912,42 @@ class core_backup_renderer extends plugin_renderer_base {
 
         $output .= html_writer::end_tag('div');
         return $output;
+    }
+
+    /**
+     * Get markup to render table for all of a users async
+     * in progress restores.
+     *
+     * @param int $userid The Moodle user id.
+     * @param \context $context The Moodle context for these restores.
+     * @return string $html The table HTML.
+     */
+    public function restore_progress_viewer ($userid, $context) {
+        $tablehead = array(get_string('course'), get_string('time'), get_string('status', 'backup'));
+
+        $table = new html_table();
+        $table->attributes['class'] = 'backup-files-table generaltable';
+        $table->head = $tablehead;
+        $tabledata = array();
+
+        // Get all in progress async restores for this user.
+        $restores = \async_helper::get_async_restores($userid);
+
+        // For each backup get, new item name, time restore created and progress.
+        foreach ($restores as $restore) {
+
+            $restorename = \async_helper::get_restore_name($context);
+            $timecreated = $restore->timecreated;
+            $status = $this->get_status_display($restore->status, $restore->backupid);
+
+            $tablerow = array($restorename, userdate($timecreated), $status);
+            $tabledata[] = $tablerow;
+        }
+
+        $table->data = $tabledata;
+        $html = html_writer::table($table);
+
+        return $html;
     }
 }
 

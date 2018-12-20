@@ -2898,6 +2898,7 @@
         <FIELD NAME="checksum" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="checksum of the backup_controller object"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="time the controller was created"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="last time the controller was modified"/>
+        <FIELD NAME="progress" TYPE="number" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="14" COMMENT="The backup or restore progress as a floating point number"/>
         <FIELD NAME="controller" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="serialised backup_controller object"/>
       </FIELDS>
       <KEYS>
@@ -2907,6 +2908,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="typeitem_ix" UNIQUE="false" FIELDS="type, itemid"/>
+        <INDEX NAME="useritem_ix" UNIQUE="false" FIELDS="userid, itemid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="backup_logs" COMMENT="To store all the logs from backup and restore operations (by db logger)">
