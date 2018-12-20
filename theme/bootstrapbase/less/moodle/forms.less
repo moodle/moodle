@@ -48,8 +48,16 @@ form {
     display: none;
 }
 
-.mform .fitem .fitemtitle div {
-    display: inline;
+.mform .fitem .fitemtitle {
+    div {
+        display: inline;
+    }
+
+    // MDL-63512 Override to handle issues in clean where the video styling is off.
+    .mediaplugin,
+    .mediaplugin div {
+        display: block;
+    }
 }
 #adminsettings .error,
 .loginpanel .error,
