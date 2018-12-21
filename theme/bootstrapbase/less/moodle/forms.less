@@ -48,17 +48,23 @@ form {
     display: none;
 }
 
+// MDL-63512 Override to handle issues in clean where the video styling is off.
 .mform .fitem .fitemtitle {
-    div {
+    & > div:not(.mediaplugin) div {
         display: inline;
     }
 
-    // MDL-63512 Override to handle issues in clean where the video styling is off.
-    .mediaplugin,
-    .mediaplugin div {
-        display: block;
+    // MDL-64450 Override for videos so they don't appear off the screen.
+    .mediaplugin > div {
+        margin: 0;
     }
 }
+
+// Reduce the mediaplugin width when using inside forms.
+.que.match .mediaplugin {
+    width: 50vw;
+}
+
 #adminsettings .error,
 .loginpanel .error,
 .mform .error {
