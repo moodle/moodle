@@ -15116,6 +15116,9 @@ div.backup-section + form {
   text-align: left;
   direction: ltr; }
 
+.que.match .mediaplugin {
+  width: 50vw; }
+
 /* rtl:ignore */
 #page-admin-grade-edit-scale-edit .error input#id_name {
   margin-right: 170px; }
