@@ -228,9 +228,20 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         $defaultanswerformat = get_config('qtype_ordering', 'defaultanswerformat');
 
-        $i = 0;
-        while (($editor = $name."[$i]") && $mform->elementExists($editor)) {
-            $editor = $mform->getElement($editor);
+        $repeats = 'count'.$name.'s'; // e.g. countanswers
+        if ($mform->elementExists($repeats)) {
+            // Use mform element to get number of repeats
+            $repeats = $mform->getElement($repeats)->getValue();
+        } else {
+            // Determine number of repeats by object sniffing
+            $repeats = 0;
+            while ($mform->elementExists($name."[$repeats]")) {
+                $repeats++;
+            }
+        }
+
+        for ($i=0; $i < $repeats; $i++) {
+            $editor = $mform->getElement($name."[$i]");
 
             if (isset($ids[$i])) {
                 $id = $ids[$i];
@@ -269,9 +280,6 @@ class qtype_ordering_edit_form extends question_edit_form {
                 }
                 $mform->registerNoSubmitButton($newname);
             }
-
-            // increment the answer index
-            $i++;
         }
     }
 

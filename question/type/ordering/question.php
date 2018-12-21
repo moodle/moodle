@@ -751,6 +751,20 @@ class qtype_ordering_question extends question_graded_automatically {
                 $subsets = array_merge($subsets, $new);
             }
         }
+
+        // remove short subsets, that are subsets of longer subsets
+        //$keys = array();
+        //foreach ($subsets as $s => $subset) {
+        //    $key = implode(',', $subset);
+        //    $search = implode(',(\d+,)*', $subset);
+        //    $search = preg_grep("/$search/", $keys);
+        //    if (count($search)) {
+        //        //unset($subsets[$s]);
+        //    } else {
+        //        //$keys[] = $key;
+        //    }
+        //}
+
         return $subsets;
     }
 
