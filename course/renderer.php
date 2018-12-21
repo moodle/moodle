@@ -2404,7 +2404,8 @@ class core_course_renderer extends plugin_renderer_base {
             $frontpagelayout = $CFG->frontpage;
         }
 
-        foreach (explode(',', $frontpagelayout) as $v) {
+        $frontpageoptions = explode(',', $frontpagelayout);
+        foreach ($frontpageoptions as $v) {
             switch ($v) {
                 // Display the main part of the front page.
                 case FRONTPAGENEWS:
@@ -2426,6 +2427,12 @@ class core_course_renderer extends plugin_renderer_base {
                         $output .= $this->frontpage_part('skipmycourses', 'frontpage-course-list',
                             get_string('mycourses'), $mycourseshtml);
                         break;
+                    } else {
+                        // Temp fix/fallback in order to display available courses when enrolled courses should be shown,
+                        // but user is not enrolled in any course.
+                        if (array_search(FRONTPAGEALLCOURSELIST, $frontpageoptions)) {
+                            break;
+                        }
                     }
                     // No "break" here. If there are no enrolled courses - continue to 'Available courses'.
 
@@ -2454,7 +2461,6 @@ class core_course_renderer extends plugin_renderer_base {
             }
             $output .= '<br />';
         }
-
         return $output;
     }
 }
