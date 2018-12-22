@@ -32,8 +32,6 @@ use  core_course_renderer;
 
 require_once($CFG->dirroot . '/blocks/mycourses/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
-require_once($CFG->libdir . '/coursecatlib.php');
-
 
 /**
  * Class containing data for my overview block.
