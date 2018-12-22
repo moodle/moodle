@@ -146,7 +146,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                     $printeditems = true;
                     $result .= html_writer::start_tag('div', array('class' => 'ablock', 'id' => $ablockid));
                     $result .= html_writer::start_tag('div', array('class' => 'answer ordering'));
-                    $result .= html_writer::start_tag('ul',  array('class' => 'sortablelist', 'id' => $sortableid));
+                    $result .= html_writer::start_tag('ul',  array('class' => 'sortablelist', 'id' => $sortableid, 'contenteditable' => 'true'));
                 }
 
                 // Set the CSS class and correctness img for this response.
