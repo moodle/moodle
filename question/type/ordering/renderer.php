@@ -144,9 +144,9 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
                 if ($printeditems == false) {
                     $printeditems = true;
-                    $result .= html_writer::start_tag('div', array('class' => 'ablock', 'id' => $ablockid));
-                    $result .= html_writer::start_tag('div', array('class' => 'answer ordering'));
-                    $result .= html_writer::start_tag('ul',  array('class' => 'sortablelist', 'id' => $sortableid, 'contenteditable' => 'true'));
+                    $result .= html_writer::start_tag('div', array('class' => 'ablock', 'id' => $ablockid, 'contenteditable' => 'true'));
+                    $result .= html_writer::start_tag('div', array('class' => 'answer ordering', 'contenteditable' => 'false'));
+                    $result .= html_writer::start_tag('ul',  array('class' => 'sortablelist', 'id' => $sortableid));
                 }
 
                 // Set the CSS class and correctness img for this response.
