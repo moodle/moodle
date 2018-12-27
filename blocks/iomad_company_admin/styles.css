@@ -9,7 +9,8 @@
    }
 
 div.iomadlink_container {
-    min-height: 100px;
+    min-height: 160px;
+    padding-left: 8px;
     position: relative;
     /* top: -30px; */
     }
