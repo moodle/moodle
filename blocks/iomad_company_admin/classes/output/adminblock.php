@@ -42,15 +42,21 @@ class adminblock implements renderable, templatable {
  
     protected $companyselect;
 
-    protected $tabhtml;
+    protected $tabs;
 
-    protected $menu;
+    protected $panes;
 
-    public function __construct($logourl, $companyselect, $tabhtml, $menu) {
+    /**
+     * @param string $logourl
+     * @param string $companyselect
+     * @param array $tabs
+     * @param array $panes
+     */
+    public function __construct($logourl, $companyselect, $tabs, $panes) {
         $this->logourl = $logourl;
         $this->companyselect = $companyselect;
-        $this->tabhtml = $tabhtml;
-        $this->menu = $menu;
+        $this->tabs = $tabs;
+        $this->panes = $panes;
     }
 
     /**
@@ -63,8 +69,8 @@ class adminblock implements renderable, templatable {
         return [
             'logourl' => $this->logourl,
             'companyselect' => $this->companyselect,
-            'tabs' => $this->tabhtml,
-            'menu' => $this->menu,
+            'tabs' => $this->tabs,
+            'panes' => array_values($this->panes),
         ];
     }
 
