@@ -14,6 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version  = 2018122700;   // The (date) version of this plugin.
-$plugin->requires = 2018051700;   // Requires this Moodle version.
-$plugin->component  = 'block_iomad_company_admin';
+/**
+ * Task definition for block_iomad_company_admin.
+ * @author    Howard Miller
+ * @copyright Howard Miller 2018
+ * @package   block_iomad_company_admin
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+$tasks = array(
+    array(
+        'classname' => '\block_iomad_company_admin\task\emailpasswords',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => 0
+    )
+);
+

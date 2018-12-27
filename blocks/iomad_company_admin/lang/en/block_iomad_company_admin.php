@@ -235,6 +235,7 @@ $string['editroletemplate'] = 'Edit role template';
 $string['edituser'] = 'Edit users';
 $string['educator'] = 'Course educator';
 $string['educatorreusable'] = 'Course educator - reusable';
+$string['emailpasswordstask'] = 'Email out passwords for newly created Iomad users';
 $string['emailprofileid'] = 'External supervisor email field';
 $string['emailprofileid_help'] = 'Choose the profile field which will contain the email address of a user\'s manager who does not have an account on the system.';
 $string['edit_users_title'] = 'Edit Users';
