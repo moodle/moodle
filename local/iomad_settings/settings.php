@@ -79,6 +79,84 @@ if ($hassiteconfig) {
                                                 '',
                                                 PARAM_TEXT));
 
+    $settings->add(new admin_setting_configtext('iomad_max_list_users',
+                                                get_string('iomad_max_list_users', 'local_iomad_settings'),
+                                                get_string('iomad_max_list_users_help', 'local_iomad_settings'),
+                                                30,
+                                                PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('iomad_max_list_courses',
+                                                get_string('iomad_max_list_courses', 'local_iomad_settings'),
+                                                get_string('iomad_max_list_courses_help', 'local_iomad_settings'),
+                                                30,
+                                                PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('iomad_max_list_templates',
+                                                get_string('iomad_max_list_templates', 'local_iomad_settings'),
+                                                get_string('iomad_max_list_templates_help', 'local_iomad_settings'),
+                                                30,
+                                                PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('iomad_max_list_companies',
+                                                get_string('iomad_max_list_companies', 'local_iomad_settings'),
+                                                get_string('iomad_max_list_companies_help', 'local_iomad_settings'),
+                                                30,
+                                                PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('iomad_max_list_licenses',
+                                                get_string('iomad_max_list_licenses', 'local_iomad_settings'),
+                                                get_string('iomad_max_list_licenses_help', 'local_iomad_settings'),
+                                                30,
+                                                PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('iomad_max_list_classrooms',
+                                                get_string('iomad_max_list_classrooms', 'local_iomad_settings'),
+                                                get_string('iomad_max_list_classrooms_help', 'local_iomad_settings'),
+                                                30,
+                                                PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('iomad_max_list_email_templates',
+                                                get_string('iomad_max_list_email_templates', 'local_iomad_settings'),
+                                                get_string('iomad_max_list_email_templates_help', 'local_iomad_settings'),
+                                                30,
+                                                PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('iomad_max_list_competencies',
+                                                get_string('iomad_max_list_competencies', 'local_iomad_settings'),
+                                                get_string('iomad_max_list_competencies_help', 'local_iomad_settings'),
+                                                30,
+                                                PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('iomad_max_list_frameworks',
+                                                get_string('iomad_max_list_frameworks', 'local_iomad_settings'),
+                                                get_string('iomad_max_list_frameworks_help', 'local_iomad_settings'),
+                                                30,
+                                                PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('iomad_max_select_users',
+                                                get_string('iomad_max_select_users', 'local_iomad_settings'),
+                                                get_string('iomad_max_select_users_help', 'local_iomad_settings'),
+                                                100,
+                                                PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('iomad_max_select_courses',
+                                                get_string('iomad_max_select_courses', 'local_iomad_settings'),
+                                                get_string('iomad_max_select_courses_help', 'local_iomad_settings'),
+                                                200,
+                                                PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('iomad_max_select_templates',
+                                                get_string('iomad_max_select_templates', 'local_iomad_settings'),
+                                                get_string('iomad_max_select_templates_help', 'local_iomad_settings'),
+                                                200,
+                                                PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('iomad_max_select_frameworks',
+                                                get_string('iomad_max_select_frameworks', 'local_iomad_settings'),
+                                                get_string('iomad_max_select_frameworks_help', 'local_iomad_settings'),
+                                                200,
+                                                PARAM_INT));
+
     $name = 'local_iomad_settings/iomadcertificate_logo';
     $title = get_string('iomadcertificate_logo', 'local_iomad_settings');
     $description = get_string('iomadcertificate_logodesc', 'local_iomad_settings');

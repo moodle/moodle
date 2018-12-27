@@ -20,7 +20,6 @@ require_once(dirname(__FILE__) . '/../../../enrol/locallib.php');
  * base class for selecting users of a company
  */
 abstract class company_user_selector_base extends user_selector_base {
-    const MAX_USERS_PER_PAGE = 100;
 
     protected $companyid;
     protected $courseid;
@@ -48,7 +47,7 @@ abstract class company_user_selector_base extends user_selector_base {
     }
 
     protected function get_course_user_ids() {
-        global $DB, $PAGE;
+        global $CFG, $DB, $PAGE;
         if (!isset( $this->courseid) ) {
             return array();
         } else {
@@ -70,7 +69,7 @@ class current_company_managers_user_selector extends company_user_selector_base 
      * @return array
      */
     public function find_users($search) {
-        global $DB;
+        global $CFG, $DB;
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
@@ -85,7 +84,7 @@ class current_company_managers_user_selector extends company_user_selector_base 
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_users) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -114,7 +113,7 @@ class potential_company_managers_user_selector extends company_user_selector_bas
      * @return array
      */
     public function find_users($search) {
-        global $DB;
+        global $CFG, $DB;
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
@@ -131,7 +130,7 @@ class potential_company_managers_user_selector extends company_user_selector_bas
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_users) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -159,7 +158,7 @@ class current_company_users_user_selector extends company_user_selector_base {
      * @return array
      */
     public function find_users($search) {
-        global $DB;
+        global $CFG, $DB;
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
@@ -175,7 +174,7 @@ class current_company_users_user_selector extends company_user_selector_base {
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_users) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -204,7 +203,7 @@ class potential_company_users_user_selector extends company_user_selector_base {
      * @return array
      */
     public function find_users($search) {
-        global $DB;
+        global $CFG, $DB;
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
@@ -225,7 +224,7 @@ class potential_company_users_user_selector extends company_user_selector_base {
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_users) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -253,7 +252,7 @@ class current_company_course_user_selector extends company_user_selector_base {
      * @return array
      */
     public function find_users($search, $all = false) {
-        global $DB;
+        global $CFG, $DB;
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
@@ -286,7 +285,7 @@ class current_company_course_user_selector extends company_user_selector_base {
 
         if (!$this->is_validating() && !$all) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_users) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -335,7 +334,7 @@ class potential_company_course_user_selector extends company_user_selector_base 
      * @return array
      */
     public function find_users($search, $all = false) {
-        global $DB;
+        global $CFG, $DB;
         $companyrec = $DB->get_record('company', array('id' => $this->companyid));
         $company = new company($this->companyid);
 
@@ -389,7 +388,7 @@ class potential_company_course_user_selector extends company_user_selector_base 
 
         if (!$this->is_validating() && !$all) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_users) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -416,7 +415,6 @@ class potential_department_user_selector extends user_selector_base {
      * @param <type> $search
      * @return array
      */
-    const MAX_USERS_PER_PAGE = 100;
 
     protected $companyid;
     protected $departmentid;
@@ -447,7 +445,7 @@ class potential_department_user_selector extends user_selector_base {
     }
 
     protected function get_department_user_ids() {
-        global $DB;
+        global $CFG, $DB;
         if (!isset( $this->departmentid) ) {
             return array();
         } else {
@@ -475,7 +473,7 @@ class potential_department_user_selector extends user_selector_base {
     }
 
     protected function process_other_company_managers(&$userlist) {
-        global $DB;
+        global $CFG, $DB;
         foreach ($userlist as $id => $user) {
             $sql = "SELECT c.name FROM {company} c
                     INNER JOIN {company_users} cu ON c.id = cu.companyid
@@ -491,7 +489,7 @@ class potential_department_user_selector extends user_selector_base {
     }
 
     public function find_users($search) {
-        global $DB, $USER;
+        global $CFG, $DB, $USER;
         $companyrec = $DB->get_record('company', array('id' => $this->companyid));
         $company = new company($this->companyid);
 
@@ -571,7 +569,7 @@ class potential_department_user_selector extends user_selector_base {
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params)
                                      + $DB->count_records_sql($countfields . $othermanagersql, $params);
-            if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_users) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -608,7 +606,6 @@ class current_department_user_selector extends user_selector_base {
      * @param <type> $search
      * @return array
      */
-    const MAX_USERS_PER_PAGE = 100;
 
     protected $companyid;
     protected $departmentid;
@@ -633,7 +630,7 @@ class current_department_user_selector extends user_selector_base {
     }
 
     protected function get_department_user_ids() {
-        global $DB;
+        global $CFG, $DB;
         if (!isset( $this->departmentid) ) {
             return array();
         } else {
@@ -647,7 +644,7 @@ class current_department_user_selector extends user_selector_base {
     }
 
     public function find_users($search) {
-        global $DB, $USER;
+        global $CFG, $DB, $USER;
         $companyrec = $DB->get_record('company', array('id' => $this->companyid));
         $company = new company($this->companyid);
 
@@ -691,7 +688,7 @@ class current_department_user_selector extends user_selector_base {
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_users) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -733,7 +730,6 @@ class potential_license_user_selector extends user_selector_base {
      * @param <type> $search
      * @return array
      */
-    const MAX_USERS_PER_PAGE = 100;
 
     protected $companyid;
     protected $licenseid;
@@ -745,7 +741,7 @@ class potential_license_user_selector extends user_selector_base {
     protected $license;
 
     public function __construct($name, $options) {
-        global $DB;
+        global $CFG, $DB;
 
         $this->companyid  = $options['companyid'];
         $this->licenseid = $options['licenseid'];
@@ -773,7 +769,7 @@ class potential_license_user_selector extends user_selector_base {
     }
 
     protected function get_license_user_ids() {
-        global $DB;
+        global $CFG, $DB;
         if (!isset( $this->license->id) ) {
             return array();
         } else {
@@ -796,7 +792,7 @@ class potential_license_user_selector extends user_selector_base {
     }
 
     protected function get_license_department_ids() {
-        global $DB, $USER;
+        global $CFG, $DB, $USER;
         if (!isset( $this->licenseid) ) {
             return array();
         } else {
@@ -848,7 +844,7 @@ class potential_license_user_selector extends user_selector_base {
     }
 
     protected function process_license_allocations(&$licenseusers) {
-        global $DB;
+        global $CFG, $DB;
         foreach ($licenseusers as $id => $user) {
 
             $sql = "SELECT d.shortname FROM {department} d
@@ -863,7 +859,7 @@ class potential_license_user_selector extends user_selector_base {
     }
 
     public function find_users($search, $all = false) {
-        global $DB, $USER;
+        global $CFG, $DB, $USER;
         $companyrec = $DB->get_record('company', array('id' => $this->companyid));
         $company = new company($this->companyid);
 
@@ -929,7 +925,7 @@ class potential_license_user_selector extends user_selector_base {
 
         if (!$this->is_validating() && !$all) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_users) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -956,7 +952,6 @@ class current_license_user_selector extends user_selector_base {
      * @param <type> $search
      * @return array
      */
-    const MAX_USERS_PER_PAGE = 100;
 
     protected $companyid;
     protected $licenseid;
@@ -968,7 +963,7 @@ class current_license_user_selector extends user_selector_base {
     protected $license;
 
     public function __construct($name, $options) {
-        global $DB;
+        global $CFG, $DB;
 
         $this->companyid  = $options['companyid'];
         $this->licenseid = $options['licenseid'];
@@ -996,7 +991,7 @@ class current_license_user_selector extends user_selector_base {
     }
 
     protected function get_license_user_ids() {
-        global $DB;
+        global $CFG, $DB;
         if (!isset( $this->licenseid) ) {
             return array();
         } else {
@@ -1023,7 +1018,7 @@ class current_license_user_selector extends user_selector_base {
     }
 
     protected function process_license_allocations(&$licenseusers) {
-        global $DB;
+        global $CFG, $DB;
         foreach ($licenseusers as $id => $user) {
             $sql = "SELECT d.shortname from {department} d
                     INNER JOIN {company_users} cu ON cu.departmentid = d.id
@@ -1043,7 +1038,7 @@ class current_license_user_selector extends user_selector_base {
     }
 
     public function find_users($search, $all = false) {
-        global $DB, $USER;
+        global $CFG, $DB, $USER;
 
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
@@ -1071,7 +1066,7 @@ class current_license_user_selector extends user_selector_base {
 
         // Are we dealing with a program?
         if (empty($this->program)) {
-            $maxcount = company_user_selector_base::MAX_USERS_PER_PAGE;
+            $maxcount = $CFG->iomad_max_select_users;
             $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, c.fullname, clu.isusing ';
             $countfields = 'SELECT COUNT(1)';
     
@@ -1090,7 +1085,7 @@ class current_license_user_selector extends user_selector_base {
             $order = ' ORDER BY lastname ASC, firstname ASC';
         } else {
             $licensecourses = $DB->get_records('companylicense_courses', array('licenseid' => $this->licenseid));
-            $maxcount = company_user_selector_base::MAX_USERS_PER_PAGE * count($licensecourses);
+            $maxcount = $CFG->iomad_max_select_users * count($licensecourses);
             $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, clu.isusing ';
             $countfields = 'SELECT COUNT(1)';
     
@@ -1246,7 +1241,7 @@ class current_company_group_user_selector extends company_user_selector_base {
      * @return array
      */
     public function find_users($search) {
-        global $DB;
+        global $CFG, $DB;
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
@@ -1287,7 +1282,7 @@ class current_company_group_user_selector extends company_user_selector_base {
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_users) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -1325,7 +1320,7 @@ class potential_company_group_user_selector extends company_user_selector_base {
      * @return array
      */
     public function find_users($search) {
-        global $DB;
+        global $CFG, $DB;
         $companyrec = $DB->get_record('company', array('id' => $this->companyid));
         $company = new company($this->companyid);
 
@@ -1394,7 +1389,7 @@ class potential_company_group_user_selector extends company_user_selector_base {
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_users) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }

@@ -20,7 +20,6 @@ require_once(dirname(__FILE__) . '/../../../local/course_selector/lib.php');
  * base class for selecting courses of a company
  */
 abstract class company_course_selector_base extends course_selector_base {
-    const MAX_COURSES_PER_PAGE = 200;
 
     protected $companyid;
     protected $hasenrollments = false;
@@ -41,7 +40,7 @@ abstract class company_course_selector_base extends course_selector_base {
     }
 
     protected function process_enrollments(&$courselist) {
-        global $DB;
+        global $CFG, $DB;
         // Locate and annotate any courses that have existing.
         // Enrollments.
         $strhasenrollments = get_string('hasenrollments', 'block_iomad_company_admin');
@@ -112,7 +111,7 @@ class current_company_course_selector extends company_course_selector_base {
     }
 
     public function find_courses($search) {
-        global $DB, $CFG;
+        global $CFG, $DB;
         // By default wherecondition retrieves all courses except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'c');
         $params['companyid'] = $this->companyid;
@@ -189,7 +188,7 @@ class current_company_course_selector extends company_course_selector_base {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params) +
                                      $DB->count_records_sql($countfields . $sharedsql, $params) +
                                      $DB->count_records_sql($countfields . $partialsharedsql, $params);
-            if ($potentialmemberscount > company_course_selector_base::MAX_COURSES_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_courses) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -247,7 +246,7 @@ class all_department_course_selector extends company_course_selector_base {
     }
 
     public function find_courses($search) {
-        global $DB, $CFG;
+        global $CFG, $DB;
         // By default wherecondition retrieves all courses except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'c');
         $params['companyid'] = $this->companyid;
@@ -314,7 +313,7 @@ class all_department_course_selector extends company_course_selector_base {
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > company_course_selector_base::MAX_COURSES_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_courses) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -393,7 +392,7 @@ class potential_company_course_selector extends company_course_selector_base {
     }
 
     public function find_courses($search) {
-        global $DB, $SITE;
+        global $CFG, $DB, $SITE;
         // By default wherecondition retrieves all courses except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'c');
         $params['companyid'] = $this->companyid;
@@ -444,7 +443,7 @@ class potential_company_course_selector extends company_course_selector_base {
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params) +
             $DB->count_records_sql($distinctcountfields . $sqldistinct, $params);
-            if ($potentialmemberscount > company_course_selector_base::MAX_COURSES_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_courses) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -501,7 +500,7 @@ class potential_subdepartment_course_selector extends company_course_selector_ba
     }
 
     public function find_courses($search) {
-        global $DB, $SITE;
+        global $CFG, $DB, $SITE;
         // By default wherecondition retrieves all courses except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'c');
         $params['companyid'] = $this->companyid;
@@ -563,7 +562,7 @@ class potential_subdepartment_course_selector extends company_course_selector_ba
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params) +
             $DB->count_records_sql($distinctcountfields . $sqldistinct, $params);
-            if ($potentialmemberscount > company_course_selector_base::MAX_COURSES_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_courses) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -607,7 +606,7 @@ class any_course_selector extends course_selector_base {
      * @return array
      */
     public function find_courses($search) {
-        global $DB;
+        global $CFG, $DB;
         // By default wherecondition retrieves all courses except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'c');
 
@@ -621,7 +620,7 @@ class any_course_selector extends course_selector_base {
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > company_course_selector_base::MAX_COURSES_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_courses) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -819,7 +818,7 @@ class potential_user_course_selector extends course_selector_base {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params) +
             $DB->count_records_sql($countfields . $sharedsql, $params) +
             $DB->count_records_sql($countfields . $partialsharedsql, $params);
-            if ($potentialmemberscount > company_course_selector_base::MAX_COURSES_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_courses) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -873,7 +872,7 @@ class current_user_license_course_selector extends course_selector_base {
     }
 
     protected function process_license_allocations(&$licensecourses, $userid) {
-        global $DB;
+        global $CFG, $DB;
         foreach ($licensecourses as $id => $course) {
             if ($DB->get_record_sql("SELECT clu.id FROM {companylicense_users} clu
                                      JOIN {companylicense} cl
@@ -919,7 +918,7 @@ class current_user_license_course_selector extends course_selector_base {
         $order = ' ORDER BY c.fullname ASC';
         if (!$this->is_validating()) {
             $availablememberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($availablememberscount > company_course_selector_base::MAX_COURSES_PER_PAGE) {
+            if ($availablememberscount > $CFG->iomad_max_select_courses) {
                 return $this->too_many_results($search, $availablememberscount);
             }
         }
@@ -948,7 +947,7 @@ class potential_user_license_course_selector extends course_selector_base {
      * @return array
      */
     public function __construct($name, $options) {
-        global $DB;
+        global $CFG, $DB;
 
         $this->companyid  = $options['companyid'];
         $this->user = $options['user'];
@@ -1003,7 +1002,7 @@ class potential_user_license_course_selector extends course_selector_base {
         $order = ' ORDER BY c.fullname ASC';
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > company_course_selector_base::MAX_COURSES_PER_PAGE) {
+            if ($potentialmemberscount > $CFG->iomad_max_select_courses) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }

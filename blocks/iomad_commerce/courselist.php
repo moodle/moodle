@@ -25,7 +25,7 @@ $confirm      = optional_param('confirm', '', PARAM_ALPHANUM);   // Md5 confirma
 $sort         = optional_param('sort', 'name', PARAM_ALPHA);
 $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
-$perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per page.
+$perpage      = optional_param('perpage', $CFG->iomad_max_list_courses, PARAM_INT);        // How many per page.
 
 global $DB;
 

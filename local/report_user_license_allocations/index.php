@@ -29,7 +29,7 @@ $sort         = optional_param('sort', 'lastname', PARAM_ALPHA);
 $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 // How many per page.
-$perpage      = optional_param('perpage', 30, PARAM_INT);
+$perpage      = optional_param('perpage', $CFG->iomad_max_list_users, PARAM_INT);
 // Id of user to tweak mnet ACL (requires $access).
 $acl          = optional_param('acl', '0', PARAM_INT);
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
