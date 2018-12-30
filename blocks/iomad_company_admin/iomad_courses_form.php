@@ -36,6 +36,7 @@ $validfor = optional_param('validfor', 0, PARAM_INTEGER);
 $warnexpire = optional_param('warnexpire', 0, PARAM_INTEGER);
 $warncompletion = optional_param('warncompletion', 0, PARAM_INTEGER);
 $notifyperiod = optional_param('notifyperiod', 0, PARAM_INTEGER);
+$expireafter = optional_param('expireafter', 0, PARAM_INTEGER);
 
 $params = array();
 
@@ -215,6 +216,13 @@ if (!empty($update)) {
             }
             $coursedetails['validlength'] = $validfor;
             $DB->update_record('iomad_courses', $coursedetails);
+        } else if ('expireafter' == $update) {
+            // Work out the time in seconds....
+            if ($expireafter < 0) {
+                $expireafter = 0;
+            }
+            $coursedetails['expireafter'] = $expireafter;
+            $DB->update_record('iomad_courses', $coursedetails);
         } else if ('warnexpire' == $update) {
             // Work out the time in seconds....
             if ($warnexpire < 0) {
@@ -303,6 +311,7 @@ $table->head = array (
     get_string('licensed', 'block_iomad_company_admin') . $OUTPUT->help_icon('licensed', 'block_iomad_company_admin'),
     get_string('shared', 'block_iomad_company_admin')  . $OUTPUT->help_icon('shared', 'block_iomad_company_admin'),
     get_string('validfor', 'block_iomad_company_admin') . $OUTPUT->help_icon('validfor', 'block_iomad_company_admin'),
+    get_string('expireafter', 'block_iomad_company_admin') . $OUTPUT->help_icon('expireafter', 'block_iomad_company_admin'),
     get_string('warnexpire', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnexpire', 'block_iomad_company_admin'),
     get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin'),
     get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin')
@@ -359,6 +368,11 @@ foreach ($courses as $course) {
     } else {
         $warnexpire = $iomaddetails->warnexpire;
     }
+    if (empty($iomaddetails->expireafter)) {
+        $expireafter = 0;
+    } else {
+        $expireafter = $iomaddetails->expireafter;
+    }
     if (empty($iomaddetails->warncompletion)) {
         $warncompletion = 0;
     } else {
@@ -376,13 +390,20 @@ foreach ($courses as $course) {
                  <input type="text" name="validfor" id="id_validfor" value="'.$duration.'" size="10"/>
                  <input type="submit" value="' . get_string('submit') . '" />
                  </form>';
-    $expirehtml = '<form action="iomad_courses_form.php" method="get">
-                 <input type="hidden" name="courseid" value="' . $course->id . '" />
-                 <input type="hidden" name="company" value="'.$company.'" />
-                 <input type="hidden" name="update" value="warnexpire" />
-                 <input type="text" name="warnexpire" id="id_warnexpire" value="'.$warnexpire.'" size="10"/>
-                 <input type="submit" value="' . get_string('submit') . '" />
-                 </form>';
+    $warnexpirehtml = '<form action="iomad_courses_form.php" method="get">
+                       <input type="hidden" name="courseid" value="' . $course->id . '" />
+                       <input type="hidden" name="company" value="'.$company.'" />
+                       <input type="hidden" name="update" value="warnexpire" />
+                       <input type="text" name="warnexpire" id="id_warnexpire" value="'.$warnexpire.'" size="10"/>
+                       <input type="submit" value="' . get_string('submit') . '" />
+                       </form>';
+    $expireafterhtml = '<form action="iomad_courses_form.php" method="get">
+                        <input type="hidden" name="courseid" value="' . $course->id . '" />
+                        <input type="hidden" name="company" value="'.$company.'" />
+                        <input type="hidden" name="update" value="expireafter" />
+                        <input type="text" name="expireafter" id="id_expire" value="'.$expireafter.'" size="10"/>
+                        <input type="submit" value="' . get_string('submit') . '" />
+                        </form>';
     $warnhtml = '<form action="iomad_courses_form.php" method="get">
                  <input type="hidden" name="courseid" value="' . $course->id . '" />
                  <input type="hidden" name="company" value="'.$company.'" />
@@ -401,7 +422,12 @@ foreach ($courses as $course) {
     $table->data[] = array ($companyname,
                             "<a href='$courselink'>$course->fullname</a>",
                             $licenseselectoutput,
-                            $sharedselectoutput, $formhtml, $expirehtml, $warnhtml, $notifyhtml);
+                            $sharedselectoutput,
+                            $formhtml,
+                            $expireafterhtml,
+                            $warnhtml,
+                            $warnexpirehtml,
+                            $notifyhtml);
 }
 
 if (!empty($courses)) {
