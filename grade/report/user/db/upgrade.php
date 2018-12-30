@@ -29,9 +29,6 @@
 function xmldb_gradereport_user_upgrade($oldversion) {
     global $CFG;
 
-    // Automatically generated Moodle v3.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 

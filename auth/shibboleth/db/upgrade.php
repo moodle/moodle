@@ -32,9 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_auth_shibboleth_upgrade($oldversion) {
     global $CFG, $DB;
 
-    // Automatically generated Moodle v3.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
     if ($oldversion < 2017020700) {
         // Convert info in config plugins from auth/shibboleth to auth_shibboleth.
         upgrade_fix_config_auth_plugin_names('shibboleth');

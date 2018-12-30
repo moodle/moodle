@@ -34,39 +34,6 @@ function xmldb_assign_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2016100301) {
-
-        // Define table assign_overrides to be created.
-        $table = new xmldb_table('assign_overrides');
-
-        // Adding fields to table assign_overrides.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('assignid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('groupid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-        $table->add_field('allowsubmissionsfromdate', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-        $table->add_field('duedate', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-        $table->add_field('cutoffdate', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-
-        // Adding keys to table assign_overrides.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('assignid', XMLDB_KEY_FOREIGN, array('assignid'), 'assign', array('id'));
-        $table->add_key('groupid', XMLDB_KEY_FOREIGN, array('groupid'), 'groups', array('id'));
-        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
-
-        // Conditionally launch create table for assign_overrides.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        // Assign savepoint reached.
-        upgrade_mod_savepoint(true, 2016100301, 'assign');
-    }
-
-    // Automatically generated Moodle v3.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
     if ($oldversion < 2017021500) {
         // Fix event types of assign events.
         $params = [
@@ -129,6 +96,7 @@ function xmldb_assign_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
+
     if ($oldversion < 2017061200) {
         // Data fix any assign group override event priorities which may have been accidentally nulled due to a bug on the group
         // overrides edit form.
