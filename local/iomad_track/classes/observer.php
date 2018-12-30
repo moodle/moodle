@@ -220,6 +220,39 @@ class observer {
             $DB->update_record('course_completions', $comprec);
         }
 
+        // Is this a duplicate event?
+        if ($DB->get_record('local_iomad_track', array('userid' => $userid, 'courseid' => $courseid, 'timeenrolled' => $comprec->timeenrolled))) {
+            // It is so we don't record it.
+            return true;
+        }
+
+        // Get the rest of the data.
+        $usercompany = \company::by_userid($userid);
+        $companyrec = $DB->get_record('company', array('id' => $usercompany->id));
+        $userrec = $DB->get_record('user', array('id' => $userid));
+        $department = $DB->get_record_sql("SELECT d.* FROM {department} d JOIN {company_users} cu ON (d.id = cu.departmentid) WHERE cu.userid = :userid AND cu.companyid = :companyid", array('userid' => $userid, 'companyid' => $companyrec->id));
+        $courserec = $DB->get_record('course', array('id' => $courseid));
+        if ($DB->get_record('iomad_courses', array('courseid' => $courseid, 'licensed' => 1))) {
+            // Its a licensed course, get the last license.
+            $licenserecs = $DB->get_records_sql("SELECT * FROM {companylicense_users}
+                                                 WHERE userid = :userid AND licensecourseid = :licensecourseid AND issuedate < :issuedate
+                                                 AND licensid IN (SELECT id from {companylicense} WHERE companyid = :companyid)
+                                                 ORDER BY issuedate DESC",
+                                                 array('licensecourseid' => $courseid, 'userid' => $userid, 'companyid' => $companyrec->id, 'issuedate' => $comprec->timecompleted),
+                                                 0,1);
+            $licenserec = array_pop($licenserecs);
+            if ($license = $DB->get_record('companylicense', array('id' => $licenserec->licenseid))) {
+                $licenseid = $license->id;
+                $licensename = $license->name;
+            } else {
+                $licenseid = 0;
+                $licensename = '';
+            }
+        } else {
+            $licenseid = 0;
+            $licensename = '';
+        }
+
         // Record the completion event.
         $completion = new \StdClass();
         $completion->courseid = $courseid;
@@ -232,6 +265,15 @@ class observer {
         } else {
             $completion->finalscore = 0;
         }
+        $completion->coursename = $courserec->fullname;
+        $completion->companyid = $companyrec->id;
+        $completion->companyname = $companyrec->name;
+        $completion->departmentid = $department->id;
+        $completion->departmentname = $department->name;
+        $completion->firstname = $userrec->firstname;
+        $completion->lastname = $userrec->lastname;
+        $completion->licenseid = $licenseid;
+        $completion->licensename = $licensename;
 
         $trackid = $DB->insert_record('local_iomad_track', $completion);
 

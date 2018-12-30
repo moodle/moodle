@@ -81,14 +81,45 @@ require('install.php');
 
 $comprecords = $DB->get_records_sql("select * from {course_completions} where timecompleted is not null and id not in (select cc.id from {course_completions} cc JOIN {local_iomad_track} lit ON (cc.course = lit.courseid AND cc.userid = lit.userid AND cc.timeenrolled = lit.timeenrolled AND cc.timecompleted = lit.timecompleted))");
 foreach ($comprecords as $comprec) {
-    if ($DB->get_record('user', array('id'=> $comprec->userid))) {
+    if ($user = $DB->get_record('user', array('id'=> $comprec->userid))) {
+        $course = $DB->get_record('course', array('id'=>$comprec->course));
+
         // Get the final grade for the course.
-        $graderec = $DB->get_record_sql("SELECT gg.* FROM {grade_grades} gg
-                                         JOIN {grade_items} gi ON (gg.itemid = gi.id
+        if ($graderec = $DB->get_record_sql("SELECT gg.* FROM {grade_grades} gg
+                                             JOIN {grade_items} gi ON (gg.itemid = gi.id
                                                                    AND gi.itemtype = 'course'
                                                                    AND gi.courseid = :courseid)
-                                         WHERE gg.userid = :userid", array('courseid' => $comprec->course,
-                                                                           'userid' => $comprec->userid));
+                                             WHERE gg.userid = :userid", array('courseid' => $comprec->course,
+                                                                               'userid' => $comprec->userid))) {
+            $finalgrade = $graderec->finalgrade;
+        } else {
+            $finalgrade = 0;
+        }
+        $company = company::by_userid($user->id);
+        $companyrec = $DB->get_record('company', array('id' => $company->id));
+        $department = $DB->get_record_sql("SELECT d.* from {department} d JOIN {company_users} cu ON (d.id = cu.departmentid) WHERE cu.companyid = :companyid AND cu.userid = :userid", array('companyid' => $companyrec->id, 'userid' => $user->id));
+
+        if ($DB->get_record('iomad_courses', array('courseid' => $course->id, 'licensed' => 1))) {
+            // Its a licensed course, get the last license.
+            $licenserecs = $DB->get_records_sql("SELECT * FROM {companylicense_users}
+                                                 WHERE userid = :userid AND licensecourseid = :licensecourseid AND issuedate < :issuedate
+                                                 AND licensid IN (SELECT id from {companylicense} WHERE companyid = :companyid)
+                                                 ORDER BY issuedate DESC",
+                                                 array('licensecourseid' => $course->id, 'userid' => $user->id, 'companyid' => $companyrec->id, 'issuedate' => $comprecord->timecompleted),
+                                                 0,1);
+            $licenserec = array_pop($licenserecs);
+            if ($license = $DB->get_record('companylicense', array('id' => $licenserec->licenseid))) {
+                $licenseid = $license->id;
+                $licensename = $license->name;
+            } else {
+                $licenseid = 0;
+                $licensename = '';
+            }
+        } else {
+            $licenseid = 0;
+            $licensename = '';
+        }
+
         // Record the completion event.
         $completion = new \StdClass();
         $completion->courseid = $comprec->course;
@@ -96,12 +127,21 @@ foreach ($comprecords as $comprec) {
         $completion->timeenrolled = $comprec->timeenrolled;
         $completion->timestarted = $comprec->timestarted;
         $completion->timecompleted = $comprec->timecompleted;
-        $completion->finalscore = $graderec->finalgrade;
-if (!empty($completion->finalscore)) {
+        $completion->finalscore = $finalgrade;
+        $completion->courseid = $course->id;
+        $completion->coursename = $course->fullname;
+        $completion->firstname = $user->firstname;
+        $completion->lastname = $user->lastname;
+        $completion->companyid = $companyrec->id;
+        $completion->companyname = $companyrec->name;
+        $completion->departmentid = $department->id;
+        $completion->departmentname = $department->name;
+        $completion->licenseid = $licenseid;
+        $completion->licensename = $licensename;
+
         if ($trackid = $DB->insert_record('local_iomad_track', $completion)) {
-            xmldb_local_iomad_track_record_certificates($comprec->course, $comprec->userid, $trackid);
+            //xmldb_local_iomad_track_record_certificates($comprec->course, $comprec->userid, $trackid);
         }
-}
 
     }
 }

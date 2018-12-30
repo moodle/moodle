@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/iomad_track/db" VERSION="20170808" COMMENT="XMLDB file for Moodle local/iomad_track"
+<XMLDB PATH="local/iomad_track/db" VERSION="20180819" COMMENT="XMLDB file for Moodle local/iomad_track"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -8,11 +8,20 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="id of completed course"/>
+        <FIELD NAME="coursename" TYPE="char" LENGTH="254" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="ID of user completing"/>
+        <FIELD NAME="firstname" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="lastname" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timecompleted" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="Time when course was completed"/>
         <FIELD NAME="timeenrolled" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timestarted" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="finalscore" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="companyid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="companyname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="departmentid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="departmentname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="licenseid" TYPE="int" LENGTH="20" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="licensename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
