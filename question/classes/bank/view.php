@@ -773,9 +773,13 @@ class view {
      * @param array    $addcontexts contexts where the user is allowed to add new questions.
      */
     protected function display_bottom_controls($totalnumber, $recurse, $category, \context $catcontext, array $addcontexts) {
+        global $PAGE;
+
         $caneditall = has_capability('moodle/question:editall', $catcontext);
         $canuseall = has_capability('moodle/question:useall', $catcontext);
         $canmoveall = has_capability('moodle/question:moveall', $catcontext);
+
+        $PAGE->requires->js_call_amd('core_question/qbankmanager', 'init');
 
         echo '<div class="modulespecificbuttonscontainer">';
         if ($caneditall || $canmoveall || $canuseall) {
