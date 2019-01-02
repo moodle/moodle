@@ -35,6 +35,8 @@ class company_edit_form extends company_moodleform {
     protected $companyrecord;
 
     public function __construct($actionurl, $isadding, $companyid, $companyrecord, $firstcompany = false, $parentcompanyid = 0, $child = false) {
+        global $DB;
+        
         $this->isadding = $isadding;
         $this->companyid = $companyid;
         $this->companyrecord = $companyrecord;
@@ -47,6 +49,9 @@ class company_edit_form extends company_moodleform {
         $this->child = $child;
         if (empty($this->companyrecord->theme)) {
             $this->companyrecord->theme = 'iomadboost';
+        }
+        if ($parentcompanyid) {
+            $this->parentcompany = $DB->get_record('company', ['id' => $parentcompanyid], '*', MUST_EXIST);
         }
         parent::__construct($actionurl);
     }
@@ -66,7 +71,11 @@ class company_edit_form extends company_moodleform {
 
         // Then show the fields about where this block appears.
         if ($this->isadding) {
-            $mform->addElement('header', 'header', get_string('addnewcompany', 'block_iomad_company_admin'));
+            if ($this->child) {
+                $mform->addElement('header', 'header', get_string('addnewchildcompany', 'block_iomad_company_admin'));
+            } else {
+                $mform->addElement('header', 'header', get_string('addnewcompany', 'block_iomad_company_admin'));
+            }
         } else {
             $mform->addElement('header', 'header', get_string('editcompany', 'block_iomad_company_admin'));
         }
@@ -624,7 +633,12 @@ if (!$new) {
 }
 
 // Set the url.
-$linkurl = new moodle_url('/blocks/iomad_company_admin/company_edit_form.php');
+$linkurl = new moodle_url('/blocks/iomad_company_admin/company_edit_form.php', [
+    'returnurl' => $returnurl,
+    'companyid' => $companyid,
+    'parentid' => $parentid,
+    'createnew' => $new,
+]);
 
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
@@ -632,9 +646,7 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-// Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
-
 
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
