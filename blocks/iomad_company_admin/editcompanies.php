@@ -33,12 +33,13 @@ $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', $CFG->iomad_max_list_companies, PARAM_INT);
 $companyid      = optional_param('companyid', 0, PARAM_INT);
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
-$name       = optional_param('name', 0, PARAM_CLEAN);
-$city       = optional_param('city', 0, PARAM_CLEAN);
-$country       = optional_param('country', 0, PARAM_CLEAN);
+$name       = optional_param('name', '', PARAM_CLEAN);
+$city       = optional_param('city', '', PARAM_CLEAN);
+$country       = optional_param('country', '', PARAM_CLEAN);
 
 $params = array();
 
+/*
 if ($delete) {
     $params['delete'] = $delete;
 }
@@ -83,7 +84,24 @@ if ($country) {
 }
 if ($companyid) {
     $params['companyid'] = $companyid;
-}
+}*/
+
+$params = [
+    'delete' => $delete,
+    'suspend' => $suspend ? $suspend : $unsuspend,
+    'showsuspended' => $showsuspended,
+    'confirm' => $confirm,
+    'confirmcompany' => $confirmcompany,
+    'sort' => $sort,
+    'dir' => $dir,
+    'page' => $page,
+    'perpage' => $perpage,
+    'search' => $search,
+    'name' => $name,
+    'city' => $city,
+    'country' => $country,
+    'companyid' => $companyid,
+];
 
 $context = context_system::instance();
 
@@ -94,15 +112,17 @@ iomad::require_capability('block/iomad_company_admin:company_add_child', $contex
 // Set the name for the page.
 $linktext = get_string('managecompanies', 'block_iomad_company_admin');
 // Set the url.
-$linkurl = new moodle_url('/blocks/iomad_company_admin/editcompanies.php');
+$linkurl = new moodle_url('/blocks/iomad_company_admin/editcompanies.php', $params);
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, null);
+
 
 // Print the page header.
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
+$output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
@@ -240,7 +260,7 @@ if ($suspend and confirm_sesskey()) {
 echo $OUTPUT->header();
 
 // Display the user filter form.
-$mform->display();
+//$mform->display();
 
 // Carry on with the user listing.
 $columns = array("name", "city", "country");
@@ -318,28 +338,9 @@ if (!empty($companylist)) {
     $companycount = 0;
 }
 
-if ($companycount == 1) {
-    echo $OUTPUT->heading(get_string('companycount', 'block_iomad_company_admin', $companycount));
-} else {
-    echo $OUTPUT->heading(get_string('companycountplural', 'block_iomad_company_admin', $companycount));
-}
-
-$alphabet = explode(',', get_string('alphabet', 'block_iomad_company_admin'));
-$strall = get_string('all');
-
 $baseurl = new moodle_url('editcompanies.php', $params);
-echo $OUTPUT->paging_bar($companycount, $page, $perpage, $baseurl);
 
-flush();
-
-
-if (!$companies) {
-    $match = array();
-    echo $OUTPUT->heading(get_string('nocompanies', 'block_iomad_company_admin'));
-
-    $table = null;
-
-} else {
+if ($companies) {
     
     // set up the table.
     $table = new html_table();
@@ -433,11 +434,19 @@ if (!$companies) {
                             $suspendbutton . ' ' .
                             $ecommercebutton);
     }
+} else {
+    $table = null;
+    $match = [];
 }
 
-if (!empty($table)) {
-    echo html_writer::table($table);
-    echo $OUTPUT->paging_bar($companycount, $page, $perpage, $baseurl);
-}
+// Render template
+$editcompanies = new block_iomad_company_admin\output\editcompanies([
+    'form' => $mform->render(),
+    'table' => empty($table) ? null : html_writer::table($table),
+    'pagingbar' => $output->paging_bar($companycount, $page, $perpage, $baseurl),
+    'companycount' => $companycount,
+    'companycountplural' => $companycount != 1,
+]);
+echo $output->render_editcompanies($editcompanies); 
 
 echo $OUTPUT->footer();

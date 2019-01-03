@@ -434,6 +434,7 @@ $string['movedepartmentcheckfull'] = 'You are moving this department to another 
 $string['newcourse'] = 'New course';
 $string['newuser'] = 'New user';
 $string['nocompanies'] = 'There are no companies - please add a company first';
+$string['nocompaniesfilter'] = 'No companies match your current filter';
 $string['nocompaniesfound'] = 'There are no companies which match your criteria';
 $string['nocompany'] = 'Unallocated courses';
 $string['nocompanyframeworks'] = 'Unallocated competency frameworks';
