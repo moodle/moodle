@@ -22392,3 +22392,6 @@ ul.indented-list {
 .dir-ltr .dir-ltr-hide {
   display: none;
 }
+.font-weight-bold {
+  font-weight: 700 !important;
+}
