@@ -237,3 +237,15 @@ div.iomadlink, div.iomadlinkreports {
     font-family: FontAwesome;
     content: "\f0e4  ";
 }
+
+.btn {
+    border-radius: 0.25rem;
+}
+
+.alert {
+    border-radius: 0.25rem;
+}
+.site-name {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
