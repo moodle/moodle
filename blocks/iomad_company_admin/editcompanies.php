@@ -131,7 +131,7 @@ $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
 
 // Set up the filter form.
-$mform = new iomad_company_filter_form();
+$mform = new block_iomad_company_admin\forms\iomad_company_filter_form();
 $mform->set_data(array('companyid' => $companyid));
 $mform->set_data($params);
 
@@ -153,16 +153,9 @@ if (empty($CFG->loginhttps)) {
 }
 
 if ($suspend and confirm_sesskey()) {
+
     // Suspend a company, after confirmation.
-
-    /* if (!iomad::has_capability('block/iomad_company_admin:suspendcompany', $context)) {
-        print_error('nopermissions', 'error', '', 'delete a user');
-    } */
-
-    if (!$company = $DB->get_record('company', array('id' => $suspend))) {
-        print_error('companynotfound', 'block_iomad_company_admin');
-    }
-
+    $company = $DB->get_record('company', ['id' => $suspend], '*', MUST_EXIST);
     if ($confirm != md5($suspend)) {
         $fullname = $company->name;
         echo $OUTPUT->header();
@@ -177,6 +170,7 @@ if ($suspend and confirm_sesskey()) {
         echo $OUTPUT->footer();
         die;
     } else {
+
         // Suspend the company
         // Create an event for this.  This handles the actual lifting.
         $eventother = array('companyid' => $company->id);
@@ -192,16 +186,9 @@ if ($suspend and confirm_sesskey()) {
         die;
     }
 } else if ($unsuspend and confirm_sesskey()) {
+
     // Unsuspends a selected company, after confirmation.
-
-   /* if (!iomad::has_capability('block/iomad_company_admin:suspendcompany', $context)) {
-        print_error('nopermissions', 'error', '', 'delete a user');
-    } */
-
-    if (!$company = $DB->get_record('company', array('id' => $unsuspend))) {
-        print_error('companynotfound', 'block_iomad_company_admin');
-    }
-
+    $company = $DB->get_record('company', ['id' => $unsuspend], '*', MUST_EXIST);
     if (!empty($company->parentid) && $DB->get_record('company', array('id' => $company->parentid, 'suspended' => 1))) {
         print_error('parentcompanysuspended', 'block_iomad_company_admin');
     }
@@ -237,22 +224,14 @@ if ($suspend and confirm_sesskey()) {
 } else if ($enableecommerce and confirm_sesskey()) {
 
     // Enables ecommerce for a selected company.
-    if (!$company = $DB->get_record('company', array('id' => $enableecommerce))) {
-        print_error('companynotfound', 'block_iomad_company_admin');
-    }
-
-    // Enable ecommerce for the company
+    $company = $DB->get_record('company', ['id' => $enableecommerce], '*', MUST_EXIST);
     $enableecommercecompany = new company($company->id);
     $enableecommercecompany->ecommerce(1);
 
 } else if ($disableecommerce and confirm_sesskey()) {
 
     // Disables ecommerce for a selected company.
-    if (!$company = $DB->get_record('company', array('id' => $disableecommerce))) {
-        print_error('companynotfound', 'block_iomad_company_admin');
-    }
-
-    // Disable ecommerce for the company
+    $company = $DB->get_record('company', ['id' => $disableecommerce], '*', MUST_EXIST);
     $enableecommercecompany = new company($company->id);
     $enableecommercecompany->ecommerce(0);
 }
