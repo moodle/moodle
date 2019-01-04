@@ -41,7 +41,11 @@ class iomad_company_filter_form extends \moodleform {
         $mform->addElement('checkbox', 'showsuspended', get_string('show_suspended_companies', 'local_iomad'));
         $mform->setType('showsuspended', PARAM_INT);
 
-        $this->add_action_buttons(false, get_string('companyfilter', 'local_iomad'));
+        // Action buttons.
+        $buttonarray = array();
+        $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('companyfilter', 'local_iomad'));
+        $buttonarray[] = $mform->createElement('submit', 'resetbutton', get_string('reset'), null, false);
+        $mform->addGroup($buttonarray, 'buttonbar', '', ' ', false);
     }
 }
 

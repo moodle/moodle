@@ -36,6 +36,7 @@ $search = optional_param('search', '', PARAM_CLEAN);// Search string.
 $name = optional_param('name', '', PARAM_CLEAN);
 $city = optional_param('city', '', PARAM_CLEAN);
 $country = optional_param('country', '', PARAM_CLEAN);
+$resetbutton = optional_param('resetbutton', '', PARAM_CLEAN);
 
 $params = [
     'delete' => $delete,
@@ -92,6 +93,11 @@ $strshowallusers = get_string('showallcompanies', 'block_iomad_company_admin');
 $strmanage = get_string('managecompany', 'block_iomad_company_admin');
 $stroverview = get_string('overview', 'local_report_companies');
 $strcreatechild = get_string('createchildcompany', 'block_iomad_company_admin');
+
+// Reset form?
+if ($resetbutton) {
+    redirect(new moodle_url('/blocks/iomad_company_admin/editcompanies.php'));
+}
 
 if ($suspend and confirm_sesskey()) {
 
@@ -260,7 +266,7 @@ if ($companies) {
     // set up the table.
     $table = new html_table();
     $table->head = array ($name, $city, $country, "");
-    $table->align = array ("left", "left", "left", "center");
+    $table->align = array ("left", "left", "left", "left");
     $table->width = "95%";
 
     foreach ($companies as $company) {
@@ -295,7 +301,7 @@ if ($companies) {
                     $linkparams['unsuspend'] = $company->id;
                     $suspendurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
                                                 $linkparams);
-                    $suspendbutton = "<a class='btn btn-primary' href='$suspendurl'>$strunsuspend</a>";
+                    $suspendbutton = "<a class='btn btn-sm btn-warning' href='$suspendurl'>$strunsuspend</a>";
                 }
             }
         } else {
@@ -303,15 +309,15 @@ if ($companies) {
                 $linkparams['suspend'] = $company->id;
                 $suspendurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
                                             $linkparams);
-                $suspendbutton = "<a class='btn btn-primary' href='$suspendurl'>$strsuspend</a>";
+                $suspendbutton = "<a class='btn btn-sm btn-warning' href='$suspendurl'>$strsuspend</a>";
             }
             $manageurl = new moodle_url('/my', array('company' => $company->id));
-            $managebutton = "<a class='btn btn-primary' href='$manageurl'>$strmanage</a>";
+            $managebutton = "<a class='btn btn-sm btn-primary' href='$manageurl'>$strmanage</a>";
 
             if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context)) {
                 $childurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/company_edit_form.php",
                                            array('createnew' => 1, 'parentid' => $company->id));
-                $childbutton = "<a class='btn btn-primary' href='$childurl'>$strcreatechild</a>";
+                $childbutton = "<a class='btn btn-sm btn-primary' href='$childurl'>$strcreatechild</a>";
             }
         }
 
@@ -321,24 +327,26 @@ if ($companies) {
 
                 $ecommerceurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
                                             $linkparams);
-                $ecommercebutton = "<a class='btn btn-primary' href='$ecommerceurl'>$strdisableecommerce</a>";
+                $ecommercebutton = "<a class='btn btn-sm btn-primary' href='$ecommerceurl'>$strdisableecommerce</a>";
             } else {
                 $linkparams['enableecommerce'] = $company->id;
                 $ecommerceurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
                                            $linkparams);
-                $ecommercebutton = "<a class='btn btn-primary' href='$ecommerceurl'>$strenableecommerce</a>";
+                $ecommercebutton = "<a class='btn btn-sm btn-primary' href='$ecommerceurl'>$strenableecommerce</a>";
             }
         }
 
         $overviewurl = new moodle_url($CFG->wwwroot . "/local/report_companies/index.php",
                                     array('companyid' => $company->id));
-        $overviewurl = "<a class='btn btn-primary' href='$overviewurl'>$stroverview</a>";
+        $overviewurl = "<a class='btn btn-sm btn-primary' href='$overviewurl'>$stroverview</a>";
 
         // Is the company suspended?
         if (!empty($company->suspended)) {
             $fullname = $company->name . ' (S)';
+            $table->rowclasses[] = 'table-dark';
         } else {
             $fullname = $company->name;
+            $table->rowclasses[] = '';
         }
         $table->data[] = array ("$fullname",
                             "$company->city",
