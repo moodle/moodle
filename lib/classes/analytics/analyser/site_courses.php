@@ -131,7 +131,8 @@ class site_courses extends \core_analytics\local\analyser\sitewide {
      * @return array array(string, \renderable)
      */
     public function sample_description($sampleid, $contextid, $sampledata) {
-        $description = format_string($sampledata['course']->fullname, true, array('context' => $sampledata['context']));
+        $description = format_string(
+            get_course_display_name_for_list($sampledata['course']), true, array('context' => $sampledata['context']));
         $courseimage = new \pix_icon('i/course', get_string('course'));
         return array($description, $courseimage);
     }
