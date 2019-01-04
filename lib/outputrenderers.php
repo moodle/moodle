@@ -2606,9 +2606,16 @@ class core_renderer extends renderer_base {
 
         $src = $userpicture->get_url($this->page, $this);
 
-        $attributes = array('src'=>$src, 'alt'=>$alt, 'title'=>$alt, 'class'=>$class, 'width'=>$size, 'height'=>$size);
+        $attributes = array('src' => $src, 'class' => $class, 'width' => $size, 'height' => $size);
         if (!$userpicture->visibletoscreenreaders) {
             $attributes['role'] = 'presentation';
+            $alt = '';
+            $attributes['aria-hidden'] = 'true';
+        }
+
+        if (!empty($alt)) {
+            $attributes['alt'] = $alt;
+            $attributes['title'] = $alt;
         }
 
         // get the image html output fisrt
