@@ -18,9 +18,10 @@
  * Control company capabilities.
 */
 
+use block_iomad_company_admin\iomad_company_admin;
+
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once(dirname(__FILE__) . '/lib.php');
-require_once(dirname(__FILE__) . '/locallib.php');
 
 // parameters
 $roleid = optional_param('roleid', 0, PARAM_INT);
