@@ -118,4 +118,32 @@ class iomad_company_admin {
 
         return $filtered_capabilities;
     }
+
+    /**
+     * Rearrange list of companies into parent/child order
+     * @param array $companies
+     * @return array
+     */
+    public static function order_companies_by_parent($companies, &$newlist = [], $parentid = 0) {
+
+        return $companies;
+
+        foreach ($companies as $company) {
+//echo "<pre>COMPANY $company->id</pre>";
+            $companyid = $company->id;
+            if ($company->parentid == $parentid) {
+//echo "<pre>NEWLIST $companyid == $parentid</pre>";
+                $newlist[] = $company;
+                $children = array_filter($companies, function($comp) use ($companyid) {
+                    return $comp->parentid == $companyid;
+                });
+//echo "<pre>COMPANY $company->id PP: $parentid"; var_dump($children); die;
+                foreach ($children as $child) {
+                    self::order_companies_by_parent($companies, $newlist, $child->id);
+                }
+            }
+        }
+
+        return $newlist;
+    }
 }

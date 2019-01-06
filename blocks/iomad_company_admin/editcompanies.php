@@ -252,12 +252,15 @@ if (!empty($companyrecords)) {
 }
 if (!empty($companylist)) {
     $companies = iomad::get_companies_listing($sort, $dir, $page * $perpage, $perpage, '', '', '', $companylist);
+    $companies = block_iomad_company_admin\iomad_company_admin::order_companies_by_parent($companies);
     $allmycompanies = iomad::get_companies_listing($sort, $dir, 0, 0, '', '', '', $companylist);
+    $allmycompanies = block_iomad_company_admin\iomad_company_admin::order_companies_by_parent($allmycompanies);
     $companycount = count($allmycompanies);
 } else {
     $companies = array();
     $companycount = 0;
 }
+//echo "<pre>"; var_dump($companies); die;
 
 $baseurl = new moodle_url('editcompanies.php', $params);
 
