@@ -33,26 +33,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_tool_monitor_upgrade($oldversion) {
     global $CFG, $DB;
 
-    $dbman = $DB->get_manager();
-
-    if ($oldversion < 2016052305) {
-
-        // Define field inactivedate to be added to tool_monitor_subscriptions.
-        $table = new xmldb_table('tool_monitor_subscriptions');
-        $field = new xmldb_field('inactivedate', XMLDB_TYPE_INTEGER, '10', null, true, null, 0, 'lastnotificationsent');
-
-        // Conditionally launch add field inactivedate.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Monitor savepoint reached.
-        upgrade_plugin_savepoint(true, 2016052305, 'tool', 'monitor');
-    }
-
-    // Automatically generated Moodle v3.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
     if ($oldversion < 2017021300) {
 
         // Delete "orphaned" subscriptions.

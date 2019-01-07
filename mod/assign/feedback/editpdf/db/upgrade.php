@@ -34,9 +34,6 @@ function xmldb_assignfeedback_editpdf_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // Automatically generated Moodle v3.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
     if ($oldversion < 2017022700) {
 
         // Get orphaned, duplicate files and delete them.

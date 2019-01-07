@@ -14,7 +14,7 @@ language: php
 php:
     # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
     - 7.2
-    - 7.0
+    - 7.1
 
 addons:
   postgresql: "9.6"
@@ -63,7 +63,7 @@ matrix:
         # Exclude it on all versions except for 7.2
 
         - env: DB=mysqli   TASK=PHPUNIT
-          php: 7.0
+          php: 7.1
 
 cache:
     directories:

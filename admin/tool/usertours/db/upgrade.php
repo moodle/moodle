@@ -35,9 +35,6 @@ use tool_usertours\manager;
 function xmldb_tool_usertours_upgrade($oldversion) {
     global $CFG, $DB;
 
-    // Automatically generated Moodle v3.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 

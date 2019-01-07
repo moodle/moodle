@@ -32,25 +32,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 function xmldb_antivirus_clamav_upgrade($oldversion) {
 
-    if ($oldversion < 2016101700) {
-        // Remove setting that has been deprecated long time ago at MDL-44260.
-        unset_config('quarantinedir', 'antivirus_clamav');
-        upgrade_plugin_savepoint(true, 2016101700, 'antivirus', 'clamav');
-    }
-
-    if ($oldversion < 2016102600) {
-        // Make command line a default running method for now. We depend on this
-        // config variable in antivirus scan running, it should be defined.
-        if (!get_config('antivirus_clamav', 'runningmethod')) {
-            set_config('runningmethod', 'commandline', 'antivirus_clamav');
-        }
-
-        upgrade_plugin_savepoint(true, 2016102600, 'antivirus', 'clamav');
-    }
-
-    // Automatically generated Moodle v3.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 
