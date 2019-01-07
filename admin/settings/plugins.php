@@ -576,14 +576,18 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configduration('searchindextime',
             new lang_string('searchindextime', 'admin'), new lang_string('searchindextime_desc', 'admin'),
             600));
+    $temp->add(new admin_setting_heading('searchcoursesheading', new lang_string('searchablecourses', 'admin'), ''));
     $options = [
         0 => new lang_string('searchallavailablecourses_off', 'admin'),
         1 => new lang_string('searchallavailablecourses_on', 'admin')
     ];
     $temp->add(new admin_setting_configselect('searchallavailablecourses',
             new lang_string('searchallavailablecourses', 'admin'),
-            new lang_string('searchallavailablecourses_desc', 'admin'),
+            new lang_string('searchallavailablecoursesdesc', 'admin'),
             0, $options));
+    $temp->add(new admin_setting_configcheckbox('searchincludeallcourses',
+        new lang_string('searchincludeallcourses', 'admin'), new lang_string('searchincludeallcourses_desc', 'admin'),
+        0));
 
     // Search display options.
     $temp->add(new admin_setting_heading('searchdisplay', new lang_string('searchdisplay', 'admin'), ''));

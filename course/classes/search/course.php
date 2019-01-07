@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Search area for Moodle courses I can access.
+ * Search area for Moodle courses.
  *
  * @package    core_course
  * @copyright  2016 Skylar Kelty <S.Kelty@kent.ac.uk>
@@ -26,13 +26,13 @@ namespace core_course\search;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Search area for Moodle courses I can access.
+ * Search area for Moodle courses.
  *
  * @package    core_course
  * @copyright  2016 Skylar Kelty <S.Kelty@kent.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mycourse extends \core_search\base {
+class course extends \core_search\base {
 
     /**
      * The context levels the search implementation is working on.
@@ -112,9 +112,13 @@ class mycourse extends \core_search\base {
         if (!$course) {
             return \core_search\manager::ACCESS_DELETED;
         }
-        if (can_access_course($course)) {
+
+        $coursecontext = \context_course::instance($course->id);
+
+        if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
             return \core_search\manager::ACCESS_GRANTED;
         }
+
         return \core_search\manager::ACCESS_DENIED;
     }
 

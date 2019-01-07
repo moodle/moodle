@@ -586,6 +586,33 @@ class manager {
     }
 
     /**
+     * Parse a search area id and get plugin name and config name prefix from it.
+     *
+     * @param string $areaid Search area id.
+     * @return array Where the first element is a plugin name and the second is config names prefix.
+     */
+    public static function parse_areaid($areaid) {
+        $parts = self::extract_areaid_parts($areaid);
+
+        if (empty($parts[1])) {
+            throw new \coding_exception('Trying to parse invalid search area id ' . $areaid);
+        }
+
+        $component = $parts[0];
+        $area = $parts[1];
+
+        if (strpos($component, 'core') === 0) {
+            $plugin = 'core_search';
+            $configprefix = str_replace('-', '_', $areaid);
+        } else {
+            $plugin = $component;
+            $configprefix = 'search_' . $area;
+        }
+
+        return [$plugin, $configprefix];
+    }
+
+    /**
      * Returns information about the areas which the user can access.
      *
      * The returned value is a stdClass object with the following fields:
@@ -660,44 +687,34 @@ class manager {
         }
 
         if (is_siteadmin()) {
-            // Admins have access to all courses regardless of enrolment.
-            if ($limitcourseids) {
-                list ($coursesql, $courseparams) = $DB->get_in_or_equal($limitcourseids);
-                $coursesql = 'id ' . $coursesql;
-            } else {
-                $coursesql = '';
-                $courseparams = [];
-            }
-            // Get courses using the same list of fields from enrol_get_my_courses.
-            $courses = $DB->get_records_select('course', $coursesql, $courseparams, '',
-                    'id, category, sortorder, shortname, fullname, idnumber, startdate, visible, ' .
-                    'groupmode, groupmodeforce, cacherev');
+            $allcourses = $this->get_all_courses($limitcourseids);
         } else {
-            // Get the courses where the current user has access.
-            $courses = enrol_get_my_courses(array('id', 'cacherev'), 'id', 0, [],
-                    (bool)get_config('core', 'searchallavailablecourses'));
+            $allcourses = $mycourses = $this->get_my_courses((bool)get_config('core', 'searchallavailablecourses'));
+
+            if (self::include_all_courses()) {
+                $allcourses = $this->get_all_courses($limitcourseids);
+            }
         }
 
         if (empty($limitcourseids) || in_array(SITEID, $limitcourseids)) {
-            $courses[SITEID] = get_course(SITEID);
+            $allcourses[SITEID] = get_course(SITEID);
+            if (isset($mycourses)) {
+                $mycourses[SITEID] = get_course(SITEID);
+            }
         }
 
         // Keep a list of included course context ids (needed for the block calculation below).
         $coursecontextids = [];
         $modulecms = [];
 
-        foreach ($courses as $course) {
+        foreach ($allcourses as $course) {
             if (!empty($limitcourseids) && !in_array($course->id, $limitcourseids)) {
                 // Skip non-included courses.
                 continue;
             }
 
             $coursecontext = \context_course::instance($course->id);
-            $coursecontextids[] = $coursecontext->id;
             $hasgrouprestrictions = false;
-
-            // Info about the course modules.
-            $modinfo = get_fast_modinfo($course);
 
             if (!empty($areasbylevel[CONTEXT_COURSE]) &&
                     (!$limitcontextids || in_array($coursecontext->id, $limitcontextids))) {
@@ -708,6 +725,16 @@ class manager {
                     }
                 }
             }
+
+            // Skip module context if a user can't access related course.
+            if (isset($mycourses) && !key_exists($course->id, $mycourses)) {
+                continue;
+            }
+
+            $coursecontextids[] = $coursecontext->id;
+
+            // Info about the course modules.
+            $modinfo = get_fast_modinfo($course);
 
             if (!empty($areasbylevel[CONTEXT_MODULE])) {
                 // Add the module contexts the user can view (cm_info->uservisible).
@@ -962,10 +989,7 @@ class manager {
             }
         }
 
-        $limitcourseids = false;
-        if (!empty($formdata->courseids)) {
-            $limitcourseids = $formdata->courseids;
-        }
+        $limitcourseids = $this->build_limitcourseids($formdata);
 
         $limitcontextids = false;
         if (!empty($formdata->contextids)) {
@@ -991,6 +1015,31 @@ class manager {
         }
 
         return $docs;
+    }
+
+    /**
+     * Build a list of course ids to limit the search based on submitted form data.
+     *
+     * @param \stdClass $formdata Submitted search form data.
+     *
+     * @return array|bool
+     */
+    protected function build_limitcourseids(\stdClass $formdata) {
+        $limitcourseids = false;
+
+        if (!empty($formdata->mycoursesonly)) {
+            $limitcourseids = array_keys($this->get_my_courses(false));
+        }
+
+        if (!empty($formdata->courseids)) {
+            if (empty($limitcourseids)) {
+                $limitcourseids = $formdata->courseids;
+            } else {
+                $limitcourseids = array_intersect($limitcourseids, $formdata->courseids);
+            }
+        }
+
+        return $limitcourseids;
     }
 
     /**
@@ -1672,4 +1721,76 @@ class manager {
 
         return $default;
     }
+
+    /**
+     * Get a list of all courses limited by ids if required.
+     *
+     * @param array|false $limitcourseids An array of course ids to limit the search to. False for no limiting.
+     * @return array
+     */
+    protected function get_all_courses($limitcourseids) {
+        global $DB;
+
+        if ($limitcourseids) {
+            list ($coursesql, $courseparams) = $DB->get_in_or_equal($limitcourseids);
+            $coursesql = 'id ' . $coursesql;
+        } else {
+            $coursesql = '';
+            $courseparams = [];
+        }
+
+        // Get courses using the same list of fields from enrol_get_my_courses.
+        return $DB->get_records_select('course', $coursesql, $courseparams, '',
+            'id, category, sortorder, shortname, fullname, idnumber, startdate, visible, ' .
+            'groupmode, groupmodeforce, cacherev');
+    }
+
+    /**
+     * Get a list of courses as user can access.
+     *
+     * @param bool $allaccessible Include courses user is not enrolled in, but can access.
+     * @return array
+     */
+    protected function get_my_courses($allaccessible) {
+        return enrol_get_my_courses(array('id', 'cacherev'), 'id', 0, [], $allaccessible);
+    }
+
+    /**
+     * Check if search all courses setting is enabled.
+     *
+     * @return bool
+     */
+    public static function include_all_courses() {
+        return !empty(get_config('core', 'searchincludeallcourses'));
+    }
+
+    /**
+     * Cleans up non existing search area.
+     *
+     * 1. Remove all configs from {config_plugins} table.
+     * 2. Delete all related indexed documents.
+     *
+     * @param string $areaid Search area id.
+     */
+    public static function clean_up_non_existing_area($areaid) {
+        global $DB;
+
+        if (!empty(self::get_search_area($areaid))) {
+            throw new \coding_exception("Area $areaid exists. Please use appropriate search area class to manipulate the data.");
+        }
+
+        $parts = self::parse_areaid($areaid);
+
+        $plugin = $parts[0];
+        $configprefix = $parts[1];
+
+        foreach (base::get_settingnames() as $settingname) {
+            $name = $configprefix. $settingname;
+            $DB->delete_records('config_plugins', ['name' => $name, 'plugin' => $plugin]);
+        }
+
+        $engine = self::instance()->get_engine();
+        $engine->delete($areaid);
+    }
+
 }

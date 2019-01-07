@@ -2736,5 +2736,22 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019021500.02);
     }
 
+    if ($oldversion < 2019022500.00) {
+        // Create adhoc task to delete renamed My Course search area (ID core_course-mycourse).
+        $record = new \stdClass();
+        $record->classname = '\core\task\clean_up_deleted_search_area_task';
+        $record->component = 'core';
+
+        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
+        $nextruntime = time() - 1;
+        $record->nextruntime = $nextruntime;
+        $record->customdata = json_encode('core_course-mycourse');
+
+        $DB->insert_record('task_adhoc', $record);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019022500.00);
+    }
+
     return true;
 }
