@@ -213,25 +213,32 @@ class provider implements
               JOIN {context} ctx
                 ON ctx.instanceid = gi.courseid
                AND ctx.contextlevel = :courselevel
-         LEFT JOIN {grade_grades} gg
+              JOIN {grade_grades} gg
                 ON gg.itemid = gi.id
-               AND (gg.userid = :userid1 OR gg.usermodified = :userid2)
-         LEFT JOIN {grade_grades_history} ggh
+             WHERE gg.userid = :userid1 OR gg.usermodified = :userid2";
+        $params = [
+            'courselevel' => CONTEXT_COURSE,
+            'userid1' => $userid,
+            'userid2' => $userid
+        ];
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {grade_items} gi
+              JOIN {context} ctx
+                ON ctx.instanceid = gi.courseid
+               AND ctx.contextlevel = :courselevel
+              JOIN {grade_grades_history} ggh
                 ON ggh.itemid = gi.id
-               AND (
-                   ggh.userid = :userid3
-                OR ggh.loggeduser = :userid4
-                OR ggh.usermodified = :userid5
-            )
-             WHERE gg.id IS NOT NULL
-                OR ggh.id IS NOT NULL";
+             WHERE ggh.userid = :userid1
+                OR ggh.loggeduser = :userid2
+                OR ggh.usermodified = :userid3";
         $params = [
             'courselevel' => CONTEXT_COURSE,
             'userid1' => $userid,
             'userid2' => $userid,
-            'userid3' => $userid,
-            'userid4' => $userid,
-            'userid5' => $userid,
+            'userid3' => $userid
         ];
         $contextlist->add_from_sql($sql, $params);
 

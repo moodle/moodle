@@ -32,7 +32,7 @@
 }}
 <a href="#previous" data-action="previous-user">{{{larrow}}}</a>
     <span data-region="input-field">
-        <select data-action="change-user" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}"></select>
+        <select data-action="change-user" data-currentuserid="{{currentuserid}}" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}"></select>
     </span>
 <a href="#next" data-action="next-user">{{{rarrow}}}</a>
 
@@ -44,12 +44,42 @@
     </small>
 </span>
 
-<span data-region="configure-filters" id="filter-configuration-{{uniqid}}" class="card card-small">
+<span data-region="configure-filters" id="filter-configuration-{{uniqid}}" class="card card-large p-2">
     <form>
-        <label><input type="checkbox" name="filter_submitted">{{#str}}filtersubmitted, mod_assign{{/str}}</label>
-        <label><input type="checkbox" name="filter_notsubmitted">{{#str}}filternotsubmitted, mod_assign{{/str}}</label>
-        <label><input type="checkbox" name="filter_requiregrading">{{#str}}filterrequiregrading, mod_assign{{/str}}</label>
-        <label><input type="checkbox" name="filter_grantedextension">{{#str}}filtergrantedextension, mod_assign{{/str}}</label>
+        <span class="row px-3 py-1">
+            <label class="text-right w-25 p-2 m-0" for="filter-general-{{uniqid}}">
+                {{#str}}filter, mod_assign{{/str}}
+            </label>
+            <select name="filter" class="custom-select w-50" id="filter-general-{{uniqid}}">
+            {{#filters}}
+                <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
+            {{/filters}}
+            </select>
+        </span>
+        {{#hasmarkingallocation}}
+        <span class="row px-3 py-1">
+            <label class="text-right w-25 p-2 m-0" for="filter-marker-{{uniqid}}">
+                {{#str}}markerfilter, mod_assign{{/str}}
+            </label>
+            <select name="markerfilter" class="custom-select w-50" id="filter-marker-{{uniqid}}">
+            {{#markingallocationfilters}}
+                <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
+            {{/markingallocationfilters}}
+            </select>
+        </span>
+        {{/hasmarkingallocation}}
+        {{#hasmarkingworkflow}}
+        <span class="row px-3 py-1">
+            <label class="text-right w-25 p-2 m-0" for="filter-workflow-{{uniqid}}">
+                {{#str}}workflowfilter, mod_assign{{/str}}
+            </label>
+            <select name="workflowfilter" class="custom-select w-50" id="filter-workflow-{{uniqid}}">
+            {{#markingworkflowfilters}}
+                <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
+            {{/markingworkflowfilters}}
+            </select>
+        </span>
+        {{/hasmarkingworkflow}}
     </form>
 </span>
 

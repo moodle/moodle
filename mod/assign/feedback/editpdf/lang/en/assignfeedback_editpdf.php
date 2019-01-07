@@ -72,6 +72,7 @@ $string['output'] = 'Output:';
 $string['pagenumber'] = 'Page {$a}';
 $string['pagexofy'] = 'Page {$a->page} of {$a->total}';
 $string['pen'] = 'Pen';
+$string['partialwarning'] = 'Some of the files in this submission can only be accessed by direct download.';
 $string['pluginname'] = 'Annotate PDF';
 $string['privacy:metadata:colourpurpose'] = 'Colour of the comment or annotation';
 $string['privacy:metadata:conversionpurpose'] = 'Files are converted to PDFs to allow for annotations.';

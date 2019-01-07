@@ -18,8 +18,8 @@ Feature: A teacher can duplicate questions in the question bank
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype | name                       | questiontext                  |
-      | Test questions   | essay | Test question to be copied | Write about whatever you want |
+      | questioncategory | qtype | name                       | questiontext                  | idnumber |
+      | Test questions   | essay | Test question to be copied | Write about whatever you want | qid      |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Question bank > Questions" in current page administration

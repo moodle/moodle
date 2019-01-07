@@ -252,6 +252,9 @@ div#dock {
             margin-top: 1rem;
         }
     }
+    .fitem .felement .custom-select {
+        align-self: flex-start;
+    }
 }
 .path-mod-lesson .generaltable td {
     vertical-align: middle;
@@ -639,8 +642,8 @@ $popout-header-height: 4rem;
 }
 
 .assignfeedback_editpdf_widget .label {
-    @extend .tag;
-    @extend .tag-info;
+    @extend .alert;
+    @extend .alert-info;
 }
 
 .assignfeedback_editpdf_menu {

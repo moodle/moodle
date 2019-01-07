@@ -45,6 +45,11 @@ class combined_document {
     const STATUS_READY = 1;
 
     /**
+     * Status value representing all documents are ready to be combined as are supported.
+     */
+    const STATUS_READY_PARTIAL = 3;
+
+    /**
      * Status value representing a successful conversion.
      */
     const STATUS_COMPLETE = 2;
@@ -76,6 +81,9 @@ class combined_document {
 
     /**
      * Check the current status of the document combination.
+     * Note that the combined document may not contain all the source files if some of the
+     * source files were not able to be converted. An example is an audio file with a pdf cover sheet. Only
+     * the cover sheet will be included in the combined document.
      *
      * @return  int
      */
@@ -97,6 +105,7 @@ class combined_document {
         }
 
         $pending = false;
+        $partial = false;
         foreach ($this->sourcefiles as $file) {
             // The combined file has not yet been generated.
             // Check the status of each source file.
@@ -108,14 +117,19 @@ class combined_document {
                         $pending = true;
                         break;
 
+                    // There are 4 status flags, so the only remaining one is complete which is fine.
                     case \core_files\conversion::STATUS_FAILED:
-                        return self::STATUS_FAILED;
+                        $partial = true;
+                        break;
                 }
             }
         }
         if ($pending) {
             return self::STATUS_PENDING_INPUT;
         } else {
+            if ($partial) {
+                return self::STATUS_READY_PARTIAL;
+            }
             return self::STATUS_READY;
         }
     }
@@ -129,6 +143,20 @@ class combined_document {
         $this->combinedfile = $file;
 
         return $this;
+    }
+
+    /**
+     * Return true of the combined file contained only some of the submission files.
+     *
+     * @return  boolean
+     */
+    public function is_partial_conversion() {
+        $combinedfile = $this->get_combined_file();
+        if (empty($combinedfile)) {
+            return false;
+        }
+        $filearea = $combinedfile->get_filearea();
+        return $filearea == document_services::PARTIAL_PDF_FILEAREA;
     }
 
     /**
@@ -210,11 +238,12 @@ class combined_document {
         global $CFG;
 
         $currentstatus = $this->get_status();
+        $readystatuslist = [self::STATUS_READY, self::STATUS_READY_PARTIAL];
         if ($currentstatus === self::STATUS_FAILED) {
             $this->store_empty_document($contextid, $itemid);
 
             return $this;
-        } else if ($currentstatus !== self::STATUS_READY) {
+        } else if (!in_array($currentstatus, $readystatuslist)) {
             // The document is either:
             // * already combined; or
             // * pending input being fully converted; or
@@ -235,7 +264,10 @@ class combined_document {
             // Note: We drop non-compatible files.
             $compatiblepdf = false;
             if (is_a($file, \core_files\conversion::class)) {
-                $compatiblepdf = pdf::ensure_pdf_compatible($file->get_destfile());
+                $status = $file->get('status');
+                if ($status == \core_files\conversion::STATUS_COMPLETE) {
+                    $compatiblepdf = pdf::ensure_pdf_compatible($file->get_destfile());
+                }
             } else {
                 $compatiblepdf = pdf::ensure_pdf_compatible($file);
             }
@@ -270,7 +302,7 @@ class combined_document {
         }
 
         // Store the newly created file as a stored_file.
-        $this->store_combined_file($tmpfile, $contextid, $itemid);
+        $this->store_combined_file($tmpfile, $contextid, $itemid, ($currentstatus == self::STATUS_READY_PARTIAL));
 
         // Note the verified page count.
         $this->pagecount = $verifypagecount;
@@ -295,11 +327,12 @@ class combined_document {
      * @param   string $tmpfile The path to the file on disk to be stored.
      * @param   int $contextid The contextid for the file to be stored under
      * @param   int $itemid The itemid for the file to be stored under
+     * @param   boolean $partial The combined pdf contains only some of the source files.
      * @return  $this
      */
-    protected function store_combined_file($tmpfile, $contextid, $itemid) {
+    protected function store_combined_file($tmpfile, $contextid, $itemid, $partial = false) {
         // Store the file.
-        $record = $this->get_stored_file_record($contextid, $itemid);
+        $record = $this->get_stored_file_record($contextid, $itemid, $partial);
         $fs = get_file_storage();
 
         // Delete existing files first.
@@ -349,12 +382,14 @@ class combined_document {
             return $this->pagecount;
         }
 
-        if ($this->get_status() === self::STATUS_FAILED) {
+        $status = $this->get_status();
+
+        if ($status === self::STATUS_FAILED) {
             // The empty document will be returned.
             return 1;
         }
 
-        if ($this->get_status() !== self::STATUS_COMPLETE) {
+        if ($status !== self::STATUS_COMPLETE) {
             // No pages yet.
             return 0;
         }
@@ -391,13 +426,18 @@ class combined_document {
      *
      * @param   int $contextid The contextid for the file to be stored under
      * @param   int $itemid The itemid for the file to be stored under
+     * @param   boolean $partial The combined file contains only some of the source files.
      * @return  stdClass
      */
-    protected function get_stored_file_record($contextid, $itemid) {
+    protected function get_stored_file_record($contextid, $itemid, $partial = false) {
+        $filearea = document_services::COMBINED_PDF_FILEAREA;
+        if ($partial) {
+            $filearea = document_services::PARTIAL_PDF_FILEAREA;
+        }
         return (object) [
             'contextid' => $contextid,
             'component' => 'assignfeedback_editpdf',
-            'filearea' => document_services::COMBINED_PDF_FILEAREA,
+            'filearea' => $filearea,
             'itemid' => $itemid,
             'filepath' => '/',
             'filename' => document_services::COMBINED_PDF_FILENAME,

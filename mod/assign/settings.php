@@ -72,6 +72,26 @@ if ($ADMIN->fulltree) {
     $setting->set_force_ltr(false);
     $settings->add($setting);
 
+    $name = new lang_string('submissionstatementteamsubmission', 'mod_assign');
+    $description = new lang_string('submissionstatement_help', 'mod_assign');
+    $default = get_string('submissionstatementteamsubmissiondefault', 'mod_assign');
+    $setting = new admin_setting_configtextarea('assign/submissionstatementteamsubmission',
+        $name,
+        $description,
+        $default);
+    $setting->set_force_ltr(false);
+    $settings->add($setting);
+
+    $name = new lang_string('submissionstatementteamsubmissionallsubmit', 'mod_assign');
+    $description = new lang_string('submissionstatement_help', 'mod_assign');
+    $default = get_string('submissionstatementteamsubmissionallsubmitdefault', 'mod_assign');
+    $setting = new admin_setting_configtextarea('assign/submissionstatementteamsubmissionallsubmit',
+        $name,
+        $description,
+        $default);
+    $setting->set_force_ltr(false);
+    $settings->add($setting);
+
     $name = new lang_string('maxperpage', 'mod_assign');
     $options = array(
         -1 => get_string('unlimitedpages', 'mod_assign'),
@@ -263,6 +283,16 @@ if ($ADMIN->fulltree) {
     $name = new lang_string('blindmarking', 'mod_assign');
     $description = new lang_string('blindmarking_help', 'mod_assign');
     $setting = new admin_setting_configcheckbox('assign/blindmarking',
+                                                    $name,
+                                                    $description,
+                                                    0);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    $name = new lang_string('hidegrader', 'mod_assign');
+    $description = new lang_string('hidegrader_help', 'mod_assign');
+    $setting = new admin_setting_configcheckbox('assign/hidegrader',
                                                     $name,
                                                     $description,
                                                     0);

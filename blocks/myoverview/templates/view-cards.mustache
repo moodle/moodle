@@ -28,7 +28,8 @@
                 "courseimage": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
                 "fullname": "course 3",
                 "hasprogress": true,
-                "progress": 10
+                "progress": 10,
+                "coursecategory": "Miscellaneous"
             }
         ]
     }
@@ -50,4 +51,13 @@
             {{#shortentext}}50, {{{fullname}}} {{/shortentext}}
         </span>
     {{/coursename}}
+    {{$coursecategory}}
+        <span class="sr-only">
+            {{#str}}aria:coursecategory, core_course{{/str}}
+        </span>
+        <div>{{{coursecategory}}}</div>
+    {{/coursecategory}}
+    {{$divider}}
+        <div class="pl-1 pr-1">|</div>
+    {{/divider}}
 {{/ core_course/coursecards }}

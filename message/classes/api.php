@@ -309,7 +309,7 @@ class api {
         $excludeusers = array($userid, $CFG->siteguest);
         list($exclude, $excludeparams) = $DB->get_in_or_equal($excludeusers, SQL_PARAMS_NAMED, 'param', false);
 
-        $params = array('search' => '%' . $search . '%', 'userid1' => $userid, 'userid2' => $userid);
+        $params = array('search' => '%' . $DB->sql_like_escape($search) . '%', 'userid1' => $userid, 'userid2' => $userid);
 
         // Ok, let's search for contacts first.
         $sql = "SELECT u.id
@@ -444,7 +444,9 @@ class api {
      * @throws \dml_exception
      */
     protected static function get_linked_conversation_extra_fields(array $conversations) : array {
-        global $DB;
+        global $DB, $PAGE;
+
+        $renderer = $PAGE->get_renderer('core');
 
         $linkedconversations = [];
         foreach ($conversations as $conversation) {
@@ -476,7 +478,7 @@ class api {
                     $extrafields[$convid]['subname'] = format_string($courseinfo[$groupid]->courseshortname);
 
                     // Imageurl.
-                    $extrafields[$convid]['imageurl'] = '';
+                    $extrafields[$convid]['imageurl'] = $renderer->image_url('g/g1')->out(false); // default image.
                     if ($url = get_group_picture_url($group, $group->courseid, true)) {
                         $extrafields[$convid]['imageurl'] = $url->out(false);
                     }

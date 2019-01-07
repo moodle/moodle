@@ -192,13 +192,6 @@ class block_navigation extends block_base {
         if (!empty($this->config->expansionlimit)) {
             $expansionlimit = $this->config->expansionlimit;
         }
-        $arguments = array(
-            'id'             => $this->instance->id,
-            'instance'       => $this->instance->id,
-            'candock'        => $this->instance_can_be_docked(),
-            'courselimit'    => $limit,
-            'expansionlimit' => $expansionlimit
-        );
 
         $options = array();
         $options['linkcategories'] = (!empty($this->config->linkcategories) && $this->config->linkcategories == 'yes');

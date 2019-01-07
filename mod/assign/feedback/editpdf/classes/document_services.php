@@ -43,6 +43,8 @@ class document_services {
     const FINAL_PDF_FILEAREA = 'download';
     /** File area for combined pdf */
     const COMBINED_PDF_FILEAREA = 'combined';
+    /** File area for partial combined pdf */
+    const PARTIAL_PDF_FILEAREA = 'partial';
     /** File area for importing html */
     const IMPORT_HTML_FILEAREA = 'importhtml';
     /** File area for page images */
@@ -262,15 +264,23 @@ EOD;
             $submission = $assignment->get_user_submission($userid, false, $attemptnumber);
         }
 
+
         $contextid = $assignment->get_context()->id;
         $component = 'assignfeedback_editpdf';
         $filearea = self::COMBINED_PDF_FILEAREA;
+        $partialfilearea = self::PARTIAL_PDF_FILEAREA;
         $itemid = $grade->id;
         $filepath = '/';
         $filename = self::COMBINED_PDF_FILENAME;
         $fs = get_file_storage();
 
-        $combinedpdf = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename);
+        $partialpdf = $fs->get_file($contextid, $component, $partialfilearea, $itemid, $filepath, $filename);
+        if (!empty($partialpdf)) {
+            $combinedpdf = $partialpdf;
+        } else {
+            $combinedpdf = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename);
+        }
+
         if ($combinedpdf && $submission) {
             if ($combinedpdf->get_timemodified() < $submission->timemodified) {
                 // The submission has been updated since the PDF was generated.
@@ -382,6 +392,7 @@ EOD;
 
         $tmpdir = \make_temp_directory('assignfeedback_editpdf/pageimages/' . self::hash($assignment, $userid, $attemptnumber));
         $combined = $tmpdir . '/' . self::COMBINED_PDF_FILENAME;
+
         $document->get_combined_file()->copy_content_to($combined); // Copy the file.
 
         $pdf = new pdf();

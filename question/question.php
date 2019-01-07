@@ -178,6 +178,7 @@ if ($id) {
     if ($makecopy) {
         // If we are duplicating a question, add some indication to the question name.
         $question->name = get_string('questionnamecopy', 'question', $question->name);
+        $question->idnumber = null;
         $question->beingcopied = true;
     }
 

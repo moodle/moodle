@@ -131,7 +131,7 @@ class mod_assign_mod_form extends moodleform_mod {
         $options += array_combine(range(1, 30), range(1, 30));
         $mform->addElement('select', 'maxattempts', get_string('maxattempts', 'mod_assign'), $options);
         $mform->addHelpButton('maxattempts', 'maxattempts', 'assign');
-        $mform->disabledIf('maxattempts', 'attemptreopenmethod', 'eq', ASSIGN_ATTEMPT_REOPEN_METHOD_NONE);
+        $mform->hideIf('maxattempts', 'attemptreopenmethod', 'eq', ASSIGN_ATTEMPT_REOPEN_METHOD_NONE);
 
         $mform->addElement('header', 'groupsubmissionsettings', get_string('groupsubmissionsettings', 'assign'));
 
@@ -200,6 +200,10 @@ class mod_assign_mod_form extends moodleform_mod {
             $mform->freeze('blindmarking');
         }
 
+        $name = get_string('hidegrader', 'assign');
+        $mform->addElement('selectyesno', 'hidegrader', $name);
+        $mform->addHelpButton('hidegrader', 'hidegrader', 'assign');
+
         $name = get_string('markingworkflow', 'assign');
         $mform->addElement('selectyesno', 'markingworkflow', $name);
         $mform->addHelpButton('markingworkflow', 'markingworkflow', 'assign');
@@ -207,7 +211,7 @@ class mod_assign_mod_form extends moodleform_mod {
         $name = get_string('markingallocation', 'assign');
         $mform->addElement('selectyesno', 'markingallocation', $name);
         $mform->addHelpButton('markingallocation', 'markingallocation', 'assign');
-        $mform->disabledIf('markingallocation', 'markingworkflow', 'eq', 0);
+        $mform->hideIf('markingallocation', 'markingworkflow', 'eq', 0);
 
         $this->standard_coursemodule_elements();
         $this->apply_admin_defaults();

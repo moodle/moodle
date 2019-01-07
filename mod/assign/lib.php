@@ -2052,3 +2052,29 @@ function mod_assign_core_calendar_event_timestart_updated(\calendar_event $event
         $event->trigger();
     }
 }
+
+/**
+ * Return a list of all the user preferences used by mod_assign.
+ *
+ * @return array
+ */
+function mod_assign_user_preferences() {
+    $preferences = array();
+    $preferences['assign_filter'] = array(
+        'type' => PARAM_ALPHA,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => ''
+    );
+    $preferences['assign_workflowfilter'] = array(
+        'type' => PARAM_ALPHA,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => ''
+    );
+    $preferences['assign_markerfilter'] = array(
+        'type' => PARAM_ALPHANUMEXT,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => ''
+    );
+
+    return $preferences;
+}
