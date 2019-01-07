@@ -1644,6 +1644,37 @@ class core_questionlib_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests that question_has_capability_on does not throw exception on broken questions.
+     */
+    public function test_question_has_capability_on_broken_question() {
+        global $DB;
+
+        // Create the test data.
+        $generator = $this->getDataGenerator();
+        $questiongenerator = $generator->get_plugin_generator('core_question');
+
+        $category = $generator->create_category();
+        $context = context_coursecat::instance($category->id);
+        $questioncat = $questiongenerator->create_question_category([
+            'contextid' => $context->id,
+        ]);
+
+        // Create a cloze question.
+        $question = $questiongenerator->create_question('multianswer', null, [
+            'category' => $questioncat->id,
+        ]);
+        // Now, break the question.
+        $DB->delete_records('question_multianswer', ['question' => $question->id]);
+
+        $this->setAdminUser();
+
+        $result = question_has_capability_on($question->id, 'tag');
+        $this->assertTrue($result);
+
+        $this->assertDebuggingCalled();
+    }
+
+    /**
      * Tests for the deprecated question_has_capability_on function when passing a stdClass as parameter.
      *
      * @dataProvider question_capability_on_question_provider
