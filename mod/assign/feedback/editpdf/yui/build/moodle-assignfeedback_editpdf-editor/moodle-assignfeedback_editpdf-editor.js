@@ -4793,7 +4793,7 @@ EDITOR.prototype = {
     /**
      * Calculate degree to rotate
      * @protected
-     * @param {Object} event javascript event
+     * @param Event e
      * @param {boolean} left  true if rotating left, false if rotating right
      * @method rotatepdf
      */
