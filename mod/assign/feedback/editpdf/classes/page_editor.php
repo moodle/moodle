@@ -416,13 +416,8 @@ class page_editor {
 
     public static function get_page_rotation($gradeid, $pageno) {
         global $DB;
-        $result = $DB->get_records('assignfeedback_editpdf_rot', array('gradeid' => $gradeid, 'pageno' => $pageno));
-        if (empty($result) || count($result) == 0) {
-            return null;
-        } else {
-            $rotation = reset($result);
-            return $rotation;
-        }
+        $result = $DB->get_record('assignfeedback_editpdf_rot', array('gradeid' => $gradeid, 'pageno' => $pageno));
+        return $result;
     }
 
 }
