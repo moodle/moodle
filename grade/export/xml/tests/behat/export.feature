@@ -30,7 +30,7 @@ Feature: I need to export grades as xml
   Scenario: Export grades as text
     When I navigate to "Export > XML file" in the course gradebook
     And I expand all fieldsets
-    And I set the field "Grade export decimal points" to "1"
+    And I set the field "Grade export decimal places" to "1"
     And I press "Download"
     Then I should see "s1"
     And I should see "a1"
