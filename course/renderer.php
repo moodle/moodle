@@ -2425,9 +2425,8 @@ class core_course_renderer extends plugin_renderer_base {
                     if (!empty($mycourseshtml)) {
                         $output .= $this->frontpage_part('skipmycourses', 'frontpage-course-list',
                             get_string('mycourses'), $mycourseshtml);
-                        break;
                     }
-                    // No "break" here. If there are no enrolled courses - continue to 'Available courses'.
+                    break;
 
                 case FRONTPAGEALLCOURSELIST:
                     $availablecourseshtml = $this->frontpage_available_courses();
