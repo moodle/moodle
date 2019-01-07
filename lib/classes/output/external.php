@@ -59,15 +59,6 @@ class external extends external_api {
     }
 
     /**
-     * Remove comments from mustache template.
-     * @param string $templatestr
-     * @return mixed
-     */
-    protected static function strip_template_comments($templatestr) {
-        return preg_replace('/(?={{!)(.*)(}})/sU', '', $templatestr);
-    }
-
-    /**
      * Return a mustache template, and all the strings it requires.
      *
      * @param string $component The component that holds the template.
@@ -84,23 +75,14 @@ class external extends external_api {
                                                   'themename' => $themename,
                                                   'includecomments' => $includecomments));
 
-        $component = $params['component'];
-        $template = $params['template'];
-        $themename = $params['themename'];
-        $includecomments = $params['includecomments'];
-
-        $templatename = $component . '/' . $template;
-
+        $loader = new mustache_template_source_loader();
         // Will throw exceptions if the template does not exist.
-        $filename = mustache_template_finder::get_template_filepath($templatename, $themename);
-        $templatestr = file_get_contents($filename);
-
-        // Remove comments from template.
-        if (!$includecomments) {
-            $templatestr = self::strip_template_comments($templatestr);
-        }
-
-        return $templatestr;
+        return $loader->load(
+            $params['component'],
+            $params['template'],
+            $params['themename'],
+            $params['includecomments']
+        );
     }
 
     /**
@@ -110,6 +92,95 @@ class external extends external_api {
      */
     public static function load_template_returns() {
         return new external_value(PARAM_RAW, 'template');
+    }
+
+    /**
+     * Returns description of load_template_with_dependencies() parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function load_template_with_dependencies_parameters() {
+        return new external_function_parameters([
+            'component' => new external_value(PARAM_COMPONENT, 'component containing the template'),
+            'template' => new external_value(PARAM_ALPHANUMEXT, 'name of the template'),
+            'themename' => new external_value(PARAM_ALPHANUMEXT, 'The current theme.'),
+            'includecomments' => new external_value(PARAM_BOOL, 'Include comments or not', VALUE_DEFAULT, false)
+        ]);
+    }
+
+    /**
+     * Return a mustache template, and all the child templates and strings it requires.
+     *
+     * @param string $component The component that holds the template.
+     * @param string $template The name of the template.
+     * @param string $themename The name of the current theme.
+     * @param bool $includecomments Whether to strip comments from the template source.
+     * @return string the template
+     */
+    public static function load_template_with_dependencies(
+        string $component,
+        string $template,
+        string $themename,
+        bool $includecomments = false
+    ) {
+        global $DB, $CFG, $PAGE;
+
+        $params = self::validate_parameters(
+            self::load_template_with_dependencies_parameters(),
+            [
+                'component' => $component,
+                'template' => $template,
+                'themename' => $themename,
+                'includecomments' => $includecomments
+            ]
+        );
+
+        $loader = new mustache_template_source_loader();
+        // Will throw exceptions if the template does not exist.
+        $dependencies = $loader->load_with_dependencies(
+            $params['component'],
+            $params['template'],
+            $params['themename'],
+            $params['includecomments']
+        );
+        $formatdependencies = function($dependency) {
+            $results = [];
+            foreach ($dependency as $dependencycomponent => $dependencyvalues) {
+                foreach ($dependencyvalues as $dependencyname => $dependencyvalue) {
+                    array_push($results, [
+                        'component' => $dependencycomponent,
+                        'name' => $dependencyname,
+                        'value' => $dependencyvalue
+                    ]);
+                }
+            }
+            return $results;
+        };
+
+        // Now we have to unpack the dependencies into a format that can be returned
+        // by external functions (because they don't support dynamic keys).
+        return [
+            'templates' => $formatdependencies($dependencies['templates']),
+            'strings' => $formatdependencies($dependencies['strings'])
+        ];
+    }
+
+    /**
+     * Returns description of load_template_with_dependencies() result value.
+     *
+     * @return external_description
+     */
+    public static function load_template_with_dependencies_returns() {
+        $resourcestructure = new external_single_structure([
+            'component' => new external_value(PARAM_COMPONENT, 'component containing the resource'),
+            'name' => new external_value(PARAM_TEXT, 'name of the resource'),
+            'value' => new external_value(PARAM_RAW, 'resource value')
+        ]);
+
+        return new external_single_structure([
+            'templates' => new external_multiple_structure($resourcestructure),
+            'strings' => new external_multiple_structure($resourcestructure)
+        ]);
     }
 
     /**
