@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the question bank view class.
+ * Unit tests for the quiz's own question bank view class.
  *
- * @package    core_question
+ * @package    mod_quiz
  * @category   test
  * @copyright  2018 the Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,12 +30,12 @@ require_once($CFG->dirroot . '/question/editlib.php');
 
 
 /**
- * Unit tests for the question bank view class.
+ * Unit tests for the quiz's own question bank view class.
  *
  * @copyright  2018 the Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_question_bank_view_testcase extends advanced_testcase {
+class quiz_question_bank_view_testcase extends advanced_testcase {
 
     public function test_viewing_question_bank_should_not_load_individual_questions() {
         $this->resetAfterTest();
@@ -44,9 +44,11 @@ class core_question_bank_view_testcase extends advanced_testcase {
         /** @var core_question_generator $questiongenerator */
         $questiongenerator = $generator->get_plugin_generator('core_question');
 
-        // Create a course.
+        // Create a course and a quiz.
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $context = context_module::instance($quiz->cmid);
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
 
         // Create a question in the default category.
         $contexts = new question_edit_contexts($context);
@@ -59,9 +61,9 @@ class core_question_bank_view_testcase extends advanced_testcase {
         $cache->delete($questiondata->id);
 
         // Generate the view.
-        $view = new core_question\bank\view($contexts, new moodle_url('/'), $course);
+        $view = new mod_quiz\question\bank\custom_view($contexts, new moodle_url('/'), $course, $cm, $quiz);
         ob_start();
-        $view->display('editq', 0, 20, $cat->id . ',' . $context->id, false, false, false);
+        $view->display('editq', 0, 20, $cat->id . ',' . $cat->contextid, false, false, false);
         $html = ob_get_clean();
 
         // Verify the output includes the expected question.
