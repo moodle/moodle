@@ -555,7 +555,7 @@ class api {
 
         $sql = "SELECT m.id as messageid, mc.id as id, mc.name as conversationname, mc.type as conversationtype, m.useridfrom,
                        m.smallmessage, m.fullmessage, m.fullmessageformat, m.fullmessagehtml, m.timecreated, mc.component,
-                       mc.itemtype, mc.itemid
+                       mc.itemtype, mc.itemid, mc.contextid
                   FROM {message_conversations} mc
             INNER JOIN {message_conversation_members} mcm
                     ON (mcm.conversationid = mc.id AND mcm.userid = :userid3)
@@ -750,6 +750,10 @@ class api {
         $unreadcounts = $DB->get_records_sql($unreadcountssql, [$userid, self::MESSAGE_ACTION_READ, self::MESSAGE_ACTION_DELETED,
             $userid, $userid]);
 
+        // Because we'll be calling format_string on each conversation name and passing contexts, we preload them here.
+        // This warms the cache and saves potentially hitting the DB once for each context fetch below.
+        \context_helper::preload_contexts_by_id(array_column($conversations, 'contextid'));
+
         // Now, create the final return structure.
         $arrconversations = [];
         foreach ($conversations as $conversation) {
@@ -768,7 +772,16 @@ class api {
 
             $conv = new \stdClass();
             $conv->id = $conversation->id;
-            $conv->name = $conversation->conversationname;
+
+            // Name should be formatted and depends on the context the conversation resides in.
+            // If not set, the context is always context_user.
+            if (is_null($conversation->contextid)) {
+                $convcontext = \context_user::instance_by_id($userid);
+            } else {
+                $convcontext = \context::instance_by_id($conversation->contextid);
+            }
+            $conv->name = format_string($conversation->conversationname, true, ['context' => $convcontext]);
+
             $conv->subname = $convextrafields[$conv->id]['subname'] ?? null;
             $conv->imageurl = $convextrafields[$conv->id]['imageurl'] ?? null;
             $conv->type = $conversation->conversationtype;
