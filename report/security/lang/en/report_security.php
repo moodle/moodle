@@ -31,7 +31,7 @@ Please note that this measure does not improve security of the server significan
 $string['check_configrw_name'] = 'Writable config.php';
 $string['check_configrw_ok'] = 'config.php can not be modified by PHP scripts.';
 $string['check_configrw_warning'] = 'PHP scripts may modify config.php.';
-$string['check_cookiesecure_details'] = '<p>If you enable https communication it is recommended that you also enable secure cookies. You should also add permanent redirection from http to https. Ideally also serve HSTS headers well.</p>';
+$string['check_cookiesecure_details'] = '<p>If https communication is enabled, it is recommended to enable sending of secure cookies. You should have permanent redirection from http to https and ideally serve HSTS headers as well.</p>';
 $string['check_cookiesecure_error'] = 'Please enable secure cookies';
 $string['check_cookiesecure_name'] = 'Secure cookies';
 $string['check_cookiesecure_ok'] = 'Secure cookies enabled.';
