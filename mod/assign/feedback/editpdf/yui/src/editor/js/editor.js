@@ -1508,7 +1508,7 @@ EDITOR.prototype = {
         if (this.get('destroyed')) {
             return;
         }
-
+        var self = this;
         // Save old coordinates.
         var i;
         this.oldannotationcoordinates = [];
@@ -1538,14 +1538,14 @@ EDITOR.prototype = {
                     var jsondata;
                     try {
                         jsondata = Y.JSON.parse(response.responseText);
-                        var page = this.pages[this.currentpage];
+                        var page = self.pages[self.currentpage];
                         page.url = jsondata.page.url;
                         page.width = jsondata.page.width;
                         page.height = jsondata.page.height;
-                        this.loadingicon.hide();
+                        self.loadingicon.hide();
 
                         // Change canvas size to fix the new page.
-                        var drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
+                        var drawingcanvas = self.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
                         drawingcanvas.setStyle('backgroundImage', 'url("' + page.url + '")');
                         drawingcanvas.setStyle('width', page.width + 'px');
                         drawingcanvas.setStyle('height', page.height + 'px');
@@ -1562,11 +1562,11 @@ EDITOR.prototype = {
                          */
                         var i;
                         // Annotations.
-                        var annotations = this.pages[this.currentpage].annotations;
+                        var annotations = page.annotations;
                         for (i = 0; i < annotations.length; i++) {
-                            if (this.oldannotationcoordinates && this.oldannotationcoordinates[i]) {
-                                var oldX = this.oldannotationcoordinates[i][0];
-                                var oldY = this.oldannotationcoordinates[i][1];
+                            if (self.oldannotationcoordinates && self.oldannotationcoordinates[i]) {
+                                var oldX = self.oldannotationcoordinates[i][0];
+                                var oldY = self.oldannotationcoordinates[i][1];
                                 var annotation = annotations[i];
                                 annotation.move(oldX, oldY);
                             }
@@ -1574,14 +1574,13 @@ EDITOR.prototype = {
                         /**
                          * Update Position of comments with relation to canvas coordinates.
                          * Without this code, the comments will stay at their positions in windows/document coordinates
-                         *
                          */
-                        var oldcomments = this.pages[this.currentpage].comments;
+                        var oldcomments = page.comments;
                         for (i = 0; i < oldcomments.length; i++) {
                             oldcomments[i].update_position();
                         }
                         // Save Annotations.
-                        this.save_current_page();
+                        self.save_current_page();
                         return;
                     } catch (e) {
                         return new M.core.exception(e);
