@@ -220,6 +220,34 @@ class core_statslib_testcase extends advanced_testcase {
     }
 
     /**
+     * Set of data for test_statlibs_get_base_weekly
+     *
+     * @return array Dates and timezones for which the first day of the week will be calculated
+     */
+    public function get_base_weekly_provider() {
+        return [
+            [
+                "startwday" => 0,
+                "timezone" => 'America/Chicago',
+                "timestart" => '18-03-2017 22:00',
+                "expected" => '12-03-2017 00:00:00'
+            ],
+            [
+                "startwday" => 0,
+                "timezone" => 'America/Chicago',
+                "date" => '25-03-2017 22:00',
+                "expected" => '19-03-2017 00:00:00'
+            ],
+            [
+                "startwday" => 1,
+                "timezone" => 'Atlantic/Canary',
+                "date" => '06-08-2018 22:00',
+                "expected" => '06-08-2018 00:00:00'
+            ],
+        ];
+    }
+
+    /**
      * Compare the expected stats to those in the database.
      *
      * @param array $expected
@@ -418,6 +446,27 @@ class core_statslib_testcase extends advanced_testcase {
         // The next day should be normal.
         $this->assertEquals(1446526800, stats_get_next_day_start(1446440400));
         $this->assertEquals(24, ((1446526800 - 1446440400) / 60 ) / 60);
+    }
+
+    /**
+     * Test the function that calculates the start of the week.
+     *
+     * @dataProvider get_base_weekly_provider
+     * @param int $startwday Day in which the week starts (Sunday = 0)
+     * @param string $timezone Default timezone
+     * @param string $timestart Date and time for which the first day of the week will be obtained
+     * @param string $expected Expected date of the first day of the week
+     */
+    public function test_statslib_get_base_weekly($startwday, $timezone, $timestart, $expected) {
+        $this->setTimezone($timezone);
+        $time = strtotime($timestart);
+        $expected = strtotime($expected);
+        set_config('calendar_startwday', $startwday);
+        set_config('statslastweekly', $time);
+
+        $weekstarttime = stats_get_base_weekly($time);
+
+        $this->assertEquals($expected, $weekstarttime);
     }
 
     /**
