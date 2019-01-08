@@ -2440,4 +2440,13 @@ $capabilities = array(
         'archetypes' => [
         ],
     ],
+
+    // Manual completion toggling.
+    'moodle/course:togglecompletion' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
 );
