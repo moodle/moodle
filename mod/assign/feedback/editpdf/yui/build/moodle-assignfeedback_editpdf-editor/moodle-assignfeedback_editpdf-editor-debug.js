@@ -4839,7 +4839,6 @@ EDITOR.prototype = {
                         page.width = jsondata.page.width;
                         page.height = jsondata.page.height;
                         self.loadingicon.hide();
-                        console.log(page);
 
                         // Change canvas size to fix the new page.
                         var drawingcanvas = self.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
