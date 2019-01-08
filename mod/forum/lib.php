@@ -5626,7 +5626,11 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
     } else if ($groupmode and !has_capability('moodle/site:accessallgroups', $context)) {
         // inform users why they can not post new discussion
         if (!$currentgroup) {
-            echo $OUTPUT->notification(get_string('cannotadddiscussionall', 'forum'));
+            if (!has_capability('mod/forum:canposttomygroups', $context)) {
+                echo $OUTPUT->notification(get_string('cannotadddiscussiongroup', 'forum'));
+            } else {
+                echo $OUTPUT->notification(get_string('cannotadddiscussionall', 'forum'));
+            }
         } else if (!groups_is_member($currentgroup)) {
             echo $OUTPUT->notification(get_string('cannotadddiscussion', 'forum'));
         }
