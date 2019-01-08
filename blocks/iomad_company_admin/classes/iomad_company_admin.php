@@ -124,22 +124,21 @@ class iomad_company_admin {
      * @param array $companies
      * @return array
      */
-    public static function order_companies_by_parent($companies, &$newlist = [], $parentid = 0) {
+    public static function order_companies_by_parent($companies, &$newlist = [], $parentid = 0, $depth = 0) {
 
-        return $companies;
+        //return $companies;
 
         foreach ($companies as $company) {
-//echo "<pre>COMPANY $company->id</pre>";
             $companyid = $company->id;
             if ($company->parentid == $parentid) {
-//echo "<pre>NEWLIST $companyid == $parentid</pre>";
+                $company->depth = $depth;
                 $newlist[] = $company;
                 $children = array_filter($companies, function($comp) use ($companyid) {
                     return $comp->parentid == $companyid;
                 });
-//echo "<pre>COMPANY $company->id PP: $parentid"; var_dump($children); die;
                 foreach ($children as $child) {
-                    self::order_companies_by_parent($companies, $newlist, $child->id);
+//echo "<pre>"; var_dump($children); die;
+                    self::order_companies_by_parent($companies, $newlist, $companyid, $depth + 1);
                 }
             }
         }

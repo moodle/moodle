@@ -555,7 +555,6 @@ class company_edit_form extends \company_moodleform {
 
         $errors = parent::validation($data, $files);
         if (!empty($data['createnew']) && $data['parentid'] != $data['currentparentid']) {
-echo "<pre>REDIRECT: "; var_dump($data); die;
             $SESSION->current_editing_company_data = $data;
             redirect(new moodle_url('/blocks/iomad_company_admin/company_edit_form.php', array('createnew' => true, 'parentid' => $data['parentid'])));
             die;

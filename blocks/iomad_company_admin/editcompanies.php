@@ -351,6 +351,14 @@ if ($companies) {
             $fullname = $company->name;
             $table->rowclasses[] = '';
         }
+
+        // Indent child companies
+        if ($company->depth == 0) {
+            $fullname = "<b>$fullname</b>";
+        } else {
+            $fullname = str_repeat('&emsp;&emsp;', $company->depth) . $fullname;
+        }
+
         $table->data[] = array ("$fullname",
                             "$company->city",
                             "$company->country",
