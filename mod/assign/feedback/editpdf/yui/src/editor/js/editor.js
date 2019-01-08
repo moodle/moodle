@@ -1498,7 +1498,7 @@ EDITOR.prototype = {
     /**
      * Calculate degree to rotate
      * @protected
-     * @param Event e
+     * @param {Object} e javascript event
      * @param {boolean} left  true if rotating left, false if rotating right
      * @method rotatepdf
      */
@@ -1518,9 +1518,9 @@ EDITOR.prototype = {
             this.oldannotationcoordinates.push([old_annotation.x, old_annotation.y]);
         }
 
-        var ajaxurl = AJAXBASE, config;
+        var ajaxurl = AJAXBASE;
 
-        config = {
+        var config = {
             method: 'post',
             context: this,
             sync: false,
@@ -1564,11 +1564,11 @@ EDITOR.prototype = {
                         // Annotations.
                         var annotations = this.pages[this.currentpage].annotations;
                         for (i = 0; i < annotations.length; i++) {
-                            if ( this.oldannotationcoordinates && this.oldannotationcoordinates[i]) {
+                            if (this.oldannotationcoordinates && this.oldannotationcoordinates[i]) {
                                 var oldX = this.oldannotationcoordinates[i][0];
                                 var oldY = this.oldannotationcoordinates[i][1];
                                 var annotation = annotations[i];
-                                annotation.move(oldX,  oldY);
+                                annotation.move(oldX, oldY);
                             }
                         }
                         /**
@@ -1582,6 +1582,7 @@ EDITOR.prototype = {
                         }
                         // Save Annotations.
                         this.save_current_page();
+                        return;
                     } catch (e) {
                         return new M.core.exception(e);
                     }

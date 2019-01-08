@@ -769,7 +769,7 @@ class pdf extends \FPDI {
 
     /**
      * This function add an image file to PDF page.
-     * @param $imagestoredfile Image file to be added
+     * @param \stored_file $imagestoredfile Image file to be added
      */
     public function add_image_page($imagestoredfile) {
         $imageinfo = $imagestoredfile->get_imageinfo();

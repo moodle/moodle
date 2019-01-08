@@ -665,7 +665,7 @@ EOD;
                     $pdf->copy_page();
                 } else {
                     $pdf->add_image_page($rotatedimagefile);
-                 }
+                }
             }
 
             $comments = page_editor::get_comments($grade->id, $i, false);
@@ -832,10 +832,10 @@ EOD;
 
     /**
      * Get All files in a File area
-     * @param $assignment Assignment
-     * @param $userid User ID
-     * @param $attemptnumber Attempt Number
-     * @param $filearea File Area
+     * @param int|\assign $assignment Assignment
+     * @param int $userid User ID
+     * @param int $attemptnumber Attempt Number
+     * @param string $filearea File Area
      * @param string $filepath File Path
      * @return array
      */
@@ -852,12 +852,13 @@ EOD;
     }
 
     /**
-     * @param $contextid Context ID
-     * @param $component Component
-     * @param $filearea File Area
-     * @param $itemid   Item ID
-     * @param $filepath file path of stored file
-     * @param $newfilepath file path of the file to store
+     * Save file.
+     * @param int|\assign $assignment Assignment
+     * @param int $userid User ID
+     * @param int $attemptnumber Attempt Number
+     * @param string $filearea File Area
+     * @param string $newfilepath File Path
+     * @param string $storedfilepath stored file path
      * @return \stored_file
      * @throws \file_exception
      * @throws \stored_file_creation_exception
@@ -896,11 +897,11 @@ EOD;
 
     /**
      * This function rotate a page, and mark the page as rotated.
-     * @param $assignment Assignment
-     * @param $userid User ID
-     * @param $attemptnumber Attempt Number
-     * @param $index Index of Current Page
-     * @param $rotateleft To determine whether the page is rotated left or right.
+     * @param int|\assign $assignment Assignment
+     * @param int $userid User ID
+     * @param int $attemptnumber Attempt Number
+     * @param int $index Index of Current Page
+     * @param bool $rotateleft To determine whether the page is rotated left or right.
      * @return null|\stored_file return rotated File
      * @throws \coding_exception
      * @throws \file_exception

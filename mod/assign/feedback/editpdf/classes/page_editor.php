@@ -397,6 +397,14 @@ class page_editor {
         return $result;
     }
 
+    /**
+     * Set page rotation value.
+     * @param int $gradeid
+     * @param int $pageno
+     * @param bool $isrotated
+     * @param string $pathnamehash
+     * @throws \dml_exception
+     */
     public static function set_page_rotation($gradeid, $pageno, $isrotated, $pathnamehash) {
         global $DB;
         $oldrecord = self::get_page_rotation($gradeid, $pageno);
@@ -404,16 +412,23 @@ class page_editor {
             $record = new \stdClass();
             $record->gradeid = $gradeid;
             $record->pageno = $pageno;
-            $record->isrotated =  $isrotated;
-            $record->pathnamehash =  $pathnamehash;
+            $record->isrotated = $isrotated;
+            $record->pathnamehash = $pathnamehash;
             $DB->insert_record('assignfeedback_editpdf_rot', $record, false);
         } else {
-            $oldrecord->isrotated =  $isrotated;
-            $oldrecord->pathnamehash =  $pathnamehash;
+            $oldrecord->isrotated = $isrotated;
+            $oldrecord->pathnamehash = $pathnamehash;
             $DB->update_record('assignfeedback_editpdf_rot', $oldrecord, false);
         }
     }
 
+    /**
+     * Get Page Rotation Value.
+     * @param int $gradeid
+     * @param int $pageno
+     * @return mixed
+     * @throws \dml_exception
+     */
     public static function get_page_rotation($gradeid, $pageno) {
         global $DB;
         $result = $DB->get_record('assignfeedback_editpdf_rot', array('gradeid' => $gradeid, 'pageno' => $pageno));

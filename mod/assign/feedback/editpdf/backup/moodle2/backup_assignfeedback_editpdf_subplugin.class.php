@@ -49,7 +49,9 @@ class backup_assignfeedback_editpdf_subplugin extends backup_subplugin {
         $subpluginelementcomments = new backup_nested_element('feedback_editpdf_comments');
         $subpluginelementcomment = new backup_nested_element('comment', null, array('gradeid', 'pageno', 'x', 'y', 'width', 'rawtext', 'colour', 'draft'));
         $subpluginelementrotation = new backup_nested_element('feedback_editpdf_rotation');
-        $subpluginelementpagerotation = new backup_nested_element('pagerotation', null, array('gradeid', 'pageno', 'pathnamehash', 'isrotated'));
+        $subpluginelementpagerotation = new backup_nested_element('pagerotation',
+                                        null,
+                                        array('gradeid', 'pageno', 'pathnamehash', 'isrotated'));
 
         // Connect XML elements into the tree.
         $subplugin->add_child($subpluginwrapper);
