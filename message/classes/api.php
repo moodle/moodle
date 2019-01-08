@@ -776,7 +776,7 @@ class api {
             // Name should be formatted and depends on the context the conversation resides in.
             // If not set, the context is always context_user.
             if (is_null($conversation->contextid)) {
-                $convcontext = \context_user::instance_by_id($userid);
+                $convcontext = \context_user::instance($userid);
             } else {
                 $convcontext = \context::instance_by_id($conversation->contextid);
             }
