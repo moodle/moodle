@@ -51,7 +51,7 @@ class backup_qtype_ordering_plugin extends backup_qtype_plugin {
         $this->add_question_question_answers($pluginwrapper);
 
         // Now create the qtype own structures.
-        $fields = array('layouttype', 'selecttype', 'selectcount', 'gradingtype',
+        $fields = array('layouttype', 'selecttype', 'selectcount', 'gradingtype', 'showgrading',
                         'correctfeedback', 'correctfeedbackformat',
                         'incorrectfeedback', 'incorrectfeedbackformat',
                         'partiallycorrectfeedback', 'partiallycorrectfeedbackformat');
