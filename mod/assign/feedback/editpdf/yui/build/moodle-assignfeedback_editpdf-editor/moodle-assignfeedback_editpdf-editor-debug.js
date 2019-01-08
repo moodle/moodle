@@ -4832,12 +4832,14 @@ EDITOR.prototype = {
                 success: function(tid, response) {
                     var jsondata;
                     try {
+
                         jsondata = Y.JSON.parse(response.responseText);
                         var page = self.pages[self.currentpage];
                         page.url = jsondata.page.url;
                         page.width = jsondata.page.width;
                         page.height = jsondata.page.height;
                         self.loadingicon.hide();
+                        console.log(page);
 
                         // Change canvas size to fix the new page.
                         var drawingcanvas = self.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
@@ -4875,8 +4877,7 @@ EDITOR.prototype = {
                             oldcomments[i].update_position();
                         }
                         // Save Annotations.
-                        self.save_current_page();
-                        return;
+                        return self.save_current_page();
                     } catch (e) {
                         return new M.core.exception(e);
                     }
