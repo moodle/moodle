@@ -465,6 +465,9 @@ class cache_phpunit_application extends cache_application {
  */
 class cache_phpunit_session extends cache_session {
 
+    /** @var Static member used for emulating the behaviour of session_id() during the tests. */
+    protected static $sessionidmockup = 'phpunitmockupsessionid';
+
     /**
      * Returns the class of the store immediately associated with this cache.
      * @return string
@@ -479,6 +482,31 @@ class cache_phpunit_session extends cache_session {
      */
     public function phpunit_get_store_implements() {
         return class_implements($this->get_store());
+    }
+
+    /**
+     * Provide access to the {@link cache_session::get_key_prefix()} method.
+     *
+     * @return string
+     */
+    public function phpunit_get_key_prefix() {
+        return $this->get_key_prefix();
+    }
+
+    /**
+     * Allows to inject the session identifier.
+     *
+     * @param string $sessionid
+     */
+    public static function phpunit_mockup_session_id($sessionid) {
+        static::$sessionidmockup = $sessionid;
+    }
+
+    /**
+     * Override the parent behaviour so that it does not need the actual session_id() call.
+     */
+    protected function set_session_id() {
+        $this->sessionid = static::$sessionidmockup;
     }
 }
 
