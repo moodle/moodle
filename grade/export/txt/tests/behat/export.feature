@@ -32,7 +32,7 @@ Feature: I need to export grades as text
     When I navigate to "Export > Plain text file" in the course gradebook
     And I expand all fieldsets
     And I click on "Course total" "checkbox"
-    And I set the field "Grade export decimal points" to "1"
+    And I set the field "Grade export decimal places" to "1"
     And I press "Download"
     Then I should see "Student,1"
     And I should see "80.0"
