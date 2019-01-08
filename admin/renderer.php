@@ -623,11 +623,14 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function cron_infrequent_warning(bool $croninfrequent) : string {
+        global $CFG;
+
         if (!$croninfrequent) {
             return '';
         }
 
-        return $this->warning(get_string('croninfrequent', 'admin') . '&nbsp;' .
+        $expectedfrequency = $CFG->expectedcronfrequency ?? 200;
+        return $this->warning(get_string('croninfrequent', 'admin', $expectedfrequency) . '&nbsp;' .
                 $this->help_icon('cron', 'admin'));
     }
 

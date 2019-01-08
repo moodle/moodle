@@ -599,6 +599,12 @@ $CFG->admin = 'admin';
 //
 //      $CFG->disablelogintoken = true;
 //
+// Moodle 3.7+ checks that cron is running frequently. If the time between cron runs
+// is greater than this value (in seconds), you get a warning on the admin page. (This
+// setting only controls whether or not the warning appears, it has no other effect.)
+//
+//      $CFG->expectedcronfrequency = 200;
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================

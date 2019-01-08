@@ -826,7 +826,8 @@ $errorsdisplayed = defined('WARN_DISPLAY_ERRORS_ENABLED');
 $lastcron = get_config('tool_task', 'lastcronstart');
 $cronoverdue = ($lastcron < time() - 3600 * 24);
 $lastcroninterval = get_config('tool_task', 'lastcroninterval');
-$croninfrequent = !$cronoverdue && ($lastcroninterval > 200 || $lastcron < time() - 200);
+$expectedfrequency = $CFG->expectedcronfrequency ?? 200;
+$croninfrequent = !$cronoverdue && ($lastcroninterval > $expectedfrequency || $lastcron < time() - $expectedfrequency);
 $dbproblems = $DB->diagnose();
 $maintenancemode = !empty($CFG->maintenance_enabled);
 
