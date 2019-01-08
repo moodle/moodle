@@ -1678,9 +1678,16 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         assign::cron();
 
         $events = $sink->get_events();
+        // Notification has been marked as read, so now first event should be a 'notification_viewed' one. For student.
         $event = reset($events);
+        $this->assertInstanceOf('\core\event\notification_viewed', $event);
+        $this->assertEquals($student->id, $event->userid);
+
+        // And next event should be the 'notification_sent' one. For teacher.
+        $event = $events[1];
         $this->assertInstanceOf('\core\event\notification_sent', $event);
         $this->assertEquals($assign->get_course()->id, $event->other['courseid']);
+        $this->assertEquals($teacher->id, $event->userid);
         $sink->close();
     }
 
