@@ -53,6 +53,7 @@ $string['bynameondate'] = 'by {$a->name} - {$a->date}';
 $string['cannotadd'] = 'Could not add the discussion for this forum';
 $string['cannotadddiscussion'] = 'Adding discussions to this forum requires group membership.';
 $string['cannotadddiscussionall'] = 'You do not have permission to add a new discussion topic for all participants.';
+$string['cannotadddiscussiongroup'] = 'You are not able to create a discussion because you are not a member of any group.';
 $string['cannotaddsubscriber'] = 'Could not add subscriber with id {$a} to this forum!';
 $string['cannotaddteacherforumto'] = 'Could not add converted teacher forum instance to section 0 in the course';
 $string['cannotcreatediscussion'] = 'Could not create new discussion';
