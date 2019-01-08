@@ -376,11 +376,14 @@ class moodle_content_writer implements content_writer {
      *
      * @param   string          $path       The path to export the data at.
      * @param   string          $data       The data to be exported.
+     * @throws  \moodle_exception           If the file cannot be written for some reason.
      */
     protected function write_data(string $path, string $data) {
         $targetpath = $this->path . DIRECTORY_SEPARATOR . $path;
         check_dir_exists(dirname($targetpath), true, true);
-        file_put_contents($targetpath, $data);
+        if (file_put_contents($targetpath, $data) === false) {
+            throw new \moodle_exception('cannotsavefile', 'error', '', $targetpath);
+        }
         $this->files[$path] = $targetpath;
     }
 
@@ -706,12 +709,12 @@ class moodle_content_writer implements content_writer {
      *
      * @param  string $filepath The file path.
      * @return string contents of the file.
+     * @throws \moodle_exception If the file cannot be opened.
      */
     protected function get_file_content(string $filepath) : String {
-        $filepointer = fopen($filepath, 'r');
-        $content = '';
-        while (!feof($filepointer)) {
-            $content .= fread($filepointer, filesize($filepath));
+        $content = file_get_contents($filepath);
+        if ($content === false) {
+            throw new \moodle_exception('cannotopenfile', 'error', '', $filepath);
         }
         return $content;
     }
