@@ -1675,6 +1675,13 @@ function mod_lesson_core_calendar_provide_event_action(calendar_event $event,
     // Apply overrides.
     $lesson->update_effective_access($userid);
 
+    // Mimics get_participant checks from mod_assign.
+    if (!$lesson->is_participant($userid)) {
+        // If the user is not a participant then they have
+        // no action to take. This will filter out the events for teachers.
+        return null;
+    }
+
     return $factory->create_instance(
         get_string('startlesson', 'lesson'),
         new \moodle_url('/mod/lesson/view.php', ['id' => $cm->id]),
