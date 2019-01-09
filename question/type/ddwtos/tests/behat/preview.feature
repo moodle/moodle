@@ -63,3 +63,19 @@ Feature: Preview a drag-drop into text question
     Then the state of "The" question is shown as "Incorrect"
     And I should see "Mark 0.00 out of 1.00"
     And I switch to the main window
+
+  @javascript
+  Scenario: Preview a question that uses strange group numbers using the keyboard.
+    Given the following "questions" exist:
+      | questioncategory | qtype  | name         | template  |
+      | Test questions   | ddwtos | Funny groups | oddgroups |
+    And I reload the page
+    When I click on "Preview" "link" in the "Funny groups" "table_row"
+    And I switch to "questionpreview" window
+    And I type " " into space "1" in the drag and drop onto image question
+    And I type " " into space "2" in the drag and drop onto image question
+    And I type " " into space "3" in the drag and drop onto image question
+    And I press "Submit and finish"
+    Then the state of "The" question is shown as "Correct"
+    And I should see "Mark 1.00 out of 1.00"
+    And I switch to the main window
