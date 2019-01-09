@@ -226,11 +226,16 @@ class mod_lesson_lib_testcase extends advanced_testcase {
         $this->setAdminUser();
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
+        // Create a teacher and enrol into the course.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
         // Create a lesson activity.
         $lesson = $this->getDataGenerator()->create_module('lesson', array('course' => $course->id,
             'available' => time() - DAYSECS, 'deadline' => time() + DAYSECS));
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $lesson->id, LESSON_EVENT_TYPE_OPEN);
+
+        // Log in as the teacher.
+        $this->setUser($teacher);
         // Create an action factory.
         $factory = new \core_calendar\action_factory();
         // Decorate action event.
@@ -346,6 +351,8 @@ class mod_lesson_lib_testcase extends advanced_testcase {
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
+        // Create a teacher and enrol.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
 
         // Create a lesson activity.
         $lesson = $this->getDataGenerator()->create_module('lesson', array('course' => $course->id,
@@ -354,6 +361,8 @@ class mod_lesson_lib_testcase extends advanced_testcase {
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $lesson->id, LESSON_EVENT_TYPE_OPEN);
 
+        // Now, log in as teacher.
+        $this->setUser($teacher);
         // Create an action factory.
         $factory = new \core_calendar\action_factory();
 
@@ -411,7 +420,8 @@ class mod_lesson_lib_testcase extends advanced_testcase {
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
-
+        // Create a teacher and enrol into the course.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
         // Create a lesson activity.
         $lesson = $this->getDataGenerator()->create_module('lesson', array('course' => $course->id,
             'available' => time() + DAYSECS));
@@ -419,6 +429,8 @@ class mod_lesson_lib_testcase extends advanced_testcase {
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $lesson->id, LESSON_EVENT_TYPE_OPEN);
 
+        // Now, log in as teacher.
+        $this->setUser($teacher);
         // Create an action factory.
         $factory = new \core_calendar\action_factory();
 
@@ -476,13 +488,15 @@ class mod_lesson_lib_testcase extends advanced_testcase {
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
-
+        // Create a teacher and enrol into the course.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
         // Create a lesson activity.
         $lesson = $this->getDataGenerator()->create_module('lesson', array('course' => $course->id));
 
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $lesson->id, LESSON_EVENT_TYPE_OPEN);
-
+        // Now, log in as teacher.
+        $this->setUser($teacher);
         // Create an action factory.
         $factory = new \core_calendar\action_factory();
 
