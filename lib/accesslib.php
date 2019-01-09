@@ -5893,12 +5893,11 @@ class context_helper extends context {
             // There are at least two to fetch.
             // There is no point only fetching a single context as this would be no more efficient than calling the existing code.
             list($insql, $inparams) = $DB->get_in_or_equal($tofetch, SQL_PARAMS_NAMED);
-            $ctxs = $DB->get_recordset_select('context', "id {$insql}", $inparams, '',
+            $ctxs = $DB->get_records_select('context', "id {$insql}", $inparams, '',
                     \context_helper::get_preload_record_columns_sql('{context}'));
             foreach ($ctxs as $ctx) {
                 self::preload_from_record($ctx);
             }
-            $ctxs->close();
         }
     }
 
