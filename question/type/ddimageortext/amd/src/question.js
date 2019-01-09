@@ -123,8 +123,9 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      */
     DragDropOntoImageQuestion.prototype.resizeAllDragsAndDrops = function() {
         var thisQ = this;
-        this.getRoot().find('.draghomes > div').each(function(i) {
-            thisQ.resizeAllDragsAndDropsInGroup(i + 1);
+        this.getRoot().find('.draghomes > div').each(function(i, node) {
+            thisQ.resizeAllDragsAndDropsInGroup(
+                    thisQ.getClassnameNumericSuffix($(node), 'dragitemgroup'));
         });
     };
 
