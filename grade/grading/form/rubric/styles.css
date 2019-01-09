@@ -64,10 +64,7 @@
 }
 
 .gradingform_rubric {
-    overflow: auto;
     padding-bottom: 1.5em;
-    max-width: 720px;
-    position: relative;
 }
 
 .gradingform_rubric.editor .criterion .controls,
@@ -89,6 +86,9 @@
 
 .gradingform_rubric .criteria {
     height: 100%;
+    display: flex;
+    width: 100%;
+    overflow: auto;
 }
 
 .gradingform_rubric .criterion {
