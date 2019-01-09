@@ -26,8 +26,7 @@ define(['jquery'],
 
         var SELECTORS = {
             PURPOSE_SELECT: '#id_purposeid',
-            RETENTION_FIELD_BOOST: '#id_error_retention_current',
-            RETENTION_FIELD_CLEAN: '#fitem_id_retention_current [data-fieldtype=static]',
+            RETENTION_FIELD: '#fitem_id_retention_current [data-fieldtype=static]',
         };
 
         /**
@@ -65,18 +64,7 @@ define(['jquery'],
             $(SELECTORS.PURPOSE_SELECT).on('change', function(ev) {
                 var selected = $(ev.currentTarget).val();
                 var selectedPurpose = this.purposeRetentionPeriods[selected];
-
-                var cleanSelector = $(SELECTORS.RETENTION_FIELD_CLEAN);
-                if (cleanSelector.length > 0) {
-                    cleanSelector.text(selectedPurpose);
-                } else {
-                    var boostSelector = $(SELECTORS.RETENTION_FIELD_BOOST);
-                    var retentionField = boostSelector.siblings();
-                    if (retentionField.length > 0) {
-                        retentionField.text(selectedPurpose);
-                    }
-                }
-
+                $(SELECTORS.RETENTION_FIELD).text(selectedPurpose);
             }.bind(this));
         };
 
