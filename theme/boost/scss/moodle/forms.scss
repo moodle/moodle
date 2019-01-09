@@ -126,10 +126,8 @@ input#id_externalurl {
 // Pale grey container for submit buttons.
 .form-buttons,
 .path-admin .buttons,
-#fitem_id_submitbutton,
 .fp-content-center form + div,
-div.backup-section + form,
-#fgroup_id_buttonar {
+div.backup-section + form {
     @extend .form-group;
     padding-left: 0;
 }
