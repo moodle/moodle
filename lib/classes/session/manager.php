@@ -364,6 +364,9 @@ class manager {
             }
 
             if ($timeout) {
+                if (defined('NO_SESSION_UPDATE') && NO_SESSION_UPDATE) {
+                    return;
+                }
                 session_regenerate_id(true);
                 $_SESSION = array();
                 $DB->delete_records('sessions', array('id'=>$record->id));
@@ -398,7 +401,7 @@ class manager {
                     $updated = true;
                 }
 
-                if ($updated) {
+                if ($updated && (!defined('NO_SESSION_UPDATE') || !NO_SESSION_UPDATE)) {
                     $update->id = $record->id;
                     $DB->update_record('sessions', $update);
                 }
@@ -630,6 +633,31 @@ class manager {
         // There is no need the existence of handler storage in public API.
         self::load_handler();
         return self::$handler->session_exists($sid);
+    }
+
+    /**
+     * Return the number of seconds remaining in the current session.
+     * @param string $sid
+     */
+    public static function time_remaining($sid) {
+        global $DB, $CFG;
+
+        if (empty($CFG->version)) {
+            // Not installed yet, do not try to access database.
+            return ['userid' => 0, 'timeremaining' => $CFG->sessiontimeout];
+        }
+
+        // Note: add sessions->state checking here if it gets implemented.
+        if (!$record = $DB->get_record('sessions', array('sid' => $sid), 'id, userid, timemodified')) {
+            return ['userid' => 0, 'timeremaining' => $CFG->sessiontimeout];
+        }
+
+        if (empty($record->userid) or isguestuser($record->userid)) {
+            // Ignore guest and not-logged-in timeouts, there is very little risk here.
+            return ['userid' => 0, 'timeremaining' => $CFG->sessiontimeout];
+        } else {
+            return ['userid' => $record->userid, 'timeremaining' => $CFG->sessiontimeout - (time() - $record->timemodified)];
+        }
     }
 
     /**
@@ -955,9 +983,10 @@ class manager {
      * @param string $identifier The string identifier for the message to show on failure.
      * @param string $component The string component for the message to show on failure.
      * @param int $frequency The update frequency in seconds.
+     * @param int $timeout The timeout of each request in seconds.
      * @throws coding_exception IF the frequency is longer than the session lifetime.
      */
-    public static function keepalive($identifier = 'sessionerroruser', $component = 'error', $frequency = null) {
+    public static function keepalive($identifier = 'sessionerroruser', $component = 'error', $frequency = null, $timeout = 0) {
         global $CFG, $PAGE;
 
         if ($frequency) {
@@ -966,19 +995,15 @@ class manager {
                 throw new \coding_exception('Keepalive frequency is longer than the session lifespan.');
             }
         } else {
-            // A frequency of sessiontimeout / 3 allows for one missed request whilst still preserving the session.
-            $frequency = $CFG->sessiontimeout / 3;
+            // A frequency of sessiontimeout / 10 matches the timeouts in core/network amd module.
+            $frequency = $CFG->sessiontimeout / 10;
         }
 
-        // Add the session keepalive script to the list of page output requirements.
-        $sessionkeepaliveurl = new \moodle_url('/lib/sessionkeepalive_ajax.php');
-        $PAGE->requires->string_for_js($identifier, $component);
-        $PAGE->requires->yui_module('moodle-core-checknet', 'M.core.checknet.init', array(array(
-            // The JS config takes this is milliseconds rather than seconds.
-            'frequency' => $frequency * 1000,
-            'message' => array($identifier, $component),
-            'uri' => $sessionkeepaliveurl->out(),
-        )));
+        $PAGE->requires->js_call_amd('core/network', 'keepalive', array(
+                $frequency,
+                $timeout,
+                get_string($identifier, $component)
+            ));
     }
 
     /**

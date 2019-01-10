@@ -1,9 +1,0 @@
-{
-    "moodle-core-checknet": {
-        "requires": [
-            "base-base",
-            "moodle-core-notification-alert",
-            "io-base"
-        ]
-    }
-}

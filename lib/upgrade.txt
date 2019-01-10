@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.8 ===
+* The yui checknet module is removed. Call \core\session\manager::keepalive instead.
+
 === 3.7 ===
 * Nodes in the navigation api can have labels for each group. See set/get_collectionlabel().
 * The method core_user::is_real_user() now returns false for userid = 0 parameter

@@ -29,6 +29,10 @@
 
 define('AJAX_SCRIPT', true);
 
+if (!empty($_GET['nosessionupdate'])) {
+    define('NO_SESSION_UPDATE', true);
+}
+
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/externallib.php');
 
@@ -63,5 +67,4 @@ foreach ($requests as $request) {
         break;
     }
 }
-
 echo json_encode($responses);

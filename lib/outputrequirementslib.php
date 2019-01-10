@@ -321,6 +321,7 @@ class page_requirements_manager {
             $this->M_cfg = array(
                 'wwwroot'             => $CFG->wwwroot,
                 'sesskey'             => sesskey(),
+                'sessiontimeout'      => $CFG->sessiontimeout,
                 'themerev'            => theme_get_revision(),
                 'slasharguments'      => (int)(!empty($CFG->slasharguments)),
                 'theme'               => $page->theme->name,
