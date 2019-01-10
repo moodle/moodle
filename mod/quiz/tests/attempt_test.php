@@ -95,7 +95,7 @@ class mod_quiz_attempt_testable extends quiz_attempt {
  * @copyright 2014 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quiz_attempt_testcase extends basic_testcase {
+class mod_quiz_attempt_testcase extends advanced_testcase {
     /**
      * Test the functions quiz_update_open_attempts() and get_list_of_overdue_attempts()
      */
@@ -303,5 +303,40 @@ class mod_quiz_attempt_testcase extends basic_testcase {
         $this->assertEquals(new moodle_url(
                 '/mod/quiz/review.php?attempt=124&page=1&cmid=0#'),
                 $attempt->review_url(11, -1, false, 0));
+    }
+
+    public function test_is_participant() {
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student', [], 'manual', 0, 0, ENROL_USER_SUSPENDED);
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quizobj = quiz::create($quiz->id);
+
+        // Login as student.
+        $this->setUser($student);
+        // Convert to a lesson object.
+        $this->assertEquals(true, $quizobj->is_participant($student->id),
+            'Student is enrolled, active and can participate');
+
+        // Login as student2.
+        $this->setUser($student2);
+        $this->assertEquals(false, $quizobj->is_participant($student2->id),
+            'Student is enrolled, suspended and can NOT participate');
+
+        // Login as an admin.
+        $this->setAdminUser();
+        $this->assertEquals(false, $quizobj->is_participant($USER->id),
+            'Admin is not enrolled and can NOT participate');
+
+        $this->getDataGenerator()->enrol_user(2, $course->id);
+        $this->assertEquals(true, $quizobj->is_participant($USER->id),
+            'Admin is enrolled and can participate');
+
+        $this->getDataGenerator()->enrol_user(2, $course->id, [], 'manual', 0, 0, ENROL_USER_SUSPENDED);
+        $this->assertEquals(true, $quizobj->is_participant($USER->id),
+            'Admin is enrolled, suspended and can participate');
     }
 }

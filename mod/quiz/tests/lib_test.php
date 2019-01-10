@@ -505,14 +505,16 @@ class mod_quiz_lib_testcase extends advanced_testcase {
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
-
+        // Create a teacher and enrol into the course.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
         // Create a quiz.
         $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id,
             'timeopen' => time() - DAYSECS, 'timeclose' => time() + DAYSECS));
 
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $quiz->id, QUIZ_EVENT_TYPE_OPEN);
-
+        // Now, log in as teacher.
+        $this->setUser($student);
         // Create an action factory.
         $factory = new \core_calendar\action_factory();
 
@@ -556,14 +558,16 @@ class mod_quiz_lib_testcase extends advanced_testcase {
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
-
+        // Create a teacher and enrol into the course.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
         // Create a quiz.
         $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id,
             'timeopen' => time() + DAYSECS));
 
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $quiz->id, QUIZ_EVENT_TYPE_CLOSE);
-
+        // Now, log in as teacher.
+        $this->setUser($student);
         // Create an action factory.
         $factory = new \core_calendar\action_factory();
 
