@@ -30,6 +30,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p>Ne mogu stvoriti bazu podataka.</p>
+<p>Navedena baza podataka ne postoji i korisnik nema prava stvaranja baze podataka.</p>
+<p>Administrator treba provjeriti postavke baze podataka.</p>';
 $string['cannotcreatelangdir'] = 'Nije moguće stvoriti lang mapu';
 $string['cannotcreatetempdir'] = 'Nije moguće stvoriti privremenu (TEMP) mapu';
 $string['cannotdownloadcomponents'] = 'Nije moguće preuzimanje komponenti';
