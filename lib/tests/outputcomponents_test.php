@@ -436,4 +436,33 @@ EOF;
         $this->assertEquals($expecteda, $pbara->pagelinks);
         $this->assertEquals($expectedb, $pbarb->pagelinks);
     }
+
+    public function test_pix_icon() {
+        $this->resetAfterTest();
+
+        $page = new moodle_page();
+
+        set_config('theme', 'boost');
+        // Need to reset after changing theme.
+        $page->reset_theme_and_output();
+        $renderer = $page->get_renderer('core');
+
+        $reason = 'An icon with no alt text is hidden from screenreaders.';
+        $this->assertContains('aria-hidden="true"', $renderer->pix_icon('t/print', ''), $reason);
+
+        $reason = 'An icon with alt text is not hidden from screenreaders.';
+        $this->assertNotContains('aria-hidden="true"', $renderer->pix_icon('t/print', 'Print'), $reason);
+
+        // Test another theme with a different icon system.
+        set_config('theme', 'clean');
+        // Need to reset after changing theme.
+        $page->reset_theme_and_output();
+        $renderer = $page->get_renderer('core');
+
+        $reason = 'An icon with no alt text is hidden from screenreaders.';
+        $this->assertContains('aria-hidden="true"', $renderer->pix_icon('t/print', ''), $reason);
+
+        $reason = 'An icon with alt text is not hidden from screenreaders.';
+        $this->assertNotContains('aria-hidden="true"', $renderer->pix_icon('t/print', 'Print'), $reason);
+    }
 }
