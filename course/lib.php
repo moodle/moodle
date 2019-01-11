@@ -2488,6 +2488,11 @@ function create_course($data, $editoroptions = NULL) {
         core_tag_tag::set_item_tags('core', 'course', $course->id, context_course::instance($course->id), $data->tags);
     }
 
+    // Save custom fields if there are any of them in the form.
+    $handler = core_course\customfield\course_handler::create();
+    $data->id = $course->id;
+    $handler->instance_form_save($data, true);
+
     return $course;
 }
 
@@ -2571,6 +2576,10 @@ function update_course($data, $editoroptions = NULL) {
             $data->newsitems = 0;
         }
     }
+
+    // Update custom fields if there are any of them in the form.
+    $handler = core_course\customfield\course_handler::create();
+    $handler->instance_form_save($data);
 
     // Update with the new data
     $DB->update_record('course', $data);
