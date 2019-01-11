@@ -409,7 +409,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // Enable course themes.
         set_config('allowcoursethemes', 1);
 
-        // Custom fields
+        // Custom fields.
         $fieldcategory = self::getDataGenerator()->create_custom_field_category(['name' => 'Other fields']);
 
         $customfield = ['shortname' => 'test', 'name' => 'Custom field', 'type' => 'text',

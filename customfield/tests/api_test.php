@@ -48,7 +48,7 @@ class core_customfield_api_testcase extends advanced_testcase {
      * Get generator
      * @return core_customfield_generator
      */
-    protected function get_generator(): core_customfield_generator {
+    protected function get_generator() : core_customfield_generator {
         return $this->getDataGenerator()->get_plugin_generator('core_customfield');
     }
 

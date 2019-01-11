@@ -682,7 +682,8 @@ class core_course_external extends external_api {
                                 new external_single_structure(
                                     ['name' => new external_value(PARAM_TEXT, 'The name of the custom field'),
                                      'shortname' => new external_value(PARAM_ALPHANUMEXT, 'The shortname of the custom field'),
-                                     'type'  => new external_value(PARAM_COMPONENT, 'The type of the custom field - text, checkbox...'),
+                                     'type'  => new external_value(PARAM_COMPONENT,
+                                         'The type of the custom field - text, checkbox...'),
                                      'value' => new external_value(PARAM_RAW, 'The value of the custom field')]
                                 ), 'Custom fields and associated values', VALUE_OPTIONAL),
                         ), 'course'
@@ -2548,8 +2549,10 @@ class core_course_external extends external_api {
                 new external_single_structure(
                     array(
                         'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
-                        'shortname' => new external_value(PARAM_RAW, 'The shortname of the custom field - to be able to build the field class in the code'),
-                        'type'  => new external_value(PARAM_ALPHANUMEXT, 'The type of the custom field - text field, checkbox...'),
+                        'shortname' => new external_value(PARAM_RAW,
+                            'The shortname of the custom field - to be able to build the field class in the code'),
+                        'type'  => new external_value(PARAM_ALPHANUMEXT,
+                            'The type of the custom field - text field, checkbox...'),
                         'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
                     )
                 ), 'Custom fields', VALUE_OPTIONAL),

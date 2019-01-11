@@ -174,7 +174,7 @@ abstract class handler {
      *
      * @return bool
      */
-    public function uses_categories(): bool {
+    public function uses_categories() : bool {
         return true;
     }
 
@@ -184,7 +184,7 @@ abstract class handler {
      * @param field_controller $field
      * @return field_config_form
      */
-    public function get_field_config_form(field_controller $field): field_config_form {
+    public function get_field_config_form(field_controller $field) : field_config_form {
          $form = new field_config_form(null, ['field' => $field]);
          $form->set_data(api::prepare_field_for_config_form($field));
          return $form;
@@ -210,7 +210,7 @@ abstract class handler {
      * @param string $name name of the category, null to generate automatically
      * @return int id of the new category
      */
-    public function create_category(string $name = null): int {
+    public function create_category(string $name = null) : int {
         global $DB;
         $params = ['component' => $this->get_component(), 'area' => $this->get_area(), 'itemid' => $this->get_itemid()];
 
@@ -236,7 +236,7 @@ abstract class handler {
      * @return category_controller
      * @throws \moodle_exception
      */
-    protected function validate_category(category_controller $category): category_controller {
+    protected function validate_category(category_controller $category) : category_controller {
         $categories = $this->get_categories_with_fields();
         if (!array_key_exists($category->get('id'), $categories)) {
             throw new \moodle_exception('categorynotfound', 'core_customfield');
@@ -251,7 +251,7 @@ abstract class handler {
      * @return field_controller
      * @throws \moodle_exception
      */
-    protected function validate_field(field_controller $field): field_controller {
+    protected function validate_field(field_controller $field) : field_controller {
         if (!array_key_exists($field->get('categoryid'), $this->get_categories_with_fields())) {
             throw new \moodle_exception('fieldnotfound', 'core_customfield');
         }
@@ -293,7 +293,7 @@ abstract class handler {
      * @param category_controller $category
      * @return bool
      */
-    public function delete_category(category_controller $category): bool {
+    public function delete_category(category_controller $category) : bool {
         $category = $this->validate_category($category);
         $result = api::delete_category($category);
         $this->clear_configuration_cache();
@@ -317,7 +317,7 @@ abstract class handler {
      * @param field_controller $field
      * @return bool
      */
-    public function delete_field_configuration(field_controller $field): bool {
+    public function delete_field_configuration(field_controller $field) : bool {
         $field = $this->validate_field($field);
         $result = api::delete_field_configuration($field);
         $this->clear_configuration_cache();
@@ -342,7 +342,7 @@ abstract class handler {
      *
      * @return bool
      */
-    abstract public function can_configure(): bool;
+    abstract public function can_configure() : bool;
 
     /**
      * The current user can edit given custom fields on the given instance
@@ -355,7 +355,7 @@ abstract class handler {
      * @param int $instanceid id of the instance or 0 if the instance is being created
      * @return bool
      */
-    abstract public function can_edit(field_controller $field, int $instanceid = 0): bool;
+    abstract public function can_edit(field_controller $field, int $instanceid = 0) : bool;
 
     /**
      * The current user can view the value of the custom field for a given custom field and instance
@@ -369,7 +369,7 @@ abstract class handler {
      * @param int $instanceid
      * @return bool
      */
-    abstract public function can_view(field_controller $field, int $instanceid): bool;
+    abstract public function can_view(field_controller $field, int $instanceid) : bool;
 
     /**
      * Returns the custom field values for an individual instance
@@ -460,7 +460,7 @@ abstract class handler {
      * @param data_controller[] $fieldsdata
      * @return string
      */
-    public function display_custom_fields_data(array $fieldsdata): string {
+    public function display_custom_fields_data(array $fieldsdata) : string {
         global $PAGE;
         $output = $PAGE->get_renderer('core_customfield');
         $content = '';
@@ -729,7 +729,7 @@ abstract class handler {
      *
      * @return field_controller[]
      */
-    public function get_fields(): array {
+    public function get_fields() : array {
         $categories = $this->get_categories_with_fields();
         $fields = [];
         foreach ($categories as $category) {
@@ -746,7 +746,7 @@ abstract class handler {
      * @param int $instanceid
      * @return field_controller[]
      */
-    protected function get_visible_fields(int $instanceid): array {
+    protected function get_visible_fields(int $instanceid) : array {
         $handler = $this;
         return array_filter($this->get_fields(),
             function($field) use($handler, $instanceid) {
@@ -761,7 +761,7 @@ abstract class handler {
      * @param int $instanceid
      * @return field_controller[]
      */
-    public function get_editable_fields(int $instanceid): array {
+    public function get_editable_fields(int $instanceid) : array {
         $handler = $this;
         return array_filter($this->get_fields(),
             function($field) use($handler, $instanceid) {
@@ -798,7 +798,7 @@ abstract class handler {
      * @param field_controller $field
      * @return string page heading
      */
-    public function setup_edit_page(field_controller $field): string {
+    public function setup_edit_page(field_controller $field) : string {
         global $PAGE;
 
         // Page context.

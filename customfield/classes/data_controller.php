@@ -82,7 +82,7 @@ abstract class data_controller {
      * @throws \coding_exception
      * @throws \moodle_exception
      */
-    public static function create(int $id, \stdClass $record = null, field_controller $field = null): data_controller {
+    public static function create(int $id, \stdClass $record = null, field_controller $field = null) : data_controller {
         global $DB;
         if ($id && $record) {
             // This warning really should be in persistent as well.
@@ -122,7 +122,7 @@ abstract class data_controller {
      *
      * @return string
      */
-    protected function get_form_element_name(): string {
+    protected function get_form_element_name() : string {
         return 'customfield_' . $this->get_field()->get('shortname');
     }
 
@@ -185,7 +185,7 @@ abstract class data_controller {
      *
      * @return field_controller
      */
-    public function get_field(): field_controller {
+    public function get_field() : field_controller {
         return $this->field;
     }
 
@@ -223,7 +223,7 @@ abstract class data_controller {
      * @param mixed $value
      * @return bool
      */
-    protected function is_empty($value): bool {
+    protected function is_empty($value) : bool {
         if ($this->datafield() === 'value' || $this->datafield() === 'charvalue' || $this->datafield() === 'shortcharvalue') {
             return '' . $value === '';
         }
@@ -236,7 +236,7 @@ abstract class data_controller {
      * @param mixed $value
      * @return bool
      */
-    protected function is_unique($value): bool {
+    protected function is_unique($value) : bool {
         global $DB;
         $datafield = $this->datafield();
         $where = "fieldid = ? AND {$datafield} = ?";
@@ -255,7 +255,7 @@ abstract class data_controller {
      * @param array $files
      * @return array array of errors
      */
-    public function instance_form_validation(array $data, array $files): array {
+    public function instance_form_validation(array $data, array $files) : array {
         $errors = [];
         $elementname = $this->get_form_element_name();
         if ($this->get_field()->get_configdata_property('uniquevalues') == 1) {
@@ -281,7 +281,7 @@ abstract class data_controller {
      *
      * @return string
      */
-    public function display(): string {
+    public function display() : string {
         global $PAGE;
         $output = $PAGE->get_renderer('core_customfield');
         return $output->render(new field_data($this));

@@ -72,7 +72,7 @@ class data_controller extends \core_customfield\data_controller {
      * @param array $files
      * @return array
      */
-    public function instance_form_validation(array $data, array $files): array {
+    public function instance_form_validation(array $data, array $files) : array {
 
         $errors = parent::instance_form_validation($data, $files);
         $maxlength = $this->get_field()->get_configdata_property('maxlength');

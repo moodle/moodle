@@ -7262,6 +7262,10 @@ class admin_setting_manageformats extends admin_setting {
 
 /**
  * Custom fields manager. Allows to enable/disable custom fields and jump to settings.
+ *
+ * @package    core
+ * @copyright  2018 Toni Barbera
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_setting_managecustomfields extends admin_setting {
 

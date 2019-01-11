@@ -42,7 +42,7 @@ class field_controller extends \core_customfield\field_controller {
     /**
      * Before delete bulk actions
      */
-    public function delete(): bool {
+    public function delete() : bool {
         global $DB;
         $fs = get_file_storage();
 

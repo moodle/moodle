@@ -61,7 +61,7 @@ class field_controller extends \core_customfield\field_controller {
      * @param \core_customfield\field_controller $field
      * @return array
      */
-    public static function get_options_array(\core_customfield\field_controller $field): array {
+    public static function get_options_array(\core_customfield\field_controller $field) : array {
         if ($field->get_configdata_property('options')) {
             $options = preg_split("/\s*\n\s*/", trim($field->get_configdata_property('options')));
         } else {
@@ -78,7 +78,7 @@ class field_controller extends \core_customfield\field_controller {
      * @param array $files
      * @return array associative array of error messages
      */
-    public function config_form_validation(array $data, $files = array()): array {
+    public function config_form_validation(array $data, $files = array()) : array {
         $options = preg_split("/\s*\n\s*/", trim($data['configdata']['options']));
         $errors = [];
         if (!$options || count($options) < 2) {

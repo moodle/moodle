@@ -80,7 +80,7 @@ class core_customfield_generator extends component_generator_base {
      * @param array|stdClass $record
      * @return field_controller
      */
-    public function create_field($record): field_controller {
+    public function create_field($record) : field_controller {
         $this->fieldcount++;
         $i = $this->fieldcount;
         $record = (object) $record;
@@ -149,7 +149,7 @@ class core_customfield_generator extends component_generator_base {
      * @param mixed $value
      * @return \core_customfield\data_controller
      */
-    public function add_instance_data(field_controller $field, int $instanceid, $value): \core_customfield\data_controller {
+    public function add_instance_data(field_controller $field, int $instanceid, $value) : \core_customfield\data_controller {
         $data = \core_customfield\data_controller::create(0, (object)['instanceid' => $instanceid], $field);
         $data->set('contextid', $data->get_context()->id);
 

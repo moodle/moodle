@@ -205,7 +205,7 @@ class core_course_list_element implements IteratorAggregate {
      *
      * @return \core_customfield\data_controller[]
      */
-    public function get_custom_fields(): array {
+    public function get_custom_fields() : array {
         if (!isset($this->record->customfields)) {
             $this->record->customfields = \core_course\customfield\course_handler::create()->get_instance_data($this->id);
         }
@@ -217,7 +217,7 @@ class core_course_list_element implements IteratorAggregate {
      *
      * @return bool
      */
-    public function has_custom_fields(): bool {
+    public function has_custom_fields() : bool {
         $customfields = $this->get_custom_fields();
         return !empty($customfields);
     }

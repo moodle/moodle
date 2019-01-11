@@ -325,7 +325,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @return array
      * @throws \coding_exception
      */
-    protected static function get_params(string $component, string $area, array $params): array {
+    protected static function get_params(string $component, string $area, array $params) : array {
         if (!empty($params) && (array_keys($params) === range(0, count($params) - 1))) {
             // Argument $params is not an associative array.
             throw new \coding_exception('Argument $params must be an associative array!');

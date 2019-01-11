@@ -30,6 +30,10 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class for admin tool plugins
+ *
+ * @package    core
+ * @copyright  2018 Toni Barbera {@link http://www.moodle.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class customfield extends base {
 
@@ -80,7 +84,6 @@ class customfield extends base {
      * This is intended for disabling of plugin, some DB table purging, etc.
      *
      * NOTE: to be called from uninstall_plugin() only.
-     * @private
      */
     public function uninstall_cleanup() {
         global $DB;

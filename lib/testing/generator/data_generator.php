@@ -427,7 +427,7 @@ EOD;
         }
 
         if (!empty($record['customfields'])) {
-            foreach($record['customfields'] as $field) {
+            foreach ($record['customfields'] as $field) {
                 $record['customfield_'.$field['shortname']] = $field['value'];
             }
         }
@@ -1185,7 +1185,7 @@ EOD;
      * @param   array $data Array with data['name'] of category
      * @return  \core_customfield\category_controller   The created category
      */
-    public function create_custom_field_category($data): \core_customfield\category_controller {
+    public function create_custom_field_category($data) : \core_customfield\category_controller {
         return $this->get_plugin_generator('core_customfield')->create_category($data);
     }
 
@@ -1195,7 +1195,7 @@ EOD;
      * @param   array $data Array with 'name', 'shortname' and 'type' of the field
      * @return  \core_customfield\field_controller   The created field
      */
-    public function create_custom_field($data): \core_customfield\field_controller {
+    public function create_custom_field($data) : \core_customfield\field_controller {
         global $DB;
         if (empty($data['categoryid']) && !empty($data['category'])) {
             $data['categoryid'] = $DB->get_field('customfield_category', 'id', ['name' => $data['category']]);
