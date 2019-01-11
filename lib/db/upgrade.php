@@ -2680,5 +2680,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019011801.01);
     }
 
+    if ($oldversion < 2019011801.02) {
+        // Add index 'useridfrom' to the table 'notifications'.
+        $table = new xmldb_table('notifications');
+        $index = new xmldb_index('useridfrom', XMLDB_INDEX_NOTUNIQUE, ['useridfrom']);
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2019011801.02);
+    }
+
     return true;
 }
