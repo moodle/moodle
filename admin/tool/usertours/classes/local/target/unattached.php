@@ -84,7 +84,7 @@ class unattached extends base {
         $myvalue = \tool_usertours\target::get_target_constant_for_class(get_class());
 
         foreach (array_keys(self::$forcedsettings) as $settingname) {
-            $mform->disabledIf($settingname, 'targettype', 'eq', $myvalue);
+            $mform->hideIf($settingname, 'targettype', 'eq', $myvalue);
         }
     }
 

@@ -57,8 +57,8 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
             'maxlength="100" size="20"');
         $mform->setType('options[shortnametemplate]', PARAM_RAW);
         $mform->addHelpButton('options[shortnametemplate]', 'shortnametemplate', 'tool_uploadcourse');
-        $mform->disabledIf('options[shortnametemplate]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE);
-        $mform->disabledIf('options[shortnametemplate]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_UPDATE_ONLY);
+        $mform->hideIf('options[shortnametemplate]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE);
+        $mform->hideIf('options[shortnametemplate]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_UPDATE_ONLY);
 
         // Restore file is not in the array options on purpose, because formslib can't handle it!
         $contextid = $this->_customdata['contextid'];
@@ -73,8 +73,8 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
 
         $mform->addElement('selectyesno', 'options[reset]', get_string('reset', 'tool_uploadcourse'));
         $mform->setDefault('options[reset]', 0);
-        $mform->disabledIf('options[reset]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_CREATE_NEW);
-        $mform->disabledIf('options[reset]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_CREATE_ALL);
+        $mform->hideIf('options[reset]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_CREATE_NEW);
+        $mform->hideIf('options[reset]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_CREATE_ALL);
         $mform->disabledIf('options[reset]', 'options[allowresets]', 'eq', 0);
         $mform->addHelpButton('options[reset]', 'reset', 'tool_uploadcourse');
 
