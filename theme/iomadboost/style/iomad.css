@@ -248,4 +248,5 @@ div.iomadlink, div.iomadlinkreports {
 .site-name {
     padding-left: 1rem;
     padding-right: 1rem;
+    border-radius: 0.25rem;
 }

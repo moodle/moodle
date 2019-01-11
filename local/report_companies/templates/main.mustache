@@ -1,0 +1,21 @@
+{{# companies }}
+    <div class="card mb-2">
+        <div class="card-body">
+            <h4 class="card-title">{{ name }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+            {{# nomanagers }}
+                <div class="alert alert-warning">{{# str }}nomanagers, local_report_companies{{/ str }}</div>
+            {{/ nomanagers }}
+            {{^ nomanagers }}
+                <h5 class="card-subtitle">{{# str }}coursemanagers, local_report_companies{{/ str }}</h5>
+                <p>{{# str }}totalusercount, local_report_companies, {{ companymanagers }}{{/ str }}</p>
+                
+                <h5 class="card-subtitle">{{# str }}departmentmanagers, local_report_companies{{/ str }}</h5>
+                <p>{{# str }}totalusercount, local_report_companies, {{ departmentmanagers }}{{/ str }}</p>
+            {{/ nomanagers }}
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="card-link">Card link</a>
+            <a href="#" class="card-link">Another link</a>
+        </div>
+    </div>
+{{/ companies }}

@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace local_report_companies;
+
 class companyrep{
 
     // Get the jsmodule setup thingy.
@@ -28,9 +30,14 @@ class companyrep{
         return $jsmodule;
     }
 
-    // Create the select list of companies.
-    // If the user is in the company managers table then the list is restricted.
-    public static function companylist( $user ) {
+    /**
+     * Create the select list of companies.
+     * If the user is in the company managers table then the list is restricted.
+     * @param object $user
+     * @param int $companyid
+     * @return array
+     */
+    public static function companylist($user, $companyid = null) {
         global $DB;
 
         // Create "empty" array.
@@ -47,8 +54,13 @@ class companyrep{
         }
 
         // Get companies information.
-        if (!$companies = $DB->get_records('company', array(), 'name')) {
-            return $companylist;
+        if ($companyid) {
+            $params = ['id' => $companyid];
+        } else {
+            $params = [];
+        }
+        if (!$companies = $DB->get_records('company', $params)) {
+            return [];
         }
 
         // And finally build the list.
@@ -66,35 +78,33 @@ class companyrep{
         return $companylist;
     }
 
-    // Append the company managers to companies.
-    public static function addmanagers( &$companies ) {
+    /**
+     * Append the company managers to companies.
+     * @param array $companies
+     */
+    public static function addmanagers(&$companies) {
         global $DB;
 
         // Iterate over companies adding their managers.
         foreach ($companies as $company) {
-            $companymanagers = array();
-            $managers = array();
-            if ($companymanagers = $DB->get_records_sql("SELECT * from {company_users} WHERE
-                                                  companyid = :companyid
-                                                  AND managertype = 1", array('companyid' => $company->id))) {
-                foreach ($companymanagers as $companymanager) {
-                    if ($user = $DB->get_record( 'user', array('id' => $companymanager->userid))) {
-                        $managers[$user->id] = $user;
-                    }
-                }
-            }
-            $company->managers['company'] = $managers;
-            $managers = array();
-            if ($companymanagers = $DB->get_records_sql("SELECT * from {company_users} WHERE
-                                                  companyid = :companyid
-                                                  AND managertype = 2", array('companyid' => $company->id))) {
-                foreach ($companymanagers as $companymanager) {
-                    if ($user = $DB->get_record( 'user', array('id' => $companymanager->userid))) {
-                        $managers[$user->id] = $user;
-                    }
-                }
-            }
-            $company->managers['department'] = $managers;
+
+            // Company managers
+            $company->managers['company'] = $DB->get_records_sql(
+                "SELECT u.* from {company_users} cu 
+                JOIN {user} u ON u.id = cu.userid 
+                WHERE companyid = :companyid
+                AND managertype = 1", ['companyid' => $company->id]);
+
+            // Department managers
+            $company->managers['department'] = $DB->get_records_sql(
+                "SELECT u.* from {company_users} cu 
+                JOIN {user} u ON u.id = cu.userid 
+                WHERE companyid = :companyid
+                AND managertype = 2", ['companyid' => $company->id]);
+
+            $company->nomanagers = empty($company->managers['department']) && empty($company->managers['company']);
+            $company->companymanagers = count($company->managers['company']);
+            $company->departmentmanagers = count($company->managers['department']);
         }
     }
 

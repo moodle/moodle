@@ -121,12 +121,13 @@ class iomad_company_admin {
 
     /**
      * Rearrange list of companies into parent/child order
-     * @param array $companies
+     * @param array $companies complete list of companies
+     * @param array $newlist (partial) ordered list
+     * @param int $parentid
+     * @param int $depth
      * @return array
      */
     public static function order_companies_by_parent($companies, &$newlist = [], $parentid = 0, $depth = 0) {
-
-        //return $companies;
 
         foreach ($companies as $company) {
             $companyid = $company->id;
@@ -137,7 +138,6 @@ class iomad_company_admin {
                     return $comp->parentid == $companyid;
                 });
                 foreach ($children as $child) {
-//echo "<pre>"; var_dump($children); die;
                     self::order_companies_by_parent($companies, $newlist, $companyid, $depth + 1);
                 }
             }

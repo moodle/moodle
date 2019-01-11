@@ -16,7 +16,8 @@
 
 require_once('../../config.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
-require_once('lib.php');
+
+use local_report_companies\companyrep;
 
 // Check permissions.
 require_login($SITE);
@@ -24,9 +25,8 @@ $context = context_system::instance();
 iomad::require_capability('local/report_companies:view', $context);
 $companyid = optional_param('companyid', 0, PARAM_INT);
 
-
 // Url stuff.
-$url = new moodle_url('/local/report_companies/index.php');
+$url = new moodle_url('/local/report_companies/index.php', ['companyid' => $companyid]);
 
 // Page stuff:.
 $strcompletion = get_string('pluginname', 'local_report_companies');
@@ -37,6 +37,9 @@ $PAGE->requires->css("/local/report_companies/styles.css");
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
 
+// Renderer
+$output = $PAGE->get_renderer('local_report_companies');
+
 // Set the url.
 company_admin_fix_breadcrumb($PAGE, get_string('pluginname', 'local_report_companies'), $url);
 
@@ -45,13 +48,21 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading( get_string('pluginname', 'local_report_companies') );
 
 // Ajax odds and sods.
-$PAGE->requires->js_init_call( 'M.local_report_companies.init');
+$PAGE->requires->js_init_call('M.local_report_companies.init');
 
 // Get the company list.
-$companies = companyrep::companylist( $USER );
-companyrep::addmanagers( $companies );
-companyrep::addusers( $companies );
-companyrep::addcourses( $companies );
+$companies = companyrep::companylist($USER);
+companyrep::addmanagers($companies) ;
+companyrep::addusers($companies);
+companyrep::addcourses($companies);
+
+// Render report
+$main = new local_report_companies\output\main($companies);
+//echo "<pre>"; var_dump($main); die;
+echo $output->render_main($main);
+
+echo $OUTPUT->footer();
+die;
 
 // Iterate over companies.
 foreach ($companies as $company) {
