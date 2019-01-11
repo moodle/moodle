@@ -59,6 +59,18 @@ if ($hassiteconfig) {
         $plugin->load_settings($ADMIN, 'formatsettings', $hassiteconfig);
     }
 
+    // Custom fields.
+    $ADMIN->add('modules', new admin_category('customfieldsettings', new lang_string('customfields', 'core_customfield')));
+    $temp = new admin_settingpage('managecustomfields', new lang_string('managecustomfields', 'core_admin'));
+    $temp->add(new admin_setting_managecustomfields());
+    $ADMIN->add('customfieldsettings', $temp);
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('customfield');
+    core_collator::asort_objects_by_property($plugins, 'displayname');
+    foreach ($plugins as $plugin) {
+        /** @var \core\plugininfo\customfield $plugin */
+        $plugin->load_settings($ADMIN, 'customfieldsettings', $hassiteconfig);
+    }
+
     // blocks
     $ADMIN->add('modules', new admin_category('blocksettings', new lang_string('blocks')));
     $ADMIN->add('blocksettings', new admin_page_manageblocks());
