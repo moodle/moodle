@@ -82,11 +82,6 @@ require_once($CFG->libdir.'/installlib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/componentlib.class.php');
 
-// make sure no tables are installed yet
-if ($DB->get_tables() ) {
-    cli_error(get_string('clitablesexist', 'install'));
-}
-
 $CFG->early_install_lang = true;
 get_string_manager(true);
 
@@ -109,10 +104,15 @@ list($options, $unrecognized) = cli_get_params(
     )
 );
 
-
+// We show help text even if tables are installed.
 if ($options['help']) {
     echo $help;
     die;
+}
+
+// Make sure no tables are installed yet.
+if ($DB->get_tables() ) {
+    cli_error(get_string('clitablesexist', 'install'));
 }
 
 if (!$options['agree-license']) {
