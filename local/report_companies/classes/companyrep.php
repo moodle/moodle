@@ -89,26 +89,31 @@ class companyrep{
         foreach ($companies as $company) {
 
             // Company managers
-            $company->managers['company'] = $DB->get_records_sql(
+            $company->companymanagers = $DB->get_records_sql(
                 "SELECT u.* from {company_users} cu 
                 JOIN {user} u ON u.id = cu.userid 
                 WHERE companyid = :companyid
                 AND managertype = 1", ['companyid' => $company->id]);
 
             // Department managers
-            $company->managers['department'] = $DB->get_records_sql(
+            $company->departmentmanagers = $DB->get_records_sql(
                 "SELECT u.* from {company_users} cu 
                 JOIN {user} u ON u.id = cu.userid 
                 WHERE companyid = :companyid
                 AND managertype = 2", ['companyid' => $company->id]);
 
-            $company->nomanagers = empty($company->managers['department']) && empty($company->managers['company']);
-            $company->companymanagers = count($company->managers['company']);
-            $company->departmentmanagers = count($company->managers['department']);
+            $company->nomanagers = empty($company->departmentmanagers) && empty($company->companymanagers);
+            $company->companymanagerscount = count($company->companymanagers);
+            $company->departmentmanagerscount = count($company->departmentmanagers);
+            $company->companymanagers = self::listusers($company->companymanagers);
+            $company->departmentmanagers = self::listusers($company->departmentmanagers);
         }
     }
 
-    // Append the company users to companies.
+    /**
+     * Append the company users to companies.
+     * @param array $companies
+     */
     public static function addusers( &$companies ) {
         global $DB;
 
@@ -122,7 +127,9 @@ class companyrep{
                     }
                 }
             }
-            $company->users = $users;
+            $company->users = self::listusers($users);
+            $company->nousers = empty($users);
+            $company->userscount = count($users);
         }
     }
 
@@ -141,21 +148,25 @@ class companyrep{
                 }
             }
             $company->courses = $courses;
+            $company->nocourses = empty($courses);
+            $company->coursescount = count($courses);
         }
     }
 
-    // List users.
-    public static function listusers( $users ) {
+    /**
+     * Update users for template
+     * @param array users
+     * @return array
+     */
+    public static function listusers($users) {
         global $CFG;
 
-        echo "<ul class=\"iomad_user_list\">\n";
         foreach ($users as $user) {
-            if (!empty($user->id) && !empty($user->email) && !empty($user->firstname) && !empty($user->lastname)) {
-                $link = "{$CFG->wwwroot}/user/view.php?id={$user->id}";
-                echo "<li><a href=\"$link\">".fullname( $user )."</a> ({$user->email})</li>\n";
-            }
+            $user->link = new \moodle_url('/user/view.php', ['id' => $user->id]);
+            $user->fullname = fullname($user);
         }
-        echo "</ul>\n";
+
+        return array_values($users);
     }
 
 }

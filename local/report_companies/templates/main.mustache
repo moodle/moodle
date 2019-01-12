@@ -1,21 +1,47 @@
 {{# companies }}
     <div class="card mb-2">
         <div class="card-body">
-            <h4 class="card-title">{{ name }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+            <h4 class="card-title"><b>{{ name }}</b></h5>
             {{# nomanagers }}
                 <div class="alert alert-warning">{{# str }}nomanagers, local_report_companies{{/ str }}</div>
             {{/ nomanagers }}
             {{^ nomanagers }}
-                <h5 class="card-subtitle">{{# str }}coursemanagers, local_report_companies{{/ str }}</h5>
-                <p>{{# str }}totalusercount, local_report_companies, {{ companymanagers }}{{/ str }}</p>
+                <h5 class="card-subtitle mt-5">{{# str }}coursemanagers, local_report_companies{{/ str }}</h5>
+                <p class="text-muted">{{# str }}totalusercount, local_report_companies, {{ companymanagerscount }}{{/ str }}</p>
+                <div>
+                    {{# companymanagers }}
+                        <ul class="list-unstyled">
+                            {{> local_report_companies/userlist }}
+                        </ul>
+                    {{/ companymanagers }}
+                </div>
                 
-                <h5 class="card-subtitle">{{# str }}departmentmanagers, local_report_companies{{/ str }}</h5>
-                <p>{{# str }}totalusercount, local_report_companies, {{ departmentmanagers }}{{/ str }}</p>
+                <h5 class="card-subtitle mt-5">{{# str }}departmentmanagers, local_report_companies{{/ str }}</h5>
+                <p class="text-muted">{{# str }}totalusercount, local_report_companies, {{ departmentmanagerscount }}{{/ str }}</p>
+                <div>
+                    {{# departmentmanagers }}
+                        <ul class="list-unstyled">
+                            {{> local_report_companies/userlist }}
+                        </ul>
+                    {{/ departmentmanagers }}
+                </div>
             {{/ nomanagers }}
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="card-link">Card link</a>
-            <a href="#" class="card-link">Another link</a>
+
+            {{# nousers }}
+                <div class="alert alert-warning">{{# str }}nousers, local_report_companies{{/ str }}</div>
+            {{/ nousers }}
+            {{^ nousers }}
+                <h5 class="card-subtitle mt-5">{{# str }}courseusers, local_report_companies{{/ str }}</h5>
+                <p class="text-muted">{{# str }}totalusercount, local_report_companies, {{ userscount }}{{/ str }}</p>
+            {{/ nousers }}
+
+            {{# nocourses }}
+                <div class="alert alert-warning">{{# str }}nocourses, local_report_companies{{/ str }}</div>
+            {{/ nocourses }}
+            {{^ nocourses }}
+                <h5 class="card-subtitle mt-5">{{# str }}courses, local_report_companies{{/ str }}</h5>
+                <p class="text-muted">{{# str }}totalusercount, local_report_companies, {{ coursescount }}{{/ str }}</p>
+            {{/ nocourses }}
         </div>
     </div>
 {{/ companies }}
