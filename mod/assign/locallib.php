@@ -5422,6 +5422,12 @@ class assign {
         $gradercache = array();
         $cangrade = has_capability('mod/assign:grade', $this->get_context());
 
+        // Show the grader's identity if 'Hide Grader' is disabled or has the 'Show Hidden Grader' capability.
+        $showgradername = (
+            has_capability('mod/assign:showhiddengrader', $this->context, $userid) or
+            !$this->is_hidden_grader()
+        );
+
         // Need gradingitem and gradingmanager.
         $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
         $controller = $gradingmanager->get_active_controller();
@@ -5439,7 +5445,9 @@ class assign {
 
         foreach ($grades as $grade) {
             // First lookup the grader info.
-            if (isset($gradercache[$grade->grader])) {
+            if (!$showgradername) {
+                $grade->grader = null;
+            } else if (isset($gradercache[$grade->grader])) {
                 $grade->grader = $gradercache[$grade->grader];
             } else if ($grade->grader > 0) {
                 // Not in cache - need to load the grader record.
