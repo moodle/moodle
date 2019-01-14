@@ -42,7 +42,7 @@ echo html_writer::tag('h2', get_string('preview', 'local_kaltura'));
     iframe.setAttribute('src', '<?php echo 'bsepreview_ltilaunch.php?playurl=' . urlencode($url); ?>');
     iframe.setAttribute('alt', '<?php echo addcslashes($title, "'"); ?>');
     iframe.setAttribute('allowfullscreen', '');
-    iframe.setAttribute('allow', 'autoplay *; fullscreen *; encrypted-media *');
+    iframe.setAttribute('allow', 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *;');
     iframe.setStyles({
             height: '<?php echo $height; ?>px',
             border: 'none',
