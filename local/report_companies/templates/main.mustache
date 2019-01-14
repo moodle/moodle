@@ -1,7 +1,9 @@
 {{# companies }}
     <div class="card mb-2">
         <div class="card-body">
-            <h4 class="card-title"><b>{{ name }}</b></h5>
+            <div class="alert alert-primary">
+                <h4 class="card-title"><b>{{ name }}</b></h5>
+            </div>
             {{# nomanagers }}
                 <div class="alert alert-warning">{{# str }}nomanagers, local_report_companies{{/ str }}</div>
             {{/ nomanagers }}
@@ -40,7 +42,7 @@
             {{/ nocourses }}
             {{^ nocourses }}
                 <h5 class="card-subtitle mt-5">{{# str }}courses, local_report_companies{{/ str }}</h5>
-                <p class="text-muted">{{# str }}totalusercount, local_report_companies, {{ coursescount }}{{/ str }}</p>
+                <p class="text-muted">{{# str }}totalcoursecount, local_report_companies, {{ coursescount }}{{/ str }}</p>
             {{/ nocourses }}
         </div>
     </div>
