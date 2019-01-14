@@ -215,6 +215,25 @@ $ADMIN->add('server', new admin_category('taskconfig', new lang_string('taskadmi
 $temp = new admin_settingpage('taskprocessing', new lang_string('taskprocessing','admin'));
 $temp->add(
     new admin_setting_configtext(
+        'task_scheduled_concurrency_limit',
+        new lang_string('task_scheduled_concurrency_limit', 'admin'),
+        new lang_string('task_scheduled_concurrency_limit_desc', 'admin'),
+        3,
+        PARAM_INT
+    )
+);
+
+$temp->add(
+    new admin_setting_configduration(
+        'task_scheduled_max_runtime',
+        new lang_string('task_scheduled_max_runtime', 'admin'),
+        new lang_string('task_scheduled_max_runtime_desc', 'admin'),
+        30 * MINSECS
+    )
+);
+
+$temp->add(
+    new admin_setting_configtext(
         'task_adhoc_concurrency_limit',
         new lang_string('task_adhoc_concurrency_limit', 'admin'),
         new lang_string('task_adhoc_concurrency_limit_desc', 'admin'),
