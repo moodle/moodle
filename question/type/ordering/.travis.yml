@@ -21,6 +21,11 @@ matrix:
   - php: 7.2
     env:
     - MOODLE_BRANCH=master
+    - DB=mysqli
+
+  - php: 7.1
+    env:
+    - MOODLE_BRANCH=MOODLE_36_STABLE
     - DB=pgsql
 
   - php: 7.2
