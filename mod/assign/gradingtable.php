@@ -399,10 +399,11 @@ class assign_grading_table extends table_sql implements renderable {
         $columns[] = 'grade';
         $headers[] = get_string('grade');
         if ($this->is_downloading()) {
-            if ($this->assignment->get_instance()->grade >= 0) {
+            $gradetype = $this->assignment->get_instance()->grade;
+            if ($gradetype > 0) {
                 $columns[] = 'grademax';
                 $headers[] = get_string('maxgrade', 'assign');
-            } else {
+            } else if ($gradetype < 0) {
                 // This is a custom scale.
                 $columns[] = 'scale';
                 $headers[] = get_string('scale', 'assign');
@@ -413,7 +414,7 @@ class assign_grading_table extends table_sql implements renderable {
                 $columns[] = 'workflowstate';
                 $headers[] = get_string('markingworkflowstate', 'assign');
             }
-            // Add a column for the list of valid marking workflow states.
+            // Add a column to show if this grade can be changed.
             $columns[] = 'gradecanbechanged';
             $headers[] = get_string('gradecanbechanged', 'assign');
         }
@@ -907,8 +908,12 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string
      */
     public function col_grademax(stdClass $row) {
-        $gradeitem = $this->assignment->get_grade_item();
-        return format_float($this->assignment->get_instance()->grade, $gradeitem->get_decimals());
+        if ($this->assignment->get_instance()->grade > 0) {
+            $gradeitem = $this->assignment->get_grade_item();
+            return format_float($this->assignment->get_instance()->grade, $gradeitem->get_decimals());
+        } else {
+            return '';
+        }
     }
 
     /**
