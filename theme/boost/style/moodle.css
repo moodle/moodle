@@ -15248,6 +15248,11 @@ fieldset.coursesearchbox label {
   top: 0.2em;
   left: -1.5em;
   cursor: pointer; }
+  .form-autocomplete-downarrow .loading-icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #fff; }
 
 .form-autocomplete-selection:focus {
   outline: none; }
