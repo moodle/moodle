@@ -104,7 +104,7 @@ class core_course_deletecategory_form extends moodleform {
             if (in_array($this->coursecat->parent, $displaylist)) {
                 $mform->setDefault('newparent', $this->coursecat->parent);
             }
-            $mform->disabledIf('newparent', 'fulldelete', 'eq', '1');
+            $mform->hideIf('newparent', 'fulldelete', 'eq', '1');
         }
 
         $mform->addElement('hidden', 'categoryid', $this->coursecat->id);
