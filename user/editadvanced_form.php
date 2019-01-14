@@ -27,6 +27,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->dirroot.'/lib/formslib.php');
+require_once($CFG->dirroot.'/user/lib.php');
 
 /**
  * Class user_editadvanced_form.
@@ -96,7 +97,8 @@ class user_editadvanced_form extends moodleform {
             }
         }
 
-        $mform->addElement('text', 'username', get_string('username'), 'size="20"');
+        $purpose = user_edit_map_field_purpose($userid, 'username');
+        $mform->addElement('text', 'username', get_string('username'), 'size="20"' . $purpose);
         $mform->addHelpButton('username', 'username', 'auth');
         $mform->setType('username', PARAM_RAW);
 
@@ -116,7 +118,9 @@ class user_editadvanced_form extends moodleform {
         if (!empty($CFG->passwordpolicy)) {
             $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
         }
-        $mform->addElement('passwordunmask', 'newpassword', get_string('newpassword'), 'size="20"');
+
+        $purpose = user_edit_map_field_purpose($userid, 'password');
+        $mform->addElement('passwordunmask', 'newpassword', get_string('newpassword'), 'size="20"' . $purpose);
         $mform->addHelpButton('newpassword', 'newpassword');
         $mform->setType('newpassword', core_user::get_property_type('password'));
         $mform->disabledIf('newpassword', 'createpassword', 'checked');
