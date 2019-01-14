@@ -857,9 +857,6 @@ function core_message_standard_after_main_region_html() {
     // Enter to send.
     $entertosend = get_user_preferences('message_entertosend', false, $USER);
 
-    // Get the unread counts for the current user.
-    $unreadcounts = \core_message\api::get_unread_conversation_counts($USER->id);
-
     return $renderer->render_from_template('core_message/message_drawer', [
         'contactrequestcount' => $requestcount,
         'loggedinuser' => [
