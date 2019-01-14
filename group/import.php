@@ -83,7 +83,9 @@ if ($mform_post->is_cancelled()) {
             "groupidnumber" => 1,
             "description" => 1,
             "enrolmentkey" => 1,
-            "groupingname" => 1);
+            "groupingname" => 1,
+            "enablemessaging" => 1,
+        );
 
     // --- get header (field names) ---
     $header = explode($csv_delimiter, array_shift($rawlines));
