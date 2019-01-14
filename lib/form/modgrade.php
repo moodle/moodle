@@ -349,9 +349,9 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                 $name = $arg[0];
 
                 // Set disable actions.
-                $caller->disabledIf($name.'[modgrade_scale]', $name.'[modgrade_type]', 'neq', 'scale');
-                $caller->disabledIf($name.'[modgrade_point]', $name.'[modgrade_type]', 'neq', 'point');
-                $caller->disabledIf($name.'[modgrade_rescalegrades]', $name.'[modgrade_type]', 'neq', 'point');
+                $caller->hideIf($name.'[modgrade_scale]', $name.'[modgrade_type]', 'neq', 'scale');
+                $caller->hideIf($name.'[modgrade_point]', $name.'[modgrade_type]', 'neq', 'point');
+                $caller->hideIf($name.'[modgrade_rescalegrades]', $name.'[modgrade_type]', 'neq', 'point');
 
                 // Set validation rules for the sub-elements belonging to this element.
                 // A handy note: the parent scope of a closure is the function in which the closure was declared.
