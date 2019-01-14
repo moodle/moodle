@@ -53,7 +53,7 @@ $attr = array(
     'width' => '100%',
     'allowfullscreen' => 'true',
     'src' => 'lti_launch.php',
-    'allow' => 'autoplay *; fullscreen *; encrypted-media *',
+    'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *;',
 );
 echo html_writer::tag('iframe', '', $attr);
 
