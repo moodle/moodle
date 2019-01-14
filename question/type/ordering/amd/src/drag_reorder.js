@@ -27,7 +27,15 @@
 /**
  * @module qtype_ordering/drag_reorder
  */
-define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, drag, keys) {
+define([
+    'jquery',
+    require.specified('core/dragdrop') ? 'core/dragdrop' : 'qtype_ordering/dragdrop',
+    require.specified('core/key_codes') ? 'core/key_codes' : 'qtype_ordering/key_codes'
+], function(
+    $,
+    drag,
+    keys
+) {
 
     /**
      * Constructor.

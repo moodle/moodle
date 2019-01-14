@@ -1,5 +1,5 @@
 ============================================
-The Ordering question type for Moodle >= 2.1
+The Ordering question type for Moodle >= 2.9
 ============================================
 
 The ordering question type displays several items in a random order
@@ -28,7 +28,7 @@ To INSTALL or UPDATE this plugin
 
        If you are installing from a zip file, unzip the zip file, to create a folder
        called "ordering" and upload or move this folder into the "question/type" folder
-       on your Moodle >= 2.1 site, to create a new folder at "question/type/ordering".
+       on your Moodle >= 2.9 site, to create a new folder at "question/type/ordering".
 
     2. log in to Moodle as administrator to initiate install/upgrade
 
@@ -43,9 +43,6 @@ Further information
     For more information, tutorials and online discussion forums, please visit:
     http://moodlereader.org/
 
-    This plugin uses JQuery framework and plugins:
-    http://jqueryui.com/sortable/
-    http://touchpunch.furf.com/
 
 ============================================
 Development history and credits

@@ -90,34 +90,10 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
         if ($options->readonly) {
             // Items cannot be dragged in readonly mode.
-        } else if (method_exists($PAGE->requires, 'js_call_amd')) {
-            // Moodle >= 2.9
+        } else {
+            // Initialise JavaScript.
             $params = array($sortableid, $responseid, $axis);
             $PAGE->requires->js_call_amd('qtype_ordering/reorder', 'init', $params);
-        } else {
-            // Moodle <= 2.8
-            $script = "\n";
-            $script .= "//<![CDATA[\n";
-            $script .= "if (window.$) {\n";
-            $script .= "    $(function(){\n";
-            $script .= "        $('#$sortableid').sortable({\n";
-            $script .= "            axis: '$axis',\n";
-            $script .= "            containment: '#$ablockid',\n";
-            $script .= "            opacity: 0.6,\n";
-            $script .= "            update: function(event, ui){\n";
-            $script .= "                var ItemsOrder = $(this).sortable('toArray');\n";
-            $script .= "                $('#$responseid').val(ItemsOrder.toString());\n";
-            $script .= "            }\n";
-            $script .= "        });\n";
-            $script .= "        $('#$sortableid').disableSelection();\n";
-            $script .= "    });\n";
-            $script .= "    $(document).ready(function(){\n";
-            $script .= "        var ItemsOrder = $('#$sortableid').sortable('toArray');\n";
-            $script .= "        $('#$responseid').val(ItemsOrder).toString();\n";
-            $script .= "    });\n";
-            $script .= "}\n";
-            $script .= "//]]>\n";
-            $result .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
         }
 
         $result .= html_writer::tag('div', $question->format_questiontext($qa), array('class' => 'qtext'));
