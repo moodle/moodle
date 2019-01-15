@@ -42,6 +42,9 @@ class behat_app extends behat_base {
     /** @var stdClass Object with data about launched Ionic instance (if any) */
     protected static $ionicrunning = null;
 
+    /** @var string URL for running Ionic server */
+    protected $ionicurl = '';
+
     /**
      * Checks if the current OS is Windows, from the point of view of task-executing-and-killing.
      *
@@ -50,6 +53,17 @@ class behat_app extends behat_base {
     protected static function is_windows() : bool {
         return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
     }
+
+    /**
+     * Called from behat_hooks when a new scenario starts, if it has the app tag.
+     *
+     * This updates Moodle configuration and starts Ionic running, if it isn't already.
+     */
+    public function start_scenario() {
+        $this->check_behat_setup();
+        $this->fix_moodle_setup();
+        $this->ionicurl = $this->start_or_reuse_ionic();
+}
 
     /**
      * Opens the Moodle app in the browser.
@@ -62,19 +76,17 @@ class behat_app extends behat_base {
      * @throws ExpectationException Problem with resizing window
      */
     public function i_enter_the_app() {
+        // Check the app tag was set.
+        if (!$this->has_tag('app')) {
+            throw new DriverException('Requires @app tag on scenario or feature.');
+        }
+
         // Restart the browser and set its size.
         $this->getSession()->restart();
         $this->resize_window('360x720', true);
 
-        // Prepare setup.
-        $this->check_behat_setup();
-        $this->fix_moodle_setup();
-
-        // Start Ionic server (or use existing one).
-        $url = $this->start_or_reuse_ionic();
-
         // Go to page and prepare browser for app.
-        $this->prepare_browser($url);
+        $this->prepare_browser($this->ionicurl);
     }
 
     /**
@@ -84,11 +96,6 @@ class behat_app extends behat_base {
      */
     protected function check_behat_setup() {
         global $CFG;
-
-        // Check the app tag was set.
-        if (!$this->has_tag('app')) {
-            throw new DriverException('Requires @app tag on scenario or feature.');
-        }
 
         // Check JavaScript is enabled.
         if (!$this->running_javascript()) {
