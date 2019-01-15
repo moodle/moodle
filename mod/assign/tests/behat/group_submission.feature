@@ -293,3 +293,64 @@ Feature: Group assignment submissions
     And I press "Go"
     And I should see "1" in the "Groups" "table_row"
     And I should see "1" in the "Submitted" "table_row"
+
+  Scenario: Confirm that the submission status changes for each group member
+    Given the following "courses" exist:
+      | fullname | shortname | category | groupmode |
+      | Course 1 | C1 | 0 | 1 |
+    And the following "users" exist:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | teacher1 | C1 | editingteacher |
+      | student1 | C1 | student |
+      | student2 | C1 | student |
+    And the following "groups" exist:
+      | name | course | idnumber |
+      | Group 1 | C1 | G1 |
+    And the following "group members" exist:
+      | user | group |
+      | student1 | G1 |
+      | student2 | G1 |
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add a "Assignment" to section "1" and I fill the form with:
+      | Assignment name | Test assignment name |
+      | Description | Test assignment description |
+      | assignsubmission_onlinetext_enabled | 1 |
+      | assignsubmission_file_enabled | 0 |
+      | Require students to click the submit button | Yes |
+      | Students submit in groups | Yes |
+      | Group mode | No groups |
+      | Require group to make submission | No |
+      | Require all group members submit | No |
+    And I am on "Course 1" course homepage
+    And I add the "Activities" block
+    And I log out
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    And I press "Add submission"
+    And I set the following fields to these values:
+      | Online text | I'm the student's first submission |
+    And I press "Save changes"
+    And I press "Submit assignment"
+    And I press "Continue"
+    And I am on "Course 1" course homepage
+    And I click on "Assignments" "link" in the "Activities" "block"
+    And I should see "Submitted for grading"
+    And I log out
+    And I log in as "student2"
+    And I am on "Course 1" course homepage
+    And I click on "Assignments" "link" in the "Activities" "block"
+    And I should see "Submitted for grading"
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    When I navigate to "View all submissions" in current page administration
+    Then "Student 1" row "Status" column of "generaltable" table should contain "Submitted for grading"
+    And "Student 2" row "Status" column of "generaltable" table should contain "Submitted for grading"
