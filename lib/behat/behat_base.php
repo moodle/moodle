@@ -648,6 +648,16 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     }
 
     /**
+     * Checks if the current scenario, or its feature, has a specified tag.
+     *
+     * @param string $tag Tag to check
+     * @return bool True if the tag exists in scenario or feature
+     */
+    public function has_tag(string $tag) : bool {
+        return array_key_exists($tag, behat_hooks::get_tags_for_scenario());
+    }
+
+    /**
      * Change browser window size.
      *   - small: 640x480
      *   - medium: 1024x768

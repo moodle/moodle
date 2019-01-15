@@ -29,7 +29,6 @@ require_once(__DIR__ . '/../../behat/behat_base.php');
 
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Exception\ExpectationException;
-use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 
 /**
  * Mobile/desktop app steps definitions.
@@ -40,9 +39,6 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_app extends behat_base {
-    /** @var bool True if the current scenario has the app tag */
-    protected $apptag = false;
-
     /** @var stdClass Object with data about launched Ionic instance (if any) */
     protected static $ionicrunning = null;
 
@@ -53,17 +49,6 @@ class behat_app extends behat_base {
      */
     protected static function is_windows() : bool {
         return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
-    }
-
-    /**
-     * Checks tags before each scenario.
-     *
-     * @BeforeScenario
-     * @param BeforeScenarioScope $scope Scope information
-     */
-    public function check_tags(BeforeScenarioScope $scope) {
-        $this->apptag = in_array('app', $scope->getScenario()->getTags()) ||
-                in_array('app', $scope->getFeature()->getTags());
     }
 
     /**
@@ -101,7 +86,7 @@ class behat_app extends behat_base {
         global $CFG;
 
         // Check the app tag was set.
-        if (!$this->apptag) {
+        if (!$this->has_tag('app')) {
             throw new DriverException('Requires @app tag on scenario or feature.');
         }
 
