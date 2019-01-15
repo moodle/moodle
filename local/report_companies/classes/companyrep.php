@@ -84,6 +84,8 @@ class companyrep{
             $companylist[$company->id] = $company;
         }
 
+        $companylist = \block_iomad_company_admin\iomad_company_admin::order_companies_by_parent($companylist);
+
         return $companylist;
     }
 
