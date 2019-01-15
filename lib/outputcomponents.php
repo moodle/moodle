@@ -525,12 +525,19 @@ class help_icon implements renderable, templatable {
         $data->icon = (new pix_icon('help', $alt, 'core', ['class' => 'iconhelp']))->export_for_template($output);
         $data->linktext = $this->linktext;
         $data->title = get_string('helpprefix2', '', trim($title, ". \t"));
-        $data->url = (new moodle_url('/help.php', [
+
+        $options = [
             'component' => $this->component,
             'identifier' => $this->identifier,
             'lang' => current_language()
-        ]))->out(false);
+        ];
 
+        // Debugging feature lets you display string identifier and component.
+        if (isset($CFG->debugstringids) && $CFG->debugstringids && optional_param('strings', 0, PARAM_INT)) {
+            $options['strings'] = 1;
+        }
+
+        $data->url = (new moodle_url('/help.php', $options))->out(false);
         $data->ltr = !right_to_left();
         return $data;
     }
