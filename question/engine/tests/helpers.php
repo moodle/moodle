@@ -778,6 +778,20 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
         $this->quba = null;
     }
 
+    /**
+     * Asserts if the manual comment for the question is equal to the provided arguments.
+     * @param $comment Comment text
+     * @param $commentformat Comment format
+     */
+    protected function check_comment($comment, $commentformat) {
+        $actualcomment = $this->quba->get_question_attempt($this->slot)->get_manual_comment();
+
+        $this->assertEquals(
+                [$comment, $commentformat],
+                [$actualcomment[0], $actualcomment[1]]
+        );
+    }
+
     protected function check_current_state($state) {
         $this->assertEquals($state, $this->quba->get_question_state($this->slot),
             'Questions is in the wrong state.');
