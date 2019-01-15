@@ -21,13 +21,13 @@ Feature: Test course list shown on app start tab
 
   Scenario: Student is registered on one course
     When I enter the app
-    And I log in as "student1" in the app
+    And I log in as "student1"
     Then I should see "Course 1"
     And I should not see "Course 2"
 
   Scenario: Student is registered on two courses (shortnames not displayed)
     When I enter the app
-    And I log in as "student2" in the app
+    And I log in as "student2"
     Then I should see "Course 1"
     And I should see "Course 2"
     And I should not see "C1"
@@ -37,7 +37,7 @@ Feature: Test course list shown on app start tab
     Given the following config values are set as admin:
       | courselistshortnames | 1 |
     When I enter the app
-    And I log in as "student2" in the app
+    And I log in as "student2"
     Then I should see "Course 1"
     And I should see "Course 2"
     And I should see "C1"
@@ -45,7 +45,7 @@ Feature: Test course list shown on app start tab
 
   Scenario: Student uses course list to enter course, then leaves it again
     When I enter the app
-    And I log in as "student2" in the app
+    And I log in as "student2"
     And I press "Course 2" near "Course overview" in the app
     Then the header should be "Course 2" in the app
     And I press the back button in the app
@@ -94,7 +94,7 @@ Feature: Test course list shown on app start tab
       | student2 | Z9     | student |
       | student2 | Z10    | student |
     When I enter the app
-    And I log in as "student2" in the app
+    And I log in as "student2"
     Then I should see "C1"
     And I should see "C2"
     And I should see "C3"

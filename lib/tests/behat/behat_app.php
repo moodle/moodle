@@ -321,20 +321,18 @@ class behat_app extends behat_base {
     }
 
     /**
-     * Logs in as the given user in the app's login screen.
+     * Carries out the login steps for the app, assuming the user is on the app login page. Called
+     * from behat_auth.php.
      *
-     * Must be run from the app login screen (i.e. immediately after first 'I enter the app').
-     *
-     * @Given /^I log in as "(?P<username_string>(?:[^"]|\\")*)" in the app$/
      * @param string $username Username (and password)
-     * @throws DriverException If the main page doesn't load
+     * @throws Exception Any error
      */
-    public function i_log_in_as_username_in_the_app(string $username) {
+    public function login(string $username) {
         $this->i_set_the_field_in_the_app('Username', $username);
         $this->i_set_the_field_in_the_app('Password', $username);
 
         // Note there are two 'Log in' texts visible (the title and the button) so we have to use
-        // the 'near' syntax here.
+        // a 'near' value here.
         $this->i_press_near_in_the_app('Log in', 'Forgotten');
 
         // Wait until the main page appears.
@@ -398,15 +396,7 @@ class behat_app extends behat_base {
      * @throws DriverException If the press doesn't work
      */
     public function i_press_in_the_app(string $text) {
-        $this->spin(function($context, $args) use ($text) {
-            $result = $this->getSession()->evaluateScript('return window.behatPress("' .
-                    addslashes_js($text) . '");');
-            if ($result !== 'OK') {
-                throw new DriverException('Error pressing item - ' . $result);
-            }
-            return true;
-        });
-        $this->wait_for_pending_js();
+        $this->press($text);
     }
 
     /**
@@ -422,9 +412,30 @@ class behat_app extends behat_base {
      * @throws DriverException If the press doesn't work
      */
     public function i_press_near_in_the_app(string $text, string $near) {
+        $this->press($text, $near);
+    }
+
+    /**
+     * Clicks on / touches something that is visible in the app, near some other text.
+     *
+     * If the $near is specified then when there are multiple matches, it picks the one
+     * nearest (in DOM terms) $near. $near should be an exact match, or a partial match that only
+     * has one result.
+     *
+     * @param behat_base $base Behat context
+     * @param string $text Text identifying click target
+     * @param string $near Text identifying a nearby unique piece of text
+     * @throws DriverException If the press doesn't work
+     */
+    protected function press(string $text, string $near = '') {
         $this->spin(function($context, $args) use ($text, $near) {
-            $result = $this->getSession()->evaluateScript('return window.behatPress("' .
-                    addslashes_js($text) . '", "' . addslashes_js($near) . '");');
+            if ($near !== '') {
+                $nearbit = ', "' . addslashes_js($near) . '"';
+            } else {
+                $nearbit = '';
+            }
+            $result = $context->getSession()->evaluateScript('return window.behatPress("' .
+                    addslashes_js($text) . '"' . $nearbit .');');
             if ($result !== 'OK') {
                 throw new DriverException('Error pressing item - ' . $result);
             }

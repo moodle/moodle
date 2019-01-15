@@ -44,6 +44,12 @@ class behat_auth extends behat_base {
      * @Given /^I log in as "(?P<username_string>(?:[^"]|\\")*)"$/
      */
     public function i_log_in_as($username) {
+        // In the mobile app the required tasks are different.
+        if ($this->is_in_app()) {
+            $this->execute('behat_app::login', [$username]);
+            return;
+        }
+
         // Visit login page.
         $this->getSession()->visit($this->locate_path('login/index.php'));
 

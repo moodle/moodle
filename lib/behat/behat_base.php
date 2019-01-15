@@ -475,6 +475,21 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     }
 
     /**
+     * Checks if the current page is part of the mobile app.
+     *
+     * @return bool True if it's in the app
+     */
+    protected function is_in_app() : bool {
+        // Cannot be in the app if there's no @app tag on scenario.
+        if (!$this->has_tag('app')) {
+            return false;
+        }
+
+        // Check on page to see if it's an app page. Safest way is to look for added JavaScript.
+        return $this->getSession()->evaluateScript('typeof window.behatPress') === 'function';
+    }
+
+    /**
      * Spins around an element until it exists
      *
      * @throws ExpectationException

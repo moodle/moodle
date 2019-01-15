@@ -20,7 +20,7 @@ Feature: Test basic usage in app
 
   Scenario: Student starts a discussion
     When I enter the app
-    And I log in as "student1" in the app
+    And I log in as "student1"
     And I press "Course 1" near "Course overview" in the app
     And I press "Test forum name" in the app
     And I press "Add a new discussion topic" in the app
@@ -32,7 +32,7 @@ Feature: Test basic usage in app
 
   Scenario: Student posts a reply
     When I enter the app
-    And I log in as "student1" in the app
+    And I log in as "student1"
     And I press "Course 1" near "Course overview" in the app
     And I press "Test forum name" in the app
     And I press "Add a new discussion topic" in the app
@@ -49,7 +49,7 @@ Feature: Test basic usage in app
   Scenario: Test that 'open in browser' works for forum
     When I enter the app
     And I change viewport size to "360x640"
-    And I log in as "student1" in the app
+    And I log in as "student1"
     And I press "Course 1" near "Course overview" in the app
     And I press "Test forum name" in the app
     And I press the page menu button in the app
