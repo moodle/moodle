@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 $string['report_companies:view'] = 'View companies report';
+$string['childcompany'] = 'This is a child company. Parent is \'{$a}\'';
 $string['companies'] = 'Companies';
 $string['completed'] = 'Completed';
 $string['course'] = 'Course';

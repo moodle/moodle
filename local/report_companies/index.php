@@ -51,7 +51,7 @@ echo $OUTPUT->heading( get_string('pluginname', 'local_report_companies') );
 $PAGE->requires->js_init_call('M.local_report_companies.init');
 
 // Get the company list.
-$companies = companyrep::companylist($USER);
+$companies = companyrep::companylist($USER, $companyid);
 companyrep::addmanagers($companies) ;
 companyrep::addusers($companies);
 companyrep::addcourses($companies);

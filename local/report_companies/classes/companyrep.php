@@ -66,6 +66,15 @@ class companyrep{
         // And finally build the list.
         foreach ($companies as $company) {
 
+            // Is this a child company?
+            if ($company->parentid) {
+                $parent = $DB->get_record('company', ['id' => $company->parentid], '*', MUST_EXIST);
+                $company->parentlink = new \moodle_url('/local/report_companies', ['companyid' => $company->parentid]);
+                $company->parent = '<a href="' . $company->parentlink . '">' . $parent->name . '</a>';
+            } else {
+                $company->parent = '';
+            }
+
             // If managers found then only allow selected companies.
             if (!empty($managedcompanies)) {
                 if (!in_array($company->id, $managedcompanies)) {
