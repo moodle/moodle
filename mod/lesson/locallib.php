@@ -1307,6 +1307,7 @@ abstract class lesson_add_page_form_base extends moodleform {
      * and then calls custom_definition();
      */
     public final function definition() {
+        global $CFG;
         $mform = $this->_form;
         $editoroptions = $this->_customdata['editoroptions'];
 
@@ -1334,8 +1335,12 @@ abstract class lesson_add_page_form_base extends moodleform {
             $mform->setType('qtype', PARAM_INT);
 
             $mform->addElement('text', 'title', get_string('pagetitle', 'lesson'), array('size'=>70));
-            $mform->setType('title', PARAM_TEXT);
             $mform->addRule('title', get_string('required'), 'required', null, 'client');
+            if (!empty($CFG->formatstringstriptags)) {
+                $mform->setType('title', PARAM_TEXT);
+            } else {
+                $mform->setType('title', PARAM_CLEANHTML);
+            }
 
             $this->editoroptions = array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$this->_customdata['maxbytes']);
             $mform->addElement('editor', 'contents_editor', get_string('pagecontents', 'lesson'), null, $this->editoroptions);
