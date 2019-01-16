@@ -58,6 +58,7 @@ class behat_files extends behat_base {
      * @param string $filepickerelement The filepicker form field label
      * @return NodeElement The hidden element node.
      */
+
     protected function get_filepicker_node($filepickerelement) {
 
         // More info about the problem (in case there is a problem).
@@ -66,18 +67,18 @@ class behat_files extends behat_base {
         // If no file picker label is mentioned take the first file picker from the page.
         if (empty($filepickerelement)) {
             $filepickercontainer = $this->find(
-                'xpath',
-                "//*[@data-fieldtype=\"filemanager\"]",
-                $exception
+                    'xpath',
+                    "//*[@data-fieldtype=\"filemanager\"]",
+                    $exception
             );
         } else {
             // Gets the ffilemanager node specified by the locator which contains the filepicker container.
             $filepickerelement = behat_context_helper::escape($filepickerelement);
             $filepickercontainer = $this->find(
-                'xpath',
-                "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
-                    '//ancestor::div[@data-fieldtype="filemanager" or @data-fieldtype="filepicker"]',
-                $exception
+                    'xpath',
+                    "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
+                    "//ancestor::*[@data-fieldtype = 'filemanager' or @data-fieldtype = 'filepicker']",
+                    $exception
             );
         }
 

@@ -17,6 +17,8 @@
 /**
  * Files interactions with behat overrides.
  *
+ * @package    theme_bootstrapbase
+ * @category   test
  * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,10 +33,12 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
 /**
  * Files-related actions overrides.
  *
+ * @package    theme_bootstrapbase
+ * @category   test
  * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_theme_boost_behat_files extends behat_files {
+class behat_theme_bootstrapbase_behat_files extends behat_files {
 
     protected function get_filepicker_node($filepickerelement) {
 
@@ -44,18 +48,18 @@ class behat_theme_boost_behat_files extends behat_files {
         // If no file picker label is mentioned take the first file picker from the page.
         if (empty($filepickerelement)) {
             $filepickercontainer = $this->find(
-                'xpath',
-                "//*[@data-fieldtype=\"filemanager\"]",
-                $exception
+                    'xpath',
+                    "//*[@data-fieldtype=\"filemanager\"]",
+                    $exception
             );
         } else {
             // Gets the ffilemanager node specified by the locator which contains the filepicker container.
             $filepickerelement = behat_context_helper::escape($filepickerelement);
             $filepickercontainer = $this->find(
-                'xpath',
-                "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
-                    "//ancestor::*[@data-fieldtype = 'filemanager' or @data-fieldtype = 'filepicker']",
-                $exception
+                    'xpath',
+                    "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
+                    '//ancestor::div[@data-fieldtype="filemanager" or @data-fieldtype="filepicker"]',
+                    $exception
             );
         }
 

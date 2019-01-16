@@ -115,13 +115,14 @@ class behat_repository_upload extends behat_files {
         // Ensure all the form is ready.
         $noformexception = new ExpectationException('The upload file form is not ready', $this->getSession());
         $this->find(
-            'xpath',
-            "//div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]" .
+                'xpath',
+                "//div[contains(concat(' ', normalize-space(@class), ' '), ' container ')]" .
                 "[contains(concat(' ', normalize-space(@class), ' '), ' repository_upload ')]" .
+                "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]" .
                 "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-content ')]" .
                 "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-upload-form ')]" .
                 "/descendant::form",
-            $noformexception
+                $noformexception
         );
         // After this we have the elements we want to interact with.
 
@@ -171,6 +172,39 @@ class behat_repository_upload extends behat_files {
             $this->getSession()->wait(self::TIMEOUT, self::PAGE_READY_JS);
         }
 
+    }
+
+    /**
+     * Try to get the filemanager node specified by the element
+     *
+     * @param string $filepickerelement
+     * @return \Behat\Mink\Element\NodeElement
+     * @throws ExpectationException
+     */
+    protected function get_filepicker_node($filepickerelement) {
+
+        // More info about the problem (in case there is a problem).
+        $exception = new ExpectationException('"' . $filepickerelement . '" filepicker can not be found', $this->getSession());
+
+        // If no file picker label is mentioned take the first file picker from the page.
+        if (empty($filepickerelement)) {
+            $filepickercontainer = $this->find(
+                    'xpath',
+                    "//*[@class=\"form-filemanager\"]",
+                    $exception
+            );
+        } else {
+            // Gets the filemanager node specified by the locator which contains the filepicker container.
+            $filepickerelement = behat_context_helper::escape($filepickerelement);
+            $filepickercontainer = $this->find(
+                    'xpath',
+                    "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
+                    "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' felement ')]",
+                    $exception
+            );
+        }
+
+        return $filepickercontainer;
     }
 
 }

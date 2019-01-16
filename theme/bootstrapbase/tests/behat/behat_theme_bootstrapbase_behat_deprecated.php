@@ -17,6 +17,8 @@
 /**
  * Deprecated steps overrides.
  *
+ * @package    theme_bootstrapbase
+ * @category   test
  * @copyright  2018 Victor Deniz
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,15 +30,17 @@ require_once(__DIR__ . '/../../../../lib/tests/behat/behat_deprecated.php');
 /**
  * Deprecated behat step definitions.
  *
- * @package    theme_boost
+ * @package    theme_bootstrapbase
  * @category   test
  * @copyright  2018 Victor Deniz
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_theme_boost_behat_deprecated extends behat_deprecated {
+class behat_theme_bootstrapbase_behat_deprecated extends behat_deprecated {
 
     /**
      * Click link in navigation tree that matches the text in parentnode/s (seperated using greater-than character if more than one)
+     *
+     * @Given /^I navigate to "(?P<nodetext_string>(?:[^"]|\\")*)" node in "(?P<parentnodes_string>(?:[^"]|\\")*)"$/
      *
      * @throws ExpectationException
      * @param string $nodetext navigation node to click.
@@ -57,34 +61,6 @@ class behat_theme_boost_behat_deprecated extends behat_deprecated {
         $this->deprecated_message($alternative);
 
         $parentnodes = array_map('trim', explode('>', $parentnodes));
-        $nodelist = array_merge($parentnodes, [$nodetext]);
-        $firstnode = array_shift($nodelist);
-
-        if ($firstnode === get_string('administrationsite')) {
-            $this->execute('behat_theme_boost_behat_navigation::i_select_from_flat_navigation_drawer',
-                    array(get_string('administrationsite')));
-            $this->execute('behat_theme_boost_behat_navigation::select_on_administration_page', array($nodelist));
-            return;
-        }
-
-        if ($firstnode === get_string('sitepages')) {
-            if ($nodetext === get_string('calendar', 'calendar')) {
-                $this->execute('behat_theme_boost_behat_navigation::i_select_from_flat_navigation_drawer',
-                        array(($nodetext)));
-            } else {
-                // TODO MDL-57120 other links under "Site pages" are not accessible without navigation block.
-                $this->execute('behat_theme_boost_behat_navigation::select_node_in_navigation',
-                        array($nodetext, $parentnodes));
-            }
-            return;
-        }
-
-        if ($firstnode === get_string('courseadministration')) {
-            // Administration menu is available only on the main course page where settings in Administration
-            // block (original purpose of the step) are available on every course page.
-            $this->execute('behat_theme_boost_behat_navigation::go_to_main_course_page', array());
-        }
-
-        $this->execute('behat_theme_boost_behat_navigation::select_from_administration_menu', array($nodelist));
+        $this->execute('behat_navigation::select_node_in_navigation', array($nodetext, $parentnodes));
     }
 }

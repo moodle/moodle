@@ -17,6 +17,8 @@
 /**
  * Override definitions for the upload repository type.
  *
+ * @package    theme_bootstrapbase
+ * @category   test
  * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,36 +33,12 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
 /**
  * Override steps definitions to deal with the upload repository.
  *
+ * @package    theme_bootstrapbase
+ * @category   test
  * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_theme_boost_behat_repository_upload extends behat_repository_upload {
-
-    protected function get_filepicker_node($filepickerelement) {
-
-        // More info about the problem (in case there is a problem).
-        $exception = new ExpectationException('"' . $filepickerelement . '" filepicker can not be found', $this->getSession());
-
-        // If no file picker label is mentioned take the first file picker from the page.
-        if (empty($filepickerelement)) {
-            $filepickercontainer = $this->find(
-                'xpath',
-                "//*[@class=\"form-filemanager\"]",
-                $exception
-            );
-        } else {
-            // Gets the ffilemanager node specified by the locator which contains the filepicker container.
-            $filepickerelement = behat_context_helper::escape($filepickerelement);
-            $filepickercontainer = $this->find(
-                'xpath',
-                "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
-                    "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' felement ')]",
-                $exception
-            );
-        }
-
-        return $filepickercontainer;
-    }
+class behat_theme_bootstrapbase_behat_repository_upload extends behat_repository_upload {
 
     protected function upload_file_to_filemanager($filepath, $filemanagerelement, TableNode $data, $overwriteaction = false) {
         global $CFG;
@@ -73,14 +51,13 @@ class behat_theme_boost_behat_repository_upload extends behat_repository_upload 
         // Ensure all the form is ready.
         $noformexception = new ExpectationException('The upload file form is not ready', $this->getSession());
         $this->find(
-            'xpath',
-            "//div[contains(concat(' ', normalize-space(@class), ' '), ' container ')]" .
+                'xpath',
+                "//div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]" .
                 "[contains(concat(' ', normalize-space(@class), ' '), ' repository_upload ')]" .
-                "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]" .
                 "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-content ')]" .
                 "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-upload-form ')]" .
                 "/descendant::form",
-            $noformexception
+                $noformexception
         );
         // After this we have the elements we want to interact with.
 

@@ -17,6 +17,8 @@
 /**
  * Steps definitions related with administration overrides.
  *
+ * @package    theme_bootstrapbase
+ * @category   test
  * @copyright 2016 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,10 +34,12 @@ use Behat\Gherkin\Node\TableNode as TableNode,
 /**
  * Site administration level steps definitions overrides.
  *
- * @copyright 2016 Damyon Wiese
+ * @package    theme_bootstrapbase
+ * @category   test
+ * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_theme_boost_behat_admin extends behat_admin {
+class behat_theme_bootstrapbase_behat_admin extends behat_admin {
 
     public function i_set_the_following_administration_settings_values(TableNode $table) {
 
@@ -45,12 +49,16 @@ class behat_theme_boost_behat_admin extends behat_admin {
 
         foreach ($data as $label => $value) {
 
-            $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', [get_string('administrationsite')]);
+            // We expect admin block to be visible, otherwise go to homepage.
+            if (!$this->getSession()->getPage()->find('css', '.block_settings')) {
+                $this->getSession()->visit($this->locate_path('/'));
+                $this->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+            }
 
             // Search by label.
-            $searchbox = $this->find_field(get_string('query', 'admin'));
+            $searchbox = $this->find_field(get_string('searchinsettings', 'admin'));
             $searchbox->setValue($label);
-            $submitsearch = $this->find('css', 'form input[type=submit][name=search]');
+            $submitsearch = $this->find('css', 'form.adminsearchform input[type=submit]');
             $submitsearch->press();
 
             $this->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
@@ -64,24 +72,21 @@ class behat_theme_boost_behat_admin extends behat_admin {
 
             // Single element settings.
             try {
-                $fieldxpath = "//*[self::input | self::textarea | self::select]" .
-                    "[not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]" .
-                    "[@id=//label[contains(normalize-space(.), $label)]/@for or " .
-                    "@id=//span[contains(normalize-space(.), $label)]/preceding-sibling::label[1]/@for]";
+                $fieldxpath = "//*[self::input | self::textarea | self::select][not(./@type = 'submit' or ./@type = 'image' or " .
+                        "./@type = 'hidden')]" . "[@id=//label[contains(normalize-space(.), $label)]/@for or " .
+                        "@id=//span[contains(normalize-space(.), $label)]/preceding-sibling::label[1]/@for]";
                 $fieldnode = $this->find('xpath', $fieldxpath, $exception);
 
-                $formfieldtypenode = $this->find('xpath', $fieldxpath .
-                    "/ancestor::div[contains(concat(' ', @class, ' '), ' form-setting ')]" .
-                    "/child::div[contains(concat(' ', @class, ' '),  ' form-')]/child::*/parent::div");
+                $formfieldtypenode = $this->find('xpath', $fieldxpath . "/ancestor::div[@class='form-setting']" .
+                        "/child::div[contains(concat(' ', @class, ' '),  ' form-')]/child::*/parent::div");
 
             } catch (ElementNotFoundException $e) {
 
                 // Multi element settings, interacting only the first one.
-                $fieldxpath = "//*[label[contains(., $label)]|span[contains(., $label)]]" .
-                    "/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' form-item ')]" .
-                    "/descendant::div[contains(concat(' ', @class, ' '), ' form-group ')]" .
-                    "/descendant::*[self::input | self::textarea | self::select]" .
-                    "[not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]";
+                $fieldxpath = "//*[label[normalize-space(.)= $label]|span[normalize-space(.)= $label]]/" .
+                        "ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' form-item ')]" .
+                        "/descendant::div[@class='form-group']/descendant::*[self::input | self::textarea | self::select]" .
+                        "[not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]";
                 $fieldnode = $this->find('xpath', $fieldxpath);
 
                 // It is the same one that contains the type.
@@ -90,7 +95,6 @@ class behat_theme_boost_behat_admin extends behat_admin {
 
             // Getting the class which contains the field type.
             $classes = explode(' ', $formfieldtypenode->getAttribute('class'));
-            $type = false;
             foreach ($classes as $class) {
                 if (substr($class, 0, 5) == 'form-') {
                     $type = substr($class, 5);
