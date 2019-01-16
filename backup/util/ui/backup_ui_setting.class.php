@@ -751,8 +751,11 @@ class backup_setting_ui_defaultcustom extends backup_setting_ui_text {
         if ($value === false) {
             $value = $this->attributes['defaultvalue'];
         }
-        if (!empty($value) && $this->attributes['type'] === 'date_selector') {
-            return userdate($value);
+        if (!empty($value)) {
+            if ($this->attributes['type'] === 'date_selector' ||
+                    $this->attributes['type'] === 'date_time_selector') {
+                return userdate($value);
+            }
         }
         return $value;
     }
