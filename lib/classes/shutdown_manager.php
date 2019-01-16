@@ -48,6 +48,51 @@ class core_shutdown_manager {
         }
         self::$registered = true;
         register_shutdown_function(array('core_shutdown_manager', 'shutdown_handler'));
+
+        // Signal handlers should only be used when dealing with a CLI script.
+        // In the case of PHP called in a web server the server is the owning process and should handle the signal chain
+        // properly itself.
+        // The 'pcntl' extension is optional and not available on Windows.
+        if (CLI_SCRIPT && extension_loaded('pcntl') && function_exists('pcntl_async_signals')) {
+            // We capture and handle SIGINT (Ctrl+C) and SIGTERM (termination requested).
+            pcntl_async_signals(true);
+            pcntl_signal(SIGINT, ['core_shutdown_manager', 'signal_handler']);
+            pcntl_signal(SIGTERM, ['core_shutdown_manager', 'signal_handler']);
+        }
+    }
+
+    /**
+     * Signal handler for SIGINT, and SIGTERM.
+     *
+     * @param   int     $signo The signal being handled
+     */
+    public static function signal_handler($signo) {
+        // Note: There is no need to manually call the shutdown handler.
+        // The fact that we are calling exit() in this script means that the standard shutdown handling is performed
+        // anyway.
+        switch ($signo) {
+            case SIGTERM:
+                // Replicate native behaviour.
+                echo "Terminated: {$signo}\n";
+
+                // The standard exit code for SIGTERM is 143.
+                $exitcode = 143;
+                break;
+            case SIGINT:
+                // Replicate native behaviour.
+                echo "\n";
+
+                // The standard exit code for SIGINT (Ctrl+C) is 130.
+                $exitcode = 130;
+                break;
+            default:
+                // The signal handler was called with a signal it was not expecting.
+                // We should exit and complain.
+                echo "Warning: \core_shutdown_manager::signal_handler() was called with an unexpected signal ({$signo}).\n";
+                $exitcode = 1;
+        }
+
+        exit ($exitcode);
     }
 
     /**
