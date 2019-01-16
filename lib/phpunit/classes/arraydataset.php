@@ -58,7 +58,7 @@ class phpunit_ArrayDataSet extends PHPUnit\DbUnit\DataSet\AbstractDataSet {
                 $columns = array_keys($firstrow);
             }
 
-            $metaData = new PHPUnit\DbUnit\DataSet\DefaultTableMetaData($tableName, $columns);
+            $metaData = new PHPUnit\DbUnit\DataSet\DefaultTableMetadata($tableName, $columns);
             $table = new PHPUnit\DbUnit\DataSet\DefaultTable($metaData);
 
             foreach ($rows AS $row) {
