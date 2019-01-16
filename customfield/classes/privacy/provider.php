@@ -47,7 +47,13 @@ use Horde\Socket\Client\Exception;
  * @copyright 2018 David Matamoros <davidmc@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\subsystem\plugin_provider {
+class provider implements
+        // Customfield store data.
+        \core_privacy\local\metadata\provider,
+
+        // The customfield subsystem stores data on behalf of other components.
+        \core_privacy\local\request\subsystem\plugin_provider,
+        \core_privacy\local\request\shared_userlist_provider  {
 
     /**
      * Return the fields which contain personal data.

@@ -7336,7 +7336,7 @@ class admin_setting_managecustomfields extends admin_setting {
     public function output_html($data, $query='') {
         global $CFG, $OUTPUT;
         $return = '';
-        $return = $OUTPUT->heading(new lang_string('customfields'), 3, 'main');
+        $return = $OUTPUT->heading(new lang_string('customfields', 'core_customfield'), 3, 'main');
         $return .= $OUTPUT->box_start('generalbox customfieldsui');
 
         $fields = core_plugin_manager::instance()->get_plugins_of_type('customfield');

@@ -64,9 +64,9 @@ class customfield extends \core_search\base {
 
         $fields = course_handler::create()->get_fields();
         if (!$fields) {
-            return null;
+            $fields = array();
         }
-        list($fieldsql, $fieldparam) = $DB->get_in_or_equal(array_keys($fields), SQL_PARAMS_NAMED, 'fld');
+        list($fieldsql, $fieldparam) = $DB->get_in_or_equal(array_keys($fields), SQL_PARAMS_NAMED, 'fld', true, true);
 
         // Restrict recordset to CONTEXT_COURSE (since we are implementing it to core_course\search).
         $sql = "SELECT d.*
@@ -179,6 +179,6 @@ class customfield extends \core_search\base {
      * @return \core_search\document_icon
      */
     public function get_doc_icon(\core_search\document $doc) : \core_search\document_icon {
-        return new \core_search\document_icon('i/course');
+        return new \core_search\document_icon('i/customfield');
     }
 }

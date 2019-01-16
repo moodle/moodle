@@ -27,7 +27,6 @@ namespace core_course\customfield;
 defined('MOODLE_INTERNAL') || die;
 
 use core_customfield\api;
-use core_customfield\data_controller;
 use core_customfield\field_controller;
 
 /**
@@ -49,11 +48,11 @@ class course_handler extends \core_customfield\handler {
      */
     protected $parentcontext;
 
-    /** @var int */
+    /** @var int Field is displayed in the course listing, visible to everybody */
     const VISIBLETOALL = 2;
-    /** @var int */
+    /** @var int Field is displayed in the course listing but only for teachers */
     const VISIBLETOTEACHERS = 1;
-    /** @var int */
+    /** @var int Field is not displayed in the course listing */
     const NOTVISIBLE = 0;
 
     /**

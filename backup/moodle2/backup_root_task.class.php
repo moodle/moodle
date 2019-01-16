@@ -171,7 +171,7 @@ class backup_root_task extends backup_task {
 
         // Define custom fields inclusion setting if custom fields are used.
         $customfields = new backup_customfield_setting('customfield', base_setting::IS_BOOLEAN, true);
-        $customfields->set_ui(new backup_setting_ui_checkbox($customfields, get_string('rootsettingcustomfields', 'backup')));
+        $customfields->set_ui(new backup_setting_ui_checkbox($customfields, get_string('rootsettingcustomfield', 'backup')));
         $this->add_setting($customfields);
     }
 }
