@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20181105" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20181210" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -3303,6 +3303,28 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="nextruntime_idx" UNIQUE="false" FIELDS="nextruntime"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="task_log" COMMENT="The log table for all tasks">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="type" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="The type of task. Scheduled task = 0; Adhoc task = 1."/>
+        <FIELD NAME="component" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The component that the task belongs to"/>
+        <FIELD NAME="classname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The class of the task being run"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The userid that the task was configured to run as (Adhoc tasks only)"/>
+        <FIELD NAME="timestart" TYPE="number" LENGTH="20" NOTNULL="true" SEQUENCE="false" DECIMALS="10" COMMENT="The start time of the task"/>
+        <FIELD NAME="timeend" TYPE="number" LENGTH="20" NOTNULL="true" SEQUENCE="false" DECIMALS="10" COMMENT="The end time of the task"/>
+        <FIELD NAME="dbreads" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The number of DB reads performed during the task."/>
+        <FIELD NAME="dbwrites" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The number of DB writes performed during the task."/>
+        <FIELD NAME="result" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" COMMENT="Whether the task was successful or not. 0 = pass; 1 = fail."/>
+        <FIELD NAME="output" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="classname" UNIQUE="false" FIELDS="classname"/>
+        <INDEX NAME="timestart" UNIQUE="false" FIELDS="timestart"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="messageinbound_handlers" COMMENT="Inbound Message Handler definitions.">

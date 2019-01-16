@@ -590,6 +590,9 @@ class manager {
             $task->get_cron_lock()->release();
         }
         $task->get_lock()->release();
+
+        // Finalise the log output.
+        logmanager::finalise_log(true);
     }
 
     /**
@@ -599,6 +602,9 @@ class manager {
      */
     public static function adhoc_task_complete(adhoc_task $task) {
         global $DB;
+
+        // Finalise the log output.
+        logmanager::finalise_log();
 
         // Delete the adhoc task record - it is finished.
         $DB->delete_records('task_adhoc', array('id' => $task->get_id()));
@@ -643,6 +649,9 @@ class manager {
             $task->get_cron_lock()->release();
         }
         $task->get_lock()->release();
+
+        // Finalise the log output.
+        logmanager::finalise_log(true);
     }
 
     /**
@@ -669,6 +678,9 @@ class manager {
      */
     public static function scheduled_task_complete(scheduled_task $task) {
         global $DB;
+
+        // Finalise the log output.
+        logmanager::finalise_log();
 
         $classname = self::get_canonical_class_name($task);
         $record = $DB->get_record('task_scheduled', array('classname' => $classname));

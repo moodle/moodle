@@ -129,6 +129,7 @@ if ($execute = $options['execute']) {
     $predbqueries = $DB->perf_get_queries();
     $pretime = microtime(true);
 
+    \core\task\logmanager::start_logging($task);
     $fullname = $task->get_name() . ' (' . get_class($task) . ')';
     mtrace('Execute scheduled task: ' . $fullname);
     // NOTE: it would be tricky to move this code to \core\task\manager class,

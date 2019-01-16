@@ -48,6 +48,7 @@ $string['runpattern'] = 'Run pattern';
 $string['scheduledtasks'] = 'Scheduled tasks';
 $string['scheduledtaskchangesdisabled'] = 'Modifications to the list of scheduled tasks have been prevented in Moodle configuration';
 $string['taskdisabled'] = 'Task disabled';
+$string['tasklogs'] = 'Task logs';
 $string['taskscheduleday'] = 'Day';
 $string['taskscheduleday_help'] = 'Day of month field for task schedule. The field uses the same format as unix cron. Some examples are:<br/><ul><li><strong>*</strong> Every day</li><li><strong>*/2</strong> Every 2nd day</li><li><strong>1</strong> The first of every month</li><li><strong>1,15</strong> The first and fifteenth of every month</li></ul>';
 $string['taskscheduledayofweek'] = 'Day of week';
@@ -59,4 +60,4 @@ $string['taskscheduleminute_help'] = 'Minute field for task schedule. The field 
 $string['taskschedulemonth'] = 'Month';
 $string['taskschedulemonth_help'] = 'Month field for task schedule. The field uses the same format as unix cron. Some examples are:<br/><ul><li><strong>*</strong> Every month</li><li><strong>*/2</strong> Every second month</li><li><strong>1</strong> Every January</li><li><strong>1,5</strong> Every January and May</li></ul>';
 $string['privacy:metadata'] = 'The Scheduled task configuration plugin does not store any personal data.';
-
+$string['viewlogs'] = 'View logs for {$a}';

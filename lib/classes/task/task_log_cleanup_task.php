@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,24 +15,39 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MOODLE VERSION INFORMATION
- *
- * This file defines the current version of the core Moodle code being used.
- * This is compared against the values stored in the database to determine
- * whether upgrades should be performed (see lib/db/*.php)
+ * Task to cleanup task logs.
  *
  * @package    core
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core\task;
 
 defined('MOODLE_INTERNAL') || die();
 
-$version  = 2019011501.00;              // YYYYMMDD      = weekly release date of this DEV branch.
-                                        //         RR    = release increments - 00 in DEV branches.
-                                        //           .XX = incremental changes.
+/**
+ * A task to cleanup log entries for tasks.
+ *
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class task_log_cleanup_task extends scheduled_task {
 
-$release  = '3.7dev (Build: 20190111)'; // Human-friendly version name
+    /**
+     * Get a descriptive name for this task (shown to admins).
+     *
+     * @return string
+     */
+    public function get_name() {
+        return get_string('tasklogcleanup', 'admin');
+    }
 
-$branch   = '37';                       // This version's branch.
-$maturity = MATURITY_ALPHA;             // This version's maturity level.
+    /**
+     * Perform the cleanup task.
+     */
+    public function execute() {
+        if (\core\task\database_logger::class == \core\task\logmanager::get_logger_classname()) {
+            \core\task\database_logger::cleanup();
+        }
+    }
+}
