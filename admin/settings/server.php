@@ -212,6 +212,46 @@ $ADMIN->add('server', $temp);
 
 
 $ADMIN->add('server', new admin_category('taskconfig', new lang_string('taskadmintitle', 'admin')));
+$temp = new admin_settingpage('taskprocessing', new lang_string('taskprocessing','admin'));
+$temp->add(
+    new admin_setting_configtext(
+        'task_scheduled_concurrency_limit',
+        new lang_string('task_scheduled_concurrency_limit', 'admin'),
+        new lang_string('task_scheduled_concurrency_limit_desc', 'admin'),
+        3,
+        PARAM_INT
+    )
+);
+
+$temp->add(
+    new admin_setting_configduration(
+        'task_scheduled_max_runtime',
+        new lang_string('task_scheduled_max_runtime', 'admin'),
+        new lang_string('task_scheduled_max_runtime_desc', 'admin'),
+        30 * MINSECS
+    )
+);
+
+$temp->add(
+    new admin_setting_configtext(
+        'task_adhoc_concurrency_limit',
+        new lang_string('task_adhoc_concurrency_limit', 'admin'),
+        new lang_string('task_adhoc_concurrency_limit_desc', 'admin'),
+        3,
+        PARAM_INT
+    )
+);
+
+$temp->add(
+    new admin_setting_configduration(
+        'task_adhoc_max_runtime',
+        new lang_string('task_adhoc_max_runtime', 'admin'),
+        new lang_string('task_adhoc_max_runtime_desc', 'admin'),
+        30 * MINSECS
+    )
+);
+$ADMIN->add('taskconfig', $temp);
+
 $temp = new admin_settingpage('tasklogging', new lang_string('tasklogging','admin'));
 $temp->add(
     new admin_setting_configselect(
