@@ -31,6 +31,17 @@ Feature: Importing of groups and groupings
     And I should see "group-id-1-duplicate"
     And I should see "group-noid-1"
     And I should see "group-noid-2"
+    # Group messaging should have been enabled for group-id-1.
+    And I set the field "groups" to "group-id-1"
+    And I press "Edit group settings"
+    And I should see "Yes" in the "Group messaging" "select"
+    And I press "Cancel"
+     # Group messaging should not have been enabled for group-id-2.
+    And I set the field "groups" to "group-id-2"
+    And I press "Edit group settings"
+    And I should see "No" in the "Group messaging" "select"
+    And I press "Cancel"
+    # Check groupings
     And I follow "Groupings"
     And I should see "Grouping-1"
     And I should see "Grouping-2"

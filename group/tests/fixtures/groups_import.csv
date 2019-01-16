@@ -1,6 +1,6 @@
-groupname, description, groupidnumber,groupingname
-group-id-1, group-id-1, group-id-1,Grouping-1
-group-id-2, group-id-2, group-id-2,Grouping-2
-group-id-1-duplicate, Duplicate of group-id-1, group-id-1,Grouping-3
-group-noid-1, group-noid-1,,Grouping-3
-group-noid-2, group-noid-2,,Grouping-2
+groupname, description, groupidnumber,groupingname,enablemessaging
+group-id-1, group-id-1, group-id-1,Grouping-1,1
+group-id-2, group-id-2, group-id-2,Grouping-2,0
+group-id-1-duplicate, Duplicate of group-id-1, group-id-1,Grouping-3,0
+group-noid-1, group-noid-1,,Grouping-3,0
+group-noid-2, group-noid-2,,Grouping-2,0
