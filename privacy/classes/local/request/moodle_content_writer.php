@@ -38,6 +38,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 class moodle_content_writer implements content_writer {
     /**
+     * Maximum context name char size.
+     */
+    const MAX_CONTEXT_NAME_LENGTH = 32;
+
+    /**
      * @var string The base path on disk for this instance.
      */
     protected $path = null;
@@ -254,15 +259,17 @@ class moodle_content_writer implements content_writer {
     /**
      * Determine the path for the current context.
      *
-     * @return  array                       The context path.
+     * @return array The context path.
+     * @throws \coding_exception
      */
-    protected function get_context_path() : Array {
+    protected function get_context_path() : array {
         $path = [];
         $contexts = array_reverse($this->context->get_parent_contexts(true));
         foreach ($contexts as $context) {
             $name = $context->get_context_name();
-            $id = '_.' . $context->id;
-            $path[] = shorten_filename(clean_param("{$name} {$id}", PARAM_FILE), MAX_FILENAME_SIZE, true);
+            $id = ' _.' . $context->id;
+            $path[] = shorten_text(clean_param($name, PARAM_FILE),
+                    self::MAX_CONTEXT_NAME_LENGTH, true, json_decode('"' . '\u2026' . '"')) . $id;
         }
 
         return $path;
