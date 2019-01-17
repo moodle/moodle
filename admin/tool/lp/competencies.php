@@ -25,9 +25,9 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$id = required_param('competencyframeworkid', PARAM_INT);
 $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to the context we came from.
 $search = optional_param('search', '', PARAM_RAW);
+$id = required_param('competencyframeworkid', PARAM_INT);
 
 require_login();
 \core_competency\api::require_enabled();

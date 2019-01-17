@@ -226,7 +226,8 @@ class badge {
                     BADGE_CRITERIA_TYPE_MANUAL,
                     BADGE_CRITERIA_TYPE_COURSE,
                     BADGE_CRITERIA_TYPE_BADGE,
-                    BADGE_CRITERIA_TYPE_ACTIVITY
+                    BADGE_CRITERIA_TYPE_ACTIVITY,
+                    BADGE_CRITERIA_TYPE_COMPETENCY
             );
         } else if ($this->type == BADGE_TYPE_SITE) {
             $criteriatypes = array(
@@ -236,6 +237,7 @@ class badge {
                     BADGE_CRITERIA_TYPE_BADGE,
                     BADGE_CRITERIA_TYPE_PROFILE,
                     BADGE_CRITERIA_TYPE_COHORT,
+                    BADGE_CRITERIA_TYPE_COMPETENCY
             );
         }
 
@@ -508,6 +510,7 @@ class badge {
             }
 
             list($extrajoin, $extrawhere, $extraparams) = $crit->get_completed_criteria_sql();
+
             // For site level badges, get all active site users who can earn this badge and haven't got it yet.
             if ($this->type == BADGE_TYPE_SITE) {
                 $sql = "SELECT DISTINCT u.id, bi.badgeid
@@ -838,7 +841,7 @@ class badge {
      *
      * @return array List content alignments.
      */
-    public function get_alignment() {
+    public function get_alignments() {
         global $DB;
         return $DB->get_records('badge_alignment', array('badgeid' => $this->id));
     }

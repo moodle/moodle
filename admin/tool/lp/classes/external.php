@@ -205,7 +205,7 @@ class external extends external_api {
         self::validate_context($framework->get_context());
         $output = $PAGE->get_renderer('tool_lp');
 
-        $renderable = new output\manage_competencies_page($framework, $params['search'], $framework->get_context());
+        $renderable = new output\manage_competencies_page($framework, $params['search'], $framework->get_context(), null);
 
         $data = $renderable->export_for_template($output);
 

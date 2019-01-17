@@ -46,7 +46,7 @@ Feature: Add badges to the system
     And I should see "Test badge with 'apostrophe' and other friends (&@#)"
     And I should see "Endorsement"
     And I should see "Related badges (0)"
-    And I should see "External alignments (0)"
+    And I should see "Alignments (0)"
     And I should not see "Create badge"
     And I follow "Manage badges"
     And I should see "Number of badges available: 1"
@@ -118,7 +118,7 @@ Feature: Add badges to the system
     Then I should see "Changes saved"
 
   @javascript @_file_upload
-  Scenario: External alignments for Badge
+  Scenario: Alignments for Badge
     Given I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Test Badge |
@@ -133,15 +133,15 @@ Feature: Add badges to the system
     When I press "Create badge"
     Then I should see "Test Badge"
     And I should see "Endorsement"
-    And I follow "External alignments (0)"
-    And I should see "This badge does not have any external alignments specified."
-    And I press "Add external alignment"
+    And I follow "Alignments (0)"
+    And I should see "This badge does not have any external skills or standards specified."
+    And I press "Add external skill or standard"
     And I set the following fields to these values:
-      | External alignment name | Test Badge Alignments |
+      | Name | Test Badge Alignments |
       | URL | https://alignments.example.com |
       | Description | Test Badge Alignments description |
     When I press "Save changes"
-    And I should see "External alignments (1)"
+    And I should see "Alignments (1)"
 
   @javascript @_file_upload
   Scenario: Add a badge from Site badges section
@@ -169,7 +169,7 @@ Feature: Add badges to the system
     And I should see "Test badge with 'apostrophe' and other friends (&@#) 2"
     And I should see "Endorsement"
     And I should see "Related badges (0)"
-    And I should see "Competencies (0)"
+    And I should see "Alignments (0)"
     And I should not see "Create badge"
     And I follow "Manage badges"
     And I should see "Number of badges available: 1"
