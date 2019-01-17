@@ -128,21 +128,22 @@ class database_logger implements task_logger {
         $classes = $DB->get_fieldset_sql($sql, $params);
 
         foreach ($classes as $classname) {
+            $notinsql = "";
             $params = [
                 'classname' => $classname,
             ];
 
             $retaincount = (int) $CFG->task_logretainruns;
-            $keeplogs = $DB->get_fieldset_sql(
-                    "SELECT id FROM {task_log} WHERE classname = :classname ORDER BY timestart DESC LIMIT {$retaincount}",
-                    $params
-                );
+            if ($retaincount) {
+                $keeplogs = $DB->get_records('task_log', [
+                        'classname' => $classname,
+                    ], 'timestart DESC', 'id', 0, $retaincount);
 
-            $notinsql = "";
-            if ($keeplogs) {
-                list($notinsql, $params) = $DB->get_in_or_equal($keeplogs, SQL_PARAMS_NAMED, 'p', false);
-                $params['classname'] = $classname;
-                $notinsql = " AND id {$notinsql}";
+                if ($keeplogs) {
+                    list($notinsql, $params) = $DB->get_in_or_equal(array_keys($keeplogs), SQL_PARAMS_NAMED, 'p', false);
+                    $params['classname'] = $classname;
+                    $notinsql = " AND id {$notinsql}";
+                }
             }
 
             $logids = $DB->get_fieldset_select('task_log', 'id', "classname = :classname {$notinsql}", $params);
