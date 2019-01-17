@@ -90,6 +90,13 @@ class behat_context_helper {
      * @return behat_base
      */
     public static function get($classname) {
+        $contexts = self::$environment->getContexts();
+
+        foreach ($contexts as $context) {
+            if (is_a($context, $classname)) {
+                return $context;
+            }
+        }
 
         $suitename = self::$environment->getSuite()->getName();
         // If default suite, then get the default theme name.

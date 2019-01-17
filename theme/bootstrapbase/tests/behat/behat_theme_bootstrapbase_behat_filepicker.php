@@ -34,16 +34,22 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
 /**
  * Steps definitions to deal with the filemanager and filepicker overrides.
  *
+ * @package    theme_bootstrapbase
+ * @category   test
  * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_theme_bootstrapbase_behat_filepicker extends behat_theme_bootstrapbase_behat_files {
+
+class behat_theme_bootstrapbase_behat_filepicker extends behat_filepicker {
+    use theme_bootstrapbase_behat_file_helper;
+
     public function i_create_folder_in_filemanager($foldername, $filemanagerelement) {
 
         $fieldnode = $this->get_filepicker_node($filemanagerelement);
 
         // Looking for the create folder button inside the specified filemanager.
-        $exception = new ExpectationException('No folders can be created in "'.$filemanagerelement.'" filemanager',$this->getSession());
+        $exception = new ExpectationException('No folders can be created in "'.$filemanagerelement.'" filemanager',
+                $this->getSession());
         $newfolder = $this->find('css', 'div.fp-btn-mkdir a', $exception, $fieldnode);
         $newfolder->click();
 
@@ -143,7 +149,8 @@ class behat_theme_bootstrapbase_behat_filepicker extends behat_theme_bootstrapba
 
         $elements = $this->find_all('xpath', $xpath, false, $filemanagernode);
         if (count($elements) != $elementscount) {
-            throw new ExpectationException('Found '.count($elements).' elements in filemanager instead of expected '.$elementscount, $this->getSession());
+            throw new ExpectationException('Found '.count($elements).
+                    ' elements in filemanager instead of expected '.$elementscount, $this->getSession());
         }
     }
 

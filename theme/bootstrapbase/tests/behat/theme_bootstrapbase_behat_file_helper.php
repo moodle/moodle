@@ -25,7 +25,7 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__ . '/../../../../lib/behat/behat_files.php');
+require_once(__DIR__ . '/../../../../lib/behat/core_behat_file_helper.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Element\NodeElement as NodeElement;
@@ -38,7 +38,11 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
  * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_theme_bootstrapbase_behat_files extends behat_files {
+trait theme_bootstrapbase_behat_file_helper {
+
+    use core_behat_file_helper {
+        core_behat_file_helper::get_filepicker_node as core_get_filepicker_node;
+    }
 
     protected function get_filepicker_node($filepickerelement) {
 

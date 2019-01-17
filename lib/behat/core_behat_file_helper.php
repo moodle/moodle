@@ -17,9 +17,8 @@
 /**
  * Files interactions with behat.
  *
- * Note that steps definitions files can not extend other steps definitions files, so
- * steps definitions which makes use of file attachments or filepicker should
- * extend behat_files instead of behat_base.
+ * Note that steps definitions files can not extend other steps definitions files, so steps definitions which makes use
+ * of file attachments or filepicker should use this behat_file_helper trait.
  *
  * @package    core
  * @category   test
@@ -37,16 +36,15 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
 /**
  * Files-related actions.
  *
- * Steps definitions related with filepicker or repositories should extend
- * this class instead of behat_base as it provides useful methods to deal
- * with the common filepicker issues.
+ * Steps definitions related with filepicker or repositories should extend use this trait as it provides useful methods
+ * to deal with the common filepicker issues.
  *
  * @package    core
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_files extends behat_base {
+trait core_behat_file_helper {
 
     /**
      * Gets the NodeElement for filepicker of filemanager moodleform element.
@@ -276,5 +274,4 @@ class behat_files extends behat_base {
             $filepickernode
         );
     }
-
 }

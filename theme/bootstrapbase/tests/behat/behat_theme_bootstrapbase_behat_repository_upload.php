@@ -26,6 +26,7 @@
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
 require_once(__DIR__ . '/../../../../repository/upload/tests/behat/behat_repository_upload.php');
+require_once(__DIR__ . '/theme_bootstrapbase_behat_file_helper.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Gherkin\Node\TableNode as TableNode;
@@ -39,6 +40,8 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_theme_bootstrapbase_behat_repository_upload extends behat_repository_upload {
+
+    use theme_bootstrapbase_behat_file_helper;
 
     protected function upload_file_to_filemanager($filepath, $filemanagerelement, TableNode $data, $overwriteaction = false) {
         global $CFG;
@@ -108,5 +111,4 @@ class behat_theme_bootstrapbase_behat_repository_upload extends behat_repository
         }
 
     }
-
 }
