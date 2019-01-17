@@ -302,8 +302,8 @@ class company_user {
             }
 
             if (!isset($manualcache[$courseid])) {
-                if ($instances = enrol_get_instances($courseid, false)) {
-                    $manualcache[$courseid] = reset($instances);
+                if ($instance = $DB->get_record('enrol', array('courseid'=>$courseid, 'enrol'=>'manual'))) {
+                    $manualcache[$courseid] = $instance;
                 } else {
                     $manualcache[$courseid] = false;
                 }
