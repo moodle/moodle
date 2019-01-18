@@ -1026,6 +1026,26 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/course:update'
     ),
 
+    'moodle/course:changelockedcustomfields' => array(
+
+        'riskbitmask' => RISK_SPAM,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        ),
+    ),
+
+    'moodle/course:configurecustomfields' => array(
+
+        'riskbitmask' => RISK_SPAM,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+
     'moodle/course:renameroles' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,

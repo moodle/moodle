@@ -286,5 +286,9 @@ class restore_root_task extends restore_task {
         $competencies = new restore_competencies_setting($hascompetencies);
         $competencies->set_ui(new backup_setting_ui_checkbox($competencies, get_string('rootsettingcompetencies', 'backup')));
         $this->add_setting($competencies);
+
+        $customfields = new restore_customfield_setting('customfields', base_setting::IS_BOOLEAN, $defaultvalue);
+        $customfields->set_ui(new backup_setting_ui_checkbox($customfields, get_string('rootsettingcustomfield', 'backup')));
+        $this->add_setting($customfields);
     }
 }

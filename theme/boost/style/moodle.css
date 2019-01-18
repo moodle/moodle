@@ -12090,13 +12090,15 @@ span.editinstructions {
 .coursebox > .info > .coursename,
 .coursebox .content .teachers,
 .coursebox .content .courseimage,
-.coursebox .content .coursefile {
+.coursebox .content .coursefile,
+.coursebox .content .customfields-container {
   float: left;
   clear: left; }
 
 .coursebox .content .teachers,
 .coursebox .content .courseimage,
-.coursebox .content .coursefile {
+.coursebox .content .coursefile,
+.coursebox .content .customfields-container {
   width: 40%; }
 
 .coursebox > .info > h3.coursename {
@@ -12143,7 +12145,8 @@ span.editinstructions {
 .coursebox .content .courseimage,
 .coursebox .content .coursefile,
 .coursebox .content .teachers,
-.coursebox.remotecoursebox .remotecourseinfo {
+.coursebox.remotecoursebox .remotecourseinfo,
+.coursebox .content .customfields-container {
   margin: 15px 5px 5px;
   padding: 0; }
 

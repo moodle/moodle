@@ -132,3 +132,4 @@ $string['versiontoolow'] = 'Sorry, global search requires PHP 5.0.0 or later';
 $string['viewresultincontext'] = 'View this result in context';
 $string['whichmodulestosearch?'] = 'Which modules to search?';
 $string['wordsintitle'] = 'Words in title';
+$string['search:customfield'] = 'Course custom fields';

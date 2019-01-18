@@ -426,6 +426,12 @@ EOD;
             $record['numsections'] = get_config('moodlecourse', 'numsections');
         }
 
+        if (!empty($record['customfields'])) {
+            foreach ($record['customfields'] as $field) {
+                $record['customfield_'.$field['shortname']] = $field['value'];
+            }
+        }
+
         $course = create_course((object)$record);
         context_course::instance($course->id);
 
@@ -1171,6 +1177,31 @@ EOD;
         $event->create($record);
 
         return $event->properties();
+    }
+
+    /**
+     * Create a new course custom field category with the given name.
+     *
+     * @param   array $data Array with data['name'] of category
+     * @return  \core_customfield\category_controller   The created category
+     */
+    public function create_custom_field_category($data) : \core_customfield\category_controller {
+        return $this->get_plugin_generator('core_customfield')->create_category($data);
+    }
+
+    /**
+     * Create a new custom field
+     *
+     * @param   array $data Array with 'name', 'shortname' and 'type' of the field
+     * @return  \core_customfield\field_controller   The created field
+     */
+    public function create_custom_field($data) : \core_customfield\field_controller {
+        global $DB;
+        if (empty($data['categoryid']) && !empty($data['category'])) {
+            $data['categoryid'] = $DB->get_field('customfield_category', 'id', ['name' => $data['category']]);
+            unset($data['category']);
+        }
+        return $this->get_plugin_generator('core_customfield')->create_field($data);
     }
 
     /**

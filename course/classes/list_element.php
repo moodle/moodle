@@ -201,6 +201,28 @@ class core_course_list_element implements IteratorAggregate {
     }
 
     /**
+     * Returns custom fields data for this course
+     *
+     * @return \core_customfield\data_controller[]
+     */
+    public function get_custom_fields() : array {
+        if (!isset($this->record->customfields)) {
+            $this->record->customfields = \core_course\customfield\course_handler::create()->get_instance_data($this->id);
+        }
+        return $this->record->customfields;
+    }
+
+    /**
+     * Does this course have custom fields
+     *
+     * @return bool
+     */
+    public function has_custom_fields() : bool {
+        $customfields = $this->get_custom_fields();
+        return !empty($customfields);
+    }
+
+    /**
      * Checks if course has any associated overview files
      *
      * @return bool
