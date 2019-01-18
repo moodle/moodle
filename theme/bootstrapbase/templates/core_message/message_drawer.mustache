@@ -85,7 +85,7 @@ function(
 ) {
 
     var root = $('#message-drawer-{{uniqid}}');
-    MessageDrawer.init(root);
+    MessageDrawer.init(root, '{{uniqid}}');
 
     var toggle = $('#message-drawer-close-{{uniqid}}');
     Popover.init(toggle);

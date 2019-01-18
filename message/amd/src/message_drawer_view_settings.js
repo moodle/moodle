@@ -264,12 +264,14 @@ function(
      * Initialise the settings page by adding event listeners to
      * the checkboxes.
      *
+     * @param {string} namespace The route namespace.
      * @param {Object} header The settings header element.
      * @param {Object} body The settings body element.
+     * @param {Object} footer The footer body element.
      * @param {Number} loggedInUserId The logged in user id.
      * @return {Object} jQuery promise
      */
-    var show = function(header, body, loggedInUserId) {
+    var show = function(namespace, header, body, footer, loggedInUserId) {
         if (!body.attr('data-init')) {
             init(body, loggedInUserId);
             body.attr('data-init', true);
