@@ -10,11 +10,16 @@
     list-style-type  : none;
     margin           : 0;
     margin-left      : 5px;
-    padding          : 4px 4px 0 4px;
+    padding          : 4px;
+}
+.que.ordering ul.sortablelist.orderingactive {
+    border           : 1px dotted #333;
+    border-radius    : 4px;
 }
 .que.ordering ul.sortablelist li {
     background-color : #ffffff;
     border           : 1px solid #000;
+    border-radius    : 4px;
     list-style-type  : none;
     margin           : 4px;
     padding          : 6px 12px;
