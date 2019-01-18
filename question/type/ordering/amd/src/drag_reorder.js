@@ -211,18 +211,16 @@ define([
          * @param e, the event
          * @param item, the current moving item
          */
-        var itemMovedByKeyboard = function (e, item) {
-            var current;
+        var itemMovedByKeyboard = function (e, current) {
             switch (e.keyCode) {
                 case keys.space:
                 case keys.arrowRight:
                 case keys.arrowDown:
                     e.preventDefault();
                     e.stopPropagation();
-                    current = document.getElementById(item.attr('id'));
-                    var next = current.nextSibling;
-                    if (next !== null) {
-                        next.parentNode.insertBefore(next, next.previousSibling);
+                    var next = current.next();
+                    if (next.length) {
+                        next.insertBefore(current);
                     }
                     break;
 
@@ -230,10 +228,9 @@ define([
                 case keys.arrowUp:
                     e.preventDefault();
                     e.stopPropagation();
-                    current = document.getElementById(item.attr('id'));
-                    var prev = current.previousSibling;
-                    if (prev !== null) {
-                        prev.parentNode.insertBefore(prev, prev.nextSibling.nextSibling);
+                    var prev = current.prev();
+                    if (prev.length) {
+                        prev.insertAfter(current);
                     }
                     break;
             }
