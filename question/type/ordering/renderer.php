@@ -76,23 +76,13 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         $sortableid        = 'id_sortable_'.$question->id;
         $ablockid          = 'id_ablock_'.$question->id;
 
-        switch ($question->options->layouttype) {
-            case qtype_ordering_question::LAYOUT_VERTICAL:
-                $axis = 'y';
-                break;
-            case qtype_ordering_question::LAYOUT_HORIZONTAL:
-                $axis = '';
-                break;
-            default: $axis = '';
-        }
-
         $result = '';
 
         if ($options->readonly) {
             // Items cannot be dragged in readonly mode.
         } else {
             // Initialise JavaScript.
-            $params = array($sortableid, $responseid, $axis);
+            $params = array($sortableid, $responseid);
             $PAGE->requires->js_call_amd('qtype_ordering/reorder', 'init', $params);
         }
 
