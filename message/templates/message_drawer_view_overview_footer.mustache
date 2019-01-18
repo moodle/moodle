@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_message/message_drawer_view_overview_body
+    @template core_message/message_drawer_view_overview_message_page_link
 
     This template will render the body of the overview section of the message drawer.
 
@@ -25,18 +25,14 @@
     Data attributes required for JS:
     * All data attributes are required
 
-    Context variables required for this template:
-    * userid The logged in user id
-    * urls The URLs for the popover
-
     Example context (json):
     {}
 
 }}
-<div class="h-100 view-overview-body" aria-hidden="false" data-region="view-overview" data-user-id="{{loggedinuser.id}}">
-    <div id="message-drawer-view-overview-container-{{uniqid}}" class="d-flex flex-column h-100" style="overflow-y: auto">
-            {{> core_message/message_drawer_view_overview_section_favourites }}
-            {{> core_message/message_drawer_view_overview_section_group_messages }}
-            {{> core_message/message_drawer_view_overview_section_messages }}
+{{#overview.messageurl}}
+    <div data-region="view-overview" class="text-center">
+        <a href="{{overview.messageurl}}">
+            {{#str}} seeall, core_message {{/str}}
+        </a>
     </div>
-</div>
+{{/overview.messageurl}}

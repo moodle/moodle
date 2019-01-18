@@ -642,4 +642,88 @@ class helper {
         }
         return $tmp;
     }
+
+    /**
+     * Renders the messaging widget.
+     *
+     * @param bool $isdrawer Are we are rendering the drawer or is this on a full page?
+     * @param int|null $sendtouser The ID of the user we want to send a message to
+     * @param int|null $conversationid The ID of the conversation we want to load
+     * @return string The HTML.
+     */
+    public static function render_messaging_widget(bool $isdrawer, int $sendtouser = null, int $conversationid = null) {
+        global $USER, $CFG, $PAGE;
+
+        // Early bail out conditions.
+        if (empty($CFG->messaging) || !isloggedin() || isguestuser() || user_not_fully_set_up($USER) ||
+            get_user_preferences('auth_forcepasswordchange') ||
+            (!$USER->policyagreed && !is_siteadmin() &&
+                ($manager = new \core_privacy\local\sitepolicy\manager()) && $manager->is_defined())) {
+            return '';
+        }
+
+        $renderer = $PAGE->get_renderer('core');
+        $requestcount = \core_message\api::get_received_contact_requests_count($USER->id);
+        $contactscount = \core_message\api::count_contacts($USER->id);
+
+        $choices = [];
+        $choices[] = [
+            'value' => \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS,
+            'text' => get_string('contactableprivacy_onlycontacts', 'message')
+        ];
+        $choices[] = [
+            'value' => \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER,
+            'text' => get_string('contactableprivacy_coursemember', 'message')
+        ];
+        if (!empty($CFG->messagingallusers)) {
+            // Add the MESSAGE_PRIVACY_SITE option when site-wide messaging between users is enabled.
+            $choices[] = [
+                'value' => \core_message\api::MESSAGE_PRIVACY_SITE,
+                'text' => get_string('contactableprivacy_site', 'message')
+            ];
+        }
+
+        // Enter to send.
+        $entertosend = get_user_preferences('message_entertosend', $CFG->messagingdefaultpressenter, $USER);
+
+        if ($isdrawer) {
+            $template = 'core_message/message_drawer';
+            $messageurl = new \moodle_url('/message/index.php');
+        } else {
+            $template = 'core_message/message_index';
+            $messageurl = null;
+        }
+
+        $templatecontext = [
+            'contactrequestcount' => $requestcount,
+            'loggedinuser' => [
+                'id' => $USER->id,
+                'midnight' => usergetmidnight(time())
+            ],
+            'contacts' => [
+                'sectioncontacts' => [
+                    'placeholders' => array_fill(0, $contactscount > 50 ? 50 : $contactscount, true)
+                ],
+                'sectionrequests' => [
+                    'placeholders' => array_fill(0, $requestcount > 50 ? 50 : $requestcount, true)
+                ],
+            ],
+            'settings' => [
+                'privacy' => $choices,
+                'entertosend' => $entertosend
+            ],
+            'overview' => [
+                'messageurl' => $messageurl
+            ],
+            'sendtouser' => false,
+            'conversationid' => false
+        ];
+
+        if ($sendtouser) {
+            $templatecontext['sendtouser'] = $sendtouser;
+            $templatecontext['conversationid'] = $conversationid;
+        }
+
+        return $renderer->render_from_template($template, $templatecontext);
+    }
 }

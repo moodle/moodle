@@ -242,7 +242,6 @@ $string['userisblockingyou'] = 'This user has blocked you from sending messages 
 $string['userisblockingyounoncontact'] = '{$a} only accepts messages from their contacts.';
 $string['userwouldliketocontactyou'] = '{$a} would like to contact you';
 $string['viewfullnotification'] = 'View full notification';
-$string['viewinganotherusersmessagearea'] = 'You are viewing another user\'s message area.';
 $string['viewmessageswith'] = 'View messages with {$a}';
 $string['viewnotificationresource'] = 'Go to: {$a}';
 $string['viewunreadmessageswith'] = 'View unread messages with {$a}';

@@ -155,8 +155,9 @@ function(
      *
      * @param {string} namespace The route namespace.
      * @param {Object} root The message drawer container.
+     * @param {bool} alwaysVisible Is this messaging app always shown?
      */
-    var registerEventListeners = function(namespace, root) {
+    var registerEventListeners = function(namespace, root, alwaysVisible) {
         CustomEvents.define(root, [CustomEvents.events.activate]);
         var paramRegex = /^data-route-param-?(\d*)$/;
 
@@ -205,21 +206,23 @@ function(
             data.originalEvent.preventDefault();
         });
 
-        PubSub.subscribe(Events.SHOW, function() {
-            show(namespace, root);
-        });
-
-        PubSub.subscribe(Events.HIDE, function() {
-            hide(root);
-        });
-
-        PubSub.subscribe(Events.TOGGLE_VISIBILITY, function() {
-            if (isVisible(root)) {
-                hide(root);
-            } else {
+        if (!alwaysVisible) {
+            PubSub.subscribe(Events.SHOW, function() {
                 show(namespace, root);
-            }
-        });
+            });
+
+            PubSub.subscribe(Events.HIDE, function() {
+                hide(root);
+            });
+
+            PubSub.subscribe(Events.TOGGLE_VISIBILITY, function() {
+                if (isVisible(root)) {
+                    hide(root);
+                } else {
+                    show(namespace, root);
+                }
+            });
+        }
 
         PubSub.subscribe(Events.SHOW_CONVERSATION, function(conversationId) {
             show(namespace, root);
@@ -254,11 +257,24 @@ function(
      *
      * @param {Object} root The message drawer container.
      * @param {String} uniqueId Unique identifier for the Routes
+     * @param {bool} alwaysVisible Should we show the app now, or wait for the user?
+     * @param {int} sendToUser Should we message someone now?
+     * @param {int} conversationId The value of the conversation id, null if none
      */
-    var init = function(root, uniqueId) {
+    var init = function(root, uniqueId, alwaysVisible, sendToUser, conversationId) {
         root = $(root);
         createRoutes(uniqueId, root);
-        registerEventListeners(uniqueId, root);
+        registerEventListeners(uniqueId, root, alwaysVisible);
+        if (alwaysVisible) {
+            show(uniqueId, root);
+            if (sendToUser) {
+                if (conversationId) {
+                    Router.go(uniqueId, Routes.VIEW_CONVERSATION, conversationId);
+                } else {
+                    Router.go(uniqueId, Routes.VIEW_CONVERSATION, null, 'create', sendToUser);
+                }
+            }
+        }
     };
 
     return {

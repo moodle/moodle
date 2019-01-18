@@ -420,17 +420,30 @@
 
 $message-drawer-width: 320px;
 
-.message-drawer {
-    position: fixed;
-    top: $navbar-height;
-    right: 0;
-    height: calc(100% - #{$navbar-height});
-    width: $message-drawer-width;
-    z-index: $zindex-sticky;
-    box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
+.message-app {
     display: flex;
     flex-direction: column;
     @include transition();
+
+    &.drawer {
+        z-index: $zindex-sticky;
+        position: fixed;
+        top: $navbar-height;
+        right: 0;
+        height: calc(100% - #{$navbar-height});
+        width: $message-drawer-width;
+        box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
+
+        .body-container {
+            & > * {
+                position: absolute;
+            }
+        }
+    }
+
+    &.main {
+        height: 768px;
+    }
 
     &.hidden {
         display: block;
@@ -446,7 +459,6 @@ $message-drawer-width: 320px;
         overflow: hidden;
 
         & > * {
-            position: absolute;
             right: 0;
             left: 0;
             top: 0;

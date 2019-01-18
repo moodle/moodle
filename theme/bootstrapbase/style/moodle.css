@@ -8486,15 +8486,8 @@ a.ygtvspacer:hover {
     transition: right 0.25s;
   }
 }
-.message-drawer {
-  position: fixed;
-  top: 0;
-  height: 100%;
-  right: 0;
-  width: 320px;
-  z-index: 999;
+.message-app {
   background-color: #fff;
-  box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   -webkit-transition: all 0.2s ease-in-out;
@@ -8502,56 +8495,66 @@ a.ygtvspacer:hover {
   -o-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
 }
+.message-app.drawer {
+  position: fixed;
+  right: 0;
+  width: 320px;
+  z-index: 999;
+  box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.08);
+}
+.message-app.main {
+  height: 768px;
+}
 @media (min-width: 980px) {
-  .message-drawer {
+  .message-app {
     height: calc(100% - 42px);
     top: 42px;
   }
-  .message-drawer .drawer-top {
+  .message-app .drawer-top {
     display: none;
   }
 }
-.message-drawer.hidden {
+.message-app.hidden {
   display: block;
   right: -320px;
 }
-.message-drawer .header-container {
+.message-app .header-container {
   flex-shrink: 0;
 }
-.message-drawer .searchinput {
+.message-app .searchinput {
   box-shadow: none;
   width: 100%;
 }
-.message-drawer [data-region="confirm-dialogue-container"] {
+.message-app [data-region="confirm-dialogue-container"] {
   box-sizing: border-box;
 }
-.message-drawer [data-region="confirm-dialogue-container"] * {
+.message-app [data-region="confirm-dialogue-container"] * {
   box-sizing: border-box;
 }
-.message-drawer [data-region="confirm-dialogue-container"] .btn-block {
+.message-app [data-region="confirm-dialogue-container"] .btn-block {
   margin-left: 0;
 }
-.message-drawer .body-container {
+.message-app .body-container {
   flex: 1;
   overflow: hidden;
 }
-.message-drawer .body-container > * {
+.message-app .body-container > * {
   position: absolute;
   right: 0;
   left: 0;
   top: 0;
   bottom: 0;
 }
-.message-drawer .footer-container {
+.message-app .footer-container {
   flex-shrink: 0;
   overflow-x: hidden;
 }
-.message-drawer .matchtext {
+.message-app .matchtext {
   background-color: #ade6fe;
   color: #333;
   height: 1.5rem;
 }
-.message-drawer .contact-status {
+.message-app .contact-status {
   position: absolute;
   left: 39px;
   top: 39px;
@@ -8559,80 +8562,80 @@ a.ygtvspacer:hover {
   height: 10px;
   border-radius: 50%;
 }
-.message-drawer .contact-status.online {
+.message-app .contact-status.online {
   border: 1px solid #46a546;
   background-color: #46a546;
 }
-.message-drawer a,
-.message-drawer .btn-link {
+.message-app a,
+.message-app .btn-link {
   text-decoration: none;
   color: inherit;
 }
-.message-drawer .btn-link:hover,
-.message-drawer .btn-link:focus {
+.message-app .btn-link:hover,
+.message-app .btn-link:focus {
   background-color: #e8e8e8;
   text-decoration: none;
 }
-.message-drawer .accordion-group .collapse.in {
+.message-app .accordion-group .collapse.in {
   overflow-y: auto;
 }
-.message-drawer .message p {
+.message-app .message p {
   margin: 0;
 }
-.message-drawer .clickable {
+.message-app .clickable {
   cursor: pointer;
 }
-.message-drawer .clickable:hover {
+.message-app .clickable:hover {
   box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.05), 3px 3px 5px -2px rgba(0, 0, 0, 0.1), 1px 1px 5px 0 rgba(0, 0, 0, 0.03);
 }
-.message-drawer h6,
-.message-drawer .h6 {
+.message-app h6,
+.message-app .h6 {
   font-size: 14px;
   font-weight: normal;
 }
-.message-drawer .accordion-group .collapsed-icon-container {
+.message-app .accordion-group .collapsed-icon-container {
   display: inline-block;
 }
-.message-drawer .accordion-group .expanded-icon-container {
+.message-app .accordion-group .expanded-icon-container {
   display: none;
 }
-.message-drawer .accordion-group.expanded .collapsed-icon-container {
+.message-app .accordion-group.expanded .collapsed-icon-container {
   display: none;
 }
-.message-drawer .accordion-group.expanded .expanded-icon-container {
+.message-app .accordion-group.expanded .expanded-icon-container {
   display: inline-block;
 }
-.message-drawer .view-overview-body .section {
+.message-app .view-overview-body .section {
   display: block;
 }
-.message-drawer .view-overview-body .section.expanded {
+.message-app .view-overview-body .section.expanded {
   display: flex;
   flex-direction: column;
 }
-.message-drawer .onepix {
+.message-app .onepix {
   height: 1px;
   width: 1px;
   position: absolute;
 }
-.message-drawer .view-conversation .content-message-container img {
+.message-app .view-conversation .content-message-container img {
   max-width: 100%;
 }
-.message-drawer .list-group .list-group-item {
+.message-app .list-group .list-group-item {
   border-top: 1px solid #e3e3e3;
   border-bottom: 1px solid #e3e3e3;
   margin-bottom: -1px;
 }
-.message-drawer .list-group .list-group-item:first-child {
+.message-app .list-group .list-group-item:first-child {
   border-top: 0;
 }
-.message-drawer .list-group .list-group-item:last-child {
+.message-app .list-group .list-group-item:last-child {
   border-bottom: 0;
   margin-bottom: 0;
 }
-.message-drawer .last-message {
+.message-app .last-message {
   min-height: 20px;
 }
-.message-drawer .lazy-load-list {
+.message-app .lazy-load-list {
   overflow-y: auto;
 }
 @media (max-width: 480px) {
