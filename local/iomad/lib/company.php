@@ -1372,6 +1372,54 @@ class company {
     }
 
     /**
+     * Gets a list of the company managers for the company
+     *
+     * Returns array of objects
+     *
+     **/
+    public function get_managers() {
+        global $DB;
+
+        $parentsql = "";
+        if ($parentslist = $this->get_parent_companies_recursive()) {
+            $parentsql = "AND u.id NOT IN (
+                          SELECT userid FROM {company_users}
+                          WHERE companyid IN (" . implode(',', array_keys($parentslist)) ."))";
+        }
+
+        // Get the managers in that list of departments.
+        $managers = $DB->get_records_sql("SELECT u.* FROM {user} u
+                                          JOIN {company_users} cu ON (u.id = cu.userid)
+                                          WHERE cu.managertype = 1
+                                          AND cu.companyid = :companyid
+                                          $parentsql",
+                                          array('companyid' => $this->id));
+        //  return them.
+        return $managers;
+    }
+
+    /**
+     * Gets a list of the company managers for the company
+     *
+     * Returns an array to be used by a form select.
+     *
+     **/
+    public function get_managers_select() {
+
+        // Set up the initial array.
+        $managerlist = array('0' => get_string('none'));
+
+        // Get any company managers.
+        if ($managers = $this->get_managers()) {
+            foreach ($managers as $manager) {
+                $managerlist[$manager->id] = fullname($manager);
+            }
+        }
+
+        return $managerlist;
+    }
+
+    /**
      * Gets a list of the managers for that user
      *
      * Parameters -
@@ -2575,6 +2623,41 @@ class company {
                                                             'templateid' => $templateid));
     }
 
+    /**
+     * checks if it is OK use an email template.
+     *
+     **/
+    public function email_template_is_enabled($templatename, $managertype = 0) {
+        global $DB;
+
+        if ($DB->get_records('email_template', array('companyid' => $this->id, 'name' => $templatename, 'disabled' => 0, 'disabledmanager' => 0, 'disabledsupervisor' => 0))) {
+            // Fully enabled for the company.
+            return true;
+        }
+
+        if ($DB->get_records('email_template', array('companyid' => $this->id, 'name' => $templatename, 'disabled' => 1))) {
+            // Disabled for the company.
+            return false;
+        }
+
+        if ($managertype == 1) {
+            if ($DB->get_records('email_template', array('companyid' => $this->id, 'name' => $templatename, 'disabledmanager' => 1))) {
+                // Disabled for the company.
+                return false;
+            }
+        }
+
+        if ($managertype == 2) {
+            if ($DB->get_records('email_template', array('companyid' => $this->id, 'name' => $templatename, 'disabledsupervisor' => 1))) {
+                // Disabled for the company.
+                return false;
+            }
+        }
+
+        // default is true as the template may not have been defined outside of defaults.
+        return true;
+    }
+
     /***  Event Handlers  ***/
 
     /**
@@ -2618,6 +2701,15 @@ class company {
         $suspendcompany = new company($companyid);
         $suspendcompany->suspend(true);
 
+        // Get the company managers.
+        $managers = $DB->get_records('company_users', array('companyid' => $companyid, 'managertype' => 1));
+        foreach ($managers as $manager) {
+            $user = $DB->get_record('user', array('id' => $manager->userid));
+            EmailTemplate::send('company_suspended',
+                                 array('company' => $suspendcompany,
+                                       'user' => $user));
+        }
+
         return true;
     }
 
@@ -2638,6 +2730,15 @@ class company {
 
         $suspendcompany = new company($companyid);
         $suspendcompany->suspend(false);
+
+        // Get the company managers.
+        $managers = $DB->get_records('company_users', array('companyid' => $companyid, 'managertype' => 1));
+        foreach ($managers as $manager) {
+            $user = $DB->get_record('user', array('id' => $manager->userid));
+            EmailTemplate::send('company_unsuspended',
+                                 array('company' => $suspendcompany,
+                                       'user' => $user));
+        }
 
         return true;
     }
@@ -2765,7 +2866,7 @@ class company {
      * @param \core\event\course_completed $event
      * @return bool true on success.
      */
-    public static function course_completed_supervisor(\core\event\course_completed $event) {
+    public static function course_completed(\core\event\course_completed $event) {
         global $DB, $CFG;
 
         $data = $event->get_data();
@@ -2779,87 +2880,51 @@ class company {
         $user = $DB->get_record('user', array('id' => $userid));
         $company = self::get_company_byuserid($userid);
 
-        $supervisortemplate = new EmailTemplate('completion_course_supervisor', array('course' => $course, 'user' => $user, 'company' => $company));
+        // Deal with attachment.
+        $trackinfos = $DB->get_records_sql('SELECT * FROM {local_iomad_track}
+                                          WHERE userid = :userid
+                                          AND courseid = :courseid
+                                          ORDER BY id DESC',
+                                          array('userid' => $userid, 'courseid' => $courseid), 0, 1);
+        $attachment = new stdclass();
+        $trackinfo = array_pop($trackinfos);
+        if ($trackfileinfo = $DB->get_record('local_iomad_track_certs', array('trackid' => $trackinfo->id))) {
+            $fileinfo = $DB->get_record('files', array('itemid' => $trackinfo->id, 'component' => 'local_iomad_track', 'filename' => $trackfileinfo->filename));
+            $filedir1 = substr($fileinfo->contenthash,0,2);
+            $filedir2 = substr($fileinfo->contenthash,2,2);
+            $attachment->filepath = $CFG->dataroot . '/filedir/' . $filedir1 . '/' . $filedir2 . '/' . $fileinfo->contenthash;
+            $attachment->filename = $trackfileinfo->filename;
+        } else {
+            $attachment = null;
+        }
 
-        // Do we have a supervisor?
-        if ($supervisoremails = self::get_usersupervisor($userid)) {
-            foreach ($supervisoremails as $supervisoremail) {
-                // Get the user info.
-                if ($userinfo = $DB->get_record('user', array('id' => $userid, 'deleted' => 0, 'suspended' => 0))) {
-                    if ($courseinfo = $DB->get_record('course', array('id' => $courseid))) {
-                        // We have to do this manually as the normal Moodle functions require a proper registered user.
-                        $params = new stdclass();
-                        $params->fullname = $courseinfo->fullname;
-                        $params->firstname = $userinfo->firstname;
-                        $params->lastname = $userinfo->lastname;
-                        $params->date = date('d-m-Y', time());
-                        $mail = get_mailer();
-
-                        $supportuser = core_user::get_support_user();
-                        if (!empty($CFG->supportemail)) {
-                            $supportuser->email = $CFG->supportemail;
-                        }
-                        if ($CFG->supportname) {
-                            $supportuser->firstname = $CFG->supportname;
-                        }
-
-                        $subject = get_string('completion_course_supervisor_subject', 'block_iomad_company_admin', $params);
-                        $messagetext = get_string('completion_course_supervisor_body', 'block_iomad_company_admin', $params);
-
-                        $mail->Sender = $supportuser->firstname;
-                        $mail->From     = $CFG->noreplyaddress;
-                        $mail->FromName = $supportuser->firstname;
-                        if (empty($CFG->divertallemailsto)) {
-                            $mail->Subject = substr($subject, 0, 900);
-                        } else {
-                            $mail->Subject = substr('[DIVERTED ' . $supervisoremail . '] ' . $subject, 0, 900);
-                        }
-
-                        $mail->addAddress($supervisoremail, '');
-
-                        // Add the certificate attachment.
-                        // need to pause to make sure the other events create it.
-                        $trackinfos = $DB->get_records_sql('SELECT * FROM {local_iomad_track}
-                                                          WHERE userid = :userid
-                                                          AND courseid = :courseid
-                                                          ORDER BY id DESC',
-                                                          array('userid' => $userid, 'courseid' => $courseid), 0, 1);
-                        $trackinfo = array_pop($trackinfos);
-                        if ($trackfileinfo = $DB->get_record('local_iomad_track_certs', array('trackid' => $trackinfo->id))) {
-                            $fileinfo = $DB->get_record('files', array('itemid' => $trackinfo->id, 'component' => 'local_iomad_track', 'filename' => $trackfileinfo->filename));
-                            $filedir1 = substr($fileinfo->contenthash,0,2);
-                            $filedir2 = substr($fileinfo->contenthash,2,2);
-                            $filepath = $CFG->dataroot . '/filedir/' . $filedir1 . '/' . $filedir2 . '/' . $fileinfo->contenthash;
-                            $mimetype = mimeinfo('type', $trackfileinfo->filename);
-                            $mail->addAttachment($filepath, $trackfileinfo->filename, 'base64', $mimetype);
-                        }
-                        // Set word wrap.
-                        $mail->WordWrap = 79;
-
-                        $mail->Body =  "\n$messagetext\n";
-                        if (empty($CFG->noemailever)) {
-                            $mail->send();
-                        }
-
-                    }
+        $complete = false;
+        if ($licenses = $DB->get_records_sql("SELECT * FROM {companylicense_users}
+                                              WHERE userid = :userid
+                                              AND licenseid = (
+                                                  SELECT licenseid FROM {companylicense_users}
+                                                  WHERE userid = :userid2
+                                                  AND licensecourseid = :courseid)",
+                                              array('userid' => $user->id, 'userid2' => $user->id, 'courseid' => $courseid))) {
+            foreach ($licenses as $license) {
+                if ($license->isusing && $DB->get_record_sql("SELECT id FROM {course_completions}
+                                                              WHERE userid = :userid
+                                                              AND course = :courseid
+                                                              AND timecompleted IS NOT NULL",
+                                                              array('courseid' => $license->licensecourseid,
+                                                                    'userid' => $user->id))) {
+                    $complete = true;
+                } else {
+                    $complete = false;
                 }
             }
         }
-
-        // Email the company managers.
-        if ($mymanagers = self::get_my_managers($userid, 1)) {
-            foreach ($mymanagers as $managerid) {
-                // Get the user info.
-                if ($managerinfo = $DB->get_record('user', array('id' => $managerid->userid, 'deleted' => 0, 'suspended' => 0))) {
-                    if ($userinfo = $DB->get_record('user', array('id' => $userid, 'deleted' => 0, 'suspended' => 0))) {
-                        if ($courseinfo = $DB->get_record('course', array('id' => $courseid))) {
-                            $courseinfo->reporttext = fullname($userinfo) . ' has completed ' . $courseinfo->fullname . ' in ' . $company->name .
-                                                       ' on ' . date($CFG->iomad_date_format, $timecompleted) . "\n";
-                            EmailTemplate::send('course_completed_manager', array('course' => $courseinfo, 'user' => $managerinfo, 'company' => $company));
-                        }
-                    }
-                }
-            }
+        if (!$complete) {
+            EmailTemplate::send('completion_course_user', array('course' => $course, 'user' => $user, 'company' => $company, 'attachment' => $attachment));
+            $supervisortemplate = new EmailTemplate('completion_course_supervisor', array('course' => $course, 'user' => $user, 'company' => $company, 'attachment' => $attachment));
+            $supervisortemplate->email_supervisor();
+        } else {
+            EmailTemplate::send('user_programcompleted', array('course' => $course, 'user' => $user, 'company' => $company, 'attachment' => $attachment));
         }
 
         return true;
@@ -2919,6 +2984,50 @@ class company {
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
             iomad_commerce::update_user($user);
         }
+
+        return true;
+    }
+
+    /**
+     * Triggered via user_suspended event.
+     *
+     * @param \core\event\user_suspended $event
+     * @return bool true on success.
+     */
+    public static function user_suspended(\core\event\user_suspended $event) {
+        global $DB;
+
+        $userid = $event->objectid;
+        $timestamp = time();
+
+        $usercompany = self::by_userid($userid);
+        $usercompanyrec = $DB->get_record('company_users', array('userid' => $userid, 'companyid' => $usercompany->id));
+        $user = $DB->get_record('user', array('id' => $userid));
+        EmailTemplate::send('user_suspended',
+                             array('company' => $usercompany,
+                                   'user' => $user));
+
+        return true;
+    }
+
+    /**
+     * Triggered via user_suspended event.
+     *
+     * @param \core\event\user_suspended $event
+     * @return bool true on success.
+     */
+    public static function user_unsuspended(\core\event\user_unsuspended $event) {
+        global $DB;
+
+        $userid = $event->objectid;
+        $timestamp = time();
+
+        $usercompany = self::by_userid($userid);
+        $usercompanyrec = $DB->get_record('company_users', array('userid' => $userid, 'companyid' => $usercompany->id));
+        $user = $DB->get_record('user', array('id' => $userid));
+        EmailTemplate::send('user_unsuspended',
+                             array('company' => $usercompany,
+                                   'user' => $user));
 
         return true;
     }
@@ -3033,6 +3142,20 @@ class company {
             iomad_commerce::delete_user($user->username);
         }
 
+
+        $usercompany = self::by_userid($userid);
+        $usercompanyrec = $DB->get_record('company_users', array('userid' => $userid, 'companyid' => $usercompany->id));
+        $user = $DB->get_record('user', array('id' => $userid));
+        if ($usercompanyrec->managertype = 0) {
+            EmailTemplate::send('user_deleted',
+                                 array('company' => $usercompany,
+                                       'user' => $user));
+
+        } else {
+            EmailTemplate::send('admin_deleted',
+                                 array('company' => $usercompany,
+                                       'user' => $user));
+        }
         // Remove the user from any company.
         $DB->delete_records('company_users', array('userid' => $userid));
 
@@ -3282,6 +3405,15 @@ class company {
             self::update_license_usage($parentid);
         }
 
+        // Get the company managers.
+        $company = new company($licenserecord->companyid);
+        $managers = $company->get_managers();
+        foreach ($managers as $manager) {
+            // Fire the email.
+            EmailTemplate::send('company_licenseassigned', array('user' => $manager));
+
+        }
+
         return true;
     }
 
@@ -3503,6 +3635,11 @@ class company {
         $company = self::get_company_byuserid($user->id);
         $supervisortemplate = new EmailTemplate('completion_warn_supervisor', array('course' => $course, 'user' => $user, 'company' => $company));
 
+        // Is this enabled for this company?
+        if (!$company->email_template_is_enabled('completion_expiry_warn_supervisor', 2)) {
+            return true;
+        }
+
         // Do we have a supervisor?
         if ($supervisoremails = self::get_usersupervisor($user->id)) {
             foreach ($supervisoremails as $supervisoremail) {
@@ -3547,7 +3684,7 @@ class company {
     }
 
     /**
-     * Send a user's supervisor a warning email that a user hasn't completed a course.
+     * Send a user's supervisor a warning email that a user's training is expiring.
      *
      * @param user object
      * @param course object
@@ -3558,6 +3695,11 @@ class company {
 
         $company = self::get_company_byuserid($user->id);
         $supervisortemplate = new EmailTemplate('completion_expiry_warn_supervisor', array('course' => $course, 'user' => $user, 'company' => $company));
+
+        // Is this enabled for this company?
+        if (!$company->email_template_is_enabled('completion_expiry_warn_supervisor', 2)) {
+            return true;
+        }
 
         // Do we have a supervisor?
         if ($supervisoremails = self::get_usersupervisor($user->id)) {

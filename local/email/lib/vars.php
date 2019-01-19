@@ -109,6 +109,8 @@ class EmailVars {
                         'License_Length', 'License_Valid',
             // Sender information fields .
                         'Sender_FirstName', 'Sender_LastName', 'Sender_Email',
+            // Activity information fields .
+                        'Activity_Name', 'Activity_Duedate',
             // Miscellaneouss fields.
                         'LinkURL', 'SiteURL'
         );
@@ -167,7 +169,7 @@ class EmailVars {
             } else {
                 return new moodle_url($this->course->url);
             }
-        }            
+        }
     }
 
     /**
@@ -189,7 +191,7 @@ class EmailVars {
             } else {
                 return new moodle_url($CFG->wwwroot);
             }
-        }            
+        }
     }
 
     /**
@@ -207,10 +209,10 @@ class EmailVars {
             // Get the company theme.
             if (method_exists($this->company,'get_theme')) {
                 $theme = $this->company->get_theme();
-                return new moodle_url($this->url, array('theme' => $theme)); 
+                return new moodle_url($this->url, array('theme' => $theme));
             } else {
                 return new moodle_url($this->url);
             }
-        }            
+        }
     }
 }

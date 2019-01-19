@@ -158,6 +158,264 @@ function xmldb_local_email_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017080700, 'local', 'email');
     }
 
+    if ($oldversion < 2017080701) {
+
+        // Define field disabled to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('disabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'body');
+
+        // Conditionally launch add field disabled.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field disabledmanager to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('disabledmanager', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'disabled');
+
+        // Conditionally launch add field disabledmanager.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field disabledsupervisor to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('disabledsupervisor', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'disabledmanager');
+
+        // Conditionally launch add field disabledsupervisor.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field repeatperiod to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('repeatperiod', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'disabledsupervisor');
+
+        // Conditionally launch add field repeatperiod.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2017080701, 'local', 'email');
+    }
+
+    if ($oldversion < 2017080702) {
+
+        // Define field repeatvalue to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('repeatvalue', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'repeatperiod');
+
+        // Conditionally launch add field repeatvalue.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field repeateday to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('repeateday', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'repeatvalue');
+
+        // Conditionally launch add field repeateday.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define table email_templateset to be created.
+        $table = new xmldb_table('email_templateset');
+
+        // Adding fields to table email_templateset.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table email_templateset.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for email_templateset.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table email_templateset_templates to be created.
+        $table = new xmldb_table('email_templateset_templates');
+
+        // Adding fields to table email_templateset_templates.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('templateset', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('lang', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('subject', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('body', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('disabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('disabledmanager', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('disabledsupervisor', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('repeatperiod', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('repeatvalue', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('repeateday', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table email_templateset_templates.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for email_templateset_templates.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2017080702, 'local', 'email');
+    }
+
+    if ($oldversion < 2017080703) {
+
+        // Rename field name on table email_templateset to templatesetname.
+        $table = new xmldb_table('email_templateset');
+        $field = new xmldb_field('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'id');
+
+        // Launch rename field templatesetname.
+        $dbman->rename_field($table, $field, 'templatesetname');
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2017080703, 'local', 'email');
+    }
+
+    if ($oldversion < 2017080704) {
+
+        // Define field companyid to be added to email.
+        $table = new xmldb_table('email');
+        $field = new xmldb_field('companyid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'varsreplaced');
+
+        // Conditionally launch add field companyid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // get all emails
+        $emails = $DB->get_records('email');
+
+        foreach ($emails as $email) {
+            $company = company::by_userid($email->userid);
+            $DB->execute("update {email} set companyid = :companyid where id = :id", array('companyid' => $company->id, 'id' => $email->id));
+        }
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2017080704, 'local', 'email');
+    }
+
+    if ($oldversion < 2017080705) {
+
+        // Define field signature to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('signature', XMLDB_TYPE_TEXT, null, null, null, null, null, 'body');
+
+        // Conditionally launch add field signature.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailto to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('emailto', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'disabledsupervisor');
+
+        // Conditionally launch add field emailto.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailtoother to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('emailtoother', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'emailto');
+
+        // Conditionally launch add field emailtoother.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailcc to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('emailcc', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'emailtoother');
+
+        // Conditionally launch add field emailcc.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailccother to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('emailccother', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'emailcc');
+
+        // Conditionally launch add field emailccother.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailfrom to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('emailfrom', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'emailccother');
+
+        // Conditionally launch add field emailfrom.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailfromother to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('emailfromother', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'emailfrom');
+
+        // Conditionally launch add field emailfromother.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailreplyto to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('emailreplyto', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'emailfromother');
+
+        // Conditionally launch add field emailreplyto.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailreplytoother to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('emailreplytoother', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'emailreplyto');
+
+        // Conditionally launch add field emailreplytoother.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2017080705, 'local', 'email');
+    }
+
+    if ($oldversion < 2017080707) {
+
+        // Rename field repeateday on table email_template to repeatday.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('repeateday', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'repeatvalue');
+
+        // Launch rename field repeatday.
+        $dbman->rename_field($table, $field, 'repeatday');
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2017080707, 'local', 'email');
+    }
+
+    if ($oldversion < 2018112400) {
+
+        // Define field emailfromothername to be added to email_template.
+        $table = new xmldb_table('email_template');
+        $field = new xmldb_field('emailfromothername', XMLDB_TYPE_TEXT, null, null, null, null, null, 'repeatday');
+
+        // Conditionally launch add field emailfromothername.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2018112400, 'local', 'email');
+    }
+
     return $result;
 
 }

@@ -105,12 +105,12 @@ function email_reports_cron() {
                                       AND userid = :userid",
                                       array('userid' => $compuser->userid))) {
                 continue;
-   
+
             }
         }
 
         if (!$DB->get_record_sql("SELECT ra.id FROM
-                                 {user_enrolments} ue 
+                                 {user_enrolments} ue
                                  INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
                                  JOIN {role_assignments} ra ON (ue.userid = ra.userid)
                                  JOIN {context} c ON (ra.contextid = c.id AND c.instanceid = e.courseid)
@@ -205,7 +205,7 @@ function email_reports_cron() {
                                                           AND userid != :managerid
                                                           $companysql",
                                                           array('managerid' => $manager->userid));
-                    
+
                     $summary = "<table><tr><th>" . get_string('firstname') . "</th>" .
                                "<th>" . get_string('lastname') . "</th>" .
                                "<th>" . get_string('email') . "</th>" .
@@ -224,7 +224,7 @@ function email_reports_cron() {
                             continue;
                         }
                         if (!$DB->get_record_sql("SELECT ra.id FROM
-                                                 {user_enrolments} ue 
+                                                 {user_enrolments} ue
                                                  INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
                                                  JOIN {role_assignments} ra ON (ue.userid = ra.userid)
                                                  JOIN {context} c ON (ra.contextid = c.id AND c.instanceid = e.courseid)
@@ -242,7 +242,7 @@ function email_reports_cron() {
                                     "<td>" . $manageruser->lastname . "</td>" .
                                     "<td>" . $manageruser->email . "</td>" .
                                     "<td>" . $manageruser->departmentname . "</td>" .
-                                    "<td>" . $manageruser->coursename . "</td>" .
+                                    "<td>" . $manageruser->fullname . "</td>" .
                                     "<td>" . date($CFG->iomad_date_format, $manageruser->timeenrolled) . "</td></tr>";
                     }
                     $summary .= "</table>";
@@ -337,12 +337,12 @@ function email_reports_cron() {
                                       AND userid = :userid",
                                       array('userid' => $compuser->userid))) {
                 continue;
-   
+
             }
         }
 
         if (!$DB->get_record_sql("SELECT ra.id FROM
-                                 {user_enrolments} ue 
+                                 {user_enrolments} ue
                                  INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
                                  JOIN {role_assignments} ra ON (ue.userid = ra.userid)
                                  JOIN {context} c ON (ra.contextid = c.id AND c.instanceid = e.courseid)
@@ -467,7 +467,7 @@ function email_reports_cron() {
                                 continue;
                             }
                             if (!$DB->get_record_sql("SELECT ra.id FROM
-                                                     {user_enrolments} ue 
+                                                     {user_enrolments} ue
                                                      INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
                                                      JOIN {role_assignments} ra ON (ue.userid = ra.userid)
                                                      JOIN {context} c ON (ra.contextid = c.id AND c.instanceid = e.courseid)
@@ -491,7 +491,7 @@ function email_reports_cron() {
                                         "<td>" . $manageruser->lastname . "</td>" .
                                         "<td>" . $manageruser->email . "</td>" .
                                         "<td>" . $manageruser->departmentname . "</td>" .
-                                        "<td>" . $manageruser->coursename . "</td>" .
+                                        "<td>" . $manageruser->fullname . "</td>" .
                                         "<td>" . $datestring . "</td></tr>";
                         }
                         $summary .= "</table>";
@@ -612,11 +612,11 @@ function email_reports_cron() {
                                     "<td>" . $manageruser->lastname . "</td>" .
                                     "<td>" . $manageruser->email . "</td>" .
                                     "<td>" . $manageruser->departmentname . "</td>" .
-                                    "<td>" . $manageruser->coursename . "</td>" .
+                                    "<td>" . $manageruser->fullname . "</td>" .
                                     "<td>" . $datestring . "</td></tr>";
                     }
                     $summary .= "</table>";
-                    
+
                     if ($foundusers && $user = $DB->get_record('user', array('id' => $manager->userid))) {
                         $course = new stdclass();
                         $course->reporttext = $summary;

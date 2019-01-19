@@ -35,13 +35,53 @@ function email_cron() {
                                         AND u.deleted = 0
                                         AND u.suspended = 0", array('now' => $now))) {
         foreach ($emails as $email) {
-            EmailTemplate::send_to_user($email);
-            // Adding a sleep to ensure there is no processing confusion.
-            sleep(10);
-    
-            $email->modifiedtime = $email->sent = time();
-            $email->id = $email->id;
-            $DB->update_record('email', $email);
+            $company = new company($email->companyid);
+            $managertype = 0;
+            if (strpos($email->templatename, 'manager')) {
+                $manapegertype = 1;
+            }
+            if (strpos($email->templatename, 'supervisor')) {
+                $managertype = 2;
+            }
+            if (!$company->email_template_is_enabled($email->templatename, $managertype)) {
+                $DB->delete_records('email', array('id' => $email->id));
+                continue;
+            } else {
+                EmailTemplate::send_to_user($email);
+                $email->modifiedtime = $email->sent = time();
+                $email->id = $email->id;
+                $DB->update_record('email', $email);
+            }
         }
     }
 }
+
+/**
+ * Serves any files associated with the email settings.
+ *
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param context $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @param array $options
+ * @return bool
+ */
+function local_email_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $filename = $args[1];
+    $itemid = $args[0];
+    if ($filearea == 'companylogo') {
+        $itemid = 0;
+    }
+
+    if (!$file = $fs->get_file($context->id, 'local_email', $filearea, $itemid, '/', $filename) or $file->is_directory()) {
+        send_file_not_found();
+    }
+
+    send_stored_file($file, 0, 0, $forcedownload);
+}
+

@@ -20,18 +20,87 @@ require_once( 'config.php');
 require_once( 'lib.php');
 require_once($CFG->dirroot . '/local/iomad/lib/user.php');
 
+// Set up the save form.
+class company_templateset_save_form extends company_moodleform {
+
+    public function __construct($actionurl,
+                                $companyid,
+                                $templatesetid) {
+
+        $this->companyid = $companyid;
+        $this->templatesetid = $templatesetid;
+
+        parent::__construct($actionurl);
+    }
+
+
+    public function definition() {
+        $this->_form->addElement('hidden', 'companyid', $this->companyid);
+        $this->_form->setType('companyid', PARAM_INT);
+    }
+
+
+    public function definition_after_data() {
+
+        $mform =& $this->_form;
+
+        $mform->addElement('hidden', 'templatesetid', $this->templatesetid);
+        $mform->setType('templatesetid', PARAM_INT);
+
+        $mform->addElement('text',  'templatesetname', get_string('templatesetname', 'local_email'),
+                           'maxlength="254" size="50"');
+        $mform->addHelpButton('templatesetname', 'templatesetname', 'local_email');
+        $mform->addRule('templatesetname', get_string('missingtemplatesetname', 'local_email'), 'required', null, 'client');
+        $mform->setType('templatesetname', PARAM_MULTILANG);
+
+        $this->add_action_buttons(true, get_string('savetemplateset', 'local_email'));
+    }
+
+    public function validation($data, $files) {
+        global $DB;
+        $errors = array();
+
+        if ($DB->get_record_sql("SELECT id FROM {email_templateset}
+                                 where " . $DB->sql_compare_text('templatesetname') ." = :templatesetname",
+                                 array('templatesetname' => $data['templatesetname']))) {
+            $errors['templatesetname'] = get_string('templatesetnamealreadyinuse', 'local_email');
+        }
+
+        return $errors;
+    }
+}
+
 $delete       = optional_param('delete', 0, PARAM_INT);
 $confirm      = optional_param('confirm', '', PARAM_ALPHANUM);   // Md5 confirmation hash.
 $sort         = optional_param('sort', 'name', PARAM_ALPHA);
 $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
-$perpage      = optional_param('perpage', $CFG->iomad_max_list_email_templates, PARAM_INT);        // How many per page.
+$perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per page.
 $lang         = optional_param('lang', 'en', PARAM_LANG);
+$ajaxtemplate = optional_param('ajaxtemplate', '', PARAM_CLEAN);
+$ajaxvalue = optional_param('ajaxvalue', '', PARAM_CLEAN);
+$save = optional_param('savetemplateset', 0, PARAM_CLEAN);
+$manage = optional_param('manage', 0, PARAM_INT);
+$action = optional_param('action', '', PARAM_ALPHANUM);
+$finished = optional_param('finished', 0, PARAM_BOOL);
+$templatesetid = optional_param('templatesetid', 0, PARAM_INT);
+$templateid = optional_param('templateid', 0, PARAM_INT);
+
+if (!empty($templatesetid)) {
+    $SESSION->currenttemplatesetid = $templatesetid;
+}
+if (!empty($SESSION->currenttemplatesetid) && !$finished) {
+     $templatesetid = $SESSION->currenttemplatesetid;
+}
+if ($finished) {
+    unset($SESSION->currenttemplatesetid);
+    $templatesetid = 0;
+}
 
 $context = context_system::instance();
 require_login();
 
-$email = local_email_get_templates();
+$email = local_email::get_templates();
 
 $block = 'local_email';
 
@@ -46,12 +115,17 @@ $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
+$PAGE->requires->jquery();
 
 // Set the page heading.
 $PAGE->set_heading($linktext);
 
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
+
+// get output renderer
+$output = $PAGE->get_renderer('local_email');
+
 
 // Set the companyid to bypass the company select form if possible.
 if (!empty($SESSION->currenteditingcompany)) {
@@ -61,7 +135,7 @@ if (!empty($SESSION->currenteditingcompany)) {
 } else if (!iomad::has_capability('local/email:list', context_system::instance())) {
     print_error('There has been a configuration error, please contact the site administrator');
 } else {
-    redirect(new moodle_url('/my'),
+    redirect(new moodle_url('/local/iomad_dashboard/index.php'),
                             'Please select a company from the dropdown first');
 }
 
@@ -69,58 +143,262 @@ $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $d
                                                     'perpage' => $perpage));
 $returnurl = $baseurl;
 
-if ($delete and confirm_sesskey()) {
-    // Delete a selected override template, after confirmation.
+// check if ajax callback
+if ($ajaxtemplate) {
+    error_log('Got it '.$ajaxtemplate.' '.$ajaxvalue);
+    $parts = explode('.', $ajaxtemplate);
+    list($type, $id, $managertype, $templatename) = $parts;
 
-    iomad::require_capability('local/email:delete', $context);
+    if ($type == 'c') {
+        // dealing with a company email template.
+        if (!$templateinfos = $DB->get_records('email_template',
+            array('name' => $templatename,
+                  'companyid' => $id))) {
+            $newtemplate = new stdclass();
+            $newtemplate->companyid = $id;
+            $newtemplate->name = $templatename;
+            $newtemplate->subject = get_string($templatename.'_subject', 'local_email');
+            $newtemplate->body = get_string($templatename.'_body', 'local_email');
+            $newtemplate->disabled = 0;
+            $newtemplate->disabledmanager = 0;
+            $newtemplate->disabledsupervisor = 0;
 
-    $template = $DB->get_record('email_template', array('id' => $delete), '*', MUST_EXIST);
+            if (isset($CFG->lang)) {
+                $newtemplate->lang = $CFG->lang;
+            } else {
+                $newtemplate->lang = 'en';
+            }
 
-    if ($confirm != md5($delete)) {
-        echo $OUTPUT->header();
-        $name = $template->name;
-        echo $OUTPUT->heading(get_string('delete_template', $block), 2, 'headingblock header');
-        $optionsyes = array('delete' => $delete, 'confirm' => md5($delete), 'sesskey' => sesskey());
-        echo $OUTPUT->confirm(get_string('delete_template_checkfull', $block, "'$name'"),
-              new moodle_url('template_list.php', $optionsyes), 'template_list.php');
-        echo $OUTPUT->footer();
-        die;
-    } else if (data_submitted()) {
-        $transaction = $DB->start_delegated_transaction();
-
-        if ( $DB->delete_records('email_template', array('id' => $delete)) ) {
-            $transaction->allow_commit();
-            redirect($returnurl);
-        } else {
-            $transaction->rollback();
-            echo $OUTPUT->header();
-            echo $OUTPUT->notification($returnurl, get_string('deletednot', '', $template->name));
-            die;
+            // What are we disabling?
+            if ($managertype == 'e') {
+                $newtemplate->disabled = 1;
+            }
+            if ($managertype == 'em') {
+                $newtemplate->managerdisabled = 1;
+            }
+            if ($managertype == 'es') {
+                $newtemplate->supervisordisabled = 1;
+            }
+            $DB->insert_record('email_template', $newtemplate);
         }
+        if ($ajaxvalue=='false') {
+            if ($managertype == 'e') {
+                $DB->execute("UPDATE {email_template}
+                              SET disabled = 1
+                              WHERE companyid = :companyid
+                              AND name = :templatename",
+                              array('companyid' => $id,
+                                    'templatename' => $templatename));
+            }
+            if ($managertype == 'em') {
+                $DB->execute("UPDATE {email_template}
+                              SET disabledmanager = 1
+                              WHERE companyid = :companyid
+                              AND name = :templatename",
+                              array('companyid' => $id,
+                                    'templatename' => $templatename));
+            }
+            if ($managertype == 'es') {
+                $DB->execute("UPDATE {email_template}
+                              SET disabledsupervisor = 1
+                              WHERE companyid = :companyid
+                              AND name = :templatename",
+                              array('companyid' => $id,
+                                    'templatename' => $templatename));
+            }
+        } else {
+            if ($managertype == 'e') {
+                $DB->execute("UPDATE {email_template}
+                              SET disabled = 0
+                              WHERE companyid = :companyid
+                              AND name = :templatename",
+                              array('companyid' => $id,
+                                    'templatename' => $templatename));
+            }
+            if ($managertype == 'em') {
+                $DB->execute("UPDATE {email_template}
+                              SET disabledmanager = 0
+                              WHERE companyid = :companyid
+                              AND name = :templatename",
+                              array('companyid' => $id,
+                                    'templatename' => $templatename));
+            }
+            if ($managertype == 'es') {
+                $DB->execute("UPDATE {email_template}
+                              SET disabledsupervisor = 0
+                              WHERE companyid = :companyid
+                              AND name = :templatename",
+                              array('companyid' => $id,
+                                    'templatename' => $templatename));
+            }
+        }
+    } else if ($type == 't') {
+        // dealing with a company email template.
+        if (!$templateinfos = $DB->get_records('email_templateset_templates',
+            array('name' => $templatename,
+                  'templateset' => $id))) {
+            $newtemplate = new stdclass();
+            $newtemplate->templateset = $id;
+            $newtemplate->name = $templatename;
+            $newtemplate->subject = get_string($templatename.'_subject', 'local_email');
+            $newtemplate->body = get_string($templatename.'_body', 'local_email');
+            $newtemplate->disabled = 0;
+            $newtemplate->disabledmanager = 0;
+            $newtemplate->disabledsupervisor = 0;
 
-        $transaction->rollback();
+            if (isset($CFG->lang)) {
+                $newtemplate->lang = $CFG->lang;
+            } else {
+                $newtemplate->lang = 'en';
+            }
+
+            // What are we disabling?
+            if ($managertype == 'e') {
+                $newtemplate->disabled = 1;
+            }
+            if ($managertype == 'em') {
+                $newtemplate->managerdisabled = 1;
+            }
+            if ($managertype == 'es') {
+                $newtemplate->supervisordisabled = 1;
+            }
+            $DB->insert_record('email_templateset_templates', $newtemplate);
+        }
+        if ($ajaxvalue=='false') {
+            if ($managertype == 'e') {
+                $DB->execute("UPDATE {email_template}
+                              SET disabled = 1
+                              WHERE companyid = :companyid
+                              AND name = :templatename",
+                              array('companyid' => $id,
+                                    'templatename' => $templatename));
+            }
+            if ($managertype == 'em') {
+                $DB->execute("UPDATE {email_template}
+                              SET disabledmanager = 1
+                              WHERE companyid = :companyid
+                              AND name = :templatename",
+                              array('companyid' => $id,
+                                    'templatename' => $templatename));
+            }
+            if ($managertype == 'es') {
+                $DB->execute("UPDATE {email_template}
+                              SET disabledsupervisor = 1
+                              WHERE companyid = :companyid
+                              AND name = :templatename",
+                              array('companyid' => $id,
+                                    'templatename' => $templatename));
+            }
+        } else {
+            if ($managertype == 'e') {
+                $DB->execute("UPDATE {email_templateset_templates}
+                              SET disabled = 0
+                              WHERE templateset = :templateset
+                              AND name = :templatename",
+                              array('templateset' => $id,
+                                    'templatename' => $templatename));
+            }
+            if ($managertype == 'em') {
+                $DB->execute("UPDATE {email_templateset_templates}
+                              SET disabledmanager = 0
+                              WHERE templateset = :templateset
+                              AND name = :templatename",
+                              array('templateset' => $id,
+                                    'templatename' => $templatename));
+            }
+            if ($managertype == 'es') {
+                $DB->execute("UPDATE {email_templateset_templates}
+                              SET disabledsupervisor = 0
+                              WHERE templateset = :templateset
+                              AND name = :templatename",
+                              array('templateset' => $id,
+                                    'templatename' => $templatename));
+            }
+        }
     }
 
+    // Don't process any more.
+    die;
 }
-echo $OUTPUT->header();
+
+echo $output->header();
+
+//  Deal with any deletes.
+if ($action == 'delete' && confirm_sesskey()) {
+    if ($confirm != md5($templatesetid)) {
+        if (!$templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid))) {
+            print_error('templatesetnotfound', 'local_email');
+        }
+
+        echo $OUTPUT->heading(get_string('deletetemplateset', 'local_email'). " " . $templatesetinfo->templatesetname);
+        $optionsyes = array('templatesetid' => $templatesetid, 'confirm' => md5($templatesetid), 'sesskey' => sesskey(), 'action' => 'delete');
+        echo $OUTPUT->confirm(get_string('deletetemplatesetfull', 'local_email', "'" . $templatesetinfo->templatesetname ."'"),
+                              new moodle_url('/local/email/template_list.php', $optionsyes),
+                                             '/local/email/template_list.php');
+        echo $OUTPUT->footer();
+        die;
+    } else {
+        // Delete the template.
+        $DB->delete_records('email_templateset_templates', array('templateset' => $templatesetid));
+        $DB->delete_records('email_templateset', array('id' => $templatesetid));
+        notice(get_string('templatesetdeleted', 'local_email'));
+    }
+}
+
+$mform = new company_templateset_save_form($linkurl, $companyid, $templatesetid);
+
+if ($data = $mform->get_data()) {
+    // Save the template.
+    $templatesetid = $DB->insert_record('email_templateset', array('templatesetname' => $data->templatesetname));
+    $emailtemplates = $DB->get_records('email_template', array('companyid' => $companyid));
+    foreach ($emailtemplates as $emailtemplate) {
+        $emailtemplate->templateset = $templatesetid;
+        $DB->insert_record('email_templateset_templates', $emailtemplate);
+    }
+    notice(get_string('emailtemplatesetsaved', 'local_email'));
+}
+
+if (!empty($save)) {
+    if (!empty($templatesetid)) {
+        $templateset = $DB->get_record('email_templateset', array('id' => $templatesetid));
+        $mform->set_data($templateset);
+    }
+
+    // Display the form.
+    $mform->display();
+    echo $OUTPUT->footer();
+    die;
+}
 
 $company = new company($companyid);
-echo '<h3>' . get_string('email_templates_for', $block, $company->get_name()) . '</h3>';
-
 // Check we can actually do anything on this page.
 iomad::require_capability('local/email:list', $context);
 
-// Deal with the language selector.
-$langs = get_string_manager()->get_list_of_translations();
-$s = new single_select($PAGE->url, 'lang', $langs);
-$s->label = get_string('language') . $OUTPUT->help_icon('language', 'local_email') . '&nbsp';
-$s->class = 'langselector';
-$s->selected = $lang;
-echo $OUTPUT->box($OUTPUT->render($s), 'langselectorbox');
+if (empty($manage)) {
+    if (empty($templatesetid)) {
+        echo '<h3>' . get_string('email_templates_for', $block, $company->get_name()) . '</h3>';
+    } else {
+        $templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid));
+        echo '<h3>' . get_string('email_templates_for', $block, $templatesetinfo->templatesetname) . '</h3>';
+    }
+
+    // output the save button.
+    $saveurl = new moodle_url('/local/email/template_list.php',
+                                array('savetemplateset' => 1,
+                                      'templatesetid' => $templatesetid));
+    $manageurl = new moodle_url('/local/email/template_list.php',
+                                  array('manage' => 1));
+    if (!empty($templatesetid)) {
+        $backurl = new moodle_url('/local/email/template_list.php', array('finished' => true));
+    } else {
+        $backurl = '';
+    }
+    echo $output->templateset_buttons($saveurl, $manageurl, $backurl);
+}
 
 // Get the number of templates.
 $objectcount = $DB->count_records('email_template');
-echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
+echo $output->paging_bar($objectcount, $page, $perpage, $baseurl);
 
 flush();
 
@@ -129,124 +407,38 @@ flush();
 $configtemplates = array_keys($email);
 sort($configtemplates);
 $ntemplates = count($configtemplates);
-
-// Returns true if user is allowed to send emails using a particular template.
-function allow_sending_to_template($templatename) {
-    return in_array($templatename, array('advertise_classroom_based_course'));
-}
-
-function create_default_template_row($templatename, $strdefault, $stradd, $strsend, $lang) {
-    global $PAGE;
-
-    $deletebutton = "";
-
-    if ($stradd) {
-        $editbutton = "<a class='btn' href='" . new moodle_url('template_edit_form.php',
-                       array("templatename" => $templatename, 'lang' => $lang)) . "'>$stradd</a>";
+if ($manage) {
+    if (empty($templatesetid)) {
+        // Display the list of templates.
+        $templates = $DB->get_records('email_templateset', array(), 'templatesetname');
+        echo $output->email_templatesets($templates, $linkurl);
     } else {
-        $editbutton = "";
-    }
-    if ($strsend && allow_sending_to_template($templatename) ) {
-        $sendbutton = "<a class='btn' href='" . new moodle_url('template_send_form.php',
-                       array("templatename" => $templatename, 'lang' => $lang)) . "'>$strsend</a>";
-    } else {
-        $sendbutton = "";
     }
 
-    $name = get_string($templatename . '_name', 'local_email') . "</br>(" . $templatename. ")";
-    $description = get_string($templatename . '_description', 'local_email');
-    return array ($name,
-                  $description,
-                  $editbutton . '&nbsp;' .
-                  $deletebutton . '&nbsp;' .
-                  $sendbutton);
-}
-
-if ($templates = $DB->get_recordset('email_template', array('companyid' => $companyid, 'lang' => $lang),
+} else if ($templates = $DB->get_recordset('email_template', array('companyid' => $companyid, 'lang' => $lang),
                                     'name', '*', $page, $perpage)) {
-    if (iomad::has_capability('local/email:edit', $context)) {
-        $stredit = get_string('edit');
+    // get heading
+    if (empty($templatesetid)) {
+        $prefix = "c." . $companyid;
     } else {
-        $stredit = null;
-    }
-    if (iomad::has_capability('local/email:add', $PAGE->context)) {
-        $stradd = get_string('add_template_button', $block);
-    } else {
-        $stradd = null;
-    }
-    if (iomad::has_capability('local/email:delete', $context)) {
-        $strdelete = get_string('delete_template_button', $block);
-    } else {
-        $strdelete = null;
-    }
-    if (iomad::has_capability('local/email:send', $context)) {
-        $strsend = get_string('send_button', $block);
-    } else {
-        $strsend = null;
-    }
-    $stroverride = get_string('custom', $block);
-    $strdefault = get_string('default', $block);
-
-    $table = new html_table();
-    $table->id = 'ReportTable';
-    $table->head = array (get_string('emailtemplatename', $block),
-                          get_string('description'),
-                          get_string('controls', $block));
-    $table->align = array ("left", "left", "center");
-
-    $i = 0;
-
-    foreach ($templates as $template) {
-        while ($i < $ntemplates && $configtemplates[$i] < $template->name) {
-            $table->data[] = create_default_template_row($configtemplates[$i], $strdefault,
-                                                         $stradd, $strsend, $lang);
-            $i++;
-        }
-
-        if ($strdelete) {
-            $deletebutton = "<a class='btn' href='" . new moodle_url('template_list.php',
-                          array("delete" => $template->id, 'lang' => $lang, 'sesskey' => sesskey())) ."'>$strdelete</a>";
-        } else {
-            $deletebutton = "";
-        }
-
-        if ($stredit) {
-            $editbutton = "<a class='btn' href='" . new moodle_url('template_edit_form.php',
-                          array("templateid" => $template->id, 'lang' => $lang)) . "'>$stredit</a>";
-        } else {
-            $editbutton = "";
-        }
-
-        if ($strsend && allow_sending_to_template($templatename)) {
-            $sendbutton = "<a class='btn' href='" . new moodle_url('template_send_form.php',
-                          array("templateid" => $template->id, 'lang' => $lang)) . "'>$strsend</a>";
-        } else {
-            $sendbutton = "";
-        }
-
-        $table->data[] = array ("$template->name",
-                            $stroverride,
-                            $editbutton . '&nbsp;' .
-                            $deletebutton . '&nbsp;' .
-                            $sendbutton
-                            );
-
-        // Need to increase the counter to skip the default template.
-        $i++;
+        $prefix = "t." . $templatesetid;
     }
 
-    while ($i < $ntemplates) {
-        $table->data[] = create_default_template_row($configtemplates[$i],
-                          $strdefault, $stradd, $strsend, $lang);
-        $i++;
-    }
-
-    if (!empty($table)) {
-        echo html_writer::table($table);
-        echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
-    }
-
+    // Display the list.
+    echo $output->email_templates($templates, $configtemplates, $lang, $prefix, $templatesetid);
+    echo $output->paging_bar($objectcount, $page, $perpage, $baseurl);
     $templates->close();
 }
 
-echo $OUTPUT->footer();
+?>
+<script>
+$(".checkbox").change(function() {
+	$.post("<?php echo $linkurl; ?>", {
+		ajaxtemplate:this.value,
+		ajaxvalue:this.checked
+	});
+});
+</script>
+<?php
+
+echo $output->footer();

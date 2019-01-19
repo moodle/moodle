@@ -30,7 +30,9 @@ class EmailTemplate {
     protected $headers = null;
     protected $approveuser = null;
     protected $event = null;
+    protected $activity = null;
     protected $due = null;
+    protected $attachment = null;
 
     /**
      * Send an email to (a) specified user(s)
@@ -53,6 +55,8 @@ class EmailTemplate {
      *              or if there was an error, those $loopoptions for which there was an error
      */
     public static function send($templatename, $options = array(), $loopoptions = array()) {
+        global $DB;
+
         if (count($loopoptions)) {
             $results = array();
             foreach ($loopoptions as $loptions) {
@@ -75,6 +79,25 @@ class EmailTemplate {
             }
         } else {
             $emailtemplate = new self($templatename, $options);
+
+            // If company isn't set - can't send.
+            if (empty($emailtemplate->company)) {
+                return true;
+            }
+            //Is the template enabled for the company?
+            $company = new company($emailtemplate->company->id);
+            $managertype = 0;
+            if (strpos($templatename, 'manager')) {
+                $managertype = 1;
+            }
+            if (strpos($templatename, 'supervisor')) {
+                $managertype = 2;
+            }
+            if (!$company->email_template_is_enabled($templatename, $managertype)) {
+                return true;
+            }
+
+            // It's Ok to send, so do so.
             return $emailtemplate->queue_for_cron();
         }
     }
@@ -115,7 +138,7 @@ class EmailTemplate {
     }
 
     public function __construct($templatename, $options = array()) {
-        global $USER, $SESSION, $COURSE, $DB;
+        global $USER, $SESSION, $COURSE, $DB, $CFG;
 
         $user = array_key_exists('user', $options) ? $options['user'] : null;
         $course = array_key_exists('course', $options) ? $options['course'] : null;
@@ -128,6 +151,8 @@ class EmailTemplate {
         $this->license = array_key_exists('license', $options) ? $options['license'] : null;
         $this->headers = array_key_exists('headers', $options) ? $options['headers'] : null;
         $this->company = array_key_exists('company', $options) ? $options['company'] : null;
+        $this->activity = array_key_exists('activity', $options) ? $options['activity'] : null;
+        $this->attachment = array_key_exists('attachment', $options) ? $options['attachment'] : null;
 
         if (!isset($user)) {
             $user =& $USER;
@@ -169,11 +194,11 @@ class EmailTemplate {
         }
         // Check if we are an admin with a company set.
         if (!empty($SESSION->currenteditingcompany)) {
-            $this->company = $DB->get_record('company', array('id' => $SESSION->currenteditingcompany));
+            $this->company = new company($SESSION->currenteditingcompany);
             // Otherwise use the creating users company.
         } else if (empty($this->company)) {
             $companyid = iomad::get_my_companyid(context_system::instance());
-            $this->company = $DB->get_record('company', array('id' => $companyid));
+            $this->company = new company($companyid);
         }
 
         $this->course = $this->get_course($course);
@@ -181,6 +206,24 @@ class EmailTemplate {
 
         $this->templatename = $templatename;
         $this->template = $this->get_template($templatename);
+        if (empty($this->attachment) && !empty($this->template->id)) {
+            $context = context_system::instance();
+            if ($files = $DB->get_records('files', array('contextid' => $context->id,
+                                                         'component' => 'local_email',
+                                                         'filearea' => 'companylogo',
+                                                         'itemid' => $this->template->id))) {
+                foreach ($files as $file) {
+                    if ($file->filename != '.') {
+                        $filedir1 = substr($file->contenthash,0,2);
+                        $filedir2 = substr($file->contenthash,2,2);
+                        $this->attachment = new stdclass();
+                        $this->attachment->filepath = $CFG->dataroot . '/filedir/' . $filedir1 . '/' . $filedir2 . '/' . $file->contenthash;
+                        $this->attachment->filename = $file->filename;
+                    }
+                }
+            }
+            echo "<pre>";print_r($this->attachment);echo "</pre>";
+        }
     }
 
     /**
@@ -202,6 +245,15 @@ class EmailTemplate {
     }
 
     /**
+     * Gets the signature for the email template from the language file
+     * and sets a class variable from it.
+     *
+     **/
+    public function signature() {
+        return $this->fill($this->template->signature);
+    }
+
+    /**
      * Sets up an email to be sent out by the Moodle cron.
      *
      **/
@@ -213,10 +265,72 @@ class EmailTemplate {
             $email->templatename = $this->templatename;
             $email->modifiedtime = time();
             $email->subject = $this->subject();
-            $email->body = $this->body();
+            if (!empty($this->template->signature)) {
+                $email->body = $this->body() . get_string('signatureseparator', 'local_email') . $this->signature();
+            } else {
+                $email->body = $this->body();
+            }
             $email->varsreplaced = 1;
             $email->userid = $this->user->id;
             $email->due = $this->due;
+            $email->companyid = $this->company->id;
+            if (isset($email->headers)) {
+                $email->customheaders = unserialize($email->headers);
+            } else {
+                $email->customheaders = array();
+            }
+
+            // Deal with any attachment.
+            if (!empty($this->attachment)) {
+                // add in the attachment to the body.
+                $email->customheaders['attachment'] = $this->attachment;
+            }
+            // Deal with To users
+            if (!empty($this->template->emailto)) {
+                $tousers = explode(',', $this->template->emailto);
+                foreach ($tousers as $touser) {
+                    if ($touserrec = $DB->get_record('user', array('id' => $touser, 'deleted' => 0, 'suspended' => 0))) {
+                        $email->customheaders[] = "To:".$touserrec->email;
+                    }
+                }
+            }
+            if (!empty($this->template->emailtoother)) {
+                $tootherusers = explode(',', $this->template->emailtoother);
+                foreach ($tootherusers as $tootheruser) {
+                    if (validate_email($tootheruser)) {
+                        $email->customheaders[] = "To:".$tootheruser;
+                    }
+                }
+            }
+
+            // Deal with CC users
+            if (!empty($this->template->emailcc)) {
+                $ccusers = explode(',', $this->template->emailcc);
+                foreach ($ccusers as $ccuser) {
+                    if ($ccuserrec = $DB->get_record('user', array('id' => $ccuser, 'deleted' => 0, 'suspended' => 0))) {
+                        $email->customheaders[] = "Cc:".$ccuserrec->email;
+                    }
+                }
+            }
+            if (!empty($this->template->emailccother)) {
+                $ccotherusers = explode(',', $this->template->emailccother);
+                foreach ($ccotherusers as $ccotheruser) {
+                    if (validate_email($ccotheruser)) {
+                        $email->customheaders[] = "Cc:".$ccotheruser;
+                    }
+                }
+            }
+
+            // Deal with reply user
+            if (!empty($this->template->emailreplyto)) {
+                if ($replytouserrec = $DB->get_record('user', array('id' => $this->template->emailreplyto, 'deleted' => 0, 'suspended' => 0))) {
+                    $email->customheaders[] = "reply-to:".$replytouserrec->email;
+                }
+            }
+            if (!empty($this->template->emailreplytoother) && validate_email($this->template->emailreplytoother)) {
+                $email->customheaders[] = "reply-to:".$this->template->emailreplytoother;
+            }
+
             if ($this->course) {
                 $email->courseid = $this->course->id;
             }
@@ -229,9 +343,8 @@ class EmailTemplate {
             if ($this->sender) {
                 $email->senderid = $this->sender->id;
             }
-            if ($this->headers) {
-                $email->headers = $this->headers;
-            }
+            $email->customheaders['template'] = $this->template;
+            $email->headers = serialize($email->customheaders);
 
             return $DB->insert_record('email', $email);
         } else {
@@ -247,9 +360,11 @@ class EmailTemplate {
      *
      **/
     static public function send_to_user($email) {
-        global $USER;
+        global $USER, $DB;
 
         $supportuser = new stdclass();
+        $company = new company($email->companyid);
+
         // Check if the user to be sent to is valid.
         if ($user = self::get_user($email->userid)) {
             if (isset($email->senderid) && !is_siteadmin($email->senderid) && $email->senderid > 0) {
@@ -257,18 +372,165 @@ class EmailTemplate {
             } else {
                 $supportuser = self::get_user(self::get_sender($user));
             }
+
             if (!empty($email->headers)) {
                 $supportuser->customheaders = unserialize($email->headers);
             } else {
                 $supportuser->customheaders = '';
             }
-            return email_to_user($user,
-                                 $supportuser,
-                                 $email->subject,
-                                 html_to_text($email->body),
-                                 $email->body);
 
+            $template = $supportuser->customheaders['template'];
+            if (!empty($template->replyto)) {
+                $replytouser = self::get_user($template->replyto);
+                $supportuser->customheaders['From'] = $replytouser->email;
+                $supportuser->customheaders['Reply-to'] = $replytouser->email;
+            }
+            if (!empty($template->replytoother) && validate_email($template->replytoother)) {
+                $supportuser->customheaders['From'] = $template->replytoother;
+                $supportuser->customheaders['Reply-to'] = $template->replytoother;
+            }
+            if (!empty($template->emailfromother && validate_email($template->emailfromother) )) {
+                $supportuser->email = $template->emailfromother;
+                $supportuser->customheaders['From'] = $template->emailfromother;
+            }
+            if (!empty($template->emailfromothername)) {
+                if ($template->emailfromothername == "{Company_Name}") {
+                    $supportuser->firstname = $company->get_name();
+                } else {
+                    $supportuser->firstname = $template->emailfromothername;
+                }
+            }
+            if (!empty($template->emailfrom)) {
+                $fromuser = self::get_user($template->emailfrom);
+                $supportuser->email = $fromuser->email;
+                $supportuser->firstname = $fromuser->firstname;
+                $supportuser->customheaders['From'] = $fromuser->email;
+            }
+            unset($supportuser->customheaders['template']);
+            if (!empty($supportuser->customheaders['attachment'])) {
+                $attachment = $supportuser->customheaders['attachment'];
+                unset($supportuser->customheaders['attachment']);
+            } else {
+                $attachment = null;
+            }
+            // Send the main email.
+            if (!self::email_direct($user->email,
+                               $supportuser,
+                               $email->subject,
+                               html_to_text($email->body),
+                               $email->body,
+                               $attachment)) {
+                return false;
+            }
+            // Send to all of the to user emails.
+            if (!empty($template->emailto)) {
+                $touserids = explode(',', $template->emailto);
+                foreach ($touserids as $touserid) {
+                    if ($touser = $DB->get_record('user', array('id' => $touserid, 'deleted' => 0, 'suspended' => 0))) {
+                        if (!self::email_direct($touser->email,
+                                           $supportuser,
+                                           $email->subject,
+                                           html_to_text($email->body),
+                                           $email->body,
+                                           $attachment)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            // Send to all of the cc user emails.
+            if (!empty($template->emailcc)) {
+                $ccuserids = explode(',', $template->emailcc);
+                foreach ($ccuserids as $ccuserid) {
+                    if ($ccuser = $DB->get_record('user', array('id' => $ccuserid, 'deleted' => 0, 'suspended' => 0))) {
+                        if (!self::email_direct($ccuser->email,
+                                           $supportuser,
+                                           $email->subject,
+                                           html_to_text($email->body),
+                                           $email->body,
+                                           $attachment)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            // Deal with the manual to users.
+            if (!empty($template->emailtoother)) {
+                $toothers = explode(',', $template->emailtoother);
+                foreach ($toothers as $toother) {
+                    if (validate_email($toother)) {
+                        if (!self::email_direct($toother,
+                                                $supportuser,
+                                                $email->subject,
+                                                html_to_text($email->body),
+                                                $email->body,
+                                                $attachment)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            // Deal with the manual cc users.
+            if (!empty($template->emailccother)) {
+                $ccothers = explode(',', $template->emailccother);
+                foreach ($ccothers as $ccother) {
+                    if (validate_email($ccother)) {
+                        if (!self::email_direct($ccother,
+                                                $supportuser,
+                                                $email->subject,
+                                                html_to_text($email->body),
+                                                $email->body,
+                                                $attachment)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            // is this a user template?
+            if (strpos($template->name, 'user')) {
+                // Do we send to managers as well?
+                if (!empty($template->disabledmanager)) {
+                    // Get the users managers.
+                    if ($managers = company::get_my_managers($userid, 1)) {
+                        foreach ($managers as $manager) {
+                            if ($managerrec = $DB->get_record('user', array('deleted' => 0, 'suspended' => 0, 'id' => $manager->userid))) {
+                                if (!self::email_direct($managerrec->email,
+                                                        $supportuser,
+                                                        $email->subject,
+                                                        html_to_text($email->body),
+                                                        $email->body,
+                                                        $attachment)) {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Do we send to external supervisors as well?
+                if (!empty($template->disabledsupervisor)) {
+                    // Get the users supervisors.
+                    if ($supervisors = company::get_usersupervisor($userid)) {
+                        foreach ($supervisors as $supervisor) {
+                            if (!self::email_direct($supervisor,
+                                                    $supportuser,
+                                                    $email->subject,
+                                                    html_to_text($email->body),
+                                                    $email->body,
+                                                    $attachment)) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
         }
+
+        return true;
     }
 
     /**
@@ -278,6 +540,125 @@ class EmailTemplate {
      **/
     public function email_to_user() {
         global $USER;
+
+        $supportuser = new stdclass();
+        $subject = $this->subject();
+        $body = $this->body();
+        $company = new company($this->companyid);
+
+        if (isset($this->emailfrom)) {
+            $supportuser = self::get_user($this->emailfrom);
+            if (isset($email->headers)) {
+                $supportuser->customheaders = unserialize($email->headers);
+            } else {
+                $supportuser->customheaders = array();
+            }
+
+        } else {
+            if (isset($this->emailfromother) && validate_email($this->emailfromother)) {
+                $supportuser == core_user::get_support_user();
+                if (isset($email->headers)) {
+                    $supportuser->customheaders = unserialize($email->headers);
+                } else {
+                    $supportuser->customheaders = array();
+                }
+                $supportuser->emailaddress = $this->emailfromother;
+                if ($this->emailfromothername == "{Company_Name}") {
+                    $supportuser->firstname = $this->emailfromother;
+                } else {
+                    $supportuser->firstname = $this->emailfromothername;
+                }
+            } else if (isset($this->sender->id)) {
+                $supportuser = self::get_user($this->sender->id);
+                if (isset($email->headers)) {
+                    $supportuser->customheaders = unserialize($email->headers);
+                } else {
+                    $supportuser->customheaders = array();
+                }
+            } else {
+                $supportuser = self::get_user(self::get_sender($this->userid));
+                if (isset($email->headers)) {
+                    $supportuser->customheaders = unserialize($email->headers);
+                } else {
+                    $supportuser->customheaders = array();
+                }
+            }
+        }
+
+        // Deal with To users
+        if (!empty($this->emailto)) {
+            $tousers = explode(',', $this->emailto);
+            foreach ($tousers as $touser) {
+                if ($touserrec = $DB->get_record('user', array('id' => $touser, 'deleted' => 0, 'suspended' => 0))) {
+                    $supportuser->customheaders[] = "To:".$touserrec->email;
+                }
+            }
+        }
+        if (!empty($this->emailtoother)) {
+            $tootherusers = explode(',', $this->emailtoother);
+            foreach ($tootherusers as $tootheruser) {
+                if (validate_email($tootheruser)) {
+                    $supportuser->customheaders[] = "To:".$tootheruser;
+                }
+            }
+        }
+
+        // Deal with CC users
+        if (!empty($this->emailcc)) {
+            $ccusers = explode(',', $this->emailcc);
+            foreach ($ccusers as $ccuser) {
+                if ($ccuserrec = $DB->get_record('user', array('id' => $ccuser, 'deleted' => 0, 'suspended' => 0))) {
+                    $supportuser->customheaders[] = "Cc:".$ccuserrec->email;
+                }
+            }
+        }
+        if (!empty($this->emailccother)) {
+            $ccotherusers = explode(',', $this->emailccother);
+            foreach ($ccotherusers as $ccotheruser) {
+                if (validate_email($ccotheruser)) {
+                    $supportuser->customheaders[] = "Cc:".$ccotheruser;
+                }
+            }
+        }
+
+        // Deal with reply user
+        if (!empty($this->emailreplyto)) {
+            if ($replytouserrec = $DB->get_record('user', array('id' => $this->emailreplyto, 'deleted' => 0, 'suspended' => 0))) {
+                $supportuser->customheaders[] = "reply-to:".$replytouserrec->email;
+            }
+        }
+        if (!empty($this->emailreplytoother) && validate_email($this->emailreplytoother)) {
+            $supportuser->customheaders[] = "reply-to:".$this->emailreplytoother;
+        }
+
+        if (empty($this->attachment)) {
+            return self::email_direct($user->email,
+                                 $supportuser,
+                                 $email->subject,
+                                 html_to_text($email->body),
+                                 $email->body);
+        } else {
+            return self::email_direct($user->email,
+                                 $supportuser,
+                                 $email->subject,
+                                 html_to_text($email->body),
+                                 $email->body,
+                                 $this->attachment);
+        }
+    }
+
+    /**
+     * Send to  Moodle function.supervisor.
+     *
+     *
+     **/
+    public function email_supervisor() {
+        global $USER, $CFG;
+
+        // Do we send this template?
+        if (!$this->template_enabled()) {
+            return true;
+        }
 
         $supportuser = new stdclass();
         $subject = $this->subject();
@@ -292,12 +673,160 @@ class EmailTemplate {
         } else {
             $supportuser->customheaders = '';
         }
+        // Do we have a supervisor?
+        if ($supervisoremails = company::get_usersupervisor($this->user->id)) {
+            $mail = get_mailer();
+            if ($CFG->smtphosts == 'qmail') {
+                // Use Qmail system.
+                $mail->isQmail();
 
-        return email_to_user($this->user,
-                             $supportuser,
-                             $subject,
-                             html_to_text($body),
-                             $body);
+            } else if (empty($CFG->smtphosts)) {
+                // Use PHP mail() = sendmail.
+                $mail->isMail();
+
+            } else {
+                // Use SMTP directly.
+                $mail->isSMTP();
+                if (!empty($CFG->debugsmtp)) {
+                    $mail->SMTPDebug = true;
+                }
+                // Specify main and backup servers.
+                $mail->Host          = $CFG->smtphosts;
+                // Specify secure connection protocol.
+                $mail->SMTPSecure    = $CFG->smtpsecure;
+                // Use previous keepalive.
+
+                if ($CFG->smtpuser) {
+                    // Use SMTP authentication.
+                    $mail->SMTPAuth = true;
+                    $mail->Username = $CFG->smtpuser;
+                    $mail->Password = $CFG->smtppass;
+                }
+            }
+
+            foreach ($supervisoremails as $supervisoremail) {
+                $mail->Sender = $CFG->noreplyaddress;
+                $mail->FromName = $supportuser->firstname;
+                $mail->From     = $CFG->noreplyaddress;
+                $mail->addAddress($supervisoremail, '');
+                if (empty($CFG->divertallemailsto)) {
+                    $mail->Subject = substr($subject, 0, 900);
+                } else {
+                    $mail->Subject = substr('[DIVERTED ' . $supervisoremail . '] ' . $subject, 0, 900);
+                }
+
+                // Set word wrap.
+                $mail->WordWrap = 79;
+                $mail->Body =  "\n$body\n";
+                // Do we have an attachment.
+                if (!empty($this->attachment)) {
+                    require_once($CFG->libdir.'/filelib.php');
+                    $mimetype = mimeinfo('type', $this->attachment->filename);
+                    $mail->addAttachment($this->attachment->filepath, $this->attachment->filename, 'base64', $mimetype);
+                }
+                if (empty($CFG->noemailever)) {
+                    if(!$mail->send()) {
+                        mtrace( 'Message could not be sent.');
+                        mtrace( 'Mailer Error: ' . $mail->ErrorInfo);
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Send to  Moodle function.supervisor.
+     *
+     *
+     **/
+    private static function email_direct($emailaddress, $supportuser, $subject, $messagetext, $messagehtml = '', $attachment = null) {
+        global $USER, $CFG;
+
+        $mail = get_mailer();
+        if ($CFG->smtphosts == 'qmail') {
+            // Use Qmail system.
+            $mail->isQmail();
+
+        } else if (empty($CFG->smtphosts)) {
+            // Use PHP mail() = sendmail.
+            $mail->isMail();
+
+        } else {
+            // Use SMTP directly.
+            $mail->isSMTP();
+            if (!empty($CFG->debugsmtp)) {
+                $mail->SMTPDebug = true;
+            }
+            // Specify main and backup servers.
+            $mail->Host          = $CFG->smtphosts;
+            // Specify secure connection protocol.
+            $mail->SMTPSecure    = $CFG->smtpsecure;
+            // Use previous keepalive.
+
+            if ($CFG->smtpuser) {
+                // Use SMTP authentication.
+                $mail->SMTPAuth = true;
+                $mail->Username = $CFG->smtpuser;
+                $mail->Password = $CFG->smtppass;
+            }
+        }
+
+        if (!empty($supportuser->customheaders['From'])) {
+            $mail->From = $supportuser->customheaders['From'];
+            unset($supportuser->customheaders['Reply-to']);
+        } else {
+            $mail->From = $CFG->noreplyaddress;
+        }
+
+        if (!empty($supportuser->customheaders['Reply-to'])) {
+            $mail->addReplyTo($supportuser->customheaders['Reply-to']);
+            unset($supportuser->customheaders['Reply-to']);
+        }
+        foreach ($supportuser->customheaders as $value) {
+            $mail->addCustomHeader($value);
+        }
+
+        $mail->Sender = $CFG->noreplyaddress;
+        $mail->FromName = $supportuser->firstname;
+        if (empty($CFG->divertallemailsto)) {
+            $mail->Subject = substr($subject, 0, 900);
+            $mail->addAddress($emailaddress, '');
+        } else {
+            $mail->Subject = substr('[DIVERTED ' . $emailaddress . '] ' . $subject, 0, 900);
+            $mail->addAddress($CFG->divertallemailsto, '');
+        }
+
+        // Set word wrap.
+        $mail->WordWrap = 79;
+
+        if ($messagehtml) {
+            // Don't ever send HTML to users who don't want it.
+            $mail->isHTML(true);
+            $mail->Encoding = 'quoted-printable';
+            $mail->Body    =  $messagehtml;
+            $mail->AltBody =  "\n$messagetext\n";
+        } else {
+            $mail->IsHTML(false);
+            $mail->Body =  "\n$messagetext\n";
+        }
+
+        // Do we have an attachment.
+        if (!empty($attachment)) {
+            require_once($CFG->libdir.'/filelib.php');
+            $mimetype = mimeinfo('type', $attachment->filename);
+            $mail->addAttachment($attachment->filepath, $attachment->filename, 'base64', $mimetype);
+        }
+        if (empty($CFG->noemailever)) {
+            if(!$mail->send()) {
+                mtrace( 'Message could not be sent.');
+                mtrace( 'Mailer Error: ' . $mail->ErrorInfo);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -375,7 +904,7 @@ class EmailTemplate {
             $companyid = $this->company->id;
         }
 
-        $email = local_email_get_templates();
+        $email = local_email::get_templates();
         // Try to get it out of the database, otherwise get it from config file.
         if (!isset($companyid) || !$template = $DB->get_record('email_template', array('name' => $templatename,
                                                                                        'companyid' => $companyid,
@@ -448,5 +977,35 @@ class EmailTemplate {
             $returnid = core_user::get_support_user();
         }
         return $returnid;
+    }
+
+    /**
+     * Checks if the template is enabled for this company.
+     *
+     **/
+    private function template_enabled() {
+        global $DB;
+
+        // Is this template enabled for the company.
+        if ($DB->get_records('email_templates', array('templatename' => $this->templatename, 'companyid' => $this->company->id, 'disabled' =>1))) {
+            return false;
+        }
+
+        if (strpos('supervisor', $this->templatename) !== false) {
+            // Is this template enabled for the supervisor.
+            if ($DB->get_records('email_templates', array('templatename' => $this->templatename, 'companyid' => $this->company->id, 'disabledsupervisor' =>1))) {
+                return false;
+            }
+        }
+
+        if (strpos('manager', $this->templatename) !== false) {
+            // Is this template enabled for the supervisor.
+            if ($DB->get_records('email_templates', array('templatename' => $this->templatename, 'companyid' => $this->company->id, 'disabledmanager' =>1))) {
+                return false;
+            }
+        }
+
+        // Default return true.
+        return true;
     }
 }
