@@ -396,17 +396,17 @@ if (empty($manage)) {
     echo $output->templateset_buttons($saveurl, $manageurl, $backurl);
 }
 
-// Get the number of templates.
-$objectcount = $DB->count_records('email_template');
-echo $output->paging_bar($objectcount, $page, $perpage, $baseurl);
-
-flush();
-
 // Sort the keys of the global $email object, the make sure we have that and the
 // recordset we'll get next in the same order.
 $configtemplates = array_keys($email);
 sort($configtemplates);
 $ntemplates = count($configtemplates);
+
+// Get the number of templates.
+echo $output->paging_bar($ntemplates, $page, $perpage, $baseurl);
+
+flush();
+
 if ($manage) {
     if (empty($templatesetid)) {
         // Display the list of templates.
@@ -414,9 +414,8 @@ if ($manage) {
         echo $output->email_templatesets($templates, $linkurl);
     } else {
     }
-
-} else if ($templates = $DB->get_recordset('email_template', array('companyid' => $companyid, 'lang' => $lang),
-                                    'name', '*', $page, $perpage)) {
+} else if ($templates = $DB->get_records('email_template', array('companyid' => $companyid, 'lang' => $lang),
+                                    'name', '*', $page * $perpage, $perpage)) {
     // get heading
     if (empty($templatesetid)) {
         $prefix = "c." . $companyid;
@@ -425,9 +424,8 @@ if ($manage) {
     }
 
     // Display the list.
-    echo $output->email_templates($templates, $configtemplates, $lang, $prefix, $templatesetid);
-    echo $output->paging_bar($objectcount, $page, $perpage, $baseurl);
-    $templates->close();
+    echo $output->email_templates($templates, $configtemplates, $lang, $prefix, $templatesetid, $page, $perpage);
+    echo $output->paging_bar($ntemplates, $page, $perpage, $baseurl);
 }
 
 ?>

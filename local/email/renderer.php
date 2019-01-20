@@ -42,7 +42,7 @@ class local_email_renderer extends plugin_renderer_base {
     /**
      * Display role templates.
      */
-    public function email_templates($templates, $configtemplates, $lang, $prefix, $templatesetid) {
+    public function email_templates($templates, $configtemplates, $lang, $prefix, $templatesetid, $page = 0, $perpage = 30) {
         global $DB, $company;
 
         $ntemplates = count($configtemplates);
@@ -85,7 +85,7 @@ class local_email_renderer extends plugin_renderer_base {
                               get_string('controls', 'local_email'));
         $table->align = array ("left", "center", "center", "center", "center", "center", "center", "center");
 
-        $i = 0;
+        $i = $page * $perpage;
 
         foreach ($templates as $template) {
             while ($i < $ntemplates && $configtemplates[$i] < $template->name) {
