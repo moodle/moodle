@@ -2490,6 +2490,10 @@ function create_course($data, $editoroptions = NULL) {
 
     // Save custom fields if there are any of them in the form.
     $handler = core_course\customfield\course_handler::create();
+    // Make sure to set the handler's parent context first.
+    $coursecatcontext = context_coursecat::instance($category->id);
+    $handler->set_parent_context($coursecatcontext);
+    // Save the custom field data.
     $data->id = $course->id;
     $handler->instance_form_save($data, true);
 
