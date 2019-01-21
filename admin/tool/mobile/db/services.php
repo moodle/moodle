@@ -61,11 +61,20 @@ $functions = array(
         'type'        => 'write',
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+
     'tool_mobile_get_content' => array(
         'classname'   => 'tool_mobile\external',
         'methodname'  => 'get_content',
         'description' => 'Returns a piece of content to be displayed in the Mobile app.',
         'type'        => 'read',
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+
+    'tool_mobile_call_external_functions' => array(
+        'classname'   => 'tool_mobile\external',
+        'methodname'  => 'call_external_functions',
+        'description' => 'Call multiple external functions and return all responses.',
+        'type'        => 'write',
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
 );
