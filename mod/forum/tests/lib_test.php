@@ -3298,6 +3298,17 @@ class mod_forum_lib_testcase extends advanced_testcase {
         // On this freshly created discussion, the teacher is the author of the last post.
         $this->assertEquals($teacher->id, $DB->get_field('forum_discussions', 'usermodified', ['id' => $discussion->id]));
 
+        // Fetch modified timestamp of the discussion.
+        $discussionmodified = $DB->get_field('forum_discussions', 'timemodified', ['id' => $discussion->id]);
+        $pasttime = $discussionmodified - 3600;
+
+        // Adjust the discussion modified timestamp back an hour, so it's in the past.
+        $adjustment = (object)[
+            'id' => $discussion->id,
+            'timemodified' => $pasttime,
+        ];
+        $DB->update_record('forum_discussions', $adjustment);
+
         // Let the student reply to the teacher's post.
         $reply = $generator->create_post((object)[
             'course' => $course->id,
@@ -3310,6 +3321,30 @@ class mod_forum_lib_testcase extends advanced_testcase {
         // The student should now be the last post's author.
         $this->assertEquals($student->id, $DB->get_field('forum_discussions', 'usermodified', ['id' => $discussion->id]));
 
+        // Fetch modified timestamp of the discussion and student's post.
+        $discussionmodified = $DB->get_field('forum_discussions', 'timemodified', ['id' => $discussion->id]);
+        $postmodified = $DB->get_field('forum_posts', 'modified', ['id' => $reply->id]);
+
+        // Discussion modified time should be updated to be equal to the newly created post's time.
+        $this->assertEquals($discussionmodified, $postmodified);
+
+        // Adjust the discussion and post timestamps, so they are in the past.
+        $adjustment = (object)[
+            'id' => $discussion->id,
+            'timemodified' => $pasttime,
+        ];
+        $DB->update_record('forum_discussions', $adjustment);
+
+        $adjustment = (object)[
+            'id' => $reply->id,
+            'modified' => $pasttime,
+        ];
+        $DB->update_record('forum_posts', $adjustment);
+
+        // The discussion and student's post time should now be an hour in the past.
+        $this->assertEquals($pasttime, $DB->get_field('forum_discussions', 'timemodified', ['id' => $discussion->id]));
+        $this->assertEquals($pasttime, $DB->get_field('forum_posts', 'modified', ['id' => $reply->id]));
+
         // Let the teacher edit the student's reply.
         $this->setUser($teacher->id);
         $newpost = (object)[
@@ -3319,8 +3354,14 @@ class mod_forum_lib_testcase extends advanced_testcase {
         ];
         forum_update_post($newpost, null);
 
-        // The student should be still the last post's author.
+        // The student should still be the last post's author.
         $this->assertEquals($student->id, $DB->get_field('forum_discussions', 'usermodified', ['id' => $discussion->id]));
+
+        // The discussion modified time should not have changed.
+        $this->assertEquals($pasttime, $DB->get_field('forum_discussions', 'timemodified', ['id' => $discussion->id]));
+
+        // The post time should be updated.
+        $this->assertGreaterThan($pasttime, $DB->get_field('forum_posts', 'modified', ['id' => $reply->id]));
     }
 
     public function test_forum_core_calendar_provide_event_action() {
