@@ -110,22 +110,22 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
         $endorsement->dateissued = $now;
         $badge->save_endorsement($endorsement);
 
-        // Add 2 competencies.
-        $competency = new stdClass();
-        $competency->badgeid = $badgeid;
-        $competency->targetname = 'Competency 1';
-        $competency->targeturl = 'http://c1-target-url.domain.co.nz';
-        $competency->targetdescription = 'C1 target description';
-        $competency->targetframework = 'C1 framework';
-        $competency->targetcode = 'C1 code';
-        $badge->save_alignment($competency);
+        // Add 2 alignments.
+        $alignment = new stdClass();
+        $alignment->badgeid = $badgeid;
+        $alignment->targetname = 'Alignment 1';
+        $alignment->targeturl = 'http://a1-target-url.domain.co.nz';
+        $alignment->targetdescription = 'A1 target description';
+        $alignment->targetframework = 'A1 framework';
+        $alignment->targetcode = 'A1 code';
+        $badge->save_alignment($alignment);
 
-        $competency->targetname = 'Competency 2';
-        $competency->targeturl = 'http://c2-target-url.domain.co.nz';
-        $competency->targetdescription = 'C2 target description';
-        $competency->targetframework = 'C2 framework';
-        $competency->targetcode = 'C2 code';
-        $badge->save_alignment($competency);
+        $alignment->targetname = 'Alignment 2';
+        $alignment->targeturl = 'http://a2-target-url.domain.co.nz';
+        $alignment->targetdescription = 'A2 target description';
+        $alignment->targetframework = 'A2 framework';
+        $alignment->targetcode = 'A2 code';
+        $badge->save_alignment($alignment);
 
         // Now a course badge.
         $badge->id = null;
@@ -162,26 +162,26 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
             $badge->badgeurl = moodle_url::make_webservice_pluginfile_url($context->id, 'badges', 'badgeimage', $badge->id, '/',
                                                                             'f1')->out(false);
 
-            // Get the endorsement, competencies and related badges.
+            // Get the endorsement, alignments and related badges.
             $badgeinstance = new badge($badge->id);
             $endorsement = $badgeinstance->get_endorsement();
-            $competencies = $badgeinstance->get_alignment();
+            $alignments = $badgeinstance->get_alignments();
             $relatedbadges = $badgeinstance->get_related_badges();
-            $badge->competencies = array();
+            $badge->alignments = array();
             $badge->relatedbadges = array();
 
             if ($endorsement) {
                 $badge->endorsement = (array) $endorsement;
             }
 
-            if (!empty($competencies)) {
-                foreach ($competencies as $competency) {
-                    // Students cannot see some fields of the competencies.
-                    unset($competency->targetdescription);
-                    unset($competency->targetframework);
-                    unset($competency->targetcode);
+            if (!empty($alignments)) {
+                foreach ($alignments as $alignment) {
+                    // Students cannot see some fields of the alignments.
+                    unset($alignment->targetdescription);
+                    unset($alignment->targetframework);
+                    unset($alignment->targetcode);
 
-                    $badge->competencies[] = (array) $competency;
+                    $badge->alignments[] = (array) $alignment;
                 }
             }
 
@@ -231,9 +231,9 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
             if (isset($badge['type']) and $badge['type'] == BADGE_TYPE_COURSE) {
                 $this->assertTrue(isset($badge['message']));
 
-                // Check that we have permissions to see all the data in competencies and related badges.
-                foreach ($badge['competencies'] as $competency) {
-                    $this->assertTrue(isset($competency['targetdescription']));
+                // Check that we have permissions to see all the data in alignments and related badges.
+                foreach ($badge['alignments'] as $alignment) {
+                    $this->assertTrue(isset($alignment['targetdescription']));
                 }
 
                 foreach ($badge['relatedbadges'] as $relatedbadge) {

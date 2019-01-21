@@ -2923,5 +2923,29 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019032200.02);
     }
 
+    if ($oldversion < 2019032900.00) {
+
+        // Define table badge_competencies to be renamed to badge_alignment.
+        $table = new xmldb_table('badge_competencies');
+
+        // Be careful if this step gets run twice.
+        if ($dbman->table_exists($table)) {
+            $key = new xmldb_key('competenciesbadge', XMLDB_KEY_FOREIGN, ['badgeid'], 'badge', ['id']);
+
+            // Launch drop key competenciesbadge.
+            $dbman->drop_key($table, $key);
+
+            $key = new xmldb_key('alignmentsbadge', XMLDB_KEY_FOREIGN, ['badgeid'], 'badge', ['id']);
+
+            // Launch add key alignmentsbadge.
+            $dbman->add_key($table, $key);
+
+            // Launch rename table for badge_alignment.
+            $dbman->rename_table($table, 'badge_alignment');
+        }
+
+        upgrade_main_savepoint(true, 2019032900.00);
+    }
+
     return true;
 }

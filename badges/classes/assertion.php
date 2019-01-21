@@ -223,15 +223,15 @@ class core_badges_assertion {
     }
 
     /**
-     * Get competencies alignment of the badge.
+     * Get alignment of the badge.
      *
-     * @return array competencies information.
+     * @return array information.
      */
-    public function get_competencies_alignment() {
+    public function get_alignments() {
         global $DB;
         $badgeid = $this->_data->id;
         $alignments = array();
-        $items = $DB->get_records_select('badge_competencies', 'badgeid = ?', array($badgeid));
+        $items = $DB->get_records_select('badge_alignment', 'badgeid = ?', array($badgeid));
         foreach ($items as $item) {
             $alignment = array('targetName' => $item->targetname, 'targetUrl' => $item->targeturl);
             if ($item->targetdescription) {
@@ -301,8 +301,8 @@ class core_badges_assertion {
                     $endorsementurl = new moodle_url('/badges/endorsement_json.php', array('id' => $this->_data->id));
                     $json['endorsement'] = $endorsementurl->out(false);
                 }
-                if ($competencies = $this->get_competencies_alignment()) {
-                    $json['alignment'] = $competencies;
+                if ($alignments = $this->get_alignments()) {
+                    $json['alignment'] = $alignments;
                 }
                 if ($this->_data->imageauthorname ||
                         $this->_data->imageauthoremail ||

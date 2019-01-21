@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Processing actions with competencies alignment.
+ * Processing actions with alignments.
  *
  * @package    core
  * @subpackage badges
@@ -30,7 +30,7 @@ $badgeid = required_param('id', PARAM_INT); // Badge ID.
 $action = optional_param('action', 'remove', PARAM_TEXT); // Remove.
 
 require_login();
-$return = new moodle_url('/badges/competency.php', array('id' => $badgeid));
+$return = new moodle_url('/badges/alignment.php', array('id' => $badgeid));
 $badge = new badge($badgeid);
 $context = $badge->get_context();
 require_capability('moodle/badges:configuredetails', $context);

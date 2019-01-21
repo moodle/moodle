@@ -714,7 +714,7 @@ class badge {
         $badgecontext = $this->get_context();
         $fs->delete_area_files($badgecontext->id, 'badges', 'badgeimage', $this->id);
 
-        // Delete endorsements, competencies and related badges.
+        // Delete endorsements, alignments and related badges.
         $DB->delete_records('badge_endorsement', array('badgeid' => $this->id));
         $relatedsql = 'badgeid = :badgeid OR relatedbadgeid = :relatedbadgeid';
         $relatedparams = array(
@@ -722,7 +722,7 @@ class badge {
             'relatedbadgeid' => $this->id
         );
         $DB->delete_records_select('badge_related', $relatedsql, $relatedparams);
-        $DB->delete_records('badge_competencies', array('badgeid' => $this->id));
+        $DB->delete_records('badge_alignment', array('badgeid' => $this->id));
 
         // Finally, remove badge itself.
         $DB->delete_records('badge', array('id' => $this->id));
@@ -804,43 +804,43 @@ class badge {
     }
 
     /**
-     * Insert/update competency alignment information of badge.
+     * Insert/update alignment information of badge.
      *
-     * @param stdClass $alignment Data of a competency alignment.
-     * @param int $alignmentid ID competency alignment.
+     * @param stdClass $alignment Data of a alignment.
+     * @param int $alignmentid ID alignment.
      * @return bool|int A status/ID when insert or update data.
      */
     public function save_alignment($alignment, $alignmentid = 0) {
         global $DB;
 
-        $record = $DB->record_exists('badge_competencies', array('id' => $alignmentid));
+        $record = $DB->record_exists('badge_alignment', array('id' => $alignmentid));
         if ($record) {
             $alignment->id = $alignmentid;
-            return $DB->update_record('badge_competencies', $alignment);
+            return $DB->update_record('badge_alignment', $alignment);
         } else {
-            return $DB->insert_record('badge_competencies', $alignment, true);
+            return $DB->insert_record('badge_alignment', $alignment, true);
         }
     }
 
     /**
-     * Delete a competency alignment of badge.
+     * Delete a alignment of badge.
      *
-     * @param int $alignmentid ID competency alignment.
-     * @return bool A status for delete a competency alignment.
+     * @param int $alignmentid ID alignment.
+     * @return bool A status for delete a alignment.
      */
     public function delete_alignment($alignmentid) {
         global $DB;
-        return $DB->delete_records('badge_competencies', array('badgeid' => $this->id, 'id' => $alignmentid));
+        return $DB->delete_records('badge_alignment', array('badgeid' => $this->id, 'id' => $alignmentid));
     }
 
     /**
-     * Get competencies of badge.
+     * Get alignments of badge.
      *
-     * @return array List content competencies.
+     * @return array List content alignments.
      */
     public function get_alignment() {
         global $DB;
-        return $DB->get_records('badge_competencies', array('badgeid' => $this->id));
+        return $DB->get_records('badge_alignment', array('badgeid' => $this->id));
     }
 
     /**
