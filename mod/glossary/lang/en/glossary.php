@@ -24,6 +24,7 @@
  */
 
 $string['addcomment'] = 'Add comment';
+$string['addcategory'] = 'Add category';
 $string['addentry'] = 'Add a new entry';
 $string['addingcomment'] = 'Add a comment';
 $string['alias'] = 'Keyword';
@@ -105,6 +106,7 @@ $string['defaultsortorder'] = 'Default sort order';
 $string['definition'] = 'Definition';
 $string['definitions'] = 'Definitions';
 $string['deleteentry'] = 'Delete entry';
+$string['deletecategory'] = 'Delete category';
 $string['deleteentrya'] = 'Delete entry: {$a}';
 $string['deletenotenrolled'] = 'Delete entries by users not enrolled';
 $string['deletingcomment'] = 'Deleting comment';
@@ -138,6 +140,7 @@ $string['duplicateentry'] = 'Duplicate entry';
 $string['editalways'] = 'Always allow editing';
 $string['editalways_help'] = 'This setting specifies whether entries are always editable or whether students can only edit their entries during a configured editing time (usually 30 minutes).';
 $string['editcategories'] = 'Edit categories';
+$string['editcategory'] = 'Edit category';
 $string['editentry'] = 'Edit entry';
 $string['editentrya'] = 'Edit entry: {$a}';
 $string['editingcomment'] = 'Editing comment';
