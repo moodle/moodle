@@ -1226,6 +1226,27 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test mimetype is returned for resources with showtype set.
+     */
+    public function test_get_course_contents_including_mimetype() {
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+        $course = self::getDataGenerator()->create_course();
+
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->showtype = 1;
+        $resource = self::getDataGenerator()->create_module('resource', $record);
+
+        $result = core_course_external::get_course_contents($course->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
+        $this->assertCount(1, $result[0]['modules']);   // One module, first section.
+        $customdata = unserialize(json_decode($result[0]['modules'][0]['customdata']));
+        $this->assertEquals('text/plain', $customdata['filedetails']['mimetype']);
+    }
+
+    /**
      * Test duplicate_course
      */
     public function test_duplicate_course() {

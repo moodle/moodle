@@ -304,6 +304,7 @@ function resource_get_file_details($resource, $cm) {
         if (!empty($options['showtype'])) {
             if ($mainfile) {
                 $filedetails['type'] = get_mimetype_description($mainfile);
+                $filedetails['mimetype'] = $mainfile->get_mimetype();
                 // Only show type if it is not unknown.
                 if ($filedetails['type'] === get_mimetype_description('document/unknown')) {
                     $filedetails['type'] = '';
