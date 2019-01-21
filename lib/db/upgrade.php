@@ -2889,5 +2889,29 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018120301.02);
     }
 
+    if ($oldversion <  2018120302.02) {
+
+        // Delete all files that have been used in sections, which are already deleted.
+        $sql = "SELECT DISTINCT f.itemid as sectionid, f.contextid
+                  FROM {files} f
+             LEFT JOIN {course_sections} s ON f.itemid = s.id
+                 WHERE f.component = :component AND f.filearea = :filearea AND s.id IS NULL ";
+
+        $params = [
+            'component' => 'course',
+            'filearea' => 'section'
+        ];
+
+        $stalefiles = $DB->get_recordset_sql($sql, $params);
+
+        $fs = get_file_storage();
+        foreach ($stalefiles as $stalefile) {
+            $fs->delete_area_files($stalefile->contextid, 'course', 'section', $stalefile->sectionid);
+        }
+        $stalefiles->close();
+
+        upgrade_main_savepoint(true,  2018120302.02);
+    }
+
     return true;
 }
