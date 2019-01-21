@@ -9719,6 +9719,8 @@ body.path-question-type .fitem_fgroup .accesshide {
 }
 .que input.questionflagimage {
   padding-right: 3px;
+  height: 16px;
+  width: 16px;
 }
 .importerror {
   margin-top: 10px;

@@ -14514,7 +14514,9 @@ body.path-question-type {
   vertical-align: text-bottom; }
 
 .que input.questionflagimage {
-  padding-right: 3px; }
+  padding-right: 3px;
+  height: 16px;
+  width: 16px; }
 
 .importerror {
   margin-top: 10px;
