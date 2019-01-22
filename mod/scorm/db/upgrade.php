@@ -66,5 +66,18 @@ function xmldb_scorm_upgrade($oldversion) {
     // Automatically generated Moodle v3.6.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2018123100) {
+
+        // Remove un-used/large index on element field.
+        $table = new xmldb_table('scorm_scoes_track');
+        $index = new xmldb_index('element', XMLDB_INDEX_UNIQUE, ['element']);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Scorm savepoint reached.
+        upgrade_mod_savepoint(true, 2018123100, 'scorm');
+    }
+
     return true;
 }
