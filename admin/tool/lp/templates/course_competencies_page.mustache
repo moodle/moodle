@@ -15,9 +15,13 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template tool_lp/course_competencies_page
+
     Course competencies template.
 
     For a full list of the context for this template see the course_competencies_page renderable.
+
+    This template includes ajax functionality, so it cannot be shown in the template library.
 }}
 <div data-region="coursecompetenciespage">
     <div data-region="actions" class="clearfix">
@@ -66,7 +70,7 @@
         <div class="clearfix"></div>
         {{/canmanagecoursecompetencies}}
         {{#competency}}
-            <a href="{{pluginbaseurl}}user_competency_in_course.php?courseid={{courseid}}&competencyid={{competency.id}}&userid={{gradableuserid}}"
+            <a href="{{pluginbaseurl}}/user_competency_in_course.php?courseid={{courseid}}&competencyid={{competency.id}}&userid={{gradableuserid}}"
                    id="competency-info-link-{{competency.id}}"
                    title="{{#str}}viewdetails, tool_lp{{/str}}">
                 <p><strong>{{{competency.shortname}}} <em>{{competency.idnumber}}</em></strong></p>
@@ -95,13 +99,27 @@
         {{/canmanagecoursecompetencies}}
         <div data-region="coursecompetencyactivities">
         <p>
-        <ul class="inline list-inline">
+        <strong>{{#str}}activities{{/str}}</strong>
+        <ul class="inline list-inline p-2">
         {{#coursemodules}}
             <li class="list-inline-item"><a href="{{url}}"><img src="{{iconurl}}"> {{name}} </a></li>
         {{/coursemodules}}
         {{^coursemodules}}
-            <li class="list-inline-item"><span class="alert">{{#str}}noactivities, tool_lp{{/str}}</span></li>
+            <li class="list-inline-item">{{#str}}noactivities, tool_lp{{/str}}</li>
         {{/coursemodules}}
+        </ul>
+        </p>
+        </div>
+        <div data-region="learningplans">
+        <p>
+        <strong>{{#str}}userplans, core_competency{{/str}}</strong>
+        <ul class="inline list-inline p-2">
+        {{#plans}}
+            <li class="list-inline-item"><a href="{{pluginbaseurl}}/plan.php?id={{id}}">{{{name}}}</a></li>
+        {{/plans}}
+        {{^plans}}
+            <li class="list-inline-item">{{#str}}nouserplanswithcompetency, core_competency{{/str}}</li>
+        {{/plans}}
         </ul>
         </p>
         </div>

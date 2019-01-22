@@ -130,3 +130,35 @@ Feature: Manage plearning plan
     When I click on "Delete" "button" in the "Confirm" "dialogue"
     And I wait until the page is ready
     Then I should not see "Science plan Year-4"
+
+  Scenario: See a learning plan from a course
+    Given the following lp "plans" exist:
+      | name | user | description |
+      | Science plan Year-manage | admin | science plan description |
+    And the following lp "frameworks" exist:
+      | shortname | idnumber |
+      | Framework 1 | sc-y-2 |
+    And the following lp "competencies" exist:
+      | shortname | framework |
+      | comp1 | sc-y-2 |
+      | comp2 | sc-y-2 |
+    And I follow "Learning plans"
+    And I should see "Science plan Year-manage"
+    And I follow "Science plan Year-manage"
+    And I should see "Add competency"
+    And I press "Add competency"
+    And "Competency picker" "dialogue" should be visible
+    And I select "comp1" of the competency tree
+    When I click on "Add" "button" in the "Competency picker" "dialogue"
+    Then "comp1" "table_row" should exist
+    And I create a course with:
+      | Course full name | New course fullname |
+      | Course short name | New course shortname |
+    And I follow "New course fullname"
+    And I follow "Competencies"
+    And I press "Add competencies to course"
+    And "Competency picker" "dialogue" should be visible
+    And I select "comp1" of the competency tree
+    And I click on "Add" "button" in the "Competency picker" "dialogue"
+    And I should see "Learning plans"
+    And I should see "Science plan Year-manage"

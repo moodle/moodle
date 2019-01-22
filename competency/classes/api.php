@@ -3192,6 +3192,34 @@ class api {
     }
 
     /**
+     * List the plans with a competency.
+     *
+     * @param  int $userid The user id we want the plans for.
+     * @param  int $competencyorid The competency, or its ID.
+     * @return array[plan] Array of learning plans.
+     */
+    public static function list_plans_with_competency($userid, $competencyorid) {
+        global $USER;
+
+        static::require_enabled();
+        $competencyid = $competencyorid;
+        $competency = null;
+        if (is_object($competencyid)) {
+            $competency = $competencyid;
+            $competencyid = $competency->get('id');
+        }
+
+        $plans = plan::get_by_user_and_competency($userid, $competencyid);
+        foreach ($plans as $index => $plan) {
+            // Filter plans we cannot read.
+            if (!$plan->can_read()) {
+                unset($plans[$index]);
+            }
+        }
+        return $plans;
+    }
+
+    /**
      * List the competencies in a user plan.
      *
      * @param  int $planorid The plan, or its ID.
