@@ -573,6 +573,25 @@ if ($hassiteconfig) {
             new lang_string('searchallavailablecourses_desc', 'admin'),
             0, $options));
 
+    // Search display options.
+    $temp->add(new admin_setting_heading('searchdisplay', new lang_string('searchdisplay', 'admin'), ''));
+    $temp->add(new admin_setting_configcheckbox('searchenablecategories',
+        new lang_string('searchenablecategories', 'admin'),
+        new lang_string('searchenablecategories_desc', 'admin'),
+        0));
+    $options = [];
+    foreach (\core_search\manager::get_search_area_categories() as $category) {
+        $options[$category->get_name()] = $category->get_visiblename();
+    }
+    $temp->add(new admin_setting_configselect('searchdefaultcategory',
+        new lang_string('searchdefaultcategory', 'admin'),
+        new lang_string('searchdefaultcategory_desc', 'admin'),
+        \core_search\manager::SEARCH_AREA_CATEGORY_ALL, $options));
+    $temp->add(new admin_setting_configcheckbox('searchhideallcategory',
+        new lang_string('searchhideallcategory', 'admin'),
+        new lang_string('searchhideallcategory_desc', 'admin'),
+        0));
+
     $ADMIN->add('searchplugins', $temp);
     $ADMIN->add('searchplugins', new admin_externalpage('searchareas', new lang_string('searchareas', 'admin'),
         new moodle_url('/admin/searchareas.php')));
