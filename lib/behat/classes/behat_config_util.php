@@ -1205,7 +1205,7 @@ class behat_config_util {
         foreach ($themes as $themename => $themedir) {
             // Load the theme config.
             try {
-                $theme = theme_config::load($themename);
+                $theme = $this->get_theme_config($themename);
             } catch (Exception $e) {
                 // Bad theme, just skip it for now.
                 continue;
@@ -1223,6 +1223,17 @@ class behat_config_util {
         }
 
         return $selectablethemes;
+    }
+
+    /**
+     * Return the theme config for a given theme name.
+     * This is done so we can mock it in PHPUnit.
+     *
+     * @param $themename name of theme
+     * @return theme_config
+     */
+    public function get_theme_config($themename) {
+        return theme_config::load($themename);
     }
 
     /**
@@ -1422,7 +1433,7 @@ class behat_config_util {
         }
 
         try {
-            $themeconfig = theme_config::load($theme);
+            $themeconfig = $this->get_theme_config($theme);
         } catch (Exception $e) {
             // This theme has no theme config.
             return [];
@@ -1462,7 +1473,6 @@ class behat_config_util {
             }
 
             $rc = new \ReflectionClass($contextclass);
-            $parent = $rc->getParentClass();
             while ($rc = $rc->getParentClass()) {
                 if (isset($contexts[$rc->name])) {
                     unset($contexts[$rc->name]);
