@@ -124,12 +124,12 @@ $where = array();
 $where_params = array();
 
 if ($sifirst !== 'all') {
-    $where[] = $DB->sql_like('u.firstname', ':sifirst', false);
+    $where[] = $DB->sql_like('u.firstname', ':sifirst', false, false);
     $where_params['sifirst'] = $sifirst.'%';
 }
 
 if ($silast !== 'all') {
-    $where[] = $DB->sql_like('u.lastname', ':silast', false);
+    $where[] = $DB->sql_like('u.lastname', ':silast', false, false);
     $where_params['silast'] = $silast.'%';
 }
 
