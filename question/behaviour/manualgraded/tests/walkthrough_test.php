@@ -432,6 +432,35 @@ class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthroug
         $this->check_current_mark(0);
     }
 
+    public function test_manual_graded_change_comment_format() {
+        global $PAGE;
+
+        // The current text editor depends on the users profile setting - so it needs a valid user.
+        $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
+
+        // Create an essay question.
+        $essay = test_question_maker::make_an_essay_question();
+        $this->start_attempt_at_question($essay, 'deferredfeedback', 10);
+
+        // Simulate some data submitted by the student.
+        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_HTML));
+
+        // Finish the attempt.
+        $this->quba->finish_all_questions();
+
+        // Process an example comment and a grade of 0.
+        $this->manual_grade('example', 0, FORMAT_HTML);
+        // Verify the format is FORMAT_HTML.
+        $this->check_comment('example', FORMAT_HTML);
+
+        // Process the same grade and comment with different format.
+        $this->manual_grade('example', 0, FORMAT_MARKDOWN);
+        // Verify the format is FORMAT_MARKDOWN.
+        $this->check_comment('example', FORMAT_MARKDOWN);
+    }
+
     public function test_manual_graded_respects_display_options() {
         // This test is for MDL-43874. Manual comments were not respecting the
         // Display options for feedback.
