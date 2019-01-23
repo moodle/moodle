@@ -392,9 +392,18 @@ abstract class question_behaviour {
         $previouscomment = $this->qa->get_last_behaviour_var('comment');
         $newcomment = $pendingstep->get_behaviour_var('comment');
 
-        if (is_null($previouscomment) && !html_is_blank($newcomment) ||
-                $previouscomment != $newcomment) {
+        if ($previouscomment != $newcomment) {
+            // The comment has changed.
             return false;
+        }
+
+        if (!html_is_blank($newcomment)) {
+            // Check comment format.
+            $previouscommentformat = $this->qa->get_last_behaviour_var('commentformat');
+            $newcommentformat = $pendingstep->get_behaviour_var('commentformat');
+            if ($previouscommentformat != $newcommentformat) {
+                return false;
+            }
         }
 
         // So, now we know the comment is the same, so check the mark, if present.
