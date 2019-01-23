@@ -26,6 +26,8 @@
  *   - you need to change the "www-data" to match the apache user account
  *   - use "su" if "sudo" not available
  *
+ * @deprecated since Moodle 3.7 MDL-59986 - please do not use this CLI script any more, use scheduled task instead.
+ * @todo       MDL-63266 This will be deleted in Moodle 4.1.
  * @package    enrol_database
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -63,6 +65,14 @@ Sample cron entry:
 
     echo $help;
     die;
+}
+
+cli_problem('[ENROL DATABASE] The sync enrolments cron script has been deprecated. Please use the scheduled task instead.');
+
+// Abort execution of the CLI script if the enrol_database\task\sync_enrolments is enabled.
+$task = \core\task\manager::get_scheduled_task('enrol_database\task\sync_enrolments');
+if (!$task->get_disabled()) {
+    cli_error('[ENROL DATABASE] The scheduled task sync_enrolments is enabled, the cron execution has been aborted.');
 }
 
 if (!enrol_is_enabled('database')) {
