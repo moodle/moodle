@@ -104,4 +104,51 @@ class core_gradelib_testcase extends advanced_testcase {
         // Confirm grade letter was deleted.
         $this->assertEquals(0, $DB->count_records('grade_letters'));
     }
+
+    /**
+     * Tests the function grade_regrade_final_grades().
+     */
+    public function test_grade_regrade_final_grades() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Setup some basics.
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        // We need two grade items.
+        $params = ['idnumber' => 'g1', 'courseid' => $course->id];
+        $g1 = new grade_item($this->getDataGenerator()->create_grade_item($params));
+        unset($params['idnumber']);
+        $g2 = new grade_item($this->getDataGenerator()->create_grade_item($params));
+
+        $category = new grade_category($this->getDataGenerator()->create_grade_category($params));
+        $catitem = $category->get_grade_item();
+
+        // Now set a calculation.
+        $catitem->set_calculation('=[[g1]]');
+
+        $catitem->update();
+
+        // Everything needs updating.
+        $this->assertEquals(4, $DB->count_records('grade_items', ['courseid' => $course->id, 'needsupdate' => 1]));
+
+        grade_regrade_final_grades($course->id);
+
+        // See that everything has been updated.
+        $this->assertEquals(0, $DB->count_records('grade_items', ['courseid' => $course->id, 'needsupdate' => 1]));
+
+        $g1->delete();
+
+        // Now there is one that needs updating.
+        $this->assertEquals(1, $DB->count_records('grade_items', ['courseid' => $course->id, 'needsupdate' => 1]));
+
+        // This can cause an infinite loop if things go... poorly.
+        grade_regrade_final_grades($course->id);
+
+        // Now because of the failure, two things need updating.
+        $this->assertEquals(2, $DB->count_records('grade_items', ['courseid' => $course->id, 'needsupdate' => 1]));
+    }
 }
