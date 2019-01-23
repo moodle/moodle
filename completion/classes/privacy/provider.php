@@ -166,12 +166,19 @@ class provider implements
         }
 
         $coursecomplete = $completioninfo->is_course_complete($user->id);
-        $criteriacomplete = $completioninfo->count_course_user_data($user->id);
-        $ccompletion = new \completion_completion(['userid' => $user->id, 'course' => $course->id]);
 
-        $status = ($coursecomplete) ? get_string('complete') : '';
-        $status = (!$criteriacomplete && !$ccompletion->timestarted) ? get_string('notyetstarted', 'completion') :
-                get_string('inprogress', 'completion');
+        if ($coursecomplete) {
+            $status = get_string('complete');
+        } else {
+            $criteriacomplete = $completioninfo->count_course_user_data($user->id);
+            $ccompletion = new \completion_completion(['userid' => $user->id, 'course' => $course->id]);
+
+            if (!$criteriacomplete && !$ccompletion->timestarted) {
+                $status = get_string('notyetstarted', 'completion');
+            } else {
+                $status = get_string('inprogress', 'completion');
+            }
+        }
 
         $completions = $completioninfo->get_completions($user->id);
         $overall = get_string('nocriteriaset', 'completion');
