@@ -36,6 +36,15 @@ define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_facto
                 component: 'tool_analytics'
             }
 
+        },
+        'delete': {
+            title: {
+                key: 'delete',
+                component: 'tool_analytics'
+            }, body: {
+                key: 'deletemodelconfirmation',
+                component: 'tool_analytics'
+            }
         }
     };
 

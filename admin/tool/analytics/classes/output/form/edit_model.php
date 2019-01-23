@@ -45,12 +45,24 @@ class edit_model extends \moodleform {
 
         $mform = $this->_form;
 
-        if ($this->_customdata['model']->is_trained()) {
+        if ($this->_customdata['trainedmodel']) {
             $message = get_string('edittrainedwarning', 'tool_analytics');
             $mform->addElement('html', $OUTPUT->notification($message, \core\output\notification::NOTIFY_WARNING));
         }
 
         $mform->addElement('advcheckbox', 'enabled', get_string('enabled', 'tool_analytics'));
+
+        if (!empty($this->_customdata['targets'])) {
+            $targets = array('' => '');
+            foreach ($this->_customdata['targets'] as $classname => $target) {
+                $optionname = \tool_analytics\output\helper::class_to_option($classname);
+                $targets[$optionname] = $target->get_name();
+            }
+
+            $mform->addElement('select', 'target', get_string('target', 'tool_analytics'), $targets);
+            $mform->addHelpButton('target', 'target', 'tool_analytics');
+            $mform->addRule('target', get_string('required'), 'required', null, 'client');
+        }
 
         $indicators = array();
         foreach ($this->_customdata['indicators'] as $classname => $indicator) {
@@ -88,11 +100,13 @@ class edit_model extends \moodleform {
             $predictionprocessors);
         $mform->addHelpButton('predictionsprocessor', 'predictionsprocessor', 'analytics');
 
-        $mform->addElement('hidden', 'id', $this->_customdata['id']);
-        $mform->setType('id', PARAM_INT);
+        if (!empty($this->_customdata['id'])) {
+            $mform->addElement('hidden', 'id', $this->_customdata['id']);
+            $mform->setType('id', PARAM_INT);
 
-        $mform->addElement('hidden', 'action', 'edit');
-        $mform->setType('action', PARAM_ALPHANUMEXT);
+            $mform->addElement('hidden', 'action', 'edit');
+            $mform->setType('action', PARAM_ALPHANUMEXT);
+        }
 
         $this->add_action_buttons();
     }

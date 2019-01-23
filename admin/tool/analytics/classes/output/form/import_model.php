@@ -22,9 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_analytics;
-defined('MOODLE_INTERNAL') || die();
+namespace tool_analytics\output\form;
 
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Model upload form.
@@ -33,15 +33,24 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 onwards Ankit Agarwal
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class import_model_form extends \moodleform {
-    function definition () {
+class import_model extends \moodleform {
+
+    /**
+     * Form definition.
+     *
+     * @return null
+     */
+    public function definition () {
         $mform = $this->_form;
 
-        $mform->addElement('header', 'settingsheader', get_string('analyticsimportmodel', 'tool_analytics'));
+        $mform->addElement('header', 'settingsheader', get_string('importmodel', 'tool_analytics'));
 
         $mform->addElement('filepicker', 'modelfile', get_string('file'), null, ['accepted_types' => '.json']);
         $mform->addRule('modelfile', null, 'required');
 
-        $this->add_action_buttons(false, get_string('submit'));
+        $mform->addElement('advcheckbox', 'ignoreversionmismatches', get_string('ignoreversionmismatches', 'tool_analytics'),
+            get_string('ignoreversionmismatchescheckbox', 'tool_analytics'));
+
+        $this->add_action_buttons(true, get_string('import'));
     }
 }

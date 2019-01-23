@@ -23,35 +23,41 @@
  */
 
 require_once(__DIR__ . '/../../../config.php');
-require_once($CFG->libdir . '/adminlib.php');
 
-admin_externalpage_setup('analyticsmodelimport', '', null, '', array('pagelayout' => 'report'));
-echo $OUTPUT->header();
+require_login();
+\core_analytics\manager::check_can_manage_models();
 
-$form = new tool_analytics\import_model_form();
-if ($data = $form->get_data()) {
-    $content = json_decode($form->get_file_content('modelfile'));
-    if (empty($content->moodleversion)) {
-        // Should never happen.
-        echo $OUTPUT->notification(get_string('missingmoodleversion', 'tool_analytics'), 'error');
-    } else {
-        if ($content->moodleversion != $CFG->version) {
-            $a = new stdClass();
-            $a->importedversion = $content->moodleversion;
-            $a->version = $CFG->version;
-            echo $OUTPUT->notification(get_string('versionnotsame', 'tool_analytics', $a), 'warning');
-        }
-        $model = \core_analytics\model::create_from_json($content);
-        if ($model) {
-            echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
-        } else {
-            echo $OUTPUT->notification(get_string('error'), 'error');
-        }
+$returnurl = new \moodle_url('/admin/tool/analytics/index.php');
+$url = new \moodle_url('/admin/tool/analytics/importmodel.php');
+$title = get_string('importmodel', 'tool_analytics');
+
+\tool_analytics\output\helper::set_navbar($title, $url);
+
+$form = new \tool_analytics\output\form\import_model();
+if ($form->is_cancelled()) {
+    redirect($returnurl);
+} else if ($data = $form->get_data()) {
+
+    $modelconfig = new \core_analytics\model_config();
+
+    $json = $form->get_file_content('modelfile');
+
+    if ($error = $modelconfig->check_json_data($json)) {
+        // The provided file is not ok.
+        redirect($url, $error, 0, \core\output\notification::NOTIFY_ERROR);
     }
-    echo $OUTPUT->single_button(new moodle_url("$CFG->wwwroot/$CFG->admin/tool/analytics/index.php"),
-        get_string('continue'), 'get');
-} else {
-    $form->display();
+
+    $modeldata = json_decode($json);
+    if ($error = $modelconfig->check_dependencies($modeldata, $data->ignoreversionmismatches)) {
+        // The file is not available until the form is validated so we need an alternative method to show errors.
+        redirect($url, $error, 0, \core\output\notification::NOTIFY_ERROR);
+    }
+    $model = \core_analytics\model::create_from_import($modeldata, true);
+
+    redirect($returnurl, get_string('importedsuccessfully', 'tool_analytics'), 0,
+        \core\output\notification::NOTIFY_SUCCESS);
 }
 
+echo $OUTPUT->header();
+$form->display();
 echo $OUTPUT->footer();

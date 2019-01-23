@@ -339,6 +339,7 @@ class model {
      * @param \core_analytics\local\target\base $target
      * @param \core_analytics\local\indicator\base[] $indicators
      * @param string $timesplittingid The time splitting method id (its fully qualified class name)
+     * @param string $processor The machine learning backend this model will use.
      * @return \core_analytics\model
      */
     public static function create(\core_analytics\local\target\base $target, array $indicators,
@@ -360,8 +361,8 @@ class model {
         $modelobj->usermodified = $USER->id;
 
         if ($processor &&
-                !self::is_valid($processor, '\core_analytics\classifier') &&
-                !self::is_valid($processor, '\core_analytics\regressor')) {
+                !manager::is_valid($processor, '\core_analytics\classifier') &&
+                !manager::is_valid($processor, '\core_analytics\regressor')) {
             throw new \coding_exception('The provided predictions processor \\' . $processor . '\processor is not valid');
         } else {
             $modelobj->predictionsprocessor = $processor;
@@ -386,41 +387,56 @@ class model {
     }
 
     /**
-     * Creates a new model from json configuration.
+     * Creates a new model from import configuration.
      *
-     * @param string $json json data.
-     * @return \core_analytics\model
+     * It is recommended to call \core_analytics\model_config::check_dependencies first so the error message can be retrieved.
+     *
+     * @param \stdClass $modeldata Model data.
+     * @param  bool $skipcheckdependencies Useful if you already checked the dependencies.
+     * @return \core_analytics\model|false False if the provided model data contain errors.
      */
-    public static function create_from_json($jsondata) {
+    public static function create_from_import(\stdClass $modeldata, ?bool $skipcheckdependencies = false) : ?\core_analytics\model {
 
         \core_analytics\manager::check_can_manage_models();
-        if (empty($jsondata) || !isset($jsondata->target) || !isset($jsondata->indicators) || !isset($jsondata->timesplitting)) {
-            throw new \coding_exception("invalid json data");
+
+        if (!$skipcheckdependencies) {
+            $modelconfig = new model_config();
+            if ($error = $modelconfig->check_dependencies($modeldata, false)) {
+                return null;
+            }
         }
 
-        // Target.
-        $target = $jsondata->target;
-        if (!class_exists($target)) {
-            throw new \moodle_exception('classdoesnotexist', 'tool_analytics', $target);
+        // At this stage we should be 100% sure that the model data is safe and can be imported.
+        // If the caller explicitly set $skipcheckdependencies to false and there is a problem
+        // in this process we trigger a coding exception.
+        if (!$target = \core_analytics\manager::get_target($modeldata->target)) {
+            throw new \coding_exception('The provided target is not available. Ensure that model_config::check_dependencies
+                is called before importing the model.');
         }
-        $target = \core_analytics\manager::get_target($target);
+        if (!$timesplitting = \core_analytics\manager::get_time_splitting($modeldata->timesplitting)) {
+            throw new \coding_exception('The provided time splitting method is not available. Ensure that
+                model_config::check_dependencies is called before importing the model.');
+        }
 
         // Indicators.
         $indicators = [];
-        foreach($jsondata->indicators as $indicator) {
-            if (!class_exists($indicator)) {
-                throw new \moodle_exception('classdoesnotexist', 'tool_analytics', $indicator);
+        foreach ($modeldata->indicators as $indicator) {
+            if (!$indicator = \core_analytics\manager::get_indicator($indicator)) {
+                throw new \coding_exception('The provided indicator is not available. Ensure that
+                    model_config::check_dependencies is called before importing the model.');
             }
-            $indicators[] = \core_analytics\manager::get_indicator($indicator);
+            $indicators[] = $indicator;
         }
 
-        // Timesplitting.
-        $timesplitting = $jsondata->timesplitting;
-        if (!class_exists($timesplitting)) {
-            throw new \moodle_exception('classdoesnotexist', 'tool_analytics', $timesplitting);
+        if (!empty($modeldata->processor)) {
+            if (!$processor = \core_analytics\manager::get_predictions_processor($modeldata->processor, false)) {
+                throw new \coding_exception('The provided machine learning backend is not available. Ensure that
+                    model_config::check_dependencies is called before importing the model.');
+            }
+        } else {
+            $modeldata->processor = false;
         }
-
-       return self::create($target, $indicators, $timesplitting);
+        return self::create($target, $indicators, $modeldata->timesplitting, $modeldata->processor);
     }
 
     /**
@@ -500,6 +516,7 @@ class model {
 
             // It needs to be reset as the version changes.
             $this->uniqueid = null;
+            $this->indicators = null;
 
             // We update the version of the model so different time splittings are not mixed up.
             $this->model->version = $now;
@@ -1418,30 +1435,40 @@ class model {
     }
 
     /**
-     * Exports the model data as JSON.
+     * Exports the model data as a JSON file.
      *
-     * @return string JSON encoded data.
+     * @param  string $downloadfilename Download file name.
+     * @return string The filepath
      */
-    public function export_as_json() {
+    public function export_config(string $downloadfilename) : string {
         global $CFG;
 
-        $data = new \stdClass();
-        $data->target = $this->get_target()->get_id();
+        \core_analytics\manager::check_can_manage_models();
 
+        $modelconfig = new model_config($this);
+        $modeldata = $modelconfig->export();
+        return $modelconfig->export_to_file($modeldata, $downloadfilename);
+    }
 
-        if ($timesplitting = $this->get_time_splitting()) {
-            $data->timesplitting = $timesplitting->get_id();
-        } else {
-            // We don't want to allow models without timesplitting to be exported.
-            throw new \moodle_exception('errornotimesplittings', 'analytics');
+    /**
+     * Can this model be exported?
+     *
+     * @return bool
+     */
+    public function can_export_configuration() : bool {
+
+        if (empty($this->model->timesplitting)) {
+            return false;
+        }
+        if (!$this->get_indicators()) {
+            return false;
         }
 
-        $data->indicators = [];
-        foreach ($this->get_indicators() as $indicator) {
-            $data->indicators[] = $indicator->get_id();
+        if ($this->is_static()) {
+            return false;
         }
-        $data->moodleversion = $CFG->version;
-        return json_encode($data);
+
+        return true;
     }
 
     /**

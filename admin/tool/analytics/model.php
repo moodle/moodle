@@ -23,18 +23,17 @@
  */
 
 require_once(__DIR__ . '/../../../config.php');
-require_once($CFG->libdir . '/dataformatlib.php');
+require_once($CFG->libdir . '/filelib.php');
 
 $id = required_param('id', PARAM_INT);
 $action = required_param('action', PARAM_ALPHANUMEXT);
-
-$context = context_system::instance();
 
 require_login();
 
 $model = new \core_analytics\model($id);
 \core_analytics\manager::check_can_manage_models();
 
+$returnurl = new \moodle_url('/admin/tool/analytics/index.php');
 $params = array('id' => $id, 'action' => $action);
 $url = new \moodle_url('/admin/tool/analytics/model.php', $params);
 
@@ -58,6 +57,9 @@ switch ($action) {
     case 'disable':
         $title = get_string('disable');
         break;
+    case 'delete':
+        $title = get_string('delete');
+        break;
     case 'exportdata':
         $title = get_string('exporttrainingdata', 'tool_analytics');
         break;
@@ -74,11 +76,7 @@ switch ($action) {
         throw new moodle_exception('errorunknownaction', 'analytics');
 }
 
-$PAGE->set_context($context);
-$PAGE->set_url($url);
-$PAGE->set_pagelayout('report');
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
+\tool_analytics\output\helper::set_navbar($title, $url);
 
 $onlycli = get_config('analytics', 'onlycli');
 if ($onlycli === false) {
@@ -92,14 +90,21 @@ switch ($action) {
         confirm_sesskey();
 
         $model->enable();
-        redirect(new \moodle_url('/admin/tool/analytics/index.php'));
+        redirect($returnurl);
         break;
 
     case 'disable':
         confirm_sesskey();
 
         $model->update(0, false, false);
-        redirect(new \moodle_url('/admin/tool/analytics/index.php'));
+        redirect($returnurl);
+        break;
+
+    case 'delete':
+        confirm_sesskey();
+
+        $model->delete();
+        redirect($returnurl);
         break;
 
     case 'edit':
@@ -112,7 +117,7 @@ switch ($action) {
 
         $customdata = array(
             'id' => $model->get_id(),
-            'model' => $model,
+            'trainedmodel' => $model->is_trained(),
             'indicators' => $model->get_potential_indicators(),
             'timesplittings' => \core_analytics\manager::get_enabled_time_splitting_methods(),
             'predictionprocessors' => \core_analytics\manager::get_all_prediction_processors()
@@ -120,7 +125,7 @@ switch ($action) {
         $mform = new \tool_analytics\output\form\edit_model(null, $customdata);
 
         if ($mform->is_cancelled()) {
-            redirect(new \moodle_url('/admin/tool/analytics/index.php'));
+            redirect($returnurl);
 
         } else if ($data = $mform->get_data()) {
 
@@ -133,7 +138,7 @@ switch ($action) {
             $timesplitting = \tool_analytics\output\helper::option_to_class($data->timesplitting);
             $predictionsprocessor = \tool_analytics\output\helper::option_to_class($data->predictionsprocessor);
             $model->update($data->enabled, $indicators, $timesplitting, $predictionsprocessor);
-            redirect(new \moodle_url('/admin/tool/analytics/index.php'));
+            redirect($returnurl);
         }
 
         echo $OUTPUT->header();
@@ -215,7 +220,7 @@ switch ($action) {
 
         $file = $model->get_training_data();
         if (!$file) {
-            redirect(new \moodle_url('/admin/tool/analytics/index.php'), get_string('errortrainingdataexport', 'tool_analytics'),
+            redirect($returnurl, get_string('errortrainingdataexport', 'tool_analytics'),
                 null, \core\output\notification::NOTIFY_ERROR);
         }
 
@@ -224,26 +229,17 @@ switch ($action) {
         break;
 
     case 'exportmodel':
-
-        if (!$model->is_static() && $model->get_indicators() && !empty($model->timesplitting)) {
-            throw new moodle_exception('errornoexportconfg', 'tool_analytics');
-        }
-        $downloadfilename = 'model-config.' . $model->get_id() . '.' . time() . '.json';
-        $modelconfig = $model->export_as_json();
-        make_temp_directory('analyticsexport');
-        $tempfilename = $CFG->tempdir .'/analyticsexport/'. md5(sesskey() . microtime() . $downloadfilename);
-        if (!file_put_contents($tempfilename, $modelconfig)) {
-            print_error('cannotcreatetempdir');
-        }
+        $downloadfilename = 'model-config.' . $model->get_id() . '.' . microtime() . '.json';
+        $filepath = $model->export_config($downloadfilename);
         @header("Content-type: text/json; charset=UTF-8");
-        send_temp_file($tempfilename, $downloadfilename);
+        send_temp_file($filepath, $downloadfilename);
         break;
 
     case 'clear':
         confirm_sesskey();
 
         $model->clear();
-        redirect(new \moodle_url('/admin/tool/analytics/index.php'));
+        redirect($returnurl);
         break;
 
     case 'invalidanalysables':

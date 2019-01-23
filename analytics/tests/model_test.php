@@ -28,6 +28,7 @@ require_once(__DIR__ . '/fixtures/test_indicator_max.php');
 require_once(__DIR__ . '/fixtures/test_indicator_min.php');
 require_once(__DIR__ . '/fixtures/test_indicator_fullname.php');
 require_once(__DIR__ . '/fixtures/test_target_shortname.php');
+require_once(__DIR__ . '/fixtures/test_static_target_shortname.php');
 require_once(__DIR__ . '/fixtures/test_target_course_level_shortname.php');
 require_once(__DIR__ . '/fixtures/test_analyser.php');
 
@@ -318,33 +319,99 @@ class analytics_model_testcase extends advanced_testcase {
     }
 
     /**
-     * Test export_as_json() API.
+     * Test model_config::get_class_component.
      */
-    public function test_export_as_json() {
-        global $CFG;
+    public function test_model_config_get_class_component() {
         $this->resetAfterTest(true);
 
-        $this->model->enable('\core\analytics\time_splitting\quarters');
-        $obj = json_decode($this->model->export_as_json());
-        $this->assertSame($CFG->version, $obj->moodleversion);
-        $this->assertSame($this->modelobj->target, $obj->target);
-        $this->assertSame(json_decode($this->modelobj->indicators), $obj->indicators);
-        $this->assertSame($this->modelobj->timesplitting, $obj->timesplitting);
+        $this->assertEquals('core',
+            \core_analytics\model_config::get_class_component('\\core\\analytics\\indicator\\read_actions'));
+        $this->assertEquals('core',
+            \core_analytics\model_config::get_class_component('core\\analytics\\indicator\\read_actions'));
+        $this->assertEquals('core',
+            \core_analytics\model_config::get_class_component('\\core_course\\analytics\\indicator\\completion_enabled'));
+        $this->assertEquals('mod_forum',
+            \core_analytics\model_config::get_class_component('\\mod_forum\\analytics\\indicator\\cognitive_depth'));
+
+        $this->assertEquals('core', \core_analytics\model_config::get_class_component('\\core_class'));
     }
 
     /**
      * Test export_from_json() API.
      */
-    public function test_create_from_json() {
-        global $CFG;
+    public function test_create_from_import() {
         $this->resetAfterTest(true);
 
-        $this->model->enable('\core\analytics\time_splitting\quarters');
-        $json = $this->model->export_as_json();
-        $obj = \core_analytics\model::create_from_json(json_decode($json))->get_model_obj();
-        $this->assertSame($this->modelobj->target, $obj->target);
-        $this->assertSame($this->modelobj->indicators, $obj->indicators);
-        $this->assertSame($this->modelobj->timesplitting, $obj->timesplitting);
+        $this->model->enable('\\core\\analytics\\time_splitting\\quarters');
+
+        $this->modelobj = $this->model->get_model_obj();
+
+        $modelconfig = new \core_analytics\model_config($this->model);
+        $modeldata = $modelconfig->export();
+        $importedmodel = \core_analytics\model::create_from_import($modeldata)->get_model_obj();
+
+        $this->assertSame($this->modelobj->target, $importedmodel->target);
+        $this->assertSame($this->modelobj->indicators, $importedmodel->indicators);
+        $this->assertSame($this->modelobj->timesplitting, $importedmodel->timesplitting);
+        $this->assertEmpty($importedmodel->predictionsprocessor);
+
+        $this->model->update(true, false, false, '\\mlbackend_php\\processor');
+
+        $this->modelobj = $this->model->get_model_obj();
+
+        $modelconfig = new \core_analytics\model_config($this->model);
+        $modeldata = $modelconfig->export();
+        $importedmodel = \core_analytics\model::create_from_import($modeldata)->get_model_obj();
+
+        $this->assertSame($this->modelobj->target, $importedmodel->target);
+        $this->assertSame($this->modelobj->indicators, $importedmodel->indicators);
+        $this->assertSame($this->modelobj->timesplitting, $importedmodel->timesplitting);
+        $this->assertSame($this->modelobj->predictionsprocessor, $importedmodel->predictionsprocessor);
+    }
+
+    /**
+     * Test can export configuration
+     */
+    public function test_can_export_configuration() {
+        $this->resetAfterTest(true);
+
+        // No time splitting method.
+        $this->assertFalse($this->model->can_export_configuration());
+
+        $this->model->enable('\\core\\analytics\\time_splitting\\quarters');
+        $this->assertTrue($this->model->can_export_configuration());
+
+        $this->model->update(true, [], false);
+        $this->assertFalse($this->model->can_export_configuration());
+
+        $statictarget = new test_static_target_shortname();
+        $indicators['test_indicator_max'] = \core_analytics\manager::get_indicator('test_indicator_max');
+        $model = \core_analytics\model::create($statictarget, $indicators, '\\core\\analytics\\time_splitting\\quarters');
+        $this->assertFalse($model->can_export_configuration());
+    }
+
+    /**
+     * Test export_config
+     */
+    public function test_export_config() {
+        $this->resetAfterTest(true);
+
+        $this->model->enable('\\core\\analytics\\time_splitting\\quarters');
+
+        $modelconfig = new \core_analytics\model_config($this->model);
+        $modeldata = $modelconfig->export();
+
+        $this->assertArrayHasKey('core', $modeldata->dependencies);
+        $this->assertInternalType('float', $modeldata->dependencies['core']);
+        $this->assertNotEmpty($modeldata->target);
+        $this->assertNotEmpty($modeldata->timesplitting);
+        $this->assertCount(3, $modeldata->indicators);
+
+        $indicators['test_indicator_max'] = \core_analytics\manager::get_indicator('test_indicator_max');
+        $this->model->update(true, $indicators, false);
+        $modeldata = $modelconfig->export();
+
+        $this->assertCount(1, $modeldata->indicators);
     }
 
     /**
