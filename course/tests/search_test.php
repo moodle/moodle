@@ -568,4 +568,15 @@ class course_search_testcase extends advanced_testcase {
         $this->assertEquals('i/section', $result->get_name());
         $this->assertEquals('moodle', $result->get_component());
     }
+
+    /**
+     * Test assigned search categories.
+     */
+    public function test_get_category_names() {
+        $coursessearcharea = \core_search\manager::get_search_area($this->mycoursesareaid);
+        $sectionsearcharea = \core_search\manager::get_search_area($this->sectionareaid);
+
+        $this->assertEquals(['core-courses'], $coursessearcharea->get_category_names());
+        $this->assertEquals(['core-course-content'], $sectionsearcharea->get_category_names());
+    }
 }

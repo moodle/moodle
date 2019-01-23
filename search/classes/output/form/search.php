@@ -40,6 +40,13 @@ class search extends \moodleform {
         global $USER, $DB, $OUTPUT;
 
         $mform =& $this->_form;
+
+        if (\core_search\manager::is_search_area_categories_enabled() && !empty($this->_customdata['cat'])) {
+            $mform->addElement('hidden', 'cat');
+            $mform->setType('cat', PARAM_NOTAGS);
+            $mform->setDefault('cat', $this->_customdata['cat']);
+        }
+
         $mform->disable_form_change_checker();
         $mform->addElement('header', 'search', get_string('search', 'search'));
 
@@ -72,11 +79,21 @@ class search extends \moodleform {
         $mform->setType('title', PARAM_TEXT);
 
         $search = \core_search\manager::instance(true);
-
-        $searchareas = \core_search\manager::get_search_areas_list(true);
+        $enabledsearchareas = \core_search\manager::get_search_areas_list(true);
         $areanames = array();
-        foreach ($searchareas as $areaid => $searcharea) {
-            $areanames[$areaid] = $searcharea->get_visible_name();
+
+        if (\core_search\manager::is_search_area_categories_enabled() && !empty($this->_customdata['cat'])) {
+            $searchareacategory = \core_search\manager::get_search_area_category_by_name($this->_customdata['cat']);
+            $searchareas = $searchareacategory->get_areas();
+            foreach ($searchareas as $areaid => $searcharea) {
+                if (key_exists($areaid, $enabledsearchareas)) {
+                    $areanames[$areaid] = $searcharea->get_visible_name();
+                }
+            }
+        } else {
+            foreach ($enabledsearchareas as $areaid => $searcharea) {
+                $areanames[$areaid] = $searcharea->get_visible_name();
+            }
         }
 
         // Sort the array by the text.
