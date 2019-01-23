@@ -56,9 +56,13 @@ class award_criteria_competency extends award_criteria {
             if ($short) {
                 $competency->set('description', '');
             }
-            $summary = new \tool_lp\output\competency_summary($competency, $competency->get_framework(), !$short, !$short);
-            $str = $OUTPUT->render($summary);
-            $output[] = $str;
+            if ($pluginsfunction = get_plugins_with_function('render_competency_summary')) {
+                foreach ($pluginsfunction as $plugintype => $plugins) {
+                    foreach ($plugins as $pluginfunction) {
+                        $output[] = $pluginfunction($competency, $competency->get_framework(), !$short, !$short);
+                    }
+                }
+            }
         }
 
         return '<dl><dd class="p-3 mb-2 bg-light text-dark border">' .
@@ -83,21 +87,25 @@ class award_criteria_competency extends award_criteria {
         if (count($this->params)) {
             $competencies = implode(',', array_keys($this->params));
         }
-        $mform->addElement('static', 'competenciesdescription', '', '<div data-region="competencies"></div>');
-        $mform->addElement('hidden', 'competency', $competencies, ['data-action' => 'competencies']);
-
-        $mform->setType('competency', PARAM_RAW);
         $badge = $DB->get_record('badge', array('id' => $this->badgeid));
+        $context = null;
+        $courseid = 0;
+
         if ($badge->type == BADGE_TYPE_SITE) {
             $context = context_system::instance();
+            $courseid = SITEID;
         } else if ($badge->type == BADGE_TYPE_COURSE) {
             $context = context_course::instance($badge->courseid);
+            $courseid = $badge->courseid;
         }
-        $params = [$context->id];
-        // Require some JS to select the competencies.
-        $PAGE->requires->js_call_amd('core_badges/competency', 'init', $params);
-
-        $mform->addElement('button', 'select_competencies', get_string('addcompetency', 'badges'), ['data-action' => 'select-competencies']);
+        if ($pluginsfunction = get_plugins_with_function('competency_picker')) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    $output[] = $pluginfunction($mform, $courseid, $context, 'competency');
+                }
+            }
+        }
+        $mform->getElement('competency')->setValue($competencies);
 
         // Add aggregation.
         if (!$none) {
@@ -122,8 +130,11 @@ class award_criteria_competency extends award_criteria {
      * @param array $params Values from the form or any other array.
      */
     public function save($params = array()) {
-        $competencies = explode(',', $params['competency']);
+        $competencies = $params['competency'];
         unset($params['competency']);
+        if (is_string($competencies)) {
+            $competencies = explode(',', $competencies);
+        }
         foreach ($competencies as $competencyid) {
             $params["competency_{$competencyid}"] = $competencyid;
         }

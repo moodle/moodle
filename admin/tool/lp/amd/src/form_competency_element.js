@@ -16,9 +16,8 @@
 /**
  * Badge select competency actions
  *
- * @module     core_badges/competency
- * @package    core
- * @class      competency
+ * @module     tool_lp/form_competency_element
+ * @package    tool_lp
  * @copyright  2019 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -60,7 +59,7 @@ define(['jquery', 'tool_lp/competencypicker', 'core/ajax', 'core/notification', 
                 competencies: competencies
             };
 
-            return Templates.render('core_badges/award_criteria_competencies', context);
+            return Templates.render('tool_lp/form_competency_list', context);
         }).then(function(html, js) {
             Templates.replaceNode($('[data-region="competencies"]'), html, js);
             return true;
@@ -119,7 +118,7 @@ define(['jquery', 'tool_lp/competencypicker', 'core/ajax', 'core/notification', 
         pickerInstance.display();
     };
 
-    return /** @alias module:core_badges/competency */ {
+    return /** @alias module:tool_lp/form_competency_element */ {
         /**
          * Listen for clicks on the competency picker and push the changes to the form element.
          *

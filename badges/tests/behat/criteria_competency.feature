@@ -31,7 +31,9 @@ Feature: Award badges based on competency completion
     And "Competency picker" "dialogue" should be visible
     And I select "comp1" of the competency tree
     And I click on "Add" "button" in the "Competency picker" "dialogue"
+    And I wait until the page is ready
     And I click on "Edit" "link" in the "[data-region='configurecoursecompetencies']" "css_element"
+    And I wait until the page is ready
     And I click on "Rating a competency only updates the competency in this course" "text"
     And I click on "Save changes" "button" in the "Configure course competencies" "dialogue"
     # Add a badge to the course
@@ -46,14 +48,10 @@ Feature: Award badges based on competency completion
     And I press "Create badge"
     # Set the competency as a criteria for the badge
     And I set the field "type" to "Competencies"
-    And I press "Add competency"
-    And "Competency picker" "dialogue" should be visible
-    And I select "comp1" of the competency tree
-    And I click on "Add" "button" in the "Competency picker" "dialogue"
-    # And I wait "1" seconds
+    When I open the autocomplete suggestions list
+    And I click on "ul[class='form-autocomplete-suggestions'] li" "css_element"
     And I wait until the page is ready
     And I press "Save"
-    # And I wait "1" seconds
     And I wait until the page is ready
     # Enable the badge
     And I press "Enable access"
@@ -95,11 +93,9 @@ Feature: Award badges based on competency completion
     And "Competency picker" "dialogue" should be visible
     And I select "comp1" of the competency tree
     And I click on "Add" "button" in the "Competency picker" "dialogue"
-    # And I wait "1" seconds
     And I wait until the page is ready
     And I press "Save"
     # Enable the badge
-    # And I wait "1" seconds
     And I wait until the page is ready
     And I press "Enable access"
     And I press "Continue"

@@ -217,3 +217,63 @@ function tool_lp_get_fontawesome_icon_map() {
         'tool_lp:url' => 'fa-external-link'
     ];
 }
+
+/**
+ * Render a short bit of information about a competency.
+ */
+function tool_lp_render_competency_summary(\core_competency\competency $competency,
+                                           \core_competency\competency_framework $framework,
+                                           $includerelated,
+                                           $includecourses) {
+    global $PAGE;
+
+    if (!get_config('core_competency', 'enabled')) {
+        return;
+    }
+
+    $summary = new \tool_lp\output\competency_summary($competency, $framework, $includerelated, $includecourses);
+
+    $output = $PAGE->get_renderer('tool_lp');
+
+    return $output->render($summary);
+}
+
+/**
+ * Inject a course competency picker into the form.
+ *
+ * @param MoodleQuickForm $mform The actual form object (required to modify the form).
+ * @param integer $courseid - SITEID or a course id
+ * @param context $context - The page context
+ * @param string $elementname - The name of the form element to create
+ */
+function tool_lp_competency_picker($mform, $courseid, $context, $elementname) {
+    global $CFG, $COURSE;
+
+    if (!get_config('core_competency', 'enabled')) {
+        return;
+    }
+
+    if ($courseid == SITEID) {
+        if (!has_capability('moodle/competency:competencymanage', $context)) {
+            return;
+        }
+
+        MoodleQuickForm::registerElementType('site_competencies',
+                                             "$CFG->dirroot/$CFG->admin/tool/lp/classes/site_competencies_form_element.php",
+                                             'tool_lp_site_competencies_form_element');
+        $mform->addElement('site_competencies', $elementname);
+    } else {
+        if (!has_capability('moodle/competency:coursecompetencymanage', $context)) {
+            return;
+        }
+
+        MoodleQuickForm::registerElementType('course_competencies',
+                                             "$CFG->dirroot/$CFG->admin/tool/lp/classes/course_competencies_form_element.php",
+                                             'tool_lp_course_competencies_form_element');
+        $options = array(
+            'courseid' => $COURSE->id
+        );
+        $mform->addElement('course_competencies', $elementname, get_string('modcompetencies', 'tool_lp'), $options);
+    }
+    $mform->setType($elementname, PARAM_SEQUENCE);
+}

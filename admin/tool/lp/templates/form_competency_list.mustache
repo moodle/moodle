@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_badges/award_criteria_competencies
+    @template tool_lp/form_competency_list
 
-    List of competencies for a badge.
+    List of competencies for a form element.
 
     Classes required for JS:
     * none
@@ -60,7 +60,7 @@
     {{/competencies}}
 </ul>
 {{^competencies}}
-    {{#str}}nocompetencies, core_badges{{/str}}
+    {{#str}}nocompetenciesinlist, tool_lp{{/str}}
 {{/competencies}}
 </div>
 {{#js}}

@@ -148,6 +148,7 @@ $string['nocompetenciesincourse'] = 'No competencies have been linked to this co
 $string['nocompetenciesinevidence'] = 'No competencies have been linked to this evidence.';
 $string['nocompetenciesinlearningplan'] = 'No competencies have been linked to this learning plan.';
 $string['nocompetenciesintemplate'] = 'No competencies have been linked to this learning plan template.';
+$string['nocompetenciesinlist'] = 'No competencies have been selected.';
 $string['nocompetencyframeworks'] = 'No competency frameworks have been created yet.';
 $string['nocompetencyselected'] = 'No competency selected';
 $string['nocrossreferencedcompetencies'] = 'No other competencies have been cross-referenced to this competency.';
