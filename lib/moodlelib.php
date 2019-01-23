@@ -137,13 +137,16 @@ define('PARAM_FILE',   'file');
  *
  * Note that you should not use PARAM_FLOAT for numbers typed in by the user.
  * It does not work for languages that use , as a decimal separator.
- * Instead, do something like
- *     $rawvalue = required_param('name', PARAM_RAW);
- *     // ... other code including require_login, which sets current lang ...
- *     $realvalue = unformat_float($rawvalue);
- *     // ... then use $realvalue
+ * Use PARAM_LOCALISEDFLOAT instead.
  */
 define('PARAM_FLOAT',  'float');
+
+/**
+ * PARAM_LOCALISEDFLOAT - a localised real/floating point number.
+ * This is preferred over PARAM_FLOAT for numbers typed in by the user.
+ * Cleans localised numbers to computer readable numbers; false for invalid numbers.
+ */
+define('PARAM_LOCALISEDFLOAT',  'localisedfloat');
 
 /**
  * PARAM_HOST - expected fully qualified domain name (FQDN) or an IPv4 dotted quad (IP address)
@@ -842,6 +845,10 @@ function clean_param($param, $type) {
         case PARAM_FLOAT:
             // Convert to float.
             return (float)$param;
+
+        case PARAM_LOCALISEDFLOAT:
+            // Convert to float.
+            return unformat_float($param, true);
 
         case PARAM_ALPHA:
             // Remove everything not `a-z`.
