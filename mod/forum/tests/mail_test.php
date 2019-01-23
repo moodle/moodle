@@ -1215,11 +1215,11 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $expect = [
             'author' => (object) [
                 'userid' => $author->id,
-                'messages' => 0,
+                'messages' => 1,
             ],
             'recipient' => (object) [
                 'userid' => $recipient->id,
-                'messages' => 0,
+                'messages' => 1,
             ],
             'editor' => (object) [
                 'userid' => $editor->id,
@@ -1229,8 +1229,8 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->queue_tasks_and_assert($expect);
 
         // No notifications should be queued.
-        $this->send_notifications_and_assert($author, []);
-        $this->send_notifications_and_assert($recipient, []);
+        $this->send_notifications_and_assert($author, [], true);
+        $this->send_notifications_and_assert($recipient, [], true);
         $this->send_notifications_and_assert($editor, [$post], true);
     }
 

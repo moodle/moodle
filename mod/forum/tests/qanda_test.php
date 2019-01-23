@@ -134,7 +134,7 @@ class mod_forum_qanda_testcase extends advanced_testcase {
             ],
             'otheruser' => (object) [
                 'userid' => $otheruser->id,
-                'messages' => 1,
+                'messages' => 3,
             ],
             'editingteacher' => (object) [
                 'userid' => $editingteacher->id,

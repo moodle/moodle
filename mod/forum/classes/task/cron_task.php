@@ -173,10 +173,6 @@ class cron_task extends \core\task\scheduled_task {
         $this->fill_digest_cache();
         $this->log_finish("Done", 1);
 
-        $this->log_start("Filling user posted cache for Q&A forums", 1);
-        $this->fetch_user_has_posted();
-        $this->log_finish("Done", 1);
-
         $this->log_start("Queueing user tasks.");
         $this->queue_user_tasks();
         $this->log_finish("All tasks queued.", 1);
@@ -309,44 +305,6 @@ class cron_task extends \core\task\scheduled_task {
                 unset($users);
             }
         }
-    }
-
-    /**
-     * Fill the cache for Q&A forums.
-     */
-    protected function fetch_user_has_posted() {
-        global $DB;
-
-        $forums = array_filter($this->forums, function($forum) {
-            return $forum->type === 'qanda';
-        });
-
-        if (empty($forums)) {
-            return;
-        }
-
-        list($in, $params) = $DB->get_in_or_equal(array_keys($forums));
-
-        $sql = "SELECT d.forum, d.firstpost, p.userid
-                 FROM {forum} f
-           INNER JOIN {forum_discussions} d ON d.forum = f.id
-            LEFT JOIN {forum_posts} p ON p.discussion = d.id
-                WHERE f.type = 'qanda'
-                  AND f.id {$in}
-             GROUP BY p.userid, d.forum, d.firstpost";
-
-        $rs = $DB->get_recordset_sql($sql, $params);
-        foreach ($rs as $row) {
-            if (empty($this->qandametadata[$row->forum])) {
-                $this->qandametadata[$row->forum] = (object) [
-                        'users' => [],
-                        'firstpost' => [$row->firstpost],
-                    ];
-            }
-            $this->qandametadata[$row->forum]->users[$row->userid] = true;
-        }
-        $rs->close();
-
     }
 
     /**
@@ -498,22 +456,6 @@ class cron_task extends \core\task\scheduled_task {
                                 unset($poststructure[$courseid][$forumid][$discussionid]);
                                 continue;
                             }
-                        }
-
-                        if ($forum->type === 'qanda' && $postid != $discussion->firstpost) {
-                            $hasqandapost = isset($this->qandametadata[$forumid]);
-                            $hasqandapost = $hasqandapost && isset($this->qandametadata[$forumid]->users[$user->id]);
-                            if (!$hasqandapost) {
-                                // The user has not posted to this qanda forum.
-                                unset($poststructure[$courseid][$forumid][$discussionid]);
-                                continue;
-                            }
-                        }
-
-                        if (!forum_user_can_see_post($forum, $discussion, $post, null, $cm)) {
-                            // The user is not allowed to see the post for some other reason.
-                            unset($poststructure[$courseid][$forumid][$discussionid][$postid]);
-                            continue;
                         }
 
                         if ($maildigest > 0) {
