@@ -1207,6 +1207,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
     $failed = 0;
 
     while (count($finalids) < count($gids)) { // work until all grades are final or error found
+        $count = 0;
         foreach ($gids as $gid) {
             if (in_array($gid, $finalids)) {
                 continue; // already final
@@ -1261,7 +1262,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
                 if ($updateddependencies === false) {
                     // If no direct descendants are marked as updated, then we don't need to update this grade item. We then mark it
                     // as final.
-
+                    $count++;
                     $finalids[] = $gid;
                     continue;
                 }
@@ -1280,6 +1281,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
                 } else {
                     $grade_items[$gid]->needsupdate = 0;
                 }
+                $count++;
                 $finalids[] = $gid;
                 $updatedids[] = $gid;
 
@@ -1289,7 +1291,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
             }
         }
 
-        if (count($finalids) == 0) {
+        if ($count == 0) {
             $failed++;
         } else {
             $failed = 0;
