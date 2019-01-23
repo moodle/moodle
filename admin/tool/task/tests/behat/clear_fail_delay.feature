@@ -7,7 +7,7 @@ Feature: Clear scheduled task fail delay
   Background:
     Given the scheduled task "\core\task\send_new_user_passwords_task" has a fail delay of "60" seconds
     And I log in as "admin"
-    And I navigate to "Server > Scheduled tasks" in site administration
+    And I navigate to "Server > Tasks > Scheduled tasks" in site administration
 
   Scenario: Clear fail delay
     When I click on "Clear" "text" in the "Send new user passwords" "table_row"
