@@ -247,7 +247,7 @@ class models_list implements \renderable, \templatable {
             }
 
             // Clear model.
-            if (!empty($predictioncontexts)) {
+            if (!empty($predictioncontexts) || $model->is_trained()) {
                 $actionid = 'clear-' . $model->get_id();
                 $PAGE->requires->js_call_amd('tool_analytics/model', 'confirmAction', [$actionid, 'clear']);
                 $urlparams['action'] = 'clear';
