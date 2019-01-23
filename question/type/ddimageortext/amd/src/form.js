@@ -450,7 +450,7 @@ define(['jquery', 'core/dragdrop'], function($, dragDrop) {
             },
 
             getEl: function(name, indexes) {
-                var form = document.getElementById('mform1');
+                var form = $('form.mform')[0];
                 return form.elements[this.toNameWithIndex(name, indexes)];
             },
 
