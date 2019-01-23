@@ -60,6 +60,23 @@ class mod_lti_mod_form extends moodleform_mod {
             component_callback("ltisource_$type", 'add_instance_hook');
         }
 
+        // Type ID parameter being passed when adding an preconfigured tool from activity chooser.
+        $typeid = optional_param('typeid', false, PARAM_INT);
+
+        // Show configuration details only if not preset (when new) or user has the capabilities to do so (when editing).
+        if ($this->_instance) {
+            $showtypes = has_capability('mod/lti:addpreconfiguredinstance', $this->context);
+            $showoptions = has_capability('mod/lti:addmanualinstance', $this->context);
+            if (!$showoptions && $this->current->typeid == 0) {
+                // If you cannot add a manual instance and this is already a manual instance, then
+                // remove the 'types' selector.
+                $showtypes = false;
+            }
+        } else {
+            $showtypes = !$typeid;
+            $showoptions = !$typeid && has_capability('mod/lti:addmanualinstance', $this->context);
+        }
+
         $this->typeid = 0;
 
         $mform =& $this->_form;
@@ -95,122 +112,131 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addHelpButton('showdescriptionlaunch', 'display_description', 'lti');
 
         // Tool settings.
-        $tooltypes = $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'));
-        // Type ID parameter being passed when adding an preconfigured tool from activity chooser.
-        $typeid = optional_param('typeid', false, PARAM_INT);
-        if ($typeid) {
-            $mform->getElement('typeid')->setValue($typeid);
-        }
-        $mform->addHelpButton('typeid', 'external_tool_type', 'lti');
         $toolproxy = array();
-
         // Array of tool type IDs that don't support ContentItemSelectionRequest.
         $noncontentitemtypes = [];
 
-        foreach (lti_get_types_for_add_instance() as $id => $type) {
-            if (!empty($type->toolproxyid)) {
-                $toolproxy[] = $type->id;
-                $attributes = array( 'globalTool' => 1, 'toolproxy' => 1);
-                $enabledcapabilities = explode("\n", $type->enabledcapability);
-                if (!in_array('Result.autocreate', $enabledcapabilities) || in_array('BasicOutcome.url', $enabledcapabilities)) {
-                    $attributes['nogrades'] = 1;
-                }
-                if (!in_array('Person.name.full', $enabledcapabilities) && !in_array('Person.name.family', $enabledcapabilities) &&
-                    !in_array('Person.name.given', $enabledcapabilities)) {
-                    $attributes['noname'] = 1;
-                }
-                if (!in_array('Person.email.primary', $enabledcapabilities)) {
-                    $attributes['noemail'] = 1;
-                }
-            } else if ($type->course == $COURSE->id) {
-                $attributes = array( 'editable' => 1, 'courseTool' => 1, 'domain' => $type->tooldomain );
-            } else if ($id != 0) {
-                $attributes = array( 'globalTool' => 1, 'domain' => $type->tooldomain);
-            } else {
-                $attributes = array();
+        if ($showtypes) {
+            $tooltypes = $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'));
+            if ($typeid) {
+                $mform->getElement('typeid')->setValue($typeid);
             }
+            $mform->addHelpButton('typeid', 'external_tool_type', 'lti');
 
-            if ($id) {
-                $config = lti_get_type_config($id);
-                if (!empty($config['contentitem'])) {
-                    $attributes['data-contentitem'] = 1;
-                    $attributes['data-id'] = $id;
+            foreach (lti_get_types_for_add_instance() as $id => $type) {
+                if (!empty($type->toolproxyid)) {
+                    $toolproxy[] = $type->id;
+                    $attributes = array('globalTool' => 1, 'toolproxy' => 1);
+                    $enabledcapabilities = explode("\n", $type->enabledcapability);
+                    if (!in_array('Result.autocreate', $enabledcapabilities) ||
+                        in_array('BasicOutcome.url', $enabledcapabilities)) {
+                        $attributes['nogrades'] = 1;
+                    }
+                    if (!in_array('Person.name.full', $enabledcapabilities) &&
+                        !in_array('Person.name.family', $enabledcapabilities) &&
+                        !in_array('Person.name.given', $enabledcapabilities)) {
+                        $attributes['noname'] = 1;
+                    }
+                    if (!in_array('Person.email.primary', $enabledcapabilities)) {
+                        $attributes['noemail'] = 1;
+                    }
+                } else if ($type->course == $COURSE->id) {
+                    $attributes = array('editable' => 1, 'courseTool' => 1, 'domain' => $type->tooldomain);
+                } else if ($id != 0) {
+                    $attributes = array('globalTool' => 1, 'domain' => $type->tooldomain);
                 } else {
-                    $noncontentitemtypes[] = $id;
+                    $attributes = array();
                 }
+
+                if ($id) {
+                    $config = lti_get_type_config($id);
+                    if (!empty($config['contentitem'])) {
+                        $attributes['data-contentitem'] = 1;
+                        $attributes['data-id'] = $id;
+                    } else {
+                        $noncontentitemtypes[] = $id;
+                    }
+                }
+                $tooltypes->addOption($type->name, $id, $attributes);
             }
-            $tooltypes->addOption($type->name, $id, $attributes);
+        } else {
+            $mform->addElement('hidden', 'typeid', $typeid);
+            $mform->setType('typeid', PARAM_INT);
         }
 
         // Add button that launches the content-item selection dialogue.
-        // Set contentitem URL.
-        $contentitemurl = new moodle_url('/mod/lti/contentitem.php');
-        $contentbuttonattributes = [
-            'data-contentitemurl' => $contentitemurl->out(false)
-        ];
-        $contentbuttonlabel = get_string('selectcontent', 'lti');
-        $contentbutton = $mform->addElement('button', 'selectcontent', $contentbuttonlabel, $contentbuttonattributes);
-        // Disable select content button if the selected tool doesn't support content item or it's set to Automatic.
-        $allnoncontentitemtypes = $noncontentitemtypes;
-        $allnoncontentitemtypes[] = '0'; // Add option value for "Automatic, based on tool URL".
-        $mform->disabledIf('selectcontent', 'typeid', 'in', $allnoncontentitemtypes);
+        if ($showoptions) {
+            // Set contentitem URL.
+            $contentitemurl = new moodle_url('/mod/lti/contentitem.php');
+            $contentbuttonattributes = [
+                'data-contentitemurl' => $contentitemurl->out(false)
+            ];
+            $contentbuttonlabel = get_string('selectcontent', 'lti');
+            $contentbutton = $mform->addElement('button', 'selectcontent', $contentbuttonlabel, $contentbuttonattributes);
+            // Disable select content button if the selected tool doesn't support content item or it's set to Automatic.
+            $allnoncontentitemtypes = $noncontentitemtypes;
+            $allnoncontentitemtypes[] = '0'; // Add option value for "Automatic, based on tool URL".
+            $mform->disabledIf('selectcontent', 'typeid', 'in', $allnoncontentitemtypes);
 
-        $mform->addElement('text', 'toolurl', get_string('launch_url', 'lti'), array('size' => '64'));
-        $mform->setType('toolurl', PARAM_URL);
-        $mform->addHelpButton('toolurl', 'launch_url', 'lti');
-        $mform->hideIf('toolurl', 'typeid', 'in', $noncontentitemtypes);
+            $mform->addElement('text', 'toolurl', get_string('launch_url', 'lti'), array('size' => '64'));
+            $mform->setType('toolurl', PARAM_URL);
+            $mform->addHelpButton('toolurl', 'launch_url', 'lti');
+            $mform->hideIf('toolurl', 'typeid', 'in', $noncontentitemtypes);
 
-        $mform->addElement('text', 'securetoolurl', get_string('secure_launch_url', 'lti'), array('size' => '64'));
-        $mform->setType('securetoolurl', PARAM_URL);
-        $mform->setAdvanced('securetoolurl');
-        $mform->addHelpButton('securetoolurl', 'secure_launch_url', 'lti');
-        $mform->hideIf('securetoolurl', 'typeid', 'in', $noncontentitemtypes);
+            $mform->addElement('text', 'securetoolurl', get_string('secure_launch_url', 'lti'), array('size' => '64'));
+            $mform->setType('securetoolurl', PARAM_URL);
+            $mform->setAdvanced('securetoolurl');
+            $mform->addHelpButton('securetoolurl', 'secure_launch_url', 'lti');
+            $mform->hideIf('securetoolurl', 'typeid', 'in', $noncontentitemtypes);
+        }
 
         $mform->addElement('hidden', 'urlmatchedtypeid', '', array( 'id' => 'id_urlmatchedtypeid' ));
         $mform->setType('urlmatchedtypeid', PARAM_INT);
 
-        $launchoptions = array();
-        $launchoptions[LTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'lti');
-        $launchoptions[LTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'lti');
-        $launchoptions[LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS] = get_string('embed_no_blocks', 'lti');
-        $launchoptions[LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW] = get_string('existing_window', 'lti');
-        $launchoptions[LTI_LAUNCH_CONTAINER_WINDOW] = get_string('new_window', 'lti');
+        if ($showoptions) {
+            $launchoptions = array();
+            $launchoptions[LTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'lti');
+            $launchoptions[LTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'lti');
+            $launchoptions[LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS] = get_string('embed_no_blocks', 'lti');
+            $launchoptions[LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW] = get_string('existing_window', 'lti');
+            $launchoptions[LTI_LAUNCH_CONTAINER_WINDOW] = get_string('new_window', 'lti');
 
-        $mform->addElement('select', 'launchcontainer', get_string('launchinpopup', 'lti'), $launchoptions);
-        $mform->setDefault('launchcontainer', LTI_LAUNCH_CONTAINER_DEFAULT);
-        $mform->addHelpButton('launchcontainer', 'launchinpopup', 'lti');
-        $mform->setAdvanced('launchcontainer');
+            $mform->addElement('select', 'launchcontainer', get_string('launchinpopup', 'lti'), $launchoptions);
+            $mform->setDefault('launchcontainer', LTI_LAUNCH_CONTAINER_DEFAULT);
+            $mform->addHelpButton('launchcontainer', 'launchinpopup', 'lti');
+            $mform->setAdvanced('launchcontainer');
 
-        $mform->addElement('text', 'resourcekey', get_string('resourcekey', 'lti'));
-        $mform->setType('resourcekey', PARAM_TEXT);
-        $mform->setAdvanced('resourcekey');
-        $mform->addHelpButton('resourcekey', 'resourcekey', 'lti');
-        $mform->setForceLtr('resourcekey');
-        $mform->hideIf('resourcekey', 'typeid', 'in', $noncontentitemtypes);
+            $mform->addElement('text', 'resourcekey', get_string('resourcekey', 'lti'));
+            $mform->setType('resourcekey', PARAM_TEXT);
+            $mform->setAdvanced('resourcekey');
+            $mform->addHelpButton('resourcekey', 'resourcekey', 'lti');
+            $mform->setForceLtr('resourcekey');
+            $mform->hideIf('resourcekey', 'typeid', 'in', $noncontentitemtypes);
 
-        $mform->addElement('passwordunmask', 'password', get_string('password', 'lti'));
-        $mform->setType('password', PARAM_TEXT);
-        $mform->setAdvanced('password');
-        $mform->addHelpButton('password', 'password', 'lti');
-        $mform->hideIf('password', 'typeid', 'in', $noncontentitemtypes);
+            $mform->addElement('passwordunmask', 'password', get_string('password', 'lti'));
+            $mform->setType('password', PARAM_TEXT);
+            $mform->setAdvanced('password');
+            $mform->addHelpButton('password', 'password', 'lti');
+            $mform->hideIf('password', 'typeid', 'in', $noncontentitemtypes);
 
-        $mform->addElement('textarea', 'instructorcustomparameters', get_string('custom', 'lti'), array('rows' => 4, 'cols' => 60));
-        $mform->setType('instructorcustomparameters', PARAM_TEXT);
-        $mform->setAdvanced('instructorcustomparameters');
-        $mform->addHelpButton('instructorcustomparameters', 'custom', 'lti');
-        $mform->setForceLtr('instructorcustomparameters');
+            $mform->addElement('textarea', 'instructorcustomparameters', get_string('custom', 'lti'), array('rows' => 4, 'cols' => 60));
+            $mform->setType('instructorcustomparameters', PARAM_TEXT);
+            $mform->setAdvanced('instructorcustomparameters');
+            $mform->addHelpButton('instructorcustomparameters', 'custom', 'lti');
+            $mform->setForceLtr('instructorcustomparameters');
 
-        $mform->addElement('text', 'icon', get_string('icon_url', 'lti'), array('size' => '64'));
-        $mform->setType('icon', PARAM_URL);
-        $mform->setAdvanced('icon');
-        $mform->addHelpButton('icon', 'icon_url', 'lti');
-        $mform->hideIf('icon', 'typeid', 'in', $noncontentitemtypes);
+            $mform->addElement('text', 'icon', get_string('icon_url', 'lti'), array('size' => '64'));
+            $mform->setType('icon', PARAM_URL);
+            $mform->setAdvanced('icon');
+            $mform->addHelpButton('icon', 'icon_url', 'lti');
+            $mform->hideIf('icon', 'typeid', 'in', $noncontentitemtypes);
 
-        $mform->addElement('text', 'secureicon', get_string('secure_icon_url', 'lti'), array('size' => '64'));
-        $mform->setType('secureicon', PARAM_URL);
-        $mform->setAdvanced('secureicon');
-        $mform->addHelpButton('secureicon', 'secure_icon_url', 'lti');
-        $mform->hideIf('secureicon', 'typeid', 'in', $noncontentitemtypes);
+            $mform->addElement('text', 'secureicon', get_string('secure_icon_url', 'lti'), array('size' => '64'));
+            $mform->setType('secureicon', PARAM_URL);
+            $mform->setAdvanced('secureicon');
+            $mform->addHelpButton('secureicon', 'secure_icon_url', 'lti');
+            $mform->hideIf('secureicon', 'typeid', 'in', $noncontentitemtypes);
+        }
 
         // Add privacy preferences fieldset where users choose whether to send their data.
         $mform->addElement('header', 'privacy', get_string('privacy', 'lti'));
@@ -289,32 +315,6 @@ class mod_lti_mod_form extends moodleform_mod {
         }
 
         $PAGE->requires->js_init_call('M.mod_lti.editor.init', array(json_encode($jsinfo)), true, $module);
-
-        // Show configuration details only if not preset (when new) or user has the capabilities to do so (when editing).
-        $ctxcourse = context_course::instance($COURSE->id);
-        if (optional_param('update', 0, PARAM_INT)) {
-            $listtypes = has_capability('mod/lti:addgloballypreconfigedtoolinstance', $ctxcourse);
-            $listoptions = has_capability('mod/lti:adddefaultinstance', $ctxcourse);
-        } else {
-            $listtypes = !$typeid;
-            $listoptions = !$typeid && has_capability('mod/lti:adddefaultinstance', $ctxcourse);
-        }
-        if (!$listtypes) {
-            $mform->removeElement('typeid');
-            $mform->addElement('hidden', 'typeid', $typeid);
-            $mform->setType('typeid', PARAM_INT);
-        }
-        if (!$listoptions) {
-            $mform->removeElement('selectcontent');
-            $mform->removeElement('toolurl');
-            $mform->removeElement('securetoolurl');
-            $mform->removeElement('launchcontainer');
-            $mform->removeElement('resourcekey');
-            $mform->removeElement('password');
-            $mform->removeElement('instructorcustomparameters');
-            $mform->removeElement('icon');
-            $mform->removeElement('secureicon');
-        }
     }
 
 }

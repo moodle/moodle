@@ -41,8 +41,6 @@ class mod_lti_generator_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        $this->setAdminuser();
-
         $this->assertEquals(0, $DB->count_records('lti'));
 
         $course = $this->getDataGenerator()->create_course();
