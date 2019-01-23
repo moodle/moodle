@@ -337,6 +337,7 @@ class core_renderer extends \core_renderer {
         $context->showskiplink = !empty($context->skiptitle);
         $context->arialabel = $bc->arialabel;
         $context->ariarole = !empty($bc->attributes['role']) ? $bc->attributes['role'] : 'complementary';
+        $context->class = $bc->attributes['class'];
         $context->type = $bc->attributes['data-block'];
         $context->title = $bc->title;
         $context->content = $bc->content;
