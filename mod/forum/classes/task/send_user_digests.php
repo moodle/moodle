@@ -307,6 +307,12 @@ class send_user_digests extends \core\task\adhoc_task {
         }
         $posts->close();
 
+        if (empty($discussionids)) {
+            // All posts have been removed since the task was queued.
+            $this->empty_queue($this->recipient->id, $timenow);
+            return;
+        }
+
         list($in, $params) = $DB->get_in_or_equal($discussionids);
         $this->discussions = $DB->get_records_select('forum_discussions', "id {$in}", $params);
 
@@ -321,7 +327,21 @@ class send_user_digests extends \core\task\adhoc_task {
 
         $this->fill_digest_cache();
 
-        $DB->delete_records_select('forum_queue', "userid = :userid AND timemodified < :timemodified", $queueparams);
+        $this->empty_queue($this->recipient->id, $timenow);
+    }
+
+    /**
+     * Empty the queue of posts for this user.
+     *
+     * @param   array $queueparams The list of 
+     */
+    protected function empty_queue(int $userid, int $timemodified) : void {
+        global $DB;
+
+        $DB->delete_records_select('forum_queue', "userid = :userid AND timemodified < :timemodified", [
+                'userid' => $userid,
+                'timemodified' => $timemodified,
+            ]);
     }
 
     /**

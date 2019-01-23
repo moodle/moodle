@@ -213,6 +213,11 @@ class send_user_notifications extends \core\task\adhoc_task {
         }
         $posts->close();
 
+        if (empty($discussionids)) {
+            // All posts have been removed since the task was queued.
+            return;
+        }
+
         // Fetch all discussions.
         list($in, $params) = $DB->get_in_or_equal(array_values($discussionids));
         $this->discussions = $DB->get_records_select('forum_discussions', "id {$in}", $params);
