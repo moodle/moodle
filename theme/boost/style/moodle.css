@@ -8423,10 +8423,10 @@ a.text-danger:hover, a.notconnected:hover, .que a.validationerror:hover, a.text-
 a.text-light:hover, a.text-light:focus {
   color: #dae0e5 !important; }
 
-.text-dark {
+.text-dark, #categoryquestions .highlight {
   color: #373a3c !important; }
 
-a.text-dark:hover, a.text-dark:focus {
+a.text-dark:hover, #categoryquestions a.highlight:hover, a.text-dark:focus, #categoryquestions a.highlight:focus {
   color: #1f2021 !important; }
 
 .text-muted, a.dimmed,
