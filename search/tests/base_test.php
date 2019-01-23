@@ -166,7 +166,7 @@ class search_base_testcase extends advanced_testcase {
         $builder->disableOriginalConstructor();
         $stub = $builder->getMockForAbstractClass();
 
-        $expected = ['core-course-content'];
+        $expected = ['core-other'];
         $this->assertEquals($expected, $stub->get_category_names());
     }
 }
