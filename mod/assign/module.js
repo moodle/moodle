@@ -3,11 +3,17 @@ M.mod_assign = {};
 M.mod_assign.init_tree = function(Y, expand_all, htmlid) {
     var treeElement = Y.one('#'+htmlid);
     if (treeElement) {
-        Y.use('yui2-treeview', function(Y) {
+        Y.use('yui2-treeview', 'node-event-simulate', function(Y) {
             var tree = new Y.YUI2.widget.TreeView(htmlid);
 
             tree.subscribe("clickEvent", function(node, event) {
                 // We want normal clicking which redirects to url.
+                return false;
+            });
+
+            tree.subscribe("enterKeyPressed", function(node) {
+                // We want keyboard activation to trigger a click on the first link.
+                Y.one(node.getContentEl()).one('a').simulate('click');
                 return false;
             });
 
