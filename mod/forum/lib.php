@@ -3617,7 +3617,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
             $postcontent = highlight($highlight, $postcontent);
         }
         if (!empty($forum->displaywordcount)) {
-            $postcontent .= html_writer::tag('div', get_string('numwords', 'moodle', count_words($post->message)),
+            $postcontent .= html_writer::tag('div', get_string('numwords', 'moodle', count_words($postcontent)),
                 array('class'=>'post-word-count'));
         }
         $postcontent .= html_writer::tag('div', $attachedimages, array('class'=>'attachedimages'));
