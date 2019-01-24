@@ -16,10 +16,10 @@
 
 // Define the Iomad menu items that are defined by this plugin
 
-function local_report_user_logins() {
+function local_report_user_logins_menu() {
 
         return array(
-            'userlogins' => array(
+            'companies' => array(
                 'category' => 'Reports',
                 'tab' => 7,
                 'name' => get_string('pluginname', 'local_report_user_logins'),
@@ -27,7 +27,7 @@ function local_report_user_logins() {
                 'cap' => 'local/report_user_logins:view',
                 'icondefault' => 'report',
                 'style' => 'report',
-                'icon' => 'fa-sign-in',
+                'icon' => 'fa-group',
                 'iconsmall' => 'fa-bar-chart-o',
             ),
         );
