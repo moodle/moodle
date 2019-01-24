@@ -4,6 +4,8 @@ information provided here is intended especially for developers.
 === 3.7 ===
 
 * The method core_user::is_real_user() now returns false for userid = 0 parameter
+* 'mform1' dependencies (in themes, js...) will stop working because a randomly generated string has been added to the id
+attribute on forms to avoid collisions in forms loaded in AJAX requests.
 
 === 3.6 ===
 
