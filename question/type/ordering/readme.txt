@@ -63,8 +63,9 @@ were undertaken by Vadim Dvorovenko (Kemerovo State University of Culture and Ar
 Development of "relative to correct" grading method commissioned by Anatoliy Markiv and
 sponsored by Kings College London, UK.
 
-Code for privacy and automatic testing was added by Tim Hunt and Mahmoud Kassaei of Open
-University, UK.
+Code for privacy, automatic testing, keyboard interaction (for accessibility) and 
+standardization of Javascript to extend standard Moodle's Drag-and_Drop was added 
+by Tim Hunt and Mahmoud Kassaei of Open University, UK.
 
 Thanks also to Dominique Bauer (ETS, University of Quebec, Canada) for his help and ideas
 in testing the "Item selection type" and "Grading type", particularly the "Longest
