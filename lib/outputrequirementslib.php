@@ -1326,6 +1326,9 @@ class page_requirements_manager {
     protected function get_amd_footercode() {
         global $CFG;
         $output = '';
+
+        // We will cache JS if cachejs is not set, or it is true.
+        $cachejs = !isset($CFG->cachejs) || $CFG->cachejs;
         $jsrev = $this->get_jsrev();
 
         $jsloader = new moodle_url('/lib/javascript.php');
@@ -1341,15 +1344,21 @@ class page_requirements_manager {
             $jsextension = '';
         }
 
+        $minextension = '.min';
+        if (!$cachejs) {
+            $minextension = '';
+        }
+
         $requirejsconfig = str_replace('[BASEURL]', $requirejsloader, $requirejsconfig);
         $requirejsconfig = str_replace('[JSURL]', $jsloader, $requirejsconfig);
+        $requirejsconfig = str_replace('[JSMIN]', $minextension, $requirejsconfig);
         $requirejsconfig = str_replace('[JSEXT]', $jsextension, $requirejsconfig);
 
         $output .= html_writer::script($requirejsconfig);
-        if ($CFG->debugdeveloper) {
-            $output .= html_writer::script('', $this->js_fix_url('/lib/requirejs/require.js'));
-        } else {
+        if ($cachejs) {
             $output .= html_writer::script('', $this->js_fix_url('/lib/requirejs/require.min.js'));
+        } else {
+            $output .= html_writer::script('', $this->js_fix_url('/lib/requirejs/require.js'));
         }
 
         // First include must be to a module with no dependencies, this prevents multiple requests.
