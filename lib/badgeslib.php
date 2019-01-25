@@ -324,6 +324,28 @@ class badge {
                 $crit->make_clone($new);
             }
 
+            // Copy endorsement.
+            $endorsement = $this->get_endorsement();
+            if ($endorsement) {
+                unset($endorsement->id);
+                $endorsement->badgeid = $new;
+                $newbadge->save_endorsement($endorsement);
+            }
+
+            // Copy alignments.
+            $alignments = $this->get_alignments();
+            foreach ($alignments as $alignment) {
+                unset($alignment->id);
+                $alignment->badgeid = $new;
+                $newbadge->save_alignment($alignment);
+            }
+
+            // Copy related badges.
+            $related = $this->get_related_badges(true);
+            if (!empty($related)) {
+                $newbadge->add_related_badges(array_keys($related));
+            }
+
             // Trigger event, badge duplicated.
             $eventparams = array('objectid' => $new, 'context' => $PAGE->context);
             $event = \core\event\badge_duplicated::create($eventparams);
