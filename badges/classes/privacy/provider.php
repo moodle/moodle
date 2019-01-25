@@ -82,23 +82,6 @@ class provider implements
             'datemet' => 'privacy:metadata:criteriamet:datemet',
         ], 'privacy:metadata:criteriamet');
 
-        $collection->add_database_table('badge_endorsement', [
-            'issuername' => 'privacy:metadata:endorsement:issuername',
-            'issuerurl' => 'privacy:metadata:endorsement:issuerurl',
-            'issueremail' => 'privacy:metadata:endorsement:issueremail',
-            'claimid' => 'privacy:metadata:endorsement:claimid',
-            'claimcomment' => 'privacy:metadata:endorsement:claimcomment',
-            'dateissued' => 'privacy:metadata:endorsement:dateissued',
-        ], 'privacy:metadata:endorsement');
-
-        $collection->add_database_table('badge_competencies', [
-            'targetname' => 'privacy:metadata:alignment:targetname',
-            'targeturl' => 'privacy:metadata:alignment:targeturl',
-            'targetdescription' => 'privacy:metadata:alignment:targetdescription',
-            'targetframework' => 'privacy:metadata:alignment:targetframework',
-            'targetcode' => 'privacy:metadata:alignment:targetcode',
-        ], 'privacy:metadata:alignment');
-
         $collection->add_database_table('badge_manual_award', [
             'recipientid' => 'privacy:metadata:manualaward:recipientid',
             'issuerid' => 'privacy:metadata:manualaward:issuerid',
@@ -393,7 +376,7 @@ class provider implements
 
             // Export the badges.
             $uniqueid = $DB->sql_concat_join("'-'", ['b.id', 'COALESCE(bc.id, 0)', 'COALESCE(bi.id, 0)',
-                'COALESCE(bma.id, 0)', 'COALESCE(bcm.id, 0)', 'COALESCE(ba.id, 0)']);
+                'COALESCE(bma.id, 0)', 'COALESCE(bcm.id, 0)', 'COALESCE(brb.id, 0)', 'COALESCE(ba.id, 0)']);
             $sql = "
                 SELECT $uniqueid AS uniqueid, b.id,
                        bi.id AS biid, bi.dateissued, bi.dateexpire, bi.uniquehash,

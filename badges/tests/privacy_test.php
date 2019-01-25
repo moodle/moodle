@@ -650,7 +650,8 @@ class core_badges_privacy_testcase extends provider_testcase {
     /**
      * Relate a badge.
      *
-     * @param array $params Parameters.
+     * @param int $badgeid The badge ID.
+     * @param int $relatedbadgeid The related badge ID.
      * @return object
      */
     protected function relate_badge(int $badgeid, int $relatedbadgeid) {

@@ -165,7 +165,7 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
             // Get the endorsement, competencies and related badges.
             $badgeinstance = new badge($badge->id);
             $endorsement = $badgeinstance->get_endorsement();
-            $competencies = $badgeinstance->get_alignment();
+            $competencies = $badgeinstance->get_alignments();
             $relatedbadges = $badgeinstance->get_related_badges();
             $badge->competencies = array();
             $badge->relatedbadges = array();
