@@ -4114,6 +4114,14 @@ abstract class lesson_page extends lesson_base {
                 if (!$userisreviewing) {
                     if ($this->lesson->retake || (!$this->lesson->retake && $nretakes == 0)) {
                         $attempt->id = $DB->insert_record("lesson_attempts", $attempt);
+
+                        list($updatedattempt, $updatedresult) = $this->on_after_write_attempt($attempt, $result);
+                        if ($updatedattempt) {
+                            $attempt = $updatedattempt;
+                            $result = $updatedresult;
+                            $DB->update_record("lesson_attempts", $attempt);
+                        }
+
                         // Trigger an event: question answered.
                         $eventparams = array(
                             'context' => context_module::instance($PAGE->cm->id),
@@ -4191,6 +4199,7 @@ abstract class lesson_page extends lesson_base {
                 $options->para = true;
                 $options->overflowdiv = true;
                 $options->context = $context;
+                $options->attemptid = isset($attempt) ? $attempt->id : null;
 
                 $result->feedback .= $OUTPUT->box(format_text($this->get_contents(), $this->properties->contentsformat, $options),
                         'generalbox boxaligncenter p-y-1');
@@ -4244,21 +4253,27 @@ abstract class lesson_page extends lesson_base {
     }
 
     /**
-     * Formats the answer
+     * Formats the answer. Override for custom formatting.
      *
      * @param string $answer
      * @param context $context
      * @param int $answerformat
      * @return string Returns formatted string
      */
-    private function format_answer($answer, $context, $answerformat, $options = []) {
+    public function format_answer($answer, $context, $answerformat, $options = []) {
 
-        if (empty($options)) {
-            $options = [
-                'context' => $context,
-                'para' => true
-            ];
+        if (is_object($options)) {
+            $options = (array) $options;
         }
+
+        if (empty($options['context'])) {
+            $options['context'] = $context;
+        }
+
+        if (empty($options['para'])) {
+            $options['para'] = true;
+        }
+
         return format_text($answer, $answerformat, $options);
     }
 
@@ -4644,9 +4659,25 @@ abstract class lesson_page extends lesson_base {
         $result->studentanswerformat = FORMAT_MOODLE;
         $result->userresponse    = null;
         $result->feedback        = '';
+        // Store data that was POSTd by a form. This is currently used to perform any logic after the 1st write to the db
+        // of the attempt.
+        $result->postdata        = false;
         $result->nodefaultresponse  = false; // Flag for redirecting when default feedback is turned off
         $result->inmediatejump = false; // Flag to detect when we should do a jump from the page without further processing.
         return $result;
+    }
+
+    /**
+     * Do any post persistence processing logic of an attempt. E.g. in cases where we need update file urls in an editor
+     * and we need to have the id of the stored attempt. Should be overridden in each individual child
+     * pagetype on a as required basis
+     *
+     * @param object $attempt The attempt corresponding to the db record
+     * @param object $result The result from the 'check_answer' method
+     * @return array False if nothing to be modified, updated $attempt and $result if update required.
+     */
+    public function on_after_write_attempt($attempt, $result) {
+        return [false, false];
     }
 
     /**
