@@ -306,7 +306,11 @@ class core_badges_privacy_testcase extends provider_testcase {
         $u2ctx = context_user::instance($u2->id);
 
         $b1 = $this->create_badge(['usercreated' => $u3->id]);
+        $this->endorse_badge(['badgeid' => $b1->id]);
+        $this->align_badge(['badgeid' => $b1->id], ' (1)');
+        $this->align_badge(['badgeid' => $b1->id], ' (2)');
         $b2 = $this->create_badge(['type' => BADGE_TYPE_COURSE, 'courseid' => $c1->id, 'usermodified' => $u3->id]);
+        $this->relate_badge($b1->id, $b2->id);
         $b3 = $this->create_badge();
         $b3crit = $this->create_criteria_manual($b3->id);
         $b4 = $this->create_badge();
@@ -333,12 +337,45 @@ class core_badges_privacy_testcase extends provider_testcase {
         $path = [get_string('badges', 'core_badges'), "{$b1->name} ({$b1->id})"];
         $data = writer::with_context($u1ctx)->get_data($path);
         $this->assertEquals($b1->name, $data->name);
+        $this->assertEquals($b1->version, $data->version);
+        $this->assertEquals($b1->language, $data->language);
+        $this->assertEquals($b1->imageauthorname, $data->imageauthorname);
+        $this->assertEquals($b1->imageauthoremail, $data->imageauthoremail);
+        $this->assertEquals($b1->imageauthorurl, $data->imageauthorurl);
+        $this->assertEquals($b1->imagecaption, $data->imagecaption);
         $this->assertNotEmpty($data->issued);
         $this->assertEmpty($data->manual_award);
         $this->assertEmpty($data->criteria_met);
         $this->assertFalse(isset($data->course));
         $this->assertEquals('yoohoo', $data->issued['unique_hash']);
         $this->assertNull($data->issued['expires_on']);
+
+        $this->assertNotEmpty($data->endorsement);
+        $this->assertNotEmpty($data->endorsement['issuername']);
+        $this->assertNotEmpty($data->endorsement['issuerurl']);
+        $this->assertNotEmpty($data->endorsement['issueremail']);
+        $this->assertNotEmpty($data->endorsement['claimid']);
+        $this->assertNotEmpty($data->endorsement['claimcomment']);
+        $this->assertNotEmpty($data->endorsement['dateissued']);
+
+        $this->assertNotEmpty($data->related_badge);
+        $this->assertNotEmpty($data->related_badge[0]);
+        $this->assertEquals($data->related_badge[0]['badgeid'], $b2->id);
+        $this->assertEquals($data->related_badge[0]['badgename'], $b2->name);
+
+        $this->assertNotEmpty($data->alignment);
+        $this->assertNotEmpty($data->alignment[0]);
+        $this->assertNotEmpty($data->alignment[0]['targetname']);
+        $this->assertNotEmpty($data->alignment[0]['targeturl']);
+        $this->assertNotEmpty($data->alignment[0]['targetdescription']);
+        $this->assertNotEmpty($data->alignment[0]['targetframework']);
+        $this->assertNotEmpty($data->alignment[0]['targetcode']);
+        $this->assertNotEmpty($data->alignment[1]);
+        $this->assertNotEmpty($data->alignment[1]['targetname']);
+        $this->assertNotEmpty($data->alignment[1]['targeturl']);
+        $this->assertNotEmpty($data->alignment[1]['targetdescription']);
+        $this->assertNotEmpty($data->alignment[1]['targetframework']);
+        $this->assertNotEmpty($data->alignment[1]['targetcode']);
 
         $path = [get_string('badges', 'core_badges'), "{$b2->name} ({$b2->id})"];
         $data = writer::with_context($u1ctx)->get_data($path);
@@ -598,8 +635,75 @@ class core_badges_privacy_testcase extends provider_testcase {
             'attachment' => 1,
             'notification' => 0,
             'status' => BADGE_STATUS_ACTIVE,
+            'version' => OPEN_BADGES_V2,
+            'language' => 'en',
+            'imageauthorname' => 'Image author',
+            'imageauthoremail' => 'author@example.com',
+            'imageauthorurl' => 'http://image.example.com/',
+            'imagecaption' => 'Image caption'
         ], $params);
         $record->id = $DB->insert_record('badge', $record);
+
+        return $record;
+    }
+
+    /**
+     * Relate a badge.
+     *
+     * @param int $badgeid The badge ID.
+     * @param int $relatedbadgeid The related badge ID.
+     * @return object
+     */
+    protected function relate_badge(int $badgeid, int $relatedbadgeid) {
+        global $DB;
+        $record = (object) [
+            'badgeid' => $badgeid,
+            'relatedbadgeid' => $relatedbadgeid
+        ];
+        $record->id = $DB->insert_record('badge_related', $record);
+
+        return $record;
+    }
+
+    /**
+     * Align a badge.
+     *
+     * @param array $params Parameters.
+     * @return object
+     */
+    protected function align_badge(array $params = [], $suffix = '') {
+        global $DB;
+        $record = (object) array_merge([
+            'badgeid' => null,
+            'targetname' => "Alignment name" . $suffix,
+            'targeturl' => "http://issuer-url.domain.co.nz",
+            'targetdescription' => "Description" . $suffix,
+            'targetframework' => "Framework" . $suffix,
+            'targetcode' => "Code . $suffix"
+        ], $params);
+        $record->id = $DB->insert_record('badge_alignment', $record);
+
+        return $record;
+    }
+
+    /**
+     * Endorse a badge.
+     *
+     * @param array $params Parameters.
+     * @return object
+     */
+    protected function endorse_badge(array $params = []) {
+        global $DB;
+        $record = (object) array_merge([
+            'badgeid' => null,
+            'issuername' => "External issuer name",
+            'issuerurl' => "http://issuer-url.domain.co.nz",
+            'issueremail' => "issuer@example.com",
+            'claimid' => "Claim ID",
+            'claimcomment' => "Claim comment",
+            'dateissued' => time()
+        ], $params);
+        $record->id = $DB->insert_record('badge_endorsement', $record);
 
         return $record;
     }
