@@ -50,7 +50,7 @@
 }}
 <div class='competency-heading'>
     <h4 id="competency_link_{{competency.id}}">{{{competency.shortname}}}
-        <small>{{competency.idnumber}}</small>
+        <small><a href="{{pluginbaseurl}}/competencies.php?competencyid={{competency.id}}">{{competency.idnumber}}</a></small>
     </h4>
     {{#framework}}
         <div class='competency-origin'>

@@ -135,7 +135,8 @@ require(['tool_lp/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions', 
                    {{#quote}} {{{framework.shortname}}} {{/quote}},
                    '{{search}}',
                    '[data-enhance=tree]',
-                   {{canmanage}});
+                   {{canmanage}},
+                   {{competencyid}});
 
     actions.init(treeModel, {{pagecontextid}}, '{{{framework.taxonomies}}}', {{{rulesmodules}}});
 

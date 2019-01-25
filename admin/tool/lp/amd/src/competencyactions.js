@@ -672,6 +672,7 @@ define(['jquery',
         context.showdeleterelatedaction = true;
         context.showrelatedcompetencies = true;
         context.showrule = false;
+        context.pluginbaseurl = url.relativeUrl('/admin/tool/lp');
 
         if (competency.ruleoutcome != Outcomes.NONE) {
             // Get the outcome and rule name.

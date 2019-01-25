@@ -69,10 +69,11 @@ class manage_competencies_page implements renderable, templatable {
      * @param string $search Search string.
      * @param context $pagecontext The page context.
      */
-    public function __construct($framework, $search, $pagecontext) {
+    public function __construct($framework, $search, $pagecontext, $competency) {
         $this->framework = $framework;
         $this->pagecontext = $pagecontext;
         $this->search = $search;
+        $this->competency = $competency;
         $addpage = new single_button(
            new moodle_url('/admin/tool/lp/editcompetencyframework.php'),
            get_string('addnewcompetency', 'tool_lp')
@@ -96,6 +97,11 @@ class manage_competencies_page implements renderable, templatable {
         $data->search = $this->search;
         $data->pagecontextid = $this->pagecontext->id;
         $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
+
+        $competencyid = 0;
+        if ($this->competency) {
+            $data->competencyid = $this->competency->get('id');
+        }
 
         $rulesmodules = array();
         $rules = competency::get_available_rules();
