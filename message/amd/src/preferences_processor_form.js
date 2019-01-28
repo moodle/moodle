@@ -22,8 +22,8 @@
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_events'],
-        function($, Ajax, Notification, CustomEvents) {
+define(['jquery', 'core/ajax', 'core/notification'],
+        function($, Ajax, Notification) {
     /**
      * Constructor for the ProcessorForm.
      *
@@ -37,18 +37,9 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_eve
         this.root.find('form').on('submit', function(e) {
             e.preventDefault();
             this.save().done(function() {
-                $(document).trigger('mpp:formsubmitted');
+                $(element).trigger('mpp:formsubmitted');
             });
         }.bind(this));
-
-        var cancelButton = this.root.find('[data-cancel-button]');
-        CustomEvents.define(cancelButton, [
-            CustomEvents.events.activate
-        ]);
-
-        cancelButton.on(CustomEvents.events.activate, function() {
-            $(document).trigger('mpp:formcancelled');
-        });
     };
 
     /**
