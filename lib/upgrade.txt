@@ -1,6 +1,13 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.6.3 ===
+
+* The \core_rating provider's get_sql_join function now accepts an optional $innerjoin parameter.
+  It is recommended that privacy providers using this function call rewrite any long query into a number of separate
+  calls to add_from_sql for improved performance, and that the new argument is used.
+  This will allow queries to remain backwards-compatible with older versions of Moodle but will have significantly better performance in version supporting the innerjoin parameter.
+
 === 3.6.2 ===
 
 * The method core_user::is_real_user() now returns false for userid = 0 parameter
