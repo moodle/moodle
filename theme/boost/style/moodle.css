@@ -10370,6 +10370,9 @@ ul {
   width: 100%;
   color: #373a3c; }
 
+.dropdown-item:active a {
+  color: #fff; }
+
 .competency-tree ul {
   padding-left: 1.5rem; }
 

@@ -2047,6 +2047,9 @@ $footer-link-color: $bg-inverse-link-color !default;
     width: 100%;
     color: $body-color;
 }
+.dropdown-item:active a {
+    color: $dropdown-link-active-color;
+}
 
 .competency-tree {
     ul {
