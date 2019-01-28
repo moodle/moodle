@@ -74,6 +74,9 @@
     {{#js}}
         require(['jquery'], function($) {
             $('#{{id}}').change(function() {
+                if (!$(this).val()) {
+                    return false;
+                }
                 $('#{{formid}}').submit();
             });
         });
