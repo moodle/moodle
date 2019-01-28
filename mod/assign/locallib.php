@@ -2922,7 +2922,11 @@ class assign {
                 $submitted = $assignment->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_SUBMITTED);
 
             } else if (has_capability('mod/assign:submit', $context)) {
-                $usersubmission = $assignment->get_user_submission($USER->id, false);
+                if ($assignment->get_instance()->teamsubmission) {
+                    $usersubmission = $assignment->get_group_submission($USER->id, 0, false);
+                } else {
+                    $usersubmission = $assignment->get_user_submission($USER->id, false);
+                }
 
                 if (!empty($usersubmission->status)) {
                     $submitted = get_string('submissionstatus_' . $usersubmission->status, 'assign');
