@@ -80,26 +80,55 @@ class provider implements
      * @return contextlist the list of contexts containing user info for the user.
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
-        $ratingquery = \core_rating\privacy\provider::get_sql_join('r', 'mod_glossary', 'entry', 'ge.id', $userid);
+        $contextlist = new contextlist();
 
+        // Glossary entries.
         $sql = "SELECT c.id
                   FROM {context} c
-            INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
-            INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-            INNER JOIN {glossary} g ON g.id = cm.instance
-            INNER JOIN {glossary_entries} ge ON ge.glossaryid = g.id
-             LEFT JOIN {comments} com ON com.commentarea =:commentarea AND com.itemid = ge.id
-            {$ratingquery->join}
-                 WHERE ge.userid = :glossaryentryuserid OR com.userid = :commentuserid OR {$ratingquery->userwhere}";
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {glossary} g ON g.id = cm.instance
+                  JOIN {glossary_entries} ge ON ge.glossaryid = g.id
+                 WHERE ge.userid = :glossaryentryuserid";
         $params = [
             'contextlevel' => CONTEXT_MODULE,
             'modname' => 'glossary',
             'commentarea' => 'glossary_entry',
             'glossaryentryuserid' => $userid,
-            'commentuserid' => $userid,
-        ] + $ratingquery->params;
+        ];
+        $contextlist->add_from_sql($sql, $params);
 
-        $contextlist = new contextlist();
+        // Where the user has rated something.
+        $ratingquery = \core_rating\privacy\provider::get_sql_join('r', 'mod_glossary', 'entry', 'ge.id', $userid, true);
+        $sql = "SELECT c.id
+                  FROM {context} c
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {glossary} g ON g.id = cm.instance
+                  JOIN {glossary_entries} ge ON ge.glossaryid = g.id
+            {$ratingquery->join}
+                 WHERE {$ratingquery->userwhere}";
+        $params = [
+            'contextlevel' => CONTEXT_MODULE,
+            'modname' => 'glossary',
+        ] + $ratingquery->params;
+        $contextlist->add_from_sql($sql, $params);
+
+        // Comments.
+        $sql = "SELECT c.id
+                  FROM {context} c
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {glossary} g ON g.id = cm.instance
+                  JOIN {glossary_entries} ge ON ge.glossaryid = g.id
+                  JOIN {comments} com ON com.commentarea =:commentarea AND com.itemid = ge.id
+                 WHERE com.userid = :commentuserid";
+        $params = [
+            'contextlevel' => CONTEXT_MODULE,
+            'modname' => 'glossary',
+            'commentarea' => 'glossary_entry',
+            'commentuserid' => $userid,
+        ];
         $contextlist->add_from_sql($sql, $params);
 
         return $contextlist;
