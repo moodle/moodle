@@ -154,6 +154,94 @@ class core_rating_privacy_testcase extends \core_privacy\tests\provider_testcase
     }
 
     /**
+     * Ensure that the get_sql_join function returns valid SQL which returns the correct list of rated itemids.
+     * This makes use of the optional inner join argument.
+     */
+    public function test_get_sql_join_inner() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+
+        $u1 = $this->getDataGenerator()->create_user();
+        $u2 = $this->getDataGenerator()->create_user();
+        $u3 = $this->getDataGenerator()->create_user();
+
+        // Rate the courses.
+        $rm = new rating_manager();
+        $ratingoptions = (object) [
+            'component'   => 'core_course',
+            'ratingarea'  => 'course',
+            'scaleid'     => 100,
+        ];
+
+        // Rate all courses as u1, and something else in the same context.
+        $this->rate_as_user($u1->id, 'core_course', 'course', $course1->id, \context_course::instance($course1->id), 25);
+        $this->rate_as_user($u1->id, 'core_course', 'course', $course2->id, \context_course::instance($course2->id), 50);
+        $this->rate_as_user($u1->id, 'core_course', 'course', $course3->id, \context_course::instance($course3->id), 75);
+        $this->rate_as_user($u1->id, 'core_course', 'files', $course3->id, \context_course::instance($course3->id), 99);
+
+        // Rate course2 as u2, and something else in a different context/component..
+        $this->rate_as_user($u2->id, 'core_course', 'course', $course2->id, \context_course::instance($course2->id), 90);
+        $this->rate_as_user($u2->id, 'user', 'user', $u3->id, \context_user::instance($u3->id), 10);
+
+        // Return any course which the u1 has rated.
+        // u1 rated all three courses.
+        $ratingquery = provider::get_sql_join('r', 'core_course', 'course', 'c.id', $u1->id, true);
+        $sql = "SELECT c.id FROM {course} c {$ratingquery->join} WHERE {$ratingquery->userwhere}";
+        $courses = $DB->get_records_sql($sql, $ratingquery->params);
+
+        $this->assertCount(3, $courses);
+        $this->assertTrue(isset($courses[$course1->id]));
+        $this->assertTrue(isset($courses[$course2->id]));
+        $this->assertTrue(isset($courses[$course3->id]));
+
+        // User u1 rated files in course 3 only.
+        $ratingquery = provider::get_sql_join('r', 'core_course', 'files', 'c.id', $u1->id, true);
+        $sql = "SELECT c.id FROM {course} c {$ratingquery->join} WHERE {$ratingquery->userwhere}";
+        $courses = $DB->get_records_sql($sql, $ratingquery->params);
+
+        $this->assertCount(1, $courses);
+        $this->assertFalse(isset($courses[$course1->id]));
+        $this->assertFalse(isset($courses[$course2->id]));
+        $this->assertTrue(isset($courses[$course3->id]));
+
+        // Return any course which the u2 has rated.
+        // User u2 rated only course 2.
+        $ratingquery = provider::get_sql_join('r', 'core_course', 'course', 'c.id', $u2->id, true);
+        $sql = "SELECT c.id FROM {course} c {$ratingquery->join} WHERE {$ratingquery->userwhere}";
+        $courses = $DB->get_records_sql($sql, $ratingquery->params);
+
+        $this->assertCount(1, $courses);
+        $this->assertFalse(isset($courses[$course1->id]));
+        $this->assertTrue(isset($courses[$course2->id]));
+        $this->assertFalse(isset($courses[$course3->id]));
+
+        // User u2 rated u3.
+        $ratingquery = provider::get_sql_join('r', 'user', 'user', 'u.id', $u2->id, true);
+        $sql = "SELECT u.id FROM {user} u {$ratingquery->join} WHERE {$ratingquery->userwhere}";
+        $users = $DB->get_records_sql($sql, $ratingquery->params);
+
+        $this->assertCount(1, $users);
+        $this->assertFalse(isset($users[$u1->id]));
+        $this->assertFalse(isset($users[$u2->id]));
+        $this->assertTrue(isset($users[$u3->id]));
+
+        // Return any course which the u3 has rated.
+        // User u3 did not rate anything.
+        $ratingquery = provider::get_sql_join('r', 'core_course', 'course', 'c.id', $u3->id, true);
+        $sql = "SELECT c.id FROM {course} c {$ratingquery->join} WHERE {$ratingquery->userwhere}";
+        $courses = $DB->get_records_sql($sql, $ratingquery->params);
+
+        $this->assertCount(0, $courses);
+        $this->assertFalse(isset($courses[$course1->id]));
+        $this->assertFalse(isset($courses[$course2->id]));
+        $this->assertFalse(isset($courses[$course3->id]));
+    }
+
+    /**
      * Ensure that export_area_ratings exports all ratings that a user has made, and all ratings for a users own content.
      */
     public function test_export_area_ratings() {
