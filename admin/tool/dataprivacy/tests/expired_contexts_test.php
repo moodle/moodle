@@ -2223,6 +2223,40 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the is_context_expired functions when supplied with the front page course.
+     */
+    public function test_is_context_expired_frontpage() {
+        $this->resetAfterTest();
+
+        $purposes = $this->setup_basics('PT1H', 'PT1H', 'P1D');
+
+        $frontcourse = get_site();
+        $frontcoursecontext = \context_course::instance($frontcourse->id);
+
+        $sitenews = $this->getDataGenerator()->create_module('forum', ['course' => $frontcourse->id]);
+        $cm = get_coursemodule_from_instance('forum', $sitenews->id);
+        $sitenewscontext = \context_module::instance($cm->id);
+
+        $user = $this->getDataGenerator()->create_user(['lastaccess' => time() - YEARSECS]);
+
+        $this->assertFalse(expired_contexts_manager::is_context_expired($frontcoursecontext));
+        $this->assertFalse(expired_contexts_manager::is_context_expired($sitenewscontext));
+
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($frontcoursecontext, $user));
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($sitenewscontext, $user));
+
+        // Protecting the course contextlevel does not impact the front page.
+        $purposes->course->set('protected', 1)->save();
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($frontcoursecontext, $user));
+        $this->assertTrue(expired_contexts_manager::is_context_expired_or_unprotected_for_user($sitenewscontext, $user));
+
+        // Protecting the system contextlevel affects the front page, too.
+        $purposes->system->set('protected', 1)->save();
+        $this->assertFalse(expired_contexts_manager::is_context_expired_or_unprotected_for_user($frontcoursecontext, $user));
+        $this->assertFalse(expired_contexts_manager::is_context_expired_or_unprotected_for_user($sitenewscontext, $user));
+    }
+
+    /**
      * Test the is_context_expired functions when supplied with an expired course.
      */
     public function test_is_context_expired_course_expired() {
