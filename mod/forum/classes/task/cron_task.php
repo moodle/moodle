@@ -125,8 +125,6 @@ class cron_task extends \core\task\scheduled_task {
      * @param   \stdClass[] $posts
      */
     protected function process_post_data($posts) {
-        $trace = $this->get_trace();
-
         $discussionids = [];
         $forumids = [];
         $courseids = [];
@@ -173,11 +171,11 @@ class cron_task extends \core\task\scheduled_task {
         $this->fill_digest_cache();
         $this->log_finish("Done", 1);
 
+        $this->log_finish("All caches filled");
+
         $this->log_start("Queueing user tasks.");
         $this->queue_user_tasks();
-        $this->log_finish("All tasks queued.", 1);
-
-        $this->log_finish("All caches filled");
+        $this->log_finish("All tasks queued.");
     }
 
     /**
@@ -312,8 +310,6 @@ class cron_task extends \core\task\scheduled_task {
      */
     protected function queue_user_tasks() {
         global $CFG, $DB;
-
-        $trace = $this->get_trace();
 
         $timenow = time();
         $sitetimezone = \core_date::get_server_timezone();

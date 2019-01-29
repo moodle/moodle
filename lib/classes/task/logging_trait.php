@@ -38,12 +38,12 @@ trait logging_trait {
     /**
      * @var \progress_trace
      */
-    protected $_trace = null;
+    protected $trace = null;
 
     /**
      * @var \stdClass
      */
-    protected $_tracestats = null;
+    protected $tracestats = null;
 
     /**
      * Get the progress_trace.
@@ -51,12 +51,12 @@ trait logging_trait {
      * @return  \progress_trace
      */
     protected function get_trace() {
-        if (null === $this->_trace) {
-            $this->_trace = new \text_progress_trace();
-            $this->_tracestats = (object) [];
+        if (null === $this->trace) {
+            $this->trace = new \text_progress_trace();
+            $this->tracestats = new \stdClass();
         }
 
-        return $this->_trace;
+        return $this->trace;
     }
 
     /**
@@ -77,16 +77,14 @@ trait logging_trait {
      * @param   int     $depth
      */
     protected function log_start($message, $depth = 0) {
-        $this->get_trace();
+        $this->log($message, $depth);
 
         if (defined('MDL_PERFTOLOG') && MDL_PERFTOLOG) {
-            $this->_tracestats->$depth = [
+            $this->tracestats->$depth = [
                 'mem' => memory_get_usage(),
                 'time' => microtime(),
             ];
         }
-
-        $this->log($message, $depth);
     }
 
     /**
@@ -97,8 +95,9 @@ trait logging_trait {
      */
     protected function log_finish($message, $depth = 0) {
         $this->log($message, $depth);
-        if (isset($this->_tracestats->$depth)) {
-            $startstats = $this->_tracestats->$depth;
+
+        if (isset($this->tracestats->$depth)) {
+            $startstats = $this->tracestats->$depth;
             $this->log(
                     sprintf("Time taken %s, memory total: %s, Memory growth: %s, Memory peak: %s",
                         microtime_diff($startstats['time'], microtime()),
