@@ -86,81 +86,90 @@ class local_email_renderer extends plugin_renderer_base {
         $table->align = array ("left", "center", "center", "center", "center", "center", "center", "center");
 
         $i = $page * $perpage;
+        $max = ($page + 1) * $perpage;
 
-        foreach ($templates as $template) {
-            while ($i < $ntemplates && $configtemplates[$i] < $template->name) {
-                $table->data[] = local_email::create_default_template_row($configtemplates[$i], $strdefault,
-                                                             $stradd, $strsend, $enable, $lang, $prefix);
-                $i++;
+        while ($i < $max && $i < $ntemplates) {
+            $found = false;
+            foreach ($templates as $templateid => $template) {
+                if ($template->name == $configtemplates[$i]) {
+                    $found = true;
+                    $templatename = $configtemplates[$i];
+                    unset($templates[$templateid]);
+                    break;
+                }
             }
-            $templatename = $configtemplates[$i];
-            $row = new html_table_row();
-            $row->cells[] = $templatename;
-            if ($enable) {
-                if ($template->disabled) {
-                    $checked = "";
-                } else {
-                    $checked = "checked";
-                }
-                $value ="{$prefix}.e.{$templatename}";
-                $enablebutton = '<label class="switch"><input class="checkbox" type="checkbox" ' . $checked. ' value="' . $value . '" />' .
-                                "<span class='slider round'></span></label>";
-                $cell = new html_table_cell($enablebutton);
-                $row->cells[] = $cell;
-                if ($template->disabledmanager) {
-                    $checked = '';
-                } else {
-                    $checked = 'checked';
-                }
-                $value ="{$prefix}.em.{$templatename}";
-                $enablemanagerbutton = '<label class="switch"><input class="checkbox " type="checkbox" ' . $checked. ' value="' . $value . '" />' .
-                                       "<span class='slider round'></span></label>";
-                $cell = new html_table_cell($enablemanagerbutton);
-                $row->cells[] = $cell;
-                if ($template->disabledsupervisor) {
-                    $checked = '';
-                } else {
-                    $checked = 'checked';
-                }
-                $value ="{$prefix}.es.{$templatename}";
-                $enablesupervisorbutton = '<label class="switch"><input class="checkbox" type="checkbox" ' . $checked. ' value="' . $value . '" />' .
-                                          "<span class='slider round'></span></label>";
-                $cell = new html_table_cell($enablesupervisorbutton);
-                $row->cells[] = $cell;
-            }
-            if ($strdelete) {
-                $deletebutton = "<a class='btn' href='" . new moodle_url('template_list.php',
-                              array("delete" => $template->id, 'lang' => $lang, 'sesskey' => sesskey())) ."'>$strdelete</a>";
+            if (!$found) {
+                $table->data[] = local_email::create_default_template_row($configtemplates[$i],
+                                                                          $strdefault,
+                                                                          $stradd,
+                                                                          $strsend,
+                                                                          $enable,
+                                                                          $lang,
+                                                                          $prefix,
+                                                                          $templatesetid);
             } else {
-                $deletebutton = "";
-            }
+                $row = new html_table_row();
+                $row->cells[] = $templatename;
+                if ($enable) {
+                    if ($template->disabled) {
+                        $checked = "";
+                    } else {
+                        $checked = "checked";
+                    }
+                    $value ="{$prefix}.e.{$templatename}";
+                    $enablebutton = '<label class="switch"><input class="checkbox" type="checkbox" ' . $checked. ' value="' . $value . '" />' .
+                                    "<span class='slider round'></span></label>";
+                    $cell = new html_table_cell($enablebutton);
+                    $row->cells[] = $cell;
+                    if ($template->disabledmanager) {
+                        $checked = '';
+                    } else {
+                        $checked = 'checked';
+                    }
+                    $value ="{$prefix}.em.{$templatename}";
+                    $enablemanagerbutton = '<label class="switch"><input class="checkbox " type="checkbox" ' . $checked. ' value="' . $value . '" />' .
+                                           "<span class='slider round'></span></label>";
+                    $cell = new html_table_cell($enablemanagerbutton);
+                    $row->cells[] = $cell;
+                    if ($template->disabledsupervisor) {
+                        $checked = '';
+                    } else {
+                        $checked = 'checked';
+                    }
+                    $value ="{$prefix}.es.{$templatename}";
+                    $enablesupervisorbutton = '<label class="switch"><input class="checkbox" type="checkbox" ' . $checked. ' value="' . $value . '" />' .
+                                              "<span class='slider round'></span></label>";
+                    $cell = new html_table_cell($enablesupervisorbutton);
+                    $row->cells[] = $cell;
+                }
+                if ($strdelete) {
+                    $deletebutton = "<a class='btn' href='" . new moodle_url('template_list.php',
+                                  array("delete" => $template->id, 'lang' => $lang, 'sesskey' => sesskey())) ."'>$strdelete</a>";
+                } else {
+                    $deletebutton = "";
+                }
 
-            if ($stredit) {
-                $editbutton = "<a class='btn' href='" . new moodle_url('template_edit_form.php',
-                              array("templateid" => $template->id, 'lang' => $lang)) . "'>$stredit</a>";
-            } else {
-                $editbutton = "";
-            }
+                if ($stredit) {
+                    $editbutton = "<a class='btn' href='" . new moodle_url('template_edit_form.php',
+                                  array("templateid" => $template->id, 'lang' => $lang)) . "'>$stredit</a>";
+                } else {
+                    $editbutton = "";
+                }
 
-            if ($strsend && local_email::allow_sending_to_template($templatename)) {
-                $sendbutton = "<a class='btn' href='" . new moodle_url('template_send_form.php',
-                              array("templateid" => $template->id, 'lang' => $lang)) . "'>$strsend</a>";
-            } else {
-                $sendbutton = "";
+                if ($strsend && local_email::allow_sending_to_template($templatename)) {
+                    $sendbutton = "<a class='btn' href='" . new moodle_url('template_send_form.php',
+                                  array("templateid" => $template->id, 'lang' => $lang)) . "'>$strsend</a>";
+                } else {
+                    $sendbutton = "";
+                }
+                $rowform = new email_template_edit_form(new moodle_url('template_edit_form.php'), $company->id, $templatename, $templatesetid);
+                $rowform->set_data(array('templatename' => $templatename));
+                $cell = new html_table_cell($rowform->render());
+                $row->cells[] = $cell;
+                $table->data[] = $row;
             }
-            $rowform = new email_template_edit_form(new moodle_url('template_edit_form.php'), $company->id, $templatename, $templatesetid);
-            $rowform->set_data(array('templatename' => $templatename));
-            $cell = new html_table_cell($rowform->render());
-            $row->cells[] = $cell;
-            $table->data[] = $row;
 
             // Need to increase the counter to skip the default template.
-            $i++;
-        }
-
-        while ($i < $ntemplates) {
-            $table->data[] = local_email::create_default_template_row($configtemplates[$i],
-                              $strdefault, $stradd, $strsend, $enable, $lang, $prefix, $templatesetid);
             $i++;
         }
 

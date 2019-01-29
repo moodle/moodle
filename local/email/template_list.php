@@ -408,14 +408,17 @@ echo $output->paging_bar($ntemplates, $page, $perpage, $baseurl);
 flush();
 
 if ($manage) {
+echo "A</br>";
     if (empty($templatesetid)) {
         // Display the list of templates.
         $templates = $DB->get_records('email_templateset', array(), 'templatesetname');
         echo $output->email_templatesets($templates, $linkurl);
     } else {
     }
-} else if ($templates = $DB->get_records('email_template', array('companyid' => $companyid, 'lang' => $lang),
-                                    'name', '*', $page * $perpage, $perpage)) {
+    
+} else {
+    $templates = $DB->get_records('email_template', array('companyid' => $companyid, 'lang' => $lang),
+                                    'name', '*', $page * $perpage, $perpage);
     // get heading
     if (empty($templatesetid)) {
         $prefix = "c." . $companyid;
