@@ -68,7 +68,7 @@ class comment_manager {
                        ON u.id=c.userid
               ORDER BY c.timecreated ASC";
         $rs = $DB->get_recordset_sql($sql, null, $start, $this->perpage);
-        $formatoptions = array('overflowdiv' => true);
+        $formatoptions = array('overflowdiv' => true, 'blanktarget' => true);
         foreach ($rs as $item) {
             // Set calculated fields
             $item->fullname = fullname($item);
