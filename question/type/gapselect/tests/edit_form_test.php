@@ -28,7 +28,7 @@ global $CFG;
 
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 require_once($CFG->dirroot . '/question/type/edit_question_form.php');
-require_once($CFG->dirroot . '/question/type/gapselect/edit_form_base.php');
+require_once($CFG->dirroot . '/question/type/gapselect/edit_gapselect_form.php');
 
 
 /**
@@ -98,7 +98,7 @@ class qtype_gapselect_edit_form_test extends advanced_testcase {
 
         $a = new stdClass();
         $a->tag = '&lt;ijk&gt;';
-        $a->allowed = '&lt;sub&gt;, &lt;sup&gt;, &lt;b&gt;, &lt;i&gt;, &lt;em&gt;, &lt;strong&gt;';
+        $a->allowed = '&lt;sub&gt;, &lt;sup&gt;, &lt;b&gt;, &lt;i&gt;, &lt;em&gt;, &lt;strong&gt;, &lt;span&gt;';
         $this->assertEquals(get_string('tagsnotallowed', 'qtype_gapselect', $a), $form->get_illegal_tag_error('<ijk>'));
 
         $a->tag = '&lt;/cat&gt;';
@@ -126,5 +126,46 @@ class qtype_gapselect_edit_form_test extends advanced_testcase {
         $a->tag = '&lt;i&gt;';
         $this->assertEquals(get_string('tagsnotallowedatall', 'qtype_gapselect', $a),
                 $form->get_illegal_tag_error('<i><br /></i>'));
+    }
+
+    /**
+     * Test the form correctly validates the HTML allowed in choices.
+     */
+    public function test_choices_validation() {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        $syscontext = context_system::instance();
+        $category = question_make_default_categories(array($syscontext));
+        $fakequestion = new stdClass();
+        $fakequestion->qtype = 'gapselect';
+        $fakequestion->contextid = $syscontext->id;
+        $fakequestion->createdby = 2;
+        $fakequestion->category = $category->id;
+        $fakequestion->questiontext = 'Test [[1]] question [[2]]';
+        $fakequestion->options = new stdClass();
+        $fakequestion->options->answers = array();
+        $fakequestion->formoptions = new stdClass();
+        $fakequestion->formoptions->movecontext = null;
+        $fakequestion->formoptions->repeatelements = true;
+        $fakequestion->inputs = null;
+
+        $form = new qtype_gapselect_edit_form(new moodle_url('/'), $fakequestion, $category,
+                new question_edit_contexts($syscontext));
+
+        $submitteddata = [
+                'category' => $category->id,
+                'questiontext' => ['text' => 'Test [[1]] question [[2]]', 'format' => FORMAT_HTML],
+                'choices' => [
+                        ['answer' => 'frog'],
+                        ['answer' => '<b>toad</b>'],
+                ],
+        ];
+
+        $errors = $form->validation($submitteddata, []);
+
+        $this->assertArrayNotHasKey('choices[0]', $errors);
+        $this->assertEquals('&lt;b&gt; is not allowed. (No HTML is allowed here.)',
+                $errors['choices[1]']);
     }
 }

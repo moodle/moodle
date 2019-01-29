@@ -855,4 +855,20 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_state(question_state::$gradedright);
         $this->check_current_mark(3);
     }
+
+    public function test_mixed_lang_rendering() {
+
+        // Create a mixe drag-and-drop question.
+        $dd = test_question_maker::make_question('ddimageortext', 'mixedlang');
+        $dd->shufflechoices = false;
+        $this->start_attempt_at_question($dd, 'interactive', 1);
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                new question_pattern_expectation('~<div class="group1 draghome dragitemhomes1 choice1 yui3-cssfonts"><span lang="fr">la</span></div>~'),
+                new question_pattern_expectation('~<div class="group1 draghome dragitemhomes2 choice2 yui3-cssfonts"><span lang="fr">ma</span></div>~')
+        );
+    }
 }
