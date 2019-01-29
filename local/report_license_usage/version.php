@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version  = 2016120600;
+$plugin->version  = 2019012100;
 $plugin->requires = 2010090501;
+$plugin->dependencies = array('local_report_user_license_allocations' => 2019012100);
 $plugin->component  = 'local_report_license_usage';
