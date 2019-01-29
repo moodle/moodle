@@ -1,4 +1,4 @@
-<?PHP
+<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,6 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version  = 2019012100;
-$plugin->requires = 2018120300;
-$plugin->component  = 'local_report_user_license_allocations';
+$observers = array(
+
+    array(
+        'eventname' => '\block_iomad_company_admin\event\user_license_assigned',
+        'callback' => '\local_report_user_license_allocations\observer::user_license_assigned',
+        'priority' => 9999,
+    ),
+
+    array(
+        'eventname' => '\block_iomad_company_admin\event\user_license_unassigned',
+        'callback' => '\local_report_user_license_allocations\observer::user_license_unassigned',
+        'priority' => 9999,
+    ),
+);

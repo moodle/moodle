@@ -181,13 +181,12 @@ $companydepartment = $parentlevel->id;
 
 // all companies?
 if ($parentslist = $company->get_parent_companies_recursive()) {
-    $companysql = " AND id NOT IN (
+    $companysql = " AND u.id NOT IN (
                     SELECT userid FROM {company_users}
                     WHERE companyid IN (" . implode(',', array_keys($parentslist)) ."))";
 } else {
     $companysql = "";
 }
-
 
 if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance()) ||
     !empty($SESSION->currenteditingcompany)) {

@@ -15,5 +15,5 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 $plugin->version  = 2019012100;
-$plugin->requires = 2010090501;
+$plugin->requires = 2018120300;
 $plugin->component  = 'local_report_user_logins';
