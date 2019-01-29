@@ -138,9 +138,6 @@ class send_user_digests extends \core\task\adhoc_task {
      * Send out messages.
      */
     public function execute() {
-        // Terminate if not able to fetch all digests in 5 minutes.
-        \core_php_time_limit::raise(300);
-
         $starttime = time();
 
         $this->recipient = \core_user::get_user($this->get_userid());

@@ -99,6 +99,9 @@ class send_user_notifications extends \core\task\adhoc_task {
     public function execute() {
         global $CFG;
 
+        // Raise the time limit for each discussion.
+        \core_php_time_limit::raise(120);
+
         $this->recipient = \core_user::get_user($this->get_userid());
 
         // Create the generic messageinboundgenerator.
