@@ -66,7 +66,8 @@ class behat_user extends behat_base {
 
         $value = $fld->get_attribute('autocomplete');
         if ($value != $purpose) {
-            throw new ExpectationException('The "' . $field . '" field does not have purposea "' . $purpose . '"', $this->getSession());
+            $reason = 'The "' . $field . '" field does not have purpose "' . $purpose . '"';
+            throw new ExpectationException($reason, $this->getSession());
         }
     }
 
