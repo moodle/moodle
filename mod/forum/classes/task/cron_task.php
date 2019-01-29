@@ -342,7 +342,7 @@ class cron_task extends \core\task\scheduled_task {
                 $task->set_userid($user->id);
                 $task->set_component('mod_forum');
                 $task->set_next_run_time($digesttime);
-                \core\task\manager::queue_adhoc_task($task, true);
+                \core\task\manager::reschedule_or_queue_adhoc_task($task);
                 $usercounts['digests']++;
                 $send = true;
             }
