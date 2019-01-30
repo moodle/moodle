@@ -340,7 +340,7 @@ EOD;
         }
 
         if (!isset($record['description'])) {
-            $record['description'] = "Test cohort $i\n$this->loremipsum";
+            $record['description'] = "Description for '{$record['name']}' \n$this->loremipsum";
         }
 
         if (!isset($record['descriptionformat'])) {

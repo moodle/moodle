@@ -18,9 +18,11 @@ Feature: Upload users to a cohort
     And I am on "Course 1" course homepage
     And I add "Cohort sync" enrolment method with:
       | Cohort | Cohort 1 |
+    And I should see "Cohort sync (Cohort 1 - Student)"
     And I am on "Course 2" course homepage
     And I add "Cohort sync" enrolment method with:
       | Cohort | Cohort 2 |
+    And I should see "Cohort sync (Cohort 2 - Student)"
     When I navigate to "Users > Accounts > Upload users" in site administration
     And I upload "lib/tests/fixtures/upload_users_cohorts.csv" file to "File" filemanager
     And I press "Upload users"
