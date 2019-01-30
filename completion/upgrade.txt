@@ -1,6 +1,10 @@
 This files describes API changes in /completion/* - completion,
 information provided here is intended especially for developers.
 
+=== 3.7 ===
+ * External function core_completion_external::get_activities_completion_status new returns the following additional field:
+   - valueused (indicates whether the completion state affects the availability of other content)
+
 === 2.9 ===
 
 * A completed and failed activity counts as a completed activity for

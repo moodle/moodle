@@ -268,7 +268,8 @@ class core_completion_external extends external_api {
                        'state'         => $activitycompletiondata->completionstate,
                        'timecompleted' => $activitycompletiondata->timemodified,
                        'tracking'      => $activity->completion,
-                       'overrideby'    => $activitycompletiondata->overrideby
+                       'overrideby'    => $activitycompletiondata->overrideby,
+                       'valueused'     => core_availability\info::completion_value_used($course, $activity->id)
             );
         }
 
@@ -302,6 +303,8 @@ class core_completion_external extends external_api {
                                                                     0 means none, 1 manual, 2 automatic'),
                             'overrideby' => new external_value(PARAM_INT, 'The user id who has overriden the status, or null',
                                 VALUE_OPTIONAL),
+                            'valueused' => new external_value(PARAM_BOOL, 'Whether the completion status affects the availability
+                                    of another activity.', VALUE_OPTIONAL),
                         ), 'Activity'
                     ), 'List of activities status'
                 ),

@@ -103,12 +103,14 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
         $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1,
                                                                     'groupmode' => SEPARATEGROUPS,
                                                                     'groupmodeforce' => 1));
+        availability_completion\condition::wipe_static_cache();
 
         $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id),
                                                              array('completion' => 1));
         $forum = $this->getDataGenerator()->create_module('forum',  array('course' => $course->id),
                                                              array('completion' => 1));
-        $assign = $this->getDataGenerator()->create_module('assign',  array('course' => $course->id));
+        $availability = '{"op":"&","c":[{"type":"completion","cm":' . $forum->cmid .',"e":1}],"showc":[true]}';
+        $assign = $this->getDataGenerator()->create_module('assign', ['course' => $course->id], ['availability' => $availability]);
         $page = $this->getDataGenerator()->create_module('page',  array('course' => $course->id),
                                                             array('completion' => 1, 'visible' => 0));
 
@@ -146,10 +148,12 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
                 $activitiesfound++;
                 $this->assertEquals(COMPLETION_COMPLETE, $status['state']);
                 $this->assertEquals(COMPLETION_TRACKING_MANUAL, $status['tracking']);
+                $this->assertTrue($status['valueused']);
             } else if ($status['cmid'] == $data->cmid and $status['modname'] == 'data' and $status['instance'] == $data->id) {
                 $activitiesfound++;
                 $this->assertEquals(COMPLETION_INCOMPLETE, $status['state']);
                 $this->assertEquals(COMPLETION_TRACKING_MANUAL, $status['tracking']);
+                $this->assertFalse($status['valueused']);
             }
         }
         $this->assertEquals(2, $activitiesfound);

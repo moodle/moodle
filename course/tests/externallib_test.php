@@ -870,14 +870,16 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $labeldescription = 'This is a very long label to test if more than 50 characters are returned.
                 So bla bla bla bla <b>bold bold bold</b> bla bla bla bla.';
         $label = $this->getDataGenerator()->create_module('label', array('course' => $course->id,
-            'intro' => $labeldescription));
+            'intro' => $labeldescription, 'completion' => COMPLETION_TRACKING_MANUAL));
         $labelcm = get_coursemodule_from_instance('label', $label->id);
         $tomorrow = time() + DAYSECS;
         // Module with availability restrictions not met.
+        $availability = '{"op":"&","c":[{"type":"date","d":">=","t":' . $tomorrow . '},'
+                .'{"type":"completion","cm":' . $label->cmid .',"e":1}],"showc":[true,true]}';
         $url = $this->getDataGenerator()->create_module('url',
             array('course' => $course->id, 'name' => 'URL: % & $ ../', 'section' => 2, 'display' => RESOURCELIB_DISPLAY_POPUP,
                 'popupwidth' => 100, 'popupheight' => 100),
-            array('availability' => '{"op":"&","c":[{"type":"date","d":">=","t":' . $tomorrow . '}],"showc":[true]}'));
+            array('availability' => $availability));
         $urlcm = get_coursemodule_from_instance('url', $url->id);
         // Module for the last section.
         $this->getDataGenerator()->create_module('url',
@@ -1189,6 +1191,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         list($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm) = $this->prepare_get_course_contents_test();
+        availability_completion\condition::wipe_static_cache();
 
         // Test activity not completed yet.
         $result = core_course_external::get_course_contents($course->id, array(
@@ -1202,6 +1205,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, $result[0]['modules'][0]["completiondata"]['state']);
         $this->assertEquals(0, $result[0]['modules'][0]["completiondata"]['timecompleted']);
         $this->assertEmpty($result[0]['modules'][0]["completiondata"]['overrideby']);
+        $this->assertFalse($result[0]['modules'][0]["completiondata"]['valueused']);
 
         // Set activity completed.
         core_completion_external::update_activity_completion_status_manually($forumcm->id, true);
@@ -1214,6 +1218,20 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(COMPLETION_COMPLETE, $result[0]['modules'][0]["completiondata"]['state']);
         $this->assertNotEmpty($result[0]['modules'][0]["completiondata"]['timecompleted']);
         $this->assertEmpty($result[0]['modules'][0]["completiondata"]['overrideby']);
+
+        // Test activity with completion value that is used in an availability condition.
+        $result = core_course_external::get_course_contents($course->id, array(
+                array("name" => "modname", "value" => "label"), array("name" => "modid", "value" => $labelcm->instance)));
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
+
+        $this->assertCount(1, $result[0]['modules']);
+        $this->assertEquals("label", $result[0]['modules'][0]["modname"]);
+        $this->assertEquals(COMPLETION_TRACKING_MANUAL, $result[0]['modules'][0]["completion"]);
+        $this->assertEquals(0, $result[0]['modules'][0]["completiondata"]['state']);
+        $this->assertEquals(0, $result[0]['modules'][0]["completiondata"]['timecompleted']);
+        $this->assertEmpty($result[0]['modules'][0]["completiondata"]['overrideby']);
+        $this->assertTrue($result[0]['modules'][0]["completiondata"]['valueused']);
 
         // Disable completion.
         $CFG->enablecompletion = 0;

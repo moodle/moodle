@@ -277,7 +277,8 @@ class core_course_external extends external_api {
                             $module['completiondata'] = array(
                                 'state'         => $completiondata->completionstate,
                                 'timecompleted' => $completiondata->timemodified,
-                                'overrideby'    => $completiondata->overrideby
+                                'overrideby'    => $completiondata->overrideby,
+                                'valueused'     => core_availability\info::completion_value_used($course, $cm->id)
                             );
                         }
 
@@ -440,6 +441,8 @@ class core_course_external extends external_api {
                                             'timecompleted' => new external_value(PARAM_INT, 'Timestamp for completion status.'),
                                             'overrideby' => new external_value(PARAM_INT, 'The user id who has overriden the
                                                 status.'),
+                                            'valueused' => new external_value(PARAM_BOOL, 'Whether the completion status affects
+                                                the availability of another activity.', VALUE_OPTIONAL),
                                         ), 'Module completion data.', VALUE_OPTIONAL
                                     ),
                                     'contents' => new external_multiple_structure(
