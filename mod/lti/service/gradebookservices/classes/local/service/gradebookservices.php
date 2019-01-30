@@ -326,7 +326,7 @@ class gradebookservices extends service_base {
         require_once($CFG->libdir . '/gradelib.php');
         $finalgrade = null;
         $timemodified = null;
-        if (isset($score->scoreGiven) && $score->scoreGiven) {
+        if (isset($score->scoreGiven)) {
             $finalgrade = grade_floatval($score->scoreGiven);
             $max = 1;
             if (isset($score->scoreMaximum)) {
