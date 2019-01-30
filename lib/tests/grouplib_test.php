@@ -908,6 +908,78 @@ class core_grouplib_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests for groups_get_all_groups when grouping is set and we want members as well.
+     */
+    public function test_groups_get_all_groups_in_grouping_with_members() {
+        $generator = $this->getDataGenerator();
+        $this->resetAfterTest();
+
+        // Create courses.
+        $course1 = $generator->create_course();
+        $course2 = $generator->create_course();
+
+        // Create users.
+        $c1user1 = $generator->create_user();
+        $c12user1 = $generator->create_user();
+        $c12user2 = $generator->create_user();
+
+        // Enrol users.
+        $generator->enrol_user($c1user1->id, $course1->id);
+        $generator->enrol_user($c12user1->id, $course1->id);
+        $generator->enrol_user($c12user1->id, $course2->id);
+        $generator->enrol_user($c12user2->id, $course1->id);
+        $generator->enrol_user($c12user2->id, $course2->id);
+
+        // Create groupings and groups for course1.
+        $c1grouping1 = $generator->create_grouping(array('courseid' => $course1->id));
+        $c1grouping2 = $generator->create_grouping(array('courseid' => $course1->id));
+        $c1group1 = $generator->create_group(array('courseid' => $course1->id));
+        $c1group2 = $generator->create_group(array('courseid' => $course1->id));
+        $c1group3 = $generator->create_group(array('courseid' => $course1->id));
+        groups_assign_grouping($c1grouping1->id, $c1group1->id);
+        groups_assign_grouping($c1grouping1->id, $c1group2->id);
+        groups_assign_grouping($c1grouping2->id, $c1group3->id);
+
+        // Create groupings and groups for course2.
+        $c2grouping1 = $generator->create_grouping(array('courseid' => $course2->id));
+        $c2group1 = $generator->create_group(array('courseid' => $course1->id));
+        groups_assign_grouping($c2grouping1->id, $c2group1->id);
+
+        // Assign users to groups.
+        $generator->create_group_member(array('groupid' => $c1group1->id, 'userid' => $c1user1->id));
+        $generator->create_group_member(array('groupid' => $c1group1->id, 'userid' => $c12user1->id));
+        $generator->create_group_member(array('groupid' => $c1group2->id, 'userid' => $c12user2->id));
+        $generator->create_group_member(array('groupid' => $c2group1->id, 'userid' => $c12user2->id));
+
+        // Test without userid.
+        $groups = groups_get_all_groups($course1->id, null, $c1grouping1->id, 'g.*', true);
+
+        $this->assertEquals(
+                [$c1group1->id, $c1group2->id],
+                array_keys($groups),
+                '', 0.0, 10, true
+        );
+        $this->assertEquals(
+                [$c1user1->id => $c1user1->id, $c12user1->id => $c12user1->id],
+                $groups[$c1group1->id]->members
+        );
+        $this->assertEquals(
+                [$c12user2->id => $c12user2->id],
+                $groups[$c1group2->id]->members
+        );
+
+        // Test with userid.
+        $groups = groups_get_all_groups($course1->id, $c1user1->id, $c1grouping1->id, 'g.*', true);
+
+        $this->assertEquals([$c1group1->id], array_keys($groups));
+        $this->assertEquals(
+                [$c1user1->id, $c12user1->id],
+                $groups[$c1group1->id]->members,
+                '', 0.0, 10, true
+        );
+    }
+
+    /**
      * Tests for groups_get_user_groups() method.
      */
     public function test_groups_get_user_groups() {
