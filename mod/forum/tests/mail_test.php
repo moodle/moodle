@@ -529,6 +529,52 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->send_notifications_and_assert($recipient, [$reply]);
     }
 
+    public function test_optional_with_subscribed_discussion_and_post() {
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_CHOOSESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+        $this->helper_update_post_time($post, -90);
+
+        // Have a user reply to the discussion before we subscribed.
+        $reply = $this->helper_post_to_discussion($forum, $discussion, $author);
+        $this->helper_update_post_time($reply, -75);
+
+        // Subscribe the 'recipient' user to the discussion.
+        \mod_forum\subscriptions::subscribe_user_to_discussion($recipient->id, $discussion);
+        $this->helper_update_subscription_time($recipient, $discussion, -60);
+
+        // Have a user reply to the discussion.
+        $reply = $this->helper_post_to_discussion($forum, $discussion, $author);
+        $this->helper_update_post_time($reply, -30);
+
+        // We expect only one user to receive this post.
+        // The original post won't be received as it was written before the user subscribed.
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 0,
+            ],
+            (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, [$reply]);
+    }
+
     public function test_automatic_with_subscribed_discussion_in_unsubscribed_forum() {
         $this->resetAfterTest(true);
 

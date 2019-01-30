@@ -449,7 +449,7 @@ class cron_task extends \core\task\scheduled_task {
                             $subscribedafter = $subscribedafter && ($subscriptiontime[$post->discussion] > $post->created);
                             if ($subscribedafter) {
                                 // The user subscribed to the discussion/forum after this post was created.
-                                unset($poststructure[$courseid][$forumid][$discussionid]);
+                                unset($poststructure[$courseid][$forumid][$discussionid][$postid]);
                                 continue;
                             }
                         }
