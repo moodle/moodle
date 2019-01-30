@@ -330,7 +330,8 @@ class send_user_digests extends \core\task\adhoc_task {
     /**
      * Empty the queue of posts for this user.
      *
-     * @param   array $queueparams The list of 
+     * @param int $userid user id which queue elements are going to be removed.
+     * @param int $timemodified up time limit of the queue elements to be removed.
      */
     protected function empty_queue(int $userid, int $timemodified) : void {
         global $DB;
