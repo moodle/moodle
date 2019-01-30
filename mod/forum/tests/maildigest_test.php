@@ -26,17 +26,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
+require_once(__DIR__ . '/cron_trait.php');
+require_once(__DIR__ . '/generator_trait.php');
 
 class mod_forum_maildigest_testcase extends advanced_testcase {
 
-    /**
-     * Keep track of the message and mail sinks that we set up for each
-     * test.
-     *
-     * @var stdClass $helper
-     */
-    protected $helper;
+    // Make use of the cron tester trait.
+    use mod_forum_tests_cron_trait;
+
+    // Make use of the test generator trait.
+    use mod_forum_tests_generator_trait;
 
     /**
      * Set up message and mail sinks, and set up other requirements for the
@@ -45,20 +44,18 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
     public function setUp() {
         global $CFG;
 
-        $this->helper = new stdClass();
-
         // Messaging is not compatible with transactions...
         $this->preventResetByRollback();
 
         // Catch all messages
-        $this->helper->messagesink = $this->redirectMessages();
-        $this->helper->mailsink = $this->redirectEmails();
+        $this->messagesink = $this->redirectMessages();
+        $this->mailsink = $this->redirectEmails();
 
         // Confirm that we have an empty message sink so far.
-        $messages = $this->helper->messagesink->get_messages();
+        $messages = $this->messagesink->get_messages();
         $this->assertEquals(0, count($messages));
 
-        $messages = $this->helper->mailsink->get_messages();
+        $messages = $this->mailsink->get_messages();
         $this->assertEquals(0, count($messages));
 
         // Tell Moodle that we've not sent any digest messages out recently.
@@ -82,11 +79,11 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
      * Clear the message sinks set up in this test.
      */
     public function tearDown() {
-        $this->helper->messagesink->clear();
-        $this->helper->messagesink->close();
+        $this->messagesink->clear();
+        $this->messagesink->close();
 
-        $this->helper->mailsink->clear();
-        $this->helper->mailsink->close();
+        $this->mailsink->clear();
+        $this->mailsink->close();
     }
 
     /**
@@ -129,52 +126,6 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($return->user->id, $return->courses->course1->id);
 
         return $return;
-    }
-
-    /**
-     * Helper to falsify all forum post records for a digest run.
-     */
-    protected function helper_force_digest_mail_times() {
-        global $CFG, $DB;
-        // Fake all of the post editing times because digests aren't sent until
-        // the start of an hour where the modification time on the message is before
-        // the start of that hour
-        $sitetimezone = core_date::get_server_timezone();
-        $digesttime = usergetmidnight(time(), $sitetimezone) + ($CFG->digestmailtime * 3600) - (60 * 60);
-        $DB->set_field('forum_posts', 'modified', $digesttime, array('mailed' => 0));
-        $DB->set_field('forum_posts', 'created', $digesttime, array('mailed' => 0));
-    }
-
-    /**
-     * Run the forum cron, and check that the specified post was sent the
-     * specified number of times.
-     *
-     * @param integer $expected The number of times that the post should have been sent
-     * @param integer $individualcount The number of individual messages sent
-     * @param integer $digestcount The number of digest messages sent
-     */
-    protected function helper_run_cron_check_count($expected, $individualcount, $digestcount) {
-        if ($expected === 0) {
-            $this->expectOutputRegex('/(Email digests successfully sent to .* users.){0}/');
-        } else {
-            $this->expectOutputRegex("/Email digests successfully sent to {$expected} users/");
-        }
-        forum_cron();
-
-        // Now check the results in the message sink.
-        $messages = $this->helper->messagesink->get_messages();
-
-        $counts = (object) array('digest' => 0, 'individual' => 0);
-        foreach ($messages as $message) {
-            if (strpos($message->subject, 'forum digest') !== false) {
-                $counts->digest++;
-            } else {
-                $counts->individual++;
-            }
-        }
-
-        $this->assertEquals($digestcount, $counts->digest);
-        $this->assertEquals($individualcount, $counts->individual);
     }
 
     public function test_set_maildigest() {
@@ -302,10 +253,9 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        $this->helper_force_digest_mail_times();
-
         // Initially the forum cron should generate no messages as we've made no posts.
-        $this->helper_run_cron_check_count(0, 0, 0);
+        $expect = [];
+        $this->queue_tasks_and_assert($expect);
     }
 
     /**
@@ -324,26 +274,18 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         $forum1 = $userhelper->forums->forum1;
         $forum2 = $userhelper->forums->forum2;
 
-        // Add some discussions to the forums.
-        $record = new stdClass();
-        $record->course = $course1->id;
-        $record->userid = $user->id;
-        $record->mailnow = 1;
-
         // Add 5 discussions to forum 1.
-        $record->forum = $forum1->id;
+        $posts = [];
         for ($i = 0; $i < 5; $i++) {
-            $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+            list($discussion, $post) = $this->helper_post_to_forum($forum1, $user, ['mailnow' => 1]);
+            $posts[] = $post;
         }
 
         // Add 5 discussions to forum 2.
-        $record->forum = $forum2->id;
         for ($i = 0; $i < 5; $i++) {
-            $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+            list($discussion, $post) = $this->helper_post_to_forum($forum2, $user, ['mailnow' => 1]);
+            $posts[] = $post;
         }
-
-        // Ensure that the creation times mean that the messages will be sent.
-        $this->helper_force_digest_mail_times();
 
         // Set the tested user's default maildigest setting.
         $DB->set_field('user', 'maildigest', 0, array('id' => $user->id));
@@ -355,7 +297,16 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         forum_set_user_maildigest($forum2, -1, $user);
 
         // No digests mails should be sent, but 10 forum mails will be sent.
-        $this->helper_run_cron_check_count(0, 10, 0);
+        $expect = [
+            (object) [
+                'userid' => $user->id,
+                'messages' => 10,
+                'digests' => 0,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_notifications_and_assert($user, $posts);
     }
 
     /**
@@ -373,27 +324,19 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         $course1 = $userhelper->courses->course1;
         $forum1 = $userhelper->forums->forum1;
         $forum2 = $userhelper->forums->forum2;
-
-        // Add a discussion to the forums.
-        $record = new stdClass();
-        $record->course = $course1->id;
-        $record->userid = $user->id;
-        $record->mailnow = 1;
+        $posts = [];
 
         // Add 5 discussions to forum 1.
-        $record->forum = $forum1->id;
         for ($i = 0; $i < 5; $i++) {
-            $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+            list($discussion, $post) = $this->helper_post_to_forum($forum1, $user, ['mailnow' => 1]);
+            $posts[] = $post;
         }
 
         // Add 5 discussions to forum 2.
-        $record->forum = $forum2->id;
         for ($i = 0; $i < 5; $i++) {
-            $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+            list($discussion, $post) = $this->helper_post_to_forum($forum2, $user, ['mailnow' => 1]);
+            $posts[] = $post;
         }
-
-        // Ensure that the creation times mean that the messages will be sent.
-        $this->helper_force_digest_mail_times();
 
         // Set the tested user's default maildigest setting.
         $DB->set_field('user', 'maildigest', 1, array('id' => $user->id));
@@ -404,8 +347,17 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         // Set the maildigest preference for forum2 to default.
         forum_set_user_maildigest($forum2, -1, $user);
 
-        // One digest mail should be sent, with no notifications, and one e-mail.
-        $this->helper_run_cron_check_count(1, 0, 1);
+        // No digests mails should be sent, but 10 forum mails will be sent.
+        $expect = [
+            (object) [
+                'userid' => $user->id,
+                'messages' => 0,
+                'digests' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_digests_and_assert($user, $posts);
     }
 
     /**
@@ -424,27 +376,20 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         $course1 = $userhelper->courses->course1;
         $forum1 = $userhelper->forums->forum1;
         $forum2 = $userhelper->forums->forum2;
-
-        // Add a discussion to the forums.
-        $record = new stdClass();
-        $record->course = $course1->id;
-        $record->userid = $user->id;
-        $record->mailnow = 1;
+        $posts = [];
+        $digests = [];
 
         // Add 5 discussions to forum 1.
-        $record->forum = $forum1->id;
         for ($i = 0; $i < 5; $i++) {
-            $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+            list($discussion, $post) = $this->helper_post_to_forum($forum1, $user, ['mailnow' => 1]);
+            $digests[] = $post;
         }
 
         // Add 5 discussions to forum 2.
-        $record->forum = $forum2->id;
         for ($i = 0; $i < 5; $i++) {
-            $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+            list($discussion, $post) = $this->helper_post_to_forum($forum2, $user, ['mailnow' => 1]);
+            $posts[] = $post;
         }
-
-        // Ensure that the creation times mean that the messages will be sent.
-        $this->helper_force_digest_mail_times();
 
         // Set the tested user's default maildigest setting.
         $DB->set_field('user', 'maildigest', 0, array('id' => $user->id));
@@ -456,7 +401,17 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         forum_set_user_maildigest($forum2, -1, $user);
 
         // One digest e-mail should be sent, and five individual notifications.
-        $this->helper_run_cron_check_count(1, 5, 1);
+        $expect = [
+            (object) [
+                'userid' => $user->id,
+                'messages' => 5,
+                'digests' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_notifications_and_assert($user, $posts);
+        $this->send_digests_and_assert($user, $digests);
     }
 
     /**
@@ -475,27 +430,20 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         $course1 = $userhelper->courses->course1;
         $forum1 = $userhelper->forums->forum1;
         $forum2 = $userhelper->forums->forum2;
-
-        // Add a discussion to the forums.
-        $record = new stdClass();
-        $record->course = $course1->id;
-        $record->userid = $user->id;
-        $record->mailnow = 1;
+        $posts = [];
+        $digests = [];
 
         // Add 5 discussions to forum 1.
-        $record->forum = $forum1->id;
         for ($i = 0; $i < 5; $i++) {
-            $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+            list($discussion, $post) = $this->helper_post_to_forum($forum1, $user, ['mailnow' => 1]);
+            $digests[] = $post;
         }
 
         // Add 5 discussions to forum 2.
-        $record->forum = $forum2->id;
         for ($i = 0; $i < 5; $i++) {
-            $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+            list($discussion, $post) = $this->helper_post_to_forum($forum2, $user, ['mailnow' => 1]);
+            $posts[] = $post;
         }
-
-        // Ensure that the creation times mean that the messages will be sent.
-        $this->helper_force_digest_mail_times();
 
         // Set the tested user's default maildigest setting.
         $DB->set_field('user', 'maildigest', 1, array('id' => $user->id));
@@ -507,7 +455,17 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         forum_set_user_maildigest($forum2, 0, $user);
 
         // One digest e-mail should be sent, and five individual notifications.
-        $this->helper_run_cron_check_count(1, 5, 1);
+        $expect = [
+            (object) [
+                'userid' => $user->id,
+                'messages' => 5,
+                'digests' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_notifications_and_assert($user, $posts);
+        $this->send_digests_and_assert($user, $digests);
     }
 
     /**
@@ -525,27 +483,20 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         $course1 = $userhelper->courses->course1;
         $forum1 = $userhelper->forums->forum1;
         $forum2 = $userhelper->forums->forum2;
-
-        // Add a discussion to the forums.
-        $record = new stdClass();
-        $record->course = $course1->id;
-        $record->userid = $user->id;
-        $record->mailnow = 1;
+        $fulldigests = [];
+        $shortdigests = [];
 
         // Add 5 discussions to forum 1.
-        $record->forum = $forum1->id;
         for ($i = 0; $i < 5; $i++) {
-            $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+            list($discussion, $post) = $this->helper_post_to_forum($forum1, $user, ['mailnow' => 1]);
+            $fulldigests[] = $post;
         }
 
         // Add 5 discussions to forum 2.
-        $record->forum = $forum2->id;
         for ($i = 0; $i < 5; $i++) {
-            $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+            list($discussion, $post) = $this->helper_post_to_forum($forum2, $user, ['mailnow' => 1]);
+            $shortdigests[] = $post;
         }
-
-        // Ensure that the creation times mean that the messages will be sent.
-        $this->helper_force_digest_mail_times();
 
         // Set the tested user's default maildigest setting.
         $DB->set_field('user', 'maildigest', 0, array('id' => $user->id));
@@ -557,7 +508,14 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         forum_set_user_maildigest($forum2, 2, $user);
 
         // One digest e-mail should be sent, and no individual notifications.
-        $this->helper_run_cron_check_count(1, 0, 1);
-    }
+        $expect = [
+            (object) [
+                'userid' => $user->id,
+                'digests' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
+        $this->send_digests_and_assert($user, $fulldigests, $shortdigests);
+    }
 }

@@ -26,42 +26,45 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
+require_once($CFG->dirroot . '/mod/forum/lib.php');
+require_once(__DIR__ . '/cron_trait.php');
+require_once(__DIR__ . '/generator_trait.php');
 
 class mod_forum_mail_testcase extends advanced_testcase {
+    // Make use of the cron tester trait.
+    use mod_forum_tests_cron_trait;
 
+    // Make use of the test generator trait.
+    use mod_forum_tests_generator_trait;
 
-    protected $helper;
+    /**
+     * @var \phpunit_message_sink
+     */
+    protected $messagesink;
+
+    /**
+     * @var \phpunit_mailer_sink
+     */
+    protected $mailsink;
 
     public function setUp() {
+        global $CFG;
+
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
         \mod_forum\subscriptions::reset_discussion_cache();
 
-        global $CFG;
-        require_once($CFG->dirroot . '/mod/forum/lib.php');
-
-        $helper = new stdClass();
-
         // Messaging is not compatible with transactions...
         $this->preventResetByRollback();
 
         // Catch all messages.
-        $helper->messagesink = $this->redirectMessages();
-        $helper->mailsink = $this->redirectEmails();
-
-        // Confirm that we have an empty message sink so far.
-        $messages = $helper->messagesink->get_messages();
-        $this->assertEquals(0, count($messages));
-
-        $messages = $helper->mailsink->get_messages();
-        $this->assertEquals(0, count($messages));
+        $this->messagesink = $this->redirectMessages();
+        $this->mailsink = $this->redirectEmails();
 
         // Forcibly reduce the maxeditingtime to a second in the past to
         // ensure that messages are sent out.
         $CFG->maxeditingtime = -1;
-
-        $this->helper = $helper;
     }
 
     public function tearDown() {
@@ -69,11 +72,13 @@ class mod_forum_mail_testcase extends advanced_testcase {
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
 
-        $this->helper->messagesink->clear();
-        $this->helper->messagesink->close();
+        $this->messagesink->clear();
+        $this->messagesink->close();
+        unset($this->messagesink);
 
-        $this->helper->mailsink->clear();
-        $this->helper->mailsink->close();
+        $this->mailsink->clear();
+        $this->mailsink->close();
+        unset($this->mailsink);
     }
 
     /**
@@ -93,166 +98,6 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $record->id = $DB->update_record('messageinbound_handlers', $record);
     }
 
-    /**
-     * Helper to create the required number of users in the specified
-     * course.
-     * Users are enrolled as students.
-     *
-     * @param stdClass $course The course object
-     * @param integer $count The number of users to create
-     * @return array The users created
-     */
-    protected function helper_create_users($course, $count) {
-        $users = array();
-
-        for ($i = 0; $i < $count; $i++) {
-            $user = $this->getDataGenerator()->create_user();
-            $this->getDataGenerator()->enrol_user($user->id, $course->id);
-            $users[] = $user;
-        }
-
-        return $users;
-    }
-
-    /**
-     * Create a new discussion and post within the specified forum, as the
-     * specified author.
-     *
-     * @param stdClass $forum The forum to post in
-     * @param stdClass $author The author to post as
-     * @param array $fields any other fields in discussion (name, message, messageformat, ...)
-     * @param array An array containing the discussion object, and the post object
-     */
-    protected function helper_post_to_forum($forum, $author, $fields = array()) {
-        global $DB;
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
-
-        // Create a discussion in the forum, and then add a post to that discussion.
-        $record = (object)$fields;
-        $record->course = $forum->course;
-        $record->userid = $author->id;
-        $record->forum = $forum->id;
-        $discussion = $generator->create_discussion($record);
-
-        // Retrieve the post which was created by create_discussion.
-        $post = $DB->get_record('forum_posts', array('discussion' => $discussion->id));
-
-        return array($discussion, $post);
-    }
-
-    /**
-     * Update the post time for the specified post by $factor.
-     *
-     * @param stdClass $post The post to update
-     * @param int $factor The amount to update by
-     */
-    protected function helper_update_post_time($post, $factor) {
-        global $DB;
-
-        // Update the post to have a created in the past.
-        $DB->set_field('forum_posts', 'created', $post->created + $factor, array('id' => $post->id));
-    }
-
-    /**
-     * Update the subscription time for the specified user/discussion by $factor.
-     *
-     * @param stdClass $user The user to update
-     * @param stdClass $discussion The discussion to update for this user
-     * @param int $factor The amount to update by
-     */
-    protected function helper_update_subscription_time($user, $discussion, $factor) {
-        global $DB;
-
-        $sub = $DB->get_record('forum_discussion_subs', array('userid' => $user->id, 'discussion' => $discussion->id));
-
-        // Update the subscription to have a preference in the past.
-        $DB->set_field('forum_discussion_subs', 'preference', $sub->preference + $factor, array('id' => $sub->id));
-    }
-
-    /**
-     * Create a new post within an existing discussion, as the specified author.
-     *
-     * @param stdClass $forum The forum to post in
-     * @param stdClass $discussion The discussion to post in
-     * @param stdClass $author The author to post as
-     * @return stdClass The forum post
-     */
-    protected function helper_post_to_discussion($forum, $discussion, $author) {
-        global $DB;
-
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
-
-        // Add a post to the discussion.
-        $record = new stdClass();
-        $record->course = $forum->course;
-        $strre = get_string('re', 'forum');
-        $record->subject = $strre . ' ' . $discussion->subject;
-        $record->userid = $author->id;
-        $record->forum = $forum->id;
-        $record->discussion = $discussion->id;
-        $record->mailnow = 1;
-
-        $post = $generator->create_post($record);
-
-        return $post;
-    }
-
-    /**
-     * Run the forum cron, and check that the specified post was sent the
-     * specified number of times.
-     *
-     * @param stdClass $post The forum post object
-     * @param integer $expected The number of times that the post should have been sent
-     * @return array An array of the messages caught by the message sink
-     */
-    protected function helper_run_cron_check_count($post, $expected) {
-
-        // Clear the sinks before running cron.
-        $this->helper->messagesink->clear();
-        $this->helper->mailsink->clear();
-
-        // Cron daily uses mtrace, turn on buffering to silence output.
-        $this->expectOutputRegex("/{$expected} users were sent post {$post->id}, '{$post->subject}'/");
-        forum_cron();
-
-        // Now check the results in the message sink.
-        $messages = $this->helper->messagesink->get_messages();
-
-        // There should be the expected number of messages.
-        $this->assertEquals($expected, count($messages));
-
-        return $messages;
-    }
-
-    /**
-     * Run the forum cron, and check that the specified posts were sent the
-     * specified number of times.
-     *
-     * @param stdClass $post The forum post object
-     * @param integer $expected The number of times that the post should have been sent
-     * @return array An array of the messages caught by the message sink
-     */
-    protected function helper_run_cron_check_counts($posts, $expected) {
-
-        // Clear the sinks before running cron.
-        $this->helper->messagesink->clear();
-        $this->helper->mailsink->clear();
-
-        // Cron daily uses mtrace, turn on buffering to silence output.
-        foreach ($posts as $post) {
-            $this->expectOutputRegex("/{$post['count']} users were sent post {$post['id']}, '{$post['subject']}'/");
-        }
-        forum_cron();
-
-        // Now check the results in the message sink.
-        $messages = $this->helper->messagesink->get_messages();
-
-        // There should be the expected number of messages.
-        $this->assertEquals($expected, count($messages));
-
-        return $messages;
-    }
-
     public function test_cron_message_includes_courseid() {
         $this->resetAfterTest(true);
 
@@ -268,25 +113,22 @@ class mod_forum_mail_testcase extends advanced_testcase {
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
 
-        // Run cron and check that \core\event\message_sent contains the course id.
-        // Close the message sink so that message_send is run.
-        $this->helper->messagesink->close();
+        $expect = [
+            'author' => (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+            'recipient' => (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        // Catch just the cron events. For each message sent two events are fired:
-        // core\event\message_sent
-        // core\event\message_viewed.
-        $this->helper->eventsink = $this->redirectEvents();
-        $this->expectOutputRegex('/Processing user/');
-
-        forum_cron();
-
-        // Get the events and close the sink so that remaining events can be triggered.
-        $events = $this->helper->eventsink->get_events();
-        $this->helper->eventsink->close();
-
-        // Reset the message sink for other tests.
-        $this->helper->messagesink = $this->redirectMessages();
-        // Notification has been marked as read, so now first event should be a 'notification_viewed' one.
+        $this->messagesink->close();
+        $this->eventsink = $this->redirectEvents();
+        $this->send_notifications_and_assert($author, [$post]);
+        $events = $this->eventsink->get_events();
         $event = reset($events);
         $this->assertInstanceOf('\core\event\notification_viewed', $event);
 
@@ -294,6 +136,8 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $event = $events[1];
         $this->assertInstanceOf('\core\event\notification_sent', $event);
         $this->assertEquals($course->id, $event->other['courseid']);
+
+        $this->send_notifications_and_assert($recipient, [$post]);
     }
 
     public function test_forced_subscription() {
@@ -311,31 +155,26 @@ class mod_forum_mail_testcase extends advanced_testcase {
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
 
-        // We expect both users to receive this post.
-        $expected = 2;
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+            (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        // Run cron and check that the expected number of users received the notification.
-        $messages = $this->helper_run_cron_check_count($post, $expected);
-
-        $seenauthor = false;
-        $seenrecipient = false;
-        foreach ($messages as $message) {
-            // They should both be from our user.
-            $this->assertEquals($author->id, $message->useridfrom);
-
-            if ($message->useridto == $author->id) {
-                $seenauthor = true;
-            } else if ($message->useridto = $recipient->id) {
-                $seenrecipient = true;
-            }
-        }
-
-        // Check we saw messages for both users.
-        $this->assertTrue($seenauthor);
-        $this->assertTrue($seenrecipient);
+        $this->send_notifications_and_assert($author, [$post]);
+        $this->send_notifications_and_assert($recipient, [$post]);
     }
 
-    public function test_subscription_disabled() {
+    /**
+     * Ensure that for a forum with subscription disabled that standard users will not receive posts.
+     */
+    public function test_subscription_disabled_standard_users() {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -352,50 +191,119 @@ class mod_forum_mail_testcase extends advanced_testcase {
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
 
-        // We expect both users to receive this post.
-        $expected = 0;
-
         // Run cron and check that the expected number of users received the notification.
-        $messages = $this->helper_run_cron_check_count($post, $expected);
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 0,
+            ],
+            (object) [
+                'userid' => $recipient->id,
+                'messages' => 0,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, []);
+    }
+
+    /**
+     * Ensure that for a forum with subscription disabled that a user subscribed to the forum will receive the post.
+     */
+    public function test_subscription_disabled_user_subscribed_forum() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_DISALLOWSUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
 
         // A user with the manageactivities capability within the course can subscribe.
-        $expected = 1;
         $roleids = $DB->get_records_menu('role', null, '', 'shortname, id');
         assign_capability('moodle/course:manageactivities', CAP_ALLOW, $roleids['student'], context_course::instance($course->id));
+
+        // Suscribe the recipient only.
         \mod_forum\subscriptions::subscribe_user($recipient->id, $forum);
 
-        $this->assertEquals($expected, $DB->count_records('forum_subscriptions', array(
+        $this->assertEquals(1, $DB->count_records('forum_subscriptions', array(
             'userid'        => $recipient->id,
             'forum'         => $forum->id,
         )));
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
 
         // Run cron and check that the expected number of users received the notification.
-        list($discussion, $post) = $this->helper_post_to_forum($forum, $recipient);
-        $messages = $this->helper_run_cron_check_count($post, $expected);
+        $expect = [
+            'author' => (object) [
+                'userid' => $author->id,
+            ],
+            'recipient' => (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        // Unsubscribe the user again.
-        \mod_forum\subscriptions::unsubscribe_user($recipient->id, $forum);
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, [$post]);
+    }
 
-        $expected = 0;
-        $this->assertEquals($expected, $DB->count_records('forum_subscriptions', array(
-            'userid'        => $recipient->id,
-            'forum'         => $forum->id,
-        )));
+    /**
+     * Ensure that for a forum with subscription disabled that a user subscribed to the discussion will receive the
+     * post.
+     */
+    public function test_subscription_disabled_user_subscribed_discussion() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_DISALLOWSUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
+
+        // A user with the manageactivities capability within the course can subscribe.
+        $roleids = $DB->get_records_menu('role', null, '', 'shortname, id');
+        assign_capability('moodle/course:manageactivities', CAP_ALLOW, $roleids['student'], context_course::instance($course->id));
 
         // Run cron and check that the expected number of users received the notification.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
-        $messages = $this->helper_run_cron_check_count($post, $expected);
 
         // Subscribe the user to the discussion.
         \mod_forum\subscriptions::subscribe_user_to_discussion($recipient->id, $discussion);
         $this->helper_update_subscription_time($recipient, $discussion, -60);
 
-        $reply = $this->helper_post_to_discussion($forum, $discussion, $author);
-        $this->helper_update_post_time($reply, -30);
+        // Run cron and check that the expected number of users received the notification.
+        $expect = [
+            'author' => (object) [
+                'userid' => $author->id,
+            ],
+            'recipient' => (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        $messages = $this->helper_run_cron_check_count($reply, $expected);
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, [$post]);
     }
 
+    /**
+     * Ensure that for a forum with automatic subscription that users receive posts.
+     */
     public function test_automatic() {
         $this->resetAfterTest(true);
 
@@ -411,28 +319,20 @@ class mod_forum_mail_testcase extends advanced_testcase {
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
 
-        // We expect both users to receive this post.
-        $expected = 2;
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+            (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        // Run cron and check that the expected number of users received the notification.
-        $messages = $this->helper_run_cron_check_count($post, $expected);
-
-        $seenauthor = false;
-        $seenrecipient = false;
-        foreach ($messages as $message) {
-            // They should both be from our user.
-            $this->assertEquals($author->id, $message->useridfrom);
-
-            if ($message->useridto == $author->id) {
-                $seenauthor = true;
-            } else if ($message->useridto = $recipient->id) {
-                $seenrecipient = true;
-            }
-        }
-
-        // Check we saw messages for both users.
-        $this->assertTrue($seenauthor);
-        $this->assertTrue($seenrecipient);
+        $this->send_notifications_and_assert($author, [$post]);
+        $this->send_notifications_and_assert($recipient, [$post]);
     }
 
     public function test_optional() {
@@ -450,11 +350,20 @@ class mod_forum_mail_testcase extends advanced_testcase {
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
 
-        // We expect both users to receive this post.
-        $expected = 0;
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 0,
+            ],
+            (object) [
+                'userid' => $recipient->id,
+                'messages' => 0,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        // Run cron and check that the expected number of users received the notification.
-        $messages = $this->helper_run_cron_check_count($post, $expected);
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, []);
     }
 
     public function test_automatic_with_unsubscribed_user() {
@@ -475,28 +384,20 @@ class mod_forum_mail_testcase extends advanced_testcase {
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
 
-        // We expect only one user to receive this post.
-        $expected = 1;
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 0,
+            ],
+            (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        // Run cron and check that the expected number of users received the notification.
-        $messages = $this->helper_run_cron_check_count($post, $expected);
-
-        $seenauthor = false;
-        $seenrecipient = false;
-        foreach ($messages as $message) {
-            // They should both be from our user.
-            $this->assertEquals($author->id, $message->useridfrom);
-
-            if ($message->useridto == $author->id) {
-                $seenauthor = true;
-            } else if ($message->useridto = $recipient->id) {
-                $seenrecipient = true;
-            }
-        }
-
-        // Check we only saw one user.
-        $this->assertFalse($seenauthor);
-        $this->assertTrue($seenrecipient);
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, [$post]);
     }
 
     public function test_optional_with_subscribed_user() {
@@ -517,28 +418,20 @@ class mod_forum_mail_testcase extends advanced_testcase {
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
 
-        // We expect only one user to receive this post.
-        $expected = 1;
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 0,
+            ],
+            (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        // Run cron and check that the expected number of users received the notification.
-        $messages = $this->helper_run_cron_check_count($post, $expected);
-
-        $seenauthor = false;
-        $seenrecipient = false;
-        foreach ($messages as $message) {
-            // They should both be from our user.
-            $this->assertEquals($author->id, $message->useridfrom);
-
-            if ($message->useridto == $author->id) {
-                $seenauthor = true;
-            } else if ($message->useridto = $recipient->id) {
-                $seenrecipient = true;
-            }
-        }
-
-        // Check we only saw one user.
-        $this->assertFalse($seenauthor);
-        $this->assertTrue($seenrecipient);
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, [$post]);
     }
 
     public function test_automatic_with_unsubscribed_discussion() {
@@ -562,28 +455,20 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum, $discussion->id));
         $this->assertTrue(\mod_forum\subscriptions::is_subscribed($recipient->id, $forum, $discussion->id));
 
-        // We expect only one user to receive this post.
-        $expected = 1;
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 0,
+            ],
+            (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        // Run cron and check that the expected number of users received the notification.
-        $messages = $this->helper_run_cron_check_count($post, $expected);
-
-        $seenauthor = false;
-        $seenrecipient = false;
-        foreach ($messages as $message) {
-            // They should both be from our user.
-            $this->assertEquals($author->id, $message->useridfrom);
-
-            if ($message->useridto == $author->id) {
-                $seenauthor = true;
-            } else if ($message->useridto = $recipient->id) {
-                $seenrecipient = true;
-            }
-        }
-
-        // Check we only saw one user.
-        $this->assertFalse($seenauthor);
-        $this->assertTrue($seenrecipient);
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, [$post]);
     }
 
     public function test_optional_with_subscribed_discussion() {
@@ -608,37 +493,86 @@ class mod_forum_mail_testcase extends advanced_testcase {
 
         // Initially we don't expect any user to receive this post as you cannot subscribe to a discussion until after
         // you have read it.
-        $expected = 0;
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 0,
+            ],
+            (object) [
+                'userid' => $recipient->id,
+                'messages' => 0,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        // Run cron and check that the expected number of users received the notification.
-        $messages = $this->helper_run_cron_check_count($post, $expected);
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, []);
 
         // Have a user reply to the discussion.
         $reply = $this->helper_post_to_discussion($forum, $discussion, $author);
         $this->helper_update_post_time($reply, -30);
 
         // We expect only one user to receive this post.
-        $expected = 1;
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 0,
+            ],
+            (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        // Run cron and check that the expected number of users received the notification.
-        $messages = $this->helper_run_cron_check_count($reply, $expected);
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, [$reply]);
+    }
 
-        $seenauthor = false;
-        $seenrecipient = false;
-        foreach ($messages as $message) {
-            // They should both be from our user.
-            $this->assertEquals($author->id, $message->useridfrom);
+    public function test_optional_with_subscribed_discussion_and_post() {
+        $this->resetAfterTest(true);
 
-            if ($message->useridto == $author->id) {
-                $seenauthor = true;
-            } else if ($message->useridto = $recipient->id) {
-                $seenrecipient = true;
-            }
-        }
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
 
-        // Check we only saw one user.
-        $this->assertFalse($seenauthor);
-        $this->assertTrue($seenrecipient);
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_CHOOSESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+        $this->helper_update_post_time($post, -90);
+
+        // Have a user reply to the discussion before we subscribed.
+        $reply = $this->helper_post_to_discussion($forum, $discussion, $author);
+        $this->helper_update_post_time($reply, -75);
+
+        // Subscribe the 'recipient' user to the discussion.
+        \mod_forum\subscriptions::subscribe_user_to_discussion($recipient->id, $discussion);
+        $this->helper_update_subscription_time($recipient, $discussion, -60);
+
+        // Have a user reply to the discussion.
+        $reply = $this->helper_post_to_discussion($forum, $discussion, $author);
+        $this->helper_update_post_time($reply, -30);
+
+        // We expect only one user to receive this post.
+        // The original post won't be received as it was written before the user subscribed.
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 0,
+            ],
+            (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, [$reply]);
     }
 
     public function test_automatic_with_subscribed_discussion_in_unsubscribed_forum() {
@@ -664,56 +598,39 @@ class mod_forum_mail_testcase extends advanced_testcase {
         \mod_forum\subscriptions::subscribe_user_to_discussion($author->id, $discussion);
         $this->helper_update_subscription_time($author, $discussion, -60);
 
-        // We expect just the user subscribed to the forum to receive this post at the moment as the discussion
-        // subscription time is after the post time.
-        $expected = 1;
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 0,
+            ],
+            (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        // Run cron and check that the expected number of users received the notification.
-        $messages = $this->helper_run_cron_check_count($post, $expected);
-
-        $seenauthor = false;
-        $seenrecipient = false;
-        foreach ($messages as $message) {
-            // They should both be from our user.
-            $this->assertEquals($author->id, $message->useridfrom);
-
-            if ($message->useridto == $author->id) {
-                $seenauthor = true;
-            } else if ($message->useridto = $recipient->id) {
-                $seenrecipient = true;
-            }
-        }
-
-        // Check we only saw one user.
-        $this->assertFalse($seenauthor);
-        $this->assertTrue($seenrecipient);
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, [$post]);
 
         // Now post a reply to the original post.
         $reply = $this->helper_post_to_discussion($forum, $discussion, $author);
         $this->helper_update_post_time($reply, -30);
 
-        // We expect two users to receive this post.
-        $expected = 2;
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+            (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        // Run cron and check that the expected number of users received the notification.
-        $messages = $this->helper_run_cron_check_count($reply, $expected);
-
-        $seenauthor = false;
-        $seenrecipient = false;
-        foreach ($messages as $message) {
-            // They should both be from our user.
-            $this->assertEquals($author->id, $message->useridfrom);
-
-            if ($message->useridto == $author->id) {
-                $seenauthor = true;
-            } else if ($message->useridto = $recipient->id) {
-                $seenrecipient = true;
-            }
-        }
-
-        // Check we saw both users.
-        $this->assertTrue($seenauthor);
-        $this->assertTrue($seenrecipient);
+        $this->send_notifications_and_assert($author, [$reply]);
+        $this->send_notifications_and_assert($recipient, [$reply]);
     }
 
     public function test_optional_with_unsubscribed_discussion_in_subscribed_forum() {
@@ -738,10 +655,20 @@ class mod_forum_mail_testcase extends advanced_testcase {
         \mod_forum\subscriptions::unsubscribe_user_from_discussion($recipient->id, $discussion);
 
         // We don't expect any users to receive this post.
-        $expected = 0;
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 0,
+            ],
+            (object) [
+                'userid' => $recipient->id,
+                'messages' => 0,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        // Run cron and check that the expected number of users received the notification.
-        $messages = $this->helper_run_cron_check_count($post, $expected);
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, []);
     }
 
     /**
@@ -780,16 +707,15 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $reply = $this->helper_post_to_discussion($forum, $discussion, $author);
         $this->helper_update_post_time($reply, -30);
 
-        $expectedmessages[] = array(
-            'id' => $reply->id,
-            'subject' => $reply->subject,
-            'count' => 1,
-        );
+        $expect = [
+            (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        $expectedcount = 1;
-
-        // Run cron and check that the expected number of users received the notification.
-        $messages = $this->helper_run_cron_check_counts($expectedmessages, $expectedcount);
+        $this->send_notifications_and_assert($author, [$reply]);
     }
 
     public function test_forum_message_inbound_multiple_posts() {
@@ -809,23 +735,21 @@ class mod_forum_mail_testcase extends advanced_testcase {
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
         $this->helper_update_post_time($post, -90);
 
-        $expectedmessages[] = array(
+        $expectedmessages[] = (object) [
             'id' => $post->id,
             'subject' => $post->subject,
             'count' => 0,
-        );
+        ];
 
         // Then post a reply to the first discussion.
         $reply = $this->helper_post_to_discussion($forum, $discussion, $author);
         $this->helper_update_post_time($reply, -60);
 
-        $expectedmessages[] = array(
+        $expectedmessages[] = (object) [
             'id' => $reply->id,
             'subject' => $reply->subject,
             'count' => 1,
-        );
-
-        $expectedcount = 2;
+        ];
 
         // Ensure that messageinbound is enabled and configured for the forum handler.
         $this->helper_spoof_message_inbound_setup();
@@ -836,19 +760,22 @@ class mod_forum_mail_testcase extends advanced_testcase {
 
         // Run cron and check that the expected number of users received the notification.
         // Clear the mailsink, and close the messagesink.
-        $this->helper->mailsink->clear();
-        $this->helper->messagesink->close();
+        $this->mailsink->clear();
+        $this->messagesink->close();
 
-        // Cron daily uses mtrace, turn on buffering to silence output.
-        foreach ($expectedmessages as $post) {
-            $this->expectOutputRegex("/{$post['count']} users were sent post {$post['id']}, '{$post['subject']}'/");
-        }
+        $expect = [
+            'author' => (object) [
+                'userid' => $author->id,
+                'messages' => count($expectedmessages),
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
 
-        forum_cron();
-        $messages = $this->helper->mailsink->get_messages();
+        $this->send_notifications_and_assert($author, $expectedmessages);
+        $messages = $this->mailsink->get_messages();
 
         // There should be the expected number of messages.
-        $this->assertEquals($expectedcount, count($messages));
+        $this->assertEquals(2, count($messages));
 
         foreach ($messages as $message) {
             $this->assertRegExp('/Reply-To: moodlemoodle123\+[^@]*@example.com/', $message->header);
@@ -874,7 +801,16 @@ class mod_forum_mail_testcase extends advanced_testcase {
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author, array('name' => $subject));
 
         // Run cron and check that the expected number of users received the notification.
-        $messages = $this->helper_run_cron_check_count($post, 1);
+        $expect = [
+            'author' => (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_notifications_and_assert($author, [$post]);
+        $messages = $this->messagesink->get_messages();
         $message = reset($messages);
         $this->assertEquals($author->id, $message->useridfrom);
         $this->assertEquals($expectedsubject, $message->subject);
@@ -898,13 +834,44 @@ class mod_forum_mail_testcase extends advanced_testcase {
 
         // New posts should not have Re: in the subject.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
-        $messages = $this->helper_run_cron_check_count($post, 2);
+        $expect = [
+            'author' => (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+            'commenter' => (object) [
+                'userid' => $commenter->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_notifications_and_assert($author, [$post]);
+        $this->send_notifications_and_assert($commenter, [$post]);
+        $messages = $this->messagesink->get_messages();
         $this->assertNotContains($strre, $messages[0]->subject);
+        $this->messagesink->clear();
 
         // Replies should have Re: in the subject.
         $reply = $this->helper_post_to_discussion($forum, $discussion, $commenter);
-        $messages = $this->helper_run_cron_check_count($reply, 2);
+
+        $expect = [
+            'author' => (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+            'commenter' => (object) [
+                'userid' => $commenter->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_notifications_and_assert($commenter, [$reply]);
+        $this->send_notifications_and_assert($author, [$reply]);
+        $messages = $this->messagesink->get_messages();
         $this->assertContains($strre, $messages[0]->subject);
+        $this->assertContains($strre, $messages[1]->subject);
     }
 
     /**
@@ -1127,17 +1094,21 @@ class mod_forum_mail_testcase extends advanced_testcase {
 
         // Clear the mailsink and close the messagesink.
         // (surely setup should provide us this cleared but...)
-        $this->helper->mailsink->clear();
-        $this->helper->messagesink->close();
+        $this->mailsink->clear();
+        $this->messagesink->close();
 
-        // Capture and silence cron output, verifying contents.
-        foreach ($posts as $post) {
-            $this->expectOutputRegex("/1 users were sent post {$post->id}, '{$post->subject}'/");
-        }
-        forum_cron(); // It's really annoying that we have to run cron to test this.
+        $expect = [
+            'author' => (object) [
+                'userid' => $user->id,
+                'messages' => count($posts),
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_notifications_and_assert($user, $posts);
 
         // Get the mails.
-        $mails = $this->helper->mailsink->get_messages();
+        $mails = $this->mailsink->get_messages();
 
         // Start testing the expectations.
         $expectations = $data['expectations'];
@@ -1182,7 +1153,301 @@ class mod_forum_mail_testcase extends advanced_testcase {
                 }
             }
         }
+
         // Finished, there should not be remaining expectations.
         $this->assertCount(0, $expectations);
+    }
+
+    /**
+     * Ensure that posts already mailed are not re-sent.
+     */
+    public function test_already_mailed() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_INITIALSUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+        $DB->set_field('forum_posts', 'mailed', 1);
+
+        // No posts shoudl be considered.
+        $this->queue_tasks_and_assert([]);
+
+        // No notifications should be queued.
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, []);
+    }
+
+    /**
+     * Ensure that posts marked mailnow are not suspect to the maxeditingtime.
+     */
+    public function test_mailnow() {
+        global $CFG, $DB;
+
+        // Update the maxeditingtime to 1 day so that posts won't be sent.
+        $CFG->maxeditingtime = DAYSECS;
+
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_INITIALSUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+
+        // Post a discussion to the forum.
+        list($discussion, $postmailednow) = $this->helper_post_to_forum($forum, $author, ['mailnow' => 1]);
+
+        // Only the mailnow post should be considered.
+        $expect = [
+            'author' => (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+            'recipient' => (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        // No notifications should be queued.
+        $this->send_notifications_and_assert($author, [$postmailednow]);
+        $this->send_notifications_and_assert($recipient, [$postmailednow]);
+    }
+
+    /**
+     * Ensure that if a user has no permission to view a post, then it is not sent.
+     */
+    public function test_access_coursemodule_hidden() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_INITIALSUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
+
+        // Create one users enrolled in the course as an editing teacher.
+        list($editor) = $this->helper_create_users($course, 1, 'editingteacher');
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+
+        // Hide the coursemodule.
+        set_coursemodule_visible($forum->cmid, 0);
+
+        // Only the mailnow post should be considered.
+        $expect = [
+            'author' => (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+            'recipient' => (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+            'editor' => (object) [
+                'userid' => $editor->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        // No notifications should be queued.
+        $this->send_notifications_and_assert($author, [], true);
+        $this->send_notifications_and_assert($recipient, [], true);
+        $this->send_notifications_and_assert($editor, [$post], true);
+    }
+
+    /**
+     * Ensure that if a user loses permission to view a post after it is queued, that it is not sent.
+     */
+    public function test_access_coursemodule_hidden_after_queue() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_INITIALSUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
+
+        // Create one users enrolled in the course as an editing teacher.
+        list($editor) = $this->helper_create_users($course, 1, 'editingteacher');
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+
+        // Only the mailnow post should be considered.
+        $expect = [
+            'author' => (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+            'recipient' => (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+            'editor' => (object) [
+                'userid' => $editor->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        // Hide the coursemodule.
+        set_coursemodule_visible($forum->cmid, 0);
+
+        // No notifications should be queued for the students.
+        $this->send_notifications_and_assert($author, [], true);
+        $this->send_notifications_and_assert($recipient, [], true);
+
+        // The editing teacher should still receive the post.
+        $this->send_notifications_and_assert($editor, [$post]);
+    }
+
+    /**
+     * Ensure that messages are not sent until the timestart.
+     */
+    public function test_access_before_timestart() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_INITIALSUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
+
+        // Create one users enrolled in the course as an editing teacher.
+        list($editor) = $this->helper_create_users($course, 1, 'editingteacher');
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+
+        // Update the discussion to have a timestart in the future.
+        $DB->set_field('forum_discussions', 'timestart', time() + DAYSECS);
+
+        // None should be sent.
+        $this->queue_tasks_and_assert([]);
+
+        // No notifications should be queued for any user.
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, []);
+        $this->send_notifications_and_assert($editor, []);
+
+        // Update the discussion to have a timestart in the past.
+        $DB->set_field('forum_discussions', 'timestart', time() - DAYSECS);
+
+        // Now should be sent to all.
+        $expect = [
+            'author' => (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+            'recipient' => (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+            'editor' => (object) [
+                'userid' => $editor->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        // No notifications should be queued for any user.
+        $this->send_notifications_and_assert($author, [$post]);
+        $this->send_notifications_and_assert($recipient, [$post]);
+        $this->send_notifications_and_assert($editor, [$post]);
+    }
+
+    /**
+     * Ensure that messages are not sent after the timeend.
+     */
+    public function test_access_after_timeend() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_INITIALSUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
+
+        // Create one users enrolled in the course as an editing teacher.
+        list($editor) = $this->helper_create_users($course, 1, 'editingteacher');
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+
+        // Update the discussion to have a timestart in the past.
+        $DB->set_field('forum_discussions', 'timeend', time() - DAYSECS);
+
+        // None should be sent.
+        $this->queue_tasks_and_assert([]);
+
+        // No notifications should be queued for any user.
+        $this->send_notifications_and_assert($author, []);
+        $this->send_notifications_and_assert($recipient, []);
+        $this->send_notifications_and_assert($editor, []);
+
+        // Update the discussion to have a timestart in the past.
+        $DB->set_field('forum_discussions', 'timeend', time() + DAYSECS);
+
+        // Now should be sent to all.
+        $expect = [
+            'author' => (object) [
+                'userid' => $author->id,
+                'messages' => 1,
+            ],
+            'recipient' => (object) [
+                'userid' => $recipient->id,
+                'messages' => 1,
+            ],
+            'editor' => (object) [
+                'userid' => $editor->id,
+                'messages' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        // No notifications should be queued for any user.
+        $this->send_notifications_and_assert($author, [$post]);
+        $this->send_notifications_and_assert($recipient, [$post]);
+        $this->send_notifications_and_assert($editor, [$post]);
     }
 }

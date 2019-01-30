@@ -372,3 +372,41 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
 
     return $renderer->render($renderable);
 }
+
+/**
+ * Removes properties from user record that are not necessary for sending post notifications.
+ *
+ * @param stdClass $user
+ * @return void, $user parameter is modified
+ * @deprecated since Moodle 3.7
+ */
+function forum_cron_minimise_user_record(stdClass $user) {
+    debugging("forum_cron_minimise_user_record() has been deprecated and has not been replaced.",
+            DEBUG_DEVELOPER);
+
+    // We store large amount of users in one huge array,
+    // make sure we do not store info there we do not actually need
+    // in mail generation code or messaging.
+
+    unset($user->institution);
+    unset($user->department);
+    unset($user->address);
+    unset($user->city);
+    unset($user->url);
+    unset($user->currentlogin);
+    unset($user->description);
+    unset($user->descriptionformat);
+}
+
+/**
+ * Function to be run periodically according to the scheduled task.
+ *
+ * Finds all posts that have yet to be mailed out, and mails them out to all subscribers as well as other maintance
+ * tasks.
+ *
+ * @deprecated since Moodle 3.7
+ */
+function forum_cron() {
+    debugging("forum_cron() has been deprecated and replaced with new tasks. Please uses these instead.",
+            DEBUG_DEVELOPER);
+}
