@@ -105,6 +105,10 @@ function folder_add_instance($data, $mform) {
     $draftitemid = $data->files;
 
     $data->timemodified = time();
+    // If 'showexpanded' is not set, apply the site config.
+    if (!isset($data->showexpanded)) {
+        $data->showexpanded = get_config('folder', 'showexpanded');
+    }
     $data->id = $DB->insert_record('folder', $data);
 
     // we need to use context now, so we need to make sure all needed info is already in db
