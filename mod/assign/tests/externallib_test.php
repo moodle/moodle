@@ -61,7 +61,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $context = context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
         $context = context_module::instance($assign->cmid);
-        $this->assignUserCapability('mod/assign:grade', $context->id, $roleid);
+        $this->assignUserCapability('mod/assign:viewgrades', $context->id, $roleid);
 
         // Create the teacher's enrolment record.
         $userenrolmentdata['status'] = 0;
