@@ -906,6 +906,47 @@ abstract class question_utils {
     }
 
     /**
+     * Convert an integer to a letter of alphabet.
+     * @param int $number an integer between 1 and 26 inclusive.
+     * Anything else will throw an exception.
+     * @return string the number converted to upper case letter of alphabet.
+     */
+    public static function int_to_letter($number) {
+        $alphabet = [
+                '1' => 'A',
+                '2' => 'B',
+                '3' => 'C',
+                '4' => 'D',
+                '5' => 'E',
+                '6' => 'F',
+                '7' => 'G',
+                '8' => 'H',
+                '9' => 'I',
+                '10' => 'J',
+                '11' => 'K',
+                '12' => 'L',
+                '13' => 'M',
+                '14' => 'N',
+                '15' => 'O',
+                '16' => 'P',
+                '17' => 'Q',
+                '18' => 'R',
+                '19' => 'S',
+                '20' => 'T',
+                '21' => 'U',
+                '22' => 'V',
+                '23' => 'W',
+                '24' => 'X',
+                '25' => 'Y',
+                '26' => 'Z'
+        ];
+        if (!is_integer($number) || $number < 1 || $number > count($alphabet)) {
+            throw new coding_exception('Only integers between 1 and 26 can be converted to letters.', $number);
+        }
+        return $alphabet[$number];
+    }
+
+    /**
      * Typically, $mark will have come from optional_param($name, null, PARAM_RAW_TRIMMED).
      * This method copes with:
      *  - keeping null or '' input unchanged - important to let teaches set a question back to requries grading.

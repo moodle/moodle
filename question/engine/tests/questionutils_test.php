@@ -177,6 +177,35 @@ class question_utils_test extends advanced_testcase {
         $this->assertSame('mmmcmxcix', question_utils::int_to_roman(3999));
     }
 
+    public function test_int_to_letter() {
+        $this->assertEquals('A', question_utils::int_to_letter(1));
+        $this->assertEquals('B', question_utils::int_to_letter(2));
+        $this->assertEquals('C', question_utils::int_to_letter(3));
+        $this->assertEquals('D', question_utils::int_to_letter(4));
+        $this->assertEquals('E', question_utils::int_to_letter(5));
+        $this->assertEquals('F', question_utils::int_to_letter(6));
+        $this->assertEquals('G', question_utils::int_to_letter(7));
+        $this->assertEquals('H', question_utils::int_to_letter(8));
+        $this->assertEquals('I', question_utils::int_to_letter(9));
+        $this->assertEquals('J', question_utils::int_to_letter(10));
+        $this->assertEquals('K', question_utils::int_to_letter(11));
+        $this->assertEquals('L', question_utils::int_to_letter(12));
+        $this->assertEquals('M', question_utils::int_to_letter(13));
+        $this->assertEquals('N', question_utils::int_to_letter(14));
+        $this->assertEquals('O', question_utils::int_to_letter(15));
+        $this->assertEquals('P', question_utils::int_to_letter(16));
+        $this->assertEquals('Q', question_utils::int_to_letter(17));
+        $this->assertEquals('R', question_utils::int_to_letter(18));
+        $this->assertEquals('S', question_utils::int_to_letter(19));
+        $this->assertEquals('T', question_utils::int_to_letter(20));
+        $this->assertEquals('U', question_utils::int_to_letter(21));
+        $this->assertEquals('V', question_utils::int_to_letter(22));
+        $this->assertEquals('W', question_utils::int_to_letter(23));
+        $this->assertEquals('X', question_utils::int_to_letter(24));
+        $this->assertEquals('Y', question_utils::int_to_letter(25));
+        $this->assertEquals('Z', question_utils::int_to_letter(26));
+    }
+
     /**
      * @expectedException moodle_exception
      */

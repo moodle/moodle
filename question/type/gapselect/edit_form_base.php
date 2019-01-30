@@ -182,7 +182,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
     protected function choice_group($mform) {
         $options = array();
         for ($i = 1; $i <= $this->get_maximum_choice_group_number(); $i += 1) {
-            $options[$i] = $i;
+            $options[$i] = question_utils::int_to_letter($i);
         }
         $grouparray = array();
         $grouparray[] = $mform->createElement('text', 'answer',
