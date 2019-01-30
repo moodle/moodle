@@ -181,9 +181,9 @@ if ($ADMIN->fulltree) {
             array('value' => 0, 'adv' => true)));
 
     // Password.
-    $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/password',
+    $quizsettings->add(new admin_setting_configpasswordunmask_with_advanced('quiz/password',
             get_string('requirepassword', 'quiz'), get_string('configrequirepassword', 'quiz'),
-            array('value' => '', 'adv' => false), PARAM_TEXT));
+            array('value' => '', 'adv' => false)));
 
     // IP restrictions.
     $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/subnet',

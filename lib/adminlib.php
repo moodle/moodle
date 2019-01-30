@@ -2489,7 +2489,28 @@ class admin_setting_configpasswordunmask extends admin_setting_configtext {
         $element = $OUTPUT->render_from_template('core_admin/setting_configpasswordunmask', $context);
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', null, $query);
     }
+}
 
+/**
+ * Password field, allows unmasking of password, with an advanced checkbox that controls an additional $name.'_adv' setting.
+ *
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2018 Paul Holden (pholden@greenhead.ac.uk)
+ */
+class admin_setting_configpasswordunmask_with_advanced extends admin_setting_configpasswordunmask {
+
+    /**
+     * Constructor
+     *
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $visiblename localised
+     * @param string $description long localised info
+     * @param array $defaultsetting ('value'=>string, 'adv'=>bool)
+     */
+    public function __construct($name, $visiblename, $description, $defaultsetting) {
+        parent::__construct($name, $visiblename, $description, $defaultsetting['value']);
+        $this->set_advanced_flag_options(admin_setting_flag::ENABLED, !empty($defaultsetting['adv']));
+    }
 }
 
 /**
