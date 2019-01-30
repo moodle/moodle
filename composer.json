@@ -6,8 +6,8 @@
     "homepage": "https://moodle.org",
     "require-dev": {
         "phpunit/phpunit": "6.5.*",
-        "phpunit/dbUnit": "3.0.*",
+        "phpunit/dbunit": "3.0.*",
         "moodlehq/behat-extension": "3.37.0",
-        "mikey179/vfsStream": "^1.6"
+        "mikey179/vfsstream": "^1.6"
     }
 }
