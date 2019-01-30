@@ -1,6 +1,9 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 3.7 ===
+* The core/form_autocompelte_input template now has a `data-tags` attribute.
+
 === 3.6 ===
 
 * A new callback has been added to the theme layout files allowing plugins to inject their content
