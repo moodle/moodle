@@ -452,7 +452,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $indicator = $this->getMockBuilder('test_indicator_max')->setMethods(['calculate_sample'])->getMock();
         $indicator->expects($this->never())->method('calculate_sample');
 
-        $existingcalcs = array(111 => 1, 222 => 0.5);
+        $existingcalcs = array(111 => 1, 222 => -1);
         $sampleids = array(111 => 111, 222 => 222);
         list($values, $unused) = $indicator->calculate($sampleids, $sampleorigin, $starttime, $endtime, $existingcalcs);
     }

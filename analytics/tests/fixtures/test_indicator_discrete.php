@@ -18,7 +18,7 @@
  * Test indicator.
  *
  * @package   core_analytics
- * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
+ * @copyright 2019 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,15 +28,13 @@ defined('MOODLE_INTERNAL') || die();
  * Test indicator.
  *
  * @package   core_analytics
- * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
+ * @copyright 2019 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class test_indicator_random extends \core_analytics\local\indicator\linear {
+class test_indicator_discrete extends \core_analytics\local\indicator\discrete {
 
     /**
-     * Returns a lang_string object representing the name for the indicator.
-     *
-     * Used as column identificator.
+     * Returns the name.
      *
      * If there is a corresponding '_help' string this will be shown as well.
      *
@@ -48,15 +46,45 @@ class test_indicator_random extends \core_analytics\local\indicator\linear {
     }
 
     /**
+     * The different classes this discrete indicator provides.
+     * @return [type] [description]
+     */
+    protected static function get_classes() {
+        return [0, 1, 2, 3, 4];
+    }
+
+    /**
+     * Just for testing.
+     *
+     * @param  float $value
+     * @param  string $subtype
+     * @return string
+     */
+    public function get_calculation_outcome($value, $subtype = false) {
+        return self::OUTCOME_OK;
+    }
+
+    /**
+     * Custom indicator calculated value display as otherwise we would display meaningless numbers to users.
+     *
+     * @param  float  $value
+     * @param  string $subtype
+     * @return string
+     */
+    public function get_display_value($value, $subtype = false) {
+        return $value;
+    }
+
+    /**
      * calculate_sample
      *
      * @param int $sampleid
-     * @param string $samplesorigin
+     * @param string $sampleorigin
      * @param int $starttime
      * @param int $endtime
      * @return float
      */
-    protected function calculate_sample($sampleid, $samplesorigin, $starttime, $endtime) {
-        return mt_rand(-1, 1);
+    protected function calculate_sample($sampleid, $sampleorigin, $starttime = false, $endtime = false) {
+        return 4;
     }
 }
