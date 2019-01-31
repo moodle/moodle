@@ -406,7 +406,11 @@ function lesson_user_outline($course, $user, $mod, $lesson) {
                 $return->info = get_string("nolessonattempts", "lesson");
             }
         } else {
-            $return->info = get_string("grade") . ': ' . $grade->str_long_grade;
+            if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+                $return->info = get_string('grade') . ': ' . $grade->str_long_grade;
+            } else {
+                $return->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
+            }
 
             // Datesubmitted == time created. dategraded == time modified or time overridden.
             // If grade was last modified by the user themselves use date graded. Otherwise use date submitted.
@@ -463,13 +467,18 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
                 $status = get_string("nolessonattempts", "lesson");
             }
         } else {
-            $status = get_string("grade") . ': ' . $grade->str_long_grade;
+            if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+                $status = get_string("grade") . ': ' . $grade->str_long_grade;
+            } else {
+                $status = get_string('grade') . ': ' . get_string('hidden', 'grades');
+            }
         }
 
         // Display the grade or lesson status if there isn't one.
         echo $OUTPUT->container($status);
 
-        if ($grade->str_feedback) {
+        if ($grade->str_feedback &&
+            (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id)))) {
             echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
         }
     }

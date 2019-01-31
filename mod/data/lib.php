@@ -1192,12 +1192,20 @@ function data_user_outline($course, $user, $mod, $data) {
                                            ORDER BY timemodified DESC', array($data->id, $user->id), true);
         $result->time = $lastrecord->timemodified;
         if ($grade) {
-            $result->info .= ', ' . get_string('grade') . ': ' . $grade->str_long_grade;
+            if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+                $result->info .= ', ' . get_string('grade') . ': ' . $grade->str_long_grade;
+            } else {
+                $result->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
+            }
         }
         return $result;
     } else if ($grade) {
         $result = new stdClass();
-        $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
+        if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+            $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
+        } else {
+            $result->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
+        }
 
         //datesubmitted == time created. dategraded == time modified or time overridden
         //if grade was last modified by the user themselves use date graded. Otherwise use date submitted
@@ -1229,9 +1237,13 @@ function data_user_complete($course, $user, $mod, $data) {
     $grades = grade_get_grades($course->id, 'mod', 'data', $data->id, $user->id);
     if (!empty($grades->items[0]->grades)) {
         $grade = reset($grades->items[0]->grades);
-        echo $OUTPUT->container(get_string('grade').': '.$grade->str_long_grade);
-        if ($grade->str_feedback) {
-            echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
+        if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+            echo $OUTPUT->container(get_string('grade').': '.$grade->str_long_grade);
+            if ($grade->str_feedback) {
+                echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
+            }
+        } else {
+            echo $OUTPUT->container(get_string('grade') . ': ' . get_string('hidden', 'grades'));
         }
     }
 
