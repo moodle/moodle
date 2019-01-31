@@ -8577,6 +8577,7 @@ a.ygtvspacer:hover {
   display: table-cell;
 }
 .messaging-area-container .messaging-area .messages-area .response .message-box .message-text-container textarea {
+  direction: ltr;
   width: 100%;
   margin: 0;
   resize: none;
