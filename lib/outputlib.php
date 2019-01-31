@@ -676,6 +676,12 @@ class theme_config {
     public $precompiledcsscallback = null;
 
     /**
+     * The theme tenant
+     * @var int Tenant id
+     */
+    public $tenantid = 0;
+
+    /**
      * Load the config.php file for a particular theme, and return an instance
      * of this class. (That is, this is a factory method.)
      *
@@ -999,13 +1005,28 @@ class theme_config {
     }
 
     /**
+     * Set the theme tenant id used to server custom stylesheets
+     * @param Int $tenantid Tenant id.
+     */
+    public function set_tenantid($tenantid) {
+        $this->tenantid = $tenantid;
+    }
+
+    /**
      * Get the stylesheet URL of this theme.
      *
      * @param moodle_page $page Not used... deprecated?
      * @return moodle_url[]
      */
     public function css_urls(moodle_page $page) {
-        global $CFG;
+        global $CFG, $USER;
+
+        // SP-207: Fetch the tenant id for the user.
+        // If no tenant the id = 1.
+        $tenantid = \tool_tenant\tenancy::get_tenant_id($USER->id);
+
+        // SP-207: Optionally override tenant in URL.
+        $tenantid = optional_param('tenantid', $tenantid, PARAM_INT);
 
         $rev = theme_get_revision();
 
@@ -1016,7 +1037,13 @@ class theme_config {
 
         if ($rev > -1) {
             $filename = right_to_left() ? 'all-rtl' : 'all';
-            $url = new moodle_url("/theme/styles.php");
+            // SP-207: If theme is workplace add the tenant id to the CSS filename.
+            if ($this->name == 'workplace') {
+                $filename = right_to_left() ? 'all-' . $tenantid . '-rtl' : 'all-' . $tenantid;
+                $url = new moodle_url("/theme/workplace/wpcss.php");
+            } else {
+                $url = new moodle_url("/theme/styles.php");
+            }
             $themesubrevision = theme_get_sub_revision_for_theme($this->name);
 
             // Provide the sub revision to allow us to invalidate cached theme CSS
