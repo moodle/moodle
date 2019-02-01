@@ -338,12 +338,12 @@ class model {
      *
      * @param \core_analytics\local\target\base $target
      * @param \core_analytics\local\indicator\base[] $indicators
-     * @param string $timesplittingid The time splitting method id (its fully qualified class name)
-     * @param string $processor The machine learning backend this model will use.
+     * @param string|false $timesplittingid The time splitting method id (its fully qualified class name)
+     * @param string|null $processor The machine learning backend this model will use.
      * @return \core_analytics\model
      */
     public static function create(\core_analytics\local\target\base $target, array $indicators,
-                                  $timesplittingid = false, $processor = false) {
+                                  $timesplittingid = false, $processor = null) {
         global $USER, $DB;
 
         \core_analytics\manager::check_can_manage_models();
@@ -384,59 +384,6 @@ class model {
         }
 
         return $model;
-    }
-
-    /**
-     * Creates a new model from import configuration.
-     *
-     * It is recommended to call \core_analytics\model_config::check_dependencies first so the error message can be retrieved.
-     *
-     * @param \stdClass $modeldata Model data.
-     * @param  bool $skipcheckdependencies Useful if you already checked the dependencies.
-     * @return \core_analytics\model|false False if the provided model data contain errors.
-     */
-    public static function create_from_import(\stdClass $modeldata, ?bool $skipcheckdependencies = false) : ?\core_analytics\model {
-
-        \core_analytics\manager::check_can_manage_models();
-
-        if (!$skipcheckdependencies) {
-            $modelconfig = new model_config();
-            if ($error = $modelconfig->check_dependencies($modeldata, false)) {
-                return null;
-            }
-        }
-
-        // At this stage we should be 100% sure that the model data is safe and can be imported.
-        // If the caller explicitly set $skipcheckdependencies to false and there is a problem
-        // in this process we trigger a coding exception.
-        if (!$target = \core_analytics\manager::get_target($modeldata->target)) {
-            throw new \coding_exception('The provided target is not available. Ensure that model_config::check_dependencies
-                is called before importing the model.');
-        }
-        if (!$timesplitting = \core_analytics\manager::get_time_splitting($modeldata->timesplitting)) {
-            throw new \coding_exception('The provided time splitting method is not available. Ensure that
-                model_config::check_dependencies is called before importing the model.');
-        }
-
-        // Indicators.
-        $indicators = [];
-        foreach ($modeldata->indicators as $indicator) {
-            if (!$indicator = \core_analytics\manager::get_indicator($indicator)) {
-                throw new \coding_exception('The provided indicator is not available. Ensure that
-                    model_config::check_dependencies is called before importing the model.');
-            }
-            $indicators[] = $indicator;
-        }
-
-        if (!empty($modeldata->processor)) {
-            if (!$processor = \core_analytics\manager::get_predictions_processor($modeldata->processor, false)) {
-                throw new \coding_exception('The provided machine learning backend is not available. Ensure that
-                    model_config::check_dependencies is called before importing the model.');
-            }
-        } else {
-            $modeldata->processor = false;
-        }
-        return self::create($target, $indicators, $modeldata->timesplitting, $modeldata->processor);
     }
 
     /**
@@ -1363,7 +1310,7 @@ class model {
      * @param bool $onlymodelid Preference over $subdirs
      * @return string
      */
-    protected function get_output_dir($subdirs = array(), $onlymodelid = false) {
+    public function get_output_dir($subdirs = array(), $onlymodelid = false) {
         global $CFG;
 
         $subdirstr = '';
@@ -1412,7 +1359,7 @@ class model {
     }
 
     /**
-     * Exports the model data.
+     * Exports the model data for displaying it in a template.
      *
      * @return \stdClass
      */
@@ -1435,19 +1382,34 @@ class model {
     }
 
     /**
-     * Exports the model data as a JSON file.
+     * Exports the model data to a zip file.
      *
-     * @param  string $downloadfilename Download file name.
-     * @return string The filepath
+     * @param string $zipfilename
+     * @return string Zip file path
      */
-    public function export_config(string $downloadfilename) : string {
-        global $CFG;
+    public function export_model(string $zipfilename) : string {
 
         \core_analytics\manager::check_can_manage_models();
 
         $modelconfig = new model_config($this);
-        $modeldata = $modelconfig->export();
-        return $modelconfig->export_to_file($modeldata, $downloadfilename);
+        return $modelconfig->export($zipfilename);
+    }
+
+    /**
+     * Imports the provided model.
+     *
+     * Note that this method assumes that model_config::check_dependencies has already been called.
+     *
+     * @throws \moodle_exception
+     * @param  string $zipfilepath Zip file path
+     * @return \core_analytics\model
+     */
+    public static function import_model(string $zipfilepath) : \core_analytics\model {
+
+        \core_analytics\manager::check_can_manage_models();
+
+        $modelconfig = new \core_analytics\model_config();
+        return $modelconfig->import($zipfilepath);
     }
 
     /**

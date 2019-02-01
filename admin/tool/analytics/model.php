@@ -229,10 +229,9 @@ switch ($action) {
         break;
 
     case 'exportmodel':
-        $downloadfilename = 'model-config.' . $model->get_id() . '.' . microtime() . '.json';
-        $filepath = $model->export_config($downloadfilename);
-        @header("Content-type: text/json; charset=UTF-8");
-        send_temp_file($filepath, $downloadfilename);
+        $zipfilename = 'model-' . $model->get_unique_id() . '-' . microtime(false) . '.zip';
+        $zipfilepath = $model->export_model($zipfilename);
+        send_temp_file($zipfilepath, $zipfilename);
         break;
 
     case 'clear':

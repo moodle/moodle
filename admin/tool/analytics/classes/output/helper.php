@@ -64,7 +64,7 @@ class helper {
      *
      * @param string $title
      * @param \moodle_url $url
-     * @param \context|false $context Defaults to context_system
+     * @param \context|null $context Defaults to context_system
      * @return null
      */
     public static function set_navbar(string $title, \moodle_url $url, ?\context $context = null) {

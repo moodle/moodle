@@ -45,7 +45,7 @@ class import_model extends \moodleform {
 
         $mform->addElement('header', 'settingsheader', get_string('importmodel', 'tool_analytics'));
 
-        $mform->addElement('filepicker', 'modelfile', get_string('file'), null, ['accepted_types' => '.json']);
+        $mform->addElement('filepicker', 'modelfile', get_string('file'), null, ['accepted_types' => '.zip']);
         $mform->addRule('modelfile', null, 'required');
 
         $mform->addElement('advcheckbox', 'ignoreversionmismatches', get_string('ignoreversionmismatches', 'tool_analytics'),

@@ -38,7 +38,7 @@ use Phpml\ModelManager;
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class processor implements \core_analytics\classifier, \core_analytics\regressor {
+class processor implements \core_analytics\classifier, \core_analytics\regressor, \core_analytics\packable {
 
     /**
      * Size of training / prediction batches.
@@ -103,8 +103,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
      */
     public function train_classification($uniqueid, \stored_file $dataset, $outputdir) {
 
-        // Output directory is already unique to the model.
-        $modelfilepath = $outputdir . DIRECTORY_SEPARATOR . self::MODEL_FILENAME;
+        $modelfilepath = $this->get_model_filepath($outputdir);
 
         $modelmanager = new ModelManager();
 
@@ -175,8 +174,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
      */
     public function classify($uniqueid, \stored_file $dataset, $outputdir) {
 
-        // Output directory is already unique to the model.
-        $modelfilepath = $outputdir . DIRECTORY_SEPARATOR . self::MODEL_FILENAME;
+        $modelfilepath = $this->get_model_filepath($outputdir);
 
         if (!file_exists($modelfilepath)) {
             throw new \moodle_exception('errorcantloadmodel', 'mlbackend_php', '', $modelfilepath);
@@ -422,6 +420,77 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
      */
     public function evaluate_regression($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir) {
         throw new \coding_exception('This predictor does not support regression yet.');
+    }
+
+    /**
+     * Exports the machine learning model.
+     *
+     * @throws \moodle_exception
+     * @param  string $uniqueid  The model unique id
+     * @param  string $modeldir  The directory that contains the trained model.
+     * @return string            The path to the directory that contains the exported model.
+     */
+    public function export(string $uniqueid, string $modeldir) : string {
+
+        $modelfilepath = $this->get_model_filepath($modeldir);
+
+        if (!file_exists($modelfilepath)) {
+            throw new \moodle_exception('errorexportmodelresult', 'analytics');
+        }
+
+        // We can use the actual $modeldir as the directory is not modified during export, just copied into a zip.
+        return $modeldir;
+    }
+
+    /**
+     * Imports the provided machine learning model.
+     *
+     * @param  string $uniqueid The model unique id
+     * @param  string $modeldir  The directory that will contain the trained model.
+     * @param  string $importdir The directory that contains the files to import.
+     * @return bool Success
+     */
+    public function import(string $uniqueid, string $modeldir, string $importdir) : bool {
+
+        $importmodelfilepath = $this->get_model_filepath($importdir);
+        $modelfilepath = $this->get_model_filepath($modeldir);
+
+        $modelmanager = new ModelManager();
+
+        // Copied from ModelManager::restoreFromFile to validate the serialised contents
+        // before restoring them.
+        $importconfig = file_get_contents($importmodelfilepath);
+
+        // Clean stuff like function calls.
+        $importconfig = preg_replace('/[^a-zA-Z0-9\{\}%\.\*\;\,\:\"\-\0\\\]/', '', $importconfig);
+
+        $object = unserialize($importconfig,
+            ['allowed_classes' => ['Phpml\\Classification\\Linear\\LogisticRegression']]);
+        if (!$object) {
+            return false;
+        }
+
+        if (get_class($object) == '__PHP_Incomplete_Class') {
+            return false;
+        }
+
+        $classifier = $modelmanager->restoreFromFile($importmodelfilepath);
+
+        // This would override any previous classifier.
+        $modelmanager->saveToFile($classifier, $modelfilepath);
+
+        return true;
+    }
+
+    /**
+     * Returns the path to the serialised model file in the provided directory.
+     *
+     * @param  string $modeldir The model directory
+     * @return string           The model file
+     */
+    protected function get_model_filepath(string $modeldir) : string {
+        // Output directory is already unique to the model.
+        return $modeldir . DIRECTORY_SEPARATOR . self::MODEL_FILENAME;
     }
 
     /**

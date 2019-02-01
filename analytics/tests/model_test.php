@@ -337,36 +337,24 @@ class analytics_model_testcase extends advanced_testcase {
     }
 
     /**
-     * Test export_from_json() API.
+     * Test that import_model import models' configurations.
      */
-    public function test_create_from_import() {
+    public function test_import_model_config() {
         $this->resetAfterTest(true);
 
         $this->model->enable('\\core\\analytics\\time_splitting\\quarters');
+        $zipfilepath = $this->model->export_model('yeah-config.zip');
 
         $this->modelobj = $this->model->get_model_obj();
 
-        $modelconfig = new \core_analytics\model_config($this->model);
-        $modeldata = $modelconfig->export();
-        $importedmodel = \core_analytics\model::create_from_import($modeldata)->get_model_obj();
+        $importedmodelobj = \core_analytics\model::import_model($zipfilepath)->get_model_obj();
 
-        $this->assertSame($this->modelobj->target, $importedmodel->target);
-        $this->assertSame($this->modelobj->indicators, $importedmodel->indicators);
-        $this->assertSame($this->modelobj->timesplitting, $importedmodel->timesplitting);
-        $this->assertEmpty($importedmodel->predictionsprocessor);
+        $this->assertSame($this->modelobj->target, $importedmodelobj->target);
+        $this->assertSame($this->modelobj->indicators, $importedmodelobj->indicators);
+        $this->assertSame($this->modelobj->timesplitting, $importedmodelobj->timesplitting);
 
-        $this->model->update(true, false, false, '\\mlbackend_php\\processor');
-
-        $this->modelobj = $this->model->get_model_obj();
-
-        $modelconfig = new \core_analytics\model_config($this->model);
-        $modeldata = $modelconfig->export();
-        $importedmodel = \core_analytics\model::create_from_import($modeldata)->get_model_obj();
-
-        $this->assertSame($this->modelobj->target, $importedmodel->target);
-        $this->assertSame($this->modelobj->indicators, $importedmodel->indicators);
-        $this->assertSame($this->modelobj->timesplitting, $importedmodel->timesplitting);
-        $this->assertSame($this->modelobj->predictionsprocessor, $importedmodel->predictionsprocessor);
+        $predictionsprocessor = $this->model->get_predictions_processor();
+        $this->assertSame('\\' . get_class($predictionsprocessor), $importedmodelobj->predictionsprocessor);
     }
 
     /**
@@ -399,7 +387,11 @@ class analytics_model_testcase extends advanced_testcase {
         $this->model->enable('\\core\\analytics\\time_splitting\\quarters');
 
         $modelconfig = new \core_analytics\model_config($this->model);
-        $modeldata = $modelconfig->export();
+
+        $method = new ReflectionMethod('\\core_analytics\\model_config', 'export_model_data');
+        $method->setAccessible(true);
+
+        $modeldata = $method->invoke($modelconfig);
 
         $this->assertArrayHasKey('core', $modeldata->dependencies);
         $this->assertInternalType('float', $modeldata->dependencies['core']);
@@ -409,7 +401,8 @@ class analytics_model_testcase extends advanced_testcase {
 
         $indicators['test_indicator_max'] = \core_analytics\manager::get_indicator('test_indicator_max');
         $this->model->update(true, $indicators, false);
-        $modeldata = $modelconfig->export();
+
+        $modeldata = $method->invoke($modelconfig);
 
         $this->assertCount(1, $modeldata->indicators);
     }
@@ -442,17 +435,6 @@ class analytics_model_testcase extends advanced_testcase {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testable_model extends \core_analytics\model {
-
-    /**
-     * get_output_dir
-     *
-     * @param array $subdirs
-     * @param bool $onlymodelid
-     * @return string
-     */
-    public function get_output_dir($subdirs = array(), $onlymodelid = false) {
-        return parent::get_output_dir($subdirs, $onlymodelid);
-    }
 
     /**
      * init_analyser

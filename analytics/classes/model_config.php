@@ -41,6 +41,11 @@ class model_config {
     private $model = null;
 
     /**
+     * The name of the file where config is held.
+     */
+    const CONFIG_FILE_NAME = 'model-config.json';
+
+    /**
      * Constructor.
      *
      * @param \core_analytics\model|null $model
@@ -50,100 +55,95 @@ class model_config {
     }
 
     /**
-     * Exports a model to a temp file using the provided file name.
+     * Exports a model to a zip using the provided file name.
      *
-     * @return \stdClass
+     * @param string $zipfilename
+     * @return string
      */
-    public function export() : \stdClass {
+    public function export(string $zipfilename) : string {
 
         if (!$this->model) {
             throw new \coding_exception('No model object provided.');
         }
 
         if (!$this->model->can_export_configuration()) {
-            throw new \moodle_exception('errornoexportconfigrequirements', 'tool_analytics');
+            throw new \moodle_exception('errornoexportconfigrequirements', 'analytics');
         }
 
-        $versions = \core_component::get_all_versions();
+        $zip = new \zip_packer();
+        $zipfiles = [];
 
-        $data = new \stdClass();
+        // Model config in JSON.
+        $modeldata = $this->export_model_data();
 
-        // Target.
-        $data->target = $this->model->get_target()->get_id();
-        $requiredclasses[] = $data->target;
+        $exporttmpdir = make_request_directory('analyticsexport');
+        $jsonfilepath = $exporttmpdir . DIRECTORY_SEPARATOR . 'model-config.json';
+        if (!file_put_contents($jsonfilepath, json_encode($modeldata))) {
+            print_error('errornoexportconfig', 'analytics');
+        }
+        $zipfiles[self::CONFIG_FILE_NAME] = $jsonfilepath;
 
-        // Time splitting method.
-        $data->timesplitting = $this->model->get_time_splitting()->get_id();
-        $requiredclasses[] = $data->timesplitting;
-
-        // Model indicators.
-        $data->indicators = [];
-        foreach ($this->model->get_indicators() as $indicator) {
-            $indicatorid = $indicator->get_id();
-            $data->indicators[] = $indicatorid;
-            $requiredclasses[] = $indicatorid;
+        // ML backend.
+        if ($this->model->is_trained()) {
+            $processor = $this->model->get_predictions_processor(true);
+            $outputdir = $this->model->get_output_dir(array('execution'));
+            $mlbackenddir = $processor->export($this->model->get_unique_id(), $outputdir);
+            $mlbackendfiles = get_directory_list($mlbackenddir);
+            foreach ($mlbackendfiles as $mlbackendfile) {
+                $fullpath = $mlbackenddir . DIRECTORY_SEPARATOR . $mlbackendfile;
+                // Place the ML backend files inside a mlbackend/ dir.
+                $zipfiles['mlbackend/' . $mlbackendfile] = $fullpath;
+            }
         }
 
-        if ($processor = $this->model->get_model_obj()->predictionsprocessor) {
-            $data->processor = $processor;
-        }
-        // Add information for versioning.
-        $data->dependencies = [];
-        foreach ($requiredclasses as $fullclassname) {
-            $component = $this->get_class_component($fullclassname);
-            $data->dependencies[$component] = $versions[$component];
-        }
+        $zipfilepath = $exporttmpdir . DIRECTORY_SEPARATOR . $zipfilename;
+        $zip->archive_to_pathname($zipfiles, $zipfilepath);
 
-        return $data;
+        return $zipfilepath;
     }
 
     /**
-     * Packages the configuration of a model into a .json file.
+     * Imports the provided model configuration into a new model.
      *
-     * @param  \stdClass $data Model config data
-     * @param  string $downloadfilename The file name.
-     * @return string Path to the file with the model configuration.
-     */
-    public function export_to_file(\stdClass $data, string $downloadfilename) : string {
-
-        $modelconfig = json_encode($data);
-
-        $dir = make_temp_directory('analyticsexport');
-        $filepath = $dir . DIRECTORY_SEPARATOR . $downloadfilename;
-        if (!file_put_contents($filepath, $modelconfig)) {
-            print_error('errornoexportconfig', 'tool_analytics');
-        }
-
-        return $filepath;
-    }
-
-    /**
-     * Check the provided json string.
+     * Note that this method assumes that self::check_dependencies has already been called.
      *
-     * @param  string $json A json string.
-     * @return string|null Error string or null if all good.
+     * @param  string $zipfilepath Path to the zip file to import
+     * @return \core_analytics\model
      */
-    public function check_json_data(string $json) : ?string {
+    public function import(string $zipfilepath) : \core_analytics\model {
 
-        if (!$modeldata = json_decode($json)) {
-            return get_string('errorimport', 'tool_analytics');
+        list($modeldata, $mlbackenddir) = $this->extract_import_contents($zipfilepath);
+
+        $target = \core_analytics\manager::get_target($modeldata->target);
+        $indicators = [];
+        foreach ($modeldata->indicators as $indicatorclass) {
+            $indicator = \core_analytics\manager::get_indicator($indicatorclass);
+            $indicators[$indicator->get_id()] = $indicator;
+        }
+        $model = \core_analytics\model::create($target, $indicators, $modeldata->timesplitting, $modeldata->processor);
+
+        // Import them disabled.
+        $model->update(false, false, false, false);
+
+        if ($mlbackenddir) {
+            $modeldir = $model->get_output_dir(['execution']);
+            if (!$model->get_predictions_processor(true)->import($model->get_unique_id(), $modeldir, $mlbackenddir)) {
+                throw new \moodle_exception('errorimport', 'analytics');
+            }
+            $model->mark_as_trained();
         }
 
-        if (empty($modeldata->target) || empty($modeldata->timesplitting) || empty($modeldata->indicators)) {
-            return get_string('errorimport', 'tool_analytics');
-        }
-
-        return null;
+        return $model;
     }
 
     /**
      * Check that the provided model configuration can be deployed in this site.
      *
-     * @param  \stdClass $importmodel
+     * @param  \stdClass $modeldata
      * @param  bool $ignoreversionmismatches
      * @return string|null Error string or null if all good.
      */
-    public function check_dependencies(\stdClass $importmodel, bool $ignoreversionmismatches) : ?string {
+    public function check_dependencies(\stdClass $modeldata, bool $ignoreversionmismatches) : ?string {
 
         $siteversions = \core_component::get_all_versions();
 
@@ -153,7 +153,7 @@ class model_config {
         $missingclasses = [];
 
         // We first check that this site has the required dependencies and the required versions.
-        foreach ($importmodel->dependencies as $component => $importversion) {
+        foreach ($modeldata->dependencies as $component => $importversion) {
 
             if (empty($siteversions[$component])) {
 
@@ -177,44 +177,42 @@ class model_config {
             }
         }
 
-        // Checking that the each of the components is available.
-        if (!$target = manager::get_target($importmodel->target)) {
-            $missingclasses[] = $importmodel->target;
+        // Checking that each of the components is available.
+        if (!$target = manager::get_target($modeldata->target)) {
+            $missingclasses[] = $modeldata->target;
         }
 
-        if (!$timesplitting = manager::get_time_splitting($importmodel->timesplitting)) {
-            $missingclasses[] = $importmodel->timesplitting;
+        if (!$timesplitting = manager::get_time_splitting($modeldata->timesplitting)) {
+            $missingclasses[] = $modeldata->timesplitting;
         }
 
         // Indicators.
-        $indicators = [];
-        foreach ($importmodel->indicators as $indicatorclass) {
+        foreach ($modeldata->indicators as $indicatorclass) {
             if (!$indicator = manager::get_indicator($indicatorclass)) {
                 $missingclasses[] = $indicatorclass;
             }
         }
 
         // ML backend.
-        if (!empty($importmodel->processor)) {
-            if (!$processor = \core_analytics\manager::get_predictions_processor($importmodel->processor, false)) {
+        if (!empty($modeldata->processor)) {
+            if (!$processor = \core_analytics\manager::get_predictions_processor($modeldata->processor, false)) {
                 $missingclasses[] = $indicatorclass;
             }
         }
 
         if (!empty($missingcomponents)) {
-            return get_string('errorimportmissingcomponents', 'tool_analytics', join(', ', $missingcomponents));
+            return get_string('errorimportmissingcomponents', 'analytics', join(', ', $missingcomponents));
         }
 
         if (!empty($versionmismatches)) {
-            return get_string('errorimportversionmismatches', 'tool_analytics', implode(', ', $versionmismatches));
+            return get_string('errorimportversionmismatches', 'analytics', implode(', ', $versionmismatches));
         }
 
         if (!empty($missingclasses)) {
             $a = (object)[
                 'missingclasses' => implode(', ', $missingclasses),
-                'dependencyversions' => implode(', ', $dependencyversions)
             ];
-            return get_string('errorimportmissingclasses', 'tool_analytics', $a);
+            return get_string('errorimportmissingclasses', 'analytics', $a);
         }
 
         // No issues found.
@@ -247,5 +245,82 @@ class model_config {
         }
 
         return $component;
+    }
+
+    /**
+     * Extracts the import zip contents.
+     *
+     * @param  string $zipfilepath Zip file path
+     * @return array [0] => \stdClass, [1] => string
+     */
+    public function extract_import_contents(string $zipfilepath) : array {
+
+        $importtempdir = make_request_directory('analyticsimport' . microtime(false));
+
+        $zip = new \zip_packer();
+        $filelist = $zip->extract_to_pathname($zipfilepath, $importtempdir);
+
+        if (empty($filelist[self::CONFIG_FILE_NAME])) {
+            // Missing required file.
+            throw new \moodle_exception('errorimport', 'analytics');
+        }
+
+        $jsonmodeldata = file_get_contents($importtempdir . DIRECTORY_SEPARATOR . self::CONFIG_FILE_NAME);
+
+        if (!$modeldata = json_decode($jsonmodeldata)) {
+            throw new \moodle_exception('errorimport', 'analytics');
+        }
+
+        if (empty($modeldata->target) || empty($modeldata->timesplitting) || empty($modeldata->indicators)) {
+            throw new \moodle_exception('errorimport', 'analytics');
+        }
+
+        $mlbackenddir = $importtempdir . DIRECTORY_SEPARATOR . 'mlbackend';
+        if (!is_dir($mlbackenddir)) {
+            $mlbackenddir = false;
+        }
+
+        return [$modeldata, $mlbackenddir];
+    }
+    /**
+     * Exports the configuration of the model.
+     * @return \stdClass
+     */
+    protected function export_model_data() : \stdClass {
+
+        $versions = \core_component::get_all_versions();
+
+        $data = new \stdClass();
+
+        // Target.
+        $data->target = $this->model->get_target()->get_id();
+        $requiredclasses[] = $data->target;
+
+        // Time splitting method.
+        $data->timesplitting = $this->model->get_time_splitting()->get_id();
+        $requiredclasses[] = $data->timesplitting;
+
+        // Model indicators.
+        $data->indicators = [];
+        foreach ($this->model->get_indicators() as $indicator) {
+            $indicatorid = $indicator->get_id();
+            $data->indicators[] = $indicatorid;
+            $requiredclasses[] = $indicatorid;
+        }
+
+        // Return the predictions processor this model is using, even if no predictions processor
+        // was explicitly selected.
+        $predictionsprocessor = $this->model->get_predictions_processor();
+        $data->processor = '\\' . get_class($predictionsprocessor);
+        $requiredclasses[] = $data->processor;
+
+        // Add information for versioning.
+        $data->dependencies = [];
+        foreach ($requiredclasses as $fullclassname) {
+            $component = $this->get_class_component($fullclassname);
+            $data->dependencies[$component] = $versions[$component];
+        }
+
+        return $data;
     }
 }

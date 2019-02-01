@@ -40,19 +40,15 @@ if ($form->is_cancelled()) {
 
     $modelconfig = new \core_analytics\model_config();
 
-    $json = $form->get_file_content('modelfile');
+    $zipfilepath = $form->save_temp_file('modelfile');
 
-    if ($error = $modelconfig->check_json_data($json)) {
-        // The provided file is not ok.
-        redirect($url, $error, 0, \core\output\notification::NOTIFY_ERROR);
-    }
+    list ($modeldata, $unused) = $modelconfig->extract_import_contents($zipfilepath);
 
-    $modeldata = json_decode($json);
     if ($error = $modelconfig->check_dependencies($modeldata, $data->ignoreversionmismatches)) {
         // The file is not available until the form is validated so we need an alternative method to show errors.
         redirect($url, $error, 0, \core\output\notification::NOTIFY_ERROR);
     }
-    $model = \core_analytics\model::create_from_import($modeldata, true);
+    \core_analytics\model::import_model($zipfilepath);
 
     redirect($returnurl, get_string('importedsuccessfully', 'tool_analytics'), 0,
         \core\output\notification::NOTIFY_SUCCESS);

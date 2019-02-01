@@ -119,23 +119,9 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->setAdminuser();
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
 
-        $ncourses = 10;
-
         // Generate training data.
-        $params = array(
-            'startdate' => mktime(0, 0, 0, 10, 24, 2015),
-            'enddate' => mktime(0, 0, 0, 2, 24, 2016),
-        );
-        for ($i = 0; $i < $ncourses; $i++) {
-            $name = 'a' . random_string(10);
-            $courseparams = array('shortname' => $name, 'fullname' => $name) + $params;
-            $this->getDataGenerator()->create_course($courseparams);
-        }
-        for ($i = 0; $i < $ncourses; $i++) {
-            $name = 'b' . random_string(10);
-            $courseparams = array('shortname' => $name, 'fullname' => $name) + $params;
-            $this->getDataGenerator()->create_course($courseparams);
-        }
+        $ncourses = 10;
+        $this->generate_courses($ncourses);
 
         // We repeat the test for all prediction processors.
         $predictionsprocessor = \core_analytics\manager::get_predictions_processor($predictionsprocessorclass, false);
@@ -171,6 +157,10 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->assertEmpty($fs->get_directory_files(\context_system::instance()->id, 'analytics',
             \core_analytics\dataset_manager::UNLABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
 
+        $params = [
+            'startdate' => mktime(0, 0, 0, 10, 24, 2015),
+            'enddate' => mktime(0, 0, 0, 2, 24, 2016),
+        ];
         $courseparams = $params + array('shortname' => 'aaaaaa', 'fullname' => 'aaaaaa', 'visible' => 0);
         $course1 = $this->getDataGenerator()->create_course($courseparams);
         $courseparams = $params + array('shortname' => 'bbbbbb', 'fullname' => 'bbbbbb', 'visible' => 0);
@@ -280,6 +270,67 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         return $this->add_prediction_processors($cases);
     }
 
+    /**
+     * test_ml_export_import
+     *
+     * @param string $predictionsprocessorclass The class name
+     * @dataProvider provider_ml_export_import
+     */
+    public function test_ml_export_import($predictionsprocessorclass) {
+
+        $this->resetAfterTest(true);
+        $this->setAdminuser();
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+
+        // Generate training data.
+        $ncourses = 10;
+        $this->generate_courses($ncourses);
+
+        // We repeat the test for all prediction processors.
+        $predictionsprocessor = \core_analytics\manager::get_predictions_processor($predictionsprocessorclass, false);
+        if ($predictionsprocessor->is_ready() !== true) {
+            $this->markTestSkipped('Skipping ' . $predictionsprocessorclass . ' as the predictor is not ready.');
+        }
+
+        $model = $this->add_perfect_model();
+        $model->update(true, false, '\core\analytics\time_splitting\quarters', get_class($predictionsprocessor));
+
+        $model->train();
+
+        $this->generate_courses(10, ['visible' => 0]);
+
+        $originalresults = $model->predict();
+
+        $zipfilename = 'model-zip-' . microtime() . '.zip';
+        $zipfilepath = $model->export_model($zipfilename);
+
+        $importmodel = \core_analytics\model::import_model($zipfilepath);
+        $importmodel->enable();
+
+        // Now predict using the imported model without prior training.
+        $importedmodelresults = $importmodel->predict();
+
+        foreach ($originalresults->predictions as $sampleid => $prediction) {
+            $this->assertEquals($importedmodelresults->predictions[$sampleid]->prediction, $prediction->prediction);
+        }
+
+        set_config('enabled_stores', '', 'tool_log');
+        get_log_manager(true);
+    }
+
+    /**
+     * provider_ml_export_import
+     *
+     * @return array
+     */
+    public function provider_ml_export_import() {
+        $cases = [
+            'case' => [],
+        ];
+
+        // We need to test all system prediction processors.
+        return $this->add_prediction_processors($cases);
+    }
     /**
      * Test the system classifiers returns.
      *
@@ -400,20 +451,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         }
 
         // Generate training data.
-        $params = array(
-            'startdate' => mktime(0, 0, 0, 10, 24, 2015),
-            'enddate' => mktime(0, 0, 0, 2, 24, 2016),
-        );
-        for ($i = 0; $i < $ncourses; $i++) {
-            $name = 'a' . random_string(10);
-            $params = array('shortname' => $name, 'fullname' => $name) + $params;
-            $this->getDataGenerator()->create_course($params);
-        }
-        for ($i = 0; $i < $ncourses; $i++) {
-            $name = 'b' . random_string(10);
-            $params = array('shortname' => $name, 'fullname' => $name) + $params;
-            $this->getDataGenerator()->create_course($params);
-        }
+        $this->generate_courses($ncourses);
 
         // We repeat the test for all prediction processors.
         $predictionsprocessor = \core_analytics\manager::get_predictions_processor($predictionsprocessorclass, false);
@@ -577,6 +615,32 @@ class core_analytics_prediction_testcase extends advanced_testcase {
 
         // To load db defaults as well.
         return new \core_analytics\model($model->get_id());
+    }
+
+    /**
+     * Generates $ncourses courses
+     *
+     * @param  int $ncourses The number of courses to be generated.
+     * @param  array $params Course params
+     * @return null
+     */
+    protected function generate_courses($ncourses, array $params = []) {
+
+        $params = $params + [
+            'startdate' => mktime(0, 0, 0, 10, 24, 2015),
+            'enddate' => mktime(0, 0, 0, 2, 24, 2016),
+        ];
+
+        for ($i = 0; $i < $ncourses; $i++) {
+            $name = 'a' . random_string(10);
+            $courseparams = array('shortname' => $name, 'fullname' => $name) + $params;
+            $this->getDataGenerator()->create_course($courseparams);
+        }
+        for ($i = 0; $i < $ncourses; $i++) {
+            $name = 'b' . random_string(10);
+            $courseparams = array('shortname' => $name, 'fullname' => $name) + $params;
+            $this->getDataGenerator()->create_course($courseparams);
+        }
     }
 
     /**
