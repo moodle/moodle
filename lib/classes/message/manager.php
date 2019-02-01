@@ -473,9 +473,21 @@ class manager {
      * @param array $processorlist the list of processors for a single user.
      */
     protected static function call_processors(message $eventdata, array $processorlist) {
+        // Allow plugins to change the message/notification data before sending it.
+        $pluginsfunction = get_plugins_with_function('pre_processor_message_send');
+
         foreach ($processorlist as $procname) {
             // Let new messaging class add custom content based on the processor.
             $proceventdata = ($eventdata instanceof message) ? $eventdata->get_eventobject_for_processor($procname) : $eventdata;
+
+            if ($pluginsfunction) {
+                foreach ($pluginsfunction as $plugintype => $plugins) {
+                    foreach ($plugins as $pluginfunction) {
+                        $pluginfunction($procname, $proceventdata);
+                    }
+                }
+            }
+
             $stdproc = new \stdClass();
             $stdproc->name = $procname;
             $processor = \core_message\api::get_processed_processor_object($stdproc);
