@@ -220,13 +220,19 @@ class mod_assign_renderer extends plugin_renderer_base {
 
         if ($header->subpage) {
             $this->page->navbar->add($header->subpage);
+            $args = ['contextname' => $header->context->get_context_name(false, true), 'subpage' => $header->subpage];
+            $title = get_string('subpagetitle', 'assign', $args);
+        } else {
+            $title = $header->context->get_context_name(false, true);
         }
+        $courseshortname = $header->context->get_course_context()->get_context_name(false, true);
+        $title = $courseshortname . ': ' . $title;
+        $heading = format_string($header->assign->name, false, array('context' => $header->context));
 
-        $this->page->set_title(get_string('pluginname', 'assign'));
+        $this->page->set_title($title);
         $this->page->set_heading($this->page->course->fullname);
 
         $o .= $this->output->header();
-        $heading = format_string($header->assign->name, false, array('context' => $header->context));
         $o .= $this->output->heading($heading);
         if ($header->preface) {
             $o .= $header->preface;
