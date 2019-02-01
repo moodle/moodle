@@ -9254,6 +9254,9 @@ a.ygtvspacer:hover {
 .message-drawer .lazy-load-list {
   overflow-y: auto;
 }
+.dir-rtl .message-drawer {
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08);
+}
 @media (max-width: 480px) {
   .messaging-area-container .messaging-area .messages-area.editing .messages-header {
     height: 80px;
