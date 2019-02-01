@@ -691,6 +691,10 @@ class api {
             // Don't use array_merge, as we lose array keys.
             $memberinfo = $individualmemberinfo + $groupmemberinfo;
 
+            if (empty($memberinfo)) {
+                return [];
+            }
+
             // Update the members array with the member information.
             $deletedmembers = [];
             foreach ($members as $convid => $memberarr) {
