@@ -145,7 +145,6 @@ $returnurl = $baseurl;
 
 // check if ajax callback
 if ($ajaxtemplate) {
-    error_log('Got it '.$ajaxtemplate.' '.$ajaxvalue);
     $parts = explode('.', $ajaxtemplate);
     list($type, $id, $managertype, $templatename) = $parts;
 
@@ -266,27 +265,27 @@ if ($ajaxtemplate) {
         }
         if ($ajaxvalue=='false') {
             if ($managertype == 'e') {
-                $DB->execute("UPDATE {email_template}
+                $DB->execute("UPDATE {email_templateset_templates}
                               SET disabled = 1
-                              WHERE companyid = :companyid
+                              WHERE templateset = :templateset
                               AND name = :templatename",
-                              array('companyid' => $id,
+                              array('templateset' => $id,
                                     'templatename' => $templatename));
             }
             if ($managertype == 'em') {
-                $DB->execute("UPDATE {email_template}
+                $DB->execute("UPDATE {email_templateset_templates}
                               SET disabledmanager = 1
-                              WHERE companyid = :companyid
+                              WHERE templateset = :templateset
                               AND name = :templatename",
-                              array('companyid' => $id,
+                              array('templateset' => $id,
                                     'templatename' => $templatename));
             }
             if ($managertype == 'es') {
-                $DB->execute("UPDATE {email_template}
+                $DB->execute("UPDATE {email_templateset_templates}
                               SET disabledsupervisor = 1
-                              WHERE companyid = :companyid
+                              WHERE templateset = :templateset
                               AND name = :templatename",
-                              array('companyid' => $id,
+                              array('templateset' => $id,
                                     'templatename' => $templatename));
             }
         } else {
