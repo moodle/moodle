@@ -589,6 +589,12 @@ class helper {
             }
         }
 
+        // Remove any userids not in $members. This can happen in the case of a user who has been deleted
+        // from the Moodle database table (which can happen in earlier versions of Moodle).
+        $userids = array_filter($userids, function($userid) use ($members) {
+            return isset($members[$userid]);
+        });
+
         // Return member information in the same order as the userids originally provided.
         $members = array_replace(array_flip($userids), $members);
 
