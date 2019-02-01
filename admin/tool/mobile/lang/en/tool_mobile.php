@@ -86,6 +86,7 @@ $string['mobilesettings'] = 'Mobile settings';
 $string['offlineuse'] = 'Offline use';
 $string['pluginname'] = 'Moodle app tools';
 $string['pluginnotenabledorconfigured'] = 'Plugin not enabled or configured.';
+$string['readingthisemailgettheapp'] = 'Reading this in your e-mail? <a href="{$a}">Download the mobile app and receive notifications on your mobile devices</a>.';
 $string['remoteaddons'] = 'Remote add-ons';
 $string['selfsignedoruntrustedcertificatewarning'] = 'It seems that the HTTPS certificate is self-signed or not trusted. The mobile app will only work with trusted sites.';
 $string['setuplink'] = 'App download page';
