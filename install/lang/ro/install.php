@@ -54,6 +54,7 @@ $string['paths'] = 'Căi';
 $string['pathserrcreatedataroot'] = 'Data directory ({$a->dataroot}) nu poate fi creat de către installer.';
 $string['pathshead'] = 'Confirmare căi';
 $string['pathsrodataroot'] = 'Directorul dataroot nu poate fi scris.';
+$string['pathsroparentdataroot'] = 'Directorul parent ({$a->parent}) nu poate fi scris. Directorul data ({$a->dataroot}) nu poate fi creat de persoana care îl instalează.';
 $string['pathssubdataroot'] = '<p>Un director unde Moodle va stoca tot conținutul unui fișier încărcat de către utilizatori.</p>
 <p>Acest director trebuie să poată fi citit și scris de către utilizatrii serverului web (de obicei \'www-data\', \'nobody\', or \'apache\').</p>
 <p>Nu trebuie să fie direct accesibil de pe web.</p>
