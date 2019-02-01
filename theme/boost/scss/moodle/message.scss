@@ -1231,6 +1231,10 @@ $message-drawer-width: 320px;
     .footer-container {
         flex-shrink: 0;
         overflow-x: hidden;
+
+        textarea {
+            direction: ltr;
+        }
     }
 
     .matchtext {

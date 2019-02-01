@@ -14125,6 +14125,8 @@ a.ygtvspacer:hover {
   .message-drawer .footer-container {
     flex-shrink: 0;
     overflow-x: hidden; }
+    .message-drawer .footer-container textarea {
+      direction: ltr; }
   .message-drawer .matchtext {
     background-color: #b5d9f9;
     color: #373a3c;
