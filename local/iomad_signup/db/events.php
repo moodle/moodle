@@ -22,5 +22,6 @@ $observers = array(
     array(
         'eventname'   => '\core\event\user_created',
         'callback'    => 'local_iomad_signup_observer::user_created',
+        'internal'    => false,
     ),
 );

@@ -19,12 +19,12 @@ $observers = array(
     array(
         'eventname' => 'core\event\user_loggedin',
         'callback' => '\local_report_user_logins\observer::user_loggedin',
-        'priority' => 9999,
+        'internal' => false,
     ),
 
     array(
         'eventname' => 'core\event\user_created',
         'callback' => '\local_report_user_logins\observer::user_created',
-        'priority' => 9999,
+        'internal' => false,
     ),
 );

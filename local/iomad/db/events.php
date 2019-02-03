@@ -32,144 +32,168 @@ $observers = array(
     array(
         'eventname'   => '\block_iomad_company_admin\event\company_created',
         'callback'    => 'local_iomad_observer::company_created',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\block_iomad_company_admin\event\company_license_created',
         'callback'    => 'local_iomad_observer::company_license_created',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\block_iomad_company_admin\event\company_license_deleted',
         'callback'    => 'local_iomad_observer::company_license_deleted',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\block_iomad_company_admin\event\company_license_updated',
         'callback'    => 'local_iomad_observer::company_license_updated',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\block_iomad_company_admin\event\company_suspended',
         'callback'    => 'local_iomad_observer::company_suspended',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\block_iomad_company_admin\event\company_unsuspended',
         'callback'    => 'local_iomad_observer::company_unsuspended',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\core\event\course_deleted',
         'callback'    => 'local_iomad_observer::course_deleted',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\core\event\user_deleted',
         'callback'    => 'local_iomad_observer::user_deleted',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\block_iomad_company_admin\event\company_updated',
         'callback'    => 'local_iomad_observer::company_updated',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\block_iomad_company_admin\event\company_user_assigned',
         'callback'    => 'local_iomad_observer::company_user_assigned',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\block_iomad_company_admin\event\company_user_unassigned',
         'callback'    => 'local_iomad_observer::company_user_unassigned',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\core\event\competency_framework_created',
         'callback'    => 'local_iomad_observer::competency_framework_created',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\core\event\competency_framework_deleted',
         'callback'    => 'local_iomad_observer::competency_framework_deleted',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\core\event\competency_template_created',
         'callback'    => 'local_iomad_observer::competency_template_created',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\core\event\competency_template_deleted',
         'callback'    => 'local_iomad_observer::competency_template_deleted',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\core\event\course_completed',
         'callback'    => 'local_iomad_observer::course_completed',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\core\event\user_created',
         'callback'    => 'local_iomad_observer::user_created',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\core\event\user_deleted',
         'callback'    => 'local_iomad_observer::user_deleted',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\block_iomad_company_admin\event\user_license_assigned',
         'callback'    => 'local_iomad_observer::user_license_assigned',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\block_iomad_company_admin\event\user_license_unassigned',
         'callback'    => 'local_iomad_observer::user_license_unassigned',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\block_iomad_company_admin\event\user_course_expired',
         'callback'    => 'local_iomad_observer::user_course_expired',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\block_iomad_company_admin\event\user_suspended',
         'callback'    => 'local_iomad_observer::user_suspended',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\block_iomad_company_admin\event\user_unsuspended',
         'callback'    => 'local_iomad_observer::user_unsuspended',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 
     array(
         'eventname'   => '\core\event\user_updated',
         'callback'    => 'local_iomad_observer::user_updated',
-        'includefile' => '/local/iomad/classes/observer.php'
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
     ),
 );

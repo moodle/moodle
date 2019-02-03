@@ -19,6 +19,6 @@ $observers = array(
     array(
         'eventname' => 'core\event\course_completed',
         'callback' => '\local_iomad_track\observer::course_completed',
-        'priority' => 9999,
+        'internal' => false,
     ),
 );

@@ -19,12 +19,12 @@ $observers = array(
     array(
         'eventname' => '\block_iomad_company_admin\event\user_license_assigned',
         'callback' => '\local_report_user_license_allocations\observer::user_license_assigned',
-        'priority' => 9999,
+        'internal' => false,
     ),
 
     array(
         'eventname' => '\block_iomad_company_admin\event\user_license_unassigned',
         'callback' => '\local_report_user_license_allocations\observer::user_license_unassigned',
-        'priority' => 9999,
+        'internal' => false,
     ),
 );
