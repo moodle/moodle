@@ -96,6 +96,14 @@ class block_iomad_company_admin_external extends external_api {
             // Create the company record
             $companyid = $DB->insert_record('company', $company);
 
+            // Fire an event for this.
+            $eventother = array('companyid' => $companyid);
+            $event = \block_iomad_company_admin\event\company_created::create(array('context' => context_system::instance(),
+                                                                                    'userid' => '-1',
+                                                                                    'objectid' => $companyid,
+                                                                                    'other' => $eventother));
+            $event->trigger();
+
             // Set up default department.
             company::initialise_departments($companyid);
 
@@ -387,6 +395,9 @@ class block_iomad_company_admin_external extends external_api {
                 throw new invalid_parameter_exception("Company id=$id does not exist");
             }
 
+            // Store this for reporting purposes.
+            $copy = clone($oldcompany);
+
             // Copy whatever vars we have
             foreach ($company as $key => $value) {
                 $oldcompany->$key = $value;
@@ -406,6 +417,16 @@ class block_iomad_company_admin_external extends external_api {
 
             // Update the company record
             $DB->update_record('company', $oldcompany);
+
+            // Fire an event for this.
+            $eventother = array('companyid' => $oldcompany->id,
+                                'oldcompany' => json_encode($copy));
+            $event = \block_iomad_company_admin\event\company_updated::create(array('context' => context_system::instance(),
+                                                                                    'userid' => '-1',
+                                                                                    'objectid' => $oldcompany->id,
+                                                                                    'other' => $eventother));
+            $event->trigger();
+
         }
 
         return true;
@@ -943,7 +964,6 @@ class block_iomad_company_admin_external extends external_api {
             } else {
                 company::remove_course($course, $courserecord['companyid']);
             }
-            
         }
 
         return $succeeded;
@@ -1968,9 +1988,8 @@ class block_iomad_company_admin_external extends external_api {
                                          'licenseid' => $licenseid,
                                          'issuedate' => time(),
                                          'isusing' => 0);
-    
+
                     $recordarray['id'] = $DB->insert_record('companylicense_users', $recordarray);
-    
                     // Fire that event.
                     $eventother = array('licenseid' => $licenseid,
                                         'duedate' => $enrolment['timestart']);
@@ -2079,4 +2098,3 @@ class block_iomad_company_admin_external extends external_api {
     }
 
 }
-
