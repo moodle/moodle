@@ -165,7 +165,7 @@ class mod_feedback_completion extends mod_feedback_structure {
             $value = $this->get_values_tmp($ditem);
         }
         if ($value === null) {
-            return null;
+            return false;
         }
         return $itemobj->compare_value($ditem, $value, $item->dependvalue) ? true : false;
     }
