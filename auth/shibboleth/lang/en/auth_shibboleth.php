@@ -41,7 +41,7 @@ $string['auth_shib_convert_data_warning'] = 'The file does not exist or is not r
 $string['auth_shib_changepasswordurl'] = 'Password-change URL';
 $string['auth_shib_idp_list'] = 'Identity providers';
 $string['auth_shib_idp_list_description'] = 'Provide a list of Identity Provider entityIDs to let the user choose from on the login page.<br />On each line there must be a comma-separated tuple for entityID of the IdP (see the Shibboleth metadata file) and Name of IdP as it shall be displayed in the drop-down list.<br />As an optional third parameter you can add the location of a Shibboleth session initiator that shall be used in case your Moodle installation is part of a multi federation setup.';
-$string['auth_shib_instructions'] = 'Use the <a href="{$a}">Shibboleth login</a> to get access via Shibboleth, if your institution supports it.<br />Otherwise, use the normal login form shown here.';
+$string['auth_shib_instructions'] = 'Use the <a href="{$a}">Shibboleth login</a> to get access via Shibboleth, if your institution supports it. Otherwise, use the normal login form shown here.';
 $string['auth_shib_instructions_help'] = 'Here you should provide custom instructions for your users to explain Shibboleth.  It will be shown on the login page in the instructions section. The instructions must include a link to "<b>{$a}</b>" that users click when they want to log in.';
 $string['auth_shib_instructions_key'] = 'Login instructions';
 $string['auth_shib_integrated_wayf'] = 'Moodle WAYF service';
