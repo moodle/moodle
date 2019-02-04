@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+        <text>$course$/Default for C1</text>
+
+    </category>
+  </question>
+
+<!-- question: 115000  -->
+  <question type="numerical">
+    <name>
+      <text>Numerical-001</text>
+    </name>
+    <questiontext format="html">
+      <text>What is the average of 4, 5, 6 and 10?</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text>The average is 6.25</text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <answer fraction="100" format="html">
+      <text>6.25</text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+      <tolerance>0.05</tolerance>
+    </answer>
+    <hint format="html">
+      <text>First hint</text>
+    </hint>
+    <hint format="html">
+      <text>Second hint</text>
+    </hint>
+  </question>
+
+</quiz>
