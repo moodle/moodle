@@ -99,11 +99,14 @@ $linkurl = new moodle_url('/local/report_license_usage/index.php');
 // Print the page header.
 $PAGE->set_context($systemcontext);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('report');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($linktext, $linkurl);
+
 
 // Get the renderer.
 $output = $PAGE->get_renderer('block_iomad_company_admin');
@@ -111,9 +114,6 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 // Javascript for fancy select.
 // Parameter is name of proper select form element followed by 1=submit its form
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('departmentid', 1, optional_param('departmentid', 0, PARAM_INT)));
-
-$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
-$PAGE->navbar->add($linktext, $linkurl);
 
 echo $output->header();
 

@@ -375,8 +375,10 @@ if ($courseid) {
 // Correct the navbar .
 // Set the name for the page.
 $linktext = get_string('managelicenses', 'block_iomad_company_admin');
+$listtext = get_string('company_license_list_title', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_license_edit_form.php');
+$listurl = new moodle_url('/blocks/iomad_company_admin/company_license_list.php');
 
 // Print the page header.
 $PAGE->set_context($context);
@@ -385,7 +387,8 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('edit_licenses_title', 'block_iomad_company_admin'));
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
-$PAGE->navbar->add($linktext, $linkurl);
+$PAGE->navbar->add($listtext, $listurl);
+$PAGE->navbar->add($linktext);
 
 // If we are editing a license, check that the parent id is set.
 if (!empty($licenseid)) {

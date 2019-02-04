@@ -145,9 +145,8 @@ $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'ini
 
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
-
-// Set the page heading.
-$PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($strcompletion, $url);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -172,9 +171,6 @@ if ($departmentid == 0 ) {
 $foundobj = iomad::add_user_filter_params($params, $companyid);
 $idlist = $foundobj->idlist;
 $foundfields = $foundobj->foundfields;
-
-$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
-$PAGE->navbar->add($strcompletion, $url);
 
 $url = new moodle_url('/local/report_license/index.php', $params);
 

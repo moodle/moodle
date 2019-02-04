@@ -45,7 +45,8 @@ $output = $PAGE->get_renderer('local_iomad_learningpath');
 $companyid = iomad::get_my_companyid($context);
 $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
 $paths = $companypaths->get_paths();
-$companypaths->breadcrumb();
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add(get_string('managetitle', 'local_iomad_learningpath'), $url);
 
 // Get renderer for page (and pass data).
 $manage_page = new local_iomad_learningpath\output\manage_page($context, $paths);

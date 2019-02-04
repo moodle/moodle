@@ -153,7 +153,7 @@ $dashboardurl = new moodle_url('/my');
 // Page stuff:.
 $strcompletion = get_string('pluginname', 'local_report_user_licenses');
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
 $PAGE->requires->css("/local/report_user_licenses/styles.css");
 $PAGE->requires->jquery();

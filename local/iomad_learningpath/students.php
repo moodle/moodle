@@ -46,7 +46,8 @@ $output = $PAGE->get_renderer('local_iomad_learningpath');
 $companyid = iomad::get_my_companyid($context);
 $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
 $path = $companypaths->get_path($id);
-$companypaths->breadcrumb(get_string('managestudents', 'local_iomad_learningpath'), $url);
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add(get_string('managestudents', 'local_iomad_learningpath'), $url);
 
 // Javascript initialise
 $PAGE->requires->js_call_amd('local_iomad_learningpath/students', 'init', [$companyid, $id]);
