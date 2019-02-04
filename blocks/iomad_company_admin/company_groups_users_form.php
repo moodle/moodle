@@ -274,7 +274,7 @@ class course_group_users_form extends moodleform {
             $mform->addElement('html', '<p><strong>' . get_string('isdefaultgroupusers', 'block_iomad_company_admin') . '</strong></p>');
         }
 
-        $mform->addElement('html', '<table summary="" class="companycourseuserstable'.
+        $mform->addElement('html', '<table summary="" class="companygroupuserstable'.
                                    ' addremovetable generaltable generalbox'.
                                    ' boxaligncenter" cellspacing="0">
             <tr>
@@ -285,21 +285,16 @@ class course_group_users_form extends moodleform {
         $mform->addElement('html', '
               </td>
               <td id="buttonscell">
-                  <div id="addcontrols">
                       <input name="add" id="add" type="submit" value="' .
                        $OUTPUT->larrow().'&nbsp;'.get_string('add') .
-                       '" title="Add" /><br />
-
-                  </div>');
+                       '" title="'.get_string('add') .'" /><br />');
 
         if (!$this->isdefault) {
 
             $mform->addElement('html', '
-                  <div id="removecontrols">
                       <input name="remove" id="remove" type="submit" value="' .
                        get_string('remove') . '&nbsp;' . $OUTPUT->rarrow() .
-                       '" title="Remove" />
-                  </div>');
+                       '" title="'.get_string('remove') .'" /></br>');
         }
 
         $mform->addElement('html', '                  

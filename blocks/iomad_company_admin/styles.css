@@ -231,3 +231,15 @@ border-radius: 10px;
 #dashboardheader {
     color: #f75701;
 }
+
+.companymanagertable p.arrow_button #remove,
+.companycourseuserstable p.arrow_button #remove,
+.companycoursegroupstable p.arrow_button #remove,
+.companycoursetable p.arrow_button #remove,
+.companygroupuserstable p.arrow_button #remove,
+.companylicenseuserstable p.arrow_button #remove,
+.companytemplatetable p.arrow_button #remove,
+.companyframeworktable p.arrow_button #remove,
+.companyuserstable p.arrow_button #remove {
+    margin: 0;
+}

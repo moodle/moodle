@@ -40,7 +40,7 @@ class company_users_form extends moodleform {
     }
 
     public function definition_after_data() {
-        global $USER;
+        global $USER, $OUTPUT;
         $mform =& $this->_form;
 
         // Adding the elements in the definition_after_data function rather than in the definition function
@@ -53,7 +53,7 @@ class company_users_form extends moodleform {
         if (count($this->potentialusers->find_users('')) || count($this->currentusers->find_users(''))) {
 
             $mform->addElement('html', '<table summary=""
-                                        class="companyusertable addremovetable generaltable generalbox boxaligncenter"
+                                        class="companyuserstable addremovetable generaltable generalbox boxaligncenter"
                                         cellspacing="0">
                 <tr>
                   <td id="existingcell">');
@@ -63,16 +63,12 @@ class company_users_form extends moodleform {
             $mform->addElement('html', '
                   </td>
                   <td id="buttonscell">
-                      <div id="addcontrols">
-                          <input name="add" id="add" type="submit" value="&nbsp;' .
-                           get_string('add') . '" title="Add" /><br />
-
-                      </div>
-
-                      <div id="removecontrols">
-                          <input name="remove" id="remove" type="submit" value="' .
-                           get_string('remove') . '&nbsp;" title="Remove" />
-                      </div>
+                      <p class="arrow_button">
+                        <input name="add" id="add" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('add') . '"
+                               title="' . print_string('add') .'" class="btn btn-secondary"/><br />
+                        <input name="remove" id="remove" type="submit" value="'. get_string('remove').'&nbsp;'.$OUTPUT->rarrow(). '"
+                               title="'. print_string('remove') .'" class="btn btn-secondary"/><br />
+                     </p>
                   </td>
                   <td id="potentialcell">');
 

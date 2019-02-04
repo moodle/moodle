@@ -124,7 +124,7 @@ class company_license_users_form extends moodleform {
     }
 
     public function definition_after_data() {
-        global $USER;
+        global $USER, $OUTPUT;
 
         $mform =& $this->_form;
 
@@ -208,7 +208,7 @@ class company_license_users_form extends moodleform {
         }
 
         $mform->addElement('html', '<table summary=""
-                                     class="companycourseuserstable addremovetable generaltable generalbox boxaligncenter"
+                                     class="companylicenseuserstable addremovetable generaltable generalbox boxaligncenter"
                                      cellspacing="0">
             <tr>
               <td id="existingcell">');
@@ -219,24 +219,16 @@ class company_license_users_form extends moodleform {
             $mform->addElement('html', '
                   </td>
                   <td id="buttonscell">
-                      <div id="addcontrols">
-                          <input name="add" id="add" type="submit" value="&nbsp;' .
-                       $this->output->larrow().'&nbsp;'. get_string('licenseallocate', 'block_iomad_company_admin') .
-                          '" title="Enrol" />
-
-                          <input name="addall" id="addall" type="submit" value="&nbsp;' .
-                          $this->output->larrow().'&nbsp;'. get_string('licenseallocateall', 'block_iomad_company_admin') .
-                          '" title="Enrolall" />
-
-                      </div>
-
-                      <div id="removecontrols"><input name="remove" id="remove" type="submit" value="' .
-                       $this->output->rarrow().'&nbsp;'. get_string('licenseremove', 'block_iomad_company_admin') .
-                          '" title="Unenrol" />
-                          <input name="removeall" id="removeall" type="submit" value="' .
-                          $this->output->rarrow().'&nbsp;'. get_string('licenseremoveall', 'block_iomad_company_admin') .
-                          '" title="Unenrolall" />
-                      </div>
+                      <p class="arrow_button">
+                        <input name="add" id="add" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('licenseallocate', 'block_iomad_company_admin') . '"
+                               title="' . get_string('licenseallocate', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />
+                        <input name="addall" id="addall" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('licenseallocateall', 'block_iomad_company_admin') . '"
+                               title="' . get_string('licenseallocateall', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />
+                        <input name="remove" id="remove" type="submit" value="'. get_string('licenseremove', 'block_iomad_company_admin').'&nbsp;'.$OUTPUT->rarrow(). '"
+                               title="'. get_string('licenseremove', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />
+                        <input name="removeall" id="removeall" type="submit" value="'. get_string('licenseremoveall', 'block_iomad_company_admin').'&nbsp;'.$OUTPUT->rarrow(). '"
+                               title="'. get_string('licenseremoveall', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />
+                     </p>
                   </td>
                   <td id="potentialcell">');
 

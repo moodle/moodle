@@ -185,7 +185,7 @@ class company_users_course_form extends moodleform {
                 $this->add_action_buttons(false, get_string('updatelicense', 'block_iomad_company_admin'));
             } else {
                 $mform->addElement('html', '<table summary=""
-                                            class="companycourseuserstable addremovetable generaltable generalbox boxaligncenter"
+                                            class="companylicenseuserstable addremovetable generaltable generalbox boxaligncenter"
                                             cellspacing="0"
                                             border="0">
                     <tr>
@@ -195,19 +195,13 @@ class company_users_course_form extends moodleform {
         
                 $mform->addElement('html', '
                       </td>
-                      <td id="buttonscell" valign="middle">
-                          <div id="addcontrols">
-                              <input name="add" id="add" type="submit" value="&nbsp;' .
-                              get_string('enrol', 'block_iomad_company_admin') .
-                              '" title="Enrol" /><br />
-        
-                          </div>
-        
-                          <div id="removecontrols">
-                              <input name="remove" id="remove" type="submit" value="' .
-                              get_string('unenrol', 'block_iomad_company_admin') .
-                              '&nbsp;" title="Unenrol" />
-                          </div>
+                      <td id="buttonscell">
+                          <p class="arrow_button">
+                            <input name="add" id="add" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('enrol', 'block_iomad_company_admin') . '"
+                                   title="' . get_string('enrol') .'" class="btn btn-secondary"/><br />
+                            <input name="remove" id="remove" type="submit" value="'. get_string('unenrol', 'block_iomad_company_admin').'&nbsp;'.$OUTPUT->rarrow(). '"
+                                   title="'. get_string('unenrol', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />
+                         </p>
                       </td>
                       <td id="potentialcell" style="text-align:center;">'); //maybe put this in the block CSS?
         
