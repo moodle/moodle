@@ -119,9 +119,8 @@ $PAGE->requires->jquery();
 
 // Set the page heading.
 $PAGE->set_heading($linktext);
-
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($linktext, $linkurl);
 
 // get output renderer
 $output = $PAGE->get_renderer('local_email');

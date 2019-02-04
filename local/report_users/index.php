@@ -101,8 +101,8 @@ $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linkte
 // Get the renderer.
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($linktext, $linkurl);
 
 echo $output->header();
 

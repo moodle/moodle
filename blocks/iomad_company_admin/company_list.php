@@ -42,9 +42,8 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('company_list_title', 'block_iomad_company_admin'));
-
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($linktext, $linkurl);
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 $returnurl = $baseurl;

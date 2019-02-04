@@ -42,9 +42,8 @@ $PAGE->requires->css("/local/report_scorm_overvew/styles.css");
 
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
-
-// Set the url.
-company_admin_fix_breadcrumb($PAGE, $strcompletion, $url);
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($strcompletion, $url);
 
 // Navigation and header.
 if (empty($dodownload)) {

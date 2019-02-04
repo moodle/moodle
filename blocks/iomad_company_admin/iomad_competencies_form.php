@@ -70,9 +70,8 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('iomad_company_frameworks_title', 'block_iomad_company_admin'));
-
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($linktext, $linkurl);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($systemcontext, false);

@@ -66,8 +66,8 @@ if ($departmentid == 0 ) {
     $departmentid = $userhierarchylevel;
 }
 
-// Set the url.
-company_admin_fix_breadcrumb($PAGE, $strcompletion, $url);
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($strcompletion, $url);
 
 // Create data for form.
 $customdata = null;

@@ -397,10 +397,8 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string($title, 'block_iomad_commerce'));
-
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($linktext, $linkurl);
 $PAGE->navbar->add(get_string($title, 'block_iomad_commerce'));
 
 /* next line copied from /course/edit.php */

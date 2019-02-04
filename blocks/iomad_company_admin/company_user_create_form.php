@@ -416,10 +416,8 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 // Javascript for fancy select.
 // Parameter is name of proper select form element. 
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('userdepartment', '', $departmentid));
-
-
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($linktext, $linkurl);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);

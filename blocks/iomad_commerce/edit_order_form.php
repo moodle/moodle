@@ -124,10 +124,8 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('edit_invoice', 'block_iomad_commerce'));
-
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($linktext, $linkurl);
 $PAGE->navbar->add(get_string('edit_invoice', 'block_iomad_commerce'));
 
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.

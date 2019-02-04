@@ -71,9 +71,8 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
-
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $departmentlist);
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($linktext, $departmentlist);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);

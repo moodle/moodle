@@ -204,8 +204,8 @@ $foundobj = iomad::add_user_filter_params($params, $companyid);
 $idlist = $foundobj->idlist;
 $foundfields = $foundobj->foundfields;
 
-// Set the url.
-company_admin_fix_breadcrumb($PAGE, $strcompletion, $url);
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($strcompletion, $url);
 
 $url = new moodle_url('/local/report_user_logins/index.php', $params);
 

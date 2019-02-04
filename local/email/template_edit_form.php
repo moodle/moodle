@@ -389,12 +389,11 @@ $PAGE->set_title($linktext);
 $PAGE->requires->jquery();
 $PAGE->requires->js('/local/email/module.js');
 
-
 // Set the page heading.
 $PAGE->set_heading($linktext);
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($linktext, $linkurl);
 
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 $templatelist = new moodle_url('/local/email/template_list.php', $urlparams);
 
 // Set up the form.

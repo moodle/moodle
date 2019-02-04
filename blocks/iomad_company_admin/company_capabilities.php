@@ -161,10 +161,9 @@ $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
 
 $PAGE->requires->jquery();
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($linktext, $linkurl);
 
-// Correct the navbar.
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 echo $OUTPUT->header();
 
 //  Deal with any deletes.

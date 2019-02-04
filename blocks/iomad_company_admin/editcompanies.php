@@ -63,7 +63,6 @@ iomad::require_capability('block/iomad_company_admin:company_add_child', $contex
 // Correct the navbar.
 $linktext = get_string('managecompanies', 'block_iomad_company_admin');
 $linkurl = new moodle_url('/blocks/iomad_company_admin/editcompanies.php', $params);
-company_admin_fix_breadcrumb($PAGE, $linktext, null);
 
 // Print the page header.
 $PAGE->set_context($context);
@@ -74,6 +73,8 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($linktext, $linkurl);
 
 $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;

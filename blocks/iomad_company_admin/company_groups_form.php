@@ -333,9 +333,8 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
-
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($linktext, $linkurl);
 
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 iomad::require_capability('block/iomad_company_admin:company_course_users', $context);

@@ -54,6 +54,8 @@ class company_courses_form extends moodleform {
     }
 
     public function definition_after_data() {
+        global $OUTPUT;
+
         $mform =& $this->_form;
 
         // Adding the elements in the definition_after_data function rather than in the
@@ -67,7 +69,7 @@ class company_courses_form extends moodleform {
         $mform->setType('deptid', PARAM_INT);
         
         $mform->addElement('html', '<table summary="" class="companycoursetable addremovetable'.
-                                   ' generaltable generalbox boxaligncenter" cellspacing="0">
+                                   ' generaltable generalbox groupmanagementtable boxaligncenter" cellspacing="0">
             <tr>
               <td id="existingcell">');
 
@@ -76,16 +78,12 @@ class company_courses_form extends moodleform {
         $mform->addElement('html', '
               </td>
               <td id="buttonscell">
-                  <div id="addcontrols">
-                      <input name="add" id="add" type="submit" value="&#x25C4;&nbsp;'.
-                       get_string('add') . '" title="Add" /><br />
-
-                  </div>
-
-                  <div id="removecontrols">
-                      <input name="remove" id="remove" type="submit" value="'.
-                       get_string('remove') . '&nbsp;&#x25BA;" title="Remove" />
-                  </div>
+                  <p class="arrow_button">
+                    <input name="add" id="add" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('add') . '"
+                           title="' . print_string('add') .'" class="btn btn-secondary"/><br />
+                    <input name="remove" id="remove" type="submit" value="'. get_string('remove').'&nbsp;'.$OUTPUT->rarrow(). '"
+                           title="'. print_string('remove') .'" class="btn btn-secondary"/><br />
+                 </p>
               </td>
               <td id="potentialcell">');
 
@@ -274,9 +272,8 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
-
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($linktext, $linkurl);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
