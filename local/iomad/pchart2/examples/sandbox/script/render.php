@@ -1,4 +1,4 @@
-<?php   
+<?php
  /*
      render.php - Sandbox rendering engine
 
@@ -494,7 +494,7 @@
  if ( $s_grid_x_enabled == "true" ) { $Settings["DrawXLines"] = TRUE; } else { $Settings["DrawXLines"] = 0; }
  if ( $s_subticks_enabled == "true" )
   { $Settings["DrawSubTicks"] = TRUE; $Settings["SubTickR"] = $SubTickR; $Settings["SubTickG"] = $SubTickG; $Settings["SubTickB"] = $SubTickB; $Settings["SubTickAlpha"] = $s_subticks_alpha;}
- if ( $s_automargin_enabled == "false" ) 
+ if ( $s_automargin_enabled == "false" )
   { $Settings["XMargin"] = $s_x_margin; $Settings["YMargin"] = $s_y_margin; }
 
  if ( $Mode == "Render" )
@@ -688,7 +688,7 @@
    $Config = "";
    $Config["R"] = $R; $Config["G"] = $G; $Config["B"] = $B;
    $Config["Alpha"] = $t_alpha;
-  
+
    if ( isset($myData->Data["Axis"][$t_axis]) ) { $Config["AxisID"] = $t_axis; }
 
    if ( $t_ticks == "true" ) { $Config["Ticks"] = 4; } else { $Config["Ticks"] = 0; }
@@ -880,12 +880,12 @@
     return(chr(34).$Value.chr(34));
   }
 
- function left($value,$NbChar)  
-  { return substr($value,0,$NbChar); }  
- 
- function right($value,$NbChar)  
-  { return substr($value,strlen($value)-$NbChar,$NbChar); }  
- 
- function mid($value,$Depart,$NbChar)  
-  { return substr($value,$Depart-1,$NbChar); }  
+ function left($value,$NbChar)
+  { return substr($value,0,$NbChar); }
+
+ function right($value,$NbChar)
+  { return substr($value,strlen($value)-$NbChar,$NbChar); }
+
+ function mid($value,$Depart,$NbChar)
+  { return substr($value,$Depart-1,$NbChar); }
 ?>

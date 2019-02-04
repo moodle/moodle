@@ -22,7 +22,7 @@ function xmldb_local_iomad_learningpath_upgrade($oldversion) {
     $result = true;
     $dbman = $DB->get_manager();
 
-    // Add missing learning path id to group table. 
+    // Add missing learning path id to group table.
     if ($oldversion < 2018043000) {
 
         // Define field learningpath to be added to iomad_learningpathgroup.

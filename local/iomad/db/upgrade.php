@@ -909,7 +909,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
                 'local_report_users:view',
                 'local_report_scorm_overview:view',
             );
-    
+
             foreach ($companydepartmentmanagercaps as $cap) {
                 assign_capability( $cap, CAP_ALLOW, $companydepartmentmanagerid, $systemcontext->id );
             }
@@ -926,7 +926,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
                 'local_report_users:view',
                 'local_report_scorm_overview:view',
             );
-    
+
             foreach ($clientadministratorcaps as $cap) {
                 assign_capability( $cap, CAP_ALLOW, $clientadministratorid, $systemcontext->id );
             }
@@ -964,7 +964,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
     }
 
     if ($oldversion < 2014052702) {
-        
+
         // Define new table company_role_restriction
         $table = new xmldb_table('company_role_restriction');
 
@@ -1307,25 +1307,25 @@ function xmldb_local_iomad_upgrade($oldversion) {
                 assign_capability( $cap, CAP_ALLOW, $companymanager->id, $systemcontext->id );
             }
         }
-        
+
         if ($companydepartmentmanager = $DB->get_record( 'role', array( 'shortname' => 'companydepartmentmanager') )) {
             foreach ($companydepartmentmanagercaps as $cap) {
                 assign_capability( $cap, CAP_ALLOW, $companydepartmentmanager->id, $systemcontext->id );
             }
         }
-        
+
         if ($companycourseeditor = $DB->get_record( 'role', array( 'shortname' => 'companycourseeditor') )) {
             foreach ($companycourseeditorcaps as $cap) {
                 assign_capability( $cap, CAP_ALLOW, $companycourseeditor->id, $systemcontext->id );
             }
         }
-        
+
         if ($companycoursenoneditor = $DB->get_record( 'role', array( 'shortname' => 'companycoursenoneditor') )) {
             foreach ($companycoursenoneditorcaps as $cap) {
                 assign_capability( $cap, CAP_ALLOW, $companycoursenoneditor->id, $systemcontext->id );
             }
         }
-        
+
         // Remove moodle/my:manageblocks capability from authenticated user
         if ($authenticateduser = $DB->get_record('role', array('shortname' => 'user'))) {
             assign_capability('moodle/my:manageblocks', CAP_PREVENT, $authenticateduser->id, $systemcontext->id, true);
@@ -1693,12 +1693,12 @@ function xmldb_local_iomad_upgrade($oldversion) {
         // They do not exist.
         $roles = $DB->get_records('role');
         foreach ($roles as $role) {
-            unassign_capability('block/iomad_company_admin:view', $role->id); 
-            unassign_capability('block/side_bar_block:editblock', $role->id); 
-            unassign_capability('block/side_bar_block:viewblock', $role->id); 
-            unassign_capability('enrol/authorize:manage', $role->id); 
-            unassign_capability('mod/certificate:manage', $role->id); 
-            unassign_capability('mod/certificate:view', $role->id); 
+            unassign_capability('block/iomad_company_admin:view', $role->id);
+            unassign_capability('block/side_bar_block:editblock', $role->id);
+            unassign_capability('block/side_bar_block:viewblock', $role->id);
+            unassign_capability('enrol/authorize:manage', $role->id);
+            unassign_capability('mod/certificate:manage', $role->id);
+            unassign_capability('mod/certificate:view', $role->id);
         }
 
         // Fix capability typo in company department manager role

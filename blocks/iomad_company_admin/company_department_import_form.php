@@ -66,7 +66,7 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 
-// get output renderer                                                                                                                                                                                         
+// get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Set the page heading.

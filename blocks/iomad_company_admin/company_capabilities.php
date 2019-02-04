@@ -44,7 +44,7 @@ class company_role_save_form extends company_moodleform {
     public function __construct($actionurl,
                                 $companyid,
                                 $templateid) {
-        
+
         $this->companyid = $companyid;
         $this->templateid = $templateid;
 
@@ -96,7 +96,7 @@ if ($ajaxcap) {
     error_log('Got it '.$ajaxcap.' '.$ajaxvalue);
     $parts = explode('.', $ajaxcap);
     list($type, $id, $roleid, $capability) = $parts;
-    
+
     if ($type == 'c') {
         // dealing with a company restriction.
         // if box is unticked (false) an entry is created (or kept)
@@ -172,7 +172,7 @@ if ($action == 'delete' && confirm_sesskey()) {
         if (!$templateinfo = $DB->get_record('company_role_templates', array('id' => $templateid))) {
             print_error('roletemplatenotfound', 'block_iomad_company_admin');
         }
-        
+
         echo $OUTPUT->heading(get_string('deleteroletemplate', 'block_iomad_company_admin'). " " . $templateinfo->name);
         $optionsyes = array('templateid' => $templateid, 'confirm' => md5($templateid), 'sesskey' => sesskey(), 'action' => 'delete');
         echo $OUTPUT->confirm(get_string('deleteroletemplatefull', 'block_iomad_company_admin', "'" . $templateinfo->name ."'"),
@@ -231,7 +231,7 @@ if ($roleid) {
     // Display the list of templates.
     $templates = $DB->get_records('company_role_templates', array(), 'name');
     echo $output->role_templates($templates, $linkurl);
-    
+
 } else {
 
     // get the list of roles to choose from
@@ -239,7 +239,7 @@ if ($roleid) {
     echo $output->role_select($roles, $linkurl, $companyid, $templateid);
 
     // output the save button.
-    
+
     $saveurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php',
                                 array('savetemplate' => 1,
                                       'templateid' => $templateid));

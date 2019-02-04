@@ -98,7 +98,7 @@ class department_display_form extends company_moodleform {
                                        $key.'" /> '.$value.'</br>';
             }
         }
-        
+
         // Then show the fields about where this block appears.
         $mform->addElement('header', 'header',
                             get_string('companydepartment', 'block_iomad_company_admin').
@@ -180,7 +180,7 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 
-// get output renderer                                                                                                                                                                                         
+// get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Set the page heading.
@@ -238,7 +238,7 @@ if ($mform->is_cancelled()) {
         // Check the department is valid.
         if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
             print_error('invaliddepartment', 'block_iomad_company_admin');
-        }   
+        }
 
         $departmentinfo = $DB->get_record('department', array('id' => $departmentid), '*', MUST_EXIST);
         if (!empty($departmentinfo->parent)) {
@@ -246,7 +246,7 @@ if ($mform->is_cancelled()) {
             if (empty($departmentid)) {
                 notice(get_string('departmentnoselect', 'block_iomad_company_admin'));
             }
-    
+
             if (company::get_recursive_department_users($departmentid)) {
                 // there are users under this department.  We can't delete them.
                 notice(get_string('cantdeletedepartment', 'block_iomad_company_admin'), $linkurl);
@@ -283,7 +283,7 @@ if ($mform->is_cancelled()) {
 }
 
 // Javascript for fancy select.
-// Parameter is name of proper select form element. 
+// Parameter is name of proper select form element.
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', '', $departmentid));
 
 $mform = new department_display_form($PAGE->url, $companyid, $departmentid, $output, 0, 0, $noticestring);
@@ -293,7 +293,7 @@ echo $output->header();
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
     print_error('invaliddepartment', 'block_iomad_company_admin');
-}   
+}
 
 $mform->display();
 

@@ -365,7 +365,7 @@ class curl {
         $options['CURLOPT_NOBODY']  = 1;
         return $this->request($url, $options);
     }
-    
+
     /**
      * Recursive function formating an array in POST parameter
      * @param array $arraydata - the array that we are going to format and add into &$data array
@@ -426,7 +426,7 @@ class curl {
         $options['CURLOPT_POST']       = 1;
         if (is_array($params)) {
             $params = $this->format_postdata_for_curlcall($params);
-        } 
+        }
         $options['CURLOPT_POSTFIELDS'] = $params;
         return $this->request($url, $options);
     }

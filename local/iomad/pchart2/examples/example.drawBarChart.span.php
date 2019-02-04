@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Bar Chart */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->loadPalette("../palettes/blind.color",TRUE);
  $MyData->addPoints(array(150,220,300,250,420,200,300,200,110),"Server A");
  $MyData->addPoints(array("January","February","March","April","May","Juin","July","August","September"),"Months");
@@ -34,7 +34,7 @@
  $AxisBoundaries = array(0=>array("Min"=>0,"Max"=>500));
  $myPicture->drawScale(array("InnerTickWidth"=>0,"OuterTickWidth"=>0,"Mode"=>SCALE_MODE_MANUAL,"ManualScale"=>$AxisBoundaries,"LabelRotation"=>45,"DrawXLines"=>FALSE,"GridR"=>0,"GridG"=>0,"GridB"=>0,"GridTicks"=>0,"GridAlpha"=>30,"AxisAlpha"=>0));
 
- /* Turn on shadow computing */ 
+ /* Turn on shadow computing */
  $myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10));
 
  /* Draw the chart */

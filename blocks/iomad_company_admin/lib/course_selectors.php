@@ -117,7 +117,7 @@ class current_company_course_selector extends company_course_selector_base {
         $params['companyid'] = $this->companyid;
         $params['departmentid'] = $this->departmentid;
         if (!empty($this->departmentid)) {
-            $departmentlist = array($this->departmentid => $this->departmentid) + 
+            $departmentlist = array($this->departmentid => $this->departmentid) +
                               company::get_department_parentnodes($this->departmentid);
         } else {
             $departmentlist = array($this->departmentid => $this->departmentid);
@@ -166,7 +166,7 @@ class current_company_course_selector extends company_course_selector_base {
                                      SELECT pc.courseid FROM {iomad_courses} pc
                                      INNER JOIN {company_shared_courses} csc ON pc.courseid=csc.courseid
                                      WHERE pc.shared = 2
-                                     AND pc.licensed = 0 
+                                     AND pc.licensed = 0
                                      AND csc.companyid = :companyid)
                                     AND c.id IN (
                                        SELECT courseid FROM {company_course}
@@ -570,7 +570,7 @@ class potential_subdepartment_course_selector extends company_course_selector_ba
         $availablecourses = $DB->get_records_sql($fields . $sql . $order, $params) +
         $DB->get_records_sql($distinctfields . $sqldistinct . $order, $params);
         if (!empty($this->showopenshared)) {
-            $availablecourses = $availablecourses + 
+            $availablecourses = $availablecourses +
             $DB->get_records_sql($distinctfields . $sqlopenshared . $order, $params);
         }
 
@@ -929,7 +929,7 @@ class current_user_license_course_selector extends course_selector_base {
         }
 
         $this->process_license_allocations($availablecourses, $this->user->id);
-        
+
         if ($search) {
             $groupname = get_string('curlicensecoursesmatching', 'block_iomad_company_admin', $search);
         } else {
@@ -953,7 +953,7 @@ class potential_user_license_course_selector extends course_selector_base {
         $this->user = $options['user'];
         $this->licenseid = $options['licenseid'];
         $this->license = $DB->get_record('companylicense', array('id' => $this->licenseid));
- 
+
         parent::__construct($name, $options);
     }
 

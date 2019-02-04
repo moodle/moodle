@@ -190,7 +190,7 @@ foreach ($userresults as $licenseid => $detail) {
             $allocationinfo .= get_string('allocated', 'local_report_user_license_allocations', date($CFG->iomad_date_format, $allocation->timecreated)) . "</br>";
         } else if ($allocation->eventname == '\block_iomad_company_admin\event\user_license_unassigned') {
             $allocationinfo .= get_string('unallocated', 'local_report_user_license_allocations', date($CFG->iomad_date_format, $allocation->timecreated)) . "</br>";
-        } 
+        }
     }
     $licenseurl = "<a href='" . new moodle_url('/local/report_user_license_allocations/index.php', array('licenseid' => $licenseid)) ."'>" .
                    $license->name . "</a>";

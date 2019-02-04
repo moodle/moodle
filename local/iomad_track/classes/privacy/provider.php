@@ -119,7 +119,7 @@ class provider implements
                 if ($certinfo = $DB->get_record('local_iomad_track_certs', array('trackid' => $track->id))) {
                     // Export the track info
                     writer::with_context($context)->export_data($context, $certinfo);
-                    
+
                 }
             }
         }

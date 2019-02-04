@@ -83,7 +83,7 @@ if ($delete and confirm_sesskey()) {              // Delete a selected company, 
         } else {
             echo $OUTPUT->heading(get_string('deletelicense', 'block_iomad_company_admin'), 2, 'headingblock header');
             $optionsyes = array('delete' => $delete, 'confirm' => md5($delete), 'sesskey' => sesskey());
-    
+
             echo $OUTPUT->confirm(get_string('companydeletelicensecheckfull', 'block_iomad_company_admin', "'$name'"),
                                   new moodle_url('company_license_list.php', $optionsyes), 'company_license_list.php');
             echo $OUTPUT->footer();
@@ -194,7 +194,7 @@ if ($departmentid == $companydepartment->id) {
                                             WHERE id = :parentid)",
                                          array('userid' => $USER->id,
                                                'parentid' => $license->parentid))) {
-                $deletebutton = "<a class='btn btn-primary' href='". 
+                $deletebutton = "<a class='btn btn-primary' href='".
                                  new moodle_url('company_license_list.php', array('delete' => $license->id,
                                                                                   'sesskey' => sesskey())) ."'>$strdelete</a>";
                 $editbutton = "<a class='btn btn-primary' href='" . new moodle_url('company_license_edit_form.php',

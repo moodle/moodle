@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Line chart */
 
  /* Set the default timezone */
@@ -27,7 +27,7 @@
  $MyData->setAxisDisplay(0,AXIS_FORMAT_TRAFFIC);
  $MyData->setSerieDescription("TimeStamp","time");
  $MyData->setAbscissa("TimeStamp");
- $MyData->setXAxisDisplay(AXIS_FORMAT_TIME,"H:00"); 
+ $MyData->setXAxisDisplay(AXIS_FORMAT_TIME,"H:00");
 
  /* Create the pChart object */
  $myPicture = new pImage(700,230,$MyData);
@@ -37,17 +37,17 @@
 
  /* Draw a background */
  $Settings = array("R"=>90, "G"=>90, "B"=>90, "Dash"=>1, "DashR"=>120, "DashG"=>120, "DashB"=>120);
- $myPicture->drawFilledRectangle(0,0,700,230,$Settings); 
+ $myPicture->drawFilledRectangle(0,0,700,230,$Settings);
 
- /* Overlay with a gradient */ 
+ /* Overlay with a gradient */
  $Settings = array("StartR"=>200, "StartG"=>200, "StartB"=>200, "EndR"=>50, "EndG"=>50, "EndB"=>50, "Alpha"=>50);
- $myPicture->drawGradientArea(0,0,700,230,DIRECTION_VERTICAL,$Settings); 
- $myPicture->drawGradientArea(0,0,700,230,DIRECTION_HORIZONTAL,$Settings); 
+ $myPicture->drawGradientArea(0,0,700,230,DIRECTION_VERTICAL,$Settings);
+ $myPicture->drawGradientArea(0,0,700,230,DIRECTION_HORIZONTAL,$Settings);
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the chart title */ 
+
+ /* Write the chart title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>11));
  $myPicture->drawText(150,35,"Interface bandwidth usage",array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE));
 
@@ -68,7 +68,7 @@
  $myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10));
  $myPicture->drawLineChart();
 
- /* Write a label over the chart */ 
+ /* Write a label over the chart */
  $myPicture->writeLabel("Inbound",720);
 
  /* Write the chart legend */

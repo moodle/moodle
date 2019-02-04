@@ -748,7 +748,7 @@ class company {
                                     company_user::enrol($adduser, array($companycourse->courseid),
                                                         $companycourse->companyid,
                                                         $companycourseeditorrole->id);
-        
+
                                 } else {
                                      company_user::enrol($adduser, array($companycourse->courseid),
                                                          $companycourse->companyid,
@@ -778,7 +778,7 @@ class company {
                                                             $companycourse->companyid);
                                 company_user::enrol($adduser, array($companycourse->courseid),
                                                     $companycourse->companyid,
-                                                    $companycoursenoneditorrole->id);        
+                                                    $companycoursenoneditorrole->id);
                             }
                         }
                     }
@@ -947,7 +947,7 @@ class company {
     public function get_userlevel($user) {
 
         global $DB;
-        if (is_siteadmin() || 
+        if (is_siteadmin() ||
             iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance()) ||
             iomad::has_capability('block/iomad_company_admin:company_add_child', context_system::instance())) {
             return self::get_company_parentnode($this->id);
@@ -3180,7 +3180,7 @@ class company {
         // We only care if its a company manager.
         if ($event->other['usertype'] == 1) {
             $childcompanies = $company->get_child_companies_recursive();
-    
+
             foreach ($childcompanies as $child) {
                 $childcompany = new company($child->id);
                 $childcompany->assign_user_to_company($userid, 0, $event->other['usertype'], true);

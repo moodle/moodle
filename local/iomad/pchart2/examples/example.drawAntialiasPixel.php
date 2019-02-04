@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Drawing */
 
  /* pChart library inclusions */
@@ -13,12 +13,12 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the picture title */ 
+
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"drawAntialiasPixel() - Drawing antialiased pixel with transparency",array("R"=>255,"G"=>255,"B"=>255));
 
- /* Draw some alpha pixels */ 
+ /* Draw some alpha pixels */
  for($X=0;$X<=160;$X++)
   {
    for($Y=0;$Y<=160;$Y++)

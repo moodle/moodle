@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Misc */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(24,-25,26,25,25),"Temperature");
  $MyData->setAxisName(0,"Temperatures");
  $MyData->addPoints(array("Jan","Feb","Mar","Apr","May","Jun"),"Labels");
@@ -28,16 +28,16 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the picture title */ 
+
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"drawThresholdArea() - draw treshold areas in the charting area",array("R"=>255,"G"=>255,"B"=>255));
 
- /* Write the chart title */ 
+ /* Write the chart title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>11));
  $myPicture->drawText(250,55,"My chart title",array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE));
 
- /* Draw the scale and do some cosmetics */ 
+ /* Draw the scale and do some cosmetics */
  $myPicture->setGraphArea(60,60,450,190);
  $myPicture->drawFilledRectangle(70,70,440,180,array("R"=>255,"G"=>255,"B"=>255,"Surrounding"=>-200,"Alpha"=>10));
  $myPicture->drawScale(array("XMargin"=>10,"YMargin"=>10,"Floating"=>TRUE,"DrawSubTicks"=>TRUE));
@@ -51,7 +51,7 @@
  /* Set the font properties */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>11));
 
- /* Draw the scale and do some cosmetics */ 
+ /* Draw the scale and do some cosmetics */
  $myPicture->setGraphArea(500,60,670,190);
  $myPicture->drawFilledRectangle(505,65,665,185,array("R"=>255,"G"=>255,"B"=>255,"Surrounding"=>-200,"Alpha"=>10));
  $myPicture->drawScale(array("XMargin"=>5,"YMargin"=>5,"Floating"=>TRUE,"Pos"=>SCALE_POS_TOPBOTTOM,"DrawSubTicks"=>TRUE));

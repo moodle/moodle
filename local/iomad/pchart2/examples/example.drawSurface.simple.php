@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Surface chart*/
 
  /* pChart library inclusions */
@@ -21,8 +21,8 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,209,99,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the picture title */ 
+
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"pSurface() :: Surface charts",array("R"=>255,"G"=>255,"B"=>255));
 

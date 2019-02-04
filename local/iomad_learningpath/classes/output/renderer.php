@@ -38,7 +38,7 @@ class renderer extends plugin_renderer_base {
      */
     public function render_manage_page($page) {
         $data = $page->export_for_template($this);
-        
+
         return parent::render_from_template('local_iomad_learningpath/manage_page', $data);
     }
 
@@ -49,7 +49,7 @@ class renderer extends plugin_renderer_base {
      */
     public function render_editpath_page($page) {
         $data = $page->export_for_template($this);
-        
+
         return parent::render_from_template('local_iomad_learningpath/editpath_page', $data);
     }
 
@@ -60,7 +60,7 @@ class renderer extends plugin_renderer_base {
      */
     public function render_editgroup_page($page) {
         $data = $page->export_for_template($this);
-        
+
         return parent::render_from_template('local_iomad_learningpath/editgroup_page', $data);
     }
 
@@ -71,7 +71,7 @@ class renderer extends plugin_renderer_base {
      */
     public function render_courselist_page($page) {
         $data = $page->export_for_template($this);
-        
+
         return parent::render_from_template('local_iomad_learningpath/courselist_page', $data);
     }
 
@@ -82,7 +82,7 @@ class renderer extends plugin_renderer_base {
      */
     public function render_students_page($page) {
         $data = $page->export_for_template($this);
-        
+
         return parent::render_from_template('local_iomad_learningpath/students_page', $data);
     }
 }

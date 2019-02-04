@@ -67,7 +67,7 @@ class company_courses_form extends moodleform {
         $company = new company($this->selectedcompany);
         $mform->addElement('hidden', 'deptid', $this->departmentid);
         $mform->setType('deptid', PARAM_INT);
-        
+
         $mform->addElement('html', '<table summary="" class="companycoursetable addremovetable'.
                                    ' generaltable generalbox groupmanagementtable boxaligncenter" cellspacing="0">
             <tr>

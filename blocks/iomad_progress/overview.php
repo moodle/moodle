@@ -172,7 +172,7 @@ if ($myusers = company::get_my_users($companyid, $departmentid)) {
     $myuserssql = " WHERE u.id IN (" . implode(',', array_keys($myusers)) . ") ";
 } else {
     $myuserssql = " WHERE 1 = 2 ";
-} 
+}
 
 // Get the list of users enrolled in the course.
 $picturefields = user_picture::fields('u');

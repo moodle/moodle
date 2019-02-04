@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Scaling */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(8,10,24,25,25,24,23,22,20,12,10),"Temperature");
  $MyData->setAxisName(0,"Temperatures");
  $MyData->addPoints(array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"),"Labels");
@@ -28,8 +28,8 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the picture title */ 
+
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"drawScale() - draw the X-Y scales",array("R"=>255,"G"=>255,"B"=>255));
 

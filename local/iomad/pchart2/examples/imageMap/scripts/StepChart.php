@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* Library settings */
  define("CLASS_PATH", "../../../class");
  define("FONT_PATH", "../../../fonts");
@@ -9,7 +9,7 @@
  include(CLASS_PATH."/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(1,2,1,2,1,2,1,2,1,2),"Probe 1");
  $MyData->addPoints(array(-1,-1,0,0,-1,-1,0,0,-1,-1),"Probe 2");
  $MyData->addPoints(array(5,3,5,3,5,3,5,3,5,3),"Probe 3");
@@ -41,8 +41,8 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the chart title */ 
+
+ /* Write the chart title */
  $myPicture->setFontProperties(array("FontName"=>FONT_PATH."/Forgotte.ttf","FontSize"=>11));
  $myPicture->drawText(150,35,"Measured values",array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE));
 

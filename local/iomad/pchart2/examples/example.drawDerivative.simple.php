@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Mathematical */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(3,12,15,8,5,-5,5,-5,-3,4,5,10),"Probe");
  $MyData->setAxisName(0,"Temperatures");
  $MyData->addPoints(array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"),"Labels");
@@ -21,7 +21,7 @@
  /* Turn of AAliasing */
  $myPicture->Antialias = FALSE;
 
- /* Set the default font */ 
+ /* Set the default font */
  $myPicture->setFontProperties(array("R"=>0,"G"=>0,"B"=>0,"FontName"=>"../fonts/pf_arma_five.ttf","FontSize"=>6));
 
  /* Define the chart area */

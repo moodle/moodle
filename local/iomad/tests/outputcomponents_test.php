@@ -153,7 +153,7 @@ class core_outputcomponents_testcase extends advanced_testcase {
         // Try legacy picture == 1.
         $user1->picture = 1;
 	$up1 = new user_picture($user1);
-	// IOMAD 
+	// IOMAD
         // $this->assertSame($CFG->wwwroot.'/pluginfile.php/'.$context1->id.'/user/icon/boost/f2?rev=1', $up1->get_url($page, $renderer)->out(false));
         $this->assertSame($CFG->wwwroot.'/theme/image.php/iomadboost/core/1/u/f2', $up1->get_url($page, $renderer)->out(false));
         $user1->picture = 11;

@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Pie charts */
 
  /* pChart library inclusions */
@@ -8,8 +8,8 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();   
- $MyData->addPoints(array(40,60,15,10,6,4),"ScoreA");  
+ $MyData = new pData();
+ $MyData->addPoints(array(40,60,15,10,6,4),"ScoreA");
  $MyData->setSerieDescription("ScoreA","Application A");
 
  /* Define the absissa serie */
@@ -31,31 +31,31 @@
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
 
- /* Write the picture title */ 
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"drawPieLegend - Draw pie charts legend",array("R"=>255,"G"=>255,"B"=>255));
 
- /* Set the default font properties */ 
+ /* Set the default font properties */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>10,"R"=>80,"G"=>80,"B"=>80));
 
- /* Enable shadow computing */ 
+ /* Enable shadow computing */
  $myPicture->setShadow(TRUE,array("X"=>2,"Y"=>2,"R"=>150,"G"=>150,"B"=>150,"Alpha"=>100));
 
- /* Create the pPie object */ 
+ /* Create the pPie object */
  $PieChart = new pPie($myPicture,$MyData);
 
- /* Draw two AA pie chart */ 
+ /* Draw two AA pie chart */
  $PieChart->draw2DPie(200,100,array("Border"=>TRUE));
  $PieChart->draw2DPie(440,115,array("Border"=>TRUE));
 
  /* Write down the legend next to the 2nd chart*/
  $PieChart->drawPieLegend(550,70);
 
- /* Write a legend box under the 1st chart */ 
+ /* Write a legend box under the 1st chart */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/pf_arma_five.ttf","FontSize"=>6));
  $PieChart->drawPieLegend(90,176,array("Style"=>LEGEND_BOX,"Mode"=>LEGEND_HORIZONTAL));
 
- /* Write the bottom legend box */ 
+ /* Write the bottom legend box */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawGradientArea(1,200,698,228,DIRECTION_VERTICAL,array("StartR"=>247,"StartG"=>247,"StartB"=>247,"EndR"=>217,"EndG"=>217,"EndB"=>217,"Alpha"=>20));
  $myPicture->drawLine(1,199,698,199,array("R"=>100,"G"=>100,"B"=>100,"Alpha"=>20));

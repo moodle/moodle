@@ -136,7 +136,7 @@ $PAGE->set_title($strcompletion);
 $PAGE->requires->css("/local/report_license/styles.css");
 $PAGE->requires->jquery();
 
-// get output renderer                                                                                                                                                                                         
+// get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Javascript for fancy select.
@@ -204,7 +204,7 @@ if (empty($dodownload) && empty($showchart) && !$sendemail) {
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
         print_error('invaliddepartment', 'block_iomad_company_admin');
-    }   
+    }
 
     if ($emailsent) {
         echo "<h2>".get_string('licenseemailsent', 'local_report_license')."</h2>";
@@ -214,7 +214,7 @@ if (empty($dodownload) && empty($showchart) && !$sendemail) {
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
         print_error('invaliddepartment', 'block_iomad_company_admin');
         die;
-    }   
+    }
 }
 
 
@@ -415,7 +415,7 @@ if (empty($charttype)) {
         }
         $compusertable = new html_table();
         $compusertable->id = 'ReportTable';
-    
+
         // Deal with table columns.
         if ($showused) {
             $columns = array('firstname',
@@ -437,7 +437,7 @@ if (empty($charttype)) {
                              'issuedate',
                              'coursename');
         }
-    
+
         foreach ($columns as $column) {
             if ($column == 'lastaccess') {
                 $string[$column] = get_string('lastaccess');
@@ -455,14 +455,14 @@ if (empty($charttype)) {
                 $columndir = $dir == "ASC" ? "DESC":"ASC";
                 $columnicon = $dir == "ASC" ? "down":"up";
                 $columnicon = " <img src=\"" . $OUTPUT->image_url('t/' . $columnicon) . "\" alt=\"\" />";
-    
+
             }
             $$column = $string[$column].$columnicon;
         }
-    
+
         // Set up the course worksheet.
         if (!empty($dodownload)) {
-   
+
             if ($courseid == 1) {
                 echo get_string('allusers', 'local_report_license')."\n";
             } else {
@@ -490,7 +490,7 @@ if (empty($charttype)) {
         }
         // Set the initial parameters for the table header links.
         $linkparams = $params;
-    
+
         $override = new stdclass();
         $override->firstname = 'firstname';
         $override->lastname = 'lastname';
@@ -628,11 +628,11 @@ if (empty($charttype)) {
             $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center');
         }
         $compusertable->width = '95%';
-    
+
         $userurl = '/local/report_users/userdisplay.php';
-    
+
         // Paginate up the results.
-    
+
         if (empty($idlist['0'])) {
             foreach ($coursedata as $user) {
                 if ($user->isusing) {
@@ -710,7 +710,7 @@ if (empty($charttype)) {
                 echo $output->paging_bar($totalcount, $page, $perpage, new moodle_url('/local/report_license/index.php', $params));
                 echo "<br />";
             }
-    
+
             // Display the user table.
             echo html_writer::table($compusertable);
             if (!empty($idlist['0'])) {
@@ -755,7 +755,7 @@ if (!empty($showchart)) {
             'DataGapAngle' => 10,
             'DataGapRadius' => 6,
             'Border' => true,
-        )); 
+        ));
         $pp->drawPieLegend(10,PCHART_SIZEY-20, array(
             'Style' => LEGEND_BOX,
             'Mode' => LEGEND_HORIZONTAL,

@@ -10,7 +10,7 @@
  include(CLASS_PATH."/pBubble.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(34,55,15,62,38,42),"Probe1");
  $MyData->addPoints(array(5,30,20,9,15,10),"Probe1Weight");
  $MyData->addPoints(array(5,10,-5,-1,0,-10),"Probe2");

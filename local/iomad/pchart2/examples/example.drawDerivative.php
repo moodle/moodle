@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Mathematical */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(-4,VOID,VOID,12,8,3,4,5,0,4,6,10),"Probe 1");
  $MyData->addPoints(array(3,12,15,8,5,-5,5,-5,-3,4,5,10),"Probe 2");
  $MyData->addPoints(array(2,7,5,18,19,22,10,2,6,10,5,6),"Probe 3");
@@ -33,12 +33,12 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the picture title */ 
+
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"drawDerivative() - draw the series slope",array("R"=>255,"G"=>255,"B"=>255));
 
- /* Set the default font */ 
+ /* Set the default font */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/pf_arma_five.ttf","FontSize"=>6));
 
  /* Draw the scale and the 1st chart */

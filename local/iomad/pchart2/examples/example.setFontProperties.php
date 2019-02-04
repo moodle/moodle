@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Drawing */
 
  /* pChart library inclusions */
@@ -20,34 +20,34 @@
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
 
- /* Write the picture title */ 
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"setFontProperties() - set default font properties",array("R"=>255,"G"=>255,"B"=>255));
 
- /* Enable shadow computing */ 
+ /* Enable shadow computing */
  $myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>20));
 
- /* Write some text */ 
+ /* Write some text */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/advent_light.ttf","FontSize"=>20));
  $myPicture->drawText(60,115,"10 degree text",array("Angle"=>10));
 
- /* Write some text */ 
+ /* Write some text */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/calibri.ttf","FontSize"=>20));
  $myPicture->drawText(75,130,"10 degree text",array("Angle"=>10));
 
- /* Write some text */ 
+ /* Write some text */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/GeosansLight.ttf","FontSize"=>20));
  $myPicture->drawText(90,145,"10 degree text",array("Angle"=>10));
 
- /* Write some text */ 
+ /* Write some text */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/MankSans.ttf","FontSize"=>20));
  $myPicture->drawText(105,160,"10 degree text",array("Angle"=>10));
 
- /* Write some text */ 
+ /* Write some text */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/MankSans.ttf","FontSize"=>30,"R"=>231,"G"=>50,"B"=>36));
  $myPicture->drawText(340,90,"Some big red text");
 
- /* Write some text */ 
+ /* Write some text */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6,"R"=>29,"G"=>70,"B"=>111));
  $myPicture->drawText(340,100,"Some blue text");
 

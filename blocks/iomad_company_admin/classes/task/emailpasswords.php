@@ -84,7 +84,7 @@ class emailpasswords extends \core\task\scheduled_task {
             }
         }
     }
-    
+
         /**
      * Send the password to the user via email.
      *
@@ -113,5 +113,5 @@ class emailpasswords extends \core\task\scheduled_task {
         $subject = format_string($site->fullname) .': '. get_string('newusernewpasswordsubj');
 
         return email_to_user($user, $supportuser, $subject, $message);
-    }    
+    }
 }

@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Scaling */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(24,-25,26,25,25),"Temperature");
  $MyData->addPoints(array(1,2,VOID,9,10),"Humidity 1");
  $MyData->addPoints(array(1,VOID,7,-9,0),"Humidity 2");
@@ -48,14 +48,14 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the picture title */ 
+
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"drawScale() - draw the X-Y scales",array("R"=>255,"G"=>255,"B"=>255));
 
  /* Set the default font */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/pf_arma_five.ttf","FontSize"=>6));
- 
+
  /* Draw the scale */
  $myPicture->setGraphArea(90,60,660,190);
  $myPicture->drawScale(array("LabelSkip"=>1,"DrawYLines"=>array(0),"Pos"=>SCALE_POS_LEFTRIGHT));

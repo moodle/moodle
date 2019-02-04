@@ -176,7 +176,7 @@ class admin_uploaduser_form2 extends company_moodleform {
 
         // Remove the company profile field from the form (this was added by the call to profile_definition
         // above but we don't want the user to edit this here).
-        
+
         // Hidden fields.
         $mform->addElement('hidden', 'iid');
         $mform->setType('iid', PARAM_INT);
@@ -283,7 +283,7 @@ class admin_uploaduser_form2 extends company_moodleform {
                                                       $licensecourses, array('id' => 'licensecourseselector'));
             $licensecourseselect->setMultiple(true);
             $mform->addElement('html', '</div>');
-            
+
             if (!empty($mylicensedetails->program)) {
                 $licensecourseselect->setSelected($licensecourses);
             } else {
@@ -390,7 +390,7 @@ class admin_uploaduser_form2 extends company_moodleform {
                 $errors['licenseid'] = 'We need ' . $requiredcount . ' license slots and have ' . $free;
             }
         }
-    
+
         return $errors;
     }
 

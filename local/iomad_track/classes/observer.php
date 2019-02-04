@@ -62,9 +62,9 @@ class observer {
         // Assumes a whole bunch of stuff exists without being explicitly required (double grrrrr)
         $typefield = CERTIFICATE . 'type';
         require("$CFG->dirroot/mod/" . CERTIFICATE . "/type/{$certificate->$typefield}/certificate.php");
-        
+
         // Create the certificate content. 'S' means return as string
-        return $pdf->Output('', 'S'); 
+        return $pdf->Output('', 'S');
     }
 
     /**

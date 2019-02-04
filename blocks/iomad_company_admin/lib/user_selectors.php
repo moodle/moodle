@@ -214,7 +214,7 @@ class potential_company_users_user_selector extends company_user_selector_base {
 
         $sql = " FROM
                     {user} u
-                WHERE $wherecondition AND u.suspended = 0 
+                WHERE $wherecondition AND u.suspended = 0
                       AND u.id NOT IN (
                         SELECT userid
                         FROM
@@ -271,7 +271,7 @@ class current_company_course_user_selector extends company_user_selector_base {
         $sql = " FROM
 	                {user} u INNER JOIN {company_users} cu
 	                ON cu.userid = u.id AND managertype = 0 $departmentsql
-                WHERE $wherecondition AND u.suspended = 0 
+                WHERE $wherecondition AND u.suspended = 0
                     AND cu.companyid = :companyid
                     AND cu.userid IN
                      (SELECT DISTINCT(ue.userid)
@@ -510,7 +510,7 @@ class potential_department_user_selector extends user_selector_base {
         // Add the ID of the current User to exclude them from the results
         $departmentusers[] = $USER->id;
         if (!empty($parentcompanies)) {
-            $userfilter = " AND NOT u.id IN (" . implode(",",$departmentusers) . ") 
+            $userfilter = " AND NOT u.id IN (" . implode(",",$departmentusers) . ")
                             AND u.id NOT IN (
                               SELECT userid FROM {company_users}
                               WHERE companyid IN (" . implode(',', array_keys($parentcompanies)) . "))";
@@ -544,7 +544,7 @@ class potential_department_user_selector extends user_selector_base {
         $sql = " FROM
                     {user} u
                     INNER JOIN {company_users} du ON du.userid = u.id
-                WHERE $wherecondition AND u.suspended = 0 
+                WHERE $wherecondition AND u.suspended = 0
                     $departmentsql
                     $userfilter";
 
@@ -678,7 +678,7 @@ class current_department_user_selector extends user_selector_base {
 
         $sql = " FROM {user} u
                  INNER JOIN {company_users} cu ON cu.userid = u.id
-                 WHERE $wherecondition $othermanagersql AND u.suspended = 0 
+                 WHERE $wherecondition $othermanagersql AND u.suspended = 0
                  $rolesql
                  AND  u.id != ($USER->id)
                     AND
@@ -916,7 +916,7 @@ class potential_license_user_selector extends user_selector_base {
                     {user} u
                     INNER JOIN {company_users} du ON du.userid = u.id
                     INNER JOIN {department} d ON d.id = du.departmentid
-                WHERE $wherecondition AND u.suspended = 0 
+                WHERE $wherecondition AND u.suspended = 0
                     $departmentsql
                     $userfilter
                     $edusql";
@@ -1069,13 +1069,13 @@ class current_license_user_selector extends user_selector_base {
             $maxcount = $CFG->iomad_max_select_users;
             $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, c.fullname, clu.isusing ';
             $countfields = 'SELECT COUNT(1)';
-    
+
             $sql = " FROM
                      {companylicense_users} clu LEFT JOIN {user} u ON (clu.userid = u.id), {course} c
                      WHERE $wherecondition AND u.suspended = 0
-                     AND clu.licensecourseid = c.id 
+                     AND clu.licensecourseid = c.id
                      AND clu.licenseid = :licenseid
-                     AND clu.timecompleted IS NULL 
+                     AND clu.timecompleted IS NULL
                      AND userid IN (
                         SELECT userid
                         FROM {company_users}
@@ -1088,12 +1088,12 @@ class current_license_user_selector extends user_selector_base {
             $maxcount = $CFG->iomad_max_select_users * count($licensecourses);
             $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, clu.isusing ';
             $countfields = 'SELECT COUNT(1)';
-    
+
             $sql = " FROM
                      {companylicense_users} clu LEFT JOIN {user} u ON (clu.userid = u.id)
                      WHERE $wherecondition AND u.suspended = 0
                      AND clu.licenseid = :licenseid
-                     AND clu.timecompleted IS NULL 
+                     AND clu.timecompleted IS NULL
                      AND userid IN (
                         SELECT userid
                         FROM {company_users}
@@ -1263,7 +1263,7 @@ class current_company_group_user_selector extends company_user_selector_base {
         $sql = " FROM
 	                {user} u INNER JOIN {company_users} cu
 	                ON cu.userid = u.id AND managertype = 0 $departmentsql
-                WHERE $wherecondition AND u.suspended = 0 
+                WHERE $wherecondition AND u.suspended = 0
                     AND cu.companyid = :companyid
                     AND cu.userid IN (
                       SELECT userid

@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Mathematical */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  for($i=0;$i<=100;$i++) { $MyData->addPoints(rand(0,20),"Probe 1"); }
  $MyData->setAxisName(0,"Temperatures");
 
@@ -27,8 +27,8 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the chart title */ 
+
+ /* Write the chart title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>11));
  $myPicture->drawText(160,35,"Measured temperature",array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE));
  $myPicture->drawText(340,30,"(and associated standard deviation)",array("FontSize"=>10,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE));
@@ -50,11 +50,11 @@
  /* Draw the line chart */
  $myPicture->drawPlotChart(array("PlotSize"=>2));
 
- /* Compute the serie average and standard deviation */ 
+ /* Compute the serie average and standard deviation */
  $Average = $MyData->getSerieAverage("Probe 1");
 
- /* Compute the serie standard deviation */ 
- $StandardDeviation = $MyData->getStandardDeviation("Probe 1"); 
+ /* Compute the serie standard deviation */
+ $StandardDeviation = $MyData->getStandardDeviation("Probe 1");
 
  /* Draw a threshold area */
  $myPicture->setShadow(FALSE);

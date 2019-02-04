@@ -186,10 +186,10 @@ class iomad_signup_form extends moodleform {
         }
 
         // Check if we have a domain already for this users email address.
-        list($dump, $emaildomain) = explode('@', $data['email']); 
+        list($dump, $emaildomain) = explode('@', $data['email']);
         if ($domaininfo = $DB->get_records('company_domains', array('companyid' => $data['id']))) {
             if (!$domaininfo = $DB->get_record_sql("SELECT * FROM {company_domains} WHERE " . $DB->sql_compare_text('domain') .
-                                                   " = '" . $DB->sql_compare_text($emaildomain)."' 
+                                                   " = '" . $DB->sql_compare_text($emaildomain)."'
                                                    AND companyid = :companyid", array('companyid' => $data['id']))) {
 
                 $errors['email'] = get_string('emaildomaindoesntmatch', 'local_iomad_signup');

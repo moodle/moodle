@@ -8,7 +8,7 @@
  include("../class/pStock.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(34,55,15,62,38,42),"Open");
  $MyData->addPoints(array(42,25,40,38,49,36),"Close");
  $MyData->addPoints(array(27,14,12,25,32,32),"Min");

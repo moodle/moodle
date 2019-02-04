@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Stacked chart */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(-7,-8,-15,-20,-18,-12,8,-19,9,16,-20,8,10,-10,-14,-20,8,-9,-19),"Probe 3");
  $MyData->addPoints(array(19,0,-8,8,-8,12,-19,-10,5,12,-20,-8,10,-11,-12,8,-17,-14,0),"Probe 4");
  $MyData->setAxisName(0,"Temperatures");

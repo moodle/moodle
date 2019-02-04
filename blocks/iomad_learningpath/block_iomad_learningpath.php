@@ -66,10 +66,10 @@ class block_iomad_learningpath extends block_base {
         $userpaths = $path->get_user_paths($USER->id);
 //echo "<pre>"; var_dump($userpaths); die;
 
-        // Javascript 
+        // Javascript
         $this->page->requires->js_call_amd('block_iomad_learningpath/path', 'init');
 
-        // Render block. 
+        // Render block.
         $renderable = new \block_iomad_learningpath\output\main($userpaths);
         $renderer = $this->page->get_renderer('block_iomad_learningpath');
         $this->content = new stdClass();

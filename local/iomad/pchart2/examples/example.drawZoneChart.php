@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Misc */
 
  /* pChart library inclusions */
@@ -30,8 +30,8 @@
  $myPicture->drawFilledRectangle(0,0,699,229,array("R"=>200,"G"=>200,"B"=>200));
  $myPicture->drawGradientArea(0,0,700,230,DIRECTION_VERTICAL,array("StartR"=>220,"StartG"=>220,"StartB"=>220,"EndR"=>100,"EndG"=>100,"EndB"=>100,"Alpha"=>30));
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the chart title */ 
+
+ /* Write the chart title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>11));
  $myPicture->drawText(150,35,"Size by time generations",array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE));
 

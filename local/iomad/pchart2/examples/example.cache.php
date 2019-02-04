@@ -1,16 +1,16 @@
 <?php
  /* CAT:Misc */
 
- /* Include all the classes */ 
- include("../class/pDraw.class.php"); 
- include("../class/pImage.class.php"); 
+ /* Include all the classes */
+ include("../class/pDraw.class.php");
+ include("../class/pImage.class.php");
  include("../class/pData.class.php");
  include("../class/pCache.class.php");
 
- /* Create your dataset object */ 
- $myData = new pData(); 
- 
- /* Add data in your dataset */ 
+ /* Create your dataset object */
+ $myData = new pData();
+
+ /* Add data in your dataset */
  $myData->addPoints(array(1,3,4,3,5));
 
  /* Create the cache object */
@@ -27,7 +27,7 @@
   }
  else
   {
-   /* Create a pChart object and associate your dataset */ 
+   /* Create a pChart object and associate your dataset */
    $myPicture = new pImage(700,230,$myData);
 
    /* Choose a nice font */
@@ -36,10 +36,10 @@
    /* Define the boundaries of the graph area */
    $myPicture->setGraphArea(60,40,670,190);
 
-   /* Draw the scale, keep everything automatic */ 
+   /* Draw the scale, keep everything automatic */
    $myPicture->drawScale();
 
-   /* Draw the scale, keep everything automatic */ 
+   /* Draw the scale, keep everything automatic */
    $myPicture->drawSplineChart();
 
    /* Do some cosmetics */

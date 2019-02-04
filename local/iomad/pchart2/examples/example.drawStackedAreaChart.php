@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Stacked chart */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(1,-2,-1,2,1,0),"Probe 1");
  $MyData->addPoints(array(1,-2,-3,2,1,8),"Probe 2");
  $MyData->addPoints(array(2,4,2,0,4,2),"Probe 3");
@@ -31,12 +31,12 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the picture title */ 
+
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"drawStackedAreaChart() - draw a stacked area chart",array("R"=>255,"G"=>255,"B"=>255));
 
- /* Write the chart title */ 
+ /* Write the chart title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>11));
  $myPicture->drawText(250,55,"Average temperature",array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE));
 
@@ -48,7 +48,7 @@
  $myPicture->setShadow(FALSE);
  $myPicture->drawStackedAreaChart(array("DisplayValues"=>TRUE,"DisplayColor"=>DISPLAY_AUTO,"DrawPlot"=>TRUE,"DrawLine"=>TRUE,"LineSurrounding"=>-250));
 
- /* Draw one static threshold */ 
+ /* Draw one static threshold */
  $myPicture->drawThreshold(0,array("Alpha"=>70,"Ticks"=>1,"NoMargin"=>TRUE));
 
  /* Draw the scale and the 2nd chart */
@@ -58,7 +58,7 @@
  $myPicture->setShadow(FALSE);
  $myPicture->drawStackedAreaChart(array("Surrounding"=>10));
 
- /* Draw one static threshold */ 
+ /* Draw one static threshold */
  $myPicture->drawThreshold(0,array("Alpha"=>70,"Ticks"=>1,"NoMargin"=>TRUE));
 
  /* Write the chart legend */

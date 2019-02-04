@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Mathematical */
 
  /* pChart library inclusions */
@@ -8,7 +8,7 @@
  include("../class/pScatter.class.php");
 
  /* Create the pData object */
- $myData = new pData();  
+ $myData = new pData();
 
  /* Define all the data series */
  $myData->addPoints(array(10,8,13,9,11,14,6,4,12,7,5),"X1");
@@ -64,7 +64,7 @@
 
  /* Set the default font */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/pf_arma_five.ttf","FontSize"=>6));
- 
+
  /* Create the Scatter chart object */
  $myScatter = new pScatter($myPicture,$myData);
 

@@ -236,9 +236,9 @@ if ($mform->is_cancelled()) {
         // Print the header.
         echo $output->header();
         echo $output->heading(get_string('uploadusersresult', 'tool_uploaduser'));
-    
+
         $optype = $formdata->uutype;
-    
+
         $createpasswords   = (!empty($formdata->uupasswordnew) and $optype != UU_UPDATE);
         $updatepasswords   = (!empty($formdata->uupasswordold)  and $optype != UU_ADDNEW and $optype != UU_ADDINC);
         $allowrenames      = (!empty($formdata->uuallowrenames) and $optype != UU_ADDNEW and $optype != UU_ADDINC);
@@ -246,7 +246,7 @@ if ($mform->is_cancelled()) {
         $updatetype        = isset($formdata->uuupdatetype) ? $formdata->uuupdatetype : 0;
         $bulk              = $formdata->uubulk;
         $noemailduplicates = $formdata->uunoemailduplicates;
-    
+
         // Verification moved to two places: after upload and into form2.
         $usersnew     = 0;
         $usersupdated = 0;
@@ -265,12 +265,12 @@ if ($mform->is_cancelled()) {
         $ccache       = array(); // Course cache - do not fetch all courses here, we  will not probably use them all anyway!
         $rolecache    = uu_allowed_roles_cache(); // Roles lookup cache.
         $manualcache  = array(); // Cache of used manual enrol plugins in each course.
-    
+
         $allowedauths   = uu_allowed_auths();
         $allowedauths   = array_keys($allowedauths);
         $availableauths = get_plugin_list('auth');
         $availableauths = array_keys($availableauths);
-    
+
         // We use only manual enrol plugin here, if it is disabled no enrol is done.
         if (enrol_is_enabled('manual')) {
             $manual = enrol_get_plugin('manual');
@@ -295,11 +295,11 @@ if ($mform->is_cancelled()) {
             $upt->flush();
             $linenum++;
             $errornum = 1;
-    
+
             $upt->track('line', $linenum);
-    
+
             $forcechangepassword = false;
-    
+
             $user = new stdClass();
             // By default, use the local mnet id (this may be changed in the file).
             $user->mnethostid = $CFG->mnet_localhost_id;
@@ -315,7 +315,7 @@ if ($mform->is_cancelled()) {
                     $user->{$columns[$key]} = '';
                 }
             }
-    
+
             if (empty($user->username) && !empty($user->email)) {
                 // No username given, try to find an existing user via the email address.
                 if ($perfexistinguser = $DB->get_record('user', array('email' => $user->email, 'mnethostid' => $user->mnethostid))) {
@@ -326,7 +326,7 @@ if ($mform->is_cancelled()) {
                 }
                 $upt->track('username', $user->username);
             }
-    
+
             // Get username, first/last name now - we need them in templates!!
             if ($optype == UU_UPDATE) {
                 // When updating only username is required.
@@ -339,7 +339,7 @@ if ($mform->is_cancelled()) {
                     $erroredusers[] = $line;
                     continue;
                 }
-    
+
             } else {
                 $error = false;
                 // When all other ops need firstname and lastname.
@@ -380,10 +380,10 @@ if ($mform->is_cancelled()) {
                     }
                 }
             }
-    
+
             // Normalize username.
             $user->username = clean_param($user->username, PARAM_USERNAME);
-    
+
             if (empty($user->username)) {
                 $upt->track('status', get_string('missingfield', 'error', 'username'), 'error');
                 $upt->track('username', $errorstr, 'error');
@@ -393,11 +393,11 @@ if ($mform->is_cancelled()) {
                 $erroredusers[] = $line;
                 continue;
             }
-    
+
             if ($existinguser = $DB->get_record('user', array('username' => $user->username, 'mnethostid' => $user->mnethostid))) {
                 $upt->track('id', $existinguser->id, 'normal', false);
             }
-    
+
             // Find out in username incrementing required.
             if ($existinguser and $optype == UU_ADDINC) {
                 $oldusername = $user->username;
@@ -406,7 +406,7 @@ if ($mform->is_cancelled()) {
                 $upt->track('username', $oldusername.'-->'.$user->username, 'info');
                 $existinguser = false;
             }
-    
+
             // Add default values for remaining fields.
             foreach ($stdfields as $field) {
                 if (isset($user->$field)) {
@@ -439,7 +439,7 @@ if ($mform->is_cancelled()) {
                     }
                 }
             }
-    
+
             // Delete user.
             if (!empty($user->deleted)) {
                 if (!$allowdeletes) {
@@ -473,7 +473,7 @@ if ($mform->is_cancelled()) {
             }
             // We do not need the deleted flag anymore.
             unset($user->deleted);
-    
+
             // Renaming requested?
             if (!empty($user->oldusername) ) {
                 $oldusername = core_text::strtolower($user->oldusername);
@@ -482,13 +482,13 @@ if ($mform->is_cancelled()) {
                     $upt->track('status', $strusernotrenamedoff, 'warning');
                     continue;
                 }
-    
+
                 if ($existinguser) {
                     $upt->track('status', $strusernotrenamedexists, 'error');
                     $renameerrors++;
                     continue;
                 }
-    
+
                 if ($olduser = $DB->get_record('user', array('username' => $oldusername, 'mnethostid' => $user->mnethostid))) {
                     $upt->track('id', $olduser->id, 'normal', false);
                     if (is_siteadmin($olduser->id)) {
@@ -514,7 +514,7 @@ if ($mform->is_cancelled()) {
                 $existinguser = $olduser;
                 $existinguser->username = $user->username;
             }
-    
+
             // Can we process with update or insert?
             $skip = false;
             switch ($optype) {
@@ -525,7 +525,7 @@ if ($mform->is_cancelled()) {
                         $skip = true;
                     }
                     break;
-    
+
                 case UU_ADDINC:
                     if ($existinguser) {
                         // This should not happen!
@@ -534,10 +534,10 @@ if ($mform->is_cancelled()) {
                         continue;
                     }
                     break;
-    
+
                 case UU_ADD_UPDATE:
                     break;
-    
+
                 case UU_UPDATE:
                     if (!$existinguser) {
                         $usersskipped++;
@@ -546,14 +546,14 @@ if ($mform->is_cancelled()) {
                     }
                     break;
             }
-    
+
             if ($skip) {
                 continue;
             }
-    
+
             if ($existinguser) {
                 $user->id = $existinguser->id;
-    
+
                 if (is_siteadmin($user->id)) {
                     $upt->track('status', $strusernotupdatedadmin, 'error');
                     $line[] = $strusernotupdatedadmin;
@@ -581,10 +581,10 @@ if ($mform->is_cancelled()) {
                             $existinguser->timecreated = $existinguser->firstaccess;
                         }
                     }
-    
+
                     // Load existing profile data.
                     profile_load_data($existinguser);
-    
+
                     $allowed = array();
                     if ($updatetype == 1) {
                         $allowed = $columns;
@@ -618,22 +618,22 @@ if ($mform->is_cancelled()) {
                                         }
                                     }
                                 }
-    
+
                                 if ($column == 'password') {
                                     $temppasswordhandler = $existinguser->password;
                                 }
-    
+
                                 if ($column == 'auth') {
                                     if (isset($user->auth) && empty($user->auth)) {
                                         $user->auth = 'manual';
                                     }
-    
+
                                     $existinguserauth = get_auth_plugin($existinguser->auth);
                                     $existingisinternalauth = $existinguserauth->is_internal();
-    
+
                                     $userauth = get_auth_plugin($user->auth);
                                     $isinternalauth = $userauth->is_internal();
-    
+
                                     if ($isinternalauth === $existingisinternalauth) {
                                         if ($updatepasswords) {
                                             if (empty($user->password)) {
@@ -653,7 +653,7 @@ if ($mform->is_cancelled()) {
                                     $upt->track($column, $existinguser->$column.'-->'.$user->$column, 'info');
                                 }
                                 $existinguser->$column = $user->$column;
-    
+
                                 if (!isset($user->auth) && !$updatepasswords) {
                                     $existinguser->password = $temppasswordhandler;
                                 }
@@ -672,10 +672,10 @@ if ($mform->is_cancelled()) {
                     } else if (!in_array($existinguser->auth, $allowedauths)) {
                         $upt->track('auth', $struserauthunsupported, 'warning');
                     }
-    
+
                     $auth = get_auth_plugin($existinguser->auth);
                     $isinternalauth = $auth->is_internal();
-    
+
                     if ($isinternalauth && $updatepasswords && !check_password_policy($user->password, $errmsg)) {
                         $upt->track('password', get_string('internalauthpassworderror', 'error', $existinguser->password), 'error');
                         $upt->track('status', $strusernotupdated, 'error');
@@ -687,7 +687,7 @@ if ($mform->is_cancelled()) {
                     } else {
                         $forcechangepassword = true;
                     }
-    
+
                     if (!$isinternalauth) {
                         $existinguser->password = 'not cached';
                         $upt->track('password', 'not cached');
@@ -697,18 +697,18 @@ if ($mform->is_cancelled()) {
                     } else {
                         $existinguser->password = $temppasswordhandler;
                     }
-    
+
                     $DB->update_record('user', $existinguser);
-    
+
                     // Remove user preference.
-    
+
                     if (get_user_preferences('create_password', false, $existinguser)) {
                         unset_user_preference('create_password', $existinguser);
                     }
                     if (get_user_preferences('auth_forcepasswordchange', false, $existinguser)) {
                         unset_user_preference('auth_forcepasswordchange', $existinguser);
                     }
-    
+
                     if ($isinternalauth && $updatepasswords) {
                         if (empty($existinguser->password)) {
                             set_user_preference('create_password', 1, $existinguser->id);
@@ -722,29 +722,29 @@ if ($mform->is_cancelled()) {
                     $usersupdated++;
                     // Save custom profile fields data from csv file.
                     profile_save_data($existinguser);
-    
+
                     \core\event\user_updated::create_from_userid($existinguser->id)->trigger();
-     
+
                 }
-    
+
                 if ($bulk == 2 or $bulk == 3) {
                     if (!in_array($user->id, $SESSION->bulk_users)) {
                         $SESSION->bulk_users[] = $user->id;
                     }
                 }
-    
+
             } else {
                 // Save the user to the database.
                 $user->confirmed = 1;
                 $user->timemodified = time();
                 $user->timecreated = time();
-    
+
                 if (isset($user->auth) && empty($user->auth)) {
                     $user->auth = 'manual';
                 }
                 $auth = get_auth_plugin($user->auth);
                 $isinternalauth = $auth->is_internal();
-    
+
                 if (!$createpasswords && $isinternalauth) {
                     if (empty($user->password)) {
                         $upt->track('password', get_string('missingfield', 'error', 'password'), 'error');
@@ -764,7 +764,7 @@ if ($mform->is_cancelled()) {
                         continue;
                     }
                 }
-    
+
                 // Do not insert record if new auth plguin does not exist!
                 if (isset($user->auth)) {
                     if (!in_array($user->auth, $availableauths)) {
@@ -779,7 +779,7 @@ if ($mform->is_cancelled()) {
                         $upt->track('auth', $struserauthunsupported, 'warning');
                     }
                 }
-    
+
                 if ($DB->record_exists('user', array('email' => $user->email))) {
                     if ($noemailduplicates) {
                         $upt->track('email', $stremailduplicate, 'error');
@@ -801,12 +801,12 @@ if ($mform->is_cancelled()) {
                         $user->password = hash_internal_user_password($user->password);
                     }
                 }
-    
+
                 // Merge user with company user defaults.
                 if (!empty($companyid)) {
                     $company = new company($companyid);
                     $defaults = $company->get_user_defaults();
-    
+
                     $user = (object) array_merge((array) $defaults, (array) $user);
                 }
 
@@ -851,13 +851,13 @@ if ($mform->is_cancelled()) {
                 }
                 // Save custom profile fields data.
                 profile_save_data($user);
-    
+
                 // Make sure user context exists.
                 context_user::instance($user->id);
-    
+
                 // Add the user to the company
                 $company->assign_user_to_company($user->id);
-    
+
                 // Do we have a department in the file?
                 if (!empty($user->department)) {
                     // we have already validated this.  Assign the user.
@@ -881,12 +881,12 @@ if ($mform->is_cancelled()) {
                     }
                 }
             }
-    
+
             // Find course enrolments, groups, roles/types and enrol periods.
             foreach ($columns as $column) {
                 if (preg_match('/^course\d+$/', $column)) {
                     $i = substr($column, 6);
-        
+
                     if (empty($user->{'course'.$i})) {
                         continue;
                     }
@@ -910,7 +910,7 @@ if ($mform->is_cancelled()) {
                     company_user::enrol($user, $courseids, $companyid);
                 }
             }
-    
+
             // Enrol user into courses that were selected on the form.
             if (isset($formdata->selectedcourses) ) {
                 company_user::enrol($user, array_keys($formdata->selectedcourses) );
@@ -944,7 +944,7 @@ if ($mform->is_cancelled()) {
                     }
                     $allow = true;
                     $numlicenses++;
-        
+
                     $count++;
                     $userlicid = $DB->insert_record('companylicense_users',
                                         array('userid' => $user->id,
@@ -976,10 +976,10 @@ if ($mform->is_cancelled()) {
 
         $upt->flush();
         $upt->close(); // Close table.
-    
+
         $cir->close();
         $cir->cleanup(true);
-    
+
         // Deal with any erroring users.
         if (!empty($erroredusers)) {
             echo get_string('erroredusers', 'block_iomad_company_admin');
@@ -1014,7 +1014,7 @@ if ($mform->is_cancelled()) {
         echo get_string('licensecount', 'block_iomad_company_admin').': '.$numlicenses.'<br />';
         echo get_string('licenseerrors', 'block_iomad_company_admin').': '.$numlicenseerrors.'</p>';
         echo $output->box_end();
-    
+
         if ($bulk) {
             echo $output->continue_button($bulknurl);
         } else {

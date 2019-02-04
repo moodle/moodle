@@ -823,7 +823,7 @@ class core_accesslib_testcase extends advanced_testcase {
 
         foreach ($allroles as $role) {
             // Get localised name from lang pack.
-            // Iomad - only original Moodle roles are localised. 
+            // Iomad - only original Moodle roles are localised.
             if ($role->id < 9) {
                 $this->assertSame('', $role->name);
             }
@@ -2207,7 +2207,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $count += $DB->count_records('block_instances');
         $totalcount = $DB->count_records('context');
         //$missing = $DB->get_records_sql("select * from {block_instances} where id not in (select instanceid from {context} where contextlevel=80)");
-        //var_dump($missing);  
+        //var_dump($missing);
         $concounts = $DB->get_records_sql("select contextlevel, count(*) from {context} group by contextlevel");
         //var_dump($concounts);
 //echo "count is $count, totalcount is $totalcount"; die;

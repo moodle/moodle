@@ -139,7 +139,7 @@ if ($category = company::get_category($companyid)) {
         }
     }
 }
-if ($categories = $DB->get_records_sql("SELECT id FROM {user_info_category} 
+if ($categories = $DB->get_records_sql("SELECT id FROM {user_info_category}
                                                 WHERE id NOT IN (
                                                  SELECT profileid FROM {company})")) {
     foreach ($categories as $category) {

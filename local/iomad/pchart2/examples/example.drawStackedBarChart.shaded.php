@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Stacked chart */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(-4,VOID,VOID,12,8,3),"Frontend #1");
  $MyData->addPoints(array(3,12,15,8,5,-5),"Frontend #2");
  $MyData->addPoints(array(2,7,5,18,19,22),"Frontend #3");

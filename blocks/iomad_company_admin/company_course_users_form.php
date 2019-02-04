@@ -319,7 +319,7 @@ class company_course_users_form extends moodleform {
         $removeall = false;;
         $remove = false;
         $userstounassign = array();
-    
+
         if (optional_param('removeall', false, PARAM_BOOL) && confirm_sesskey()) {
             $search = optional_param('currentlyenrolledusers_searchtext', '', PARAM_RAW);
             // Process incoming allocations.
@@ -391,7 +391,7 @@ $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
 
-// get output renderer                                                                                                                                                                                         
+// get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Javascript for fancy select.
@@ -436,7 +436,7 @@ echo $output->header();
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
     print_error('invaliddepartment', 'block_iomad_company_admin');
-}   
+}
 
 if ($coursesform->is_cancelled() || $usersform->is_cancelled() ||
      optional_param('cancel', false, PARAM_BOOL) ) {

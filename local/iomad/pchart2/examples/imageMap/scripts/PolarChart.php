@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* Library settings */
  define("CLASS_PATH", "../../../class");
  define("FONT_PATH", "../../../fonts");
@@ -10,9 +10,9 @@
  include(CLASS_PATH."/pRadar.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();   
- $MyData->addPoints(array(10,20,30,40,50,60,70,80,90),"ScoreA"); 
- $MyData->addPoints(array(20,40,50,12,10,30,40,50,60),"ScoreB"); 
+ $MyData = new pData();
+ $MyData->addPoints(array(10,20,30,40,50,60,70,80,90),"ScoreA");
+ $MyData->addPoints(array(20,40,50,12,10,30,40,50,60),"ScoreB");
  $MyData->setSerieDescription("ScoreA","Coverage A");
  $MyData->setSerieDescription("ScoreB","Coverage B");
 
@@ -37,16 +37,16 @@
  $RectangleSettings = array("R"=>180,"G"=>180,"B"=>180,"Alpha"=>100);
  $myPicture->drawRectangle(0,0,299,299,array("R"=>0,"G"=>0,"B"=>0));
 
- /* Set the default font properties */ 
+ /* Set the default font properties */
  $myPicture->setFontProperties(array("FontName"=>FONT_PATH."/Forgotte.ttf","FontSize"=>10,"R"=>80,"G"=>80,"B"=>80));
 
- /* Enable shadow computing */ 
+ /* Enable shadow computing */
  $myPicture->setShadow(TRUE,array("X"=>2,"Y"=>2,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10));
 
- /* Create the pRadar object */ 
+ /* Create the pRadar object */
  $SplitChart = new pRadar();
 
- /* Draw a radar chart */ 
+ /* Draw a radar chart */
  $myPicture->setGraphArea(10,10,290,290);
  $Options = array("RecordImageMap"=>TRUE,"LabelPos"=>RADAR_LABELS_HORIZONTAL,"BackgroundGradient"=>array("StartR"=>255,"StartG"=>255,"StartB"=>255,"StartAlpha"=>50,"EndR"=>32,"EndG"=>109,"EndB"=>174,"EndAlpha"=>30),"AxisRotation"=>0,"DrawPoly"=>TRUE,"PolyAlpha"=>50, "FontName"=>FONT_PATH."/pf_arma_five.ttf","FontSize"=>6);
  $SplitChart->drawPolar($myPicture,$MyData,$Options);

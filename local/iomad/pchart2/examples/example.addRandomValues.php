@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Misc */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create the pData object with some random values*/
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addRandomValues("Probe 1",array("Values"=>30,"Min"=>0,"Max"=>4));
  $MyData->addRandomValues("Probe 2",array("Values"=>30,"Min"=>6,"Max"=>10));
  $MyData->addRandomValues("Probe 3",array("Values"=>30,"Min"=>12,"Max"=>16));
@@ -28,8 +28,8 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the picture title */ 
+
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"addRandomValues() :: assess your scales",array("R"=>255,"G"=>255,"B"=>255));
 

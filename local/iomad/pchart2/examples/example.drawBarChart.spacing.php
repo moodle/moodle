@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Bar Chart */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(150,220,300,250,420,200,300,200,100),"Server A");
  $MyData->addPoints(array(140,0,340,300,320,300,200,100,50),"Server B");
  $MyData->setAxisName(0,"Hits");
@@ -39,7 +39,7 @@
  /* Write the chart legend */
  $myPicture->drawLegend(580,12,array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL));
 
- /* Turn on shadow computing */ 
+ /* Turn on shadow computing */
  $myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10));
 
  /* Draw the chart */

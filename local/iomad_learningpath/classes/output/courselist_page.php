@@ -55,7 +55,7 @@ class courselist_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        
+
         // fix courses list inside groups
         $groups = $this->groups;
         foreach ($groups as $group) {

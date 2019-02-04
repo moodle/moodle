@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Spline chart */
 
  /* pChart library inclusions */
@@ -24,8 +24,8 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,846,303,array("R"=>204,"G"=>204,"B"=>204));
- 
- /* Write the picture title */ 
+
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/pf_arma_five.ttf","FontSize"=>6));
  $myPicture->drawText(340,12,"Cyclic magnetic field strength",array("R"=>255,"G"=>255,"B"=>255,"Align"=>TEXT_ALIGN_MIDDLEMIDDLE));
 
@@ -35,9 +35,9 @@
  /* Draw a rectangle */
  $myPicture->drawFilledRectangle(53,22,675,185,array("R"=>0,"G"=>0,"B"=>0,"Dash"=>TRUE,"DashR"=>0,"DashG"=>51,"DashB"=>51,"BorderR"=>0,"BorderG"=>0,"BorderB"=>0));
 
- /* Turn on shadow computing */ 
+ /* Turn on shadow computing */
  $myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>20));
- 
+
  /* Draw the scale */
  $myPicture->setFontProperties(array("R"=>255,"G"=>255,"B"=>255));
  $ScaleSettings = array("XMargin"=>5,"YMargin"=>5,"Floating"=>TRUE,"DrawSubTicks"=>TRUE,"GridR"=>255,"GridG"=>255,"GridB"=>255,"AxisR"=>255,"AxisG"=>255,"AxisB"=>255,"GridAlpha"=>30,"CycleBackground"=>TRUE);

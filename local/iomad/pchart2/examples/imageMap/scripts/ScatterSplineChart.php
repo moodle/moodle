@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* Library settings */
  define("CLASS_PATH", "../../../class");
  define("FONT_PATH", "../../../fonts");
@@ -10,7 +10,7 @@
  include(CLASS_PATH."/pScatter.class.php");
 
  /* Create the pData object */
- $myData = new pData();  
+ $myData = new pData();
 
  /* Create the X axis and the binded series */
  for ($i=0;$i<=360;$i=$i+90) { $myData->addPoints(rand(1,30),"Probe 1"); }
@@ -62,7 +62,7 @@
 
  /* Set the default font */
  $myPicture->setFontProperties(array("FontName"=>FONT_PATH."/pf_arma_five.ttf","FontSize"=>6));
- 
+
  /* Set the graph area */
  $myPicture->setGraphArea(50,30,350,330);
 

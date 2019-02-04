@@ -50,6 +50,6 @@ if ($hassiteconfig) {
     $settings->add(new admin_setting_configcheckbox('local_iomad_learningpath/showprogress',
         get_string('showprogress', 'local_iomad_learningpath'),
         get_string('showprogress_desc', 'local_iomad_learningpath'), 1));
-        
+
 }
 

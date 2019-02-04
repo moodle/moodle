@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  *      - int licenseid: the id of the license.
  *      - int parentid: the id of the parent license.
- *      
+ *
  * }
  *
  * @package    block_iomad_company_admin

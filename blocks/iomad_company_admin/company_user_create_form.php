@@ -66,7 +66,7 @@ class user_edit_form extends company_moodleform {
                          'parentdepartmentid' => $parentlevel,
                          'showopenshared' => true,
                          'license' => false);
-        
+
         $this->currentcourses = new potential_subdepartment_course_selector('currentcourses', $options);
         $this->currentcourses->set_rows(20);
         $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
@@ -96,7 +96,7 @@ class user_edit_form extends company_moodleform {
             $mform->addElement('text', $necessaryname, get_string($necessaryname), 'maxlength="100" size="30"');
             $mform->addRule($necessaryname, $strrequired, 'required', null, 'client');
             $mform->setType($necessaryname, PARAM_NOTAGS);
-        } 
+        }
 
         // Do not show email field if change confirmation is pending.
         if (!empty($CFG->emailchangeconfirmation) and !empty($user->preference_newemail)) {
@@ -151,7 +151,7 @@ class user_edit_form extends company_moodleform {
 
         // Deal with company optional fields.
         $mform->addElement('header', 'category_id', get_string('advanced'));
-        
+
         $departmentslist = company::get_all_subdepartments($this->userdepartment);
         $departmenttree = company::get_all_subdepartments_raw($this->userdepartment);
         $treehtml = $output->department_tree($departmenttree, optional_param('userdepartment', 0, PARAM_INT));
@@ -360,7 +360,7 @@ class user_edit_form extends company_moodleform {
                                                                        AND clc.licenseid = :licenseid)",
                                                                        array('licenseid' => $license->id));
             }
-        
+
             if (!empty($usernew->licensecourses)) {
                 if ($license = $DB->get_record('companylicense', array('id' => $usernew->licenseid))) {
                     if (count($usernew->licensecourses) + $license->used > $license->allocation) {
@@ -414,7 +414,7 @@ $PAGE->requires->jquery();
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Javascript for fancy select.
-// Parameter is name of proper select form element. 
+// Parameter is name of proper select form element.
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('userdepartment', '', $departmentid));
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
 $PAGE->navbar->add($linktext, $linkurl);
@@ -536,7 +536,7 @@ if ($mform->is_cancelled()) {
                                                                    AND clc.licenseid = :licenseid)",
                                                                    array('licenseid' => $licenserecord['id']));
         }
-        
+
         if (!empty($data->licensecourses)) {
             $userdata = $DB->get_record('user', array('id' => $userid));
             $count = $licenserecord['used'];
@@ -550,7 +550,7 @@ if ($mform->is_cancelled()) {
                                              array('licenseid' => $licenseid, 'error' => 1)));
                 }
                 $allow = true;
-    
+
                 if ($allow) {
                     $count++;
                     $DB->insert_record('companylicense_users',
@@ -585,7 +585,7 @@ echo $output->header();
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
     print_error('invaliddepartment', 'block_iomad_company_admin');
-}   
+}
 
 // Check the userid is valid.
 if (!empty($userid) && !company::check_valid_user($companyid, $userid, $departmentid)) {

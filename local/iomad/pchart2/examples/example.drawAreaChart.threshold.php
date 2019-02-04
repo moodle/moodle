@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Area Chart */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  for($i=0;$i<=30;$i++) { $MyData->addPoints(rand(1,15),"Probe 1"); }
  $MyData->setSerieTicks("Probe 2",4);
  $MyData->setAxisName(0,"Temperatures");
@@ -24,8 +24,8 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the chart title */ 
+
+ /* Write the chart title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>11));
  $myPicture->drawText(150,35,"Average temperature",array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE));
 
@@ -65,7 +65,7 @@
  /* Write the thresholds */
  $myPicture->drawThreshold(5,array("WriteCaption"=>TRUE,"Caption"=>"Warn Zone","Alpha"=>70,"Ticks"=>2,"R"=>0,"G"=>0,"B"=>255));
  $myPicture->drawThreshold(10,array("WriteCaption"=>TRUE,"Caption"=>"Error Zone","Alpha"=>70,"Ticks"=>2,"R"=>0,"G"=>0,"B"=>255));
-  
+
  /* Render the picture (choose the best way) */
  $myPicture->autoOutput("pictures/example.drawAreaChart.threshold.png");
 ?>

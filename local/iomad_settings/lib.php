@@ -18,7 +18,7 @@
  * This file contains the version information for the comments feedback plugin
  *
  * @package local_iomad_settings
- * @copyright  2017 Derick Tuner 
+ * @copyright  2017 Derick Tuner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

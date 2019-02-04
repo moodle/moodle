@@ -202,14 +202,14 @@
 
  function StartFade()
   {
-   Loader     = new Image();   
-   Loader.src = URL;   
-   setTimeout("CheckLoadingStatus()", 200);   
+   Loader     = new Image();
+   Loader.src = URL;
+   setTimeout("CheckLoadingStatus()", 200);
   }
 
- function CheckLoadingStatus()   
-  {   
-   if ( Loader.complete == true )   
+ function CheckLoadingStatus()
+  {
+   if ( Loader.complete == true )
     {
      changeOpac(0, "render");
      HTMLResult = "<center><img src='" + URL + "' alt=''/></center>";
@@ -218,18 +218,18 @@
      opacity("render",0,100,100);
      view(SourceURL);
     }
-   else  
-    setTimeout("CheckLoadingStatus()", 200);   
-  }   
+   else
+    setTimeout("CheckLoadingStatus()", 200);
+  }
 
- function changeOpac(opacity, id)   
-  {   
-   var object = document.getElementById(id).style;   
-   object.opacity = (opacity / 100);   
-   object.MozOpacity = (opacity / 100);   
-   object.KhtmlOpacity = (opacity / 100);   
-   object.filter = "alpha(opacity=" + opacity + ")";   
-  }   
+ function changeOpac(opacity, id)
+  {
+   var object = document.getElementById(id).style;
+   object.opacity = (opacity / 100);
+   object.MozOpacity = (opacity / 100);
+   object.KhtmlOpacity = (opacity / 100);
+   object.filter = "alpha(opacity=" + opacity + ")";
+  }
 
  function wait()
   {
@@ -264,44 +264,44 @@
 
  function ajaxRender(URL)
   {
-   var xmlhttp=false;   
-   /*@cc_on @*/  
-   /*@if (@_jscript_version >= 5)  
-    try { xmlhttp = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) { try { xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); } catch (E) { xmlhttp = false; } }  
-   @end @*/  
-  
-   if (!xmlhttp && typeof XMLHttpRequest!='undefined')   
-    { try { xmlhttp = new XMLHttpRequest(); } catch (e) { xmlhttp=false; } }   
-  
-   if (!xmlhttp && window.createRequest)   
-    { try { xmlhttp = window.createRequest(); } catch (e) { xmlhttp=false; } }   
-  
+   var xmlhttp=false;
+   /*@cc_on @*/
+   /*@if (@_jscript_version >= 5)
+    try { xmlhttp = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) { try { xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); } catch (E) { xmlhttp = false; } }
+   @end @*/
+
+   if (!xmlhttp && typeof XMLHttpRequest!='undefined')
+    { try { xmlhttp = new XMLHttpRequest(); } catch (e) { xmlhttp=false; } }
+
+   if (!xmlhttp && window.createRequest)
+    { try { xmlhttp = window.createRequest(); } catch (e) { xmlhttp=false; } }
+
    xmlhttp.open("GET", URL,true);
 
-   xmlhttp.onreadystatechange=function() { if (xmlhttp.readyState==4) { StartFade();  } }   
-   xmlhttp.send(null)   
+   xmlhttp.onreadystatechange=function() { if (xmlhttp.readyState==4) { StartFade();  } }
+   xmlhttp.send(null)
   }
 
  function view(URL)
   {
-   var xmlhttp=false;   
-   /*@cc_on @*/  
-   /*@if (@_jscript_version >= 5)  
-    try { xmlhttp = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) { try { xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); } catch (E) { xmlhttp = false; } }  
-   @end @*/  
-  
+   var xmlhttp=false;
+   /*@cc_on @*/
+   /*@if (@_jscript_version >= 5)
+    try { xmlhttp = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) { try { xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); } catch (E) { xmlhttp = false; } }
+   @end @*/
+
    URL = "index.php?Action=View&Script=" + URL;
 
-   if (!xmlhttp && typeof XMLHttpRequest!='undefined')   
-    { try { xmlhttp = new XMLHttpRequest(); } catch (e) { xmlhttp=false; } }   
-  
-   if (!xmlhttp && window.createRequest)   
-    { try { xmlhttp = window.createRequest(); } catch (e) { xmlhttp=false; } }   
-  
+   if (!xmlhttp && typeof XMLHttpRequest!='undefined')
+    { try { xmlhttp = new XMLHttpRequest(); } catch (e) { xmlhttp=false; } }
+
+   if (!xmlhttp && window.createRequest)
+    { try { xmlhttp = window.createRequest(); } catch (e) { xmlhttp=false; } }
+
    xmlhttp.open("GET", URL,true);
 
-   xmlhttp.onreadystatechange=function() { if (xmlhttp.readyState==4) { Result = xmlhttp.responseText; document.getElementById("source").innerHTML = Result.replace("/\<BR\>/");  } }   
-   xmlhttp.send(null)   
+   xmlhttp.onreadystatechange=function() { if (xmlhttp.readyState==4) { Result = xmlhttp.responseText; document.getElementById("source").innerHTML = Result.replace("/\<BR\>/");  } }
+   xmlhttp.send(null)
   }
 </script>
 </html>
@@ -323,7 +323,7 @@
        $GDVersion = $Match[0];
       }
     }
- 
+
    if ( $PHPMajor < 4 || $GDVersion < 2 )
     {
 ?>
@@ -352,7 +352,7 @@
    $Script = preg_replace("/\//","",$Script);
    $Script = preg_replace("/\:/","",$Script);
 
-   if ( file_exists($Script) ) 
+   if ( file_exists($Script) )
     { highlight_file($Script); }
    else
     { echo "Script source code cannot be fetched."; }
@@ -366,12 +366,12 @@
    return(floor($Value/1024000))." mo.";
   }
 
- function left($value,$NbChar)  
-  { return substr($value,0,$NbChar); }  
- 
- function right($value,$NbChar)  
-  { return substr($value,strlen($value)-$NbChar,$NbChar); }  
- 
- function mid($value,$Depart,$NbChar)  
-  { return substr($value,$Depart-1,$NbChar); }  
+ function left($value,$NbChar)
+  { return substr($value,0,$NbChar); }
+
+ function right($value,$NbChar)
+  { return substr($value,strlen($value)-$NbChar,$NbChar); }
+
+ function mid($value,$Depart,$NbChar)
+  { return substr($value,$Depart-1,$NbChar); }
 ?>

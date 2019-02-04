@@ -147,7 +147,7 @@ class report_completion {
         return $returnarr;
     }
 
-    /** 
+    /**
      * Get users into temporary table
      */
     private static function populate_temporary_users($temptablename, $searchinfo) {
@@ -178,7 +178,7 @@ class report_completion {
         return array($dbman, $table);
     }
 
-    /** 
+    /**
      * Get users into temporary table
      */
     private static function populate_temporary_completion($tempcomptablename, $tempusertablename, $courseid=0, $showhistoric=false) {
@@ -233,9 +233,9 @@ class report_completion {
                           AND lit2.timestarted = tt2.timestarted)";
             if (!empty($courseid)) {
                 $idlistsql .= " AND lit2.courseid = ".$courseid;
-            } 
+            }
             $idlist = implode(',', array_keys($DB->get_records_sql($idlistsql)));
-            
+
             $tempcreatesql = "INSERT INTO {".$tempcomptablename."} (userid, courseid, timeenrolled, timestarted, timecompleted, finalscore, certsource)
                               SELECT it.userid, it.courseid, it.timeenrolled, it.timestarted, it.timecompleted, it.finalscore, it.id
                               FROM {".$tempusertablename."} tut, {local_iomad_track} it
@@ -431,12 +431,12 @@ class report_completion {
 
         // Populate the temporary completion table.
         list($compdbman, $comptable) = self::populate_temporary_completion($tempcomptablename, $temptablename, 0, $showhistoric);
-                
+
         // Get the user details.
         $countsql = "SELECT cc.id AS id ";
         $selectsql = "
                 SELECT
-                cc.id, 
+                cc.id,
                 u.id AS uid,
                 u.firstname AS firstname,
                 u.lastname AS lastname,

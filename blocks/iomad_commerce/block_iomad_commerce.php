@@ -66,12 +66,12 @@ class block_iomad_commerce extends block_base {
                 $this->content->text = '<div class="alert alert-danger">' . get_string('notconfigured', 'block_iomad_commerce', $link->out()) . '</div>';
                 return $this->content;
             }
-    
+
             $fatype = "fa-" . strtolower($CFG->commerce_admin_currency);
-            $this->content->text = "<p><span class='fa $fatype'></span>"; 
+            $this->content->text = "<p><span class='fa $fatype'></span>";
             $this->content->text .= ' <a href="' . new moodle_url('/blocks/iomad_commerce/shop.php') .
                                    '">' . get_string('shop_title', 'block_iomad_commerce') . '</a></p>';
-    
+
             $this->content->text .= get_basket_info();
         }
 

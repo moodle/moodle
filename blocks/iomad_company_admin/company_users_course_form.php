@@ -230,7 +230,7 @@ echo $OUTPUT->header();
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
     print_error('invaliddepartment', 'block_iomad_company_admin');
-}   
+}
 
 // Check the userid is valid.
 if (!company::check_valid_user($companyid, $userid, $departmentid)) {

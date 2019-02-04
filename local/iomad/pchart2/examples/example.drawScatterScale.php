@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Scatter chart */
 
  /* pChart library inclusions */
@@ -8,7 +8,7 @@
  include("../class/pScatter.class.php");
 
  /* Create the pData object */
- $myData = new pData();  
+ $myData = new pData();
 
  /* Create the X axis and the binded series */
  $myData->addPoints(array(-4,VOID,VOID,12,8,3),"Probe 1");
@@ -38,7 +38,7 @@
  $myPicture->drawGradientArea(0,0,400,400,DIRECTION_VERTICAL,$Settings);
  $myPicture->drawGradientArea(0,0,400,20,DIRECTION_VERTICAL,array("StartR"=>0,"StartG"=>0,"StartB"=>0,"EndR"=>50,"EndG"=>50,"EndB"=>50,"Alpha"=>80));
 
- /* Write the picture title */ 
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"drawScatterScale() - Draw the scatter chart scale",array("R"=>255,"G"=>255,"B"=>255));
 
@@ -47,7 +47,7 @@
 
  /* Set the default font */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/pf_arma_five.ttf","FontSize"=>6));
- 
+
  /* Set the graph area */
  $myPicture->setGraphArea(50,50,350,350);
 

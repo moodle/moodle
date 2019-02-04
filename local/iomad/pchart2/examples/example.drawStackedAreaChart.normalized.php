@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Stacked chart */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(4,0,0,12,8,3,0,12,8),"Frontend #1");
  $MyData->addPoints(array(3,12,15,8,5,5,12,15,8),"Frontend #2");
  $MyData->addPoints(array(2,7,5,18,19,22,7,5,18),"Frontend #3");
@@ -27,7 +27,7 @@
  /* Set the default font properties */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/pf_arma_five.ttf","FontSize"=>6));
 
- /* Draw the scale and the chart */ 
+ /* Draw the scale and the chart */
  $myPicture->setGraphArea(60,20,680,190);
  $myPicture->drawScale(array("XMargin"=>1,"DrawSubTicks"=>TRUE,"Mode"=>SCALE_MODE_ADDALL_START0));
 
@@ -37,7 +37,7 @@
  /* Draw the stacked area chart */
  $myPicture->drawStackedAreaChart(array("DrawPlot"=>TRUE,"DrawLine"=>TRUE,"LineSurrounding"=>-20));
 
- /* Write the chart legend */ 
+ /* Write the chart legend */
  $myPicture->drawLegend(480,210,array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL));
 
  /* Render the picture (choose the best way) */

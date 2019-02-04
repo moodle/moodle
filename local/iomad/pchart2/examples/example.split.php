@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Split chart */
 
  /* pChart library inclusions */
@@ -22,19 +22,19 @@
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
 
- /* Write the picture title */ 
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"pSplit - Draw splitted path charts",array("R"=>255,"G"=>255,"B"=>255));
 
- /* Set the default font properties */ 
+ /* Set the default font properties */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>10,"R"=>80,"G"=>80,"B"=>80));
 
- /* Enable shadow computing */ 
+ /* Enable shadow computing */
  $myPicture->setShadow(TRUE,array("X"=>2,"Y"=>2,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10));
 
  /* Create and populate the pData object */
- $MyData = new pData();   
- $MyData->addPoints(array(30,20,15,10,8,4),"Score"); 
+ $MyData = new pData();
+ $MyData->addPoints(array(30,20,15,10,8,4),"Score");
  $MyData->addPoints(array("End of visit","Home Page","Product Page","Sales","Statistics","Prints"),"Labels");
  $MyData->setAbscissa("Labels");
 
@@ -47,8 +47,8 @@
  $SplitChart->drawSplitPath($myPicture,$MyData,$Settings);
 
  /* Create and populate the pData object */
- $MyData2 = new pData();   
- $MyData2->addPoints(array(30,20,15),"Score"); 
+ $MyData2 = new pData();
+ $MyData2->addPoints(array(30,20,15),"Score");
  $MyData2->addPoints(array("UK","FR","ES"),"Labels");
  $MyData2->setAbscissa("Labels");
 

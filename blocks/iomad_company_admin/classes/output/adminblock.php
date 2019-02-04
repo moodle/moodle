@@ -39,7 +39,7 @@ use templatable;
 class adminblock implements renderable, templatable {
 
     protected $logourl;
- 
+
     protected $companyselect;
 
     protected $tabs;

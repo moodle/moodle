@@ -72,14 +72,14 @@ if (empty($dodownload)) {
 // Get this list of courses the user is a member of.
 $enrolcourses = enrol_get_users_courses($userid, true, null, 'visible DESC, sortorder ASC');
 if ($showhistoric) {
-    $completioncourses = $DB->get_records_sql("SELECT distinct courseid as id FROM {local_iomad_track} 
+    $completioncourses = $DB->get_records_sql("SELECT distinct courseid as id FROM {local_iomad_track}
                                                WHERE userid = :userid", array('userid' => $userid));
 } else {
     $completioncourses = array();
 }
 
 // Get non started courses.
-$licensecourses = $DB->get_records_sql("SELECT distinct licensecourseid as id FROM {companylicense_users} 
+$licensecourses = $DB->get_records_sql("SELECT distinct licensecourseid as id FROM {companylicense_users}
                                                WHERE userid = :userid AND isusing = 0", array('userid' => $userid));
 $rawusercourses = array();
 // We only want student roles here.
@@ -105,7 +105,7 @@ if (!empty($rawusercourses)) {
     $usercourses = $DB->get_records_sql("SELECT id FROM {course}
                                          WHERE id IN (" . implode(',', array_keys($rawusercourses)) . ")
                                          ORDER BY fullname");
-                                         
+
 } else {
     $usercourses = array();
 }
@@ -228,7 +228,7 @@ foreach ($usercourses as $usercourse) {
             } else {
                 $statusstring = get_string('notstarted', 'local_report_users');
             }
-    
+
             // Get the score for the course.
             if (!empty($usercompcourse->result)) {
                 $resultstring = $usercompcourse->result.

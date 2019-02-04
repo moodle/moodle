@@ -218,7 +218,7 @@ class block_iomad_company_admin extends block_base {
         if (iomad::has_capability('block/iomad_reports:view', $context)) {
             $tabs[] = [
                 'category' => 'Reports',
-                'icon' => 'fa-bar-chart-o', 
+                'icon' => 'fa-bar-chart-o',
                 'selected' => false,
                 'label' => get_string('reports', 'block_iomad_company_admin')
             ];
@@ -227,7 +227,7 @@ class block_iomad_company_admin extends block_base {
 
         // Build content for selected tab (from menu array).
         $menus = $this->get_menu();
-        
+
         $somethingtodisplay = false;
         foreach ($menus as $key => $menu) {
             $tab = $menu['tab'];

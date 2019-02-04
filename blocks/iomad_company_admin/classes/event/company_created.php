@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event.
  *
  *      - int companyid: the id of the company.
- *      
+ *
  * }
  *
  * @package    block_iomad_company_admin

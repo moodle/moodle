@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Spring chart */
 
  /* pChart library inclusions */
@@ -22,44 +22,44 @@
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,299,299,array("R"=>0,"G"=>0,"B"=>0));
 
- /* Write the picture title */ 
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"pSpring - Draw spring charts",array("R"=>255,"G"=>255,"B"=>255));
 
- /* Set the graph area boundaries*/ 
+ /* Set the graph area boundaries*/
  $myPicture->setGraphArea(20,20,280,280);
 
- /* Set the default font properties */ 
+ /* Set the default font properties */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>9,"R"=>80,"G"=>80,"B"=>80));
 
- /* Enable shadow computing */ 
+ /* Enable shadow computing */
  $myPicture->setShadow(TRUE,array("X"=>2,"Y"=>2,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10));
 
- /* Create the pSpring object */ 
+ /* Create the pSpring object */
  $SpringChart = new pSpring();
 
- /* Set the default parameters for newly added nodes */ 
+ /* Set the default parameters for newly added nodes */
  $SpringChart->setNodeDefaults(array("FreeZone"=>100));
 
- /* Create some nodes */ 
+ /* Create some nodes */
  $SpringChart->addNode(0,array("Shape"=>NODE_SHAPE_TRIANGLE,"FreeZone"=>60,"Size"=>20,"NodeType"=>NODE_TYPE_CENTRAL));
  $SpringChart->addNode(1,array("Connections"=>"0"));
  $SpringChart->addNode(2,array("Connections"=>"0"));
  $SpringChart->addNode(3,array("Connections"=>"2"));
 
- /* Set the nodes color */ 
+ /* Set the nodes color */
  $SpringChart->setNodesColor(0,array("R"=>215,"G"=>163,"B"=>121,"BorderR"=>166,"BorderG"=>115,"BorderB"=>74));
  $SpringChart->setNodesColor(array(1,2,3),array("R"=>150,"G"=>215,"B"=>121,"Surrounding"=>-30));
 
- /* Set the link properties */ 
+ /* Set the link properties */
  $SpringChart->linkProperties(0,1,array("Name"=>"Synchronous","R"=>255,"G"=>0,"B"=>0));
  $SpringChart->linkProperties(0,2,array("Name"=>"Asynchronous","R"=>255,"G"=>0,"B"=>0,"Ticks"=>2));
  $SpringChart->linkProperties(3,2,array("Name"=>"Mixed","Ticks"=>4));
 
- /* Draw the spring chart */ 
+ /* Draw the spring chart */
  $Result = $SpringChart->drawSpring($myPicture);
 
- /* Output the statistics */ 
+ /* Output the statistics */
  // print_r($Result);
 
  /* Render the picture (choose the best way) */

@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event.
  *
  *      - int parentid: the id of the parent license.
- *      
+ *
  * }
  *
  * @package    block_iomad_company_admin

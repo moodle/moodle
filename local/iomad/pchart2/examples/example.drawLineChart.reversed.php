@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Line chart */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(3,12,15,8,5,5),"Probe 1");
  $MyData->addPoints(array(8,7,5,18,19,22),"Probe 2");
  $MyData->setSerieWeight("Probe 1",2);
@@ -20,7 +20,7 @@
  /* Reverse the Y axis trick */
  $MyData->setAbsicssaPosition(AXIS_POSITION_TOP);
  $MyData->NegateValues(array("Probe 1","Probe 2","Probe 3"));
- $MyData->setAxisDisplay(0,AXIS_FORMAT_CUSTOM,"NegateValues"); 
+ $MyData->setAxisDisplay(0,AXIS_FORMAT_CUSTOM,"NegateValues");
  function NegateValues($Value) { if ( $Value == VOID ) { return(VOID); } else { return(-$Value); } }
 
  /* Create the pChart object */
@@ -40,8 +40,8 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the chart title */ 
+
+ /* Write the chart title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>8,"R"=>255,"G"=>255,"B"=>255));
  $myPicture->drawText(10,16,"Average recorded temperature",array("FontSize"=>11,"Align"=>TEXT_ALIGN_BOTTOMLEFT));
 

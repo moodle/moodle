@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * block approve access 
+ * block approve access
  *
  * @package    Block Iomad Approve Access
  * @copyright  2011 onwards E-Learn Design Limited

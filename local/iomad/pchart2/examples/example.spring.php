@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Spring chart */
 
  /* pChart library inclusions */
@@ -22,23 +22,23 @@
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,299,299,array("R"=>0,"G"=>0,"B"=>0));
 
- /* Write the picture title */ 
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"pSpring - Draw spring charts",array("R"=>255,"G"=>255,"B"=>255));
 
- /* Set the graph area boundaries*/ 
+ /* Set the graph area boundaries*/
  $myPicture->setGraphArea(20,20,280,280);
 
- /* Set the default font properties */ 
+ /* Set the default font properties */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>9,"R"=>80,"G"=>80,"B"=>80));
 
- /* Enable shadow computing */ 
+ /* Enable shadow computing */
  $myPicture->setShadow(TRUE,array("X"=>2,"Y"=>2,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10));
 
- /* Create the pSpring object */ 
+ /* Create the pSpring object */
  $SpringChart = new pSpring();
 
- /* Create some nodes */ 
+ /* Create some nodes */
  $SpringChart->addNode("0",array("Name"=>"","Shape"=>NODE_SHAPE_SQUARE,"FreeZone"=>60,"Size"=>20,"NodeType"=>NODE_TYPE_CENTRAL));
  $SpringChart->addNode("1",array("Name"=>"Johanna","Connections"=>array("0")));
  $SpringChart->addNode("2",array("Name"=>"Martin","Connections"=>array("0")));
@@ -49,15 +49,15 @@
  $SpringChart->addNode("7",array("Name"=>"Elisa","Connections"=>array("2")));
  $SpringChart->addNode("8",array("Name"=>"Omar","Connections"=>array("2")));
 
- /* Set the nodes color */ 
+ /* Set the nodes color */
  $SpringChart->setNodesColor(array(0),array("R"=>215,"G"=>163,"B"=>121,"BorderR"=>166,"BorderG"=>115,"BorderB"=>74));
  $SpringChart->setNodesColor(array(1,5,6,7),array("R"=>245,"G"=>183,"B"=>241,"Surrounding"=>-30));
  $SpringChart->setNodesColor(array(2,3,4,8),array("R"=>183,"G"=>224,"B"=>245,"Surrounding"=>-30));
 
- /* Draw the spring chart */ 
+ /* Draw the spring chart */
  $Result = $SpringChart->drawSpring($myPicture,array("DrawQuietZone"=>TRUE));
 
- /* Output the statistics */ 
+ /* Output the statistics */
  // print_r($Result);
 
  /* Render the picture (choose the best way) */

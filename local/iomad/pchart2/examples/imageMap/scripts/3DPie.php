@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* Library settings */
  define("CLASS_PATH", "../../../class");
  define("FONT_PATH", "../../../fonts");
@@ -10,8 +10,8 @@
  include(CLASS_PATH."/pPie.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();   
- $MyData->addPoints(array(40,60,15,10,6,4),"ScoreA");  
+ $MyData = new pData();
+ $MyData->addPoints(array(40,60,15,10,6,4),"ScoreA");
  $MyData->setSerieDescription("ScoreA","Application A");
 
  /* Define the absissa serie */
@@ -39,14 +39,14 @@
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,299,259,array("R"=>0,"G"=>0,"B"=>0));
 
- /* Set the default font properties */ 
+ /* Set the default font properties */
  $myPicture->setFontProperties(array("FontName"=>FONT_PATH."/Forgotte.ttf","FontSize"=>10,"R"=>80,"G"=>80,"B"=>80));
 
- /* Create the pPie object */ 
+ /* Create the pPie object */
  $Settings = array("RecordImageMap"=>TRUE);
  $PieChart = new pPie($myPicture,$MyData,$Settings);
 
- /* Draw an AA pie chart */ 
+ /* Draw an AA pie chart */
  $PieSettings = array("DrawLabels"=>TRUE,"LabelStacked"=>TRUE,"Border"=>TRUE,"RecordImageMap"=>TRUE);
  $PieChart->draw3DPie(160,150,$PieSettings);
 

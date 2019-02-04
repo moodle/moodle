@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Drawing */
 
  /* pChart library inclusions */
@@ -21,7 +21,7 @@
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
 
- /* Write the picture title */ 
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"drawPolygon - Draw polygons",array("R"=>255,"G"=>255,"B"=>255));
 
@@ -29,8 +29,8 @@
  $myPicture->setShadow(TRUE,array("X"=>2,"Y"=>2,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10));
 
  /* Create some filling thresholds */
- $Threshold = []; 
- $Threshold[] = array("MinX"=>100,"MaxX"=>60,"R"=>200,"G"=>200,"B"=>200,"Alpha"=>50); 
+ $Threshold = [];
+ $Threshold[] = array("MinX"=>100,"MaxX"=>60,"R"=>200,"G"=>200,"B"=>200,"Alpha"=>50);
  $Threshold[] = array("MinX"=>140,"MaxX"=>100,"R"=>220,"G"=>220,"B"=>220,"Alpha"=>50);
  $Threshold[] = array("MinX"=>180,"MaxX"=>140,"R"=>240,"G"=>240,"B"=>240,"Alpha"=>50);
 

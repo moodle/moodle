@@ -840,7 +840,7 @@ class block_iomad_company_admin_external extends external_api {
     }
 
     // Course functions.
- 
+
     /**
      * block_iomad_company_admin_assign_courses
      *
@@ -1619,7 +1619,7 @@ class block_iomad_company_admin_external extends external_api {
             // Create an event to deal with parent license allocations.
             $eventother = array('licenseid' => $oldlicense->id,
                                 'parentid' => $oldlicense->parentid);
-    
+
             $event = \block_iomad_company_admin\event\company_license_deleted::create(array('context' => context_system::instance(),
                                                                                             'userid' => $USER->id,
                                                                                             'objectid' => $oldlicense->parentid,

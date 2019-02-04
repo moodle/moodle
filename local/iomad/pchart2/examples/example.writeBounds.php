@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Misc */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(2,7,5,18,VOID,12,10,15,8,5,6,9),"Help Desk");
  $MyData->setAxisName(0,"Incidents");
  $MyData->addPoints(array("Jan","Feb","Mar","Apr","May","Jun","Jui","Aou","Sep","Oct","Nov","Dec"),"Labels");
@@ -38,7 +38,7 @@
  $myPicture->writeBounds();
  $myPicture->setShadow(FALSE);
 
- /* Write the chart legend */ 
+ /* Write the chart legend */
  $myPicture->drawLegend(630,215,array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL));
 
  /* Render the picture (choose the best way) */

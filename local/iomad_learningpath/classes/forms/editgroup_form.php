@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Edit/create group 
+ * Edit/create group
  *
  * @package    local_iomadlearninpath
  * @copyright  2018 Howard Miller (howardsmiller@gmail.com)

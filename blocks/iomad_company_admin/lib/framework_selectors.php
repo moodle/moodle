@@ -160,7 +160,7 @@ class potential_company_frameworks_selector extends company_framework_selector_b
         // Deal with shared frameworks.  Cannot be added to a company in this manner.
         $sharedsql = " AND cf.id NOT IN (
                          SELECT frameworkid FROM {iomad_frameworks}
-                         WHERE shared = 1 ) 
+                         WHERE shared = 1 )
                         AND cf.id NOT IN (
                          SELECT frameworkid FROM {company_comp_frameworks}
                          WHERE companyid = :companyid)";

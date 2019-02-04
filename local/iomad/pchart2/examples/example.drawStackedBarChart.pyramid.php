@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Stacked chart */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(20,40,65,100,70,55,40,22,12),"Male");
  $MyData->addPoints(array(-22,-44,-61,-123,-74,-60,-52,-34,-21),"Female");
  $MyData->setAxisName(0,"Community members");
@@ -36,5 +36,5 @@
  /* Render the picture (choose the best way) */
  $myPicture->autoOutput("pictures/example.drawStackedBarChart.pyramid.png");
 
- function YAxisFormat($Value) { return(abs($Value)); } 
+ function YAxisFormat($Value) { return(abs($Value)); }
 ?>

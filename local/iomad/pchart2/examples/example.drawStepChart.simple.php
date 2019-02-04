@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(VOID,VOID,VOID,2,6,3),"Probe 1");
  $MyData->addPoints(array(13,12,15,18,15,10),"Probe 2");
  $MyData->setAxisName(0,"Temperatures");

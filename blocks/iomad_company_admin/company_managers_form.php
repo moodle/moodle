@@ -198,7 +198,7 @@ class company_managers_form extends moodleform {
                                                         company_user::enrol($adduser, array($companycourse->courseid),
                                                                             $companycourse->companyid,
                                                                             $companycourseeditorrole->id);
-    
+
                                                     } else {
                                                          company_user::enrol($adduser, array($companycourse->courseid),
                                                                              $companycourse->companyid,
@@ -255,7 +255,7 @@ class company_managers_form extends moodleform {
                                                         company_user::enrol($adduser, array($companycourse->courseid),
                                                                             $companycourse->companyid,
                                                                             $companycourseeditorrole->id);
-    
+
                                                     } else {
                                                          company_user::enrol($adduser, array($companycourse->courseid),
                                                                              $companycourse->companyid,
@@ -411,10 +411,10 @@ class company_managers_form extends moodleform {
                         $userrecord = $DB->get_record('company_users', array('companyid' => $this->selectedcompany,
                                                                     'userid' => $removeuser->id));
                         // Is this a manager from another company?
-                        if ($roletype != 3 && 
+                        if ($roletype != 3 &&
                             $DB->get_records_sql("SELECT id FROM {company_users}
                                                   WHERE userid = :userid
-                                                  AND companyid NOT IN 
+                                                  AND companyid NOT IN
                                                   (" . join(',', array_keys($companytree)) .")
                                                   AND managertype = 1",
                                                   array('userid' => $removeuser->id,
@@ -532,7 +532,7 @@ $companyid = iomad::get_my_companyid($context);
 
 $PAGE->set_context($context);
 
-// get output renderer                                                                                                                                                                                         
+// get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Javascript for fancy select.

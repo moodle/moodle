@@ -16,7 +16,7 @@
 
 /**
  * @package    contrib
- * @subpackage block_iomad_progress   
+ * @subpackage block_iomad_progress
  * @copyright  2012 Michael de Raadt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,7 +25,7 @@
  * Backup task for the Progress Bar block
  *
  * @package    contrib
- * @subpackage block_iomad_progress   
+ * @subpackage block_iomad_progress
  * @copyright  2012 Michael de Raadt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

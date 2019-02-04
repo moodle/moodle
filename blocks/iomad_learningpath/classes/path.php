@@ -65,8 +65,8 @@ class path {
             $course->hasprogress = $progress !== null;
             $course->progresspercent = $course->hasprogress ? $progress : 0;
 
-            // Count progress for any courses that actually have some. 
-            // Ones that don't will be ignored. 
+            // Count progress for any courses that actually have some.
+            // Ones that don't will be ignored.
             if ($course->hasprogress) {
                 $cumulativeprogress += $course->progresspercent;
                 $completioncoursecount++;
@@ -142,7 +142,7 @@ class path {
             $path->progress = $pathprogress !== null ? $pathprogress : 0;
         }
 
-        return $paths; 
+        return $paths;
     }
 
     /**

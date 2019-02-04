@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Labels */
 
  /* pChart library inclusions */
@@ -8,7 +8,7 @@
  include("../class/pIndicator.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(4,12,15,8,5,-5),"Probe 1");
  $MyData->addPoints(array(7,2,4,14,8,3),"Probe 2");
  $MyData->setAxisName(0,"Temperatures");
@@ -31,12 +31,12 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the picture title */ 
+
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"drawIndicator() - Create nice looking indicators",array("R"=>255,"G"=>255,"B"=>255));
 
- /* Create the pIndicator object */ 
+ /* Create the pIndicator object */
  $Indicator = new pIndicator($myPicture);
 
  $myPicture->setFontProperties(array("FontName"=>"../fonts/pf_arma_five.ttf","FontSize"=>6));

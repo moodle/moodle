@@ -57,7 +57,7 @@ function local_iomad_signup_user_created($user) {
     $context = context_system::instance();
 
     // Check if we have a domain already for this users email address.
-    list($dump, $emaildomain) = explode('@', $user->email); 
+    list($dump, $emaildomain) = explode('@', $user->email);
     if ($domaininfo = $DB->get_record_sql("SELECT * FROM {company_domains} WHERE " . $DB->sql_compare_text('domain') . " = '" . $DB->sql_compare_text($emaildomain)."'")) {
         // Get company.
         $company = new company($domaininfo->companyid);
@@ -89,7 +89,7 @@ function local_iomad_signup_user_created($user) {
         profile_save_data($user);
     } else if (!empty($CFG->local_iomad_signup_company)) {
     }
-    
+
     // Do we have a role to assign?
     if (!empty($CFG->local_iomad_signup_role)) {
         // Get role

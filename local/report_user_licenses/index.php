@@ -98,7 +98,7 @@ if ($category = $DB->get_record_sql("SELECT uic.id, uic.name FROM {user_info_cat
         }
     }
 }
-if ($categories = $DB->get_records_sql("SELECT id FROM {user_info_category} 
+if ($categories = $DB->get_records_sql("SELECT id FROM {user_info_category}
                                                 WHERE id NOT IN (
                                                  SELECT profileid FROM {company})")) {
     foreach ($categories as $category) {

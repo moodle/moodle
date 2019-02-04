@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Drawing */
 
  /* pChart library inclusions */
@@ -19,15 +19,15 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the picture title */ 
+
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"drawArrow() - Arrows on your charts",array("R"=>255,"G"=>255,"B"=>255));
 
- /* Turn on shadow computing */ 
+ /* Turn on shadow computing */
  $myPicture->setShadow(TRUE,array("X"=>2,"Y"=>2,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>20));
 
- /* Draw some arrows */ 
+ /* Draw some arrows */
  for($i=1;$i<=100;$i=$i+8)
   {
    $arrowSettings = array("FillR"=>$i*2.5,"FillG"=>$i*2.5,"FillB"=>$i*2.5,"Ticks"=>$i % 5);

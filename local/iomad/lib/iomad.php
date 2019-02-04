@@ -23,7 +23,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 class iomad {
 
     /**
-     * Gets the current users company ID depending on 
+     * Gets the current users company ID depending on
      * if the user is an admin and editing a company or is a
      * company user tied to a company.
      * @param $context - stdclass()
@@ -162,7 +162,7 @@ class iomad {
      * Get the company Custom CSS given an ID.
      *
      * Parameters = $companyid = int;
-     * 
+     *
      * Returns text;
      **/
      public static function get_company_customcss($companyid) {
@@ -179,7 +179,7 @@ class iomad {
       * Get the company main colour given an ID.
       *
       * Parameters = $companyid = int;
-      * 
+      *
       * Returns text;
       **/
      public static function get_company_maincolor($companyid) {
@@ -196,7 +196,7 @@ class iomad {
       * Get the company heading colour given an ID.
       *
       * Parameters = $companyid = int;
-      * 
+      *
       * Returns text;
       **/
      public static function get_company_headingcolor($companyid) {
@@ -213,7 +213,7 @@ class iomad {
       * Get the company link colour given an ID.
       *
       * Parameters = $companyid = int;
-      * 
+      *
       * Returns text;
       **/
      public static function get_company_linkcolor($companyid) {
@@ -386,7 +386,7 @@ class iomad {
         }
         $context = context_system::instance();
         $mycompanyid = self::get_my_companyid($context);
-        
+
         $iomadcourses = array();
         foreach ($courses as $id => $course) {
             // Try to find category in company list.
@@ -858,7 +858,7 @@ class iomad {
         return $returnarr;
     }
 
-    /** 
+    /**
      * Get users into temporary table
      */
     private static function populate_temporary_users($temptablename, $searchinfo) {
@@ -921,7 +921,7 @@ class iomad {
         } else {
             $completionsql = "";
         }
-                
+
         // Get the user details.
         $shortname = addslashes($course->shortname);
         $countsql = "SELECT u.id ";
@@ -996,12 +996,12 @@ class iomad {
         } else {
             $completionsql = "";
         }
-                
+
         // Get the user details.
         $countsql = "SELECT CONCAT(co.id, u.id) AS id ";
         $selectsql = "
                 SELECT
-                CONCAT(co.id, u.id) AS id, 
+                CONCAT(co.id, u.id) AS id,
                 u.id AS uid,
                 u.firstname AS firstname,
                 u.lastname AS lastname,
@@ -1246,19 +1246,19 @@ class iomad {
             $showsuspendedsql = "AND u.suspended = 0";
         } else {
             $showsuspendedsql = "";
-        }                
+        }
 
         if (!$showused) {
             $showusedsql = "AND clu.isusing = 0";
         } else {
             $showusedsql = "";
-        }                
+        }
 
         // Get the user details.
         $countsql = "SELECT clu.id AS id ";
         $selectsql = "
                 SELECT
-                clu.id AS id, 
+                clu.id AS id,
                 u.id AS uid,
                 u.firstname AS firstname,
                 u.lastname AS lastname,
@@ -1304,9 +1304,9 @@ class iomad {
     public static function get_companies_listing($sort='name', $dir='ASC', $page=0, $recordsperpage=0,
                            $search='', $firstinitial='', $lastinitial='', $extraselect='', array $extraparams = null) {
         global $DB;
-    
+
         $params = array();
-    
+
         if (!empty($search)) {
             $search = trim($search);
             $select .= " AND (". $DB->sql_like("name", ':search1', false, false).
@@ -1316,23 +1316,23 @@ class iomad {
             $params['search2'] = "%$search%";
             $params['search3'] = "$search";
         }
-    
+
         if ($extraselect) {
             $select = $extraselect;
             $params = $params + (array)$extraparams;
         }
-    
+
         if ($sort) {
             $sort = " ORDER BY $sort $dir";
         }
-    
+
         // Warning: will return UNCONFIRMED USERS!
         return $DB->get_records_sql("SELECT *
                                      FROM {company}
                                      WHERE $select $sort",
                                      $params, $page, $recordsperpage);
     }
-    
+
     /**
      * Get user completion info for a course
      *
@@ -1357,19 +1357,19 @@ class iomad {
             $showsuspendedsql = "AND u.suspended = 0";
         } else {
             $showsuspendedsql = "";
-        }                
+        }
 
         if (!$showused) {
             $showusedsql = "AND clu.isusing = 0";
         } else {
             $showusedsql = "";
-        }                
+        }
 
         // Get the user details.
         $shortname = addslashes($course->shortname);
         $countsql = "SELECT CONCAT(clu.id, u.id, clu.isusing) AS id";
         $selectsql = "SELECT
-                CONCAT(clu.id, u.id) AS id, 
+                CONCAT(clu.id, u.id) AS id,
                 u.id AS uid,
                 u.firstname AS firstname,
                 u.lastname AS lastname,
@@ -1383,7 +1383,7 @@ class iomad {
                 d.name AS department,
                 cl.name AS licensename ";
         $fromsql = " FROM {user} u, {companylicense_users} clu, {department} d, {company_users} du, {".$temptablename."} tt, {companylicense} cl
-                     
+
                     WHERE $searchinfo->sqlsearch
                     AND tt.userid = u.id
                     AND clu.licensecourseid = $courseid
@@ -1422,7 +1422,7 @@ class iomad {
      */
     private static function has_capability_in_accessdata($companyid, $capability, context $context, array &$accessdata) {
         global $CFG, $DB;
-    
+
         // Build $paths as a list of current + all parent "paths" with order bottom-to-top
         $path = $context->path;
         $paths = array($path);
@@ -1433,10 +1433,10 @@ class iomad {
             }
             $paths[] = $path;
         }
-    
+
         $roles = array();
         $switchedrole = false;
-    
+
         // Find out if role switched
         if (!empty($accessdata['rsw'])) {
             // From the bottom up...
@@ -1449,7 +1449,7 @@ class iomad {
                 }
             }
         }
-    
+
         if (!$switchedrole) {
             // get all users roles in this context and above
             foreach ($paths as $path) {
@@ -1460,7 +1460,7 @@ class iomad {
                 }
             }
         }
-    
+
         // Now find out what access is given to each role, going bottom-->up direction
         $rdefs = get_role_definitions(array_keys($roles));
         $allowed = false;
@@ -1489,12 +1489,12 @@ class iomad {
             }
             $allowed = ($allowed or $roles[$roleid] === CAP_ALLOW);
         }
-    
+
         return $allowed;
     }
-    
+
     /**
-     * IOMAD version 
+     * IOMAD version
      * @param unknown $capability
      * @param context $context
      * @param int $companyid (optional) check for different company (and right to access same).
@@ -1502,13 +1502,13 @@ class iomad {
      */
     public static function has_capability($capability, context $context, $companyid = 0) {
         global $USER, $DB;
-        
+
         // If original version says no then it's no.
         // (We also rely on this doing a bunch of sanity checks, so we don't have to)
         if (!has_capability($capability, $context)) {
             return false;
         }
-        
+
         // If this is the admin then we'll believe it
         if (is_siteadmin()) {
             return true;
@@ -1520,22 +1520,22 @@ class iomad {
                 return false;
             }
         } else {
-        
+
             // Get user's current company. If no company then it must be true.
             if (!$companyid = self::companyid()) {
                 return true;
             }
         }
-        
+
         // Probably need to get accessdata (again), so...
         if (!isset($USER->access)) {
             load_all_capabilities();
         }
         $access =& $USER->access;
-        
+
         return self::has_capability_in_accessdata($companyid, $capability, $context, $access);
     }
-    
+
     /**
      * Iomad version of require_capability
      * @param unknown $capability
@@ -1548,7 +1548,7 @@ class iomad {
             throw new required_capability_exception($context, $capability, 'nopermissions', 'local_iomad');
         }
     }
-    
+
     /**
      * Get IOMAD documentation link.
      */

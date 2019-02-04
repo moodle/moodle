@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create the pData object with some random values*/
- $MyData = new pData(); 
+ $MyData = new pData();
  $MyData->addPoints(array(30,24,32),"This year");
  $MyData->addPoints(array(28,20,27),"Last year");
  $MyData->setSerieTicks("Last year",4);
@@ -31,8 +31,8 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the picture title */ 
+
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"Chart title",array("R"=>255,"G"=>255,"B"=>255));
 

@@ -60,7 +60,7 @@ class core_userliblib_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         // Get user2 details as a user with super system capabilities.
-        // IOMAD - this function doesn't work because of permission changes 
+        // IOMAD - this function doesn't work because of permission changes
         /*
         $result = user_get_user_details_courses($user2);
         $this->assertEquals($user2->id, $result['id']);
@@ -694,7 +694,7 @@ class core_userliblib_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         // Get student details as a user with super system capabilities.
-        // IOMAD - this function doesn't work like this 
+        // IOMAD - this function doesn't work like this
         /*
         $result = user_get_user_details($student, $course1);
         $this->assertEquals($student->id, $result['id']);

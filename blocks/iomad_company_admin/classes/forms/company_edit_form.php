@@ -32,7 +32,7 @@ class company_edit_form extends \company_moodleform {
 
     public function __construct($actionurl, $isadding, $companyid, $companyrecord, $firstcompany = false, $parentcompanyid = 0, $child = false) {
         global $DB;
-        
+
         $this->isadding = $isadding;
         $this->companyid = $companyid;
         $this->companyrecord = $companyrecord;
@@ -169,10 +169,10 @@ class company_edit_form extends \company_moodleform {
         $mform->addElement('select', 'emailprofileid', get_string('emailprofileid', 'block_iomad_company_admin'), $profilefields);
         $mform->setDefault('emailprofileid', 0);
         $mform->addHelpButton('emailprofileid', 'emailprofileid', 'block_iomad_company_admin');
-           
+
         /* === end company email notifications === */
          $mform->addElement('header', 'companyadvanced', get_string('companyadvanced', 'block_iomad_company_admin'));
-        
+
         // Add in the company role template selector.
         $templates = \company::get_role_templates($this->companyid);
         $mform->addElement('select', 'roletemplate', get_string('applyroletemplate', 'block_iomad_company_admin', $templates[$this->previousroletemplateid]), $templates);
@@ -240,7 +240,7 @@ class company_edit_form extends \company_moodleform {
         $mform->setType('ecommerce', PARAM_INT);
         $mform->setType('templates', PARAM_RAW);
 
-        if (!empty($this->companyid)) {        
+        if (!empty($this->companyid)) {
             // Add the auto enrol courses.
             $parentnodeid = company::get_company_parentnode($this->companyid);
             if ($courses = $DB->get_records_sql_menu("SELECT c.id, c.fullname

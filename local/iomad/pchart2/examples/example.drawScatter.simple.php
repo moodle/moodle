@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Scatter chart */
 
  /* pChart library inclusions */
@@ -8,7 +8,7 @@
  include("../class/pScatter.class.php");
 
  /* Create the pData object */
- $myData = new pData();  
+ $myData = new pData();
 
  /* Create the X axis and the binded series */
  for ($i=0;$i<=10;$i=$i+1) { $myData->addPoints(rand(1,20),"Probe 1"); }
@@ -44,7 +44,7 @@
 
  /* Set the default font */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/pf_arma_five.ttf","FontSize"=>6));
- 
+
  /* Set the graph area */
  $myPicture->setGraphArea(40,40,370,370);
 

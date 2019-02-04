@@ -15,7 +15,7 @@
  /* Do a gradient overlay */
  $Settings = array("StartR"=>231, "StartG"=>228, "StartB"=>155, "EndR"=>138, "EndG"=>91, "EndB"=>10, "Alpha"=>50);
  $myPicture->drawGradientArea(0,0,550,175,DIRECTION_VERTICAL,$Settings);
- 
+
  /* Set the default font */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/calibri.ttf","FontSize"=>20));
 

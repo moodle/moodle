@@ -30,7 +30,7 @@ class pScatter
 	/* Prepare the scale */
 	function drawScatterScale(array $Format = [])
 	{
-		
+
 		/* Check if we have at least both one X and Y axis */
 		$GotXAxis = FALSE;
 		$GotYAxis = FALSE;
@@ -46,7 +46,7 @@ class pScatter
 		if (!$GotYAxis) {
 			return (SCATTER_MISSING_Y_SERIE);
 		}
-		
+
 		$Mode = SCALE_MODE_FLOATING;
 		$Floating = FALSE;
 		$XLabelsRotation = 90;
@@ -92,16 +92,16 @@ class pScatter
 		$BackgroundG2 = 230;
 		$BackgroundB2 = 230;
 		$BackgroundAlpha2 = 10;
-		
+
 		/* Override defaults */
 		extract($Format);
-		
+
 		$BG1 = ["R" => $BackgroundR1,"G" => $BackgroundG1,"B" => $BackgroundB1,"Alpha" => $BackgroundAlpha1];
 		$BG2 = ["R" => $BackgroundR2,"G" => $BackgroundG2,"B" => $BackgroundB2,"Alpha" => $BackgroundAlpha2];
 
 		/* Skip a NOTICE event in case of an empty array */
 		($DrawYLines == NONE) AND $DrawYLines = ["zarma" => "31"];
-		
+
 		$Data = $this->pDataObject->getData();
 		foreach($Data["Axis"] as $AxisID => $AxisSettings) {
 			if ($AxisSettings["Identity"] == AXIS_X) {
@@ -159,7 +159,7 @@ class pScatter
 			"T" => $this->pChartObject->GraphAreaY1,
 			"B" => $this->pChartObject->GraphAreaY2
 		];
-		
+
 		foreach($Data["Axis"] as $AxisID => $AxisSettings) {
 			if (isset($AxisSettings["Color"])) {
 				$AxisR = $AxisSettings["Color"]["R"];
@@ -238,7 +238,7 @@ class pScatter
 						if ($DrawSubTicks && $i != $AxisSettings["Rows"]){
 							$this->pChartObject->drawLine($XPos + $SubTicksSize, $YPos - $InnerSubTickWidth, $XPos + $SubTicksSize, $YPos + $OuterSubTickWidth, ["R" => $SubTickR,"G" => $SubTickG,"B" => $SubTickB,"Alpha" => $SubTickAlpha]);
 						}
-						
+
 						$this->pChartObject->drawLine($XPos, $YPos - $InnerTickWidth, $XPos, $YPos + $OuterTickWidth, ["R" => $TickR,"G" => $TickG,"B" => $TickB,"Alpha" => $TickAlpha]);
 						$Bounds = $this->pChartObject->drawText($XPos, $YPos + $OuterTickWidth + $LabelOffset, $Value, ["Angle" => $XLabelsRotation,"Align" => $LabelAlign]);
 						$TxtBottom = $YPos + 2 + $OuterTickWidth + 2 + ($Bounds[0]["Y"] - $Bounds[2]["Y"]);
@@ -255,9 +255,9 @@ class pScatter
 					}
 
 					$AxisPos["B"] = $MaxBottom + $ScaleSpacing;
-					
+
 				} elseif ($AxisSettings["Position"] == AXIS_POSITION_TOP) {
-					
+
 					if ($XLabelsRotation == 0) {
 						$LabelAlign = TEXT_ALIGN_BOTTOMMIDDLE;
 						$LabelOffset = 2;
@@ -330,7 +330,7 @@ class pScatter
 
 					$AxisPos["T"] = $MinTop - $ScaleSpacing;
 				}
-				
+
 			} elseif ($AxisSettings["Identity"] == AXIS_Y) {
 				if ($AxisSettings["Position"] == AXIS_POSITION_LEFT) {
 					if ($Floating) {
@@ -367,7 +367,7 @@ class pScatter
 						if ($DrawSubTicks && $i != $AxisSettings["Rows"]) {
 							 $this->pChartObject->drawLine($XPos - $OuterSubTickWidth, $YPos - $SubTicksSize, $XPos + $InnerSubTickWidth, $YPos - $SubTicksSize, ["R" => $SubTickR,"G" => $SubTickG,"B" => $SubTickB,"Alpha" => $SubTickAlpha]);
 						}
-						
+
 						$this->pChartObject->drawLine($XPos - $OuterTickWidth, $YPos, $XPos + $InnerTickWidth, $YPos, ["R" => $TickR,"G" => $TickG,"B" => $TickB,"Alpha" => $TickAlpha]);
 						$Bounds = $this->pChartObject->drawText($XPos - $OuterTickWidth - 2, $YPos, $Value, ["Align" => TEXT_ALIGN_MIDDLERIGHT]);
 						$TxtLeft = $XPos - $OuterTickWidth - 2 - ($Bounds[1]["X"] - $Bounds[0]["X"]);
@@ -419,7 +419,7 @@ class pScatter
 						if ($DrawSubTicks && $i != $AxisSettings["Rows"]) {
 							$this->pChartObject->drawLine($XPos - $InnerSubTickWidth, $YPos - $SubTicksSize, $XPos + $OuterSubTickWidth, $YPos - $SubTicksSize, ["R" => $SubTickR,"G" => $SubTickG,"B" => $SubTickB,"Alpha" => $SubTickAlpha]);
 						}
-						
+
 						$this->pChartObject->drawLine($XPos - $InnerTickWidth, $YPos, $XPos + $OuterTickWidth, $YPos, ["R" => $TickR,"G" => $TickG,"B" => $TickB,"Alpha" => $TickAlpha]);
 						$Bounds = $this->pChartObject->drawText($XPos + $OuterTickWidth + 2, $YPos, $Value, ["Align" => TEXT_ALIGN_MIDDLELEFT]);
 						$TxtLeft = $XPos + $OuterTickWidth + 2 + ($Bounds[1]["X"] - $Bounds[0]["X"]);
@@ -457,10 +457,10 @@ class pScatter
 		$RecordImageMap = FALSE;
 		$ImageMapTitle = NULL;
 		$ImageMapPrecision = 2;
-		
+
 		/* Override defaults */
 		extract($Format);
-		
+
 		$Data = $this->pDataObject->getData();
 		$Palette = $this->pDataObject->getPalette();
 		$BorderColor =["R" => $BorderR,"G" => $BorderG,"B" => $BorderB,"Alpha" => $BorderAlpha];
@@ -486,9 +486,9 @@ class pScatter
 
 				$PosArrayY = $this->getPosArray($SerieValuesY, $SerieYAxis);
 				(!is_array($PosArrayY)) AND $PosArrayY = [0 => $PosArrayY];
-	
+
 				$Color = array("R" => $Series["Color"]["R"],"G" => $Series["Color"]["G"],"B" => $Series["Color"]["B"],"Alpha" => $Series["Color"]["Alpha"]);
-				
+
 				foreach($PosArrayX as $Key => $Value) {
 					$X = $Value;
 					$Y = $PosArrayY[$Key];
@@ -539,7 +539,7 @@ class pScatter
 
 				$PosArrayX = $this->getPosArray($SerieValuesX, $SerieXAxis);
 				(!is_array($PosArrayX)) AND $PosArrayX = [0 => $PosArrayX];
-	
+
 				$PosArrayY = $this->getPosArray($SerieValuesY, $SerieYAxis);
 				(!is_array($PosArrayY)) AND $PosArrayY = [0 => $PosArrayY];
 
@@ -557,7 +557,7 @@ class pScatter
 						if ($RecordImageMap) {
 							$this->pChartObject->addToImageMap("CIRCLE", floor($X) . "," . floor($Y) . "," . $ImageMapPlotSize, $this->pChartObject->toHTMLColor($Series["Color"]["R"], $Series["Color"]["G"], $Series["Color"]["B"]) , $Description, $RealValue);
 						}
-						
+
 						if ($LastX != VOID && $LastY != VOID){
 							$this->pChartObject->drawLine($LastX, $LastY, $X, $Y, $Color);
 						}
@@ -607,7 +607,7 @@ class pScatter
 				$SplineSettings = ["R" => $Series["Color"]["R"],"G" => $Series["Color"]["G"],"B" => $Series["Color"]["B"],"Alpha" => $Series["Color"]["Alpha"]];
 				($Ticks != 0) AND $SplineSettings["Ticks"] = $Ticks;
 				($Weight != 0) AND $SplineSettings["Weight"] = $Weight;
-				
+
 				$LastX = VOID;
 				$LastY = VOID;
 				$WayPoints = [];
@@ -650,7 +650,7 @@ class pScatter
 	{
 		$Data = $this->pDataObject->getData();
 		$ScaleHeight = $Data["Axis"][$AxisID]["ScaleMax"] - $Data["Axis"][$AxisID]["ScaleMin"];
-		
+
 		(!is_array($Values)) AND $Values = [$Values];
 		$Result = [];
 
@@ -661,7 +661,7 @@ class pScatter
 			foreach($Values as $Key => $Value) {
 				$Result[] = ($Value == VOID) ? VOID : $this->pChartObject->GraphAreaX1 + $Data["Axis"][$AxisID]["Margin"] + ($Step * ($Value - $Data["Axis"][$AxisID]["ScaleMin"]));
 			}
-			
+
 		} else {
 			$Height = ($this->pChartObject->GraphAreaY2 - $this->pChartObject->GraphAreaY1) - $Data["Axis"][$AxisID]["Margin"] * 2;
 			$Step = $Height / $ScaleHeight;
@@ -670,9 +670,9 @@ class pScatter
 				$Result[] = ($Value == VOID) ? VOID : $this->pChartObject->GraphAreaY2 - $Data["Axis"][$AxisID]["Margin"] - ($Step * ($Value - $Data["Axis"][$AxisID]["ScaleMin"]));
 			}
 		}
-		
+
 		return (count($Result) == 1) ? $Result[0] : $Result;
-			
+
 	}
 
 	/* Draw the legend of the active series */
@@ -700,10 +700,10 @@ class pScatter
 		$Surrounding = NULL;
 		$Style = LEGEND_ROUND;
 		$Mode = LEGEND_VERTICAL;
-		
+
 		/* Override defaults */
 		extract($Format);
-		
+
 		if ($Surrounding != NULL) {
 			$BorderR = $R + $Surrounding;
 			$BorderG = $G + $Surrounding;
@@ -734,7 +734,7 @@ class pScatter
 					($Boundaries["B"] < $BoxArray[1]["Y"] + 2 + $IconAreaHeight / 2) AND $Boundaries["B"] = $BoxArray[1]["Y"] + 2 + $IconAreaHeight / 2;
 					$Lines = preg_split("/\n/", $Series["Description"]);
 					$vY = $vY + max($this->pChartObject->FontSize * count($Lines) , $IconAreaHeight) + 5;
-					
+
 				} elseif ($Mode == LEGEND_HORIZONTAL) {
 					$Lines = preg_split("/\n/", $Series["Description"]);
 					$Width = [];
@@ -743,7 +743,7 @@ class pScatter
 						($Boundaries["T"] > $BoxArray[2]["Y"] + $IconAreaHeight / 2) AND $Boundaries["T"] = $BoxArray[2]["Y"] + $IconAreaHeight / 2;
 						($Boundaries["R"] < $BoxArray[1]["X"] + 2) AND $Boundaries["R"] = $BoxArray[1]["X"] + 2;
 						($Boundaries["B"] < $BoxArray[1]["Y"] + 2 + $IconAreaHeight / 2) AND $Boundaries["B"] = $BoxArray[1]["Y"] + 2 + $IconAreaHeight / 2;
-						
+
 						$Width[] = $BoxArray[1]["X"];
 					}
 
@@ -780,7 +780,7 @@ class pScatter
 					$PicX = $X + $IconAreaWidth / 2;
 					$PicY = $Y + $IconAreaHeight / 2;
 					$this->pChartObject->drawFromPNG($PicX - $PicWidth / 2, $PicY - $PicHeight / 2, $Picture);
-					
+
 				} else {
 					if ($Family == LEGEND_FAMILY_BOX) {
 						$XOffset = ($BoxWidth != $IconAreaWidth) ? floor(($IconAreaWidth - $BoxWidth) / 2) : 0;
@@ -814,7 +814,7 @@ class pScatter
 		}
 
 		$this->Shadow = $RestoreShadow;
-	} 
+	}
 
 	/* Get the legend box size */
 	function getScatterLegendSize(array $Format = [])
@@ -851,10 +851,10 @@ class pScatter
 					($Boundaries["T"] > $BoxArray[2]["Y"] + $IconAreaHeight / 2) AND $Boundaries["T"] = $BoxArray[2]["Y"] + $IconAreaHeight / 2;
 					($Boundaries["R"] < $BoxArray[1]["X"] + 2) AND $Boundaries["R"] = $BoxArray[1]["X"] + 2;
 					($Boundaries["B"] < $BoxArray[1]["Y"] + 2 + $IconAreaHeight / 2) AND $Boundaries["B"] = $BoxArray[1]["Y"] + 2 + $IconAreaHeight / 2;
-					
+
 					$Lines = preg_split("/\n/", $Series["Description"]);
 					$vY = $vY + max($this->pChartObject->FontSize * count($Lines) , $IconAreaHeight) + 5;
-					
+
 				} elseif ($Mode == LEGEND_HORIZONTAL) {
 					$Lines = preg_split("/\n/", $Series["Description"]);
 					$Width = [];
@@ -863,7 +863,7 @@ class pScatter
 						($Boundaries["T"] > $BoxArray[2]["Y"] + $IconAreaHeight / 2) AND $Boundaries["T"] = $BoxArray[2]["Y"] + $IconAreaHeight / 2;
 						($Boundaries["R"] < $BoxArray[1]["X"] + 2) AND $Boundaries["R"] = $BoxArray[1]["X"] + 2;
 						($Boundaries["B"] < $BoxArray[1]["Y"] + 2 + $IconAreaHeight / 2) AND $Boundaries["B"] = $BoxArray[1]["Y"] + 2 + $IconAreaHeight / 2;
-						
+
 						$Width[] = $BoxArray[1]["X"];
 					}
 
@@ -878,7 +878,7 @@ class pScatter
 		($Boundaries["B"] - ($vY + $BoxSize) < $TopOffset) AND $Boundaries["B"] = $vY + $BoxSize + $TopOffset;
 		$Width = ($Boundaries["R"] + $Margin) - ($Boundaries["L"] - $Margin);
 		$Height = ($Boundaries["B"] + $Margin) - ($Boundaries["T"] - $Margin);
-		
+
 		return ["Width" => $Width,"Height" => $Height];
 	}
 
@@ -956,12 +956,12 @@ class pScatter
 	{
 		$Data = $this->pDataObject->getData();
 		$Palette = $this->pDataObject->getPalette();
-				
+
 		if (!isset($Data["ScatterSeries"][$ScatterSerieID])) {
 			return (0);
 		}
-		
-		(!is_array($Points)) AND $Points = [$Points]; 
+
+		(!is_array($Points)) AND $Points = [$Points];
 		$OverrideTitle = isset($Format["OverrideTitle"]) ? $Format["OverrideTitle"] : NULL;
 		$DrawPoint = isset($Format["DrawPoint"]) ? $Format["DrawPoint"] : LABEL_POINT_BOX;
 		$Decimals = isset($Format["Decimals"]) ? $Format["Decimals"] : NULL;
@@ -973,7 +973,7 @@ class pScatter
 		$SerieY = $Series["Y"];
 		$SerieValuesY = $Data["Series"][$SerieY]["Data"];
 		$SerieYAxis = $Data["Series"][$SerieY]["Axis"];
-		
+
 		$PosArrayX = $this->getPosArray($SerieValuesX, $SerieXAxis);
 		(!is_array($PosArrayX)) AND $PosArrayX = [0 => $PosArrayX];
 
@@ -992,10 +992,10 @@ class pScatter
 
 				$XValue = ($Decimals == NULL) ? $SerieValuesX[$Point] : round($SerieValuesX[$Point], $Decimals);
 				$XValue = $this->pChartObject->scaleFormat($XValue, $Data["Axis"][$SerieXAxis]["Display"], $Data["Axis"][$SerieXAxis]["Format"], $Data["Axis"][$SerieXAxis]["Unit"]);
-				
+
 				$YValue = ($Decimals == NULL) ? $SerieValuesY[$Point] : round($SerieValuesY[$Point], $Decimals);
 				$YValue = $this->pChartObject->scaleFormat($YValue, $Data["Axis"][$SerieYAxis]["Display"], $Data["Axis"][$SerieYAxis]["Format"], $Data["Axis"][$SerieYAxis]["Unit"]);
-				
+
 				$Description = (isset($Series["Description"])) ? $Series["Description"] : "No description";
 				$Series = ["Format" => ["R" => $Series["Color"]["R"],"G" => $Series["Color"]["G"],"B" => $Series["Color"]["B"],"Alpha" => $Series["Color"]["Alpha"]],"Caption" => $XValue . " / " . $YValue];
 				$this->pChartObject->drawLabelBox($X, $Y - 3, $Description, $Series, $Format);
@@ -1006,7 +1006,7 @@ class pScatter
 	/* Draw a Scatter threshold */
 	function drawScatterThreshold($Value, array $Format = [])
 	{
-				
+
 		$AxisID = 0;
 		$R = 255;
 		$G = 0;
@@ -1038,15 +1038,15 @@ class pScatter
 		$BoxBorderG = 255;
 		$BoxBorderB = 255;
 		$BoxBorderAlpha = 100;
-		
+
 		/* Override defaults */
 		extract($Format);
-		
+
 		$Data = $this->pDataObject->getData();
 		if (!isset($Data["Axis"][$AxisID])) {
 			return (-1);
 		}
-		
+
 		($Caption == NULL) AND $Caption = $Value;
 		$CaptionSettings = [
 			"DrawBox" => $DrawBox,
@@ -1068,7 +1068,7 @@ class pScatter
 			"B" => $CaptionB,
 			"Alpha" => $CaptionAlpha
 		];
-				
+
 		if ($Data["Axis"][$AxisID]["Identity"] == AXIS_Y) {
 			$X1 = $this->pChartObject->GraphAreaX1 + $Data["Axis"][$AxisID]["Margin"];
 			$X2 = $this->pChartObject->GraphAreaX2 - $Data["Axis"][$AxisID]["Margin"];
@@ -1092,7 +1092,7 @@ class pScatter
 			}
 
 			return ["Y" => $Y];
-			
+
 		} elseif ($Data["Axis"][$AxisID]["Identity"] == AXIS_X) {
 			$X = $this->getPosArray($Value, $AxisID);
 			$Y1 = $this->pChartObject->GraphAreaY1 + $Data["Axis"][$AxisID]["Margin"];
@@ -1122,7 +1122,7 @@ class pScatter
 
 	/* Draw a Scatter threshold area */
 	function drawScatterThresholdArea($Value1, $Value2, array $Format = [])
-	{		
+	{
 		$AxisID = 0;
 		$R = isset($Format["R"]) ? $Format["R"] : 255;
 		$G = isset($Format["G"]) ? $Format["G"] : 0;
@@ -1141,17 +1141,17 @@ class pScatter
 		$NameB = 255;
 		$NameAlpha = 100;
 		$DisableShadowOnArea = TRUE;
-		
+
 		/* Override defaults */
 		extract($Format);
-		
+
 		$Data = $this->pDataObject->getData();
 		if (!isset($Data["Axis"][$AxisID])) {
 			return (-1);
 		}
-		
+
 		($BorderAlpha > 100) AND $BorderAlpha = 100;
-				
+
 		if ($Value1 > $Value2) {
 			list($Value1, $Value2) = [$Value2,$Value1];
 		}
@@ -1160,7 +1160,7 @@ class pScatter
 		if ($DisableShadowOnArea && $this->pChartObject->Shadow) {
 			$this->pChartObject->Shadow = FALSE;
 		}
-	
+
 		if ($Data["Axis"][$AxisID]["Identity"] == AXIS_X) {
 			$Y1 = $this->pChartObject->GraphAreaY1 + $Data["Axis"][$AxisID]["Margin"];
 			$Y2 = $this->pChartObject->GraphAreaY2 - $Data["Axis"][$AxisID]["Margin"];
@@ -1175,7 +1175,7 @@ class pScatter
 			}
 
 			$this->pChartObject->drawFilledRectangle($X1, $Y1, $X2, $Y2, ["R" => $R,"G" => $G,"B" => $B,"Alpha" => $Alpha]);
-			
+
 			if ($Border) {
 				$this->pChartObject->drawLine($X1, $Y1, $X1, $Y2, ["R" => $BorderR,"G" => $BorderG,"B" => $BorderB,"Alpha" => $BorderAlpha,"Ticks" => $BorderTicks]);
 				$this->pChartObject->drawLine($X2, $Y1, $X2, $Y2, ["R" => $BorderR,"G" => $BorderG,"B" => $BorderB,"Alpha" => $BorderAlpha,"Ticks" => $BorderTicks]);
@@ -1196,11 +1196,11 @@ class pScatter
 			}
 
 			$this->pChartObject->Shadow = $RestoreShadow;
-			
+
 			return ["X1" => $X1,"X2" => $X2];
-			
+
 		} elseif ($Data["Axis"][$AxisID]["Identity"] == AXIS_Y) {
-			
+
 			$X1 = $this->pChartObject->GraphAreaX1 + $Data["Axis"][$AxisID]["Margin"];
 			$X2 = $this->pChartObject->GraphAreaX2 - $Data["Axis"][$AxisID]["Margin"];
 			$Y1 = $this->getPosArray($Value1, $AxisID);
@@ -1228,7 +1228,7 @@ class pScatter
 			}
 
 			$this->pChartObject->Shadow = $RestoreShadow;
-			
+
 			return ["Y1" => $Y1,"Y2" => $Y2];
 		}
 	}

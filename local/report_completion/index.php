@@ -143,7 +143,7 @@ $PAGE->set_title($strcompletion);
 $PAGE->requires->css("/local/report_completion/styles.css");
 $PAGE->requires->jquery();
 
-// get output renderer                                                                                                                                                                                         
+// get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Javascript for fancy select.
@@ -234,13 +234,13 @@ if (empty($dodownload) && empty($showchart)) {
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
         print_error('invaliddepartment', 'block_iomad_company_admin');
-    }   
+    }
 } else {
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
         print_error('invaliddepartment', 'block_iomad_company_admin');
         die;
-    }   
+    }
 }
 
 $courseinfo = report_completion::get_course_summary_info ($departmentid, 0, $showsuspended);
@@ -501,7 +501,7 @@ if (empty($charttype)) {
                 $totalcount = $coursedataobj->totalcount;
             }
         }
-    
+
         // Check if there is a certificate module.
         $hascertificate = false;
         if (empty($dodownload) && $certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
@@ -516,7 +516,7 @@ if (empty($charttype)) {
             }
         }
         $compusertable = new html_table();
-    
+
         // Deal with table columns.
         $startcolumns = array('firstname' => 'firstname',
                               'lastname' => 'lastname',
@@ -556,10 +556,10 @@ if (empty($charttype)) {
                 $$column = get_string($column, 'local_report_completion');
             }
         }
-    
+
         // Set up the course worksheet.
         if (!empty($dodownload)) {
-   
+
             if ($courseid == 1) {
                 echo get_string('allusers', 'local_report_completion')."\n";
             } else {
@@ -595,7 +595,7 @@ if (empty($charttype)) {
         }
         // Set the initial parameters for the table header links.
         $linkparams = $params;
-    
+
         $override = new stdclass();
         $override->firstname = 'firstname';
         $override->lastname = 'lastname';
@@ -624,7 +624,7 @@ if (empty($charttype)) {
             $finalscoreurl = new moodle_url('index.php', $linkparams);
             $linkparams['sort'] = 'timeenrolled';
             $timeenrolledurl = new moodle_url('index.php', $linkparams);
-    
+
             // Set the options if there is already a sort defined.
             if (!empty($params['sort'])) {
                 if ($params['sort'] == 'firstname') {
@@ -712,7 +712,7 @@ if (empty($charttype)) {
             }
         }
         $fullnamedisplay = $output->action_link($firstnameurl, get_string('name')); //." / ". $OUTPUT->action_link($lastnameurl, $lastname);
-    
+
         $headstart = array($fullnamedisplay => $fullnamedisplay,
                            $email => $output->action_link($emailurl, $email),
                            'course' => get_string('course'),
@@ -745,11 +745,11 @@ if (empty($charttype)) {
             $compusertable->head[] = get_string('certificate', 'local_report_completion');
             $compusertable->align[] = 'center';
         }
-    
+
         $userurl = '/local/report_users/userdisplay.php';
-    
+
         // Paginate up the results.
-    
+
         if (empty($idlist['0'])) {
             foreach ($coursedata as $userid => $user) {
 
@@ -785,7 +785,7 @@ if (empty($charttype)) {
                 } else {
                     $completetime = "-";
                 }
-    
+
                 if ($showexpiry && !empty($user->timecompleted) && !empty($iomadcourseinfo->validlength)) {
                     $expirytime = date($CFG->iomad_date_format, $user->timecompleted + ($iomadcourseinfo->validlength * 24 * 60 * 60) );
                 } else {
@@ -896,7 +896,7 @@ if (empty($charttype)) {
                                 '","'.$user->email.
                                 '","'.$user->coursename.
                                 '","'.$user->department;
-                              
+
                     $rowmid = '';
                     if (!empty($extrafields)) {
                         foreach($extrafields as $extrafield) {
@@ -931,18 +931,18 @@ if (empty($charttype)) {
             $mform->set_data(array('departmentid' => $departmentid));
             $mform->set_data($params);
             $mform->get_data();
-    
+
             // Display the user filter form.
             echo html_writer::start_tag('div', array('class' => 'iomadclear'));
             $mform->display();
             echo html_writer::end_tag('div');
-    
+
             // Display the paging bar.
             if (empty($idlist['0'])) {
                 echo $output->paging_bar($totalcount, $page, $perpage, new moodle_url('/local/report_completion/index.php', $params));
 				echo "<br />";
             }
-    
+
             // Display the user table.
             echo html_writer::table($compusertable);
             if (!empty($idlist['0'])) {
@@ -987,7 +987,7 @@ if (!empty($showchart)) {
             'DataGapAngle' => 10,
             'DataGapRadius' => 6,
             'Border' => true,
-        )); 
+        ));
         $pp->drawPieLegend(10,PCHART_SIZEY-20, array(
             'Style' => LEGEND_BOX,
             'Mode' => LEGEND_HORIZONTAL,

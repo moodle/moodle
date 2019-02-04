@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Drawing */
 
  /* pChart library inclusions */
@@ -19,8 +19,8 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the picture title */ 
+
+ /* Write the picture title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Silkscreen.ttf","FontSize"=>6));
  $myPicture->drawText(10,13,"drawSpline() - for smooth line drawing",array("R"=>255,"G"=>255,"B"=>255));
 

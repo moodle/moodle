@@ -110,7 +110,7 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 
-// Get output renderer.                                                                                                                                                                                         
+// Get output renderer.
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Javascript for fancy select.
@@ -135,7 +135,7 @@ echo $output->header();
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
     print_error('invaliddepartment', 'block_iomad_company_admin');
-}   
+}
 
 // Get the associated department id.
 $company = new company($companyid);
@@ -195,7 +195,7 @@ if (!$showall && $category = $DB->get_record_sql('select uic.id, uic.name from {
             ${'profile_field_'.$field->shortname} = optional_param('profile_field_'.$field->shortname, null, PARAM_RAW);
         }
     }
-    if ($categories = $DB->get_records_sql("SELECT id FROM {user_info_category} 
+    if ($categories = $DB->get_records_sql("SELECT id FROM {user_info_category}
                                                     WHERE id NOT IN (
                                                      SELECT profileid FROM {company})")) {
         foreach ($categories as $category) {
@@ -687,7 +687,7 @@ if (!$users) {
                // This manager can't edit manager users.
             } else {
                 $url = new moodle_url('/blocks/iomad_company_admin/editadvanced.php', array(
-                    'id' => $user->id,   
+                    'id' => $user->id,
                 ));
                 $actions['edit'] = new action_menu_link_secondary(
                     $url,
@@ -697,7 +697,7 @@ if (!$users) {
                 if (iomad::has_capability('block/iomad_company_admin:edituserpassword', $systemcontext)) {
                     $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
                         'password' => $user->id,
-                        'sesskey' => sesskey(),   
+                        'sesskey' => sesskey(),
                     ));
                     $actions['password'] = new action_menu_link_secondary(
                         $url,
@@ -803,7 +803,7 @@ if (!$users) {
         foreach ($actions as $action) {
             $menu->add($action);
         }
-        
+
 
         if (!$showall) {
             $table->data[] = array("$fullname",

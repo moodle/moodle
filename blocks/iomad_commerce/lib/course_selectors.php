@@ -45,7 +45,7 @@ class nonshopcourse_selector extends course_selector_base {
                 WHERE
                     c.id NOT IN
                     (
-                      SELECT courseid FROM {course_shopsettings} 
+                      SELECT courseid FROM {course_shopsettings}
                     )
                     AND c.id!=1 AND $wherecondition";
         $order = ' ORDER BY c.sortorder, c.fullname ASC';

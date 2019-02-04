@@ -401,7 +401,7 @@ function is_commerce_configured() {
     $pp = get_payment_providers();
     if (!$pp) {
         return false;
-    } 
+    }
 
     // Looks ok
     return true;

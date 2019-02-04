@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Misc */
 
  /* pChart library inclusions */

@@ -413,7 +413,7 @@ echo "A</br>";
         echo $output->email_templatesets($templates, $linkurl);
     } else {
     }
-    
+
 } else {
     $templates = $DB->get_records('email_template', array('companyid' => $companyid, 'lang' => $lang),
                                     'name', '*', $page * $perpage, $perpage);

@@ -63,15 +63,15 @@ class pPie
 		$ValueG = 255;
 		$ValueB = 255;
 		$ValueAlpha = 100;
-		$RecordImageMap = FALSE;		
+		$RecordImageMap = FALSE;
 		$Radius = 60;
 		$DataGapAngle = 0;
 		$DataGapRadius = 0;
 		$ValuePadding = 15;
-		
+
 		/* Override defaults */
 		extract($Format);
-		
+
 		/* Data Processing */
 		$Data = $this->pDataObject->getData();
 		$Palette = $this->pDataObject->getPalette();
@@ -127,7 +127,7 @@ class pPie
 		$Step = 360 / (2 * PI * $Radius);
 		$Offset = 0;
 		$ID = 0;
-		
+
 		foreach($Values as $Key => $Value) {
 			if ($Shadow) {
 				$Settings = ["R" => $this->pChartObject->ShadowR,"G" => $this->pChartObject->ShadowG,"B" => $this->pChartObject->ShadowB,"Alpha" => $this->pChartObject->Shadowa];
@@ -153,7 +153,7 @@ class pPie
 
 			$EndAngle = $Offset + ($Value * $ScaleFactor);
 			($EndAngle > 360) AND $EndAngle = 360;
-			
+
 			$Angle = ($EndAngle - $Offset) / 2 + $Offset;
 			if ($DataGapAngle == 0) {
 				$X0 = $X;
@@ -170,7 +170,7 @@ class pPie
 				if ($SecondPass && ($i < 90)) {
 					$Yc++;
 				}
-				
+
 				# Momchil TODO: $i >= 90 && $i =< 180 ?
 
 				if ($SecondPass && ($i > 180 && $i < 270)) {
@@ -202,7 +202,7 @@ class pPie
 				$Xc = cos(($Angle - 90) * PI / 180) * $Radius + $X;
 				$Yc = sin(($Angle - 90) * PI / 180) * $Radius + $Y;
 				$Label = $Data["Series"][$Data["Abscissa"]]["Data"][$Key];
-				
+
 				if ($LabelStacked) {
 					$this->writePieLabel($Xc, $Yc, $Label, $Angle, $Settings, TRUE, $X, $Y, $Radius);
 				} else {
@@ -233,7 +233,7 @@ class pPie
 
 				$EndAngle = $Offset + ($Value * $ScaleFactor);
 				($EndAngle > 360) AND $EndAngle = 360;
-				
+
 				if ($DataGapAngle == 0) {
 					$X0 = $X;
 					$Y0 = $Y;
@@ -250,14 +250,14 @@ class pPie
 					$Yc = sin(($i - 90) * PI / 180) * $Radius + $Y;
 					if ($FirstPoint) {
 						$this->pChartObject->drawLine($Xc, $Yc, $X0, $Y0, $Settings);
-					} 
+					}
 					$FirstPoint = FALSE;
 					$this->pChartObject->drawAntialiasPixel($Xc, $Yc, $Settings);
 				}
 
 				$this->pChartObject->drawLine($Xc, $Yc, $X0, $Y0, $Settings);
 				if ($DrawLabels && !$Shadow) {
-					
+
 					if ($LabelColor == PIE_LABEL_COLOR_AUTO) {
 						$Settings = ["FillR" => $Palette[$ID]["R"],"FillG" => $Palette[$ID]["G"],"FillB" => $Palette[$ID]["B"],"Alpha" => $Palette[$ID]["Alpha"]];
 					} else {
@@ -268,7 +268,7 @@ class pPie
 					$Xc = cos(($Angle - 90) * PI / 180) * $Radius + $X;
 					$Yc = sin(($Angle - 90) * PI / 180) * $Radius + $Y;
 					$Label = $Data["Series"][$Data["Abscissa"]]["Data"][$Key];
-					
+
 					if ($LabelStacked) {
 						$this->writePieLabel($Xc, $Yc, $Label, $Angle, $Settings, TRUE, $X, $Y, $Radius);
 					} else {
@@ -286,13 +286,13 @@ class pPie
 			$Offset = 0;
 			#$ID = count($Values) - 1; # UNUSED
 			$Settings = ["Align" => TEXT_ALIGN_MIDDLEMIDDLE,"R" => $ValueR,"G" => $ValueG,"B" => $ValueB,"Alpha" => $ValueAlpha];
-			
+
 			foreach($Values as $Key => $Value) {
 				$EndAngle = ($Value * $ScaleFactor) + $Offset;
 			    ((int)$EndAngle > 360) AND $EndAngle = 0;
 				$Angle = ($EndAngle - $Offset) / 2 + $Offset;
 				$Angle = ($Angle - 90) * PI / 180;
-				
+
 				if ($ValuePosition == PIE_VALUE_OUTSIDE) {
 					$Xc = cos($Angle) * ($Radius + $ValuePadding) + $X;
 					$Yc = sin($Angle) * ($Radius + $ValuePadding) + $Y;
@@ -341,7 +341,7 @@ class pPie
 		$ValueG = 255;
 		$ValueB = 255;
 		$ValueAlpha = 100;
-		$RecordImageMap = FALSE;			
+		$RecordImageMap = FALSE;
 		$Radius = 80;
 		$SkewFactor = .5;
 		$SliceHeight = 20;
@@ -352,10 +352,10 @@ class pPie
 
 		/* Override defaults */
 		extract($Format);
-		
+
 		/* Error correction for overlaying rounded corners */
 		($SkewFactor < .5) AND $SkewFactor = .5;
-		
+
 		/* Data Processing */
 		$Data = $this->pDataObject->getData();
 		$Palette = $this->pDataObject->getPalette();
@@ -453,7 +453,7 @@ class pPie
 				(($SecondPass || $RestoreShadow) && ($i < 90)) AND $Yc++;
 				(($SecondPass || $RestoreShadow) && ($i > 90 && $i < 180)) AND $Xc++;
 				(($SecondPass || $RestoreShadow) && ($i > 180 && $i < 270)) AND $Xc++;
-		
+
 				if (($SecondPass || $RestoreShadow) && ($i >= 270)) {
 					$Xc++;
 					$Yc++;
@@ -651,7 +651,7 @@ class pPie
 
 				$EndAngle = $Offset - ($Value * $ScaleFactor);
 				($EndAngle < 0) AND $EndAngle = 0;
-				
+
 				if ($DataGapAngle == 0) {
 					$X0 = $X;
 					$Y0 = $Y - $SliceHeight;
@@ -668,7 +668,7 @@ class pPie
 					$Yc = sin(($i - 90) * PI / 180) * $Radius * $SkewFactor + $Y - $SliceHeight;
 					if ($FirstPoint) {
 						$this->pChartObject->drawLine($Xc, $Yc, $X0, $Y0, $Settings);
-					} 
+					}
 					$FirstPoint = FALSE;
 
 					$this->pChartObject->drawAntialiasPixel($Xc, $Yc, $Settings);
@@ -684,17 +684,17 @@ class pPie
 		}
 
 		if ($WriteValues != NULL) {
-			
+
 			# $Step = 360 / (2 * PI * $Radius); # UNUSED
 			$Offset = 360;
 			# $ID = count($Values) - 1; # UNUSED
 			$Settings = ["Align" => TEXT_ALIGN_MIDDLEMIDDLE,"R" => $ValueR,"G" => $ValueG,"B" => $ValueB,"Alpha" => $ValueAlpha];
-			
+
 			foreach($Values as $Key => $Value) {
-				
+
 				$EndAngle = $Offset - ($Value * $ScaleFactor);
 				($EndAngle < 0) AND $EndAngle = 0;
-			
+
 				$Angle = ($EndAngle - $Offset) / 2 + $Offset;
 				$Angle = ($Angle - 90) * PI / 180;
 				if ($ValuePosition == PIE_VALUE_OUTSIDE) {
@@ -730,7 +730,7 @@ class pPie
 
 				$EndAngle = $Offset - ($Value * $ScaleFactor);
 				($EndAngle < 0) AND $EndAngle = 0;
-			
+
 				$Angle = ($EndAngle - $Offset) / 2 + $Offset;
 				$Xc = cos(($Angle - 90) * PI / 180) * $Radius + $X;
 				$Yc = sin(($Angle - 90) * PI / 180) * $Radius * $SkewFactor + $Y - $SliceHeight;
@@ -755,7 +755,7 @@ class pPie
 		$this->pChartObject->Shadow = $RestoreShadow;
 		return (PIE_RENDERED);
 	}
-	
+
 	function drawPieLegend($X, $Y, array $Format = [])
 	{
 		$FontName = $this->pChartObject->FontName;
@@ -775,10 +775,10 @@ class pPie
 		$Surrounding = NULL;
 		$Style = LEGEND_ROUND;
 		$Mode = LEGEND_VERTICAL;
-		
+
 		/* Override defaults */
 		extract($Format);
-		
+
 		if ($Surrounding != NULL) {
 			$BorderR = $R + $Surrounding;
 			$BorderG = $G + $Surrounding;
@@ -798,7 +798,7 @@ class pPie
 		$Boundaries = ["L" => $X, "T" => $Y, "R" => 0, "B" => 0];
 		$vY = $Y;
 		$vX = $X;
-		
+
 		foreach($Data["Series"][$Data["Abscissa"]]["Data"] as $Key => $Value) {
 			$BoxArray = $this->pChartObject->getTextBox($vX + $BoxSize + 4, $vY + $BoxSize / 2, $FontName, $FontSize, 0, $Value);
 			if ($Mode == LEGEND_VERTICAL) {
@@ -806,7 +806,7 @@ class pPie
 				($Boundaries["R"] < $BoxArray[1]["X"] + 2) 					AND $Boundaries["R"] = $BoxArray[1]["X"] + 2;
 				($Boundaries["B"] < $BoxArray[1]["Y"] + 2 + $BoxSize / 2) 	AND $Boundaries["B"] = $BoxArray[1]["Y"] + 2 + $BoxSize / 2;
 				$vY = $vY + $YStep;
-				
+
 			} elseif ($Mode == LEGEND_HORIZONTAL) {
 				($Boundaries["T"] > $BoxArray[2]["Y"] + $BoxSize / 2)	 	AND $Boundaries["T"] = $BoxArray[2]["Y"] + $BoxSize / 2;
 				($Boundaries["R"] < $BoxArray[1]["X"] + 2)				 	AND $Boundaries["R"] = $BoxArray[1]["X"] + 2;
@@ -832,7 +832,7 @@ class pPie
 				"BorderG" => $BorderG,
 				"BorderB" => $BorderB
 			));
-			
+
 		} elseif ($Style == LEGEND_BOX) {
 			$this->pChartObject->drawFilledRectangle($Boundaries["L"] - $Margin, $Boundaries["T"] - $Margin, $Boundaries["R"] + $Margin, $Boundaries["B"] + $Margin, array(
 				"R" => $R,
@@ -896,9 +896,9 @@ class pPie
 			if (count($this->LabelPos) > 0) {
 				$Done = FALSE;
 				foreach($this->LabelPos as $Key => $Settings) {
-					if (!$Done) {						
+					if (!$Done) {
 						if (($YTop >= $Settings["YTop"] && $YTop <= $Settings["YBottom"]) || ($YBottom >= $Settings["YTop"] && $YBottom <= $Settings["YBottom"])){
-							
+
 							switch (TRUE) {
 								case ($Angle <= 90):
 									$this->shift(0, 180, -($Height + 2), $Reversed);
@@ -917,7 +917,7 @@ class pPie
 									$Done = TRUE;
 									break;
 							}
-							
+
 						}
 					}
 				}
@@ -978,7 +978,7 @@ class pPie
 
 	/* Draw a ring chart */
 	function draw2DRing($X, $Y, array $Format = [])
-	{	
+	{
 		$Precision = 0;
 		$Border = FALSE;
 		$BorderR = 255;
@@ -1004,7 +1004,7 @@ class pPie
 		$InnerRadius = 30;
 		$BorderAlpha = 100;
 		$ValuePadding = 5;
-		
+
 		/* Override defaults */
 		extract($Format);
 
@@ -1064,7 +1064,7 @@ class pPie
 		$Offset = 0;
 		$ID = 0;
 		foreach($Values as $Key => $Value) {
-			
+
 			if ($Shadow) {
 				$Settings = ["R" => $this->pChartObject->ShadowR,"G" => $this->pChartObject->ShadowG,"B" => $this->pChartObject->ShadowB,"Alpha" => $this->pChartObject->Shadowa];
 				$BorderColor = $Settings;
@@ -1083,7 +1083,7 @@ class pPie
 			$AAPixels = [];
 			$EndAngle = $Offset + ($Value * $ScaleFactor);
 			($EndAngle > 360) AND $EndAngle = 360;
-			
+
 			for ($i = $Offset; $i <= $EndAngle; $i = $i + $Step) {
 				$Xc = cos(($i - 90) * PI / 180) * $OuterRadius + $X;
 				$Yc = sin(($i - 90) * PI / 180) * $OuterRadius + $Y;
@@ -1186,11 +1186,11 @@ class pPie
 			$Step = 360 / (2 * PI * $OuterRadius);
 			$Offset = 0;
 			foreach($Values as $Key => $Value) {
-				
+
 				$EndAngle = $Offset + ($Value * $ScaleFactor);
 				($EndAngle > 360) AND $EndAngle = 360;
 				$Angle = $Offset + ($Value * $ScaleFactor) / 2;
-				
+
 				if ($ValuePosition == PIE_VALUE_OUTSIDE) {
 					$Xc = cos(($Angle - 90) * PI / 180) * ($OuterRadius + $ValuePadding) + $X;
 					$Yc = sin(($Angle - 90) * PI / 180) * ($OuterRadius + $ValuePadding) + $Y;
@@ -1240,7 +1240,7 @@ class pPie
 		$ValueG = 255;
 		$ValueB = 255;
 		$ValueAlpha = 100;
-		$RecordImageMap = FALSE;				
+		$RecordImageMap = FALSE;
 		$OuterRadius = 100;
 		$InnerRadius = 30;
 		$SkewFactor = .6;
@@ -1250,13 +1250,13 @@ class pPie
 		$Cf = 20;
 		$WriteValues = PIE_VALUE_NATURAL;
 		$ValuePadding = $SliceHeight + 15;
-		
+
 		/* Override defaults */
 		extract($Format);
-	
+
 		/* Error correction for overlaying rounded corners */
 		($SkewFactor < .5) AND $SkewFactor = .5;
-		
+
 		/* Data Processing */
 		$Data = $this->pDataObject->getData();
 		$Palette = $this->pDataObject->getPalette();
@@ -1312,10 +1312,10 @@ class pPie
 		$Slice = 0;
 		$Slices = [];
 		$SliceColors = [];
-		$Visible = []; 
-		
+		$Visible = [];
+
 		foreach($Values as $Key => $Value) {
-			
+
 			if (!isset($Palette[$ID]["R"])) {
 				$Color = $this->pChartObject->getRandomColor();
 				$Palette[$ID] = $Color;
@@ -1332,7 +1332,7 @@ class pPie
 			$Step = (360 / (2 * PI * $OuterRadius)) / 2;
 			$OutX1 = VOID;
 			$OutY1 = VOID;
-			
+
 			for ($i = $Offset; $i >= $EndAngle; $i = $i - $Step) {
 				$Xc = cos(($i - 90) * PI / 180) * ($OuterRadius + $DataGapRadius - 2) + $X;
 				$Yc = sin(($i - 90) * PI / 180) * ($OuterRadius + $DataGapRadius - 2) * $SkewFactor + $Y;
@@ -1371,7 +1371,7 @@ class pPie
 			$Step = (360 / (2 * PI * $InnerRadius)) / 2;
 			$InX1 = VOID;
 			$InY1 = VOID;
-			
+
 			for ($i = $EndAngle; $i <= $Offset; $i = $i + $Step) {
 				$Xc = cos(($i - 90) * PI / 180) * ($InnerRadius + $DataGapRadius - 1) + $X;
 				$Yc = sin(($i - 90) * PI / 180) * ($InnerRadius + $DataGapRadius - 1) * $SkewFactor + $Y;
@@ -1457,7 +1457,7 @@ class pPie
 
 		/* Draw the inner vertical slices */
 		foreach($Slices as $SliceID => $Plots) {
-			
+
 			$Settings = $SliceColors[$SliceID];
 			$Settings["NoBorder"] = TRUE;
 			$Settings["R"] = $Settings["R"] + $Cf;
@@ -1467,7 +1467,7 @@ class pPie
 			$Inner = FALSE;
 			$InnerPlotsA = [];
 			$InnerPlotsB = [];
-			
+
 			foreach($Plots["Angle"] as $ID => $Angle) {
 				if ($Angle == VOID) {
 					$Outer = FALSE;
@@ -1483,7 +1483,7 @@ class pPie
 			}
 
 			(count($InnerPlotsA) > 0) AND $this->pChartObject->drawPolygon(array_merge($InnerPlotsA, $this->arrayReverse($InnerPlotsB)), $Settings);
-			
+
 		}
 
 		/* Draw the splice top and left poly */
@@ -1536,7 +1536,7 @@ class pPie
 
 		/* Draw the outer vertical slices */
 		foreach($Slices as $SliceID => $Plots) {
-			
+
 			$Settings = $SliceColors[$SliceID];
 			$Settings["NoBorder"] = TRUE;
 			$Settings["R"] = $Settings["R"] + $Cf;
@@ -1545,8 +1545,8 @@ class pPie
 			$Outer = TRUE;
 			$Inner = FALSE;
 			$OuterPlotsA = [];
-			$OuterPlotsB = []; 
-			
+			$OuterPlotsB = [];
+
 			foreach($Plots["Angle"] as $ID => $Angle) {
 				if ($Angle == VOID) {
 					$Outer = FALSE;
@@ -1564,7 +1564,7 @@ class pPie
 			}
 
 			(count($OuterPlotsA) > 0) AND $this->pChartObject->drawPolygon(array_merge($OuterPlotsA, $this->arrayReverse($OuterPlotsB)), $Settings);
-			
+
 		}
 
 		$Slices = array_reverse($Slices);
@@ -1594,7 +1594,7 @@ class pPie
 				# $StartAngle = $Offset; UNUSED
 				$EndAngle = $Offset - ($Value * $ScaleFactor);
 				($EndAngle < 0) AND $EndAngle = 0;
-			
+
 				if ($LabelColor == PIE_LABEL_COLOR_AUTO) {
 					$Settings = ["FillR" => $Palette[$ID]["R"],"FillG" => $Palette[$ID]["G"],"FillB" => $Palette[$ID]["B"],"Alpha" => $Palette[$ID]["Alpha"]];
 				} else {
@@ -1670,7 +1670,7 @@ class pPie
 
 		$Data["Series"][$DataSerie]["Data"] = $NewData;
 		$Data["Series"][$AbscissaSerie]["Data"] = $NewAbscissa;
-		
+
 		return [$Data,$NewPalette];
 	}
 }

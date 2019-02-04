@@ -55,7 +55,7 @@ class core_repositorylib_testcase extends advanced_testcase {
         $repos = repository::get_instances($args);
         $repository = reset($repos);
 
-        // IOMAD 
+        // IOMAD
         // This doesn't work - dunno why
         // $this->assertInstanceOf('repository', $repository);
         // $info = $repository->get_meta();

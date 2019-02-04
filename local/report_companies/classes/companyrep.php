@@ -101,15 +101,15 @@ class companyrep{
 
             // Company managers
             $company->companymanagers = $DB->get_records_sql(
-                "SELECT u.* from {company_users} cu 
-                JOIN {user} u ON u.id = cu.userid 
+                "SELECT u.* from {company_users} cu
+                JOIN {user} u ON u.id = cu.userid
                 WHERE companyid = :companyid
                 AND managertype = 1", ['companyid' => $company->id]);
 
             // Department managers
             $company->departmentmanagers = $DB->get_records_sql(
-                "SELECT u.* from {company_users} cu 
-                JOIN {user} u ON u.id = cu.userid 
+                "SELECT u.* from {company_users} cu
+                JOIN {user} u ON u.id = cu.userid
                 WHERE companyid = :companyid
                 AND managertype = 2", ['companyid' => $company->id]);
 

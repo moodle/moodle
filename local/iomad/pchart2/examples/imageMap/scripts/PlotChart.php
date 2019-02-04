@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* Library settings */
  define("CLASS_PATH", "../../../class");
  define("FONT_PATH", "../../../fonts");
@@ -9,7 +9,7 @@
  include(CLASS_PATH."/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  for($i=0;$i<=20;$i++) { $MyData->addPoints(rand(0,20),"Probe 1"); }
  for($i=0;$i<=20;$i++) { $MyData->addPoints(rand(0,20),"Probe 2"); }
  $MyData->setSerieShape("Probe 1",SERIE_SHAPE_FILLEDTRIANGLE);
@@ -41,8 +41,8 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
- 
- /* Write the chart title */ 
+
+ /* Write the chart title */
  $myPicture->setFontProperties(array("FontName"=>FONT_PATH."/Forgotte.ttf","FontSize"=>11));
  $myPicture->drawText(150,35,"Average temperature",array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE));
 

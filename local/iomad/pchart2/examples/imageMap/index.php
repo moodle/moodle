@@ -157,24 +157,24 @@
 
  function viewPHP(URL)
   {
-   var xmlhttp=false;   
-   /*@cc_on @*/  
-   /*@if (@_jscript_version >= 5)  
-    try { xmlhttp = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) { try { xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); } catch (E) { xmlhttp = false; } }  
-   @end @*/  
-  
+   var xmlhttp=false;
+   /*@cc_on @*/
+   /*@if (@_jscript_version >= 5)
+    try { xmlhttp = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) { try { xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); } catch (E) { xmlhttp = false; } }
+   @end @*/
+
    URL = "index.php?Action=ViewPHP&Script=" + URL;
 
-   if (!xmlhttp && typeof XMLHttpRequest!='undefined')   
-    { try { xmlhttp = new XMLHttpRequest(); } catch (e) { xmlhttp=false; } }   
-  
-   if (!xmlhttp && window.createRequest)   
-    { try { xmlhttp = window.createRequest(); } catch (e) { xmlhttp=false; } }   
-  
+   if (!xmlhttp && typeof XMLHttpRequest!='undefined')
+    { try { xmlhttp = new XMLHttpRequest(); } catch (e) { xmlhttp=false; } }
+
+   if (!xmlhttp && window.createRequest)
+    { try { xmlhttp = window.createRequest(); } catch (e) { xmlhttp=false; } }
+
    xmlhttp.open("GET", URL,true);
 
-   xmlhttp.onreadystatechange=function() { if (xmlhttp.readyState==4) { Result = xmlhttp.responseText; document.getElementById("source").innerHTML = Result.replace("/\<BR\>/");  } }   
-   xmlhttp.send(null)   
+   xmlhttp.onreadystatechange=function() { if (xmlhttp.readyState==4) { Result = xmlhttp.responseText; document.getElementById("source").innerHTML = Result.replace("/\<BR\>/");  } }
+   xmlhttp.send(null)
   }
 </script>
 <?php
@@ -185,7 +185,7 @@
    $Script = preg_replace("/\:/","",$Script);
    $Script = preg_replace("/scripts/","scripts/",$Script);
 
-   if ( file_exists($Script) ) 
+   if ( file_exists($Script) )
     { highlight_file($Script); }
    else
     { echo "Script source code cannot be fetched."; }

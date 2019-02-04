@@ -108,7 +108,7 @@ $companydepartment = $parentlevel->id;
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($company->id, $departmentid)) {
     print_error('invaliddepartment', 'block_iomad_company_admin');
-}   
+}
 
 if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
     $userhierarchylevel = $parentlevel->id;

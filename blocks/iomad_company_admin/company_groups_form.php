@@ -71,7 +71,7 @@ class company_ccu_courses_form extends company_moodleform {
         if ($this->courses) {
 
         // We are going to cheat and be lazy here.
-            $autooptions = array('multiple' => false,                                                                                                     
+            $autooptions = array('multiple' => false,
                                  'noselectionstring' => get_string('selectenrolmentcourse', 'block_iomad_company_admin'),
                                  'onchange' => 'this.form.submit()');
             $mform->addElement('autocomplete', 'selectedcourse', get_string('selectenrolmentcourse', 'block_iomad_company_admin'), $this->courses, $autooptions);
@@ -358,7 +358,7 @@ echo $OUTPUT->header();
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
     print_error('invaliddepartment', 'block_iomad_company_admin');
-}   
+}
 
 $ccuparamarray = array();
 if (!empty($departmentid)) {

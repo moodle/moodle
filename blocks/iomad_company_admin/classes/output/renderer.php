@@ -97,13 +97,13 @@ class renderer extends plugin_renderer_base {
         $out .= \html_writer::table($table);
         return $out;
     }
-    
+
     /**
      * Back to list of roles button
      */
     public function roles_button($link) {
         $out = '<p><a class="btn btn-primary" href="'.$link.'">' . get_string('listroles', 'block_iomad_company_admin') . '</a></p>';
-        
+
         return $out;
     }
 
@@ -131,7 +131,7 @@ class renderer extends plugin_renderer_base {
         $out = '<h3>' . get_string('roletemplates', 'block_iomad_company_admin') . '</h3>';
 
         $out .= '<a class="btn btn-primary" href="'.$backlink.'">' .
-                                           get_string('back') . '</a>'; 
+                                           get_string('back') . '</a>';
         $table = new \html_table();
         foreach ($templates as $template) {
             $deletelink = new \moodle_url('/blocks/iomad_company_admin/company_capabilities.php',
@@ -144,18 +144,18 @@ class renderer extends plugin_renderer_base {
                                            get_string('deleteroletemplate', 'block_iomad_company_admin') . '</a> ' .
                                            '<a class="btn btn-primary" href="'.$editlink.'">' .
                                            get_string('editroletemplate', 'block_iomad_company_admin') . '</a>');
-                
+
             $table->data[] = $row;
         }
 
         $out .= \html_writer::table($table);
         return $out;
     }
-    
+
     /**
      * Is the supplied id in the leaf somewhere?
      * @param array $leaf
-     * @param int $id 
+     * @param int $id
      * @return boolean
      */
     private function id_in_tree($leaf, $id) {
@@ -205,7 +205,7 @@ class renderer extends plugin_renderer_base {
             $aria_selected = 'aria-selected="false"';
             $name = $leaf->name . ' ' . $leaf->id . ' ' . $selected;
         }
-        $data = 'data-id="' . $leaf->id . '"'; 
+        $data = 'data-id="' . $leaf->id . '"';
         $html = '<div role="treeitem" ' . $aria . ' ' . $aria_selected . ' class="' . $class .'" ' . $style . '>';
         $html .= '<span class="tree_dept_name" ' . $data . '>' . $leaf->name . '</span>';
         if ($haschildren) {
@@ -216,7 +216,7 @@ class renderer extends plugin_renderer_base {
             $html .= '</div>';
         }
         $html .= '</div>';
-   
+
         return $html;
     }
 
@@ -244,7 +244,7 @@ class renderer extends plugin_renderer_base {
         return $this->render_from_template('block_iomad_company_admin/adminblock', $adminblock->export_for_template($this));
     }
 
-    /** 
+    /**
      * Render editcompanies page
      * @param editcompanies $editcompanies
      */

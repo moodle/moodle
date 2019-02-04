@@ -61,7 +61,7 @@ class companypaths {
         global $DB;
 
         $paths = $DB->get_records('iomad_learningpath', array('company' => $this->companyid));
-        
+
         return $paths;
     }
 
@@ -106,7 +106,7 @@ class companypaths {
         global $DB;
 
         if ($groupid) {
- 
+
             // Enforce the pathid even though just the id will do.
             $group = $DB->get_record('iomad_learningpathgroup', ['learningpath' => $pathid, 'id' => $groupid], '*', MUST_EXIST);
             return $group;
@@ -156,7 +156,7 @@ class companypaths {
     }
 
     /**
-     * Take image uploaded on learning path form and 
+     * Take image uploaded on learning path form and
      * process for size and thumbnail
      * @param object $context
      * @param int $id learning path id
@@ -329,7 +329,7 @@ class companypaths {
 
             // Collect categories regardless of selection
             $categories[$course->category] = $course->category;
-            
+
             // Do not include courses already selected
             if (in_array($depcourse->courseid, $selectedcourses)) {
                 continue;
@@ -367,8 +367,8 @@ class companypaths {
         if (!$this->categories) {
             $this->get_prospective_courses($pathid);
         }
-        
-        // loop over categories and get full(er) information. 
+
+        // loop over categories and get full(er) information.
         $cat0 = (object)['id' => 0, 'name' => get_string('all', 'local_iomad_learningpath')];
         $cats = [0 => $cat0];
         foreach ($this->categories as $categoryid) {
@@ -410,7 +410,7 @@ class companypaths {
         // Work through courses.
         foreach ($courseids as $courseid) {
 
-            // Double clicking can try to add the same course twice. 
+            // Double clicking can try to add the same course twice.
             if (!array_key_exists($courseid, $allcourses)) {
                 continue;
             }

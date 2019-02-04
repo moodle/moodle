@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Stacked chart */
 
  /* pChart library inclusions */
@@ -7,7 +7,7 @@
  include("../class/pImage.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  $MyData->addPoints(array(4,VOID,VOID,12,8,3),"Frontend #1");
  $MyData->addPoints(array(3,12,15,8,5,5),"Frontend #2");
  $MyData->addPoints(array(2,7,5,18,19,22),"Frontend #3");
@@ -32,7 +32,7 @@
  $myPicture->drawStackedBarChart(array("Surrounding"=>-15,"InnerSurrounding"=>15));
 
  /* Write a label */
- $myPicture->writeLabel(array("Frontend #1","Frontend #2","Frontend #3"),1,array("DrawVerticalLine"=>TRUE)); 
+ $myPicture->writeLabel(array("Frontend #1","Frontend #2","Frontend #3"),1,array("DrawVerticalLine"=>TRUE));
 
  /* Write the chart legend */
  $myPicture->drawLegend(480,210,array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL));

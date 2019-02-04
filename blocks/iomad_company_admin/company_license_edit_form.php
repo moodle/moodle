@@ -306,7 +306,7 @@ class company_license_form extends company_moodleform {
         if (empty($data['licensecourses'])) {
             $errors['licensecourses'] = get_string('select_license_courses', 'block_iomad_company_admin');
         }
-        
+
         if (($data['type'] == 1 || $data['type'] == 3) && empty($data['validlength'])) {
             $errors['validlength'] = get_string('missinglicenseduration', 'block_iomad_company_admin');
         }
@@ -414,7 +414,7 @@ if ($licenseinfo = $DB->get_record('companylicense', array('id' => $licenseid)))
 } else {
     $licenseinfo = new stdclass();
     $licenseinfo->expirydate = strtotime('+ 1 year');
-    if (!empty($parentid)) {		
+    if (!empty($parentid)) {
         if ($currentcourses = $DB->get_records('companylicense_courses', array('licenseid' => $parentid), null, 'courseid')) {
             foreach ($currentcourses as $currentcourse) {
                 $licenseinfo->licensecourses[] = $currentcourse->courseid;
@@ -524,12 +524,12 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
         print_error('invaliddepartment', 'block_iomad_company_admin');
-    }   
+    }
 
     // Check the license is valid.
     if (!empty($licenseid) && !company::check_valid_company_license($companyid, $licenseid)) {
         print_error('invalidlicense', 'block_iomad_company_admin');
-    }   
+    }
 
     $company = new company($companyid);
     echo "<h3>".$company->get_name()."</h3>";

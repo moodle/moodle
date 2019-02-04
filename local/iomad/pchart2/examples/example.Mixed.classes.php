@@ -1,4 +1,4 @@
-<?php   
+<?php
  /* CAT:Combo */
 
  /* pChart library inclusions */
@@ -8,7 +8,7 @@
  include("../class/pIndicator.class.php");
 
  /* Create and populate the pData object */
- $MyData = new pData();  
+ $MyData = new pData();
  for($i=0;$i<=80;$i++) { $MyData->addPoints(($i/10)*($i/10),"Statistical probability"); }
  $MyData->setAxisName(0,"Probability");
  $MyData->setAxisUnit(0,"%");
@@ -31,7 +31,7 @@
 
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,349,array("R"=>0,"G"=>0,"B"=>0));
- 
+
  /* Set the default font */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/pf_arma_five.ttf","FontSize"=>6));
 
@@ -61,7 +61,7 @@
  $myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10));
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>11));
 
- /* Write the chart title */ 
+ /* Write the chart title */
  $myPicture->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>11));
  $myPicture->drawText(150,35,"Probability of heart disease",array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE,"R"=>255,"G"=>255,"B"=>255));
 
@@ -69,7 +69,7 @@
  $LabelSettings = array("DrawVerticalLine"=>TRUE,"TitleMode"=>LABEL_TITLE_BACKGROUND,"TitleR"=>255,"TitleG"=>255,"TitleB"=>255);
  $myPicture->writeLabel("Statistical probability",35,$LabelSettings);
 
- /* Create the pIndicator object */ 
+ /* Create the pIndicator object */
  $Indicator = new pIndicator($myPicture);
 
  /* Define the indicator sections */
