@@ -24,10 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-if (class_exists('default_questiontype')) { // Moodle 2.0
-    require_once($CFG->dirroot.'/question/type/ordering/legacy/20.php');
-}
-
 /**
  * The ordering question type.
  *
