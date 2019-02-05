@@ -3542,19 +3542,21 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
     if ($groups) {
         $groups = (array)$groups;
         list($grouptest, $grpparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED, 'grp');
-        $grouptest = "u.id IN (SELECT userid FROM {groups_members} gm WHERE gm.groupid $grouptest)";
+        $joins[] = "LEFT OUTER JOIN (SELECT DISTINCT userid
+                                       FROM {groups_members}
+                                      WHERE groupid $grouptest
+                                    ) gm ON gm.userid = u.id";
+
         $params = array_merge($params, $grpparams);
 
+        $grouptest = 'gm.userid IS NOT NULL';
         if ($useviewallgroups) {
             $viewallgroupsusers = get_users_by_capability($context, 'moodle/site:accessallgroups', 'u.id, u.id', '', '', '', '', $exceptions);
             if (!empty($viewallgroupsusers)) {
-                $wherecond[] =  "($grouptest OR u.id IN (" . implode(',', array_keys($viewallgroupsusers)) . '))';
-            } else {
-                $wherecond[] =  "($grouptest)";
+                $grouptest .= ' OR u.id IN (' . implode(',', array_keys($viewallgroupsusers)) . ')';
             }
-        } else {
-            $wherecond[] =  "($grouptest)";
         }
+        $wherecond[] = "($grouptest)";
     }
 
     // User exceptions
