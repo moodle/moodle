@@ -101,7 +101,6 @@ class renderer extends plugin_renderer_base {
     public function render_print_book_toc($chapters, $book, $cm) {
 
         $first = true;
-        $titles = array();
 
         $context = context_module::instance($cm->id);
 
@@ -150,7 +149,6 @@ class renderer extends plugin_renderer_base {
                     }
 
                 }
-                $titles[$ch->id] = $title;
 
                 if (!$ch->subchapter) {
                     $toc .= html_writer::link(new moodle_url('#ch' . $ch->id), $title,
