@@ -99,18 +99,10 @@ class provider implements
             return;
         }
 
-        $params = [
-            'contextuser' => CONTEXT_USER,
-            'contextid' => $context->id
-        ];
-
-        $sql = "SELECT ctx.instanceid as userid
-                  FROM {auth_oauth2_linked_login} ao
-                  JOIN {context} ctx
-                       ON ctx.instanceid = ao.userid
-                       AND ctx.contextlevel = :contextuser
-                 WHERE ctx.id = :contextid";
-
+        $sql = "SELECT userid
+                  FROM {auth_oauth2_linked_login}
+                 WHERE userid = ?";
+        $params = [$context->instanceid];
         $userlist->add_from_sql('userid', $sql, $params);
     }
 

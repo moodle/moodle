@@ -115,39 +115,23 @@ class provider implements
      * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
      */
     public static function get_users_in_context(userlist $userlist) {
+        global $DB;
+
         $context = $userlist->get_context();
 
-        $params = [
-            'contextid' => $context->id,
-            'contextuser' => CONTEXT_USER,
-        ];
+        if (!$context instanceof \context_user) {
+            return;
+        }
 
-        $sql = "SELECT ctx.instanceid as userid
-                  FROM {external_tokens} t
-                  JOIN {context} ctx
-                       ON ctx.instanceid = t.userid
-                       AND ctx.contextlevel = :contextuser
-                 WHERE ctx.id = :contextid";
+        $userid = $context->instanceid;
 
-        $userlist->add_from_sql('userid', $sql, $params);
+        $hasdata = false;
+        $hasdata = $hasdata || $DB->record_exists_select('external_tokens', 'userid = ? OR creatorid = ?', [$userid, $userid]);
+        $hasdata = $hasdata || $DB->record_exists('external_services_users', ['userid' => $userid]);
 
-        $sql = "SELECT ctx.instanceid as userid
-                  FROM {external_tokens} t
-                  JOIN {context} ctx
-                       ON ctx.instanceid = t.creatorid
-                       AND ctx.contextlevel = :contextuser
-                 WHERE ctx.id = :contextid";
-
-        $userlist->add_from_sql('userid', $sql, $params);
-
-        $sql = "SELECT ctx.instanceid as userid
-                  FROM {external_services_users} su
-                  JOIN {context} ctx
-                       ON ctx.instanceid = su.userid
-                       AND ctx.contextlevel = :contextuser
-                  WHERE ctx.id = :contextid";
-
-        $userlist->add_from_sql('userid', $sql, $params);
+        if ($hasdata) {
+            $userlist->add_user($userid);
+        }
     }
 
     /**

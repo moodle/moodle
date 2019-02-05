@@ -111,21 +111,15 @@ class provider implements
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
 
-        if (!is_a($context, \context_user::class)) {
+        if (!$context instanceof \context_user) {
             return;
         }
 
         // The data is associated at the user context level, so retrieve the user's context id.
-        $sql = "SELECT roa.usermodified AS userid
-                  FROM {repository_onedrive_access} roa
-                  JOIN {context} c ON c.instanceid = roa.usermodified AND c.contextlevel = :contextuser
-                 WHERE c.id = :contextid";
-
-        $params = [
-            'contextuser'   => CONTEXT_USER,
-            'contextid'        => $context->id,
-        ];
-
+        $sql = "SELECT usermodified AS userid
+                  FROM {repository_onedrive_access}
+                 WHERE usermodified = ?";
+        $params = [$context->instanceid];
         $userlist->add_from_sql('userid', $sql, $params);
     }
 
