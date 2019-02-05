@@ -52,7 +52,7 @@ define ('BOOK_LINK_TEXT', '2');
 /**
  * Preload book chapters and fix toc structure if necessary.
  *
- * Returns array of chapters with standard 'pagenum', 'id, pagenum, subchapter, title, hidden'
+ * Returns array of chapters with standard 'pagenum', 'id, pagenum, subchapter, title, content, contentformat, hidden'
  * and extra 'parent, number, subchapters, prev, next'.
  * Please note the content/text of chapters is not included.
  *
@@ -61,7 +61,8 @@ define ('BOOK_LINK_TEXT', '2');
  */
 function book_preload_chapters($book) {
     global $DB;
-    $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum', 'id, pagenum, subchapter, title, hidden');
+    $chapters = $DB->get_records('book_chapters', array('bookid' => $book->id), 'pagenum', 'id, pagenum,
+            subchapter, title, content, contentformat, hidden');
     if (!$chapters) {
         return array();
     }

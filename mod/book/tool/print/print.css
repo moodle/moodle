@@ -1,48 +1,3 @@
-#page-mod-book-print {
-    color: #000;
-    background-color: #fff;
-    font-family: "Times New Roman", Times, serif;
-    font-size: 1em;
-    font-weight: normal;
-    text-decoration: none;
-}
-
-#page-mod-book-print {
-    margin-left: 50px;
-    margin-right: 10px;
-}
-
-#page-mod-book-print h1,
-#page-mod-book-print h2,
-#page-mod-book-print h3,
-#page-mod-book-print h4,
-#page-mod-book-print h5,
-#page-mod-book-print h6 {
-    page-break-after: avoid;
-    page-break-inside: avoid;
-    margin-left: 0;
-}
-
-/* just some hack - ignore user defined <font> */
-#page-mod-book-print font {
-    color: #000;
-    background-color: #eee;
-    font-family: "Times New Roman", Times, serif;
-    font-size: 1em;
-    font-weight: normal;
-    text-decoration: none;
-}
-
-#page-mod-book-print .book_summary {
-    text-align: center;
-    margin-bottom: 120px;
-    margin-left: -40px;
-}
-
-#page-mod-book-print .book_chapter {
-    page-break-before: always;
-}
-
 /* ===== TOC numbering styles ===== */
 
 /* numbering == NONE */
@@ -136,11 +91,21 @@
     padding-left: 0;
 }
 
+#page-mod-book-print .book .book_chapter,
+#page-mod-book-print .book .book_description {
+    page-break-before: always;
+}
+
+#page-mod-book-print {
+    padding-top: 0;
+}
 
 /* Exclude elements from printing. */
-
 @media print {
     .hidden-print {
         display: none !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .book .book_title {
+        margin-top: 45%;
     }
 }
