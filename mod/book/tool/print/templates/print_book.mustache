@@ -1,0 +1,137 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more comments.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template booktool_print/print_book
+
+    Print book page.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    * printdialoglink string The URL pointing to the print book chapter popup window.
+    * booktitle string The HTML of the book title.
+    * bookintro string The book description.
+    * sitelink string The HTML link pointing to the site's dashboard.
+    * coursename string The name of the course.
+    * modulename string The name of the module.
+    * username string The user name.
+    * printdate string The print date.
+    * chaptertitle string The title of the chapter.
+    * toc object The HTML of the table of contents.
+    * chapters array The array of book chapters, their content and visibility information.
+
+    Example context (json):
+    {
+        "printdialoglink": "<a>Print book</a>",
+        "booktitle": "<h2>Book title</h2>",
+        "bookintro": "Book description",
+        "sitelink" : "<a>Site title</a>",
+        "coursename" : "Course name",
+        "modulename" : "Module name",
+        "username" : "User name",
+        "printdate" : "Tuesday, 22 January 2019, 10:17 AM",
+        "chaptertitle": "Chapter title",
+        "toc" : "<div>Table of contents</div>",
+        "chapters": [
+            {
+                "content": "<div>Chapter1 content</div>",
+                "visible": "true"
+            },
+            {
+                "content": "<div>Chapter2 content</div>",
+                "visible": "false"
+            }
+        ]
+    }
+}}
+<div class="book p-4">
+    <div class="text-right">{{{ printdialoglink }}}</div>
+    <div class="text-center p-b-1 book_title">{{{ booktitle }}}</div>
+    <div class="book_info w-100 p-t-3 d-inline-block">
+        <div class="w-50 pull-left">
+            <table>
+                <tr>
+                    <td>
+                        {{# str }} site {{/ str }}:
+                    </td>
+                    <td class="p-l-1">
+                        {{{ sitelink }}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{# str }} course {{/ str }}:
+                    </td>
+                    <td class="p-l-1">
+                        {{{ coursename }}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{# str }} modulename, mod_book {{/ str }}:
+                    </td>
+                    <td class="p-l-1">
+                        {{{ modulename }}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="w-50 pull-left">
+            <table class="pull-right">
+                <tr>
+                    <td>
+                        {{# str }} printedby, booktool_print {{/ str }}:
+                    </td>
+                    <td class="p-l-1">
+                        {{{ username }}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{# str }} printdate, booktool_print {{/ str }}:
+                    </td>
+                    <td class="p-l-1">
+                        {{{ printdate }}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    {{#bookintro}}
+    <div class="w-100 book_description">
+        <div class="p-b-2 p-t-2">
+            <h2 class="text-center p-b-2">{{#str}} description {{/str}}</h2>
+             <p class="book_summary">{{{ bookintro }}}</p>
+        </div>
+    </div>
+    {{/bookintro}}
+    <div class="w-100">
+        <div class="p-b-2 p-t-2">{{{ toc }}}</div>
+    </div>
+    <div class="w-100">
+     {{#chapters}}
+        {{#visible }}
+            <div class="p-b-2">
+            {{{ content }}}
+            </div>
+        {{/visible}}
+    {{/chapters}}
+    </div>
+</div>
