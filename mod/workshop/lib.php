@@ -408,13 +408,23 @@ function workshop_user_outline($course, $user, $mod, $workshop) {
 
     if (!empty($grades->items[0]->grades)) {
         $submissiongrade = reset($grades->items[0]->grades);
-        $info .= get_string('submissiongrade', 'workshop') . ': ' . $submissiongrade->str_long_grade . html_writer::empty_tag('br');
         $time = max($time, $submissiongrade->dategraded);
+        if (!$submissiongrade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+            $info .= get_string('submissiongrade', 'workshop') . ': ' . $submissiongrade->str_long_grade
+                . html_writer::empty_tag('br');
+        } else {
+            $info .= get_string('submissiongrade', 'workshop') . ': ' . get_string('hidden', 'grades')
+                . html_writer::empty_tag('br');
+        }
     }
     if (!empty($grades->items[1]->grades)) {
         $assessmentgrade = reset($grades->items[1]->grades);
-        $info .= get_string('gradinggrade', 'workshop') . ': ' . $assessmentgrade->str_long_grade;
         $time = max($time, $assessmentgrade->dategraded);
+        if (!$assessmentgrade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+            $info .= get_string('gradinggrade', 'workshop') . ': ' . $assessmentgrade->str_long_grade;
+        } else {
+            $info .= get_string('gradinggrade', 'workshop') . ': ' . get_string('hidden', 'grades');
+        }
     }
 
     if (!empty($info) and !empty($time)) {
@@ -447,12 +457,20 @@ function workshop_user_complete($course, $user, $mod, $workshop) {
 
     if (!empty($grades->items[0]->grades)) {
         $submissiongrade = reset($grades->items[0]->grades);
-        $info = get_string('submissiongrade', 'workshop') . ': ' . $submissiongrade->str_long_grade;
+        if (!$submissiongrade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+            $info = get_string('submissiongrade', 'workshop') . ': ' . $submissiongrade->str_long_grade;
+        } else {
+            $info = get_string('submissiongrade', 'workshop') . ': ' . get_string('hidden', 'grades');
+        }
         echo html_writer::tag('li', $info, array('class'=>'submissiongrade'));
     }
     if (!empty($grades->items[1]->grades)) {
         $assessmentgrade = reset($grades->items[1]->grades);
-        $info = get_string('gradinggrade', 'workshop') . ': ' . $assessmentgrade->str_long_grade;
+        if (!$assessmentgrade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+            $info = get_string('gradinggrade', 'workshop') . ': ' . $assessmentgrade->str_long_grade;
+        } else {
+            $info = get_string('gradinggrade', 'workshop') . ': ' . get_string('hidden', 'grades');
+        }
         echo html_writer::tag('li', $info, array('class'=>'gradinggrade'));
     }
 
