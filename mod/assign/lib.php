@@ -1627,7 +1627,11 @@ function assign_user_outline($course, $user, $coursemodule, $assignment) {
         return null;
     }
     $result = new stdClass();
-    $result->info = get_string('outlinegrade', 'assign', $gradebookgrade->str_long_grade);
+    if (!$gradingitem->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+        $result->info = get_string('outlinegrade', 'assign', $gradebookgrade->str_long_grade);
+    } else {
+        $result->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
+    }
     $result->time = $gradebookgrade->dategraded;
 
     return $result;
