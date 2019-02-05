@@ -129,7 +129,7 @@ class message_airnotifier_external_testcase extends externallib_advanced_testcas
         $expected = array(
             array(
                 'userid' => $user1->id,
-                'configured' => 0
+                'configured' => 1
             )
         );
         $this->assertEquals($expected, $preferences['users']);
