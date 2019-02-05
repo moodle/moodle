@@ -146,4 +146,39 @@ class qtype_gapselect_test_helper {
 
         return $gapselect;
     }
+
+    /**
+     * This examples includes choices with currency like options.
+     * @return qtype_gapselect_question
+     */
+    public static function make_a_currency_gapselect_question() {
+        question_bank::load_question_definition_classes('gapselect');
+        $gapselect = new qtype_gapselect_question();
+
+        test_question_maker::initialise_a_question($gapselect);
+
+        $gapselect->name = 'Selection from currency like choices';
+        $gapselect->questiontext = 'The price of the ball is [[1]] approx.';
+        $gapselect->generalfeedback = 'The choice is yours';
+        $gapselect->qtype = question_bank::get_qtype('gapselect');
+
+        $gapselect->shufflechoices = true;
+
+        test_question_maker::set_standard_combined_feedback_fields($gapselect);
+
+        $gapselect->choices = [
+                1 => [
+                        1 => new qtype_gapselect_choice('$2', 1),
+                        2 => new qtype_gapselect_choice('$3', 1),
+                        3 => new qtype_gapselect_choice('$4.99', 1),
+                        4 => new qtype_gapselect_choice('-1', 1)
+                ]
+        ];
+
+        $gapselect->places = array(1 => 1);
+        $gapselect->rightchoices = array(1 => 1);
+        $gapselect->textfragments = array('The price of the ball is ', ' approx.');
+
+        return $gapselect;
+    }
 }
