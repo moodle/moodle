@@ -130,21 +130,10 @@ class auth_plugin_cas extends auth_plugin_ldap {
             }
 
             $authCAS = optional_param('authCAS', '', PARAM_RAW);
-            if ($authCAS == 'NOCAS') {
+            if ($authCAS != 'CAS') {
                 return;
             }
-            // Show authentication form for multi-authentication.
-            // Test pgtIou parameter for proxy mode (https connection in background from CAS server to the php server).
-            if ($authCAS != 'CAS' && !isset($_GET['pgtIou'])) {
-                $PAGE->set_url('/login/index.php');
-                $PAGE->navbar->add($CASform);
-                $PAGE->set_title("$site->fullname: $CASform");
-                $PAGE->set_heading($site->fullname);
-                echo $OUTPUT->header();
-                include($CFG->dirroot.'/auth/cas/cas_form.html');
-                echo $OUTPUT->footer();
-                exit();
-            }
+
         }
 
         // Connection to CAS server
@@ -362,5 +351,36 @@ class auth_plugin_cas extends auth_plugin_ldap {
             $this->connectCAS();
             phpCAS::logoutWithRedirectService($backurl);
         }
+    }
+
+    /**
+     * Return a list of identity providers to display on the login page.
+     *
+     * @param string|moodle_url $wantsurl The requested URL.
+     * @return array List of arrays with keys url, iconurl and name.
+     */
+    public function loginpage_idp_list($wantsurl) {
+        if (empty($this->config->hostname)) {
+            // CAS is not configured.
+            return [];
+        }
+
+        $iconurl = moodle_url::make_pluginfile_url(
+            context_system::instance()->id,
+            'auth_cas',
+            'logo',
+            null,
+            '/',
+            $this->config->auth_logo);
+
+        return [
+            [
+                'url' => new moodle_url(get_login_url(), [
+                        'authCAS' => 'CAS',
+                    ]),
+                'iconurl' => $iconurl,
+                'name' => format_string($this->config->auth_name),
+            ],
+        ];
     }
 }
