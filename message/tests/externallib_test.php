@@ -1612,6 +1612,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml  = '<strong>Feedback submitted</strong>';
         $eventdata->smallmessage     = '';
+        $eventdata->customdata         = ['datakey' => 'data'];
         message_send($eventdata);
 
         $this->setUser($user1);
@@ -1644,6 +1645,10 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $messages = core_message_external::get_messages(0, $user1->id, 'notifications', true, true, 0, 0);
         $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(1, $messages['messages']);
+        // Check we receive custom data as a unserialisable json.
+        $this->assertObjectHasAttribute('datakey', json_decode($messages['messages'][0]['customdata']));
+        $this->assertEquals('mod_feedback', $messages['messages'][0]['component']);
+        $this->assertEquals('submission', $messages['messages'][0]['eventtype']);
 
         // Test warnings.
         $CFG->messaging = 0;

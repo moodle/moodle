@@ -202,6 +202,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $message->fullmessagehtml = '<p>message body</p>';
         $message->smallmessage = 'small message';
         $message->notification = '0';
+        $message->customdata = ['datakey' => 'data'];
 
         $sink = $this->redirectMessages();
         $this->setCurrentTimeStart();
@@ -218,6 +219,12 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertEquals($message->smallmessage, $savedmessage->smallmessage);
         $this->assertEquals($message->smallmessage, $savedmessage->smallmessage);
         $this->assertEquals($message->notification, $savedmessage->notification);
+        $this->assertEquals($message->customdata, $savedmessage->customdata);
+        $this->assertContains('datakey', $savedmessage->customdata);
+        // Check it was a unserialisable json.
+        $customdata = json_decode($savedmessage->customdata);
+        $this->assertEquals('data', $customdata->datakey);
+        $this->assertEquals(1, $customdata->courseid);
         $this->assertTimeCurrent($savedmessage->timecreated);
         $record = $DB->get_record('messages', array('id' => $savedmessage->id), '*', MUST_EXIST);
         unset($savedmessage->useridto);

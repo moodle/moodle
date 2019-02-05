@@ -3000,5 +3000,34 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019041300.01);
     }
 
+    if ($oldversion < 2019041800.01) {
+        // Add new customdata field to message table.
+        $table = new xmldb_table('message');
+        $field = new xmldb_field('customdata', XMLDB_TYPE_TEXT, null, null, null, null, null, 'eventtype');
+
+        // Conditionally launch add field output.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Add new customdata field to notifications and messages table.
+        $table = new xmldb_table('notifications');
+        $field = new xmldb_field('customdata', XMLDB_TYPE_TEXT, null, null, null, null, null, 'timecreated');
+
+        // Conditionally launch add field output.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('messages');
+        // Conditionally launch add field output.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019041800.01);
+    }
+
     return true;
 }
