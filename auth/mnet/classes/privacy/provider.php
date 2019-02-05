@@ -273,13 +273,15 @@ class provider implements
             return;
         }
 
+        $userid = $contextlist->get_user()->id;
         foreach ($contextlist->get_contexts() as $context) {
             if ($context->contextlevel != CONTEXT_USER) {
-                return;
+                continue;
             }
-
-            // Because we only use user contexts the instance ID is the user ID.
-            $DB->delete_records('mnet_log', ['userid' => $context->instanceid]);
+            if ($context->instanceid == $userid) {
+                // Because we only use user contexts the instance ID is the user ID.
+                $DB->delete_records('mnet_log', ['userid' => $context->instanceid]);
+            }
         }
     }
 }
