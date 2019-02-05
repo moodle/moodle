@@ -1189,4 +1189,73 @@ class mod_forum_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_forum_access_information.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.7
+     */
+    public static function get_forum_access_information_parameters() {
+        return new external_function_parameters (
+            array(
+                'forumid' => new external_value(PARAM_INT, 'Forum instance id.')
+            )
+        );
+    }
+
+    /**
+     * Return access information for a given forum.
+     *
+     * @param int $forumid forum instance id
+     * @return array of warnings and the access information
+     * @since Moodle 3.7
+     * @throws  moodle_exception
+     */
+    public static function get_forum_access_information($forumid) {
+        global $DB;
+
+        $params = self::validate_parameters(self::get_forum_access_information_parameters(), array('forumid' => $forumid));
+
+        // Request and permission validation.
+        $forum = $DB->get_record('forum', array('id' => $params['forumid']), '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        $result = array();
+        // Return all the available capabilities.
+        $capabilities = load_capability_def('mod_forum');
+        foreach ($capabilities as $capname => $capdata) {
+            // Get fields like cansubmit so it is consistent with the access_information function implemented in other modules.
+            $field = 'can' . str_replace('mod/forum:', '', $capname);
+            $result[$field] = has_capability($capname, $context);
+        }
+
+        $result['warnings'] = array();
+        return $result;
+    }
+
+    /**
+     * Describes the get_forum_access_information return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.7
+     */
+    public static function get_forum_access_information_returns() {
+
+        $structure = array(
+            'warnings' => new external_warnings()
+        );
+
+        $capabilities = load_capability_def('mod_forum');
+        foreach ($capabilities as $capname => $capdata) {
+            // Get fields like cansubmit so it is consistent with the access_information function implemented in other modules.
+            $field = 'can' . str_replace('mod/forum:', '', $capname);
+            $structure[$field] = new external_value(PARAM_BOOL, 'Whether the user has the capability ' . $capname . ' allowed.',
+                VALUE_OPTIONAL);
+        }
+
+        return new external_single_structure($structure);
+    }
 }
