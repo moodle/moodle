@@ -411,6 +411,125 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Mute conversations parameters description.
+     *
+     * @return external_function_parameters
+     */
+    public static function mute_conversations_parameters() {
+        return new external_function_parameters(
+            [
+                'userid' => new external_value(PARAM_INT, 'The id of the user who is blocking'),
+                'conversationids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'id of the conversation', VALUE_REQUIRED)
+                ),
+            ]
+        );
+    }
+
+    /**
+     * Mutes conversations.
+     *
+     * @param int $userid The id of the user who is blocking
+     * @param array $conversationids The list of conversations being muted
+     * @return external_description
+     */
+    public static function mute_conversations(int $userid, array $conversationids) {
+        global $CFG, $USER;
+
+        // Check if messaging is enabled.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = ['userid' => $userid, 'conversationids' => $conversationids];
+        $params = self::validate_parameters(self::mute_conversations_parameters(), $params);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['userid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
+
+        foreach ($params['conversationids'] as $conversationid) {
+            if (!\core_message\api::is_conversation_muted($params['userid'], $conversationid)) {
+                \core_message\api::mute_conversation($params['userid'], $conversationid);
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * Mute conversations return description.
+     *
+     * @return external_description
+     */
+    public static function mute_conversations_returns() {
+        return new external_warnings();
+    }
+
+    /**
+     * Unmute conversations parameters description.
+     *
+     * @return external_function_parameters
+     */
+    public static function unmute_conversations_parameters() {
+        return new external_function_parameters(
+            [
+                'userid' => new external_value(PARAM_INT, 'The id of the user who is unblocking'),
+                'conversationids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'id of the conversation', VALUE_REQUIRED)
+                ),
+            ]
+        );
+    }
+
+    /**
+     * Unmute conversations.
+     *
+     * @param int $userid The id of the user who is unblocking
+     * @param array $conversationids The list of conversations being muted
+     */
+    public static function unmute_conversations(int $userid, array $conversationids) {
+        global $CFG, $USER;
+
+        // Check if messaging is enabled.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = ['userid' => $userid, 'conversationids' => $conversationids];
+        $params = self::validate_parameters(self::unmute_conversations_parameters(), $params);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $params['userid']) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
+        }
+
+        foreach ($params['conversationids'] as $conversationid) {
+            \core_message\api::unmute_conversation($params['userid'], $conversationid);
+        }
+
+        return [];
+    }
+
+    /**
+     * Unmute conversations return description.
+     *
+     * @return external_description
+     */
+    public static function unmute_conversations_returns() {
+        return new external_warnings();
+    }
+
+    /**
      * Block user parameters description.
      *
      * @return external_function_parameters
