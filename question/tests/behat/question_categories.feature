@@ -38,7 +38,7 @@ Feature: A teacher can put questions in categories in the question bank
 
   Scenario: A question category can be edited
     When I navigate to "Question bank > Categories" in current page administration
-    And I click on "Edit" "link" in the "Subcategory" "list_item"
+    And I click on "Edit this category" "link" in the "Subcategory" "list_item"
     And the field "parent" matches value "&nbsp;&nbsp;&nbsp;Default for C1"
     And I set the following fields to these values:
       | Name            | New name     |
