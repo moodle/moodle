@@ -73,6 +73,9 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
     UserInfo.prototype._refreshUserInfo = function(event, userid) {
         var promise = $.Deferred();
 
+        // Put the current user ID in the DOM so yui can access it.
+        this._region.attr('data-userid', userid);
+
         // Skip reloading if it is the same user.
         if (this._lastUserId == userid) {
             return;
