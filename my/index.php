@@ -45,6 +45,13 @@ $reset  = optional_param('reset', null, PARAM_BOOL);
 
 require_login();
 
+if (\core\session\manager::is_loggedinas()) {
+    // Disable access to the user's dashboard for "logged in as" sessions
+    // to mitigate risks associated with loading other users' JavaScript.
+    // See MDL-63786 for more information.
+    redirect(new moodle_url('/', ['redirect' => 0]), get_string('unabletoaccess', 'core_my'));
+}
+
 $hassiteconfig = has_capability('moodle/site:config', context_system::instance());
 if ($hassiteconfig && moodle_needs_upgrading()) {
     redirect(new moodle_url('/admin/index.php'));
