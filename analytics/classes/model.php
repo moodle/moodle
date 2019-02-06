@@ -1463,6 +1463,29 @@ class model {
     }
 
     /**
+     * Has the model been trained using data from this site?
+     *
+     * This method is useful to determine if a trained model can be evaluated as
+     * we can not use the same data for training and for evaluation.
+     *
+     * @return bool
+     */
+    public function trained_locally() {
+        global $DB;
+
+        if (!$this->is_trained() || $this->is_static()) {
+            // Early exit.
+            return false;
+        }
+
+        if ($DB->record_exists('analytics_train_samples', ['modelid' => $this->model->id])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Flag the provided file as used for training or prediction.
      *
      * @param \stored_file $file

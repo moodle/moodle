@@ -49,6 +49,20 @@ define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_facto
     };
 
     /**
+     * Template to display the evaluation mode choices.
+     */
+    var evaluationRadioHTML = '<div class="box mb-4">{{evaluationmodeinfo}}</div>' +
+        '<div class="form-check">' +
+            '<input class="form-check-input" type="radio" name="evaluationmode" id="id-mode-trainedmodel" value="trainedmodel" ' +
+                'checked>' +
+            '<label class="form-check-label" for="id-mode-trainedmodel">{{trainedmodellabel}}</label>' +
+        '</div>' +
+        '<div class="form-check">' +
+            '<input class="form-check-input" type="radio" name="evaluationmode" id="id-mode-configuration" value="configuration">' +
+            '<label class="form-check-label" for="id-mode-configuration">{{configurationlabel}}</label>' +
+        '</div>';
+
+    /**
      * Returns the model name.
      *
      * @param {Object} actionItem The action item DOM node.
@@ -94,6 +108,73 @@ define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_facto
                     modal.getRoot().on(ModalEvents.save, function() {
                         window.location.href = a.attr('href');
                     });
+                    modal.show();
+                    return modal;
+                }).fail(Notification.exception);
+            });
+        },
+
+        /**
+         * Displays a select-evaluation-mode choice.
+         *
+         * @param  {String}  actionId
+         * @param  {Boolean} trainedOnlyExternally
+         */
+        selectEvaluationMode: function(actionId, trainedOnlyExternally) {
+            $('[data-action-id="' + actionId + '"]').on('click', function(ev) {
+                ev.preventDefault();
+
+                var a = $(ev.currentTarget);
+
+                if (!trainedOnlyExternally) {
+                    // We can not evaluate trained models if the model was trained using data from this site.
+                    // Default to evaluate the model configuration if that is the case.
+                    window.location.href = a.attr('href');
+                    return;
+                }
+
+                var stringsPromise = Str.get_strings([
+                    {
+                        key: 'evaluatemodel',
+                        component: 'tool_analytics'
+                    }, {
+                        key: 'evaluationmode',
+                        component: 'tool_analytics'
+                    }, {
+                        key: 'evaluationmodeinfo',
+                        component: 'tool_analytics'
+                    }, {
+                        key: 'evaluationmodetrainedmodel',
+                        component: 'tool_analytics'
+                    }, {
+                        key: 'evaluationmodeconfiguration',
+                        component: 'tool_analytics'
+                    }
+                ]);
+                var modalPromise = ModalFactory.create({type: ModalFactory.types.SAVE_CANCEL});
+
+                $.when(stringsPromise, modalPromise).then(function(strings, modal) {
+
+
+                    modal.getRoot().on(ModalEvents.hidden, modal.destroy.bind(modal));
+
+                    modal.setTitle(strings[1]);
+                    modal.setSaveButtonText(strings[0]);
+
+                    var body = evaluationRadioHTML.replace(/{{evaluationmodeinfo}}/, strings[2])
+                        .replace(/{{trainedmodellabel}}/, strings[3])
+                        .replace(/{{configurationlabel}}/, strings[4]);
+                    modal.setBody(body);
+
+                    modal.getRoot().on(ModalEvents.save, function() {
+                        var evaluationMode = $("input[name='evaluationmode']:checked").val();
+                        if (evaluationMode == 'trainedmodel') {
+                            a.attr('href', a.attr('href') + '&mode=trainedmodel');
+                        }
+                        window.location.href = a.attr('href');
+                        return;
+                    });
+
                     modal.show();
                     return modal;
                 }).fail(Notification.exception);
