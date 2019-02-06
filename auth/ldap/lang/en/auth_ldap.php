@@ -163,6 +163,12 @@ $string['userentriestoupdate'] = "User entries to be updated: {\$a}\n";
 $string['usernotfound'] = 'User not found in LDAP';
 $string['useracctctrlerror'] = 'Error getting userAccountControl for {$a}';
 
+$string['diag_genericerror'] = 'LDAP error {$a->code} reading {$a->subject}: {$a->message}.';
+$string['diag_toooldversion'] = 'Its is very unlikely a modern LDAP server uses LDAPv2 protocol. Wrong settings can corrupt values in user fields. Check with your LDAP administrator.';
+$string['diag_emptycontext'] = 'Empty context found.';
+$string['diag_contextnotfound'] = 'Context {$a} does not  exists or cannot be read by bind DN.';
+$string['diag_rolegroupnotfound'] = 'Group {$a->group} for role {$a->localname} does not exists or cannot be read by bind DN.';
+
 // Deprecated since Moodle 3.4.
 $string['auth_ldap_creators'] = 'List of groups or contexts whose members are allowed to create new courses. Separate multiple groups with \';\'. Usually something like \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_creators_key'] = 'Creators';
