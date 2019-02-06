@@ -79,6 +79,9 @@ if (has_capability('moodle/user:loginas', $systemcontext)) {
 
 // Login as this user and return to course home page.
 \core\session\manager::loginas($userid, $context);
+// Add a notification to let the logged in as user know that all content will be force cleaned
+// while in this session.
+\core\notification::info(get_string('sessionforceclean', 'core'));
 $newfullname = fullname($USER, true);
 
 $strloginas    = get_string('loginas');
