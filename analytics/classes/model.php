@@ -537,6 +537,22 @@ class model {
         }
 
         $options['evaluation'] = true;
+
+        if (empty($options['mode'])) {
+            $options['mode'] = 'configuration';
+        }
+
+        if ($options['mode'] == 'trainedmodel') {
+
+            // We are only interested on the time splitting method used by the trained model.
+            $options['timesplitting'] = $this->model->timesplitting;
+
+            // Provide the trained model directory to the ML backend if that is what we want to evaluate.
+            $trainedmodeldir = $this->get_output_dir(['execution']);
+        } else {
+            $trainedmodeldir = false;
+        }
+
         $this->init_analyser($options);
 
         if (empty($this->get_indicators())) {
@@ -575,10 +591,10 @@ class model {
             // Evaluate the dataset, the deviation we accept in the results depends on the amount of iterations.
             if ($this->get_target()->is_linear()) {
                 $predictorresult = $predictor->evaluate_regression($this->get_unique_id(), self::ACCEPTED_DEVIATION,
-                self::EVALUATION_ITERATIONS, $dataset, $outputdir);
+                    self::EVALUATION_ITERATIONS, $dataset, $outputdir, $trainedmodeldir);
             } else {
                 $predictorresult = $predictor->evaluate_classification($this->get_unique_id(), self::ACCEPTED_DEVIATION,
-                self::EVALUATION_ITERATIONS, $dataset, $outputdir);
+                    self::EVALUATION_ITERATIONS, $dataset, $outputdir, $trainedmodeldir);
             }
 
             $result->status = $predictorresult->status;
@@ -1470,7 +1486,7 @@ class model {
      *
      * @return bool
      */
-    public function trained_locally() {
+    public function trained_locally() : bool {
         global $DB;
 
         if (!$this->is_trained() || $this->is_static()) {
