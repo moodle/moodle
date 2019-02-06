@@ -823,9 +823,11 @@ if (isset($SESSION->pluginuninstallreturn)) {
 // Print default admin page with notifications.
 $errorsdisplayed = defined('WARN_DISPLAY_ERRORS_ENABLED');
 
-// We make the assumption that at least one schedule task should run once per day.
-$lastcron = $DB->get_field_sql('SELECT MAX(lastruntime) FROM {task_scheduled}');
+$lastcron = get_config('tool_task', 'lastcronstart');
 $cronoverdue = ($lastcron < time() - 3600 * 24);
+$lastcroninterval = get_config('tool_task', 'lastcroninterval');
+$expectedfrequency = $CFG->expectedcronfrequency ?? 200;
+$croninfrequent = !$cronoverdue && ($lastcroninterval > $expectedfrequency || $lastcron < time() - $expectedfrequency);
 $dbproblems = $DB->diagnose();
 $maintenancemode = !empty($CFG->maintenance_enabled);
 
@@ -886,4 +888,4 @@ $output = $PAGE->get_renderer('core', 'admin');
 echo $output->admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed, $cronoverdue, $dbproblems,
                                        $maintenancemode, $availableupdates, $availableupdatesfetch, $buggyiconvnomb,
                                        $registered, $cachewarnings, $eventshandlers, $themedesignermode, $devlibdir,
-                                       $mobileconfigured, $overridetossl, $invalidforgottenpasswordurl);
+                                       $mobileconfigured, $overridetossl, $invalidforgottenpasswordurl, $croninfrequent);

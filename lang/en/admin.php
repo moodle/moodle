@@ -417,6 +417,7 @@ $string['cron_link'] = 'admin/cron';
 $string['cronclionly'] = 'Cron execution via command line only';
 $string['cronerrorclionly'] = 'Sorry, internet access to this page has been disabled by the administrator.';
 $string['cronerrorpassword'] = 'Sorry, you have not provided a valid password to access this page';
+$string['croninfrequent'] = 'The time between the last two runs of the cron maintenance script was over {$a} seconds. We recommend configuring it to run more frequently.';
 $string['cronremotepassword'] = 'Cron password for remote access';
 $string['cronwarning'] = 'The <a href="{$a}">cron.php maintenance script</a> has not been run for at least 24 hours.';
 $string['cronwarningcli'] = 'The cli/cron.php maintenance script has not been run for at least 24 hours.';

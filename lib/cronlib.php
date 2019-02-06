@@ -61,6 +61,14 @@ function cron_run() {
     $timenow  = time();
     mtrace("Server Time: ".date('r', $timenow)."\n\n");
 
+    // Record start time and interval between the last cron runs.
+    $laststart = get_config('tool_task', 'lastcronstart');
+    set_config('lastcronstart', $timenow, 'tool_task');
+    if ($laststart) {
+        // Record the interval between last two runs (always store at least 1 second).
+        set_config('lastcroninterval', max(1, $timenow - $laststart), 'tool_task');
+    }
+
     // Run all scheduled tasks.
     cron_run_scheduled_tasks($timenow);
 
