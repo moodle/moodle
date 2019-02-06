@@ -49,6 +49,11 @@ class api {
     const MESSAGE_ACTION_DELETED = 2;
 
     /**
+     * The action for reading a message.
+     */
+    const CONVERSATION_ACTION_MUTED = 1;
+
+    /**
      * The privacy setting for being messaged by anyone within courses user is member of.
      */
     const MESSAGE_PRIVACY_COURSEMEMBER = 0;
@@ -3132,5 +3137,60 @@ class api {
         }
 
         return $counts;
+    }
+
+    /**
+     * Handles muting a conversation.
+     *
+     * @param int $userid The id of the user
+     * @param int $conversationid The id of the conversation
+     */
+    public static function mute_conversation(int $userid, int $conversationid) : void {
+        global $DB;
+
+        $mutedconversation = new \stdClass();
+        $mutedconversation->userid = $userid;
+        $mutedconversation->conversationid = $conversationid;
+        $mutedconversation->action = self::CONVERSATION_ACTION_MUTED;
+        $mutedconversation->timecreated = time();
+
+        $DB->insert_record('message_conversation_actions', $mutedconversation);
+    }
+
+    /**
+     * Handles unmuting a conversation.
+     *
+     * @param int $userid The id of the user
+     * @param int $conversationid The id of the conversation
+     */
+    public static function unmute_conversation(int $userid, int $conversationid) : void {
+        global $DB;
+
+        $DB->delete_records('message_conversation_actions',
+            [
+                'userid' => $userid,
+                'conversationid' => $conversationid,
+                'action' => self::CONVERSATION_ACTION_MUTED
+            ]
+        );
+    }
+
+    /**
+     * Checks whether a conversation is muted or not.
+     *
+     * @param int $userid The id of the user
+     * @param int $conversationid The id of the conversation
+     * @return bool Whether or not the conversation is muted or not
+     */
+    public static function is_conversation_muted(int $userid, int $conversationid) : bool {
+        global $DB;
+
+        return $DB->record_exists('message_conversation_actions',
+            [
+                'userid' => $userid,
+                'conversationid' => $conversationid,
+                'action' => self::CONVERSATION_ACTION_MUTED
+            ]
+        );
     }
 }

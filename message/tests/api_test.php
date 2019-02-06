@@ -4913,6 +4913,84 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test muting a conversation.
+     */
+    public function test_mute_conversation() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        \core_message\api::mute_conversation($user1->id, $conversationid);
+
+        $mutedconversation = $DB->get_records('message_conversation_actions');
+
+        $this->assertCount(1, $mutedconversation);
+
+        $mutedconversation = reset($mutedconversation);
+
+        $this->assertEquals($user1->id, $mutedconversation->userid);
+        $this->assertEquals($conversationid, $mutedconversation->conversationid);
+        $this->assertEquals(\core_message\api::CONVERSATION_ACTION_MUTED, $mutedconversation->action);
+    }
+
+    /**
+     * Test unmuting a conversation.
+     */
+    public function test_unmute_conversation() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        \core_message\api::mute_conversation($user1->id, $conversationid);
+        \core_message\api::unmute_conversation($user1->id, $conversationid);
+
+        $this->assertEquals(0, $DB->count_records('message_conversation_actions'));
+    }
+
+    /**
+     * Test if a conversation is muted.
+     */
+    public function test_is_conversation_muted() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user2->id
+            ]
+        );
+        $conversationid = $conversation->id;
+
+        $this->assertFalse(\core_message\api::is_conversation_muted($user1->id, $conversationid));
+
+        \core_message\api::mute_conversation($user1->id, $conversationid);
+
+        $this->assertTrue(\core_message\api::is_conversation_muted($user1->id, $conversationid));
+    }
+
+    /**
      * Test is contact check.
      */
     public function test_is_contact() {
