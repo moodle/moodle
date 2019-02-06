@@ -199,7 +199,7 @@ $doughnut-fill-colour: $brand-warning;
     }
 }
 
-.card-deck {
+.block_myoverview .card-deck {
     .card {
         $card-gutter : $card-deck-margin * 2;
         flex-grow: 0;
