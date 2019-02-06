@@ -29,6 +29,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7');
 
+
+/**
+ * Do not process file merging when working with draft area files.
+ */
+define('IGNORE_FILE_MERGE', -1);
+
 /**
  * Unlimited area size constant
  */
@@ -888,6 +894,7 @@ function file_remove_editor_orphaned_files($editor) {
  *
  * @category files
  * @param int $draftitemid the id of the primary draft area.
+ *            When set to -1 (probably, by a WebService) it won't process file merging, keeping the original state of the file area.
  * @param int $usercontextid the user's context id.
  * @param string $text some html content that needs to have files copied to the correct draft area.
  * @param bool $forcehttps force https urls.
@@ -896,6 +903,11 @@ function file_remove_editor_orphaned_files($editor) {
  */
 function file_merge_draft_areas($draftitemid, $usercontextid, $text, $forcehttps = false) {
     if (is_null($text)) {
+        return null;
+    }
+
+    // Do not merge files, leave it as it was.
+    if ($draftitemid === IGNORE_FILE_MERGE) {
         return null;
     }
 
@@ -1015,6 +1027,7 @@ function file_copy_file_to_file_area($file, $filename, $itemid) {
  * @global stdClass $USER
  * @param int $draftitemid the id of the draft area to use. Normally obtained
  *      from file_get_submitted_draft_itemid('elementname') or similar.
+ *      When set to -1 (probably, by a WebService) it won't process file merging, keeping the original state of the file area.
  * @param int $contextid This parameter and the next two identify the file area to save to.
  * @param string $component
  * @param string $filearea indentifies the file area.
@@ -1027,6 +1040,11 @@ function file_copy_file_to_file_area($file, $filename, $itemid) {
  */
 function file_save_draft_area_files($draftitemid, $contextid, $component, $filearea, $itemid, array $options=null, $text=null, $forcehttps=false) {
     global $USER;
+
+    // Do not merge files, leave it as it was.
+    if ($draftitemid === IGNORE_FILE_MERGE) {
+        return null;
+    }
 
     $usercontext = context_user::instance($USER->id);
     $fs = get_file_storage();
