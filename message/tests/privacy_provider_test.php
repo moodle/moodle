@@ -47,7 +47,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $collection = new collection('core_message');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();
-        $this->assertCount(9, $itemcollection);
+        $this->assertCount(10, $itemcollection);
 
         $messagestable = array_shift($itemcollection);
         $this->assertEquals('messages', $messagestable->get_name());
@@ -57,6 +57,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $messageconversationmemberstable = array_shift($itemcollection);
         $this->assertEquals('message_conversation_members', $messageconversationmemberstable->get_name());
+
+        $messageconversationactions = array_shift($itemcollection);
+        $this->assertEquals('message_conversation_actions', $messageconversationactions->get_name());
 
         $messagecontacts = array_shift($itemcollection);
         $this->assertEquals('message_contacts', $messagecontacts->get_name());
@@ -1584,6 +1587,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         \core_message\api::set_favourite_conversation($conversation1->id, $user1->id);
         \core_message\api::set_favourite_conversation($iconversation1id, $user2->id);
 
+        // Mute some conversations.
+        \core_message\api::mute_conversation($user1->id, $conversation1->id);
+        \core_message\api::mute_conversation($user2->id, $iconversation1id);
+
         // Send some messages to the conversation.
         $m1 = testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'Message 1', $now + 1);
         $m2 = testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'Message 2', $now + 2);
@@ -1646,6 +1653,15 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(transform::datetime($now + 5), $m3->timeread);
         $this->assertArrayNotHasKey('timedeleted', (array) $m3);
 
+        // Confirm the muted group conversation is correct.
+        $mutedconversations = (array) $writer->get_related_data([
+            get_string('messages', 'core_message'),
+            get_string($conversation1->itemtype, $conversation1->component),
+            get_string('privacy:export:conversationprefix', 'core_message') . $conversation1->name
+        ], 'muted');
+        $this->assertCount(2, $mutedconversations);
+        $this->assertEquals(get_string('yes'), $mutedconversations['muted']);
+
         // Confirm the favourite group conversation is correct.
         $favourite = (array) $writer->get_related_data([
             get_string('messages', 'core_message'),
@@ -1706,6 +1722,14 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(transform::datetime($now + 3), $m3->timecreated);
         $this->assertEquals('-', $m3->timeread);
         $this->assertArrayNotHasKey('timedeleted', (array) $m3);
+
+        // Confirm the muted group conversation is correct.
+        $mutedconversations = (array) $writer->get_related_data([
+            get_string('messages', 'core_message'),
+            get_string($conversation1->itemtype, $conversation1->component),
+            $conversation1->name
+        ], 'muted');
+        $this->assertCount(0, $mutedconversations);
 
         // Confirm there are no favourite group conversation for user2.
         $favourite = (array) $writer->get_related_data([
@@ -1822,6 +1846,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // Mark as read one of the conversation messages.
         \core_message\api::mark_message_as_read($user1->id, $dbgm3, $now + 5);
 
+        // Mark some conversations as muted by two users.
+        \core_message\api::mute_conversation($user1->id, $iconversation1id);
+        \core_message\api::mute_conversation($user1->id, $conversation1->id);
+        \core_message\api::mute_conversation($user2->id, $conversation1->id);
+
         // There should be 2 contacts.
         $this->assertEquals(2, $DB->count_records('message_contacts'));
 
@@ -1836,6 +1865,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         // There should be 4 user actions - 3 for reading the message, 1 for deleting.
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
+
+        // There should be 3 muted conversations.
+        $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
 
         // There should be 4 conversations - 2 individual + 2 group.
         $this->assertEquals(4, $DB->count_records('message_conversations'));
@@ -1861,7 +1893,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be still 2 blocked users.
         $this->assertEquals(2, $DB->count_records('message_users_blocked'));
 
-        // There should be 5 notifications.
+        // There should be 1 muted conversation.
+        $this->assertEquals(1, $DB->count_records('message_conversation_actions'));
+
+        // There should be 3 notifications.
         $this->assertEquals(5, $DB->count_records('notifications'));
 
         // There should be 5 messages - 3 individual - 2 group (course2).
@@ -1992,6 +2027,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $dbgm3 = $DB->get_record('messages', ['id' => $gm3]);
 
+        // Mark some conversations as muted by two users.
+        \core_message\api::mute_conversation($user1->id, $iconversation1id);
+        \core_message\api::mute_conversation($user1->id, $conversation1->id);
+        \core_message\api::mute_conversation($user2->id, $conversation1->id);
+
         // Mark as read one of the conversation messages.
         \core_message\api::mark_message_as_read($user1->id, $dbgm3, $now + 5);
 
@@ -2009,6 +2049,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         // There should be 4 user actions - 3 for reading the message, 1 for deleting.
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
+
+        // There should be 3 muted conversations.
+        $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
 
         // There should be 4 conversations - 2 individual + 2 group.
         $this->assertEquals(4, $DB->count_records('message_conversations'));
@@ -2031,6 +2074,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(2, $DB->count_records('message_users_blocked'));
         $this->assertEquals(8, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
+        $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
         $this->assertEquals(5, $DB->count_records('notifications'));
@@ -2045,6 +2089,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(2, $DB->count_records('message_users_blocked'));
         $this->assertEquals(8, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
+        $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
         $this->assertEquals(5, $DB->count_records('notifications'));
@@ -2154,6 +2199,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // Mark as read one of the conversation messages.
         \core_message\api::mark_message_as_read($user1->id, $dbgm3, $now + 5);
 
+        // Mark some of the conversations as muted by two users.
+        \core_message\api::mute_conversation($user1->id, $iconversation1id);
+        \core_message\api::mute_conversation($user1->id, $conversation1->id);
+        \core_message\api::mute_conversation($user2->id, $conversation1->id);
+
         // There should be 2 contacts.
         $this->assertEquals(2, $DB->count_records('message_contacts'));
 
@@ -2168,6 +2218,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         // There should be 4 user actions - 3 for reading the message, 1 for deleting.
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
+
+        // There should be 3 muted conversations.
+        $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
 
         // There should be 4 conversations - 2 individual + 2 group.
         $this->assertEquals(4, $DB->count_records('message_conversations'));
@@ -2190,6 +2243,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(2, $DB->count_records('message_users_blocked'));
         $this->assertEquals(8, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
+        $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
         $this->assertEquals(5, $DB->count_records('notifications'));
@@ -2204,6 +2258,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(2, $DB->count_records('message_users_blocked'));
         $this->assertEquals(8, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
+        $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(9, $DB->count_records('message_conversation_members'));
         $this->assertEquals(5, $DB->count_records('notifications'));
@@ -2301,6 +2356,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // Mark as read one of the conversation messages.
         \core_message\api::mark_message_as_read($user1->id, $dbm3, $now + 5);
 
+        // Mark some of the conversations as muted by two users.
+        \core_message\api::mute_conversation($user1->id, $iconversation1id);
+        \core_message\api::mute_conversation($user1->id, $conversation1->id);
+        \core_message\api::mute_conversation($user2->id, $conversation1->id);
+
         // There should be 2 contacts.
         $this->assertEquals(2, $DB->count_records('message_contacts'));
 
@@ -2318,6 +2378,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         // There should be 4 user actions - 3 for reading the message, one for deleting.
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
+
+        // There should be 3 users muting a conversation.
+        $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
 
         // There should be 3 conversations - 2 private + 1 group.
         $this->assertEquals(3, $DB->count_records('message_conversations'));
@@ -2347,7 +2410,10 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be still 2 blocked users.
         $this->assertEquals(2, $DB->count_records('message_users_blocked'));
 
-        // There should be 5 notifications.
+        // There should be 2 muted conversation.
+        $this->assertEquals(2, $DB->count_records('message_conversation_actions'));
+
+        // There should be 3 notifications.
         $this->assertEquals(5, $DB->count_records('notifications'));
 
         // There should be 4 messages - 3 private + 1 group sent by user2.
@@ -2484,6 +2550,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // Mark as read one of the conversation messages.
         \core_message\api::mark_message_as_read($user1->id, $dbm3, $now + 5);
 
+        // Mark some of the conversations as muted by two users.
+        \core_message\api::mute_conversation($user1->id, $iconversation1id);
+        \core_message\api::mute_conversation($user1->id, $conversation1->id);
+        \core_message\api::mute_conversation($user2->id, $conversation1->id);
+
         // There should be 2 contacts.
         $this->assertEquals(2, $DB->count_records('message_contacts'));
 
@@ -2501,6 +2572,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         // There should be 4 user actions - 3 for reading the message, one for deleting.
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
+
+        // There should be 3 muted conversation.
+        $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
 
         // There should be 3 conversations - 2 private + 2 group.
         $this->assertEquals(4, $DB->count_records('message_conversations'));
@@ -2529,6 +2603,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(5, $DB->count_records('notifications'));
         $this->assertEquals(6, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
+        $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(8, $DB->count_records('message_conversation_members'));
         $this->assertEquals(3, $DB->count_records('favourite'));
@@ -2545,6 +2620,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(5, $DB->count_records('notifications'));
         $this->assertEquals(6, $DB->count_records('messages'));
         $this->assertEquals(4, $DB->count_records('message_user_actions'));
+        $this->assertEquals(3, $DB->count_records('message_conversation_actions'));
         $this->assertEquals(4, $DB->count_records('message_conversations'));
         $this->assertEquals(3, $DB->count_records('favourite'));
         // There should be 7 conversation members - (2 + 2) private + 3 group.
@@ -2582,6 +2658,9 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
                 return $action->messageid;
         }, $useractions);
         $this->assertNotContains($gm3, $useractions);
+
+        // There should be 1 muted conversation.
+        $this->assertEquals(1, $DB->count_records('message_conversation_actions'));
 
         // There should be still 4 conversations - 2 private + 2 group.
         $this->assertEquals(4, $DB->count_records('message_conversations'));

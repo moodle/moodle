@@ -100,6 +100,16 @@ class provider implements
         );
 
         $items->add_database_table(
+            'message_conversation_actions',
+            [
+                'conversationid' => 'privacy:metadata:message_conversation_actions:conversationid',
+                'userid' => 'privacy:metadata:message_conversation_actions:userid',
+                'timecreated' => 'privacy:metadata:message_conversation_actions:timecreated',
+            ],
+            'privacy:metadata:message_conversation_actions'
+        );
+
+        $items->add_database_table(
             'message_contacts',
             [
                 'userid' => 'privacy:metadata:message_contacts:userid',
@@ -205,6 +215,8 @@ class provider implements
         // It is enough to add the user's context as soon as we come to the conclusion that the user has some data.
         // Also, the order of checking is sorted by the probability of occurrence (just by guess).
         // There is no need to check the message_user_actions table, as there needs to be a message in order to be a message action.
+        // There is no need to check the message_conversation_actions table, as there needs to be a conversation in order to
+        // be a conversation action.
         // So, checking messages table would suffice.
 
         $hasdata = false;
@@ -258,6 +270,8 @@ class provider implements
         // It is enough to add the user's context as soon as we come to the conclusion that the user has some data.
         // Also, the order of checking is sorted by the probability of occurrence (just by guess).
         // There is no need to check the message_user_actions table, as there needs to be a message in order to be a message action.
+        // There is no need to check the message_conversation_actions table, as there needs to be a conversation in order to
+        // be a conversation action.
         // So, checking messages table would suffice.
 
         $hasdata = false;
@@ -568,6 +582,7 @@ class provider implements
 
             // Delete members and conversations.
             $DB->delete_records_list('message_conversation_members', 'conversationid', $conversationids);
+            $DB->delete_records_list('message_conversation_actions', 'conversationid', $conversationids);
             $DB->delete_records_list('message_conversations', 'id', $conversationids);
         }
     }
@@ -673,6 +688,9 @@ class provider implements
             // Reuse the $params var because it contains the useridparams and the conversationids.
             $DB->delete_records_select('message_conversation_members', $sql, $params);
 
+            // Delete any conversation actions.
+            $DB->delete_records_select('message_conversation_actions', $sql, $params);
+
             // Delete the favourite conversations.
             $userlist = new \core_privacy\local\request\approved_userlist($context, 'core_message', $userids);
             \core_favourites\privacy\provider::delete_favourites_for_userlist(
@@ -762,6 +780,9 @@ class provider implements
             $sql = "conversationid $conversationidsql AND userid = :userid";
             // Reuse the $params var because it contains the userid and the conversationids.
             $DB->delete_records_select('message_conversation_members', $sql, $params);
+
+            // Delete any conversation actions.
+            $DB->delete_records_select('message_conversation_actions', $sql, $params);
 
             // Delete the favourite conversations.
             if (empty($contextids) && empty($component) && empty($itemtype) && empty($itemid)) {
@@ -973,6 +994,20 @@ class provider implements
             if ($conversationfavourite) {
                 // If the conversation has been favorited by the user, include it in the export.
                 writer::with_context($context)->export_related_data($subcontext, 'starred', (object) $conversationfavourite);
+            }
+
+            // Check if the conversation was muted.
+            $params = [
+                'userid' => $userid,
+                'conversationid' => $conversation->id,
+                'action' => \core_message\api::CONVERSATION_ACTION_MUTED
+            ];
+            if ($mca = $DB->get_record('message_conversation_actions', $params)) {
+                $mcatostore = [
+                    'muted' => transform::yesno(true),
+                    'timecreated' => transform::datetime($mca->timecreated),
+                ];
+                writer::with_context($context)->export_related_data($subcontext, 'muted', (object) $mcatostore);
             }
         }
     }
