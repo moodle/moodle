@@ -146,8 +146,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
             } else {
                 $name = get_string('wildcard', 'qtype_calculated', $datasetdef->name);
             }
-            $mform->addElement('text', "number[{$j}]", $name);
-            $mform->setType("number[{$j}]", PARAM_RAW); // This parameter will be validated in validation().
+            $mform->addElement('float', "number[{$j}]", $name);
             $this->qtypeobj->custom_generator_tools_part($mform, $idx, $j);
             $idx++;
             $mform->addElement('hidden', "definition[{$j}]");
@@ -174,7 +173,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                 $mform->addElement('static',
                         'answercomment[' . ($this->noofitems+$key1) . ']', $ans);
                 $mform->addElement('hidden', 'tolerance['.$key.']', '');
-                $mform->setType('tolerance['.$key.']', PARAM_RAW);
+                $mform->setType('tolerance['.$key.']', PARAM_FLOAT); // No need to worry about localisation, as the value of this field will not be shown to users anymore.
                 $mform->setAdvanced('tolerance['.$key.']', true);
                 $mform->addElement('hidden', 'tolerancetype['.$key.']', '');
                 $mform->setType('tolerancetype['.$key.']', PARAM_RAW);
@@ -188,9 +187,8 @@ class question_dataset_dependent_items_form extends question_wizard_form {
             } else if ( $ans !== '' ) {
                 $mform->addElement('static', 'answercomment[' . ($this->noofitems+$key1) . ']',
                         $ans);
-                $mform->addElement('text', 'tolerance['.$key.']',
+                $mform->addElement('float', 'tolerance['.$key.']',
                         get_string('tolerance', 'qtype_calculated'));
-                $mform->setType('tolerance['.$key.']', PARAM_RAW);
                 $mform->setAdvanced('tolerance['.$key.']', true);
                 $mform->addElement('select', 'tolerancetype['.$key.']',
                         get_string('tolerancetype', 'qtype_numerical'),
@@ -287,17 +285,17 @@ class question_dataset_dependent_items_form extends question_wizard_form {
             foreach ($this->datasetdefs as $defkey => $datasetdef) {
                 if ($k > 0) {
                     if ($datasetdef->category == 0 ) {
-                        $mform->addElement('text', "number[{$j}]",
+                        $mform->addElement('float', "number[{$j}]",
                                 get_string('wildcard', 'qtype_calculated', $datasetdef->name));
                     } else {
-                        $mform->addElement('text', "number[{$j}]", get_string(
+                        $mform->addElement('float', "number[{$j}]", get_string(
                                 'sharedwildcard', 'qtype_calculated', $datasetdef->name));
                     }
 
                 } else {
                     $mform->addElement('hidden', "number[{$j}]" , '');
+                    $mform->setType("number[{$j}]", PARAM_LOCALISEDFLOAT); // Localisation handling has to be done manually.
                 }
-                $mform->setType("number[{$j}]", PARAM_RAW); // This parameter will be validated in validation().
                 $mform->addElement('hidden', "itemid[{$j}]");
                 $mform->setType("itemid[{$j}]", PARAM_INT);
 
@@ -408,7 +406,13 @@ class question_dataset_dependent_items_form extends question_wizard_form {
             $data = array();
             foreach ($this->datasetdefs as $defid => $datasetdef) {
                 if (isset($datasetdef->items[$itemnumber])) {
-                    $formdata["number[{$j}]"] = $datasetdef->items[$itemnumber]->value;
+                    $value = $datasetdef->items[$itemnumber]->value;
+                    if ($this->_form->getElementType("number[{$j}]") == 'hidden') {
+                        // Some of the number elements are from the float type and some are from the hidden type.
+                        // We need to manually handle localised floats for hidden elements.
+                        $value = format_float($value, strlen($value), true, true);
+                    }
+                    $formdata["number[{$j}]"] = $value;
                     $formdata["definition[{$j}]"] = $defid;
                     $formdata["itemid[{$j}]"] = $datasetdef->items[$itemnumber]->id;
                     $data[$datasetdef->name] = $datasetdef->items[$itemnumber]->value;
@@ -438,11 +442,16 @@ class question_dataset_dependent_items_form extends question_wizard_form {
             foreach ($this->datasetdefs as $defid => $datasetdef) {
                 if (!optional_param('updatedatasets', false, PARAM_BOOL) &&
                         !optional_param('updateanswers', false, PARAM_BOOL)) {
-                    $formdata["number[{$j}]"] = $this->qtypeobj->generate_dataset_item(
-                            $datasetdef->options);
+                    $value = $this->qtypeobj->generate_dataset_item($datasetdef->options);
                 } else {
-                    $formdata["number[{$j}]"] = $this->_form->getElementValue("number[{$j}]");
+                    $value = $this->_form->getElementValue("number[{$j}]");
                 }
+                if ($this->_form->getElementType("number[{$j}]") == 'hidden') {
+                    // Some of the number elements are from the float type and some are from the hidden type.
+                    // We need to manually handle localised floats for hidden elements.
+                    $value = format_float($value, strlen($value), true, true);
+                }
+                $formdata["number[{$j}]"] = $value;
                 $formdata["definition[{$j}]"] = $defid;
                 $formdata["itemid[{$j}]"] = isset($datasetdef->items[$itemnumber]) ?
                         $datasetdef->items[$itemnumber]->id : 0;
@@ -455,7 +464,6 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         $j = $this->noofitems * count($this->datasetdefs) + 1;
         if (!$this->regenerate && !optional_param('updatedatasets', false, PARAM_BOOL) &&
                 !optional_param('updateanswers', false, PARAM_BOOL)) {
-            $idx = 1;
             $itemnumber = $this->noofitems + 1;
             foreach ($this->datasetdefs as $defid => $datasetdef) {
                 if (isset($datasetdef->items[$itemnumber])) {
