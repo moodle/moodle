@@ -49,7 +49,7 @@ class main implements renderable, templatable {
 
         return [
             'userid' => $USER->id,
-            'nocoursesimgurl' => $nocoursesurl
+            'nocoursesimg' => $nocoursesurl
         ];
     }
 }

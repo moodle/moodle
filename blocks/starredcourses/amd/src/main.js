@@ -53,12 +53,12 @@ function(
      */
     var renderCourses = function(root, courses) {
         if (courses.length > 0) {
-            return Templates.render('block_starredcourses/view-cards', {
+            return Templates.render('core_course/view-cards', {
                 courses: courses
             });
         } else {
             var nocoursesimg = root.find(SELECTORS.STARRED_COURSES_REGION_VIEW).attr('data-nocoursesimg');
-            return Templates.render('block_starredcourses/no-courses', {
+            return Templates.render('core_course/no-courses', {
                 nocoursesimg: nocoursesimg
             });
         }

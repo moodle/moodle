@@ -20,8 +20,10 @@
  * @copyright  2018 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-$string['nocourses'] = 'No recent courses';
 $string['pluginname'] = 'Recently accessed courses';
 $string['privacy:metadata'] = 'The Recently accessed courses block does not store any personal data.';
 $string['recentlyaccessedcourses:addinstance'] = 'Add a new Recently accessed courses block';
 $string['recentlyaccessedcourses:myaddinstance'] = 'Add a new recently accessed courses block to Dashboard';
+
+// Deprecated since Moodle 3.7.
+$string['nocourses'] = 'No recent courses';
