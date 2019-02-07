@@ -115,8 +115,8 @@ class qtype_calculatedsimple_test extends advanced_testcase {
 
         for ($itemno = 1; $itemno <= 10; $itemno++) {
             $item = $datasetloader->get_values($itemno);
-            $this->assertEquals($formdata->number[($itemno -1)*2 + 2], $item['a']);
-            $this->assertEquals($formdata->number[($itemno -1)*2 + 1], $item['b']);
+            $this->assertEquals((float)$formdata->number[($itemno -1)*2 + 2], $item['a']);
+            $this->assertEquals((float)$formdata->number[($itemno -1)*2 + 1], $item['b']);
         }
     }
 }

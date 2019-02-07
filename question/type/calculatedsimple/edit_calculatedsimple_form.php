@@ -147,7 +147,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                 if ($dummyform->answer = optional_param_array('answer', '', PARAM_NOTAGS)) {
                     // There is always at least one answer...
                     $fraction = optional_param_array('fraction', '', PARAM_FLOAT);
-                    $tolerance = optional_param_array('tolerance', '', PARAM_FLOAT);
+                    $tolerance = optional_param_array('tolerance', '', PARAM_LOCALISEDFLOAT);
                     $tolerancetype = optional_param_array('tolerancetype', '', PARAM_FLOAT);
                     $correctanswerlength = optional_param_array('correctanswerlength', '', PARAM_INT);
                     $correctanswerformat = optional_param_array('correctanswerformat', '', PARAM_INT);
@@ -169,9 +169,9 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                 $this->datasetdefs = array();
                 // Rebuild datasetdefs from old values.
                 if ($olddef = optional_param_array('datasetdef', '', PARAM_RAW)) {
-                    $calcmin = optional_param_array('calcmin', '', PARAM_FLOAT);
+                    $calcmin = optional_param_array('calcmin', '', PARAM_LOCALISEDFLOAT);
                     $calclength = optional_param_array('calclength', '', PARAM_INT);
-                    $calcmax = optional_param_array('calcmax', '', PARAM_FLOAT);
+                    $calcmax = optional_param_array('calcmax', '', PARAM_LOCALISEDFLOAT);
                     $oldoptions  = optional_param_array('defoptions', '', PARAM_RAW);
                     $newdatasetvalues = false;
                     $sizeofolddef = count($olddef);
@@ -255,7 +255,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                     !($datasettoremove ||$newdataset ||$newdatasetvalues)) {
                 $i = 1;
                 $fromformdefinition = optional_param_array('definition', '', PARAM_NOTAGS);
-                $fromformnumber = optional_param_array('number', '', PARAM_RAW);// This parameter will be validated in the form.
+                $fromformnumber = optional_param_array('number', '', PARAM_LOCALISEDFLOAT);
                 $fromformitemid = optional_param_array('itemid', '', PARAM_INT);
                 ksort($fromformdefinition);
 
@@ -354,7 +354,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                 $j = $this->noofitems * count($this->datasetdefs);
                 for ($itemnumber = $this->noofitems; $itemnumber >= 1; $itemnumber--) {
                     $data = array();
-                    $numbererrors = array();
+                    $numbererrors = '';
                     $comment = new stdClass();
                     $comment->stranswers = array();
                     $comment->outsidelimit = false;
@@ -495,7 +495,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                 for ($i = $this->noofitems; $i >= 1; $i--) {
                     foreach ($this->datasetdefs as $defkey => $datasetdef) {
                         if ($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors)) {
-                            $mform->addElement('text', "number[{$j}]", get_string(
+                            $mform->addElement('float', "number[{$j}]", get_string(
                                     'wildcard', 'qtype_calculatedsimple', $datasetdef->name));
                             $mform->setAdvanced("number[{$j}]", true);
                             if (!empty($this->numbererrors['number['.$j.']'])) {
@@ -505,10 +505,13 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                                 $mform->setAdvanced("numbercomment[{$j}]", true);
                             }
                         } else {
-                            $mform->addElement('hidden', "number[{$j}]", get_string(
-                                    'wildcard', 'qtype_calculatedsimple', $datasetdef->name));
+                            $mform->addElement('hidden', "number[{$j}]", '');
+                            $mform->setType("number[{$j}]", PARAM_LOCALISEDFLOAT); // Localisation handling has to be done manually.
+                            if (isset($this->formdata["number[{$j}]"])) {
+                                $number = $this->formdata["number[{$j}]"];
+                                $this->formdata["number[{$j}]"] = format_float($number, strlen($number), true, true);
+                            }
                         }
-                        $mform->setType("number[{$j}]", PARAM_RAW); // This parameter will be validated in validation().
 
                         $mform->addElement('hidden', "itemid[{$j}]");
                         $mform->setType("itemid[{$j}]", PARAM_INT);
