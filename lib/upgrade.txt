@@ -9,6 +9,7 @@ information provided here is intended especially for developers.
 * The method core_user::is_real_user() now returns false for userid = 0 parameter
 * Added $CFG->conversionattemptlimit setting to config.php allowing a maximum number of retries before giving up conversion
   of a given document by the assignfeedback_editpdf\task\convert_submissions task. Default value: 3.
+* Icons are displayed for screen readers unless they have empty alt text (aria-hidden). Do not provide an icon with alt text immediately beside an element with exactly the same text.
 
 
 === 3.5.2 ===
