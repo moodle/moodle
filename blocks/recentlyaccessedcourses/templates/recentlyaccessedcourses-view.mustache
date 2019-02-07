@@ -21,19 +21,19 @@
 
     Example context (json):
     {
-        "nocoursesimgurl": "https://moodlesite/theme/image.php/boost/block_recentlyaccessedcourses/1535727318/courses"
+        "nocoursesimg": "https://moodlesite/theme/image.php/boost/block_recentlyaccessedcourses/1535727318/courses"
     }
 }}
 <div id="recentlyaccessedcourses-view-{{uniqid}}"
      data-region="recentlyaccessedcourses-view"
-     data-nocoursesimgurl="{{nocoursesimgurl}}">
+     data-nocoursesimg="{{nocoursesimg}}">
     <div data-region="recentlyaccessedcourses-view-content">
         <div data-region="recentlyaccessedcourses-loading-placeholder">
             <div class="card-deck dashboard-card-deck one-row" style="height: 11.1rem">
-                {{> block_recentlyaccessedcourses/placeholder-course }}
-                {{> block_recentlyaccessedcourses/placeholder-course }}
-                {{> block_recentlyaccessedcourses/placeholder-course }}
-                {{> block_recentlyaccessedcourses/placeholder-course }}
+                {{> core_course/placeholder-course }}
+                {{> core_course/placeholder-course }}
+                {{> core_course/placeholder-course }}
+                {{> core_course/placeholder-course }}
             </div>
         </div>
     </div>

@@ -54,7 +54,6 @@ $string['lastaccessed'] = 'Last accessed';
 $string['list'] = 'List';
 $string['myoverview:addinstance'] = 'Add a new course overview block';
 $string['myoverview:myaddinstance'] = 'Add a new course overview block to Dashboard';
-$string['nocourses'] = 'No courses';
 $string['past'] = 'Past';
 $string['pluginname'] = 'Course overview';
 $string['privacy:metadata:overviewsortpreference'] = 'The Course overview block sort preference.';
@@ -90,3 +89,6 @@ $string['timeline'] = 'Timeline';
 $string['viewcoursename'] = 'View course {$a}';
 $string['privacy:metadata:overviewlasttab'] = 'This stores the last tab selected by the user on the overview block.';
 $string['viewcourse'] = 'View course';
+
+// Deprecated since Moodle 3.7.
+$string['nocourses'] = 'No courses';
