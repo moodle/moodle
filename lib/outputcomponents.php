@@ -701,6 +701,11 @@ class pix_icon implements renderable, templatable {
             // and some browsers might overwrite it with an empty title.
             unset($this->attributes['title']);
         }
+
+        // Hide icons from screen readers that have no alt.
+        if (empty($this->attributes['alt'])) {
+            $this->attributes['aria-hidden'] = 'true';
+        }
     }
 
     /**
