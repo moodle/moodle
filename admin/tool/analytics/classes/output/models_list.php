@@ -201,7 +201,7 @@ class models_list implements \renderable, \templatable {
             }
 
             // Machine-learning-based models evaluation log.
-            if (!$model->is_static()) {
+            if (!$model->is_static() && $model->get_logs()) {
                 $urlparams['action'] = 'log';
                 $url = new \moodle_url('model.php', $urlparams);
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('i/report', get_string('viewlog', 'tool_analytics')),

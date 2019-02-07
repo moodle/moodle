@@ -67,8 +67,14 @@ if ($options['help']) {
     exit(0);
 }
 
-if ($options['list'] || $options['modelid'] === false) {
+if ($options['list']) {
     \tool_analytics\clihelper::list_models();
+    exit(0);
+}
+
+if ($options['modelid'] === false) {
+    // All actions but --list require a modelid.
+    echo $help;
     exit(0);
 }
 
@@ -79,6 +85,10 @@ if ($options['filter'] !== false) {
 
 if ($options['mode'] !== 'configuration' && $options['mode'] !== 'trainedmodel') {
     cli_error('Error: The provided mode is not supported');
+}
+
+if ($options['mode'] == 'trainedmodel' && $options['timesplitting']) {
+    cli_error('Sorry, no time splitting method can be specified when using \'trainedmodel\' mode.');
 }
 
 // We need admin permissions.

@@ -42,6 +42,11 @@ class model_logs extends \table_sql {
     protected $model = null;
 
     /**
+     * @var string|false
+     */
+    protected $evaluationmode = false;
+
+    /**
      * Sets up the table_log parameters.
      *
      * @param string $uniqueid unique id of form.
@@ -57,20 +62,31 @@ class model_logs extends \table_sql {
         $this->set_attribute('class', 'modellog generaltable generalbox');
         $this->set_attribute('aria-live', 'polite');
 
-        $this->define_columns(array('time', 'version', 'indicators', 'timesplitting', 'accuracy', 'info', 'usermodified'));
+        $this->define_columns(array('time', 'version', 'evaluationmode', 'indicators', 'timesplitting',
+            'accuracy', 'info', 'usermodified'));
         $this->define_headers(array(
             get_string('time'),
             get_string('version'),
+            get_string('evaluationmode', 'tool_analytics'),
             get_string('indicators', 'tool_analytics'),
             get_string('timesplittingmethod', 'analytics'),
             get_string('accuracy', 'tool_analytics'),
             get_string('info', 'tool_analytics'),
             get_string('fullnameuser'),
         ));
+
+        $evaluationmodehelp = new \help_icon('evaluationmode', 'tool_analytics');
+        $this->define_help_for_headers([null, null, $evaluationmodehelp, null, null, null, null, null]);
+
         $this->pageable(true);
         $this->collapsible(false);
         $this->sortable(false);
         $this->is_downloadable(false);
+
+        $this->evaluationmode = optional_param('evaluationmode', false, PARAM_ALPHANUM);
+        if ($this->evaluationmode && $this->evaluationmode != 'configuration' && $this->evaluationmode != 'trainedmodel') {
+            $this->evaluationmode = '';
+        }
 
         $this->define_baseurl($PAGE->url);
     }
@@ -86,6 +102,15 @@ class model_logs extends \table_sql {
         return userdate($log->version, $recenttimestr);
     }
 
+    /**
+     * Generate the evaluation mode column.
+     *
+     * @param \stdClass $log log data.
+     * @return string HTML for the evaluationmode column
+     */
+    public function col_evaluationmode($log) {
+        return get_string('evaluationmodecol' . $log->evaluationmode, 'tool_analytics');
+    }
     /**
      * Generate the time column.
      *

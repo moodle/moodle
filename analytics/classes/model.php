@@ -542,15 +542,22 @@ class model {
             $options['mode'] = 'configuration';
         }
 
-        if ($options['mode'] == 'trainedmodel') {
+        switch ($options['mode']) {
+            case 'trainedmodel':
 
-            // We are only interested on the time splitting method used by the trained model.
-            $options['timesplitting'] = $this->model->timesplitting;
+                // We are only interested on the time splitting method used by the trained model.
+                $options['timesplitting'] = $this->model->timesplitting;
 
-            // Provide the trained model directory to the ML backend if that is what we want to evaluate.
-            $trainedmodeldir = $this->get_output_dir(['execution']);
-        } else {
-            $trainedmodeldir = false;
+                // Provide the trained model directory to the ML backend if that is what we want to evaluate.
+                $trainedmodeldir = $this->get_output_dir(['execution']);
+                break;
+            case 'configuration':
+
+                $trainedmodeldir = false;
+                break;
+
+            default:
+                throw new \moodle_exception('errorunknownaction', 'analytics');
         }
 
         $this->init_analyser($options);
@@ -612,7 +619,7 @@ class model {
                 $dir = $predictorresult->dir;
             }
 
-            $result->logid = $this->log_result($timesplitting->get_id(), $result->score, $dir, $result->info);
+            $result->logid = $this->log_result($timesplitting->get_id(), $result->score, $dir, $result->info, $options['mode']);
 
             $results[$timesplitting->get_id()] = $result;
         }
@@ -1526,14 +1533,16 @@ class model {
      * @param float $score
      * @param string $dir
      * @param array $info
+     * @param string $evaluationmode
      * @return int The inserted log id
      */
-    protected function log_result($timesplittingid, $score, $dir = false, $info = false) {
+    protected function log_result($timesplittingid, $score, $dir = false, $info = false, $evaluationmode = 'configuration') {
         global $DB, $USER;
 
         $log = new \stdClass();
         $log->modelid = $this->get_id();
         $log->version = $this->model->version;
+        $log->evaluationmode = $evaluationmode;
         $log->target = $this->model->target;
         $log->indicators = $this->model->indicators;
         $log->timesplitting = $timesplittingid;
