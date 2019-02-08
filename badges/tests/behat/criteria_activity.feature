@@ -30,9 +30,15 @@ Feature: Award badges based on activity completion
     And quiz "Test quiz name" contains the following questions:
       | question       | page |
       | First question | 1    |
-    And user "student1" has attempted "Test quiz name" with responses:
-      | slot | response |
-      |   1  | False    |
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Test quiz name"
+    And I press "Attempt quiz now"
+    And I click on "False" "radio" in the "Answer the first question" "question"
+    And I press "Finish attempt ..."
+    And I press "Submit all and finish"
+    And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
+    And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Add a new badge" in current page administration
