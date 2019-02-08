@@ -58,7 +58,7 @@ function(
             });
         } else {
             var nocoursesimg = root.find(SELECTORS.STARRED_COURSES_REGION_VIEW).attr('data-nocoursesimg');
-            return Templates.render('core_course/no-courses', {
+            return Templates.render('block_starredcourses/no-courses', {
                 nocoursesimg: nocoursesimg
             });
         }
