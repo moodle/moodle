@@ -74,7 +74,7 @@ define(
                 });
             } else {
                 var nocoursesimgurl = root.attr('data-nocoursesimg');
-                return Templates.render('core_course/no-courses', {
+                return Templates.render('block_recentlyaccessedcourses/no-courses', {
                     nocoursesimg: nocoursesimgurl
                 });
             }
