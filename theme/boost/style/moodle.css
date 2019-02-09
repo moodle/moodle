@@ -11154,6 +11154,10 @@ div.editor_atto_toolbar button .icon {
     padding-left: 0.5rem;
     content: "/"; }
 
+@media (min-width: 576px) {
+  #page-admin-search .container {
+    overflow-wrap: break-word; } }
+
 .blockmovetarget .accesshide {
   position: relative;
   left: initial; }
