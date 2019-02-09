@@ -804,3 +804,11 @@
 #overriderolestable .overriddenpermission {
     @extend .table-warning;
 }
+
+#page-admin-search {
+    @media (min-width: 576px) {
+        .container {
+            overflow-wrap: break-word;
+        }
+    }
+}
