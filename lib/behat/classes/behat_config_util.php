@@ -700,26 +700,39 @@ class behat_config_util {
      * This is based on the current mobile app version (from its package.json) and all known
      * mobile app versions (based on the list appversions.json in the lib/behat directory).
      *
+     * @param bool $verbose If true, outputs information about installed app version
      * @return string List of tags or '' if not supporting mobile
      */
-    protected function get_mobile_version_tags() : string {
+    protected function get_mobile_version_tags($verbose = true) : string {
         global $CFG;
 
-        if (empty($CFG->behat_ionic_dirroot)) {
+        if (!empty($CFG->behat_ionic_dirroot)) {
+            // Get app version from package.json.
+            $jsonpath = $CFG->behat_ionic_dirroot . '/package.json';
+            $json = @file_get_contents($jsonpath);
+            if (!$json) {
+                throw new coding_exception('Unable to load app version from ' . $jsonpath);
+            }
+            $package = json_decode($json);
+            if ($package === null || empty($package->version)) {
+                throw new coding_exception('Invalid app package data in ' . $jsonpath);
+            }
+            $installedversion = $package->version;
+        } else if (!empty($CFG->behat_ionic_wwwroot)) {
+            // Get app version from config.json inside wwwroot.
+            $jsonurl = $CFG->behat_ionic_wwwroot . '/config.json';
+            $json = @download_file_content($jsonurl);
+            if (!$json) {
+                throw new coding_exception('Unable to load app version from ' . $jsonurl);
+            }
+            $config = json_decode($json);
+            if ($config === null || empty($config->versionname)) {
+                throw new coding_exception('Invalid app config data in ' . $jsonurl);
+            }
+            $installedversion = str_replace('-dev', '', $config->versionname);
+        } else {
             return '';
         }
-
-        // Get app version.
-        $jsonpath = $CFG->behat_ionic_dirroot . '/package.json';
-        $json = @file_get_contents($jsonpath);
-        if (!$json) {
-            throw new coding_exception('Unable to load app version from ' . $jsonpath);
-        }
-        $package = json_decode($json);
-        if ($package === null) {
-            throw new coding_exception('Invalid app package data in ' . $jsonpath);
-        }
-        $installedversion = $package->version;
 
         // Read all feature files to check which mobile tags are used. (Note: This could be cached
         // but ideally, it is the sort of thing that really ought to be refreshed by doing a new
@@ -751,7 +764,7 @@ class behat_config_util {
                     // Installed version OLDER than the one being considered, so do not
                     // include any scenarios that only run from the considered version up.
                     if ($direction === 'from') {
-                        $tags[] = '~app_from' . $version;
+                        $tags[] = '~@app_from' . $version;
                     }
                     break;
 
@@ -764,11 +777,16 @@ class behat_config_util {
                     // Installed version NEWER than the one being considered, so do not
                     // include any scenarios that only run up to that version.
                     if ($direction === 'upto') {
-                        $tags[] = '~app_upto' . $version;
+                        $tags[] = '~@app_upto' . $version;
                     }
                     break;
             }
         }
+
+        if ($verbose) {
+            mtrace('Configured app tests for version ' . $installedversion);
+        }
+
         return join(' && ', $tags);
     }
 
@@ -1360,7 +1378,8 @@ class behat_config_util {
 
         // Mobile app tests are not theme-specific, so run only for the default theme (and if
         // configured).
-        if (empty($CFG->behat_ionic_dirroot) || $theme !== $this->get_default_theme()) {
+        if ((empty($CFG->behat_ionic_dirroot) && empty($CFG->behat_ionic_wwwroot)) ||
+                $theme !== $this->get_default_theme()) {
             $themeblacklisttags[] = '@app';
         }
 
