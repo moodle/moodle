@@ -1734,6 +1734,25 @@ class lesson extends lesson_base {
     }
 
     /**
+     * Checks user enrollment in the current course.
+     *
+     * @param int $userid
+     * @return null|stdClass user record
+     */
+    public function is_participant($userid) {
+        return is_enrolled($this->get_context(), $userid, 'mod/lesson:view', $this->show_only_active_users());
+    }
+
+    /**
+     * Check is only active users in course should be shown.
+     *
+     * @return bool true if only active users should be shown.
+     */
+    public function show_only_active_users() {
+        return !has_capability('moodle/course:viewsuspendedusers', $this->get_context());
+    }
+
+    /**
      * Updates the lesson properties with override information for a user.
      *
      * Algorithm:  For each lesson setting, if there is a matching user-specific override,

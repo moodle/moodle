@@ -2184,6 +2184,12 @@ function mod_quiz_core_calendar_provide_event_action(calendar_event $event,
         return null;
     }
 
+    if (!$quizobj->is_participant($USER->id)) {
+        // If the user is not a participant then they have
+        // no action to take. This will filter out the events for teachers.
+        return null;
+    }
+
     $attempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id);
     if (!empty($attempts)) {
         // The student's last attempt is finished.
