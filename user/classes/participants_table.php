@@ -210,8 +210,8 @@ class participants_table extends \table_sql {
         $this->define_columns($columns);
         $this->define_headers($headers);
 
-        // Make this table sorted by first name by default.
-        $this->sortable(true, 'firstname');
+        // Make this table sorted by last name by default.
+        $this->sortable(true, 'lastname');
 
         $this->no_sorting('select');
         $this->no_sorting('roles');
