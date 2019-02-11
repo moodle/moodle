@@ -1464,6 +1464,12 @@ function mod_chat_core_calendar_provide_event_action(calendar_event $event,
     }
 
     $cm = get_fast_modinfo($event->courseid, $user->id)->instances['chat'][$event->instance];
+
+    if (!$cm->uservisible) {
+        // The module is not visible to the user for any reason.
+        return null;
+    }
+
     $chattime = $DB->get_field('chat', 'chattime', array('id' => $event->instance));
     $usertimezone = core_date::get_user_timezone($user);
     $chattimemidnight = usergetmidnight($chattime, $usertimezone);
