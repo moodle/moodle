@@ -86,8 +86,8 @@
         </caption>
     <thead>
         <tr>
-            <th scope="col" class="col-sm-10">{{#str}}name{{/str}}</th>
-            <th scope="col" class="col-sm-2">{{#str}}actions{{/str}}</th>
+            <th scope="col">{{#str}}name{{/str}}</th>
+            <th scope="col">{{#str}}actions{{/str}}</th>
         </tr>
     </thead>
     <tbody>
@@ -99,13 +99,13 @@
     <caption>{{#str}}predictiondetails, report_insights{{/str}}</caption>
     <tbody>
         <tr>
-            <td scope="col" class="col-sm-3">{{#str}}timecreated, report_insights{{/str}}</td>
-            <td scope="col" class="col-sm-9">{{timecreated}}</td>
+            <td scope="row">{{#str}}timecreated, report_insights{{/str}}</td>
+            <td>{{timecreated}}</td>
         </tr>
         {{#timerange}}
             <tr>
-                <td scope="col" class="col-sm-3">{{#str}}timerange, report_insights{{/str}}</td>
-                <td scope="col" class="col-sm-9">{{.}}</td>
+                <td scope="row">{{#str}}timerange, report_insights{{/str}}</td>
+                <td>{{.}}</td>
             </tr>
         {{/timerange}}
     </tbody>
@@ -114,15 +114,15 @@
     <caption class="accesshide">{{#str}}predictioncalculations, report_insights{{/str}}</caption>
     <thead>
         <tr>
-            <th scope="col" class="col-sm-8">{{#str}}indicator, report_insights{{/str}}</th>
-            <th scope="col" class="col-sm-4">{{#str}}calculatedvalue, report_insights{{/str}}</th>
+            <th scope="col">{{#str}}indicator, report_insights{{/str}}</th>
+            <th scope="col">{{#str}}calculatedvalue, report_insights{{/str}}</th>
         </tr>
     </thead>
     <tbody>
     {{#calculations}}
         <tr>
-            <td class="{{#style}}table-{{style}}{{/style}} col-sm-8">{{name}}</td>
-            <td class="{{#style}}table-{{style}}{{/style}} col-sm-4">{{#outcomeicon}}{{> core/pix_icon}}{{/outcomeicon}} {{displayvalue}}</td>
+            <td class="{{#style}}table-{{style}}{{/style}}">{{name}}</td>
+            <td class="{{#style}}table-{{style}}{{/style}}">{{#outcomeicon}}{{> core/pix_icon}}{{/outcomeicon}} {{displayvalue}}</td>
         </tr>
     {{/calculations}}
     </tbody>
