@@ -161,47 +161,55 @@ class provider implements
         $completioninfo = new \completion_info($course);
         $completion = $completioninfo->is_enabled();
 
-        if ($completion == COMPLETION_ENABLED) {
+        if ($completion != COMPLETION_ENABLED) {
+            return [];
+        }
 
-            $coursecomplete = $completioninfo->is_course_complete($user->id);
+        $coursecomplete = $completioninfo->is_course_complete($user->id);
+
+        if ($coursecomplete) {
+            $status = get_string('complete');
+        } else {
             $criteriacomplete = $completioninfo->count_course_user_data($user->id);
             $ccompletion = new \completion_completion(['userid' => $user->id, 'course' => $course->id]);
 
-            $status = ($coursecomplete) ? get_string('complete') : '';
-            $status = (!$criteriacomplete && !$ccompletion->timestarted) ? get_string('notyetstarted', 'completion') :
-                    get_string('inprogress', 'completion');
-
-            $completions = $completioninfo->get_completions($user->id);
-            $overall = get_string('nocriteriaset', 'completion');
-            if (!empty($completions)) {
-                if ($completioninfo->get_aggregation_method() == COMPLETION_AGGREGATION_ALL) {
-                    $overall = get_string('criteriarequiredall', 'completion');
-                } else {
-                    $overall = get_string('criteriarequiredany', 'completion');
-                }
+            if (!$criteriacomplete && !$ccompletion->timestarted) {
+                $status = get_string('notyetstarted', 'completion');
+            } else {
+                $status = get_string('inprogress', 'completion');
             }
-
-            $coursecompletiondata = [
-                'status' => $status,
-                'required' => $overall,
-            ];
-
-            $coursecompletiondata['criteria'] = array_map(function($completion) use ($completioninfo) {
-                $criteria = $completion->get_criteria();
-                $aggregation = $completioninfo->get_aggregation_method($criteria->criteriatype);
-                $required = ($aggregation == COMPLETION_AGGREGATION_ALL) ? get_string('all', 'completion') :
-                        get_string('any', 'completion');
-                $data = [
-                    'required' => $required,
-                    'completed' => transform::yesno($completion->is_complete()),
-                    'timecompleted' => isset($completion->timecompleted) ? transform::datetime($completion->timecompleted) : ''
-                ];
-                $details = $criteria->get_details($completion);
-                $data = array_merge($data, $details);
-                return $data;
-            }, $completions);
-            return $coursecompletiondata;
         }
+
+        $completions = $completioninfo->get_completions($user->id);
+        $overall = get_string('nocriteriaset', 'completion');
+        if (!empty($completions)) {
+            if ($completioninfo->get_aggregation_method() == COMPLETION_AGGREGATION_ALL) {
+                $overall = get_string('criteriarequiredall', 'completion');
+            } else {
+                $overall = get_string('criteriarequiredany', 'completion');
+            }
+        }
+
+        $coursecompletiondata = [
+            'status' => $status,
+            'required' => $overall,
+        ];
+
+        $coursecompletiondata['criteria'] = array_map(function($completion) use ($completioninfo) {
+            $criteria = $completion->get_criteria();
+            $aggregation = $completioninfo->get_aggregation_method($criteria->criteriatype);
+            $required = ($aggregation == COMPLETION_AGGREGATION_ALL) ? get_string('all', 'completion') :
+                    get_string('any', 'completion');
+            $data = [
+                'required' => $required,
+                'completed' => transform::yesno($completion->is_complete()),
+                'timecompleted' => isset($completion->timecompleted) ? transform::datetime($completion->timecompleted) : ''
+            ];
+            $details = $criteria->get_details($completion);
+            $data = array_merge($data, $details);
+            return $data;
+        }, $completions);
+        return $coursecompletiondata;
     }
 
     /**
