@@ -216,4 +216,39 @@ class mod_lesson_locallib_testcase extends advanced_testcase {
 
         $this->assertEquals($comparearray, lesson_get_user_deadline($course->id));
     }
+
+    public function test_is_participant() {
+        global $USER, $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student', [], 'manual', 0, 0, ENROL_USER_SUSPENDED);
+        $lessonmodule = $this->getDataGenerator()->create_module('lesson', array('course' => $course->id));
+
+        // Login as student.
+        $this->setUser($student);
+        // Convert to a lesson object.
+        $lesson = new lesson($lessonmodule);
+        $this->assertEquals(true, $lesson->is_participant($student->id),
+            'Student is enrolled, active and can participate');
+
+        // Login as student2.
+        $this->setUser($student2);
+        $this->assertEquals(false, $lesson->is_participant($student2->id),
+            'Student is enrolled, suspended and can NOT participate');
+
+        // Login as an admin.
+        $this->setAdminUser();
+        $this->assertEquals(false, $lesson->is_participant($USER->id),
+            'Admin is not enrolled and can NOT participate');
+
+        $this->getDataGenerator()->enrol_user(2, $course->id);
+        $this->assertEquals(true, $lesson->is_participant($USER->id),
+            'Admin is enrolled and can participate');
+
+        $this->getDataGenerator()->enrol_user(2, $course->id, [], 'manual', 0, 0, ENROL_USER_SUSPENDED);
+        $this->assertEquals(true, $lesson->is_participant($USER->id),
+            'Admin is enrolled, suspended and can participate');
+    }
 }
