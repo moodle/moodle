@@ -159,8 +159,7 @@ class manager {
 
             $s = new \stdClass();
             $s->sitename = format_string($SITE->shortname, true, array('context' => \context_course::instance(SITEID)));
-            // When the new interface lands, the URL may be reintroduced, but for now it isn't supported, so just hit the index.
-            $s->url = $CFG->wwwroot.'/message/index.php';
+            $s->url = $CFG->wwwroot.'/message/index.php?id='.$eventdata->userfrom->id;
             $emailtagline = get_string_manager()->get_string('emailtagline', 'message', $s, $recipient->lang);
 
             $localisedeventdata->fullmessage = $eventdata->fullmessage;
