@@ -15,17 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version info
+ * Mobile app support.
  *
  * @package    tool_mobile
- * @copyright  2016 Juan Leyva
+ * @copyright  2019 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-$plugin->version   = 2019021100; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018112800; // Requires this Moodle version.
-$plugin->component = 'tool_mobile'; // Full name of the plugin (used for diagnostics).
-$plugin->dependencies = array(
-    'webservice_rest' => 2018112800
-);
+
+require_once($CFG->dirroot . '/lib/upgradelib.php');
+
+/**
+ * Upgrade the plugin.
+ *
+ * @param int $oldversion
+ * @return bool always true
+ */
+function xmldb_tool_mobile_upgrade($oldversion) {
+    global $CFG;
+
+    if ($oldversion < 2019021100) {
+        $disabledfeatures = get_config('tool_mobile', 'disabledfeatures');
+        $disabledfeatures = str_replace('remoteAddOn_', 'sitePlugin_', $disabledfeatures);
+        set_config('disabledfeatures', $disabledfeatures, 'tool_mobile');
+        upgrade_plugin_savepoint(true, 2019021100, 'tool', 'mobile');
+    }
+
+    return true;
+}
