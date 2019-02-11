@@ -705,12 +705,12 @@ class behat_config_util {
     protected function get_mobile_version_tags() : string {
         global $CFG;
 
-        if (empty($CFG->behat_approot)) {
+        if (empty($CFG->behat_ionic_dirroot)) {
             return '';
         }
 
         // Get app version.
-        $jsonpath = $CFG->behat_approot . '/package.json';
+        $jsonpath = $CFG->behat_ionic_dirroot . '/package.json';
         $json = @file_get_contents($jsonpath);
         if (!$json) {
             throw new coding_exception('Unable to load app version from ' . $jsonpath);
@@ -1360,7 +1360,7 @@ class behat_config_util {
 
         // Mobile app tests are not theme-specific, so run only for the default theme (and if
         // configured).
-        if (empty($CFG->behat_approot) || $theme !== $this->get_default_theme()) {
+        if (empty($CFG->behat_ionic_dirroot) || $theme !== $this->get_default_theme()) {
             $themeblacklisttags[] = '@app';
         }
 

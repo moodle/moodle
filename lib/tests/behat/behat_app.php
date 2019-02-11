@@ -103,8 +103,8 @@ class behat_app extends behat_base {
         }
 
         // Check the config settings are defined.
-        if (empty($CFG->behat_ionicaddress) && empty($CFG->behat_approot)) {
-            throw new DriverException('$CFG->behat_ionicaddress or $CFG->behat_approot must be defined.');
+        if (empty($CFG->behat_ionic_wwwroot) && empty($CFG->behat_ionic_dirroot)) {
+            throw new DriverException('$CFG->behat_ionic_wwwroot or $CFG->behat_ionic_dirroot must be defined.');
         }
     }
 
@@ -176,15 +176,15 @@ class behat_app extends behat_base {
     protected function start_or_reuse_ionic() {
         global $CFG;
 
-        if (!empty($CFG->behat_ionicaddress)) {
+        if (!empty($CFG->behat_ionic_wwwroot)) {
             // Use supplied Ionic server which should already be running.
-            $url = $CFG->behat_ionicaddress;
+            $url = $CFG->behat_ionic_wwwroot;
         } else if (self::$ionicrunning) {
             // Use existing Ionic instance launched previously.
             $url = self::$ionicrunning->url;
         } else {
             // Open Ionic process in relevant path.
-            $path = realpath($CFG->behat_approot);
+            $path = realpath($CFG->behat_ionic_dirroot);
             $stderrfile = $CFG->dataroot . '/behat/ionic-stderr.log';
             $prefix = '';
             // Except on Windows, use 'exec' so that we get the pid of the actual Node process

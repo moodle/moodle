@@ -869,11 +869,11 @@ $CFG->admin = 'admin';
 //   define('BEHAT_DISABLE_HISTOGRAM', true);
 //
 // Mobile app Behat testing requires this option, pointing to a developer Moodle Mobile directory:
-//   $CFG->behat_approot = '/where/I/keep/my/git/checkouts/moodlemobile2';
+//   $CFG->behat_ionic_dirroot = '/where/I/keep/my/git/checkouts/moodlemobile2';
 //
 // The following option can be used to indicate a running Ionic server (otherwise Behat will start
 // one automatically for each test run, which is convenient but takes ages):
-//   $CFG->behat_ionicaddress = 'http://localhost:8100';
+//   $CFG->behat_ionic_wwwroot = 'http://localhost:8100';
 //
 //=========================================================================
 // 12. DEVELOPER DATA GENERATOR
