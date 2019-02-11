@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains alignment class for displaying a badge alignment.
+ * Contains class for displaying a recipient.
  *
  * @package   core_badges
- * @copyright 2018 Dani Palou <dani@moodle.com>
+ * @copyright 2019 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,13 +29,13 @@ defined('MOODLE_INTERNAL') || die();
 use core\external\exporter;
 
 /**
- * Class for displaying a badge alignment.
+ * Class for displaying a badge competency.
  *
  * @package   core_badges
- * @copyright 2018 Dani Palou <dani@moodle.com>
+ * @copyright 2019 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class alignment_exporter extends exporter {
+class recipient_exporter extends exporter {
 
     /**
      * Return the list of properties.
@@ -44,44 +44,28 @@ class alignment_exporter extends exporter {
      */
     protected static function define_properties() {
         return [
-            'id' => [
-                'type' => PARAM_INT,
-                'description' => 'Alignment id',
+            'identity' => [
+                'type' => PARAM_RAW,
+                'description' => 'Hashed email address to issue badge to.',
+            ],
+            'plaintextIdentity' => [
+                'type' => PARAM_RAW,
+                'description' => 'Email address to issue badge to.',
                 'optional' => true,
             ],
-            'badgeid' => [
-                'type' => PARAM_INT,
-                'description' => 'Badge id',
+            'salt' => [
+                'type' => PARAM_RAW,
+                'description' => 'Salt used to hash email.',
                 'optional' => true,
             ],
-            'targetName' => [
-                'type' => PARAM_TEXT,
-                'description' => 'Target name',
-                'optional' => true,
+            'type' => [
+                'type' => PARAM_ALPHA,
+                'description' => 'Email',
             ],
-            'targetUrl' => [
-                'type' => PARAM_URL,
-                'description' => 'Target URL',
-                'optional' => true,
+            'hashed' => [
+                'type' => PARAM_BOOL,
+                'description' => 'Should be true',
             ],
-            'targetDescription' => [
-                'type' => PARAM_TEXT,
-                'description' => 'Target description',
-                'null' => NULL_ALLOWED,
-                'optional' => true,
-            ],
-            'targetFramework' => [
-                'type' => PARAM_TEXT,
-                'description' => 'Target framework',
-                'null' => NULL_ALLOWED,
-                'optional' => true,
-            ],
-            'targetCode' => [
-                'type' => PARAM_TEXT,
-                'description' => 'Target code',
-                'null' => NULL_ALLOWED,
-                'optional' => true,
-            ]
         ];
     }
 

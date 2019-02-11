@@ -24,6 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use \core_badges\badge;
 /**
  * Event observer for badges.
  */
@@ -87,6 +88,9 @@ class core_badges_observer {
             $ucid = $event->other['usercompetencyid'];
             $cid = $event->other['competencyid'];
             $userid = $event->relateduserid;
+            if (!$eventdata) {
+                return;
+            }
 
             if ($rs = $DB->get_records('badge_criteria_param', array('name' => 'competency_' . $cid, 'value' => $cid))) {
                 foreach ($rs as $r) {

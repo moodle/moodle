@@ -177,6 +177,8 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
             if (!empty($alignments)) {
                 foreach ($alignments as $alignment) {
                     // Students cannot see some fields of the alignments.
+                    unset($alignment->targetname);
+                    unset($alignment->targeturl);
                     unset($alignment->targetdescription);
                     unset($alignment->targetframework);
                     unset($alignment->targetcode);

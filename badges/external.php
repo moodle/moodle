@@ -37,6 +37,7 @@ $hash = required_param('hash', PARAM_ALPHANUM);
 $userid = required_param('user', PARAM_INT);
 
 $PAGE->set_url(new moodle_url('/badges/external.php', array('hash' => $hash, 'user' => $userid)));
+$PAGE->set_context(context_system::instance());
 
 // Using the same setting as user profile page.
 if (!empty($CFG->forceloginforprofiles)) {
@@ -75,15 +76,21 @@ if (empty($badge)) {
     print_error('error:externalbadgedoesntexist', 'badges');
 }
 
-$PAGE->set_context(context_system::instance());
 $output = $PAGE->get_renderer('core', 'badges');
 
-$badge = new external_badge($badge, $userid);
+$badge = new \core_badges\output\external_badge($badge, $userid);
 
 $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('issuedbadge', 'badges'));
-$PAGE->set_heading(s($badge->issued->assertion->badge->name));
-$PAGE->navbar->add(s($badge->issued->assertion->badge->name));
+$badgename = '';
+if (!empty($badge->issued->name)) {
+    $badgename = s($badge->issued->name);
+}
+if (!empty($badge->issued->assertion->badge->name)) {
+    $badgename = s($badge->issued->assertion->badge->name);
+}
+$PAGE->set_heading($badgename);
+$PAGE->navbar->add($badgename);
 if (isloggedin() && $USER->id == $userid) {
     $url = new moodle_url('/badges/mybadges.php');
 } else {

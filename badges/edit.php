@@ -26,10 +26,10 @@
 
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
-require_once($CFG->dirroot . '/badges/edit_form.php');
+require_once($CFG->libdir . '/filelib.php');
 
 $badgeid = required_param('id', PARAM_INT);
-$action = optional_param('action', 'details', PARAM_TEXT);
+$action = optional_param('action', 'badge', PARAM_TEXT);
 
 require_login();
 
@@ -84,13 +84,13 @@ $editoroptions = array(
         );
 $badge = file_prepare_standard_editor($badge, 'message', $editoroptions, $context);
 
-$formclass = 'edit_' . $action . '_form';
+$formclass = '\core_badges\form' . '\\' . $action;
 $form = new $formclass($currenturl, array('badge' => $badge, 'action' => $action, 'editoroptions' => $editoroptions));
 
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/badges/overview.php', array('id' => $badgeid)));
 } else if ($form->is_submitted() && $form->is_validated() && ($data = $form->get_data())) {
-    if ($action == 'details') {
+    if ($action == 'badge') {
         $badge->name = $data->name;
         $badge->version = trim($data->version);
         $badge->language = $data->language;

@@ -108,7 +108,7 @@ if ($badge->status != BADGE_STATUS_INACTIVE) {
                 if ($item->targetcode) {
                     $alignment['targetCode'] = $item->targetcode;
                 }
-                $json['alignment'][] = $alignment;
+                $json['alignments'][] = $alignment;
             }
         }
     } else if ($action == 0) {

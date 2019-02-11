@@ -38,7 +38,7 @@ $PAGE->set_url('/badges/badge.php', array('hash' => $id));
 $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('issuedbadge', 'badges'));
 
-$badge = new issued_badge($id);
+$badge = new \core_badges\output\issued_badge($id);
 if (!empty($badge->recipient->id)) {
     if ($bake && ($badge->recipient->id == $USER->id)) {
         $name = str_replace(' ', '_', $badge->badgeclass['name']) . '.png';

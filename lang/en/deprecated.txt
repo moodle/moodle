@@ -154,3 +154,7 @@ undockall,core_block
 undockblock,core_block
 undockitem,core_block
 canceledit,core_message
+backpackbadges,core_badges
+nobackpackbadges,core_badges
+nobackpackcollections,core_badges
+error:nogroups,core_badges
