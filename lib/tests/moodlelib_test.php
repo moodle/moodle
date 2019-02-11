@@ -3929,6 +3929,163 @@ class core_moodlelib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test allowemailaddresses setting.
+     *
+     * @param string $email Email address for the from user.
+     * @param string $config The CFG->allowemailaddresses config values
+     * @param false/string $result The expected result.
+     *
+     * @dataProvider data_email_is_not_allowed_for_allowemailaddresses
+     */
+    public function test_email_is_not_allowed_for_allowemailaddresses($email, $config, $result) {
+        $this->resetAfterTest();
+
+        set_config('allowemailaddresses', $config);
+        $this->assertEquals($result, email_is_not_allowed($email));
+    }
+
+    /**
+     * Data provider for data_email_is_not_allowed_for_allowemailaddresses.
+     *
+     * @return array Returns an array of test data for the above function.
+     */
+    public function data_email_is_not_allowed_for_allowemailaddresses() {
+        return [
+            // Test allowed domain empty list.
+            [
+                'email' => 'fromuser@example.com',
+                'config' => '',
+                'result' => false
+            ],
+            // Test from email is in allowed domain.
+            [
+                'email' => 'fromuser@example.com',
+                'config' => 'example.com test.com',
+                'result' => false
+            ],
+            // Test from email is in allowed domain but uppercase config.
+            [
+                'email' => 'fromuser@example.com',
+                'config' => 'EXAMPLE.com test.com',
+                'result' => false
+            ],
+            // Test from email is in allowed domain but uppercase email.
+            [
+                'email' => 'fromuser@EXAMPLE.com',
+                'config' => 'example.com test.com',
+                'result' => false
+            ],
+            // Test from email is in allowed subdomain.
+            [
+                'email' => 'fromuser@something.example.com',
+                'config' => '.example.com test.com',
+                'result' => false
+            ],
+            // Test from email is in allowed subdomain but uppercase config.
+            [
+                'email' => 'fromuser@something.example.com',
+                'config' => '.EXAMPLE.com test.com',
+                'result' => false
+            ],
+            // Test from email is in allowed subdomain but uppercase email.
+            [
+                'email' => 'fromuser@something.EXAMPLE.com',
+                'config' => '.example.com test.com',
+                'result' => false
+            ],
+            // Test from email is not in allowed domain.
+            [   'email' => 'fromuser@moodle.com',
+                'config' => 'example.com test.com',
+                'result' => get_string('emailonlyallowed', '', 'example.com test.com')
+            ],
+            // Test from email is not in allowed subdomain.
+            [   'email' => 'fromuser@something.example.com',
+                'config' => 'example.com test.com',
+                'result' => get_string('emailonlyallowed', '', 'example.com test.com')
+            ],
+        ];
+    }
+
+    /**
+     * Test denyemailaddresses setting.
+     *
+     * @param string $email Email address for the from user.
+     * @param string $config The CFG->denyemailaddresses config values
+     * @param false/string $result The expected result.
+     *
+     * @dataProvider data_email_is_not_allowed_for_denyemailaddresses
+     */
+    public function test_email_is_not_allowed_for_denyemailaddresses($email, $config, $result) {
+        $this->resetAfterTest();
+
+        set_config('denyemailaddresses', $config);
+        $this->assertEquals($result, email_is_not_allowed($email));
+    }
+
+
+    /**
+     * Data provider for test_email_is_not_allowed_for_denyemailaddresses.
+     *
+     * @return array Returns an array of test data for the above function.
+     */
+    public function data_email_is_not_allowed_for_denyemailaddresses() {
+        return [
+            // Test denied domain empty list.
+            [
+                'email' => 'fromuser@example.com',
+                'config' => '',
+                'result' => false
+            ],
+            // Test from email is in denied domain.
+            [
+                'email' => 'fromuser@example.com',
+                'config' => 'example.com test.com',
+                'result' => get_string('emailnotallowed', '', 'example.com test.com')
+            ],
+            // Test from email is in denied domain but uppercase config.
+            [
+                'email' => 'fromuser@example.com',
+                'config' => 'EXAMPLE.com test.com',
+                'result' => get_string('emailnotallowed', '', 'EXAMPLE.com test.com')
+            ],
+            // Test from email is in denied domain but uppercase email.
+            [
+                'email' => 'fromuser@EXAMPLE.com',
+                'config' => 'example.com test.com',
+                'result' => get_string('emailnotallowed', '', 'example.com test.com')
+            ],
+            // Test from email is in denied subdomain.
+            [
+                'email' => 'fromuser@something.example.com',
+                'config' => '.example.com test.com',
+                'result' => get_string('emailnotallowed', '', '.example.com test.com')
+            ],
+            // Test from email is in denied subdomain but uppercase config.
+            [
+                'email' => 'fromuser@something.example.com',
+                'config' => '.EXAMPLE.com test.com',
+                'result' => get_string('emailnotallowed', '', '.EXAMPLE.com test.com')
+            ],
+            // Test from email is in denied subdomain but uppercase email.
+            [
+                'email' => 'fromuser@something.EXAMPLE.com',
+                'config' => '.example.com test.com',
+                'result' => get_string('emailnotallowed', '', '.example.com test.com')
+            ],
+            // Test from email is not in denied domain.
+            [   'email' => 'fromuser@moodle.com',
+                'config' => 'example.com test.com',
+                'result' => false
+            ],
+            // Test from email is not in denied subdomain.
+            [   'email' => 'fromuser@something.example.com',
+                'config' => 'example.com test.com',
+                'result' => false
+            ],
+        ];
+    }
+
+    /**
      * Test safe method unserialize_array().
      */
     public function test_unserialize_array() {
