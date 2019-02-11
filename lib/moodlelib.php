@@ -6381,8 +6381,10 @@ function send_password_change_info($user) {
 function email_is_not_allowed($email) {
     global $CFG;
 
+    // Comparing lowercase domains.
+    $email = strtolower($email);
     if (!empty($CFG->allowemailaddresses)) {
-        $allowed = explode(' ', $CFG->allowemailaddresses);
+        $allowed = explode(' ', strtolower($CFG->allowemailaddresses));
         foreach ($allowed as $allowedpattern) {
             $allowedpattern = trim($allowedpattern);
             if (!$allowedpattern) {
@@ -6401,7 +6403,7 @@ function email_is_not_allowed($email) {
         return get_string('emailonlyallowed', '', $CFG->allowemailaddresses);
 
     } else if (!empty($CFG->denyemailaddresses)) {
-        $denied = explode(' ', $CFG->denyemailaddresses);
+        $denied = explode(' ', strtolower($CFG->denyemailaddresses));
         foreach ($denied as $deniedpattern) {
             $deniedpattern = trim($deniedpattern);
             if (!$deniedpattern) {
