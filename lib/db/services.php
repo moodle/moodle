@@ -138,6 +138,7 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'moodle/calendar:manageentries, moodle/calendar:manageownentries, moodle/calendar:managegroupentries',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_calendar_create_calendar_events' => array(
         'classname' => 'core_calendar_external',
@@ -215,6 +216,7 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'moodle/calendar:manageentries, moodle/calendar:manageownentries, moodle/calendar:managegroupentries',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_cohort_add_cohort_members' => array(
         'classname' => 'core_cohort_external',
