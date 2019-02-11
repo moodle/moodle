@@ -240,7 +240,7 @@ if ($generalforums) {
                 if (isset($untracked[$forum->id])) {
                         $unreadlink  = '-';
                 } else if ($unread = forum_tp_count_forum_unread_posts($cm, $course)) {
-                    $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                    $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'#unread">'.$unread.'</a>';
                     $icon = $OUTPUT->pix_icon('t/markasread', $strmarkallread);
                     $unreadlink .= '<a title="'.$strmarkallread.'" href="markposts.php?f='.
                                    $forum->id.'&amp;mark=read&amp;sesskey=' . sesskey() . '">' . $icon . '</a></span>';
@@ -371,7 +371,7 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
                     if (isset($untracked[$forum->id])) {
                         $unreadlink  = '-';
                     } else if ($unread = forum_tp_count_forum_unread_posts($cm, $course)) {
-                        $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                        $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'#unread">'.$unread.'</a>';
                         $icon = $OUTPUT->pix_icon('t/markasread', $strmarkallread);
                         $unreadlink .= '<a title="'.$strmarkallread.'" href="markposts.php?f='.
                                        $forum->id.'&amp;mark=read&sesskey=' . sesskey() . '">' . $icon . '</a></span>';
