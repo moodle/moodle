@@ -358,7 +358,7 @@ class behat_app extends behat_base {
      */
     public function i_press_the_standard_button_in_the_app(string $button) {
         $this->spin(function($context, $args) use ($button) {
-            $result = $this->getSession()->evaluateScript('return window.behatPressStandard("' .
+            $result = $this->getSession()->evaluateScript('return window.behat.pressStandard("' .
                     $button . '");');
             if ($result !== 'OK') {
                 throw new DriverException('Error pressing standard button - ' . $result);
@@ -376,7 +376,7 @@ class behat_app extends behat_base {
      */
     public function i_close_the_popup_in_the_app() {
         $this->spin(function($context, $args)  {
-            $result = $this->getSession()->evaluateScript('return window.behatClosePopup();');
+            $result = $this->getSession()->evaluateScript('return window.behat.closePopup();');
             if ($result !== 'OK') {
                 throw new DriverException('Error closing popup - ' . $result);
             }
@@ -434,7 +434,7 @@ class behat_app extends behat_base {
             } else {
                 $nearbit = '';
             }
-            $result = $context->getSession()->evaluateScript('return window.behatPress("' .
+            $result = $context->getSession()->evaluateScript('return window.behat.press("' .
                     addslashes_js($text) . '"' . $nearbit .');');
             if ($result !== 'OK') {
                 throw new DriverException('Error pressing item - ' . $result);
@@ -457,7 +457,7 @@ class behat_app extends behat_base {
      */
     public function i_set_the_field_in_the_app(string $field, string $value) {
         $this->spin(function($context, $args) use ($field, $value) {
-            $result = $this->getSession()->evaluateScript('return window.behatSetField("' .
+            $result = $this->getSession()->evaluateScript('return window.behat.setField("' .
                     addslashes_js($field) . '", "' . addslashes_js($value) . '");');
             if ($result !== 'OK') {
                 throw new DriverException('Error setting field - ' . $result);
@@ -479,7 +479,7 @@ class behat_app extends behat_base {
      */
     public function the_header_should_be_in_the_app(string $text) {
         $result = $this->spin(function($context, $args) {
-            $result = $this->getSession()->evaluateScript('return window.behatGetHeader();');
+            $result = $this->getSession()->evaluateScript('return window.behat.getHeader();');
             if (substr($result, 0, 3) !== 'OK:') {
                 throw new DriverException('Error getting header - ' . $result);
             }

@@ -486,7 +486,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
         }
 
         // Check on page to see if it's an app page. Safest way is to look for added JavaScript.
-        return $this->getSession()->evaluateScript('typeof window.behatPress') === 'function';
+        return $this->getSession()->evaluateScript('typeof window.behat') === 'object';
     }
 
     /**
