@@ -23,7 +23,6 @@ M.core_completion.init = function(Y) {
                 iconkey,
                 button = args.image.get('parentNode');
 
-
             if (current == 1) {
                 altstr = M.util.get_string('completion-alt-manual-y', 'completion', modulename);
                 iconkey = 'i/completion-manual-y';
@@ -33,11 +32,13 @@ M.core_completion.init = function(Y) {
                 iconkey = 'i/completion-manual-n';
                 args.state.set('value', 1);
             }
-            button.set('title', altstr);
 
             require(['core/templates', 'core/notification'], function(Templates, Notification) {
                 Templates.renderPix(iconkey, 'core', altstr).then(function(html) {
-                    Templates.replaceNode(args.image.getDOMNode(), html, '');
+                    var id = button.get('id'),
+                        postFocus = '$(document.getElementById("' + id + '")).focus();';
+
+                    Templates.replaceNode(args.image.getDOMNode(), html, postFocus);
                 }).catch(Notification.exception);
             });
         }
