@@ -686,4 +686,36 @@ class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthroug
         $this->render();
         $this->check_output_contains_text_input('-mark', '0.3333333');
     }
+
+    public function test_manual_grading_history_display() {
+        global $PAGE;
+
+        // The current text editor depends on the users profile setting - so it needs a valid user.
+        $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
+
+        // Create an essay question graded out of 15 and attempt it.
+        $essay = test_question_maker::make_an_essay_question();
+        $this->start_attempt_at_question($essay, 'deferredfeedback', 10);
+        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_HTML));
+        $this->quba->finish_all_questions();
+
+        // Verify.
+        $this->check_current_state(question_state::$needsgrading);
+
+        // Process an initial grade and comment.
+        $this->manual_grade('First comment', '5.0', FORMAT_HTML);
+
+        // Process a second grade and comment.
+        $this->manual_grade('Second comment', '7.0', FORMAT_HTML);
+
+        // Verify.
+        $this->check_current_state(question_state::$mangrpartial);
+        $this->check_current_mark(7);
+        $this->displayoptions->history = question_display_options::VISIBLE;
+        $this->render();
+        $this->check_output_contains('Manually graded 5 with comment: First comment');
+        $this->check_output_contains('Manually graded 7 with comment: Second comment');
+    }
 }
