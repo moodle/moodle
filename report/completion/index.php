@@ -724,7 +724,6 @@ if ($csv) {
 }
 
 print '</table>';
-print $pagingbar;
 
 $csvurl = new moodle_url('/report/completion/index.php', array('course' => $course->id, 'format' => 'csv'));
 $excelurl = new moodle_url('/report/completion/index.php', array('course' => $course->id, 'format' => 'excelcsv'));
