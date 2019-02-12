@@ -5817,6 +5817,55 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test verifying get_conversations identifies if a conversation is muted or not.
+     */
+    public function test_get_conversations_some_muted() {
+        $this->resetAfterTest();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversation1 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]);
+        testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'Message 1');
+        testhelper::send_fake_message_to_conversation($user2, $conversation1->id, 'Message 2');
+        \core_message\api::mute_conversation($user1->id, $conversation1->id);
+
+        $conversation2 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user3->id]);
+        testhelper::send_fake_message_to_conversation($user1, $conversation2->id, 'Message 1');
+        testhelper::send_fake_message_to_conversation($user2, $conversation2->id, 'Message 2');
+
+        $conversation3 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id]);
+        \core_message\api::mute_conversation($user1->id, $conversation3->id);
+
+        $conversation4 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user3->id]);
+
+        $this->setUser($user1);
+        $result = core_message_external::get_conversations($user1->id);
+        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $conversations = $result['conversations'];
+
+        usort($conversations, function($first, $second){
+            return $first['id'] > $second['id'];
+        });
+
+        $conv1 = array_shift($conversations);
+        $conv2 = array_shift($conversations);
+        $conv3 = array_shift($conversations);
+        $conv4 = array_shift($conversations);
+
+        $this->assertTrue($conv1['ismuted']);
+        $this->assertFalse($conv2['ismuted']);
+        $this->assertTrue($conv3['ismuted']);
+        $this->assertFalse($conv4['ismuted']);
+    }
+
+    /**
      * Test returning members in a conversation with no contact requests.
      */
     public function test_get_conversation_members_messaging_disabled() {

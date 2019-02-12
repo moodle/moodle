@@ -550,7 +550,7 @@ class api {
 
         $sql = "SELECT m.id as messageid, mc.id as id, mc.name as conversationname, mc.type as conversationtype, m.useridfrom,
                        m.smallmessage, m.fullmessage, m.fullmessageformat, m.fullmessagehtml, m.timecreated, mc.component,
-                       mc.itemtype, mc.itemid, mc.contextid
+                       mc.itemtype, mc.itemid, mc.contextid, mca.action as ismuted
                   FROM {message_conversations} mc
             INNER JOIN {message_conversation_members} mcm
                     ON (mcm.conversationid = mc.id AND mcm.userid = :userid3)
@@ -574,12 +574,15 @@ class api {
                     ON lastmessage.conversationid = mc.id
             LEFT JOIN {messages} m
                    ON m.id = lastmessage.messageid
+            LEFT JOIN {message_conversation_actions} mca
+                   ON (mca.conversationid = mc.id AND mca.userid = :userid4 AND mca.action = :convaction)
                 WHERE mc.id IS NOT NULL
                   AND mc.enabled = 1 $typesql $favouritesql
               ORDER BY (CASE WHEN m.timecreated IS NULL THEN 0 ELSE 1 END) DESC, m.timecreated DESC, id DESC";
 
         $params = array_merge($favouriteparams, ['userid' => $userid, 'action' => self::MESSAGE_ACTION_DELETED,
-            'userid2' => $userid, 'userid3' => $userid, 'convtype' => $type]);
+            'userid2' => $userid, 'userid3' => $userid, 'userid4' => $userid, 'convaction' => self::CONVERSATION_ACTION_MUTED,
+            'convtype' => $type]);
         $conversationset = $DB->get_recordset_sql($sql, $params, $limitfrom, $limitnum);
 
         $conversations = [];
@@ -795,6 +798,7 @@ class api {
             $conv->isfavourite = in_array($conv->id, $favouriteconversationids);
             $conv->isread = isset($unreadcounts[$conv->id]) ? false : true;
             $conv->unreadcount = isset($unreadcounts[$conv->id]) ? $unreadcounts[$conv->id]->unreadcount : null;
+            $conv->ismuted = $conversation->ismuted ? true : false;
             $conv->members = $members[$conv->id];
 
             // Add the most recent message information.
@@ -955,6 +959,12 @@ class api {
 
         $membercount = $DB->count_records('message_conversation_members', ['conversationid' => $conversationid]);
 
+        $ismuted = false;
+        if ($DB->record_exists('message_conversation_actions', ['userid' => $userid,
+                'conversationid' => $conversationid, 'action' => self::CONVERSATION_ACTION_MUTED])) {
+            $ismuted = true;
+        }
+
         return (object) [
             'id' => $conversation->id,
             'name' => $conversation->name,
@@ -965,6 +975,7 @@ class api {
             'isfavourite' => $isfavourite,
             'isread' => empty($unreadcount),
             'unreadcount' => $unreadcount,
+            'ismuted' => $ismuted,
             'members' => $members,
             'messages' => $messages['messages']
         ];
