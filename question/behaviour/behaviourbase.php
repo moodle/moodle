@@ -550,13 +550,13 @@ abstract class question_behaviour {
 
     /**
      * @return string a summary of a manual comment action.
-     * @param unknown_type $step
+     * @param question_attempt_step $step
      */
     protected function summarise_manual_comment($step) {
         $a = new stdClass();
         if ($step->has_behaviour_var('comment')) {
-            list($comment, $commentformat, $commentstep) = $this->qa->get_manual_comment();
-            $comment = question_utils::to_plain_text($comment, $commentformat);
+            $comment = question_utils::to_plain_text($step->get_behaviour_var('comment'),
+                    $step->get_behaviour_var('commentformat'));
             $a->comment = shorten_text($comment, 200);
         } else {
             $a->comment = '';
