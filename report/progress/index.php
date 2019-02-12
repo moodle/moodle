@@ -441,7 +441,6 @@ if ($csv) {
 }
 print '</tbody></table>';
 print '</div>';
-print $pagingbar;
 
 print '<ul class="progress-actions"><li><a href="index.php?course='.$course->id.
     '&amp;format=csv">'.get_string('csvdownload','completion').'</a></li>
