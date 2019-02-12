@@ -57,7 +57,7 @@ class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_
         $orderedchoices = $question->get_ordered_choices($group);
         $selectoptions = array();
         foreach ($orderedchoices as $orderedchoicevalue => $orderedchoice) {
-            $selectoptions[$orderedchoicevalue] = $orderedchoice->text;
+            $selectoptions[$orderedchoicevalue] = format_string($orderedchoice->text);
         }
 
         $feedbackimage = '';
