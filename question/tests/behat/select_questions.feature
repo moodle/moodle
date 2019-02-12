@@ -24,17 +24,17 @@ Feature: The questions in the question bank can be selected in various ways
       | Test questions   | numerical | C question 3 name | teacher1 | Question 3 text |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Questions" in current page administration
+    And I navigate to "Question bank > Questions" in current page administration
 
   @javascript
   Scenario: The question text can be chosen all in the list of questions
     Given the field "Select all" matches value ""
     When I click on "Select all" "checkbox"
-    Then the field "A question 1 name" matches value "1"
+    And the field "A question 1 name" matches value "1"
     And the field "B question 2 name" matches value "1"
     And the field "C question 3 name" matches value "1"
-    When I click on "Deselect all" "checkbox"
-    Then the field "A question 1 name" matches value ""
+    Then I click on "Deselect all" "checkbox"
+    And the field "A question 1 name" matches value ""
     And the field "B question 2 name" matches value ""
     And the field "C question 3 name" matches value ""
 
@@ -43,9 +43,9 @@ Feature: The questions in the question bank can be selected in various ways
     Given the field "Select all" matches value ""
     When I click on "A question 1 name" "checkbox"
     Then the field "Select all" matches value ""
-    When I click on "B question 2 name" "checkbox"
+    And I click on "B question 2 name" "checkbox"
     And I click on "C question 3 name" "checkbox"
-    Then the field "Deselect all" matches value "1"
+    And the field "Deselect all" matches value "1"
 
   @javascript
   Scenario: The action button can be disabled when the question not be chosen in the list of questions

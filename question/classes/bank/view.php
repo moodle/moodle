@@ -688,7 +688,7 @@ class view {
     protected function display_question_list($contexts, $pageurl, $categoryandcontext,
             $cm = null, $recurse=1, $page=0, $perpage=100, $showhidden=false,
             $showquestiontext = false, $addcontexts = array()) {
-        global $CFG, $DB, $OUTPUT;
+        global $CFG, $DB, $OUTPUT, $PAGE;
 
         // This function can be moderately slow with large question counts and may time out.
         // We probably do not want to raise it to unlimited, so randomly picking 5 minutes.
@@ -758,6 +758,8 @@ class view {
         }
         echo '</div>';
 
+        $PAGE->requires->js_call_amd('core_question/qbankmanager', 'init');
+
         $this->display_bottom_controls($totalnumber, $recurse, $category, $catcontext, $addcontexts);
 
         echo '</fieldset>';
@@ -773,13 +775,9 @@ class view {
      * @param array    $addcontexts contexts where the user is allowed to add new questions.
      */
     protected function display_bottom_controls($totalnumber, $recurse, $category, \context $catcontext, array $addcontexts) {
-        global $PAGE;
-
         $caneditall = has_capability('moodle/question:editall', $catcontext);
         $canuseall = has_capability('moodle/question:useall', $catcontext);
         $canmoveall = has_capability('moodle/question:moveall', $catcontext);
-
-        $PAGE->requires->js_call_amd('core_question/qbankmanager', 'init');
 
         echo '<div class="modulespecificbuttonscontainer">';
         if ($caneditall || $canmoveall || $canuseall) {

@@ -38,7 +38,6 @@ class checkbox_column extends column_base {
     protected function get_title() {
         $input = \html_writer::empty_tag('input', [
             'id' => 'qbheadercheckbox',
-            'title' => get_string('select'),
             'name' => 'qbheadercheckbox',
             'type' => 'checkbox',
             'value' => '1',
