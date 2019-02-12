@@ -24,7 +24,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = array(
-    'ltisource' => 'mod/lti/source',
-    'ltiservice' => 'mod/lti/service'
-);
+debugging('Use of subplugins.php has been deprecated. Please provide a subplugins.json instead.', DEBUG_DEVELOPER);
+$subplugins = (array) json_decode(file_get_contents(__DIR__ . "/subplugins.json"))->plugintypes;

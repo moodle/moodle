@@ -1,0 +1,6 @@
+{
+    "plugintypes": {
+        "assignsubmission": "mod\/assign\/submission",
+        "assignfeedback": "mod\/assign\/feedback"
+    }
+}

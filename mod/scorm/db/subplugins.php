@@ -14,4 +14,5 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$subplugins = array('scormreport' => 'mod/scorm/report');
+debugging('Use of subplugins.php has been deprecated. Please provide a subplugins.json instead.', DEBUG_DEVELOPER);
+$subplugins = (array) json_decode(file_get_contents(__DIR__ . "/subplugins.json"))->plugintypes;

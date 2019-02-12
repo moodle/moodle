@@ -1,0 +1,5 @@
+{
+    "plugintypes": {
+        "tinymce": "lib\/editor\/tinymce\/plugins"
+    }
+}
