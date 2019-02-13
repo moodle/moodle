@@ -475,6 +475,21 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     }
 
     /**
+     * Checks if the current page is part of the mobile app.
+     *
+     * @return bool True if it's in the app
+     */
+    protected function is_in_app() : bool {
+        // Cannot be in the app if there's no @app tag on scenario.
+        if (!$this->has_tag('app')) {
+            return false;
+        }
+
+        // Check on page to see if it's an app page. Safest way is to look for added JavaScript.
+        return $this->getSession()->evaluateScript('typeof window.behat') === 'object';
+    }
+
+    /**
      * Spins around an element until it exists
      *
      * @throws ExpectationException
@@ -645,6 +660,16 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             debugging('Function behat_base::ensure_editors_are_loaded() is deprecated. It is no longer required.');
         }
         return;
+    }
+
+    /**
+     * Checks if the current scenario, or its feature, has a specified tag.
+     *
+     * @param string $tag Tag to check
+     * @return bool True if the tag exists in scenario or feature
+     */
+    public function has_tag(string $tag) : bool {
+        return array_key_exists($tag, behat_hooks::get_tags_for_scenario());
     }
 
     /**
