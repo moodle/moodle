@@ -334,7 +334,6 @@ echo $output->footer();
 
 die;
 
-
 // Carry on with the user listing.
 $columns = array("firstname", "lastname", "department", "email", "timecreated", "lastaccess");
 
@@ -577,7 +576,6 @@ echo $output->paging_bar($usercount, $page, $perpage, $baseurl);
 
 flush();
 
-
 if (!$users) {
     $match = array();
     echo $output->heading(get_string('nousersfound'));
@@ -707,7 +705,6 @@ if (!$users) {
         if ($user->username == 'guest') {
             continue; // Do not dispaly dummy new user and guest here.
         }
-
 
         if ($user->timecreated) {
             $strtimecreated = date($CFG->iomad_date_format, $user->timecreated);

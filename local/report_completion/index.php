@@ -504,7 +504,6 @@ if (empty($courseid)) {
         }
     }
 
-
     $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
     $table->define_baseurl($url);
     $table->define_columns($columns);

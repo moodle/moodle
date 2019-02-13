@@ -25,7 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
  * Unit tests for the {@link filter_manager} class.
  *

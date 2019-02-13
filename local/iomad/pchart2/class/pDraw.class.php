@@ -5048,7 +5048,6 @@ class pDraw
 					$Areas[$AreaID][] = $this->GraphAreaX1 + $XMargin;
 					$Areas[$AreaID][] = ($AroundZero) ? $YZero : $this->GraphAreaY2 - 1;
 
-
 					if ($XDivs == 0) {
 						$XStep = ($this->GraphAreaX2 - $this->GraphAreaX1) / 4;
 					} else {

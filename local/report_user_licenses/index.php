@@ -507,7 +507,6 @@ $baseurl = new moodle_url('index.php', $params);
 
 flush();
 
-
 if (!$users && empty($dodownload)) {
     $match = array();
     echo $output->heading(get_string('nousersfound'));

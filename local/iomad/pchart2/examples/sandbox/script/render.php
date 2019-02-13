@@ -187,7 +187,6 @@
  $p_template		= $_SESSION["p_template"];
  /* ------------------------------------------------------------------------ */
 
-
  /* pChart library inclusions */
  include("../../../class/pData.class.php");
  include("../../../class/pDraw.class.php");
@@ -823,7 +822,6 @@
    else
     return($Value);
   }
-
 
  function stripTail($Values)
   {

@@ -162,7 +162,6 @@ class report_completion {
             $completionsql = "";
         }
 
-
         // Deal with parent company managers
         if (!empty($parentcompanies)) {
             $userfilter = " AND u.id NOT IN (

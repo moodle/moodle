@@ -64,7 +64,6 @@ if (empty($dodownload)) {
     }
 }
 
-
 // Get this list of license the user has been allocated.
 $userlicenses = $DB->get_records_sql("SELECT DISTINCT objectid FROM {logstore_standard_log}
                                       WHERE userid = :userid

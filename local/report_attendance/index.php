@@ -92,8 +92,6 @@ if (empty($dodownload)) {
     }
 }
 
-
-
 // Get the courses which have the classroom module in them.
 $courses = attendancerep::courseselectlist($companyid);
 $courseselect = new single_select($url, 'courseid', $courses, $courseid);

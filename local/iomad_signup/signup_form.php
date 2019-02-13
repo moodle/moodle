@@ -55,7 +55,6 @@ class iomad_signup_form extends moodleform {
             $mform->addRule('email2', get_string('missingemail'), 'required', null, 'server');
         }
 
-
         if (!empty($CFG->passwordpolicy)){
             $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
         }

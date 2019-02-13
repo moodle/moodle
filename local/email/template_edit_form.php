@@ -190,7 +190,6 @@ class template_edit_form extends moodleform {
         }
         $mform->addElement('html', "</div>");
 
-
         // Add in repeation parts.
         $repeatperiods = array('99' => get_string('always'),
                                '0' => get_string('never'),

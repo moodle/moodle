@@ -83,7 +83,6 @@ function xmldb_local_report_user_logins_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-
         // Populate the report table from any previous users.
         $users = $DB->get_records('user', array('deleted' => 0));
         foreach ($users as $user) {

@@ -18,7 +18,6 @@
  $MyData->setSerieDescription("Labels","Months");
  $MyData->setAbscissa("Labels");
 
-
  /* Create the pChart object */
  $myPicture = new pImage(700,230,$MyData);
 

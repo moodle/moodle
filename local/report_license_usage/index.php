@@ -81,7 +81,6 @@ if ($toraw) {
     }
 }
 
-
 $systemcontext = context_system::instance();
 require_login(); // Adds to $PAGE, creates $output.
 iomad::require_capability('local/report_license_usage:view', $systemcontext);
@@ -106,7 +105,6 @@ $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
 $PAGE->navbar->add($linktext, $linkurl);
-
 
 // Get the renderer.
 $output = $PAGE->get_renderer('block_iomad_company_admin');

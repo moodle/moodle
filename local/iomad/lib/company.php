@@ -1056,7 +1056,6 @@ class company {
             return $parent;
         }
 
-
         $returnarray = $parent;
         // Check to see if its the top node.
         if (isset($parent->id)) {
@@ -1874,7 +1873,6 @@ class company {
         }
     }
 
-
     /** Check if a license is in a child company.
      *
      * Parameters -
@@ -1981,7 +1979,6 @@ class company {
         return array('0' => get_string('noselection', 'form')) + $retgroups;
     }
 
-
     // Shared course stuff.
 
     /**
@@ -1997,7 +1994,6 @@ class company {
     public static function create_company_course_group($companyid, $courseid, $groupdata = null) {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/group/lib.php');
-
 
         // Creates a company group within a shared course.
         $company = $DB->get_record('company', array('id' => $companyid));
@@ -2978,7 +2974,6 @@ class company {
         }
         $user->company = $company->name;
 
-
         if ($CFG->commerce_enable_external) {
             // Fire off the payload to the external site.
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
@@ -3141,7 +3136,6 @@ class company {
             $user = $DB->get_record('user', array('id' => $userid));
             iomad_commerce::delete_user($user->username);
         }
-
 
         $usercompany = self::by_userid($userid);
         $usercompanyrec = $DB->get_record('company_users', array('userid' => $userid, 'companyid' => $usercompany->id));

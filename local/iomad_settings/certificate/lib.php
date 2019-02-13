@@ -18,7 +18,6 @@ const RESET_SEQUENCE_NEVER = 'never';
 const RESET_SEQUENCE_DAILY = 'daily';
 const RESET_SEQUENCE_ANNUALLY = 'annually';
 
-
 function padleft($value, $n) {
     return str_pad($value, $n, "0", STR_PAD_LEFT);
 }

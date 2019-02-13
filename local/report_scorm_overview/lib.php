@@ -90,7 +90,6 @@ class scormcomprep{
         return $companyselect;
     }
 
-
     // Create the select list of courses.
     public function courseselectlist($companyid=0) {
         global $DB;

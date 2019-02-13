@@ -79,7 +79,6 @@ class local_email {
         return $row;
     }
 
-
     public static function get_templates() {
         $email = array();
 

@@ -132,7 +132,6 @@ class blockpage {
         $this->page->set_heading($blocktitle);
     }
 
-
     /**
      * Display the page header using the class settings.
      *

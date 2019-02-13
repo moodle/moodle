@@ -78,7 +78,6 @@ Example:
 
 require('install.php');
 
-
 $comprecords = $DB->get_records_sql("select * from {course_completions} where timecompleted is not null and id not in (select cc.id from {course_completions} cc JOIN {local_iomad_track} lit ON (cc.course = lit.courseid AND cc.userid = lit.userid AND cc.timeenrolled = lit.timeenrolled AND cc.timecompleted = lit.timecompleted))");
 foreach ($comprecords as $comprec) {
     if ($user = $DB->get_record('user', array('id'=> $comprec->userid))) {

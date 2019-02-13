@@ -78,7 +78,6 @@ abstract class framework_selector_base {
                     array('none', 'local_framework_selector')
                 ));
 
-
     // Public API.
 
     /**

@@ -28,7 +28,6 @@ function email_reports_cron() {
     // We only want the student role.
     $studentrole = $DB->get_record('role', array('shortname' => 'student'));
 
-
     mtrace("Running email report cron at ".date('D M Y h:m:s', $runtime));
 
     // Deal with courses which have completed by warnings

@@ -16,7 +16,6 @@
  $MyData->setSerieDescription("Labels","Months");
  $MyData->setAbscissa("Labels");
 
-
  /* Create the pChart object */
  $myPicture = new pImage(700,230,$MyData);
  $myPicture->drawGradientArea(0,0,700,230,DIRECTION_VERTICAL,array("StartR"=>240,"StartG"=>240,"StartB"=>240,"EndR"=>180,"EndG"=>180,"EndB"=>180,"Alpha"=>100));

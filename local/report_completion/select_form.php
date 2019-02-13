@@ -44,6 +44,5 @@ class completion_select_form extends moodleform {
         return $errors;
     }
 
-
 }
 

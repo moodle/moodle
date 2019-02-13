@@ -217,8 +217,6 @@ if (empty($dodownload) && empty($showchart) && !$sendemail) {
     }
 }
 
-
-
 // Get the data.
 if (!empty($companyid)) {
     if (empty($dodownload) && empty($showchart) && !$sendemail) {

@@ -260,7 +260,6 @@ function xmldb_local_email_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-
         // Email savepoint reached.
         upgrade_plugin_savepoint(true, 2017080702, 'local', 'email');
     }

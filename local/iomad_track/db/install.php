@@ -22,7 +22,6 @@ define('CERTIFICATE', 'iomadcertificate');
 require_once($CFG->dirroot . '/mod/' . CERTIFICATE . '/lib.php');
 require_once($CFG->dirroot . '/mod/' . CERTIFICATE . '/locallib.php');
 
-
 function xmldb_local_iomad_track_install() {
     global $DB;
 

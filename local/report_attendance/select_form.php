@@ -48,6 +48,5 @@ class atendance_select_form extends moodleform {
         return $errors;
     }
 
-
 }
 

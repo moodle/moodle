@@ -25,7 +25,6 @@ require_once($CFG->dirroot.'/user/filters/lib.php');
 require_once($CFG->dirroot.'/lib/formslib.php');
 require_once($CFG->dirroot.'/group/lib.php');
 
-
 class company_user {
 
     /**

@@ -101,7 +101,6 @@ foreach($authsequence as $authname) {
     $authplugin->loginpage_hook();
 }
 
-
 /// Define variables used in page
 $site = get_site();
 

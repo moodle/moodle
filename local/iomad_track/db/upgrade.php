@@ -80,7 +80,6 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
             }
         }
 
-
         // Define field companyid to be added to local_iomad_track.
         $table = new xmldb_table('local_iomad_track');
         $field = new xmldb_field('companyid', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'finalscore');

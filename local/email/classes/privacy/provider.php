@@ -125,7 +125,6 @@ class provider implements
         }
     }
 
-
     /**
      * Delete all data for all users in the specified context.
      *

@@ -1164,7 +1164,6 @@ function xmldb_local_iomad_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-
         // Define table iomad_templates to be created.
         $table = new xmldb_table('iomad_templates');
 

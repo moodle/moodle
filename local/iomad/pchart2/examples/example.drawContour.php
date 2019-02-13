@@ -55,7 +55,6 @@
  /* Draw the contour with a threshold of 50 */
  $mySurface->drawContour(50,array("R"=>0,"G"=>0,"B"=>0));
 
-
  /* Render the picture (choose the best way) */
  $myPicture->autoOutput("pictures/example.surface.png");
 ?>

@@ -327,7 +327,6 @@ class iomad {
         return;
     }
 
-
     /**
      * IOMAD:
      * Filter categories to only show 'company' categories for the
@@ -863,7 +862,6 @@ class iomad {
      */
     private static function populate_temporary_users($temptablename, $searchinfo) {
         global $DB;
-
 
         // Create a temporary table to hold the userids.
         $dbman = $DB->get_manager();

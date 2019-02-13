@@ -78,7 +78,6 @@ abstract class course_selector_base {
                     array('none', 'local_course_selector')
                 ));
 
-
     // Public API.
 
     /**

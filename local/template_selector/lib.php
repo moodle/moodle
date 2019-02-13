@@ -78,7 +78,6 @@ abstract class template_selector_base {
                     array('none', 'local_template_selector')
                 ));
 
-
     // Public API.
 
     /**

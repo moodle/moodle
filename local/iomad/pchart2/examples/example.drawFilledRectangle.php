@@ -17,7 +17,6 @@
  $myPicture->drawGradientArea(0,0,700,230,DIRECTION_VERTICAL,$Settings);
  $myPicture->drawGradientArea(0,0,700,20,DIRECTION_VERTICAL,array("StartR"=>0,"StartG"=>0,"StartB"=>0,"EndR"=>50,"EndG"=>50,"EndB"=>50,"Alpha"=>80));
 
-
  /* Add a border to the picture */
  $myPicture->drawRectangle(0,0,699,229,array("R"=>0,"G"=>0,"B"=>0));
 

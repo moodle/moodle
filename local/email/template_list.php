@@ -33,12 +33,10 @@ class company_templateset_save_form extends company_moodleform {
         parent::__construct($actionurl);
     }
 
-
     public function definition() {
         $this->_form->addElement('hidden', 'companyid', $this->companyid);
         $this->_form->setType('companyid', PARAM_INT);
     }
-
 
     public function definition_after_data() {
 
@@ -124,7 +122,6 @@ $PAGE->navbar->add($linktext, $linkurl);
 
 // get output renderer
 $output = $PAGE->get_renderer('local_email');
-
 
 // Set the companyid to bypass the company select form if possible.
 if (!empty($SESSION->currenteditingcompany)) {

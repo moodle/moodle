@@ -42,7 +42,6 @@
 //
 // The variable name for the capability definitions array is $capabilities.
 
-
 $capabilities = array(
 
     'local/iomad_learningpath:view' => array(

@@ -33,7 +33,6 @@ if (is_null($ADMIN->locate('CompanyAdmin'))) {
               get_string('companymanagement', 'block_iomad_company_admin')));
 }
 
-
 if (is_null($ADMIN->locate('UserAdmin'))) {
     $ADMIN->add( 'iomad', new admin_category( 'UserAdmin',
               get_string('usermanagement', 'block_iomad_company_admin')));

@@ -185,6 +185,5 @@ if ($hassiteconfig) {
     array('maxfiles' => 1, 'accepted_types' => array('image')));
     $settings->add($setting);
 
-
 }
 

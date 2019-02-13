@@ -203,7 +203,6 @@ class userrep {
     private static function populate_temporary_completion($tempcomptablename, $userid, $courseid=0, $showhistoric=false) {
         global $DB;
 
-
         // Create a temporary table to hold the userids.
         $dbman = $DB->get_manager();
 
