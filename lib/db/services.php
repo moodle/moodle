@@ -218,6 +218,14 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_calendar_get_calendar_access_information' => array(
+        'classname' => 'core_calendar_external',
+        'methodname' => 'get_calendar_access_information',
+        'description' => 'Convenience function to retrieve some permissions/access information for the given course calendar.',
+        'classpath' => 'calendar/externallib.php',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_cohort_add_cohort_members' => array(
         'classname' => 'core_cohort_external',
         'methodname' => 'add_cohort_members',

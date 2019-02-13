@@ -1257,4 +1257,65 @@ class core_calendar_external extends external_api {
     public static function get_calendar_upcoming_view_returns() {
         return \core_calendar\external\calendar_upcoming_exporter::get_read_structure();
     }
+
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters.
+     * @since  Moodle 3.7
+     */
+    public static function get_calendar_access_information_parameters() {
+        return new external_function_parameters(
+            [
+                'courseid' => new external_value(PARAM_INT, 'Course to check, empty for site calendar events.', VALUE_DEFAULT, 0),
+            ]
+        );
+    }
+
+    /**
+     * Convenience function to retrieve some permissions information for the given course calendar.
+     *
+     * @param int $courseid Course to check, empty for site.
+     * @return array The access information
+     * @throws moodle_exception
+     * @since  Moodle 3.7
+     */
+    public static function get_calendar_access_information($courseid = 0) {
+
+        $params = self::validate_parameters(self::get_calendar_access_information_parameters(), ['courseid' => $courseid]);
+
+        if (empty($params['courseid']) || $params['courseid'] == SITEID) {
+            $context = \context_system::instance();
+        } else {
+            $context = \context_course::instance($params['courseid']);
+        }
+
+        self::validate_context($context);
+
+        return [
+            'canmanageentries' => has_capability('moodle/calendar:manageentries', $context),
+            'canmanageownentries' => has_capability('moodle/calendar:manageownentries', $context),
+            'canmanagegroupentries' => has_capability('moodle/calendar:managegroupentries', $context),
+            'warnings' => [],
+        ];
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description.
+     * @since  Moodle 3.7
+     */
+    public static function  get_calendar_access_information_returns() {
+
+        return new external_single_structure(
+            [
+                'canmanageentries' => new external_value(PARAM_BOOL, 'Whether the user can manage entries.'),
+                'canmanageownentries' => new external_value(PARAM_BOOL, 'Whether the user can manage its own entries.'),
+                'canmanagegroupentries' => new external_value(PARAM_BOOL, 'Whether the user can manage group entries.'),
+                'warnings' => new external_warnings(),
+            ]
+        );
+    }
 }
