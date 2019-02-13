@@ -13,6 +13,28 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}{{!
+    @template core_admin/setting_courselist_frontpage
+
+    Admin courselist_frontpage setting template.
+
+    Context variables required for this template:
+    * selects list of select objects containing id, name, key and options.
+      options is another nested list of items containing name, value and selected
+
+    Example context (json):
+    {
+        "selects": [
+            {
+                "id": "i1",
+                "name": "s1",
+                "key": "k1",
+                "options": [
+                    { "name": "Fish", "value": "snapper", "selected": true }
+                ]
+            }
+        ]
+    }
 }}
 {{!
     @template core_admin/setting_courselist_frontpage

@@ -13,6 +13,27 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}{{!
+    @template core_admin/settings
+
+    Admin settings form template.
+
+    Context variables required for this template:
+    * actionurl - url to submit to
+    * params - list of parameters containing name and value
+    * return - page to return to
+    * title - form title
+    * settings - raw html for settings
+    * showsave - true if we need save buttons
+
+    Example context (json):
+    {
+        "actionurl": "/",
+        "return": "/",
+        "title": "Settings Form",
+        "settings": "RAW HTML",
+        "showsave": true
+    }
 }}
 {{!
     @template core_admin/settings

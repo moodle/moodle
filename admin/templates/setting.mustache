@@ -13,6 +13,34 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}{{!
+    @template core_admin/setting
+
+    Admin setting template.
+
+    Context variables required for this template:
+    * labelfor - id of the form element
+    * title - Setting title
+    * override - Overridden message
+    * warning - Warning message
+    * name - Setting name
+    * error - Error message
+    * element - The Element HTML
+    * forceltr - Force this element to be displayed LTR
+    * default - Default value
+
+    Example context (json):
+    {
+        "title": "Setting title",
+        "labelfor": "id0",
+        "override": "Overidden",
+        "warning": "Warning",
+        "name": "Name",
+        "error": "Error",
+        "element": "Raw HTML",
+        "forceltr": false,
+        "default": "Default value"
+    }
 }}
 {{!
     @template core_admin/setting

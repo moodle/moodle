@@ -39,13 +39,13 @@ use moodle_url;
 class block_settings_renderer extends \block_settings_renderer {
 
     public function search_form(moodle_url $formtarget, $searchvalue) {
-        $content = html_writer::start_tag('form', array('class'=>'adminsearchform', 'method'=>'get', 'action'=>$formtarget, 'role' => 'search'));
-        $content .= html_writer::start_tag('div');
-        $content .= html_writer::tag('label', s(get_string('searchinsettings', 'admin')), array('for'=>'adminsearchquery', 'class'=>'accesshide'));
-        $content .= html_writer::empty_tag('input', array('id'=>'adminsearchquery', 'type'=>'text', 'name'=>'query', 'value'=>s($searchvalue)));
-        $content .= html_writer::empty_tag('input', array('type'=>'submit', 'value'=>s(get_string('search'))));
-        $content .= html_writer::end_tag('div');
-        $content .= html_writer::end_tag('form');
+        $content = \html_writer::start_tag('form', array('class'=>'adminsearchform', 'method'=>'get', 'action'=>$formtarget, 'role' => 'search'));
+        $content .= \html_writer::start_tag('div');
+        $content .= \html_writer::tag('label', s(get_string('searchinsettings', 'admin')), array('for'=>'adminsearchquery', 'class'=>'accesshide'));
+        $content .= \html_writer::empty_tag('input', array('id'=>'adminsearchquery', 'type'=>'text', 'name'=>'query', 'value'=>s($searchvalue)));
+        $content .= \html_writer::empty_tag('input', array('type'=>'submit', 'value'=>s(get_string('search'))));
+        $content .= \html_writer::end_tag('div');
+        $content .= \html_writer::end_tag('form');
         return $content;
     }
 

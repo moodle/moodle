@@ -96,7 +96,7 @@ class behat_theme_bootstrapbase_behat_navigation extends behat_navigation {
     public function should_exist_in_current_page_administration($element, $selectortype) {
         $parentnodes = array_map('trim', explode('>', $element));
         // Find the name of the first category of the administration block tree.
-        $xpath = '//div[contains(@class,\'block_settings\')]//div[@id=\'settingsnav\']/ul/li[1]/p[1]/span';
+        $xpath = '//section[contains(@class,\'block_settings\')]//div[@id=\'settingsnav\']/ul/li[1]/p[1]/span';
         $node = $this->find('xpath', $xpath);
         array_unshift($parentnodes, $node->getText());
         $lastnode = array_pop($parentnodes);
@@ -110,7 +110,7 @@ class behat_theme_bootstrapbase_behat_navigation extends behat_navigation {
     public function should_not_exist_in_current_page_administration($element, $selectortype) {
         $parentnodes = array_map('trim', explode('>', $element));
         // Find the name of the first category of the administration block tree.
-        $xpath = '//div[contains(@class,\'block_settings\')]//div[@id=\'settingsnav\']/ul/li[1]/p[1]/span';
+        $xpath = '//section[contains(@class,\'block_settings\')]//div[@id=\'settingsnav\']/ul/li[1]/p[1]/span';
         $node = $this->find('xpath', $xpath);
         array_unshift($parentnodes, $node->getText());
         $lastnode = array_pop($parentnodes);
@@ -124,7 +124,7 @@ class behat_theme_bootstrapbase_behat_navigation extends behat_navigation {
     public function i_navigate_to_in_current_page_administration($nodetext) {
         $parentnodes = array_map('trim', explode('>', $nodetext));
         // Find the name of the first category of the administration block tree.
-        $xpath = '//div[contains(@class,\'block_settings\')]//div[@id=\'settingsnav\']/ul/li[1]/p[1]/span';
+        $xpath = '//section[contains(@class,\'block_settings\')]//div[@id=\'settingsnav\']/ul/li[1]/p[1]/span';
         $node = $this->find('xpath', $xpath);
         array_unshift($parentnodes, $node->getText());
         $lastnode = array_pop($parentnodes);

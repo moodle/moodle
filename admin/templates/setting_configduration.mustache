@@ -13,6 +13,24 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}{{!
+    @template core_admin/setting_configduration
+
+    Admin duration setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * options - list of options for units containing name, value, selected
+    * value - yes
+    * id - element id
+
+    Example context (json):
+    {
+        "name": "test",
+        "value": "5",
+        "id": "test0",
+        "options": [ { "name": "Minutes", "value": "mins", "selected": true } ]
+    }
 }}
 {{!
     @template core_admin/setting_configduration

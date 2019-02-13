@@ -13,6 +13,28 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}{{!
+    @template core_admin/setting_gradecat_combo
+
+    Admin gradecat_combo setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * id - element id
+    * options - list of options containing name, value and selected
+    * forced - is it forced
+    * advanced - is it advanced
+
+    Example context (json):
+    {
+        "name": "test",
+        "id": "test0",
+        "options": [
+            { "name": "Option name", "value": "Value", "selected": true }
+        ],
+        "forced": true,
+        "advanced": true
+    }
 }}
 {{!
     @template core_admin/setting_gradecat_combo

@@ -22,5 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('renderers/core_renderer.php');
-
+require_once($CFG->dirroot . '/theme/bootstrapbase/renderers/core_renderer.php');
+require_once($CFG->dirroot . '/theme/bootstrapbase/renderers/block_settings_renderer.php');
+require_once($CFG->dirroot . '/theme/bootstrapbase/renderers/gradereport_history_renderer.php');
+require_once($CFG->dirroot . '/theme/bootstrapbase/renderers/core/course_renderer.php');
+require_once($CFG->dirroot . '/theme/bootstrapbase/renderers/core/files_renderer.php');
+require_once($CFG->dirroot . '/theme/bootstrapbase/renderers/core_course/management/renderer.php');
+require_once($CFG->dirroot . '/theme/bootstrapbase/renderers/core_question/bank_renderer.php');

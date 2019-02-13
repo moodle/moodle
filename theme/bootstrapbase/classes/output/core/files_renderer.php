@@ -417,11 +417,11 @@ class files_renderer extends \core_files_renderer {
      * Default contents is one text input field with name="s"
      */
     public function repository_default_searchform() {
-        $searchinput = html_writer::label(get_string('searchrepo', 'repository'),
+        $searchinput = \html_writer::label(get_string('searchrepo', 'repository'),
                 'reposearch', false, array('class' => 'accesshide'));
-        $searchinput .= html_writer::empty_tag('input', array('type' => 'text',
+        $searchinput .= \html_writer::empty_tag('input', array('type' => 'text',
                 'id' => 'reposearch', 'name' => 's', 'value' => get_string('search', 'repository')));
-        $str = html_writer::tag('div', $searchinput, array('class' => "fp-def-search"));
+        $str = \html_writer::tag('div', $searchinput, array('class' => "fp-def-search"));
 
         return $str;
     }

@@ -13,6 +13,30 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}{{!
+    @template core_admin/setting_configtime
+
+    Admin time setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * id - element id
+    * hours - list of valid hour options containing name, value, selected
+    * minutes - list of valid minute options containing name, value, selected
+
+    Example context (json):
+    {
+        "name": "test",
+        "id": "test0",
+        "minutes": [
+            { "name": "00", "value": "0", "selected": true },
+            { "name": "01", "value": "1", "selected": false }
+        ],
+        "hours": [
+            { "name": "1", "value": "1", "selected": true },
+            { "name": "2", "value": "2", "selected": false }
+        ]
+    }
 }}
 {{!
     @template core_admin/setting_configtime

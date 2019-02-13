@@ -71,18 +71,18 @@ class course_renderer extends \core_course_renderer {
         $strsearchcourses= get_string("searchcourses");
         $searchurl = new moodle_url('/course/search.php');
 
-        $output = html_writer::start_tag('form', array('id' => $formid, 'action' => $searchurl, 'method' => 'get'));
-        $output .= html_writer::start_tag('fieldset', array('class' => 'coursesearchbox invisiblefieldset'));
-        $output .= html_writer::tag('label', $strsearchcourses.': ', array('for' => $inputid));
-        $output .= html_writer::empty_tag('input', array('type' => 'text', 'id' => $inputid,
+        $output = \html_writer::start_tag('form', array('id' => $formid, 'action' => $searchurl, 'method' => 'get'));
+        $output .= \html_writer::start_tag('fieldset', array('class' => 'coursesearchbox invisiblefieldset'));
+        $output .= \html_writer::tag('label', $strsearchcourses.': ', array('for' => $inputid));
+        $output .= \html_writer::empty_tag('input', array('type' => 'text', 'id' => $inputid,
                 'size' => $inputsize, 'name' => 'search', 'value' => s($value)));
-        $output .= html_writer::empty_tag('input', array('type' => 'submit',
+        $output .= \html_writer::empty_tag('input', array('type' => 'submit',
                 'value' => get_string('go')));
-        $output .= html_writer::end_tag('fieldset');
+        $output .= \html_writer::end_tag('fieldset');
         if ($format != 'navbar') {
             $output .= $this->output->help_icon("coursesearch", "core");
         }
-        $output .= html_writer::end_tag('form');
+        $output .= \html_writer::end_tag('form');
 
         return $output;
     }
