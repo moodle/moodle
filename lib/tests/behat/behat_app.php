@@ -176,7 +176,7 @@ class behat_app extends behat_base {
     protected function start_or_reuse_ionic() {
         global $CFG;
 
-        if (!empty($CFG->behat_ionic_wwwroot)) {
+        if (empty($CFG->behat_ionic_dirroot) && !empty($CFG->behat_ionic_wwwroot)) {
             // Use supplied Ionic server which should already be running.
             $url = $CFG->behat_ionic_wwwroot;
         } else if (self::$ionicrunning) {
