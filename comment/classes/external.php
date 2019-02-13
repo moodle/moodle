@@ -131,6 +131,7 @@ class core_comment_external extends external_api {
             'comments' => $comments,
             'count' => $commentobject->count(),
             'perpage' => (!empty($CFG->commentsperpage)) ? $CFG->commentsperpage : 15,
+            'canpost'  => $commentobject->can_post(),
             'warnings' => $warnings
         );
         return $results;
@@ -164,6 +165,7 @@ class core_comment_external extends external_api {
                 ),
                 'count' => new external_value(PARAM_INT,  'Total number of comments.', VALUE_OPTIONAL),
                 'perpage' => new external_value(PARAM_INT,  'Number of comments per page.', VALUE_OPTIONAL),
+                'canpost' => new external_value(PARAM_BOOL, 'Whether the user can post in this comment area.', VALUE_OPTIONAL),
                 'warnings' => new external_warnings()
             )
         );
