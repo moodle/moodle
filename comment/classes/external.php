@@ -285,4 +285,91 @@ class core_comment_external extends external_api {
             self::get_comment_structure()
         );
     }
+
+    /**
+     * Returns description of method parameters for the delete_comments() method.
+     *
+     * @return external_function_parameters
+     */
+    public static function delete_comments_parameters() {
+        return new external_function_parameters(
+            [
+                'comments' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'id of the comment', VALUE_DEFAULT, 0)
+                )
+            ]
+        );
+    }
+
+    /**
+     * Deletes a comment or comments.
+     *
+     * @param array $comments array of comment ids to be deleted
+     * @return array
+     * @throws comment_exception
+     */
+    public static function delete_comments(array $comments) {
+        global $CFG, $DB, $USER, $SITE;
+
+        if (empty($CFG->usecomments)) {
+            throw new comment_exception('commentsnotenabled', 'moodle');
+        }
+
+        $params = self::validate_parameters(self::delete_comments_parameters(), ['comments' => $comments]);
+        $commentids = $params['comments'];
+
+        list($insql, $inparams) = $DB->get_in_or_equal($commentids);
+        $commentrecords = $DB->get_records_select('comments', "id {$insql}", $inparams);
+
+        // If one or more of the records could not be found, report this and fail early.
+        if (count($commentrecords) != count($comments)) {
+            $invalidcomments = array_diff($commentids, array_column($commentrecords, 'id'));
+            $invalidcommentsstr = implode(',', $invalidcomments);
+            throw new comment_exception("One or more comments could not be found by id: $invalidcommentsstr");
+        }
+
+        // Make sure we can delete every one of the comments before actually doing so.
+        $comments = []; // Holds the comment objects, for later deletion.
+        foreach ($commentrecords as $commentrecord) {
+            // Validate the context.
+            list($context, $course, $cm) = get_context_info_array($commentrecord->contextid);
+            if ($context->id == SYSCONTEXTID) {
+                $course = $SITE;
+            }
+            self::validate_context($context);
+
+            // Make sure the user is allowed to delete the comment.
+            $args = new stdClass;
+            $args->context   = $context;
+            $args->course    = $course;
+            $args->cm        = $cm;
+            $args->component = $commentrecord->component;
+            $args->itemid    = $commentrecord->itemid;
+            $args->area      = $commentrecord->commentarea;
+            $manager = new comment($args);
+
+            if ($commentrecord->userid != $USER->id && !$manager->can_delete($commentrecord->id)) {
+                throw new comment_exception('nopermissiontodelentry');
+            }
+
+            // User is allowed to delete it, so store the comment object, for use below in final deletion.
+            $comments[$commentrecord->id] = $manager;
+        }
+
+        // All comments can be deleted by the user. Make it so.
+        foreach ($comments as $commentid => $comment) {
+            $comment->delete($commentid);
+        }
+
+        return [];
+    }
+
+    /**
+     * Returns description of method result value for the delete_comments() method.
+     *
+     * @return external_description
+     */
+    public static function delete_comments_returns() {
+        return new external_warnings();
+    }
 }

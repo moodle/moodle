@@ -53,8 +53,8 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
 
         $this->student = $this->getDataGenerator()->create_user();
         $this->course = $this->getDataGenerator()->create_course(array('enablecomment' => 1));
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
-        $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $studentrole->id);
+        $this->studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $this->studentrole->id);
 
         $record = new stdClass();
         $record->course = $this->course->id;
@@ -329,5 +329,119 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
         ];
         $this->expectException(comment_exception::class);
         core_comment_external::add_comments($comments);
+    }
+
+    /**
+     * Test delete_comment invalid comment.
+     */
+    public function test_delete_comments_invalid_comments() {
+        $this->resetAfterTest(true);
+        $this->setUser($this->student);
+
+        $this->expectException(comment_exception::class);
+        core_comment_external::delete_comments([-1, 0]);
+    }
+
+    /**
+     * Test delete_comment own user.
+     */
+    public function test_delete_comments_own_user() {
+        $this->resetAfterTest(true);
+        $this->setUser($this->student);
+
+        // Create a few comments.
+        $result = core_comment_external::add_comments([
+            [
+                'contextlevel' => 'module',
+                'instanceid' => $this->cm->id,
+                'component' => 'mod_data',
+                'content' => 'abc',
+                'itemid' => $this->recordid,
+                'area' => 'database_entry'
+            ],
+            [
+                'contextlevel' => 'module',
+                'instanceid' => $this->cm->id,
+                'component' => 'mod_data',
+                'content' => 'def',
+                'itemid' => $this->recordid,
+                'area' => 'database_entry'
+            ]
+        ]);
+        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+
+
+        // Delete those comments we just created.
+        $result = core_comment_external::delete_comments([$result[0]['id'], $result[1]['id']]);
+        $result = external_api::clean_returnvalue(core_comment_external::delete_comments_returns(), $result);
+        $this->assertEquals([], $result);
+    }
+
+    /**
+     * Test delete_comment other student.
+     */
+    public function test_delete_comment_other_student() {
+        $this->resetAfterTest(true);
+        $this->setUser($this->student);
+
+        // Create a comment as student 1.
+        $result = core_comment_external::add_comments([
+            [
+                'contextlevel' => 'module',
+                'instanceid' => $this->cm->id,
+                'component' => 'mod_data',
+                'content' => 'abc',
+                'itemid' => $this->recordid,
+                'area' => 'database_entry'
+            ]
+        ]);
+        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+
+        $this->assertNotEquals(0, $result[0]['id']);
+
+        // Create another student.
+        $otherstudent = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($otherstudent->id, $this->course->id, $this->studentrole->id);
+
+        $this->setUser($otherstudent);
+        $this->expectException(comment_exception::class);
+        core_comment_external::delete_comments([$result[0]['id']]);
+    }
+
+    /**
+     * Test delete_comment as teacher.
+     */
+    public function test_delete_comments_as_teacher() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setUser($this->student);
+
+        $result = core_comment_external::add_comments([
+            [
+                'contextlevel' => 'module',
+                'instanceid' => $this->cm->id,
+                'component' => 'mod_data',
+                'content' => 'abc',
+                'itemid' => $this->recordid,
+                'area' => 'database_entry'
+            ]
+        ]);
+        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+
+        $this->assertNotEquals(0, $result[0]['id']);
+
+        // Create teacher.
+        $teacher = $this->getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($teacher->id, $this->course->id, $teacherrole->id);
+
+        $this->setUser($teacher);
+        $result = external_api::clean_returnvalue(
+            core_comment_external::delete_comments_returns(),
+            core_comment_external::delete_comments([$result[0]['id']])
+        );
+
+        $this->assertEquals([], $result);
+
     }
 }
