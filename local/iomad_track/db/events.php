@@ -21,4 +21,46 @@ $observers = array(
         'callback' => '\local_iomad_track\observer::course_completed',
         'internal' => false,
     ),
+
+    array(
+        'eventname' => 'core\event\course_updated',
+        'callback' => '\local_iomad_track\observer::course_updated',
+        'internal' => false,
+    ),
+
+    array(
+        'eventname' => '\block_iomad_company_admin\event\company_license_updated',
+        'callback' => '\local_iomad_track\observer::company_license_updated',
+        'internal' => false,
+    ),
+
+    array(
+        'eventname'   => '\block_iomad_company_admin\event\user_license_assigned',
+        'callback'    => '\local_iomad_track\observer::user_license_assigned',
+        'internal'    => false,
+    ),
+
+    array(
+        'eventname'   => '\block_iomad_company_admin\event\user_license_unassigned',
+        'callback'    => '\local_iomad_track\observer::user_license_unassigned',
+        'internal'    => false,
+    ),
+
+    array(
+        'eventname'   => '\block_iomad_company_admin\event\user_license_unassigned',
+        'callback'    => '\local_iomad_track\observer::user_license_unassigned',
+        'internal'    => false,
+    ),
+
+    array(
+        'eventname'   => '\core\event\user_enrolment_created',
+        'callback'    => '\local_iomad_track\observer::user_enrolment_created',
+        'internal'    => false,
+    ),
+
+    array(
+        'eventname'   => '\core\event\user_enrolment_deleted',
+        'callback'    => '\local_iomad_track\observer::user_enrolment_deleted',
+        'internal'    => false,
+    ),
 );

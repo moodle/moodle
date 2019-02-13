@@ -26,3 +26,7 @@ div#piechart {
 #page-local-report_completion-index .col-md-9 {
     clear:both;
 }
+
+#page-local-report_completion-index .chart-area{
+    max-width: 400px;
+}

@@ -946,15 +946,17 @@ if ($mform->is_cancelled()) {
                     $numlicenses++;
 
                     $count++;
+                    $issuedate = time();
                     $userlicid = $DB->insert_record('companylicense_users',
                                         array('userid' => $user->id,
                                               'licenseid' => $formdata->licenseid,
                                               'licensecourseid' => $licensecourse,
-                                              'issuedate' => time()));
+                                              'issuedate' => $issuedate));
 
                     // Create an event.
                     $eventother = array('licenseid' => $formdata->licenseid,
-                                    'duedate' => $timestamp);
+                                        'issuedate' => $issuedate,
+                                        'duedate' => $timestamp);
                     $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($licensecourse),
                                                                                                   'objectid' => $userlicid,
                                                                                                   'courseid' => $licensecourse,

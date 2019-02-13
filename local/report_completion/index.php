@@ -17,7 +17,7 @@
 require_once(dirname(__FILE__).'/../../config.php');
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/excellib.class.php');
-require_once(dirname(__FILE__).'/select_form.php');
+require_once(dirname(__FILE__).'/report_course_completion_table.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
 require_once($CFG->dirroot.'/local/iomad/pchart2/class/pData.class.php');
 require_once($CFG->dirroot.'/local/iomad/pchart2/class/pDraw.class.php');
@@ -33,14 +33,14 @@ define('PCHART_SIZEY', 500);
 // Params.
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $participant = optional_param('participant', 0, PARAM_INT);
-$dodownload = optional_param('dodownload', 0, PARAM_CLEAN);
+$download = optional_param('download', 0, PARAM_CLEAN);
 $firstname       = optional_param('firstname', 0, PARAM_CLEAN);
 $lastname      = optional_param('lastname', '', PARAM_CLEAN);
 $showsuspended = optional_param('showsuspended', 0, PARAM_INT);
 $showhistoric = optional_param('showhistoric', 1, PARAM_BOOL);
 $email  = optional_param('email', 0, PARAM_CLEAN);
 $timecreated  = optional_param('timecreated', 0, PARAM_CLEAN);
-$sort         = optional_param('sort', 'lastname', PARAM_ALPHA);
+$sort         = optional_param('sort', '', PARAM_ALPHA);
 $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', $CFG->iomad_max_list_users, PARAM_INT);        // How many per page.
@@ -94,16 +94,9 @@ if ($departmentid) {
 if ($showsuspended) {
     $params['showsuspended'] = $showsuspended;
 }
-if ($showhistoric) {
-    $params['showhistoric'] = $showhistoric;
-}
-if ($charttype) {
-    $params['charttype'] = $charttype;
-}
 if ($completiontype) {
     $params['completiontype'] = $completiontype;
 }
-
 if ($compfromraw) {
     if (is_array($compfromraw)) {
         $compfrom = mktime(0, 0, 0, $compfromraw['month'], $compfromraw['day'], $compfromraw['year']);
@@ -114,7 +107,6 @@ if ($compfromraw) {
 } else {
     $compfrom = 0;
 }
-
 if ($comptoraw) {
     if (is_array($comptoraw)) {
         $compto = mktime(0, 0, 0, $comptoraw['month'], $comptoraw['day'], $comptoraw['year']);
@@ -218,18 +210,18 @@ $completiontypeselectoutput = html_writer::tag('div', $output->render($select), 
 //}
 
 if ($courseid == 1) {
-	$searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, true, true);
+    $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, true, true);
 } else {
-	$searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, false, false);
+    $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, false, false);
 }
 
 // Create data for form.
 $customdata = null;
 $options = $params;
-$options['dodownload'] = 1;
+$options['download'] = 1;
 
 // Only print the header if we are not downloading.
-if (empty($dodownload) && empty($showchart)) {
+if (empty($download)) {
     echo $output->header();
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -243,769 +235,279 @@ if (empty($dodownload) && empty($showchart)) {
     }
 }
 
-$courseinfo = report_completion::get_course_summary_info ($departmentid, 0, $showsuspended);
-if (empty($dodownload) && empty($showchart)) {
-    if (empty($courseid)) {
-        echo "<h3>".get_string('coursesummary', 'local_report_completion')."</h3>";
-    } else if ($courseid == 1) {
-        echo "<h3>".get_string('reportallusers', 'local_report_completion')."</h3>";
-    } else {
-        echo "<h3>".get_string('courseusers', 'local_report_completion').$courseinfo[$courseid]->coursename."</h3>";
-    }
-
-    if (!empty($companyid) && !empty($courseid)) {
-        echo html_writer::start_tag('div', array('class' => 'iomadclear'));
-        echo html_writer::start_tag('div', array('class' => 'fitem'));
-        echo $treehtml;
-        echo html_writer::start_tag('div', array('style' => 'display:none'));
-        echo $fwselectoutput;
-        echo html_writer::end_tag('div');
-        echo html_writer::end_tag('div');
-        echo html_writer::end_tag('div');
-        echo html_writer::start_tag('div', array('class' => 'iomadclear', 'style' => 'padding-top: 5px;'));
-        echo html_writer::start_tag('div', array('style' => 'float:left;'));
-        echo $completiontypeselectoutput;
-        echo html_writer::end_tag('div');
-        echo html_writer::end_tag('div');
-    }
-    if (!empty($courseid)) {
-        $options['charttype'] = 'summary';
-        $options['dodownload'] = false;
-    } else {
-        $options['charttype'] = 'summary';
-        $options['dodownload'] = false;
-        $alluserslink = new moodle_url($url, array(
-            'courseid' => 1,
-            'departmentid' => $departmentid,
-            'showchart' => 0,
-            'charttype' => '',
-        ));
-        echo $output->single_button($alluserslink, get_string("allusers", 'local_report_completion'));
-        if (!$showhistoric) {
-            $historicuserslink = new moodle_url($url, array('departmentid' => $departmentid,
-                                                            'showchart' => 0,
-                                                            'charttype' => '',
-                                                            'showhistoric' => 1,
-                                                            'showsuspended' => $showsuspended
-                                                            ));
-            echo $output->single_button($historicuserslink, get_string("historicusers", 'local_report_completion'));
+// Are we showing the overview menu?
+if (empty($courseid)) {
+    $courseinfo = report_completion::get_course_summary_info ($departmentid, 0, $showsuspended);
+    if (empty($download)) {
+        if (empty($courseid)) {
+            echo "<h3>".get_string('coursesummary', 'local_report_completion')."</h3>";
+        } else if ($courseid == 1) {
+            echo "<h3>".get_string('reportallusers', 'local_report_completion')."</h3>";
         } else {
-            $historicuserslink = new moodle_url($url, array('departmentid' => $departmentid,
-                                                            'showchart' => 0,
-                                                            'charttype' => '',
-                                                            'showhistoric' => 0,
-                                                            'showsuspended' => $showsuspended
-                                                            ));
-            echo $output->single_button($historicuserslink, get_string("hidehistoricusers", 'local_report_completion'));
+            echo "<h3>".get_string('courseusers', 'local_report_completion').$courseinfo[$courseid]->coursename."</h3>";
         }
-        if (!$showsuspended) {
-            $suspendeduserslink = new moodle_url($url, array('departmentid' => $departmentid,
-                                                             'showchart' => 0,
-                                                             'charttype' => '',
-                                                             'showhistoric' => $showhistoric,
-                                                             'showsuspended' => 1
-                                                            ));
-            echo $output->single_button($suspendeduserslink, get_string("showsuspendedusers", 'local_report_completion'));
-        } else {
-            $suspendeduserslink = new moodle_url($url, array('departmentid' => $departmentid,
-                                                             'showchart' => 0,
-                                                             'charttype' => '',
-                                                             'showhistoric' => $showhistoric,
-                                                             'showsuspended' => 0
-                                                            ));
-            echo $output->single_button($suspendeduserslink, get_string("hidesuspendedusers", 'local_report_completion'));
-        }
-    }
-
-}
-
-// Set up the course overview table.
-$coursecomptable = new html_table();
-$coursecomptable->id = 'ReportTable';
-if (!$showhistoric) {
-    $coursecomptable->head = array(
-        get_string('coursename', 'local_report_completion'),
-        get_string('numusers', 'local_report_completion'),
-        get_string('notstartedusers', 'local_report_completion'),
-        get_string('inprogressusers', 'local_report_completion'),
-        get_string('completedusers', 'local_report_completion'),
-        ' ',
-    );
-    $coursecomptable->align = array('left', 'center', 'center', 'center', 'center', 'center');
-} else {
-    $coursecomptable->head = array(
-        get_string('coursename', 'local_report_completion'),
-        get_string('numusers', 'local_report_completion'),
-        get_string('notstartedusers', 'local_report_completion'),
-        get_string('inprogressusers', 'local_report_completion'),
-        get_string('completedusers', 'local_report_completion'),
-        get_string('historiccompletedusers', 'local_report_completion'),
-        ' ',
-    );
-    $coursecomptable->align = array('left', 'center', 'center', 'center', 'center', 'center', 'center');
-}
-//$coursecomptable->width = '95%';
-$chartdata = array();
-
-if (!empty($dodownload)) {
-    // Set up the Excel workbook.
-
-    header("Content-Type: application/download\n");
-    header("Content-Disposition: attachment; filename=\"coursereport.csv\"");
-    header("Expires: 0");
-    header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
-    header("Pragma: public");
-
-}
-$chartnumusers = array();
-$chartnotstarted = array();
-$chartinprogress = array();
-$chartcompleted = array();
-$chartname = array();
-
-// Iterate over courses.
-foreach ($courseinfo as $id => $coursedata) {
-    $courseuserslink = new moodle_url($url, array(
-        'courseid' => $coursedata->id,
-        'departmentid' => $departmentid,
-        'showchart' => 0,
-        'charttype' => '',
-    ));
-    $coursechartlink = new moodle_url('index.php', array(
-        'courseid' => $coursedata->id,
-        'departmentid' => $departmentid,
-        'showchart' => 0,
-        'charttype' => 'course',
-    ));
-    if (!$showhistoric) {
-        $coursecomptable->data[] = array(
-            $coursedata->coursename,
-            $coursedata->numenrolled,
-            $coursedata->numnotstarted,
-            $coursedata->numstarted - $coursedata->numcompleted,
-            $coursedata->numcompleted,
-            '<a class="btn" style="margin:2px" href="' . $courseuserslink . '">' . get_string('usersummary', 'local_report_completion') . '</a>&nbsp;',
-            //'<a class="btn" style="margin:2px" href="' . $coursechartlink . '">' . get_string('cchart', 'local_report_completion') . '</a>',
-        );
-    } else {
-        $coursecomptable->data[] = array(
-            $coursedata->coursename,
-            $coursedata->numenrolled,
-            $coursedata->numnotstarted,
-            $coursedata->numstarted - $coursedata->numcompleted,
-            $coursedata->numcompleted,
-            $coursedata->historic,
-            '<a class="btn" style="margin:2px" href="' . $courseuserslink . '">' . get_string('usersummary', 'local_report_completion') . '</a>&nbsp;',
-            //'<a class="btn" style="margin:2px" href="' . $coursechartlink . '">' . get_string('cchart', 'local_report_completion') . '</a>',
-        );
-    }
-    if ($charttype == 'summary') {
-        $chartname[] = $coursedata->coursename;
-        $chartnumusers[] = $coursedata->numenrolled;
-        $chartnotstarted[] = $coursedata->numnotstarted;
-        $chartinprogress[] = $coursedata->numstarted - $coursedata->numcompleted;
-        $chartcompleted[] = $coursedata->numcompleted;
-        if ($showhistoric) {
-            $charthistoric = $coursedata->historic;
-        }
-    } else if ($charttype == 'course' && $courseid == $coursedata->id ) {
-        $seriesdata = array($coursedata->numnotstarted,
-                            $coursedata->numstarted - $coursedata->numcompleted,
-                            $coursedata->numcompleted);
-        if ($showhistoric) {
-            $seriesdata = $seriesdata + array($coursedata->historic);
-        }
-    }
-}
-
-if (!empty($charttype)) {
-    $chartdata = new pData();
-    if ($charttype == 'summary') {
-        $chartdata->addPoints($chartnotstarted, 's_notstarted' );
-        $chartdata->addPoints($chartinprogress, 's_inprogress' );
-        $chartdata->addPoints($chartcompleted, 's_completed' );
-        if ($showhistoric) {
-            $chartdata->addPoints($charthistoric, 's_completed' );
-        }
-    } else if ($charttype == 'course') {
-        $chartdata->addPoints($seriesdata, 'Value');
-    }
-    if (!showhistoric) {
-        $chartdata->addPoints(array(
-            get_string('notstartedusers', 'local_report_completion'),
-            get_string('inprogressusers', 'local_report_completion'),
-            get_string('completedusers', 'local_report_completion'),
-        ), 'Legend');
-    } else {
-        $chartdata->addPoints(array(
-            get_string('notstartedusers', 'local_report_completion'),
-            get_string('inprogressusers', 'local_report_completion'),
-            get_string('completedusers', 'local_report_completion'),
-            get_string('historicusers', 'local_report_completion'),
-        ), 'Legend');
-    }
-    $chartdata->setAbscissa('Legend');
-}
-
-if (empty($dodownload) && empty($showchart)) {
-    if (empty($courseid)) {
-        echo html_writer::table($coursecomptable);
-    }
-}
-
-// Do we have any additional reporting fields?
-$extrafields = array();
-if (!empty($CFG->iomad_report_fields)) {
-    foreach (explode(',', $CFG->iomad_report_fields) as $extrafield) {
-        $extrafields[$extrafield] = new stdclass();
-        $extrafields[$extrafield]->name = $extrafield;
-        if (strpos($extrafield, 'profile_field') !== false) {
-            // Its an optional profile field.
-            $profilefield = $DB->get_record('user_info_field', array('shortname' => str_replace('profile_field_', '', $extrafield)));
-            $extrafields[$extrafield]->title = $profilefield->name;
-        } else {
-            $extrafields[$extrafield]->title = get_string($extrafield);
-        }
-    }
-}
-
-if (empty($charttype)) {
-    if (!empty($courseid)) {
-        // Get the course completion information.
-        $showexpiry = true;
-        if ($iomadcourseinfo = $DB->get_record('iomad_courses', array('courseid' => $courseid))) {
-            if (!empty($iomadcourseinfo->validlength)) {
-                $showexpiry = true;
-            }
-        }
-        if (empty($dodownload)) {
-            if (empty($idlist['0'])) {
-                // Only want the data for the page we are on.
-                // courseid==1 is ALL users.
-                if ($courseid == 1) {
-                    $coursedataobj = report_completion::get_all_user_course_completion_data($searchinfo, $page, $perpage, $completiontype, $showhistoric);
-                } else {
-                    $coursedataobj = report_completion::get_user_course_completion_data($searchinfo, $courseid, $page, $perpage, $completiontype, $showhistoric);
-                }
-                $coursedata = $coursedataobj->users;
-                $totalcount = $coursedataobj->totalcount;
-            }
-        } else {
-            if (empty($idlist['0'])) {
-                if ($courseid == 1) {
-                    $coursedataobj = report_completion::get_all_user_course_completion_data($searchinfo, 0, 0, 0, $showhistoric);
-                } else {
-                    $coursedataobj = report_completion::get_user_course_completion_data($searchinfo, $courseid, 0, 0, 0, $showhistoric);
-                }
-                $coursedata = $coursedataobj->users;
-                $totalcount = $coursedataobj->totalcount;
-            }
-        }
-
-        // Check if there is a certificate module.
-        $hascertificate = false;
-        if (empty($dodownload) && $certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
-            require_once($CFG->dirroot.'/mod/iomadcertificate/lib.php');
-            if ($certificateinfo = $DB->get_record('iomadcertificate', array('course' => $courseid))) {
-                if ($certificatemodinstance = $DB->get_record('course_modules', array('course' => $courseid,
-                                                                                      'module' => $certmodule->id,
-                                                                                      'instance' => $certificateinfo->id))) {
-                    $certificatecontext = context_module::instance($certificatemodinstance->id);
-                    $hascertificate = true;
-                }
-            }
-        }
-        $compusertable = new html_table();
-
-        // Deal with table columns.
-        $startcolumns = array('firstname' => 'firstname',
-                              'lastname' => 'lastname',
-                              'department' => 'department',
-                              'email' => 'email');
-
-        if (!$showexpiry) {
-            $endcolumns = array('status' => 'status',
-                                'timeenrolled' => 'timeenrolled',
-                                'timestarted' => 'timestarted',
-                                'timecompleted' => 'timecompleted',
-                                'finalscore' => 'finalscore');
-        } else {
-            $endcolumns = array('status' => 'status',
-                                'timeenrolled' => 'timeenrolled',
-                                'timestarted' => 'timestarted',
-                                'timecompleted' => 'timecompleted',
-                                'timeexpires' => 'timeexpires',
-                                'finalscore' => 'finalscore');
-        }
-
-        $columns = $startcolumns + $endcolumns;
-        foreach ($columns as $column) {
-            if ($column != 'timeexpires') {
-                $string[$column] = get_string($column, 'local_report_completion');
-                if ($sort != $column) {
-                    $columnicon = "";
-                    $columndir = "ASC";
-                } else {
-                    $columndir = $dir == "ASC" ? "DESC":"ASC";
-                    $columnicon = $dir == "ASC" ? "down":"up";
-                    $columnicon = " <img src=\"" . $output->image_url('t/' . $columnicon) . "\" alt=\"\" />";
-
-                }
-                $$column = $string[$column].$columnicon;
-            } else {
-                $$column = get_string($column, 'local_report_completion');
-            }
-        }
-
-        // Set up the course worksheet.
-        if (!empty($dodownload)) {
-
-            if ($courseid == 1) {
-                echo get_string('allusers', 'local_report_completion')."\n";
-            } else {
-                echo $courseinfo[$courseid]->coursename."\n";
-            }
-            $startcolumns = '"'.get_string('name', 'local_report_completion').'","'
-                            .get_string('email', 'local_report_completion').'","'
-                            .get_string('course').'","'
-                            .get_string('department', 'block_iomad_company_admin').'",';
-            if (!$showexpiry) {
-                $endcolumns = '"' . get_string('status', 'local_report_completion').'","'
-                              .get_string('timeenrolled', 'local_report_completion').'","'
-                              .get_string('timestarted', 'local_report_completion').'","'
-                              .get_string('timecompleted', 'local_report_completion').'","'
-                              .get_string('finalscore', 'local_report_completion')."\"\n";
-            } else {
-                $endcolumns = '"' . get_string('status', 'local_report_completion').'","'
-                              .get_string('timeenrolled', 'local_report_completion').'","'
-                              .get_string('timestarted', 'local_report_completion').'","'
-                              .get_string('timecompleted', 'local_report_completion').'","'
-                              .get_string('timeexpires', 'local_report_completion').'","'
-                              .get_string('finalscore', 'local_report_completion')."\"\n";
-            }
-            $midcolumns = "";
-            if (!empty($extrafields)) {
-                foreach ($extrafields as $extrafield) {
-                    $midcolumns .= '"' . $extrafield->title . '",';
-                }
-            }
-
-            echo $startcolumns . $midcolumns . $endcolumns;
-            $xlsrow = 1;
-        }
-        // Set the initial parameters for the table header links.
-        $linkparams = $params;
-
-        $override = new stdclass();
-        $override->firstname = 'firstname';
-        $override->lastname = 'lastname';
-        $fullnamelanguage = get_string('fullnamedisplay', '', $override);
-        if (($CFG->fullnamedisplay == 'firstname lastname') or
-            ($CFG->fullnamedisplay == 'firstname') or
-            ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'firstname lastname' )) {
-            // Work out for name sorting/direction and links.
-            // Set the defaults.
-               $linkparams['dir'] = 'ASC';
-            $linkparams['sort'] = 'firstname';
-            $firstnameurl = new moodle_url('index.php', $linkparams);
-            $linkparams['sort'] = 'lastname';
-            $lastnameurl = new moodle_url('index.php', $linkparams);
-            $linkparams['sort'] = 'department';
-            $departmenturl = new moodle_url('index.php', $linkparams);
-            $linkparams['sort'] = 'email';
-            $emailurl = new moodle_url('index.php', $linkparams);
-            $linkparams['sort'] = 'status';
-            $statusurl = new moodle_url('index.php', $linkparams);
-            $linkparams['sort'] = 'timestarted';
-            $timestartedurl = new moodle_url('index.php', $linkparams);
-            $linkparams['sort'] = 'timecompleted';
-            $timecompletedurl = new moodle_url('index.php', $linkparams);
-            $linkparams['sort'] = 'finalscore';
-            $finalscoreurl = new moodle_url('index.php', $linkparams);
-            $linkparams['sort'] = 'timeenrolled';
-            $timeenrolledurl = new moodle_url('index.php', $linkparams);
-
-            // Set the options if there is already a sort defined.
-            if (!empty($params['sort'])) {
-                if ($params['sort'] == 'firstname') {
-                    $linkparams['sort'] = 'firstname';
-                    if ($params['dir'] == 'ASC') {
-                        $linkparams['dir'] = 'DESC';
-                        $firstnameurl = new moodle_url('index.php', $linkparams);
-                    } else {
-                        $linkparams['dir'] = 'ASC';
-                        $firstnameurl = new moodle_url('index.php', $linkparams);
-                    }
-                } else if ($params['sort'] == 'lastname') {
-                    $linkparams['sort'] = 'lastname';
-                    if ($params['dir'] == 'ASC') {
-                        $linkparams['dir'] = 'DESC';
-                        $lastnameurl = new moodle_url('index.php', $linkparams);
-                    } else {
-                        $linkparams['dir'] = 'ASC';
-                        $lastnameurl = new moodle_url('index.php', $linkparams);
-                    }
-                } else if ($params['sort'] == 'department') {
-                    $linkparams['sort'] = 'department';
-                    if ($params['dir'] == 'ASC') {
-                        $linkparams['dir'] = 'DESC';
-                        $departmenturl = new moodle_url('index.php', $linkparams);
-                    } else {
-                        $linkparams['dir'] = 'ASC';
-                        $departmenturl = new moodle_url('index.php', $linkparams);
-                    }
-                } else if ($params['sort'] == 'email') {
-                    $linkparams['sort'] = 'email';
-                    if ($params['dir'] == 'ASC') {
-                        $linkparams['dir'] = 'DESC';
-                        $emailurl = new moodle_url('index.php', $linkparams);
-                    } else {
-                        $linkparams['dir'] = 'ASC';
-                        $emailurl = new moodle_url('index.php', $linkparams);
-                    }
-                } else if ($params['sort'] == 'status') {
-                    $linkparams['sort'] = 'status';
-                    if ($params['dir'] == 'ASC') {
-                        $linkparams['dir'] = 'DESC';
-                        $statusurl = new moodle_url('index.php', $linkparams);
-                    } else {
-                        $linkparams['dir'] = 'ASC';
-                        $statusurl = new moodle_url('index.php', $linkparams);
-                    }
-                } else if ($params['sort'] == 'timestarted') {
-                    $linkparams['sort'] = 'timestarted';
-                    if ($params['dir'] == 'ASC') {
-                        $linkparams['dir'] = 'DESC';
-                        $datestartedurl = new moodle_url('index.php', $linkparams);
-                    } else {
-                        $linkparams['dir'] = 'ASC';
-                        $datestartedurl = new moodle_url('index.php', $linkparams);
-                    }
-                } else if ($params['sort'] == 'timeenrolled') {
-                    $linkparams['sort'] = 'timeenrolled';
-                    if ($params['dir'] == 'ASC') {
-                        $linkparams['dir'] = 'DESC';
-                        $dateenrolledurl = new moodle_url('index.php', $linkparams);
-                    } else {
-                        $linkparams['dir'] = 'ASC';
-                        $dateenrolledurl = new moodle_url('index.php', $linkparams);
-                    }
-                } else if ($params['sort'] == 'timecompleted') {
-                    $linkparams['sort'] = 'timecompleted';
-                    if ($params['dir'] == 'ASC') {
-                        $linkparams['dir'] = 'DESC';
-                        $datecompletedurl = new moodle_url('index.php', $linkparams);
-                    } else {
-                        $linkparams['dir'] = 'ASC';
-                        $datecompletedurl = new moodle_url('index.php', $linkparams);
-                    }
-                } else if ($params['sort'] == 'finalscore') {
-                    $linkparams['sort'] = 'finalscore';
-                    if ($params['dir'] == 'ASC') {
-                        $linkparams['dir'] = 'DESC';
-                        $finalscoreurl = new moodle_url('index.php', $linkparams);
-                    } else {
-                        $linkparams['dir'] = 'ASC';
-                        $finalscoreurl = new moodle_url('index.php', $linkparams);
-                    }
-                }
-            }
-        }
-        $fullnamedisplay = $output->action_link($firstnameurl, get_string('name')); //." / ". $OUTPUT->action_link($lastnameurl, $lastname);
-
-        $headstart = array($fullnamedisplay => $fullnamedisplay,
-                           $email => $output->action_link($emailurl, $email),
-                           'course' => get_string('course'),
-                           $department => $output->action_link($departmenturl, $department));
-        $headmid = array();
-        if (!empty($extrafields)) {
-            foreach ($extrafields as $extrafield) {
-                $headmid[$extrafield->name] = $extrafield->title;
-            }
-        }
-        if (!$showexpiry) {
-            $headend = array ($timeenrolled => $output->action_link($timeenrolledurl, $timeenrolled),
-                              $status => $output->action_link($statusurl, $status),
-                              $timestarted => $output->action_link($timestartedurl, $timestarted),
-                              $timecompleted => $output->action_link($timecompletedurl, $timecompleted),
-                              $finalscore =>$finalscore);
-            $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
-        } else {
-            $headend = array ($timeenrolled => $output->action_link($timeenrolledurl, $timeenrolled),
-                              $status => $output->action_link($statusurl, $status),
-                              $timestarted => $output->action_link($timestartedurl, $timestarted),
-                              $timecompleted => $output->action_link($timecompletedurl, $timecompleted),
-                              $timeexpires => $timeexpires,
-                              $finalscore =>$finalscore);
-            $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
-        }
-        $compusertable->head = $headstart + $headmid + $headend;
-		$compusertable->id = 'ReportTable';
-        if ($hascertificate) {
-            $compusertable->head[] = get_string('certificate', 'local_report_completion');
-            $compusertable->align[] = 'center';
-        }
-
-        $userurl = '/local/report_users/userdisplay.php';
-
-        // Paginate up the results.
-
-        if (empty($idlist['0'])) {
-            foreach ($coursedata as $userid => $user) {
-
-                // Get the course info if it's all of them.
-                if ($courseid == 1) {
-                    if (!$iomadcourseinfo = $DB->get_record('iomad_courses', array('courseid' => $user->courseid))) {
-                        $iomadcourseinfo = new stdclass();
-                    }
-                }
-
-                if (empty($user->timestarted)) {
-                    $statusstring = get_string('notstarted', 'local_report_completion');
-                } else {
-                    $statusstring = get_string('started', 'local_report_completion');
-                }
-                if (!empty($user->timecompleted)) {
-                    $statusstring = get_string('completed', 'local_report_completion');
-                }
-
-                // Get the completion date information.
-                if (!empty($user->timestarted)) {
-                    $starttime = date($CFG->iomad_date_format, $user->timestarted);
-                } else {
-                    $starttime = "-";
-                }
-                if (!empty($user->timeenrolled)) {
-                    $enrolledtime = date($CFG->iomad_date_format, $user->timeenrolled);
-                } else {
-                    $enrolledtime = "-";
-                }
-                if (!empty($user->timecompleted)) {
-                    $completetime = date($CFG->iomad_date_format, $user->timecompleted);
-                } else {
-                    $completetime = "-";
-                }
-
-                if ($showexpiry && !empty($user->timecompleted) && !empty($iomadcourseinfo->validlength)) {
-                    $expirytime = date($CFG->iomad_date_format, $user->timecompleted + ($iomadcourseinfo->validlength * 24 * 60 * 60) );
-                } else {
-                    $expirytime = "-";
-                }
-
-                // Score information.
-                if (!empty($user->result)) {
-                    $scorestring = round($user->result, 0)."%";
-                } else {
-                    $scorestring = "-";
-                }
-
-                // load the full user profile.
-                $fulluser = $DB->get_record('user', array('id' => $user->uid));
-                profile_load_data($fulluser);
-                $user->fullname = fullname($fulluser);
-
-                // Deal with the certificate.
-                if ($hascertificate) {
-                    // Check if user has completed the course - if so, show the certificate.
-                    if (!empty($user->timecompleted) ) {
-                        // Get the course module.
-                        if (empty($user->certsource)) {
-                            $certtabledata = "<a class=\"btn\" href='".new moodle_url('/mod/iomadcertificate/view.php',
-                                                                         array('id' => $certificatemodinstance->id,
-                                                                               'action' => 'get',
-                                                                               'userid' => $user->uid,
-                                                                               'sesskey' => sesskey()))."'>".
-                                              get_string('downloadcert', 'local_report_users')."</a>";
-                        } else {
-                            // Get the certificate from the download files thing.
-                            if ($traccertrec = $DB->get_record('local_iomad_track_certs', array('trackid' => $user->certsource))) {
-                                // create the file download link.
-                                $coursecontext = context_course::instance($courseid);
-                                $certtabledata = "<a class=\"btn btn-info\" href='".
-                                               moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename) .
-                                              "'>" . get_string('downloadcert', 'local_report_users').
-                                              "</a>";
-                            }
-                        }
-                    } else {
-                        $certtabledata = get_string('nocerttodownload', 'local_report_users');
-                    }
-
-                    $rowstart = array('fullname' => "<a href='".new moodle_url($userurl, array('userid' => $user->uid,
-                                                                                 'courseid' => $courseid)).
-                                                    "'>$user->fullname</a>",
-                                      'email' => $user->email,
-                                      'coursename' => $user->coursename,
-                                      'department' => $user->department);
-                    $rowmid = array();
-                    if (!empty($extrafields)) {
-                        foreach($extrafields as $extrafield) {
-                            $fieldname = $extrafield->name;
-                            $rowmid[$extrafield->name] = $fulluser->$fieldname;
-                        }
-                    }
-                    if (!$showexpiry) {
-                        $rowend = array('enrolledtime' => $enrolledtime,
-                                        'statusstring' => $statusstring,
-                                        'starttime' => $starttime,
-                                        'completetime' => $completetime,
-                                        'scorestring' => $scorestring,
-                                        'certtabledata' => $certtabledata);
-                    } else {
-                        $rowend = array('enrolledtime' => $enrolledtime,
-                                        'statusstring' => $statusstring,
-                                        'starttime' => $starttime,
-                                        'completetime' => $completetime,
-                                        'expirytime' => $expirytime,
-                                        'scorestring' => $scorestring,
-                                        'certtabledata' => $certtabledata);
-                    }
-                    $compusertable->data[] = $rowstart + $rowmid + $rowend;
-                } else {
-                    $rowstart = array('fullname' => "<a href='".new moodle_url($userurl, array('userid' => $user->uid,
-                                                                                 'courseid' => $courseid)).
-                                                    "'>$user->fullname</a>",
-                                      'email' => $user->email,
-                                      'coursename' => $user->coursename,
-                                      'department' => $user->department);
-                    $rowmid = array();
-                    if (!empty($extrafields)) {
-                        foreach($extrafields as $extrafield) {
-                            $fieldname = $extrafield->name;
-                            $rowmid[$extrafield->name] = $fulluser->$fieldname;
-                        }
-                    }
-                    if (!$showexpiry) {
-                        $rowend = array('enrolledtime' => $enrolledtime,
-                                        'statusstring' => $statusstring,
-                                        'starttime' => $starttime,
-                                        'completetime' => $completetime,
-                                        'scorestring' => $scorestring);
-                    } else {
-                        $rowend = array('enrolledtime' => $enrolledtime,
-                                        'statusstring' => $statusstring,
-                                        'starttime' => $starttime,
-                                        'completetime' => $completetime,
-                                        'expirytime' => $expirytime,
-                                        'scorestring' => $scorestring);
-                    }
-                    $compusertable->data[] = $rowstart + $rowmid + $rowend;
-                }
-                if (!empty($dodownload)) {
-                    $rowstart = '"'.$user->fullname.
-                                '","'.$user->email.
-                                '","'.$user->coursename.
-                                '","'.$user->department;
-
-                    $rowmid = '';
-                    if (!empty($extrafields)) {
-                        foreach($extrafields as $extrafield) {
-                            $fieldname = $extrafield->name;
-                            $rowmid .= '","'.$fulluser->$fieldname;
-                        }
-                    }
-                    if (!$showexpiry) {
-                        $rowend = '","'.$statusstring.
-                                  '","'.$enrolledtime.
-                                  '","'.$starttime.
-                                  '","'.$completetime.
-                                  '","'.$scorestring.
-                                  "\"\n";
-                    } else {
-                        $rowend = '","'.$statusstring.
-                                  '","'.$enrolledtime.
-                                  '","'.$starttime.
-                                  '","'.$completetime.
-                                  '","'.$expirytime.
-                                  '","'.$scorestring.
-                                  "\"\n";
-                    }
-                    echo $rowstart . $rowmid . $rowend;
-                }
-            }
-        }
-        if (empty($dodownload)) {
-            // Set up the filter form.
-            $mform = new iomad_user_filter_form(null, array('companyid' => $companyid, 'showhistoric' => true, 'addfrom' => 'compfrom', 'addto' => 'compto', 'adddodownload' => true));
-
-            $mform->set_data(array('departmentid' => $departmentid));
-            $mform->set_data($params);
-            $mform->get_data();
-
-            // Display the user filter form.
+    
+        if (!empty($companyid)) {
             echo html_writer::start_tag('div', array('class' => 'iomadclear'));
-            $mform->display();
+            echo html_writer::start_tag('div', array('class' => 'fitem'));
+            echo $treehtml;
+            echo html_writer::start_tag('div', array('style' => 'display:none'));
+            echo $fwselectoutput;
             echo html_writer::end_tag('div');
-
-            // Display the paging bar.
-            if (empty($idlist['0'])) {
-                echo $output->paging_bar($totalcount, $page, $perpage, new moodle_url('/local/report_completion/index.php', $params));
-				echo "<br />";
+            echo html_writer::end_tag('div');
+            echo html_writer::end_tag('div');
+            if (!empty($courseid)) {
+                echo html_writer::start_tag('div', array('class' => 'iomadclear', 'style' => 'padding-top: 5px;'));
+                echo html_writer::start_tag('div', array('style' => 'float:left;'));
+                echo $completiontypeselectoutput;
+                echo html_writer::end_tag('div');
+                echo html_writer::end_tag('div');
             }
-
-            // Display the user table.
-            echo html_writer::table($compusertable);
-            if (!empty($idlist['0'])) {
-                echo "<h2>".$idlist['0']."</h2>";
+        }
+        if (empty($courseid)) {
+            $alluserslink = new moodle_url($url, array(
+                'courseid' => 1,
+                'departmentid' => $departmentid,
+            ));
+            echo $output->single_button($alluserslink, get_string("allusers", 'local_report_completion'));
+            if (!$showsuspended) {
+                $suspendeduserslink = new moodle_url($url, array('departmentid' => $departmentid,
+                                                                 'showchart' => 0,
+                                                                 'charttype' => '',
+                                                                 'showhistoric' => $showhistoric,
+                                                                 'showsuspended' => 1
+                                                                ));
+                echo $output->single_button($suspendeduserslink, get_string("showsuspendedusers", 'local_report_completion'));
+            } else {
+                $suspendeduserslink = new moodle_url($url, array('departmentid' => $departmentid,
+                                                                 'showchart' => 0,
+                                                                 'charttype' => '',
+                                                                 'showhistoric' => $showhistoric,
+                                                                 'showsuspended' => 0
+                                                                ));
+                echo $output->single_button($suspendeduserslink, get_string("hidesuspendedusers", 'local_report_completion'));
             }
         }
     }
-}
-if (!empty($showchart)) {
+    
+    // Set up the course overview table.
+    $coursecomptable = new html_table();
+    $coursecomptable->id = 'ReportTable';
+    $coursecomptable->head = array(get_string('coursename', 'local_report_completion'),
+                                   get_string('licenseallocated', 'local_report_user_license_allocations'),
+                                   get_string('usersummary', 'local_report_completion'));
+    $coursecomptable->align = array('left', 'left', 'left'
+    );
+    $coursecomptable->width = '95%';
+    
+    // Iterate over courses.
+    foreach ($courseinfo as $id => $coursedata) {
+        $courseuserslink = new moodle_url($url, array(
+            'courseid' => $coursedata->id,
+            'departmentid' => $departmentid,
+        ));
 
-    // Initialise the graph
-    $pi = new pImage(PCHART_SIZEX, PCHART_SIZEY, $chartdata);
-    $pi->drawRectangle(0, 0, PCHART_SIZEX-1, PCHART_SIZEY-1, array('R' => 0, 'G' => 0, 'B' => 0));
+        $enrolledchart = new \core\chart_pie();
+        $enrolledchart->set_doughnut(true); // Calling set_doughnut(true) we display the chart as a doughnut.
+        $enrolledseries = new \core\chart_series('', array($coursedata->licensesallocated,$coursedata->enrolled, $coursedata->completed));
+        $enrolledchart->add_series($enrolledseries);
+        $enrolledchart->set_labels(array(get_string('notstartedusers', 'local_report_completion'),
+                                         get_string('inprogressusers', 'local_report_completion'),
+                                         get_string('completedusers', 'local_report_completion')));
+        if (!empty($coursedata->licensed)) {
+            $CFG->chart_colorset= ['#d9534f', 'green'];
+            $licensechart = new \core\chart_pie();
+            $licensechart->set_doughnut(true); // Calling set_doughnut(true) we display the chart as a doughnut.
+            $series = new \core\chart_series('', array($coursedata->licensesallocated - $coursedata->enrolled, $coursedata->enrolled));
+            $licensechart->add_series($series);
+            $licensechart->set_labels(array(get_string('unused', 'local_report_license'),
+                                            get_string('used', 'local_report_license')));
+            $licensechartout = $output->render($licensechart, false);
+        } else {
+            $licensechartout = null;
+        }
+        // Change the chart colours.
+        $CFG->chart_colorset= ['#d9534f', '#1177d1','green'];
+        $enrolledchartout = $output->render($enrolledchart, false);
 
-    if ($charttype == "summary") {
+        $coursecomptable->data[] = array(
+                $output->single_button($courseuserslink, $coursedata->coursename),
+                $licensechartout,
+                $enrolledchartout);
+    }
+    
+    echo html_writer::table($coursecomptable);
+    echo $output->footer();
+} else {
+    // Do we have any additional reporting fields?
+    $extrafields = array();
+    if (!empty($CFG->iomad_report_fields)) {
+        foreach (explode(',', $CFG->iomad_report_fields) as $extrafield) {
+            $extrafields[$extrafield] = new stdclass();
+            $extrafields[$extrafield]->name = $extrafield;
+            if (strpos($extrafield, 'profile_field') !== false) {
+                // Its an optional profile field.
+                $profilefield = $DB->get_record('user_info_field', array('shortname' => str_replace('profile_field_', '', $extrafield)));
+                $extrafields[$extrafield]->title = $profilefield->name;
+                $extrafields[$extrafield]->fieldid = $profilefield->id;
+            } else {
+                $extrafields[$extrafield]->title = get_string($extrafield);
+            }
+        }
+    }
 
-        // Bar chart
-        $pi->setFontProperties(array(
-            'FontName' => $CFG->dirroot . '/local/iomad/pchart2/fonts/verdana.ttf',
-            'FontSize' => 10,
-            'R' => 0, 'G' => 0, 'B' => 0,
-        ));
-        $pi->setGraphArea(50, 50, PCHART_SIZEX-50, PCHART_SIZEY-50);
-        $pi->setShadow(false);
-        $pi->drawScale(array('DrawSubTicks' => true));
-        $pi->drawBarChart();
-        $pi->autoOutput();
-        exit;
-    } else if ($charttype == "course") {
+    // Deal with sort by course for all courses if sort is empty.
+    if (empty($sort) && $courseid == 1) {
+        $sort = 'coursename';
+    }
 
-        // Pie chart
-        $pp = new pPie($pi, $chartdata);
-        $pi->setShadow(false);
-        $pi->setFontProperties(array(
-            'FontName' => $CFG->dirroot . '/local/iomad/pchart2/fonts/verdana.ttf',
-            'FontSize' => 10,
-            'R' => 0, 'G' => 0, 'B' => 0,
-        ));
-        $pp->draw3DPie(PCHART_SIZEX * 0.5, PCHART_SIZEY * 0.5, array(
-            'Radius' => PCHART_SIZEX * 0.4,
-            'DrawLabels' => true,
-            'DataGapAngle' => 10,
-            'DataGapRadius' => 6,
-            'Border' => true,
-        ));
-        $pp->drawPieLegend(10,PCHART_SIZEY-20, array(
-            'Style' => LEGEND_BOX,
-            'Mode' => LEGEND_HORIZONTAL,
-        ));
-        $pi->drawText(PCHART_SIZEX * 0.5, 10, 'Course completion', array(
-            'Align' => TEXT_ALIGN_TOPMIDDLE,
-        ));
-        $pi->autoOutput();
-        exit;
+    // Set up the display table.
+    $table = new local_report_course_completion_table('user_report_course_completion');
+    $table->is_downloading($download, 'user_report_course_completion', 'user_report_coursecompletion123');
+
+    if (!$table->is_downloading()) {
+        // Display the search form and department picker.
+        if (!empty($companyid)) {
+            if (empty($table->is_downloading())) {
+                echo html_writer::start_tag('div', array('class' => 'iomadclear'));
+                echo html_writer::start_tag('div', array('class' => 'fitem'));
+                echo $treehtml;
+                echo html_writer::start_tag('div', array('style' => 'display:none'));
+                echo $fwselectoutput;
+                echo html_writer::end_tag('div');
+                echo html_writer::end_tag('div');
+                echo html_writer::end_tag('div');
+
+                // Set up the filter form.
+                $params['companyid'] = $companyid;
+                $params['addfrom'] = 'compfrom';
+                $params['addto'] = 'compto';
+                $params['adddodownload'] = false;
+                $mform = new iomad_user_filter_form(null, $params);
+                $mform->set_data(array('departmentid' => $departmentid));
+                $mform->set_data($params);
+                $mform->get_data();
+    
+                // Display the user filter form.
+                $mform->display();
+            }
+        }
+    }
+
+    // Deal with where we are on the department tree.
+    $currentdepartment = company::get_departmentbyid($departmentid);
+    $showdepartments = company::get_subdepartments_list($currentdepartment);
+    $showdepartments[$departmentid] = $departmentid;
+    $departmentsql = " AND d.id IN (" . implode(',', array_keys($showdepartments)) . ")";
+
+    // all companies?
+    if ($parentslist = $company->get_parent_companies_recursive()) {
+        $companysql = " AND u.id NOT IN (
+                        SELECT userid FROM {company_users}
+                        WHERE companyid IN (" . implode(',', array_keys($parentslist)) ."))";
+    } else {
+        $companysql = "";
+    }
+
+    // All courses or just the one?
+    if ($courseid != 1) {
+        $coursesql = " AND lit.courseid = :courseid ";
+    } else {
+        $coursesql = "";
+    }
+
+    // Set up the initial SQL for the form.
+    $selectsql = "u.id,u.firstname,u.lastname,d.name AS department,u.email,lit.id as certsource, lit.courseid,lit.coursename,lit.timecompleted,lit.timeenrolled,lit.timestarted,lit.finalscore,lit.licenseid,lit.licensename, lit.licenseallocated, lit.timecompleted AS timeexpires";
+    $fromsql = "{user} u JOIN {local_iomad_track} lit ON (u.id = lit.userid) JOIN {company_users} cu ON (u.id = cu.userid AND lit.companyid = cu.companyid) JOIN {department} d ON (cu.departmentid = d.id)";
+    $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $coursesql";
+    $sqlparams = array('companyid' => $companyid, 'courseid' => $courseid) + $searchinfo->searchparams;
+    
+    // Set up the headers for the form.
+    $headers = array(get_string('firstname'),
+                     get_string('lastname'),
+                     get_string('department', 'block_iomad_company_admin'),
+                     get_string('email'));
+    
+    $columns = array('firstname',
+                     'lastname',
+                     'department',
+                     'email');
+    
+    // Deal with optional report fields.
+    if (!empty($extrafields)) {
+        foreach ($extrafields as $extrafield) {
+            $headers[] = $extrafield->title;
+            $columns[] = $extrafield->name;
+            if (!empty($extrafield->fieldid)) {
+                // Its a profile field.
+                // Skip it this time as these may not have data.
+            } else {
+                $selectsql .= ", u." . $extrafield->name;
+            }
+        }
+        foreach ($extrafields as $extrafield) {
+            if (!empty($extrafield->fieldid)) {
+                // Its a profile field.
+                $selectsql .= ", P" . $extrafield->fieldid . ".data AS " . $extrafield->name;
+                $fromsql .= " LEFT JOIN {user_info_data} P" . $extrafield->fieldid . " ON (u.id = P" . $extrafield->fieldid . ".userid )";
+            }
+        }
+    }
+
+    // Are we showing all courses?
+    if ($courseid == 1) {
+        $headers[] = get_string('course');
+        $columns[] = 'coursename';
+    }
+
+    // Is this licensed?
+    if ($courseid == 1 || 
+        $DB->get_record('iomad_courses', array('courseid' => $courseid, 'licensed' => 1)) ||
+        $DB->count_records_sql("SELECT count(id) FROM {local_iomad_track}
+                                WHERE courseid = :courseid
+                                AND licensename IS NOT NULL",
+                                array('courseid' => $courseid)) > 0) {
+        // Need to add the license columns
+        $headers[] = get_string('licensename', 'block_iomad_company_admin');
+        $headers[] = get_string('licensedateallocated', 'block_iomad_company_admin');
+        $columns[] = 'licensename';
+        $columns[] = 'licenseallocated';
+    }
+    // And final the rest of the form headers.
+    $headers[] = get_string('timeenrolled', 'local_report_completion');
+    $headers[] = get_string('timecompleted', 'local_report_completion');
+
+    $columns[] = 'timeenrolled';
+    $columns[] = 'timecompleted';
+    // Does this course have an expiry time?
+    if (($courseid == 1 && $DB->get_records_sql("SELECT id FROM {iomad_courses} WHERE courseid IN (SELECT courseid FROM {local_iomad_track} WHERE companyid = :companyid) AND expireafter != 0", array('companyid' => $company->id))) ||
+        $DB->get_record_sql("SELECT id FROM {iomad_courses} WHERE courseid = :courseid AND expireafter != 0", array('courseid' => $courseid))) {
+        $columns[] = 'timeexpires';
+        $headers[] = get_string('timeexpires', 'local_report_completion');
+    }
+
+    $headers[] = get_string('finalscore', 'local_report_completion');
+    $columns[] = 'finalscore';
+
+    if ($certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
+        if ($certificateinfo = $DB->get_record('iomadcertificate', array('course' => $courseid))) {
+            if ($certificatemodinstance = $DB->get_record('course_modules', array('course' => $courseid,
+                                                                                  'module' => $certmodule->id,
+                                                                                  'instance' => $certificateinfo->id))) {
+                $headers[] = get_string('certificate', 'local_report_completion');
+                $columns[] = 'certificate';
+            }
+        }
+    }
+
+
+    $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
+    $table->define_baseurl($url);
+    $table->define_columns($columns);
+    $table->define_headers($headers);
+    $table->out($CFG->iomad_max_list_users, true);
+    
+    if (!$table->is_downloading()) {
+        echo $output->footer();
     }
 }
-
-if (empty($dodownload) && !empty($charttype)) {
-    $params['showchart'] = true;
-    echo "<center><img src='".new moodle_url('/local/report_completion/index.php', $params)."'></center>";
-}
-
-if (!empty($dodownload)) {
-    exit;
-}
-echo $output->footer();

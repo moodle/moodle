@@ -284,6 +284,7 @@ class company_users_course_form extends moodleform {
 
                                     // Create an event.
                                     $eventother = array('licenseid' => $licenserecord['id'],
+                                                        'issuedate' => $assignrecord['issuedate'],
                                                         'duedate' => $duedate);
                                     $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($course->id),
                                                                                                                   'objectid' => $assignrecord['id'],
@@ -345,6 +346,7 @@ class company_users_course_form extends moodleform {
 
                                     // Create an event.
                                     $eventother = array('licenseid' => $licenserecord['id'],
+                                                        'issuedate' => $assignrecord['issuedate'],
                                                         'duedate' => $duedate);
                                     $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($addcourse->id),
                                                                                                                   'objectid' => $licenserecord['id'],

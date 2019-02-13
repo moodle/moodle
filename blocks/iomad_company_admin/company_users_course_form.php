@@ -124,7 +124,7 @@ class company_users_course_form extends moodleform {
               <td id="buttonscell">
                   <p class="arrow_button">
                     <input name="add" id="add" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('enrol', 'block_iomad_company_admin') . '"
-                           title="' . get_string('enrol') .'" class="btn btn-secondary"/><br />
+                           title="' . get_string('enrol', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />
                     <input name="remove" id="remove" type="submit" value="'. get_string('unenrol', 'block_iomad_company_admin').'&nbsp;'.$OUTPUT->rarrow(). '"
                            title="'. get_string('unenrol', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />
                  </p>

@@ -1738,6 +1738,7 @@ class block_iomad_company_admin_external extends external_api {
 
             // Create an event.
             $eventother = array('licenseid' => $licenseid,
+                                'issuedate' =>time(),
                                 'duedate' => 0);
             $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_system::instance(),
                                                                                           'objectid' => $licenseid,

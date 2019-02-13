@@ -334,6 +334,7 @@ class company_license_users_form extends moodleform {
 
                                     // Create an event.
                                     $eventother = array('licenseid' => $this->license->id,
+                                                        'issuedate' => $recordarray['issuedate'],
                                                         'duedate' => $duedate);
                                     $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
                                                                                                                   'objectid' => $recordarray['id'],

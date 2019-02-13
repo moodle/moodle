@@ -37,18 +37,6 @@ class report_completion {
         $companytree = $topcompany->get_child_companies_recursive();
         $parentcompanies = $company->get_parent_companies_recursive();
 
-        // Create a temporary table to hold the userids.
-        $temptablename = 'tmp_'.uniqid();
-        $dbman = $DB->get_manager();
-
-        // Define table user to be created.
-        $table = new xmldb_table($temptablename);
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-        $dbman->create_temp_table($table);
-
         // Deal with parent company managers
         if (!empty($parentcompanies)) {
             $userfilter = " AND userid NOT IN (
@@ -58,198 +46,66 @@ class report_completion {
             $userfilter = "";
         }
 
-        // Populate it.
+        // Deal with department tree.
         $alldepartments = company::get_all_subdepartments($departmentid);
-        if (count($alldepartments) > 0 ) {
-            // Deal with suspended or not.
-            if (empty($showsuspended)) {
-                $suspendedsql = " AND userid IN (select id FROM {user} WHERE suspended = 0) ";
-            } else {
-                $suspendedsql = "";
-            }
-            $tempcreatesql = "INSERT INTO {".$temptablename."} (userid) SELECT userid from {company_users}
-                              WHERE departmentid IN (".implode(',', array_keys($alldepartments)).") $userfilter $suspendedsql";
+        $departmentsql = " AND cu.departmentid IN (" . join(",", array_keys($alldepartments)) . ") ";
+
+        // Deal with suspended or not.
+        if (empty($showsuspended)) {
+            $suspendedsql = " AND u.suspended = 0 ";
         } else {
-            $tempcreatesql = "";
+            $suspendedsql = "";
         }
-        $DB->execute($tempcreatesql);
-
-        // All or one course?
-        $courses = array();
-        if (!empty($courseid)) {
-            $courses[$courseid] = new stdclass();
-            $courses[$courseid]->id = $courseid;
-        } else {
-            $courses = company::get_recursive_department_courses($departmentid);
-        }
-
-        // We only want the student role.
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
-
-        // Process them!
-        $returnarr = array();
-        foreach ($courses as $course) {
-            $contextcourse = context_course::instance($course->courseid);
-            $courseobj = new stdclass();
-            $courseobj->id = $course->courseid;
-
-            $courseobj->numenrolled = $DB->count_records_sql("SELECT COUNT(ue.id) FROM {user_enrolments} ue
-                                                   JOIN {enrol} e ON (e.id = ue.enrolid AND e.status = 0)
-                                                   JOIN {role_assignments} ra ON (ue.userid = ra.userid)
-                                                   JOIN {".$temptablename."} tt ON (ue.userid = tt.userid)
-                                                   WHERE e.courseid = :course
-                                                   AND ra.roleid = :student
-                                                   AND ra.contextid = :coursecontext",
-                                                   array('course' => $course->courseid,
-                                                         'student' => $studentrole->id,
-                                                         'coursecontext' => $contextcourse->id));
-            $courseobj->numnotstarted = $DB->count_records_sql("SELECT COUNT(cc.id) FROM {course_completions} cc
-                                                   JOIN {role_assignments} ra ON (cc.userid = ra.userid)
-                                                   JOIN {".$temptablename."} tt ON (cc.userid = tt.userid)
-                                                   WHERE cc.course = :course
-                                                   AND ra.roleid = :student
-                                                   AND ra.contextid = :coursecontext
-                                                   AND cc.timestarted = 0",
-                                                   array('course' => $course->courseid,
-                                                         'student' => $studentrole->id,
-                                                         'coursecontext' => $contextcourse->id));
-            $courseobj->numstarted = $DB->count_records_sql("SELECT COUNT(cc.id) FROM {course_completions} cc
-                                                   JOIN {role_assignments} ra ON (cc.userid = ra.userid)
-                                                   JOIN {".$temptablename."} tt ON (cc.userid = tt.userid)
-                                                   WHERE
-                                                   cc.course = :course
-                                                   AND ra.roleid = :student
-                                                   AND ra.contextid = :coursecontext
-                                                   AND cc.timestarted != 0",
-                                                   array('course' => $course->courseid,
-                                                         'student' => $studentrole->id,
-                                                         'coursecontext' => $contextcourse->id));
-            $courseobj->numcompleted = $DB->count_records_sql("SELECT COUNT(cc.id) FROM {course_completions} cc
-                                                   JOIN {role_assignments} ra ON (cc.userid = ra.userid)
-                                                   JOIN {".$temptablename."} tt ON (cc.userid = tt.userid)
-                                                   WHERE cc.course = :course
-                                                   AND ra.roleid = :student
-                                                   AND ra.contextid = :coursecontext
-                                                   AND cc.timecompleted IS NOT NULL",
-                                                   array('course' => $course->courseid,
-                                                         'student' => $studentrole->id,
-                                                         'coursecontext' => $contextcourse->id));
-            $courseobj->historic = $DB->count_records_sql("SELECT COUNT(lct.id) FROM {local_iomad_track} lct
-                                                   JOIN {".$temptablename."} tt ON (lct.userid = tt.userid)
-                                                   WHERE
-                                                   lct.courseid = :course", array('course' => $course->courseid));
-
-            if (!$courseobj->coursename = $DB->get_field('course', 'fullname', array('id' => $course->courseid))) {
-                continue;
+        $courses = $DB->get_records_sql("SELECT courseid AS id, coursename
+                                         FROM {local_iomad_track}
+                                         WHERE companyid = :companyid
+                                         GROUP BY courseid, coursename
+                                         ORDER BY courseid",
+                                         array('companyid' => $company->id));
+        foreach ($courses as $id => $course) {
+            $courses[$id]->licensesallocated = 0;
+            if ($licensesallocated = $DB->count_records_sql("SELECT count(lit.id) FROM {local_iomad_track} lit
+                                                             JOIN {company_users} cu ON (lit.userid = cu.userid AND lit.companyid = cu.companyid)
+                                                             JOIN {user} u ON (lit.userid = u.id)
+                                                             WHERE lit.courseid = :courseid
+                                                             AND lit.companyid = :companyid
+                                                             AND lit.licensename IS NOT NULL
+                                                             $suspendedsql
+                                                             $departmentsql",
+                                                             array('courseid' => $course->id, 'companyid' => $company->id))) {
+                $courses[$id]->licensed = true;
+                $courses[$id]->licensesallocated = $licensesallocated;
+            } else if ($DB->get_record('iomad_courses', array('courseid' => $course->id, 'licensed' => 1))) {
+                $courses[$id]->licensed = true;
             }
-            $returnarr[$course->courseid] = $courseobj;
-        }
-        return $returnarr;
-    }
+            // Count the enrolled users
+            $enrolled = $DB->count_records_sql("SELECT COUNT(lit.id)
+                                                FROM {local_iomad_track} lit
+                                                JOIN {company_users} cu ON (lit.userid = cu.userid AND lit.companyid = cu.companyid)
+                                                JOIN {user} u ON (lit.userid = u.id)
+                                                WHERE lit.companyid = :companyid
+                                                AND lit.courseid = :courseid
+                                                AND lit.timeenrolled IS NOT NULL
+                                                $suspendedsql
+                                                $departmentsql",
+                                                array('companyid' => $company->id, 'courseid' => $course->id));
+            $courses[$id]->enrolled = $enrolled;
 
-    /**
-     * Get users into temporary table
-     */
-    private static function populate_temporary_users($temptablename, $searchinfo) {
-        global $DB;
-
-
-        // Create a temporary table to hold the userids.
-        $dbman = $DB->get_manager();
-
-        // Define table user to be created.
-        $table = new xmldb_table($temptablename);
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-        $dbman->create_temp_table($table);
-
-        // Populate it.
-        $alldepartments = company::get_all_subdepartments($searchinfo->departmentid);
-        if (count($alldepartments) > 0 ) {
-            $tempcreatesql = "INSERT INTO {".$temptablename."} (userid) SELECT userid from {company_users}
-                              WHERE departmentid IN (".implode(',', array_keys($alldepartments)).")";
-        } else {
-            $tempcreatesql = "";
-        }
-        $DB->execute($tempcreatesql);
-
-        return array($dbman, $table);
-    }
-
-    /**
-     * Get users into temporary table
-     */
-    private static function populate_temporary_completion($tempcomptablename, $tempusertablename, $courseid=0, $showhistoric=false) {
-        global $DB, $USER;
-
-        // Create a temporary table to hold the userids.
-        $dbman = $DB->get_manager();
-
-        // Define table user to be created.
-        $table = new xmldb_table($tempcomptablename);
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
-        $table->add_field('timeenrolled', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
-        $table->add_field('timestarted', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
-        $table->add_field('timecompleted', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
-        $table->add_field('finalscore', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
-        $table->add_field('certsource', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-        $dbman->create_temp_table($table);
-
-        // We only want the student role.
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
-
-        // Populate it.
-        $tempcreatesql = "INSERT INTO {".$tempcomptablename."} (userid, courseid, timeenrolled, timestarted, timecompleted, finalscore, certsource)
-                          SELECT ue.userid, e.courseid, ue.timestart, cc.timestarted, cc.timecompleted, gg.finalgrade, 0
-                          FROM {".$tempusertablename."} tut
-                          JOIN {user_enrolments} ue ON (tut.userid = ue.userid)
-                          INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
-                          JOIN {course_completions} cc ON (ue.userid = cc.userid AND e.courseid = cc.course)
-                          JOIN {role_assignments} ra ON (ue.userid = ra.userid)
-                          JOIN {context} c ON (ra.contextid = c.id AND c.contextlevel = 50 AND c.instanceid = e.courseid)
-                          LEFT JOIN {grade_items} gi
-                          ON (cc.course = gi.courseid
-                          AND gi.itemtype = 'course')
-                          LEFT JOIN {grade_grades} gg ON (gg.userid = cc.userid AND gi.id = gg.itemid)
-                          WHERE ra.roleid = " . $studentrole->id;
-
-        if (!empty($courseid)) {
-            $tempcreatesql .= " AND cc.course = ".$courseid;
-        }
-        $DB->execute($tempcreatesql);
-
-        // Are we also adding in historic data?
-        if ($showhistoric) {
-        // Populate it.
-            // get the current list of populated ids.
-            $idlistsql = "SELECT lit2.id FROM {local_iomad_track} lit2 JOIN {".$tempcomptablename."} tt2
-                          ON (lit2.courseid = tt2.courseid AND lit2.userid=tt2.userid AND lit2.timecompleted = tt2.timecompleted
-                          AND lit2.timestarted = tt2.timestarted)";
-            if (!empty($courseid)) {
-                $idlistsql .= " AND lit2.courseid = ".$courseid;
-            }
-            $idlist = implode(',', array_keys($DB->get_records_sql($idlistsql)));
-
-            $tempcreatesql = "INSERT INTO {".$tempcomptablename."} (userid, courseid, timeenrolled, timestarted, timecompleted, finalscore, certsource)
-                              SELECT it.userid, it.courseid, it.timeenrolled, it.timestarted, it.timecompleted, it.finalscore, it.id
-                              FROM {".$tempusertablename."} tut, {local_iomad_track} it
-                              WHERE tut.userid = it.userid";
-            if (!empty($idlist)) {
-                $tempcreatesql .= " AND it.id NOT IN (".$idlist.")";
-            }
-            if (!empty($courseid)) {
-                $tempcreatesql .= " AND it.courseid = ".$courseid;
-            }
-            $DB->execute($tempcreatesql);
+            // count the completed users
+            $completed = $DB->count_records_sql("SELECT COUNT(lit.id)
+                                                 FROM {local_iomad_track} lit
+                                                 JOIN {company_users} cu ON (lit.userid = cu.userid AND lit.companyid = cu.companyid)
+                                                 JOIN {user} u ON (lit.userid = u.id)
+                                                 WHERE lit.companyid = :companyid
+                                                 AND lit.courseid = :courseid
+                                                 AND lit.timecompleted IS NOT NULL
+                                                 $suspendedsql
+                                                 $departmentsql",
+                                                 array('companyid' => $company->id, 'courseid' => $course->id));
+            $courses[$id]->completed = $completed;
         }
 
-        return array($dbman, $table);
+        return $courses;
     }
 
     /**
