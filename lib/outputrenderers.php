@@ -4261,7 +4261,7 @@ EOD;
                             'title' => get_string('message', 'message'),
                             'url' => new moodle_url('/message/index.php', array('id' => $user->id)),
                             'image' => 'message',
-                            'linkattributes' => array('role' => 'button'),
+                            'linkattributes' => \core_message\helper::messageuser_link_params($user->id),
                             'page' => $this->page
                         ),
                         'togglecontact' => array(
@@ -4345,6 +4345,9 @@ EOD;
                     // Include js for messaging.
                     if ($button['buttontype'] === 'togglecontact') {
                         \core_message\helper::togglecontact_requirejs();
+                    }
+                    if ($button['buttontype'] === 'message') {
+                        \core_message\helper::messageuser_requirejs();
                     }
                     $image = $this->pix_icon($button['formattedimage'], $button['title'], 'moodle', array(
                         'class' => 'iconsmall',

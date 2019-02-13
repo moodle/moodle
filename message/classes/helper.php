@@ -436,6 +436,40 @@ class helper {
     }
 
     /**
+     * Requires the JS libraries for the message user button.
+     *
+     * @return void
+     */
+    public static function messageuser_requirejs() {
+        global $PAGE;
+
+        static $done = false;
+        if ($done) {
+            return;
+        }
+
+        $PAGE->requires->js_call_amd('core_message/message_user_button', 'send', array('#message-user-button'));
+        $done = true;
+    }
+
+    /**
+     * Returns the attributes to place on the message user button.
+     *
+     * @param int $useridto
+     * @return array
+     */
+    public static function messageuser_link_params(int $useridto) : array {
+        global $USER;
+
+        return [
+            'id' => 'message-user-button',
+            'role' => 'button',
+            'data-conversationid' => api::get_conversation_between_users([$USER->id, $useridto]),
+            'data-userid' => $useridto,
+        ];
+    }
+
+    /**
      * Returns the conversation hash between users for easy look-ups in the DB.
      *
      * @param array $userids
