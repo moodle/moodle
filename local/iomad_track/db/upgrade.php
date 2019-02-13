@@ -235,7 +235,7 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
 
         // Define field modifiedtime to be added to local_iomad_track.
         $table = new xmldb_table('local_iomad_track');
-        $field = new xmldb_field('modifiedtime', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null, 'licenseallocated');
+        $field = new xmldb_field('modifiedtime', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'licenseallocated');
 
         // Conditionally launch add field modifiedtime.
         if (!$dbman->field_exists($table, $field)) {
@@ -320,7 +320,7 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
         foreach ($enrolments as $rec) {
             // Get the user's company.
             if ($companies = $DB->get_records_sql("SELECT cu.* FROM {company_users} cu
-                                                  JOIN {company_course} cc on (cu.companyid = cu.companyid)
+                                                  JOIN {company_course} cc on (cu.companyid = cc.companyid)
                                                   WHERE cu.userid = :userid
                                                   AND cc.courseid = :courseid
                                                   ORDER BY cu.id DESC",
