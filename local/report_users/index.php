@@ -16,6 +16,7 @@
 
 require_once('../../config.php');
 require_once( dirname('__FILE__').'/lib.php');
+require_once( dirname('__FILE__').'/report_users_table.php');
 require_once(dirname(__FILE__) . '/../../config.php'); // Creates $PAGE.
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/user/filters/lib.php');
@@ -238,12 +239,6 @@ $strdelete = get_string('delete');
 $strdeletecheck = get_string('deletecheck');
 $strshowallusers = get_string('showallusers');
 
-if (empty($CFG->loginhttps)) {
-    $securewwwroot = $CFG->wwwroot;
-} else {
-    $securewwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
-}
-
 $returnurl = $CFG->wwwroot."/local/report_users/index.php";
 
 // Do we have any additional reporting fields?
@@ -256,11 +251,89 @@ if (!empty($CFG->iomad_report_fields)) {
             // Its an optional profile field.
             $profilefield = $DB->get_record('user_info_field', array('shortname' => str_replace('profile_field_', '', $extrafield)));
             $extrafields[$extrafield]->title = $profilefield->name;
+            $extrafields[$extrafield]->fieldid = $profilefield->id;
         } else {
             $extrafields[$extrafield]->title = get_string($extrafield);
         }
     }
 }
+
+// Deal with the form searching.
+$searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, true, true);
+
+// Set up the table.
+$table = new local_report_users_table('user_report_logins');
+
+// Deal with where we are on the department tree.
+$currentdepartment = company::get_departmentbyid($departmentid);
+$showdepartments = company::get_subdepartments_list($currentdepartment);
+$showdepartments[$departmentid] = $departmentid;
+$departmentsql = " AND d.id IN (" . implode(',', array_keys($showdepartments)) . ")";
+
+// all companies?
+if ($parentslist = $company->get_parent_companies_recursive()) {
+    $companysql = " AND u.id NOT IN (
+                    SELECT userid FROM {company_users}
+                    WHERE companyid IN (" . implode(',', array_keys($parentslist)) ."))";
+} else {
+    $companysql = "";
+}
+
+// Set up the initial SQL for the form.
+$selectsql = "u.id,u.firstname,u.lastname,d.name as department,u.email,u.timecreated as created, u.currentlogin as lastlogin";
+$fromsql = "{user} u JOIN {company_users} cu ON (u.id = cu.userid) JOIN {department} d ON (cu.departmentid = d.id)";
+$wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql";
+$sqlparams = array('companyid' => $companyid) + $searchinfo->searchparams;
+
+// Set up the headers for the form.
+$headers = array(get_string('firstname'),
+                 get_string('lastname'),
+                 get_string('department', 'block_iomad_company_admin'),
+                 get_string('email'));
+
+$columns = array('firstname',
+                    'lastname',
+                    'department',
+                    'email');
+
+// Deal with optional report fields.
+if (!empty($extrafields)) {
+    foreach ($extrafields as $extrafield) {
+        $headers[] = $extrafield->title;
+        $columns[] = $extrafield->name;
+        if (!empty($extrafield->fieldid)) {
+            // Its a profile field.
+            // Skip it this time as these may not have data.
+        } else {
+            $selectsql .= ", u." . $extrafield->name;
+        }
+    }
+    foreach ($extrafields as $extrafield) {
+        if (!empty($extrafield->fieldid)) {
+            // Its a profile field.
+            $selectsql .= ", P" . $extrafield->fieldid . ".data AS " . $extrafield->name;
+            $fromsql .= " LEFT JOIN {user_info_data} P" . $extrafield->fieldid . " ON (u.id = P" . $extrafield->fieldid . ".userid )";
+        }
+    }
+}
+
+// And final the rest of the form headers.
+$headers[] = get_string('created', 'block_iomad_company_admin');
+$headers[] = get_string('lastaccess');
+
+$columns[] = 'created';
+$columns[] = 'lastlogin';
+
+$table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
+$table->define_baseurl($linkurl);
+$table->define_columns($columns);
+$table->define_headers($headers);
+$table->out($CFG->iomad_max_list_users, true);
+
+echo $output->footer();
+
+die;
+
 
 // Carry on with the user listing.
 $columns = array("firstname", "lastname", "department", "email", "timecreated", "lastaccess");
