@@ -10,6 +10,7 @@ attribute on forms to avoid collisions in forms loaded in AJAX requests.
 * A new method to allow queueing or rescheduling of an existing scheduled task was added. This allows an existing task
   to be updated or queued as required. This new functionality can be found in \core\task\manager::reschedule_or_queue_adhoc_task.
 * Icons are displayed for screen readers unless they have empty alt text (aria-hidden). Do not provide an icon with alt text immediately beside an element with exactly the same text.
+* admin_settingpage has a new function hide_if(), modeled after the same functionality in the forms library. This allows admin settings to be dynamically hidden based on the values of other settings.
 
 === 3.6 ===
 
