@@ -17,12 +17,12 @@
 /**
  * Question renderer.
  *
- * @package    theme_boost
+ * @package    theme_bootstrapbase
  * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace theme_boost\output\core_question;
+namespace theme_bootstrapbase\output\core_question;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/' . $CFG->admin . '/renderer.php');
@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/renderer.php');
 /**
  * Question renderer class.
  *
- * @package    theme_boost
+ * @package    theme_bootstrapbase
  * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -42,17 +42,7 @@ class bank_renderer extends \core_question_bank_renderer {
      * @return string
      */
     public function extra_horizontal_navigation() {
-        // Horizontal navigation for question bank.
-        if ($questionnode = $this->page->settingsnav->find("questionbank", \navigation_node::TYPE_CONTAINER)) {
-            if ($children = $questionnode->children) {
-                $tabs = [];
-                foreach ($children as $key => $node) {
-                    $tabs[] = new \tabobject($node->key, $node->action, $node->text);
-                }
-                $active = $questionnode->find_active_node()->key;
-                return \html_writer::div(print_tabs([$tabs], $active, null, null, true), 'questionbank-navigation');
-            }
-        }
+        // Overwrite in child themes if needed.
         return '';
     }
 }

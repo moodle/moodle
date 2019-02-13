@@ -41,7 +41,17 @@ class core_question_bank_renderer extends plugin_renderer_base {
      * @return string
      */
     public function extra_horizontal_navigation() {
-        // Overwrite in child themes if needed.
+        // Horizontal navigation for question bank.
+        if ($questionnode = $this->page->settingsnav->find("questionbank", \navigation_node::TYPE_CONTAINER)) {
+            if ($children = $questionnode->children) {
+                $tabs = [];
+                foreach ($children as $key => $node) {
+                    $tabs[] = new \tabobject($node->key, $node->action, $node->text);
+                }
+                $active = $questionnode->find_active_node()->key;
+                return \html_writer::div(print_tabs([$tabs], $active, null, null, true), 'questionbank-navigation');
+            }
+        }
         return '';
     }
 
