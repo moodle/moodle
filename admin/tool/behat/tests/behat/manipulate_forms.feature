@@ -28,6 +28,6 @@ Feature: Forms manipulation
     When I expand all fieldsets
     Then I should see "Close the quiz"
     And I should see "Group mode"
-    And I should see "Grouping"
+    And I should see "ID number"
     And I should not see "Show more..." in the "region-main" "region"
     And I should see "Show less..."
