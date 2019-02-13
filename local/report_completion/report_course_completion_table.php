@@ -156,4 +156,70 @@ class local_report_course_completion_table extends table_sql {
         }
     }
 
+    /**
+     * Generate the display of the user's license allocated timestamp
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_certificate($row) {
+        global $DB, $output;
+
+        if ($this->is_downloading()) {
+            return;
+        }
+
+        if (!empty($row->certsource) && $certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
+            if ($certificateinfo = $DB->get_record('iomadcertificate', array('course' => $row->courseid))) {
+                if ($certificatemodinstance = $DB->get_record('course_modules', array('course' => $row->courseid,
+                                                                                      'module' => $certmodule->id,
+                                                                                      'instance' => $certificateinfo->id))) {
+                    return $output->single_button(new moodle_url('/mod/iomadcertificate/view.php',
+                                                                 array('id' => $certificatemodinstance->id,
+                                                                       'action' => 'get',
+                                                                       'userid' => $row->id,
+                                                                       'sesskey' => sesskey())),
+                                                   get_string('downloadcert', 'local_report_users'));
+                } else {
+                    return;
+                }
+            } else {
+                return;
+            }
+        } else {
+            return;
+        }
+    }
+
+    /**
+     * Generate the display of the user's course status
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_status($row) {
+        global $DB;
+
+        if (!empty($row->timecompleted)) {
+            $progress = 100;
+        } else {
+            $total = $DB->count_records('course_completion_criteria', array('course' => $row->courseid));
+            if ($total != 0) {
+                $usercount = $DB->count_records('course_completion_crit_compl', array('course' => $row->courseid, 'userid' => $row->id));
+                $progress = round($usercount / $total);
+            } else {
+                $progress = -1;
+            }
+        }
+        if ($progress == -1) {
+            return get_string('notstarted', 'local_report_users');
+        } else {
+            if (!$this->is_downloading()) {
+                return '<div class="progress" style="height:20px">
+                        <div class="progress-bar" style="width:' . $progress . '%;height:20px">' . $progress . '%</div>
+                        </div>';
+            } else {
+                return $progress . "%";
+            }
+        }
+    }
+
 }

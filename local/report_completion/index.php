@@ -460,6 +460,10 @@ if (empty($courseid)) {
         $columns[] = 'coursename';
     }
 
+    // Status column.
+    $headers[] =  get_string('status', 'local_report_completion');
+    $columns[] = 'status';
+
     // Is this licensed?
     if ($courseid == 1 || 
         $DB->get_record('iomad_courses', array('courseid' => $courseid, 'licensed' => 1)) ||
@@ -505,6 +509,7 @@ if (empty($courseid)) {
     $table->define_baseurl($url);
     $table->define_columns($columns);
     $table->define_headers($headers);
+    $table->no_sorting('status');
     $table->out($CFG->iomad_max_list_users, true);
     
     if (!$table->is_downloading()) {
