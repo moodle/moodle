@@ -170,4 +170,119 @@ class core_comment_external extends external_api {
             )
         );
     }
+
+    /**
+     * Helper to get the structure of a single comment.
+     *
+     * @return external_single_structure the comment structure.
+     */
+    protected static function get_comment_structure() {
+        return new external_single_structure(
+            array(
+                'id'             => new external_value(PARAM_INT,  'Comment ID'),
+                'content'        => new external_value(PARAM_RAW,  'The content text formatted'),
+                'format'         => new external_format_value('content'),
+                'timecreated'    => new external_value(PARAM_INT,  'Time created (timestamp)'),
+                'strftimeformat' => new external_value(PARAM_NOTAGS, 'Time format'),
+                'profileurl'     => new external_value(PARAM_URL,  'URL profile'),
+                'fullname'       => new external_value(PARAM_NOTAGS, 'fullname'),
+                'time'           => new external_value(PARAM_NOTAGS, 'Time in human format'),
+                'avatar'         => new external_value(PARAM_RAW,  'HTML user picture'),
+                'userid'         => new external_value(PARAM_INT,  'User ID'),
+                'delete'         => new external_value(PARAM_BOOL, 'Permission to delete=true/false', VALUE_OPTIONAL)
+            ), 'comment'
+        );
+    }
+
+    /**
+     * Returns description of method parameters for the add_comments method.
+     *
+     * @return external_function_parameters
+     */
+    public static function add_comments_parameters() {
+        return new external_function_parameters(
+            [
+                'comments' => new external_multiple_structure(
+                    new external_single_structure(
+                        [
+                            'contextlevel' => new external_value(PARAM_ALPHA, 'contextlevel system, course, user...'),
+                            'instanceid'   => new external_value(PARAM_INT, 'the id of item associated with the contextlevel'),
+                            'component'    => new external_value(PARAM_COMPONENT, 'component'),
+                            'content'      => new external_value(PARAM_RAW, 'component'),
+                            'itemid'       => new external_value(PARAM_INT, 'associated id'),
+                            'area'         => new external_value(PARAM_AREA, 'string comment area', VALUE_DEFAULT, ''),
+                        ]
+                    )
+                )
+            ]
+        );
+    }
+
+    /**
+     * Add a comment or comments.
+     *
+     * @param array $comments the array of comments to create.
+     * @return array the array containing those comments created.
+     * @throws comment_exception
+     */
+    public static function add_comments($comments) {
+        global $CFG, $SITE;
+
+        if (empty($CFG->usecomments)) {
+            throw new comment_exception('commentsnotenabled', 'moodle');
+        }
+
+        $params = self::validate_parameters(self::add_comments_parameters(), ['comments' => $comments]);
+
+        // Validate every intended comment before creating anything, storing the validated comment for use below.
+        foreach ($params['comments'] as $index => $comment) {
+            $context = self::get_context_from_params($comment);
+            self::validate_context($context);
+
+            list($context, $course, $cm) = get_context_info_array($context->id);
+            if ($context->id == SYSCONTEXTID) {
+                $course = $SITE;
+            }
+
+            // Initialising comment object.
+            $args = new stdClass();
+            $args->context   = $context;
+            $args->course    = $course;
+            $args->cm        = $cm;
+            $args->component = $comment['component'];
+            $args->itemid    = $comment['itemid'];
+            $args->area      = $comment['area'];
+
+            $manager = new comment($args);
+            if (!$manager->can_post()) {
+                throw new comment_exception('nopermissiontocomment');
+            }
+
+            $params['comments'][$index]['preparedcomment'] = $manager;
+        }
+
+        // Create the comments.
+        $results = [];
+        foreach ($params['comments'] as $comment) {
+            $manager = $comment['preparedcomment'];
+            $newcomment = $manager->add($comment['content']);
+            if (!empty($newcomment) && is_object($newcomment)) {
+                $results[] = $newcomment;
+            }
+            $newcomment->delete = true; // USER created the comment, so they can delete it.
+        }
+
+        return $results;
+    }
+
+    /**
+     * Returns description of method result value for the add_comments method.
+     *
+     * @return external_description
+     */
+    public static function add_comments_returns() {
+        return new external_multiple_structure(
+            self::get_comment_structure()
+        );
+    }
 }
