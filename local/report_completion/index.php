@@ -246,7 +246,7 @@ if (empty($courseid)) {
         } else {
             echo "<h3>".get_string('courseusers', 'local_report_completion').$courseinfo[$courseid]->coursename."</h3>";
         }
-    
+
         if (!empty($companyid)) {
             echo html_writer::start_tag('div', array('class' => 'iomadclear'));
             echo html_writer::start_tag('div', array('class' => 'fitem'));
@@ -289,7 +289,7 @@ if (empty($courseid)) {
             }
         }
     }
-    
+
     // Set up the course overview table.
     $coursecomptable = new html_table();
     $coursecomptable->id = 'ReportTable';
@@ -299,7 +299,7 @@ if (empty($courseid)) {
     $coursecomptable->align = array('left', 'left', 'left'
     );
     $coursecomptable->width = '95%';
-    
+
     // Iterate over courses.
     foreach ($courseinfo as $id => $coursedata) {
         $courseuserslink = new moodle_url($url, array(
@@ -335,7 +335,7 @@ if (empty($courseid)) {
                 $licensechartout,
                 $enrolledchartout);
     }
-    
+
     echo html_writer::table($coursecomptable);
     echo $output->footer();
 } else {
@@ -387,7 +387,7 @@ if (empty($courseid)) {
                 $mform->set_data(array('departmentid' => $departmentid));
                 $mform->set_data($params);
                 $mform->get_data();
-    
+
                 // Display the user filter form.
                 $mform->display();
             }
@@ -421,18 +421,18 @@ if (empty($courseid)) {
     $fromsql = "{user} u JOIN {local_iomad_track} lit ON (u.id = lit.userid) JOIN {company_users} cu ON (u.id = cu.userid AND lit.companyid = cu.companyid) JOIN {department} d ON (cu.departmentid = d.id)";
     $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $coursesql";
     $sqlparams = array('companyid' => $companyid, 'courseid' => $courseid) + $searchinfo->searchparams;
-    
+
     // Set up the headers for the form.
     $headers = array(get_string('firstname'),
                      get_string('lastname'),
                      get_string('department', 'block_iomad_company_admin'),
                      get_string('email'));
-    
+
     $columns = array('firstname',
                      'lastname',
                      'department',
                      'email');
-    
+
     // Deal with optional report fields.
     if (!empty($extrafields)) {
         foreach ($extrafields as $extrafield) {
@@ -465,7 +465,7 @@ if (empty($courseid)) {
     $columns[] = 'status';
 
     // Is this licensed?
-    if ($courseid == 1 || 
+    if ($courseid == 1 ||
         $DB->get_record('iomad_courses', array('courseid' => $courseid, 'licensed' => 1)) ||
         $DB->count_records_sql("SELECT count(id) FROM {local_iomad_track}
                                 WHERE courseid = :courseid
@@ -511,7 +511,7 @@ if (empty($courseid)) {
     $table->define_headers($headers);
     $table->no_sorting('status');
     $table->out($CFG->iomad_max_list_users, true);
-    
+
     if (!$table->is_downloading()) {
         echo $output->footer();
     }

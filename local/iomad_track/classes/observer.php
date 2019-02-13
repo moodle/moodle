@@ -306,7 +306,7 @@ class observer {
                                                            'courseid' => $courseid));
                     $comprec->timeenrolled = $enrolrec->starttime;
                 }
-                $current->timeenrolled = $comprec->timeenrolled; 
+                $current->timeenrolled = $comprec->timeenrolled;
             }
 
             if (empty($current->timestarted)) {
@@ -324,7 +324,7 @@ class observer {
                     }
                     $comprec->timestarted = $enrolrec->starttime;
                 }
-                $current->timestarted = $comprec->timestarted; 
+                $current->timestarted = $comprec->timestarted;
             }
 
             if ($broken) {
