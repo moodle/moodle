@@ -28,10 +28,9 @@ class observer {
         // Add the event.
         $DB->insert_record('local_report_user_license_allocations', array('userid' => $event->userid,
                                                                           'license' => $event->other['licenseid'],
-                                                                          'date' => $event->timecreated,
+                                                                          'date' => $event->other['issuedate'],
                                                                           'action' => 1,
                                                                           'modifiedtime' => time()));
-        }
 
         return true;
     }
