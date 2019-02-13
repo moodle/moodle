@@ -417,7 +417,7 @@ if (empty($courseid)) {
     }
 
     // Set up the initial SQL for the form.
-    $selectsql = "u.id,u.firstname,u.lastname,d.name AS department,u.email,lit.id as certsource, lit.courseid,lit.coursename,lit.timecompleted,lit.timeenrolled,lit.timestarted,lit.finalscore,lit.licenseid,lit.licensename, lit.licenseallocated, lit.timecompleted AS timeexpires";
+    $selectsql = "lit.id,u.id as userid,u.firstname,u.lastname,d.name AS department,u.email,lit.id as certsource, lit.courseid,lit.coursename,lit.timecompleted,lit.timeenrolled,lit.timestarted,lit.finalscore,lit.licenseid,lit.licensename, lit.licenseallocated, lit.timecompleted AS timeexpires";
     $fromsql = "{user} u JOIN {local_iomad_track} lit ON (u.id = lit.userid) JOIN {company_users} cu ON (u.id = cu.userid AND lit.companyid = cu.companyid) JOIN {department} d ON (cu.departmentid = d.id)";
     $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $coursesql";
     $sqlparams = array('companyid' => $companyid, 'courseid' => $courseid) + $searchinfo->searchparams;
@@ -492,23 +492,15 @@ if (empty($courseid)) {
 
     $headers[] = get_string('finalscore', 'local_report_completion');
     $columns[] = 'finalscore';
-
-    if ($certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
-        if ($certificateinfo = $DB->get_record('iomadcertificate', array('course' => $courseid))) {
-            if ($certificatemodinstance = $DB->get_record('course_modules', array('course' => $courseid,
-                                                                                  'module' => $certmodule->id,
-                                                                                  'instance' => $certificateinfo->id))) {
-                $headers[] = get_string('certificate', 'local_report_completion');
-                $columns[] = 'certificate';
-            }
-        }
-    }
+    $headers[] = get_string('certificate', 'local_report_completion');
+    $columns[] = 'certificate';
 
     $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
     $table->define_baseurl($url);
     $table->define_columns($columns);
     $table->define_headers($headers);
     $table->no_sorting('status');
+    $table->no_sorting('certificate');
     $table->out($CFG->iomad_max_list_users, true);
 
     if (!$table->is_downloading()) {

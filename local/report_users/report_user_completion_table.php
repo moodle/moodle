@@ -121,7 +121,7 @@ class local_report_user_completion_table extends table_sql {
     public function col_finalscore($row) {
         global $CFG;
 
-        if (!empty($row->finalscore)) {
+        if (!empty($row->timecompleted)) {
             return round($row->finalscore, 0)."%";
         } else {
             return;
@@ -134,7 +134,7 @@ class local_report_user_completion_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_actions($row) {
-        global $CFG;
+        global $DB;
 
         // Do nothing if downloading.
         if ($this->is_downloading()) {
@@ -156,7 +156,7 @@ class local_report_user_completion_table extends table_sql {
                     'courseid' => $row->courseid,
                     'action' => 'clear'
                 ));
-            if (has_capability('block/iomad_company_admin:editusers', $context)) {
+            if (has_capability('block/iomad_company_admin:editusers', context_system::instance())) {
                 // Its from the course_completions table.  Check the license type.
                 if ($DB->get_record_sql("SELECT cl.* FROM {companylicense} cl
                                          JOIN {companylicense_users} clu
@@ -164,8 +164,8 @@ class local_report_user_completion_table extends table_sql {
                                          WHERE cl.program = 1
                                          AND clu.userid = :userid
                                          AND clu.licensecourseid = :courseid",
-                                         array('userid' => $userid,
-                                               'courseid' => $usercourseid))) {
+                                         array('userid' => $row->userid,
+                                               'courseid' => $row->courseid))) {
                     $delaction = '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
                 } else {
                     $delaction = '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete', 'local_report_users') . '</a>' .

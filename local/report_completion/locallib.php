@@ -86,6 +86,7 @@ class report_completion {
                                                 WHERE lit.companyid = :companyid
                                                 AND lit.courseid = :courseid
                                                 AND lit.timeenrolled IS NOT NULL
+                                                AND lit.timecompleted IS NULL
                                                 $suspendedsql
                                                 $departmentsql",
                                                 array('companyid' => $company->id, 'courseid' => $course->id));

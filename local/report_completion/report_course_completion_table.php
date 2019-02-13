@@ -47,7 +47,7 @@ class local_report_course_completion_table extends table_sql {
         $userurl = '/local/report_users/userdisplay.php';
         if (!$this->is_downloading()) {
             return "<a href='".
-                    new moodle_url($userurl, array('userid' => $row->id,
+                    new moodle_url($userurl, array('userid' => $row->userid,
                                                    'courseid' => $row->courseid)).
                     "'>$row->firstname</a>";
         } else {
@@ -66,7 +66,7 @@ class local_report_course_completion_table extends table_sql {
         $userurl = '/local/report_users/userdisplay.php';
         if (!$this->is_downloading()) {
             return "<a href='".
-                    new moodle_url($userurl, array('userid' => $row->id,
+                    new moodle_url($userurl, array('userid' => $row->userid,
                                                    'courseid' => $row->courseid)).
                     "'>$row->lastname</a>";
         } else {
@@ -147,7 +147,7 @@ class local_report_course_completion_table extends table_sql {
     public function col_finalscore($row) {
         global $CFG;
 
-        if (!empty($row->finalscore)) {
+        if (!empty($row->timecompleted)) {
             return round($row->finalscore, 0)."%";
         } else {
             return;
@@ -162,7 +162,7 @@ class local_report_course_completion_table extends table_sql {
     public function col_certificate($row) {
         global $DB, $output;
 
-        if ($this->is_downloading()) {
+        if ($this->is_downloading() || empty($row->timecompleted)) {
             return;
         }
 
@@ -174,7 +174,7 @@ class local_report_course_completion_table extends table_sql {
                     return $output->single_button(new moodle_url('/mod/iomadcertificate/view.php',
                                                                  array('id' => $certificatemodinstance->id,
                                                                        'action' => 'get',
-                                                                       'userid' => $row->id,
+                                                                       'userid' => $row->userid,
                                                                        'sesskey' => sesskey())),
                                                    get_string('downloadcert', 'local_report_users'));
                 } else {
