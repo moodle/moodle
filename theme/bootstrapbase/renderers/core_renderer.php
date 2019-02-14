@@ -41,8 +41,8 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         // Setup help icon overlays.
         $this->page->requires->yui_module('moodle-core-popuphelp', 'M.core.init_popuphelp');
         $this->page->requires->strings_for_js(array(
-            'morehelp',
-            'loadinghelp',
+                'morehelp',
+                'loadinghelp',
         ), 'moodle');
 
         if ($PAGE->pagelayout == 'frontpage') {

@@ -194,15 +194,11 @@ class core_grade_import_lib_test extends advanced_testcase {
             'itemid' => $gradeitem->id
         ));
 
-        $url = $CFG->wwwroot . '/grade/index.php';
-        $expectedresponse = "++ Grade import success ++
-<div class=\"continuebutton\"><form method=\"get\" action=\"$url\"><div><input type=\"submit\" value=\"Continue\" /><input type=\"hidden\" name=\"id\" value=\"$course->id\" /></div></form></div>";
-
         ob_start();
         $status = grade_import_commit($course->id, $importcode);
         $output = ob_get_contents();
         ob_end_clean();
         $this->assertTrue($status);
-        $this->assertEquals($expectedresponse, $output);
+        $this->assertContains("++ Grade import success ++", $output);
     }
 }

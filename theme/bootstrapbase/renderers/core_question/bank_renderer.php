@@ -25,7 +25,7 @@
 namespace theme_bootstrapbase\output\core_question;
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/' . $CFG->admin . '/renderer.php');
+require_once($CFG->dirroot . '/question/renderer.php');
 
 /**
  * Question renderer class.
