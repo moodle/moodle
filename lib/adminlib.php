@@ -6339,7 +6339,10 @@ class admin_page_managemessageoutputs extends admin_externalpage {
      */
     public function __construct() {
         global $CFG;
-        parent::__construct('managemessageoutputs', get_string('managemessageoutputs', 'message'), new moodle_url('/admin/message.php'));
+        parent::__construct('managemessageoutputs',
+            get_string('defaultmessageoutputs', 'message'),
+            new moodle_url('/admin/message.php')
+        );
     }
 
     /**
