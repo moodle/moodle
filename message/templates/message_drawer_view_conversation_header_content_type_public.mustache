@@ -59,6 +59,9 @@
                         <span class="{{^isfavourite}}hidden{{/isfavourite}} ml-1 text-primary" data-region="favourite-icon-container">
                             {{#pix}} i/star-rating, core {{/pix}}
                         </span>
+                        <span class="{{^ismuted}}hidden{{/ismuted}} ml-1 text-primary" data-region="muted-icon-container">
+                            {{#pix}} i/muted, core {{/pix}}
+                        </span>
                     </div>
                     <p class="m-0 text-truncate">{{subname}}</p>
                 </div>
@@ -77,6 +80,12 @@
                 </a>
                 <a class="dropdown-item {{^isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-unfavourite">
                     {{#str}} removefromfavourites, core_message {{/str}}
+                </a>
+                <a class="dropdown-item {{#ismuted}}hidden{{/ismuted}}" href="#" data-action="confirm-mute">
+                    {{#str}} muteconversation, core_message {{/str}}
+                </a>
+                <a class="dropdown-item {{^ismuted}}hidden{{/ismuted}}" href="#" data-action="confirm-unmute">
+                    {{#str}} unmuteconversation, core_message {{/str}}
                 </a>
             </div>
         </div>

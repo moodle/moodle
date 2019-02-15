@@ -240,6 +240,7 @@ function(
             subname: state.subname,
             imageUrl: state.imageUrl,
             isFavourite: state.isFavourite,
+            isMuted: state.isMuted,
             type: state.type,
             totalMemberCount: state.totalMemberCount,
             loggedInUserId: state.loggedInUserId,
@@ -328,6 +329,7 @@ function(
         newState = StateManager.setImageUrl(newState, imageUrl);
         newState = StateManager.setTotalMemberCount(newState, conversation.membercount);
         newState = StateManager.setIsFavourite(newState, conversation.isfavourite);
+        newState = StateManager.setIsMuted(newState, conversation.ismuted);
         newState = StateManager.addMessages(newState, conversation.messages);
         return newState;
     };
@@ -796,6 +798,50 @@ function(
     };
 
     /**
+     * Set the current conversation as a muted conversation.
+     *
+     * @return {Promise} Renderer promise.
+     */
+    var setMuted = function() {
+        var userId = viewState.loggedInUserId;
+        var conversationId = viewState.id;
+
+        return Repository.setMutedConversations(userId, [conversationId])
+            .then(function() {
+                var newState = StateManager.setIsMuted(viewState, true);
+                return render(newState);
+            })
+            .then(function() {
+                return PubSub.publish(
+                    MessageDrawerEvents.CONVERSATION_SET_MUTED,
+                    formatConversationForEvent(viewState)
+                );
+            });
+    };
+
+    /**
+     * Unset the current conversation as a muted conversation.
+     *
+     * @return {Promise} Renderer promise.
+     */
+    var unsetMuted = function() {
+        var userId = viewState.loggedInUserId;
+        var conversationId = viewState.id;
+
+        return Repository.unsetMutedConversations(userId, [conversationId])
+            .then(function() {
+                var newState = StateManager.setIsMuted(viewState, false);
+                return render(newState);
+            })
+            .then(function() {
+                return PubSub.publish(
+                    MessageDrawerEvents.CONVERSATION_UNSET_MUTED,
+                    formatConversationForEvent(viewState)
+                );
+            });
+    };
+
+    /**
      * Tell the statemanager there is a request to delete the selected messages
      * and run the renderer to show confirm delete messages dialogue.
      *
@@ -1211,6 +1257,29 @@ function(
 
     /**
      * Show the view group info page.
+     * Set this conversation as muted.
+     *
+     * @param {Object} e Element this event handler is called on.
+     * @param {Object} data Data for this event.
+     */
+    var handleSetMuted = function(e, data) {
+        setMuted().catch(Notification.exception);
+        data.originalEvent.preventDefault();
+    };
+
+    /**
+     * Unset this conversation as muted.
+     *
+     * @param {Object} e Element this event handler is called on.
+     * @param {Object} data Data for this event.
+     */
+    var handleUnsetMuted = function(e, data) {
+        unsetMuted().catch(Notification.exception);
+        data.originalEvent.preventDefault();
+    };
+
+    /**
+     * Show the view contact page.
      *
      * @param {String} namespace Unique identifier for the Routes
      * @return {Function} View group info handler.
@@ -1254,7 +1323,9 @@ function(
             [SELECTORS.ACTION_VIEW_CONTACT, generateHandleViewContact(namespace)],
             [SELECTORS.ACTION_VIEW_GROUP_INFO, generateHandleViewGroupInfo(namespace)],
             [SELECTORS.ACTION_CONFIRM_FAVOURITE, handleSetFavourite],
+            [SELECTORS.ACTION_CONFIRM_MUTE, handleSetMuted],
             [SELECTORS.ACTION_CONFIRM_UNFAVOURITE, handleUnsetFavourite],
+            [SELECTORS.ACTION_CONFIRM_UNMUTE, handleUnsetMuted]
         ];
         var bodyActivateHandlers = [
             [SELECTORS.ACTION_CANCEL_CONFIRM, generateConfirmActionHandler(cancelRequest)],

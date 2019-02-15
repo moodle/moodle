@@ -260,6 +260,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/moodle_host' => 'fa-graduation-cap',
             'core:i/moremenu' => 'fa-ellipsis-h',
             'core:i/move_2d' => 'fa-arrows',
+            'core:i/muted' => 'fa-microphone-slash',
             'core:i/navigationitem' => 'fa-fw',
             'core:i/ne_red_mark' => 'fa-remove',
             'core:i/new' => 'fa-bolt',
