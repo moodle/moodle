@@ -17,12 +17,9 @@
 require_once(dirname(__FILE__).'/../../config.php');
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/excellib.class.php');
-require_once(dirname(__FILE__).'/report_course_completion_table.php');
+require_once(dirname(__FILE__).'/report_course_completion_course_table.php');
+require_once(dirname(__FILE__).'/report_course_completion_user_table.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
-require_once($CFG->dirroot.'/local/iomad/pchart2/class/pData.class.php');
-require_once($CFG->dirroot.'/local/iomad/pchart2/class/pDraw.class.php');
-require_once($CFG->dirroot.'/local/iomad/pchart2/class/pImage.class.php');
-require_once($CFG->dirroot.'/local/iomad/pchart2/class/pPie.class.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
@@ -134,9 +131,8 @@ $PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
 $PAGE->requires->css("/local/report_completion/styles.css");
 $PAGE->requires->jquery();
-
-// get output renderer
-$output = $PAGE->get_renderer('block_iomad_company_admin');
+$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add($strcompletion, $url);
 
 // Javascript for fancy select.
 // Parameter is name of proper select form element followed by 1=submit its form
@@ -145,7 +141,7 @@ $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'ini
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
 
-// Get the renderer.
+// get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Set the companyid
@@ -172,9 +168,6 @@ $foundobj = iomad::add_user_filter_params($params, $companyid);
 $idlist = $foundobj->idlist;
 $foundfields = $foundobj->foundfields;
 
-$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
-$PAGE->navbar->add($strcompletion, $url);
-
 $url = new moodle_url('/local/report_completion/index.php', $params);
 
 // Get the appropriate list of departments.
@@ -192,53 +185,34 @@ $departmenttree = company::get_all_subdepartments_raw($userhierarchylevel);
 $treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
 $fwselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector', 'style' => 'display: none;'));
 
-// Get the appropriate list of departments.
-$selectparams = $params;
-$selecturl = new moodle_url('/local/report_completion/index.php', $selectparams);
-$completiontypelist = array('0' => get_string('all'),
-                            '1' => get_string('notstartedusers', 'local_report_completion'),
-                            '2' => get_string('inprogressusers', 'local_report_completion'),
-                            '3' => get_string('completedusers', 'local_report_completion'));
-$select = new single_select($selecturl, 'completiontype', $completiontypelist, $completiontype);
-$select->label = get_string('choosecompletiontype', 'block_iomad_company_admin') . "&nbsp";
-$select->formid = 'choosecompletiontype';
-$completiontypeselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_completiontype_selector'));
-
-//if (!(iomad::has_capability('block/iomad_company_admin:editusers', $context) or
-//      iomad::has_capability('block/iomad_company_admin:editallusers', $context))) {
-//    print_error('nopermissions', 'error', '', 'report on users');
-//}
-
+// Set up the user search parameters.
 if ($courseid == 1) {
     $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, true, true);
 } else {
     $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, false, false);
 }
 
-// Create data for form.
+// Create data for filter form.
 $customdata = null;
 $options = $params;
-$options['download'] = 1;
 
-// Only print the header if we are not downloading.
-if (empty($download)) {
-    echo $output->header();
-    // Check the department is valid.
-    if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
-        print_error('invaliddepartment', 'block_iomad_company_admin');
-    }
-} else {
-    // Check the department is valid.
-    if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
-        print_error('invaliddepartment', 'block_iomad_company_admin');
-        die;
-    }
+// Check the department is valid.
+if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+    print_error('invaliddepartment', 'block_iomad_company_admin');
 }
 
-// Are we showing the overview menu?
+// Are we showing the overview table?
 if (empty($courseid)) {
-    $courseinfo = report_completion::get_course_summary_info ($departmentid, 0, $showsuspended);
-    if (empty($download)) {
+    // Set up the course display table.
+    $coursetable = new local_report_course_completion_course_table('local_report_completion_course_table');
+    $coursetable->is_downloading($download, 'local_report_course_completion_course', 'local_report_coursecompletion_course123');
+
+    if (!$coursetable->is_downloading()) {
+
+        // Display the header.
+        echo $output->header();
+
+        // What heading are we displaying?
         if (empty($courseid)) {
             echo "<h3>".get_string('coursesummary', 'local_report_completion')."</h3>";
         } else if ($courseid == 1) {
@@ -247,97 +221,69 @@ if (empty($courseid)) {
             echo "<h3>".get_string('courseusers', 'local_report_completion').$courseinfo[$courseid]->coursename."</h3>";
         }
 
-        if (!empty($companyid)) {
-            echo html_writer::start_tag('div', array('class' => 'iomadclear'));
-            echo html_writer::start_tag('div', array('class' => 'fitem'));
-            echo $treehtml;
-            echo html_writer::start_tag('div', array('style' => 'display:none'));
-            echo $fwselectoutput;
-            echo html_writer::end_tag('div');
-            echo html_writer::end_tag('div');
-            echo html_writer::end_tag('div');
-            if (!empty($courseid)) {
-                echo html_writer::start_tag('div', array('class' => 'iomadclear', 'style' => 'padding-top: 5px;'));
-                echo html_writer::start_tag('div', array('style' => 'float:left;'));
-                echo $completiontypeselectoutput;
-                echo html_writer::end_tag('div');
-                echo html_writer::end_tag('div');
-            }
-        }
-        if (empty($courseid)) {
-            $alluserslink = new moodle_url($url, array(
-                'courseid' => 1,
-                'departmentid' => $departmentid,
-            ));
-            echo $output->single_button($alluserslink, get_string("allusers", 'local_report_completion'));
-            if (!$showsuspended) {
-                $suspendeduserslink = new moodle_url($url, array('departmentid' => $departmentid,
-                                                                 'showchart' => 0,
-                                                                 'charttype' => '',
-                                                                 'showhistoric' => $showhistoric,
-                                                                 'showsuspended' => 1
-                                                                ));
-                echo $output->single_button($suspendeduserslink, get_string("showsuspendedusers", 'local_report_completion'));
-            } else {
-                $suspendeduserslink = new moodle_url($url, array('departmentid' => $departmentid,
-                                                                 'showchart' => 0,
-                                                                 'charttype' => '',
-                                                                 'showhistoric' => $showhistoric,
-                                                                 'showsuspended' => 0
-                                                                ));
-                echo $output->single_button($suspendeduserslink, get_string("hidesuspendedusers", 'local_report_completion'));
-            }
-        }
-    }
+        // Display the department selector.
+        echo html_writer::start_tag('div', array('class' => 'iomadclear'));
+        echo html_writer::start_tag('div', array('class' => 'fitem'));
+        echo $treehtml;
+        echo html_writer::start_tag('div', array('style' => 'display:none'));
+        echo $fwselectoutput;
+        echo html_writer::end_tag('div');
+        echo html_writer::end_tag('div');
+        echo html_writer::end_tag('div');
 
-    // Set up the course overview table.
-    $coursecomptable = new html_table();
-    $coursecomptable->id = 'ReportTable';
-    $coursecomptable->head = array(get_string('coursename', 'local_report_completion'),
-                                   get_string('licenseallocated', 'local_report_user_license_allocations'),
-                                   get_string('usersummary', 'local_report_completion'));
-    $coursecomptable->align = array('left', 'left', 'left'
-    );
-    $coursecomptable->width = '95%';
-
-    // Iterate over courses.
-    foreach ($courseinfo as $id => $coursedata) {
-        $courseuserslink = new moodle_url($url, array(
-            'courseid' => $coursedata->id,
+        // Display the control buttons.
+        $alluserslink = new moodle_url($url, array(
+            'courseid' => 1,
             'departmentid' => $departmentid,
         ));
+        echo $output->single_button($alluserslink, get_string("allusers", 'local_report_completion'));
 
-        $enrolledchart = new \core\chart_pie();
-        $enrolledchart->set_doughnut(true); // Calling set_doughnut(true) we display the chart as a doughnut.
-        $enrolledseries = new \core\chart_series('', array($coursedata->licensesallocated,$coursedata->enrolled, $coursedata->completed));
-        $enrolledchart->add_series($enrolledseries);
-        $enrolledchart->set_labels(array(get_string('notstartedusers', 'local_report_completion'),
-                                         get_string('inprogressusers', 'local_report_completion'),
-                                         get_string('completedusers', 'local_report_completion')));
-        if (!empty($coursedata->licensed)) {
-            $CFG->chart_colorset= ['#d9534f', 'green'];
-            $licensechart = new \core\chart_pie();
-            $licensechart->set_doughnut(true); // Calling set_doughnut(true) we display the chart as a doughnut.
-            $series = new \core\chart_series('', array($coursedata->licensesallocated - $coursedata->enrolled, $coursedata->enrolled));
-            $licensechart->add_series($series);
-            $licensechart->set_labels(array(get_string('unused', 'local_report_license'),
-                                            get_string('used', 'local_report_license')));
-            $licensechartout = $output->render($licensechart, false);
+        // Also for suspended user controls.
+        if (!$showsuspended) {
+            $suspendeduserslink = new moodle_url($url, array('departmentid' => $departmentid,
+                                                             'showchart' => 0,
+                                                             'charttype' => '',
+                                                             'showhistoric' => $showhistoric,
+                                                             'showsuspended' => 1
+                                                            ));
+            echo $output->single_button($suspendeduserslink, get_string("showsuspendedusers", 'local_report_completion'));
         } else {
-            $licensechartout = null;
+            $suspendeduserslink = new moodle_url($url, array('departmentid' => $departmentid,
+                                                             'showchart' => 0,
+                                                             'charttype' => '',
+                                                             'showhistoric' => $showhistoric,
+                                                             'showsuspended' => 0
+                                                            ));
+            echo $output->single_button($suspendeduserslink, get_string("hidesuspendedusers", 'local_report_completion'));
         }
-        // Change the chart colours.
-        $CFG->chart_colorset= ['#d9534f', '#1177d1','green'];
-        $enrolledchartout = $output->render($enrolledchart, false);
-
-        $coursecomptable->data[] = array(
-                $output->single_button($courseuserslink, $coursedata->coursename),
-                $licensechartout,
-                $enrolledchartout);
     }
 
-    echo html_writer::table($coursecomptable);
-    echo $output->footer();
+    // Set up the SQL for the table.
+    $selectsql = "courseid as id, coursename, $departmentid AS departmentid, $showsuspended AS showsuspended, companyid";
+    $fromsql = "{local_iomad_track}";
+    $wheresql = "companyid = :companyid group by courseid";
+    $sqlparams = array('companyid' => $companyid);
+
+    // Set up the headers for the table.
+    $courseheaders = array(get_string('coursename', 'local_report_completion'),
+                     get_string('licenseallocated', 'local_report_user_license_allocations'),
+                     get_string('usersummary', 'local_report_completion'));
+    $coursecolumns = array('coursename',
+                     'licenseallocated',
+                     'usersummary');
+
+    $coursetable->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
+    $coursetable->define_baseurl($url);
+    $coursetable->define_columns($coursecolumns);
+    $coursetable->define_headers($courseheaders);
+    $coursetable->no_sorting('licenseallocated');
+    $coursetable->no_sorting('usersummary');
+    $coursetable->sort_default_column = 'coursename';
+    $coursetable->out($CFG->iomad_max_list_users, true);
+
+    if (!$coursetable->is_downloading()) {
+        echo $output->footer();
+    }
 } else {
     // Do we have any additional reporting fields?
     $extrafields = array();
@@ -356,16 +302,18 @@ if (empty($courseid)) {
         }
     }
 
+    // Set up the display table.
+    $table = new local_report_course_completion_user_table('local_report_course_completion_user_table');
+    $table->is_downloading($download, 'local_report_course_completion_user', 'local_report_coursecompletion_user123');
+
     // Deal with sort by course for all courses if sort is empty.
     if (empty($sort) && $courseid == 1) {
-        $sort = 'coursename';
+        $table->sort_default_column = 'coursename';
     }
 
-    // Set up the display table.
-    $table = new local_report_course_completion_table('user_report_course_completion');
-    $table->is_downloading($download, 'user_report_course_completion', 'user_report_coursecompletion123');
-
     if (!$table->is_downloading()) {
+        echo $output->header();
+
         // Display the search form and department picker.
         if (!empty($companyid)) {
             if (empty($table->is_downloading())) {
@@ -417,9 +365,9 @@ if (empty($courseid)) {
     }
 
     // Set up the initial SQL for the form.
-    $selectsql = "lit.id,u.id as userid,u.firstname,u.lastname,d.name AS department,u.email,lit.id as certsource, lit.courseid,lit.coursename,lit.timecompleted,lit.timeenrolled,lit.timestarted,lit.finalscore,lit.licenseid,lit.licensename, lit.licenseallocated, lit.timecompleted AS timeexpires";
-    $fromsql = "{user} u JOIN {local_iomad_track} lit ON (u.id = lit.userid) JOIN {company_users} cu ON (u.id = cu.userid AND lit.companyid = cu.companyid) JOIN {department} d ON (cu.departmentid = d.id)";
-    $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $coursesql";
+    $selectsql = "DISTINCT lit.id,u.id as userid,u.firstname,u.lastname,d.name AS department,u.email,lit.id as certsource, lit.courseid,lit.coursename,lit.timecompleted,lit.timeenrolled,lit.timestarted,lit.finalscore,lit.licenseid,lit.licensename, lit.licenseallocated, lit.timecompleted AS timeexpires";
+    $fromsql = "{user} u JOIN {local_iomad_track} lit ON (u.id = lit.userid) JOIN {company_users} cu ON (u.id = cu.userid AND lit.userid = cu.userid AND lit.companyid = cu.companyid) JOIN {department} d ON (cu.departmentid = d.id)";
+    $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $coursesql GROUP BY lit.id";
     $sqlparams = array('companyid' => $companyid, 'courseid' => $courseid) + $searchinfo->searchparams;
 
     // Set up the headers for the form.
@@ -477,12 +425,13 @@ if (empty($courseid)) {
         $columns[] = 'licensename';
         $columns[] = 'licenseallocated';
     }
-    // And final the rest of the form headers.
+
+    // And enrolment columns.
     $headers[] = get_string('timeenrolled', 'local_report_completion');
     $headers[] = get_string('timecompleted', 'local_report_completion');
-
     $columns[] = 'timeenrolled';
     $columns[] = 'timecompleted';
+
     // Does this course have an expiry time?
     if (($courseid == 1 && $DB->get_records_sql("SELECT id FROM {iomad_courses} WHERE courseid IN (SELECT courseid FROM {local_iomad_track} WHERE companyid = :companyid) AND expireafter != 0", array('companyid' => $company->id))) ||
         $DB->get_record_sql("SELECT id FROM {iomad_courses} WHERE courseid = :courseid AND expireafter != 0", array('courseid' => $courseid))) {
@@ -490,19 +439,23 @@ if (empty($courseid)) {
         $headers[] = get_string('timeexpires', 'local_report_completion');
     }
 
+    // And finally the last of the columns.
     $headers[] = get_string('finalscore', 'local_report_completion');
     $columns[] = 'finalscore';
     $headers[] = get_string('certificate', 'local_report_completion');
     $columns[] = 'certificate';
 
+    // Set up the table and display it.
     $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
     $table->define_baseurl($url);
     $table->define_columns($columns);
     $table->define_headers($headers);
     $table->no_sorting('status');
     $table->no_sorting('certificate');
+    $table->sort_default_column = 'lastname';
     $table->out($CFG->iomad_max_list_users, true);
 
+    // End the page if appropriate.
     if (!$table->is_downloading()) {
         echo $output->footer();
     }

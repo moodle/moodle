@@ -123,6 +123,7 @@ $table->define_columns($columns);
 $table->define_headers($headers);
 $table->no_sorting('status');
 $table->no_sorting('certificate');
+$table->sort_default_column='coursename';
 $table->out($CFG->iomad_max_list_courses, true);
 
 echo $output->footer();
