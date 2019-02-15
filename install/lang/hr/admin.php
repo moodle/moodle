@@ -40,3 +40,4 @@ $string['cliunknowoption'] = 'Nepoznate opcije: {$a} Molimo koristite --help opc
 $string['cliyesnoprompt'] = 'unesite y (znači da) ili n (znači ne)';
 $string['environmentrequireinstall'] = 'je neophodno instalirati/omogućiti';
 $string['environmentrequireversion'] = 'neophodna inačica je {$a->needed}, a vi trenutačno koristite inačicu {$a->current}';
+$string['upgradekeyset'] = 'Ključ za ažuriranje (ostavite prazno kako ga ne bi zadali)';
