@@ -121,9 +121,20 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
         foreach ($users as $user) {
             if ($usercompany = company::by_userid($user->userid)) {
                 if ($usercompanyrec = $DB->get_record('company', array('id' => $usercompany->id))) {
-                    $department = $DB->get_record_sql("SELECT d.* from {department} d JOIN {company_users} cu ON (d.id = cu.departmentid) WHERE cu.companyid = :companyid AND cu.userid = :userid", array('companyid' => $usercompanyrec->id, 'userid' => $user->userid));
                     $DB->set_field('local_iomad_track', 'companyid', $usercompanyrec->id, array('userid' => $user->userid));
                     $DB->set_field('local_iomad_track', 'companyname', $usercompanyrec->name, array('userid' => $user->userid));
+                }
+                // If we don't have an actual department any more,
+                if ($department = $DB->get_record_sql("SELECT d.* FROM {department} d
+                                                       JOIN {company_users} cu ON (d.id = cu.departmentid)
+                                                       WHERE cu.companyid = :companyid
+                                                       AND cu.userid = :userid",
+                                                       array('companyid' => $usercompanyrec->id, 'userid' => $user->userid))) {
+                    $DB->set_field('local_iomad_track', 'departmentid', $department->id, array('userid' => $user->userid));
+                    $DB->set_field('local_iomad_track', 'departmentname', $department->name, array('userid' => $user->userid));
+                } else {
+                    // Allocate them to the company department.
+                    $department = company::get_company_parentnode($usercompanyrec->id);
                     $DB->set_field('local_iomad_track', 'departmentid', $department->id, array('userid' => $user->userid));
                     $DB->set_field('local_iomad_track', 'departmentname', $department->name, array('userid' => $user->userid));
                 }
@@ -153,18 +164,20 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
         foreach ($liccourses as $liccourse) {
             $lictracks = $DB->get_records('local_iomad_track', array('courseid' => $liccourse->courseid));
             foreach ($lictracks as $lictrack) {
-                $licenserecs = $DB->get_records_sql("SELECT * FROM {companylicense_users}
-                                                     WHERE userid = :userid AND licensecourseid = :licensecourseid AND issuedate < :issuedate
-                                                     AND licensid IN (SELECT id from {companylicense} WHERE companyid = :companyid)
-                                                     ORDER BY issuedate DESC",
-                                                     array('licensecourseid' => $lictrack->courseid, 'userid' => $lictrack->userid, 'companyid' => $usercompanyrec->id, 'issuedate' => $lictrack->timecompleted),
+                $licenserecs = $DB->get_records_sql("SELECT clu.*,cl.name FROM {companylicense_users} clu JOIN {companylicense} cl ON (clu.licenseid = cl.id)
+                                                     WHERE clu.userid = :userid AND clu.licensecourseid = :licensecourseid AND clu.issuedate < :issuedate
+                                                     ORDER BY clu.issuedate DESC",
+                                                     array('licensecourseid' => $lictrack->courseid, 'userid' => $lictrack->userid, 'issuedate' => $lictrack->timecompleted),
                                                      0,1);
                 $licenserec = array_pop($licenserecs);
-                if ($license = $DB->get_record('companylicense', array('id' => $licenserec->licenseid))) {
-                    $lictrack->licenseid = $license->id;
-                    $lictrack->licensename = $license->name;
-                    $DB->update_record('local_iomad_track', $lictrack);
+                if (!empty($licenserec->licenseid)) {
+                    $lictrack->licenseid = $licenserec->licenseid;
+                    $lictrack->licensename = $licenserec->name;
+                } else {
+                    $lictrack->licenseid = 0;
+                    $lictrack->licensename = 'HISTORIC';
                 }
+                $DB->update_record('local_iomad_track', $lictrack);
             }
         }
 
@@ -264,23 +277,23 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
         $dbman->change_field_notnull($table, $field);
 
         // Get the timestamp for the license which have been allocated for already tracked courses.
-        $current = $DB->get_records_sql("SELECT lit.*,clu.issuedate,cl.name AS licensename, cl.companyid FROM {local_iomad_track} lit
-                                         JOIN {companylicense_users} clu ON (lit.courseid = clu.licensecourseid AND lit.userid = clu.userid)
-                                         JOIN {companylicense} cl ON (clu.licenseid = cl.id)");
+        $current = $DB->get_records_sql("SELECT clu.id, lit.id AS litid,clu.issuedate
+                                         FROM {local_iomad_track} lit
+                                         JOIN {companylicense_users} clu ON (lit.courseid = clu.licensecourseid AND lit.userid = clu.userid AND lit.licenseid = clu.licenseid)
+                                         WHERE lit.timecompleted IS NOT NULL
+                                         AND lit.licenseid != 0
+                                         AND lit.timeenrolled > clu.issuedate
+                                         GROUP BY clu.id");
         foreach ($current as $cur) {
-            if (empty($cur->timecompleted) && $completionrec = $DB->get_record('course_completions', array('course' => $cur->courseid, 'userid' => $cur->userid))) {
-                $DB->set_field('local_iomad_track', 'timeenrolled', $completionrec->timeenrolled, array('id' => $cur->id));
-                $DB->set_field('local_iomad_track', 'timestarted', $completionrec->timestarted, array('id' => $cur->id));
-                $DB->set_field('local_iomad_track', 'timecompleted', $completionrec->timecompleted, array('id' => $cur->id));
-            } else if (empty($cur->timecompleted)) {
-                $DB->set_field('local_iomad_track', 'timeenrolled', null, array('id' => $cur->id));
-                $DB->set_field('local_iomad_track', 'timestarted', null, array('id' => $cur->id));
-                $DB->set_field('local_iomad_track', 'timecompleted', null, array('id' => $cur->id));
+            $DB->set_field('local_iomad_track', 'licenseallocated', $cur->issuedate, array('id' => $cur->litid));
+            $DB->set_field('local_iomad_track', 'modifiedtime', time(), array('id' => $cur->litid));
+        }
+
+        // Get the timestamp historic values.
+        if ($nolics = $DB->get_records('local_iomad_track', array('licenseid' => 0))) {
+            foreach ($nolics as $nolic) {
+                $DB->set_field('local_iomad_track', 'licenseallocated', $nolic->timeenrolled, array('id' => $nolic->id));
             }
-            $DB->set_field('local_iomad_track', 'companyid', $cur->companyid, array('id' => $cur->id));
-            $DB->set_field('local_iomad_track', 'licenseallocated', $cur->issuedate, array('id' => $cur->id));
-            $DB->set_field('local_iomad_track', 'licensename', $cur->licensename, array('id' => $cur->id));
-            $DB->set_field('local_iomad_track', 'modifiedtime', time(), array('id' => $cur->id));
         }
 
         $rest = $DB->get_records_sql("SELECT clu.*,cl.name AS licensename, cl.companyid, c.fullname AS coursename FROM {companylicense_users} clu
