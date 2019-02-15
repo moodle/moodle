@@ -83,8 +83,9 @@ if ($hassiteconfig) {
         foreach ($alltimesplittings as $key => $timesplitting) {
             $timesplittingoptions[$key] = $timesplitting->get_name();
         }
-        $settings->add(new admin_setting_configmultiselect('analytics/timesplittings',
-            new lang_string('enabledtimesplittings', 'analytics'), new lang_string('timesplittingmethod_help', 'analytics'),
+        $settings->add(new admin_setting_configmultiselect('analytics/defaulttimesplittingsevaluation',
+            new lang_string('defaulttimesplittingmethods', 'analytics'),
+            new lang_string('defaulttimesplittingmethods_help', 'analytics'),
             $timesplittingdefaults, $timesplittingoptions)
         );
 

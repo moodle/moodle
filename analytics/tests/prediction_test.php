@@ -443,7 +443,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $sometimesplittings = '\core\analytics\time_splitting\weekly,' .
             '\core\analytics\time_splitting\single_range,' .
             '\core\analytics\time_splitting\quarters';
-        set_config('timesplittings', $sometimesplittings, 'analytics');
+        set_config('defaulttimesplittingsevaluation', $sometimesplittings, 'analytics');
 
         if ($modelquality === 'perfect') {
             $model = $this->add_perfect_model();
@@ -487,8 +487,6 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminuser();
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
-        set_config('timesplittings',
-            '\core\analytics\time_splitting\quarters,\core\analytics\time_splitting\quarters_accum', 'analytics');
 
         $model = $this->add_perfect_model();
 

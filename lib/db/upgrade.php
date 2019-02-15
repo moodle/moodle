@@ -2905,5 +2905,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019030800.03);
     }
 
+    if ($oldversion < 2019031500.01) {
+
+        $defaulttimesplittings = get_config('analytics', 'timesplittings');
+        if ($defaulttimesplittings !== false) {
+            set_config('defaulttimesplittingsevaluation', $defaulttimesplittings, 'analytics');
+            unset_config('timesplittings', 'analytics');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019031500.01);
+    }
+
     return true;
 }

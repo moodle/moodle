@@ -119,7 +119,7 @@ switch ($action) {
             'id' => $model->get_id(),
             'trainedmodel' => $model->is_trained(),
             'indicators' => $model->get_potential_indicators(),
-            'timesplittings' => \core_analytics\manager::get_enabled_time_splitting_methods(),
+            'timesplittings' => \core_analytics\manager::get_all_time_splittings(),
             'predictionprocessors' => \core_analytics\manager::get_all_prediction_processors()
         );
         $mform = new \tool_analytics\output\form\edit_model(null, $customdata);

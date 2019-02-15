@@ -254,11 +254,26 @@ class manager {
     /**
      * Returns the enabled time splitting methods.
      *
+     * @deprecated since Moodle 3.7
+     * @todo MDL-65086 This will be deleted in Moodle 4.1
+     * @see \core_analytics\manager::get_time_splitting_methods_for_evaluation
      * @return \core_analytics\local\time_splitting\base[]
      */
     public static function get_enabled_time_splitting_methods() {
+        debugging('This function has been deprecated. You can use self::get_time_splitting_methods_for_evaluation if ' .
+            'you want to get the default time splitting methods for evaluation, or you can use self::get_all_time_splittings if ' .
+            'you want to get all the time splitting methods available on this site.');
+        return self::get_time_splitting_methods_for_evaluation();
+    }
 
-        if ($enabledtimesplittings = get_config('analytics', 'timesplittings')) {
+    /**
+     * Returns the default time splitting methods for model evaluation.
+     *
+     * @return \core_analytics\local\time_splitting\base[]
+     */
+    public static function get_time_splitting_methods_for_evaluation() {
+
+        if ($enabledtimesplittings = get_config('analytics', 'defaulttimesplittingsevaluation')) {
             $enabledtimesplittings = array_flip(explode(',', $enabledtimesplittings));
         }
 
