@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/assign/feedback/editpdf/db" VERSION="20180925" COMMENT="XMLDB file for Moodle mod/assign/feedback/editpdf"
+<XMLDB PATH="mod/assign/feedback/editpdf/db" VERSION="20190107" COMMENT="XMLDB file for Moodle mod/assign/feedback/editpdf"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
@@ -70,6 +70,23 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="submissionid-submissionattempt" TYPE="unique" FIELDS="submissionid, submissionattempt"/>
       </KEYS>
+    </TABLE>
+    <TABLE NAME="assignfeedback_editpdf_rot" COMMENT="Stores rotation information of a page.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="gradeid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="pageno" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Page number"/>
+        <FIELD NAME="pathnamehash" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="File path hash of the rotated page"/>
+        <FIELD NAME="isrotated" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the page is rotated or not"/>
+        <FIELD NAME="degree" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Rotation degree"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="gradeid" TYPE="foreign" FIELDS="gradeid" REFTABLE="assign_grades" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="gradeid_pageno" UNIQUE="true" FIELDS="gradeid, pageno"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>
