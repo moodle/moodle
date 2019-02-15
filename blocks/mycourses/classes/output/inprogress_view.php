@@ -57,7 +57,7 @@ class inprogress_view implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG, $DB;
+        global $CFG, $DB, $USER;
         require_once($CFG->dirroot.'/course/lib.php');
 
         // Build courses view data structure.
@@ -91,11 +91,19 @@ class inprogress_view implements renderable, templatable {
             if (empty($imageurl)) {
                 $imageurl = $output->image_url('i/course');
             }
+
             $exportedcourse = $exporter->export($output);
             $exportedcourse->url = new \moodle_url('/course/view.php', array('id' => $inprogress->courseid));
             $exportedcourse->fullname = $inprogress->coursefullname;
             $exportedcourse->image = $imageurl;
             $exportedcourse->summary = $coursesummary;
+
+            // Get the course percentage.
+            if ($totalrec = $DB->get_records('course_completion_criteria', array('course' => $inprogress->courseid))) {
+                $usercount = $DB->count_records('course_completion_crit_compl', array('course' => $inprogress->courseid, 'userid' => $USER->id));
+                $exportedcourse->progress = round($usercount * 100 / count($totalrec), 0);
+                $exportedcourse->hasprogress = true;
+            }
             $inprogressview['courses'][] = $exportedcourse;
         }
         return $inprogressview;

@@ -48,3 +48,10 @@ html.yui3-js-enabled body#page-my-index.format-site.path-my.gecko.dir-ltr.lang-e
     width: 100px;
     height: 100px;
 }
+
+.block_mycourses .ml-auto.mt-auto.w-50.p-t-1 {
+    float: left;
+}
+.block_mycourses .certificatediv {
+    clear: both;
+}

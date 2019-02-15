@@ -40,16 +40,24 @@
                                 {{ summary}}
                             </div>
                             <div class="finalresults">
-                                <p>{{#str}} timecompleted, local_report_completion {{/str}} {{ timecompleted }}
-                                {{#timeexpires}}
-                                    ({{#str}} timeexpires, local_report_completion {{/str}} {{ timeexpires }})
-                                {{/timeexpires}}</p>
-                                <p>{{#str}} finalscore, block_mycourses,  {{ finalscore }} {{/str}}
+                                <div class="ml-auto mt-auto w-50 p-t-1">
+                                    <div class="progress bg-white border">
+                                        <div class="progress-bar bar" role="progressbar" aria-valuenow="{{progress}}" style="width: {{progress}}%" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <div class="small">
+                                        <span class="sr-only">{{#str}}aria:courseprogress, block_myoverview{{/str}}</span>
+                                        <strong>{{progress}}%</strong> {{#str}}complete, block_myoverview{{/str}}
+                                        <strong>{{#str}} timecompleted, local_report_completion {{/str}}</strong> {{ timecompleted }}
+                                        {{#timeexpires}}
+                                            <strong>({{#str}} timeexpires, local_report_completion {{/str}}</strong> {{ timeexpires }})
+                                        {{/timeexpires}}
+                                        <strong>{{#str}} finalscore, block_mycourses,  {{ finalscore }}</strong> {{/str}}
+                                    </div>
+                                </div>
                                 {{#certificate}}
-                                    <a class="btn btn-info" href="{{ certificate }}">{{#str}} downloadcert, block_mycourses {{/str}}</a></p>
-                                {{/certificate}}
-                                {{^certificate}}
-                                    {{#str}} nocerttodownload, block_mycourses {{/str}}</p>
+                                    <div class = "certificatediv">
+                                        <a class="btn btn-secondary" href="{{ certificate }}">{{#str}} downloadcert, block_mycourses {{/str}}</a></p>
+                                    </div>
                                 {{/certificate}}
                             </div>
                         </div>

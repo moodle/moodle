@@ -106,6 +106,8 @@ class completed_view implements renderable, templatable {
                     $exportedcourse->timeexpires = date($CFG->iomad_date_format, $completed->timecompleted + $iomadcourserec->validlength * 24 * 60 * 60 );
                 }
             }
+            $exportedcourse->progress = 100;
+            $exportedcourse->hasprogress = true;
             $exportedcourse->finalscore = intval($completed->finalgrade);
             $exportedcourse->certificate = $completed->certificate;
             $completedview['courses'][] = $exportedcourse;
