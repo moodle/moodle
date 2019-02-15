@@ -245,7 +245,7 @@ class course_competency extends persistent {
 
         $results = $DB->get_records_sql('SELECT course.id, course.visible, course.shortname, course.idnumber,
                                                 course.fullname, course.summary, course.summaryformat, course.startdate,
-                                                course.enddate
+                                                course.enddate, course.category
                                            FROM {course} course
                                            JOIN {' . self::TABLE . '} coursecomp
                                              ON coursecomp.courseid = course.id
