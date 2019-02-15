@@ -135,11 +135,7 @@ $string['offline'] = 'Offline';
 $string['on'] = 'On';
 $string['online'] = 'Online';
 $string['otherparticipants'] = 'Other participants';
-$string['outputdisabled'] = 'Output disabled';
-$string['outputdoesnotexist'] = 'Message output does not exist';
-$string['outputenabled'] = 'Output enabled';
 $string['outputnotavailable'] = 'Not available';
-$string['outputnotconfigured'] = 'Not configured';
 $string['participants'] = 'Participants';
 $string['permitted'] = 'Permitted';
 $string['privacy'] = 'Privacy';
@@ -260,3 +256,7 @@ $string['userisblockingyounoncontact'] = '{$a} only accepts messages from their 
 
 // Deprecated since Moodle 3.7.
 $string['nomessages'] = 'No messages';
+$string['outputdisabled'] = 'Output disabled';
+$string['outputdoesnotexist'] = 'Message output does not exist';
+$string['outputenabled'] = 'Output enabled';
+$string['outputnotconfigured'] = 'Not configured';
