@@ -44,6 +44,11 @@ $stringparams = (object) [
     ];
 
 if (null !== $confirm && confirm_sesskey()) {
+    if ($originalrequest->get('type') == \tool_dataprivacy\api::DATAREQUEST_TYPE_DELETE
+        && !\tool_dataprivacy\api::can_create_data_deletion_request_for_other()) {
+        throw new required_capability_exception(context_system::instance(),
+            'tool/dataprivacy:requestdeleteforotheruser', 'nopermissions', '');
+    }
     $originalrequest->resubmit_request();
     redirect($manageurl, get_string('resubmittedrequest', 'tool_dataprivacy', $stringparams));
 }

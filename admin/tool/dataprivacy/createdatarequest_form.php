@@ -45,6 +45,7 @@ class tool_dataprivacy_data_request_form extends moodleform {
      * Form definition.
      *
      * @throws coding_exception
+     * @throws dml_exception
      */
     public function definition() {
         global $USER;
@@ -108,6 +109,24 @@ class tool_dataprivacy_data_request_form extends moodleform {
         // Action buttons.
         $this->add_action_buttons();
 
+        $shouldfreeze = false;
+        if ($this->manage) {
+            $shouldfreeze = !api::can_create_data_deletion_request_for_other();
+        } else {
+            $shouldfreeze = !api::can_create_data_deletion_request_for_self();
+            if ($shouldfreeze && !empty($useroptions)) {
+                foreach ($useroptions as $userid => $useroption) {
+                    if (api::can_create_data_deletion_request_for_children($userid)) {
+                        $shouldfreeze = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ($shouldfreeze) {
+            $mform->freeze('type');
+        }
     }
 
     /**
@@ -120,6 +139,7 @@ class tool_dataprivacy_data_request_form extends moodleform {
      * @throws dml_exception
      */
     public function validation($data, $files) {
+        global $USER;
         $errors = [];
 
         $validrequesttypes = [
@@ -132,6 +152,19 @@ class tool_dataprivacy_data_request_form extends moodleform {
 
         if (api::has_ongoing_request($data['userid'], $data['type'])) {
             $errors['type'] = get_string('errorrequestalreadyexists', 'tool_dataprivacy');
+        }
+
+        // Check if current user can create data deletion request.
+        $userid = $data['userid'];
+        if ($data['type'] == api::DATAREQUEST_TYPE_DELETE) {
+            if ($userid == $USER->id) {
+                if (!api::can_create_data_deletion_request_for_self()) {
+                    $errors['type'] = get_string('errorcannotrequestdeleteforself', 'tool_dataprivacy');
+                }
+            } else if (!api::can_create_data_deletion_request_for_other()
+                && !api::can_create_data_deletion_request_for_children($userid)) {
+                $errors['type'] = get_string('errorcannotrequestdeleteforother', 'tool_dataprivacy');
+            }
         }
 
         return $errors;
