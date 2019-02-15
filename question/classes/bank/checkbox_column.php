@@ -26,7 +26,9 @@ class checkbox_column extends column_base {
     protected $strselect;
 
     public function init() {
-        $this->strselect = get_string('select');
+        global $PAGE;
+
+        $PAGE->requires->js_call_amd('core/checkbox-toggleall', 'init');
     }
 
     public function get_name() {
@@ -34,21 +36,41 @@ class checkbox_column extends column_base {
     }
 
     protected function get_title() {
-        return '<input type="checkbox" disabled="disabled" id="qbheadercheckbox" />';
+        $input = \html_writer::empty_tag('input', [
+            'id' => 'qbheadercheckbox',
+            'name' => 'qbheadercheckbox',
+            'type' => 'checkbox',
+            'value' => '1',
+            'data-action' => 'toggle',
+            'data-toggle' => 'master',
+            'data-togglegroup' => 'qbank',
+            'data-toggle-selectall' => get_string('selectall', 'moodle'),
+            'data-toggle-deselectall' => get_string('deselectall', 'moodle'),
+        ]);
+
+        $label = \html_writer::tag('label', get_string('selectall', 'moodle'), [
+            'class' => 'accesshide',
+            'for' => 'qbheadercheckbox',
+        ]);
+
+        return $input . $label;
     }
 
     protected function get_title_tip() {
-        global $PAGE;
-        $PAGE->requires->strings_for_js(array('selectall', 'deselectall'), 'moodle');
-        $PAGE->requires->yui_module('moodle-question-qbankmanager', 'M.question.qbankmanager.init');
         return get_string('selectquestionsforbulk', 'question');
-
     }
 
     protected function display_content($question, $rowclasses) {
-        global $PAGE;
-        echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
-                $question->id . '" id="checkq' . $question->id . '" value="1"/>';
+        echo \html_writer::empty_tag('input', [
+            'title' => get_string('select'),
+            'type' => 'checkbox',
+            'name' => "q{$question->id}",
+            'id' => "checkq{$question->id}",
+            'value' => '1',
+            'data-action' => 'toggle',
+            'data-toggle' => 'slave',
+            'data-togglegroup' => 'qbank',
+        ]);
     }
 
     public function get_required_fields() {
