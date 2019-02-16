@@ -35,7 +35,7 @@ $string['cliansweryes'] = 'b';
 $string['cliincorrectvalueerror'] = 'Errorea, "{$a->value}" balioa ez da egokia "{$a->option}"-rako';
 $string['cliincorrectvalueretry'] = 'Balio ezegokia, mesedez saiatu berriz';
 $string['clitypevalue'] = 'Sartu balioa';
-$string['clitypevaluedefault'] = 'sartu balioa, sakatu Enter-i berezko balioa erabiltzeko ({$a})';
+$string['clitypevaluedefault'] = 'sartu balioa, sakatu Enter-i lehenetsitako balioa erabiltzeko ({$a})';
 $string['cliunknowoption'] = 'Aukera ezezagunak:
  {$a}
 Mesedez, erabili --help aukera.';
