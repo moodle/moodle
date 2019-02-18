@@ -398,7 +398,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
                             if ($trimmedanswer !== '') {
                                 $answercount++;
                                 if ($subquestion->qtype == 'numerical' &&
-                                        !($this->is_valid_number($trimmedanswer) || $trimmedanswer == '*')) {
+                                        !(qtype_numerical::is_valid_number($trimmedanswer) || $trimmedanswer == '*')) {
                                     $this->_form->setElementError($prefix.'answer['.$key.']',
                                             get_string('answermustbenumberorstar',
                                                     'qtype_numerical'));
@@ -456,76 +456,12 @@ class qtype_multianswer_edit_form extends question_edit_form {
         parent::set_data($question);
     }
 
-    /**
-     * Validate that a string is a nubmer formatted correctly for the current locale.
-     * @param string $x a string
-     * @return bool whether $x is a number that the numerical question type can interpret.
-     */
-    protected function is_valid_number($x) {
-        if (is_null($this->ap)) {
-            $this->ap = new qtype_numerical_answer_processor(array());
-        }
-
-        list($value, $unit) = $this->ap->apply_units($x);
-
-        return !is_null($value) && !$unit;
-    }
-
-
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
         $questiondisplay = qtype_multianswer_extract_question($data['questiontext']);
 
-        if (isset($questiondisplay->options->questions)) {
-            $subquestions = fullclone($questiondisplay->options->questions);
-            if (count($subquestions)) {
-                $sub = 1;
-                foreach ($subquestions as $subquestion) {
-                    $prefix = 'sub_'.$sub.'_';
-                    $answercount = 0;
-                    $maxgrade = false;
-                    $maxfraction = -1;
-
-                    foreach ($subquestion->answer as $key => $answer) {
-                        if (is_array($answer)) {
-                            $answer = $answer['text'];
-                        }
-                        $trimmedanswer = trim($answer);
-                        if ($trimmedanswer !== '') {
-                            $answercount++;
-                            if ($subquestion->qtype == 'numerical' &&
-                                    !($this->is_valid_number($trimmedanswer) || $trimmedanswer == '*')) {
-                                $errors[$prefix.'answer['.$key.']'] =
-                                        get_string('answermustbenumberorstar', 'qtype_numerical');
-                            }
-                            if ($subquestion->fraction[$key] == 1) {
-                                $maxgrade = true;
-                            }
-                            if ($subquestion->fraction[$key] > $maxfraction) {
-                                $maxfraction = $subquestion->fraction[$key];
-                            }
-                            // For 'multiresponse' we are OK if there is at least one fraction > 0.
-                            if ($subquestion->qtype == 'multichoice' && $subquestion->single == 0 &&
-                                $subquestion->fraction[$key] > 0) {
-                                $maxgrade = true;
-                            }
-                        }
-                    }
-                    if ($subquestion->qtype == 'multichoice' && $answercount < 2) {
-                        $errors[$prefix.'answer[0]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
-                    } else if ($answercount == 0) {
-                        $errors[$prefix.'answer[0]'] = get_string('notenoughanswers', 'question', 1);
-                    }
-                    if ($maxgrade == false) {
-                        $errors[$prefix.'fraction[0]'] = get_string('fractionsnomax', 'question');
-                    }
-                    $sub++;
-                }
-            } else {
-                $errors['questiontext'] = get_string('questionsmissing', 'qtype_multianswer');
-            }
-        }
+        $errors = array_merge($errors, qtype_multianswer_validate_question($questiondisplay));
 
         if (($this->negativediff > 0 || $this->usedinquiz &&
                 ($this->negativediff > 0 || $this->negativediff < 0 ||
