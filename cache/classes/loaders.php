@@ -1712,6 +1712,7 @@ class cache_session extends cache {
     public function __construct(cache_definition $definition, cache_store $store, $loader = null) {
         // First up copy the loadeduserid to the current user id.
         $this->currentuserid = self::$loadeduserid;
+        $this->set_session_id();
         parent::__construct($definition, $store, $loader);
 
         // This will trigger check tracked user. If this gets removed a call to that will need to be added here in its place.
@@ -1771,8 +1772,6 @@ class cache_session extends cache {
                 // Purge the data we have for the old user.
                 // This way we don't bloat the session.
                 $this->purge();
-                // Update the session id just in case!
-                $this->set_session_id();
             }
             self::$loadeduserid = $new;
             $this->currentuserid = $new;
@@ -1780,8 +1779,6 @@ class cache_session extends cache {
             // The current user matches the loaded user but not the user last used by this cache.
             $this->purge_current_user();
             $this->currentuserid = $new;
-            // Update the session id just in case!
-            $this->set_session_id();
         }
     }
 

@@ -2327,4 +2327,51 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertEquals('test data 2', $cache->get('testkey1'));
     }
 
+    /**
+     * Test that values set in different sessions are stored with different key prefixes.
+     */
+    public function test_session_distinct_storage_key() {
+        $this->resetAfterTest();
+
+        // Prepare a dummy session cache configuration.
+        $config = cache_config_testing::instance();
+        $config->phpunit_add_definition('phpunit/test_session_distinct_storage_key', array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'test_session_distinct_storage_key'
+        ));
+
+        // First anonymous user's session cache.
+        cache_phpunit_session::phpunit_mockup_session_id('foo');
+        $this->setUser(0);
+        $cache1 = cache::make('phpunit', 'test_session_distinct_storage_key');
+
+        // Reset cache instances to emulate a new request.
+        cache_factory::instance()->reset_cache_instances();
+
+        // Another anonymous user's session cache.
+        cache_phpunit_session::phpunit_mockup_session_id('bar');
+        $this->setUser(0);
+        $cache2 = cache::make('phpunit', 'test_session_distinct_storage_key');
+
+        cache_factory::instance()->reset_cache_instances();
+
+        // Guest user's session cache.
+        cache_phpunit_session::phpunit_mockup_session_id('baz');
+        $this->setGuestUser();
+        $cache3 = cache::make('phpunit', 'test_session_distinct_storage_key');
+
+        cache_factory::instance()->reset_cache_instances();
+
+        // Same guest user's session cache but in another browser window.
+        cache_phpunit_session::phpunit_mockup_session_id('baz');
+        $this->setGuestUser();
+        $cache4 = cache::make('phpunit', 'test_session_distinct_storage_key');
+
+        // Assert that different PHP session implies different key prefix for storing values.
+        $this->assertNotEquals($cache1->phpunit_get_key_prefix(), $cache2->phpunit_get_key_prefix());
+
+        // Assert that same PHP session implies same key prefix for storing values.
+        $this->assertEquals($cache3->phpunit_get_key_prefix(), $cache4->phpunit_get_key_prefix());
+    }
 }
