@@ -1096,9 +1096,28 @@ class iomad_date_filter_form extends moodleform {
             $mform->addElement('hidden', $param, $value);
             $mform->setType($param, PARAM_CLEAN);
         }
-        $mform->addElement('date_selector', 'compfrom', get_string('compfrom', 'local_report_completion'), array('optional' => 'yes'));
-        $mform->addElement('date_selector', 'compto', get_string('compto', 'local_report_completion'), array('optional' => 'yes'));
-        $mform->setDefault('compfrom', 0);
+
+        if (empty($this->params['yearonly'])) {
+            $mform->addElement('date_selector', 'compfrom', get_string('compfrom', 'local_report_completion'), array('optional' => 'yes'));
+            $mform->addElement('date_selector', 'compto', get_string('compto', 'local_report_completion'), array('optional' => 'yes'));
+            $mform->setDefault('compfrom', 0);
+        } else {
+            // Get the calendar type used - see MDL-18375.
+            $calendartype = \core_calendar\type_factory::get_calendar_instance();
+            $dateformat = $calendartype->get_date_order();
+            $from = array();
+            $from[] = $mform->createElement('select', 'yearfrom', get_string('compfrom', 'local_report_completion'), $dateformat['year']);
+            $from[] = $mform->createElement('checkbox', 'yearfromoptional', '', get_string('optional', 'form'));
+            $mform->addGroup($from, 'fromarray', get_string('compfrom', 'local_report_completion'));
+            $to[] = $mform->createElement('select', 'yearto', get_string('compfrom', 'local_report_completion'), $dateformat['year']);
+            $to[] = $mform->createElement('checkbox', 'yeartooptional', '', get_string('optional', 'form'));
+            $mform->addGroup($to, 'toarray', get_string('compto', 'local_report_completion'));
+
+            $mform->setDefault('fromarray[yearfrom]', '2018');
+            $mform->setDefault('toarray[yearto]', '2018');
+            $mform->disabledIf('fromarray', 'fromarray[yearfromoptional]');
+            $mform->disabledIf('toarray', 'toarray[yeartooptional]');
+        }
         $this->add_action_buttons(false, get_string('userfilter', 'local_iomad'));
     }
 }
