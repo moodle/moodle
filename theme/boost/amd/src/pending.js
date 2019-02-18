@@ -92,6 +92,17 @@ define(['jquery'], function($) {
             },
         ],
 
+        toast: [
+            {
+                start: 'hide',
+                end: 'hidden',
+            },
+            {
+                start: 'show',
+                end: 'shown',
+            },
+        ],
+
         tooltip: [
             {
                 start: 'hide',
