@@ -1090,7 +1090,7 @@ class iomad_date_filter_form extends moodleform {
 
         $mform =& $this->_form;
         foreach ($this->params as $param => $value) {
-            if ($param == 'compfrom' || $param == 'compto') {
+            if ($param == 'compfrom' || $param == 'compto' || $param == 'yearfrom' || $param == 'yearto') {
                 continue;
             }
             $mform->addElement('hidden', $param, $value);
@@ -1113,8 +1113,24 @@ class iomad_date_filter_form extends moodleform {
             $to[] = $mform->createElement('checkbox', 'yeartooptional', '', get_string('optional', 'form'));
             $mform->addGroup($to, 'toarray', get_string('compto', 'local_report_completion'));
 
-            $mform->setDefault('fromarray[yearfrom]', '2018');
-            $mform->setDefault('toarray[yearto]', '2018');
+            if (!empty($this->params['yearto'])) {
+                $mform->setDefault('toarray[yearto]', $this->params['yearto']);
+            } else {
+                $mform->setDefault('toarray[yearto]', '2018');
+            }
+
+            if (!empty($this->params['yearfrom'])) {
+                $mform->setDefault('fromarray[yearfrom]', $this->params['yearfrom']);
+            } else {
+                $mform->setDefault('fromarray[yearfrom]', '2018');
+            }
+
+            if (!empty($this->params['yearfromoptional'])) {
+                $mform->setDefault('fromarray[yearfromoptional]', 'checked');
+            }
+            if (!empty($this->params['yeartooptional'])) {
+                $mform->setDefault('toarray[yeartooptional]', 'checked');
+            }
             $mform->disabledIf('fromarray', 'fromarray[yearfromoptional]');
             $mform->disabledIf('toarray', 'toarray[yeartooptional]');
         }

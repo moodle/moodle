@@ -86,9 +86,21 @@ if ($toraw) {
 // Deal with any passed year parameters.
 if (!empty($yearto)) {
     $compto = strtotime($yearto['yearto'] . "/01/01 + 1 year");
+    $params['yearto'] = $yearto['yearto'];
+    $params['yeartooptional'] = true;
+} else if ($yearto = optional_param('yearto', null, PARAM_INT)) {
+    $compto = strtotime($yearto . "/01/01 + 1 year");
+    $params['yearto'] = $yearto;
+    $params['yeartooptional'] = optional_param('yeartooptional', true, PARAM_BOOL);
 }
 if (!empty($yearfrom)) {
     $compfrom = strtotime($yearfrom['yearfrom'] . "/01/01");
+    $params['yearfrom'] = $yearfrom['yearfrom'];
+    $params['yearfromoptional'] = true;
+} else if ($yearfrom = optional_param('yearfrom', null, PARAM_INT)) {
+    $compfrom = strtotime($yearfrom . "/01/01 + 1 year");
+    $params['yearfrom'] = $yearfrom;
+    $params['yearfromoptional'] = optional_param('yearfromoptional', true, PARAM_BOOL);
 }
 
 $systemcontext = context_system::instance();
@@ -201,7 +213,7 @@ $courseselectoutput = html_writer::tag('div', $output->render($select), array('i
 
 // Get the appropriate list of departments.
 $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
-$select = new single_select($baseurl, 'departmentid', $subhierarchieslist, $departmentid);
+$select = new single_select($selecturl, 'departmentid', $subhierarchieslist, $departmentid);
 $select->label = get_string('department', 'block_iomad_company_admin');
 $select->formid = 'choosedepartment';
 $fwselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector'));
@@ -351,7 +363,7 @@ foreach (array_keys($seriesarray) as $year) {
 // Create the chart and all the series data for it.
 $chart = new core\chart_bar();
 foreach ($seriesarray as $year => $values) {
-        $series = new core\chart_series("$year", array_values($values));
+        $series = new core\chart_series("$year (".array_sum($values) . ")", array_values($values));
         $chart->add_series($series);
 }
 $chart->set_labels($montharray);
@@ -359,7 +371,6 @@ $chart->set_labels($montharray);
 // Get the calendar type used - see MDL-18375.
 $calendartype = \core_calendar\type_factory::get_calendar_instance();
 $dateformat = $calendartype->get_date_order();
-//        echo "<pre>";print_r($dateformat);echo "</pre>";
 
 // Display the chart.
 echo $output->render($chart);
