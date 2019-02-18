@@ -41,6 +41,7 @@ use core_competency\external\course_competency_exporter;
 use core_competency\external\course_competency_settings_exporter;
 use core_competency\external\user_competency_course_exporter;
 use core_competency\external\user_competency_exporter;
+use core_competency\external\plan_exporter;
 use tool_lp\external\competency_path_exporter;
 use tool_lp\external\course_competency_statistics_exporter;
 use core_course\external\course_module_summary_exporter;
@@ -113,6 +114,7 @@ class course_competencies_page implements renderable, templatable {
         $data->courseid = $this->courseid;
         $data->pagecontextid = $this->context->id;
         $data->competencies = array();
+        $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
 
         $gradable = is_enrolled($this->context, $USER, 'moodle/competency:coursecompetencygradable');
         if ($gradable) {
@@ -154,12 +156,21 @@ class course_competencies_page implements renderable, templatable {
                 'context' => $context
             ]);
 
+            // User learning plans.
+            $plans = api::list_plans_with_competency($USER->id, $competency);
+            $exportedplans = array();
+            foreach ($plans as $plan) {
+                $planexporter = new plan_exporter($plan, array('template' => $plan->get_template()));
+                $exportedplans[] = $planexporter->export($output);
+            }
+
             $onerow = array(
                 'competency' => $compexporter->export($output),
                 'coursecompetency' => $ccexporter->export($output),
                 'ruleoutcomeoptions' => $ccoutcomeoptions,
                 'coursemodules' => $exportedmodules,
-                'comppath' => $pathexporter->export($output)
+                'comppath' => $pathexporter->export($output),
+                'plans' => $exportedplans
             );
             if ($gradable) {
                 $foundusercompetencycourse = false;

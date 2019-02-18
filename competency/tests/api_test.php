@@ -4631,4 +4631,38 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertEquals($uc1b->get('id'), $result['competencies'][0]->usercompetency->get('id'));
         $this->assertEquals($uc1c->get('id'), $result['competencies'][1]->usercompetency->get('id'));
     }
+
+    /**
+     * Test we can get all of a users plans with a competency.
+     */
+    public function test_list_plans_with_competency() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
+
+        $u1 = $this->getDataGenerator()->create_user();
+        $tpl = $this->getDataGenerator()->get_plugin_generator('core_competency')->create_template();
+
+        // Create a framework and assign competencies.
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+
+        // Create two plans and assign the competency to each.
+        $plan1 = $lpg->create_plan(array('userid' => $u1->id));
+        $plan2 = $lpg->create_plan(array('userid' => $u1->id));
+
+        $lpg->create_plan_competency(array('planid' => $plan1->get('id'), 'competencyid' => $c1->get('id')));
+        $lpg->create_plan_competency(array('planid' => $plan2->get('id'), 'competencyid' => $c1->get('id')));
+
+        // Create one more plan without the competency.
+        $plan3 = $lpg->create_plan(array('userid' => $u1->id));
+
+        $plans = api::list_plans_with_competency($u1->id, $c1);
+
+        $this->assertEquals(2, count($plans));
+
+        $this->assertEquals(reset($plans)->get('id'), $plan1->get('id'));
+        $this->assertEquals(end($plans)->get('id'), $plan2->get('id'));
+    }
+
 }
