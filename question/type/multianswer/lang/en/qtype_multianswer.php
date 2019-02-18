@@ -28,6 +28,7 @@ $string['confirmsave'] = 'Confirm then save {$a}';
 $string['correctanswer'] = 'Correct answer';
 $string['correctanswerandfeedback'] = 'Correct answer and feedback';
 $string['decodeverifyquestiontext'] = 'Decode and verify the question text';
+$string['invalidmultianswerquestion'] = 'Invalid embedded answers (Cloze) question ({$a}).';
 $string['layout'] = 'Layout';
 $string['layouthorizontal'] = 'Horizontal row of radio-buttons';
 $string['layoutmultiple_horizontal'] = 'Horizontal row of checkboxes';
