@@ -39,7 +39,7 @@ class add_persistent_mandatory extends XMLDBAction {
             'persistentfieldsconfirm' => 'tool_xmldb',
             'persistentfieldscomplete' => 'tool_xmldb',
             'persistentfieldsexist' => 'tool_xmldb',
-            'continue' => 'core'
+            'back' => 'core'
         ));
 
     }
@@ -95,7 +95,8 @@ class add_persistent_mandatory extends XMLDBAction {
             'action' => 'edit_table'
         ]);
 
-        $continuebutton = $OUTPUT->single_button($returnurl, $this->str['continue']);
+        $backbutton = html_writer::link($returnurl, '[' . $this->str['back'] . ']');
+        $actionbuttons = html_writer::tag('p', $backbutton, ['class' => 'centerpara buttons']);
 
         if (!$confirm) {
 
@@ -106,7 +107,7 @@ class add_persistent_mandatory extends XMLDBAction {
                 $this->output .= $OUTPUT->notification($message);
 
                 if (count($existing) == count($fields)) {
-                    $this->output .= $continuebutton;
+                    $this->output .= $actionbuttons;
                     return true;
                 }
             }
@@ -144,7 +145,7 @@ class add_persistent_mandatory extends XMLDBAction {
             $message .= html_writer::alist(array_diff($fields, $existing));
             $this->output .= $OUTPUT->notification($message, 'success');
 
-            $this->output .= $continuebutton;
+            $this->output .= $actionbuttons;
         }
 
         return $result;
