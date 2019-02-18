@@ -109,9 +109,16 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('langimport', 'tool_langimport'));
 
 $installedlangs = get_string_manager()->get_list_of_translations(true);
+$locale = new \tool_langimport\locale();
 
+$missinglocales = '';
 $missingparents = array();
-foreach ($installedlangs as $installedlang => $unused) {
+foreach ($installedlangs as $installedlang => $langpackname) {
+    // Check locale availability.
+    if (!$locale->check_locale_availability($installedlang)) {
+        $missinglocales .= '<li>'.$langpackname.'</li>';
+    }
+
     $parent = get_parent_language($installedlang);
     if (empty($parent)) {
         continue;
@@ -119,6 +126,14 @@ foreach ($installedlangs as $installedlang => $unused) {
     if (!isset($installedlangs[$parent])) {
         $missingparents[$installedlang] = $parent;
     }
+}
+
+if (!empty($missinglocales)) {
+    // There is at least one missing locale.
+    $a = new stdClass();
+    $a->globallocale = moodle_getlocale();
+    $a->missinglocales = $missinglocales;
+    $controller->errors[] = get_string('langunsupported', 'tool_langimport', $a);
 }
 
 if ($availablelangs = $controller->availablelangs) {
