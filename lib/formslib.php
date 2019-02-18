@@ -2919,8 +2919,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $PAGE->requires->yui_module('moodle-form-shortforms', 'M.form.shortforms', array(array('formid' => $formid)));
         }
         if (!empty($this->_advancedElements)){
-            $PAGE->requires->strings_for_js(array('showmore', 'showless'), 'form');
-            $PAGE->requires->yui_module('moodle-form-showadvanced', 'M.form.showadvanced', array(array('formid' => $formid)));
+            $PAGE->requires->js_call_amd('core_form/showadvanced', 'init', [$formid]);
         }
     }
 
