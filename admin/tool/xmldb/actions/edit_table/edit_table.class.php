@@ -44,6 +44,7 @@ class edit_table extends XMLDBAction {
 
         // Get needed strings
         $this->loadStrings(array(
+            'addpersistent' => 'tool_xmldb',
             'change' => 'tool_xmldb',
             'vieworiginal' => 'tool_xmldb',
             'viewedited' => 'tool_xmldb',
@@ -177,6 +178,15 @@ class edit_table extends XMLDBAction {
         $b .= '<a href="index.php?action=view_table_sql&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' .$this->str['viewsqlcode'] . ']</a>';
         // The view php code button
         $b .= '&nbsp;<a href="index.php?action=view_table_php&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['viewphpcode'] . ']</a>';
+        // The add persistent fields button.
+        $url = new \moodle_url('/admin/tool/xmldb/index.php', [
+            'action' => 'add_persistent_mandatory',
+            'sesskey' => sesskey(),
+            'table' => $tableparam,
+            'dir'=> str_replace($CFG->dirroot, '', $dirpath)
+        ]);
+        $b .= '&nbsp;' . \html_writer::link($url, '[' . $this->str['addpersistent'] . ']');
+
         // The save button (if possible)
         if ($cansavenow) {
             $b .= '&nbsp;<a href="index.php?action=save_xml_file&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;time=' . time() . '&amp;unload=false&amp;postaction=edit_table&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['save'] . ']</a>';
