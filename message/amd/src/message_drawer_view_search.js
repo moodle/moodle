@@ -613,6 +613,22 @@ function(
     };
 
     /**
+     * Highlight words in search results.
+     *
+     * @param  {String} content HTML to search.
+     * @param  {String} searchText Search text.
+     * @return {String} searchText with search wrapped in matchtext span.
+     */
+    var highlightSearch = function(content, searchText) {
+        if (!content) {
+            return '';
+        }
+        var regex = new RegExp('(' + searchText + ')', 'gi');
+        return content.replace(regex, '<span class="matchtext">$1</span>');
+    };
+
+
+    /**
      * Render contacts in the contacts search results.
      *
      * @param {Object} root Search results container.
@@ -702,6 +718,18 @@ function(
                 var contactsCount = results.contacts.length;
                 var nonContactsCount = results.noncontacts.length;
 
+                if (contactsCount) {
+                    results.contacts.forEach(function(contact) {
+                        contact.highlight = highlightSearch(contact.fullname, text);
+                    });
+                }
+
+                if (nonContactsCount) {
+                    results.noncontacts.forEach(function(contact) {
+                        contact.highlight = highlightSearch(contact.fullname, text);
+                    });
+                }
+
                 return $.when(
                     contactsCount ? renderContacts(root, results.contacts) : true,
                     nonContactsCount ? renderNonContacts(root, results.noncontacts) : true
@@ -756,6 +784,9 @@ function(
             })
             .then(function(messages) {
                 if (messages.length) {
+                    messages.forEach(function(message) {
+                        message.lastmessage = highlightSearch(message.lastmessage, text);
+                    });
                     return renderMessages(root, messages)
                         .then(function() {
                             return messages.length;
