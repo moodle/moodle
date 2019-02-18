@@ -2719,5 +2719,12 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019011801.03);
     }
 
+    if ($oldversion < 2019021500.01) {
+        $insights = $DB->get_record('message_providers', ['component' => 'moodle', 'name' => 'insights']);
+        $insights->capability = null;
+        $DB->update_record('message_providers', $insights);
+        upgrade_main_savepoint(true, 2019021500.01);
+    }
+
     return true;
 }
