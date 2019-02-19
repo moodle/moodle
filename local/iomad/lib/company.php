@@ -669,7 +669,7 @@ class company {
      *
      **/
     public function assign_user_to_company($userid, $departmentid = 0, $managertype = 0, $ws = false) {
-        global $DB;
+        global $CFG, $DB;
 
         // Were we passed a departmentid?
         if (!empty($departmentid)) {
