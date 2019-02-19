@@ -86,23 +86,6 @@ define('BADGE_CRITERIA_TYPE_COHORT', 8);
  */
 define('BADGE_CRITERIA_TYPE_COMPETENCY', 9);
 
-/*
- * Criteria type constant to class name mapping
- */
-global $BADGE_CRITERIA_TYPES;
-$BADGE_CRITERIA_TYPES = array(
-    BADGE_CRITERIA_TYPE_OVERALL    => 'overall',
-    BADGE_CRITERIA_TYPE_ACTIVITY   => 'activity',
-    BADGE_CRITERIA_TYPE_MANUAL     => 'manual',
-    BADGE_CRITERIA_TYPE_SOCIAL     => 'social',
-    BADGE_CRITERIA_TYPE_COURSE     => 'course',
-    BADGE_CRITERIA_TYPE_COURSESET  => 'courseset',
-    BADGE_CRITERIA_TYPE_PROFILE    => 'profile',
-    BADGE_CRITERIA_TYPE_BADGE      => 'badge',
-    BADGE_CRITERIA_TYPE_COHORT     => 'cohort',
-    BADGE_CRITERIA_TYPE_COMPETENCY => 'competency',
-);
-
 /**
  * Award criteria abstract definition
  *
@@ -168,13 +151,17 @@ abstract class award_criteria {
      * @return award_criteria
      */
     public static function build($params) {
-        global $CFG, $BADGE_CRITERIA_TYPES;
+        global $CFG;
 
-        if (!isset($params['criteriatype']) || !isset($BADGE_CRITERIA_TYPES[$params['criteriatype']])) {
+        require_once($CFG->libdir . '/badgeslib.php');
+
+        $types = badges_list_criteria(false);
+
+        if (!isset($params['criteriatype']) || !isset($types[$params['criteriatype']])) {
             print_error('error:invalidcriteriatype', 'badges');
         }
 
-        $class = 'award_criteria_' . $BADGE_CRITERIA_TYPES[$params['criteriatype']];
+        $class = 'award_criteria_' . $types[$params['criteriatype']];
         require_once($CFG->dirroot . '/badges/criteria/' . $class . '.php');
 
         return new $class($params);
@@ -500,5 +487,14 @@ abstract class award_criteria {
                 }
             }
         }
+    }
+
+    /**
+     * Allow some specific criteria types to be disabled based on config.
+     *
+     * @return boolean
+     */
+    public static function is_enabled() {
+        return true;
     }
 }

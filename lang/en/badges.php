@@ -467,6 +467,7 @@ $string['relative'] = 'Relative date';
 $string['relatedbages'] = 'Related badges';
 $string['revoke'] = 'Revoke badge';
 $string['requiredcohort'] = 'At least one cohort should be added to the cohort criterion.';
+$string['requiredcompetency'] = 'At least one competency should be added to the competency criterion.';
 $string['requiredcourse'] = 'At least one course should be added to the courseset criterion.';
 $string['requiredbadge'] = 'At least one badge should be added to the badge criterion.';
 $string['reviewbadge'] = 'Changes in badge access';

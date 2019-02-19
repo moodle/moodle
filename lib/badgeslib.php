@@ -218,6 +218,7 @@ class badge {
      * @return array
      */
     public function get_accepted_criteria() {
+        global $CFG;
         $criteriatypes = array();
 
         if ($this->type == BADGE_TYPE_COURSE) {
@@ -239,6 +240,12 @@ class badge {
                     BADGE_CRITERIA_TYPE_COHORT,
                     BADGE_CRITERIA_TYPE_COMPETENCY
             );
+        }
+        $alltypes = badges_list_criteria();
+        foreach ($criteriatypes as $index => $type) {
+            if (!isset($alltypes[$type])) {
+                unset($criteriatypes[$index]);
+            }
         }
 
         return $criteriatypes;
@@ -1534,4 +1541,40 @@ function badges_setup_backpack_js() {
         $PAGE->requires->js(new moodle_url(BADGE_BACKPACKURL . '/issuer.js'), true);
         $PAGE->requires->js('/badges/backpack.js', true);
     }
+}
+
+/**
+ * Return all the enabled criteria types for this site.
+ *
+ * @return array
+ */
+function badges_list_criteria($enabled = true) {
+    global $CFG;
+
+    $types = array(
+        BADGE_CRITERIA_TYPE_OVERALL    => 'overall',
+        BADGE_CRITERIA_TYPE_ACTIVITY   => 'activity',
+        BADGE_CRITERIA_TYPE_MANUAL     => 'manual',
+        BADGE_CRITERIA_TYPE_SOCIAL     => 'social',
+        BADGE_CRITERIA_TYPE_COURSE     => 'course',
+        BADGE_CRITERIA_TYPE_COURSESET  => 'courseset',
+        BADGE_CRITERIA_TYPE_PROFILE    => 'profile',
+        BADGE_CRITERIA_TYPE_BADGE      => 'badge',
+        BADGE_CRITERIA_TYPE_COHORT     => 'cohort',
+        BADGE_CRITERIA_TYPE_COMPETENCY => 'competency',
+    );
+    if ($enabled) {
+        foreach ($types as $key => $type) {
+            $class = 'award_criteria_' . $type;
+            $file = $CFG->dirroot . '/badges/criteria/' . $class . '.php';
+            if (file_exists($file)) {
+                require_once($file);
+
+                if (!$class::is_enabled()) {
+                    unset($types[$key]);
+                }
+            }
+        }
+    }
+    return $types;
 }

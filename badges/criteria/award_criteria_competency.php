@@ -37,6 +37,9 @@ class award_criteria_competency extends award_criteria {
 
     /* @var int Criteria [BADGE_CRITERIA_TYPE_COMPETENCY] */
     public $criteriatype = BADGE_CRITERIA_TYPE_COMPETENCY;
+    public $required_param = 'competency';
+    public $optional_params = [];
+
 
     public $required_param = 'competency';
     public $self_validation = true;
@@ -56,10 +59,14 @@ class award_criteria_competency extends award_criteria {
             if ($short) {
                 $competency->set('description', '');
             }
-            if ($pluginsfunction = get_plugins_with_function('render_competency_summary')) {
-                foreach ($pluginsfunction as $plugintype => $plugins) {
-                    foreach ($plugins as $pluginfunction) {
-                        $output[] = $pluginfunction($competency, $competency->get_framework(), !$short, !$short);
+            if (!self::is_enabled()) {
+                $output[] = get_string('competenciesarenotenabled', 'core_competency');
+            } else {
+                if ($pluginsfunction = get_plugins_with_function('render_competency_summary')) {
+                    foreach ($pluginsfunction as $plugintype => $plugins) {
+                        foreach ($plugins as $pluginfunction) {
+                            $output[] = $pluginfunction($competency, $competency->get_framework(), !$short, !$short);
+                        }
                     }
                 }
             }
@@ -101,11 +108,12 @@ class award_criteria_competency extends award_criteria {
         if ($pluginsfunction = get_plugins_with_function('competency_picker')) {
             foreach ($pluginsfunction as $plugintype => $plugins) {
                 foreach ($plugins as $pluginfunction) {
-                    $output[] = $pluginfunction($mform, $courseid, $context, 'competency');
+                    $output[] = $pluginfunction($mform, $courseid, $context, 'competency_competencies');
                 }
             }
         }
-        $mform->getElement('competency')->setValue($competencies);
+        $mform->getElement('competency_competencies')->setValue($competencies);
+        $mform->addRule('competency_competencies', get_string('requiredcompetency', 'badges'), 'required');
 
         // Add aggregation.
         if (!$none) {
@@ -130,8 +138,8 @@ class award_criteria_competency extends award_criteria {
      * @param array $params Values from the form or any other array.
      */
     public function save($params = array()) {
-        $competencies = $params['competency'];
-        unset($params['competency']);
+        $competencies = $params['competency_competencies'];
+        unset($params['competency_competencies']);
         if (is_string($competencies)) {
             $competencies = explode(',', $competencies);
         }
@@ -156,6 +164,9 @@ class award_criteria_competency extends award_criteria {
         $overall = false;
         $competencyids = [];
 
+        if (!self::is_enabled()) {
+            return false;
+        }
         foreach ($this->params as $param) {
             $competencyids[] = $param['competency'];
         }
@@ -208,6 +219,10 @@ class award_criteria_competency extends award_criteria {
 
         $badge = $DB->get_record('badge', array('id' => $this->badgeid));
 
+        if (!self::is_enabled()) {
+            return array($join, $where, $params);
+        }
+
         if ($this->method == BADGE_CRITERIA_AGGREGATION_ANY) {
             // User has received ANY of the required competencies (we can use an in or equals list).
             foreach ($this->params as $param) {
@@ -244,5 +259,14 @@ class award_criteria_competency extends award_criteria {
             return array($join, $where, $params);
         }
         return array($join, $where, $params);
+    }
+
+    /**
+     * Hide this criteria when competencies are disabled.
+     *
+     * @return boolean
+     */
+    public static function is_enabled() {
+        return \core_competency\api::is_enabled();
     }
 }
