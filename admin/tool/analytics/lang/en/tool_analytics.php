@@ -75,6 +75,7 @@ $string['nextpage'] = 'Next page';
 $string['nodatatoevaluate'] = 'There is no data to evaluate the model';
 $string['nodatatopredict'] = 'No new elements to get predictions for';
 $string['nodatatotrain'] = 'There is no new data that can be used for training';
+$string['noinvalidanalysables'] = 'This site does not contain any invalid analysable element.';
 $string['notdefined'] = 'Not yet defined';
 $string['pluginname'] = 'Analytic models';
 $string['predictionresults'] = 'Prediction results';
