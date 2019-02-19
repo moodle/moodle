@@ -35,15 +35,13 @@ defined('MOODLE_INTERNAL') || die();
  */
 class award_criteria_competency extends award_criteria {
 
-    /* @var int Criteria [BADGE_CRITERIA_TYPE_COMPETENCY] */
+    /* @var int The criteria type */
     public $criteriatype = BADGE_CRITERIA_TYPE_COMPETENCY;
+    /* @var string a required param */
     public $required_param = 'competency';
+    /* @var array no optional params */
     public $optional_params = [];
 
-
-    public $required_param = 'competency';
-    public $self_validation = true;
-    public $optional_params = array('');
 
     /**
      * Get criteria details for displaying to users
@@ -51,7 +49,6 @@ class award_criteria_competency extends award_criteria {
      * @return string
      */
     public function get_details($short = '') {
-        global $DB, $OUTPUT;
         $output = array();
 
         foreach ($this->params as $p) {
@@ -80,9 +77,10 @@ class award_criteria_competency extends award_criteria {
     /**
      * Add appropriate new criteria options to the form
      * @param object $mform moodle form
+     * @return array First item is a boolean to indicate an error and the second is the error message.
      */
     public function get_options(&$mform) {
-        global $DB, $PAGE;
+        global $DB;
         $none = false;
         $availablebadges = null;
 
@@ -180,11 +178,9 @@ class award_criteria_competency extends award_criteria {
         }
 
         foreach ($this->params as $param) {
-            $found = false;
             $proficiency = false;
             foreach ($existing as $usercompetency) {
                 if ($usercompetency->get('competencyid') == $param['competency']) {
-                    $found = true;
                     $proficiency = $usercompetency->get('proficiency');
                 }
             }
@@ -240,7 +236,6 @@ class award_criteria_competency extends award_criteria {
             }
             $where .= ' AND uc2.proficiency = :isproficient ';
             $params['isproficient'] = true;
-            return array($join, $where, $params);
         } else {
 
             // User has received ALL of the required competencies (we have to join on each one).
@@ -256,7 +251,6 @@ class award_criteria_competency extends award_criteria {
                 $params['isproficient' . $joincount] = true;
             }
 
-            return array($join, $where, $params);
         }
         return array($join, $where, $params);
     }

@@ -15,6 +15,8 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template tool_lp/manage_competencies_page
+
     Manage competencies template.
 
     Classes required for JS:
@@ -25,10 +27,15 @@
     * data-region=term
     * data-region=selected-competency
 
-    Context variables required for this template:
-    * framework -
-    * competencies - array of objects containing id, shortname, idnumber, sortorder, parentid, competencyframeworkid, path
-    * canmanage - true if this user has permission to manage the competencies
+    Example context (json):
+    {
+        "framework": { 
+            "description": "Framework",
+            "id": 0
+        },
+        "competencies": [],
+        "canmanage": false
+    }
 }}
 <div data-region="managecompetencies">
 <h2>

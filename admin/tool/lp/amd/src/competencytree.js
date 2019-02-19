@@ -141,7 +141,7 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'too
          * @param {String} search The current search string
          * @param {String} selector The selector for the tree div
          * @param {Boolean} canmanage Can manage the competencies
-         * @param {Number} competencyid
+         * @param {Number} competencyid The id of the competency to show first
          */
         init: function(id, shortname, search, selector, canmanage, competencyid) {
             competencyFrameworkId = id;

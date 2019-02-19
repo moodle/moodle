@@ -16,10 +16,10 @@
 
 
 /**
- * Course competencies element.
+ * Site competencies element.
  *
  * @package   tool_lp
- * @copyright 2016 Damyon Wiese
+ * @copyright 2019 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,10 +30,10 @@ global $CFG;
 require_once($CFG->libdir . '/form/hidden.php');
 
 /**
- * Course competencies element.
+ * Site competencies element.
  *
  * @package   tool_lp
- * @copyright 2016 Damyon Wiese
+ * @copyright 2019 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_lp_site_competencies_form_element extends MoodleQuickForm_hidden {
@@ -41,28 +41,25 @@ class tool_lp_site_competencies_form_element extends MoodleQuickForm_hidden {
     /**
      * Constructor
      *
-     * @param string $elementName Element name
-     * @param mixed $elementLabel Label(s) for an element
-     * @param array $options Options to control the element's display
+     * @param string $elementname Element name.
+     * @param string $value The element value.
      * @param mixed $attributes Either a typical HTML attribute string or an associative array.
      */
-    public function __construct($elementName=null, $value='', $attributes=null) {
-        global $OUTPUT;
-
-        if ($elementName == null) {
+    public function __construct($elementname=null, $value='', $attributes=null) {
+        if ($elementname == null) {
             // This is broken quickforms messing with the constructors.
             return;
         }
-        $attributes = array_merge(['data-action' => 'competencies'], $attributes?$attributes:[]);
+        $attributes = array_merge(['data-action' => 'competencies'], $attributes ? $attributes : []);
 
-        parent::__construct($elementName, $value, $attributes);
+        parent::__construct($elementname, $value, $attributes);
         $this->setType('hidden');
     }
 
     /**
      * Generate the hidden field and the controls to show and pick the competencies.
      */
-    function toHtml(){
+    public function toHtml() {
         global $PAGE;
 
         $html = parent::toHTML();
@@ -77,7 +74,9 @@ class tool_lp_site_competencies_form_element extends MoodleQuickForm_hidden {
             $html .= '<div class="col-md-9">';
             $html .= '<div data-region="competencies"></div>';
             $html .= '<div class="mt-3">';
-            $html .= '<a class="btn btn-secondary" role="button" data-action="select-competencies">' . get_string('addcompetency', 'tool_lp') . '</a>';
+            $html .= '<a class="btn btn-secondary" role="button" data-action="select-competencies">';
+            $html .= get_string('addcompetency', 'tool_lp');
+            $html .= '</a>';
             $html .= '</div>';
             $html .= '</div>';
             $html .= '</div>';
@@ -88,12 +87,12 @@ class tool_lp_site_competencies_form_element extends MoodleQuickForm_hidden {
     /**
      * Accepts a renderer
      *
-     * @param object     An HTML_QuickForm_Renderer object
-     * @access public
+     * @param HTML_QuickForm_Renderer $renderer the renderer for the element.
+     * @param boolean $required not used.
+     * @param string $error not used.
      * @return void
      */
-    function accept(&$renderer, $required=false, $error=null)
-    {
+    public function accept(&$renderer, $required=false, $error=null) {
         $renderer->renderElement($this, false, '');
     }
 }

@@ -86,7 +86,6 @@ class core_badges_observer {
 
             $ucid = $event->other['usercompetencyid'];
             $cid = $event->other['competencyid'];
-            $eventdata = $event->get_record_snapshot('competency_usercomp', $ucid);
             $userid = $event->relateduserid;
 
             if ($rs = $DB->get_records('badge_criteria_param', array('name' => 'competency_' . $cid, 'value' => $cid))) {
@@ -122,7 +121,6 @@ class core_badges_observer {
         if (!empty($CFG->enablebadges)) {
             require_once($CFG->dirroot.'/lib/badgeslib.php');
 
-            $eventdata = $event->get_record_snapshot('course_completions', $event->objectid);
             $userid = $event->relateduserid;
             $courseid = $event->courseid;
 

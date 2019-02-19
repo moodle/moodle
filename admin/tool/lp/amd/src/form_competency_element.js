@@ -32,6 +32,7 @@ define(['jquery', 'tool_lp/competencypicker', 'core/ajax', 'core/notification', 
      * Re-render the list of selected competencies.
      *
      * @method renderCompetencies
+     * @return {boolean}
      */
     var renderCompetencies = function() {
         var currentCompetencies = $('[data-action="competencies"]').val();
@@ -72,6 +73,8 @@ define(['jquery', 'tool_lp/competencypicker', 'core/ajax', 'core/notification', 
      * Deselect a competency
      *
      * @method unpickCompetenciesHandler
+     * @param {Event} e
+     * @return {boolean}
      */
     var unpickCompetenciesHandler = function(e) {
         var currentCompetencies = $('[data-action="competencies"]').val().split(','),

@@ -220,6 +220,13 @@ function tool_lp_get_fontawesome_icon_map() {
 
 /**
  * Render a short bit of information about a competency.
+ *
+ * @param \core_competency\competency $competency The competency to show.
+ * @param \core_competency\competency_framework $framework The competency framework.
+ * @param boolean $includerelated If true, show related competencies.
+ * @param boolean $includecourses If true, show courses using this competency.
+ * @param boolean $skipenabled If true, show this competency even if competencies are disabled.
+ * @return string The html summary for the competency.
  */
 function tool_lp_render_competency_summary(\core_competency\competency $competency,
                                            \core_competency\competency_framework $framework,

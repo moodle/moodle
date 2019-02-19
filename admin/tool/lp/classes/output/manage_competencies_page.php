@@ -62,12 +62,16 @@ class manage_competencies_page implements renderable, templatable {
     /** @var context $pagecontext The page context. */
     protected $pagecontext = null;
 
+    /** @var \core_competency\competency $competency The competency to show when the page loads. */
+    protected $competency = null;
+
     /**
      * Construct this renderable.
      *
      * @param \core_competency\competency_framework $framework Competency framework.
      * @param string $search Search string.
      * @param context $pagecontext The page context.
+     * @param \core_competency\competency $competency The core competency to show when the page loads.
      */
     public function __construct($framework, $search, $pagecontext, $competency) {
         $this->framework = $framework;
@@ -98,7 +102,7 @@ class manage_competencies_page implements renderable, templatable {
         $data->pagecontextid = $this->pagecontext->id;
         $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
 
-        $competencyid = 0;
+        $data->competencyid = 0;
         if ($this->competency) {
             $data->competencyid = $this->competency->get('id');
         }
