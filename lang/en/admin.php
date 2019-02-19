@@ -1103,6 +1103,7 @@ $string['sessioncookiedomain'] = 'Cookie domain';
 $string['sessioncookiepath'] = 'Cookie path';
 $string['sessionhandling'] = 'Session handling';
 $string['sessiontimeout'] = 'Timeout';
+$string['settingdependenton'] = 'This setting may be hidden, based on the value of <strong>{$a}</strong>';
 $string['settingfileuploads'] = 'File uploading is required for normal operation, please enable it in PHP configuration.';
 $string['settingmemorylimit'] = 'Insufficient memory detected, please set higher memory limit in PHP settings.';
 $string['settingsafemode'] = 'Moodle is not fully compatible with safe mode, please ask server administrator to turn it off. Running Moodle under safe mode is not supported, please expect various problems if you do so.';

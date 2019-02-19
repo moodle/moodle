@@ -29,6 +29,7 @@
     * element - The Element HTML
     * forceltr - Force this element to be displayed LTR
     * default - Default value
+    * dependenton - optional message listing the settings this one is dependent on
 
     Example context (json):
     {
@@ -66,4 +67,5 @@
         {{/default}}
     </div>
     <div class="form-description">{{{description}}}</div>
+    {{#dependenton}}<div class="form-dependenton">{{{.}}}</div>{{/dependenton}}
 </div>

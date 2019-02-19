@@ -1554,6 +1554,17 @@ class admin_settingpage implements part_of_admin_tree {
      */
     public function hide_if($settingname, $dependenton, $condition = 'notchecked', $value = '1') {
         $this->dependencies[] = new admin_settingdependency($settingname, $dependenton, $condition, $value);
+
+        // Reformat the dependency name to the plugin | name format used in the display.
+        $dependenton = str_replace('/', ' | ', $dependenton);
+
+        // Let the setting know, so it can be displayed underneath.
+        $findname = str_replace('/', '', $settingname);
+        foreach ($this->settings as $name => $setting) {
+            if ($name === $findname) {
+                $setting->add_dependent_on($dependenton);
+            }
+        }
     }
 
     /**
@@ -1663,6 +1674,8 @@ abstract class admin_setting {
     private $flags = array();
     /** @var bool Whether this field must be forced LTR. */
     private $forceltr = null;
+    /** @var array list of other settings that may cause this setting to be hidden */
+    private $dependenton = [];
 
     /**
      * Constructor
@@ -2031,6 +2044,22 @@ abstract class admin_setting {
      */
     public function set_force_ltr($value) {
         $this->forceltr = $value;
+    }
+
+    /**
+     * Add a setting to the list of those that could cause this one to be hidden
+     * @param string $dependenton
+     */
+    public function add_dependent_on($dependenton) {
+        $this->dependenton[] = $dependenton;
+    }
+
+    /**
+     * Get a list of the settings that could cause this one to be hidden.
+     * @return array
+     */
+    public function get_dependent_on() {
+        return $this->dependenton;
     }
 }
 
@@ -8681,6 +8710,10 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
     $adminroot = admin_get_root();
     if (array_key_exists($context->fullname, $adminroot->errors)) {
         $context->error = $adminroot->errors[$context->fullname]->error;
+    }
+
+    if ($dependenton = $setting->get_dependent_on()) {
+        $context->dependenton = get_string('settingdependenton', 'admin', implode(', ', $dependenton));
     }
 
     $context->id = 'admin-' . $setting->name;
