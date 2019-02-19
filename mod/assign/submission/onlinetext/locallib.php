@@ -251,6 +251,9 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         if (!empty($submission->userid) && ($submission->userid != $USER->id)) {
             $params['relateduserid'] = $submission->userid;
         }
+        if ($this->assignment->is_blind_marking()) {
+            $params['anonymous'] = 1;
+        }
         $event = \assignsubmission_onlinetext\event\assessable_uploaded::create($params);
         $event->trigger();
 

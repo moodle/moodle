@@ -60,6 +60,9 @@ abstract class base extends \core\event\base {
         if ($assign->get_context()->id != $this->get_context()->id) {
             throw new \coding_exception('Invalid assign isntance supplied!');
         }
+        if ($assign->is_blind_marking()) {
+            $this->data['anonymous'] = 1;
+        }
         $this->assign = $assign;
     }
 
