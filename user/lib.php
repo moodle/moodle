@@ -1573,3 +1573,42 @@ function core_user_inplace_editable($itemtype, $itemid, $newvalue) {
         return \core_user\output\user_roles_editable::update($itemid, $newvalue);
     }
 }
+
+/**
+ * Map an internal field name to a valid purpose from: "https://www.w3.org/TR/WCAG21/#input-purposes"
+ *
+ * @param integer $userid
+ * @param string $fieldname
+ * @return string $purpose (empty string if there is no mapping).
+ */
+function user_edit_map_field_purpose($userid, $fieldname) {
+    global $USER;
+
+    $currentuser = ($userid == $USER->id) && !\core\session\manager::is_loggedinas();
+    // These are the fields considered valid to map and auto fill from a browser.
+    // We do not include fields that are in a collapsed section by default because
+    // the browser could auto-fill the field and cause a new value to be saved when
+    // that field was never visible.
+    $validmappings = array(
+        'username' => 'username',
+        'password' => 'current-password',
+        'firstname' => 'given-name',
+        'lastname' => 'family-name',
+        'middlename' => 'additional-name',
+        'email' => 'email',
+        'country' => 'country',
+        'lang' => 'language'
+    );
+
+    $purpose = '';
+    if (!$currentuser) {
+        // Do not set a purpose.
+        $purpose = '';
+    }
+    if (isset($validmappings[$fieldname])) {
+        $purpose = ' autocomplete="' . $validmappings[$fieldname] . '" ';
+    }
+
+    return $purpose;
+}
+
