@@ -137,6 +137,16 @@ class behat_form_field {
     }
 
     /**
+     * Get the value of an attribute set on this field.
+     *
+     * @param string $name The attribute name
+     * @return string The attribute value
+     */
+    public function get_attribute($name) {
+        return $this->field->getAttribute($name);
+    }
+
+    /**
      * Guesses the element type we are dealing with in case is not a text-based element.
      *
      * This class is the generic field type, behat_field_manager::get_form_field()
