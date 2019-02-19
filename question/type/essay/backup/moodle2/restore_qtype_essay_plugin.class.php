@@ -95,15 +95,15 @@ class restore_qtype_essay_plugin extends restore_qtype_plugin {
         global $DB;
 
         $essayswithoutoptions = $DB->get_records_sql("
-                    SELECT *
+                    SELECT q.*
                       FROM {question} q
+                      JOIN {backup_ids_temp} bi ON bi.newitemid = q.id
+                 LEFT JOIN {qtype_essay_options} qeo ON qeo.questionid = q.id
                      WHERE q.qtype = ?
-                       AND NOT EXISTS (
-                        SELECT 1
-                          FROM {qtype_essay_options}
-                         WHERE questionid = q.id
-                     )
-                ", array('essay'));
+                       AND qeo.id IS NULL
+                       AND bi.backupid = ?
+                       AND bi.itemname = ?
+                ", array('essay', $this->get_restoreid(), 'question_created'));
 
         foreach ($essayswithoutoptions as $q) {
             $defaultoptions = new stdClass();
