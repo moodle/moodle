@@ -141,7 +141,7 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         // Adding feedback fields (=Combined feedback).
         $this->add_combined_feedback_fields(false);
-        
+
         // Adding interactive settings (=Multiple tries).
         $this->add_interactive_settings(false, false);
     }
@@ -224,19 +224,19 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         $defaultanswerformat = get_config('qtype_ordering', 'defaultanswerformat');
 
-        $repeats = 'count'.$name.'s'; // e.g. countanswers
+        $repeats = 'count'.$name.'s'; // E.g. countanswers.
         if ($mform->elementExists($repeats)) {
-            // Use mform element to get number of repeats
+            // Use mform element to get number of repeats.
             $repeats = $mform->getElement($repeats)->getValue();
         } else {
-            // Determine number of repeats by object sniffing
+            // Determine number of repeats by object sniffing.
             $repeats = 0;
             while ($mform->elementExists($name."[$repeats]")) {
                 $repeats++;
             }
         }
 
-        for ($i=0; $i < $repeats; $i++) {
+        for ($i = 0; $i < $repeats; $i++) {
             $editor = $mform->getElement($name."[$i]");
 
             if (isset($ids[$i])) {
@@ -292,9 +292,9 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         // Preprocess feedback.
         $question = $this->data_preprocessing_combined_feedback($question);
-        
+
         $question = $this->data_preprocessing_hints($question, false, false);
-        
+
         // Preprocess answers and fractions.
         $question->answer     = array();
         $question->fraction   = array();
@@ -421,13 +421,13 @@ class qtype_ordering_edit_form extends question_edit_form {
      */
     protected function get_addcount_options($type, $max=10) {
 
-        // cache plugin name
+        // Cache plugin name.
         $plugin = $this->plugin_name();
 
-        // generate options
+        // Generate options.
         $options = array();
-        for ($i=1; $i<=$max; $i++) {
-            if ($i==1) {
+        for ($i = 1; $i <= $max; $i++) {
+            if ($i == 1) {
                 $options[$i] = get_string('addsingle'.$type, $plugin);
             } else {
                 $options[$i] = get_string('addmultiple'.$type.'s', $plugin, $i);
@@ -444,10 +444,10 @@ class qtype_ordering_edit_form extends question_edit_form {
      */
     protected function add_repeat_elements($mform, $type, $elements, $options) {
 
-        // cache plugin name
+        // Cache plugin name.
         $plugin = $this->plugin_name();
 
-        // cache element names
+        // Cache element names.
         $types = $type.'s';
         $addtypes = 'add'.$types;
         $counttypes = 'count'.$types;
@@ -458,22 +458,22 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         $count = optional_param($addtypescount, self::NUM_ITEMS_ADD, PARAM_INT);
 
-        $label = ($count==1 ? 'addsingle'.$type : 'addmultiple'.$types);
+        $label = ($count == 1 ? 'addsingle'.$type : 'addmultiple'.$types);
         $label = get_string($label, $plugin, $count);
 
         $this->repeat_elements($elements, $repeats, $options, $counttypes, $addtypes, $count, $label, true);
 
-        // remove the original "Add xxx" button ...
+        // Remove the original "Add xxx" button ...
         $mform->removeElement($addtypes);
 
-        // ... and replace it with "Add" button + select group
+        // ... and replace it with "Add" button + select group.
         $options = $this->get_addcount_options($type);
         $mform->addGroup(array(
             $mform->createElement('submit', $addtypes, get_string('add')),
             $mform->createElement('select', $addtypescount, '', $options)
         ), $addtypesgroup, '', ' ', false);
 
-        // set default value and type of select element
+        // Set default value and type of select element.
         $mform->setDefault($addtypescount, $count);
         $mform->setType($addtypescount, PARAM_INT);
     }

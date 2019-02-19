@@ -224,7 +224,7 @@ class qtype_ordering_question extends question_graded_automatically {
         if (array_key_exists($name, $response)) {
             $items = explode(',', $response[$name]);
         } else {
-            $items = array(); // shouldn't happen !!
+            $items = array(); // Shouldn't happen !!
         }
         $answerids = array();
         foreach ($this->answers as $answer) {
@@ -234,10 +234,10 @@ class qtype_ordering_question extends question_graded_automatically {
             if (array_key_exists($item, $answerids)) {
                 $item = $this->answers[$answerids[$item]];
                 $item = $this->html_to_text($item->answer, $item->answerformat);
-                $item = shorten_text($item, 10, true); // force truncate at 10 chars
+                $item = shorten_text($item, 10, true); // Force truncate at 10 chars.
                 $items[$i] = $item;
             } else {
-                $items[$i] = ''; // shouldn't happen !!
+                $items[$i] = ''; // Shouldn't happen !!
             }
         }
         return implode('; ', array_filter($items));
@@ -702,38 +702,38 @@ class qtype_ordering_question extends question_graded_automatically {
         // Var $subsets is the collection of all subsets within $positions.
         $subsets = array();
 
-        // loop through the values at each position
+        // Loop through the values at each position.
         foreach ($positions as $p => $value) {
 
-            // is $value a "new" value that cannot be added to any $subsets found so far
+            // Is $value a "new" value that cannot be added to any $subsets found so far?
             $isnew = true;
 
-            // an array of new and saved subsets to be added to $subsets
+            // An array of new and saved subsets to be added to $subsets.
             $new = array();
 
-            // append the current value to any subsets to which it belongs
-            // i.e. any subset whose end value is less than the current value
+            // Append the current value to any subsets to which it belongs
+            // i.e. any subset whose end value is less than the current value.
             foreach ($subsets as $s => $subset) {
 
-                // get value at end of $subset
+                // Get value at end of $subset.
                 $end = $positions[end($subset)];
 
                 switch (true) {
 
                     case ($value == ($end + 1)):
-                        // for a contiguous value, we simply append $p to the subset
+                        // For a contiguous value, we simply append $p to the subset.
                         $isnew = false;
                         $subsets[$s][] = $p;
                         break;
 
                     case $contiguous:
-                        // if the $contiguous flag is set, we ignore non-contiguous values
+                        // If the $contiguous flag is set, we ignore non-contiguous values.
                         break;
 
                     case ($value > $end):
-                        // for a non-contiguous value, we save the subset so far,
+                        // For a non-contiguous value, we save the subset so far,
                         // because a value between $end and $value may be found later,
-                        // and then append $p to the subset
+                        // and then append $p to the subset.
                         $isnew = false;
                         $new[] = $subset;
                         $subsets[$s][] = $p;
@@ -741,29 +741,16 @@ class qtype_ordering_question extends question_graded_automatically {
                 }
             }
 
-            // if this is a "new" value, add it as a new subset
+            // If this is a "new" value, add it as a new subset.
             if ($isnew) {
                 $new[] = array($p);
             }
 
-            // append any "new" subsets that were found during this iteration
+            // Append any "new" subsets that were found during this iteration.
             if (count($new)) {
                 $subsets = array_merge($subsets, $new);
             }
         }
-
-        // remove short subsets, that are subsets of longer subsets
-        //$keys = array();
-        //foreach ($subsets as $s => $subset) {
-        //    $key = implode(',', $subset);
-        //    $search = implode(',(\d+,)*', $subset);
-        //    $search = preg_grep("/$search/", $keys);
-        //    if (count($search)) {
-        //        //unset($subsets[$s]);
-        //    } else {
-        //        //$keys[] = $key;
-        //    }
-        //}
 
         return $subsets;
     }
