@@ -480,7 +480,6 @@
     border: 1px solid #ccc;
     border-top: none;
     background-color: #fff;
-    z-index: 99999;
 }
 
 .path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .expand-icon,
@@ -966,7 +965,6 @@
     left: auto;
     right: 15px;
     margin: 0;
-    height: 100%;
     line-height: 60px;
 }
 
@@ -1075,7 +1073,6 @@
         border: 1px solid #ccc;
         border-radius: 0 0 4px 0;
         background-color: #fff;
-        z-index: 99999;
     }
 
     .path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .expand-icon,
