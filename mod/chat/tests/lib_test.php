@@ -39,6 +39,76 @@ class mod_chat_lib_testcase extends advanced_testcase {
         $this->resetAfterTest();
     }
 
+    /*
+     * The chat's event should not be shown to a user when the user cannot view the chat at all.
+     */
+    public function test_chat_core_calendar_provide_event_action_in_hidden_section() {
+        global $CFG;
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a student.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create a chat.
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id,
+                'chattime' => usergetmidnight(time())));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $chat->id, CHAT_EVENT_TYPE_CHATTIME);
+
+        // Set sections 0 as hidden.
+        set_section_visible($course->id, 0, 0);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for the student.
+        $actionevent = mod_chat_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        // Confirm the event is not shown at all.
+        $this->assertNull($actionevent);
+    }
+
+    /*
+     * The chat's event should not be shown to a user who does not have permission to view the chat at all.
+     */
+    public function test_chat_core_calendar_provide_event_action_for_non_user() {
+        global $CFG;
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a chat.
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id,
+                'chattime' => usergetmidnight(time())));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $chat->id, CHAT_EVENT_TYPE_CHATTIME);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_chat_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event is not shown at all.
+        $this->assertNull($actionevent);
+    }
+
     public function test_chat_core_calendar_provide_event_action_chattime_event_yesterday() {
         $this->setAdminUser();
 
@@ -62,6 +132,38 @@ class mod_chat_lib_testcase extends advanced_testcase {
         $this->assertNull($actionevent);
     }
 
+    public function test_chat_core_calendar_provide_event_action_chattime_event_yesterday_for_user() {
+        global $CFG;
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Enrol a student in the course.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create a chat.
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id,
+                'chattime' => time() - DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $chat->id, CHAT_EVENT_TYPE_CHATTIME);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users have mod/chat:view capability by default.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for the student.
+        $actionevent = mod_chat_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        // Confirm the event is not shown at all.
+        $this->assertNull($actionevent);
+    }
+
     public function test_chat_core_calendar_provide_event_action_chattime_event_today() {
         $this->setAdminUser();
 
@@ -80,6 +182,42 @@ class mod_chat_lib_testcase extends advanced_testcase {
 
         // Decorate action event.
         $actionevent = mod_chat_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('enterchat', 'chat'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
+    public function test_chat_core_calendar_provide_event_action_chattime_event_today_for_user() {
+        global $CFG;
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Enrol a student in the course.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create a chat.
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id,
+                'chattime' => usergetmidnight(time())));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $chat->id, CHAT_EVENT_TYPE_CHATTIME);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users have mod/chat:view capability by default.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for the student.
+        $actionevent = mod_chat_core_calendar_provide_event_action($event, $factory, $student->id);
 
         // Confirm the event was decorated.
         $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
@@ -116,6 +254,42 @@ class mod_chat_lib_testcase extends advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
+    public function test_chat_core_calendar_provide_event_action_chattime_event_tonight_for_user() {
+        global $CFG;
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Enrol a student in the course.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create a chat.
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id,
+                'chattime' => usergetmidnight(time()) + (23 * HOURSECS)));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $chat->id, CHAT_EVENT_TYPE_CHATTIME);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users have mod/chat:view capability by default.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for the student.
+        $actionevent = mod_chat_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('enterchat', 'chat'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
+    }
+
     public function test_chat_core_calendar_provide_event_action_chattime_event_tomorrow() {
         $this->setAdminUser();
 
@@ -141,6 +315,124 @@ class mod_chat_lib_testcase extends advanced_testcase {
         $this->assertInstanceOf('moodle_url', $actionevent->get_url());
         $this->assertEquals(1, $actionevent->get_item_count());
         $this->assertFalse($actionevent->is_actionable());
+    }
+
+    public function test_chat_core_calendar_provide_event_action_chattime_event_tomorrow_for_user() {
+        global $CFG;
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Enrol a student in the course.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create a chat.
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id,
+                'chattime' => time() + DAYSECS));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $chat->id, CHAT_EVENT_TYPE_CHATTIME);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users have mod/chat:view capability by default.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for the student.
+        $actionevent = mod_chat_core_calendar_provide_event_action($event, $factory, $student->id);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('enterchat', 'chat'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertFalse($actionevent->is_actionable());
+    }
+
+    public function test_chat_core_calendar_provide_event_action_chattime_event_different_timezones() {
+        global $CFG;
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        $hour = gmdate('H');
+
+        // This could have been much easier if MDL-37327 were implemented.
+        // We don't know when this test is being ran and there is no standard way to
+        // mock the time() function (MDL-37327 to handle that).
+        if ($hour < 10) {
+            $timezone1 = 'Europe/London';       // GMT or GMT +01:00.
+            $timezone2 = 'Pacific/Pago_Pago';   // GMT -11:00.
+        } else if ($hour < 11) {
+            $timezone1 = 'Pacific/Kiritimati';  // GMT +14:00.
+            $timezone2 = 'America/Sao_Paulo';   // GMT -03:00.
+        } else {
+            $timezone1 = 'Pacific/Kiritimati';  // GMT +14:00.
+            $timezone2 = 'Europe/London';       // GMT or GMT +01:00.
+        }
+
+        $this->setTimezone($timezone2);
+
+        // Enrol 2 students with different timezones in the course.
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student', (object)['timezone' => $timezone1]);
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student', (object)['timezone' => $timezone2]);
+
+        // Create a chat.
+        $chat1 = $this->getDataGenerator()->create_module('chat', array('course' => $course->id,
+                'chattime' => mktime(1, 0, 0)));    // This is always yesterday in timezone1 time
+                                                    // and always today in timezone2 time.
+
+        // Create a chat.
+        $chat2 = $this->getDataGenerator()->create_module('chat', array('course' => $course->id,
+                'chattime' => mktime(1, 0, 0) + DAYSECS));  // This is always today in timezone1 time
+                                                            // and always tomorrow in timezone2 time.
+
+        // Create calendar events for the 2 chats above.
+        $event1 = $this->create_action_event($course->id, $chat1->id, CHAT_EVENT_TYPE_CHATTIME);
+        $event2 = $this->create_action_event($course->id, $chat2->id, CHAT_EVENT_TYPE_CHATTIME);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users have mod/chat:view capability by default.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for student1.
+        $actionevent11 = mod_chat_core_calendar_provide_event_action($event1, $factory, $student1->id);
+        $actionevent12 = mod_chat_core_calendar_provide_event_action($event1, $factory, $student2->id);
+        $actionevent21 = mod_chat_core_calendar_provide_event_action($event2, $factory, $student1->id);
+        $actionevent22 = mod_chat_core_calendar_provide_event_action($event2, $factory, $student2->id);
+
+        // Confirm event1 is not shown to student1 at all.
+        $this->assertNull($actionevent11);
+
+        // Confirm event1 was decorated for student2 and it is actionable.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent12);
+        $this->assertEquals(get_string('enterchat', 'chat'), $actionevent12->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent12->get_url());
+        $this->assertEquals(1, $actionevent12->get_item_count());
+        $this->assertTrue($actionevent12->is_actionable());
+
+        // Confirm event2 was decorated for student1 and it is actionable.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent21);
+        $this->assertEquals(get_string('enterchat', 'chat'), $actionevent21->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent21->get_url());
+        $this->assertEquals(1, $actionevent21->get_item_count());
+        $this->assertTrue($actionevent21->is_actionable());
+
+        // Confirm event2 was decorated for student2 and it is not actionable.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent22);
+        $this->assertEquals(get_string('enterchat', 'chat'), $actionevent22->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent22->get_url());
+        $this->assertEquals(1, $actionevent22->get_item_count());
+        $this->assertFalse($actionevent22->is_actionable());
     }
 
     /**
