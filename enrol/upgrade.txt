@@ -1,6 +1,13 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.7 ===
+
+* Functions get_potential_users() and search_other_users() now return more information to avoid extra count query:
+  - users: List of user objects returned by the query.
+  - moreusers: True if there are still more users, otherwise is False.
+  - totalusers: Number users matching the search. (This element only exists if the function is called with $returnexactcount param set to true).
+
 === 3.6 ===
 
 * External function core_enrol_external::get_users_courses now return more information to avoid multiple queries to build the

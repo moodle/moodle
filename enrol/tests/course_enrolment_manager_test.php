@@ -104,6 +104,20 @@ class core_course_enrolment_manager_testcase extends advanced_testcase {
         $this->course = $course;
         $this->users = $users;
         $this->groups = $groups;
+
+        // Make sample users and not enroll to any course.
+        $this->getDataGenerator()->create_user([
+                'username' => 'testapiuser1',
+                'firstname' => 'testapiuser 1'
+        ]);
+        $this->getDataGenerator()->create_user([
+                'username' => 'testapiuser2',
+                'firstname' => 'testapiuser 2'
+        ]);
+        $this->getDataGenerator()->create_user([
+                'username' => 'testapiuser3',
+                'firstname' => 'testapiuser 3'
+        ]);
     }
 
     /**
@@ -238,5 +252,89 @@ class core_course_enrolment_manager_testcase extends advanced_testcase {
         $users = $manager->get_users('id');
         $this->assertCount(1, $users, 'Only suspended users must be returned when suspended users filtering is applied.');
         $this->assertArrayHasKey($this->users['user22']->id, $users);
+    }
+
+    /**
+     * Test get_potential_users without returnexactcount param.
+     *
+     * @dataProvider search_users_provider
+     *
+     * @param int $perpage Number of users per page.
+     * @param bool $returnexactcount Return the exact count or not.
+     * @param int $expectedusers Expected number of users return.
+     * @param int $expectedtotalusers Expected total of users in database.
+     * @param bool $expectedmoreusers Expected for more users return or not.
+     */
+    public function test_get_potential_users($perpage, $returnexactcount, $expectedusers, $expectedtotalusers, $expectedmoreusers) {
+        global $DB, $PAGE;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $enrol = $DB->get_record('enrol', array('courseid' => $this->course->id, 'enrol' => 'manual'));
+        $manager = new course_enrolment_manager($PAGE, $this->course);
+        $users = $manager->get_potential_users($enrol->id,
+                'testapiuser',
+                true,
+                0,
+                $perpage,
+                0,
+                $returnexactcount);
+
+        $this->assertCount($expectedusers, $users['users']);
+        $this->assertEquals($expectedmoreusers, $users['moreusers']);
+        if ($returnexactcount) {
+            $this->assertArrayHasKey('totalusers', $users);
+            $this->assertEquals($expectedtotalusers, $users['totalusers']);
+        } else {
+            $this->assertArrayNotHasKey('totalusers', $users);
+        }
+    }
+
+    /**
+     * Test search_other_users with returnexactcount param.
+     *
+     * @dataProvider search_users_provider
+     *
+     * @param int $perpage Number of users per page.
+     * @param bool $returnexactcount Return the exact count or not.
+     * @param int $expectedusers Expected number of users return.
+     * @param int $expectedtotalusers Expected total of users in database.
+     * @param bool $expectedmoreusers Expected for more users return or not.
+     */
+    public function test_search_other_users($perpage, $returnexactcount, $expectedusers, $expectedtotalusers, $expectedmoreusers) {
+        global $PAGE;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $manager = new course_enrolment_manager($PAGE, $this->course);
+        $users = $manager->search_other_users(
+                'testapiuser',
+                true,
+                0,
+                $perpage,
+                $returnexactcount);
+
+        $this->assertCount($expectedusers, $users['users']);
+        $this->assertEquals($expectedmoreusers, $users['moreusers']);
+        if ($returnexactcount) {
+            $this->assertArrayHasKey('totalusers', $users);
+            $this->assertEquals($expectedtotalusers, $users['totalusers']);
+        } else {
+            $this->assertArrayNotHasKey('totalusers', $users);
+        }
+    }
+
+    /**
+     * Test case for test_get_potential_users and test_search_other_users tests.
+     *
+     * @return array Dataset
+     */
+    public function search_users_provider() {
+        return [
+                [2, false, 2, 3, true],
+                [5, false, 3, 3, false],
+                [2, true, 2, 3, true],
+                [5, true, 3, 3, false]
+        ];
     }
 }
