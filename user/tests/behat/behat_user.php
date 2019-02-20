@@ -27,6 +27,8 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
+use Behat\Mink\Exception\ExpectationException as ExpectationException;
+
 /**
  * Steps definitions for users.
  *
@@ -83,7 +85,7 @@ class behat_user extends behat_base {
 
         $value = $fld->get_attribute('autocomplete');
         if ($value == $purpose) {
-            throw new ExpectationException('The "' . $field . '" field does have purposea "' . $purpose . '"', $this->getSession());
+            throw new ExpectationException('The "' . $field . '" field does have purpose "' . $purpose . '"', $this->getSession());
         }
     }
 }
