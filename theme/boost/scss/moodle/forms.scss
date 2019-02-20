@@ -169,6 +169,11 @@ div.backup-section + form {
     direction: ltr;
 }
 
+// Reduce the mediaplugin width when using inside forms.
+.que.match .mediaplugin {
+    width: 50vw;
+}
+
 /* rtl:ignore */
 #page-admin-grade-edit-scale-edit .error input#id_name {
     margin-right: 170px;
