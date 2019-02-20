@@ -1498,6 +1498,7 @@ $functions = array(
         'description' => 'Gets tag index page for one tag and one tag area',
         'type' => 'read',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_tag_get_tags' => array(
         'classname' => 'core_tag_external',
