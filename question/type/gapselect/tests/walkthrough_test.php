@@ -60,9 +60,9 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
         // Also note the ' ' in the p2 example below is a nbsp (used when names are short).
         $this->check_output_contains_selectoptions(
                 $this->get_contains_select_expectation('p1',
-                        ['' => get_string('choosedots'), '1' => 'quick', '2' => 'slow'], null, true),
+                        ['0' => '&nbsp;', '1' => 'quick', '2' => 'slow'], null, true),
                 $this->get_contains_select_expectation('p2',
-                        ['' => ' ', '1' => 'fox', '2' => 'dog'], null, true),
+                        ['0' => '&nbsp;', '1' => 'fox', '2' => 'dog'], null, true),
                 $this->get_contains_select_expectation('p3',
                         ['1' => 'lazy', '2' => 'assiduous'], null, true));
 
