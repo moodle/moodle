@@ -1601,11 +1601,8 @@ function user_edit_map_field_purpose($userid, $fieldname) {
     );
 
     $purpose = '';
-    if (!$currentuser) {
-        // Do not set a purpose.
-        $purpose = '';
-    }
-    if (isset($validmappings[$fieldname])) {
+    // Only set a purpose when editing your own user details.
+    if ($currentuser && isset($validmappings[$fieldname])) {
         $purpose = ' autocomplete="' . $validmappings[$fieldname] . '" ';
     }
 
