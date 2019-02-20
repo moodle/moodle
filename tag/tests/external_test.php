@@ -181,4 +181,57 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('Rename me again', $res['value']);
         $this->assertEquals('Rename me again', $DB->get_field('tag', 'rawname', array('id' => $tag->id)));
     }
+
+    /**
+     * Test get_tagindex_per_area.
+     */
+    public function test_get_tagindex_per_area() {
+        global $USER;
+        $this->resetAfterTest(true);
+
+        // Create tags for two user profiles and one course.
+        $this->setAdminUser();
+        $context = context_user::instance($USER->id);
+        core_tag_tag::set_item_tags('core', 'user', $USER->id, $context, array('test'));
+
+        $this->setUser($this->getDataGenerator()->create_user());
+        $context = context_user::instance($USER->id);
+        core_tag_tag::set_item_tags('core', 'user', $USER->id, $context, array('test'));
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        core_tag_tag::set_item_tags('core', 'course', $course->id, $context, array('test'));
+
+        $tag = core_tag_tag::get_by_name(0, 'test');
+
+        // First, search by id.
+        $result = core_tag_external::get_tagindex_per_area(array('id' => $tag->id));
+        $result = external_api::clean_returnvalue(core_tag_external::get_tagindex_per_area_returns(), $result);
+        $this->assertCount(2, $result); // Two different areas: course and user.
+        $this->assertEquals($tag->id, $result[0]['tagid']);
+        $this->assertEquals('course', $result[0]['itemtype']);
+        $this->assertEquals($tag->id, $result[1]['tagid']);
+        $this->assertEquals('user', $result[1]['itemtype']);
+
+        // Now, search by name.
+        $result = core_tag_external::get_tagindex_per_area(array('tag' => 'test'));
+        $result = external_api::clean_returnvalue(core_tag_external::get_tagindex_per_area_returns(), $result);
+        $this->assertCount(2, $result); // Two different areas: course and user.
+        $this->assertEquals($tag->id, $result[0]['tagid']);
+        $this->assertEquals('course', $result[0]['itemtype']);
+        $this->assertEquals($tag->id, $result[1]['tagid']);
+        $this->assertEquals('user', $result[1]['itemtype']);
+
+        // Filter by tag area.
+        $result = core_tag_external::get_tagindex_per_area(array('tag' => 'test', 'ta' => $result[0]['ta']));
+        $result = external_api::clean_returnvalue(core_tag_external::get_tagindex_per_area_returns(), $result);
+        $this->assertCount(1, $result); // Just the given area.
+        $this->assertEquals($tag->id, $result[0]['tagid']);
+        $this->assertEquals('course', $result[0]['itemtype']);
+
+        // Now, search by tag collection (use default).
+        $result = core_tag_external::get_tagindex_per_area(array('id' => $tag->id, 'tc' => 1));
+        $result = external_api::clean_returnvalue(core_tag_external::get_tagindex_per_area_returns(), $result);
+        $this->assertCount(2, $result); // Two different areas: course and user.
+    }
 }

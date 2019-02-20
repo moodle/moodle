@@ -1514,6 +1514,13 @@ $functions = array(
         'type' => 'write',
         'ajax' => true,
     ),
+    'core_tag_get_tagindex_per_area' => array(
+        'classname' => 'core_tag_external',
+        'methodname' => 'get_tagindex_per_area',
+        'description' => 'Gets tag index page per different areas.',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_update_inplace_editable' => array(
         'classname' => 'core_external',
         'methodname' => 'update_inplace_editable',

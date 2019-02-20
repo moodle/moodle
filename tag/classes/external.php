@@ -335,4 +335,122 @@ class core_tag_external extends external_api {
             ), 'tag index'
         );
     }
+
+
+    /**
+     * Parameters for function get_tagindex_per_area()
+     *
+     * @return external_function_parameters
+     * @since  Moodle 3.7
+     */
+    public static function get_tagindex_per_area_parameters() {
+        return new external_function_parameters(
+            array(
+                'tagindex' => new external_single_structure(array(
+                    'id' => new external_value(PARAM_INT, 'tag id', VALUE_OPTIONAL, 0),
+                    'tag' => new external_value(PARAM_TAG, 'tag name', VALUE_OPTIONAL, ''),
+                    'tc' => new external_value(PARAM_INT, 'tag collection id', VALUE_OPTIONAL, 0),
+                    'ta' => new external_value(PARAM_INT, 'tag area id', VALUE_OPTIONAL, 0),
+                    'excl' => new external_value(PARAM_BOOL, 'exlusive mode for this tag area', VALUE_OPTIONAL, 0),
+                    'from' => new external_value(PARAM_INT, 'context id where the link was displayed', VALUE_OPTIONAL, 0),
+                    'ctx' => new external_value(PARAM_INT, 'context id where to search for items', VALUE_OPTIONAL, 0),
+                    'rec' => new external_value(PARAM_INT, 'search in the context recursive', VALUE_OPTIONAL, 1),
+                    'page' => new external_value(PARAM_INT, 'page number (0-based)', VALUE_OPTIONAL, 0),
+                ), 'parameters')
+            )
+        );
+    }
+
+    /**
+     * Returns the tag index per multiple areas if requested.
+     *
+     * @param array $params Tag index required information.
+     * @throws moodle_exception
+     * @since  Moodle 3.7
+     */
+    public static function get_tagindex_per_area($params) {
+        global $CFG, $PAGE;
+        // Validate and normalize parameters.
+        $tagindex = self::validate_parameters(
+            self::get_tagindex_per_area_parameters(), array('tagindex' => $params));
+        $params = $tagindex['tagindex'] + array(    // Force defaults.
+            'id' => 0,
+            'tag' => '',
+            'tc' => 0,
+            'ta' => 0,
+            'excl' => 0,
+            'from' => 0,
+            'ctx' => 0,
+            'rec' => 1,
+            'page' => 0,
+        );
+
+        if (empty($CFG->usetags)) {
+            throw new moodle_exception('tagsaredisabled', 'tag');
+        }
+
+        if (!empty($params['tag'])) {
+            if (empty($params['tc'])) {
+                // Tag name specified but tag collection was not. Try to guess it.
+                $tags = core_tag_tag::guess_by_name($params['tag'], '*');
+                if (count($tags) > 1) {
+                    // It is in more that one collection, do not display.
+                    throw new moodle_exception('Tag is in more that one collection, please indicate one.');
+                } else if (count($tags) == 1) {
+                    $tag = reset($tags);
+                }
+            } else {
+                if (!$tag = core_tag_tag::get_by_name($params['tc'], $params['tag'], '*')) {
+                    // Not found in collection.
+                    throw new moodle_exception('notagsfound', 'tag');
+                }
+            }
+        } else if (!empty($params['id'])) {
+            $tag = core_tag_tag::get($params['id'], '*');
+        }
+
+        if (empty($tag)) {
+            throw new moodle_exception('notagsfound', 'tag');
+        }
+
+        // Login to the course / module if applicable.
+        $context = !empty($params['ctx']) ? context::instance_by_id($params['ctx']) : context_system::instance();
+        self::validate_context($context);
+
+        $tag = core_tag_tag::get_by_name($params['tc'], $tag->name, '*', MUST_EXIST);
+        $tagareas = core_tag_collection::get_areas($params['tc']);
+        $tagareaid = $params['ta'];
+
+         $exclusivemode = 0;
+        // Find all areas in this collection and their items tagged with this tag.
+        if ($tagareaid) {
+            $tagareas = array($tagareas[$tagareaid]);
+        }
+        if (!$tagareaid && count($tagareas) == 1) {
+            // Automatically set "exclusive" mode for tag collection with one tag area only.
+            $params['excl'] = 1;
+        }
+
+        $renderer = $PAGE->get_renderer('core');
+        $result = array();
+        foreach ($tagareas as $ta) {
+            $tagindex = $tag->get_tag_index($ta, $params['excl'], $params['from'], $params['ctx'], $params['rec'], $params['page']);
+            if (!empty($tagindex->hascontent)) {
+                $result[] = $tagindex->export_for_template($renderer);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Return structure for get_tagindex_per_area
+     *
+     * @return external_description
+     * @since  Moodle 3.7
+     */
+    public static function get_tagindex_per_area_returns() {
+        return new external_multiple_structure(
+            self::get_tagindex_returns()
+        );
+    }
 }
