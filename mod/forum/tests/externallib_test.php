@@ -260,6 +260,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         $record->parent = $discussion1reply1->id;
         $record->userid = $user3->id;
+        $record->tags = array('Cats', 'Dogs');
         $discussion1reply2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
 
         // Enrol the user in the  course.
@@ -311,7 +312,12 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'userpictureurl' => '',
             'deleted' => false,
             'isprivatereply' => false,
+            'tags' => \core_tag\external\util::get_item_tags('mod_forum', 'forum_posts', $discussion1reply2->id),
         );
+        // Cast to expected.
+        $this->assertCount(2, $expectedposts['posts'][0]['tags']);
+        $expectedposts['posts'][0]['tags'][0]['isstandard'] = (bool) $expectedposts['posts'][0]['tags'][0]['isstandard'];
+        $expectedposts['posts'][0]['tags'][1]['isstandard'] = (bool) $expectedposts['posts'][0]['tags'][1]['isstandard'];
 
         $expectedposts['posts'][] = array(
             'id' => $discussion1reply1->id,
@@ -348,6 +354,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'userpictureurl' => '',
             'deleted' => false,
             'isprivatereply' => false,
+            'tags' => array(),
         );
 
         // Test a discussion with two additional posts (total 3 posts).

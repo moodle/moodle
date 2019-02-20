@@ -412,9 +412,9 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         }
 
         $this->setUser($this->student1);
-        $entry11 = $generator->create_entry($this->database, $fieldcontents, $this->group1->id);
+        $entry11 = $generator->create_entry($this->database, $fieldcontents, $this->group1->id, ['Cats', 'Dogs']);
         $this->setUser($this->student2);
-        $entry12 = $generator->create_entry($this->database, $fieldcontents, $this->group1->id);
+        $entry12 = $generator->create_entry($this->database, $fieldcontents, $this->group1->id, ['Cats']);
         $entry13 = $generator->create_entry($this->database, $fieldcontents, $this->group1->id);
         // Entry not in group.
         $entry14 = $generator->create_entry($this->database, $fieldcontents, 0);
@@ -447,10 +447,13 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(3, $result['entries']);
         $this->assertEquals(3, $result['totalcount']);
         $this->assertEquals($entry11, $result['entries'][0]['id']);
+        $this->assertCount(2, $result['entries'][0]['tags']);
         $this->assertEquals($this->student1->id, $result['entries'][0]['userid']);
         $this->assertEquals($this->group1->id, $result['entries'][0]['groupid']);
         $this->assertEquals($this->database->id, $result['entries'][0]['dataid']);
         $this->assertEquals($entry12, $result['entries'][1]['id']);
+        $this->assertCount(1, $result['entries'][1]['tags']);
+        $this->assertEquals('Cats', $result['entries'][1]['tags'][0]['rawname']);
         $this->assertEquals($this->student2->id, $result['entries'][1]['userid']);
         $this->assertEquals($this->group1->id, $result['entries'][1]['groupid']);
         $this->assertEquals($this->database->id, $result['entries'][1]['dataid']);

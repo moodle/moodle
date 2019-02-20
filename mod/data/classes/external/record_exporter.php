@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 use core\external\exporter;
 use renderer_base;
 use core_user;
+use core_tag\external\tag_item_exporter;
 
 /**
  * Class for exporting record data.
@@ -102,6 +103,12 @@ class record_exporter extends exporter {
                 'multiple' => true,
                 'optional' => true,
             ),
+            'tags' => array(
+                'type' => tag_item_exporter::read_properties_definition(),
+                'description' => 'Tags.',
+                'multiple' => true,
+                'optional' => true,
+            ),
         );
     }
 
@@ -128,6 +135,9 @@ class record_exporter extends exporter {
             }
             $values['contents'] = $contents;
         }
+
+        $values['tags'] = \core_tag\external\util::get_item_tags('mod_data', 'data_records', $this->data->id);
+
         return $values;
     }
 }

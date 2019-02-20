@@ -9,6 +9,7 @@ information provided here is intended especially for developers.
   * The get_forum_discussion_posts web service has been deprecated in favour of get_discussion_posts.
   * The forum_count_replies function has been deprecated in favour of get_reply_count_for_post_id_in_discussion_id in
     the Post vault.
+  * External function get_forum_discussion_posts now returns an additional field "tags" returning the post tags.
 
 === 3.6 ===
 

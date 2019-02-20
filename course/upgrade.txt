@@ -6,6 +6,8 @@ information provided here is intended especially for developers.
  * External function core_course_external::get_course_contents new returns the following additional completiondata field:
    - valueused (indicates whether the completion state affects the availability of other content)
  * External function core_course_external::get_course_contents now returns a new contentsinfo field with summary files information.
+ * External function core_course_external::get_course_contents now returns an additional field "tags" returning the content tags.
+
 
 === 3.6 ===
 
