@@ -23,9 +23,11 @@
  */
 
 $string['all'] = 'All';
+$string['allexcepthidden'] = 'All (except hidden)';
 $string['addtofavourites'] = 'Star this course';
 $string['aria:addtofavourites'] = 'Star for';
 $string['aria:allcourses'] = 'All courses';
+$string['aria:allcoursesexcepthidden'] = 'All courses except hidden courses';
 $string['aria:card'] = 'Switch to card view';
 $string['aria:controls'] = 'Course overview controls';
 $string['aria:courseactions'] = 'Actions for current course';
