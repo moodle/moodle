@@ -599,6 +599,71 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Data provider for \core_user_externallib_testcase::test_create_users_with_same_emails().
+     */
+    public function create_users_provider_with_same_emails() {
+        return [
+            'Same emails allowed, same case' => [
+                1, false
+            ],
+            'Same emails allowed, different case' => [
+                1, true
+            ],
+            'Same emails disallowed, same case' => [
+                0, false
+            ],
+            'Same emails disallowed, different case' => [
+                0, true
+            ],
+        ];
+    }
+
+    /**
+     * Test for \core_user_external::create_users() when user using the same email addresses are being created.
+     *
+     * @dataProvider create_users_provider_with_same_emails
+     * @param int $sameemailallowed The value to set for $CFG->allowaccountssameemail.
+     * @param boolean $differentcase Whether to user a different case for the other user.
+     */
+    public function test_create_users_with_same_emails($sameemailallowed, $differentcase) {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Allow multiple users with the same email address.
+        set_config('allowaccountssameemail', $sameemailallowed);
+        $users = [
+            [
+                'username' => 's1',
+                'firstname' => 'Johnny',
+                'lastname' => 'Bravo',
+                'email' => 's1@example.com',
+                'password' => 'Passw0rd!'
+            ],
+            [
+                'username' => 's2',
+                'firstname' => 'John',
+                'lastname' => 'Doe',
+                'email' => $differentcase ? 'S1@EXAMPLE.COM' : 's1@example.com',
+                'password' => 'Passw0rd!'
+            ],
+        ];
+
+        if (!$sameemailallowed) {
+            // This should throw an exception when $CFG->allowaccountssameemail is empty.
+            $this->expectException(invalid_parameter_exception::class);
+        }
+
+        // Create our users.
+        core_user_external::create_users($users);
+
+        // Confirm that the users have been created.
+        list($insql, $params) = $DB->get_in_or_equal(['s1', 's2']);
+        $this->assertEquals(2, $DB->count_records_select('user', 'username ' . $insql, $params));
+    }
+
+    /**
      * Test create_users with invalid parameters
      *
      * @dataProvider data_create_users_invalid_parameter
@@ -831,28 +896,88 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test update_users using duplicated email.
+     * Data provider for testing \core_user_external::update_users() for users with same emails
+     *
+     * @return array
      */
-    public function test_update_users_duplicated_email() {
-        global $DB, $CFG;
+    public function users_with_same_emails() {
+        return [
+            'Same emails not allowed: Update name using exactly the same email' => [
+                0, 'John', 's1@example.com', 'Johnny', 's1@example.com', false, true
+            ],
+            'Same emails not allowed: Update using someone else\'s email' => [
+                0, 'John', 's1@example.com', 'Johnny', 's2@example.com', true, false
+            ],
+            'Same emails allowed: Update using someone else\'s email' => [
+                1, 'John', 's1@example.com', 'Johnny', 's2@example.com', true, true
+            ],
+            'Same emails not allowed: Update using same email but with different case' => [
+                0, 'John', 's1@example.com', 'Johnny', 'S1@EXAMPLE.COM', false, true
+            ],
+            'Same emails not allowed: Update using another user\'s email similar to user but with different case' => [
+                0, 'John', 's1@example.com', 'Johnny', 'S1@EXAMPLE.COM', true, false
+            ],
+            'Same emails allowed: Update using another user\'s email similar to user but with different case' => [
+                1, 'John', 's1@example.com', 'Johnny', 'S1@EXAMPLE.COM', true, true
+            ],
+        ];
+    }
 
-        $this->resetAfterTest(true);
+    /**
+     * Test update_users using similar emails with varying cases.
+     *
+     * @dataProvider users_with_same_emails
+     * @param boolean $allowsameemail The value to set for $CFG->allowaccountssameemail.
+     * @param string $currentname The user's current name.
+     * @param string $currentemail The user's current email.
+     * @param string $newname The user's new name.
+     * @param string $newemail The user's new email.
+     * @param boolean $withanotheruser Whether to create another user that has the same email as the target user's new email.
+     * @param boolean $successexpected Whether we expect that the target user's email/name will be updated.
+     */
+    public function test_update_users_emails_with_different_cases($allowsameemail, $currentname, $currentemail,
+                                                                  $newname, $newemail, $withanotheruser, $successexpected) {
+        global $DB;
+
+        $this->resetAfterTest();
         $this->setAdminUser();
 
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-        $user2toupdate = array(
-            'id' => $user2->id,
-            'email' => $user1->email,
-        );
-        // E-mail duplicated not allowed.
-        $CFG->allowaccountssameemail = 0;
-        core_user_external::update_users(array($user2toupdate));
-        $this->assertNotEquals($user1->email, $DB->get_field('user', 'email', array('id' => $user2->id)));
-        // E-mail duplicated allowed.
-        $CFG->allowaccountssameemail = 1;
-        core_user_external::update_users(array($user2toupdate));
-        $this->assertEquals($user1->email, $DB->get_field('user', 'email', array('id' => $user2->id)));
+        // Set the value for $CFG->allowaccountssameemail.
+        set_config('allowaccountssameemail', $allowsameemail);
+
+        $generator = self::getDataGenerator();
+
+        // Create the user that we wish to update.
+        $usertoupdate = $generator->create_user(['email' => $currentemail, 'firstname' => $currentname]);
+
+        if ($withanotheruser) {
+            // Create another user that has the same email as the new email that we'd like to update for our target user.
+            $generator->create_user(['email' => $newemail]);
+        }
+
+        // Build the user update parameters.
+        $updateparams = [
+            'id' => $usertoupdate->id,
+            'email' => $newemail,
+            'firstname' => $newname
+        ];
+        // Let's try to update the user's information.
+        core_user_external::update_users([$updateparams]);
+
+        // Fetch the updated user record.
+        $userrecord = $DB->get_record('user', ['id' => $usertoupdate->id], 'id, email, firstname');
+
+        // If we expect the update to succeed, then the email/name would have been changed.
+        if ($successexpected) {
+            $expectedemail = $newemail;
+            $expectedname = $newname;
+        } else {
+            $expectedemail = $currentemail;
+            $expectedname = $currentname;
+        }
+        // Confirm that our expectations are met.
+        $this->assertEquals($expectedemail, $userrecord->email);
+        $this->assertEquals($expectedname, $userrecord->firstname);
     }
 
     /**
