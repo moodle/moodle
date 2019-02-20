@@ -15,16 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Definition of chat scheduled tasks.
  *
  * @package   mod_chat
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright 2019 Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2018120301; // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018112800; // Requires this Moodle version.
-$plugin->component = 'mod_chat'; // Full name of the plugin (used for diagnostics).
-$plugin->cron      = 300;
+$tasks = array(
+    array(
+        'classname' => '\mod_chat\task\cron_task',
+        'blocking' => 0,
+        'minute' => '*/5',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    )
+);
