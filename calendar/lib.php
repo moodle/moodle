@@ -3512,6 +3512,11 @@ function calendar_output_fragment_event_form($args) {
         $mform->set_data($data);
     } else {
         $event = calendar_event::load($eventid);
+
+        if (!calendar_edit_event_allowed($event)) {
+            print_error('nopermissiontoupdatecalendar');
+        }
+
         $mapper = new \core_calendar\local\event\mappers\create_update_form_mapper();
         $eventdata = $mapper->from_legacy_event_to_data($event);
         $data = array_merge((array) $eventdata, $data);
