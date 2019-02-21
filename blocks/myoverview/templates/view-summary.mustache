@@ -48,23 +48,25 @@
             </a>
 
             <div class="align-self-stretch d-flex flex-column w-100">
+                <div class="text-muted muted mb-1 d-flex flex-wrap">
+                    <span class="sr-only">
+                        {{#str}}aria:coursecategory, core_course{{/str}}
+                    </span>
+                    {{$coursecategory}}
+                    <span class="categoryname">
+                        {{{coursecategory}}}
+                    </span>
+                    {{/coursecategory}}
+                    {{#showshortname}}
+                    <div class="pl-1 pr-1">|</div>
+                    <span class="sr-only">
+                        {{#str}}aria:courseshortname, core_course{{/str}}
+                    </span>
+                    <div>{{{shortname}}}</div>
+                    {{/showshortname}}
+                </div>
                 <div class="d-flex mb-1">
                     <a href="{{viewurl}}" class="coursename">
-                        <div class="text-muted muted mb-1 d-flex" style="flex-flow:wrap;">
-                            <span class="sr-only">
-                                {{#str}}aria:coursecategory, core_course{{/str}}
-                            </span>
-                            {{$coursecategory}}
-                                <div>{{{coursecategory}}}</div>
-                            {{/coursecategory}}
-                            {{#showshortname}}
-                            <div class="pl-1 pr-1">|</div>
-                            <span class="sr-only">
-                                {{#str}}aria:courseshortname, core_course{{/str}}
-                            </span>
-                            <div>{{{shortname}}}</div>
-                            {{/showshortname}}
-                        </div>
                         {{> core_course/favouriteicon }}
                         <span class="sr-only">
                             {{#str}}aria:coursename, core_course{{/str}}

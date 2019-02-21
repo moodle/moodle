@@ -11499,6 +11499,7 @@ div.editor_atto_toolbar button .icon {
   margin-top: -0.5rem; }
 
 .block .block-cards a.coursename,
+.block .block-cards span.categoryname,
 .block .block-cards .btn-link {
   color: inherit; }
 

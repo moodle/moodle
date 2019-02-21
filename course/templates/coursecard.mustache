@@ -43,8 +43,8 @@
     </a>
     <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
         <div class="d-flex align-items-start">
-            <a href="{{viewurl}}" class="coursename mr-2 text-truncate">
-                <div class="text-muted muted d-flex w-100 mb-1 text-truncate" style="flex-flow:wrap;">
+            <div>
+                <div class="text-muted muted d-flex w-100 mb-1 text-truncate flex-wrap">
                     {{$coursecategory}}{{/coursecategory}}
                     {{#showshortname}}
                     {{$divider}}{{/divider}}
@@ -56,12 +56,14 @@
                     </div>
                     {{/showshortname}}
                 </div>
-                {{> core_course/favouriteicon }}
-                <span class="sr-only">
-                    {{#str}}aria:coursename, core_course{{/str}}
-                </span>
-                {{$coursename}}{{/coursename}}
-            </a>
+                <a href="{{viewurl}}" class="coursename mr-2 text-truncate">
+                    {{> core_course/favouriteicon }}
+                    <span class="sr-only">
+                            {{#str}}aria:coursename, core_course{{/str}}
+                        </span>
+                    {{$coursename}}{{/coursename}}
+                </a>
+            </div>
             {{$menu}}{{/menu}}
         </div>
     </div>
