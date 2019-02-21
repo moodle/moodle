@@ -21,6 +21,12 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
         0)
     );
 
+    $optionalsubsystems->add(new admin_setting_configcheckbox('messagingdefaultpressenter',
+        new lang_string('messagingdefaultpressenter', 'admin'),
+        new lang_string('configmessagingdefaultpressenter', 'admin'),
+        1)
+    );
+
     $options = array(
         DAYSECS => new lang_string('secondstotime86400'),
         WEEKSECS => new lang_string('secondstotime604800'),

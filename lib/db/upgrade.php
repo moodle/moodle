@@ -2728,5 +2728,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019021500.01);
     }
 
+    if ($oldversion < 2019021500.02) {
+        // Default 'off' for existing sites as this is the behaviour they had earlier.
+        set_config('messagingdefaultpressenter', false);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019021500.02);
+    }
+
     return true;
 }

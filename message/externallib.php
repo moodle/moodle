@@ -4160,7 +4160,7 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function get_user_message_preferences($userid = 0) {
-        global $PAGE;
+        global $CFG, $PAGE;
 
         $params = self::validate_parameters(
             self::get_user_message_preferences_parameters(),
@@ -4189,11 +4189,13 @@ class core_message_external extends external_api {
 
         $renderer = $PAGE->get_renderer('core_message');
 
+        $entertosend = get_user_preferences('message_entertosend', $CFG->messagingdefaultpressenter, $user);
+
         $result = array(
             'warnings' => array(),
             'preferences' => $notificationlistoutput->export_for_template($renderer),
             'blocknoncontacts' => \core_message\api::get_user_privacy_messaging_preference($user->id),
-            'entertosend' => get_user_preferences('message_entertosend', false, $user)
+            'entertosend' => $entertosend
         );
         return $result;
     }

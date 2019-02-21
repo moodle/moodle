@@ -842,7 +842,7 @@ function core_message_standard_after_main_region_html() {
     }
 
     // Enter to send.
-    $entertosend = get_user_preferences('message_entertosend', false, $USER);
+    $entertosend = get_user_preferences('message_entertosend', $CFG->messagingdefaultpressenter, $USER);
 
     return $renderer->render_from_template('core_message/message_drawer', [
         'contactrequestcount' => $requestcount,
