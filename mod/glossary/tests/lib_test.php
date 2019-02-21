@@ -466,4 +466,41 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         $this->assertNotRegExp('/'.$entry16->concept.'/', $res->content);
         $this->assertRegExp('/'.$entry17->concept.'/', $res->content);
     }
+
+    public function test_glossary_get_entries_search() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        // Turn on glossary autolinking (usedynalink).
+        set_config('glossary_linkentries', 1);
+        $glossarygenerator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $course = $this->getDataGenerator()->create_course();
+        $glossary = $this->getDataGenerator()->create_module('glossary', array('course' => $course->id));
+        // Note this entry is not case sensitive by default (casesensitive = 0).
+        $entry = $glossarygenerator->create_content($glossary);
+        // Check that a search for the concept return the entry.
+        $concept = $entry->concept;
+        $search = glossary_get_entries_search($concept, $course->id);
+        $this->assertCount(1, $search);
+        $foundentry = array_shift($search);
+        $this->assertEquals($foundentry->concept, $entry->concept);
+        // Now try the same search but with a lowercase term.
+        $concept = strtolower($entry->concept);
+        $search = glossary_get_entries_search($concept, $course->id);
+        $this->assertCount(1, $search);
+        $foundentry = array_shift($search);
+        $this->assertEquals($foundentry->concept, $entry->concept);
+
+        // Make an entry that is case sensitive (casesensitive = 1).
+        set_config('glossary_casesensitive', 1);
+        $entry = $glossarygenerator->create_content($glossary);
+        $concept = $entry->concept;
+        $search = glossary_get_entries_search($concept, $course->id);
+        $this->assertCount(1, $search);
+        $foundentry = array_shift($search);
+        $this->assertEquals($foundentry->concept, $entry->concept);
+        // Now try the same search but with a lowercase term.
+        $concept = strtolower($entry->concept);
+        $search = glossary_get_entries_search($concept, $course->id);
+        $this->assertCount(0, $search);
+    }
 }
