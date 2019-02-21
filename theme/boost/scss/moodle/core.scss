@@ -2260,3 +2260,7 @@ $switch-transition: .2s all !default;
 .overflow-hidden {
     overflow: hidden !important; /* stylelint-disable-line declaration-no-important */
 }
+
+.text-break {
+    overflow-wrap: break-word !important; /* stylelint-disable-line declaration-no-important */
+}
