@@ -94,6 +94,7 @@ $string['configgradinggrade'] = 'Default maximum grade for assessment in worksho
 $string['configmaxbytes'] = 'Default maximum submission file size for all workshops on the site (subject to course limits and other local settings)';
 $string['configstrategy'] = 'Default grading strategy for workshops';
 $string['createsubmission'] = 'Start preparing your submission';
+$string['crontask'] = 'Background processing for workshop module';
 $string['daysago'] = '{$a} days ago';
 $string['daysleft'] = '{$a} days left';
 $string['daystoday'] = 'today';
