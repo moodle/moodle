@@ -299,6 +299,12 @@
     padding-top: 5px;
     padding-bottom: 12px;
     min-width: 112px;
+    // Undo truncating of text on hover.
+    &:hover {
+        overflow: inherit;
+        white-space: normal;
+        text-overflow: unset;
+    }
 }
 
 // Table view (File Picker only)

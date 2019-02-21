@@ -12745,6 +12745,10 @@ body.drawer-ease {
   padding-top: 5px;
   padding-bottom: 12px;
   min-width: 112px; }
+  .fp-iconview .fp-filename-field .fp-filename:hover {
+    overflow: inherit;
+    white-space: normal;
+    text-overflow: inherit; }
 
 .file-picker .yui3-datatable table {
   border: 0 solid #bbb;
