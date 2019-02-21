@@ -485,6 +485,9 @@ class restore_gradebook_structure_step extends restore_structure_step {
         // Freeze gradebook calculations if needed.
         $this->gradebook_calculation_freeze();
 
+        // Ensure the module cache is current when recalculating grades.
+        rebuild_course_cache($this->get_courseid(), true);
+
         // Restore marks items as needing update. Update everything now.
         grade_regrade_final_grades($this->get_courseid());
     }
