@@ -348,19 +348,6 @@ function message_post_message($userfrom, $userto, $message, $format) {
 
     $eventdata->fullmessageformat = $format;
     $eventdata->smallmessage     = $message;//store the message unfiltered. Clean up on output.
-
-    $s = new stdClass();
-    $s->sitename = format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID)));
-    $s->url = $CFG->wwwroot.'/message/index.php?user='.$userto->id.'&id='.$userfrom->id;
-
-    $emailtagline = get_string_manager()->get_string('emailtagline', 'message', $s, $userto->lang);
-    if (!empty($eventdata->fullmessage)) {
-        $eventdata->fullmessage .= "\n\n---------------------------------------------------------------------\n".$emailtagline;
-    }
-    if (!empty($eventdata->fullmessagehtml)) {
-        $eventdata->fullmessagehtml .= "<br /><br />---------------------------------------------------------------------<br />".$emailtagline;
-    }
-
     $eventdata->timecreated     = time();
     $eventdata->notification    = 0;
     return message_send($eventdata);
