@@ -69,7 +69,10 @@ if ($importcourseid === false || $searchcourses) {
 
     // show the course selector
     echo $OUTPUT->header();
-    echo $renderer->import_course_selector($url, $search);
+    $backup = new import_ui(false, array());
+    echo $renderer->progress_bar($backup->get_progress_bar());
+    $html = $renderer->import_course_selector($url, $search);
+    echo $html;
     echo $OUTPUT->footer();
     die();
 }
@@ -131,6 +134,8 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
 
     // First execute the backup
     $backup->execute();
+    // Before destroying the backup object, we still need to generate the progress bar.
+    $progressbar = $renderer->progress_bar($backup->get_progress_bar());
     $backup->destroy();
     unset($backup);
 
@@ -209,6 +214,7 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
         echo html_writer::end_tag('ul');
         echo $OUTPUT->box_end();
     }
+    echo $progressbar;
     echo $OUTPUT->notification(get_string('importsuccess', 'backup'), 'notifysuccess');
     echo $OUTPUT->continue_button(new moodle_url('/course/view.php', array('id'=>$course->id)));
 
