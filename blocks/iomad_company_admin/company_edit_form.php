@@ -87,6 +87,7 @@ if (!$new) {
     $companyrecord = new stdClass;
     $companyrecord->templates = null;
     $companyrecord->previousroletemplateid = 0;
+    $companyrecord->maxusers = 0;
 
     if (!empty($parentid) && iomad::has_capability('block/iomad_company_admin:company_add_child', $context)) {
         // We are adding a child company.

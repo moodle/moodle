@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/iomad/db" VERSION="20181227" COMMENT="XMLDB file for Moodle local/iomad"
+<XMLDB PATH="local/iomad/db" VERSION="20190215" COMMENT="XMLDB file for Moodle local/iomad"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -39,6 +39,7 @@
         <FIELD NAME="managerdigestday" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Day of the week when a manager gets the digest emails."/>
         <FIELD NAME="previousroletemplateid" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="saves the identifier for the roletemplate id used last for the company"/>
         <FIELD NAME="hostname" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="maxusers" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

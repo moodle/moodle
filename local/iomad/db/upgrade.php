@@ -1858,5 +1858,20 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018122700, 'local', 'iomad');
     }
 
-    return $result;
+    if ($oldversion < 2019012900) {
+
+        // Define field maxusers to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('maxusers', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'hostname');
+
+        // Conditionally launch add field maxusers.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2019012900, 'local', 'iomad');
+    }
+
+return $result;
 }

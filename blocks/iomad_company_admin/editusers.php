@@ -379,8 +379,13 @@ if ($confirmuser and confirm_sesskey()) {
     }
 
 } else if ($unsuspend and confirm_sesskey()) {
-    // Unsuspends a selected user, after confirmation.
+    // Check if the company has gone over the user quota.
+    if (!$company->check_usercount(1)) {
+        $maxusers = $company->get('maxusers');
+        print_error('maxuserswarning', 'block_iomad_company_admin', $returnurl, $maxusers->maxusers);
+    }
 
+    // Unsuspends a selected user, after confirmation.
     if (!iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
         print_error('nopermissions', 'error', '', 'suspend a user');
     }

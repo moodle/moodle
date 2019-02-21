@@ -2411,6 +2411,49 @@ class company {
     }
 
     /**
+     * Checks number of new users to be added to the company won't bring it about the maximum.
+     *
+     * Parameters -
+     *              $new = int;
+     *
+     * Returns boolean.
+     *
+     **/
+    public function check_usercount($new = 0) {
+        global $DB, $USER;
+
+        // Get the company maximum.
+        $maxusers = $this->get('maxusers');
+        if (empty($maxusers->maxusers)) {
+            return true;
+        } else {
+            // Get the current number of users.
+            // Deal with any parent companies.
+            // all companies?
+            if ($parentslist = $this->get_parent_companies_recursive()) {
+                $companysql = " AND u.id NOT IN (
+                                SELECT userid FROM {company_users}
+                                WHERE companyid IN (" . implode(',', array_keys($parentslist)) ."))";
+            } else {
+                $companysql = "";
+            }
+
+            $usercount = $DB->count_records_sql("SELECT COUNT(u.id) FROM
+                                                 {company_users} cu
+                                                 JOIN {user} u ON (cu.userid = u.id)
+                                                 WHERE cu.companyid = :companyid
+                                                 AND u.deleted = 0
+                                                 AND u.suspended = 0",
+                                                 array('companyid' => $this->id));
+            if ($usercount + $new > $maxusers->maxusers) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    /**
      * Checks that the USER can edit a userid in a companyid.
      *
      * Parameters -

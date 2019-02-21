@@ -99,6 +99,15 @@ class company_users_form extends moodleform {
                 $userstoassign = $this->potentialusers->get_selected_users();
                 if (!empty($userstoassign)) {
 
+                    // Check if the company has gone over the user quota.
+                     $company = new company($this->selectedcompany);
+                     if (!$company->check_usercount(count($userstoassign))) {
+                        $maxusers = $company->get('maxusers');
+                        $returnurl = new moodle_url('/blocks/iomad_company_admin/company_users_form.php');
+                        print_error('maxuserswarning', 'block_iomad_company_admin', $returnurl, $maxusers->maxusers);
+                    }
+
+                    // Process them.
                     foreach ($userstoassign as $adduser) {
                         $allow = true;
 
@@ -146,7 +155,6 @@ class company_users_form extends moodleform {
     }
 }
 
-
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 
 $context = context_system::instance();
@@ -176,6 +184,7 @@ $PAGE->navbar->add($linktext, $linkurl);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
+$company = new company($companyid);
 
 $usersform = new company_users_form($PAGE->url, $context, $companyid);
 

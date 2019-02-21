@@ -182,6 +182,10 @@ class company_edit_form extends \company_moodleform {
         $mform->setType('companydomains', PARAM_NOTAGS);
         $mform->addHelpButton('companydomains', 'companydomains', 'block_iomad_company_admin');
 
+        $mform->addElement('text', 'maxusers', get_string('companymaxusers', 'block_iomad_company_admin'));
+        $mform->setType('maxusers', PARAM_INT);
+        $mform->addHelpButton('maxusers', 'companymaxusers', 'block_iomad_company_admin');
+
         $mform->addElement('text', 'hostname', get_string('companyhostname', 'block_iomad_company_admin'));
         $mform->setType('hostname', PARAM_NOTAGS);
         $mform->addHelpButton('hostname', 'companyhostname', 'block_iomad_company_admin');
@@ -602,6 +606,10 @@ class company_edit_form extends \company_moodleform {
                                                  'block_iomad_company_admin',
                                                   $foundcompanynamestring);
             }
+        }
+
+        if ($data['maxusers'] < 0) {
+            $errors['maxusers'] = get_string('invalidnum', 'error');
         }
 
         return $errors;

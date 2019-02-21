@@ -423,6 +423,12 @@ $PAGE->navbar->add($linktext, $linkurl);
 $companyid = iomad::get_my_companyid($context);
 $company = new company($companyid);
 
+// Check if the company has gone over the user quota.
+if (!$company->check_usercount(1)) {
+    $maxusers = $company->get('maxusers');
+    print_error('maxuserswarning', 'block_iomad_company_admin', $dashboardurl, $maxusers->maxusers);
+}
+
 $mform = new user_edit_form($PAGE->url, $companyid, $departmentid, $licenseid);
 if ($mform->is_cancelled()) {
     redirect($dashboardurl);

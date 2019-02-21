@@ -170,7 +170,41 @@ if (empty($iid)) {
                                             $formdata->encoding,
                                             $formdata->delimiter_name,
                                             'validate_user_upload_columns');
+        if (!$columns = $cir->get_columns()) {
+           print_error('cannotreadtmpfile', 'error', $returnurl);
+        }
+
         unset($content);
+
+        // Keep track of new users.
+        $newusercount = 0;
+        $cir->init();
+        while ($line = $cir->next()) {
+            $usercheck = new stdClass();
+
+            // Add fields to user object.
+            foreach ($line as $key => $value) {
+                if ($value !== '') {
+                    $key = $columns[$key];
+                    $usercheck->$key = $value;
+                } else {
+                    $usercheck->{$columns[$key]} = '';
+                }
+            }
+            if (!$DB->get_record('user', array('username' =>  $usercheck->username)) && $optype != 3) {
+                $newusercount++;
+            } else if (($optype == 2 || $optype ==3) && isset($usercheck->suspended)
+                       && $usercheck->suspended == 0
+                       && $DB->get_record('user', array('username' =>  $usercheck->username, 'suspended' => 1))) {
+                $newusercount++;
+            }
+        }
+
+        // Check if the company has gone over the user quota.
+        if (!$company->check_usercount($newusercount)) {
+            $maxusers = $company->get('maxusers');
+            print_error('maxuserswarningplural', 'block_iomad_company_admin', $returnurl, $maxusers->maxusers);
+        }
 
         if ($readcount === false) {
             // TODO: need more detailed error info.

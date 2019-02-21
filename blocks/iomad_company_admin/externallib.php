@@ -636,35 +636,50 @@ class block_iomad_company_admin_external extends external_api {
         self::validate_context($context);
         require_capability('block/iomad_company_admin:assign_company_manager', $context);
 
-        $succeeded = true;
+        $result = array();
 
         // Deal with the list of users.
         foreach ($params['users'] as $userrecord) {
+            $succeeded = true;
+            $errormessage = "";
             if (empty($userrecord['userid']) || empty($userrecord['companyid'])) {
                 $succeeded = false;
                 continue;
             }
             $company = new company($userrecord['companyid']);
+
+            // Check if the company has gone over the user quota.
+            if (!$company->check_usercount(1)) {
+                $maxusers = $company->get('maxusers');
+                $errormessage = get_string('maxuserswarning', 'block_iomad_company_admin', $maxusers->maxusers);
+            }
+
             if (!$company->assign_user_to_company($userrecord['userid'],
                                                   $userrecord['departmentid'],
                                                   $userrecord['managertype'],
                                                   true)) {
                 $succeeded = false;
-            }
+                $errormessage = "Unable to assign user";
+            } else {
 
-            // Create an event for this.
-            $managertypes = $company->get_managertypes();
-            $eventother = array('companyname' => $company->get_name(),
-                                'companyid' => $company->id,
-                                'usertype' => $userrecord['managertype'],
-                                'usertypename' => $managertypes[$userrecord['managertype']]);
-            $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => context_system::instance(),
-                                                                                            'objectid' => $company->id,
-                                                                                            'userid' => $adduser->id,
-                                                                                            'other' => $eventother));
-            $event->trigger();
+                // Create an event for this.
+                $managertypes = $company->get_managertypes();
+                $eventother = array('companyname' => $company->get_name(),
+                                    'companyid' => $company->id,
+                                    'usertype' => $userrecord['managertype'],
+                                    'usertypename' => $managertypes[$userrecord['managertype']]);
+                $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => context_system::instance(),
+                                                                                                'objectid' => $company->id,
+                                                                                                'userid' => $userrecord['userid'],
+                                                                                                'other' => $eventother));
+                $event->trigger();
+            }
+            $result[] = array('userid' => $userrecord['userid'],
+                              'companyid' => $company->id,
+                              'result' => $succeeded,
+                              'message' => $errormessage);
         }
-        return $succeeded;
+        return array('users' => $result, 'warning' => array());;
     }
 
    /**
@@ -674,7 +689,20 @@ class block_iomad_company_admin_external extends external_api {
      * @return external_description
      */
     public static function assign_users_returns() {
-        return new external_value(PARAM_BOOL, 'Success or failure');
+        return new external_single_structure(
+                array('users' => new external_multiple_structure(
+                        new external_single_structure(
+                            array(
+                                'userid' => new external_value(PARAM_INT, 'Department ID'),
+                                'company' => new external_value(PARAM_INT, 'Company ID'),
+                                'result' => new external_value(PARAM_BOOLEAN, 'Success or failure'),
+                                'message' => new external_value(PARAM_TEXT, 'Failure message'),
+                                )
+                            )
+                       ),
+                      'warnings' => new external_warnings('always set to \'key\'', 'faulty key name')
+                    )
+                );
     }
 
     /**
