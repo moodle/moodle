@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/iomad_track/db" VERSION="20190213" COMMENT="XMLDB file for Moodle local/iomad_track"
+<XMLDB PATH="local/iomad_track/db" VERSION="20190220" COMMENT="XMLDB file for Moodle local/iomad_track"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -25,6 +25,9 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="companycourse" UNIQUE="false" FIELDS="companyid, courseid"/>
+        <INDEX NAME="usercourseenrol" UNIQUE="false" FIELDS="userid, courseid, timeenrolled"/>
+        <INDEX NAME="usercourselicense" UNIQUE="false" FIELDS="userid, courseid, licenseid, licenseallocated"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="local_iomad_track_certs" COMMENT="Record certificates issued">

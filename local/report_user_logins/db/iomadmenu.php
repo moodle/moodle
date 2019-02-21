@@ -19,7 +19,7 @@
 function local_report_user_logins_menu() {
 
         return array(
-            'companies' => array(
+            'userlogins' => array(
                 'category' => 'Reports',
                 'tab' => 7,
                 'name' => get_string('pluginname', 'local_report_user_logins'),

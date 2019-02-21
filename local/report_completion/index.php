@@ -42,7 +42,7 @@ $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', $CFG->iomad_max_list_users, PARAM_INT);        // How many per page.
 $acl          = optional_param('acl', '0', PARAM_INT);           // Id of user to tweak mnet ACL (requires $access).
-$search      = optional_param('search', '', PARAM_CLEAN);// Search string.
+$coursesearch = optional_param('coursesearch', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $compfromraw = optional_param_array('compfrom', null, PARAM_INT);
 $comptoraw = optional_param_array('compto', null, PARAM_INT);
@@ -76,8 +76,8 @@ if ($page) {
 if ($perpage) {
     $params['perpage'] = $perpage;
 }
-if ($search) {
-    $params['search'] = $search;
+if ($coursesearch) {
+    $params['coursesearch'] = $coursesearch;
 }
 if ($courseid) {
     $params['courseid'] = $courseid;
@@ -230,6 +230,9 @@ if (empty($courseid)) {
         echo html_writer::end_tag('div');
         echo html_writer::end_tag('div');
         echo html_writer::end_tag('div');
+        $mform = new iomad_course_search_form($url, $params);
+        $mform->set_data($params);
+        $mform->display();
 
         // Display the control buttons.
         $alluserslink = new moodle_url($url, array(
@@ -258,11 +261,19 @@ if (empty($courseid)) {
         }
     }
 
+    // Deal with any course searches.
+    $searchparams = array();
+    if (!empty($coursesearch)) {
+        $coursesearchsql = " AND " . $DB->sql_like('coursename', ':coursename', false, false);
+        $searchparams['coursename'] = "%" . $coursesearch . "%";
+    } else {
+        $coursesearchsql = "";
+    }
     // Set up the SQL for the table.
     $selectsql = "courseid as id, coursename, $departmentid AS departmentid, $showsuspended AS showsuspended, companyid";
     $fromsql = "{local_iomad_track}";
-    $wheresql = "companyid = :companyid group by courseid";
-    $sqlparams = array('companyid' => $companyid);
+    $wheresql = "companyid = :companyid $coursesearchsql group by courseid";
+    $sqlparams = array('companyid' => $companyid) + $searchparams;
 
     // Set up the headers for the table.
     $courseheaders = array(get_string('coursename', 'local_report_completion'),
@@ -365,9 +376,9 @@ if (empty($courseid)) {
     }
 
     // Set up the initial SQL for the form.
-    $selectsql = "DISTINCT lit.id,u.id as userid,u.firstname,u.lastname,d.name AS department,u.email,lit.id as certsource, lit.courseid,lit.coursename,lit.timecompleted,lit.timeenrolled,lit.timestarted,lit.finalscore,lit.licenseid,lit.licensename, lit.licenseallocated, lit.timecompleted AS timeexpires";
+    $selectsql = "lit.id,u.id as userid,u.firstname,u.lastname,d.name AS department,u.email,lit.id as certsource, lit.courseid,lit.coursename,lit.timecompleted,lit.timeenrolled,lit.timestarted,lit.finalscore,lit.licenseid,lit.licensename, lit.licenseallocated, lit.timecompleted AS timeexpires";
     $fromsql = "{user} u JOIN {local_iomad_track} lit ON (u.id = lit.userid) JOIN {company_users} cu ON (u.id = cu.userid AND lit.userid = cu.userid AND lit.companyid = cu.companyid) JOIN {department} d ON (cu.departmentid = d.id)";
-    $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $coursesql GROUP BY lit.id";
+    $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $coursesql";
     $sqlparams = array('companyid' => $companyid, 'courseid' => $courseid) + $searchinfo->searchparams;
 
     // Set up the headers for the form.
@@ -398,6 +409,8 @@ if (empty($courseid)) {
                 // Its a profile field.
                 $selectsql .= ", P" . $extrafield->fieldid . ".data AS " . $extrafield->name;
                 $fromsql .= " LEFT JOIN {user_info_data} P" . $extrafield->fieldid . " ON (u.id = P" . $extrafield->fieldid . ".userid )";
+                $wheresql .= " AND P".$extrafield->fieldid . ".fieldid = :p" . $extrafield->fieldid . "fieldid ";
+                $sqlparams["p".$extrafield->fieldid."fieldid"] = $extrafield->fieldid;
             }
         }
     }

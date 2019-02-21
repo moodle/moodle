@@ -27,7 +27,7 @@ $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', 30, PARAM_INT);
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
-$courseid    = optional_param('courseid', 0, PARAM_INTEGER);
+$courseid    = optional_param('courseid', 1, PARAM_INTEGER);
 $fromraw = optional_param_array('compfrom', null, PARAM_INT);
 $toraw = optional_param_array('compto', null, PARAM_INT);
 $yearfrom = optional_param_array('fromarray', null, PARAM_INT);
@@ -317,6 +317,8 @@ if (!empty($extrafields)) {
             // Its a profile field.
             $selectsql .= ", P" . $extrafield->fieldid . ".data AS " . $extrafield->name;
             $fromsql .= " LEFT JOIN {user_info_data} P" . $extrafield->fieldid . " ON (u.id = P" . $extrafield->fieldid . ".userid )";
+            $wheresql .= " AND P".$extrafield->fieldid . ".fieldid = :p" . $extrafield->fieldid . "fieldid ";
+            $sqlparams["p".$extrafield->fieldid."fieldid"] = $extrafield->fieldid;
         }
     }
 }
@@ -326,7 +328,11 @@ $results = $DB->get_records_sql("SELECT $selectsql FROM $fromsql WHERE $wheresql
 
 // Set up some defaults.
 $seriesarray = array();
+// Get the calendar type used - see MDL-18375.
+$calendartype = \core_calendar\type_factory::get_calendar_instance();
+$dateformat = $calendartype->get_date_order();
 $montharray = array("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12");
+$monthstringarray = array_values($dateformat['month']);
 
 // Work through the results.
 foreach ($results as $result) {
@@ -366,11 +372,7 @@ foreach ($seriesarray as $year => $values) {
         $series = new core\chart_series("$year (".array_sum($values) . ")", array_values($values));
         $chart->add_series($series);
 }
-$chart->set_labels($montharray);
-
-// Get the calendar type used - see MDL-18375.
-$calendartype = \core_calendar\type_factory::get_calendar_instance();
-$dateformat = $calendartype->get_date_order();
+$chart->set_labels($monthstringarray);
 
 // Display the chart.
 echo $output->render($chart);

@@ -28,6 +28,6 @@ defined('MOODLE_INTERNAL') || die;
 require($CFG->dirroot . '/local/iomad/lib/basicsettings.php');
 
 $url = new moodle_url( '/local/report_completion_monthly/index.php' );
-$ADMIN->add('IomadReports', new admin_externalpage('replicenseusage',
-             get_string('repuserlicallocation', 'local_report_completion_monthly'),
-             $url, 'local/report_completion_monthly:view'));
+$ADMIN->add('IomadReports', new admin_externalpage('repcompmonthly',
+             get_string('pluginname', 'local_report_completion_monthly'),
+             $url, 'local/report_emails:view'));

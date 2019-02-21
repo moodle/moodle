@@ -46,10 +46,12 @@ class local_report_user_license_allocations_table extends table_sql {
         $allocated = $DB->count_records('local_report_user_lic_allocs',
                                         array('userid' => $row->id,
                                               'licenseid' => $row->licenseid,
+                                              'courseid' => $row->courseid,
                                               'action' => 1));
         $unallocated = $DB->count_records('local_report_user_lic_allocs',
                                         array('userid' => $row->id,
                                               'licenseid' => $row->licenseid,
+                                              'courseid' => $row->courseid,
                                               'action' => 0));
         if ($allocated > $unallocated) {
             return get_string('yes');
@@ -69,12 +71,13 @@ class local_report_user_license_allocations_table extends table_sql {
         $allocations = $DB->get_records('local_report_user_lic_allocs',
                                         array('userid' => $row->id,
                                               'licenseid' => $row->licenseid,
+                                              'courseid' => $row->courseid,
                                               'action' => 1));
         $returnstring = "";
 
         // Process them.
         foreach ($allocations as $allocation) {
-            $returnstring .= date($CFG->iomad_date_format, $allocation->date) . "</br>";
+            $returnstring .= date($CFG->iomad_date_format, $allocation->issuedate) . "</br>";
         }
 
         return $returnstring;
@@ -91,15 +94,40 @@ class local_report_user_license_allocations_table extends table_sql {
         $unallocations = $DB->get_records('local_report_user_lic_allocs',
                                           array('userid' => $row->id,
                                                 'licenseid' => $row->licenseid,
+                                                'courseid' => $row->courseid,
                                                 'action' => 0));
         $returnstring = "";
 
         // Process them.
         foreach ($unallocations as $unallocation) {
-            $returnstring .= date($CFG->iomad_date_format, $unallocation->date) . "</br>";
+            $returnstring .= date($CFG->iomad_date_format, $unallocation->issuedate) . "</br>";
         }
 
         return $returnstring;
+    }
+
+    /**
+     * Generate the display of the user's licensename
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_licensename($row) {
+        global $CFG, $DB;
+
+        if ($row->licenseid == null) {
+            $row->licenseid = 0;
+        }
+        if ($trackrec = $DB->get_records_sql("SELECT id,licensename FROM {local_iomad_track}
+                                              WHERE userid = :userid
+                                              AND licenseid = :licenseid",
+                                              array('userid' => $row->id,
+                                                    'licenseid' => $row->licenseid),
+                                                    0, 1)) {
+            $license = array_pop($trackrec);
+            return $license->licensename;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -128,5 +156,60 @@ class local_report_user_license_allocations_table extends table_sql {
                                   array('userid' => $row->id,
                                         'licenseid' => $row->licenseid,
                                         'action' => 0));
+    }
+
+    /**
+     * Query the db. Store results in the table object for use by build_table.
+     *
+     * @param int $pagesize size of page for paginated displayed table.
+     * @param bool $useinitialsbar do you want to use the initials bar. Bar
+     * will only be used if there is a fullname column defined for the table.
+     */
+    function query_db($pagesize, $useinitialsbar=true) {
+        global $DB;
+        if (!$this->is_downloading()) {
+            if ($this->countsql === NULL) {
+                $this->countsql = "SELECT DISTINCT concat(u.id, concat('-', concat(urla.licenseid, concat('-', urla.courseid)))) AS cindex FROM " . $this->sql->from.' WHERE '.$this->sql->where;
+                $this->countparams = $this->sql->params;
+            }
+            $subgrandtotal = $DB->get_records_sql($this->countsql, $this->countparams);
+            $grandtotal = count($subgrandtotal);
+            if ($useinitialsbar && !$this->is_downloading()) {
+                $this->initialbars($grandtotal > $pagesize);
+            }
+
+            list($wsql, $wparams) = $this->get_sql_where();
+            if ($wsql) {
+                $this->countsql .= ' AND '.$wsql;
+                $this->countparams = array_merge($this->countparams, $wparams);
+
+                $this->sql->where .= ' AND '.$wsql;
+                $this->sql->params = array_merge($this->sql->params, $wparams);
+
+                $subtotal  = $DB->get_records_sql($this->countsql, $this->countparams);
+                $total = count($subtotal);
+            } else {
+                $total = $grandtotal;
+            }
+
+            $this->pagesize($pagesize, $total);
+        }
+
+        // Fetch the attempts
+        $sort = $this->get_sql_sort();
+        if ($sort) {
+            $sort = "ORDER BY $sort";
+        }
+        $sql = "SELECT
+                {$this->sql->fields}
+                FROM {$this->sql->from}
+                WHERE {$this->sql->where}
+                {$sort}";
+
+        if (!$this->is_downloading()) {
+            $this->rawdata = $DB->get_records_sql($sql, $this->sql->params, $this->get_page_start(), $this->get_page_size());
+        } else {
+            $this->rawdata = $DB->get_records_sql($sql, $this->sql->params);
+        }
     }
 }

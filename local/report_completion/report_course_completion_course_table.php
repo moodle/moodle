@@ -44,11 +44,21 @@ class local_report_course_completion_course_table extends table_sql {
     public function col_coursename($row) {
         global $output;
 
-        $courseuserslink = new moodle_url('/local/report_completion/index.php',
-                                          array('courseid' => $row->id,
-                                                'departmentid' => $row->departmentid));
         if (!$this->is_downloading()) {
-            return $output->single_button($courseuserslink, $row->coursename);
+            $courseuserslink = new moodle_url('/local/report_completion/index.php',
+                                              array('courseid' => $row->id,
+                                                    'departmentid' => $row->departmentid));
+            $coursemonthlylink = new moodle_url('/local/report_completion_monthly/index.php',
+                                                array('courseid' => $row->id,
+                                                      'departmentid' => $row->departmentid));
+            $courselicenselink = new moodle_url('/local/report_user_license_allocations/index.php',
+                                                array('courseid' => $row->id,
+                                                      'departmentid' => $row->departmentid));
+            $cell = html_writer::tag('h2', $row->coursename);
+            $cell .= $output->single_button($courseuserslink, get_string('usersummary', 'local_report_completion'));
+            $cell .= "</br>" . $output->single_button($coursemonthlylink, get_string('pluginname', 'local_report_completion_monthly'));
+            $cell .= "</br>" . $output->single_button($courselicenselink, get_string('pluginname', 'local_report_user_license_allocations'));
+            return $cell;
         } else {
             return $row->coursename;
         }
@@ -85,37 +95,28 @@ class local_report_course_completion_course_table extends table_sql {
         } else {
             $suspendedsql = "";
         }
-        $completed = $DB->count_records_sql("SELECT COUNT(lit.id)
-                                             FROM {local_iomad_track} lit
-                                             JOIN {company_users} cu ON (lit.userid = cu.userid AND lit.companyid = cu.companyid)
-                                             JOIN {user} u ON (lit.userid = u.id)
-                                             WHERE lit.companyid = :companyid
-                                             AND lit.courseid = :courseid
-                                             AND lit.timecompleted IS NOT NULL
-                                             $suspendedsql
-                                             $departmentsql",
-                                             array('companyid' => $company->id, 'courseid' => $row->id));
 
-        // Count the enrolled users
-        $enrolled = $DB->count_records_sql("SELECT COUNT(lit.id)
+        // Count the unused licenses.
+        $licensesunused = $DB->count_records_sql("SELECT COUNT(lit.id)
                                             FROM {local_iomad_track} lit
                                             JOIN {company_users} cu ON (lit.userid = cu.userid AND lit.companyid = cu.companyid)
                                             JOIN {user} u ON (lit.userid = u.id)
                                             WHERE lit.companyid = :companyid
                                             AND lit.courseid = :courseid
-                                            AND lit.licenseid IS NOT NULL
-                                            AND lit.timeenrolled IS NOT NULL
-                                            AND lit.timecompleted IS NULL
+                                            AND lit.licenseallocated IS NOT NULL
+                                            AND lit.timeenrolled IS NULL
                                             $suspendedsql
                                             $departmentsql",
                                             array('companyid' => $company->id, 'courseid' => $row->id));
 
+        // Count the used licenses.
         $licensesallocated = $DB->count_records_sql("SELECT count(lit.id) FROM {local_iomad_track} lit
                                                      JOIN {company_users} cu ON (lit.userid = cu.userid AND lit.companyid = cu.companyid)
                                                      JOIN {user} u ON (lit.userid = u.id)
                                                      WHERE lit.courseid = :courseid
                                                      AND lit.companyid = :companyid
-                                                     AND lit.licensename IS NOT NULL
+                                                     AND lit.licenseallocated IS NOT NULL
+                                                     AND lit.timeenrolled IS NOT NULL
                                                      $suspendedsql
                                                      $departmentsql",
                                                      array('companyid' => $company->id, 'courseid' => $row->id));
@@ -125,10 +126,10 @@ class local_report_course_completion_course_table extends table_sql {
                 $CFG->chart_colorset= ['green', '#d9534f'];
                 $licensechart = new \core\chart_pie();
                 $licensechart->set_doughnut(true); // Calling set_doughnut(true) we display the chart as a doughnut.
-                $series = new \core\chart_series('', array($licensesallocated - $enrolled, $enrolled));
+                $series = new \core\chart_series('', array($licensesallocated, $licensesunused));
                 $licensechart->add_series($series);
-                $licensechart->set_labels(array(get_string('used', 'local_report_license'),
-                                                get_string('unused', 'local_report_license')));
+                $licensechart->set_labels(array(get_string('used', 'local_report_license') . " (" . $licensesallocated . ")",
+                                                get_string('unused', 'local_report_license') . " (" . $licensesunused . ")"));
                 return $output->render($licensechart, false);
             } else {
                 return;
@@ -174,6 +175,8 @@ class local_report_course_completion_course_table extends table_sql {
         } else {
             $suspendedsql = "";
         }
+
+        // Count the completed users.
         $completed = $DB->count_records_sql("SELECT COUNT(lit.id)
                                              FROM {local_iomad_track} lit
                                              JOIN {company_users} cu ON (lit.userid = cu.userid AND lit.companyid = cu.companyid)
@@ -198,6 +201,7 @@ class local_report_course_completion_course_table extends table_sql {
                                             $departmentsql",
                                             array('companyid' => $company->id, 'courseid' => $row->id));
 
+        // Count the non started users.
         $licensesallocated = $DB->count_records_sql("SELECT count(lit.id) FROM {local_iomad_track} lit
                                                      JOIN {company_users} cu ON (lit.userid = cu.userid AND lit.companyid = cu.companyid)
                                                      JOIN {user} u ON (lit.userid = u.id)
@@ -214,9 +218,9 @@ class local_report_course_completion_course_table extends table_sql {
             $enrolledchart->set_doughnut(true); // Calling set_doughnut(true) we display the chart as a doughnut.
             $enrolledseries = new \core\chart_series('', array($completed, $licensesallocated, $enrolled));
             $enrolledchart->add_series($enrolledseries);
-            $enrolledchart->set_labels(array(get_string('completedusers', 'local_report_completion'),
-                                             get_string('inprogressusers', 'local_report_completion'),
-                                             get_string('notstartedusers', 'local_report_completion')));
+            $enrolledchart->set_labels(array(get_string('completedusers', 'local_report_completion') . " (" .$completed . ")",
+                                             get_string('inprogressusers', 'local_report_completion') . " (" . $licensesallocated . ")",
+                                             get_string('notstartedusers', 'local_report_completion') . " (" . $enrolled . ")"));
             $CFG->chart_colorset= ['green', '#1177d1', '#d9534f'];
             return $output->render($enrolledchart, false);
         } else {

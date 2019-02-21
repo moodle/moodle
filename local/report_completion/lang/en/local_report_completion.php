@@ -80,3 +80,4 @@ $string['showsuspendedusers'] = 'Include suspended users';
 $string['hidesuspendedusers'] = 'Remove suspended users';
 $string['compfrom'] = 'Start date';
 $string['compto'] = 'End date';
+$string['userlink'] = 'Display users';

@@ -36,7 +36,7 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
     }
 
     if ($oldversion < 2018081900) {
-
+mtrace("starting " . time());
         // Define field coursename to be added to local_iomad_track.
         $table = new xmldb_table('local_iomad_track');
         $field = new xmldb_field('coursename', XMLDB_TYPE_CHAR, '254', null, null, null, null, 'courseid');
@@ -53,32 +53,7 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
                 $DB->set_field('local_iomad_track', 'coursename', $course->fullname, array('courseid' => $litcourse->courseid));
             }
         }
-
-        // Define field firstname to be added to local_iomad_track.
-        $table = new xmldb_table('local_iomad_track');
-        $field = new xmldb_field('firstname', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'userid');
-
-        // Conditionally launch add field firstname.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        // Define field lastname to be added to local_iomad_track.
-        $table = new xmldb_table('local_iomad_track');
-        $field = new xmldb_field('lastname', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'firstname');
-
-        // Conditionally launch add field lastname.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Save the user names.
-        $litusers = $DB->get_records_sql("SELECT distinct userid from {local_iomad_track}");
-        foreach ($litusers as $lituser) {
-            if ($user = $DB->get_record('user', array('id' => $lituser->userid))) {
-                $DB->set_field('local_iomad_track', 'firstname', $user->firstname, array('userid' => $lituser->userid));
-                $DB->set_field('local_iomad_track', 'lastname', $user->lastname, array('userid' => $lituser->userid));
-            }
-        }
+mtrace("coursename end " . time());
 
         // Define field companyid to be added to local_iomad_track.
         $table = new xmldb_table('local_iomad_track');
@@ -89,32 +64,7 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Define field companyname to be added to local_iomad_track.
-        $table = new xmldb_table('local_iomad_track');
-        $field = new xmldb_field('companyname', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'companyid');
-
-        // Conditionally launch add field companyname.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field departmentid to be added to local_iomad_track.
-        $table = new xmldb_table('local_iomad_track');
-        $field = new xmldb_field('departmentid', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'companyname');
-
-        // Conditionally launch add field departmentid.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field departmentname to be added to local_iomad_track.
-        $table = new xmldb_table('local_iomad_track');
-        $field = new xmldb_field('departmentname', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'departmentid');
-
-        // Conditionally launch add field departmentname.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
+mtrace("companies/departments start " . time());
 
         // Get the user company and departments.
         $users = $DB->get_records_sql("SELECT DISTINCT userid FROM {local_iomad_track}");
@@ -122,28 +72,15 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
             if ($usercompany = company::by_userid($user->userid)) {
                 if ($usercompanyrec = $DB->get_record('company', array('id' => $usercompany->id))) {
                     $DB->set_field('local_iomad_track', 'companyid', $usercompanyrec->id, array('userid' => $user->userid));
-                    $DB->set_field('local_iomad_track', 'companyname', $usercompanyrec->name, array('userid' => $user->userid));
-                }
-                // If we don't have an actual department any more,
-                if ($department = $DB->get_record_sql("SELECT d.* FROM {department} d
-                                                       JOIN {company_users} cu ON (d.id = cu.departmentid)
-                                                       WHERE cu.companyid = :companyid
-                                                       AND cu.userid = :userid",
-                                                       array('companyid' => $usercompanyrec->id, 'userid' => $user->userid))) {
-                    $DB->set_field('local_iomad_track', 'departmentid', $department->id, array('userid' => $user->userid));
-                    $DB->set_field('local_iomad_track', 'departmentname', $department->name, array('userid' => $user->userid));
-                } else {
-                    // Allocate them to the company department.
-                    $department = company::get_company_parentnode($usercompanyrec->id);
-                    $DB->set_field('local_iomad_track', 'departmentid', $department->id, array('userid' => $user->userid));
-                    $DB->set_field('local_iomad_track', 'departmentname', $department->name, array('userid' => $user->userid));
                 }
             }
         }
 
+mtrace("companies/departments end " . time());
+
         // Define field licenseid to be added to local_iomad_track.
         $table = new xmldb_table('local_iomad_track');
-        $field = new xmldb_field('licenseid', XMLDB_TYPE_INTEGER, '20', null, null, null, '0', 'departmentname');
+        $field = new xmldb_field('licenseid', XMLDB_TYPE_INTEGER, '20', null, null, null, '0', 'companyid');
 
         // Conditionally launch add field licenseid.
         if (!$dbman->field_exists($table, $field)) {
@@ -158,6 +95,8 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+
+mtrace("licenses start " . time());
 
         // Deal with licenses.
         $liccourses = $DB->get_records('iomad_courses', array('licensed' => 1));
@@ -181,12 +120,15 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
             }
         }
 
+mtrace("licenses end " . time());
+
         // Iomad_track savepoint reached.
         upgrade_plugin_savepoint(true, 2018081900, 'local', 'iomad_track');
     }
 
     if ($oldversion < 2019912100) {
 
+mtrace("starting " . time());
         // Define field userid to be dropped from local_iomad_track.
         $table = new xmldb_table('local_iomad_track');
         $field = new xmldb_field('firstname');
@@ -276,6 +218,34 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
         // Launch change of nullability for field timestarted.
         $dbman->change_field_notnull($table, $field);
 
+        // Define index companycourse (not unique) to be added to local_iomad_track.
+        $table = new xmldb_table('local_iomad_track');
+        $index = new xmldb_index('companycourse', XMLDB_INDEX_NOTUNIQUE, ['companyid', 'courseid']);
+
+        // Conditionally launch add index companycourse.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index usercourseenrol (not unique) to be added to local_iomad_track.
+        $table = new xmldb_table('local_iomad_track');
+        $index = new xmldb_index('usercourseenrol', XMLDB_INDEX_NOTUNIQUE, ['userid', 'courseid', 'timeenrolled']);
+
+        // Conditionally launch add index usercourseenrol.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index usercourselicense (not unique) to be added to local_iomad_track.
+        $table = new xmldb_table('local_iomad_track');
+        $index = new xmldb_index('usercourselicense', XMLDB_INDEX_NOTUNIQUE, ['userid', 'courseid', 'licenseid', 'licenseallocated']);
+
+        // Conditionally launch add index usercourselicense.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+mtrace("current start " . time());
         // Get the timestamp for the license which have been allocated for already tracked courses.
         $current = $DB->get_records_sql("SELECT clu.id, lit.id AS litid,clu.issuedate
                                          FROM {local_iomad_track} lit
@@ -289,6 +259,8 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
             $DB->set_field('local_iomad_track', 'modifiedtime', time(), array('id' => $cur->litid));
         }
 
+mtrace("current end " . time());
+
         // Get the timestamp historic values.
         if ($nolics = $DB->get_records('local_iomad_track', array('licenseid' => 0))) {
             foreach ($nolics as $nolic) {
@@ -296,10 +268,12 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
             }
         }
 
+mtrace("rest start " . time());
+
         $rest = $DB->get_records_sql("SELECT clu.*,cl.name AS licensename, cl.companyid, c.fullname AS coursename FROM {companylicense_users} clu
                                       JOIN {companylicense} cl ON (clu.licenseid = cl.id)
                                       JOIN {course} c ON (clu.licensecourseid = c.id)
-                                      LEFT JOIN {local_iomad_track} lit ON (clu.licensecourseid = lit.courseid AND clu.userid = lit.userid)
+                                      LEFT JOIN {local_iomad_track} lit ON (clu.licensecourseid = lit.courseid AND clu.userid = lit.userid AND clu.issuedate = lit.licenseallocated)
                                       WHERE lit.id IS NULL");
         foreach ($rest as $rec) {
             if ($completionrec = $DB->get_record('course_completions', array('course' => $rec->licensecourseid, 'userid' => $rec->userid))) {
@@ -324,6 +298,8 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
                                  'modifiedtime' => time());
             $DB->insert_record('local_iomad_track', $trackrecord);
         }
+
+mtrace("reset end " . time());
 
         // Deal with enrolments.
         $enrolments = $DB->get_records_sql("SELECT cc.*,c.fullname AS coursename FROM {course_completions} cc
@@ -352,6 +328,7 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
                 $DB->insert_record('local_iomad_track', $entry);
             }
         }
+mtrace("enrol end " . time());
 
         // Iomad_track savepoint reached.
         upgrade_plugin_savepoint(true, 2019012100, 'local', 'iomad_track');

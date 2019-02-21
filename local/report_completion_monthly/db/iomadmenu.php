@@ -19,7 +19,7 @@
 function local_report_completion_monthly_menu() {
 
         return array(
-            'licenseusage' => array(
+            'completionmonthly' => array(
                 'category' => 'Reports',
                 'tab' => 7,
                 'name' => get_string('pluginname', 'local_report_completion_monthly'),
@@ -27,7 +27,7 @@ function local_report_completion_monthly_menu() {
                 'cap' => 'local/report_completion_monthly:view',
                 'icondefault' => 'report',
                 'style' => 'report',
-                'icon' => 'fa-legal',
+                'icon' => 'fa-check-square-o',
                 'iconsmall' => 'fa-bar-chart-o',
             ),
         );

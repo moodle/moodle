@@ -69,18 +69,44 @@ function xmldb_local_report_user_license_allocations_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
         $table->add_field('licenseid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('action', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('date', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
+        $table->add_field('issuedate', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
         $table->add_field('modifiedtime', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
 
         // Adding keys to table local_report_user_lic_allocs.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Adding indexes to table local_report_user_lic_allocs.
+        $table->add_index('userliccoursedate', XMLDB_INDEX_UNIQUE, ['userid', 'courseid', 'licenseid', 'issuedate']);
 
         // Conditionally launch create table for local_report_user_lic_allocs.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
 
+        // Deal with historic license allocations as they may have dropped out of the logs or was before we fired an event.
+        // Find the first event.
+        if ($firstrec = $DB->get_records_sql("SELECT * FROM {logstore_standard_log}
+                                          WHERE eventname = :eventname
+                                          ORDER BY ID",
+                                          array('eventname' => '\block_iomad_company_admin\event\user_license_assigned',
+                                          0,1))) {
+            $first = array_pop($firstrec);
+            if ($oldallocations = $DB->get_records_sql("SELECT * FROM {companylicense_users}
+                                                        WHERE issuedate < :first",
+                                                        array('first' => $first->timecreated))) {
+                foreach ($oldallocations as $oldallocation) {
+                    $DB->insert_record('local_report_user_lic_allocs',
+                                       array('userid' => $oldallocation->userid,
+                                             'licenseid' => $oldallocation->licenseid,
+                                             'courseid' => $oldallocation->licensecourseid,
+                                             'action' => 1,
+                                             'issuedate' => $oldallocation->issuedate,
+                                             'modifiedtime' => time()));
+                }
+            }
+        }
         // Populate the report table from any previous users.
         $users = $DB->get_records('user', array('deleted' => 0));
         foreach ($users as $user) {
@@ -93,8 +119,9 @@ function xmldb_local_report_user_license_allocations_upgrade($oldversion) {
                 // Insert the record.
                 $DB->insert_record('local_report_user_lic_allocs', array('userid' => $user->id,
                                                                           'licenseid' => $evententries['licenseid'],
+                                                                          'courseid' => $event->courseid,
                                                                           'action' => 1,
-                                                                          'date' => $event->timecreated,
+                                                                          'issuedate' => $event->timecreated,
                                                                           'modifiedtime' => time()));
             }
 
@@ -107,8 +134,9 @@ function xmldb_local_report_user_license_allocations_upgrade($oldversion) {
                 // Insert the record.
                 $DB->insert_record('local_report_user_lic_allocs', array('userid' => $user->id,
                                                                           'licenseid' => $evententries['licenseid'],
+                                                                          'courseid' => $event->courseid,
                                                                           'action' => 0,
-                                                                          'date' => $event->timecreated,
+                                                                          'issuedate' => $event->timecreated,
                                                                           'modifiedtime' => time()));
             }
         }

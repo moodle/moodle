@@ -1136,4 +1136,37 @@ class iomad_date_filter_form extends moodleform {
         }
         $this->add_action_buttons(false, get_string('userfilter', 'local_iomad'));
     }
+
+}
+
+/**
+ * User Filter form used on the Iomad pages.
+ *
+ */
+class iomad_course_search_form extends moodleform {
+    protected $params = array();
+
+    public function __construct($params) {
+        $this->params = $params;
+        parent::__construct();
+    }
+
+    public function definition() {
+        global $CFG, $DB, $USER, $SESSION;
+
+        $mform =& $this->_form;
+        foreach ($this->params as $param => $value) {
+            if ($param == 'coursesearch') {
+                continue;
+            }
+            $mform->addElement('hidden', $param, $value);
+            $mform->setType($param, PARAM_CLEAN);
+        }
+
+        $sarcharray = array();
+        $searcharray[] = $mform->createElement('text', 'coursesearch');
+        $searcharray[] = $mform->createElement('submit', 'searchbutton', get_string('search'));
+        $mform->addGroup($searcharray, 'searcharray', get_string('coursenamesearch', 'block_iomad_company_admin'), ' ', false);
+        $mform->setType('coursesearch', PARAM_CLEAN);
+    }
 }

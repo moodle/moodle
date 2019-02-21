@@ -313,6 +313,8 @@ if (!empty($extrafields)) {
             // Its a profile field.
             $selectsql .= ", P" . $extrafield->fieldid . ".data AS " . $extrafield->name;
             $fromsql .= " LEFT JOIN {user_info_data} P" . $extrafield->fieldid . " ON (u.id = P" . $extrafield->fieldid . ".userid )";
+            $wheresql .= " AND P".$extrafield->fieldid . ".fieldid = :p" . $extrafield->fieldid . "fieldid ";
+            $sqlparams["p".$extrafield->fieldid."fieldid"] = $extrafield->fieldid;
         }
     }
 }
