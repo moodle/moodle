@@ -52,47 +52,47 @@
 </div>
 <div class="box generalbox boxaligncenter">
     <form id="searchform" action="{{actionurl}}" method="get">
-        <table class="searchbox table" id="form">
+        <table class="searchbox table table-striped" id="form">
             <tr>
-                <td class="c0">
+                <td class="c0 text-xs-right">
                     <label for="words">{{#str}}searchwords, forum{{/str}}</label>
                     <input type="hidden" value="{{courseid}}" name="id">
                 </td>
                 <td class="c1">
-                    <input type="text" size="35" name="words" id="words" value="{{words}}">
+                    <input type="text" class="form-control" name="words" id="words" value="{{words}}">
                 </td>
             </tr>
             <tr>
-                <td class="c0">
+                <td class="c0 text-xs-right">
                     <label for="phrase">{{#str}}searchphrase, forum{{/str}}</label>
                 </td>
                 <td class="c1">
-                    <input type="text" size="35" name="phrase" id="phrase" value="{{phrase}}">
+                    <input type="text" class="form-control" name="phrase" id="phrase" value="{{phrase}}">
                 </td>
             </tr>
             <tr>
-                <td class="c0">
+                <td class="c0 text-xs-right">
                     <label for="notwords">{{#str}}searchnotwords, forum{{/str}}</label>
                 </td>
                 <td class="c1">
-                    <input type="text" size="35" name="notwords" id="notwords" value="{{notwords}}">
+                    <input type="text" class="form-control" name="notwords" id="notwords" value="{{notwords}}">
                 </td>
             </tr>
             {{#showfullwords}}
                 <tr>
-                    <td class="c0">
+                    <td class="c0 text-xs-right">
                         <label for="fullwords">{{#str}}searchfullwords, forum{{/str}}</label>
                     </td>
                     <td class="c1">
-                        <input type="text" size="35" name="fullwords" id="fullwords" value="{{fullwords}}">
+                        <input type="text" class="form-control" name="fullwords" id="fullwords" value="{{fullwords}}">
                     </td>
                 </tr>
             {{/showfullwords}}
             <tr>
-                <td class="c0">
+                <td class="c0 text-xs-right">
                     {{#str}}searchdatefrom, forum{{/str}}
                 </td>
-                <td class="c1">
+                <td class="c1 text-nowrap form-inline">
                     <input type="checkbox" name="timefromrestrict" value="1" {{#datefromchecked}}checked{{/datefromchecked}}>
                     {{{datefromfields}}}
                     <input type="hidden" name="hfromday" value="0">
@@ -103,10 +103,10 @@
                 </td>
             </tr>
             <tr>
-                <td class="c0">
+                <td class="c0 text-xs-right">
                     {{#str}}searchdateto, forum{{/str}}
                 </td>
-                <td class="c1">
+                <td class="c1 text-nowrap form-inline">
                     <input type="checkbox" name="timetorestrict" value="1" {{#datetochecked}}checked{{/datetochecked}}>
                     {{{datetofields}}}
                     <input type="hidden" name="htoday" value="0">
@@ -117,11 +117,11 @@
                 </td>
             </tr>
             <tr>
-                <td class="c0">
+                <td class="c0 text-xs-right">
                     <label for="menuforumid">{{#str}}searchwhichforums, forum{{/str}}</label>
                 </td>
                 <td class="c1">
-                    <select name="forumid" id="menuforumid">
+                    <select name="forumid" id="menuforumid" class="form-control">
                         {{#forumoptions}}
                             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
                         {{/forumoptions}}
@@ -129,61 +129,60 @@
                 </td>
             </tr>
             <tr>
-                <td class="c0">
+                <td class="c0 text-xs-right">
                     <label for="subject">{{#str}}searchsubject, forum{{/str}}</label>
                 </td>
                 <td class="c1">
-                    <input type="text" size="35" name="subject" id="subject" value="{{subject}}">
+                    <input type="text" class="form-control" name="subject" id="subject" value="{{subject}}">
                 </td>
             </tr>
             <tr>
-                <td class="c0">
+                <td class="c0 text-xs-right">
                     <label for="user">{{#str}}searchuser, forum{{/str}}</label>
                 </td>
                 <td class="c1">
-                    <input type="text" size="35" name="user" id="user" value="{{user}}">
+                    <input type="text" class="form-control" name="user" id="user" value="{{user}}">
                 </td>
             </tr>
             {{#tagsenabled}}
-            <tr>
-                <td class="c0">
-                    <label for="tags">{{#str}}searchtags, forum{{/str}}</label>
-                </td>
-                <td class="c1">
-                    <select class="custom-select" name="tags[]"
-                            id="tags" multiple>
-                        {{#tagoptions}}
-                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{text}}}</option>
-                        {{/tagoptions}}
-                    </select>
-                </td>
-            </tr>
+                <tr>
+                    <td class="c0">
+                        <label for="tags">{{#str}}searchtags, forum{{/str}}</label>
+                    </td>
+                    <td class="c1">
+                        <select class="custom-select" name="tags[]"
+                                id="tags" multiple>
+                            {{#tagoptions}}
+                                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{text}}}</option>
+                            {{/tagoptions}}
+                        </select>
+                    </td>
+                </tr>
             {{/tagsenabled}}
             <tr>
-                <td colspan="2" class="submit">
-                    <div class="text-center">
-                        <input type="submit" value={{#quote}}{{#str}}searchforums, forum{{/str}}{{/quote}}>
-                    </div>
+                <td> </td>
+                <td class="submit">
+                    <button type="submit" class="btn btn-primary">{{#str}}searchforums, forum{{/str}}</button>
                 </td>
             </tr>
         </table>
     </form>
 </div>
 {{#js}}
-    require(['jquery'], function($) {
-        var toggleDateFields = function(prefix, disabled) {
-            $('#searchform select[name^=' + prefix + ']').prop('disabled', disabled);
-            $('#searchform input[name^=h' + prefix + ']').val(disabled ? 1 : 0);
-        };
+require(['jquery'], function($) {
+    var toggleDateFields = function(prefix, disabled) {
+        $('#searchform select[name^=' + prefix + ']').prop('disabled', disabled);
+        $('#searchform input[name^=h' + prefix + ']').val(disabled ? 1 : 0);
+    };
 
-        toggleDateFields('from', !$("#searchform input[name='timefromrestrict']").prop('checked'));
-        $("#searchform input[name='timefromrestrict']").click(function() {
-            toggleDateFields('from', !this.checked);
-        });
-
-        toggleDateFields('to', !$("#searchform input[name='timetorestrict']").prop('checked'));
-        $("#searchform input[name='timetorestrict']").click(function() {
-            toggleDateFields('to', !this.checked);
-        });
+    toggleDateFields('from', !$("#searchform input[name='timefromrestrict']").prop('checked'));
+    $("#searchform input[name='timefromrestrict']").click(function() {
+        toggleDateFields('from', !this.checked);
     });
+
+    toggleDateFields('to', !$("#searchform input[name='timetorestrict']").prop('checked'));
+    $("#searchform input[name='timetorestrict']").click(function() {
+        toggleDateFields('to', !this.checked);
+    });
+});
 {{/js}}
