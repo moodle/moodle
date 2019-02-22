@@ -21,10 +21,10 @@
     <input type="checkbox" name="{{applyname}}" value="1" id="{{applyname}}">
     <label for="{{applyname}}">{{applylabel}}</label>
 </div>
-<fieldset class="form-inline">
+<fieldset>
     <legend class="accesshide">{{label}}</legend>
     <label for="{{menuname}}">{{menulabel}}</label>
-    <select name="{{menuname}}" id="{{menuname}}" class="form-control">
+    <select name="{{menuname}}" id="{{menuname}}">
         {{#menuoptions}}
             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
         {{/menuoptions}}

@@ -15,11 +15,6 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Dropdown attribute.
+    Button.
 }}
-<select id="{{name}}" name="{{name}}" class="custom-select" tabindex="1" {{#disabled}}disabled{{/disabled}}>
-    {{#options}}
-        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-    {{/options}}
-</select>
-<input type="hidden" name="old{{name}}" value="{{value}}">
+<input type="{{type}}" value={{#quote}}{{value}}{{/quote}}>

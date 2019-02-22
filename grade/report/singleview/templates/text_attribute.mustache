@@ -18,5 +18,5 @@
     Text attribute.
 }}
 <label for="{{name}}" class="accesshide">{{label}}</label>
-<input id="{{name}}" name="{{name}}" type="text" value="{{value}}" {{#tabindex}}tabindex="{{.}}"{{/tabindex}} {{#disabled}}disabled{{/disabled}}>
+<input id="{{name}}" name="{{name}}" type="text" value="{{value}}" class="form-control" {{#tabindex}}tabindex="{{.}}"{{/tabindex}} {{#disabled}}disabled{{/disabled}}>
 <input type="hidden" name="old{{name}}" value="{{value}}">

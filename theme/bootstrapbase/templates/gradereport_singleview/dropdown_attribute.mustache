@@ -15,8 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Text attribute.
+    Dropdown attribute.
 }}
-<label for="{{name}}" class="accesshide">{{label}}</label>
-<input id="{{name}}" name="{{name}}" type="text" value="{{value}}" class="form-control" {{#tabindex}}tabindex="{{.}}"{{/tabindex}} {{#disabled}}disabled{{/disabled}}>
+<select id="{{name}}" name="{{name}}" tabindex="1" {{#disabled}}disabled{{/disabled}}>
+    {{#options}}
+        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+    {{/options}}
+</select>
 <input type="hidden" name="old{{name}}" value="{{value}}">
