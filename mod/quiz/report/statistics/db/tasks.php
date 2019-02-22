@@ -15,15 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Quiz activity version information.
+ * Legacy Cron Quiz Reports Task
  *
- * @package   mod_quiz
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    quiz_statistics
+ * @copyright  2017 Michael Hughes, University of Strathclyde
+ * @author Michael Hughes <michaelhughes@strath.ac.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018120300;
-$plugin->requires  = 2018112800;
-$plugin->component = 'mod_quiz';
+$tasks = [
+    [
+        'classname' => 'quiz_statistics\task\quiz_statistics_cleanup',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => '*/5',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ]
+];
