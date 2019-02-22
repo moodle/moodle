@@ -15,32 +15,23 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/settings_link_page_single
-
-    Displays the admin tree as a list of grouped links.
+    @template core_auth/output/digital_minor_page
 
     Example context (json):
     {
-        "text": "Root of menu",
-        "key": "test0",
-        "display": true,
-        "children": []
+        "logourl": "https://moodle.org/logo/moodle-logo.svg",
+        "sitename": "Site name",
+        "supportname": "John Doe",
+        "supportemail": "johndoe@example.com",
+        "homelink": "/"
     }
 }}
-{{#display}}
-    {{#action}}
-        <li><a href="{{{action}}}">{{text}}</a></li>
-    {{/action}}
-    {{^action}}
-        <li><strong>{{text}}</strong></li>
-    {{/action}}
-    {{#children.count}}
-        <li>
-            <ul class="list-unstyled ml-2">
-                {{#children}}
-                    {{> core/settings_link_page_single }}
-                {{/children}}
-            </ul>
-        </li>
-    {{/children.count}}
-{{/display}}
+<h3>{{#str}}considereddigitalminor{{/str}}</h3>
+<p class="m-b-0">{{#str}}digitalminor_desc{{/str}}</p>
+<div class="p-t-1 p-b-1">
+    <p class="m-b-0">{{{supportname}}}</p>
+    <p class="m-b-0">{{{supportemail}}}</p>
+</div>
+<div class="backlink">
+    <a href="{{homelink}}">{{#str}}backtohome{{/str}}</a>
+</div>

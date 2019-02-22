@@ -15,22 +15,23 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/modal_backdrop
-
-    Moodle modal backdrop template.
-
-    The purpose of this template is to render a modal
-
-    Classes required for JS:
-    * none
-
-    Data attributes required for JS:
-    * none
-
-    Context variables required for this template:
-    * none
+    @template core_auth/output/verify_age_location_page
 
     Example context (json):
-    {}
+    {
+        "logourl": "https://moodle.org/logo/moodle-logo.svg",
+        "sitename": "Site name",
+        "error": "Error message",
+        "formhtml": "(Form html would go here)"
+    }
 }}
-<div class="modal-backdrop in hide" aria-hidden="true" data-region="modal-backdrop"></div>
+{{#error}}
+    <div class="alert alert-danger" role="alert">
+        {{{error}}}
+    </div>
+{{/error}}
+<h3>{{#str}}agelocationverification{{/str}}</h3>
+{{{formhtml}}}
+<hr>
+<h3>{{#str}}whyisthisrequired{{/str}}</h3>
+<p >{{#str}}explanationdigitalminor{{/str}}</p>

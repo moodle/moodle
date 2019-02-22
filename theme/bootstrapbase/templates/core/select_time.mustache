@@ -15,20 +15,24 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/action_menu_link
+    @template core/select_time
 
-    Action menu link.
+    Select time.
 
     Example context (json):
     {
-        "text": "Example link text",
-        "showtext": true,
-        "url": "http://example.com/link"
+        "id": "test-id",
+        "name": "test-name",
+        "label": "Test label",
+        "options": [
+            {"name": "Option 1", "value": "1"},
+            {"name": "Option 2", "value": "2"}
+        ]
     }
 }}
-{{^disabled}}
-    <a href="{{url}}" class="{{classes}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}{{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>{{#icon}}{{#pix}}{{key}}, {{component}}, {{title}}{{/pix}}{{/icon}}{{#showtext}}<span class="menu-action-text" id="actionmenuaction-{{instance}}">{{{text}}}</span>{{/showtext}}</a>
-{{/disabled}}
-{{#disabled}}
-    <span class="currentlink" role="menuitem">{{#icon}}{{#pix}}{{key}},{{component}},{{title}}{{/pix}}{{/icon}}{{{text}}}</span>
-{{/disabled}}
+<label for="{{id}}" class="accesshide">{{label}}</label>
+<select name="{{name}}" id="{{id}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
+    {{#options}}
+        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+    {{/options}}
+</select>

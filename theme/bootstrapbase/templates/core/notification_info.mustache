@@ -15,11 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/notification_error
+    @template core/notification_info
 
     Moodle notification template.
 
-    The purpose of this template is to render an error notification.
+    The purpose of this template is to render an info notification.
 
     Classes required for JS:
     * none
@@ -36,9 +36,15 @@
     Example context (json):
     { "message": "Your pants are on fire!", "closebutton": 1, "announce": 1, "extraclasses": "foo bar"}
 }}
-<div class="alert alert-danger alert-block fade in {{ extraclasses }}" {{!
-    }}{{# announce }} role="alert" data-aria-autofocus="true"{{/ announce }}{{!
+<div class="alert alert-info alert-block fade in {{ extraclasses }}" {{!
+    }}{{# announce }} role="alert"{{/ announce }}{{!
     }}>
     {{# closebutton }}<button type="button" class="close" data-dismiss="alert">&times;</button>{{/ closebutton }}
     {{{ message }}}
 </div>
+{{# js }}
+require(['jquery', 'theme_bootstrapbase/bootstrap'], function($) {
+    // Setup closing of bootstrap alerts.
+    $().alert();
+});
+{{/ js }}

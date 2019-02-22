@@ -15,20 +15,32 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/action_menu_link
+    @template core/settings_link_page_single
 
-    Action menu link.
+    Displays the admin tree as a list of grouped links.
 
     Example context (json):
     {
-        "text": "Example link text",
-        "showtext": true,
-        "url": "http://example.com/link"
+        "text": "Root of menu",
+        "key": "test0",
+        "display": true,
+        "children": []
     }
 }}
-{{^disabled}}
-    <a href="{{url}}" class="{{classes}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}{{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>{{#icon}}{{#pix}}{{key}}, {{component}}, {{title}}{{/pix}}{{/icon}}{{#showtext}}<span class="menu-action-text" id="actionmenuaction-{{instance}}">{{{text}}}</span>{{/showtext}}</a>
-{{/disabled}}
-{{#disabled}}
-    <span class="currentlink" role="menuitem">{{#icon}}{{#pix}}{{key}},{{component}},{{title}}{{/pix}}{{/icon}}{{{text}}}</span>
-{{/disabled}}
+{{#display}}
+    {{#action}}
+        <li><a href="{{{action}}}">{{text}}</a></li>
+    {{/action}}
+    {{^action}}
+        <li><strong>{{text}}</strong></li>
+    {{/action}}
+    {{#children.count}}
+        <li>
+            <ul class="unstyled indented-list">
+                {{#children}}
+                    {{> core/settings_link_page_single }}
+                {{/children}}
+            </ul>
+        </li>
+    {{/children.count}}
+{{/display}}

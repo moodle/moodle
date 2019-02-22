@@ -15,12 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/columns-2to1
+    @template core/modal_backdrop
 
-    Moodle columns-2to1 template.
+    Moodle modal backdrop template.
 
-    The purpose of this template is to render 2 columns where the first column has twice the width of the second one.
-    On mobile the second column collapses underneath the first.
+    The purpose of this template is to render a modal
 
     Classes required for JS:
     * none
@@ -29,16 +28,9 @@
     * none
 
     Context variables required for this template:
-    * col1content Column 1 contents.
-    * col2content Column 2 contents.
+    * none
 
     Example context (json):
-    {
-        "col1content": "<div class='alert alert-info'>1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In porttitor vulputate turpis, quis tempor arcu.</div>",
-        "col2content": "<div class='alert alert-success'>2. Vivamus ac orci in velit fringilla aliquam a a nisl. Cras luctus quam laoreet magna pulvinar aliquet.</div>"
-    }
+    {}
 }}
-<div class="row">
-    <div class="col-md-8">{{$ column1 }}{{{ col1content }}}{{/ column1 }}</div>
-    <div class="col-md-4">{{$ column2 }}{{{ col2content }}}{{/ column2 }}</div>
-</div>
+<div class="modal-backdrop hide" aria-hidden="true" data-region="modal-backdrop"></div>

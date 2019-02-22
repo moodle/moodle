@@ -9,8 +9,13 @@
         ]
     }
 }}
-<div>
+<div class="skiplinks">
 {{#links}}
-    <a class="sr-only sr-only-focusable" href="#{{{url}}}">{{{text}}}</a>
+    <a href="#{{{url}}}" class="skip">{{{text}}}</a>
 {{/links}}
 </div>
+{{#js}}
+require(['core/yui'], function(Y) {
+    M.util.init_skiplink(Y);
+});
+{{/js}}

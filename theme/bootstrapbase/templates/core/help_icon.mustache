@@ -15,24 +15,24 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/select_time
+    @template core/help_icon
 
-    Select time.
+    Help icon.
 
     Example context (json):
     {
-        "id": "test-id",
-        "name": "test-name",
-        "label": "Test label",
-        "options": [
-            {"name": "Option 1", "value": "1"},
-            {"name": "Option 2", "value": "2"}
-        ]
+        "title": "Help with something",
+        "url": "http://example.org/help",
+        "linktext": "",
+        "icon":{
+            "attributes": [
+                {"name": "class", "value": "iconhelp"},
+                {"name": "src", "value": "../../../pix/help.svg"},
+                {"name": "alt", "value": "Help icon"}
+            ]
+        }
     }
 }}
-<label for="{{id}}" class="sr-only">{{label}}</label>
-<select name="{{name}}" id="{{id}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}} class="form-control">
-    {{#options}}
-        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-    {{/options}}
-</select>
+<span class="helptooltip">
+    <a href="{{url}}" title={{#quote}}{{title}}{{/quote}} aria-haspopup="true" target="_blank">{{#icon}}{{>core/pix_icon}}{{/icon}}{{#linktext}}{{.}}{{/linktext}}</a>
+</span>

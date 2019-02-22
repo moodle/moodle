@@ -15,11 +15,12 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/notification_warning
+    @template core/columns-2to1
 
-    Moodle notification template.
+    Moodle columns-2to1 template.
 
-    The purpose of this template is to render a warning notification.
+    The purpose of this template is to render 2 columns where the first column has twice the width of the second one.
+    On mobile the second column collapses underneath the first.
 
     Classes required for JS:
     * none
@@ -28,17 +29,16 @@
     * none
 
     Context variables required for this template:
-    * message A cleaned string (use clean_text()) to display.
-    * extraclasses Additional classes to apply to the notification.
-    * closebutton Whether a close button should be displayed to dismiss the message.
-    * announce Whether the notification should be announced to screen readers.
+    * col1content Column 1 contents.
+    * col2content Column 2 contents.
 
     Example context (json):
-    { "message": "Your pants are on fire!", "closebutton": 1, "announce": 1, "extraclasses": "foo bar"}
+    {
+        "col1content": "<div class='alert alert-info'>1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In porttitor vulputate turpis, quis tempor arcu.</div>",
+        "col2content": "<div class='alert alert-success'>2. Vivamus ac orci in velit fringilla aliquam a a nisl. Cras luctus quam laoreet magna pulvinar aliquet.</div>"
+    }
 }}
-<div class="alert alert-warning alert-block fade in {{ extraclasses }}" {{!
-    }}{{# announce }} role="alert" data-aria-autofocus="true"{{/ announce }}{{!
-    }}>
-    {{# closebutton }}<button type="button" class="close" data-dismiss="alert">&times;</button>{{/ closebutton }}
-    {{{ message }}}
+<div class="row-fluid rtl-compatible">
+    <div class="span8">{{$ column1 }}{{{ col1content }}}{{/ column1 }}</div>
+    <div class="span4">{{$ column2 }}{{{ col2content }}}{{/ column2 }}</div>
 </div>

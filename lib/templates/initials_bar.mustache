@@ -73,24 +73,30 @@
          ]
     }
 }}
-<div class="initialbar {{class}}">
-    <span class="initialbarlabel">{{title}}</span>
-    {{#current}}
-        <a class="initialbarall page-item letter" href="{{url}}">{{all}}</a>
-    {{/current}}
-    {{^current}}
-        <div class="initialbarall letter page-item active">{{all}}</div>
-    {{/current}}
+<div class="initialbar {{class}} d-flex flex-wrap justify-content-center justify-content-md-start">
+    <span class="initialbarlabel mr-2">{{title}}</span>
 
-    <div class="initialbargroups">
+    <div class="initialbargroups d-flex flex-wrap justify-content-center justify-content-md-start">
+        <ul class="pagination pagination-sm">
+        {{#current}}
+            <li class="initialbarall page-item">
+                <a class="page-link" href="{{url}}">{{all}}</a>
+            </li>
+        {{/current}}
+        {{^current}}
+            <li class="initialbarall page-item active">
+                <a class="page-link">{{all}}</a>
+            </li>
+        {{/current}}
+        </ul>
         {{#group}}
-            <ul class="initialbargroup">
+            <ul class="pagination pagination-sm">
                 {{#letter}}
                     {{#selected}}
-                        <li><span class="letter page-item active {{name}}">{{name}}</span></li>
+                        <li class="page-item active {{name}}"><span class="page-link">{{name}}</span></li>
                     {{/selected}}
                     {{^selected}}
-                        <li><a class="letter page-item {{name}}" href="{{url}}">{{name}}</a></li>
+                        <li class="page-item {{name}}"><a class="page-link" href="{{url}}">{{name}}</a></li>
                     {{/selected}}
                 {{/letter}}
             </ul>
