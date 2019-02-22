@@ -1,57 +1,74 @@
-@core @core_admin
-Feature: Enable multiple accounts to have the same email address
-  In order to have multiple accounts registerd on the system with the same email address
+@core @core_admin @core_user
+Feature: Allowing multiple accounts to have the same email address
+  In order to manage user accounts
   As an admin
-  I need to enable multiple accounts to be registered with the same email address and verify it is applied
+  I need to be able to set whether to allow multiple accounts with the same email or not
 
-  Background:
-    Given I log in as "admin"
-
-  Scenario: Enable registration of multiple accounts with the same email address
+  Scenario Outline: Create a user with the same email as an existing user
     Given the following config values are set as admin:
-      | allowaccountssameemail | 1 |
-    When I navigate to "Users > Accounts > Add a new user" in site administration
+      | allowaccountssameemail | <allowsameemail> |
+    And the following "users" exist:
+      | username  | firstname | lastname | email           |
+      | s1        | John      | Doe      | s1@example.com  |
+    When I log in as "admin"
+    And I navigate to "Users > Accounts > Add a new user" in site administration
     And I set the following fields to these values:
-      | Username                        | testmultiemailuser1             |
-      | Choose an authentication method | Manual accounts                 |
-      | New password                    | test@User1                      |
-      | First name                      | Test                            |
-      | Surname                         | Multi1                          |
-      | Email address                   | testmultiemailuser@example.com  |
+      | Username      | s2      |
+      | First name    | Jane    |
+      | Surname       | Doe     |
+      | Email address | <email> |
+      | New password  | test    |
     And I press "Create user"
-    And I should see "Test Multi1"
-    And I press "Add a new user"
-    And I set the following fields to these values:
-      | Username                        | testmultiemailuser2             |
-      | Choose an authentication method | Manual accounts                 |
-      | New password                    | test@User2                      |
-      | First name                      | Test                            |
-      | Surname                         | Multi2                          |
-      | Email address                   | testmultiemailuser@example.com  |
-    And I press "Create user"
-    Then I should see "Test Multi2"
-    And I should not see "This email address is already registered"
+    Then I should <expect> "This email address is already registered."
 
-  Scenario: Disable registration of multiple accounts with the same email address
+    Examples:
+      | allowsameemail | email          | expect  |
+      | 0              | s1@example.com | see     |
+      | 0              | S1@EXAMPLE.COM | see     |
+      | 1              | s1@example.com | not see |
+      | 1              | S1@EXAMPLE.COM | not see |
+
+  Scenario Outline: Update a user with the same email as an existing user
     Given the following config values are set as admin:
-      | allowaccountssameemail | 0 |
-    When I navigate to "Users > Accounts > Add a new user" in site administration
-    And I set the following fields to these values:
-      | Username                        | testmultiemailuser1             |
-      | Choose an authentication method | Manual accounts                 |
-      | New password                    | test@User1                      |
-      | First name                      | Test                            |
-      | Surname                         | Multi1                          |
-      | Email address                   | testmultiemailuser@example.com  |
-    And I press "Create user"
-    And I should see "Test Multi1"
-    And I press "Add a new user"
-    And I set the following fields to these values:
-      | Username                        | testmultiemailuser2             |
-      | Choose an authentication method | Manual accounts                 |
-      | New password                    | test@User2                      |
-      | First name                      | Test                            |
-      | Surname                         | Multi2                          |
-      | Email address                   | testmultiemailuser@example.com  |
-    And I press "Create user"
-    Then I should see "This email address is already registered"
+      | allowaccountssameemail | <allowsameemail> |
+    And the following "users" exist:
+      | username  | firstname | lastname | email           |
+      | s1        | John      | Doe      | s1@example.com  |
+      | s2        | Jane      | Doe      | s2@example.com  |
+    When I log in as "admin"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I click on "Edit" "link" in the "Jane Doe" "table_row"
+    And I set the field "Email address" to "<email>"
+    And I press "Update profile"
+    Then I should <expect> "This email address is already registered."
+
+    Examples:
+      | allowsameemail | email          | expect  |
+      | 0              | s1@example.com | see     |
+      | 0              | S1@EXAMPLE.COM | see     |
+      | 1              | s1@example.com | not see |
+      | 1              | S1@EXAMPLE.COM | not see |
+      | 0              | S2@EXAMPLE.COM | not see |
+      | 1              | S2@EXAMPLE.COM | not see |
+
+  Scenario Outline: Update own user profile with the same email as an existing user
+    Given the following config values are set as admin:
+      | allowaccountssameemail | <allowsameemail> |
+    And the following "users" exist:
+      | username  | firstname | lastname | email           |
+      | s1        | John      | Doe      | s1@example.com  |
+      | s2        | Jane      | Doe      | s2@example.com  |
+    When I log in as "s2"
+    And I open my profile in edit mode
+    And I set the field "Email address" to "<email>"
+    And I press "Update profile"
+    Then I should <expect> "This email address is already registered."
+
+    Examples:
+      | allowsameemail | email          | expect  |
+      | 0              | s1@example.com | see     |
+      | 0              | S1@EXAMPLE.COM | see     |
+      | 1              | s1@example.com | not see |
+      | 1              | S1@EXAMPLE.COM | not see |
+      | 0              | S2@EXAMPLE.COM | not see |
+      | 1              | S2@EXAMPLE.COM | not see |
