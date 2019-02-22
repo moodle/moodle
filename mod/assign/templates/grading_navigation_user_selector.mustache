@@ -23,7 +23,7 @@
     * none
 
     Data attributes required for JS:
-    * data-action, data-assignmentid, data-groupid, data-region, data-currentuserid
+    * data-action, data-assignmentid, data-groupid, data-region
 
     Context variables required for this template:
     * see mod/assign/classes/output/grading_app.php
@@ -31,11 +31,10 @@
     This template uses ajax functionality, so it cannot be shown in the template library.
 }}
 <a href="#previous" data-action="previous-user">{{{larrow}}}</a>
-    <span>
-        <select data-action="change-user" data-currentuserid="{{currentuserid}}" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}">
-        </select>
+    <span data-region="input-field">
+        <select data-action="change-user" data-currentuserid="{{currentuserid}}" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}"></select>
     </span>
-    <a href="#next" data-action="next-user">{{{rarrow}}}</a>
+<a href="#next" data-action="next-user">{{{rarrow}}}</a>
 
 <br>
 
@@ -45,47 +44,41 @@
     </small>
 </span>
 
-<span data-region="configure-filters" id="filter-configuration-{{uniqid}}" class="well well-large p-2">
-    <form class="container-fluid">
-        <div class="row-fluid">
-            <label class="span4 text-right" for="filter-general-{{uniqid}}">
+<span data-region="configure-filters" id="filter-configuration-{{uniqid}}" class="card card-large p-2">
+    <form>
+        <span class="row px-3 py-1">
+            <label class="text-right w-25 p-2 m-0" for="filter-general-{{uniqid}}">
                 {{#str}}filter, mod_assign{{/str}}
             </label>
-            <div class="span8">
-                <select name="filter" class="custom-select span8" id="filter-general-{{uniqid}}">
-                {{#filters}}
-                    <option value="{{key}}" {{#active}}selected="selected"{{/active}}> {{name}} </option>
-                {{/filters}}
-                </select>
-            </div>
-        </div>
+            <select name="filter" class="custom-select w-50" id="filter-general-{{uniqid}}">
+            {{#filters}}
+                <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
+            {{/filters}}
+            </select>
+        </span>
         {{#hasmarkingallocation}}
-        <div class="row-fluid">
-            <label class="span4 text-right" for="filter-marker-{{uniqid}}">
+        <span class="row px-3 py-1">
+            <label class="text-right w-25 p-2 m-0" for="filter-marker-{{uniqid}}">
                 {{#str}}markerfilter, mod_assign{{/str}}
             </label>
-            <div class="span8">
-                <select name="markerfilter" class="custom-select span8" id="filter-marker-{{uniqid}}">
-                {{#markingallocationfilters}}
-                    <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
-                {{/markingallocationfilters}}
-                </select>
-            </div>
-        </div>
+            <select name="markerfilter" class="custom-select w-50" id="filter-marker-{{uniqid}}">
+            {{#markingallocationfilters}}
+                <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
+            {{/markingallocationfilters}}
+            </select>
+        </span>
         {{/hasmarkingallocation}}
         {{#hasmarkingworkflow}}
-        <div class="row-fluid">
-            <label class="span4 text-right" for="filter-workflow-{{uniqid}}">
+        <span class="row px-3 py-1">
+            <label class="text-right w-25 p-2 m-0" for="filter-workflow-{{uniqid}}">
                 {{#str}}workflowfilter, mod_assign{{/str}}
             </label>
-            <div class="span8">
-                <select name="workflowfilter" class="custom-select span8" id="filter-workflow-{{uniqid}}">
-                {{#markingworkflowfilters}}
-                    <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
-                {{/markingworkflowfilters}}
-                </select>
-            </div>
-        </div>
+            <select name="workflowfilter" class="custom-select w-50" id="filter-workflow-{{uniqid}}">
+            {{#markingworkflowfilters}}
+                <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
+            {{/markingworkflowfilters}}
+            </select>
+        </span>
         {{/hasmarkingworkflow}}
     </form>
 </span>

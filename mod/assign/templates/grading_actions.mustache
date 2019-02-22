@@ -30,6 +30,15 @@
 
     This template is initially hidden, and is only displayed after the current user info has been loaded.
 }}
+{{#showreview}}
+<div class="btn-toolbar collapse-buttons">
+    <div class="btn-group">
+        <button type="button" class="btn btn-secondary collapse-review-panel">{{#pix}} layout-expand-right, mod_assign, {{#str}} collapsereviewpanel, mod_assign {{/str}} {{/pix}}</button>
+        <button type="button" class="btn btn-secondary collapse-none active">{{#pix}} layout-default, mod_assign, {{#str}} defaultlayout, mod_assign {{/str}} {{/pix}}</button>
+        <button type="button" class="btn btn-secondary collapse-grade-panel">{{#pix}} layout-expand-left, mod_assign, {{#str}} collapsegradepanel, mod_assign {{/str}} {{/pix}}</button>
+    </div>
+</div>
+{{/showreview}}
 <form data-region="grading-actions-form" class="hide">
     <label>{{#str}}sendstudentnotifications, mod_assign{{/str}}
            <input type="checkbox" name="sendstudentnotifications"
@@ -40,17 +49,8 @@
     {{/helpicon}}
     <button type="submit" class="btn btn-primary" name="savechanges">{{#str}}savechanges{{/str}}</button>
     <button type="submit" class="btn btn-primary" name="saveandshownext">{{#str}}saveandnext{{/str}}</button>
-    <button type="submit" class="btn" name="resetbutton">{{#str}}reset{{/str}}</button>
+    <button type="submit" class="btn btn-secondary" name="resetbutton">{{#str}}reset{{/str}}</button>
 </form>
-{{#showreview}}
-<div class="btn-toolbar collapse-buttons">
-    <div class="btn-group">
-        <button class="btn collapse-review-panel">{{#pix}} layout-expand-right, mod_assign, {{#str}} collapsereviewpanel, mod_assign {{/str}} {{/pix}}</button>
-        <button class="btn collapse-none active">{{#pix}} layout-default, mod_assign, {{#str}} defaultlayout, mod_assign {{/str}} {{/pix}}</button>
-        <button class="btn collapse-grade-panel">{{#pix}} layout-expand-left, mod_assign, {{#str}} collapsegradepanel, mod_assign {{/str}} {{/pix}}</button>
-    </div>
-</div>
-{{/showreview}}
 {{#js}}
 require(['mod_assign/grading_actions'], function(GradingActions) {
     new GradingActions('[data-region="grade-actions"]');
