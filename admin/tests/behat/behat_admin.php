@@ -58,12 +58,8 @@ class behat_admin extends behat_base {
             $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', [get_string('administrationsite')]);
 
             // Search by label.
-            $searchbox = $this->find_field(get_string('query', 'admin'));
-            $searchbox->setValue($label);
-            $submitsearch = $this->find('css', 'form input[type=submit][name=search]');
-            $submitsearch->press();
-
-            $this->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+            $this->execute('behat_forms::i_set_the_field_to', [get_string('query', 'admin'), $label]);
+            $this->execute("behat_forms::press_button", get_string('search', 'admin'));
 
             // Admin settings does not use the same DOM structure than other moodle forms
             // but we also need to use lib/behat/form_field/* to deal with the different moodle form elements.
