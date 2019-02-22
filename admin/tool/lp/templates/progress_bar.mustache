@@ -20,7 +20,6 @@
     Moodle progress bar template for tool_lp.
 
     The purpose of this template is to render a progress bar with a brief description.
-    Inherits core/columns-1to2.
 
     Classes required for JS:
     * none
@@ -41,17 +40,8 @@
     }
 
 }}
-<div class="row-fluid rtl-compatible">
-    <div class="span4">
-        <div class="progresstext">
-            {{$progresstext}}{{progresstextvalue}}{{/progresstext}}
-        </div>
-    </div>
-    <div class="span8">
-        <div class="progress">
-            <div class="bar" style="width: {{$percentage}}{{percentagevalue}}{{/percentage}}%;" role="progressbar" aria-valuenow="{{$percentage}}{{percentagevalue}}{{/percentage}}" aria-valuemin="0" aria-valuemax="100">
-                {{$percentlabel}}{{percentlabelvalue}}{{/percentlabel}}
-            </div>
-        </div>
-    </div>
+<div id="progress-{{uniqid}}">
+    {{$progresstext}}{{progresstextvalue}}{{/progresstext}}
 </div>
+<progress class="progress" aria-describedby="progress-{{uniqid}}"
+    value="{{$percentage}}{{percentagevalue}}{{/percentage}}" max="100"></progress>
