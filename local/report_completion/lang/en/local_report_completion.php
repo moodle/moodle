@@ -81,3 +81,5 @@ $string['hidesuspendedusers'] = 'Remove suspended users';
 $string['compfrom'] = 'Start date';
 $string['compto'] = 'End date';
 $string['userlink'] = 'Display users';
+$string['used'] = 'Used';
+$string['unused'] = 'Unused';

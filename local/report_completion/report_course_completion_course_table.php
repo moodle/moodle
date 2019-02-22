@@ -128,16 +128,16 @@ class local_report_course_completion_course_table extends table_sql {
                 $licensechart->set_doughnut(true); // Calling set_doughnut(true) we display the chart as a doughnut.
                 $series = new \core\chart_series('', array($licensesallocated, $licensesunused));
                 $licensechart->add_series($series);
-                $licensechart->set_labels(array(get_string('used', 'local_report_license') . " (" . $licensesallocated . ")",
-                                                get_string('unused', 'local_report_license') . " (" . $licensesunused . ")"));
+                $licensechart->set_labels(array(get_string('used', 'local_report_completion') . " (" . $licensesallocated . ")",
+                                                get_string('unused', 'local_report_completion') . " (" . $licensesunused . ")"));
                 return $output->render($licensechart, false);
             } else {
                 return;
             }
         } else {
             if (!empty($licenseallocated) || $DB->get_record('iomad_courses', array('courseid' => $course->id, 'licensed' => 1))) {
-                return get_string('used', 'local_report_license') . " = " . $licensesallocated - $enrolled . "\n" .
-                      get_string('unused', 'local_report_license') . " = $enrolled\n";
+                return get_string('used', 'local_report_completion') . " = " . $licensesallocated - $enrolled . "\n" .
+                      get_string('unused', 'local_report_completion') . " = $enrolled\n";
             } else {
                 return;
             }
