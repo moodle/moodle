@@ -15,10 +15,29 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Settings.
+    @template core_admin/settings
+
+    Admin settings form template.
+
+    Context variables required for this template:
+    * actionurl - url to submit to
+    * params - list of parameters containing name and value
+    * return - page to return to
+    * title - form title
+    * settings - raw html for settings
+    * showsave - true if we need save buttons
+
+    Example context (json):
+    {
+        "actionurl": "/",
+        "return": "/",
+        "title": "Settings Form",
+        "settings": "RAW HTML",
+        "showsave": true
+    }
 }}
 <form action="{{actionurl}}" method="post" id="adminsettings">
-    <div class="settingsform">
+    <div class="settingsform clearfix">
         {{#params}}
             <input type="hidden" name="{{name}}" value="{{value}}">
             <input type="hidden" name="action" value="save-settings">
@@ -30,10 +49,8 @@
         {{/title}}
         {{{settings}}}
         {{#showsave}}
-            <div class="row">
-                <div class="offset-sm-3 col-sm-3">
-                    <button type="submit" class="btn btn-primary">{{#str}}savechanges, admin{{/str}}</button>
-                </div>
+            <div class="form-buttons">
+                <input type="submit" class="form-submit" value={{#quote}}{{#str}}savechanges, admin{{/str}}{{/quote}}>
             </div>
         {{/showsave}}
     </div>

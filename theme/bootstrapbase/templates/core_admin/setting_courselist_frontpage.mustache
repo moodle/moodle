@@ -15,17 +15,35 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Setting configduration.
+    @template core_admin/setting_courselist_frontpage
+
+    Admin courselist_frontpage setting template.
+
+    Context variables required for this template:
+    * selects list of select objects containing id, name, key and options.
+      options is another nested list of items containing name, value and selected
+
+    Example context (json):
+    {
+        "selects": [
+            {
+                "id": "i1",
+                "name": "s1",
+                "key": "k1",
+                "options": [
+                    { "name": "Fish", "value": "snapper", "selected": true }
+                ]
+            }
+        ]
+    }
 }}
-<div class="form-duration defaultsnext">
-    <div class="form-inline">
-        <input type="text" size="5" id="{{id}}v" name="{{name}}[v]" value="{{value}}" class="form-control text-ltr">
-        <label class="sr-only" for="{{id}}u">{{#str}}durationunits, admin{{/str}}</label>
-        <select id="{{id}}u" name="{{name}}[u]" class="form-control">
+<div class="form-group">
+    {{#selects}}
+        <select id="{{id}}{{key}}" name="{{name}}[]" class="form-select">
             {{#options}}
                 <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
             {{/options}}
         </select>
-    </div>
+        <br>
+    {{/selects}}
 </div>
-

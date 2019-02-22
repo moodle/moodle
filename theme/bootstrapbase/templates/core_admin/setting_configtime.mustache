@@ -15,34 +15,42 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_admin/setting_configmultiselect
+    @template core_admin/setting_configtime
 
-    Admin multiselect setting template.
+    Admin time setting template.
 
     Context variables required for this template:
     * name - form element name
     * id - element id
-    * size - element size
-    * options - list of options containing name, value, selected
+    * hours - list of valid hour options containing name, value, selected
+    * minutes - list of valid minute options containing name, value, selected
 
     Example context (json):
     {
         "name": "test",
         "id": "test0",
-        "size": "3",
-        "options": [ { "name": "Option 1", "value": "V", "selected": true },
-                     { "name": "Option 2", "value": "V", "selected": true } ]
+        "minutes": [
+            { "name": "00", "value": "0", "selected": true },
+            { "name": "01", "value": "1", "selected": false }
+        ],
+        "hours": [
+            { "name": "1", "value": "1", "selected": true },
+            { "name": "2", "value": "2", "selected": false }
+        ]
     }
 }}
-{{!
-    Setting configmultiselect.
-}}
-<div class="form-select">
-    <input type="hidden" name="{{name}}[xxxxx]" value="1">
-    <select id="{{id}}" name="{{name}}[]" size="{{size}}" class="form-control" multiple>
-        {{#options}}
+<div class="form-time defaultsnext text-ltr">
+    <label class="accesshide" for="{{id}}h">{{#str}}hours{{/str}}</label>
+    <select id="{{id}}h" name="{{name}}[h]">
+        {{#hours}}
             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-        {{/options}}
+        {{/hours}}
+    </select>:
+    <label class="accesshide" for="{{id}}m">{{#str}}minutes{{/str}}</label>
+    <select id="{{id}}m" name="{{name}}[m]">
+        {{#minutes}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+        {{/minutes}}
     </select>
 </div>
 

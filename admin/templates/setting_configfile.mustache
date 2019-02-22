@@ -13,29 +13,6 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-}}{{!
-    @template core_admin/setting_configfile
-
-    Admin file setting template.
-
-    Context variables required for this template:
-    * name - form element name
-    * id - element id
-    * size - size of the field
-    * readonly - Make the field readonly
-    * value - value
-    * showvalidity - Show a green check if the path is readable
-    * valid - True if the path is readable
-
-    Example context (json):
-    {
-        "name": "test",
-        "value": "/my-super-secret-path/file",
-        "id": "test0",
-        "readonly": true,
-        "showvalidity": true,
-        "valid": false
-    }
 }}
 {{!
     @template core_admin/setting_configfile
@@ -61,15 +38,20 @@
         "valid": false
     }
 }}
+{{!
+    Setting configfile.
+}}
 <div class="form-file defaultsnext">
-    <input type="text" name="{{name}}" id="{{id}}" size="{{size}}" value="{{value}}" class="text-ltr" {{#readonly}}readonly{{/readonly}}>
-    {{#showvalidity}}
-        {{#valid}}
-            <span class="pathok">&#x2714;</span>
-        {{/valid}}
-        {{^valid}}
-            <span class="patherror">&#x2718;</span>
-        {{/valid}}
-    {{/showvalidity}}
+    <div class="form-inline">
+        <input type="text" name="{{name}}" id="{{id}}" size="{{size}}" value="{{value}}" class="form-control text-ltr" {{#readonly}}readonly{{/readonly}}>
+        {{#showvalidity}}
+            {{#valid}}
+                <span class="text-success">&#x2714;</span>
+            {{/valid}}
+            {{^valid}}
+                <span class="text-danger">&#x2718;</span>
+            {{/valid}}
+        {{/showvalidity}}
+    </div>
 </div>
 

@@ -15,32 +15,28 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_admin/setting_description
+    @template core_admin/setting_configtext
 
-    Admin setting description template.
+    Admin text setting template.
 
     Context variables required for this template:
-    * labelfor - id of the form element
-    * title - Setting title
-    * name - Setting name
+    * name - form element name
+    * id - element id
+    * value - element value
+    * size - element size
+    * forceltr - always display as ltr
+    * attributes - list of additional attributes containing name, value
 
     Example context (json):
     {
-        "title": "Setting title",
-        "name": "Name",
-        "description": "Description goes here"
+        "name": "test",
+        "id": "test0",
+        "value": "A tall, dark stranger will have more fun than you.",
+        "size": "21",
+        "forceltr": false,
+        "attributes": [ { "name": "readonly", "value": "readonly" } ]
     }
 }}
-{{!
-    Setting description.
-}}
-<div class="form-item row">
-    <div class="form-label col-sm-3 text-sm-right">
-        <label>
-            {{{title}}}
-        </label>
-    </div>
-    <div class="form-setting col-sm-9">
-        <div class="form-description">{{{description}}}</div>
-    </div>
+<div class="form-text defaultsnext">
+    <input type="text" name="{{name}}" value="{{value}}" size="{{size}}" id="{{id}}" class="{{#forceltr}}text-ltr{{/forceltr}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
 </div>

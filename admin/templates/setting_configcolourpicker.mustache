@@ -13,26 +13,6 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-}}{{!
-    @template core_admin/setting_configcolourpicker
-
-    Admin setting colour picker template.
-
-    Context variables required for this template:
-    * icon - optional icon context (see pix_icon)
-    * name - element name
-    * id - element id
-    * value - element value
-    * haspreviewconfig - show preview of selected color
-
-    Example context (json):
-    {
-        "icon": false,
-        "name": "name0",
-        "id": "id0",
-        "value": "#555655",
-        "haspreviewconfig": false
-    }
 }}
 {{!
     @template core_admin/setting_configcolourpicker
@@ -55,13 +35,16 @@
         "haspreviewconfig": false
     }
 }}
+{{!
+    Setting configcolourpicker.
+}}
 <div class="form-colourpicker defaultsnext">
     <div class="admin_colourpicker clearfix">
         {{#icon}}
             {{>core/pix_icon}}
         {{/icon}}
     </div>
-    <input type="text" name="{{name}}" id="{{id}}" value="{{value}}" size="12" class="text-ltr">
+    <input type="text" name="{{name}}" id="{{id}}" value="{{value}}" size="12" class="form-control text-ltr">
     {{#haspreviewconfig}}
         <input type="button" id="{{id}}_preview" value={{#quote}}{{#str}}preview{{/str}}{{/quote}} class="admin_colourpicker_preview">
     {{/haspreviewconfig}}

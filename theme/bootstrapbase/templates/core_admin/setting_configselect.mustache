@@ -15,21 +15,30 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Setting configmultiselect with optgroup support.
+    @template core_admin/setting_configselect
+
+    Admin select setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * id - element id
+    * options - list of options containing name, value, selected
+
+    Example context (json):
+    {
+        "name": "test",
+        "id": "test0",
+        "options": [
+            { "name": "Option 1", "value": "V", "selected": true },
+            { "name": "Option 2", "value": "V", "selected": true }
+        ]
+    }
 }}
-<div class="form-select">
-    <input type="hidden" name="{{name}}[xxxxx]" value="1">
-    <select id="{{id}}" name="{{name}}[]" size="{{size}}" class="form-control" multiple>
-    {{#options}}
-        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-    {{/options}}
-    {{#optgroups}}
-            <optgroup label="{{label}}">
-                {{#options}}
-                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-                {{/options}}
-            </optgroup>
-        {{/optgroups}}
+<div class="form-select defaultsnext">
+    <select id="{{id}}" name="{{name}}">
+        {{#options}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+        {{/options}}
     </select>
 </div>
 

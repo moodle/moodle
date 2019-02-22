@@ -15,21 +15,31 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Setting configselect with optgroup support.
+    @template core_admin/setting_description
+
+    Admin setting description template.
+
+    Context variables required for this template:
+    * labelfor - id of the form element
+    * title - Setting title
+    * name - Setting name
+
+    Example context (json):
+    {
+        "title": "Setting title",
+        "name": "Name",
+        "description": "Description goes here"
+    }
 }}
-<div class="form-select defaultsnext">
-    <select id="{{id}}" name="{{name}}" class="custom-select">
-        {{#options}}
-            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-        {{/options}}
-        {{#optgroups}}
-            <optgroup label="{{label}}">
-                {{#options}}
-                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-                {{/options}}
-            </optgroup>
-        {{/optgroups}}
-    </select>
+{{!
+    Setting description.
+}}
+<div class="form-item form-horizontal clearfix">
+    <div class="form-label">
+        <label>
+            {{{title}}}
+        </label>
+        <span class="form-shortname ">{{{name}}}</span>
+    </div>
+    <div class="controls felement fstatic">{{{description}}}</div>
 </div>
-
-

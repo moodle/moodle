@@ -15,54 +15,48 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_admin/setting_configmultiselect_optgroup
+    @template core_admin/setting_configselect_optgroup
 
-    Admin multiselect setting template with optgroup support.
+    Admin select with optgroup setting template.
 
     Context variables required for this template:
     * name - form element name
     * id - element id
-    * size - element size
-    * options - list of options not grouped
+    * options - list of options (not grouped)
     * optgroups - list of options grouped containing the group label and for each option: name, value, selected
 
     Example context (json):
     {
         "name": "test",
         "id": "test0",
-        "size": "3",
         "options": [
             { "name": "Option 1", "value": "V", "selected": false },
-            { "name": "Option 2", "value": "V", "selected": true }
+            { "name": "Option 2", "value": "V", "selected": false }
         ],
         "optgroups": [
             {
                 "label": "Group 1",
                 "options": [
-                    { "name": "Option 3", "value": "V", "selected": false },
-                    { "name": "Option 4", "value": "V", "selected": true }
+                    { "name": "Option 3", "value": "V", "selected": true },
+                    { "name": "Option 4", "value": "V", "selected": false }
                 ]
             },
             {
                 "label": "Group 2",
                 "options": [
                     { "name": "Option 5", "value": "V", "selected": false },
-                    { "name": "Option 6", "value": "V", "selected": true }
+                    { "name": "Option 6", "value": "V", "selected": false }
                 ]
             }
         ]
     }
 }}
-{{!
-    Setting configmultiselect with optgroup support.
-}}
-<div class="form-select">
-    <input type="hidden" name="{{name}}[xxxxx]" value="1">
-    <select id="{{id}}" name="{{name}}[]" size="{{size}}" class="form-control" multiple>
-    {{#options}}
-        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-    {{/options}}
-    {{#optgroups}}
+<div class="form-select defaultsnext">
+    <select id="{{id}}" name="{{name}}">
+        {{#options}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+        {{/options}}
+        {{#optgroups}}
             <optgroup label="{{label}}">
                 {{#options}}
                     <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>

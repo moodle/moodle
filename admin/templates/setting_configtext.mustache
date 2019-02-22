@@ -13,28 +13,6 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-}}{{!
-    @template core_admin/setting_configtext
-
-    Admin text setting template.
-
-    Context variables required for this template:
-    * name - form element name
-    * id - element id
-    * value - element value
-    * size - element size
-    * forceltr - always display as ltr
-    * attributes - list of additional attributes containing name, value
-
-    Example context (json):
-    {
-        "name": "test",
-        "id": "test0",
-        "value": "A tall, dark stranger will have more fun than you.",
-        "size": "21",
-        "forceltr": false,
-        "attributes": [ { "name": "readonly", "value": "readonly" } ]
-    }
 }}
 {{!
     @template core_admin/setting_configtext
@@ -59,6 +37,9 @@
         "attributes": [ { "name": "readonly", "value": "readonly" } ]
     }
 }}
+{{!
+    Setting configtext.
+}}
 <div class="form-text defaultsnext">
-    <input type="text" name="{{name}}" value="{{value}}" size="{{size}}" id="{{id}}" class="{{#forceltr}}text-ltr{{/forceltr}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
+    <input type="text" name="{{name}}" value="{{value}}" size="{{size}}" id="{{id}}" class="form-control {{#forceltr}}text-ltr{{/forceltr}}">
 </div>
