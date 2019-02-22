@@ -979,15 +979,24 @@ function signup_validate_data($data, $files) {
     if (! validate_email($data['email'])) {
         $errors['email'] = get_string('invalidemail');
 
-    } else if ($DB->record_exists('user', array('email' => $data['email']))) {
-        $errors['email'] = get_string('emailexists') . ' ' .
-                get_string('emailexistssignuphint', 'moodle',
-                        html_writer::link(new moodle_url('/login/forgot_password.php'), get_string('emailexistshintlink')));
+    } else if (empty($CFG->allowaccountssameemail)) {
+        // Make a case-insensitive query for the given email address.
+        $select = $DB->sql_equal('email', ':email', false) . ' AND mnethostid = :mnethostid';
+        $params = array(
+            'email' => $data['email'],
+            'mnethostid' => $CFG->mnet_localhost_id,
+        );
+        // If there are other user(s) that already have the same email, show an error.
+        if ($DB->record_exists_select('user', $select, $params)) {
+            $forgotpasswordurl = new moodle_url('/login/forgot_password.php');
+            $forgotpasswordlink = html_writer::link($forgotpasswordurl, get_string('emailexistshintlink'));
+            $errors['email'] = get_string('emailexists') . ' ' . get_string('emailexistssignuphint', 'moodle', $forgotpasswordlink);
+        }
     }
     if (empty($data['email2'])) {
         $errors['email2'] = get_string('missingemail');
 
-    } else if ($data['email2'] != $data['email']) {
+    } else if (core_text::strtolower($data['email2']) != core_text::strtolower($data['email'])) {
         $errors['email2'] = get_string('invalidemail');
     }
     if (!isset($errors['email'])) {
