@@ -230,17 +230,18 @@ if (empty($courseid)) {
         echo html_writer::end_tag('div');
         echo html_writer::end_tag('div');
         echo html_writer::end_tag('div');
+        echo html_writer::start_tag('div', array('class' => 'reporttablecontrols'));
         $mform = new iomad_course_search_form($url, $params);
         $mform->set_data($params);
-        $mform->display();
 
         // Display the control buttons.
         $alluserslink = new moodle_url($url, array(
             'courseid' => 1,
             'departmentid' => $departmentid,
         ));
+        echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
         echo $output->single_button($alluserslink, get_string("allusers", 'local_report_completion'));
-
+        echo html_writer::end_tag('div');
         // Also for suspended user controls.
         if (!$showsuspended) {
             $suspendeduserslink = new moodle_url($url, array('departmentid' => $departmentid,
@@ -249,7 +250,9 @@ if (empty($courseid)) {
                                                              'showhistoric' => $showhistoric,
                                                              'showsuspended' => 1
                                                             ));
+            echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
             echo $output->single_button($suspendeduserslink, get_string("showsuspendedusers", 'local_report_completion'));
+            echo html_writer::end_tag('div');
         } else {
             $suspendeduserslink = new moodle_url($url, array('departmentid' => $departmentid,
                                                              'showchart' => 0,
@@ -257,8 +260,14 @@ if (empty($courseid)) {
                                                              'showhistoric' => $showhistoric,
                                                              'showsuspended' => 0
                                                             ));
+            echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
             echo $output->single_button($suspendeduserslink, get_string("hidesuspendedusers", 'local_report_completion'));
+            echo html_writer::end_tag('div');
         }
+        echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+        $mform->display();
+        echo html_writer::end_tag('div');
+        echo html_writer::end_tag('div');
     }
 
     // Deal with any course searches.

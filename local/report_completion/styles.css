@@ -30,3 +30,32 @@ div#piechart {
 #page-local-report_completion-index .chart-area{
     max-width: 400px;
 }
+
+.reporttablecontrols {
+    display: inline-block;
+}
+
+.reporttablecontrolscontrol {
+    padding-top: 4px;
+    float: left;
+}
+
+.reporttablecontrolscontrol .singlebutton {
+    padding-top: 1px;
+    padding-right: 5px;
+}
+
+ .reporttablecontrolscontrol #id_searchbutton {
+    color: #212529;
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+    padding-right: 3px;
+}
+
+ .reporttablecontrolscontrol div.col-md-9.form-inline.felement {
+     display: contents
+ }
+ 
+  .reporttablecontrolscontrol  div.col-md-3 {
+      display: none
+  }

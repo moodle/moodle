@@ -59,7 +59,7 @@ class local_report_emails_table extends table_sql {
     public function col_created($row) {
         global $CFG;
 
-        return date($CFG->iomad_date_format, $row->created);
+        return date($CFG->iomad_date_format. " H:i:s", $row->created);
     }
 
     /**
@@ -70,7 +70,7 @@ class local_report_emails_table extends table_sql {
     public function col_due($row) {
         global $CFG;
 
-        return date($CFG->iomad_date_format, $row->due);
+        return date($CFG->iomad_date_format. " H:i:s", $row->due);
     }
 
     /**
@@ -84,7 +84,7 @@ class local_report_emails_table extends table_sql {
         if (empty($row->sent)) {
             return get_string('never');
         } else {
-            return date($CFG->iomad_date_format, $row->sent);
+            return date($CFG->iomad_date_format. " H:i:s", $row->sent);
         }
     }
 
