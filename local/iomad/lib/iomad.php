@@ -392,14 +392,14 @@ class iomad {
             if ($DB->get_record( 'company_course', array('courseid' => $id,
                                                          'companyid' => $mycompanyid) ) ) {
                 // Include as tied to company.
-                $iomadcoursess[ $id ] = $course;
+                $iomadcourses[ $id ] = $course;
             } else if ($DB->get_record( 'iomad_courses', array('courseid' => $id,
                                                               'shared' => 1) ) ) {
                 // Include as open shared.
-                $iomadcoursess[ $id ] = $course;
+                $iomadcourses[ $id ] = $course;
             } else if (!$DB->get_records('company_course', array('courseid' => $id))) {
                 // Include as not a companycourse.
-                $iomadcoursess[ $id ] = $course;
+                $iomadcourses[ $id ] = $course;
             }
         }
 

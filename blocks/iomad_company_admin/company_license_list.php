@@ -104,6 +104,8 @@ if ($delete and confirm_sesskey()) {              // Delete a selected company, 
                                                                                         'objectid' => $license->parentid,
                                                                                         'other' => $eventother));
         $event->trigger();
+
+        redirect($returnurl, get_string(licensedeletedok', 'block_iomad_company_admin'), null, \core\output\notification::NOTIFY_SUCCESS);
     }
 }
 

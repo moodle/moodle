@@ -154,12 +154,14 @@ if ($mform->is_cancelled()) {
         $data->companyid = $companyid;
         $classroomid = $DB->insert_record('classroom', $data);
         $data->id = $classroomid;
+        $message = get_string('classroomaddedok', 'block_iomad_company_admin');
     } else {
         $data->id = $classroomid;
         $DB->update_record('classroom', $data);
+        $message = get_string('classroomupdatedok', 'block_iomad_company_admin');
     }
 
-    redirect($templatelist);
+    redirect($templatelist, $message, null, \core\output\notification::NOTIFY_SUCCESS);
 }
 
 echo $OUTPUT->header();

@@ -447,6 +447,7 @@ if ($mform->is_cancelled()) {
             $templateid = $DB->insert_record('email_template', $data);
         }
         $data->id = $templateid;
+        $redirectmessage = get_string('templatecreatedok', 'local_email');
     } else {
         $data->id = $templateid;
         $data->body = $data->body_editor['text'];
@@ -457,6 +458,7 @@ if ($mform->is_cancelled()) {
         } else {
             $DB->update_record('email_template', $data);
         }
+        $redirectmessage = get_string('templateupdatedok', 'local_email');
     }
     if (!empty($data->companylogo)) {
         file_save_draft_area_files($data->companylogo,
@@ -467,7 +469,7 @@ if ($mform->is_cancelled()) {
                                    array('subdirs' => 0, 'maxbytes' => 150 * 1024, 'maxfiles' => 1));
     }
 
-    redirect($templatelist);
+    redirect($templatelist, $redirectmessage, null, \core\output\notification::NOTIFY_SUCCESS);
 }
 
 echo $OUTPUT->header();

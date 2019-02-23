@@ -23,7 +23,7 @@ require_once('lib.php');
 $action   = optional_param('action', '', PARAM_ALPHA);
 $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 
-$redirect = $CFG->wwwroot.'/blocks/iomad_company_admin/company_user_profiles.php';
+$redirect = new moodle_url($CFG->wwwroot.'/blocks/iomad_company_admin/company_user_profiles.php');
 
 $strchangessaved    = get_string('changessaved');
 $strcancelled       = get_string('cancelled');
@@ -63,7 +63,7 @@ switch ($action) {
         if (confirm_sesskey()) {
             profile_move_field($id, $dir);
         }
-        redirect($redirect);
+        redirect($redirect, get_string('eventuserinfofieldupdated'), null, \core\output\notification::NOTIFY_SUCCESS);
         break;
     case 'deletefield':
         $id      = required_param('id', PARAM_INT);
@@ -72,7 +72,7 @@ switch ($action) {
         $datacount = $DB->count_records('user_info_data', array('fieldid' => $id));
         if (data_submitted() and ($confirm and confirm_sesskey()) or $datacount === 0) {
             profile_delete_field($id);
-            redirect($redirect);
+            redirect($redirect, get_string('eventuserinfofielddeleted'), null, \core\output\notification::NOTIFY_SUCCESS);
         }
 
         // Ask for confirmation.

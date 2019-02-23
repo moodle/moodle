@@ -264,10 +264,9 @@ if ($mform->is_cancelled()) {
 
     if (isset($data->submitandviewbutton)) {
         // We are going to the course instead.
-        redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
+        redirect(new moodle_url('/course/view.php', array('id' => $course->id), get_string('coursecreatedok', 'block_iomad_company_admin'), null, \core\output\notification::NOTIFY_SUCCESS));
     } else {
-        $companylist->param('noticeok', get_string('coursecreatedok', 'block_iomad_company_admin'));
-        redirect($companylist);
+        redirect($companylist, get_string('coursecreatedok', 'block_iomad_company_admin'), null, \core\output\notification::NOTIFY_SUCCESS));
     }
 } else {
 

@@ -331,7 +331,7 @@ if ($mform->is_cancelled()) {
             $company = new company($companydetails->id);
             $company->assign_parent_managers($companydetails->parentid);
         }
-        $companylist->param('noticeok', get_string('companycreatedok', 'block_iomad_company_admin'));
+        $redirectmessage = get_string('companycreatedok', 'block_iomad_company_admin');
 
         // Deal with any assigned templates.
         if (!empty($data->templates)) {
@@ -425,7 +425,7 @@ if ($mform->is_cancelled()) {
         if (company_user::is_company_user()) {
             company_user::reload_company();
         }
-        $companylist->param('noticeok', get_string('companysavedok', 'block_iomad_company_admin'));
+        $redirectmessage = get_string('companysavedok', 'block_iomad_company_admin');
     }
 
     $company = new company($data->id);
@@ -507,7 +507,7 @@ if ($mform->is_cancelled()) {
             $DB->set_field('company_course', 'autoenrol', true, array('companyid' => $companyid, 'courseid' => $autoid));
         }
     }
-    redirect($companylist);
+    redirect($companylist, $redirectmessage, \core\output\notification::NOTIFY_SUCCESS);
 }
 
 echo $OUTPUT->header();

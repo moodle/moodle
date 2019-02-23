@@ -2798,7 +2798,7 @@ class company {
 
         $oldcompany = json_decode( $event->other['oldcompany']);
 
-        if ($CFG->commerce_enable_external) {
+        if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
             // Fire off the payload to the external site.
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
             iomad_commerce::update_company($company, $oldcompany);

@@ -579,10 +579,9 @@ if ($mform->is_cancelled()) {
     }
 
     if (isset($data->submitandback)) {
-        $dashboardurl->param('noticeok', get_string('usercreated', 'block_iomad_company_admin'));
-        redirect($dashboardurl);
+        redirect($dashboardurl, get_string('usercreated', 'block_iomad_company_admin'), null, \core\output\notification::NOTIFY_SUCCESS);
     } else {
-        redirect($linkurl."?createdok=1");
+        redirect($linkurl, get_string('usercreated', 'block_iomad_company_admin'), null, \core\output\notification::NOTIFY_SUCCESS);
     }
 }
 echo $output->header();

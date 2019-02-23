@@ -76,10 +76,12 @@ $string['signature'] = 'Signature';
 $string['signatureseparator'] = "<p>--</p>";
 $string['subject'] = 'Subject';
 $string['template_list_title'] = 'Email Templates';
+$string['templateaddedok'] = 'Template was successfully added.';
 $string['templatesetdeleted'] = 'Template set deleted successfully';
 $string['templatesetname'] = 'Template set name';
 $string['templatesetname_help'] = 'This is name which the template set will be referenced by.';
 $string['templatetype'] = 'Template type';
+$string['templateupdatedok'] = 'Template was successfully updated.';
 $string['toother'] = 'Manual To address';
 $string['weekly'] = 'Weekly';
 

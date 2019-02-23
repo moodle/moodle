@@ -425,11 +425,7 @@ if ($licenseinfo = $DB->get_record('companylicense', array('id' => $licenseid)))
 }
 
 if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
-    if ( $returnurl ) {
-        redirect($returnurl);
-    } else {
-        redirect(new moodle_url('/blocks/iomad_company_admin/company_license_list.php'));
-    }
+    redirect(new moodle_url('/blocks/iomad_company_admin/company_license_list.php'));
 } else {
     if ( $data = $mform->get_data() ) {
 	global $DB, $USER;
@@ -498,6 +494,7 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
                                                                                             'userid' => $USER->id,
                                                                                             'objectid' => $licenseid,
                                                                                             'other' => $eventother));
+            $returnmessage = get_string('licensecreatedok', 'block_iomad_company_admin');
         } else {
             $eventother['oldcourses'] = json_encode($oldcourses);
             if ($currlicensedata->program != $data->program) {
@@ -513,9 +510,10 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
                                                                                             'userid' => $USER->id,
                                                                                             'objectid' => $licenseid,
                                                                                             'other' => $eventother));
+            $returnmessage = get_string('licenseupdatedok', 'block_iomad_company_admin');
         }
         $event->trigger();
-        redirect(new moodle_url('/blocks/iomad_company_admin/company_license_list.php'));
+        redirect(new moodle_url('/blocks/iomad_company_admin/company_license_list.php'), $returnmessage, null, \core\output\notification::NOTIFY_SUCCESS);
     }
 
     // Display the form.

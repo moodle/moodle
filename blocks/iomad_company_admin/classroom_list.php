@@ -81,7 +81,7 @@ if ($delete and confirm_sesskey()) {
 
         if ( $DB->delete_records('classroom', array('id' => $delete)) ) {
             $transaction->allow_commit();
-            redirect($returnurl);
+            redirect($returnurl, get_string('classroomdeletedok', 'block_iomad_company_admin'), null, \core\output\notification::NOTIFY_SUCCESS);
         } else {
             $transaction->rollback();
             echo $OUTPUT->header();

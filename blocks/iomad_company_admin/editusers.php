@@ -41,15 +41,6 @@ $usertype = optional_param('usertype', 'a', PARAM_ALPHANUM);
 
 $params = array();
 
-if ($delete) {
-    $params['delete'] = $delete;
-}
-if ($suspend) {
-    $params['suspend'] = $suspend;
-}
-if ($unsuspend) {
-    $params['suspend'] = $unsuspend;
-}
 if ($showsuspended) {
     $params['showsuspended'] = $showsuspended;
 }
@@ -215,7 +206,7 @@ $idlist = array();
 if (!empty($fieldnames)) {
     $fieldids = array();
     foreach ($fieldnames as $id => $fieldname) {
-        if ($fields[$id]->datatype == "menu") {
+        if (!empty($fields[$id]->datatype) && $fields[$id]->datatype == "menu") {
             $paramarray = explode("\n", $fields[$id]->param1);
             if (!empty($paramarray[${$fieldname}])) {
                 ${$fieldname} = $paramarray[${$fieldname}];
@@ -263,8 +254,6 @@ if (empty($CFG->loginhttps)) {
 } else {
     $securewwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
 }
-
-$returnurl = "$CFG->wwwroot/blocks/iomad_company_admin/editusers.php";
 
 if ($confirmuser and confirm_sesskey()) {
     if (!$user = $DB->get_record('user', array('id' => $confirmuser))) {
@@ -335,6 +324,8 @@ if ($confirmuser and confirm_sesskey()) {
                                                                                      'userid' => $USER->id,
                                                                                      'other' => $eventother));
         $event->trigger();
+        $returnmessage = get_string('userdeletedok', 'block_iomad_company_admin');
+        redirect($returnurl, $returnmessage, null, \core\output\notification::NOTIFY_SUCCESS);
 
     }
 
@@ -375,7 +366,8 @@ if ($confirmuser and confirm_sesskey()) {
                                                                                        'other' => $eventother));
         $event->trigger();
 
-        $params['suspend'] = 0;
+        $returnmessage = get_string('usersuspendedok', 'block_iomad_company_admin');
+        redirect($returnurl, $returnmessage, null, \core\output\notification::NOTIFY_SUCCESS);
     }
 
 } else if ($unsuspend and confirm_sesskey()) {
@@ -422,7 +414,8 @@ if ($confirmuser and confirm_sesskey()) {
                                                                                          'other' => $eventother));
         $event->trigger();
 
-        $params['suspend'] = 0;
+        $returnmessage = get_string('userunsuspendedok', 'block_iomad_company_admin');
+        redirect($returnurl, $returnmessage, null, \core\output\notification::NOTIFY_SUCCESS);
     }
 
 } else if ($acl and confirm_sesskey()) {

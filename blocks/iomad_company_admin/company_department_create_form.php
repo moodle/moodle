@@ -171,7 +171,8 @@ if ($moveid && confirm_sesskey() && $confirm == md5($moveid)) {
                                $movefullname,
                                $moveshortname,
                                $moveparent);
-    redirect($departmentlist);
+    $redirectmessage = get_string('departmentupdatedok', 'block_iomad_company_admin');
+    redirect($departmentlist, $redirectmessage, null, \core\output\notification::NOTIFY_SUCCESS);
     die;
 }
 
@@ -204,6 +205,7 @@ if ($editform->is_cancelled()) {
                                    $createdata->fullname,
                                    $createdata->shortname,
                                    $createdata->deptid);
+        $redirectmessage = get_string('departmentcreatedok', 'block_iomad_company_admin');
     } else {
         // We are editing a current department.
         // Check if we are moving this department.
@@ -215,6 +217,7 @@ if ($editform->is_cancelled()) {
                                        $createdata->fullname,
                                        $createdata->shortname,
                                        $createdata->deptid);
+            $redirectmessage = get_string('departmentupdatedok', 'block_iomad_company_admin');
         } else {
             $parentdept = $DB->get_record('department', array('id' => $createdata->deptid));
             echo $output->header();
@@ -233,7 +236,7 @@ if ($editform->is_cancelled()) {
         }
     }
 
-    redirect($departmentlist);
+    redirect($departmentlist, $redirectmessage, null, \core\output\notification::NOTIFY_SUCCESS);
     die;
 } else {
     // Javascript for fancy select.
