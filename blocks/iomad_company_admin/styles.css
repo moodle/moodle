@@ -139,8 +139,8 @@ border-radius: 10px;
 
 .dep_tree {
     padding: 20px;
-    background-color: #fd8c4e;
-    border: 1px solid #3a3a3a;
+    background-color: #ddd;
+    border: 1px solid #666;
     border-radius: 5px;
 }
 
@@ -229,7 +229,7 @@ border-radius: 10px;
 }
 
 #dashboardheader {
-    color: #f75701;
+    color: #d30000;
 }
 
 .companymanagertable p.arrow_button #remove,

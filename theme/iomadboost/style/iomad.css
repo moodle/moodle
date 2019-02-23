@@ -1,13 +1,21 @@
+a {
+    color: #666;
+}
+
+a:hover {
+    color: #d30000
+}
+
 .navbar {
     margin-bottom : 3px;
 }
 .navbar-light .navbar-brand  {
   font-family: Ubuntu;
-  background-color: #f75701;
+  background-color: #d30000;
 }
 .moodleheader h1 {
     font-family: Ubuntu;
-    color: #f75701;
+    color: #d30000;
     margin: 10px 0;
 }
 .dashboard-section .headingblock {
@@ -25,13 +33,13 @@
   padding: 0 10px;
 }
 .navbar-text a {
-  color: #f75701;
+  color: #d30000;
 }
 #page-header h1 {
   font-family: Ubuntu;
   font-size: 40px;
   font-weight: normal;
-  color: #f75701;
+  color: #d30000;
 }
 #region-main {
   background-color: #ffffff;
@@ -45,20 +53,20 @@
   box-shadow: rgba(0, 0, 0, 0.0470588) 0 1px 1px inset;
 }
 .iomad_block_title {
-  color: #f75701;
+  color: #d30000;
   font-size: 14px;
   text-transform: uppercase;
   font-family: Ubuntu;
   font-weight: normal;
 }
 .block .card-block h3 {
-  color: #f75701;
+  color: #d30000;
   font-size: 16px;
   font-family: Ubuntu;
   font-weight: normal;
 }
 .block .content h3 {
-  color: #f75701;
+  color: #d30000;
   font-size: 18px;
   font-family: Ubuntu;
   font-weight: normal;
@@ -70,8 +78,30 @@
 body {
   background-color: #eeeeee;
 }
-#page-footer a {
-  color: #f75701;
+
+ {
+  background-color: #ddd !important;
+}
+
+#page-footer, #nav-drawer, .navbar {
+  background-color: #ddd !important;
+  color: #666 !important;
+}
+#page-footer a, #page-footer a.icon, ul.navbar-nav a {
+  color: #666 !important;
+  font-style: none;
+}
+
+#page-footer a:hover, #page-footer a.icon:hover, ul.navbar-nav a:hover {
+  color: #d30000 !important;
+}
+
+.navbar a {
+    color: #fff !important;
+}
+
+.navbar a:hover {
+    color: #ddd !important;
 }
 
 #sitelogo {
@@ -121,12 +151,12 @@ body {
 .iomadlink_container .iomadlink .iomadicon .fa-topic, .iomadlink_container .iomadlinkreports .iomadicon .fa-topic {
   font-size: 54px;
   margin-bottom: 10px;
-  color: #17859b;
+  color: #666;
 }
 .iomadlink_container .iomadlink .iomadicon .fa-action, .iomadlink_container .iomadlinkreports .iomadicon .fa-action {
   border-radius: 15px;
   color: #FFFFFF;
-  background-color: #83d411;
+  background-color: #93d800;
   font-size: 20px;
   height: 30px;
   line-height: 30px;
@@ -145,7 +175,7 @@ body {
 div.iomadlink, div.iomadlinkreports {
     min-height: 130px;
     background-color: #ffec70;
-    background-color: #d2ff70;
+    background-color: #ddd;
     border-radius: 5px;
     box-shadow: 5px 5px 5px #888888;
 }
@@ -249,4 +279,33 @@ div.iomadlink, div.iomadlinkreports {
     padding-left: 1rem;
     padding-right: 1rem;
     border-radius: 0.25rem;
+}
+
+.list-group-item.active {
+    z-index: 2;
+    color: #ddd;
+    background-color: #d30000;
+    border-color: #d30000;
+}
+
+.tag-info, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release, .assignfeedback_editpdf_widget .label {
+    background-color: #666;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #666;
+    border-color: #666;
+}
+
+.page-item.active .page-link {
+    color: #fff;
+    background-color: #666;
+    border-color: #666;
+}
+
+.page-link {
+    color: #666;
+    background-color: #ddd;
+    border: 1px solid #ddd;
 }
