@@ -66,7 +66,7 @@ class inprogress_view implements renderable, templatable {
         foreach ($this->mycompletion->myinprogress as $mid => $inprogress) {
             $context = \context_course::instance($inprogress->courseid);
             $course = $DB->get_record("course", array("id"=>$inprogress->courseid));
-            $courseobj = new \course_in_list($course);
+            $courseobj = new \core_course_list_element($course);
 
             $exporter = new course_summary_exporter($course, ['context' => $context]);
             $exportedcourse = $exporter->export($output);

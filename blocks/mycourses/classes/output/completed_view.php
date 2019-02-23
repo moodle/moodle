@@ -66,7 +66,7 @@ class completed_view implements renderable, templatable {
         foreach ($this->mycompletion->mycompleted as $mid => $completed) {
             $context = \context_course::instance($completed->courseid);
             $course = $DB->get_record("course", array("id"=>$completed->courseid));
-            $courseobj = new \course_in_list($course);
+            $courseobj = new \core_course_list_element($course);
 
             $exporter = new course_summary_exporter($course, ['context' => $context]);
             $exportedcourse = $exporter->export($output);

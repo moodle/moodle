@@ -67,7 +67,7 @@ class available_view implements renderable, templatable {
             // get the course display info.
             $context = \context_course::instance($notstarted->courseid);
             $course = $DB->get_record("course", array("id"=>$notstarted->courseid));
-            $courseobj = new \course_in_list($course);
+            $courseobj = new \core_course_list_element($course);
 
             $exporter = new course_summary_exporter($course, ['context' => $context]);
             $exportedcourse = $exporter->export($output);
@@ -97,7 +97,7 @@ class available_view implements renderable, templatable {
             // get the course display info.
             $context = \context_course::instance($notstarted->courseid);
             $course = $DB->get_record("course", array("id"=>$notstarted->courseid));
-            $courseobj = new \course_in_list($course);
+            $courseobj = new \core_course_list_element($course);
 
             $exporter = new course_summary_exporter($course, ['context' => $context]);
             $exportedcourse = $exporter->export($output);
