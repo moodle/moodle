@@ -62,6 +62,8 @@ function xmldb_local_report_user_license_allocations_upgrade($oldversion) {
 
     if ($oldversion < 2019012100) {
 
+        upgrade_set_timeout(7200); // Set installation time to 2 hours as this takes a long time.
+
         // Define table local_report_user_lic_allocs to be created.
         $table = new xmldb_table('local_report_user_lic_allocs');
 
@@ -96,6 +98,11 @@ function xmldb_local_report_user_license_allocations_upgrade($oldversion) {
             if ($oldallocations = $DB->get_records_sql("SELECT * FROM {companylicense_users}
                                                         WHERE issuedate < :first",
                                                         array('first' => $first->timecreated))) {
+                $totalold = count($oldallocations);
+                mtrace("Dealing with old allocations $totalold to be processed");
+                $currentcount = 0;
+                $warn = 10;
+
                 foreach ($oldallocations as $oldallocation) {
                     if (!$DB->get_record('local_report_user_lic_allocs',
                                        array('userid' => $oldallocation->userid,
@@ -112,6 +119,11 @@ function xmldb_local_report_user_license_allocations_upgrade($oldversion) {
                                                  'issuedate' => $oldallocation->issuedate,
                                                  'modifiedtime' => time()));
                     }
+                    $currentcount++;
+                    if ($currentcount * 100 / $totalold > $warn) {
+                        mtrace("$warn%");
+                        $warn = $warn + 10;
+                    }
                 }
             }
         }
@@ -120,6 +132,10 @@ function xmldb_local_report_user_license_allocations_upgrade($oldversion) {
         foreach ($users as $user) {
             // Deal with any license allocations.
             $licenseallocations = $DB->get_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\block_iomad_company_admin\event\user_license_assigned'));
+            $licensecount = count($licenseallocations);
+            mtrace("Dealing with $licensecount new allocations");
+            $currentcount = 0;
+            $warn = 10;
             foreach ($licenseallocations as $event) {
                 // Get the payload.
                 $evententries = unserialize($event->other);
@@ -138,10 +154,19 @@ function xmldb_local_report_user_license_allocations_upgrade($oldversion) {
                                                                               'issuedate' => $event->timecreated,
                                                                               'modifiedtime' => time()));
                 }
+                $currentcount++;
+                if ($currentcount * 100 / $licensecount > $warn) {
+                    mtrace("$warn%");
+                    $warn = $warn + 10;
+                }
             }
 
             // Deal with any license unallocations.
             $licenseunallocations = $DB->get_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\block_iomad_company_admin\event\user_license_unassigned'));
+            $licensecount = count($licenseunallocations);
+            mtrace("Dealing with $licensecount new un-allocations");
+            $currentcount = 0;
+            $warn = 10;
             foreach ($licenseunallocations as $event) {
                 // Get the payload.
                 $evententries = unserialize($event->other);
@@ -158,6 +183,11 @@ function xmldb_local_report_user_license_allocations_upgrade($oldversion) {
                                                                               'action' => 0,
                                                                               'issuedate' => $event->timecreated,
                                                                               'modifiedtime' => time()));
+                }
+                $currentcount++;
+                if ($currentcount * 100 / $licensecount > $warn) {
+                    mtrace("$warn%");
+                    $warn = $warn + 10;
                 }
             }
         }

@@ -62,6 +62,8 @@ function xmldb_local_report_user_logins_upgrade($oldversion) {
 
     if ($oldversion < 2019012100) {
 
+        upgrade_set_timeout(7200); // Set installation time to 2 hours as this takes a long time.
+
         // Define table local_report_user_logins to be created.
         $table = new xmldb_table('local_report_user_logins');
 
@@ -85,8 +87,17 @@ function xmldb_local_report_user_logins_upgrade($oldversion) {
 
         // Populate the report table from any previous users.
         $users = $DB->get_records('user', array('deleted' => 0));
+        $total = count($users);
+        mtrace("Dealing with $total users");
+        $count = 0;
+        $warn = 10;
+
         foreach ($users as $user) {
-            $totallogins = $DB->count_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\core\event\user_loggedin'));
+            if ($user->currentlogin != 0) {
+                $totallogins = $DB->count_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\core\event\user_loggedin'));
+            } else {
+                $totallogins = 0;
+            }
             if ($user->currentlogin == 0 ) {
                 $user->currentlogin = null;
             }
@@ -101,6 +112,23 @@ function xmldb_local_report_user_logins_upgrade($oldversion) {
                                                                  'lastlogin' => $user->currentlogin,
                                                                  'logincount' => $totallogins,
                                                                  'modifiedtime' => time()));
+            $count++;
+            if ($count * 100 / $total > $warn) {
+                mtrace ("$warn%");
+                $warn = $warn + 10;
+            }
+        }
+
+        // Deal with any that may have been missed.
+        if ($missedusers = $DB->get_records_sql("SELECT u.* FROM {user} u
+                                                 JOIN {local_report_user_logins} lrul ON (u.id = lrul.userid)
+                                                 WHERE lrul.logincount = 0
+                                                 AND u.currentlogin != 0")) {
+            foreach ($missedusers as $missed) {
+                // Not in the logs to we are going to set it to 1 as it's the only evidence we have.
+                $DB->set_field('local_report_user_logins', 'logincount', 1, array('userid' => $missed->id));
+                $DB->set_field('local_report_user_logins', 'lastlogin', $missed->currentlogin, array('userid' => $missed->id));
+            }
         }
 
         // Report_user_logins savepoint reached.
