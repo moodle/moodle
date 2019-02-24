@@ -56,3 +56,11 @@
   .reporttablecontrolscontrol  div.col-md-3 {
       display: none
   }
+
+.progress {
+    background-color: #666;
+}
+
+.progress-bar {
+    background-color: green;
+}

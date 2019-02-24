@@ -16,7 +16,7 @@
 
 $string['actions'] = 'Actions';
 $string['allocated'] = 'Allocated: {$a}';
-$string['blocktitle'] = 'User license allocation history report';
+$string['blocktitle'] = 'User license allocations report';
 $string['certificate'] = 'Certificate';
 $string['clear'] = 'Clear';
 $string['clearconfirm'] = 'User will be removed from the course and all of their data will be deleted.  They will still have a license to restart the course.  Are you sure you want to do this?';
@@ -35,11 +35,11 @@ $string['licenseallocated'] = 'License allocated';
 $string['nocerttodownload'] = 'Certificate not achieved';
 $string['nofurtherdetail'] = 'No further details to show';
 $string['notstarted'] = 'Not started';
-$string['pluginname'] = 'User license allocation history report';
+$string['pluginname'] = 'User license allocations report';
 $string['privacy:metadata'] = 'The Local Iomad license allocation report only shows data stored in other locations.';
-$string['report_user_license_allocations_title'] = 'User license allocation history report';
-$string['report_user_license_allocations:view'] = 'View the user license allocation history report';
-$string['repuserlicallocation'] = 'User license allocation history report';
+$string['report_user_license_allocations_title'] = 'User license allocations report';
+$string['report_user_license_allocations:view'] = 'View the user license allocations report';
+$string['repuserlicallocation'] = 'User license allocations report';
 $string['scormattempts'] = 'Number of attempts';
 $string['scormnotstarted'] = 'User enrolled on course.  Module not started';
 $string['scormquestion'] = 'Question ID';

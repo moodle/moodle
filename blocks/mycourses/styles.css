@@ -55,3 +55,11 @@ html.yui3-js-enabled body#page-my-index.format-site.path-my.gecko.dir-ltr.lang-e
 .block_mycourses .certificatediv {
     clear: both;
 }
+
+.progress {
+    background-color: #666;
+}
+
+.progress-bar {
+    background-color: green;
+}

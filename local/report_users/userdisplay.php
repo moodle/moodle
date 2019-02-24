@@ -24,10 +24,13 @@ require_once(dirname(__FILE__).'/report_user_completion_table.php');
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $userid = required_param('userid', PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
-$download = optional_param('download', 0, PARAM_INT);
+$download = optional_param('download', 0, PARAM_CLEAN);
 $delete = optional_param('delete', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_CLEAN);
 $confirm = optional_param('confirm', 0, PARAM_INT);
+
+$params = array();
+$params['userid'] = $userid;
 
 // Check permissions.
 require_login();
@@ -51,12 +54,14 @@ $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add(get_string('pluginname', 'local_report_completion'),
+                   new moodle_url($CFG->wwwroot . "/local/report_completion/index.php"));
 $PAGE->navbar->add($linktext, $linkurl);
 
 // Get the renderer.
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
-$baseurl = new moodle_url(basename(__FILE__));
+$baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
 
 // Check the userid is valid.
@@ -74,7 +79,7 @@ if ($confirm) {
 
 // Set up the table.
 $table = new local_report_user_completion_table('user_report_completion');
-//$table->is_downloading($download, 'user_report_completion', 'user_report_completion123');
+$table->is_downloading($download, 'user_report_completion', 'user_report_completion123');
 
 if (!$table->is_downloading()) {
     echo $output->header();
@@ -126,4 +131,6 @@ $table->no_sorting('certificate');
 $table->sort_default_column='coursename';
 $table->out($CFG->iomad_max_list_courses, true);
 
-echo $output->footer();
+if (!$table->is_downloading()) {
+    echo $output->footer();
+}

@@ -309,3 +309,10 @@ div.iomadlink, div.iomadlinkreports {
     background-color: #ddd;
     border: 1px solid #ddd;
 }
+
+.progress {
+    background-color: #666;
+}
+.progress-bar {
+    background-color: green;
+}

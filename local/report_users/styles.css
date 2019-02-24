@@ -24,3 +24,11 @@
 #page-local-report_users-index .mform fieldset {
     border-bottom: 0px;
 }
+
+.progress {
+    background-color: #666;
+}
+
+.progress-bar {
+    background-color: green;
+}

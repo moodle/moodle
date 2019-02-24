@@ -37,6 +37,44 @@ require_once($CFG->libdir.'/tablelib.php');
 class local_report_user_license_allocations_table extends table_sql {
 
     /**
+     * Generate the display of the user's firstname
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_firstname($row) {
+        global $CFG;
+
+        $userurl = '/local/report_users/userdisplay.php';
+        if (!$this->is_downloading()) {
+            return "<a href='".
+                    new moodle_url($userurl, array('userid' => $row->id,
+                                                   'courseid' => $row->courseid)).
+                    "'>$row->firstname</a>";
+        } else {
+            return $row->firstname;
+        }
+    }
+
+    /**
+     * Generate the display of the user's lastname
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_lastname($row) {
+        global $CFG;
+
+        $userurl = '/local/report_users/userdisplay.php';
+        if (!$this->is_downloading()) {
+            return "<a href='".
+                    new moodle_url($userurl, array('userid' => $row->id,
+                                                   'courseid' => $row->courseid)).
+                    "'>$row->lastname</a>";
+        } else {
+            return $row->lastname;
+        }
+    }
+
+    /**
      * Generate the display of the user's created timestamp
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
@@ -123,10 +161,35 @@ class local_report_user_license_allocations_table extends table_sql {
                                               array('userid' => $row->id,
                                                     'licenseid' => $row->licenseid),
                                                     0, 1)) {
+            $licenseurl = $CFG->wwwroot . "/local/report_license_usage/index.php";
             $license = array_pop($trackrec);
-            return $license->licensename;
+            if (!$this->is_downloading()) {
+                return  "<a href='".
+                        new moodle_url($licenseurl, array('licenseid' => $row->licenseid)).
+                        "'>" . $license->licensename . "</a>";
+            } else {
+                return $license->licensename;
+            }
         } else {
             return null;
+        }
+    }
+
+    /**
+     * Generate the display of the user's license coursename
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_coursename($row) {
+        global $CFG, $DB;
+
+        $courseurl  = '/local/report_completion/index.php';
+        if (!$this->is_downloading()) {
+            return "<a href='".
+                    new moodle_url($courseurl, array('courseid' => $row->courseid)).
+                    "'>" . $row->coursename . "</a>";
+        } else {
+            return $row->coursename;
         }
     }
 
@@ -141,6 +204,7 @@ class local_report_user_license_allocations_table extends table_sql {
         return $DB->count_records('local_report_user_lic_allocs',
                                   array('userid' => $row->id,
                                         'licenseid' => $row->licenseid,
+                                        'courseid' => $row->courseid,
                                         'action' => 1));
     }
 
@@ -155,6 +219,7 @@ class local_report_user_license_allocations_table extends table_sql {
         return $DB->count_records('local_report_user_lic_allocs',
                                   array('userid' => $row->id,
                                         'licenseid' => $row->licenseid,
+                                        'courseid' => $row->courseid,
                                         'action' => 0));
     }
 

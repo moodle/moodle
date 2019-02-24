@@ -342,7 +342,7 @@ if (!empty($templateid)) {
 }
 
 // Set up the initial SQL for the form.
-$selectsql = " e.id AS emailid, u.id,u.firstname,u.lastname,d.name as department,u.email,e.templatename, e.modifiedtime AS created, e.sent, c.fullname AS coursename, e.senderid, e.due, e.subject";
+$selectsql = " e.id AS emailid, u.id,u.firstname,u.lastname,d.name as department,u.email,e.templatename, e.modifiedtime AS created, e.sent, c.id AS courseid, c.fullname AS coursename, e.senderid, e.due, e.subject";
 $fromsql = "{user} u JOIN {email} e ON (u.id = e.userid) JOIN {company_users} cu ON (u.id = cu.userid AND e.userid = cu.userid) JOIN {department} d ON (cu.departmentid = d.id) JOIN {course} c on (e.courseid = c.id)";
 $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $templatesql $departmentsql $companysql";
 $sqlparams = array('companyid' => $companyid) + $searchinfo->searchparams;

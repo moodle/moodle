@@ -37,6 +37,42 @@ require_once($CFG->libdir.'/tablelib.php');
 class local_report_emails_table extends table_sql {
 
     /**
+     * Generate the display of the user's firstname
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_firstname($row) {
+        global $CFG;
+
+        $userurl = '/local/report_users/userdisplay.php';
+        if (!$this->is_downloading()) {
+            return "<a href='".
+                    new moodle_url($userurl, array('userid' => $row->id)).
+                    "'>$row->firstname</a>";
+        } else {
+            return $row->firstname;
+        }
+    }
+
+    /**
+     * Generate the display of the user's lastname
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_lastname($row) {
+        global $CFG;
+
+        $userurl = '/local/report_users/userdisplay.php';
+        if (!$this->is_downloading()) {
+            return "<a href='".
+                    new moodle_url($userurl, array('userid' => $row->id)).
+                    "'>$row->lastname</a>";
+        } else {
+            return $row->lastname;
+        }
+    }
+
+    /**
      * Generate the display of the user's created timestamp
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
@@ -85,6 +121,24 @@ class local_report_emails_table extends table_sql {
             return get_string('never');
         } else {
             return date($CFG->iomad_date_format. " H:i:s", $row->sent);
+        }
+    }
+
+    /**
+     * Generate the display of the user's license coursename
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_coursename($row) {
+        global $CFG, $DB;
+
+        $courseurl  = '/local/report_completion/index.php';
+        if (!$this->is_downloading()) {
+            return "<a href='".
+                    new moodle_url($courseurl, array('courseid' => $row->courseid)).
+                    "'>" . $row->coursename . "</a>";
+        } else {
+            return $row->coursename;
         }
     }
 

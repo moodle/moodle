@@ -44,8 +44,12 @@ class local_report_user_completion_table extends table_sql {
     public function col_coursename($row) {
         global $output;
 
-        $completionurl = '/local/report_completion/index.php';
-        return $output->single_button(new moodle_url($completionurl, array('courseid' => $row->courseid)), $row->coursename);;
+        if (!$this->is_downloading()) {
+            $completionurl = '/local/report_completion/index.php';
+            return $output->single_button(new moodle_url($completionurl, array('courseid' => $row->courseid)), $row->coursename);
+        } else {
+            return $row->coursename;
+        }
     }
 
     /**
@@ -193,7 +197,7 @@ class local_report_user_completion_table extends table_sql {
             return;
         }
 
-        if (!empty($row->certsource) && $certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
+        if (!empty($row->timecompleted) && $certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
             if ($certificateinfo = $DB->get_record('iomadcertificate', array('course' => $row->courseid))) {
                 if ($certificatemodinstance = $DB->get_record('course_modules', array('course' => $row->courseid,
                                                                                       'module' => $certmodule->id,
@@ -237,9 +241,13 @@ class local_report_user_completion_table extends table_sql {
         if ($progress == -1) {
             return get_string('notstarted', 'local_report_users');
         } else {
-            return '<div class="progress" style="height:20px">
-                    <div class="progress-bar" style="width:' . $progress . '%;height:20px">' . $progress . '%</div>
-                    </div>';
+            if (!$this->is_downloading()) {
+                return '<div class="progress" style="height:20px">
+                        <div class="progress-bar" style="width:' . $progress . '%;height:20px">' . $progress . '%</div>
+                        </div>';
+            } else {
+                return "$progress%";
+            }
         }
     }
 }

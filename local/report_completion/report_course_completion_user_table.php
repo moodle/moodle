@@ -220,4 +220,21 @@ class local_report_course_completion_user_table extends table_sql {
         }
     }
 
+    /**
+     * Generate the display of the user's license name
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_licensename($row) {
+        global $DB;
+
+        if ($this->is_downloading()) {
+            return $row->licensename;
+        } else {
+            $licenseurl = "/local/report_user_license_allocations/index.php";
+            return  "<a href='".
+                    new moodle_url($licenseurl, array('licenseid' => $row->licenseid)).
+                    "'>$row->licensename</a>";
+        }
+    }
 }

@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$string['blocktitle'] = 'License Allocation History Report';
-$string['pluginname'] = 'License allocation history report';
-$string['privacy:metadata'] = 'The Local Iomad license allocation hisroty report only shows data stored in other locations.';
-$string['report_license_usage_title'] = 'License allocation history report';
-$string['report_license_usage:view'] = 'View the license allocation history report';
-$string['repuserlicallocation'] = 'License allocation history report';
+$string['blocktitle'] = 'License Allocations Report';
+$string['pluginname'] = 'License allocations report';
+$string['privacy:metadata'] = 'The Local Iomad license allocations report only shows data stored in other locations.';
+$string['report_license_usage_title'] = 'License allocations report';
+$string['report_license_usage:view'] = 'View the license allocations report';
+$string['repuserlicallocation'] = 'License allocations report';
 $string['totalallocate'] = 'Number of allocations';
 $string['totalunallocate'] = 'Number of unallocations';
 $string['numstart'] = 'Previously allocated';
