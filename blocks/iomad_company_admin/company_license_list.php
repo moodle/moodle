@@ -125,6 +125,7 @@ flush();
 
 $stredit   = get_string('edit');
 $strdelete = get_string('delete');
+$strallocate = get_string('licenseallocate', 'block_iomad_company_admin');
 $strsplit = get_string('split', 'block_iomad_company_admin');
 $straddlicense = get_string('licenseaddnew', 'block_iomad_company_admin');
 $strlicensename = get_string('licensename', 'block_iomad_company_admin');
@@ -184,6 +185,7 @@ if ($departmentid == $companydepartment->id) {
         // Set up the edit buttons.
         $deletebutton = "";
         $editbutton = "";
+        $allocatebutton = "";
 
         if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context) ||
             (iomad::has_capability('block/iomad_company_admin:edit_my_licenses', $context) && !empty($license->parentid))) {
@@ -204,6 +206,12 @@ if ($departmentid == $companydepartment->id) {
             }
         }
 
+        if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', $context)) {
+            $allocatebutton = "<a class='btn btn-primary' href='".
+                                 new moodle_url('company_license_users_form.php', array('licenseid' => $license->id)) ."'>$strallocate</a>";
+        } else {
+            $allocatebutton = "";
+        }
         // does the company the license is allocated to have any kids?
         $licensecompany = new company($license->companyid);
         if ($childcompanies = $licensecompany->get_child_companies_recursive()) {
@@ -230,14 +238,18 @@ if ($departmentid == $companydepartment->id) {
         } else {
             $issiteadmin = false;
         }
+        $coursestring = "";
+        if (count($licensecourses > 5)) {
+            $coursestring = "<details><summary>" . get_string('view') . "</summary>";
+        }
         foreach ($licensecourses as $licensecourse) {
             $coursename = $DB->get_record('course', array('id' => $licensecourse->courseid));
             if (empty($coursestring)) {
                 if ($issiteadmin) {
-                    $coursestring = "<a href='".new moodle_url('/course/view.php',
+                    $coursestring .= "<a href='".new moodle_url('/course/view.php',
                                        array('id' => $licensecourse->courseid))."'>".$coursename->fullname."</a>";
                 } else {
-                    $coursestring = $coursename->fullname;
+                    $coursestring .= $coursename->fullname;
                 }
             } else {
                 if ($issiteadmin) {
@@ -247,6 +259,9 @@ if ($departmentid == $companydepartment->id) {
                     $coursestring .= ",</br>".$coursename->fullname;
                 }
             }
+        }
+        if (count($licensecourses > 5)) {
+            $coursestring .= "</details>";
         }
 
         // Deal with allocation numbers if a program.
@@ -287,7 +302,8 @@ if ($departmentid == $companydepartment->id) {
                            $used,
                            $editbutton . ' ' .
                            $splitbutton . ' ' .
-                           $deletebutton);
+                           $deletebutton . ' ' .
+                           $allocatebutton);
         // Add in the company name if we have any.
         if ($showcompanies) {
             $liccompany = new company($license->companyid);

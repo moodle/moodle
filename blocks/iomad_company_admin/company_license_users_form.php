@@ -588,7 +588,7 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
 } else {
     if ($licenseid > 0) {
         //  Work out the courses that the license applies to, if any.
-        $courses = company::get_courses_by_license($licenseid);
+/*        $courses = company::get_courses_by_license($licenseid);
         $outputstring = "";
         if (!empty($courses)) {
             $outputstring = "<p>" .get_string('licenseassignedto', 'block_iomad_company_admin');
@@ -603,7 +603,7 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
             }
             $count ++;
         }
-        echo $outputstring."</p>";
+        echo $outputstring."</p>";*/
         $usersform->process();
 
         if (!empty($availablewarning)) {
