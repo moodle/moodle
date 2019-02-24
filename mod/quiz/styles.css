@@ -958,7 +958,7 @@ table.quizreviewsummary td.cell {
     background: #e4e4e4;
 }
 
-#categoryquestions > tbody > tr:nth-of-type(even).highlight {
+#categoryquestions > tbody > tr.highlight {
     background-color: #afa;
 }
 

@@ -99,18 +99,10 @@ class provider implements
             return;
         }
 
-        $params = [
-            'contextuser' => CONTEXT_USER,
-            'contextid' => $context->id
-        ];
-
-        $sql = "SELECT ctx.instanceid as userid
-                  FROM {auth_oauth2_linked_login} ao
-                  JOIN {context} ctx
-                       ON ctx.instanceid = ao.userid
-                       AND ctx.contextlevel = :contextuser
-                 WHERE ctx.id = :contextid";
-
+        $sql = "SELECT userid
+                  FROM {auth_oauth2_linked_login}
+                 WHERE userid = ?";
+        $params = [$context->instanceid];
         $userlist->add_from_sql('userid', $sql, $params);
     }
 
@@ -178,12 +170,15 @@ class provider implements
         if (empty($contextlist->count())) {
             return;
         }
+        $userid = $contextlist->get_user()->id;
         foreach ($contextlist->get_contexts() as $context) {
             if ($context->contextlevel != CONTEXT_USER) {
-                return;
+                continue;
             }
-            // Because we only use user contexts the instance ID is the user ID.
-            static::delete_user_data($context->instanceid);
+            if ($context->instanceid == $userid) {
+                // Because we only use user contexts the instance ID is the user ID.
+                static::delete_user_data($context->instanceid);
+            }
         }
     }
 

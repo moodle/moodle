@@ -1,6 +1,14 @@
 This file describes API changes in /theme/boost
 information provided here is intended especially for theme designers.
 
+=== 3.7 ===
+
+Form element template
+---------------------
+A 'wrapperid' has been added to 'templates/core_form/element-template.mustache' to restore unique ids
+on Boost form element wrappers. This restores the same unique element ids seen on elements in BS2
+themes, which were mistakenly dropped when introducing the Boost theme.
+
 === 3.5 ===
 
 The Boost theme now uses Bootstrap 4 Stable (BS4S).

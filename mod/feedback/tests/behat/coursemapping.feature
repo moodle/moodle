@@ -138,10 +138,6 @@ Feature: Mapping courses in a feedback
     And I follow "Map feedback to courses"
     And I set the field "Courses" to "Course 2"
     And I set the field "Courses" to "Course 3"
-    # Weird solution to make the editable field to lose the focus
-    # but with the focus, "save changes" uses to fail because of
-    # the suggestions hiding the button.
-    And I press key "27" in the field "Courses"
     And I press "Save changes"
     And I should see "Course mapping has been changed"
     And I log out

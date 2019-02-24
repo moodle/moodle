@@ -27,6 +27,8 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
+use Behat\Mink\Exception\ExpectationException as ExpectationException;
+
 /**
  * Steps definitions for users.
  *
@@ -52,5 +54,38 @@ class behat_user extends behat_base {
         // Click on the option.
         $this->execute("behat_general::i_click_on", array("//select[@id='formactionid']" .
                                                           "/option[contains(., " . $nodetext . ")]", "xpath_element"));
+    }
+
+    /**
+     * The input field should have autocomplete set to this value.
+     *
+     * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" should have purpose "(?P<purpose_string>(?:[^"]|\\")*)"$/
+     * @param string $field The field to select.
+     * @param string $purpose The expected purpose.
+     */
+    public function the_field_should_have_purpose($field, $purpose) {
+        $fld = behat_field_manager::get_form_field_from_label($field, $this);
+
+        $value = $fld->get_attribute('autocomplete');
+        if ($value != $purpose) {
+            $reason = 'The "' . $field . '" field does not have purpose "' . $purpose . '"';
+            throw new ExpectationException($reason, $this->getSession());
+        }
+    }
+
+    /**
+     * The input field should not have autocomplete set to this value.
+     *
+     * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" should not have purpose "(?P<purpose_string>(?:[^"]|\\")*)"$/
+     * @param string $field The field to select.
+     * @param string $purpose The expected purpose we do not want.
+     */
+    public function the_field_should_not_have_purpose($field, $purpose) {
+        $fld = behat_field_manager::get_form_field_from_label($field, $this);
+
+        $value = $fld->get_attribute('autocomplete');
+        if ($value == $purpose) {
+            throw new ExpectationException('The "' . $field . '" field does have purpose "' . $purpose . '"', $this->getSession());
+        }
     }
 }

@@ -52,14 +52,6 @@ function folder_supports($feature) {
 }
 
 /**
- * Returns all other caps used in module
- * @return array
- */
-function folder_get_extra_capabilities() {
-    return array('moodle/site:accessallgroups');
-}
-
-/**
  * This function is used by the reset_course_userdata function in moodlelib.
  * @param $data the data submitted from the reset course.
  * @return array status array
@@ -113,6 +105,10 @@ function folder_add_instance($data, $mform) {
     $draftitemid = $data->files;
 
     $data->timemodified = time();
+    // If 'showexpanded' is not set, apply the site config.
+    if (!isset($data->showexpanded)) {
+        $data->showexpanded = get_config('folder', 'showexpanded');
+    }
     $data->id = $DB->insert_record('folder', $data);
 
     // we need to use context now, so we need to make sure all needed info is already in db

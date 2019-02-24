@@ -28,10 +28,11 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-use Behat\Mink\Exception\DriverException,
-    Behat\Mink\Exception\ExpectationException as ExpectationException,
-    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
-    Behat\Mink\Element\NodeElement as NodeElement;
+use Behat\Mink\Exception\DriverException;
+use Behat\Mink\Exception\ExpectationException;
+use Behat\Mink\Exception\ElementNotFoundException;
+use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Session;
 
 /**
  * Steps definitions base class.
@@ -474,6 +475,21 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     }
 
     /**
+     * Checks if the current page is part of the mobile app.
+     *
+     * @return bool True if it's in the app
+     */
+    protected function is_in_app() : bool {
+        // Cannot be in the app if there's no @app tag on scenario.
+        if (!$this->has_tag('app')) {
+            return false;
+        }
+
+        // Check on page to see if it's an app page. Safest way is to look for added JavaScript.
+        return $this->getSession()->evaluateScript('typeof window.behat') === 'object';
+    }
+
+    /**
      * Spins around an element until it exists
      *
      * @throws ExpectationException
@@ -647,6 +663,16 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     }
 
     /**
+     * Checks if the current scenario, or its feature, has a specified tag.
+     *
+     * @param string $tag Tag to check
+     * @return bool True if the tag exists in scenario or feature
+     */
+    public function has_tag(string $tag) : bool {
+        return array_key_exists($tag, behat_hooks::get_tags_for_scenario());
+    }
+
+    /**
      * Change browser window size.
      *   - small: 640x480
      *   - medium: 1024x768
@@ -709,23 +735,30 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     /**
      * Waits for all the JS to be loaded.
      *
-     * @throws \Exception
-     * @throws NoSuchWindow
-     * @throws UnknownError
-     * @return bool True or false depending whether all the JS is loaded or not.
+     * @return  bool Whether any JS is still pending completion.
      */
     public function wait_for_pending_js() {
-        // Waiting for JS is only valid for JS scenarios.
         if (!$this->running_javascript()) {
-            return;
+            // JS is not available therefore there is nothing to wait for.
+            return false;
         }
 
+        return static::wait_for_pending_js_in_session($this->getSession());
+    }
+
+    /**
+     * Waits for all the JS to be loaded.
+     *
+     * @param   Session $session The Mink Session where JS can be run
+     * @return  bool Whether any JS is still pending completion.
+     */
+    public static function wait_for_pending_js_in_session(Session $session) {
         // We don't use behat_base::spin() here as we don't want to end up with an exception
         // if the page & JSs don't finish loading properly.
         for ($i = 0; $i < self::EXTENDED_TIMEOUT * 10; $i++) {
             $pending = '';
             try {
-                $jscode = '
+                $jscode = trim(preg_replace('/\s+/', ' ', '
                     return (function() {
                         if (typeof M === "undefined") {
                             if (document.readyState === "complete") {
@@ -740,8 +773,8 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                         } else {
                             return "incomplete"
                         }
-                    }());';
-                $pending = $this->getSession()->evaluateScript($jscode);
+                    }());'));
+                $pending = $session->evaluateScript($jscode);
             } catch (NoSuchWindow $nsw) {
                 // We catch an exception here, in case we just closed the window we were interacting with.
                 // No javascript is running if there is no window right?
@@ -762,7 +795,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             usleep(100000);
         }
 
-        // Timeout waiting for JS to complete. It will be catched and forwarded to behat_hooks::i_look_for_exceptions().
+        // Timeout waiting for JS to complete. It will be caught and forwarded to behat_hooks::i_look_for_exceptions().
         // It is unlikely that Javascript code of a page or an AJAX request needs more than self::EXTENDED_TIMEOUT seconds
         // to be loaded, although when pages contains Javascript errors M.util.js_complete() can not be executed, so the
         // number of JS pending code and JS completed code will not match and we will reach this point.

@@ -114,8 +114,8 @@ class EvalMath {
         'average'=>array(-1), 'max'=>array(-1),  'min'=>array(-1),
         'mod'=>array(2),      'pi'=>array(0),    'power'=>array(2),
         'round'=>array(1, 2), 'sum'=>array(-1), 'rand_int'=>array(2),
-        'rand_float'=>array(0), 'ifthenelse'=>array(3));
-    var $fcsynonyms = array('if' => 'ifthenelse');
+        'rand_float'=>array(0), 'ifthenelse'=>array(3), 'cond_and'=>array(-1), 'cond_or'=>array(-1));
+    var $fcsynonyms = array('if' => 'ifthenelse', 'and' => 'cond_and', 'or' => 'cond_or');
 
     var $allowimplicitmultiplication;
 
@@ -534,6 +534,27 @@ class EvalMathFuncs {
             return $else;
         }
     }
+
+    static function cond_and() {
+        $args = func_get_args();
+        foreach($args as $a) {
+            if ($a == false) {
+                return 0;
+            }
+        }
+        return 1;
+    }
+
+    static function cond_or() {
+        $args = func_get_args();
+        foreach($args as $a) {
+            if($a == true) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
     static function average() {
         $args = func_get_args();
         return (call_user_func_array(array('self', 'sum'), $args) / count($args));

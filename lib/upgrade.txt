@@ -1,6 +1,16 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.7 ===
+
+* Nodes in the navigation api can have labels for each group. See set/get_collectionlabel().
+* The method core_user::is_real_user() now returns false for userid = 0 parameter
+* 'mform1' dependencies (in themes, js...) will stop working because a randomly generated string has been added to the id
+attribute on forms to avoid collisions in forms loaded in AJAX requests.
+* A new method to allow queueing or rescheduling of an existing scheduled task was added. This allows an existing task
+  to be updated or queued as required. This new functionality can be found in \core\task\manager::reschedule_or_queue_adhoc_task.
+* Icons are displayed for screen readers unless they have empty alt text (aria-hidden). Do not provide an icon with alt text immediately beside an element with exactly the same text.
+
 === 3.6 ===
 
 * A new token-based version of pluginfile.php has been added which can be used for out-of-session file serving by

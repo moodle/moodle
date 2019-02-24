@@ -117,6 +117,15 @@ abstract class assign_submission_plugin extends assign_plugin {
     }
 
     /**
+     * Remove any saved data from this submission.
+     *
+     * @param stdClass $submission - assign_submission data
+     * @return void
+     */
+    public function remove(stdClass $submission) {
+    }
+
+    /**
      * Carry out any extra processing required when a student is given a new attempt
      * (i.e. when the submission is "reopened"
      * @param stdClass $oldsubmission The previous attempt

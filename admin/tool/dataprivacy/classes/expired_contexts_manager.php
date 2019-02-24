@@ -920,9 +920,17 @@ class expired_contexts_manager {
      * @return  bool
      */
     protected static function is_course_context_expired_or_unprotected_for_user(\context $context, \stdClass $user) {
-        $expiryrecords = self::get_nested_expiry_info_for_courses($context->path);
 
-        $info = $expiryrecords[$context->path]->info;
+        if ($context->get_course_context()->instanceid == SITEID) {
+            // The is an activity in the site course (front page).
+            $purpose = data_registry::get_effective_contextlevel_value(CONTEXT_SYSTEM, 'purpose');
+            $info = static::get_expiry_info($purpose);
+
+        } else {
+            $expiryrecords = self::get_nested_expiry_info_for_courses($context->path);
+            $info = $expiryrecords[$context->path]->info;
+        }
+
         if ($info->is_fully_expired()) {
             // This context is fully expired.
             return true;

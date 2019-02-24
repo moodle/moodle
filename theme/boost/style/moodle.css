@@ -2357,7 +2357,7 @@
   --gray: #868e96;
   --gray-dark: #373a3c;
   --primary: #1177d1;
-  --secondary: #e9ecef;
+  --secondary: #ced4da;
   --success: #5cb85c;
   --info: #5bc0de;
   --warning: #f0ad4e;
@@ -3451,10 +3451,10 @@ table#listdirectories td {
 .table-secondary,
 .table-secondary > th,
 .table-secondary > td {
-  background-color: #f9fafb; }
+  background-color: #f1f3f5; }
 
 .table-hover .table-secondary:hover, table.grading-report .table-secondary:hover, .forumheaderlist .table-secondary:hover, .generaltable .table-secondary:hover, table.flexible .table-secondary:hover, .category_subcategories .table-secondary:hover, table#modules .table-secondary:hover, table#permissions .table-secondary:hover {
-  background-color: #eaedf1; }
+  background-color: #e2e6ea; }
   .table-hover .table-secondary:hover > td, table.grading-report .table-secondary:hover > td, .forumheaderlist .table-secondary:hover > td, .generaltable .table-secondary:hover > td, table.flexible .table-secondary:hover > td, .category_subcategories .table-secondary:hover > td, table#modules .table-secondary:hover > td, table#permissions .table-secondary:hover > td,
   .table-hover .table-secondary:hover > th,
   table.grading-report .table-secondary:hover > th,
@@ -3464,7 +3464,7 @@ table#listdirectories td {
   .category_subcategories .table-secondary:hover > th,
   table#modules .table-secondary:hover > th,
   table#permissions .table-secondary:hover > th {
-    background-color: #eaedf1; }
+    background-color: #e2e6ea; }
 
 .table-success,
 .table-success > th,
@@ -3798,10 +3798,8 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
 
 .form-group, .form-buttons,
 .path-admin .buttons,
-#fitem_id_submitbutton,
 .fp-content-center form + div,
-div.backup-section + form,
-#fgroup_id_buttonar {
+div.backup-section + form {
   margin-bottom: 1rem; }
 
 .form-text {
@@ -4012,10 +4010,8 @@ div.backup-section + form,
       margin-bottom: 0; }
     .form-inline .form-group, .form-inline .form-buttons,
     .form-inline .path-admin .buttons, .path-admin .form-inline .buttons,
-    .form-inline #fitem_id_submitbutton,
     .form-inline .fp-content-center form + div, .fp-content-center .form-inline form + div,
-    .form-inline div.backup-section + form,
-    .form-inline #fgroup_id_buttonar {
+    .form-inline div.backup-section + form {
       display: flex;
       flex: 0 0 auto;
       flex-flow: row wrap;
@@ -4104,28 +4100,28 @@ fieldset:disabled #rubric-rubric.gradingform_rubric a.addcriterion,
 
 .btn-secondary, .btn-default {
   color: #212529;
-  background-color: #e9ecef;
-  border-color: #e9ecef; }
+  background-color: #ced4da;
+  border-color: #ced4da; }
   .btn-secondary:hover, .btn-default:hover {
     color: #212529;
-    background-color: #d3d9df;
-    border-color: #cbd3da; }
+    background-color: #b8c1ca;
+    border-color: #b1bbc4; }
   .btn-secondary:focus, .btn-default:focus, .btn-secondary.focus, .focus.btn-default {
-    box-shadow: 0 0 0 0.2rem rgba(233, 236, 239, 0.5); }
+    box-shadow: 0 0 0 0.2rem rgba(206, 212, 218, 0.5); }
   .btn-secondary.disabled, .fp-viewbar.disabled a, .disabled.btn-default, .btn-secondary:disabled, .btn-default:disabled {
     color: #212529;
-    background-color: #e9ecef;
-    border-color: #e9ecef; }
+    background-color: #ced4da;
+    border-color: #ced4da; }
   .btn-secondary:not(:disabled):not(.disabled):active, .btn-default:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active, .fp-viewbar:not(.disabled) a.checked:not(:disabled):not(.disabled), .btn-default:not(:disabled):not(.disabled).active,
   .show > .btn-secondary.dropdown-toggle,
   .show > .dropdown-toggle.btn-default {
     color: #212529;
-    background-color: #cbd3da;
-    border-color: #c4ccd4; }
+    background-color: #b1bbc4;
+    border-color: #aab4bf; }
     .btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-default:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled).active:focus, .fp-viewbar:not(.disabled) a.checked:not(:disabled):not(.disabled):focus, .btn-default:not(:disabled):not(.disabled).active:focus,
     .show > .btn-secondary.dropdown-toggle:focus,
     .show > .dropdown-toggle.btn-default:focus {
-      box-shadow: 0 0 0 0.2rem rgba(233, 236, 239, 0.5); }
+      box-shadow: 0 0 0 0.2rem rgba(206, 212, 218, 0.5); }
 
 .btn-success {
   color: #fff;
@@ -4289,27 +4285,27 @@ fieldset:disabled #rubric-rubric.gradingform_rubric a.addcriterion,
       box-shadow: 0 0 0 0.2rem rgba(17, 119, 209, 0.5); }
 
 .btn-outline-secondary {
-  color: #e9ecef;
+  color: #ced4da;
   background-color: transparent;
   background-image: none;
-  border-color: #e9ecef; }
+  border-color: #ced4da; }
   .btn-outline-secondary:hover {
     color: #212529;
-    background-color: #e9ecef;
-    border-color: #e9ecef; }
+    background-color: #ced4da;
+    border-color: #ced4da; }
   .btn-outline-secondary:focus, .btn-outline-secondary.focus {
-    box-shadow: 0 0 0 0.2rem rgba(233, 236, 239, 0.5); }
+    box-shadow: 0 0 0 0.2rem rgba(206, 212, 218, 0.5); }
   .btn-outline-secondary.disabled, .btn-outline-secondary:disabled {
-    color: #e9ecef;
+    color: #ced4da;
     background-color: transparent; }
   .btn-outline-secondary:not(:disabled):not(.disabled):active, .btn-outline-secondary:not(:disabled):not(.disabled).active,
   .show > .btn-outline-secondary.dropdown-toggle {
     color: #212529;
-    background-color: #e9ecef;
-    border-color: #e9ecef; }
+    background-color: #ced4da;
+    border-color: #ced4da; }
     .btn-outline-secondary:not(:disabled):not(.disabled):active:focus, .btn-outline-secondary:not(:disabled):not(.disabled).active:focus,
     .show > .btn-outline-secondary.dropdown-toggle:focus {
-      box-shadow: 0 0 0 0.2rem rgba(233, 236, 239, 0.5); }
+      box-shadow: 0 0 0 0.2rem rgba(206, 212, 218, 0.5); }
 
 .btn-outline-success {
   color: #5cb85c;
@@ -5722,11 +5718,11 @@ tbody.collapse.show {
 
 .badge-secondary {
   color: #212529;
-  background-color: #e9ecef; }
+  background-color: #ced4da; }
   .badge-secondary[href]:hover, .badge-secondary[href]:focus {
     color: #212529;
     text-decoration: none;
-    background-color: #cbd3da; }
+    background-color: #b1bbc4; }
 
 .badge-success {
   color: #fff;
@@ -5792,7 +5788,7 @@ tbody.collapse.show {
 #page-admin-index .adminwarning,
 #page-admin-index .adminerror, .que .formulation,
 .que .outcome,
-.que .comment {
+.que .comment, .assignfeedback_editpdf_widget .label {
   position: relative;
   padding: 0.75rem 1.25rem;
   margin-bottom: 1rem;
@@ -5823,13 +5819,13 @@ tbody.collapse.show {
     color: #05233e; }
 
 .alert-secondary {
-  color: #797b7c;
-  background-color: #fbfbfc;
-  border-color: #f9fafb; }
+  color: #6b6e71;
+  background-color: #f5f6f8;
+  border-color: #f1f3f5; }
   .alert-secondary hr {
-    border-top-color: #eaedf1; }
+    border-top-color: #e2e6ea; }
   .alert-secondary .alert-link {
-    color: #606162; }
+    color: #525557; }
 
 .alert-success,
 .que .comment {
@@ -5841,13 +5837,13 @@ tbody.collapse.show {
   .alert-success .alert-link, .que .comment .alert-link {
     color: #1f3e1f; }
 
-.alert-info, #page-admin-index .releasenoteslink, #adminsettings .form-overridden, .que .formulation {
+.alert-info, #page-admin-index .releasenoteslink, #adminsettings .form-overridden, .que .formulation, .assignfeedback_editpdf_widget .label {
   color: #2f6473;
   background-color: #def2f8;
   border-color: #d1edf6; }
-  .alert-info hr, #page-admin-index .releasenoteslink hr, #adminsettings .form-overridden hr, .que .formulation hr {
+  .alert-info hr, #page-admin-index .releasenoteslink hr, #adminsettings .form-overridden hr, .que .formulation hr, .assignfeedback_editpdf_widget .label hr {
     border-top-color: #bce5f2; }
-  .alert-info .alert-link, #page-admin-index .releasenoteslink .alert-link, #adminsettings .form-overridden .alert-link, .que .formulation .alert-link {
+  .alert-info .alert-link, #page-admin-index .releasenoteslink .alert-link, #adminsettings .form-overridden .alert-link, .que .formulation .alert-link, .assignfeedback_editpdf_widget .label .alert-link {
     color: #20454f; }
 
 .alert-warning,
@@ -5987,15 +5983,15 @@ tbody.collapse.show {
     border-color: #093e6d; }
 
 .list-group-item-secondary {
-  color: #797b7c;
-  background-color: #f9fafb; }
+  color: #6b6e71;
+  background-color: #f1f3f5; }
   .list-group-item-secondary.list-group-item-action:hover, .list-group-item-secondary.list-group-item-action:focus {
-    color: #797b7c;
-    background-color: #eaedf1; }
+    color: #6b6e71;
+    background-color: #e2e6ea; }
   .list-group-item-secondary.list-group-item-action.active {
     color: #fff;
-    background-color: #797b7c;
-    border-color: #797b7c; }
+    background-color: #6b6e71;
+    border-color: #6b6e71; }
 
 .list-group-item-success {
   color: #306030;
@@ -6556,12 +6552,12 @@ button.bg-primary:focus {
   background-color: #0d5ca2 !important; }
 
 .bg-secondary {
-  background-color: #e9ecef !important; }
+  background-color: #ced4da !important; }
 
 a.bg-secondary:hover, a.bg-secondary:focus,
 button.bg-secondary:hover,
 button.bg-secondary:focus {
-  background-color: #cbd3da !important; }
+  background-color: #b1bbc4 !important; }
 
 .bg-success {
   background-color: #5cb85c !important; }
@@ -6652,7 +6648,7 @@ button.bg-dark:focus {
   border-color: #1177d1 !important; }
 
 .border-secondary {
-  border-color: #e9ecef !important; }
+  border-color: #ced4da !important; }
 
 .border-success {
   border-color: #5cb85c !important; }
@@ -8379,10 +8375,10 @@ a.text-primary:hover, a.text-primary:focus {
   color: #0d5ca2 !important; }
 
 .text-secondary {
-  color: #e9ecef !important; }
+  color: #ced4da !important; }
 
 a.text-secondary:hover, a.text-secondary:focus {
-  color: #cbd3da !important; }
+  color: #b1bbc4 !important; }
 
 .text-success, .green,
 .notifysuccess, .connected {
@@ -8427,10 +8423,10 @@ a.text-danger:hover, a.notconnected:hover, .que a.validationerror:hover, a.text-
 a.text-light:hover, a.text-light:focus {
   color: #dae0e5 !important; }
 
-.text-dark {
+.text-dark, #categoryquestions .highlight {
   color: #373a3c !important; }
 
-a.text-dark:hover, a.text-dark:focus {
+a.text-dark:hover, #categoryquestions a.highlight:hover, a.text-dark:focus, #categoryquestions a.highlight:focus {
   color: #1f2021 !important; }
 
 .text-muted, a.dimmed,
@@ -8524,7 +8520,7 @@ a.dimmed_text:visited,
 /* stylelint-disable function-url-scheme-blacklist */
 /* stylelint-enable function-url-scheme-blacklist */
 .tag, .statusok, .statuswarning, .statusserious,
-.statuscritical, .que .correctness, .assignfeedback_editpdf_widget .label, .label, .badge {
+.statuscritical, .que .correctness, .label, .badge {
   display: inline-block;
   padding: 0.25rem 0.4em;
   font-size: 75%;
@@ -8570,9 +8566,9 @@ a.dimmed_text:visited,
   #page-admin-report-backups-index .backup-notyetrun[href]:focus {
     background-color: #449d44; }
 
-.tag-info, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release, .assignfeedback_editpdf_widget .label {
+.tag-info, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release {
   background-color: #5bc0de; }
-  .tag-info[href]:hover, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release[href]:hover, .assignfeedback_editpdf_widget .label[href]:hover, .tag-info[href]:focus, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release[href]:focus, .assignfeedback_editpdf_widget .label[href]:focus {
+  .tag-info[href]:hover, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release[href]:hover, .tag-info[href]:focus, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release[href]:focus {
     background-color: #31b0d5; }
 
 .tag-warning, .statuswarning, #page-admin-report-backups-index .backup-warning, #page-admin-index .updateplugin .updatepluginconfirmexternal, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity100 .info.release,
@@ -10383,6 +10379,9 @@ ul {
   width: 100%;
   color: #373a3c; }
 
+.dropdown-item:active a {
+  color: #fff; }
+
 .competency-tree ul {
   padding-left: 1.5rem; }
 
@@ -11155,6 +11154,10 @@ div.editor_atto_toolbar button .icon {
     padding-left: 0.5rem;
     content: "/"; }
 
+#page-admin-tasklogs .task-class {
+  font-size: 0.8203125rem;
+  color: #868e96; }
+
 .blockmovetarget .accesshide {
   position: relative;
   left: initial; }
@@ -11256,8 +11259,8 @@ div.editor_atto_toolbar button .icon {
   overflow-x: scroll; }
 
 .summaryimage {
-  height: 7rem;
-  width: 7rem;
+  height: 5rem;
+  width: 5rem;
   background-position: center;
   background-size: cover; }
 
@@ -12090,13 +12093,15 @@ span.editinstructions {
 .coursebox > .info > .coursename,
 .coursebox .content .teachers,
 .coursebox .content .courseimage,
-.coursebox .content .coursefile {
+.coursebox .content .coursefile,
+.coursebox .content .customfields-container {
   float: left;
   clear: left; }
 
 .coursebox .content .teachers,
 .coursebox .content .courseimage,
-.coursebox .content .coursefile {
+.coursebox .content .coursefile,
+.coursebox .content .customfields-container {
   width: 40%; }
 
 .coursebox > .info > h3.coursename {
@@ -12143,7 +12148,8 @@ span.editinstructions {
 .coursebox .content .courseimage,
 .coursebox .content .coursefile,
 .coursebox .content .teachers,
-.coursebox.remotecoursebox .remotecourseinfo {
+.coursebox.remotecoursebox .remotecourseinfo,
+.coursebox .content .customfields-container {
   margin: 15px 5px 5px;
   padding: 0; }
 
@@ -12424,7 +12430,9 @@ span.editinstructions {
   #course-category-listings .select-a-category .que .outcome,
   .que #course-category-listings .select-a-category .outcome,
   #course-category-listings .select-a-category .que .comment,
-  .que #course-category-listings .select-a-category .comment {
+  .que #course-category-listings .select-a-category .comment,
+  #course-category-listings .select-a-category .assignfeedback_editpdf_widget .label,
+  .assignfeedback_editpdf_widget #course-category-listings .select-a-category .label {
     margin: 1em; }
 
 #course-category-listings #course-listing .listitem .drag-handle {
@@ -14392,7 +14400,7 @@ body.path-question-type {
     font: inherit;
     position: static;
     padding-right: .3em; }
-  body.path-question-type .form-group .sr-only, body.path-question-type .form-buttons .sr-only, body.path-question-type .path-admin .buttons .sr-only, .path-admin body.path-question-type .buttons .sr-only, body.path-question-type #fitem_id_submitbutton .sr-only, body.path-question-type .fp-content-center form + div .sr-only, .fp-content-center body.path-question-type form + div .sr-only, body.path-question-type div.backup-section + form .sr-only, body.path-question-type #fgroup_id_buttonar .sr-only {
+  body.path-question-type .form-group .sr-only, body.path-question-type .form-buttons .sr-only, body.path-question-type .path-admin .buttons .sr-only, .path-admin body.path-question-type .buttons .sr-only, body.path-question-type .fp-content-center form + div .sr-only, .fp-content-center body.path-question-type form + div .sr-only, body.path-question-type div.backup-section + form .sr-only {
     position: static;
     width: auto;
     height: auto;
@@ -14509,7 +14517,9 @@ body.path-question-type {
   vertical-align: text-bottom; }
 
 .que input.questionflagimage {
-  padding-right: 3px; }
+  padding-right: 3px;
+  height: 16px;
+  width: 16px; }
 
 .importerror {
   margin-top: 10px;
@@ -15007,10 +15017,8 @@ body.path-question-type .mform fieldset.hidden {
 
 .mform .form-inline .form-group, .mform .form-inline .form-buttons,
 .mform .form-inline .path-admin .buttons, .path-admin .mform .form-inline .buttons,
-.mform .form-inline #fitem_id_submitbutton,
 .mform .form-inline .fp-content-center form + div, .fp-content-center .mform .form-inline form + div,
-.mform .form-inline div.backup-section + form,
-.mform .form-inline #fgroup_id_buttonar {
+.mform .form-inline div.backup-section + form {
   margin: 0.1rem 0.25rem 0.1rem 0; }
 
 .mform .form-inline br + label {
@@ -15030,10 +15038,8 @@ body.path-question-type .mform fieldset.hidden {
 
 .mform > .form-group, .mform > .form-buttons,
 .path-admin .mform > .buttons,
-.mform > #fitem_id_submitbutton,
 .fp-content-center .mform > form + div,
-.mform > div.backup-section + form,
-.mform > #fgroup_id_buttonar {
+.mform > div.backup-section + form {
   margin-left: 1.5rem; }
 
 .editor_atto_content.form-control {
@@ -15082,10 +15088,8 @@ input#id_externalurl {
 
 .form-buttons,
 .path-admin .buttons,
-#fitem_id_submitbutton,
 .fp-content-center form + div,
-div.backup-section + form,
-#fgroup_id_buttonar {
+div.backup-section + form {
   padding-left: 0; }
 
 .form-item .form-setting .defaultsnext > input {
@@ -15114,6 +15118,9 @@ div.backup-section + form,
 .mform .fitem .felement input[name="phone2"] {
   text-align: left;
   direction: ltr; }
+
+.que.match .mediaplugin {
+  width: 50vw; }
 
 /* rtl:ignore */
 #page-admin-grade-edit-scale-edit .error input#id_name {
@@ -15295,10 +15302,8 @@ textarea[data-auto-rows] {
 
 [data-fieldtype="modgrade"] .form-group, [data-fieldtype="modgrade"] .form-buttons,
 [data-fieldtype="modgrade"] .path-admin .buttons, .path-admin [data-fieldtype="modgrade"] .buttons,
-[data-fieldtype="modgrade"] #fitem_id_submitbutton,
 [data-fieldtype="modgrade"] .fp-content-center form + div, .fp-content-center [data-fieldtype="modgrade"] form + div,
-[data-fieldtype="modgrade"] div.backup-section + form,
-[data-fieldtype="modgrade"] #fgroup_id_buttonar {
+[data-fieldtype="modgrade"] div.backup-section + form {
   padding-bottom: 0.375rem; }
 
 [data-fieldtype="modgrade"] {
@@ -15573,6 +15578,9 @@ div#dock {
     margin-left: 0;
     margin-top: 1rem; }
 
+#page-mod-lesson-view .fitem .felement .custom-select {
+  align-self: flex-start; }
+
 .path-mod-lesson .generaltable td {
   vertical-align: middle; }
   .path-mod-lesson .generaltable td label {
@@ -15668,10 +15676,8 @@ div#dock {
 
 #page-mod-quiz-mod #id_reviewoptionshdr .form-group, #page-mod-quiz-mod #id_reviewoptionshdr .form-buttons,
 #page-mod-quiz-mod #id_reviewoptionshdr .path-admin .buttons, .path-admin #page-mod-quiz-mod #id_reviewoptionshdr .buttons,
-#page-mod-quiz-mod #id_reviewoptionshdr #fitem_id_submitbutton,
 #page-mod-quiz-mod #id_reviewoptionshdr .fp-content-center form + div, .fp-content-center #page-mod-quiz-mod #id_reviewoptionshdr form + div,
-#page-mod-quiz-mod #id_reviewoptionshdr div.backup-section + form,
-#page-mod-quiz-mod #id_reviewoptionshdr #fgroup_id_buttonar {
+#page-mod-quiz-mod #id_reviewoptionshdr div.backup-section + form {
   float: left;
   width: 20rem;
   display: inline-block;
@@ -15994,41 +16000,33 @@ div#dock {
     background-color: #fff; }
   .path-backup .mform .root_setting .form-group, .path-backup .mform .root_setting .form-buttons,
   .path-backup .mform .root_setting .path-admin .buttons, .path-admin .path-backup .mform .root_setting .buttons,
-  .path-backup .mform .root_setting #fitem_id_submitbutton,
   .path-backup .mform .root_setting .fp-content-center form + div, .fp-content-center .path-backup .mform .root_setting form + div,
   .path-backup .mform .root_setting div.backup-section + form,
-  .path-backup .mform .root_setting #fgroup_id_buttonar,
   .path-backup .mform .grouped_settings .form-group,
   .path-backup .mform .grouped_settings .form-buttons,
   .path-backup .mform .grouped_settings .path-admin .buttons,
   .path-admin .path-backup .mform .grouped_settings .buttons,
-  .path-backup .mform .grouped_settings #fitem_id_submitbutton,
   .path-backup .mform .grouped_settings .fp-content-center form + div,
   .fp-content-center .path-backup .mform .grouped_settings form + div,
-  .path-backup .mform .grouped_settings div.backup-section + form,
-  .path-backup .mform .grouped_settings #fgroup_id_buttonar {
+  .path-backup .mform .grouped_settings div.backup-section + form {
     /* These checkboxes with no label on the left. */ }
-    .path-backup .mform .root_setting .form-group .col-md-3.checkbox, .path-backup .mform .root_setting .form-buttons .col-md-3.checkbox, .path-backup .mform .root_setting .path-admin .buttons .col-md-3.checkbox, .path-admin .path-backup .mform .root_setting .buttons .col-md-3.checkbox, .path-backup .mform .root_setting #fitem_id_submitbutton .col-md-3.checkbox, .path-backup .mform .root_setting .fp-content-center form + div .col-md-3.checkbox, .fp-content-center .path-backup .mform .root_setting form + div .col-md-3.checkbox, .path-backup .mform .root_setting div.backup-section + form .col-md-3.checkbox, .path-backup .mform .root_setting #fgroup_id_buttonar .col-md-3.checkbox,
+    .path-backup .mform .root_setting .form-group .col-md-3.checkbox, .path-backup .mform .root_setting .form-buttons .col-md-3.checkbox, .path-backup .mform .root_setting .path-admin .buttons .col-md-3.checkbox, .path-admin .path-backup .mform .root_setting .buttons .col-md-3.checkbox, .path-backup .mform .root_setting .fp-content-center form + div .col-md-3.checkbox, .fp-content-center .path-backup .mform .root_setting form + div .col-md-3.checkbox, .path-backup .mform .root_setting div.backup-section + form .col-md-3.checkbox,
     .path-backup .mform .grouped_settings .form-group .col-md-3.checkbox,
     .path-backup .mform .grouped_settings .form-buttons .col-md-3.checkbox,
     .path-backup .mform .grouped_settings .path-admin .buttons .col-md-3.checkbox,
     .path-admin .path-backup .mform .grouped_settings .buttons .col-md-3.checkbox,
-    .path-backup .mform .grouped_settings #fitem_id_submitbutton .col-md-3.checkbox,
     .path-backup .mform .grouped_settings .fp-content-center form + div .col-md-3.checkbox,
     .fp-content-center .path-backup .mform .grouped_settings form + div .col-md-3.checkbox,
-    .path-backup .mform .grouped_settings div.backup-section + form .col-md-3.checkbox,
-    .path-backup .mform .grouped_settings #fgroup_id_buttonar .col-md-3.checkbox {
+    .path-backup .mform .grouped_settings div.backup-section + form .col-md-3.checkbox {
       width: 0%; }
-    .path-backup .mform .root_setting .form-group .col-md-9.checkbox, .path-backup .mform .root_setting .form-buttons .col-md-9.checkbox, .path-backup .mform .root_setting .path-admin .buttons .col-md-9.checkbox, .path-admin .path-backup .mform .root_setting .buttons .col-md-9.checkbox, .path-backup .mform .root_setting #fitem_id_submitbutton .col-md-9.checkbox, .path-backup .mform .root_setting .fp-content-center form + div .col-md-9.checkbox, .fp-content-center .path-backup .mform .root_setting form + div .col-md-9.checkbox, .path-backup .mform .root_setting div.backup-section + form .col-md-9.checkbox, .path-backup .mform .root_setting #fgroup_id_buttonar .col-md-9.checkbox,
+    .path-backup .mform .root_setting .form-group .col-md-9.checkbox, .path-backup .mform .root_setting .form-buttons .col-md-9.checkbox, .path-backup .mform .root_setting .path-admin .buttons .col-md-9.checkbox, .path-admin .path-backup .mform .root_setting .buttons .col-md-9.checkbox, .path-backup .mform .root_setting .fp-content-center form + div .col-md-9.checkbox, .fp-content-center .path-backup .mform .root_setting form + div .col-md-9.checkbox, .path-backup .mform .root_setting div.backup-section + form .col-md-9.checkbox,
     .path-backup .mform .grouped_settings .form-group .col-md-9.checkbox,
     .path-backup .mform .grouped_settings .form-buttons .col-md-9.checkbox,
     .path-backup .mform .grouped_settings .path-admin .buttons .col-md-9.checkbox,
     .path-admin .path-backup .mform .grouped_settings .buttons .col-md-9.checkbox,
-    .path-backup .mform .grouped_settings #fitem_id_submitbutton .col-md-9.checkbox,
     .path-backup .mform .grouped_settings .fp-content-center form + div .col-md-9.checkbox,
     .fp-content-center .path-backup .mform .grouped_settings form + div .col-md-9.checkbox,
-    .path-backup .mform .grouped_settings div.backup-section + form .col-md-9.checkbox,
-    .path-backup .mform .grouped_settings #fgroup_id_buttonar .col-md-9.checkbox {
+    .path-backup .mform .grouped_settings div.backup-section + form .col-md-9.checkbox {
       width: 100%;
       left: 0; }
 
@@ -17174,3 +17172,11 @@ body {
     .btn-outline-secondary:not(:disabled):not(.disabled):active:focus, .btn-outline-secondary:not(:disabled):not(.disabled).active:focus,
     .show > .btn-outline-secondary.dropdown-toggle:focus {
       box-shadow: 0 0 0 0.2rem rgba(134, 142, 150, 0.5); }
+
+.bg-gray {
+  background-color: #e9ecef !important; }
+
+a.bg-gray:hover, a.bg-gray:focus,
+button.bg-gray:hover,
+button.bg-gray:focus {
+  background-color: #cbd3da !important; }

@@ -1740,6 +1740,10 @@ class core_plugin_manager {
                 'gregorian'
             ),
 
+            'customfield' => array(
+                'checkbox', 'date', 'select', 'text', 'textarea'
+            ),
+
             'coursereport' => array(
                 // Deprecated!
             ),

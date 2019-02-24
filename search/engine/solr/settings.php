@@ -41,11 +41,11 @@ if ($ADMIN->fulltree) {
             $defaultport = !empty($secure) ? 8443 : 8983;
             $settings->add(new admin_setting_configtext('search_solr/server_port', new lang_string('solrhttpconnectionport', 'search_solr'), '', $defaultport, PARAM_INT));
             $settings->add(new admin_setting_configtext('search_solr/server_username', new lang_string('solrauthuser', 'search_solr'), '', '', PARAM_RAW));
-            $settings->add(new admin_setting_configtext('search_solr/server_password', new lang_string('solrauthpassword', 'search_solr'), '', '', PARAM_RAW));
+            $settings->add(new admin_setting_configpasswordunmask('search_solr/server_password', new lang_string('solrauthpassword', 'search_solr'), '', ''));
             $settings->add(new admin_setting_configtext('search_solr/server_timeout', new lang_string('solrhttpconnectiontimeout', 'search_solr'), new lang_string('solrhttpconnectiontimeout_desc', 'search_solr'), 30, PARAM_INT));
             $settings->add(new admin_setting_configtext('search_solr/ssl_cert', new lang_string('solrsslcert', 'search_solr'), new lang_string('solrsslcert_desc', 'search_solr'), '', PARAM_RAW));
             $settings->add(new admin_setting_configtext('search_solr/ssl_key', new lang_string('solrsslkey', 'search_solr'), new lang_string('solrsslkey_desc', 'search_solr'), '', PARAM_RAW));
-            $settings->add(new admin_setting_configtext('search_solr/ssl_keypassword', new lang_string('solrsslkeypassword', 'search_solr'), new lang_string('solrsslkeypassword_desc', 'search_solr'), '', PARAM_RAW));
+            $settings->add(new admin_setting_configpasswordunmask('search_solr/ssl_keypassword', new lang_string('solrsslkeypassword', 'search_solr'), new lang_string('solrsslkeypassword_desc', 'search_solr'), ''));
             $settings->add(new admin_setting_configtext('search_solr/ssl_cainfo', new lang_string('solrsslcainfo', 'search_solr'), new lang_string('solrsslcainfo_desc', 'search_solr'), '', PARAM_RAW));
             $settings->add(new admin_setting_configtext('search_solr/ssl_capath', new lang_string('solrsslcapath', 'search_solr'), new lang_string('solrsslcapath_desc', 'search_solr'), '', PARAM_RAW));
 

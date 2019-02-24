@@ -65,6 +65,7 @@ class course_summary_exporter extends \core\external\exporter {
             $hasprogress = true;
         }
         $progress = floor($progress);
+        $coursecategory = \core_course_category::get($this->data->category, MUST_EXIST, true);
         return array(
             'fullnamedisplay' => get_course_display_name_for_list($this->data),
             'viewurl' => (new moodle_url('/course/view.php', array('id' => $this->data->id)))->out(false),
@@ -73,7 +74,8 @@ class course_summary_exporter extends \core\external\exporter {
             'hasprogress' => $hasprogress,
             'isfavourite' => $this->related['isfavourite'],
             'hidden' => boolval(get_user_preferences('block_myoverview_hidden_course_' . $this->data->id, 0)),
-            'showshortname' => $CFG->courselistshortnames ? true : false
+            'showshortname' => $CFG->courselistshortnames ? true : false,
+            'coursecategory' => $coursecategory->name
         );
     }
 
@@ -149,6 +151,9 @@ class course_summary_exporter extends \core\external\exporter {
             ),
             'showshortname' => array(
                 'type' => PARAM_BOOL
+            ),
+            'coursecategory' => array(
+                'type' => PARAM_TEXT
             )
         );
     }

@@ -46,14 +46,6 @@ function imscp_supports($feature) {
 }
 
 /**
- * Returns all other caps used in module
- * @return array
- */
-function imscp_get_extra_capabilities() {
-    return array('moodle/site:accessallgroups');
-}
-
-/**
  * This function is used by the reset_course_userdata function in moodlelib.
  *
  * @param stdClass $data the data submitted from the reset course.

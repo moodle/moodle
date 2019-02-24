@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class test_indicator_random extends \core_analytics\local\indicator\binary {
+class test_indicator_random extends \core_analytics\local\indicator\linear {
 
     /**
      * Returns a lang_string object representing the name for the indicator.

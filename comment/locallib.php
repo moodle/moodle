@@ -170,6 +170,7 @@ class comment_manager {
 
         $link = new moodle_url('/comment/index.php', array('action' => 'delete', 'sesskey' => sesskey()));
         foreach ($comments as $c) {
+            $userdata = html_writer::link(new moodle_url('/user/profile.php', ['id' => $c->userid]), $c->fullname);
             $this->setup_plugin($c);
             if (!empty($this->plugintype)) {
                 $context_url = plugin_callback($this->plugintype, $this->pluginname, 'comment', 'url', array($c));
@@ -180,7 +181,7 @@ class comment_manager {
                 $action .= html_writer::empty_tag('br');
                 $action .= html_writer::link($context_url, get_string('commentincontext'), array('target'=>'_blank'));
             }
-            $table->data[] = array($checkbox, $c->fullname, $c->content, $action);
+            $table->data[] = array($checkbox, $userdata, $c->content, $action);
         }
         echo html_writer::table($table);
         echo $OUTPUT->paging_bar($count, $page, $this->perpage, $CFG->wwwroot.'/comment/index.php');

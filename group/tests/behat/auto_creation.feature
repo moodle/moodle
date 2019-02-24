@@ -57,6 +57,16 @@ Feature: Automatic creation of groups
     And I press "Submit"
     And the "groups" select box should contain "Group A (5)"
     And the "groups" select box should contain "Group B (5)"
+    # Check that group messaging is not enabled for the auto-created groups.
+    And I set the field "groups" to "Group A"
+    And I press "Edit group settings"
+    And I should see "No" in the "Group messaging" "select"
+    And I press "Cancel"
+    And I set the field "groups" to "Group B"
+    And I press "Edit group settings"
+    And I should see "No" in the "Group messaging" "select"
+    And I press "Cancel"
+    # Check groupings.
     And I follow "Groupings"
     And I should see "Grouping name"
     And I click on "Show groups in grouping" "link" in the "Grouping name" "table_row"
@@ -170,3 +180,20 @@ Feature: Automatic creation of groups
     And I set the field "Group/member count" to "11"
     And I press "Preview"
     And I should not see "Suspended Student 11"
+
+  @javascript
+  Scenario: Auto-create groups with group messaging
+    Given I set the following fields to these values:
+      | Naming scheme | Group @ |
+      | Auto create based on | Number of groups |
+      | Group/member count | 2 |
+      | Grouping of auto-created groups | No grouping |
+      | Group messaging | Yes |
+    And I press "Submit"
+    And I set the field "groups" to "Group A"
+    When I press "Edit group settings"
+    Then I should see "Yes" in the "Group messaging" "select"
+    And I press "Cancel"
+    And I set the field "groups" to "Group B"
+    And I press "Edit group settings"
+    And I should see "Yes" in the "Group messaging" "select"

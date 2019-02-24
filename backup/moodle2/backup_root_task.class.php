@@ -168,5 +168,10 @@ class backup_root_task extends backup_task {
         $competencies = new backup_competencies_setting();
         $competencies->set_ui(new backup_setting_ui_checkbox($competencies, get_string('rootsettingcompetencies', 'backup')));
         $this->add_setting($competencies);
+
+        // Define custom fields inclusion setting if custom fields are used.
+        $customfields = new backup_customfield_setting('customfield', base_setting::IS_BOOLEAN, true);
+        $customfields->set_ui(new backup_setting_ui_checkbox($customfields, get_string('rootsettingcustomfield', 'backup')));
+        $this->add_setting($customfields);
     }
 }

@@ -281,6 +281,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param bool $mobileconfigured Whether the mobile web services have been enabled
      * @param bool $overridetossl Whether or not ssl is being forced.
      * @param bool $invalidforgottenpasswordurl Whether the forgotten password URL does not link to a valid URL.
+     * @param bool $croninfrequent If true, warn that cron hasn't run in the past few minutes
      *
      * @return string HTML to output.
      */
@@ -288,7 +289,7 @@ class core_admin_renderer extends plugin_renderer_base {
             $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch,
             $buggyiconvnomb, $registered, array $cachewarnings = array(), $eventshandlers = 0,
             $themedesignermode = false, $devlibdir = false, $mobileconfigured = false,
-            $overridetossl = false, $invalidforgottenpasswordurl = false) {
+            $overridetossl = false, $invalidforgottenpasswordurl = false, $croninfrequent = false) {
         global $CFG;
         $output = '';
 
@@ -302,6 +303,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->display_errors_warning($errorsdisplayed);
         $output .= $this->buggy_iconv_warning($buggyiconvnomb);
         $output .= $this->cron_overdue_warning($cronoverdue);
+        $output .= $this->cron_infrequent_warning($croninfrequent);
         $output .= $this->db_problems($dbproblems);
         $output .= $this->maintenance_mode_warning($maintenancemode);
         $output .= $this->overridetossl_warning($overridetossl);
@@ -611,6 +613,24 @@ class core_admin_renderer extends plugin_renderer_base {
 
         // $CFG->cronclionly is not empty: cron can run only from CLI.
         return $this->warning(get_string('cronwarningcli', 'admin') . '&nbsp;' .
+                $this->help_icon('cron', 'admin'));
+    }
+
+    /**
+     * Render an appropriate message if cron is not being run frequently (recommended every minute).
+     *
+     * @param bool $croninfrequent
+     * @return string HTML to output.
+     */
+    public function cron_infrequent_warning(bool $croninfrequent) : string {
+        global $CFG;
+
+        if (!$croninfrequent) {
+            return '';
+        }
+
+        $expectedfrequency = $CFG->expectedcronfrequency ?? 200;
+        return $this->warning(get_string('croninfrequent', 'admin', $expectedfrequency) . '&nbsp;' .
                 $this->help_icon('cron', 'admin'));
     }
 

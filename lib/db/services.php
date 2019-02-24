@@ -1396,6 +1396,14 @@ $functions = array(
         'loginrequired' => false,
         'ajax' => true,
     ),
+    'core_output_load_template_with_dependencies' => array(
+        'classname' => 'core\output\external',
+        'methodname' => 'load_template_with_dependencies',
+        'description' => 'Load a template and its dependencies for a renderable',
+        'type' => 'read',
+        'loginrequired' => false,
+        'ajax' => true,
+    ),
     'core_output_load_fontawesome_icon_map' => array(
         'classname' => 'core\output\external',
         'methodname' => 'load_fontawesome_icon_map',
@@ -2425,6 +2433,54 @@ $functions = array(
         'type'        => 'read',
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_customfield_delete_field' => array(
+        'classname'   => 'core_customfield_external',
+        'methodname'  => 'delete_field',
+        'classpath'   => 'customfield/externallib.php',
+        'description' => 'Deletes an entry',
+        'type'        => 'write',
+        'ajax'        => 'true'
+    ),
+    'core_customfield_reload_template' => array(
+        'classname'   => 'core_customfield_external',
+        'methodname'  => 'reload_template',
+        'classpath'   => 'customfield/externallib.php',
+        'description' => 'Reloads template',
+        'type'        => 'read',
+        'ajax'        => 'true'
+    ),
+    'core_customfield_create_category' => array(
+        'classname'   => 'core_customfield_external',
+        'methodname'  => 'create_category',
+        'classpath'   => 'customfield/externallib.php',
+        'description' => 'Creates a new category',
+        'type'        => 'write',
+        'ajax'        => 'true'
+    ),
+    'core_customfield_delete_category' => array(
+        'classname'   => 'core_customfield_external',
+        'methodname'  => 'delete_category',
+        'classpath'   => 'customfield/externallib.php',
+        'description' => 'Deletes a category',
+        'type'        => 'write',
+        'ajax'        => 'true'
+    ),
+    'core_customfield_move_field'   => array(
+        'classname'   => 'core_customfield_external',
+        'methodname'  => 'move_field',
+        'classpath'   => 'customfield/externallib.php',
+        'description' => 'Drag and drop',
+        'type'        => 'write',
+        'ajax'        => 'true'
+    ),
+    'core_customfield_move_category' => array(
+        'classname'   => 'core_customfield_external',
+        'methodname'  => 'move_category',
+        'classpath'   => 'customfield/externallib.php',
+        'description' => 'Drag and drop categories',
+        'type'        => 'write',
+        'ajax'        => 'true'
+    )
 );
 
 $services = array(

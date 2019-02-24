@@ -98,22 +98,25 @@ class provider implements
      * @param   userlist    $userlist   The userlist containing the list of users who have data in this context/plugin combination.
      */
     public static function get_users_in_context(userlist $userlist) {
+        // This block doesn't know who information is stored against unless it
+        // is at the user context.
         $context = $userlist->get_context();
 
-        if (!is_a($context, \context_block::class)) {
+        if (!$context instanceof \context_block) {
             return;
         }
 
-        $params = [
-            'contextid'    => $context->id,
-            'contextuser' => CONTEXT_USER,
-        ];
-
         $sql = "SELECT bpc.instanceid AS userid
-                  FROM {context} c
-                  JOIN {block_instances} bi ON bi.id = c.instanceid AND bi.blockname = 'html'
-                  JOIN {context} bpc ON bpc.id = bi.parentcontextid AND bpc.contextlevel = :contextuser
-                 WHERE c.id = :contextid";
+                  FROM {block_instances} bi
+                  JOIN {context} bpc ON bpc.id = bi.parentcontextid
+                 WHERE bi.blockname = 'html'
+                   AND bpc.contextlevel = :contextuser
+                   AND bi.id = :blockinstanceid";
+
+        $params = [
+            'contextuser' => CONTEXT_USER,
+            'blockinstanceid' => $context->instanceid
+        ];
 
         $userlist->add_from_sql('userid', $sql, $params);
     }

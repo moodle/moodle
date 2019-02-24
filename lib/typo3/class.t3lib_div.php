@@ -1527,7 +1527,7 @@ final class t3lib_div {
 		require_once(PATH_typo3 . 'contrib/idna/idna_convert.class.php');
 		$IDN = new idna_convert(array('idn_version' => 2008));
 
-		return (filter_var($IDN->encode($url), FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED) !== FALSE);
+		return (filter_var($IDN->encode($url), FILTER_VALIDATE_URL) !== FALSE);
 	}
 
 

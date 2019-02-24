@@ -1,8 +1,0 @@
-{
-    "moodle-question-qbankmanager": {
-        "requires": [
-            "node",
-            "selector-css3"
-        ]
-    }
-}

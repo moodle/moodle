@@ -213,16 +213,7 @@ class provider implements
             return;
         }
 
-        $params = [
-            'contextid' => $context->id,
-            'contextuser' => CONTEXT_USER,
-        ];
-
-        $sql = "SELECT instanceid as userid
-                  FROM {context}
-                 WHERE id = :contextid and contextlevel = :contextuser";
-
-        $userlist->add_from_sql('userid', $sql, $params);
+        $userlist->add_user($context->instanceid);
     }
 
     /**

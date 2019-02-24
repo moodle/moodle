@@ -193,13 +193,31 @@ class core_completion_privacy_test extends \core_privacy\tests\provider_testcase
         $hasno = array_search('No', $coursecompletion1['criteria'], true);
         $this->assertFalse($hasno);
         $coursecompletion2 = \core_completion\privacy\provider::get_course_completion_info($user2, $this->course);
-        $hasyes = array_search('Yes', $coursecompletion1['criteria'], true);
+        $hasyes = array_search('Yes', $coursecompletion2['criteria'], true);
         $this->assertFalse($hasyes);
         $coursecompletion3 = \core_completion\privacy\provider::get_course_completion_info($user3, $this->course);
-        $hasno = array_search('No', $coursecompletion1['criteria'], true);
+        $hasno = array_search('No', $coursecompletion3['criteria'], true);
         $this->assertFalse($hasno);
         $coursecompletion4 = \core_completion\privacy\provider::get_course_completion_info($user4, $this->course);
-        $hasyes = array_search('Yes', $coursecompletion1['criteria'], true);
+        $hasyes = array_search('Yes', $coursecompletion4['criteria'], true);
         $this->assertFalse($hasyes);
+    }
+
+    /**
+     * Test getting course completion information with completion disabled.
+     */
+    public function test_get_course_completion_info_completion_disabled() {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 0]);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $coursecompletion = \core_completion\privacy\provider::get_course_completion_info($user, $course);
+
+        $this->assertTrue(is_array($coursecompletion));
+        $this->assertEmpty($coursecompletion);
     }
 }

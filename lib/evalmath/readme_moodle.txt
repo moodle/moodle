@@ -22,3 +22,9 @@ skodak, Tim Hunt
 Changes by Juan Pablo de Castro (MDL-14274):
 * operators >,<,>=,<=,== added.
 * function if[thenelse](condition, true_value, false_value)
+
+Changes by Stefan Erlachner, Thomas Niedermaier (MDL-64414):
+* add function or:
+e.g. if (or(condition_1, condition_2, ... condition_n))
+* add function and:
+e.g. if (and(condition_1, condition_2, ... condition_n))

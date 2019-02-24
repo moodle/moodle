@@ -28,13 +28,15 @@ Feature: In a book, create chapters and sub chapters
       | Content | Dream is the start of a journey |
     And I press "Save changes"
     And I should see "1. Dummy first chapter" in the "Table of contents" "block"
-    And I click on "Add new chapter" "link" in the "Table of contents" "block"
+    And I click on "Add new chapter after \"Dummy first chapter\"" "link" in the "Table of contents" "block"
+    And I should see "Dummy first chapter"
     And I set the following fields to these values:
       | Chapter title | Dummy second chapter |
       | Content | The path is the second part |
     And I press "Save changes"
     And I should see "2. Dummy second chapter" in the "Table of contents" "block"
-    And I click on "Add new chapter" "link" in the "Table of contents" "block"
+    And I click on "Add new chapter after \"Dummy first chapter\"" "link" in the "Table of contents" "block"
+    And I should see "Dummy first chapter"
     And I set the following fields to these values:
       | Chapter title | Dummy first subchapter |
       | Content | The path is the second part |
@@ -75,4 +77,4 @@ Feature: In a book, create chapters and sub chapters
     Then "Edit chapter \"1. Dummy first chapter\"" "link" should not exist in the "Table of contents" "block"
     And "Delete chapter \"1. Dummy first chapter\"" "link" should not exist in the "Table of contents" "block"
     And "Hide chapter \"1. Dummy first chapter\"" "link" should not exist in the "Table of contents" "block"
-    And "Add new chapter" "link" should not exist in the "Table of contents" "block"
+    And "Add new chapter after \"Dummy first chapter\"" "link" should not exist in the "Table of contents" "block"

@@ -184,12 +184,12 @@ $where = array();
 $where_params = array();
 
 if ($sifirst !== 'all') {
-    $where[] = $DB->sql_like('u.firstname', ':sifirst', false);
+    $where[] = $DB->sql_like('u.firstname', ':sifirst', false, false);
     $where_params['sifirst'] = $sifirst.'%';
 }
 
 if ($silast !== 'all') {
-    $where[] = $DB->sql_like('u.lastname', ':silast', false);
+    $where[] = $DB->sql_like('u.lastname', ':silast', false, false);
     $where_params['silast'] = $silast.'%';
 }
 
@@ -724,7 +724,6 @@ if ($csv) {
 }
 
 print '</table>';
-print $pagingbar;
 
 $csvurl = new moodle_url('/report/completion/index.php', array('course' => $course->id, 'format' => 'csv'));
 $excelurl = new moodle_url('/report/completion/index.php', array('course' => $course->id, 'format' => 'excelcsv'));

@@ -25,34 +25,10 @@
 <div data-region="loading-placeholder-content" aria-hidden="true">
     {{#cards}}
     <div class="card-deck dashboard-card-deck one-row" style="height: 13rem">
-        <div class="card dashboard-card border-0">
-            <div class="card-img-top bg-pulse-grey w-100" style="height: 7rem">
-            </div>
-            <div class="card-body course-info-container">
-                <div class="bg-pulse-grey w-100" style="height: 1rem"></div>
-            </div>
-        </div>
-        <div class="card dashboard-card border-0">
-            <div class="card-img-top bg-pulse-grey w-100" style="height: 7rem">
-            </div>
-            <div class="card-body course-info-container">
-                <div class="bg-pulse-grey w-100" style="height: 1rem"></div>
-            </div>
-        </div>
-        <div class="card dashboard-card border-0">
-            <div class="card-img-top bg-pulse-grey w-100" style="height: 7rem">
-            </div>
-            <div class="card-body course-info-container">
-                <div class="bg-pulse-grey w-100" style="height: 1rem"></div>
-            </div>
-        </div>
-        <div class="card dashboard-card border-0">
-            <div class="card-img-top bg-pulse-grey w-100" style="height: 7rem">
-            </div>
-            <div class="card-body course-info-container">
-                <div class="bg-pulse-grey w-100" style="height: 1rem"></div>
-            </div>
-        </div>
+        {{> core_course/placeholder-course }}
+        {{> core_course/placeholder-course }}
+        {{> core_course/placeholder-course }}
+        {{> core_course/placeholder-course }}
     </div>
     {{/cards}}
     {{#list}}

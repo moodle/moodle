@@ -28,6 +28,7 @@ $string['addinstance'] = 'Add method';
 $string['addinstanceanother'] = 'Add method and create another';
 $string['ajaxoneuserfound'] = '1 user found';
 $string['ajaxxusersfound'] = '{$a} users found';
+$string['ajaxxmoreusersfound'] = 'More than {$a} users found';
 $string['ajaxnext25'] = 'Next 25...';
 $string['assignnotpermitted'] = 'You do not have permission or can not assign roles in this course.';
 $string['bulkuseroperation'] = 'Bulk user operation';

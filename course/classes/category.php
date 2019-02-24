@@ -922,6 +922,18 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
     }
 
     /**
+     * Preloads the custom fields values in bulk
+     *
+     * @param array $records
+     */
+    public static function preload_custom_fields(array &$records) {
+        $customfields = \core_course\customfield\course_handler::create()->get_instances_data(array_keys($records));
+        foreach ($customfields as $courseid => $data) {
+            $records[$courseid]->customfields = $data;
+        }
+    }
+
+    /**
      * Verify user enrollments for multiple course-user combinations
      *
      * @param array $courseusers array where keys are course ids and values are array
@@ -1048,6 +1060,10 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         // Preload course contacts if necessary.
         if (!empty($options['coursecontacts'])) {
             self::preload_course_contacts($list);
+        }
+        // Preload custom fields if necessary - saves DB queries later to do it for each course separately.
+        if (!empty($options['customfields'])) {
+            self::preload_custom_fields($list);
         }
         return $list;
     }
@@ -1445,6 +1461,10 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 if (!empty($options['coursecontacts'])) {
                     self::preload_course_contacts($records);
                 }
+                // Preload custom fields if necessary - saves DB queries later to do it for each course separately.
+                if (!empty($options['customfields'])) {
+                    self::preload_custom_fields($records);
+                }
                 // If option 'idonly' is specified no further action is needed, just return list of ids.
                 if (!empty($options['idonly'])) {
                     return array_keys($records);
@@ -1550,6 +1570,10 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         // Preload course contacts if necessary - saves DB queries later to do it for each course separately.
         if (!empty($preloadcoursecontacts)) {
             self::preload_course_contacts($records);
+        }
+        // Preload custom fields if necessary - saves DB queries later to do it for each course separately.
+        if (!empty($options['customfields'])) {
+            self::preload_custom_fields($records);
         }
         // If option 'idonly' is specified no further action is needed, just return list of ids.
         if (!empty($options['idonly'])) {
@@ -1666,6 +1690,10 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 if (!empty($options['idonly'])) {
                     return array_keys($records);
                 }
+                // Preload custom fields if necessary - saves DB queries later to do it for each course separately.
+                if (!empty($options['customfields'])) {
+                    self::preload_custom_fields($records);
+                }
                 // Prepare the list of core_course_list_element objects.
                 foreach ($ids as $id) {
 
@@ -1708,6 +1736,10 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             // Preload course contacts if necessary - saves DB queries later to do it for each course separately.
             if (!empty($options['coursecontacts'])) {
                 self::preload_course_contacts($list);
+            }
+            // Preload custom fields if necessary - saves DB queries later to do it for each course separately.
+            if (!empty($options['customfields'])) {
+                self::preload_custom_fields($list);
             }
             // If option 'idonly' is specified no further action is needed, just return list of ids.
             if (!empty($options['idonly'])) {

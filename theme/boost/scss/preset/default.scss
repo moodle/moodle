@@ -62,7 +62,7 @@ $card-group-margin: .25rem;
 
 $theme-colors: (
     primary: $primary,
-    secondary: $gray-200,
+    secondary: $gray-400,
     success: $success,
     info: $info,
     warning: $orange,
@@ -107,3 +107,5 @@ body {
     @include button-outline-variant($gray-600);
     border-color: $border-color;
 }
+
+@include bg-variant(".bg-gray", $gray-200);

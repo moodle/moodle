@@ -24,6 +24,7 @@
 
 $string['aim'] = 'This administration tool helps developers and test writers to create .feature files describing Moodle\'s functionalities and run them automatically. Step definitions available for use in .feature files are listed below.';
 $string['allavailablesteps'] = 'All available step definitions';
+$string['errorapproot'] = '$CFG->behat_ionic_dirroot is not pointing to a valid Moodle Mobile developer install.';
 $string['errorbehatcommand'] = 'Error running behat CLI command. Try running "{$a} --help" manually from CLI to find out more about the problem.';
 $string['errorcomposer'] = 'Composer dependencies are not installed.';
 $string['errordataroot'] = '$CFG->behat_dataroot is not set or is invalid.';

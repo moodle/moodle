@@ -391,6 +391,11 @@ class backup_course_structure_step extends backup_structure_step {
         $tag = new backup_nested_element('tag', array('id'), array(
             'name', 'rawname'));
 
+        $customfields = new backup_nested_element('customfields');
+        $customfield = new backup_nested_element('customfield', array('id'), array(
+          'shortname', 'type', 'value', 'valueformat'
+        ));
+
         // attach format plugin structure to $course element, only one allowed
         $this->add_plugin_structure('format', $course, false);
 
@@ -425,6 +430,9 @@ class backup_course_structure_step extends backup_structure_step {
         $course->add_child($tags);
         $tags->add_child($tag);
 
+        $course->add_child($customfields);
+        $customfields->add_child($customfield);
+
         // Set the sources
 
         $courserec = $DB->get_record('course', array('id' => $this->task->get_courseid()));
@@ -456,6 +464,10 @@ class backup_course_structure_step extends backup_structure_step {
                                  AND ti.itemid = ?', array(
                                      backup_helper::is_sqlparam('course'),
                                      backup::VAR_PARENTID));
+
+        $handler = core_course\customfield\course_handler::create();
+        $fieldsforbackup = $handler->get_instance_data_for_backup($this->task->get_courseid());
+        $customfield->set_source_array($fieldsforbackup);
 
         // Some annotations
 

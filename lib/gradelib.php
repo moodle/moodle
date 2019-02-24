@@ -1128,7 +1128,7 @@ function grade_recover_history_grades($userid, $courseid) {
  *
  * @param int $courseid The course ID
  * @param int $userid If specified try to do a quick regrading of the grades of this user only
- * @param object $updated_item Optional grade item to be marked for regrading
+ * @param object $updated_item Optional grade item to be marked for regrading. It is required if $userid is set.
  * @param \core\progress\base $progress If provided, will be used to update progress on this long operation.
  * @return bool true if ok, array of errors if problems found. Grade item id => error message
  */
@@ -1262,7 +1262,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
                 if ($updateddependencies === false) {
                     // If no direct descendants are marked as updated, then we don't need to update this grade item. We then mark it
                     // as final.
-
+                    $count++;
                     $finalids[] = $gid;
                     continue;
                 }

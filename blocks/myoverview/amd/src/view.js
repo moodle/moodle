@@ -64,7 +64,7 @@ function(
         COURSES_CARDS: 'block_myoverview/view-cards',
         COURSES_LIST: 'block_myoverview/view-list',
         COURSES_SUMMARY: 'block_myoverview/view-summary',
-        NOCOURSES: 'block_myoverview/no-courses'
+        NOCOURSES: 'core_course/no-courses'
     };
 
     var NUMCOURSES_PERPAGE = [12, 24, 48];

@@ -275,6 +275,7 @@ $string['restoringcourse'] = 'Course restoration in progress';
 $string['restoringcourseshortname'] = 'restoring';
 $string['restorerolemappings'] = 'Restore role mappings';
 $string['rootenrolmanual'] = 'Restore as manual enrolments';
+$string['rootsettingcustomfield'] = 'Include custom fields';
 $string['rootsettingenrolments'] = 'Include enrolment methods';
 $string['rootsettingenrolments_always'] = 'Yes, always';
 $string['rootsettingenrolments_never'] = 'No, restore users as manual enrolments';

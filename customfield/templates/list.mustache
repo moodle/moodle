@@ -1,0 +1,131 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+  }}
+{{!
+  @template core_customfield/list
+
+  Moodle list template.
+
+  The purpose of this template is to render a list.
+
+  Classes required for JS:
+  * none
+
+  Data attributes required for JS:
+  * data-component
+  * data-area
+  * data-itemid
+
+  Context variables required for this template:
+  * attributes Array of name / value pairs.
+
+  Example context (json):
+  {
+      "component": "core_nonexisting",
+      "area": "course",
+      "itemid": 0,
+      "usescategories": 1,
+      "categories": [
+          { "id": "0",
+            "nameeditable": "Other fields",
+            "addfieldmenu": "Add field",
+            "fields": [
+                { "id": 0, "name": "Field name", "shortname": "shortname", "type": "Text" },
+                { "id": 0, "name": "Another field", "shortname": "checkme", "type": "Checkbox" }
+            ]
+          },
+          { "id": "00",
+            "nameeditable": "Empty category",
+            "addfieldmenu": "Add field",
+            "fields": [] }
+      ],
+      "singleselect" : "select"
+  }
+}}
+
+{{{alert}}}
+
+<div data-region="list-page" id="customfield_catlist" data-component="{{component}}" data-area="{{area}}" data-itemid="{{itemid}}">
+    <div class="row">
+        <div class="col align-self-end">
+            {{#usescategories}}
+            <a tabindex="0" role="button" class="btn btn-secondary float-right" data-role="addnewcategory">{{#str}}addnewcategory, core_customfield{{/str}}</a>
+            {{/usescategories}}
+        </div>
+    </div>
+
+    {{^categories}}
+        {{{nocategories}}}
+    {{/categories}}
+
+    <div class="categorieslist">
+    {{#categories}}
+        <div data-category-id="{{id}}" id="category-{{id}}" class="mt-2">
+        <div class="row justify-content-between align-items-end">
+            <div class="col-6 categoryinstance">
+                {{#usescategories}}
+                    <h3>
+                        <span class="movecategory">
+                        {{> core/drag_handle}}</span>{{{nameeditable}}}
+                        <a href="#" data-role="deletecategory" data-id="{{id}}">{{#pix}}
+                            t/delete, core, {{#str}} delete, moodle {{/str}} {{/pix}}</a>
+                    </h3>
+                {{/usescategories}}
+            </div>
+            <div class="col-auto text-right">
+                {{{addfieldmenu}}}
+            </div>
+        </div>
+        <div>
+            <table class="generaltable fullwidth fieldslist">
+                <thead>
+                <tr>
+                    <th scope="col" class="col-5">{{#str}} customfield, core_customfield {{/str}}</th>
+                    <th scope="col" class="col-3">{{#str}} shortname, core_customfield {{/str}}</th>
+                    <th scope="col" class="col-2">{{#str}} type, core_customfield {{/str}}</th>
+                    <th scope="col" class="col-2 text-right">{{#str}} action, core_customfield {{/str}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#fields}}
+                    <tr data-field-name="{{name}}" data-field-id="{{id}}"  class="field">
+                        <td class="col-5"><span class="movefield">{{> core/drag_handle}}</span>{{{name}}}</td>
+                        <td class="col-3">{{{shortname}}}</td>
+                        <td class="col-2">{{{type}}}</td>
+                        <td class="col-2 text-right">
+                            <a href="{{editfieldurl}}" data-role="editfield">{{#pix}}
+                                t/edit, core, {{#str}} edit, moodle {{/str}} {{/pix}}</a>
+                            <a href="#" data-id="{{id}}" data-role="deletefield">{{#pix}}
+                                t/delete, core, {{#str}} delete, moodle {{/str}} {{/pix}}</a>
+                        </td>
+                    </tr>
+                {{/fields}}
+                {{^fields}}
+                    <tr class="nofields"><td colspan="4">{{# str }} therearenofields, core_customfield {{/ str }}</td></tr>
+                {{/fields}}
+                </tbody>
+            </table>
+        </div>
+        </div>
+    {{/categories}}
+    </div>
+</div>
+
+{{#js}}
+    require(['core_customfield/form'], function(s) {
+        s.init();
+    });
+{{/js}}

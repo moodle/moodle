@@ -193,7 +193,6 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function repaginate_button(structure $structure, \moodle_url $pageurl) {
-
         $header = html_writer::tag('span', get_string('repaginatecommand', 'quiz'), array('class' => 'repaginatecommand'));
         $form = $this->repaginate_form($structure, $pageurl);
 
@@ -209,7 +208,7 @@ class edit_renderer extends \plugin_renderer_base {
         if (!$structure->can_be_repaginated()) {
             $buttonoptions['disabled'] = 'disabled';
         } else {
-            $this->page->requires->yui_module('moodle-mod_quiz-repaginate', 'M.mod_quiz.repaginate.init');
+            $this->page->requires->js_call_amd('mod_quiz/repaginate', 'init');
         }
 
         return html_writer::empty_tag('input', $buttonoptions);

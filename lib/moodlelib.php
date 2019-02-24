@@ -3108,7 +3108,10 @@ function require_course_login($courseorid, $autologinguest = true, $cm = null, $
             // If $PAGE->course, and hence $PAGE->context, have not already been set up properly, set them up now.
             $PAGE->set_course($PAGE->course);
         }
-        user_accesstime_log(SITEID);
+        // Do not update access time for webservice or ajax requests.
+        if (!WS_SERVER && !AJAX_SCRIPT) {
+            user_accesstime_log(SITEID);
+        }
         return;
 
     } else {
@@ -4953,6 +4956,9 @@ function delete_course($courseorid, $showfeedback = true) {
         }
     }
 
+    $handler = core_course\customfield\course_handler::create();
+    $handler->delete_instance($courseid);
+
     // Make the course completely empty.
     remove_course_contents($courseid, $showfeedback);
 
@@ -6430,8 +6436,10 @@ function send_password_change_info($user) {
 function email_is_not_allowed($email) {
     global $CFG;
 
+    // Comparing lowercase domains.
+    $email = strtolower($email);
     if (!empty($CFG->allowemailaddresses)) {
-        $allowed = explode(' ', $CFG->allowemailaddresses);
+        $allowed = explode(' ', strtolower($CFG->allowemailaddresses));
         foreach ($allowed as $allowedpattern) {
             $allowedpattern = trim($allowedpattern);
             if (!$allowedpattern) {
@@ -6450,7 +6458,7 @@ function email_is_not_allowed($email) {
         return get_string('emailonlyallowed', '', $CFG->allowemailaddresses);
 
     } else if (!empty($CFG->denyemailaddresses)) {
-        $denied = explode(' ', $CFG->denyemailaddresses);
+        $denied = explode(' ', strtolower($CFG->denyemailaddresses));
         foreach ($denied as $deniedpattern) {
             $deniedpattern = trim($deniedpattern);
             if (!$deniedpattern) {
@@ -8003,6 +8011,28 @@ function moodle_major_version($fromdisk = false) {
 // MISCELLANEOUS.
 
 /**
+ * Gets the system locale
+ *
+ * @return string Retuns the current locale.
+ */
+function moodle_getlocale() {
+    global $CFG;
+
+    // Fetch the correct locale based on ostype.
+    if ($CFG->ostype == 'WINDOWS') {
+        $stringtofetch = 'localewin';
+    } else {
+        $stringtofetch = 'locale';
+    }
+
+    if (!empty($CFG->locale)) { // Override locale for all language packs.
+        return $CFG->locale;
+    }
+
+    return get_string($stringtofetch, 'langconfig');
+}
+
+/**
  * Sets the system locale
  *
  * @category string
@@ -8015,20 +8045,11 @@ function moodle_setlocale($locale='') {
 
     $oldlocale = $currentlocale;
 
-    // Fetch the correct locale based on ostype.
-    if ($CFG->ostype == 'WINDOWS') {
-        $stringtofetch = 'localewin';
-    } else {
-        $stringtofetch = 'locale';
-    }
-
     // The priority is the same as in get_string() - parameter, config, course, session, user, global language.
     if (!empty($locale)) {
         $currentlocale = $locale;
-    } else if (!empty($CFG->locale)) { // Override locale for all language packs.
-        $currentlocale = $CFG->locale;
     } else {
-        $currentlocale = get_string($stringtofetch, 'langconfig');
+        $currentlocale = moodle_getlocale();
     }
 
     // Do nothing if locale already set up.
@@ -8950,10 +8971,15 @@ function mtrace($string, $eol="\n", $sleep=0) {
         return;
     } else if (defined('STDOUT') && !PHPUNIT_TEST && !defined('BEHAT_TEST')) {
         fwrite(STDOUT, $string.$eol);
+
+        // We must explicitly call the add_line function here.
+        // Uses of fwrite to STDOUT are not picked up by ob_start.
+        \core\task\logmanager::add_line("{$string}{$eol}");
     } else {
         echo $string . $eol;
     }
 
+    // Flush again.
     flush();
 
     // Delay to keep message on user's screen in case of subsequent redirect.

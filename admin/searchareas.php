@@ -153,6 +153,7 @@ $table = new html_table();
 $table->id = 'core-search-areas';
 $table->head = [
     get_string('searcharea', 'search'),
+    get_string('searchareacategories', 'search'),
     get_string('enable'),
     get_string('newestdocindexed', 'admin'),
     get_string('searchlastrun', 'admin'),
@@ -164,6 +165,14 @@ $areasconfig = isset($searchmanager) ? $searchmanager->get_areas_config($searcha
 foreach ($searchareas as $area) {
     $areaid = $area->get_area_id();
     $columns = array(new html_table_cell($area->get_visible_name()));
+
+    $areacategories = [];
+    foreach (\core_search\manager::get_search_area_categories() as $category) {
+        if (key_exists($areaid, $category->get_areas())) {
+            $areacategories[] = $category->get_visiblename();
+        }
+    }
+    $columns[] = new html_table_cell(implode(', ', $areacategories));
 
     if ($area->is_enabled()) {
         $columns[] = $OUTPUT->action_icon(admin_searcharea_action_url('disable', $areaid),

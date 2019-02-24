@@ -532,4 +532,13 @@ abstract class base {
     public function get_doc_icon(document $doc) : document_icon {
         return new document_icon('i/empty');
     }
+
+    /**
+     * Returns a list of category names associated with the area.
+     *
+     * @return array
+     */
+    public function get_category_names() {
+        return [manager::SEARCH_AREA_CATEGORY_OTHER];
+    }
 }

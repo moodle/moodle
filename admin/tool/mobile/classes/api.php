@@ -356,7 +356,7 @@ class api {
         $mobileplugins = self::get_plugins_supporting_mobile();
         foreach ($mobileplugins as $plugin) {
             $displayname = core_plugin_manager::instance()->plugin_name($plugin['component']) . " - " . $plugin['addon'];
-            $remoteaddonslist['remoteAddOn_' . $plugin['component'] . '_' . $plugin['addon']] = $displayname;
+            $remoteaddonslist['sitePlugin_' . $plugin['component'] . '_' . $plugin['addon']] = $displayname;
 
         }
 

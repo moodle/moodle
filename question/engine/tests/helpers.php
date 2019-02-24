@@ -574,6 +574,48 @@ abstract class question_testcase extends advanced_testcase {
 
         throw new coding_exception('Unknown expectiontion:'.get_class($expectation));
     }
+
+    /**
+     * Use this function rather than assert when checking the value of options within a select element.
+     *
+     * @param question_contains_select_expectation $expectation The select expectation class
+     * @param string $html The rendered output to check against
+     */
+    public function assert_select_options($expectation, $html) {
+        if (get_class($expectation) !== 'question_contains_select_expectation') {
+            throw new coding_exception('Unsuitable expectiontion: '.get_class($expectation));
+        }
+        $dom = new DOMDocument();
+        $dom->loadHTML($html);
+        $selects = $dom->getElementsByTagName('select');
+        foreach ($selects as $select) {
+            if ($select->getAttribute('name') == $expectation->name) {
+                $options = $select->getElementsByTagName('option');
+                foreach ($options as $key => $option) {
+                    if ($key == 0) {
+                        // Check the value of the first option. This is often 'Choose...' or a nbsp.
+                        // Note it is necessary to pass a nbsp character in the test here and not just ' '.
+                        // Many tests do not require checking of this option.
+                        if (isset($expectation->choices[$option->getAttribute('value')])) {
+                            $this->assertEquals($expectation->choices[$option->getAttribute('value')], $option->textContent);
+                        }
+                        continue;
+                    }
+                    // Check the value of the options in the select.
+                    $this->assertEquals($expectation->choices[$option->getAttribute('value')], $option->textContent);
+                    if ($expectation->selected && $option->getAttribute('value') == $expectation->selected) {
+                        // Check the right option is selected.
+                        $this->assertTrue(!empty($option->getAttribute('selected')));
+                    }
+                }
+                if ($expectation->enabled) {
+                    // Check the select element is enabled.
+                    $this->assertTrue(!$select->getAttribute('disabled'));
+                }
+            }
+        }
+        return;
+    }
 }
 
 
@@ -778,6 +820,20 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
         $this->quba = null;
     }
 
+    /**
+     * Asserts if the manual comment for the question is equal to the provided arguments.
+     * @param $comment Comment text
+     * @param $commentformat Comment format
+     */
+    protected function check_comment($comment, $commentformat) {
+        $actualcomment = $this->quba->get_question_attempt($this->slot)->get_manual_comment();
+
+        $this->assertEquals(
+                [$comment, $commentformat],
+                [$actualcomment[0], $actualcomment[1]]
+        );
+    }
+
     protected function check_current_state($state) {
         $this->assertEquals($state, $this->quba->get_question_state($this->slot),
             'Questions is in the wrong state.');
@@ -896,6 +952,20 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
         $html = $this->quba->render_question($this->slot, $this->displayoptions);
         foreach (func_get_args() as $condition) {
             $this->assert($condition, $html);
+        }
+    }
+
+    /**
+     * Use this function rather than check_current_output for select expectations where
+     * checking the value of the options is required. check_current_output only checks
+     * that the right number of options are available.
+     *
+     * @param question_contains_select_expectation $expectations One or more expectations.
+     */
+    protected function check_output_contains_selectoptions(...$expectations) {
+        $html = $this->quba->render_question($this->slot, $this->displayoptions);
+        foreach ($expectations as $expectation) {
+            $this->assert_select_options($expectation, $html);
         }
     }
 

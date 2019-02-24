@@ -51,12 +51,12 @@
                 {{#isgroup}}
                     <optgroup label="{{name}}">
                         {{#options}}
-                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{name}}}</option>
                         {{/options}}
                     </optgroup>
                 {{/isgroup}}
                 {{^isgroup}}
-                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{name}}}</option>
                 {{/isgroup}}
             {{/options}}
         </select>
@@ -74,6 +74,9 @@
     {{#js}}
         require(['jquery'], function($) {
             $('#{{id}}').change(function() {
+                if (!$(this).val()) {
+                    return false;
+                }
                 $('#{{formid}}').submit();
             });
         });

@@ -9,10 +9,18 @@
 #
 # See gitignore(5) man page for more details
 #
+
+# Swap files (vim)
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+# Temporary files including undo
+*~
+#
 /config.php
 /lib/editor/tinymce/extra/tools/temp/
-*~
-*.swp
 /tags
 /TAGS
 /cscope.*

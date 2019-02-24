@@ -44,7 +44,7 @@ class core_question_bank_view_testcase extends advanced_testcase {
         /** @var core_question_generator $questiongenerator */
         $questiongenerator = $generator->get_plugin_generator('core_question');
 
-        // Cerate a course.
+        // Create a course.
         $course = $generator->create_course();
         $context = context_course::instance($course->id);
 
@@ -54,7 +54,7 @@ class core_question_bank_view_testcase extends advanced_testcase {
         $questiondata = $questiongenerator->create_question('numerical', null,
                 ['name' => 'Example question', 'category' => $cat->id]);
 
-        // Ensure the qusetion is not in the cache.
+        // Ensure the question is not in the cache.
         $cache = cache::make('core', 'questiondata');
         $cache->delete($questiondata->id);
 
@@ -67,7 +67,7 @@ class core_question_bank_view_testcase extends advanced_testcase {
         // Verify the output includes the expected question.
         $this->assertContains('Example question', $html);
 
-        // Verify the qusetion has not been loaded into the cache.
+        // Verify the question has not been loaded into the cache.
         $this->assertFalse($cache->has($questiondata->id));
     }
 }

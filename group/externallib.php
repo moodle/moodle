@@ -462,7 +462,7 @@ class core_group_external extends external_api {
             $groupid = $member['groupid'];
             $userid = $member['userid'];
 
-            $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
+            $group = groups_get_group($groupid, '*', MUST_EXIST);
             $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
 
             // now security checks
@@ -540,7 +540,7 @@ class core_group_external extends external_api {
             $groupid = $member['groupid'];
             $userid = $member['userid'];
 
-            $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
+            $group = groups_get_group($groupid, '*', MUST_EXIST);
             $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
 
             // now security checks
@@ -986,7 +986,7 @@ class core_group_external extends external_api {
 
         foreach ($params['groupingids'] as $groupingid) {
 
-            if (!$grouping = groups_get_grouping($groupingid, 'id, courseid', IGNORE_MISSING)) {
+            if (!$grouping = groups_get_grouping($groupingid)) {
                 // Silently ignore attempts to delete nonexisting groupings.
                 continue;
             }

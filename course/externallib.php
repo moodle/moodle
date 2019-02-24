@@ -277,7 +277,8 @@ class core_course_external extends external_api {
                             $module['completiondata'] = array(
                                 'state'         => $completiondata->completionstate,
                                 'timecompleted' => $completiondata->timemodified,
-                                'overrideby'    => $completiondata->overrideby
+                                'overrideby'    => $completiondata->overrideby,
+                                'valueused'     => core_availability\info::completion_value_used($course, $cm->id)
                             );
                         }
 
@@ -440,6 +441,8 @@ class core_course_external extends external_api {
                                             'timecompleted' => new external_value(PARAM_INT, 'Timestamp for completion status.'),
                                             'overrideby' => new external_value(PARAM_INT, 'The user id who has overriden the
                                                 status.'),
+                                            'valueused' => new external_value(PARAM_BOOL, 'Whether the completion status affects
+                                                the availability of another activity.', VALUE_OPTIONAL),
                                         ), 'Module completion data.', VALUE_OPTIONAL
                                     ),
                                     'contents' => new external_multiple_structure(
@@ -553,6 +556,19 @@ class core_course_external extends external_api {
                 $courseinfo['numsections'] = $courseformatoptions['numsections'];
             }
 
+            $handler = core_course\customfield\course_handler::create();
+            if ($customfields = $handler->export_instance_data($course->id)) {
+                $courseinfo['customfields'] = [];
+                foreach ($customfields as $data) {
+                    $courseinfo['customfields'][] = [
+                        'type' => $data->get_type(),
+                        'value' => $data->get_value(),
+                        'name' => $data->get_name(),
+                        'shortname' => $data->get_shortname()
+                    ];
+                }
+            }
+
             //some field should be returned only if the user has update permission
             $courseadmin = has_capability('moodle/course:update', $context);
             if ($courseadmin) {
@@ -663,9 +679,16 @@ class core_course_external extends external_api {
                                 new external_single_structure(
                                     array('name' => new external_value(PARAM_ALPHANUMEXT, 'course format option name'),
                                         'value' => new external_value(PARAM_RAW, 'course format option value')
-                                )),
-                                    'additional options for particular course format', VALUE_OPTIONAL
+                                )), 'additional options for particular course format', VALUE_OPTIONAL
                              ),
+                            'customfields' => new external_multiple_structure(
+                                new external_single_structure(
+                                    ['name' => new external_value(PARAM_TEXT, 'The name of the custom field'),
+                                     'shortname' => new external_value(PARAM_ALPHANUMEXT, 'The shortname of the custom field'),
+                                     'type'  => new external_value(PARAM_COMPONENT,
+                                         'The type of the custom field - text, checkbox...'),
+                                     'value' => new external_value(PARAM_RAW, 'The value of the custom field')]
+                                ), 'Custom fields and associated values', VALUE_OPTIONAL),
                         ), 'course'
                 )
         );
@@ -739,8 +762,14 @@ class core_course_external extends external_api {
                                         'value' => new external_value(PARAM_RAW, 'course format option value')
                                 )),
                                     'additional options for particular course format', VALUE_OPTIONAL),
-                        )
-                    ), 'courses to create'
+                            'customfields' => new external_multiple_structure(
+                                new external_single_structure(
+                                    array(
+                                        'shortname'  => new external_value(PARAM_ALPHANUMEXT, 'The shortname of the custom field'),
+                                        'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
+                                )), 'custom fields for the course', VALUE_OPTIONAL
+                            )
+                    )), 'courses to create'
                 )
             )
         );
@@ -828,6 +857,13 @@ class core_course_external extends external_api {
                 }
             }
 
+            // Custom fields.
+            if (!empty($course['customfields'])) {
+                foreach ($course['customfields'] as $field) {
+                    $course['customfield_'.$field['shortname']] = $field['value'];
+                }
+            }
+
             //Note: create_course() core function check shortname, idnumber, category
             $course['id'] = create_course((object) $course)->id;
 
@@ -909,8 +945,14 @@ class core_course_external extends external_api {
                                 new external_single_structure(
                                     array('name' => new external_value(PARAM_ALPHANUMEXT, 'course format option name'),
                                         'value' => new external_value(PARAM_RAW, 'course format option value')
-                                )),
-                                    'additional options for particular course format', VALUE_OPTIONAL),
+                                )), 'additional options for particular course format', VALUE_OPTIONAL),
+                            'customfields' => new external_multiple_structure(
+                                new external_single_structure(
+                                    [
+                                        'shortname'  => new external_value(PARAM_ALPHANUMEXT, 'The shortname of the custom field'),
+                                        'value' => new external_value(PARAM_RAW, 'The value of the custom field')
+                                    ]
+                                ), 'Custom fields', VALUE_OPTIONAL),
                         )
                     ), 'courses to update'
                 )
@@ -1021,6 +1063,13 @@ class core_course_external extends external_api {
                         if (isset($option['name']) && isset($option['value'])) {
                             $course[$option['name']] = $option['value'];
                         }
+                    }
+                }
+
+                // Prepare list of custom fields.
+                if (isset($course['customfields'])) {
+                    foreach ($course['customfields'] as $field) {
+                        $course['customfield_' . $field['shortname']] = $field['value'];
                     }
                 }
 
@@ -2499,6 +2548,17 @@ class core_course_external extends external_api {
                 new external_value(PARAM_PLUGIN, 'enrollment method'),
                 'enrollment methods list'
             ),
+            'customfields' => new external_multiple_structure(
+                new external_single_structure(
+                    array(
+                        'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
+                        'shortname' => new external_value(PARAM_RAW,
+                            'The shortname of the custom field - to be able to build the field class in the code'),
+                        'type'  => new external_value(PARAM_ALPHANUMEXT,
+                            'The type of the custom field - text field, checkbox...'),
+                        'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
+                    )
+                ), 'Custom fields', VALUE_OPTIONAL),
         );
 
         if (!$onlypublicdata) {

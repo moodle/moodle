@@ -3390,6 +3390,88 @@ class core_accesslib_testcase extends advanced_testcase {
     }
 
     /**
+     * Helper that verifies a list of capabilities, as returned by
+     * $context->get_capabilities() contains certain capabilities.
+     *
+     * @param array $expected a list of capability names
+     * @param array $actual a list of capability info from $context->get_capabilities().
+     */
+    protected function assert_capability_list_contains($expected, $actual) {
+        $actualnames = [];
+        foreach ($actual as $cap) {
+            $actualnames[$cap->name] = $cap->name;
+        }
+        $this->assertArraySubset(array_combine($expected, $expected), $actualnames);
+    }
+
+    /**
+     * Test that context_system::get_capabilities returns capabilities relevant to all modules.
+     */
+    public function test_context_module_caps_returned_by_get_capabilities_in_sys_context() {
+        $actual = context_system::instance()->get_capabilities();
+
+        // Just test a few representative capabilities.
+        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
+                'repository/upload:view', 'atto/recordrtc:recordaudio'];
+
+        $this->assert_capability_list_contains($expectedcapabilities, $actual);
+    }
+
+    /**
+     * Test that context_coursecat::get_capabilities returns capabilities relevant to all modules.
+     */
+    public function test_context_module_caps_returned_by_get_capabilities_in_course_cat_context() {
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+        $cat = $generator->create_category();
+
+        $actual = context_coursecat::instance($cat->id)->get_capabilities();
+
+        // Just test a few representative capabilities.
+        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
+                'repository/upload:view', 'atto/recordrtc:recordaudio'];
+
+        $this->assert_capability_list_contains($expectedcapabilities, $actual);
+    }
+
+    /**
+     * Test that context_course::get_capabilities returns capabilities relevant to all modules.
+     */
+    public function test_context_module_caps_returned_by_get_capabilities_in_course_context() {
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+        $cat = $generator->create_category();
+        $course = $generator->create_course(['category' => $cat->id]);
+
+        $actual = context_course::instance($course->id)->get_capabilities();
+
+        // Just test a few representative capabilities.
+        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
+                'repository/upload:view', 'atto/recordrtc:recordaudio'];
+
+        $this->assert_capability_list_contains($expectedcapabilities, $actual);
+    }
+
+    /**
+     * Test that context_module::get_capabilities returns capabilities relevant to all modules.
+     */
+    public function test_context_module_caps_returned_by_get_capabilities_mod_context() {
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+        $cat = $generator->create_category();
+        $course = $generator->create_course(['category' => $cat->id]);
+        $page = $generator->create_module('page', ['course' => $course->id]);
+
+        $actual = context_module::instance($page->cmid)->get_capabilities();
+
+        // Just test a few representative capabilities.
+        $expectedcapabilities = ['moodle/site:accessallgroups', 'moodle/site:viewfullnames',
+                'repository/upload:view', 'atto/recordrtc:recordaudio'];
+
+        $this->assert_capability_list_contains($expectedcapabilities, $actual);
+    }
+
+    /**
      * Test updating of role capabilities during upgrade
      */
     public function test_update_capabilities() {
@@ -3737,6 +3819,47 @@ class core_accesslib_testcase extends advanced_testcase {
         set_config('profileroles', "");
         $this->setUser($user2);
         $this->assertEquals($expectedteacher, get_profile_roles($coursecontext));
+    }
+
+    /**
+     * Ensure that the get_parent_contexts() function limits the number of queries it performs.
+     */
+    public function test_get_parent_contexts_preload() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        /*
+         * Given the following data structure:
+         * System
+         * - Category
+         * --- Category
+         * ----- Category
+         * ------- Category
+         * --------- Course
+         * ----------- Activity (Forum)
+         */
+
+        $contexts = [];
+
+        $cat1 = $this->getDataGenerator()->create_category();
+        $cat2 = $this->getDataGenerator()->create_category(['parent' => $cat1->id]);
+        $cat3 = $this->getDataGenerator()->create_category(['parent' => $cat2->id]);
+        $cat4 = $this->getDataGenerator()->create_category(['parent' => $cat3->id]);
+        $course = $this->getDataGenerator()->create_course(['category' => $cat4->id]);
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+
+        $modcontext = context_module::instance($forum->cmid);
+
+        context_helper::reset_caches();
+
+        // There should only be a single DB query.
+        $predbqueries = $DB->perf_get_reads();
+
+        $parents = $modcontext->get_parent_contexts();
+        // Note: For some databases There is one read, plus one FETCH, plus one CLOSE.
+        // These all show as reads, when there has actually only been a single query.
+        $this->assertLessThanOrEqual(3, $DB->perf_get_reads() - $predbqueries);
     }
 }
 

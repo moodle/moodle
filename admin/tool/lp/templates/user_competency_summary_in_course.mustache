@@ -65,6 +65,19 @@
         </dd>
         {{/user}}
         {{/displayuser}}
+        <dt>{{#str}}userplans, competency{{/str}}</dt>
+        <dd>
+        <p>
+        <ul class="inline list-inline">
+        {{#plans}}
+            <li class="list-inline-item"><a href="{{pluginbaseurl}}/plan.php?id={{id}}">{{{name}}}</a></li>
+        {{/plans}}
+        {{^plans}}
+            <li>{{#str}}nouserplanswithcompetency, competency{{/str}}</li>
+        {{/plans}}
+        </ul>
+        </p>
+        </dd>
         {{#usercompetencycourse}}
         <dt>{{#str}}proficient, tool_lp{{/str}}</dt>
         <dd>

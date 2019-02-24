@@ -48,31 +48,38 @@
 <div class="box">
     <h3>{{#str}}modelinvalidanalysables, tool_analytics, {{modelname}}{{/str}}</h3>
     <div>{{#str}}invalidanalysablesinfo, tool_analytics{{/str}}</div>
-    <div class="m-t-2 m-b-1">
-        <span>{{#prev}}{{> core/single_button}}{{/prev}}</span>
-        <span>{{#next}}{{> core/single_button}}{{/next}}</span>
-    </div>
-    <table class="generaltable fullwidth">
-        <caption class="accesshide">{{#str}}invalidanalysablestable, tool_analytics{{/str}}</caption>
-        <thead>
-            <tr>
-                <th scope="col">{{#str}}name{{/str}}</th>
-                <th scope="col">{{#str}}invalidtraining, tool_analytics{{/str}}</th>
-                <th scope="col">{{#str}}invalidprediction, tool_analytics{{/str}}</th>
-            </tr>
-        </thead>
-        <tbody>
-        {{#analysables}}
-            <tr>
-                <td>{{{url}}}</td>
-                <td>{{validtraining}}</td>
-                <td>{{validprediction}}</td>
-            </tr>
-        {{/analysables}}
-        </tbody>
-    </table>
-    <div class="m-t-1 m-b-2">
-        <span>{{#prev}}{{> core/single_button}}{{/prev}}</span>
-        <span>{{#next}}{{> core/single_button}}{{/next}}</span>
-    </div>
+    {{#noanalysables}}
+        <div class="m-t-2 m-b-1">
+            {{> core/notification_info}}
+        </div>
+    {{/noanalysables}}
+    {{^noanalysables}}
+        <div class="m-t-2 m-b-1">
+            <span>{{#prev}}{{> core/single_button}}{{/prev}}</span>
+            <span>{{#next}}{{> core/single_button}}{{/next}}</span>
+        </div>
+        <table class="generaltable fullwidth">
+            <caption class="accesshide">{{#str}}invalidanalysablestable, tool_analytics{{/str}}</caption>
+            <thead>
+                <tr>
+                    <th scope="col">{{#str}}name{{/str}}</th>
+                    <th scope="col">{{#str}}invalidtraining, tool_analytics{{/str}}</th>
+                    <th scope="col">{{#str}}invalidprediction, tool_analytics{{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{#analysables}}
+                <tr>
+                    <td>{{{url}}}</td>
+                    <td>{{validtraining}}</td>
+                    <td>{{validprediction}}</td>
+                </tr>
+            {{/analysables}}
+            </tbody>
+        </table>
+        <div class="m-t-1 m-b-2">
+            <span>{{#prev}}{{> core/single_button}}{{/prev}}</span>
+            <span>{{#next}}{{> core/single_button}}{{/next}}</span>
+        </div>
+    {{/noanalysables}}
 </div>

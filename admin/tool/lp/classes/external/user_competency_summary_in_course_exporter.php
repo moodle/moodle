@@ -26,11 +26,13 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_competency\api;
 use core_competency\user_competency;
+use core_competency\external\plan_exporter;
 use core_course\external\course_module_summary_exporter;
 use core_course\external\course_summary_exporter;
 use context_course;
 use renderer_base;
 use stdClass;
+use moodle_url;
 
 /**
  * Class for exporting user competency data with additional related data in a plan.
@@ -62,7 +64,14 @@ class user_competency_summary_in_course_exporter extends \core\external\exporter
             'coursemodules' => array(
                 'type' => course_module_summary_exporter::read_properties_definition(),
                 'multiple' => true
-            )
+            ),
+            'plans' => array(
+                'type' => plan_exporter::read_properties_definition(),
+                'multiple' => true
+            ),
+            'pluginbaseurl' => [
+                'type' => PARAM_URL
+            ],
         );
     }
 
@@ -94,6 +103,16 @@ class user_competency_summary_in_course_exporter extends \core\external\exporter
             $exportedmodules[] = $cmexporter->export($output);
         }
         $result->coursemodules = $exportedmodules;
+
+        // User learning plans.
+        $plans = api::list_plans_with_competency($this->related['user']->id, $this->related['competency']);
+        $exportedplans = array();
+        foreach ($plans as $plan) {
+            $planexporter = new plan_exporter($plan, array('template' => $plan->get_template()));
+            $exportedplans[] = $planexporter->export($output);
+        }
+        $result->plans = $exportedplans;
+        $result->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
 
         return (array) $result;
     }

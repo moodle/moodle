@@ -351,7 +351,9 @@ class core_badges_renderer extends plugin_renderer_base {
         if (!empty($badge->version)) {
             $dl[get_string('version', 'badges')] = $badge->version;
         }
-        $dl[get_string('language')] = $languages[$badge->language];
+        if (!empty($badge->language)) {
+            $dl[get_string('language')] = $languages[$badge->language];
+        }
         $dl[get_string('description', 'badges')] = $badge->description;
         if (!empty($badge->imageauthorname)) {
             $dl[get_string('imageauthorname', 'badges')] = $badge->imageauthorname;
@@ -417,15 +419,18 @@ class core_badges_renderer extends plugin_renderer_base {
         if (!empty($endorsement)) {
             $output .= self::print_badge_endorsement($badge);
         }
-        $relatedbadges = $badge->get_related_badges();
-        if (!empty($relatedbadges)) {
+
+        $relatedbadges = $badge->get_related_badges(true);
+        $items = array();
+        foreach ($relatedbadges as $related) {
+            $relatedurl = new moodle_url('/badges/overview.php', array('id' => $related->id));
+            $items[] = html_writer::link($relatedurl->out(), $related->name, array('target' => '_blank'));
+        }
+        if (!empty($items)) {
             $output .= $this->heading(get_string('relatedbages', 'badges'), 3);
-            $items = array();
-            foreach ($relatedbadges as $related) {
-                $items[] = $related->name;
-            }
             $output .= html_writer::alist($items, array(), 'ul');
         }
+
         $competencies = $badge->get_alignment();
         if (!empty($competencies)) {
             $output .= $this->heading(get_string('alignment', 'badges'), 3);

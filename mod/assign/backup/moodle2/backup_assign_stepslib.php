@@ -85,6 +85,7 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
                                                   'requireallteammemberssubmit',
                                                   'teamsubmissiongroupingid',
                                                   'blindmarking',
+                                                  'hidegrader',
                                                   'revealidentities',
                                                   'attemptreopenmethod',
                                                   'maxattempts',

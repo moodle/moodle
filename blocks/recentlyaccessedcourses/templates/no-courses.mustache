@@ -14,20 +14,8 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
-{{!
-    @template block_recentlyaccessedcourses/no-courses
-
-    This template renders the no courses message.
-
-    Example context (json):
-    {
-        "nocoursesimgurl": "https://moodlesite/theme/image.php/boost/block_recentlyaccessedcourses/1535727318/courses"
-    }
-}}
-<div class="text-xs-center text-center m-t-3" data-region="empty-message">
-    <img class="empty-placeholder-image-lg m-t-1"
-         src="{{nocoursesimgurl}}"
-         alt="{{#str}} nocourses, block_recentlyaccessedcourses {{/str}}"
-         role="presentation">
-    <p class="text-muted mt-3">{{#str}} nocourses, block_recentlyaccessedcourses {{/str}}</p>
-</div>
+{{< core_course/no-courses}}
+    {{$nocoursestring}}
+        {{#str}} nocourses, block_recentlyaccessedcourses {{/str}}
+    {{/nocoursestring}}
+{{/ core_course/no-courses}}

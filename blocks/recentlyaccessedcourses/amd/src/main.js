@@ -69,13 +69,13 @@ define(
          */
         var renderCourses = function(root, courses) {
             if (courses.length > 0) {
-                return Templates.render('block_recentlyaccessedcourses/view-cards', {
+                return Templates.render('core_course/view-cards', {
                     courses: courses
                 });
             } else {
-                var nocoursesimgurl = root.attr('data-nocoursesimgurl');
+                var nocoursesimgurl = root.attr('data-nocoursesimg');
                 return Templates.render('block_recentlyaccessedcourses/no-courses', {
-                    nocoursesimgurl: nocoursesimgurl
+                    nocoursesimg: nocoursesimgurl
                 });
             }
         };

@@ -535,7 +535,7 @@ class core_renderer extends \core_renderer {
                 if ($skipped) {
                     $text = get_string('morenavigationlinks');
                     $url = new moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
-                    $link = new action_link($url, $text, null, null, new pix_icon('t/edit', $text));
+                    $link = new action_link($url, $text, null, null, new pix_icon('t/edit', ''));
                     $menu->add_secondary_action($link);
                 }
             }
@@ -549,7 +549,7 @@ class core_renderer extends \core_renderer {
                 if ($skipped) {
                     $text = get_string('morenavigationlinks');
                     $url = new moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
-                    $link = new action_link($url, $text, null, null, new pix_icon('t/edit', $text));
+                    $link = new action_link($url, $text, null, null, new pix_icon('t/edit', ''));
                     $menu->add_secondary_action($link);
                 }
             }

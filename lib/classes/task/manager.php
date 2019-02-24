@@ -129,7 +129,18 @@ class manager {
      * @return bool
      */
     protected static function task_is_scheduled($task) {
+        return false !== self::get_queued_adhoc_task_record($task);
+    }
+
+    /**
+     * Checks if the task with the same classname, component and customdata is already scheduled
+     *
+     * @param adhoc_task $task
+     * @return bool
+     */
+    protected static function get_queued_adhoc_task_record($task) {
         global $DB;
+
         $record = self::record_from_adhoc_task($task);
         $params = [$record->classname, $record->component, $record->customdata];
         $sql = 'classname = ? AND component = ? AND ' .
@@ -139,14 +150,38 @@ class manager {
             $params[] = $record->userid;
             $sql .= " AND userid = ? ";
         }
-        return $DB->record_exists_select('task_adhoc', $sql, $params);
+        return $DB->get_record_select('task_adhoc', $sql, $params);
+    }
+
+    /**
+     * Schedule a new task, or reschedule an existing adhoc task which has matching data.
+     *
+     * Only a task matching the same user, classname, component, and customdata will be rescheduled.
+     * If these values do not match exactly then a new task is scheduled.
+     *
+     * @param \core\task\adhoc_task $task - The new adhoc task information to store.
+     * @since Moodle 3.7
+     */
+    public static function reschedule_or_queue_adhoc_task(adhoc_task $task) : void {
+        global $DB;
+
+        if ($existingrecord = self::get_queued_adhoc_task_record($task)) {
+            // Only update the next run time if it is explicitly set on the task.
+            $nextruntime = $task->get_next_run_time();
+            if ($nextruntime && ($existingrecord->nextruntime != $nextruntime)) {
+                $DB->set_field('task_adhoc', 'nextruntime', $nextruntime, ['id' => $existingrecord->id]);
+            }
+        } else {
+            // There is nothing queued yet. Just queue as normal.
+            self::queue_adhoc_task($task);
+        }
     }
 
     /**
      * Queue an adhoc task to run in the background.
      *
      * @param \core\task\adhoc_task $task - The new adhoc task information to store.
-     * @param bool $checkforexisting - If set to true and the task with the same classname, component and customdata
+     * @param bool $checkforexisting - If set to true and the task with the same user, classname, component and customdata
      *     is already scheduled then it will not schedule a new task. Can be used only for ASAP tasks.
      * @return boolean - True if the config was saved.
      */
@@ -590,6 +625,9 @@ class manager {
             $task->get_cron_lock()->release();
         }
         $task->get_lock()->release();
+
+        // Finalise the log output.
+        logmanager::finalise_log(true);
     }
 
     /**
@@ -599,6 +637,9 @@ class manager {
      */
     public static function adhoc_task_complete(adhoc_task $task) {
         global $DB;
+
+        // Finalise the log output.
+        logmanager::finalise_log();
 
         // Delete the adhoc task record - it is finished.
         $DB->delete_records('task_adhoc', array('id' => $task->get_id()));
@@ -643,6 +684,9 @@ class manager {
             $task->get_cron_lock()->release();
         }
         $task->get_lock()->release();
+
+        // Finalise the log output.
+        logmanager::finalise_log(true);
     }
 
     /**
@@ -669,6 +713,9 @@ class manager {
      */
     public static function scheduled_task_complete(scheduled_task $task) {
         global $DB;
+
+        // Finalise the log output.
+        logmanager::finalise_log();
 
         $classname = self::get_canonical_class_name($task);
         $record = $DB->get_record('task_scheduled', array('classname' => $classname));

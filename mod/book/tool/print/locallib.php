@@ -30,12 +30,16 @@ require_once($CFG->dirroot.'/mod/book/locallib.php');
 /**
  * Generate toc structure and titles
  *
+ * @deprecated since Moodle 3.7
  * @param array $chapters
  * @param stdClass $book
  * @param stdClass $cm
  * @return array
  */
 function booktool_print_get_toc($chapters, $book, $cm) {
+    debugging('booktool_print_get_toc() is deprecated. Please use booktool_print renderer
+            function render_print_book_toc().', DEBUG_DEVELOPER);
+
     $first = true;
     $titles = array();
 

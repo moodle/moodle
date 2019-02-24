@@ -1111,6 +1111,11 @@ abstract class format_base {
         $DB->delete_records('course_sections', array('id' => $section->id));
         rebuild_course_cache($course->id, true);
 
+        // Delete section summary files.
+        $context = \context_course::instance($course->id);
+        $fs = get_file_storage();
+        $fs->delete_area_files($context->id, 'course', 'section', $section->id);
+
         // Descrease 'numsections' if needed.
         if ($decreasenumsections) {
             $this->update_course_format_options(array('numsections' => $course->numsections - 1));

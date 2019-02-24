@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ddwtos_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('fox', 'maths');
+        return array('fox', 'maths', 'oddgroups');
     }
 
     /**
@@ -75,7 +75,9 @@ class qtype_ddwtos_test_helper extends question_test_helper {
     }
 
     /**
-     * @return stdClass date to create a ddwtos question.
+     * This is a simple question with choices in three groups.
+     *
+     * @return stdClass data to create a ddwtos question.
      */
     public function get_ddwtos_question_form_data_fox() {
         $fromform = new stdClass();
@@ -90,6 +92,33 @@ class qtype_ddwtos_test_helper extends question_test_helper {
             array('answer' => 'lazy',      'choicegroup' => '3'),
             array('answer' => 'slow',      'choicegroup' => '1'),
             array('answer' => 'dog',       'choicegroup' => '2'),
+            array('answer' => 'assiduous', 'choicegroup' => '3'),
+        );
+        test_question_maker::set_standard_combined_feedback_form_data($fromform);
+        $fromform->shownumcorrect = 0;
+        $fromform->penalty = 0.3333333;
+
+        return $fromform;
+    }
+
+    /**
+     * Similar to the 'fox' example above, but using different, non-continuous group numbers.
+     *
+     * @return stdClass data to create a ddwtos question.
+     */
+    public function get_ddwtos_question_form_data_oddgroups() {
+        $fromform = new stdClass();
+
+        $fromform->name = 'Drag-and-drop words with strange groups';
+        $fromform->questiontext = array('text' => 'The [[1]] brown [[2]] jumped over the [[3]] dog.', 'format' => FORMAT_HTML);
+        $fromform->defaultmark = 1.0;
+        $fromform->generalfeedback = array('text' => 'This sentence uses each letter of the alphabet.', 'format' => FORMAT_HTML);
+        $fromform->choices = array(
+            array('answer' => 'quick',     'choicegroup' => '5'),
+            array('answer' => 'fox',       'choicegroup' => '7'),
+            array('answer' => 'lazy',      'choicegroup' => '3'),
+            array('answer' => 'slow',      'choicegroup' => '5'),
+            array('answer' => 'dog',       'choicegroup' => '7'),
             array('answer' => 'assiduous', 'choicegroup' => '3'),
         );
         test_question_maker::set_standard_combined_feedback_form_data($fromform);

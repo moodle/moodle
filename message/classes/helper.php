@@ -524,6 +524,10 @@ class helper {
             $data->id = $member->id;
             $data->fullname = fullname($member);
 
+            // Create the URL for their profile.
+            $profileurl = new \moodle_url('/user/profile.php', ['id' => $member->id]);
+            $data->profileurl = $profileurl->out(false);
+
             // Set the user picture data.
             $userpicture = new \user_picture($member);
             $userpicture->size = 1; // Size f1.
@@ -584,6 +588,15 @@ class helper {
                 }
             }
         }
+
+        // Remove any userids not in $members. This can happen in the case of a user who has been deleted
+        // from the Moodle database table (which can happen in earlier versions of Moodle).
+        $userids = array_filter($userids, function($userid) use ($members) {
+            return isset($members[$userid]);
+        });
+
+        // Return member information in the same order as the userids originally provided.
+        $members = array_replace(array_flip($userids), $members);
 
         return $members;
     }

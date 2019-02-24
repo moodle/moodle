@@ -124,12 +124,12 @@ $where = array();
 $where_params = array();
 
 if ($sifirst !== 'all') {
-    $where[] = $DB->sql_like('u.firstname', ':sifirst', false);
+    $where[] = $DB->sql_like('u.firstname', ':sifirst', false, false);
     $where_params['sifirst'] = $sifirst.'%';
 }
 
 if ($silast !== 'all') {
-    $where[] = $DB->sql_like('u.lastname', ':silast', false);
+    $where[] = $DB->sql_like('u.lastname', ':silast', false, false);
     $where_params['silast'] = $silast.'%';
 }
 
@@ -422,7 +422,7 @@ foreach($progress as $user) {
                                                                      'data-activityname' => $a->activity,
                                                                      'data-userfullname' => $a->user,
                                                                      'data-completiontracking' => $completiontrackingstring,
-                                                                     'aria-role' => 'button'));
+                                                                     'role' => 'button'));
             }
             print '<td class="completion-progresscell '.$formattedactivities[$activity->id]->datepassedclass.'">'.
                 $celltext . '</td>';
@@ -441,7 +441,6 @@ if ($csv) {
 }
 print '</tbody></table>';
 print '</div>';
-print $pagingbar;
 
 print '<ul class="progress-actions"><li><a href="index.php?course='.$course->id.
     '&amp;format=csv">'.get_string('csvdownload','completion').'</a></li>

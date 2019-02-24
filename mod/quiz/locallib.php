@@ -2313,8 +2313,8 @@ function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessman
     // Check to see if a new preview was requested.
     if ($quizobj->is_preview_user() && $forcenew) {
         // To force the creation of a new preview, we mark the current attempt (if any)
-        // as finished. It will then automatically be deleted below.
-        $DB->set_field('quiz_attempts', 'state', quiz_attempt::FINISHED,
+        // as abandoned. It will then automatically be deleted below.
+        $DB->set_field('quiz_attempts', 'state', quiz_attempt::ABANDONED,
                 array('quiz' => $quizobj->get_quizid(), 'userid' => $USER->id));
     }
 

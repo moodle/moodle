@@ -163,7 +163,7 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
             core_external::update_inplace_editable('core_tag', 'tagname', $tag->id, 'new tag name');
             $this->fail('Exception expected');
         } catch (moodle_exception $e) {
-            $this->assertEquals('Sorry, but you do not currently have permissions to do that (Manage all tags)',
+            $this->assertEquals('Sorry, but you do not currently have permissions to do that (Manage all tags).',
                     $e->getMessage());
         }
 

@@ -259,7 +259,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
         $mform->addHelpButton('assignfeedback_comments_commentinline', 'commentinline', 'assignfeedback_comments');
         $mform->setDefault('assignfeedback_comments_commentinline', $default);
         // Disable comment online if comment feedback plugin is disabled.
-        $mform->disabledIf('assignfeedback_comments_commentinline', 'assignfeedback_comments_enabled', 'notchecked');
+        $mform->hideIf('assignfeedback_comments_commentinline', 'assignfeedback_comments_enabled', 'notchecked');
    }
 
     /**

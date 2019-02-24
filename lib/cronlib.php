@@ -61,19 +61,19 @@ function cron_run() {
     $timenow  = time();
     mtrace("Server Time: ".date('r', $timenow)."\n\n");
 
-    // Run all scheduled tasks.
-    while (!\core\task\manager::static_caches_cleared_since($timenow) &&
-           $task = \core\task\manager::get_next_scheduled_task($timenow)) {
-        cron_run_inner_scheduled_task($task);
-        unset($task);
+    // Record start time and interval between the last cron runs.
+    $laststart = get_config('tool_task', 'lastcronstart');
+    set_config('lastcronstart', $timenow, 'tool_task');
+    if ($laststart) {
+        // Record the interval between last two runs (always store at least 1 second).
+        set_config('lastcroninterval', max(1, $timenow - $laststart), 'tool_task');
     }
 
-    // Run all adhoc tasks.
-    while (!\core\task\manager::static_caches_cleared_since($timenow) &&
-           $task = \core\task\manager::get_next_adhoc_task($timenow)) {
-        cron_run_inner_adhoc_task($task);
-        unset($task);
-    }
+    // Run all scheduled tasks.
+    cron_run_scheduled_tasks($timenow);
+
+    // Run adhoc tasks.
+    cron_run_adhoc_tasks($timenow);
 
     mtrace("Cron script completed correctly");
 
@@ -81,6 +81,88 @@ function cron_run() {
     mtrace('Cron completed at ' . date('H:i:s') . '. Memory used ' . display_size(memory_get_usage()) . '.');
     $difftime = microtime_diff($starttime, microtime());
     mtrace("Execution took ".$difftime." seconds");
+}
+
+/**
+ * Execute all queued scheduled tasks, applying necessary concurrency limits and time limits.
+ *
+ * @param   int     $timenow The time this process started.
+ */
+function cron_run_scheduled_tasks(int $timenow) {
+    // Allow a restriction on the number of scheduled task runners at once.
+    $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+    $maxruns = get_config('core', 'task_scheduled_concurrency_limit');
+    $maxruntime = get_config('core', 'task_scheduled_max_runtime');
+
+    $scheduledlock = null;
+    for ($run = 0; $run < $maxruns; $run++) {
+        if ($scheduledlock = $cronlockfactory->get_lock("scheduled_task_runner_{$run}", 1)) {
+            break;
+        }
+    }
+
+    if (!$scheduledlock) {
+        mtrace("Skipping processing of scheduled tasks. Concurrency limit reached.");
+        return;
+    }
+
+    $starttime = time();
+
+    // Run all scheduled tasks.
+    while (!\core\task\manager::static_caches_cleared_since($timenow) &&
+            $task = \core\task\manager::get_next_scheduled_task($timenow)) {
+        cron_run_inner_scheduled_task($task);
+        unset($task);
+
+        if ((time() - $starttime) > $maxruntime) {
+            mtrace("Stopping processing of scheduled tasks as time limit has been reached.");
+            break;
+        }
+    }
+
+    // Release the scheduled task runner lock.
+    $scheduledlock->release();
+}
+
+/**
+ * Execute all queued adhoc tasks, applying necessary concurrency limits and time limits.
+ *
+ * @param   int     $timenow The time this process started.
+ */
+function cron_run_adhoc_tasks(int $timenow) {
+    // Allow a restriction on the number of adhoc task runners at once.
+    $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+    $maxruns = get_config('core', 'task_adhoc_concurrency_limit');
+    $maxruntime = get_config('core', 'task_adhoc_max_runtime');
+
+    $adhoclock = null;
+    for ($run = 0; $run < $maxruns; $run++) {
+        if ($adhoclock = $cronlockfactory->get_lock("adhoc_task_runner_{$run}", 1)) {
+            break;
+        }
+    }
+
+    if (!$adhoclock) {
+        mtrace("Skipping processing of adhoc tasks. Concurrency limit reached.");
+        return;
+    }
+
+    $starttime = time();
+
+    // Run all adhoc tasks.
+    while (!\core\task\manager::static_caches_cleared_since($timenow) &&
+            $task = \core\task\manager::get_next_adhoc_task($timenow)) {
+        cron_run_inner_adhoc_task($task);
+        unset($task);
+
+        if ((time() - $starttime) > $maxruntime) {
+            mtrace("Stopping processing of adhoc tasks as time limit has been reached.");
+            break;
+        }
+    }
+
+    // Release the adhoc task runner lock.
+    $adhoclock->release();
 }
 
 /**
@@ -92,6 +174,8 @@ function cron_run() {
  */
 function cron_run_inner_scheduled_task(\core\task\task_base $task) {
     global $CFG, $DB;
+
+    \core\task\logmanager::start_logging($task);
 
     $fullname = $task->get_name() . ' (' . get_class($task) . ')';
     mtrace('Execute scheduled task: ' . $fullname);
@@ -144,6 +228,9 @@ function cron_run_inner_scheduled_task(\core\task\task_base $task) {
  */
 function cron_run_inner_adhoc_task(\core\task\adhoc_task $task) {
     global $DB, $CFG;
+
+    \core\task\logmanager::start_logging($task);
+
     mtrace("Execute adhoc task: " . get_class($task));
     cron_trace_time_and_memory();
     $predbqueries = null;

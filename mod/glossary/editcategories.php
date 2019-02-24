@@ -72,7 +72,7 @@ $strglossary     = get_string("modulename", "glossary");
 $PAGE->navbar->add(get_string("categories","glossary"),
         new moodle_url('/mod/glossary/editcategories.php', array('id' => $cm->id,'mode' => 'cat')));
 if (!empty($action)) {
-    $navaction = get_string($action). " " . core_text::strtolower(get_string("category","glossary"));
+    $navaction = get_string(core_text::strtolower($action."category"), 'glossary');
     $PAGE->navbar->add($navaction);
 }
 $PAGE->set_title($glossary->name);
@@ -118,7 +118,7 @@ if ( $hook >0 ) {
         } else {
             echo $OUTPUT->header();
             echo $OUTPUT->heading(format_string($glossary->name), 2);
-            echo $OUTPUT->heading(format_string(get_string("edit"). " " . get_string("category","glossary")), 3);
+            echo $OUTPUT->heading(format_string(get_string("editcategory", "glossary")), 3);
 
             $name = $category->name;
             $usedynalink = $category->usedynalink;
@@ -148,7 +148,7 @@ if ( $hook >0 ) {
         } else {
             echo $OUTPUT->header();
             echo $OUTPUT->heading(format_string($glossary->name), 2);
-            echo $OUTPUT->heading(format_string(get_string("delete"). " " . get_string("category","glossary")), 3);
+            echo $OUTPUT->heading(format_string(get_string("deletecategory", "glossary")), 3);
 
             echo $OUTPUT->box_start('generalbox boxaligncenter errorboxcontent boxwidthnarrow');
             echo "<div class=\"boxaligncenter deletecatconfirm\">".format_string($category->name, true, $fmtoptions)."<br/>";
@@ -218,7 +218,7 @@ if ( $hook >0 ) {
     } else {
         echo $OUTPUT->header();
         echo $OUTPUT->heading(format_string($glossary->name), 2);
-        echo "<h3 class=\"main\">" . get_string("add"). " " . get_string("category","glossary"). "</h3>";
+        echo "<h3 class=\"main\">" . get_string("addcategory", "glossary"). "</h3>";
         $name="";
         require "editcategories.html";
     }
@@ -287,7 +287,7 @@ echo $OUTPUT->heading(format_string($glossary->name), 2);
              $options['action'] = "add";
 
              echo "<table class=\"editbuttons\" border=\"0\"><tr><td align=\"$rightalignment\">";
-             echo $OUTPUT->single_button(new moodle_url("editcategories.php", $options), get_string("add") . " " . get_string("category","glossary"));
+             echo $OUTPUT->single_button(new moodle_url("editcategories.php", $options), get_string("addcategory", "glossary"));
              echo "</td><td align=\"$leftalignment\">";
              unset($options['action']);
              $options['mode'] = 'cat';

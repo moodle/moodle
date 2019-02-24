@@ -2003,7 +2003,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
 
     // Groupmode.
     if ($hasmanageactivities && !$mod->coursegroupmodeforce) {
-        if (plugin_supports('mod', $mod->modname, FEATURE_GROUPS, 0)) {
+        if (plugin_supports('mod', $mod->modname, FEATURE_GROUPS, false)) {
             if ($mod->effectivegroupmode == SEPARATEGROUPS) {
                 $nextgroupmode = VISIBLEGROUPS;
                 $grouptitle = $str->groupsseparate;
@@ -2488,6 +2488,15 @@ function create_course($data, $editoroptions = NULL) {
         core_tag_tag::set_item_tags('core', 'course', $course->id, context_course::instance($course->id), $data->tags);
     }
 
+    // Save custom fields if there are any of them in the form.
+    $handler = core_course\customfield\course_handler::create();
+    // Make sure to set the handler's parent context first.
+    $coursecatcontext = context_coursecat::instance($category->id);
+    $handler->set_parent_context($coursecatcontext);
+    // Save the custom field data.
+    $data->id = $course->id;
+    $handler->instance_form_save($data, true);
+
     return $course;
 }
 
@@ -2571,6 +2580,10 @@ function update_course($data, $editoroptions = NULL) {
             $data->newsitems = 0;
         }
     }
+
+    // Update custom fields if there are any of them in the form.
+    $handler = core_course\customfield\course_handler::create();
+    $handler->instance_form_save($data);
 
     // Update with the new data
     $DB->update_record('course', $data);
@@ -3419,6 +3432,13 @@ function duplicate_module($course, $cm) {
 
     $rc = new restore_controller($backupid, $course->id,
             backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id, backup::TARGET_CURRENT_ADDING);
+
+    // Make sure that the restore_general_groups setting is always enabled when duplicating an activity.
+    $plan = $rc->get_plan();
+    $groupsetting = $plan->get_setting('groups');
+    if (empty($groupsetting->get_value())) {
+        $groupsetting->set_value(true);
+    }
 
     $cmcontext = context_module::instance($cm->id);
     if (!$rc->execute_precheck()) {

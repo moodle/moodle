@@ -66,12 +66,16 @@ class block_login extends block_base {
 
             $this->content->text .= "\n".'<form class="loginform" id="login" method="post" action="'.get_login_url().'">';
 
-            $this->content->text .= '<div class="form-group"><label for="login_username">'.$strusername.'</label>';
-            $this->content->text .= '<input type="text" name="username" id="login_username" class="form-control" value="'.s($username).'" /></div>';
+            $this->content->text .= '<div class="form-group">';
+            $this->content->text .= '<label for="login_username">'.$strusername.'</label>';
+            $this->content->text .= '<input type="text" name="username" id="login_username" ';
+            $this->content->text .= ' class="form-control" value="'.s($username).'" autocomplete="username"/></div>';
 
             $this->content->text .= '<div class="form-group"><label for="login_password">'.get_string('password').'</label>';
 
-            $this->content->text .= '<input type="password" name="password" id="login_password" class="form-control" value="" /></div>';
+            $this->content->text .= '<input type="password" name="password" id="login_password" ';
+            $this->content->text .= ' class="form-control" value="" autocomplete="current-password"/>';
+            $this->content->text .= '</div>';
 
             if (isset($CFG->rememberusername) and $CFG->rememberusername == 2) {
                 $checked = $username ? 'checked="checked"' : '';

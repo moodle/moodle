@@ -104,7 +104,7 @@ class lesson_add_page_form_endofcluster extends lesson_add_page_form_base {
     protected $standard = false;
 
     public function custom_definition() {
-        global $PAGE;
+        global $PAGE, $CFG;
 
         $mform = $this->_form;
         $lesson = $this->_customdata['lesson'];
@@ -117,7 +117,11 @@ class lesson_add_page_form_endofcluster extends lesson_add_page_form_base {
         $mform->setType('qtype', PARAM_TEXT);
 
         $mform->addElement('text', 'title', get_string("pagetitle", "lesson"), array('size'=>70));
-        $mform->setType('title', PARAM_TEXT);
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('title', PARAM_TEXT);
+        } else {
+            $mform->setType('title', PARAM_CLEANHTML);
+        }
 
         $this->editoroptions = array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$PAGE->course->maxbytes);
         $mform->addElement('editor', 'contents_editor', get_string("pagecontents", "lesson"), null, $this->editoroptions);

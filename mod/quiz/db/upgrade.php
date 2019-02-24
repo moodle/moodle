@@ -33,61 +33,6 @@ function xmldb_quiz_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2016092000) {
-        // Define new fields to be added to quiz.
-        $table = new xmldb_table('quiz');
-
-        $field = new xmldb_field('allowofflineattempts', XMLDB_TYPE_INTEGER, '1', null, null, null, 0, 'completionpass');
-        // Conditionally launch add field allowofflineattempts.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        // Quiz savepoint reached.
-        upgrade_mod_savepoint(true, 2016092000, 'quiz');
-    }
-
-    if ($oldversion < 2016092001) {
-        // New field for quiz_attemps.
-        $table = new xmldb_table('quiz_attempts');
-
-        $field = new xmldb_field('timemodifiedoffline', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'timemodified');
-        // Conditionally launch add field timemodifiedoffline.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Quiz savepoint reached.
-        upgrade_mod_savepoint(true, 2016092001, 'quiz');
-    }
-
-    if ($oldversion < 2016100300) {
-        // Find quizzes with the combination of require passing grade and grade to pass 0.
-        $gradeitems = $DB->get_records_sql("
-            SELECT gi.id, gi.itemnumber, cm.id AS cmid
-              FROM {quiz} q
-        INNER JOIN {course_modules} cm ON q.id = cm.instance
-        INNER JOIN {grade_items} gi ON q.id = gi.iteminstance
-        INNER JOIN {modules} m ON m.id = cm.module
-             WHERE q.completionpass = 1
-               AND gi.gradepass = 0
-               AND cm.completiongradeitemnumber IS NULL
-               AND gi.itemmodule = m.name
-               AND gi.itemtype = ?
-               AND m.name = ?", array('mod', 'quiz'));
-
-        foreach ($gradeitems as $gradeitem) {
-            $DB->execute("UPDATE {course_modules}
-                             SET completiongradeitemnumber = :itemnumber
-                           WHERE id = :cmid",
-                array('itemnumber' => $gradeitem->itemnumber, 'cmid' => $gradeitem->cmid));
-        }
-        // Quiz savepoint reached.
-        upgrade_mod_savepoint(true, 2016100300, 'quiz');
-    }
-
-    // Automatically generated Moodle v3.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 

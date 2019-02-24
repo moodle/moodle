@@ -66,9 +66,8 @@ function resource_display_embed($resource, $cm, $course, $file) {
     $clicktoopen = resource_get_clicktoopen($file, $resource->revision);
 
     $context = context_module::instance($cm->id);
-    $path = '/'.$context->id.'/mod_resource/content/'.$resource->revision.$file->get_filepath().$file->get_filename();
-    $fullurl = file_encode_url($CFG->wwwroot.'/pluginfile.php', $path, false);
-    $moodleurl = new moodle_url('/pluginfile.php' . $path);
+    $moodleurl = moodle_url::make_pluginfile_url($context->id, 'mod_resource', 'content', $resource->revision,
+            $file->get_filepath(), $file->get_filename());
 
     $mimetype = $file->get_mimetype();
     $title    = $resource->name;
@@ -82,11 +81,11 @@ function resource_display_embed($resource, $cm, $course, $file) {
     );
 
     if (file_mimetype_in_typegroup($mimetype, 'web_image')) {  // It's an image
-        $code = resourcelib_embed_image($fullurl, $title);
+        $code = resourcelib_embed_image($moodleurl->out(), $title);
 
     } else if ($mimetype === 'application/pdf') {
         // PDF document
-        $code = resourcelib_embed_pdf($fullurl, $title, $clicktoopen);
+        $code = resourcelib_embed_pdf($moodleurl->out(), $title, $clicktoopen);
 
     } else if ($mediamanager->can_embed_url($moodleurl, $embedoptions)) {
         // Media (audio/video) file.
@@ -305,6 +304,7 @@ function resource_get_file_details($resource, $cm) {
         if (!empty($options['showtype'])) {
             if ($mainfile) {
                 $filedetails['type'] = get_mimetype_description($mainfile);
+                $filedetails['mimetype'] = $mainfile->get_mimetype();
                 // Only show type if it is not unknown.
                 if ($filedetails['type'] === get_mimetype_description('document/unknown')) {
                     $filedetails['type'] = '';

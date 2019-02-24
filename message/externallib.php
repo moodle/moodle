@@ -1118,8 +1118,8 @@ class core_message_external extends external_api {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'The conversation id'),
-                'name' => new external_value(PARAM_NOTAGS, 'The conversation name, if set', VALUE_DEFAULT, null),
-                'subname' => new external_value(PARAM_NOTAGS, 'A subtitle for the conversation name, if set', VALUE_DEFAULT, null),
+                'name' => new external_value(PARAM_TEXT, 'The conversation name, if set', VALUE_DEFAULT, null),
+                'subname' => new external_value(PARAM_TEXT, 'A subtitle for the conversation name, if set', VALUE_DEFAULT, null),
                 'imageurl' => new external_value(PARAM_URL, 'A link to the conversation picture, if set', VALUE_DEFAULT, null),
                 'type' => new external_value(PARAM_INT, 'The type of the conversation (1=individual,2=group)'),
                 'membercount' => new external_value(PARAM_INT, 'Total number of conversation members'),
@@ -1147,6 +1147,7 @@ class core_message_external extends external_api {
         $result = [
             'id' => new external_value(PARAM_INT, 'The user id'),
             'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
+            'profileurl' => new external_value(PARAM_URL, 'The link to the user\'s profile page'),
             'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
             'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
             'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
@@ -4159,7 +4160,7 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function get_user_message_preferences($userid = 0) {
-        global $PAGE;
+        global $CFG, $PAGE;
 
         $params = self::validate_parameters(
             self::get_user_message_preferences_parameters(),
@@ -4188,11 +4189,13 @@ class core_message_external extends external_api {
 
         $renderer = $PAGE->get_renderer('core_message');
 
+        $entertosend = get_user_preferences('message_entertosend', $CFG->messagingdefaultpressenter, $user);
+
         $result = array(
             'warnings' => array(),
             'preferences' => $notificationlistoutput->export_for_template($renderer),
             'blocknoncontacts' => \core_message\api::get_user_privacy_messaging_preference($user->id),
-            'entertosend' => get_user_preferences('message_entertosend', false, $user)
+            'entertosend' => $entertosend
         );
         return $result;
     }

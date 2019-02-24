@@ -352,4 +352,14 @@ class message_received_search_testcase extends advanced_testcase {
         $this->assertEquals('t/message', $result->get_name());
         $this->assertEquals('moodle', $result->get_component());
     }
+
+    /**
+     * Test assigned search categories.
+     */
+    public function test_get_category_names() {
+        $searcharea = \core_search\manager::get_search_area($this->messagereceivedareaid);
+
+        $expected = ['core-users'];
+        $this->assertEquals($expected, $searcharea->get_category_names());
+    }
 }

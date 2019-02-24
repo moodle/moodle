@@ -9719,6 +9719,8 @@ body.path-question-type .fitem_fgroup .accesshide {
 }
 .que input.questionflagimage {
   padding-right: 3px;
+  height: 16px;
+  width: 16px;
 }
 .importerror {
   margin-top: 10px;
@@ -16530,8 +16532,8 @@ body {
   border-top-left-radius: 4px;
 }
 .summaryimage {
-  height: 7rem;
-  width: 7rem;
+  height: 5rem;
+  width: 5rem;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
@@ -16589,8 +16591,14 @@ form {
 .jsenabled .mform .collapsed .fcontainer {
   display: none;
 }
-.mform .fitem .fitemtitle div {
+.mform .fitem .fitemtitle > div:not(.mediaplugin) div {
   display: inline;
+}
+.mform .fitem .fitemtitle .mediaplugin > div {
+  margin: 0;
+}
+.que.match .mediaplugin {
+  width: 50vw;
 }
 #adminsettings .error,
 .loginpanel .error,
@@ -22387,4 +22395,7 @@ ul.indented-list {
 }
 .dir-ltr .dir-ltr-hide {
   display: none;
+}
+.font-weight-bold {
+  font-weight: 700 !important;
 }

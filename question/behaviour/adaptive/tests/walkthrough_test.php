@@ -761,7 +761,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         $q = test_question_maker::make_question('multianswer', 'twosubq');
         // To simplify testing, multichoice subquestion's answers are not shuffled.
         $q->subquestions[2]->shuffleanswers = 0;
-        $choices = array('' => '', '0' => 'Bow-wow', '1' => 'Wiggly worm', '2' => 'Pussy-cat');
+        $choices = array('0' => 'Bow-wow', '1' => 'Wiggly worm', '2' => 'Pussy-cat');
 
         $this->start_attempt_at_question($q, 'adaptive', 12);
 
@@ -777,10 +777,11 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_output_does_not_contain_text_input_with_class('sub1_answer', 'incorrect');
         $this->check_current_output(
                 $this->get_contains_marked_out_of_summary(),
-                $this->get_contains_select_expectation('sub2_answer', $choices, null, true),
                 $this->get_contains_submit_button_expectation(true),
                 $this->get_does_not_contain_validation_error_expectation(),
                 $this->get_does_not_contain_feedback_expectation());
+        $this->check_output_contains_selectoptions(
+                $this->get_contains_select_expectation('sub2_answer', $choices, null, true));
 
         // Submit an invalid response.
         $this->process_submission(array('sub1_answer' => '', 'sub2_answer' => 1, '-submit' => 1));
@@ -790,11 +791,12 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_mark(null);
         $this->check_output_contains_text_input('sub1_answer', '', true);
         $this->check_current_output(
-                $this->get_contains_select_expectation('sub2_answer', $choices, 1, true),
                 $this->get_contains_submit_button_expectation(true),
                 $this->get_does_not_contain_penalty_info_expectation(),
                 $this->get_does_not_contain_total_penalty_expectation(),
                 $this->get_contains_disregarded_info_expectation());
+        $this->check_output_contains_selectoptions(
+                $this->get_contains_select_expectation('sub2_answer', $choices, 1, true));
 
         // Check that extract responses will return the reset data.
         $prefix = $this->quba->get_field_prefix($this->slot);
@@ -813,11 +815,12 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_output_contains_text_input_with_class('sub1_answer', 'incorrect');
         $this->check_current_output(
                 $this->get_contains_mark_summary(0),
-                $this->get_contains_select_expectation('sub2_answer', $choices, 1, true),
                 $this->get_contains_submit_button_expectation(true),
                 $this->get_contains_incorrect_expectation(),
                 $this->get_contains_penalty_info_expectation(4.00),
                 $this->get_does_not_contain_validation_error_expectation());
+        $this->check_output_contains_selectoptions(
+                $this->get_contains_select_expectation('sub2_answer', $choices, 1, true));
 
         // Submit the right answer.
         $this->process_submission(array('sub1_answer' => 'Owl', 'sub2_answer' => 2, '-submit' => 1));
@@ -829,13 +832,14 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_output_contains_text_input('sub1_answer', 'Owl', true);
         $this->check_output_contains_text_input_with_class('sub1_answer', 'correct');
         $this->check_current_output(
-                $this->get_contains_select_expectation('sub2_answer', $choices, '2', true),
                 $this->get_contains_mark_summary(8.00),
                 $this->get_contains_submit_button_expectation(true),
                 $this->get_contains_correct_expectation(),
                 $this->get_does_not_contain_penalty_info_expectation(),
                 $this->get_does_not_contain_total_penalty_expectation(),
                 $this->get_does_not_contain_validation_error_expectation());
+        $this->check_output_contains_selectoptions(
+                $this->get_contains_select_expectation('sub2_answer', $choices, '2', true));
 
         // Finish the attempt.
         $this->quba->finish_all_questions();

@@ -22,9 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['nocourses'] = 'No starred courses';
 $string['pluginname'] = 'Starred courses';
 $string['privacy:metadata'] = 'The starred courses block does not store any personal data.';
 $string['starredcourses:addinstance'] = 'Add a new starred courses block';
 $string['starredcourses:myaddinstance'] = 'Add a new starred courses block to Dashboard';
-
+$string['nocourses'] = 'No starred courses';

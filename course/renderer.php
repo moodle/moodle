@@ -457,7 +457,7 @@ class core_course_renderer extends plugin_renderer_base {
             }
         }
         if ($completionicon) {
-            $formattedname = $mod->get_formatted_name();
+            $formattedname = html_entity_decode($mod->get_formatted_name(), ENT_QUOTES, 'UTF-8');
             if ($completiondata->overrideby) {
                 $args = new stdClass();
                 $args->modname = $formattedname;
@@ -468,7 +468,7 @@ class core_course_renderer extends plugin_renderer_base {
                 $imgalt = get_string('completion-alt-' . $completionicon, 'completion', $formattedname);
             }
 
-            if ($this->page->user_is_editing()) {
+            if ($this->page->user_is_editing() || !has_capability('moodle/course:togglecompletion', $mod->context)) {
                 // When editing, the icon is just an image.
                 $completionpixicon = new pix_icon('i/completion-'.$completionicon, $imgalt, '',
                         array('title' => $imgalt, 'class' => 'iconsmall'));
@@ -498,12 +498,12 @@ class core_course_renderer extends plugin_renderer_base {
                 $output .= html_writer::empty_tag('input', array(
                     'type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
                 $output .= html_writer::empty_tag('input', array(
-                    'type' => 'hidden', 'name' => 'modulename', 'value' => $mod->name));
+                    'type' => 'hidden', 'name' => 'modulename', 'value' => $formattedname));
                 $output .= html_writer::empty_tag('input', array(
                     'type' => 'hidden', 'name' => 'completionstate', 'value' => $newstate));
                 $output .= html_writer::tag('button',
                     $this->output->pix_icon('i/completion-' . $completionicon, $imgalt),
-                        array('class' => 'btn btn-link', 'title' => $imgalt));
+                        array('class' => 'btn btn-link', 'aria-live' => 'assertive'));
                 $output .= html_writer::end_tag('div');
                 $output .= html_writer::end_tag('form');
             } else {
@@ -1116,7 +1116,8 @@ class core_course_renderer extends plugin_renderer_base {
         // If we display course in collapsed form but the course has summary or course contacts, display the link to the info page.
         $content .= html_writer::start_tag('div', array('class' => 'moreinfo'));
         if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
-            if ($course->has_summary() || $course->has_course_contacts() || $course->has_course_overviewfiles()) {
+            if ($course->has_summary() || $course->has_course_contacts() || $course->has_course_overviewfiles()
+                    || $course->has_custom_fields()) {
                 $url = new moodle_url('/course/info.php', array('id' => $course->id));
                 $image = $this->output->pix_icon('i/info', $this->strings->summary);
                 $content .= html_writer::link($url, $image, array('title' => $this->strings->summary));
@@ -1219,6 +1220,13 @@ class core_course_renderer extends plugin_renderer_base {
                                 $cat->get_formatted_name(), array('class' => $cat->visible ? '' : 'dimmed'));
                 $content .= html_writer::end_tag('div'); // .coursecat
             }
+        }
+
+        // Display custom fields.
+        if ($course->has_custom_fields()) {
+            $handler = core_course\customfield\course_handler::create();
+            $customfields = $handler->display_custom_fields_data($course->get_custom_fields());
+            $content .= \html_writer::tag('div', $customfields, ['class' => 'customfields-container']);
         }
 
         return $content;
@@ -2434,9 +2442,8 @@ class core_course_renderer extends plugin_renderer_base {
                     if (!empty($mycourseshtml)) {
                         $output .= $this->frontpage_part('skipmycourses', 'frontpage-course-list',
                             get_string('mycourses'), $mycourseshtml);
-                        break;
                     }
-                    // No "break" here. If there are no enrolled courses - continue to 'Available courses'.
+                    break;
 
                 case FRONTPAGEALLCOURSELIST:
                     $availablecourseshtml = $this->frontpage_available_courses();
@@ -2507,6 +2514,7 @@ class coursecat_helper {
         // and core_course_category::search_courses().
         $this->coursesdisplayoptions['summary'] = $showcourses >= core_course_renderer::COURSECAT_SHOW_COURSES_AUTO;
         $this->coursesdisplayoptions['coursecontacts'] = $showcourses >= core_course_renderer::COURSECAT_SHOW_COURSES_EXPANDED;
+        $this->coursesdisplayoptions['customfields'] = $showcourses >= core_course_renderer::COURSECAT_SHOW_COURSES_COLLAPSED;
         return $this;
     }
 
@@ -2553,6 +2561,7 @@ class coursecat_helper {
      *      this may be a huge list!
      *    - summary - preloads fields 'summary' and 'summaryformat'
      *    - coursecontacts - preloads course contacts
+     *    - customfields - preloads custom fields data
      *    - isenrolled - preloads indication whether this user is enrolled in the course
      *    - sort - list of fields to sort. Example
      *             array('idnumber' => 1, 'shortname' => 1, 'id' => -1)

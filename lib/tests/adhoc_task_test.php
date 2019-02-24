@@ -151,6 +151,114 @@ class core_adhoc_task_testcase extends advanced_testcase {
     }
 
     /**
+     * Ensure that the reschedule_or_queue_adhoc_task function will schedule a new task if no tasks exist.
+     */
+    public function test_reschedule_or_queue_adhoc_task_no_existing() {
+        $this->resetAfterTest(true);
+
+        // Schedule adhoc task.
+        $task = new \core\task\adhoc_test_task();
+        $task->set_custom_data(['courseid' => 10]);
+        \core\task\manager::reschedule_or_queue_adhoc_task($task);
+        $this->assertEquals(1, count(\core\task\manager::get_adhoc_tasks('core\task\adhoc_test_task')));
+    }
+
+    /**
+     * Ensure that the reschedule_or_queue_adhoc_task function will schedule a new task if a task for the same user does
+     * not exist.
+     */
+    public function test_reschedule_or_queue_adhoc_task_different_user() {
+        $this->resetAfterTest(true);
+        $user = \core_user::get_user_by_username('admin');
+
+        // Schedule adhoc task.
+        $task = new \core\task\adhoc_test_task();
+        $task->set_custom_data(['courseid' => 10]);
+        \core\task\manager::reschedule_or_queue_adhoc_task($task);
+
+        // Schedule adhoc task for a different user.
+        $task = new \core\task\adhoc_test_task();
+        $task->set_custom_data(['courseid' => 10]);
+        $task->set_userid($user->id);
+        \core\task\manager::reschedule_or_queue_adhoc_task($task);
+
+        $this->assertEquals(2, count(\core\task\manager::get_adhoc_tasks('core\task\adhoc_test_task')));
+    }
+
+    /**
+     * Ensure that the reschedule_or_queue_adhoc_task function will schedule a new task if a task with different custom
+     * data exists.
+     */
+    public function test_reschedule_or_queue_adhoc_task_different_data() {
+        $this->resetAfterTest(true);
+
+        // Schedule adhoc task.
+        $task = new \core\task\adhoc_test_task();
+        $task->set_custom_data(['courseid' => 10]);
+        \core\task\manager::reschedule_or_queue_adhoc_task($task);
+
+        // Schedule adhoc task for a different user.
+        $task = new \core\task\adhoc_test_task();
+        $task->set_custom_data(['courseid' => 11]);
+        \core\task\manager::reschedule_or_queue_adhoc_task($task);
+
+        $this->assertEquals(2, count(\core\task\manager::get_adhoc_tasks('core\task\adhoc_test_task')));
+    }
+
+    /**
+     * Ensure that the reschedule_or_queue_adhoc_task function will not make any change for matching data if no time was
+     * specified.
+     */
+    public function test_reschedule_or_queue_adhoc_task_match_no_change() {
+        $this->resetAfterTest(true);
+
+        // Schedule adhoc task.
+        $task = new \core\task\adhoc_test_task();
+        $task->set_custom_data(['courseid' => 10]);
+        $task->set_next_run_time(time() + DAYSECS);
+        \core\task\manager::reschedule_or_queue_adhoc_task($task);
+
+        $before = \core\task\manager::get_adhoc_tasks('core\task\adhoc_test_task');
+
+        // Schedule the task again but do not specify a time.
+        $task = new \core\task\adhoc_test_task();
+        $task->set_custom_data(['courseid' => 10]);
+        \core\task\manager::reschedule_or_queue_adhoc_task($task);
+
+        $this->assertEquals(1, count(\core\task\manager::get_adhoc_tasks('core\task\adhoc_test_task')));
+        $this->assertEquals($before, \core\task\manager::get_adhoc_tasks('core\task\adhoc_test_task'));
+    }
+
+    /**
+     * Ensure that the reschedule_or_queue_adhoc_task function will update the run time if there are planned changes.
+     */
+    public function test_reschedule_or_queue_adhoc_task_match_update_runtime() {
+        $this->resetAfterTest(true);
+        $initialruntime = time() + DAYSECS;
+        $newruntime = time() + WEEKSECS;
+
+        // Schedule adhoc task.
+        $task = new \core\task\adhoc_test_task();
+        $task->set_custom_data(['courseid' => 10]);
+        $task->set_next_run_time($initialruntime);
+        \core\task\manager::reschedule_or_queue_adhoc_task($task);
+
+        $before = \core\task\manager::get_adhoc_tasks('core\task\adhoc_test_task');
+
+        // Schedule the task again.
+        $task = new \core\task\adhoc_test_task();
+        $task->set_custom_data(['courseid' => 10]);
+        $task->set_next_run_time($newruntime);
+        \core\task\manager::reschedule_or_queue_adhoc_task($task);
+
+        $tasks = \core\task\manager::get_adhoc_tasks('core\task\adhoc_test_task');
+        $this->assertEquals(1, count($tasks));
+        $this->assertNotEquals($before, $tasks);
+        $firsttask = reset($tasks);
+        $this->assertEquals($newruntime, $firsttask->get_next_run_time());
+    }
+
+    /**
      * Test queue_adhoc_task "if not scheduled".
      */
     public function test_queue_adhoc_task_if_not_scheduled() {

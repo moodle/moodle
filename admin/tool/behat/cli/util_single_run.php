@@ -218,7 +218,7 @@ if ($options['install']) {
     // Run behat command to get steps in feature files.
     $featurestepscmd = behat_command::get_behat_command(true);
     $featurestepscmd .= ' --config ' . behat_config_manager::get_behat_cli_config_filepath();
-    $featurestepscmd .= ' --dry-run --format=moodle_step_count';
+    $featurestepscmd .= ' --dry-run --format=moodle_stepcount';
     $processes = cli_execute_parallel(array($featurestepscmd), __DIR__ . "/../../../../");
     $status = print_update_step_output(array_pop($processes), $behatstepfile);
 

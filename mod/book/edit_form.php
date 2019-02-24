@@ -48,6 +48,13 @@ class book_chapter_edit_form extends moodleform {
             $mform->addElement('header', 'general', get_string('addafter', 'mod_book'));
         }
 
+        if (isset($chapter->currentchaptertitle)) {
+            $mform->addElement('static', 'details',
+                get_string('previouschapter', 'mod_book'),
+                $chapter->currentchaptertitle
+            );
+        }
+
         $mform->addElement('text', 'title', get_string('chaptertitle', 'mod_book'), array('size'=>'30'));
         $mform->setType('title', PARAM_RAW);
         $mform->addRule('title', null, 'required', null, 'client');

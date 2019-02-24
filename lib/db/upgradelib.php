@@ -539,3 +539,30 @@ function upgrade_fix_serialized_objects($serializeddata) {
     }
     return [$updated, $serializeddata];
 }
+
+/**
+ * Deletes file records which have their repository deleted.
+ *
+ */
+function upgrade_delete_orphaned_file_records() {
+    global $DB;
+
+    $sql = "SELECT f.id, f.contextid, f.component, f.filearea, f.itemid, fr.id AS referencefileid
+              FROM {files} f
+              JOIN {files_reference} fr ON f.referencefileid = fr.id
+         LEFT JOIN {repository_instances} ri ON fr.repositoryid = ri.id
+             WHERE ri.id IS NULL";
+
+    $deletedfiles = $DB->get_recordset_sql($sql);
+
+    $deletedfileids = array();
+
+    $fs = get_file_storage();
+    foreach ($deletedfiles as $deletedfile) {
+        $fs->delete_area_files($deletedfile->contextid, $deletedfile->component, $deletedfile->filearea, $deletedfile->itemid);
+        $deletedfileids[] = $deletedfile->referencefileid;
+    }
+    $deletedfiles->close();
+
+    $DB->delete_records_list('files_reference', 'id', $deletedfileids);
+}

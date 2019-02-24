@@ -23,6 +23,7 @@
  */
 
 $string['actual'] = 'Actual';
+$string['addpersistent'] = 'Add mandatory persistent fields';
 $string['aftertable'] = 'After table:';
 $string['back'] = 'Back';
 $string['backtomainview'] = 'Back to main';
@@ -169,6 +170,9 @@ $string['numberincorrectwholepart'] = 'Too big whole number part for number fiel
 $string['pendingchanges'] = 'Note: You have performed changes to this file. They can be saved at any moment.';
 $string['pendingchangescannotbesaved'] = 'There are changes in this file but they cannot be saved! Please verify that both the directory and the "install.xml" within it have write permissions for the web server.';
 $string['pendingchangescannotbesavedreload'] = 'There are changes in this file but they cannot be saved! Please verify that both the directory and the "install.xml" within it have write permissions for the web server. Then reload this page and you should be able to save those changes.';
+$string['persistentfieldsconfirm'] = 'Do you want to add the following fields: ';
+$string['persistentfieldscomplete'] = 'The following fields have been added: ';
+$string['persistentfieldsexist'] = 'The following fields already exist: ';
 $string['pluginname'] = 'XMLDB editor';
 $string['primarykeyonlyallownotnullfields'] = 'Primary keys cannot be null';
 $string['reserved'] = 'Reserved';
@@ -215,8 +219,8 @@ $string['yesmissingindexesfound'] = '<p>Some missing indexes have been found in 
 <p>After doing that, it\'s highly recommended to execute this utility again to check that no more missing indexes are found.</p>';
 $string['yeswrongdefaultsfound'] = '<p>Some inconsistent defaults have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to fix them all. Remember to backup your data first!</p>
 <p>After doing that, it\'s highly recommended to execute this utility again to check that no more inconsistent defaults are found.</p>';
-$string['yeswrongintsfound'] = '<p>Some wrong integers have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them. Remember to backup your data first!</p>
-<p>After doing that, it\'s highly recommended to execute this utility again to check that no more wrong integers are found.</p>';
+$string['yeswrongintsfound'] = '<p>Some wrong integers have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to fix them. Remember to backup your data first!</p>
+<p>After fixing them, it is highly recommended to execute this utility again to check that no more wrong integers are found.</p>';
 $string['yeswrongoraclesemanticsfound'] = '<p>Some Oracle columns using BYTE semantics have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them. Remember to backup your data first!</p>
 <p>After doing that, it\'s highly recommended to execute this utility again to check that no more wrong semantics are found.</p>';
 $string['privacy:metadata'] = 'The XMLDB editor plugin does not store any personal data.';

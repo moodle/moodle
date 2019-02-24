@@ -41,20 +41,33 @@ class tool_task_renderer extends plugin_renderer_base {
     public function scheduled_tasks_table($tasks) {
         global $CFG;
 
+        $showloglink = \core\task\logmanager::has_log_report();
+
         $table = new html_table();
-        $table->head  = array(get_string('name'),
-                              get_string('component', 'tool_task'),
-                              get_string('edit'),
-                              get_string('lastruntime', 'tool_task'),
-                              get_string('nextruntime', 'tool_task'),
-                              get_string('taskscheduleminute', 'tool_task'),
-                              get_string('taskschedulehour', 'tool_task'),
-                              get_string('taskscheduleday', 'tool_task'),
-                              get_string('taskscheduledayofweek', 'tool_task'),
-                              get_string('taskschedulemonth', 'tool_task'),
-                              get_string('faildelay', 'tool_task'),
-                              get_string('default', 'tool_task'));
+        $table->head = [
+            get_string('name'),
+            get_string('component', 'tool_task'),
+            get_string('edit'),
+            get_string('logs'),
+            get_string('lastruntime', 'tool_task'),
+            get_string('nextruntime', 'tool_task'),
+            get_string('taskscheduleminute', 'tool_task'),
+            get_string('taskschedulehour', 'tool_task'),
+            get_string('taskscheduleday', 'tool_task'),
+            get_string('taskscheduledayofweek', 'tool_task'),
+            get_string('taskschedulemonth', 'tool_task'),
+            get_string('faildelay', 'tool_task'),
+            get_string('default', 'tool_task'),
+        ];
+
         $table->attributes['class'] = 'admintable generaltable';
+        $table->colclasses = [];
+
+        if (!$showloglink) {
+            // Hide the log links.
+            $table->colclasses['3'] = 'hidden';
+        }
+
         $data = array();
         $yes = get_string('yes');
         $no = get_string('no');
@@ -70,6 +83,14 @@ class tool_task_renderer extends plugin_renderer_base {
                 $editlink = $this->action_icon($configureurl, new pix_icon('t/edit', get_string('edittaskschedule', 'tool_task', $task->get_name())));
             } else {
                 $editlink = $this->render(new pix_icon('t/locked', get_string('scheduledtaskchangesdisabled', 'tool_task')));
+            }
+
+            $loglink = '';
+            if ($showloglink) {
+                $loglink = $this->action_icon(
+                    \core\task\logmanager::get_url_for_task_class(get_class($task)),
+                    new pix_icon('e/file-text', get_string('viewlogs', 'tool_task', $task->get_name())
+                ));
             }
 
             $namecell = new html_table_cell($task->get_name() . "\n" . html_writer::tag('span', '\\'.get_class($task),
@@ -125,6 +146,7 @@ class tool_task_renderer extends plugin_renderer_base {
                         $namecell,
                         $componentcell,
                         new html_table_cell($editlink),
+                        new html_table_cell($loglink),
                         new html_table_cell($lastrun . $runnow),
                         new html_table_cell($nextrun),
                         new html_table_cell($task->get_minute()),
@@ -136,11 +158,11 @@ class tool_task_renderer extends plugin_renderer_base {
                         new html_table_cell($customised)));
 
             // Cron-style values must always be LTR.
-            $row->cells[5]->attributes['class'] = 'text-ltr';
             $row->cells[6]->attributes['class'] = 'text-ltr';
             $row->cells[7]->attributes['class'] = 'text-ltr';
             $row->cells[8]->attributes['class'] = 'text-ltr';
             $row->cells[9]->attributes['class'] = 'text-ltr';
+            $row->cells[10]->attributes['class'] = 'text-ltr';
 
             if ($disabled) {
                 $row->attributes['class'] = 'disabled';

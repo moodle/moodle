@@ -147,7 +147,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
                                             array('class' => 'dragitemtype'));
         $options = array();
         for ($i = 1; $i <= self::MAX_GROUPS; $i += 1) {
-            $options[$i] = $i;
+            $options[$i] = question_utils::int_to_letter($i);
         }
         $grouparray[] = $mform->createElement('select', 'draggroup',
                                                 get_string('group', 'qtype_gapselect'),
@@ -267,8 +267,8 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
         for ($dragindex = 0; $dragindex < $data['noitems']; $dragindex++) {
             $label = $data['draglabel'][$dragindex];
             if ($data['drags'][$dragindex]['dragitemtype'] == 'word') {
-                $allowedtags = '<br><sub><sup><b><i><strong><em>';
-                $errormessage = get_string('formerror_disallowedtags', 'qtype_ddimageortext');
+                $allowedtags = '<br><sub><sup><b><i><strong><em><span>';
+                $errormessage = get_string('formerror_disallowedtags', 'qtype_ddimageortext', s($allowedtags));
             } else {
                 $allowedtags = '';
                 $errormessage = get_string('formerror_noallowedtags', 'qtype_ddimageortext');

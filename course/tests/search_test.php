@@ -48,12 +48,18 @@ class course_search_testcase extends advanced_testcase {
      */
     protected $sectionareaid = null;
 
+    /**
+     * @var string Area id for custom fields.
+     */
+    protected $customfieldareaid = null;
+
     public function setUp() {
         $this->resetAfterTest(true);
         set_config('enableglobalsearch', true);
 
         $this->mycoursesareaid = \core_search\manager::generate_areaid('core_course', 'mycourse');
         $this->sectionareaid = \core_search\manager::generate_areaid('core_course', 'section');
+        $this->customfieldareaid = \core_search\manager::generate_areaid('core_course', 'customfield');
 
         // Set \core_search::instance to the mock_search_engine as we don't require the search engine to be working to test this.
         $search = testable_core_search::instance();
@@ -448,6 +454,90 @@ class course_search_testcase extends advanced_testcase {
     }
 
     /**
+     * Indexing custom fields contents.
+     *
+     * @return void
+     */
+    public function test_customfield_indexing() {
+        // Returns the instance as long as the area is supported.
+        $searcharea = \core_search\manager::get_search_area($this->customfieldareaid);
+        $this->assertInstanceOf('\core_course\search\customfield', $searcharea);
+
+        // We need to be admin for custom fields creation.
+        $this->setAdminUser();
+
+        // Custom fields.
+        $fieldcategory = self::getDataGenerator()->create_custom_field_category(['name' => 'Other fields']);
+        $customfield = ['shortname' => 'test', 'name' => 'Customfield', 'type' => 'text',
+            'categoryid' => $fieldcategory->get('id')];
+        $field = self::getDataGenerator()->create_custom_field($customfield);
+
+        $course1data = ['customfields' => [['shortname' => $customfield['shortname'], 'value' => 'Customvalue1']]];
+        $course1  = self::getDataGenerator()->create_course($course1data);
+
+        $course2data = ['customfields' => [['shortname' => $customfield['shortname'], 'value' => 'Customvalue2']]];
+        $course2 = self::getDataGenerator()->create_course($course2data);
+
+        // All records.
+        $recordset = $searcharea->get_recordset_by_timestamp(0);
+        $this->assertTrue($recordset->valid());
+        $nrecords = 0;
+        foreach ($recordset as $record) {
+            $this->assertInstanceOf('stdClass', $record);
+            $doc = $searcharea->get_document($record);
+            $this->assertInstanceOf('\core_search\document', $doc);
+            $nrecords++;
+        }
+        // If there would be an error/failure in the foreach above the recordset would be closed on shutdown.
+        $recordset->close();
+        $this->assertEquals(2, $nrecords);
+
+        // The +2 is to prevent race conditions.
+        $recordset = $searcharea->get_recordset_by_timestamp(time() + 2);
+
+        // No new records.
+        $this->assertFalse($recordset->valid());
+        $recordset->close();
+    }
+
+    /**
+     * Document contents for custom fields.
+     *
+     * @return void
+     */
+    public function test_customfield_document() {
+        global $DB;
+        // Returns the instance as long as the area is supported.
+        $searcharea = \core_search\manager::get_search_area($this->customfieldareaid);
+
+        // We need to be admin for custom fields creation.
+        $this->setAdminUser();
+
+        // Custom fields.
+        $fieldcategory = self::getDataGenerator()->create_custom_field_category(['name' => 'Other fields']);
+        $customfield = ['shortname' => 'test', 'name' => 'Customfield', 'type' => 'text',
+            'categoryid' => $fieldcategory->get('id')];
+        $field = self::getDataGenerator()->create_custom_field($customfield);
+
+        $coursedata = ['customfields' => [['shortname' => $customfield['shortname'], 'value' => 'Customvalue1']]];
+        $course  = self::getDataGenerator()->create_course($coursedata);
+
+        // Retrieve data we need to compare with document instance.
+        $record = $DB->get_record('customfield_data', ['instanceid' => $course->id]);
+        $field = \core_customfield\field_controller::create($record->fieldid);
+        $data = \core_customfield\data_controller::create(0, $record, $field);
+
+        $doc = $searcharea->get_document($record);
+        $this->assertInstanceOf('\core_search\document', $doc);
+        $this->assertEquals('Customfield', $doc->get('title'));
+        $this->assertEquals('Customvalue1', $doc->get('content'));
+        $this->assertEquals($course->id, $doc->get('courseid'));
+        $this->assertEquals(\core_search\manager::NO_OWNER_ID, $doc->get('owneruserid'));
+        $this->assertEquals($course->id, $doc->get('courseid'));
+        $this->assertFalse($doc->is_set('userid'));
+    }
+
+    /**
      * Test document icon for mycourse area.
      */
     public function test_get_doc_icon_for_mycourse_area() {
@@ -477,5 +567,16 @@ class course_search_testcase extends advanced_testcase {
 
         $this->assertEquals('i/section', $result->get_name());
         $this->assertEquals('moodle', $result->get_component());
+    }
+
+    /**
+     * Test assigned search categories.
+     */
+    public function test_get_category_names() {
+        $coursessearcharea = \core_search\manager::get_search_area($this->mycoursesareaid);
+        $sectionsearcharea = \core_search\manager::get_search_area($this->sectionareaid);
+
+        $this->assertEquals(['core-courses'], $coursessearcharea->get_category_names());
+        $this->assertEquals(['core-course-content'], $sectionsearcharea->get_category_names());
     }
 }

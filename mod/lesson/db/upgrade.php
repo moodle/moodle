@@ -54,9 +54,6 @@ function xmldb_lesson_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // Automatically generated Moodle v3.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
     if ($oldversion < 2016120515) {
         // Define new fields to be added to lesson.
         $table = new xmldb_table('lesson');

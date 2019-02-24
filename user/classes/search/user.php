@@ -216,4 +216,13 @@ class user extends \core_search\base {
         return new \core_search\document_icon('i/user');
     }
 
+    /**
+     * Returns a list of category names associated with the area.
+     *
+     * @return array
+     */
+    public function get_category_names() {
+        return [\core_search\manager::SEARCH_AREA_CATEGORY_USERS];
+    }
+
 }

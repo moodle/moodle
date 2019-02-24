@@ -1210,4 +1210,83 @@ class search_manager_testcase extends advanced_testcase {
         // Confirm request table is now empty.
         $this->assertEquals(0, $DB->count_records('search_index_requests'));
     }
+
+    /**
+     * Test search area categories.
+     */
+    public function test_get_search_area_categories() {
+        $categories = \core_search\manager::get_search_area_categories();
+
+        $this->assertTrue(is_array($categories));
+        $this->assertTrue(count($categories) >= 4); // We always should have 4 core categories.
+        $this->assertArrayHasKey('core-all', $categories);
+        $this->assertArrayHasKey('core-course-content', $categories);
+        $this->assertArrayHasKey('core-courses', $categories);
+        $this->assertArrayHasKey('core-users', $categories);
+
+        foreach ($categories as $category) {
+            $this->assertInstanceOf('\core_search\area_category', $category);
+        }
+    }
+
+    /**
+     * Test that we can find out if search area categories functionality is enabled.
+     */
+    public function test_is_search_area_categories_enabled() {
+        $this->resetAfterTest();
+
+        $this->assertFalse(\core_search\manager::is_search_area_categories_enabled());
+        set_config('searchenablecategories', 1);
+        $this->assertTrue(\core_search\manager::is_search_area_categories_enabled());
+        set_config('searchenablecategories', 0);
+        $this->assertFalse(\core_search\manager::is_search_area_categories_enabled());
+    }
+
+    /**
+     * Test that we can find out if hiding all results category is enabled.
+     */
+    public function test_should_hide_all_results_category() {
+        $this->resetAfterTest();
+
+        $this->assertEquals(0, \core_search\manager::should_hide_all_results_category());
+        set_config('searchhideallcategory', 1);
+        $this->assertEquals(1, \core_search\manager::should_hide_all_results_category());
+        set_config('searchhideallcategory', 0);
+        $this->assertEquals(0, \core_search\manager::should_hide_all_results_category());
+    }
+
+    /**
+     * Test that we can get default search category name.
+     */
+    public function test_get_default_area_category_name() {
+        $this->resetAfterTest();
+
+        $expected = 'core-all';
+        $this->assertEquals($expected, \core_search\manager::get_default_area_category_name());
+
+        set_config('searchhideallcategory', 1);
+        $expected = 'core-course-content';
+        $this->assertEquals($expected, \core_search\manager::get_default_area_category_name());
+
+        set_config('searchhideallcategory', 0);
+        $expected = 'core-all';
+        $this->assertEquals($expected, \core_search\manager::get_default_area_category_name());
+    }
+
+    /**
+     * Test that we can get correct search area category by its name.
+     */
+    public function test_get_search_area_category_by_name() {
+        $this->resetAfterTest();
+
+        $testcategory = \core_search\manager::get_search_area_category_by_name('test_random_name');
+        $this->assertEquals('core-all', $testcategory->get_name());
+
+        $testcategory = \core_search\manager::get_search_area_category_by_name('core-courses');
+        $this->assertEquals('core-courses', $testcategory->get_name());
+
+        set_config('searchhideallcategory', 1);
+        $testcategory = \core_search\manager::get_search_area_category_by_name('test_random_name');
+        $this->assertEquals('core-course-content', $testcategory->get_name());
+    }
 }

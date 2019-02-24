@@ -115,7 +115,6 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         this.cloneDrags();
         this.positionDragsAndDrops();
         M.util.js_complete('qtype_ddimageortext-init-' + this.containerId);
-
     };
 
     /**
@@ -123,8 +122,9 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      */
     DragDropOntoImageQuestion.prototype.resizeAllDragsAndDrops = function() {
         var thisQ = this;
-        this.getRoot().find('.draghomes > div').each(function(i) {
-            thisQ.resizeAllDragsAndDropsInGroup(i + 1);
+        this.getRoot().find('.draghomes > div').each(function(i, node) {
+            thisQ.resizeAllDragsAndDropsInGroup(
+                    thisQ.getClassnameNumericSuffix($(node), 'dragitemgroup'));
         });
     };
 
@@ -268,6 +268,28 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                 .addClass('placed inplace' + place)
                 .offset(root.find('.dropzone.place' + place).offset());
         });
+
+        this.bgImage().data('prev-top', bgPosition.top).data('prev-left', bgPosition.left);
+    };
+
+    /**
+     * Check to see if the background image has moved. If so, refresh the layout.
+     */
+    DragDropOntoImageQuestion.prototype.fixLayoutIfBackgroundMoved = function() {
+        var bgImage = this.bgImage(),
+            bgPosition = bgImage.offset(),
+            prevTop = bgImage.data('prev-top'),
+            prevLeft = bgImage.data('prev-left');
+        if (prevLeft === undefined || prevTop === undefined) {
+            // Question is not set up yet. Nothing to do.
+            return;
+        }
+        if (prevTop === bgPosition.top && prevLeft === bgPosition.left) {
+            // Things have not moved.
+            return;
+        }
+        // We need to reposition things.
+        this.positionDragsAndDrops();
     };
 
     /**
@@ -697,6 +719,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                     '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .dropzones .dropzone',
                     questionManager.handleKeyPress);
             $(window).on('resize', questionManager.handleWindowResize);
+            setTimeout(questionManager.fixLayoutIfThingsMoved, 100);
         },
 
         /**
@@ -731,6 +754,24 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                     questionManager.questions[containerId].positionDragsAndDrops();
                 }
             }
+        },
+
+        /**
+         * Sometimes, despite our best efforts, things change in a way that cannot
+         * be specifically caught (e.g. dock expanding or collapsing in Boost).
+         * Therefore, we need to periodically check everything is in the right position.
+         */
+        fixLayoutIfThingsMoved: function() {
+            for (var containerId in questionManager.questions) {
+                if (questionManager.questions.hasOwnProperty(containerId)) {
+                    questionManager.questions[containerId].fixLayoutIfBackgroundMoved();
+                }
+            }
+
+            // We use setTimeout after finishing work, rather than setInterval,
+            // in case positioning things is slow. We want 100 ms gap
+            // between executions, not what setInterval does.
+            setTimeout(questionManager.fixLayoutIfThingsMoved, 100);
         },
 
         /**

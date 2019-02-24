@@ -320,6 +320,11 @@ class course_edit_form extends moodleform {
                     array('itemtype' => 'course', 'component' => 'core'));
         }
 
+        // Add custom fields to the form.
+        $handler = core_course\customfield\course_handler::create();
+        $handler->set_parent_context($categorycontext); // For course handler only.
+        $handler->instance_form_definition($mform, empty($course->id) ? 0 : $course->id);
+
         // When two elements we need a group.
         $buttonarray = array();
         $classarray = array('class' => 'form-submit');
@@ -334,6 +339,8 @@ class course_edit_form extends moodleform {
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);
 
+        // Prepare custom fields data.
+        $handler->instance_form_before_set_data($course);
         // Finally set the current form data
         $this->set_data($course);
     }
@@ -383,6 +390,10 @@ class course_edit_form extends moodleform {
                 $mform->removeElement('newsitems');
             }
         }
+
+        // Tweak the form with values provided by custom fields in use.
+        $handler  = core_course\customfield\course_handler::create();
+        $handler->instance_form_definition_after_data($mform, empty($courseid) ? 0 : $courseid);
     }
 
     /**
@@ -425,7 +436,10 @@ class course_edit_form extends moodleform {
             $errors = array_merge($errors, $formaterrors);
         }
 
+        // Add the custom fields validation.
+        $handler = core_course\customfield\course_handler::create();
+        $errors  = array_merge($errors, $handler->instance_form_validation($data, $files));
+
         return $errors;
     }
 }
-

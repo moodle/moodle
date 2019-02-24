@@ -82,6 +82,7 @@ class core_mathslib_testcase extends basic_testcase {
     }
 
     public function test_conditional_functions() {
+        // Test ifthenelse.
         $formula = new calc_formula('=ifthenelse(1,2,3)');
         $this->assertSame(2, (int)$formula->evaluate());
 
@@ -91,7 +92,7 @@ class core_mathslib_testcase extends basic_testcase {
         $formula = new calc_formula('=ifthenelse(2<3,2,3)');
         $this->assertSame(2, (int) $formula->evaluate());
 
-        // Test synonim if.
+        // Test synonym if.
         $formula = new calc_formula('=if(1,2,3)');
         $this->assertSame(2, (int)$formula->evaluate());
 
@@ -100,6 +101,46 @@ class core_mathslib_testcase extends basic_testcase {
 
         $formula = new calc_formula('=if(2<3,2,3)');
         $this->assertSame(2, (int) $formula->evaluate());
+
+        // Test cond_and.
+        $formula = new calc_formula('=cond_and(1,1,1)');
+        $this->assertSame(1, (int)$formula->evaluate());
+
+        $formula = new calc_formula('=cond_and(1,1,0)');
+        $this->assertSame(0, (int) $formula->evaluate());
+
+        $formula = new calc_formula('=cond_and(0,0,0)');
+        $this->assertSame(0, (int) $formula->evaluate());
+
+        // Test synonym and.
+        $formula = new calc_formula('=and(1,1,1)');
+        $this->assertSame(1, (int)$formula->evaluate());
+
+        $formula = new calc_formula('=and(1,1,0)');
+        $this->assertSame(0, (int) $formula->evaluate());
+
+        $formula = new calc_formula('=and(0,0,0)');
+        $this->assertSame(0, (int) $formula->evaluate());
+
+        // Test cond_or.
+        $formula = new calc_formula('=cond_or(1,1,1)');
+        $this->assertSame(1, (int)$formula->evaluate());
+
+        $formula = new calc_formula('=cond_or(1,1,0)');
+        $this->assertSame(1, (int) $formula->evaluate());
+
+        $formula = new calc_formula('=cond_or(0,0,0)');
+        $this->assertSame(0, (int) $formula->evaluate());
+
+        // Test synonym or.
+        $formula = new calc_formula('=or(1,1,1)');
+        $this->assertSame(1, (int)$formula->evaluate());
+
+        $formula = new calc_formula('=or(1,1,0)');
+        $this->assertSame(1, (int) $formula->evaluate());
+
+        $formula = new calc_formula('=or(0,0,0)');
+        $this->assertSame(0, (int) $formula->evaluate());
     }
 
     public function test_conditional_operators() {

@@ -23,9 +23,23 @@
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_events', 'core_message/notification_preference',
-        'core_message/notification_processor_settings'],
-        function($, Ajax, Notification, CustomEvents, NotificationPreference, NotificationProcessorSettings) {
+define(['jquery',
+        'core/ajax',
+        'core/notification',
+        'core/custom_interaction_events',
+        'core_message/notification_preference',
+        'core_message/notification_processor_settings',
+        'core/modal_factory',
+        ],
+        function(
+          $,
+          Ajax,
+          Notification,
+          CustomEvents,
+          NotificationPreference,
+          NotificationProcessorSettings,
+          ModalFactory
+        ) {
 
     var SELECTORS = {
         DISABLE_NOTIFICATIONS: '[data-region="disable-notification-container"] [data-disable-notifications]',
@@ -143,11 +157,25 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_eve
             }
         }.bind(this));
 
-        this.root.on(CustomEvents.events.activate, SELECTORS.PROCESSOR_SETTING, function(e, data) {
+        var eventFormPromise = ModalFactory.create({
+            type: NotificationProcessorSettings.TYPE,
+        });
+
+        this.root.on(CustomEvents.events.activate, SELECTORS.PROCESSOR_SETTING, function(e) {
             var element = $(e.target).closest(SELECTORS.PROCESSOR_SETTING);
-            var processorSettings = new NotificationProcessorSettings(element);
-            processorSettings.show();
-            data.originalEvent.preventDefault();
+
+            e.preventDefault();
+            eventFormPromise.then(function(modal) {
+                // Configure modal with element settings.
+                modal.setUserId($(element).attr('data-user-id'));
+                modal.setName($(element).attr('data-name'));
+                modal.setContextId($(element).attr('data-context-id'));
+                modal.setElement(element);
+                modal.show();
+
+                e.stopImmediatePropagation();
+                return;
+            }).fail(Notification.exception);
         });
 
         CustomEvents.define(disabledNotificationsElement, [

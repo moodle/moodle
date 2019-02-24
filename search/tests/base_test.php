@@ -157,4 +157,16 @@ class search_base_testcase extends advanced_testcase {
         $this->assertEquals('i/empty', $result->get_name());
         $this->assertEquals('moodle', $result->get_component());
     }
+
+    /**
+     * Test base search area category names.
+     */
+    public function test_get_category_names() {
+        $builder = $this->getMockBuilder('\core_search\base');
+        $builder->disableOriginalConstructor();
+        $stub = $builder->getMockForAbstractClass();
+
+        $expected = ['core-other'];
+        $this->assertEquals($expected, $stub->get_category_names());
+    }
 }

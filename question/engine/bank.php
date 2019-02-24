@@ -267,7 +267,7 @@ abstract class question_bank {
         global $DB;
 
         if (self::$testmode) {
-            // Evil, test code in production, but now way round it.
+            // Evil, test code in production, but no way round it.
             return self::return_test_question_data($questionid);
         }
 

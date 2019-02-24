@@ -524,7 +524,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
      * @return {object} jQuery promise
      */
     var deleteMessages = function(userId, messageIds) {
-        return Ajax.call(messageIds.map(function(messageId) {
+        return $.when.apply(null, Ajax.call(messageIds.map(function(messageId) {
             return {
                 methodname: 'core_message_delete_message',
                 args: {
@@ -532,7 +532,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                     userid: userId
                 }
             };
-        }));
+        })));
     };
 
     /**

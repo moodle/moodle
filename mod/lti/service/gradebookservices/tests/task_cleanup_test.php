@@ -100,4 +100,46 @@ class ltiservice_gradebookservices_cleanup_task_testcase extends advanced_testca
 
         $this->assertEquals($gradeitem2->id, $gradebookserviceitem->gradeitemid);
     }
+
+    /**
+     * Test the cleanup task with a manual grade item.
+     */
+    public function test_cleanup_task_with_manual_item() {
+        global $CFG, $DB;
+
+        // This is required when running the unit test in isolation.
+        require_once($CFG->libdir . '/gradelib.php');
+
+        // Create a manual grade item for a course.
+        $course = $this->getDataGenerator()->create_course();
+        $params = [
+            'courseid' => $course->id,
+            'itemtype' => 'manual'
+        ];
+        $gradeitem = new grade_item($params);
+        $gradeitem->insert();
+
+        // Insert it into the 'ltiservice_gradebookservices' table.
+        $data = new stdClass();
+        $data->gradeitemid = $gradeitem->id;
+        $data->courseid = $course->id;
+        $DB->insert_record('ltiservice_gradebookservices', $data);
+
+        // Run the task.
+        $task = new \ltiservice_gradebookservices\task\cleanup_task();
+        $task->execute();
+
+        // Check it still exist.
+        $this->assertEquals(1, $DB->count_records('ltiservice_gradebookservices'));
+
+        // Delete the manual item.
+        $gradeitem->delete();
+
+        // Run the task again.
+        $task = new \ltiservice_gradebookservices\task\cleanup_task();
+        $task->execute();
+
+        // Check it has been removed.
+        $this->assertEquals(0, $DB->count_records('ltiservice_gradebookservices'));
+    }
 }

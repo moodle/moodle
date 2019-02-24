@@ -1678,9 +1678,16 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         assign::cron();
 
         $events = $sink->get_events();
+        // Notification has been marked as read, so now first event should be a 'notification_viewed' one. For student.
         $event = reset($events);
+        $this->assertInstanceOf('\core\event\notification_viewed', $event);
+        $this->assertEquals($student->id, $event->userid);
+
+        // And next event should be the 'notification_sent' one. For teacher.
+        $event = $events[1];
         $this->assertInstanceOf('\core\event\notification_sent', $event);
         $this->assertEquals($assign->get_course()->id, $event->other['courseid']);
+        $this->assertEquals($teacher->id, $event->userid);
         $sink->close();
     }
 
@@ -3986,5 +3993,18 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $this->assertNotContains(get_string('submissionslocked', 'assign'), $output2);
         // Check that submissionstatus_marked 'Graded' message does appear for student.
         $this->assertContains(get_string('submissionstatus_marked', 'assign'), $output2);
+    }
+
+    /**
+     * Test the result of get_filters is consistent.
+     */
+    public function test_get_filters() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->create_instance($course);
+        $valid = $assign->get_filters();
+
+        $this->assertEquals(count($valid), 5);
     }
 }

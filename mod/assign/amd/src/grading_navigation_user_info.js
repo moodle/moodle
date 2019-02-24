@@ -48,7 +48,7 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
     /** @type {JQuery} JQuery node for the page region containing the user navigation. */
     UserInfo.prototype._region = null;
 
-    /** @type {Integer} Remember the last user id to prevent unnessecary reloads. */
+    /** @type {Integer} Remember the last user id to prevent unnecessary reloads. */
     UserInfo.prototype._lastUserId = 0;
 
     /**
@@ -73,6 +73,9 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
     UserInfo.prototype._refreshUserInfo = function(event, userid) {
         var promise = $.Deferred();
 
+        // Put the current user ID in the DOM so yui can access it.
+        this._region.attr('data-userid', userid);
+
         // Skip reloading if it is the same user.
         if (this._lastUserId == userid) {
             return;
@@ -90,11 +93,13 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
             if (userid < 0) {
                 // Render the template.
                 templates.render('mod_assign/grading_navigation_no_users', {}).done(function(html, js) {
-                    // Update the page.
-                    this._region.fadeOut("fast", function() {
-                        templates.replaceNodeContents(this._region, html, js);
-                        this._region.fadeIn("fast");
-                    }.bind(this));
+                    if (userid == this._lastUserId) {
+                        // Update the page.
+                        this._region.fadeOut("fast", function() {
+                            templates.replaceNodeContents(this._region, html, js);
+                            this._region.fadeIn("fast");
+                        }.bind(this));
+                    }
                 }.bind(this)).fail(notification.exception);
                 return;
             }
@@ -147,10 +152,12 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
 
                 templates.render('mod_assign/grading_navigation_user_summary', context).done(function(html, js) {
                     // Update the page.
-                    this._region.fadeOut("fast", function() {
-                        templates.replaceNodeContents(this._region, html, js);
-                        this._region.fadeIn("fast");
-                    }.bind(this));
+                    if (userid == this._lastUserId) {
+                        this._region.fadeOut("fast", function() {
+                            templates.replaceNodeContents(this._region, html, js);
+                            this._region.fadeIn("fast");
+                        }.bind(this));
+                    }
                 }.bind(this)).fail(notification.exception);
             }.bind(this)).fail(function() {
                 // Render the template.

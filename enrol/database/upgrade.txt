@@ -1,0 +1,4 @@
+This files describes API changes in the enrol_database code.
+
+=== 3.7 ===
+* enrol/database/cli/sync.php script has been deprecated in favour of enrol_database\task\sync_enrolments task.

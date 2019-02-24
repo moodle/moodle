@@ -1534,7 +1534,8 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         // No 'name' atttribute for form in xhtml strict :
         $attributes = array('action' => $action, 'method' => $method, 'accept-charset' => 'utf-8') + $target;
         if (is_null($this->getAttribute('id'))) {
-            $attributes['id'] = 'mform' . $formcounter;
+            // Append a random id, forms can be loaded in different requests using Fragments API.
+            $attributes['id'] = 'mform' . $formcounter . '_' . random_string();
         }
         $formcounter++;
         $this->updateAttributes($attributes);
@@ -2918,8 +2919,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $PAGE->requires->yui_module('moodle-form-shortforms', 'M.form.shortforms', array(array('formid' => $formid)));
         }
         if (!empty($this->_advancedElements)){
-            $PAGE->requires->strings_for_js(array('showmore', 'showless'), 'form');
-            $PAGE->requires->yui_module('moodle-form-showadvanced', 'M.form.showadvanced', array(array('formid' => $formid)));
+            $PAGE->requires->js_call_amd('core_form/showadvanced', 'init', [$formid]);
         }
     }
 

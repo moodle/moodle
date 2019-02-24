@@ -457,9 +457,7 @@ EDITOR.prototype = {
      * @method poll_document_conversion_status
      */
     poll_document_conversion_status: function() {
-        if (this.get('destroyed')) {
-            return;
-        }
+        var requestUserId = this.get('userid');
 
         Y.io(AJAXBASE, {
             method: 'get',
@@ -475,6 +473,15 @@ EDITOR.prototype = {
             },
             on: {
                 success: function(tid, response) {
+                    var currentUserRegion = Y.one(SELECTOR.USERINFOREGION);
+                    if (currentUserRegion) {
+                        var currentUserId = currentUserRegion.getAttribute('data-userid');
+                        if (currentUserId && (currentUserId != requestUserId)) {
+                            // Polling conversion status needs to abort because
+                            // the current user changed.
+                            return;
+                        }
+                    }
                     var data = this.handle_response_data(response),
                         poll = false;
                     if (data) {
@@ -483,7 +490,7 @@ EDITOR.prototype = {
                             // The combined document is still waiting for input to be ready.
                             poll = true;
 
-                        } else if (data.status === 1) {
+                        } else if (data.status === 1 || data.status === 3) {
                             // The combine document is ready for conversion into a single PDF.
                             poll = true;
 
@@ -523,9 +530,6 @@ EDITOR.prototype = {
      * @method get_images_for_documents
      */
     start_document_to_image_conversion: function() {
-        if (this.get('destroyed')) {
-            return;
-        }
         Y.io(AJAXBASE, {
             method: 'get',
             context: this,
@@ -557,6 +561,47 @@ EDITOR.prototype = {
     },
 
     /**
+     * Display an error in a small part of the page (don't block everything).
+     *
+     * @param string The error text.
+     * @param boolean dismissable Not critical messages can be removed after a short display.
+     * @protected
+     * @method warning
+     */
+    warning: function(message, dismissable) {
+        var icontemplate = this.get_dialogue_element(SELECTOR.ICONMESSAGECONTAINER);
+        var warningregion = this.get_dialogue_element(SELECTOR.WARNINGMESSAGECONTAINER);
+        var delay = 15, duration = 1;
+        var messageclasses = 'assignfeedback_editpdf_warningmessages alert alert-warning';
+        if (dismissable) {
+            delay = 4;
+            messageclasses = 'assignfeedback_editpdf_warningmessages alert alert-info';
+        }
+        var warningelement = Y.Node.create('<div class="' + messageclasses + '" role="alert"></div>');
+
+        // Copy info icon template.
+        warningelement.append(icontemplate.one('*').cloneNode());
+
+        // Append the message.
+        warningelement.append(message);
+
+        // Add the entire warning to the container.
+        warningregion.prepend(warningelement);
+
+        // Remove the message after a short delay.
+        warningelement.transition(
+            {
+                duration: duration,
+                delay: delay,
+                opacity: 0
+            },
+            function() {
+                warningelement.remove();
+            }
+        );
+    },
+
+    /**
      * The info about all pages in the pdf has been returned.
      *
      * @param string The ajax response as text.
@@ -564,7 +609,8 @@ EDITOR.prototype = {
      * @method prepare_pages_for_display
      */
     prepare_pages_for_display: function(data) {
-        var i, j, comment, error;
+        var i, j, comment, error, annotation, readonly;
+
         if (!data.pagecount) {
             if (this.dialogue) {
                 this.dialogue.hide();
@@ -590,9 +636,15 @@ EDITOR.prototype = {
                                                                                  comment.rawtext);
             }
             for (j = 0; j < this.pages[i].annotations.length; j++) {
-                data = this.pages[i].annotations[j];
-                this.pages[i].annotations[j] = this.create_annotation(data.type, data);
+                annotation = this.pages[i].annotations[j];
+                this.pages[i].annotations[j] = this.create_annotation(annotation.type, annotation);
             }
+        }
+
+        readonly = this.get('readonly');
+        if (!readonly && data.partial) {
+            // Warn about non converted files, but only for teachers.
+            this.warning(M.util.get_string('partialwarning', 'assignfeedback_editpdf'), false);
         }
 
         // Update the ui.
@@ -610,9 +662,6 @@ EDITOR.prototype = {
      * @method update_page_load_progress
      */
     update_page_load_progress: function() {
-        if (this.get('destroyed')) {
-            return;
-        }
         var checkconversionstatus,
             ajax_error_total = 0,
             progressbar = this.get_dialogue_element(SELECTOR.PROGRESSBARCONTAINER + ' .bar');
@@ -635,9 +684,6 @@ EDITOR.prototype = {
             },
             on: {
                 success: function(tid, response) {
-                    if (this.get('destroyed')) {
-                        return;
-                    }
                     ajax_error_total = 0;
 
                     var progress = 0;
@@ -659,9 +705,6 @@ EDITOR.prototype = {
                     }
                 },
                 failure: function(tid, response) {
-                    if (this.get('destroyed')) {
-                        return;
-                    }
                     ajax_error_total = ajax_error_total + 1;
                     // We only continue on error if the all pages were not generated,
                     // and if the ajax call did not produce 5 errors in the row.
@@ -694,9 +737,6 @@ EDITOR.prototype = {
      * @return  {object}
      */
     handle_response_data: function(response) {
-        if (this.get('destroyed')) {
-            return;
-        }
         var data;
         try {
             data = Y.JSON.parse(response.responseText);
@@ -1181,9 +1221,7 @@ EDITOR.prototype = {
      * @method save_current_page
      */
     save_current_page: function() {
-        if (this.get('destroyed')) {
-            return;
-        }
+        this.clear_warnings(false);
         var ajaxurl = AJAXBASE,
             config;
 
@@ -1208,16 +1246,9 @@ EDITOR.prototype = {
                         if (jsondata.error) {
                             return new M.core.ajaxException(jsondata);
                         }
+                        // Show warning that we have not saved the feedback.
                         Y.one(SELECTOR.UNSAVEDCHANGESINPUT).set('value', 'true');
-                        Y.one(SELECTOR.UNSAVEDCHANGESDIV).setStyle('opacity', 1);
-                        Y.one(SELECTOR.UNSAVEDCHANGESDIV).setStyle('display', 'inline-block');
-                        Y.one(SELECTOR.UNSAVEDCHANGESDIV).transition({
-                            duration: 1,
-                            delay: 2,
-                            opacity: 0
-                        }, function() {
-                            Y.one(SELECTOR.UNSAVEDCHANGESDIV).setStyle('display', 'none');
-                        });
+                        this.warning(M.util.get_string('draftchangessaved', 'assignfeedback_editpdf'), true);
                     } catch (e) {
                         return new M.core.exception(e);
                     }
@@ -1293,6 +1324,22 @@ EDITOR.prototype = {
     },
 
     /**
+     * Clear all current warning messages from display.
+     * @protected
+     * @method clear_warnings
+     * @param {Boolean} allwarnings If true, all previous warnings are removed.
+     */
+    clear_warnings: function(allwarnings) {
+        // Remove all warning messages, they may not relate to the current document or page anymore.
+        var warningregion = this.get_dialogue_element(SELECTOR.WARNINGMESSAGECONTAINER);
+        if (allwarnings) {
+            warningregion.empty();
+        } else {
+            warningregion.all('.alert-info').remove(true);
+        }
+    },
+
+    /**
      * Load the image for this pdf page and remove the loading icon (if there).
      * @protected
      * @method change_page
@@ -1318,10 +1365,13 @@ EDITOR.prototype = {
         }
 
         page = this.pages[this.currentpage];
-        this.loadingicon.hide();
+        if (this.loadingicon) {
+            this.loadingicon.hide();
+        }
         drawingcanvas.setStyle('backgroundImage', 'url("' + page.url + '")');
         drawingcanvas.setStyle('width', page.width + 'px');
         drawingcanvas.setStyle('height', page.height + 'px');
+        drawingcanvas.scrollIntoView();
 
         // Update page select.
         this.get_dialogue_element(SELECTOR.PAGESELECT).set('selectedIndex', this.currentpage);
@@ -1358,6 +1408,7 @@ EDITOR.prototype = {
         pageselect.removeAttribute('disabled');
         pageselect.on('change', function() {
             this.currentpage = pageselect.get('value');
+            this.clear_warnings(false);
             this.change_page();
         }, this);
 
@@ -1381,6 +1432,7 @@ EDITOR.prototype = {
         if (this.currentpage < 0) {
             this.currentpage = 0;
         }
+        this.clear_warnings(false);
         this.change_page();
     },
 
@@ -1395,6 +1447,7 @@ EDITOR.prototype = {
         if (this.currentpage >= this.pages.length) {
             this.currentpage = this.pages.length - 1;
         }
+        this.clear_warnings(false);
         this.change_page();
     },
 
@@ -1521,10 +1574,6 @@ M.assignfeedback_editpdf.editor = M.assignfeedback_editpdf.editor || {};
  * @param {Object} params
  */
 M.assignfeedback_editpdf.editor.init = M.assignfeedback_editpdf.editor.init || function(params) {
-    if (typeof M.assignfeedback_editpdf.instance !== 'undefined') {
-        M.assignfeedback_editpdf.instance.destroy();
-    }
-
     M.assignfeedback_editpdf.instance = new EDITOR(params);
     return M.assignfeedback_editpdf.instance;
 };

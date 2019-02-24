@@ -419,21 +419,50 @@ class course_enrolment_manager {
      * @param int $page which page number of the results to show.
      * @param int $perpage number of users per page.
      * @param int $addedenrollment number of users added to enrollment.
-     * @return array with two elememts:
-     *      int total number of users matching the search.
-     *      array of user objects returned by the query.
+     * @param bool $returnexactcount Return the exact total users using count_record or not.
+     * @return array with two or three elements:
+     *      int totalusers Number users matching the search. (This element only exist if $returnexactcount was set to true)
+     *      array users List of user objects returned by the query.
+     *      boolean moreusers True if there are still more users, otherwise is False.
+     * @throws dml_exception
      */
-    protected function execute_search_queries($search, $fields, $countfields, $sql, array $params, $page, $perpage, $addedenrollment=0) {
+    protected function execute_search_queries($search, $fields, $countfields, $sql, array $params, $page, $perpage,
+            $addedenrollment = 0, $returnexactcount = false) {
         global $DB, $CFG;
 
         list($sort, $sortparams) = users_order_by_sql('u', $search, $this->get_context());
         $order = ' ORDER BY ' . $sort;
 
-        $totalusers = $DB->count_records_sql($countfields . $sql, $params);
-        $availableusers = $DB->get_records_sql($fields . $sql . $order,
-                array_merge($params, $sortparams), ($page*$perpage) - $addedenrollment, $perpage);
+        $totalusers = 0;
+        $moreusers = false;
+        $results = [];
 
-        return array('totalusers' => $totalusers, 'users' => $availableusers);
+        $availableusers = $DB->get_records_sql($fields . $sql . $order,
+                array_merge($params, $sortparams), ($page * $perpage) - $addedenrollment, $perpage + 1);
+        if ($availableusers) {
+            $totalusers = count($availableusers);
+            $moreusers = $totalusers > $perpage;
+
+            if ($moreusers) {
+                // We need to discard the last record.
+                array_pop($availableusers);
+            }
+
+            if ($returnexactcount && $moreusers) {
+                // There is more data. We need to do the exact count.
+                $totalusers = $DB->count_records_sql($countfields . $sql, $params);
+            }
+        }
+
+        $results['users'] = $availableusers;
+        $results['moreusers'] = $moreusers;
+
+        if ($returnexactcount) {
+            // Include totalusers in result if $returnexactcount flag is true.
+            $results['totalusers'] = $totalusers;
+        }
+
+        return $results;
     }
 
     /**
@@ -446,9 +475,15 @@ class course_enrolment_manager {
      * @param int $page Defaults to 0
      * @param int $perpage Defaults to 25
      * @param int $addedenrollment Defaults to 0
-     * @return array Array(totalusers => int, users => array)
+     * @param bool $returnexactcount Return the exact total users using count_record or not.
+     * @return array with two or three elements:
+     *      int totalusers Number users matching the search. (This element only exist if $returnexactcount was set to true)
+     *      array users List of user objects returned by the query.
+     *      boolean moreusers True if there are still more users, otherwise is False.
+     * @throws dml_exception
      */
-    public function get_potential_users($enrolid, $search='', $searchanywhere=false, $page=0, $perpage=25, $addedenrollment=0) {
+    public function get_potential_users($enrolid, $search = '', $searchanywhere = false, $page = 0, $perpage = 25,
+            $addedenrollment = 0, $returnexactcount = false) {
         global $DB;
 
         list($ufields, $params, $wherecondition) = $this->get_basic_search_conditions($search, $searchanywhere);
@@ -461,7 +496,8 @@ class course_enrolment_manager {
                       AND ue.id IS NULL";
         $params['enrolid'] = $enrolid;
 
-        return $this->execute_search_queries($search, $fields, $countfields, $sql, $params, $page, $perpage, $addedenrollment);
+        return $this->execute_search_queries($search, $fields, $countfields, $sql, $params, $page, $perpage, $addedenrollment,
+                $returnexactcount);
     }
 
     /**
@@ -472,9 +508,14 @@ class course_enrolment_manager {
      * @param bool $searchanywhere
      * @param int $page Starting at 0
      * @param int $perpage
-     * @return array
+     * @param bool $returnexactcount Return the exact total users using count_record or not.
+     * @return array with two or three elements:
+     *      int totalusers Number users matching the search. (This element only exist if $returnexactcount was set to true)
+     *      array users List of user objects returned by the query.
+     *      boolean moreusers True if there are still more users, otherwise is False.
+     * @throws dml_exception
      */
-    public function search_other_users($search='', $searchanywhere=false, $page=0, $perpage=25) {
+    public function search_other_users($search = '', $searchanywhere = false, $page = 0, $perpage = 25, $returnexactcount = false) {
         global $DB, $CFG;
 
         list($ufields, $params, $wherecondition) = $this->get_basic_search_conditions($search, $searchanywhere);
@@ -487,7 +528,7 @@ class course_enrolment_manager {
                     AND ra.id IS NULL";
         $params['contextid'] = $this->context->id;
 
-        return $this->execute_search_queries($search, $fields, $countfields, $sql, $params, $page, $perpage);
+        return $this->execute_search_queries($search, $fields, $countfields, $sql, $params, $page, $perpage, 0, $returnexactcount);
     }
 
     /**

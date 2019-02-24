@@ -65,12 +65,12 @@ class tool_filetypes_form extends moodleform {
         $mform->addElement('text', 'description',  get_string('description', 'tool_filetypes'));
         $mform->setType('description', PARAM_TEXT);
         $mform->addHelpButton('description', 'description', 'tool_filetypes');
-        $mform->disabledIf('description', 'descriptiontype', 'ne', 'custom');
+        $mform->hideIf('description', 'descriptiontype', 'ne', 'custom');
 
         $mform->addElement('text', 'corestring',  get_string('corestring', 'tool_filetypes'));
         $mform->setType('corestring', PARAM_ALPHANUMEXT);
         $mform->addHelpButton('corestring', 'corestring', 'tool_filetypes');
-        $mform->disabledIf('corestring', 'descriptiontype', 'ne', 'lang');
+        $mform->hideIf('corestring', 'descriptiontype', 'ne', 'lang');
 
         $mform->addElement('checkbox', 'defaulticon',  get_string('defaulticon', 'tool_filetypes'));
         $mform->addHelpButton('defaulticon', 'defaulticon', 'tool_filetypes');

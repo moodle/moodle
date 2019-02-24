@@ -970,4 +970,143 @@ class tool_dataprivacy_external_testcase extends externallib_advanced_testcase {
         $this->expectException(required_capability_exception::class);
         $result = external::bulk_deny_data_requests([$requestid1]);
     }
+
+    /**
+     * Test for external::get_users(), case search using non-identity field without
+     * facing any permission problem.
+     *
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws required_capability_exception
+     * @throws restricted_context_exception
+     */
+    public function test_get_users_using_using_non_identity() {
+        $this->resetAfterTest();
+        $context = context_system::instance();
+        $requester = $this->getDataGenerator()->create_user();
+        $role = $this->getDataGenerator()->create_role();
+        role_assign($role, $requester->id, $context);
+        assign_capability('tool/dataprivacy:managedatarequests', CAP_ALLOW, $role, $context);
+        $this->setUser($requester);
+
+        $this->getDataGenerator()->create_user([
+            'firstname' => 'First Student'
+        ]);
+        $student2 = $this->getDataGenerator()->create_user([
+            'firstname' => 'Second Student'
+        ]);
+
+        $results = external::get_users('Second');
+        $this->assertCount(1, $results);
+        $this->assertEquals((object)[
+            'id' => $student2->id,
+            'fullname' => fullname($student2),
+            'extrafields' => []
+        ], $results[$student2->id]);
+    }
+
+    /**
+     * Test for external::get_users(), case search using identity field but
+     * don't have "moodle/site:viewuseridentity" permission.
+     *
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws required_capability_exception
+     * @throws restricted_context_exception
+     */
+    public function test_get_users_using_identity_without_permission() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->showuseridentity = 'institution';
+
+        // Create requester user and assign correct capability.
+        $context = context_system::instance();
+        $requester = $this->getDataGenerator()->create_user();
+        $role = $this->getDataGenerator()->create_role();
+        role_assign($role, $requester->id, $context);
+        assign_capability('tool/dataprivacy:managedatarequests', CAP_ALLOW, $role, $context);
+        $this->setUser($requester);
+
+        $this->getDataGenerator()->create_user([
+            'institution' => 'University1'
+        ]);
+
+        $results = external::get_users('University1');
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * Test for external::get_users(), case search using disabled identity field
+     * even they have "moodle/site:viewuseridentity" permission.
+     *
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws required_capability_exception
+     * @throws restricted_context_exception
+     */
+    public function test_get_users_using_field_not_in_identity() {
+        $this->resetAfterTest();
+
+        $context = context_system::instance();
+        $requester = $this->getDataGenerator()->create_user();
+        $role = $this->getDataGenerator()->create_role();
+        role_assign($role, $requester->id, $context);
+        assign_capability('tool/dataprivacy:managedatarequests', CAP_ALLOW, $role, $context);
+        assign_capability('moodle/site:viewuseridentity', CAP_ALLOW, $role, $context);
+        $this->setUser($requester);
+
+        $this->getDataGenerator()->create_user([
+            'institution' => 'University1'
+        ]);
+
+        $results = external::get_users('University1');
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * Test for external::get_users(), case search using enabled identity field
+     * with "moodle/site:viewuseridentity" permission.
+     *
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws required_capability_exception
+     * @throws restricted_context_exception
+     */
+    public function test_get_users() {
+        global $CFG;
+        $this->resetAfterTest();
+        $CFG->showuseridentity = 'institution';
+        $context = context_system::instance();
+        $requester = $this->getDataGenerator()->create_user();
+        $role = $this->getDataGenerator()->create_role();
+        role_assign($role, $requester->id, $context);
+        assign_capability('tool/dataprivacy:managedatarequests', CAP_ALLOW, $role, $context);
+        assign_capability('moodle/site:viewuseridentity', CAP_ALLOW, $role, $context);
+        $this->setUser($requester);
+
+        $student1 = $this->getDataGenerator()->create_user([
+            'institution' => 'University1'
+        ]);
+        $this->getDataGenerator()->create_user([
+            'institution' => 'University2'
+        ]);
+
+        $results = external::get_users('University1');
+        $this->assertCount(1, $results);
+        $this->assertEquals((object)[
+            'id' => $student1->id,
+            'fullname' => fullname($student1),
+            'extrafields' => [
+                0 => (object)[
+                    'name' => 'institution',
+                    'value' => 'University1'
+                ]
+            ]
+        ], $results[$student1->id]);
+    }
 }

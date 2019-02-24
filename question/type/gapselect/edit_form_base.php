@@ -40,7 +40,8 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         'b',
         'i',
         'em',
-        'strong'
+        'strong',
+        'span',
     );
 
     /** @var string regex to match HTML open tags. */
@@ -55,7 +56,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
     /**
      * Vaidate some input to make sure it does not contain any tags other than
      * $this->allowedhtmltags.
-     * @param unknown_type $text the input to validate.
+     * @param string $text the input to validate.
      * @return string any validation errors.
      */
     protected function get_illegal_tag_error($text) {
@@ -181,7 +182,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
     protected function choice_group($mform) {
         $options = array();
         for ($i = 1; $i <= $this->get_maximum_choice_group_number(); $i += 1) {
-            $options[$i] = $i;
+            $options[$i] = question_utils::int_to_letter($i);
         }
         $grouparray = array();
         $grouparray[] = $mform->createElement('text', 'answer',

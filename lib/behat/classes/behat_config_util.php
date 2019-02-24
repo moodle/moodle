@@ -620,6 +620,42 @@ class behat_config_util {
 
         // Check suite values.
         $behatprofilesuites = array();
+
+        // Automatically set tags information to skip app testing if necessary. We skip app testing
+        // if the browser is not Chrome. (Note: We also skip if it's not configured, but that is
+        // done on the theme/suite level.)
+        if (empty($values['browser']) || $values['browser'] !== 'chrome') {
+            if (!empty($values['tags'])) {
+                $values['tags'] .= ' && ~@app';
+            } else {
+                $values['tags'] = '~@app';
+            }
+        }
+
+        // Automatically add Chrome command line option to skip the prompt about allowing file
+        // storage - needed for mobile app testing (won't hurt for everything else either).
+        if (!empty($values['browser']) && $values['browser'] === 'chrome') {
+            if (!isset($values['capabilities'])) {
+                $values['capabilities'] = [];
+            }
+            if (!isset($values['capabilities']['chrome'])) {
+                $values['capabilities']['chrome'] = [];
+            }
+            if (!isset($values['capabilities']['chrome']['switches'])) {
+                $values['capabilities']['chrome']['switches'] = [];
+            }
+            $values['capabilities']['chrome']['switches'][] = '--unlimited-storage';
+
+            // If the mobile app is enabled, check its version and add appropriate tags.
+            if ($mobiletags = $this->get_mobile_version_tags()) {
+                if (!empty($values['tags'])) {
+                    $values['tags'] .= ' && ' . $mobiletags;
+                } else {
+                    $values['tags'] = $mobiletags;
+                }
+            }
+        }
+
         // Fill tags information.
         if (isset($values['tags'])) {
             $behatprofilesuites = array(
@@ -656,6 +692,102 @@ class behat_config_util {
         }
 
         return array($profile => array_merge($behatprofilesuites, $behatprofileextension));
+    }
+
+    /**
+     * Gets version tags to use for the mobile app.
+     *
+     * This is based on the current mobile app version (from its package.json) and all known
+     * mobile app versions (based on the list appversions.json in the lib/behat directory).
+     *
+     * @param bool $verbose If true, outputs information about installed app version
+     * @return string List of tags or '' if not supporting mobile
+     */
+    protected function get_mobile_version_tags($verbose = true) : string {
+        global $CFG;
+
+        if (!empty($CFG->behat_ionic_dirroot)) {
+            // Get app version from package.json.
+            $jsonpath = $CFG->behat_ionic_dirroot . '/package.json';
+            $json = @file_get_contents($jsonpath);
+            if (!$json) {
+                throw new coding_exception('Unable to load app version from ' . $jsonpath);
+            }
+            $package = json_decode($json);
+            if ($package === null || empty($package->version)) {
+                throw new coding_exception('Invalid app package data in ' . $jsonpath);
+            }
+            $installedversion = $package->version;
+        } else if (!empty($CFG->behat_ionic_wwwroot)) {
+            // Get app version from config.json inside wwwroot.
+            $jsonurl = $CFG->behat_ionic_wwwroot . '/config.json';
+            $json = @download_file_content($jsonurl);
+            if (!$json) {
+                throw new coding_exception('Unable to load app version from ' . $jsonurl);
+            }
+            $config = json_decode($json);
+            if ($config === null || empty($config->versionname)) {
+                throw new coding_exception('Invalid app config data in ' . $jsonurl);
+            }
+            $installedversion = str_replace('-dev', '', $config->versionname);
+        } else {
+            return '';
+        }
+
+        // Read all feature files to check which mobile tags are used. (Note: This could be cached
+        // but ideally, it is the sort of thing that really ought to be refreshed by doing a new
+        // Behat init. Also, at time of coding it only takes 0.3 seconds and only if app enabled.)
+        $usedtags = [];
+        foreach ($this->features as $filepath) {
+            $feature = file_get_contents($filepath);
+            // This may incorrectly detect versions used e.g. in a comment or something, but it
+            // doesn't do much harm if we have extra ones.
+            if (preg_match_all('~@app_(?:from|upto)(?:[0-9]+(?:\.[0-9]+)*)~', $feature, $matches)) {
+                foreach ($matches[0] as $tag) {
+                    // Store as key in array so we don't get duplicates.
+                    $usedtags[$tag] = true;
+                }
+            }
+        }
+
+        // Set up relevant tags for each version.
+        $tags = [];
+        foreach ($usedtags as $usedtag => $ignored) {
+            if (!preg_match('~^@app_(from|upto)([0-9]+(?:\.[0-9]+)*)$~', $usedtag, $matches)) {
+                throw new coding_exception('Unexpected tag format');
+            }
+            $direction = $matches[1];
+            $version = $matches[2];
+
+            switch (version_compare($installedversion, $version)) {
+                case -1:
+                    // Installed version OLDER than the one being considered, so do not
+                    // include any scenarios that only run from the considered version up.
+                    if ($direction === 'from') {
+                        $tags[] = '~@app_from' . $version;
+                    }
+                    break;
+
+                case 0:
+                    // Installed version EQUAL to the one being considered - no tags need
+                    // excluding.
+                    break;
+
+                case 1:
+                    // Installed version NEWER than the one being considered, so do not
+                    // include any scenarios that only run up to that version.
+                    if ($direction === 'upto') {
+                        $tags[] = '~@app_upto' . $version;
+                    }
+                    break;
+            }
+        }
+
+        if ($verbose) {
+            mtrace('Configured app tests for version ' . $installedversion);
+        }
+
+        return join(' && ', $tags);
     }
 
     /**
@@ -1237,11 +1369,19 @@ class behat_config_util {
      * @return array ($blacklistfeatures, $blacklisttags, $features)
      */
     protected function get_behat_features_for_theme($theme) {
+        global $CFG;
 
         // Get list of features defined by theme.
         $themefeatures = $this->get_tests_for_theme($theme, 'features');
         $themeblacklistfeatures = $this->get_blacklisted_tests_for_theme($theme, 'features');
         $themeblacklisttags = $this->get_blacklisted_tests_for_theme($theme, 'tags');
+
+        // Mobile app tests are not theme-specific, so run only for the default theme (and if
+        // configured).
+        if ((empty($CFG->behat_ionic_dirroot) && empty($CFG->behat_ionic_wwwroot)) ||
+                $theme !== $this->get_default_theme()) {
+            $themeblacklisttags[] = '@app';
+        }
 
         // Clean feature key and path.
         $features = array();

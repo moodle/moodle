@@ -23,9 +23,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_repository_googledocs_upgrade($oldversion) {
     global $CFG;
 
-    // Automatically generated Moodle v3.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
     if ($oldversion < 2017011100) {
         // Set default import formats from Google.
         set_config('documentformat', 'rtf', 'googledocs');

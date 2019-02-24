@@ -348,19 +348,6 @@ function message_post_message($userfrom, $userto, $message, $format) {
 
     $eventdata->fullmessageformat = $format;
     $eventdata->smallmessage     = $message;//store the message unfiltered. Clean up on output.
-
-    $s = new stdClass();
-    $s->sitename = format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID)));
-    $s->url = $CFG->wwwroot.'/message/index.php?user='.$userto->id.'&id='.$userfrom->id;
-
-    $emailtagline = get_string_manager()->get_string('emailtagline', 'message', $s, $userto->lang);
-    if (!empty($eventdata->fullmessage)) {
-        $eventdata->fullmessage .= "\n\n---------------------------------------------------------------------\n".$emailtagline;
-    }
-    if (!empty($eventdata->fullmessagehtml)) {
-        $eventdata->fullmessagehtml .= "<br /><br />---------------------------------------------------------------------<br />".$emailtagline;
-    }
-
     $eventdata->timecreated     = time();
     $eventdata->notification    = 0;
     return message_send($eventdata);
@@ -855,10 +842,7 @@ function core_message_standard_after_main_region_html() {
     }
 
     // Enter to send.
-    $entertosend = get_user_preferences('message_entertosend', false, $USER);
-
-    // Get the unread counts for the current user.
-    $unreadcounts = \core_message\api::get_unread_conversation_counts($USER->id);
+    $entertosend = get_user_preferences('message_entertosend', $CFG->messagingdefaultpressenter, $USER);
 
     return $renderer->render_from_template('core_message/message_drawer', [
         'contactrequestcount' => $requestcount,

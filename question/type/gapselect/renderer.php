@@ -57,8 +57,7 @@ class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_
         $orderedchoices = $question->get_ordered_choices($group);
         $selectoptions = array();
         foreach ($orderedchoices as $orderedchoicevalue => $orderedchoice) {
-            $selectoptions[$orderedchoicevalue] = $question->format_text($orderedchoice->text,
-                $question->questiontextformat, $qa, 'question', 'questiontext', $question->id);
+            $selectoptions[$orderedchoicevalue] = format_string($orderedchoice->text);
         }
 
         $feedbackimage = '';
@@ -72,17 +71,9 @@ class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_
             }
         }
 
-        // If the text is short use non-breaking space.
-        $choose = '&nbsp;';
-        foreach ($selectoptions as $key => $text) {
-            if (strlen(get_string('choosedots')) / 2 <= strlen($text)) {
-                $choose = get_string('choosedots');
-                break;
-            }
-        }
-
+        // Use non-breaking space instead of 'Choose...'.
         $selecthtml = html_writer::select($selectoptions, $qa->get_qt_field_name($fieldname),
-                $value, $choose, $attributes) . ' ' . $feedbackimage;
+                        $value, '&nbsp;', $attributes) . ' ' . $feedbackimage;
         return html_writer::tag('span', $selecthtml, array('class' => 'control '.$groupclass));
     }
 
