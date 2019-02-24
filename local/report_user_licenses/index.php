@@ -117,7 +117,7 @@ $idlist = array();
 if (!empty($fieldnames)) {
     $fieldids = array();
     foreach ($fieldnames as $id => $fieldname) {
-        if ($fields[$id]->datatype == "menu") {
+        if (!empty($fields[$id]->datatype) && $fields[$id]->datatype == "menu") {
             $paramarray = explode("\n", $fields[$id]->param1);
             if (!empty($paramarray[${$fieldname}])) {
                 ${$fieldname} = $paramarray[${$fieldname}];

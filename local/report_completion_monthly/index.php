@@ -126,6 +126,8 @@ $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add(get_string('pluginname', 'local_report_completion'),
+                   new moodle_url($CFG->wwwroot . "/local/report_completion/index.php"));
 $PAGE->navbar->add($linktext, $linkurl);
 
 // Get the renderer.
@@ -209,7 +211,7 @@ $selecturl = new moodle_url('/local/report_completion_monthly/index.php', $selec
 $select = new single_select($selecturl, 'courseid', $courselist, $courseid);
 $select->label = get_string('course');
 $select->formid = 'shoosecourse';
-$courseselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector'));
+$courseselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_course_selector'));
 
 // Get the appropriate list of departments.
 $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
@@ -228,18 +230,6 @@ $mform->set_data(array('departmentid' => $departmentid));
 $mform->set_data($params);
 $mform->get_data();
 
-if (empty($courselist)) {
-    echo get_string('nocourses', 'block_iomad_company_admin');
-    echo $output->footer();
-    die;
-}
-
-echo $courseselectoutput;
-if (empty($courseid)) {
-    echo $output->footer();
-    die;
-}
-
 // Display the tree selector thing.
 echo html_writer::start_tag('div', array('class' => 'iomadclear'));
 echo html_writer::start_tag('div', array('class' => 'fitem'));
@@ -251,8 +241,21 @@ echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
 echo html_writer::start_tag('div', array('class' => 'iomadclear', 'style' => 'padding-top: 5px;'));
 
+echo html_writer::start_tag('div', array('class' => 'iomadclear controlitems'));
+
+if (empty($courselist)) {
+echo html_writer::end_tag('div');
+    echo get_string('nocourses', 'block_iomad_company_admin');
+    echo $output->footer();
+    die;
+}
+
+// Display the course selector.
+echo $courseselectoutput;
+
 // Display the user filter form.
 $mform->display();
+echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
 
 if (empty($CFG->loginhttps)) {

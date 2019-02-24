@@ -170,6 +170,8 @@ $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+$PAGE->navbar->add(get_string('pluginname', 'local_report_completion'),
+                   new moodle_url($CFG->wwwroot . "/local/report_completion/index.php"));
 $PAGE->navbar->add($linktext, $linkurl);
 
 // Get the renderer.
@@ -216,7 +218,7 @@ $selecturl = new moodle_url('/local/report_user_license_allocations/index.php', 
 $select = new single_select($selecturl, 'licenseid', $licenselist, $licenseid);
 $select->label = get_string('licenseselect', 'block_iomad_company_admin');
 $select->formid = 'chooselicense';
-$licenseselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_licenseselector_selector'));
+$licenseselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_license_selector'));
 
 // Deal with the course selector.
 $courselist = array( 0 => get_string('all'));
@@ -242,7 +244,7 @@ $courselist = $courselist + $courserecs;
 $courseselect = new single_select($selecturl, 'courseid', $courselist, $courseid);
 $courseselect->label = get_string('course');
 $courseselect->formid = 'choosecourse';
-$courseselectoutput = html_writer::tag('div', $output->render($courseselect), array('id' => 'iomad_licenseselector_selector'));
+$courseselectoutput = html_writer::tag('div', $output->render($courseselect), array('id' => 'iomad_course_selector'));
 
 // Get the appropriate list of departments.
 $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
@@ -273,8 +275,6 @@ if (!$table->is_downloading()) {
     // Display the license selector and other control forms.
     if (!empty($companyid)) {
         if (empty($table->is_downloading())) {
-            echo $licenseselectoutput;
-            echo $courseselectoutput;
             echo html_writer::start_tag('div', array('class' => 'iomadclear'));
             echo html_writer::start_tag('div', array('class' => 'fitem'));
             echo $treehtml;
@@ -282,6 +282,11 @@ if (!$table->is_downloading()) {
             echo $fwselectoutput;
             echo html_writer::end_tag('div');
             echo html_writer::end_tag('div');
+            echo html_writer::end_tag('div');
+
+            echo html_writer::start_tag('div', array('class' => 'iomadclear controlitems'));
+            echo $licenseselectoutput;
+            echo $courseselectoutput;
             echo html_writer::end_tag('div');
 
             // Set up the filter form.

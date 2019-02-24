@@ -243,3 +243,12 @@ border-radius: 10px;
 .companyuserstable p.arrow_button #remove {
     margin: 0;
 }
+
+#page-blocks-iomad_company_admin-editusers #mform1 {
+    display: flex;
+    padding-top: 5px;
+}
+
+#page-blocks-iomad_company_admin-editusers .mform fieldset {
+    border-bottom: 0px;
+}

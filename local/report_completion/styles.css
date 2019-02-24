@@ -1,30 +1,28 @@
-td.inprogress {
-    background-color: yellow;
-    }
-
-td.notstarted {
-    background-color: #ff3333;
-    }
-
-td.completed {
-    background-color: #33ff33;
-    }
-
-#ReportTable  td {
-	vertical-align: middle !important;
-}
-
-div#piechart {
-    width: 360px;
-    height: 200px;
-    padding: 5px;
-    margin: 0 auto;
-    border: 2px #888 solid;
-    background-color: #fff;
-    }
-
 #page-local-report_completion-index .col-md-9 {
     clear:both;
+}
+
+#page-local-report_completion-index #iomad_course_selector, #page-local-report_completion-index #iomad_license_selector {
+    float:left;
+}
+
+#page-local-report_completion-index #iomad_course_selector select, #page-local-report_completion-index #iomad_license_selector select {
+    background-color: #ddd;
+}
+
+#page-local-report_completion-index #iomad_course_selector, #page-local-report_completion-index #iomad_license_selector {
+    padding-top: 7px;
+    padding-bottom: 17px;
+    padding-right: 5px;
+}
+
+#page-local-report_completion-index #mform1 {
+    display: flex;
+    padding-top: 5px;
+}
+
+#page-local-report_completion-index .mform fieldset {
+    border-bottom: 0px;
 }
 
 #page-local-report_completion-index .chart-area{

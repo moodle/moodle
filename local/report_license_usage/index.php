@@ -185,7 +185,7 @@ $selecturl = new moodle_url('/local/report_license_usage/index.php', $selectpara
 $select = new single_select($selecturl, 'licenseid', $licenselist, $licenseid);
 $select->label = get_string('licenseselect', 'block_iomad_company_admin');
 $select->formid = 'chooselicense';
-$licenseselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector'));
+$licenseselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_license_selector'));
 
 // Get the appropriate list of departments.
 $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
@@ -203,18 +203,6 @@ $mform->set_data(array('departmentid' => $departmentid));
 $mform->set_data($params);
 $mform->get_data();
 
-if (empty($licenselist)) {
-    echo get_string('nolicenses', 'block_iomad_company_admin');
-    echo $output->footer();
-    die;
-}
-
-echo $licenseselectoutput;
-if (empty($licenseid)) {
-    echo $output->footer();
-    die;
-}
-
 // Display the tree selector thing.
 echo html_writer::start_tag('div', array('class' => 'iomadclear'));
 echo html_writer::start_tag('div', array('class' => 'fitem'));
@@ -226,7 +214,16 @@ echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
 echo html_writer::start_tag('div', array('class' => 'iomadclear', 'style' => 'padding-top: 5px;'));
 
+if (empty($licenselist)) {
+    echo html_writer::end_tag('div');
+    echo get_string('nolicenses', 'block_iomad_company_admin');
+    echo $output->footer();
+    die;
+}
+
+echo $licenseselectoutput;
 if (empty($licenseid)) {
+    echo html_writer::end_tag('div');
     echo $output->footer();
     die;
 }

@@ -18,6 +18,7 @@ require_once(dirname(__FILE__).'/../../config.php');
 require_once(dirname(__FILE__).'/report_emails_table.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
 require_once($CFG->dirroot."/lib/tablelib.php");
+require_once($CFG->dirroot."/local/email/local_lib.php");
 
 // Params.
 $participant = optional_param('participant', 0, PARAM_INT);
@@ -33,6 +34,7 @@ $perpage      = optional_param('perpage', $CFG->iomad_max_list_users, PARAM_INT)
 $acl          = optional_param('acl', '0', PARAM_INT);           // Id of user to tweak mnet ACL (requires $access).
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
+$templateid = optional_param('templateid', 0, PARAM_INTEGER);
 $emailfromraw = optional_param_array('emailfrom', null, PARAM_INT);
 $emailtoraw = optional_param_array('emailto', null, PARAM_INT);
 $confirm = optional_param('confirm', '', PARAM_CLEAN);
@@ -251,6 +253,19 @@ if (!empty($CFG->iomad_report_fields)) {
     }
 }
 
+// Get the appropriate list of email templates.
+$templateslist = array(0 => get_string('all'));
+$templates = local_email::get_templates();
+foreach (array_keys($templates) as $templatename) {
+    $templateslist[] = $templatename;
+}
+$selectparams = $params;
+$selecturl = new moodle_url('/local/report_emails/index.php', $selectparams);
+$select = new single_select($selecturl, 'templateid', $templateslist, $templateid);
+$select->label = get_string('templatetype', 'local_email');
+$select->formid = 'choosetemplate';
+$templateselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_template_selector'));
+
 // Get the appropriate list of departments.
 $selectparams = $params;
 $selectparams['courseid'] = 0;
@@ -293,6 +308,10 @@ if (!$table->is_downloading()) {
             echo html_writer::end_tag('div');
             echo html_writer::end_tag('div');
 
+            echo html_writer::start_tag('div', array('class' => 'iomadclear controlitems'));
+            echo $templateselectoutput;
+            echo html_writer::end_tag('div');
+
             // Set up the filter form.
             $params['companyid'] = $companyid;
             $params['addfrom'] = 'emailfrom';
@@ -315,10 +334,17 @@ $showdepartments = company::get_subdepartments_list($currentdepartment);
 $showdepartments[$departmentid] = $departmentid;
 $departmentsql = " AND d.id IN (" . implode(',', array_keys($showdepartments)) . ")";
 
+if (!empty($templateid)) {
+    $templatesql = " AND templatename = :templatename ";
+    $searchinfo->searchparams['templatename'] = $templateslist[$templateid];
+} else {
+    $templatesql = '';
+}
+
 // Set up the initial SQL for the form.
 $selectsql = " e.id AS emailid, u.id,u.firstname,u.lastname,d.name as department,u.email,e.templatename, e.modifiedtime AS created, e.sent, c.fullname AS coursename, e.senderid, e.due, e.subject";
 $fromsql = "{user} u JOIN {email} e ON (u.id = e.userid) JOIN {company_users} cu ON (u.id = cu.userid AND e.userid = cu.userid) JOIN {department} d ON (cu.departmentid = d.id) JOIN {course} c on (e.courseid = c.id)";
-$wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql";
+$wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $templatesql $departmentsql $companysql";
 $sqlparams = array('companyid' => $companyid) + $searchinfo->searchparams;
 
 // Set up the headers for the form.

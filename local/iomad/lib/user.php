@@ -1165,7 +1165,7 @@ class iomad_course_search_form extends moodleform {
 
         $sarcharray = array();
         $searcharray[] = $mform->createElement('text', 'coursesearch');
-        $searcharray[] = $mform->createElement('submit', 'searchbutton', get_string('search'));
+        $searcharray[] = $mform->createElement('submit', 'searchbutton', get_string('coursenamesearch', 'block_iomad_company_admin'));
         $mform->addGroup($searcharray, 'searcharray', get_string('coursenamesearch', 'block_iomad_company_admin'), ' ', false);
         $mform->setType('coursesearch', PARAM_CLEAN);
     }

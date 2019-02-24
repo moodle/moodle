@@ -133,6 +133,14 @@ $PAGE->requires->css("/local/report_completion/styles.css");
 $PAGE->requires->jquery();
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
 $PAGE->navbar->add($strcompletion, $url);
+if (!empty($courseid)) {
+    if ($courseid == 1) {
+        $PAGE->navbar->add(get_string("allusers", 'local_report_completion'));
+    } else {
+        $course = $DB->get_record('course', array('id' => $courseid));
+            $PAGE->navbar->add($course->fullname);
+    }
+}
 
 // Javascript for fancy select.
 // Parameter is name of proper select form element followed by 1=submit its form

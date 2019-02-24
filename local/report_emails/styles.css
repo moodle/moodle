@@ -1,19 +1,22 @@
-td.inprogress {
-    background-color: yellow;
+#page-local-report_emails-index #iomad_course_selector, #page-local-report_emails-index #iomad_template_selector {
+    float:left;
 }
 
-td.notstarted {
-    background-color: #ff3333;
+#page-local-report_emails-index #iomad_template_selector select {
+    background-color: #ddd;
 }
 
-td.completed {
-    background-color: #33ff33;
+#page-local-report_emails-index #iomad_template_selector {
+    padding-top: 7px;
+    padding-bottom: 17px;
+    padding-right: 5px;
 }
 
-#ReportTable  td {
-    vertical-align: middle !important;
+#page-local-report_emails-index #mform1 {
+    display: flex;
+    padding-top: 5px;
 }
 
-#page-local-report_user_logins-index .col-md-9 {
-    clear: both;
+#page-local-report_emails-index .mform fieldset {
+    border-bottom: 0px;
 }
