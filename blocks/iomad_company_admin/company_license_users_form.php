@@ -149,9 +149,7 @@ class company_license_users_form extends moodleform {
         $departmenttree = company::get_all_subdepartments_raw($userdepartment->id);
         $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
 
-        $mform->addElement('html', '<p>' . get_string('updatedepartmentusersselection', 'block_iomad_company_admin') . '</p>');
         $mform->addElement('html', $treehtml);
-        //$mform->addElement('html', $subdepartmenthtml);
 
         // This is getting hidden anyway, so no need for label
         $mform->addElement('html', '<div class="display:none;">');
@@ -478,7 +476,14 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 // Javascript for fancy select.
 // Parameter is name of proper select form element.
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 'mform1', $departmentid));
+
+// Add in the manage license page if we are allowed.
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
+if (iomad::has_capability('block/iomad_company_admin:view_licenses', $context)) {
+    $PAGE->navbar->add(get_string('company_license_list_title', 'block_iomad_company_admin'),
+                       new moodle_url('/blocks/iomad_company_admin/company_license_list.php'));
+}
+
 $PAGE->navbar->add($linktext, $linkurl);
 
 // Set the companyid
@@ -587,23 +592,6 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
     }
 } else {
     if ($licenseid > 0) {
-        //  Work out the courses that the license applies to, if any.
-/*        $courses = company::get_courses_by_license($licenseid);
-        $outputstring = "";
-        if (!empty($courses)) {
-            $outputstring = "<p>" .get_string('licenseassignedto', 'block_iomad_company_admin');
-            $count = 1;
-            foreach ($courses as $course) {
-                if ($count > 1) {
-                    $outputstring .= ", ".$course->fullname;
-                } else {
-                    $outputstring .= $course->fullname;
-                }
-                $count++;
-            }
-            $count ++;
-        }
-        echo $outputstring."</p>";*/
         $usersform->process();
 
         if (!empty($availablewarning)) {

@@ -239,15 +239,17 @@ if ($departmentid == $companydepartment->id) {
             $issiteadmin = false;
         }
         $coursestring = "";
+        $first = true;
         if (count($licensecourses > 5)) {
             $coursestring = "<details><summary>" . get_string('view') . "</summary>";
         }
         foreach ($licensecourses as $licensecourse) {
             $coursename = $DB->get_record('course', array('id' => $licensecourse->courseid));
-            if (empty($coursestring)) {
+            if ($first) {
                 if ($issiteadmin) {
                     $coursestring .= "<a href='".new moodle_url('/course/view.php',
                                        array('id' => $licensecourse->courseid))."'>".$coursename->fullname."</a>";
+                    $first = false;
                 } else {
                     $coursestring .= $coursename->fullname;
                 }
