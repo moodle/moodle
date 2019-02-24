@@ -26,12 +26,12 @@ class observer {
         global $DB;
 
         // Add the event.
-        $DB->insert_record('local_report_user_license_allocations', array('userid' => $event->userid,
-                                                                          'license' => $event->other['licenseid'],
-                                                                          'issuedate' => $event->other['issuedate'],
-                                                                          'courseid' => $event->courseid,
-                                                                          'action' => 1,
-                                                                          'modifiedtime' => time()));
+        $DB->insert_record('local_report_user_lic_allocs', array('userid' => $event->userid,
+                                                                 'licenseid' => $event->other['licenseid'],
+                                                                 'issuedate' => $event->other['issuedate'],
+                                                                 'courseid' => $event->courseid,
+                                                                 'action' => 1,
+                                                                 'modifiedtime' => time()));
 
         return true;
     }
@@ -45,12 +45,12 @@ class observer {
 
         // Add the event.
         $user = $DB->get_record('user', array('id' => $userid));
-        $DB->insert_record('local_report_user_license_allocations', array('userid' => $event->userid,
-                                                                          'license' => $event->other['licenseid'],
-                                                                          'issuedate' => $event->timecreated,
-                                                                          'courseid' => $event->courseid,
-                                                                          'action' => 0,
-                                                                          'modifiedtime' => time()));
+        $DB->insert_record('local_report_user_lic_allocs', array('userid' => $event->userid,
+                                                                 'licenseid' => $event->other['licenseid'],
+                                                                 'issuedate' => $event->timecreated,
+                                                                 'courseid' => $event->courseid,
+                                                                 'action' => 0,
+                                                                 'modifiedtime' => time()));
 
         return true;
     }
