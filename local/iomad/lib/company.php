@@ -2713,7 +2713,7 @@ class company {
             return;
         }
 
-        if ($CFG->commerce_enable_external) {
+        if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
             // Fire off the payload to the external site.
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
             iomad_commerce::update_company($company, $company);
@@ -2982,7 +2982,7 @@ class company {
         $user = $DB->get_record('user', array('id' => $userid));
         $user->manager = 'no';
 
-        if ($CFG->commerce_enable_external) {
+        if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
             // Fire off the payload to the external site.
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
             iomad_commerce::update_user($user);
@@ -3017,7 +3017,7 @@ class company {
         }
         $user->company = $company->name;
 
-        if ($CFG->commerce_enable_external) {
+        if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
             // Fire off the payload to the external site.
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
             iomad_commerce::update_user($user);
@@ -3173,7 +3173,7 @@ class company {
             }
         }
 
-        if ($CFG->commerce_enable_external) {
+        if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
             // Fire off the payload to the external site.
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
             $user = $DB->get_record('user', array('id' => $userid));
@@ -3224,7 +3224,7 @@ class company {
             }
         }
 
-        if ($CFG->commerce_enable_external) {
+        if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
             // Fire off the payload to the external site.
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
             iomad_commerce::assign_user($user, $companyrec->name);
