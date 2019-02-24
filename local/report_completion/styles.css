@@ -34,12 +34,11 @@
 }
 
 .reporttablecontrolscontrol {
-    padding-top: 4px;
     float: left;
 }
 
 .reporttablecontrolscontrol .singlebutton {
-    padding-top: 1px;
+    padding-top: 7px;
     padding-right: 5px;
 }
 
