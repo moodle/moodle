@@ -43,6 +43,14 @@ $PAGE->set_pagelayout('login');
 $errormsg = '';
 $errorcode = 0;
 
+// IOMAD - Set the theme if the server hostname matches one of ours.
+if ($company = $DB->get_record_select('company', $DB->sql_like('hostname', '?'), array('%'.$_SERVER["SERVER_NAME"].'%'))) {
+    // set the current editing company to be this.
+    $SESSION->currenteditingcompany = $company->id;
+    // Set the page theme.
+    $SESSION->theme = $company->theme;
+}
+
 // login page requested session test
 if ($testsession) {
     if ($testsession == $USER->id) {
