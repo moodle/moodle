@@ -54,7 +54,6 @@ $string['future'] = 'Future';
 $string['inprogress'] = 'In progress';
 $string['lastaccessed'] = 'Last accessed';
 $string['list'] = 'List';
-$string['myoverview:addinstance'] = 'Add a new course overview block';
 $string['myoverview:myaddinstance'] = 'Add a new course overview block to Dashboard';
 $string['past'] = 'Past';
 $string['pluginname'] = 'Course overview';

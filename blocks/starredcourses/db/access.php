@@ -34,15 +34,5 @@ $capabilities = array(
         ),
 
         'clonepermissionsfrom' => 'moodle/my:manageblocks'
-    ),
-
-    'block/starredcourses:addinstance' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        ),
-
-        'clonepermissionsfrom' => 'moodle/site:manageblocks'
-    ),
+    )
 );
