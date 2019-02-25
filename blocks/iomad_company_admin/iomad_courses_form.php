@@ -15,19 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once('../../config.php');
-require_once(dirname('__FILE__').'/lib.php');
 require_once(dirname(__FILE__) . '/../../config.php'); // Creates $PAGE.
+require_once(dirname('__FILE__').'/lib.php');
+require_once(dirname('__FILE__').'/iomad_courses_table.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/user/filters/lib.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
 
-$company       = optional_param('company', 0, PARAM_CLEAN);
-$sort         = optional_param('sort', 'name', PARAM_ALPHA);
-$dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
-$page         = optional_param('page', 0, PARAM_INT);
-$perpage      = optional_param('perpage', $CFG->iomad_max_list_courses, PARAM_INT);        // How many per page.
-$acl          = optional_param('acl', '0', PARAM_INT);           // Id of user to tweak mnet ACL (requires $access).
-$search      = optional_param('search', '', PARAM_CLEAN);// Search string.
+$companyid    = optional_param('companyid', 0, PARAM_INT);
+$coursesearch      = optional_param('coursesearch', '', PARAM_CLEAN);// Search string.
 $courseid = optional_param('courseid', 0, PARAM_INTEGER);
 $update = optional_param('update', null, PARAM_ALPHA);
 $license = optional_param('license', 0, PARAM_INTEGER);
@@ -40,23 +36,11 @@ $expireafter = optional_param('expireafter', 0, PARAM_INTEGER);
 
 $params = array();
 
-if ($company) {
-    $params['company'] = $company;
+if ($companyid) {
+    $params['companyid'] = $companyid;
 }
-if ($sort) {
-    $params['sort'] = $sort;
-}
-if ($dir) {
-    $params['dir'] = $dir;
-}
-if ($page) {
-    $params['page'] = $page;
-}
-if ($perpage) {
-    $params['perpage'] = $perpage;
-}
-if ($search) {
-    $params['search'] = $search;
+if ($coursesearch) {
+    $params['coursesearch'] = $coursesearch;
 }
 if ($courseid) {
     $params['courseid'] = $courseid;
@@ -82,12 +66,12 @@ $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
 $PAGE->navbar->add($linktext, $linkurl);
 
 // Set the companyid
-$companyid = iomad::get_my_companyid($systemcontext, false);
+$mycompanyid = iomad::get_my_companyid($systemcontext, false);
 
 // Is the users company set and no other company selected?
-if (empty($company) && !empty($companyid)) {
-    $company = $companyid;
-    $params['company'] = $company;
+if (empty($companyid) && !empty($mycompanyid)) {
+    $companyid = $mycompanyid;
+    $params['companyid'] = $mycompanyid;
 }
 
 
@@ -250,6 +234,9 @@ if (!empty($update)) {
 $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
 
+$mform = new iomad_course_search_form($baseurl, $params);
+$mform->set_data($params);
+
 echo $OUTPUT->header();
 
 // Get the list of companies and display it as a drop down select..
@@ -258,53 +245,42 @@ $companyids = $DB->get_records_menu('company', array(), 'id, name');
 $companyids['none'] = get_string('nocompany', 'block_iomad_company_admin');
 $companyids['all'] = get_string('allcourses', 'block_iomad_company_admin');
 ksort($companyids);
-$companyselect = new single_select($linkurl, 'company', $companyids, $company);
+$companyselect = new single_select($linkurl, 'company', $companyids, $companyid);
 $companyselect->label = get_string('filtercompany', 'block_iomad_company_admin');
 $companyselect->formid = 'choosecompany';
+echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
 echo html_writer::tag('div', $OUTPUT->render($companyselect), array('id' => 'iomad_company_selector')).'</br>';
+$mform->display();
+echo html_writer::end_tag('div');
+echo html_writer::start_tag('div', array('class' => 'iomadclear'));
 
-// Need a name search in here too.
+$table = new iomad_courses_table('iomad_courses_table');
 
-// Set default courses.
-$courses = array();
-
-if (!empty($company)) {
-    if ($company == 'none') {
-        // Get all courses which are not assigned to any company.
-        if (!empty($search)) {
-            $select = "fullname like '%$search%' AND id!=1 AND";
-        } else {
-            $select = "id != 1 AND";
-        }
-        $sql = "SELECT * from {course} WHERE $select
-                id not in (select courseid from {company_course})";
-        $courses = $DB->get_records_sql($sql);
-    } else  if ($company == 'all') {
-        // Get every course.
-        if (!empty($search)) {
-            $select = "fullname like '%$search%' AND id!=1";
-        } else {
-            $select = "id != 1";
-        }
-        $courses = $DB->get_records_select('course', $select);
-    } else {
-        // Get the courses belonging to that company only.
-        if (!empty($search)) {
-            $select = "AND c.fullname like '%$search%'";
-        } else {
-            $select = "";
-        }
-        $sql = "SELECT c.* from {course} c, {company_course} cc WHERE
-                cc.companyid=$company AND cc.courseid = c.id $select";
-        $courses = $DB->get_records_sql($sql);
-    }
+$companysql = "";
+$searchsql = "";
+if (!empty($companyid)) {
+    $companysql = " (c.id IN (
+                      SELECT courseid FROM {company_course}
+                      WHERE companyid = :companyid)
+                     OR ic.shared = 1) ";
 }
 
+if (!empty($coursesearch)) {
+    if (!empty($companysql)) {
+        $searchsql = " AND ";
+    }
+    $searchsql .= $DB->sql_like('c.fullname', ':coursesearch', false, false);
+    $params['coursesearch'] = "%" . $params['coursesearch'] ."%";
+}
 
+// Set up the SQL for the table.
+$selectsql = "ic.id, c.id AS courseid, c.fullname AS coursename, ic.licensed, ic.shared, ic.validlength, ic.warnexpire, ic.warncompletion, ic.notifyperiod, ic.expireafter, $companyid AS companyid";
+$fromsql = "{iomad_courses} ic JOIN {course} c ON (ic.courseid = c.id)";
+$wheresql = "$companysql $searchsql";
+$sqlparams = $params;
 
-// Display the table.
-$table = new html_table();
-$table->head = array (
+// Set up the headers for the table.
+$tableheaders = array(
     get_string('company', 'block_iomad_company_admin'),
     get_string('course'),
     get_string('licensed', 'block_iomad_company_admin') . $OUTPUT->help_icon('licensed', 'block_iomad_company_admin'),
@@ -313,130 +289,24 @@ $table->head = array (
     get_string('expireafter', 'block_iomad_company_admin') . $OUTPUT->help_icon('expireafter', 'block_iomad_company_admin'),
     get_string('warnexpire', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnexpire', 'block_iomad_company_admin'),
     get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin'),
-    get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin')
-);
-$table->align = array ("left", "center", "center", "center", "center", "center", "center", "center");
-$table->width = "95%";
-$selectbutton = array('0' => get_string('no'), '1' => get_string('yes'));
-$licenseselectbutton = array('0' => get_string('no'), '1' => get_string('yes'), '3' => get_string('pluginname', 'enrol_self'));
-$sharedselectbutton = array('0' => get_string('no'),
-                            '1' => get_string('open', 'block_iomad_company_admin'),
-                            '2' => get_string('closed', 'block_iomad_company_admin'));
+    get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin'));
+$tablecolumns = array('company',
+                 'coursename',
+                 'licensed',
+                 'shared',
+                 'validlength',
+                 'expireafter',
+                 'warnexpire',
+                 'warncompletion',
+                 'notifyperiod');
 
+$table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
+$table->define_baseurl($baseurl);
+$table->define_columns($tablecolumns);
+$table->define_headers($tableheaders);
+$table->sort_default_column = 'coursename';
+$table->out($CFG->iomad_max_list_courses, true);
 
-foreach ($courses as $course) {
-    if (!$iomaddetails = $DB->get_record('iomad_courses', array('courseid' => $course->id))) {
-        $iomadrecord = array('courseid' => $course->id, 'licensed' => 0, 'shared' => 0);
-        $iomadrecord['id'] = $DB->insert_record('iomad_courses', $iomadrecord);
-        $iomaddetails = (object) $iomadrecord;
-    }
-    $linkparams = $params;
-    $linkparams['courseid'] = $course->id;
-    $linkparams['update'] = 'license';
-    $licenseurl = new moodle_url($baseurl, $linkparams);
-    $licenseselect = new single_select($licenseurl, 'license', $licenseselectbutton, $iomaddetails->licensed);
-    $licenseselect->label = '';
-    $licenseselect->formid = 'licenseselect'.$course->id;
-    $licenseselectoutput = html_writer::tag('div', $OUTPUT->render($licenseselect), array('id' => 'license_selector'.$course->id));
-    $linkparams['update'] = 'shared';
-    $sharedurl = new moodle_url($baseurl, $linkparams);
-    $sharedselect = new single_select($sharedurl, 'shared', $sharedselectbutton, $iomaddetails->shared);
-    $sharedselect->label = '';
-    $sharedselect->formid = 'sharedselect'.$course->id;
-    $sharedselectoutput = html_writer::tag('div', $OUTPUT->render($sharedselect), array('id' => 'shared_selector'.$course->id));
-    if ($tablecompany = $DB->get_records_sql("select c.shortname from {company} c, {company_course} cc WHERE
-                                                      cc.courseid = $course->id and cc.companyid = c.id")) {
-        $companyname = "";
-        foreach ($tablecompany as $tcompany) {
-            if ($companyname == "") {
-                $companyname = $tcompany->shortname;
-            } else {
-                $companyname .= ", " . $tcompany->shortname;
-            }
-        }
-    } else {
-        $companyname = "";
-    }
-    if (empty($iomaddetails->validlength)) {
-        $duration = 0;
-    } else {
-        $duration = $iomaddetails->validlength;
-    }
-    if (empty($iomaddetails->warnexpire)) {
-        $warnexpire = 0;
-    } else {
-        $warnexpire = $iomaddetails->warnexpire;
-    }
-    if (empty($iomaddetails->expireafter)) {
-        $expireafter = 0;
-    } else {
-        $expireafter = $iomaddetails->expireafter;
-    }
-    if (empty($iomaddetails->warncompletion)) {
-        $warncompletion = 0;
-    } else {
-        $warncompletion = $iomaddetails->warncompletion;
-    }
-    if (empty($iomaddetails->notifyperiod)) {
-        $notifyperiod = 0;
-    } else {
-        $notifyperiod = $iomaddetails->notifyperiod;
-    }
-    $formhtml = '<form action="iomad_courses_form.php" method="get">
-                 <input type="hidden" name="courseid" value="' . $course->id . '" />
-                 <input type="hidden" name="company" value="'.$company.'" />
-                 <input type="hidden" name="update" value="validfor" />
-                 <input type="text" name="validfor" id="id_validfor" value="'.$duration.'" size="10"/>
-                 <input type="submit" value="' . get_string('submit') . '" />
-                 </form>';
-    $warnexpirehtml = '<form action="iomad_courses_form.php" method="get">
-                       <input type="hidden" name="courseid" value="' . $course->id . '" />
-                       <input type="hidden" name="company" value="'.$company.'" />
-                       <input type="hidden" name="update" value="warnexpire" />
-                       <input type="text" name="warnexpire" id="id_warnexpire" value="'.$warnexpire.'" size="10"/>
-                       <input type="submit" value="' . get_string('submit') . '" />
-                       </form>';
-    $expireafterhtml = '<form action="iomad_courses_form.php" method="get">
-                        <input type="hidden" name="courseid" value="' . $course->id . '" />
-                        <input type="hidden" name="company" value="'.$company.'" />
-                        <input type="hidden" name="update" value="expireafter" />
-                        <input type="text" name="expireafter" id="id_expire" value="'.$expireafter.'" size="10"/>
-                        <input type="submit" value="' . get_string('submit') . '" />
-                        </form>';
-    $warnhtml = '<form action="iomad_courses_form.php" method="get">
-                 <input type="hidden" name="courseid" value="' . $course->id . '" />
-                 <input type="hidden" name="company" value="'.$company.'" />
-                 <input type="hidden" name="update" value="warncompletion" />
-                 <input type="text" name="warncompletion" id="id_warncompletion" value="'.$warncompletion.'" size="10"/>
-                 <input type="submit" value="' . get_string('submit') . '" />
-                 </form>';
-    $notifyhtml = '<form action="iomad_courses_form.php" method="get">
-                 <input type="hidden" name="courseid" value="' . $course->id . '" />
-                 <input type="hidden" name="company" value="'.$company.'" />
-                 <input type="hidden" name="update" value="notifyperiod" />
-                 <input type="text" name="notifyperiod" id="id_notifyperiod" value="'.$notifyperiod.'" size="10"/>
-                 <input type="submit" value="' . get_string('submit') . '" />
-                 </form>';
-    $courselink = new moodle_url('/course/view.php', array('id'=>$course->id));
-    $table->data[] = array ($companyname,
-                            "<a href='$courselink'>$course->fullname</a>",
-                            $licenseselectoutput,
-                            $sharedselectoutput,
-                            $formhtml,
-                            $expireafterhtml,
-                            $warnhtml,
-                            $warnexpirehtml,
-                            $notifyhtml);
-}
+echo html_writer::end_tag('div');
 
-if (!empty($courses)) {
-    echo html_writer::table($table);
-} else {
-    echo '<div class="alert alert-warning">' . get_string('nocourses', 'block_iomad_company_admin') . '</div>';
-}
-
-// exit button
-$link = new moodle_url('/my');
-echo '<a class="btn btn-primary" href="' . $link . '">' . get_string('todashboard', 'block_iomad_company_admin') . '</a>';
-
-echo $OUTPUT->footer();
+echo $OUTPUT->footer(); 

@@ -249,6 +249,30 @@ border-radius: 10px;
     padding-top: 5px;
 }
 
-#page-blocks-iomad_company_admin-editusers .mform fieldset {
-    border-bottom: 0px;
+#page-blocks-iomad_company_admin-iomad_courses_form .reporttablecontrolscontrol {
+    display: flex;
 }
+
+#page-blocks-iomad_company_admin-iomad_courses_form .reporttablecontrolscontrol {
+    float: left;
+}
+
+#page-blocks-iomad_company_admin-iomad_courses_form .reporttablecontrolscontrol .singlebutton {
+    padding-top: 7px;
+    padding-right: 5px;
+}
+
+ #page-blocks-iomad_company_admin-iomad_courses_form .reporttablecontrolscontrol #id_searchbutton {
+    color: #212529;
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+    padding-right: 3px;
+}
+
+ #page-blocks-iomad_company_admin-iomad_courses_form .reporttablecontrolscontrol div.col-md-9.form-inline.felement {
+     display: contents
+ }
+ 
+  #page-blocks-iomad_company_admin-iomad_courses_form .reporttablecontrolscontrol  div.col-md-3 {
+      display: none
+  }
