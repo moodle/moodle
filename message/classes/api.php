@@ -713,6 +713,13 @@ class api {
                             $members[$convid][$key]->canmessage = null;
                             $members[$convid][$key]->contactrequests = [];
                         }
+                    } else { // Remove all members and individual conversations where we could not get the member's information.
+                        unset($members[$convid][$key]);
+
+                        // If the conversation is an individual conversation, then we should remove it from the list.
+                        if ($conversations[$convid]->conversationtype == self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL) {
+                            unset($conversations[$convid]);
+                        }
                     }
                 }
             }

@@ -5433,19 +5433,33 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
 
-        $conversation = \core_message\api::create_conversation(
+        $conversation1 = \core_message\api::create_conversation(
             \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
             [
                 $user1->id,
                 $user2->id
             ],
-            'Individual conversation'
+            'Individual conversation 1'
         );
 
-        testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'A');
-        testhelper::send_fake_message_to_conversation($user2, $conversation->id, 'B');
-        testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'C');
+        testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'A');
+        testhelper::send_fake_message_to_conversation($user2, $conversation1->id, 'B');
+        testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'C');
+
+        $conversation2 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [
+                $user1->id,
+                $user3->id
+            ],
+            'Individual conversation 2'
+        );
+
+        testhelper::send_fake_message_to_conversation($user1, $conversation2->id, 'A');
+        testhelper::send_fake_message_to_conversation($user3, $conversation2->id, 'B');
+        testhelper::send_fake_message_to_conversation($user1, $conversation2->id, 'C');
 
         $this->setUser($user1);
 
@@ -5455,7 +5469,13 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $result = core_message_external::get_conversations($user1->id, 0, 20, 1, false);
         $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
 
-        $this->assertEmpty($result['conversations']);
+        $conversation = $result['conversations'];
+
+        $this->assertCount(1, $conversation);
+
+        $conversation = reset($conversation);
+
+        $this->assertEquals($conversation2->id, $conversation['id']);
     }
 
     /**
