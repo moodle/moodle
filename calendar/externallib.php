@@ -406,7 +406,8 @@ class core_calendar_external extends external_api {
                 'aftereventid' => new external_value(PARAM_INT, 'The last seen event id', VALUE_DEFAULT, 0),
                 'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 20),
                 'limittononsuspendedevents' => new external_value(PARAM_BOOL,
-                        'Limit the events to courses the user is not suspended in', VALUE_DEFAULT, false)
+                        'Limit the events to courses the user is not suspended in', VALUE_DEFAULT, false),
+                'userid' => new external_value(PARAM_INT, 'The user id', VALUE_DEFAULT, null),
             )
         );
     }
@@ -419,15 +420,16 @@ class core_calendar_external extends external_api {
      * @param null|int $timesortto Events before this time (inclusive)
      * @param null|int $aftereventid Get events with ids greater than this one
      * @param int $limitnum Limit the number of results to this value
+     * @param null|int $userid The user id
      * @return array
      */
     public static function get_calendar_action_events_by_timesort($timesortfrom = 0, $timesortto = null,
-                                                       $aftereventid = 0, $limitnum = 20, $limittononsuspendedevents = false) {
+                                                       $aftereventid = 0, $limitnum = 20, $limittononsuspendedevents = false,
+                                                       $userid = null) {
         global $CFG, $PAGE, $USER;
 
         require_once($CFG->dirroot . '/calendar/lib.php');
 
-        $user = null;
         $params = self::validate_parameters(
             self::get_calendar_action_events_by_timesort_parameters(),
             [
@@ -435,10 +437,17 @@ class core_calendar_external extends external_api {
                 'timesortto' => $timesortto,
                 'aftereventid' => $aftereventid,
                 'limitnum' => $limitnum,
-                'limittononsuspendedevents' => $limittononsuspendedevents
+                'limittononsuspendedevents' => $limittononsuspendedevents,
+                'userid' => $userid,
             ]
         );
-        $context = \context_user::instance($USER->id);
+        if ($params['userid']) {
+            $user = \core_user::get_user($params['userid']);
+        } else {
+            $user = $USER;
+        }
+
+        $context = \context_user::instance($user->id);
         self::validate_context($context);
 
         if (empty($params['aftereventid'])) {
@@ -451,7 +460,8 @@ class core_calendar_external extends external_api {
             $params['timesortto'],
             $params['aftereventid'],
             $params['limitnum'],
-            $params['limittononsuspendedevents']
+            $params['limittononsuspendedevents'],
+            $user
         );
 
         $exportercache = new events_related_objects_cache($events);
