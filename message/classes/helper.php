@@ -720,6 +720,11 @@ class helper {
         // Enter to send.
         $entertosend = get_user_preferences('message_entertosend', $CFG->messagingdefaultpressenter, $USER);
 
+        $notification = '';
+        if (!get_user_preferences('core_message_migrate_data', false)) {
+            $notification = get_string('messagingdatahasnotbeenmigrated', 'message');
+        }
+
         if ($isdrawer) {
             $template = 'core_message/message_drawer';
             $messageurl = new \moodle_url('/message/index.php');
@@ -747,7 +752,8 @@ class helper {
                 'entertosend' => $entertosend
             ],
             'overview' => [
-                'messageurl' => $messageurl
+                'messageurl' => $messageurl,
+                'notification' => $notification
             ],
             'sendtouser' => false,
             'conversationid' => false
