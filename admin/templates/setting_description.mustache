@@ -34,12 +34,13 @@
 {{!
     Setting description.
 }}
-<div class="form-item form-horizontal clearfix">
-    <div class="form-label">
+<div class="form-item row">
+    <div class="form-label col-sm-3 text-sm-right">
         <label>
             {{{title}}}
         </label>
-        <span class="form-shortname ">{{{name}}}</span>
     </div>
-    <div class="controls felement fstatic">{{{description}}}</div>
+    <div class="form-setting col-sm-9">
+        <div class="form-description">{{{description}}}</div>
+    </div>
 </div>

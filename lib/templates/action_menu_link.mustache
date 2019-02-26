@@ -23,14 +23,12 @@
     {
         "text": "Example link text",
         "showtext": true,
-        "url": "http://example.com/link",
-        "classes": "menu-action",
-        "instance": "1"
+        "url": "http://example.com/link"
     }
 }}
 {{^disabled}}
     <a href="{{url}}" class="{{classes}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}{{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>{{#icon}}{{#pix}}{{key}}, {{component}}, {{title}}{{/pix}}{{/icon}}{{#showtext}}<span class="menu-action-text" id="actionmenuaction-{{instance}}">{{{text}}}</span>{{/showtext}}</a>
 {{/disabled}}
 {{#disabled}}
-    <span class="currentlink" role="menuitem">{{#icon}}{{#pix}}{{key}}, {{component}}, {{title}}{{/pix}}{{/icon}}{{{text}}}</span>
+    <span class="currentlink" role="menuitem">{{#icon}}{{#pix}}{{key}},{{component}},{{title}}{{/pix}}{{/icon}}{{{text}}}</span>
 {{/disabled}}

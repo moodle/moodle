@@ -32,6 +32,9 @@
         ]
     }
 }}
+{{!
+    Setting emoticons.
+}}
 <div class="form-group">
     <table id="emoticonsetting" class="admintable generaltable">
         <thead>
@@ -48,7 +51,7 @@
                 <tr>
                     {{#fields}}
                         <td class="c{{index}}">
-                            <input type="text" name="{{name}}[{{field}}]" class="form-text text-ltr" value="{{value}}">
+                            <input type="text" name="{{name}}[{{field}}]" class="form-text form-control text-ltr" value="{{value}}">
                         </td>
                     {{/fields}}
                     <td>

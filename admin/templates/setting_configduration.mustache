@@ -33,13 +33,18 @@
         "options": [ { "name": "Minutes", "value": "mins", "selected": true } ]
     }
 }}
+{{!
+    Setting configduration.
+}}
 <div class="form-duration defaultsnext">
-    <input type="text" size="5" id="{{id}}v" name="{{name}}[v]" value="{{value}}" class="text-ltr">
-    <label class="accesshide" for="{{id}}u">{{#str}}durationunits, admin{{/str}}</label>
-    <select id="{{id}}u" name="{{name}}[u]">
-        {{#options}}
-            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-        {{/options}}
-    </select>
+    <div class="form-inline">
+        <input type="text" size="5" id="{{id}}v" name="{{name}}[v]" value="{{value}}" class="form-control text-ltr">
+        <label class="sr-only" for="{{id}}u">{{#str}}durationunits, admin{{/str}}</label>
+        <select id="{{id}}u" name="{{name}}[u]" class="form-control">
+            {{#options}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+            {{/options}}
+        </select>
+    </div>
 </div>
 

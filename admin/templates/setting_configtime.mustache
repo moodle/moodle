@@ -39,18 +39,23 @@
         ]
     }
 }}
-<div class="form-time defaultsnext text-ltr">
-    <label class="accesshide" for="{{id}}h">{{#str}}hours{{/str}}</label>
-    <select id="{{id}}h" name="{{name}}[h]">
-        {{#hours}}
-            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-        {{/hours}}
-    </select>:
-    <label class="accesshide" for="{{id}}m">{{#str}}minutes{{/str}}</label>
-    <select id="{{id}}m" name="{{name}}[m]">
-        {{#minutes}}
-            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-        {{/minutes}}
-    </select>
+{{!
+    Setting configtime.
+}}
+<div class="form-time defaultsnext">
+    <div class="form-inline text-ltr">
+        <label class="sr-only" for="{{id}}h">{{#str}}hours{{/str}}</label>
+        <select id="{{id}}h" name="{{name}}[h]" class="custom-select">
+            {{#hours}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+            {{/hours}}
+        </select>:
+        <label class="sr-only" for="{{id}}m">{{#str}}minutes{{/str}}</label>
+        <select id="{{id}}m" name="{{name}}[m]" class="custom-select">
+            {{#minutes}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+            {{/minutes}}
+        </select>
+    </div>
 </div>
 

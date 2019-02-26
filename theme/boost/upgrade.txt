@@ -3,6 +3,10 @@ information provided here is intended especially for theme designers.
 
 === 3.7 ===
 
+* Templates and renderers moved to core.
+
+* Behat override steps moved to core.
+
 Form element template
 ---------------------
 A 'wrapperid' has been added to 'templates/core_form/element-template.mustache' to restore unique ids

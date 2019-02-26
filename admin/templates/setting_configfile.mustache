@@ -38,15 +38,20 @@
         "valid": false
     }
 }}
+{{!
+    Setting configfile.
+}}
 <div class="form-file defaultsnext">
-    <input type="text" name="{{name}}" id="{{id}}" size="{{size}}" value="{{value}}" class="text-ltr" {{#readonly}}readonly{{/readonly}}>
-    {{#showvalidity}}
-        {{#valid}}
-            <span class="pathok">&#x2714;</span>
-        {{/valid}}
-        {{^valid}}
-            <span class="patherror">&#x2718;</span>
-        {{/valid}}
-    {{/showvalidity}}
+    <div class="form-inline">
+        <input type="text" name="{{name}}" id="{{id}}" size="{{size}}" value="{{value}}" class="form-control text-ltr" {{#readonly}}readonly{{/readonly}}>
+        {{#showvalidity}}
+            {{#valid}}
+                <span class="text-success">&#x2714;</span>
+            {{/valid}}
+            {{^valid}}
+                <span class="text-danger">&#x2718;</span>
+            {{/valid}}
+        {{/showvalidity}}
+    </div>
 </div>
 

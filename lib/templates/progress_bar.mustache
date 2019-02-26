@@ -25,12 +25,12 @@
         "width": "500"
     }
 }}
-<div class="progressbar_container" style="width: {{width}}px;" id="{{id}}">
-    <h2 id="{{id}}_status"></h2>
-    <div class="progress progress-striped active">
-        <div id="{{id}}_bar" class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">&nbsp;</div>
+<div id="{{id}}" class="row progressbar_container">
+    <div class="col-md-6 push-md-3">
+        <p id="{{id}}_status" class="text-xs-center"></p>
+        <progress id="{{id}}_bar" class="progress progress-striped progress-animated" value="0" max="100"></progress>
+        <p id="{{id}}_estimate" class="text-xs-center"></p>
     </div>
-    <p id="{{id}}_estimate"></p>
 </div>
 
 {{! We must not use the JS helper otherwise this gets executed too late. }}
@@ -47,20 +47,18 @@
             estimate = e.detail.estimate;
 
         statusIndicator.textContent = msg;
-        progressBar.textContent = '' + percent + '%';
+        progressBar.setAttribute('value', Math.round(percent));
         if (percent === 100) {
-            el.classList.add('progress-success');
-            estimateIndicator.textContent = '';
+            progressBar.classList.add('progress-success');
+            estimateIndicator.textContent = '100%';
         } else {
             if (estimate) {
-                estimateIndicator.textContent = estimate;
+                estimateIndicator.textContent = estimate + ' - ' + percent + '%';
             } else {
-                estimateIndicator.textContent = '';
+                estimateIndicator.textContent = '' + percent + '%';
             }
-            el.classList.remove('progress-success');
+            progressBar.classList.remove('progress-success');
         }
-        progressBar.setAttribute('aria-valuenow', percent);
-        progressBar.setAttribute('style', 'width: ' + percent + '%');
     });
 })();
 </script>

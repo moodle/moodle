@@ -6,7 +6,7 @@ Feature: Add a bookmarks to an admin pages
 
   Background:
     Given I log in as "admin"
-    And I navigate to "Server > Scheduled tasks" in site administration
+    And I navigate to "Server > Tasks > Scheduled tasks" in site administration
     And I click on "Bookmark this page" "link" in the "Admin bookmarks" "block"
     And I log out
 

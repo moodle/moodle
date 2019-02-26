@@ -1,0 +1,68 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_admin/setting_configselect_optgroup
+
+    Admin select with optgroup setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * id - element id
+    * options - list of options (not grouped)
+    * optgroups - list of options grouped containing the group label and for each option: name, value, selected
+
+    Example context (json):
+    {
+        "name": "test",
+        "id": "test0",
+        "options": [
+            { "name": "Option 1", "value": "V", "selected": false },
+            { "name": "Option 2", "value": "V", "selected": false }
+        ],
+        "optgroups": [
+            {
+                "label": "Group 1",
+                "options": [
+                    { "name": "Option 3", "value": "V", "selected": true },
+                    { "name": "Option 4", "value": "V", "selected": false }
+                ]
+            },
+            {
+                "label": "Group 2",
+                "options": [
+                    { "name": "Option 5", "value": "V", "selected": false },
+                    { "name": "Option 6", "value": "V", "selected": false }
+                ]
+            }
+        ]
+    }
+}}
+<div class="form-select defaultsnext">
+    <select id="{{id}}" name="{{name}}">
+        {{#options}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+        {{/options}}
+        {{#optgroups}}
+            <optgroup label="{{label}}">
+                {{#options}}
+                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                {{/options}}
+            </optgroup>
+        {{/optgroups}}
+    </select>
+</div>
+
