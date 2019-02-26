@@ -9107,8 +9107,6 @@ a.ygtvspacer:hover {
 }
 .message-drawer {
   position: fixed;
-  top: 0;
-  height: 100%;
   right: 0;
   width: 320px;
   z-index: 999;
@@ -9116,14 +9114,30 @@ a.ygtvspacer:hover {
   box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
+  height: calc(100% - 42px);
+  top: 52px;
   -webkit-transition: all 0.2s ease-in-out;
   -moz-transition: all 0.2s ease-in-out;
   -o-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
 }
+.message-drawer .drawer-top {
+  transition: all 0.2s ease-in-out;
+  height: 0;
+  opacity: 0;
+}
+@media (max-width: 980px) {
+  .message-drawer.affix {
+    top: 0;
+    height: 100%;
+  }
+  .message-drawer.affix .drawer-top {
+    height: 37px;
+    opacity: 1;
+  }
+}
 @media (min-width: 980px) {
   .message-drawer {
-    height: calc(100% - 42px);
     top: 42px;
   }
   .message-drawer .drawer-top {

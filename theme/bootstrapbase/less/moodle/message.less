@@ -1182,8 +1182,6 @@
 
 .message-drawer {
     position: fixed;
-    top: 0;
-    height: 100%;
     right: 0;
     width: @message-drawer-width;
     z-index: 999;
@@ -1191,13 +1189,28 @@
     box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
     display: flex;
     flex-direction: column;
-
+    height: ~"calc(100% - 42px)";
+    top: 52px;
+    .drawer-top {
+        transition: all .2s ease-in-out;
+        height: 0;
+        opacity: 0;
+    }
+    @media (max-width: 980px) {
+        &.affix {
+            top: 0;
+            height: 100%;
+            .drawer-top {
+                height: 37px;
+                opacity: 1;
+            }
+        }
+    }
     @media (min-width: 980px) {
+        top: 42px;
         .drawer-top {
             display: none;
         }
-        height: ~"calc(100% - 42px)";
-        top: 42px;
     }
 
     .transition(all .2s ease-in-out);

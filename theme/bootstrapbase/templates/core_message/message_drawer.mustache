@@ -45,10 +45,12 @@
     data-region="message-drawer"
     role="region"
 >
-    <div class="drawer-top p-2 border-bottom bg-secondary text-right">
-        <a id="message-drawer-close-{{uniqid}}" class="" href="#" role="button">
-            {{#pix}} i/window_close, core, {{#str}} togglemessagemenu, message {{/str}} {{/pix}}
-        </a>
+    <div class="drawer-top border-bottom bg-secondary text-right">
+        <div class="p-2">
+            <a id="message-drawer-close-{{uniqid}}" href="#">
+                {{#pix}} i/window_close, core, {{#str}} togglemessagemenu, message {{/str}} {{/pix}}
+            </a>
+        </div>
     </div>
     <div class="header-container position-relative" data-region="header-container">
         {{> core_message/message_drawer_view_contacts_header }}
@@ -76,16 +78,23 @@ require(
 [
     'jquery',
     'core_message/message_drawer',
-    'core_message/message_popover'
+    'core_message/message_popover',
+    'theme_bootstrapbase/bootstrap'
 ],
 function(
     $,
     MessageDrawer,
-    Popover
+    Popover,
+    _
 ) {
 
     var root = $('#message-drawer-{{uniqid}}');
     MessageDrawer.init(root);
+    root.affix({
+        offset: {
+            top: 52
+        }
+    });
 
     var toggle = $('#message-drawer-close-{{uniqid}}');
     Popover.init(toggle);
