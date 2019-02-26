@@ -67,8 +67,8 @@ if ($dir) {
 if ($page) {
     $params['page'] = $page;
 }
-if ($perpage) {
-    $params['perpage'] = $perpage;
+if ($templateid) {
+    $params['templateid'] = $templateid;
 }
 if ($search) {
     $params['search'] = $search;
