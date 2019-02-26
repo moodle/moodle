@@ -578,32 +578,6 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
     return true;
 }
 
-/**
- * Quiz periodic clean-up tasks.
- */
-function quiz_cron() {
-    global $CFG;
-
-    require_once($CFG->dirroot . '/mod/quiz/cronlib.php');
-    mtrace('');
-
-    $timenow = time();
-    $overduehander = new mod_quiz_overdue_attempt_updater();
-
-    $processto = $timenow - get_config('quiz', 'graceperiodmin');
-
-    mtrace('  Looking for quiz overdue quiz attempts...');
-
-    list($count, $quizcount) = $overduehander->update_overdue_attempts($timenow, $processto);
-
-    mtrace('  Considered ' . $count . ' attempts in ' . $quizcount . ' quizzes.');
-
-    // Run cron for our sub-plugin types.
-    cron_execute_plugin_type('quiz', 'quiz reports');
-    cron_execute_plugin_type('quizaccess', 'quiz access rules');
-
-    return true;
-}
 
 /**
  * @param int|array $quizids A quiz ID, or an array of quiz IDs.
