@@ -197,20 +197,21 @@ class provider implements
 
         if ($context->contextlevel == CONTEXT_COURSE || $context->contextlevel == CONTEXT_SYSTEM) {
             // Find the modifications we made on badges (course & system).
-            $params = [
-                'courselevel' => CONTEXT_COURSE,
-                'syscontextid' => SYSCONTEXTID,
-                'typecourse' => BADGE_TYPE_COURSE,
-                'typesite' => BADGE_TYPE_SITE,
-                'contextid' => $context->id,
-            ];
+            if ($context->contextlevel == CONTEXT_COURSE) {
+                $extrawhere = 'AND b.courseid = :courseid';
+                $params = [
+                    'badgetype' => BADGE_TYPE_COURSE,
+                    'courseid'  => $context->instanceid
+                ];
+            } else {
+                $extrawhere = '';
+                $params = ['badgetype' => BADGE_TYPE_SITE];
+            }
 
             $sql = "SELECT b.usermodified, b.usercreated
                       FROM {badge} b
-                      JOIN {context} ctx
-                           ON (b.type = :typecourse AND b.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel)
-                           OR (b.type = :typesite AND ctx.id = :syscontextid)
-                     WHERE ctx.id = :contextid";
+                     WHERE b.type = :badgetype
+                           $extrawhere";
 
             $userlist->add_from_sql('usermodified', $sql, $params);
             $userlist->add_from_sql('usercreated', $sql, $params);
