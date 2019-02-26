@@ -1080,7 +1080,7 @@ class iomad_user_filter_form extends moodleform {
 class iomad_date_filter_form extends moodleform {
     protected $params = array();
 
-    public function __construct($params) {
+    public function __construct($url, $params) {
         $this->params = $params;
         parent::__construct();
     }
@@ -1146,8 +1146,9 @@ class iomad_date_filter_form extends moodleform {
 class iomad_course_search_form extends moodleform {
     protected $params = array();
 
-    public function __construct($params) {
+    public function __construct($url, $params) {
         $this->params = $params;
+
         parent::__construct();
     }
 

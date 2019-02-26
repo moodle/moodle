@@ -22,7 +22,7 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/user/filters/lib.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
 
-$companyid    = optional_param('companyid', 0, PARAM_INT);
+$companyid    = optional_param('companyid', 0, PARAM_CLEAN);
 $coursesearch      = optional_param('coursesearch', '', PARAM_CLEAN);// Search string.
 $courseid = optional_param('courseid', 0, PARAM_INTEGER);
 $update = optional_param('update', null, PARAM_ALPHA);
@@ -37,12 +37,8 @@ $expireafter = optional_param('expireafter', 0, PARAM_INTEGER);
 
 $params = array();
 
-if ($companyid) {
-    $params['companyid'] = $companyid;
-}
-if ($coursesearch) {
-    $params['coursesearch'] = $coursesearch;
-}
+$params['companyid'] = $companyid;
+$params['coursesearch'] = $coursesearch;
 if ($courseid) {
     $params['courseid'] = $courseid;
 }
@@ -74,7 +70,6 @@ if (empty($companyid) && !empty($mycompanyid)) {
     $companyid = $mycompanyid;
     $params['companyid'] = $mycompanyid;
 }
-
 
 if (!empty($update)) {
     // Need to change something.
@@ -253,7 +248,7 @@ $companyids = $DB->get_records_menu('company', array(), 'id, name');
 $companyids['none'] = get_string('nocompany', 'block_iomad_company_admin');
 $companyids['all'] = get_string('allcourses', 'block_iomad_company_admin');
 ksort($companyids);
-$companyselect = new single_select($linkurl, 'company', $companyids, $companyid);
+$companyselect = new single_select($linkurl, 'companyid', $companyids, $companyid);
 $companyselect->label = get_string('filtercompany', 'block_iomad_company_admin');
 $companyselect->formid = 'choosecompany';
 echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
@@ -264,13 +259,21 @@ echo html_writer::start_tag('div', array('class' => 'iomadclear'));
 
 $table = new iomad_courses_table('iomad_courses_table');
 
-$companysql = "";
+if ($companyid == 'all') {
+    $companyid = 0;
+}
+
+$companysql = " 1 = 1";
 $searchsql = "";
 if (!empty($companyid)) {
-    $companysql = " (c.id IN (
-                      SELECT courseid FROM {company_course}
-                      WHERE companyid = :companyid)
-                     OR ic.shared = 1) ";
+    if ($companyid == "none") {
+        $companysql = " c.id NOT IN (SELECT courseid FROM {company_course}) ";
+    } else {
+        $companysql = " (c.id IN (
+                          SELECT courseid FROM {company_course}
+                          WHERE companyid = :companyid)
+                         OR ic.shared = 1) ";
+    }
 }
 
 if (!empty($coursesearch)) {
@@ -279,10 +282,11 @@ if (!empty($coursesearch)) {
     }
     $searchsql .= $DB->sql_like('c.fullname', ':coursesearch', false, false);
     $params['coursesearch'] = "%" . $params['coursesearch'] ."%";
+    $params['coursesearchtext'] = $coursesearch;
 }
 
 // Set up the SQL for the table.
-$selectsql = "ic.id, c.id AS courseid, c.fullname AS coursename, ic.licensed, ic.shared, ic.validlength, ic.warnexpire, ic.warncompletion, ic.notifyperiod, ic.expireafter, ic.warnnotstarted, $companyid AS companyid";
+$selectsql = "ic.id, c.id AS courseid, c.fullname AS coursename, ic.licensed, ic.shared, ic.validlength, ic.warnexpire, ic.warncompletion, ic.notifyperiod, ic.expireafter, ic.warnnotstarted, '$companyid' AS companyid";
 $fromsql = "{iomad_courses} ic JOIN {course} c ON (ic.courseid = c.id)";
 $wheresql = "$companysql $searchsql";
 $sqlparams = $params;

@@ -91,6 +91,9 @@ class iomad_courses_table extends table_sql {
         $licenseselectbutton = array('0' => get_string('no'), '1' => get_string('yes'), '3' => get_string('pluginname', 'enrol_self'));
 
         $linkparams = $params;
+        if (!empty($params['coursesearchtext'])) {
+            $linkparams['coursesearch'] = $params['coursesearchtext'];
+        }
         $linkparams['courseid'] = $row->courseid;
         $linkparams['update'] = 'license';
         $licenseurl = new moodle_url($linkurl, $linkparams);
@@ -116,10 +119,13 @@ class iomad_courses_table extends table_sql {
                                     '2' => get_string('closed', 'block_iomad_company_admin'));
 
         $linkparams = $params;
+        if (!empty($params['coursesearchtext'])) {
+            $linkparams['coursesearch'] = $params['coursesearchtext'];
+        }
         $linkparams['courseid'] = $row->courseid;
         $linkparams['update'] = 'shared';
         $sharedurl = new moodle_url($linkurl, $linkparams);
-        $sharedselect = new single_select($sharedurl, 'license', $sharedselectbutton, $row->licensed);
+        $sharedselect = new single_select($sharedurl, 'shared', $sharedselectbutton, $row->shared);
         $sharedselect->label = '';
         $sharedselect->formid = 'sharedselect'.$row->courseid;
         $sharedselectoutput = html_writer::tag('div', $OUTPUT->render($sharedselect), array('id' => 'shared_selector'.$row->courseid));
@@ -134,11 +140,18 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_validlength($row) {
-        global $output, $CFG, $DB;
+        global $output, $CFG, $DB, $params;
+
+        if (!empty($params['coursesearchtext'])) {
+            $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+        } else {
+            $coursesearch = '';
+        }
 
         return '<form action="iomad_courses_form.php" method="get">
-               <input type="hidden" name="courseid" value="' . $row->courseid . '" />
-               <input type="hidden" name="companyid" value="'.$row->companyid.'" />
+                <input type="hidden" name="courseid" value="' . $row->courseid . '" />
+                <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
+                $coursesearch .'
                <input type="hidden" name="update" value="validfor" />
                <input type="text" name="validfor" id="id_validfor" value="'.$row->validlength.'" size="10"/>
                <input type="submit" value="' . get_string('submit') . '" />
@@ -152,11 +165,18 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_expireafter($row) {
-        global $output, $CFG, $DB;
+        global $output, $CFG, $DB, $params;
+
+        if (!empty($params['coursesearchtext'])) {
+            $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+        } else {
+            $coursesearch = '';
+        }
 
         return '<form action="iomad_courses_form.php" method="get">
                 <input type="hidden" name="courseid" value="' . $row->courseid . '" />
-                <input type="hidden" name="companyid" value="'.$row->companyid.'" />
+                <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
+                $coursesearch .'
                 <input type="hidden" name="update" value="expireafter" />
                 <input type="text" name="expireafter" id="id_expire" value="'.$row->expireafter.'" size="10"/>
                 <input type="submit" value="' . get_string('submit') . '" />
@@ -170,11 +190,18 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_warnexpire($row) {
-        global $output, $CFG, $DB;
+        global $output, $CFG, $DB, $params;
+
+        if (!empty($params['coursesearchtext'])) {
+            $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+        } else {
+            $coursesearch = '';
+        }
 
         return '<form action="iomad_courses_form.php" method="get">
                 <input type="hidden" name="courseid" value="' . $row->courseid . '" />
-                <input type="hidden" name="companyid" value="'.$row->companyid.'" />
+                <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
+                $coursesearch .'
                 <input type="hidden" name="update" value="warnexpire" />
                 <input type="text" name="warnexpire" id="id_warnexpire" value="'.$row->warnexpire.'" size="10"/>
                 <input type="submit" value="' . get_string('submit') . '" />
@@ -188,11 +215,18 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_warnnotstarted($row) {
-        global $output, $CFG, $DB;
+        global $output, $CFG, $DB, $params;
+
+        if (!empty($params['coursesearchtext'])) {
+            $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+        } else {
+            $coursesearch = '';
+        }
 
         return '<form action="iomad_courses_form.php" method="get">
                 <input type="hidden" name="courseid" value="' . $row->courseid . '" />
-                <input type="hidden" name="companyid" value="'.$row->companyid.'" />
+                <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
+                $coursesearch .'
                 <input type="hidden" name="update" value="warnnotstarted" />
                 <input type="text" name="warnnotstarted" id="id_warnnotstarted" value="'.$row->warnnotstarted.'" size="10"/>
                 <input type="submit" value="' . get_string('submit') . '" />
@@ -206,11 +240,18 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_warncompletion($row) {
-        global $output, $CFG, $DB;
+        global $output, $CFG, $DB, $params;
+
+        if (!empty($params['coursesearchtext'])) {
+            $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+        } else {
+            $coursesearch = '';
+        }
 
         return '<form action="iomad_courses_form.php" method="get">
                 <input type="hidden" name="courseid" value="' . $row->courseid . '" />
-                <input type="hidden" name="companyid" value="'.$row->companyid.'" />
+                <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
+                $coursesearch .'
                 <input type="hidden" name="update" value="warncompletion" />
                 <input type="text" name="warncompletion" id="id_warncompletion" value="'.$row->warncompletion.'" size="10"/>
                 <input type="submit" value="' . get_string('submit') . '" />
@@ -224,11 +265,18 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_notifyperiod($row) {
-        global $output, $CFG, $DB;
+        global $output, $CFG, $DB, $params;
+
+        if (!empty($params['coursesearchtext'])) {
+            $coursesearch = '<input type="hidden" name="coursesearch" value="'.$params['coursesearchtext'].'" />';
+        } else {
+            $coursesearch = '';
+        }
 
         return '<form action="iomad_courses_form.php" method="get">
                 <input type="hidden" name="courseid" value="' . $row->courseid . '" />
-                <input type="hidden" name="companyid" value="'.$row->companyid.'" />
+                <input type="hidden" name="companyid" value="'.$row->companyid.'" />'.
+                $coursesearch .'
                 <input type="hidden" name="update" value="notifyperiod" />
                 <input type="text" name="notifyperiod" id="id_notifyperiod" value="'.$row->notifyperiod.'" size="10"/>
                 <input type="submit" value="' . get_string('submit') . '" />
