@@ -164,13 +164,13 @@ class template_edit_form extends moodleform {
         }
         $mform->addElement('html', "</div>");
 
-        $mform->addElement('filemanager', 'companylogo',
+/*        $mform->addElement('filemanager', 'companylogo',
                             get_string('companylogo', 'block_iomad_company_admin'), null,
                             array('subdirs' => 0,
                                  'maxbytes' => 150 * 1024,
                                  'maxfiles' => 1,
                                  'accepted_types' => array('*.jpg', '*.gif', '*.png')));
-
+*/
         $mform->addElement('editor', 'signature_editor', get_string('signature', 'local_email'),
                            array('enable_filemanagement' => false,
                                  'changeformat' => false,
@@ -231,7 +231,7 @@ class template_edit_form extends moodleform {
         $mform->disabledIf('emailreplytoother', 'isediting', 'neq', 1);
         $mform->disabledIf('subject', 'isediting', 'neq', 1);
         $mform->disabledIf('body_editor', 'isediting', 'neq', 1);
-        $mform->disabledIf('companylogo', 'isediting', 'neq', 1);
+//        $mform->disabledIf('companylogo', 'isediting', 'neq', 1);
         $mform->disabledIf('signature_editor', 'isediting', 'neq', 1);
         $mform->disabledIf('save', 'isediting', 'neq', 1);
         $mform->disabledIf('edit', 'isediting', 'eq', 1);
@@ -391,7 +391,8 @@ $PAGE->requires->js('/local/email/module.js');
 // Set the page heading.
 $PAGE->set_heading($linktext);
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
-$PAGE->navbar->add($linktext, $linkurl);
+$PAGE->navbar->add(get_string('template_list_title', 'local_email'), new moodle_url('/local/email/template_list.php'));
+$PAGE->navbar->add($linktext);
 
 $templatelist = new moodle_url('/local/email/template_list.php', $urlparams);
 
@@ -410,7 +411,7 @@ foreach(explode(',', $templaterecord->emailcc) as $emailcc) {
 }
 $templaterecord->emailcc = $emailccarr;
 
-if (!empty($templaterecord->id)) {
+/*if (!empty($templaterecord->id)) {
     // Get the company logo.
     $draftcompanylogoid = file_get_submitted_draft_itemid('companylogo');
     file_prepare_draft_area($draftcompanylogoid,
@@ -420,7 +421,7 @@ if (!empty($templaterecord->id)) {
                             array('subdirs' => 0, 'maxbytes' => 15 * 1024, 'maxfiles' => 1));
     $templaterecord->companylogo = $draftcompanylogoid;
 }
-
+*/
 // Set the form data.
 $mform->set_data($templaterecord);
 
@@ -460,7 +461,7 @@ if ($mform->is_cancelled()) {
         }
         $redirectmessage = get_string('templateupdatedok', 'local_email');
     }
-    if (!empty($data->companylogo)) {
+/*    if (!empty($data->companylogo)) {
         file_save_draft_area_files($data->companylogo,
                                    $context->id,
                                    'local_email',
@@ -468,7 +469,7 @@ if ($mform->is_cancelled()) {
                                    $data->id,
                                    array('subdirs' => 0, 'maxbytes' => 150 * 1024, 'maxfiles' => 1));
     }
-
+*/
     redirect($templatelist, $redirectmessage, null, \core\output\notification::NOTIFY_SUCCESS);
 }
 
