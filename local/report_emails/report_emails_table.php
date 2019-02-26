@@ -77,6 +77,17 @@ class local_report_emails_table extends table_sql {
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
      */
+    public function col_templatename($row) {
+        global $CFG, $DB;
+
+        return get_string($row->templatename. '_name', 'local_email');
+    }
+
+    /**
+     * Generate the display of the user's created timestamp
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
     public function col_sender($row) {
         global $CFG, $DB;
 

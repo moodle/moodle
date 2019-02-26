@@ -34,7 +34,7 @@ $perpage      = optional_param('perpage', $CFG->iomad_max_list_users, PARAM_INT)
 $acl          = optional_param('acl', '0', PARAM_INT);           // Id of user to tweak mnet ACL (requires $access).
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
-$templateid = optional_param('templateid', 0, PARAM_INTEGER);
+$templateid = optional_param('templateid', 0, PARAM_CLEAN);
 $emailfromraw = optional_param_array('emailfrom', null, PARAM_INT);
 $emailtoraw = optional_param_array('emailto', null, PARAM_INT);
 $confirm = optional_param('confirm', '', PARAM_CLEAN);
@@ -256,12 +256,18 @@ if (!empty($CFG->iomad_report_fields)) {
 // Get the appropriate list of email templates.
 $templateslist = array(0 => get_string('all'));
 $templates = local_email::get_templates();
+$templatenames = array();
 foreach (array_keys($templates) as $templatename) {
     $templateslist[] = $templatename;
+    $templatenames[$templatename] = get_string($templatename .'_name', 'local_email');
 }
+// Make the names nice.
+uasort($templatenames, 'email_template_sort');
+$templatenames = array('0' => get_string('all')) + $templatenames;
+
 $selectparams = $params;
 $selecturl = new moodle_url('/local/report_emails/index.php', $selectparams);
-$select = new single_select($selecturl, 'templateid', $templateslist, $templateid);
+$select = new single_select($selecturl, 'templateid', $templatenames, $templateid);
 $select->label = get_string('templatetype', 'local_email');
 $select->formid = 'choosetemplate';
 $templateselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_template_selector'));
@@ -336,7 +342,7 @@ $departmentsql = " AND d.id IN (" . implode(',', array_keys($showdepartments)) .
 
 if (!empty($templateid)) {
     $templatesql = " AND templatename = :templatename ";
-    $searchinfo->searchparams['templatename'] = $templateslist[$templateid];
+    $searchinfo->searchparams['templatename'] = $templateid;
 } else {
     $templatesql = '';
 }
@@ -405,9 +411,16 @@ $table->define_baseurl($url);
 $table->define_columns($columns);
 $table->define_headers($headers);
 $table->no_sorting('controls');
+$table->no_sorting('templatename');
 $table->sort_default_column = 'sent';
 $table->out($CFG->iomad_max_list_users, true);
 
 if (!$table->is_downloading()) {
     echo $output->footer();
+}
+
+function email_template_sort($a,$b)
+{
+    if ($a==$b) return 0;
+    return ($a<$b)?-1:1;
 }

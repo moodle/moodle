@@ -403,7 +403,6 @@ echo $output->paging_bar($ntemplates, $page, $perpage, $baseurl);
 flush();
 
 if ($manage) {
-echo "A</br>";
     if (empty($templatesetid)) {
         // Display the list of templates.
         $templates = $DB->get_records('email_templateset', array(), 'templatesetname');

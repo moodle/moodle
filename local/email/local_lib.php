@@ -24,7 +24,7 @@ class local_email {
     }
 
     public static function create_default_template_row($templatename, $strdefault, $stradd, $strsend, $enable, $lang, $prefix, $templatesetid = 0) {
-        global $PAGE, $company;
+        global $PAGE, $company, $OUTPUT;
 
         $deletebutton = "";
 
@@ -66,7 +66,7 @@ class local_email {
         $rowform = new email_template_edit_form(new moodle_url('template_edit_form.php'), $company->id, $templatename, $templatesetid);
         $rowform->set_data(array('templatename' => $templatename));
         $row = new html_table_row();
-        $row->cells[] = $templatename;
+        $row->cells[] = get_string($templatename.'_name', 'local_email') . $OUTPUT->help_icon($templatename.'_name', 'local_email');
         $cell = new html_table_cell($enablebutton);
         $row->cells[] = $cell;
         $cell = new html_table_cell($enablemanagerbutton);
