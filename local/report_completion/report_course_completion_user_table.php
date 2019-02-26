@@ -201,7 +201,7 @@ class local_report_course_completion_user_table extends table_sql {
         } else {
             $total = $DB->count_records('course_completion_criteria', array('course' => $row->courseid));
             if ($total != 0) {
-                $usercount = $DB->count_records('course_completion_crit_compl', array('course' => $row->courseid, 'userid' => $row->id));
+                $usercount = $DB->count_records('course_completion_crit_compl', array('course' => $row->courseid, 'userid' => $row->userid));
                 $progress = round($usercount * 100 / $total, 0);
             } else {
                 $progress = -1;
