@@ -1258,39 +1258,6 @@ function assign_get_post_actions() {
 }
 
 /**
- * Call cron on the assign module.
- */
-function assign_cron() {
-    global $CFG;
-
-    require_once($CFG->dirroot . '/mod/assign/locallib.php');
-    assign::cron();
-
-    $plugins = core_component::get_plugin_list('assignsubmission');
-
-    foreach ($plugins as $name => $plugin) {
-        $disabled = get_config('assignsubmission_' . $name, 'disabled');
-        if (!$disabled) {
-            $class = 'assign_submission_' . $name;
-            require_once($CFG->dirroot . '/mod/assign/submission/' . $name . '/locallib.php');
-            $class::cron();
-        }
-    }
-    $plugins = core_component::get_plugin_list('assignfeedback');
-
-    foreach ($plugins as $name => $plugin) {
-        $disabled = get_config('assignfeedback_' . $name, 'disabled');
-        if (!$disabled) {
-            $class = 'assign_feedback_' . $name;
-            require_once($CFG->dirroot . '/mod/assign/feedback/' . $name . '/locallib.php');
-            $class::cron();
-        }
-    }
-
-    return true;
-}
-
-/**
  * Returns all other capabilities used by this module.
  * @return array Array of capability strings
  */
