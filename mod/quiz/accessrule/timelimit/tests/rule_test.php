@@ -39,6 +39,7 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/timelimit/rule.php');
 class quizaccess_timelimit_testcase extends basic_testcase {
     public function test_time_limit_access_rule() {
         $quiz = new stdClass();
+        $quiz->timeclose = 0;
         $quiz->timelimit = 3600;
         $cm = new stdClass();
         $cm->id = 0;
@@ -51,10 +52,58 @@ class quizaccess_timelimit_testcase extends basic_testcase {
 
         $attempt->timestart = 10000;
         $attempt->preview = 0;
-        $this->assertEquals($rule->end_time($attempt), 13600);
-        $this->assertEquals($rule->time_left_display($attempt, 10000), 3600);
-        $this->assertEquals($rule->time_left_display($attempt, 12000), 1600);
-        $this->assertEquals($rule->time_left_display($attempt, 14000), -400);
+        $this->assertEquals(13600, $rule->end_time($attempt));
+        $this->assertEquals(3600, $rule->time_left_display($attempt, 10000));
+        $this->assertEquals(1600, $rule->time_left_display($attempt, 12000));
+        $this->assertEquals(-400, $rule->time_left_display($attempt, 14000));
+
+        $this->assertFalse($rule->prevent_access());
+        $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
+        $this->assertFalse($rule->is_finished(0, $attempt));
+    }
+
+    /**
+     * Data provider for test_time_limit_access_rule_with_time_close.
+     *
+     * @return array of ($timetoclose, $timelimit, $displaylimit, $actuallimit)
+     */
+    public function time_limit_access_rule_with_time_close_provider() {
+        return [
+            'Close time is earlier than time limit' => [1800, 3600, 3600, 1800],
+            'Close time is on time limit' => [3600, 3600, 3600, 3600],
+            'Close time is later than time limit' => [3600, 1800, 1800, 1800]
+        ];
+    }
+
+    /**
+     * Test the time_left_display method of the quizaccess_timelimit class.
+     *
+     * @param int $timetoclose  The number of seconds that is left to the quiz' closing time
+     * @param int $timelimit    Time limit of the quiz
+     * @param int $displaylimit The limit that is displayed on the quiz page
+     * @param int $actuallimit  The actual limit that is being applied
+     * @dataProvider time_limit_access_rule_with_time_close_provider
+     */
+    public function test_time_limit_access_rule_with_time_close($timetoclose, $timelimit, $displaylimit, $actuallimit) {
+        $timenow = 10000;
+
+        $quiz = new stdClass();
+        $quiz->timeclose = $timenow + $timetoclose;
+        $quiz->timelimit = $timelimit;
+        $cm = new stdClass();
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
+        $rule = new quizaccess_timelimit($quizobj, $timenow);
+        $attempt = new stdClass();
+
+        $this->assertEquals($rule->description(),
+            get_string('quiztimelimit', 'quizaccess_timelimit', format_time($displaylimit)));
+
+        $attempt->timestart = $timenow;
+        $attempt->preview = 0;
+        $this->assertEquals($timenow + $actuallimit, $rule->end_time($attempt));
+        $this->assertEquals($actuallimit, $rule->time_left_display($attempt, $timenow));
+        $this->assertEquals($actuallimit - 1000, $rule->time_left_display($attempt, $timenow + 1000));
 
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
