@@ -473,7 +473,7 @@ class core_component_testcase extends advanced_testcase {
         $this->assertEquals(array(), array_keys($list));
     }
 
-    public function test_get_component_classes_int_namespace() {
+    public function test_get_component_classes_in_namespace() {
 
         // Unexisting.
         $this->assertCount(0, core_component::get_component_classes_in_namespace('core_unexistingcomponent', 'something'));
@@ -493,7 +493,7 @@ class core_component_testcase extends advanced_testcase {
         $this->assertCount(1, core_component::get_component_classes_in_namespace('auth_cas', 'task'));
         $this->assertCount(1, core_component::get_component_classes_in_namespace('auth_cas', '\\task'));
 
-        // Core as a component works, the funcion can normalise the component name.
+        // Core as a component works, the function can normalise the component name.
         $this->assertCount(7, core_component::get_component_classes_in_namespace('core', 'update'));
         $this->assertCount(7, core_component::get_component_classes_in_namespace('', 'update'));
         $this->assertCount(7, core_component::get_component_classes_in_namespace('moodle', 'update'));
@@ -507,6 +507,17 @@ class core_component_testcase extends advanced_testcase {
         // Without namespace it returns classes/ classes.
         $this->assertCount(3, core_component::get_component_classes_in_namespace('tool_mobile', ''));
         $this->assertCount(2, core_component::get_component_classes_in_namespace('tool_filetypes'));
+
+        // When no component is specified, classes are returned for the namespace in all components.
+        // (We don't assert exact amounts here as the count of `output` classes will change depending on plugins installed).
+        $this->assertGreaterThan(
+            count(\core_component::get_component_classes_in_namespace('core', 'output')),
+            count(\core_component::get_component_classes_in_namespace(null, 'output')));
+
+        // Without either a component or namespace it returns an empty array.
+        $this->assertEmpty(\core_component::get_component_classes_in_namespace());
+        $this->assertEmpty(\core_component::get_component_classes_in_namespace(null));
+        $this->assertEmpty(\core_component::get_component_classes_in_namespace(null, ''));
     }
 
     /**

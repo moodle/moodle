@@ -650,22 +650,7 @@ class manager {
         // Just in case...
         $element = clean_param($element, PARAM_ALPHANUMEXT);
 
-        // Core analytics classes (analytics subsystem should not contain uses of the analytics API).
-        $classes = \core_component::get_component_classes_in_namespace('core', 'analytics\\' . $element);
-
-        // Plugins.
-        foreach (\core_component::get_plugin_types() as $type => $unusedplugintypepath) {
-            foreach (\core_component::get_plugin_list($type) as $pluginname => $unusedpluginpath) {
-                $frankenstyle = $type . '_' . $pluginname;
-                $classes += \core_component::get_component_classes_in_namespace($frankenstyle, 'analytics\\' . $element);
-            }
-        }
-
-        // Core subsystems.
-        foreach (\core_component::get_core_subsystems() as $subsystemname => $unusedsubsystempath) {
-            $componentname = 'core_' . $subsystemname;
-            $classes += \core_component::get_component_classes_in_namespace($componentname, 'analytics\\' . $element);
-        }
+        $classes = \core_component::get_component_classes_in_namespace(null, 'analytics\\' . $element);
 
         return $classes;
     }
