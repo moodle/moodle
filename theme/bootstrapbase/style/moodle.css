@@ -5244,10 +5244,12 @@ img.iconsmall {
 .adminsettingsflags label {
   margin-right: 7px;
 }
-.form-description {
+.form-description,
+.form-dependenton {
   clear: right;
 }
 .form-description pre,
+.form-dependenton pre,
 .formsettingheading pre {
   /* Code examples should be left aligned. */
   /*rtl:ignore*/
@@ -16715,6 +16717,7 @@ form {
 }
 .form-item .form-setting,
 .form-item .form-description,
+.form-item .form-dependenton,
 .mform .fitem .felement,
 #page-mod-forum-search .c1 {
   *display: inline-block;
@@ -16724,6 +16727,7 @@ form {
 }
 .form-item .form-setting:first-child,
 .form-item .form-description:first-child,
+.form-item .form-dependenton:first-child,
 .mform .fitem .felement:first-child,
 #page-mod-forum-search .c1:first-child {
   *padding-left: 200px;
@@ -16735,13 +16739,15 @@ form {
   margin-bottom: 0;
 }
 .form-item .form-description,
+.form-item .form-dependenton,
 .felement.fstatic {
   color: #595959;
   display: block;
   margin-bottom: 10px;
   padding-top: 5px;
 }
-.form-item .form-description {
+.form-item .form-description,
+.form-item .form-dependenton {
   padding-top: 0;
 }
 .fitem .fstaticlabel {
@@ -20779,6 +20785,7 @@ span[data-flexitour="container"][x-placement="right-start"] div[data-role="arrow
   }
   .form-item .form-setting,
   .form-item .form-description,
+  .form-item .form-dependenton,
   .mform .fitem .felement,
   #page-mod-forum-search .c1,
   .mform .fdescription.required,
@@ -20845,6 +20852,7 @@ span[data-flexitour="container"][x-placement="right-start"] div[data-role="arrow
   }
   .form-item .form-setting,
   .form-item .form-description,
+  .form-item .form-dependenton,
   .mform .fitem .felement,
   #page-mod-forum-search .c1,
   .mform .fdescription.required,
@@ -21056,7 +21064,8 @@ span[data-flexitour="container"][x-placement="right-start"] div[data-role="arrow
   .mform .fitem .felement,
   .path-backup .mform .fitem .felement,
   .mform .fdescription.required,
-  .form-item .form-description {
+  .form-item .form-description,
+  .form-item .form-dependenton {
     margin-left: 0;
   }
   table#form td.submit,
