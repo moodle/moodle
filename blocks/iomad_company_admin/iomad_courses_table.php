@@ -187,6 +187,24 @@ class iomad_courses_table extends table_sql {
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
      */
+    public function col_warnnotstarted($row) {
+        global $output, $CFG, $DB;
+
+        return '<form action="iomad_courses_form.php" method="get">
+                <input type="hidden" name="courseid" value="' . $row->courseid . '" />
+                <input type="hidden" name="companyid" value="'.$row->companyid.'" />
+                <input type="hidden" name="update" value="warnnotstarted" />
+                <input type="text" name="warnnotstarted" id="id_warnnotstarted" value="'.$row->warnnotstarted.'" size="10"/>
+                <input type="submit" value="' . get_string('submit') . '" />
+                </form>';
+
+    }
+
+    /**
+     * Generate the display of the user's license allocated timestamp
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
     public function col_warncompletion($row) {
         global $output, $CFG, $DB;
 

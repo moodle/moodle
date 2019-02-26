@@ -1873,5 +1873,20 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019012900, 'local', 'iomad');
     }
 
+    if ($oldversion < 2019012901) {
+
+        // Define field warnnotstarted to be added to iomad_courses.
+        $table = new xmldb_table('iomad_courses');
+        $field = new xmldb_field('warnnotstarted', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'expireafter');
+
+        // Conditionally launch add field warnnotstarted.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2019012901, 'local', 'iomad');
+    }
+
 return $result;
 }

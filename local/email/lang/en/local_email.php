@@ -105,6 +105,8 @@ $string['course_classroom_manager_denied_name'] = 'Department mananager training
 $string['course_classroom_approval_request_name'] = 'User training event request confirmation';
 $string['courseclassroom_approved_name'] = 'User training event approved';
 $string['course_completed_manager_name'] = 'Manager course completed report';
+$string['course_not_started_warning_name'] = 'Course not started warning';
+$string['course_not_started_warning_name_help'] = 'This email is sent out to a user when they have been given access to a course and have not started it within the defined timeframe in the Iomad course settings.';
 $string['user_added_to_course_name'] = 'User enrolled on course';
 $string['invoice_ordercomplete_name'] = 'User invoice order created';
 $string['invoice_ordercomplete_admin_name'] = 'Admin invoice order created';
@@ -299,6 +301,9 @@ $string['password_update_body'] = '<p>Your password has been updated by the admi
 <p>{User_Newpassword}</p>
 
 <p>Please visit <a href="{LinkURL}">{LinkURL}</a> to change this</p>';
+$string['course_not_started_warning_subject'] = 'Notice: Course {Course_FullName} has not been started';
+$string['course_not_started_warning_body'] = '<p>Dear {User_FirstName},</p>
+<p>You have still not yet started your training on {Course_FullName}.  Please visit <a href="{CourseURL}">{CourseURL}</a> to rectify this.</p>';
 $string['completion_warn_user_subject'] = 'Notice: Course {Course_FullName} has not been completed';
 $string['completion_warn_user_body'] = '<p>Dear {User_FirstName},</p>
 <p>You have still not completed your training on {Course_FullName}.  Please visit <a href="{CourseURL}">{CourseURL}</a> to rectify this.</p>';

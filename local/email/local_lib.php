@@ -101,6 +101,7 @@ class local_email {
                             'course_classroom_denied',
                             'course_completed_manager',
                             'course_classroom_manager_denied',
+                            'course_not_started_warning',
                             'expire',
                             'expire_manager',
                             'expiry_warn_manager',

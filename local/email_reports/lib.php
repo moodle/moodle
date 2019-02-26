@@ -259,6 +259,23 @@ function email_reports_cron() {
 
     $dbman->drop_table($table);
 
+    // Deal with courses where users have not yet started.
+    $warnnotstartusers = $DB->get_records_sql("SELECT lit.* FROM {local_iomad_track} lit
+                                               JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid AND ic.timestarted !=0)
+                                               WHERE lit.timestarted = 0
+                                               AND lit.timeenrolled < (:time - ic.warnnotstarted * 60 * 60 * 24)",
+                                               array('time' => time()));
+    foreach ($warnnotstartedusers as $notstarteduser) {
+        if ($userrec = $DB->get_record('user', array('id' => $notstarteduser->userid, 'suspend' => 0, 'deleted' => 0))) {
+            if ($courserec = $DB->get_record('course', array('id' => $notstarteduser->courseid))) {
+                if ($companyrec = $DB->get_record('company', array('id' => $notstarteduser->companyid))) {
+                    // Passed all checks, send the email.
+                    EmailTemplate::send('course_not_started_warning', array('user' => $userrec, 'course' => $courserec, 'company' => $companyrec));
+                }
+            }
+        }
+    }
+
     // Deal with courses which have expiry warnings
     $tempcomptablename = uniqid('emailrep');
     // Generate the Temp table for storing the users.

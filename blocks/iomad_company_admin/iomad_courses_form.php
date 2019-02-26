@@ -29,6 +29,7 @@ $update = optional_param('update', null, PARAM_ALPHA);
 $license = optional_param('license', 0, PARAM_INTEGER);
 $shared = optional_param('shared', 0, PARAM_INTEGER);
 $validfor = optional_param('validfor', 0, PARAM_INTEGER);
+$warnnotstarted = optional_param('warnnotstarted', 0, PARAM_INTEGER);
 $warnexpire = optional_param('warnexpire', 0, PARAM_INTEGER);
 $warncompletion = optional_param('warncompletion', 0, PARAM_INTEGER);
 $notifyperiod = optional_param('notifyperiod', 0, PARAM_INTEGER);
@@ -213,6 +214,13 @@ if (!empty($update)) {
             }
             $coursedetails['warnexpire'] = $warnexpire;
             $DB->update_record('iomad_courses', $coursedetails);
+        } else if ('warnnotstarted' == $update) {
+            // Work out the time in seconds....
+            if ($warnnotstarted < 0) {
+                $warnnotstarted = 0;
+            }
+            $coursedetails['warnnotstarted'] = $warnnotstarted;
+            $DB->update_record('iomad_courses', $coursedetails);
         } else if ('warncompletion' == $update) {
             // Work out the time in seconds....
             if ($warncompletion < 0) {
@@ -274,7 +282,7 @@ if (!empty($coursesearch)) {
 }
 
 // Set up the SQL for the table.
-$selectsql = "ic.id, c.id AS courseid, c.fullname AS coursename, ic.licensed, ic.shared, ic.validlength, ic.warnexpire, ic.warncompletion, ic.notifyperiod, ic.expireafter, $companyid AS companyid";
+$selectsql = "ic.id, c.id AS courseid, c.fullname AS coursename, ic.licensed, ic.shared, ic.validlength, ic.warnexpire, ic.warncompletion, ic.notifyperiod, ic.expireafter, ic.warnnotstarted, $companyid AS companyid";
 $fromsql = "{iomad_courses} ic JOIN {course} c ON (ic.courseid = c.id)";
 $wheresql = "$companysql $searchsql";
 $sqlparams = $params;
@@ -288,6 +296,7 @@ $tableheaders = array(
     get_string('validfor', 'block_iomad_company_admin') . $OUTPUT->help_icon('validfor', 'block_iomad_company_admin'),
     get_string('expireafter', 'block_iomad_company_admin') . $OUTPUT->help_icon('expireafter', 'block_iomad_company_admin'),
     get_string('warnexpire', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnexpire', 'block_iomad_company_admin'),
+    get_string('warnnotstarted', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnnotstarted', 'block_iomad_company_admin'),
     get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin'),
     get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin'));
 $tablecolumns = array('company',
@@ -297,6 +306,7 @@ $tablecolumns = array('company',
                  'validlength',
                  'expireafter',
                  'warnexpire',
+                 'warnnotstarted',
                  'warncompletion',
                  'notifyperiod');
 
