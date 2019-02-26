@@ -347,20 +347,6 @@ function wiki_print_recent_activity($course, $viewfullnames, $timestart) {
 
     return true; //  True if anything was printed, otherwise false
 }
-/**
- * Function to be run periodically according to the moodle cron
- * This function searches for things that need to be done, such
- * as sending out mail, toggling flags etc ...
- *
- * @uses $CFG
- * @return boolean
- * @todo Finish documenting this function
- **/
-function wiki_cron() {
-    global $CFG;
-
-    return true;
-}
 
 /**
  * Must return an array of grades for a given instance of this module,
