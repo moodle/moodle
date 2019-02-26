@@ -844,6 +844,11 @@ function core_message_standard_after_main_region_html() {
     // Enter to send.
     $entertosend = get_user_preferences('message_entertosend', false, $USER);
 
+    $notification = '';
+    if (!get_user_preferences('core_message_migrate_data', false)) {
+        $notification = get_string('messagingdatahasnotbeenmigrated', 'message');
+    }
+
     return $renderer->render_from_template('core_message/message_drawer', [
         'contactrequestcount' => $requestcount,
         'loggedinuser' => [
@@ -861,6 +866,9 @@ function core_message_standard_after_main_region_html() {
         'settings' => [
             'privacy' => $choices,
             'entertosend' => $entertosend
+        ],
+        'overview' => [
+            'notification' => $notification
         ]
     ]);
 }
