@@ -189,7 +189,7 @@ class local_report_course_completion_course_table extends table_sql {
                                              array('companyid' => $company->id, 'courseid' => $row->id));
 
         // Count the enrolled users
-        $enrolled = $DB->count_records_sql("SELECT COUNT(lit.id)
+        $started = $DB->count_records_sql("SELECT COUNT(lit.id)
                                             FROM {local_iomad_track} lit
                                             JOIN {company_users} cu ON (lit.userid = cu.userid AND lit.companyid = cu.companyid)
                                             JOIN {user} u ON (lit.userid = u.id)
@@ -202,12 +202,11 @@ class local_report_course_completion_course_table extends table_sql {
                                             array('companyid' => $company->id, 'courseid' => $row->id));
 
         // Count the non started users.
-        $licensesallocated = $DB->count_records_sql("SELECT count(lit.id) FROM {local_iomad_track} lit
+        $notstarted = $DB->count_records_sql("SELECT count(lit.id) FROM {local_iomad_track} lit
                                                      JOIN {company_users} cu ON (lit.userid = cu.userid AND lit.companyid = cu.companyid)
                                                      JOIN {user} u ON (lit.userid = u.id)
                                                      WHERE lit.courseid = :courseid
                                                      AND lit.companyid = :companyid
-                                                     AND lit.licensename IS NOT NULL
                                                      AND lit.timeenrolled IS NULL
                                                      $suspendedsql
                                                      $departmentsql",
@@ -216,17 +215,17 @@ class local_report_course_completion_course_table extends table_sql {
         if (!$this->is_downloading()) {
             $enrolledchart = new \core\chart_pie();
             $enrolledchart->set_doughnut(true); // Calling set_doughnut(true) we display the chart as a doughnut.
-            $enrolledseries = new \core\chart_series('', array($completed, $licensesallocated, $enrolled));
+            $enrolledseries = new \core\chart_series('', array($completed, $started, $notstarted));
             $enrolledchart->add_series($enrolledseries);
             $enrolledchart->set_labels(array(get_string('completedusers', 'local_report_completion') . " (" .$completed . ")",
-                                             get_string('inprogressusers', 'local_report_completion') . " (" . $licensesallocated . ")",
-                                             get_string('notstartedusers', 'local_report_completion') . " (" . $enrolled . ")"));
+                                             get_string('inprogressusers', 'local_report_completion') . " (" . $started . ")",
+                                             get_string('notstartedusers', 'local_report_completion') . " (" . $notstarted . ")"));
             $CFG->chart_colorset= ['green', '#1177d1', '#d9534f'];
             return $output->render($enrolledchart, false);
         } else {
             return get_string('completedusers', 'local_report_completion') . " = $completed\n" .
-                   get_string('inprogressusers', 'local_report_completion') . " = $enrolled\n" .
-                   get_string('notstartedusers', 'local_report_completion') . " = $licenseallocated\n";
+                   get_string('inprogressusers', 'local_report_completion') . " = $started\n" .
+                   get_string('notstartedusers', 'local_report_completion') . " = $notstarted\n";
         }
     }
 
