@@ -469,7 +469,7 @@ if (empty($courseid)) {
     }
 
     // And finally the last of the columns.
-    $headers[] = get_string('finalscore', 'local_report_completion');
+    $headers[] = get_string('grade');
     $columns[] = 'finalscore';
     $headers[] = get_string('certificate', 'local_report_completion');
     $columns[] = 'certificate';

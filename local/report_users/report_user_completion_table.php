@@ -125,7 +125,7 @@ class local_report_user_completion_table extends table_sql {
     public function col_finalscore($row) {
         global $CFG;
 
-        if (!empty($row->timecompleted)) {
+        if (!empty($row->finalscore) && !empty($row->timeenrolled)) {
             return round($row->finalscore, 0)."%";
         } else {
             return;

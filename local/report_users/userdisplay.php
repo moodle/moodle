@@ -108,7 +108,7 @@ $headers = array(get_string('course', 'local_report_completion'),
                  get_string('dateenrolled', 'local_report_completion'),
                  get_string('datecompleted', 'local_report_completion'),
                  get_string('timeexpires', 'local_report_completion'),
-                 get_string('finalscore', 'local_report_completion'),
+                 get_string('grade'),
                  get_string('certificate', 'local_report_completion'),
                  get_string('actions', 'local_report_users'));
 
