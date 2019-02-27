@@ -301,6 +301,10 @@ function scorm_delete_instance($id) {
         }
         $DB->delete_records('scorm_scoes', array('scorm' => $scorm->id));
     }
+
+    scorm_grade_item_delete($scorm);
+
+    // We must delete the module record after we delete the grade item.
     if (! $DB->delete_records('scorm', array('id' => $scorm->id))) {
         $result = false;
     }
@@ -326,8 +330,6 @@ function scorm_delete_instance($id) {
     if (! $DB->delete_records('scorm_sequencing_ruleconditions', array('scormid'=>$scorm->id))) {
         $result = false;
     }*/
-
-    scorm_grade_item_delete($scorm);
 
     return $result;
 }

@@ -203,6 +203,7 @@ function quiz_delete_instance($id) {
     }
 
     quiz_grade_item_delete($quiz);
+    // We must delete the module record after we delete the grade item.
     $DB->delete_records('quiz', array('id' => $quiz->id));
 
     return true;
