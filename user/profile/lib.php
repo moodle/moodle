@@ -475,6 +475,11 @@ class profile_field_base {
             return true;
         }
 
+        // IOMAD: is this a company manager and can they edit this user.
+        if ((company::check_can_manage($this->userid) || empty($this->userid)) && iomad::has_capability('block/iomad_company_admin:user_create', $systemcontext)) {
+            return true;
+        }
+
         return false;
     }
 
