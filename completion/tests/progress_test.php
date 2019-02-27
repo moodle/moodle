@@ -151,4 +151,33 @@ class core_completion_progress_testcase extends advanced_testcase {
         // Check that the result was null.
         $this->assertNull(\core_completion\progress::get_course_progress_percentage($course));
     }
+
+    /**
+     * Tests that the course progress returns null for a not tracked for completion user in a course.
+     */
+    public function test_course_progress_not_tracked_user() {
+        global $DB;
+
+        // Add a course that supports completion.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+
+        // Enrol a user in the course.
+        $user = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id);
+
+        // Now, mark the course as completed.
+        $ccompletion = new completion_completion(array('course' => $course->id, 'userid' => $user->id));
+        $ccompletion->mark_complete();
+
+        // The course completion should return 100.
+        $this->assertEquals('100', \core_completion\progress::get_course_progress_percentage($course, $user->id));
+
+        // Now make the user's role to be not tracked for completion.
+        unassign_capability('moodle/course:isincompletionreports', $studentrole->id);
+
+        // Check that the result is null now.
+        $this->assertNull(\core_completion\progress::get_course_progress_percentage($course, $user->id));
+    }
 }
