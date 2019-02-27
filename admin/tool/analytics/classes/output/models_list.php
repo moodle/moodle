@@ -62,6 +62,8 @@ class models_list implements \renderable, \templatable {
         global $PAGE;
 
         $data = new \stdClass();
+        $data->importmodelurl = new \moodle_url('/admin/tool/analytics/importmodel.php');
+        $data->createmodelurl = new \moodle_url('/admin/tool/analytics/createmodel.php');
 
         $onlycli = get_config('analytics', 'onlycli');
         if ($onlycli === false) {
@@ -229,10 +231,19 @@ class models_list implements \renderable, \templatable {
 
             // Export training data.
             if (!$model->is_static() && $model->is_trained()) {
-                $urlparams['action'] = 'export';
+                $urlparams['action'] = 'exportdata';
                 $url = new \moodle_url('model.php', $urlparams);
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('i/export',
-                    get_string('exporttrainingdata', 'tool_analytics')), get_string('export', 'tool_analytics'));
+                    get_string('exporttrainingdata', 'tool_analytics')), get_string('exporttrainingdata', 'tool_analytics'));
+                $actionsmenu->add($icon);
+            }
+
+            // Export model.
+            if (!$model->is_static() && $model->get_indicators() && !empty($modeldata->timesplitting)) {
+                $urlparams['action'] = 'exportmodel';
+                $url = new \moodle_url('model.php', $urlparams);
+                $icon = new \action_menu_link_secondary($url, new \pix_icon('i/backup',
+                    get_string('exportmodel', 'tool_analytics')), get_string('exportmodel', 'tool_analytics'));
                 $actionsmenu->add($icon);
             }
 
@@ -257,6 +268,15 @@ class models_list implements \renderable, \templatable {
                     ['data-action-id' => $actionid]);
                 $actionsmenu->add($icon);
             }
+
+            $actionid = 'delete-' . $model->get_id();
+            $PAGE->requires->js_call_amd('tool_analytics/model', 'confirmAction', [$actionid, 'delete']);
+            $urlparams['action'] = 'delete';
+            $url = new \moodle_url('model.php', $urlparams);
+            $icon = new \action_menu_link_secondary($url, new \pix_icon('t/delete',
+                get_string('delete', 'tool_analytics')), get_string('delete', 'tool_analytics'),
+                ['data-action-id' => $actionid]);
+            $actionsmenu->add($icon);
 
             $modeldata->actions = $actionsmenu->export_for_template($output);
 

@@ -58,4 +58,38 @@ class helper {
         // Really unlikely but yeah, I'm a bad booyyy.
         return str_replace('2015102400ouuu', '\\', $option);
     }
+
+    /**
+     * Sets an analytics > analytics models > $title breadcrumb.
+     *
+     * @param string $title
+     * @param \moodle_url $url
+     * @param \context|null $context Defaults to context_system
+     * @return null
+     */
+    public static function set_navbar(string $title, \moodle_url $url, ?\context $context = null) {
+        global $PAGE;
+
+        if (!$context) {
+            $context = \context_system::instance();
+        }
+
+        $PAGE->set_context($context);
+        $PAGE->set_url($url);
+
+        if ($siteadmin = $PAGE->settingsnav->find('root', \navigation_node::TYPE_SITE_ADMIN)) {
+            $PAGE->navbar->add($siteadmin->get_content(), $siteadmin->action());
+        }
+        if ($analytics = $PAGE->settingsnav->find('analytics', \navigation_node::TYPE_SETTING)) {
+            $PAGE->navbar->add($analytics->get_content(), $analytics->action());
+        }
+        if ($analyticmodels = $PAGE->settingsnav->find('analyticmodels', \navigation_node::TYPE_SETTING)) {
+            $PAGE->navbar->add($analyticmodels->get_content(), $analyticmodels->action());
+        }
+        $PAGE->navbar->add($title, $url);
+
+        $PAGE->set_pagelayout('report');
+        $PAGE->set_title($title);
+        $PAGE->set_heading($title);
+    }
 }

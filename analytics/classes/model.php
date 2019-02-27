@@ -338,11 +338,12 @@ class model {
      *
      * @param \core_analytics\local\target\base $target
      * @param \core_analytics\local\indicator\base[] $indicators
-     * @param string $timesplittingid The time splitting method id (its fully qualified class name)
+     * @param string|false $timesplittingid The time splitting method id (its fully qualified class name)
+     * @param string|null $processor The machine learning backend this model will use.
      * @return \core_analytics\model
      */
     public static function create(\core_analytics\local\target\base $target, array $indicators,
-                                  $timesplittingid = false, $processor = false) {
+                                  $timesplittingid = false, $processor = null) {
         global $USER, $DB;
 
         \core_analytics\manager::check_can_manage_models();
@@ -360,8 +361,8 @@ class model {
         $modelobj->usermodified = $USER->id;
 
         if ($processor &&
-                !self::is_valid($processor, '\core_analytics\classifier') &&
-                !self::is_valid($processor, '\core_analytics\regressor')) {
+                !manager::is_valid($processor, '\core_analytics\classifier') &&
+                !manager::is_valid($processor, '\core_analytics\regressor')) {
             throw new \coding_exception('The provided predictions processor \\' . $processor . '\processor is not valid');
         } else {
             $modelobj->predictionsprocessor = $processor;
@@ -462,6 +463,7 @@ class model {
 
             // It needs to be reset as the version changes.
             $this->uniqueid = null;
+            $this->indicators = null;
 
             // We update the version of the model so different time splittings are not mixed up.
             $this->model->version = $now;
@@ -1308,7 +1310,7 @@ class model {
      * @param bool $onlymodelid Preference over $subdirs
      * @return string
      */
-    protected function get_output_dir($subdirs = array(), $onlymodelid = false) {
+    public function get_output_dir($subdirs = array(), $onlymodelid = false) {
         global $CFG;
 
         $subdirstr = '';
@@ -1357,7 +1359,7 @@ class model {
     }
 
     /**
-     * Exports the model data.
+     * Exports the model data for displaying it in a template.
      *
      * @return \stdClass
      */
@@ -1377,6 +1379,58 @@ class model {
             $data->indicators[] = $indicator->get_name();
         }
         return $data;
+    }
+
+    /**
+     * Exports the model data to a zip file.
+     *
+     * @param string $zipfilename
+     * @return string Zip file path
+     */
+    public function export_model(string $zipfilename) : string {
+
+        \core_analytics\manager::check_can_manage_models();
+
+        $modelconfig = new model_config($this);
+        return $modelconfig->export($zipfilename);
+    }
+
+    /**
+     * Imports the provided model.
+     *
+     * Note that this method assumes that model_config::check_dependencies has already been called.
+     *
+     * @throws \moodle_exception
+     * @param  string $zipfilepath Zip file path
+     * @return \core_analytics\model
+     */
+    public static function import_model(string $zipfilepath) : \core_analytics\model {
+
+        \core_analytics\manager::check_can_manage_models();
+
+        $modelconfig = new \core_analytics\model_config();
+        return $modelconfig->import($zipfilepath);
+    }
+
+    /**
+     * Can this model be exported?
+     *
+     * @return bool
+     */
+    public function can_export_configuration() : bool {
+
+        if (empty($this->model->timesplitting)) {
+            return false;
+        }
+        if (!$this->get_indicators()) {
+            return false;
+        }
+
+        if ($this->is_static()) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

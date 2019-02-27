@@ -46,6 +46,11 @@ class manager {
     protected static $predictionprocessors = null;
 
     /**
+     * @var \core_analytics\local\target\base[]
+     */
+    protected static $alltargets = null;
+
+    /**
      * @var \core_analytics\local\indicator\base[]
      */
     protected static $allindicators = null;
@@ -282,6 +287,28 @@ class manager {
     }
 
     /**
+     * Return all targets in the system.
+     *
+     * @return \core_analytics\local\target\base[]
+     */
+    public static function get_all_targets() : array {
+        if (self::$alltargets !== null) {
+            return self::$alltargets;
+        }
+
+        $classes = self::get_analytics_classes('target');
+
+        self::$alltargets = [];
+        foreach ($classes as $fullclassname => $classpath) {
+            $instance = self::get_target($fullclassname);
+            if ($instance) {
+                self::$alltargets[$instance->get_id()] = $instance;
+            }
+        }
+
+        return self::$alltargets;
+    }
+    /**
      * Return all system indicators.
      *
      * @return \core_analytics\local\indicator\base[]
@@ -297,7 +324,6 @@ class manager {
         foreach ($classes as $fullclassname => $classpath) {
             $instance = self::get_indicator($fullclassname);
             if ($instance) {
-                // Using get_class as get_component_classes_in_namespace returns double escaped fully qualified class names.
                 self::$allindicators[$instance->get_id()] = $instance;
             }
         }

@@ -28,6 +28,7 @@ require_once(__DIR__ . '/fixtures/test_indicator_max.php');
 require_once(__DIR__ . '/fixtures/test_indicator_min.php');
 require_once(__DIR__ . '/fixtures/test_indicator_fullname.php');
 require_once(__DIR__ . '/fixtures/test_target_shortname.php');
+require_once(__DIR__ . '/fixtures/test_static_target_shortname.php');
 require_once(__DIR__ . '/fixtures/test_target_course_level_shortname.php');
 require_once(__DIR__ . '/fixtures/test_analyser.php');
 
@@ -318,6 +319,95 @@ class analytics_model_testcase extends advanced_testcase {
     }
 
     /**
+     * Test model_config::get_class_component.
+     */
+    public function test_model_config_get_class_component() {
+        $this->resetAfterTest(true);
+
+        $this->assertEquals('core',
+            \core_analytics\model_config::get_class_component('\\core\\analytics\\indicator\\read_actions'));
+        $this->assertEquals('core',
+            \core_analytics\model_config::get_class_component('core\\analytics\\indicator\\read_actions'));
+        $this->assertEquals('core',
+            \core_analytics\model_config::get_class_component('\\core_course\\analytics\\indicator\\completion_enabled'));
+        $this->assertEquals('mod_forum',
+            \core_analytics\model_config::get_class_component('\\mod_forum\\analytics\\indicator\\cognitive_depth'));
+
+        $this->assertEquals('core', \core_analytics\model_config::get_class_component('\\core_class'));
+    }
+
+    /**
+     * Test that import_model import models' configurations.
+     */
+    public function test_import_model_config() {
+        $this->resetAfterTest(true);
+
+        $this->model->enable('\\core\\analytics\\time_splitting\\quarters');
+        $zipfilepath = $this->model->export_model('yeah-config.zip');
+
+        $this->modelobj = $this->model->get_model_obj();
+
+        $importedmodelobj = \core_analytics\model::import_model($zipfilepath)->get_model_obj();
+
+        $this->assertSame($this->modelobj->target, $importedmodelobj->target);
+        $this->assertSame($this->modelobj->indicators, $importedmodelobj->indicators);
+        $this->assertSame($this->modelobj->timesplitting, $importedmodelobj->timesplitting);
+
+        $predictionsprocessor = $this->model->get_predictions_processor();
+        $this->assertSame('\\' . get_class($predictionsprocessor), $importedmodelobj->predictionsprocessor);
+    }
+
+    /**
+     * Test can export configuration
+     */
+    public function test_can_export_configuration() {
+        $this->resetAfterTest(true);
+
+        // No time splitting method.
+        $this->assertFalse($this->model->can_export_configuration());
+
+        $this->model->enable('\\core\\analytics\\time_splitting\\quarters');
+        $this->assertTrue($this->model->can_export_configuration());
+
+        $this->model->update(true, [], false);
+        $this->assertFalse($this->model->can_export_configuration());
+
+        $statictarget = new test_static_target_shortname();
+        $indicators['test_indicator_max'] = \core_analytics\manager::get_indicator('test_indicator_max');
+        $model = \core_analytics\model::create($statictarget, $indicators, '\\core\\analytics\\time_splitting\\quarters');
+        $this->assertFalse($model->can_export_configuration());
+    }
+
+    /**
+     * Test export_config
+     */
+    public function test_export_config() {
+        $this->resetAfterTest(true);
+
+        $this->model->enable('\\core\\analytics\\time_splitting\\quarters');
+
+        $modelconfig = new \core_analytics\model_config($this->model);
+
+        $method = new ReflectionMethod('\\core_analytics\\model_config', 'export_model_data');
+        $method->setAccessible(true);
+
+        $modeldata = $method->invoke($modelconfig);
+
+        $this->assertArrayHasKey('core', $modeldata->dependencies);
+        $this->assertInternalType('float', $modeldata->dependencies['core']);
+        $this->assertNotEmpty($modeldata->target);
+        $this->assertNotEmpty($modeldata->timesplitting);
+        $this->assertCount(3, $modeldata->indicators);
+
+        $indicators['test_indicator_max'] = \core_analytics\manager::get_indicator('test_indicator_max');
+        $this->model->update(true, $indicators, false);
+
+        $modeldata = $method->invoke($modelconfig);
+
+        $this->assertCount(1, $modeldata->indicators);
+    }
+
+    /**
      * Generates a model log record.
      */
     private function add_fake_log() {
@@ -345,17 +435,6 @@ class analytics_model_testcase extends advanced_testcase {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testable_model extends \core_analytics\model {
-
-    /**
-     * get_output_dir
-     *
-     * @param array $subdirs
-     * @param bool $onlymodelid
-     * @return string
-     */
-    public function get_output_dir($subdirs = array(), $onlymodelid = false) {
-        return parent::get_output_dir($subdirs, $onlymodelid);
-    }
 
     /**
      * init_analyser
