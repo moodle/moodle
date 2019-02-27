@@ -13679,6 +13679,7 @@ a.ygtvspacer:hover {
           .messaging-area-container .messaging-area .messages-area .response .message-box .message-text-container {
             display: table-cell; }
             .messaging-area-container .messaging-area .messages-area .response .message-box .message-text-container textarea {
+              direction: ltr;
               line-height: 20px;
               padding: 4px 6px;
               vertical-align: middle;
