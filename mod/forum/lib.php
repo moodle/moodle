@@ -305,11 +305,12 @@ function forum_delete_instance($id) {
 
     forum_tp_delete_read_records(-1, -1, -1, $forum->id);
 
+    forum_grade_item_delete($forum);
+
+    // We must delete the module record after we delete the grade item.
     if (!$DB->delete_records('forum', array('id'=>$forum->id))) {
         $result = false;
     }
-
-    forum_grade_item_delete($forum);
 
     return $result;
 }
