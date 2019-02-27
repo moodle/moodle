@@ -367,7 +367,7 @@ function iomadcertificate_get_issue($course, $user, $iomadcertificate, $cm) {
                                           AND e.status = 0
                                           AND ue.userid = :userid",
                                           array('courseid' => $course->id, 'userid' => $user->id));
-        if ($certissue->timecreated > $enrolinfo->timestart) {
+        if (empty($enrolinfo->timestart) || $certissue->timecreated > $enrolinfo->timestart) {
             return $certissue;
         } else {
             // No. Remove this record.
@@ -461,7 +461,7 @@ function iomadcertificate_get_issues($iomadcertificateid, $sort="ci.timecreated 
 
     // The picture fields also include the name fields for the user.
     $picturefields = user_picture::fields('u', get_extra_user_fields($context));
-    $users = $DB->get_records_sql("SELECT $picturefields, u.idnumber, ci.code, ci.timecreated
+    $users = $DB->get_records_sql("SELECT concat(u.id, concat('-', ci.code)) AS indexcode, $picturefields, u.idnumber, ci.code, ci.timecreated
                                      FROM {user} u
                                INNER JOIN {iomadcertificate_issues} ci
                                        ON u.id = ci.userid
