@@ -54,9 +54,6 @@ if (!$company = $DB->get_record('company', array('id'=> $wantedcompanyid, 'short
 $SESSION->currenteditingcompany = $company->id;
 $SESSION->theme = $company->theme;
 
-//HTTPS is required in this page when $CFG->loginhttps enabled
-$PAGE->https_required();
-
 $context = context_system::instance();
 $PAGE->set_url("$CFG->httpswwwroot/login/index.php");
 $PAGE->set_context($context);
@@ -320,9 +317,6 @@ if (!empty($CFG->alternateloginurl)) {
 
     redirect($loginurl->out(false));
 }
-
-// make sure we really are on the https page when https login required
-$PAGE->verify_https_required();
 
 /// Generate the login page with forms
 
