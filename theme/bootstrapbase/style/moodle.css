@@ -8555,6 +8555,9 @@ a.ygtvspacer:hover {
   flex-shrink: 0;
   overflow-x: hidden;
 }
+.message-app .footer-container textarea {
+  direction: ltr;
+}
 .message-app .matchtext {
   background-color: #ade6fe;
   color: #333;
@@ -8643,6 +8646,9 @@ a.ygtvspacer:hover {
 }
 .message-app .lazy-load-list {
   overflow-y: auto;
+}
+.dir-rtl .message-drawer {
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08);
 }
 @media (max-width: 480px) {
   .messaging-area-container .messaging-area .messages-area.editing .messages-header {
