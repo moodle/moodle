@@ -248,6 +248,7 @@ $strshowallusers = get_string('showallusers');
 $strenrolment = get_string('userenrolments', 'block_iomad_company_admin');
 $struserlicense = get_string('userlicenses', 'block_iomad_company_admin');
 $strshowall = get_string('showallcompanies', 'block_iomad_company_admin');
+$struserreport = get_string('report_users_title', 'local_report_users');
 
 if (empty($CFG->loginhttps)) {
     $securewwwroot = $CFG->wwwroot;
@@ -776,6 +777,17 @@ if (!$users) {
                 $url,
                 null,
                 $struserlicense
+            );
+        }
+
+        if (iomad::has_capability('local/report_users:view', $systemcontext)) {
+            $url = new moodle_url('/local/report_users/userdisplay.php', array(
+                'userid' => $user->id,
+            ));
+            $actions['userreport'] = new action_menu_link_secondary(
+                $url,
+                null,
+                $struserreport
             );
         }
 
