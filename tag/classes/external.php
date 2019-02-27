@@ -579,4 +579,107 @@ class core_tag_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of get_tag_cloud() parameters.
+     *
+     * @return external_function_parameters
+     * @since  Moodle 3.7
+     */
+    public static function get_tag_cloud_parameters() {
+        return new external_function_parameters(
+            array(
+                'tagcollid' => new external_value(PARAM_INT, 'Tag collection id.', VALUE_DEFAULT, 0),
+                'isstandard' => new external_value(PARAM_BOOL, 'Whether to return only standard tags.', VALUE_DEFAULT, false),
+                'limit' => new external_value(PARAM_INT, 'Maximum number of tags to retrieve.', VALUE_DEFAULT, 150),
+                'sort' => new external_value(PARAM_ALPHA, 'Sort order for display
+                    (id, name, rawname, count, flag, isstandard, tagcollid).', VALUE_DEFAULT, 'name'),
+                'search' => new external_value(PARAM_RAW, 'Search string.', VALUE_DEFAULT, ''),
+                'fromctx' => new external_value(PARAM_INT, 'Context id where this tag cloud is displayed.', VALUE_DEFAULT, 0),
+                'ctx' => new external_value(PARAM_INT, 'Only retrieve tag instances in this context.', VALUE_DEFAULT, 0),
+                'rec' => new external_value(PARAM_INT, 'Retrieve tag instances in the $ctx context and it\'s children.',
+                    VALUE_DEFAULT, 1),
+            )
+        );
+    }
+
+    /**
+     * Retrieves a tag cloud for display.
+     *
+     * @param int $tagcollid tag collection id
+     * @param bool $isstandard return only standard tags
+     * @param int $limit maximum number of tags to retrieve, tags are sorted by the instance count
+     *            descending here regardless of $sort parameter
+     * @param string $sort sort order for display, default 'name' - tags will be sorted after they are retrieved
+     * @param string $search search string
+     * @param int $fromctx context id where this tag cloud is displayed
+     * @param int $ctx only retrieve tag instances in this context
+     * @param int $rec retrieve tag instances in the $ctx context and it's children (default 1)
+     * @return array an array of warnings and tag cloud information and items
+     * @throws moodle_exception
+     * @since  Moodle 3.7
+     */
+    public static function get_tag_cloud($tagcollid = 0, $isstandard = false, $limit = 150, $sort = 'name',
+            $search = '', $fromctx = 0, $ctx = 0, $rec = 1) {
+        global $CFG, $PAGE;
+
+        $params = self::validate_parameters(self::get_tag_cloud_parameters(),
+            array(
+                'tagcollid' => $tagcollid,
+                'isstandard' => $isstandard,
+                'limit' => $limit,
+                'sort' => $sort,
+                'search' => $search,
+                'fromctx' => $fromctx,
+                'ctx' => $ctx,
+                'rec' => $rec,
+            )
+        );
+
+        if (empty($CFG->usetags)) {
+            throw new moodle_exception('tagsaredisabled', 'tag');
+        }
+
+        $context = context_system::instance();
+        self::validate_context($context);
+        $PAGE->set_context($context); // Needed by internal APIs.
+        $output = $PAGE->get_renderer('core');
+
+        $tagcloud = core_tag_collection::get_tag_cloud($params['tagcollid'], $params['isstandard'], $params['limit'],
+            $params['sort'], $params['search'], $params['fromctx'], $params['ctx'], $params['rec']);
+
+        $result = $tagcloud->export_for_template($output);
+        $result->warnings = array();
+
+        return (array) $result;
+    }
+
+    /**
+     * Returns description of get_tag_cloud() result value.
+     *
+     * @return external_description
+     * @since  Moodle 3.7
+     */
+    public static function get_tag_cloud_returns() {
+        return new external_single_structure(
+            array(
+                'tags' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_TAG, 'Tag name.'),
+                            'viewurl' => new external_value(PARAM_RAW, 'URL to view the tag index.'),
+                            'flag' => new external_value(PARAM_BOOL, 'Whether the tag is flagged as inappropriate.',
+                                VALUE_OPTIONAL),
+                            'isstandard' => new external_value(PARAM_BOOL, 'Whether is a standard tag or not.', VALUE_OPTIONAL),
+                            'count' => new external_value(PARAM_INT, 'Number of tag instances.', VALUE_OPTIONAL),
+                            'size' => new external_value(PARAM_INT, 'Proportional size to display the tag.', VALUE_OPTIONAL),
+                        ), 'Tags.'
+                    )
+                ),
+                'tagscount' => new external_value(PARAM_INT, 'Number of tags returned.'),
+                'totalcount' => new external_value(PARAM_INT, 'Total count of tags.'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

@@ -1535,6 +1535,13 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_tag_get_tag_cloud' => array(
+        'classname' => 'core_tag_external',
+        'methodname' => 'get_tag_cloud',
+        'description' => 'Retrieves a tag cloud for the given collection and/or query search.',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_update_inplace_editable' => array(
         'classname' => 'core_external',
         'methodname' => 'update_inplace_editable',

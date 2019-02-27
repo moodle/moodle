@@ -275,4 +275,103 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals($collections[$collection['id']]->name, $collection['name']);
         }
     }
+
+    /**
+     * Test get_tag_cloud.
+     */
+    public function test_get_tag_cloud() {
+        global $USER, $DB;
+        $this->resetAfterTest(true);
+
+        // Create tags for two user profiles, a post and one course.
+        $this->setAdminUser();
+        $context = context_user::instance($USER->id);
+        core_tag_tag::set_item_tags('core', 'user', $USER->id, $context, array('Cats', 'Dogs'));
+
+        $this->setUser($this->getDataGenerator()->create_user());
+        $context = context_user::instance($USER->id);
+        core_tag_tag::set_item_tags('core', 'user', $USER->id, $context, array('Mice'));
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        core_tag_tag::set_item_tags('core', 'course', $course->id, $coursecontext, array('Cats'));
+
+        $post = new stdClass();
+        $post->userid = $USER->id;
+        $post->content = 'test post content text';
+        $post->id = $DB->insert_record('post', $post);
+        $context = context_system::instance();
+        core_tag_tag::set_item_tags('core', 'post', $post->id, $context, array('Horses', 'Cats'));
+
+        // First, retrieve complete cloud.
+        $result = core_tag_external::get_tag_cloud();
+        $result = external_api::clean_returnvalue(core_tag_external::get_tag_cloud_returns(), $result);
+        $this->assertCount(4, $result['tags']); // Four different tags: Cats, Dogs, Mice, Horses.
+        $this->assertEquals(4, $result['tagscount']);
+        $this->assertEquals(4, $result['totalcount']);
+
+        foreach ($result['tags'] as $tag) {
+            if ($tag['name'] == 'Cats') {
+                $this->assertEquals(3, $tag['count']);
+            } else {
+                $this->assertEquals(1, $tag['count']);
+            }
+        }
+
+        // Test filter by collection, pagination and sorting.
+        $defaultcoll = core_tag_collection::get_default();
+        $result = core_tag_external::get_tag_cloud($defaultcoll, false, 2, 'count');
+        $result = external_api::clean_returnvalue(core_tag_external::get_tag_cloud_returns(), $result);
+        $this->assertCount(2, $result['tags']); // Only two tags.
+        $this->assertEquals(2, $result['tagscount']);
+        $this->assertEquals(4, $result['totalcount']);
+        $this->assertEquals('Dogs', $result['tags'][0]['name']); // Lower count first.
+
+        // Test search.
+        $result = core_tag_external::get_tag_cloud(0, false, 150, 'name', 'Mice');
+        $result = external_api::clean_returnvalue(core_tag_external::get_tag_cloud_returns(), $result);
+        $this->assertCount(1, $result['tags']); // Only the searched tags.
+        $this->assertEquals(1, $result['tagscount']);
+        $this->assertEquals(1, $result['totalcount']); // When searching, the total is always for the search.
+        $this->assertEquals('Mice', $result['tags'][0]['name']);
+
+        $result = core_tag_external::get_tag_cloud(0, false, 150, 'name', 'Conejo');
+        $result = external_api::clean_returnvalue(core_tag_external::get_tag_cloud_returns(), $result);
+        $this->assertCount(0, $result['tags']); // Nothing found.
+        $this->assertEquals(0, $result['tagscount']);
+        $this->assertEquals(0, $result['totalcount']); // When searching, the total is always for the search.
+
+        // Test standard filtering.
+        $micetag = core_tag_tag::get_by_name($defaultcoll, 'Mice', '*');
+        $micetag->update(array('isstandard' => 1));
+
+        $result = core_tag_external::get_tag_cloud(0, true);
+        $result = external_api::clean_returnvalue(core_tag_external::get_tag_cloud_returns(), $result);
+        $this->assertCount(1, $result['tags']);
+        $this->assertEquals(1, $result['tagscount']);
+        $this->assertEquals(1, $result['totalcount']); // When searching, the total is always for the search.
+        $this->assertEquals('Mice', $result['tags'][0]['name']);
+
+        // Test course context filtering.
+        $result = core_tag_external::get_tag_cloud(0, false, 150, 'name', '', 0, $coursecontext->id);
+        $result = external_api::clean_returnvalue(core_tag_external::get_tag_cloud_returns(), $result);
+        $this->assertCount(1, $result['tags']);
+        $this->assertEquals(1, $result['tagscount']);
+        $this->assertEquals(1, $result['totalcount']); // When searching, the total is always for the search.
+        $this->assertEquals('Cats', $result['tags'][0]['name']);
+
+        // Complete system context.
+        $result = core_tag_external::get_tag_cloud(0, false, 150, 'name', '', 0, context_system::instance()->id);
+        $result = external_api::clean_returnvalue(core_tag_external::get_tag_cloud_returns(), $result);
+        $this->assertCount(4, $result['tags']);
+        $this->assertEquals(4, $result['tagscount']);
+
+        // Just system context - avoid children.
+        $result = core_tag_external::get_tag_cloud(0, false, 150, 'name', '', 0, context_system::instance()->id, 0);
+        $result = external_api::clean_returnvalue(core_tag_external::get_tag_cloud_returns(), $result);
+        $this->assertCount(2, $result['tags']);
+        $this->assertEquals(2, $result['tagscount']); // Horses and Cats.
+        $this->assertEquals('Cats', $result['tags'][0]['name']);
+        $this->assertEquals('Horses', $result['tags'][1]['name']);
+    }
 }
