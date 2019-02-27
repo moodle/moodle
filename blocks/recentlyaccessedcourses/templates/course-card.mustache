@@ -11,13 +11,13 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+    You should have received a copy of the GNU General Public Licensebllsdsadfasfd
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_myoverview/view-cards
+    @template block_recentlyaccessedcourses/course-card
 
-    This template renders the cards view for the myoverview block.
+    This template renders a course for the recentlyaccessedcourses block.
 
     Example context (json):
     {
@@ -25,18 +25,20 @@
             {
                 "name": "Assignment due 1",
                 "viewurl": "https://moodlesite/course/view.php?id=2",
-                "courseimage": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
+                "courseimageurl": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
                 "fullname": "course 3",
-                "hasprogress": true,
-                "progress": 10,
-                "coursecategory": "Miscellaneous"
+                "isfavourite": true
             }
         ]
     }
 }}
 
-<div class="card-deck dashboard-card-deck {{$classes}}{{/classes}}" data-region="card-deck" role="list">
-{{#courses}}
-    {{> core_course/coursecard }}
-{{/courses}}
-</div>
+{{< core_course/coursecard }}
+    {{$coursecategory}}
+        <span class="sr-only">
+            {{#str}}aria:coursecategory, core_course{{/str}}
+        </span>
+        <span class="text-truncate">{{{coursecategory}}}</span>
+    {{/coursecategory}}
+    {{$coursename}} <span class="text-truncate">{{{fullname}}}</span> {{/coursename}}
+{{/ core_course/coursecard }}
