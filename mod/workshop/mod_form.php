@@ -151,17 +151,17 @@ class mod_workshop_mod_form extends moodleform_mod {
         $label = get_string('nattachments', 'workshop');
         $mform->addElement('select', 'nattachments', $label, $options);
         $mform->setDefault('nattachments', 1);
-        $mform->disabledIf('nattachments', 'submissiontypefileavailable');
+        $mform->hideIf('nattachments', 'submissiontypefileavailable');
 
         $label = get_string('allowedfiletypesforsubmission', 'workshop');
         $mform->addElement('filetypes', 'submissionfiletypes', $label);
         $mform->addHelpButton('submissionfiletypes', 'allowedfiletypesforsubmission', 'workshop');
-        $mform->disabledIf('submissionfiletypes', 'submissiontypefileavailable');
+        $mform->hideIf('submissionfiletypes', 'submissiontypefileavailable');
 
         $options = get_max_upload_sizes($CFG->maxbytes, $this->course->maxbytes, 0, $workshopconfig->maxbytes);
         $mform->addElement('select', 'maxbytes', get_string('maxbytes', 'workshop'), $options);
         $mform->setDefault('maxbytes', $workshopconfig->maxbytes);
-        $mform->disabledIf('maxbytes', 'submissiontypefileavailable');
+        $mform->hideIf('maxbytes', 'submissiontypefileavailable');
 
         $label = get_string('latesubmissions', 'workshop');
         $text = get_string('latesubmissions_desc', 'workshop');
@@ -196,18 +196,18 @@ class mod_workshop_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'overallfeedbackfiles', get_string('overallfeedbackfiles', 'workshop'), $options);
         $mform->setDefault('overallfeedbackfiles', 0);
-        $mform->disabledIf('overallfeedbackfiles', 'overallfeedbackmode', 'eq', 0);
+        $mform->hideIf('overallfeedbackfiles', 'overallfeedbackmode', 'eq', 0);
 
         $label = get_string('allowedfiletypesforoverallfeedback', 'workshop');
         $mform->addElement('filetypes', 'overallfeedbackfiletypes', $label);
         $mform->addHelpButton('overallfeedbackfiletypes', 'allowedfiletypesforoverallfeedback', 'workshop');
-        $mform->disabledIf('overallfeedbackfiletypes', 'overallfeedbackfiles', 'eq', 0);
+        $mform->hideIf('overallfeedbackfiletypes', 'overallfeedbackfiles', 'eq', 0);
 
         $options = get_max_upload_sizes($CFG->maxbytes, $this->course->maxbytes);
         $mform->addElement('select', 'overallfeedbackmaxbytes', get_string('overallfeedbackmaxbytes', 'workshop'), $options);
         $mform->setDefault('overallfeedbackmaxbytes', $workshopconfig->maxbytes);
-        $mform->disabledIf('overallfeedbackmaxbytes', 'overallfeedbackmode', 'eq', 0);
-        $mform->disabledIf('overallfeedbackmaxbytes', 'overallfeedbackfiles', 'eq', 0);
+        $mform->hideIf('overallfeedbackmaxbytes', 'overallfeedbackmode', 'eq', 0);
+        $mform->hideIf('overallfeedbackmaxbytes', 'overallfeedbackfiles', 'eq', 0);
 
         $label = get_string('conclusion', 'workshop');
         $mform->addElement('editor', 'conclusioneditor', $label, null,
@@ -226,7 +226,7 @@ class mod_workshop_mod_form extends moodleform_mod {
         $options = workshop::available_example_modes_list();
         $mform->addElement('select', 'examplesmode', $label, $options);
         $mform->setDefault('examplesmode', $workshopconfig->examplesmode);
-        $mform->disabledIf('examplesmode', 'useexamples');
+        $mform->hideIf('examplesmode', 'useexamples');
 
         // Availability ---------------------------------------------------------------
         $mform->addElement('header', 'accesscontrol', get_string('availability', 'core'));
@@ -239,7 +239,7 @@ class mod_workshop_mod_form extends moodleform_mod {
 
         $label = get_string('submissionendswitch', 'mod_workshop');
         $mform->addElement('checkbox', 'phaseswitchassessment', $label);
-        $mform->disabledIf('phaseswitchassessment', 'submissionend[enabled]');
+        $mform->hideIf('phaseswitchassessment', 'submissionend[enabled]');
         $mform->addHelpButton('phaseswitchassessment', 'submissionendswitch', 'mod_workshop');
 
         $label = get_string('assessmentstart', 'workshop');

@@ -158,13 +158,13 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addElement('text', 'toolurl', get_string('launch_url', 'lti'), array('size' => '64'));
         $mform->setType('toolurl', PARAM_URL);
         $mform->addHelpButton('toolurl', 'launch_url', 'lti');
-        $mform->disabledIf('toolurl', 'typeid', 'in', $noncontentitemtypes);
+        $mform->hideIf('toolurl', 'typeid', 'in', $noncontentitemtypes);
 
         $mform->addElement('text', 'securetoolurl', get_string('secure_launch_url', 'lti'), array('size' => '64'));
         $mform->setType('securetoolurl', PARAM_URL);
         $mform->setAdvanced('securetoolurl');
         $mform->addHelpButton('securetoolurl', 'secure_launch_url', 'lti');
-        $mform->disabledIf('securetoolurl', 'typeid', 'in', $noncontentitemtypes);
+        $mform->hideIf('securetoolurl', 'typeid', 'in', $noncontentitemtypes);
 
         $mform->addElement('hidden', 'urlmatchedtypeid', '', array( 'id' => 'id_urlmatchedtypeid' ));
         $mform->setType('urlmatchedtypeid', PARAM_INT);
@@ -186,13 +186,13 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setAdvanced('resourcekey');
         $mform->addHelpButton('resourcekey', 'resourcekey', 'lti');
         $mform->setForceLtr('resourcekey');
-        $mform->disabledIf('resourcekey', 'typeid', 'in', $noncontentitemtypes);
+        $mform->hideIf('resourcekey', 'typeid', 'in', $noncontentitemtypes);
 
         $mform->addElement('passwordunmask', 'password', get_string('password', 'lti'));
         $mform->setType('password', PARAM_TEXT);
         $mform->setAdvanced('password');
         $mform->addHelpButton('password', 'password', 'lti');
-        $mform->disabledIf('password', 'typeid', 'in', $noncontentitemtypes);
+        $mform->hideIf('password', 'typeid', 'in', $noncontentitemtypes);
 
         $mform->addElement('textarea', 'instructorcustomparameters', get_string('custom', 'lti'), array('rows' => 4, 'cols' => 60));
         $mform->setType('instructorcustomparameters', PARAM_TEXT);
@@ -204,13 +204,13 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setType('icon', PARAM_URL);
         $mform->setAdvanced('icon');
         $mform->addHelpButton('icon', 'icon_url', 'lti');
-        $mform->disabledIf('icon', 'typeid', 'in', $noncontentitemtypes);
+        $mform->hideIf('icon', 'typeid', 'in', $noncontentitemtypes);
 
         $mform->addElement('text', 'secureicon', get_string('secure_icon_url', 'lti'), array('size' => '64'));
         $mform->setType('secureicon', PARAM_URL);
         $mform->setAdvanced('secureicon');
         $mform->addHelpButton('secureicon', 'secure_icon_url', 'lti');
-        $mform->disabledIf('secureicon', 'typeid', 'in', $noncontentitemtypes);
+        $mform->hideIf('secureicon', 'typeid', 'in', $noncontentitemtypes);
 
         // Add privacy preferences fieldset where users choose whether to send their data.
         $mform->addElement('header', 'privacy', get_string('privacy', 'lti'));

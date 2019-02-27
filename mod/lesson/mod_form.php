@@ -201,8 +201,8 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setDefault('password', '');
         $mform->setAdvanced('password', $lessonconfig->password_adv);
         $mform->setType('password', PARAM_RAW);
-        $mform->disabledIf('password', 'usepassword', 'eq', 0);
-        $mform->disabledIf('passwordunmask', 'usepassword', 'eq', 0);
+        $mform->hideIf('password', 'usepassword', 'eq', 0);
+        $mform->hideIf('passwordunmask', 'usepassword', 'eq', 0);
 
         // Dependent on.
         if ($this->current && isset($this->current->dependency) && $this->current->dependency) {
@@ -332,7 +332,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->addHelpButton('usemaxgrade', 'handlingofretakes', 'lesson');
         $mform->setDefault('usemaxgrade', $lessonconfig->handlingofretakes);
         $mform->setAdvanced('usemaxgrade', $lessonconfig->handlingofretakes_adv);
-        $mform->disabledIf('usemaxgrade', 'retake', 'eq', '0');
+        $mform->hideIf('usemaxgrade', 'retake', 'eq', '0');
 
         $numbers = array();
         for ($i = 100; $i >= 0; $i--) {

@@ -49,7 +49,7 @@ abstract class feedback_item_form extends moodleform {
                                 'dependvalue',
                                 get_string('dependvalue', 'feedback'),
                                 array('size'=>FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
-            $mform->disabledIf('dependvalue', 'dependitem', 'eq', '0');
+            $mform->hideIf('dependvalue', 'dependitem', 'eq', '0');
         } else {
             $mform->addElement('hidden', 'dependitem', 0);
             $mform->addElement('hidden', 'dependvalue', '');

@@ -75,7 +75,7 @@ class mod_scorm_mod_form extends moodleform_mod {
             $mform->addElement('text', 'packageurl', get_string('packageurl', 'scorm'), array('size' => 60));
             $mform->setType('packageurl', PARAM_RAW);
             $mform->addHelpButton('packageurl', 'packageurl', 'scorm');
-            $mform->disabledIf('packageurl', 'scormtype', 'eq', SCORM_TYPE_LOCAL);
+            $mform->hideIf('packageurl', 'scormtype', 'eq', SCORM_TYPE_LOCAL);
         } else {
             $mform->addElement('hidden', 'scormtype', SCORM_TYPE_LOCAL);
             $mform->setType('scormtype', PARAM_ALPHA);
@@ -90,7 +90,7 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         $mform->addElement('filemanager', 'packagefile', get_string('package', 'scorm'), null, $filemanageroptions);
         $mform->addHelpButton('packagefile', 'package', 'scorm');
-        $mform->disabledIf('packagefile', 'scormtype', 'noteq', SCORM_TYPE_LOCAL);
+        $mform->hideIf('packagefile', 'scormtype', 'noteq', SCORM_TYPE_LOCAL);
 
         // Update packages timing.
         $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), scorm_get_updatefreq_array());
@@ -111,14 +111,14 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setDefault('width', $cfgscorm->framewidth);
         $mform->setType('width', PARAM_INT);
         $mform->setAdvanced('width', $cfgscorm->framewidth_adv);
-        $mform->disabledIf('width', 'popup', 'eq', 0);
+        $mform->hideIf('width', 'popup', 'eq', 0);
 
         // Height.
         $mform->addElement('text', 'height', get_string('height', 'scorm'), 'maxlength="5" size="5"');
         $mform->setDefault('height', $cfgscorm->frameheight);
         $mform->setType('height', PARAM_INT);
         $mform->setAdvanced('height', $cfgscorm->frameheight_adv);
-        $mform->disabledIf('height', 'popup', 'eq', 0);
+        $mform->hideIf('height', 'popup', 'eq', 0);
 
         // Window Options.
         $winoptgrp = array();
@@ -127,7 +127,7 @@ class mod_scorm_mod_form extends moodleform_mod {
             $mform->setDefault($key, $value);
         }
         $mform->addGroup($winoptgrp, 'winoptgrp', get_string('options', 'scorm'), '<br />', false);
-        $mform->disabledIf('winoptgrp', 'popup', 'eq', 0);
+        $mform->hideIf('winoptgrp', 'popup', 'eq', 0);
         $mform->setAdvanced('winoptgrp', $cfgscorm->winoptgrp_adv);
 
         // Display activity name.
@@ -166,23 +166,23 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addHelpButton('nav', 'nav', 'scorm');
         $mform->setDefault('nav', $cfgscorm->nav);
         $mform->setAdvanced('nav', $cfgscorm->nav_adv);
-        $mform->disabledIf('nav', 'hidetoc', 'noteq', SCORM_TOC_SIDE);
+        $mform->hideIf('nav', 'hidetoc', 'noteq', SCORM_TOC_SIDE);
 
         // Navigation panel position from left.
         $mform->addElement('text', 'navpositionleft', get_string('fromleft', 'scorm'), 'maxlength="5" size="5"');
         $mform->setDefault('navpositionleft', $cfgscorm->navpositionleft);
         $mform->setType('navpositionleft', PARAM_INT);
         $mform->setAdvanced('navpositionleft', $cfgscorm->navpositionleft_adv);
-        $mform->disabledIf('navpositionleft', 'hidetoc', 'noteq', SCORM_TOC_SIDE);
-        $mform->disabledIf('navpositionleft', 'nav', 'noteq', SCORM_NAV_FLOATING);
+        $mform->hideIf('navpositionleft', 'hidetoc', 'noteq', SCORM_TOC_SIDE);
+        $mform->hideIf('navpositionleft', 'nav', 'noteq', SCORM_NAV_FLOATING);
 
         // Navigation panel position from top.
         $mform->addElement('text', 'navpositiontop', get_string('fromtop', 'scorm'), 'maxlength="5" size="5"');
         $mform->setDefault('navpositiontop', $cfgscorm->navpositiontop);
         $mform->setType('navpositiontop', PARAM_INT);
         $mform->setAdvanced('navpositiontop', $cfgscorm->navpositiontop_adv);
-        $mform->disabledIf('navpositiontop', 'hidetoc', 'noteq', SCORM_TOC_SIDE);
-        $mform->disabledIf('navpositiontop', 'nav', 'noteq', SCORM_NAV_FLOATING);
+        $mform->hideIf('navpositiontop', 'hidetoc', 'noteq', SCORM_TOC_SIDE);
+        $mform->hideIf('navpositiontop', 'nav', 'noteq', SCORM_NAV_FLOATING);
 
         // Display attempt status.
         $mform->addElement('select', 'displayattemptstatus', get_string('displayattemptstatus', 'scorm'),
@@ -211,7 +211,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'maxgrade', get_string('maximumgrade'), $grades);
         $mform->setDefault('maxgrade', $cfgscorm->maxgrade);
-        $mform->disabledIf('maxgrade', 'grademethod', 'eq', GRADESCOES);
+        $mform->hideIf('maxgrade', 'grademethod', 'eq', GRADESCOES);
 
         // Attempts management.
         $mform->addElement('header', 'attemptsmanagementhdr', get_string('attemptsmanagement', 'scorm'));
@@ -223,7 +223,7 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         // What Grade.
         $mform->addElement('select', 'whatgrade', get_string('whatgrade', 'scorm'),  scorm_get_what_grade_array());
-        $mform->disabledIf('whatgrade', 'maxattempt', 'eq', 1);
+        $mform->hideIf('whatgrade', 'maxattempt', 'eq', 1);
         $mform->addHelpButton('whatgrade', 'whatgrade', 'scorm');
         $mform->setDefault('whatgrade', $cfgscorm->whatgrade);
 
