@@ -2495,8 +2495,22 @@ class grade_item extends grade_object {
      */
     public function get_context() {
         if ($this->itemtype == 'mod') {
-            $cm = get_fast_modinfo($this->courseid)->instances[$this->itemmodule][$this->iteminstance];
-            $context = \context_module::instance($cm->id);
+            $modinfo = get_fast_modinfo($this->courseid);
+            // Sometimes the course module cache is out of date and needs to be rebuilt.
+            if (!isset($modinfo->instances[$this->itemmodule][$this->iteminstance])) {
+                rebuild_course_cache($this->courseid, true);
+                $modinfo = get_fast_modinfo($this->courseid);
+            }
+            // Even with a rebuilt cache the module does not exist. This means the
+            // database is in an invalid state - we will log an error and return
+            // the course context but the calling code should be updated.
+            if (!isset($modinfo->instances[$this->itemmodule][$this->iteminstance])) {
+                mtrace(get_string('moduleinstancedoesnotexist', 'error'));
+                $context = \context_course::instance($this->courseid);
+            } else {
+                $cm = $modinfo->instances[$this->itemmodule][$this->iteminstance];
+                $context = \context_module::instance($cm->id);
+            }
         } else {
             $context = \context_course::instance($this->courseid);
         }

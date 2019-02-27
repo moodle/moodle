@@ -290,12 +290,13 @@ function workshop_delete_instance($id) {
         $event->delete();
     }
 
-    // finally remove the workshop record itself
-    $DB->delete_records('workshop', array('id' => $workshop->id));
-
     // gradebook cleanup
     grade_update('mod/workshop', $workshop->course, 'mod', 'workshop', $workshop->id, 0, null, array('deleted' => true));
     grade_update('mod/workshop', $workshop->course, 'mod', 'workshop', $workshop->id, 1, null, array('deleted' => true));
+
+    // finally remove the workshop record itself
+    // We must delete the module record after we delete the grade item.
+    $DB->delete_records('workshop', array('id' => $workshop->id));
 
     return true;
 }
