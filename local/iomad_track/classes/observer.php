@@ -520,4 +520,34 @@ class observer {
 
         return true;
     }
+
+    /**
+     * Consume user graded event
+     * @param object $event the event object
+     */
+    public static function user_graded($event) {
+        global $DB;
+
+        $userid = $event->relateduserid;
+        $courseid = $event->courseid;
+        $itemid = $event->other['itemid'];
+        $finalgrade = $event->other['finalgrade'];
+
+        // If this isn't a course, we don't care.
+        if (!$DB->get_record('grade_items', array('id' => $itemid, 'itemtype' => 'course'))) {
+            return true;
+        }
+
+        // Check if there is already an entry for this.
+        if ($entry = $DB->get_record('local_iomad_track', array('userid' => $userid,
+                                                                'courseid' => $courseid,
+                                                                'timecompleted' => null))) {
+            // We already have an entry.  Remove it.
+            $DB->set_field('local_iomad_track', 'finalscore', $finalgrade, array('id' => $entry->id));
+            $DB->set_field('local_iomad_track', 'modifiedtime', $event->timecreated, array('id' => $entry->id));
+        }
+
+        return true;
+    }
+
 }

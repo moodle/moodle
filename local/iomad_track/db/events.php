@@ -63,4 +63,10 @@ $observers = array(
         'callback'    => '\local_iomad_track\observer::user_enrolment_deleted',
         'internal'    => false,
     ),
+
+    array(
+        'eventname'   => '\core\event\user_graded',
+        'callback'    => '\local_iomad_track\observer::user_graded',
+        'internal'    => false,
+    ),
 );

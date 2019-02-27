@@ -265,6 +265,7 @@ mtrace("current end " . time());
         if ($nolics = $DB->get_records('local_iomad_track', array('licenseid' => 0))) {
             foreach ($nolics as $nolic) {
                 $DB->set_field('local_iomad_track', 'licenseallocated', $nolic->timeenrolled, array('id' => $nolic->id));
+            $DB->set_field('local_iomad_track', 'modifiedtime', time(), array('id' => $nolic->id));
             }
         }
 
@@ -285,6 +286,19 @@ mtrace("rest start " . time());
                 $timestarted = null;
                 $timecompleted = null;
             }
+
+            // Get the final grade for the course.
+            if ($graderec = $DB->get_record_sql("SELECT gg.* FROM {grade_grades} gg
+                                             JOIN {grade_items} gi ON (gg.itemid = gi.id
+                                                                       AND gi.itemtype = 'course'
+                                                                       AND gi.courseid = :courseid)
+                                             WHERE gg.userid = :userid", array('courseid' => $rec->licensecourseid,
+                                                                               'userid' => $rec->userid))) {
+                $finalgrade = $graderec->finalgrade;
+            } else {
+                $finalgrade = 0;
+            }
+
             $trackrecord = array('courseid' => $rec->licensecourseid,
                                  'userid' => $rec->userid,
                                  'coursename' => $rec->coursename,
@@ -295,6 +309,7 @@ mtrace("rest start " . time());
                                  'licenseid' => $rec->licenseid,
                                  'licensename' => $rec->licensename,
                                  'licenseallocated' => $rec->issuedate,
+                                 'finalscore' => $finalgrade,
                                  'modifiedtime' => time());
             $DB->insert_record('local_iomad_track', $trackrecord);
         }
