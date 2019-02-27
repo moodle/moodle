@@ -429,6 +429,7 @@ class observer {
                                'companyid' => $licenserec->companyid,
                                'licenseid' => $licenseid,
                                'licensename' => $licenserec->name,
+                               'licenseallocated' => $issuedate,
                                'modifiedtime' => $modifiedtime
                                );
                 $DB->insert_record('local_iomad_track', $entry);
