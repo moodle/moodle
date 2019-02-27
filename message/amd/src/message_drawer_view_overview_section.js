@@ -212,7 +212,7 @@ function(
      * Build the callback to load conversations.
      *
      * @param  {Number} type The conversation type.
-     * @param  {Bool} includeFavourites Include/exclude favourites.
+     * @param  {bool} includeFavourites Include/exclude favourites.
      * @param  {Number} offset Result offset
      * @return {Function}
      */
@@ -483,12 +483,13 @@ function(
     /**
      * Listen to, and handle events in this section.
      *
+     * @param {String} namespace Unique identifier for the Routes
      * @param {Object} root The section container element.
      * @param {Function} loadCallback The callback to load items.
      * @param {Number} type The conversation type for this section
-     * @param {Bool} includeFavourites If this section includes favourites
+     * @param {bool} includeFavourites If this section includes favourites
      */
-    var registerEventListeners = function(root, loadCallback, type, includeFavourites) {
+    var registerEventListeners = function(namespace, root, loadCallback, type, includeFavourites) {
         var listRoot = LazyLoadList.getRoot(root);
 
         // Set the minimum height of the section to the height of the toggle. This
@@ -586,7 +587,7 @@ function(
             var conversationElement = $(e.target).closest(SELECTORS.CONVERSATION);
             var conversationId = conversationElement.attr('data-conversation-id');
             var conversation = loadedConversationsById[conversationId];
-            MessageDrawerRouter.go(MessageDrawerRoutes.VIEW_CONVERSATION, conversation);
+            MessageDrawerRouter.go(namespace, MessageDrawerRoutes.VIEW_CONVERSATION, conversation);
 
             data.originalEvent.preventDefault();
         });
@@ -595,18 +596,21 @@ function(
     /**
      * Setup the section.
      *
-     * @param {Object} root The section container element.
+     * @param {String} namespace Unique identifier for the Routes
+     * @param {Object} header The header container element.
+     * @param {Object} body The section container element.
+     * @param {Object} footer The footer container element.
      * @param {Number} type The conversation type for this section
-     * @param {Bool} includeFavourites If this section includes favourites
+     * @param {bool} includeFavourites If this section includes favourites
      * @param {Object} totalCountPromise Resolves wth the total conversations count
      * @param {Object} unreadCountPromise Resolves wth the unread conversations count
      */
-    var show = function(root, type, includeFavourites, totalCountPromise, unreadCountPromise) {
-        root = $(root);
+    var show = function(namespace, header, body, footer, type, includeFavourites, totalCountPromise, unreadCountPromise) {
+        var root = $(body);
 
         if (!root.attr('data-init')) {
             var loadCallback = getLoadCallback(type, includeFavourites, 0);
-            registerEventListeners(root, loadCallback, type, includeFavourites);
+            registerEventListeners(namespace, root, loadCallback, type, includeFavourites);
 
             if (isVisible(root)) {
                 setExpanded(root);

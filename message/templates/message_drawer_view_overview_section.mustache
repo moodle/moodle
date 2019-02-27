@@ -43,9 +43,9 @@
         <button
             class="btn btn-link w-100 text-left p-2 d-flex align-items-center overview-section-toggle {{^expanded}}collapsed{{/expanded}}"
             data-toggle="collapse"
-            data-target="#{{$region}}{{/region}}-target"
+            data-target="#{{$region}}{{/region}}-target-{{uniqid}}"
             aria-expanded="{{#expanded}}true{{/expanded}}{{^expanded}}false{{/expanded}}"
-            aria-controls="{{$region}}{{/region}}-target"
+            aria-controls="{{$region}}{{/region}}-target-{{uniqid}}"
         >
             <span class="collapsed-icon-container">
                 {{#pix}} t/collapsedcaret, core {{/pix}}
@@ -68,9 +68,9 @@
     {{< core_message/message_drawer_lazy_load_list }}
         {{$rootclasses}}collapse border-bottom {{#expanded}}show{{/expanded}}{{/rootclasses}}
         {{$rootattributes}}
-            id="{{$region}}{{/region}}-target"
+            id="{{$region}}{{/region}}-target-{{uniqid}}"
             aria-labelledby="{{$region}}{{/region}}-toggle"
-            data-parent="#message-drawer-view-overview-container"
+            data-parent="#message-drawer-view-overview-container-{{uniqid}}"
         {{/rootattributes}}
     {{/ core_message/message_drawer_lazy_load_list }}
 </div>

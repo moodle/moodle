@@ -33,14 +33,13 @@
     {}
 
 }}
-
 <div
-    id="message-drawer-{{uniqid}}"
-    class="message-app drawer bg-light hidden"
-    aria-expanded="false"
-    aria-hidden="true"
-    data-region="message-drawer"
-    role="region"
+        id="message-index-{{uniqid}}"
+        class="message-app main bg-light border"
+        aria-expanded="false"
+        aria-hidden="true"
+        data-region="message-index"
+        role="region"
 >
     <div class="header-container position-relative" data-region="header-container">
         {{> core_message/message_drawer_view_contacts_header }}
@@ -64,8 +63,8 @@
     </div>
 </div>
 {{#js}}
-require(['jquery', 'core_message/message_drawer'], function($, MessageDrawer) {
-    var root = $('#message-drawer-{{uniqid}}');
-    MessageDrawer.init(root, '{{uniqid}}', false);
-});
+    require(['jquery', 'core_message/message_drawer'], function($, MessageDrawer) {
+    var root = $('#message-index-{{uniqid}}');
+    MessageDrawer.init(root, '{{uniqid}}', true, {{sendtouser}}, {{conversationid}});
+    });
 {{/js}}

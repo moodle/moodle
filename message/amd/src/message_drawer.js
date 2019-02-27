@@ -70,21 +70,24 @@ function(
     /**
      * Get elements for route.
      *
+     * @param {String} namespace Unique identifier for the Routes
      * @param {Object} root The message drawer container.
      * @param {string} selector The route container.
      *
      * @return {array} elements Found route container objects.
     */
-    var getElementsForRoute = function(root, selector) {
+    var getParametersForRoute = function(namespace, root, selector) {
         var candidates = root.children();
         var header = candidates.filter(SELECTORS.HEADER_CONTAINER).find(selector);
         var body = candidates.filter(SELECTORS.BODY_CONTAINER).find(selector);
         var footer = candidates.filter(SELECTORS.FOOTER_CONTAINER).find(selector);
-        var elements = [header, body, footer].filter(function(element) {
-            return element.length;
-        });
 
-        return elements;
+        return [
+            namespace,
+            header.length ? header : null,
+            body.length ? body : null,
+            footer.length ? footer : null
+        ];
     };
 
     var routes = [
@@ -94,28 +97,30 @@ function(
         [Routes.VIEW_GROUP_INFO, SELECTORS.VIEW_GROUP_INFO, ViewGroupInfo.show, ViewGroupInfo.description],
         [Routes.VIEW_OVERVIEW, SELECTORS.VIEW_OVERVIEW, ViewOverview.show, ViewOverview.description],
         [Routes.VIEW_SEARCH, SELECTORS.VIEW_SEARCH, ViewSearch.show, ViewSearch.description],
-        [Routes.VIEW_SETTINGS, SELECTORS.VIEW_SETTINGS, ViewSettings.show, ViewSettings.description],
+        [Routes.VIEW_SETTINGS, SELECTORS.VIEW_SETTINGS, ViewSettings.show, ViewSettings.description]
     ];
 
     /**
      * Create routes.
      *
+     * @param {String} namespace Unique identifier for the Routes
      * @param {Object} root The message drawer container.
      */
-    var createRoutes = function(root) {
+    var createRoutes = function(namespace, root) {
         routes.forEach(function(route) {
-            Router.add(route[0], getElementsForRoute(root, route[1]), route[2], route[3]);
+            Router.add(namespace, route[0], getParametersForRoute(namespace, root, route[1]), route[2], route[3]);
         });
     };
 
     /**
      * Show the message drawer.
      *
+     * @param {string} namespace The route namespace.
      * @param {Object} root The message drawer container.
      */
-    var show = function(root) {
+    var show = function(namespace, root) {
         if (!root.attr('data-shown')) {
-            Router.go(Routes.VIEW_OVERVIEW);
+            Router.go(namespace, Routes.VIEW_OVERVIEW);
             root.attr('data-shown', true);
         }
 
@@ -148,9 +153,11 @@ function(
     /**
      * Listen to and handle events for routing, showing and hiding the message drawer.
      *
+     * @param {string} namespace The route namespace.
      * @param {Object} root The message drawer container.
+     * @param {bool} alwaysVisible Is this messaging app always shown?
      */
-    var registerEventListeners = function(root) {
+    var registerEventListeners = function(namespace, root, alwaysVisible) {
         CustomEvents.define(root, [CustomEvents.events.activate]);
         var paramRegex = /^data-route-param-?(\d*)$/;
 
@@ -186,7 +193,7 @@ function(
             var params = paramAttributes.map(function(attribute) {
                 return attribute.nodeValue;
             });
-            var routeParams = [route].concat(params);
+            var routeParams = [namespace, route].concat(params);
 
             Router.go.apply(null, routeParams);
 
@@ -194,40 +201,42 @@ function(
         });
 
         root.on(CustomEvents.events.activate, SELECTORS.ROUTES_BACK, function(e, data) {
-            Router.back();
+            Router.back(namespace);
 
             data.originalEvent.preventDefault();
         });
 
-        PubSub.subscribe(Events.SHOW, function() {
-            show(root);
-        });
+        if (!alwaysVisible) {
+            PubSub.subscribe(Events.SHOW, function() {
+                show(namespace, root);
+            });
 
-        PubSub.subscribe(Events.HIDE, function() {
-            hide(root);
-        });
-
-        PubSub.subscribe(Events.TOGGLE_VISIBILITY, function() {
-            if (isVisible(root)) {
+            PubSub.subscribe(Events.HIDE, function() {
                 hide(root);
-            } else {
-                show(root);
-            }
-        });
+            });
+
+            PubSub.subscribe(Events.TOGGLE_VISIBILITY, function() {
+                if (isVisible(root)) {
+                    hide(root);
+                } else {
+                    show(namespace, root);
+                }
+            });
+        }
 
         PubSub.subscribe(Events.SHOW_CONVERSATION, function(conversationId) {
-            show(root);
-            Router.go(Routes.VIEW_CONVERSATION, conversationId);
+            show(namespace, root);
+            Router.go(namespace, Routes.VIEW_CONVERSATION, conversationId);
         });
 
         PubSub.subscribe(Events.CREATE_CONVERSATION_WITH_USER, function(userId) {
-            show(root);
-            Router.go(Routes.VIEW_CONVERSATION, null, 'create', userId);
+            show(namespace, root);
+            Router.go(namespace, Routes.VIEW_CONVERSATION, null, 'create', userId);
         });
 
         PubSub.subscribe(Events.SHOW_SETTINGS, function() {
-            show(root);
-            Router.go(Routes.VIEW_SETTINGS);
+            show(namespace, root);
+            Router.go(namespace, Routes.VIEW_SETTINGS);
         });
 
         PubSub.subscribe(Events.PREFERENCES_UPDATED, function(preferences) {
@@ -247,11 +256,25 @@ function(
      * Initialise the message drawer.
      *
      * @param {Object} root The message drawer container.
+     * @param {String} uniqueId Unique identifier for the Routes
+     * @param {bool} alwaysVisible Should we show the app now, or wait for the user?
+     * @param {int} sendToUser Should we message someone now?
+     * @param {int} conversationId The value of the conversation id, null if none
      */
-    var init = function(root) {
+    var init = function(root, uniqueId, alwaysVisible, sendToUser, conversationId) {
         root = $(root);
-        createRoutes(root);
-        registerEventListeners(root);
+        createRoutes(uniqueId, root);
+        registerEventListeners(uniqueId, root, alwaysVisible);
+        if (alwaysVisible) {
+            show(uniqueId, root);
+            if (sendToUser) {
+                if (conversationId) {
+                    Router.go(uniqueId, Routes.VIEW_CONVERSATION, conversationId);
+                } else {
+                    Router.go(uniqueId, Routes.VIEW_CONVERSATION, null, 'create', sendToUser);
+                }
+            }
+        }
     };
 
     return {

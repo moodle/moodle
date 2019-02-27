@@ -186,18 +186,19 @@ function(
     /**
      * Listen to, and handle event in the overview header.
      *
+     * @param {String} namespace Unique identifier for the Routes
      * @param {Object} header Conversation header container element.
      */
-    var registerEventListeners = function(header) {
+    var registerEventListeners = function(namespace, header) {
         var searchInput = getSearchInput(header);
         var ignoredKeys = [KeyCodes.tab, KeyCodes.shift, KeyCodes.ctrl, KeyCodes.alt];
 
         searchInput.on('click', function() {
-            Router.go(Routes.VIEW_SEARCH);
+            Router.go(namespace, Routes.VIEW_SEARCH);
         });
         searchInput.on('keydown', function(e) {
             if (ignoredKeys.indexOf(e.keyCode) < 0 && e.key != 'Meta') {
-                Router.go(Routes.VIEW_SEARCH);
+                Router.go(namespace, Routes.VIEW_SEARCH);
             }
         });
 
@@ -208,13 +209,14 @@ function(
     /**
      * Setup the overview page.
      *
+     * @param {String} namespace Unique identifier for the Routes
      * @param {Object} header Overview header container element.
      * @param {Object} body Overview body container element.
      * @return {Object} jQuery promise
      */
-    var show = function(header, body) {
+    var show = function(namespace, header, body) {
         if (!header.attr('data-init')) {
-            registerEventListeners(header);
+            registerEventListeners(namespace, header);
             header.attr('data-init', true);
         }
 
@@ -242,7 +244,8 @@ function(
                 return filterCountsByType(result.unread, sectionType);
             });
 
-            Section.show(sectionRoot, sectionType, includeFavourites, totalCountPromise, unreadCountPromise);
+            Section.show(namespace, null, sectionRoot, null, sectionType, includeFavourites,
+                totalCountPromise, unreadCountPromise);
         });
 
         return allCounts.then(function(result) {

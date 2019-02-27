@@ -41,8 +41,8 @@ function(
     /* @var {object} routes Message drawer route elements and callbacks. */
     var routes = {};
 
-    /* @var {array} history Store for route objects history. */
-    var history = [];
+    /* @var {object} history Store for route objects history. */
+    var history = {};
 
     var SELECTORS = {
         CAN_RECEIVE_FOCUS: 'input:not([type="hidden"]), a[href], button, textarea, select, [tabindex]',
@@ -52,40 +52,52 @@ function(
     /**
      * Add a route.
      *
+     * @param {String} namespace Unique identifier for the Routes
      * @param {string} route Route config name.
-     * @param {array} elements Route container objects.
+     * @param {array} parameters Route parameters.
      * @param {callback} onGo Route initialization function.
      * @param {callback} getDescription Route initialization function.
      */
-    var add = function(route, elements, onGo, getDescription) {
-        routes[route] = {
-            elements: elements,
-            onGo: onGo,
-            getDescription: getDescription
-        };
+    var add = function(namespace, route, parameters, onGo, getDescription) {
+        if (!routes[namespace]) {
+            routes[namespace] = [];
+        }
+
+        routes[namespace][route] =
+            {
+                parameters: parameters,
+                onGo: onGo,
+                getDescription: getDescription
+            };
     };
 
     /**
      * Go to a defined route and run the route callbacks.
      *
+     * @param {String} namespace Unique identifier for the Routes
      * @param {string} newRoute Route config name.
      * @return {object} record Current route record with route config name and parameters.
      */
-    var changeRoute = function(newRoute) {
+    var changeRoute = function(namespace, newRoute) {
         var newConfig;
         // Get the rest of the arguments, if any.
-        var args = [].slice.call(arguments, 1);
+        var args = [].slice.call(arguments, 2);
         var renderPromise = $.Deferred().resolve().promise();
 
-        Object.keys(routes).forEach(function(route) {
-            var config = routes[route];
+        Object.keys(routes[namespace]).forEach(function(route) {
+            var config = routes[namespace][route];
             var isMatch = route === newRoute;
 
             if (isMatch) {
                 newConfig = config;
             }
 
-            config.elements.forEach(function(element) {
+            config.parameters.forEach(function(element) {
+                // Some parameters may be null, or not an element.
+                if (typeof element !== 'object' || element === null) {
+                    return;
+                }
+
                 element.removeClass('previous');
 
                 if (isMatch) {
@@ -100,12 +112,23 @@ function(
 
         if (newConfig) {
             if (newConfig.onGo) {
-                renderPromise = newConfig.onGo.apply(undefined, newConfig.elements.concat(args));
+                renderPromise = newConfig.onGo.apply(undefined, newConfig.parameters.concat(args));
                 var currentFocusElement = $(document.activeElement);
                 var hasFocus = false;
+                var firstFocusable = null;
 
-                for (var i = 0; i < newConfig.elements.length; i++) {
-                    var element = newConfig.elements[i];
+                // No need to start at 0 as we know that is the namespace.
+                for (var i = 1; i < newConfig.parameters.length; i++) {
+                    var element = newConfig.parameters[i];
+
+                    // Some parameters may be null, or not an element.
+                    if (typeof element !== 'object' || element === null) {
+                        continue;
+                    }
+
+                    if (!firstFocusable) {
+                        firstFocusable = element;
+                    }
 
                     if (element.has(currentFocusElement).length) {
                         hasFocus = true;
@@ -116,7 +139,7 @@ function(
                 if (!hasFocus) {
                     // This page doesn't have focus yet so focus the first focusable
                     // element in the new view.
-                    newConfig.elements[0].find(SELECTORS.CAN_RECEIVE_FOCUS).filter(':visible').first().focus();
+                    firstFocusable.find(SELECTORS.CAN_RECEIVE_FOCUS).filter(':visible').first().focus();
                 }
             }
         }
@@ -135,18 +158,23 @@ function(
     /**
      * Go to a defined route and store the route history.
      *
-     * @param {string} newRoute Route config name.
+     * @param {String} namespace Unique identifier for the Routes
      * @return {object} record Current route record with route config name and parameters.
      */
-    var go = function() {
+    var go = function(namespace) {
         var currentFocusElement = $(document.activeElement);
         var record = changeRoute.apply(null, arguments);
         var inHistory = false;
+
+        if (!history[namespace]) {
+            history[namespace] = [];
+        }
+
         // History stores a unique list of routes. Check to see if the new route
         // is already in the history, if it is then forget all history after it.
         // This ensures there are no duplicate routes in history and that it represents
-        // a linear path of routes (it never stores something like [foo, bar, foo])/
-        history = history.reduce(function(carry, previous) {
+        // a linear path of routes (it never stores something like [foo, bar, foo])).
+        history[namespace] = history[namespace].reduce(function(carry, previous) {
             if (previous.route === record.route) {
                 inHistory = true;
             }
@@ -158,20 +186,29 @@ function(
             return carry;
         }, []);
 
-        var previousRecord = history.length ? history[history.length - 1] : null;
+        var historylength = history[namespace].length;
+        var previousRecord = historylength ? history[namespace][historylength - 1] : null;
 
         if (previousRecord) {
-            var prevConfig = routes[previousRecord.route];
-            prevConfig.elements.forEach(function(element) {
-                element.addClass('previous');
-            });
+            var prevConfig = routes[namespace][previousRecord.route];
+            var elements = prevConfig.parameters;
+
+            // The first one will be the namespace, skip it.
+            for (var i = 1; i < elements.length; i++) {
+                // Some parameters may be null, or not an element.
+                if (typeof elements[i] !== 'object' || elements[i] === null) {
+                    continue;
+                }
+
+                elements[i].addClass('previous');
+            }
 
             previousRecord.focusElement = currentFocusElement;
 
             if (prevConfig.getDescription) {
                 // If the route has a description then set it on the back button for
                 // the new page we're displaying.
-                prevConfig.getDescription.apply(null, prevConfig.elements.concat(previousRecord.params))
+                prevConfig.getDescription.apply(null, prevConfig.parameters.concat(previousRecord.params))
                     .then(function(description) {
                         return Str.get_string('backto', 'core_message', description);
                     })
@@ -180,12 +217,15 @@ function(
                         // that the back button is visible.
                         return record.renderPromise.then(function() {
                             // Find the elements for the new route we displayed.
-                            routes[record.route].elements.forEach(function(element) {
+                            routes[namespace][record.route].parameters.forEach(function(element) {
+                                // Some parameters may be null, or not an element.
+                                if (typeof element !== 'object' || !element) {
+                                    return;
+                                }
+
                                 // Update the aria label for the back button.
                                 element.find(SELECTORS.ROUTES_BACK).attr('aria-label', label);
                             });
-
-                            return;
                         });
                     })
                     .catch(function() {
@@ -193,23 +233,24 @@ function(
                     });
             }
         }
-
-        history.push(record);
+        history[namespace].push(record);
         return record;
     };
 
     /**
      * Go back to the previous route record stored in history.
+     *
+     * @param {String} namespace Unique identifier for the Routes
      */
-    var back = function() {
-        if (history.length) {
+    var back = function(namespace) {
+        if (history[namespace].length) {
             // Remove the current route.
-            history.pop();
-            var previous = history.pop();
+            history[namespace].pop();
+            var previous = history[namespace].pop();
 
             if (previous) {
                 // If we have a previous route then show it.
-                go.apply(undefined, [previous.route].concat(previous.params));
+                go.apply(undefined, [namespace, previous.route].concat(previous.params));
                 // Delay the focus 50 milliseconds otherwise it doesn't correctly
                 // focus the element for some reason...
                 window.setTimeout(function() {

@@ -37,9 +37,9 @@ class helper {
     /**
      * Helper function to retrieve the messages between two users
      *
-     * TODO: This function should be removed once the new group messaging UI is in place and the old messaging UI is removed.
-     * For now we are not removing/deprecating this function for backwards compatibility with messaging UI.
-     * Followup: MDL-63915
+     * TODO: This function should be removed once the related web services go through final deprecation.
+     * The related web services are data_for_messagearea_messages AND data_for_messagearea_get_most_recent_message.
+     * Followup: MDL-63261
      *
      * @param int $userid the current user
      * @param int $otheruserid the other user
@@ -232,9 +232,9 @@ class helper {
     /**
      * Helper function to return an array of messages.
      *
-     * TODO: This function should be removed once the new group messaging UI is in place and the old messaging UI is removed.
-     * For now we are not removing/deprecating this function for backwards compatibility with messaging UI.
-     * Followup: MDL-63915
+     * TODO: This function should be removed once the related web services go through final deprecation.
+     * The related web services are data_for_messagearea_messages AND data_for_messagearea_get_most_recent_message.
+     * Followup: MDL-63261
      *
      * @param int $userid
      * @param array $messages
@@ -436,6 +436,40 @@ class helper {
     }
 
     /**
+     * Requires the JS libraries for the message user button.
+     *
+     * @return void
+     */
+    public static function messageuser_requirejs() {
+        global $PAGE;
+
+        static $done = false;
+        if ($done) {
+            return;
+        }
+
+        $PAGE->requires->js_call_amd('core_message/message_user_button', 'send', array('#message-user-button'));
+        $done = true;
+    }
+
+    /**
+     * Returns the attributes to place on the message user button.
+     *
+     * @param int $useridto
+     * @return array
+     */
+    public static function messageuser_link_params(int $useridto) : array {
+        global $USER;
+
+        return [
+            'id' => 'message-user-button',
+            'role' => 'button',
+            'data-conversationid' => api::get_conversation_between_users([$USER->id, $useridto]),
+            'data-userid' => $useridto,
+        ];
+    }
+
+    /**
      * Returns the conversation hash between users for easy look-ups in the DB.
      *
      * @param array $userids
@@ -604,6 +638,10 @@ class helper {
     /**
      * Backwards compatibility formatter, transforming the new output of get_conversations() into the old format.
      *
+     * TODO: This function should be removed once the related web services go through final deprecation.
+     * The related web services are data_for_messagearea_conversations.
+     * Followup: MDL-63261
+     *
      * @param array $conversations the array of conversations, which must come from get_conversations().
      * @return array the array of conversations, formatted in the legacy style.
      */
@@ -637,5 +675,89 @@ class helper {
             $tmp[$data->userid] = $data;
         }
         return $tmp;
+    }
+
+    /**
+     * Renders the messaging widget.
+     *
+     * @param bool $isdrawer Are we are rendering the drawer or is this on a full page?
+     * @param int|null $sendtouser The ID of the user we want to send a message to
+     * @param int|null $conversationid The ID of the conversation we want to load
+     * @return string The HTML.
+     */
+    public static function render_messaging_widget(bool $isdrawer, int $sendtouser = null, int $conversationid = null) {
+        global $USER, $CFG, $PAGE;
+
+        // Early bail out conditions.
+        if (empty($CFG->messaging) || !isloggedin() || isguestuser() || user_not_fully_set_up($USER) ||
+            get_user_preferences('auth_forcepasswordchange') ||
+            (!$USER->policyagreed && !is_siteadmin() &&
+                ($manager = new \core_privacy\local\sitepolicy\manager()) && $manager->is_defined())) {
+            return '';
+        }
+
+        $renderer = $PAGE->get_renderer('core');
+        $requestcount = \core_message\api::get_received_contact_requests_count($USER->id);
+        $contactscount = \core_message\api::count_contacts($USER->id);
+
+        $choices = [];
+        $choices[] = [
+            'value' => \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS,
+            'text' => get_string('contactableprivacy_onlycontacts', 'message')
+        ];
+        $choices[] = [
+            'value' => \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER,
+            'text' => get_string('contactableprivacy_coursemember', 'message')
+        ];
+        if (!empty($CFG->messagingallusers)) {
+            // Add the MESSAGE_PRIVACY_SITE option when site-wide messaging between users is enabled.
+            $choices[] = [
+                'value' => \core_message\api::MESSAGE_PRIVACY_SITE,
+                'text' => get_string('contactableprivacy_site', 'message')
+            ];
+        }
+
+        // Enter to send.
+        $entertosend = get_user_preferences('message_entertosend', $CFG->messagingdefaultpressenter, $USER);
+
+        if ($isdrawer) {
+            $template = 'core_message/message_drawer';
+            $messageurl = new \moodle_url('/message/index.php');
+        } else {
+            $template = 'core_message/message_index';
+            $messageurl = null;
+        }
+
+        $templatecontext = [
+            'contactrequestcount' => $requestcount,
+            'loggedinuser' => [
+                'id' => $USER->id,
+                'midnight' => usergetmidnight(time())
+            ],
+            'contacts' => [
+                'sectioncontacts' => [
+                    'placeholders' => array_fill(0, $contactscount > 50 ? 50 : $contactscount, true)
+                ],
+                'sectionrequests' => [
+                    'placeholders' => array_fill(0, $requestcount > 50 ? 50 : $requestcount, true)
+                ],
+            ],
+            'settings' => [
+                'privacy' => $choices,
+                'entertosend' => $entertosend
+            ],
+            'overview' => [
+                'messageurl' => $messageurl
+            ],
+            'sendtouser' => false,
+            'conversationid' => false
+        ];
+
+        if ($sendtouser) {
+            $templatecontext['sendtouser'] = $sendtouser;
+            $templatecontext['conversationid'] = $conversationid;
+        }
+
+        return $renderer->render_from_template($template, $templatecontext);
     }
 }

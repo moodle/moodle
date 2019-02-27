@@ -1250,10 +1250,6 @@ class core_message_external extends external_api {
      *
      * @deprecated since 3.6
      *
-     * NOTE: We are deprecating this function but not search_users_in_course API function for backwards compatibility
-     * with messaging UI. But should be removed once new group messaging UI is in place and old messaging UI is removed.
-     * Followup: MDL-63915
-     *
      * @param int $userid The id of the user who is performing the search
      * @param int $courseid The id of the course
      * @param string $search The string being searched
@@ -1350,10 +1346,6 @@ class core_message_external extends external_api {
      * Get messagearea search users results.
      *
      * @deprecated since 3.6
-     *
-     * NOTE: We are deprecating this function but not search_users API function for backwards compatibility
-     * with messaging UI. But should be removed once new group messaging UI is in place and old messaging UI is removed.
-     * Followup: MDL-63915
      *
      * @param int $userid The id of the user who is performing the search
      * @param string $search The string being searched
@@ -1538,7 +1530,7 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function data_for_messagearea_search_messages($userid, $search, $limitfrom = 0, $limitnum = 0) {
-        global $CFG, $PAGE, $USER;
+        global $CFG, $USER;
 
         // Check if messaging is enabled.
         if (empty($CFG->messaging)) {
@@ -1567,10 +1559,38 @@ class core_message_external extends external_api {
             $params['limitfrom'],
             $params['limitnum']
         );
-        $results = new \core_message\output\messagearea\message_search_results($messages);
 
-        $renderer = $PAGE->get_renderer('core_message');
-        return $results->export_for_template($renderer);
+        $data = new \stdClass();
+        $data->contacts = [];
+        foreach ($messages as $message) {
+            $contact = new \stdClass();
+            $contact->userid = $message->userid;
+            $contact->fullname = $message->fullname;
+            $contact->profileimageurl = $message->profileimageurl;
+            $contact->profileimageurlsmall = $message->profileimageurlsmall;
+            $contact->messageid = $message->messageid;
+            $contact->ismessaging = $message->ismessaging;
+            $contact->sentfromcurrentuser = false;
+            if ($message->lastmessage) {
+                if ($message->userid !== $message->useridfrom) {
+                    $contact->sentfromcurrentuser = true;
+                }
+                $contact->lastmessage = shorten_text($message->lastmessage, 60);
+            } else {
+                $contact->lastmessage = null;
+            }
+            $contact->lastmessagedate = $message->lastmessagedate;
+            $contact->showonlinestatus = is_null($message->isonline) ? false : true;
+            $contact->isonline = $message->isonline;
+            $contact->isblocked = $message->isblocked;
+            $contact->isread = $message->isread;
+            $contact->unreadcount = $message->unreadcount;
+            $contact->conversationid = $message->conversationid;
+
+            $data->contacts[] = $contact;
+        }
+
+        return $data;
     }
 
     /**
