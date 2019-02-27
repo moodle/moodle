@@ -4987,8 +4987,9 @@ class api {
         static::require_enabled();
         $coursecontext = context_course::instance($courseid);
 
-        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $coursecontext)) {
-            throw new required_capability_exception($coursecontext, 'moodle/competency:competencyview', 'nopermissions', '');
+        if (!has_any_capability(array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage'),
+                $coursecontext)) {
+            throw new required_capability_exception($coursecontext, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         }
 
         return user_competency_course::get_least_proficient_competencies_for_course($courseid, $skip, $limit);
