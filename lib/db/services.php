@@ -1521,6 +1521,13 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_tag_get_tag_areas' => array(
+        'classname' => 'core_tag_external',
+        'methodname' => 'get_tag_areas',
+        'description' => 'Retrieves existing tag areas.',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_update_inplace_editable' => array(
         'classname' => 'core_external',
         'methodname' => 'update_inplace_editable',

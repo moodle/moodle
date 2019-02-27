@@ -453,4 +453,71 @@ class core_tag_external extends external_api {
             self::get_tagindex_returns()
         );
     }
+
+    /**
+     * Returns description of get_tag_areas() parameters.
+     *
+     * @return external_function_parameters
+     * @since  Moodle 3.7
+     */
+    public static function get_tag_areas_parameters() {
+        return new external_function_parameters(array());
+    }
+
+    /**
+     * Retrieves existing tag areas.
+     *
+     * @return array an array of warnings and objects containing the plugin information
+     * @throws moodle_exception
+     * @since  Moodle 3.7
+     */
+    public static function get_tag_areas() {
+        global $CFG, $PAGE;
+
+        if (empty($CFG->usetags)) {
+            throw new moodle_exception('tagsaredisabled', 'tag');
+        }
+
+        $context = context_system::instance();
+        self::validate_context($context);
+        $PAGE->set_context($context); // Needed by internal APIs.
+        $output = $PAGE->get_renderer('core');
+
+        $areas = core_tag_area::get_areas();
+        $exportedareas = array();
+        foreach ($areas as $itemtype => $component) {
+            foreach ($component as $area) {
+                // Move optional fields not part of the DB table to otherdata.
+                $locked = false;
+                if (isset($area->locked)) {
+                    $locked = $area->locked;
+                    unset($area->locked);
+                }
+                $exporter = new \core_tag\external\tag_area_exporter($area, array('locked' => $locked));
+                $exportedareas[] = $exporter->export($output);
+            }
+        }
+
+        return array(
+            'areas' => $exportedareas,
+            'warnings' => array(),
+        );
+    }
+
+    /**
+     * Returns description of get_tag_areas() result value.
+     *
+     * @return external_description
+     * @since  Moodle 3.7
+     */
+    public static function get_tag_areas_returns() {
+        return new external_single_structure(
+            array(
+                'areas' => new external_multiple_structure(
+                    \core_tag\external\tag_area_exporter::get_read_structure()
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

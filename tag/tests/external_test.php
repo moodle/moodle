@@ -234,4 +234,22 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_tag_external::get_tagindex_per_area_returns(), $result);
         $this->assertCount(2, $result); // Two different areas: course and user.
     }
+
+    /**
+     * Test get_tag_areas.
+     */
+    public function test_get_tag_areas() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+        $result = core_tag_external::get_tag_areas();
+        $result = external_api::clean_returnvalue(core_tag_external::get_tag_areas_returns(), $result);
+        $areas = $DB->get_records('tag_area');
+        $this->assertCount(count($areas), $result['areas']);
+        foreach ($result['areas'] as $area) {
+            $this->assertEquals($areas[$area['id']]->component, $area['component']);
+            $this->assertEquals($areas[$area['id']]->itemtype, $area['itemtype']);
+        }
+    }
 }
