@@ -200,6 +200,7 @@ function lti_delete_instance($id) {
     $cm = get_coursemodule_from_instance('lti', $id);
     \core_completion\api::update_completion_date_event($cm->id, 'lti', $id, null);
 
+    // We must delete the module record after we delete the grade item.
     return $DB->delete_records("lti", array("id" => $basiclti->id));
 }
 
