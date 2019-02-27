@@ -126,7 +126,7 @@ mtrace("licenses end " . time());
         upgrade_plugin_savepoint(true, 2018081900, 'local', 'iomad_track');
     }
 
-    if ($oldversion < 2019912100) {
+    if ($oldversion < 2019012100) {
 
 mtrace("starting " . time());
         // Define field userid to be dropped from local_iomad_track.
@@ -288,15 +288,16 @@ mtrace("rest start " . time());
             }
 
             // Get the final grade for the course.
+            $finalgrade = 0;
             if ($graderec = $DB->get_record_sql("SELECT gg.* FROM {grade_grades} gg
                                              JOIN {grade_items} gi ON (gg.itemid = gi.id
                                                                        AND gi.itemtype = 'course'
                                                                        AND gi.courseid = :courseid)
                                              WHERE gg.userid = :userid", array('courseid' => $rec->licensecourseid,
                                                                                'userid' => $rec->userid))) {
-                $finalgrade = $graderec->finalgrade;
-            } else {
-                $finalgrade = 0;
+                if (!empty($graderec->finalgrade)) {
+                    $finalgrade = $graderec->finalgrade;
+                }
             }
 
             $trackrecord = array('courseid' => $rec->licensecourseid,
@@ -349,5 +350,31 @@ mtrace("enrol end " . time());
         upgrade_plugin_savepoint(true, 2019012100, 'local', 'iomad_track');
     }
 
+    if ($oldversion < 2019022700) {
+
+        $noscores = $DB->get_records_sql("SELECT * from {local_iomad_track}
+                                          WHERE finalscore = 0 
+                                          AND timeenrolled IS NOT NULL");
+        foreach ($noscores as $rec) {
+            // Get the final grade for the course.
+            if ($graderec = $DB->get_record_sql("SELECT gg.* FROM {grade_grades} gg
+                                             JOIN {grade_items} gi ON (gg.itemid = gi.id
+                                                                       AND gi.itemtype = 'course'
+                                                                       AND gi.courseid = :courseid)
+                                             WHERE gg.userid = :userid", array('courseid' => $rec->courseid,
+                                                                               'userid' => $rec->userid))) {
+
+                if (!empty($graderec->finalgrade)) {
+                    $DB->set_field('local_iomad_track', 'finalscore', $graderec->finalgrade, array('id' => $rec->id));
+                    $DB->set_field('local_iomad_track', 'modifiedtime', time(), array('id' => $rec->id));
+                }
+            } else {
+                $finalgrade = 0;
+            }
+        }
+
+        // Iomad_track savepoint reached.
+        upgrade_plugin_savepoint(true, 2019022700, 'local', 'iomad_track');
+    }
     return $result;
 }

@@ -538,6 +538,11 @@ class observer {
             return true;
         }
 
+        // In case we get a null.
+        if (empty($finalgrade)) {
+            $finalgrade = 0;
+        }
+
         // Check if there is already an entry for this.
         if ($entry = $DB->get_record('local_iomad_track', array('userid' => $userid,
                                                                 'courseid' => $courseid,
