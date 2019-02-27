@@ -1242,6 +1242,10 @@
     .footer-container {
         flex-shrink: 0;
         overflow-x: hidden;
+
+        textarea {
+            direction: ltr;
+        }
     }
 
     .matchtext {
@@ -1359,6 +1363,12 @@
 
     .lazy-load-list {
         overflow-y: auto;
+    }
+}
+
+.dir-rtl {
+    .message-drawer {
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, .08);
     }
 }
 
