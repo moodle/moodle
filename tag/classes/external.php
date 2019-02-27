@@ -520,4 +520,63 @@ class core_tag_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of get_tag_collections() parameters.
+     *
+     * @return external_function_parameters
+     * @since  Moodle 3.7
+     */
+    public static function get_tag_collections_parameters() {
+        return new external_function_parameters(array());
+    }
+
+    /**
+     * Retrieves existing tag collections.
+     *
+     * @return array an array of warnings and tag collections
+     * @throws moodle_exception
+     * @since  Moodle 3.7
+     */
+    public static function get_tag_collections() {
+        global $CFG, $PAGE;
+
+        if (empty($CFG->usetags)) {
+            throw new moodle_exception('tagsaredisabled', 'tag');
+        }
+
+        $context = context_system::instance();
+        self::validate_context($context);
+        $PAGE->set_context($context); // Needed by internal APIs.
+        $output = $PAGE->get_renderer('core');
+
+        $collections = core_tag_collection::get_collections();
+        $exportedcollections = array();
+        foreach ($collections as $collection) {
+            $exporter = new \core_tag\external\tag_collection_exporter($collection);
+            $exportedcollections[] = $exporter->export($output);
+        }
+
+        return array(
+            'collections' => $exportedcollections,
+            'warnings' => array(),
+        );
+    }
+
+    /**
+     * Returns description of get_tag_collections() result value.
+     *
+     * @return external_description
+     * @since  Moodle 3.7
+     */
+    public static function get_tag_collections_returns() {
+        return new external_single_structure(
+            array(
+                'collections' => new external_multiple_structure(
+                    \core_tag\external\tag_collection_exporter::get_read_structure()
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

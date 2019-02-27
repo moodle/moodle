@@ -252,4 +252,27 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals($areas[$area['id']]->itemtype, $area['itemtype']);
         }
     }
+
+    /**
+     * Test get_tag_collections.
+     */
+    public function test_get_tag_collections() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create new tag collection.
+        $data = (object) array('name' => 'new tag coll');
+        core_tag_collection::create($data);
+
+        $this->setAdminUser();
+        $result = core_tag_external::get_tag_collections();
+        $result = external_api::clean_returnvalue(core_tag_external::get_tag_collections_returns(), $result);
+
+        $collections = $DB->get_records('tag_coll');
+        $this->assertCount(count($collections), $result['collections']);
+        foreach ($result['collections'] as $collection) {
+            $this->assertEquals($collections[$collection['id']]->component, $collection['component']);
+            $this->assertEquals($collections[$collection['id']]->name, $collection['name']);
+        }
+    }
 }

@@ -1528,6 +1528,13 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_tag_get_tag_collections' => array(
+        'classname' => 'core_tag_external',
+        'methodname' => 'get_tag_collections',
+        'description' => 'Retrieves existing tag collections.',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_update_inplace_editable' => array(
         'classname' => 'core_external',
         'methodname' => 'update_inplace_editable',
