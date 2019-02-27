@@ -45,7 +45,7 @@ class local_report_course_completion_user_table extends table_sql {
         global $CFG;
 
         $userurl = '/local/report_users/userdisplay.php';
-        if (!$this->is_downloading()) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
             return "<a href='".
                     new moodle_url($userurl, array('userid' => $row->userid,
                                                    'courseid' => $row->courseid)).
@@ -228,7 +228,7 @@ class local_report_course_completion_user_table extends table_sql {
     public function col_licensename($row) {
         global $DB;
 
-        if ($this->is_downloading()) {
+        if ($this->is_downloading() || !iomad::has_capability('local/report_user_license_allocations:view', context_system::instance())) {
             return $row->licensename;
         } else {
             $licenseurl = "/local/report_user_license_allocations/index.php";

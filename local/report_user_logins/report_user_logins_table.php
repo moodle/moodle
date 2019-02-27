@@ -37,6 +37,42 @@ require_once($CFG->libdir.'/tablelib.php');
 class local_report_user_logins_table extends table_sql {
 
     /**
+     * Generate the display of the user's firstname
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_firstname($row) {
+        global $CFG;
+
+        $userurl = '/local/report_users/userdisplay.php';
+        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
+            return "<a href='".
+                    new moodle_url($userurl, array('userid' => $row->id)) .
+                    "'>$row->firstname</a>";
+        } else {
+            return $row->firstname;
+        }
+    }
+
+    /**
+     * Generate the display of the user's lastname
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_lastname($row) {
+        global $CFG;
+
+        $userurl = '/local/report_users/userdisplay.php';
+        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
+            return "<a href='".
+                    new moodle_url($userurl, array('userid' => $row->id)).
+                    "'>$row->lastname</a>";
+        } else {
+            return $row->lastname;
+        }
+    }
+
+    /**
      * Generate the display of the user's created timestamp
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.

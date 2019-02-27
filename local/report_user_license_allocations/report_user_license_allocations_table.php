@@ -45,7 +45,7 @@ class local_report_user_license_allocations_table extends table_sql {
         global $CFG;
 
         $userurl = '/local/report_users/userdisplay.php';
-        if (!$this->is_downloading()) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
             return "<a href='".
                     new moodle_url($userurl, array('userid' => $row->id,
                                                    'courseid' => $row->courseid)).
@@ -64,7 +64,7 @@ class local_report_user_license_allocations_table extends table_sql {
         global $CFG;
 
         $userurl = '/local/report_users/userdisplay.php';
-        if (!$this->is_downloading()) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
             return "<a href='".
                     new moodle_url($userurl, array('userid' => $row->id,
                                                    'courseid' => $row->courseid)).
@@ -163,7 +163,7 @@ class local_report_user_license_allocations_table extends table_sql {
                                                     0, 1)) {
             $licenseurl = $CFG->wwwroot . "/local/report_license_usage/index.php";
             $license = array_pop($trackrec);
-            if (!$this->is_downloading()) {
+            if (!$this->is_downloading() && iomad::has_capability('local/report_license_usage:view', context_system::instance())) {
                 return  "<a href='".
                         new moodle_url($licenseurl, array('licenseid' => $row->licenseid)).
                         "'>" . $license->licensename . "</a>";
@@ -184,7 +184,7 @@ class local_report_user_license_allocations_table extends table_sql {
         global $CFG, $DB;
 
         $courseurl  = '/local/report_completion/index.php';
-        if (!$this->is_downloading()) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_completion:view', context_system::instance())) {
             return "<a href='".
                     new moodle_url($courseurl, array('courseid' => $row->courseid)).
                     "'>" . $row->coursename . "</a>";

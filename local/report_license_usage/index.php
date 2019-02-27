@@ -104,8 +104,10 @@ $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
-$PAGE->navbar->add(get_string('pluginname', 'local_report_completion'),
-                   new moodle_url($CFG->wwwroot . "/local/report_completion/index.php"));
+if (iomad::has_capability('local/report_completion:view', $systemcontext)) {
+    $PAGE->navbar->add(get_string('pluginname', 'local_report_completion'),
+                       new moodle_url($CFG->wwwroot . "/local/report_completion/index.php"));
+}
 $PAGE->navbar->add($linktext, $linkurl);
 
 // Get the renderer.
@@ -200,7 +202,7 @@ $departmenttree = company::get_all_subdepartments_raw($userhierarchylevel);
 $treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
 
 // Set up the filter form.
-$mform = new iomad_date_filter_form($params);
+$mform = new iomad_date_filter_form($baseurl, $params);
 $mform->set_data(array('departmentid' => $departmentid));
 $mform->set_data($params);
 $mform->get_data();

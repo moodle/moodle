@@ -54,8 +54,10 @@ $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
-$PAGE->navbar->add(get_string('pluginname', 'local_report_completion'),
-                   new moodle_url($CFG->wwwroot . "/local/report_completion/index.php"));
+if (iomad::has_capability('local/report_completion:view', $context)) {
+    $PAGE->navbar->add(get_string('pluginname', 'local_report_completion'),
+                       new moodle_url($CFG->wwwroot . "/local/report_completion/index.php"));
+}
 $PAGE->navbar->add($linktext, $linkurl);
 
 // Get the renderer.
@@ -105,12 +107,14 @@ $sqlparams = array('userid' => $userid);
 $headers = array(get_string('course', 'local_report_completion'),
                  get_string('status', 'local_report_completion'),
                  get_string('licensedateallocated', 'block_iomad_company_admin'),
-                 get_string('dateenrolled', 'local_report_completion'),
+                 get_string('datestarted', 'local_report_completion'),
                  get_string('datecompleted', 'local_report_completion'),
                  get_string('timeexpires', 'local_report_completion'),
-                 get_string('grade'),
-                 get_string('certificate', 'local_report_completion'),
-                 get_string('actions', 'local_report_users'));
+                 get_string('grade'));
+if (!$table->is_downloading()){
+    $headers[] = get_string('certificate', 'local_report_completion');
+    $headers[] = get_string('actions', 'local_report_users');
+}
 
 $columns = array('coursename',
                  'status',
@@ -118,9 +122,11 @@ $columns = array('coursename',
                  'timeenrolled',
                  'timecompleted',
                  'timeexpires',
-                 'finalscore',
-                 'certificate',
-                 'actions');
+                 'finalscore');
+if (!$table->is_downloading()){
+    $columns[] = 'certificate';
+    $columns[] = 'actions';
+}
 
 $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
 $table->define_baseurl($baseurl);

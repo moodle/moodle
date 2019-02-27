@@ -55,10 +55,24 @@ class local_report_course_completion_course_table extends table_sql {
                                                 array('courseid' => $row->id,
                                                       'departmentid' => $row->departmentid));
             $cell = html_writer::tag('h2', $row->coursename);
-            $cell .= $output->single_button($courseuserslink, get_string('usersummary', 'local_report_completion'));
-            $cell .= "</br>" . $output->single_button($coursemonthlylink, get_string('pluginname', 'local_report_completion_monthly'));
-            $cell .= "</br>" . $output->single_button($courselicenselink, get_string('pluginname', 'local_report_user_license_allocations'));
+            $systemcontext = context_system::instance();
+            if (iomad::has_capability('local/report_users:view', $systemcontext)) {
+                $cell .= $output->single_button($courseuserslink, get_string('usersummary', 'local_report_completion'));
+            }
+            if (iomad::has_capability('local/report_completion_monthly:view', $systemcontext)) {
+                if (!empty($cell)) {
+                    $cell .= "</br>";
+                }
+                $cell .= $output->single_button($coursemonthlylink, get_string('pluginname', 'local_report_completion_monthly'));
+            }
+            if (iomad::has_capability('local/report_user_license_allocations:view', $systemcontext)) {
+                if (!empty($cell)) {
+                    $cell .= "</br>";
+                }
+                $cell .= $output->single_button($courselicenselink, get_string('pluginname', 'local_report_user_license_allocations'));
+            }
             return $cell;
+
         } else {
             return $row->coursename;
         }

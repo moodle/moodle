@@ -456,7 +456,7 @@ if (empty($courseid)) {
     }
 
     // And enrolment columns.
-    $headers[] = get_string('timeenrolled', 'local_report_completion');
+    $headers[] = get_string('timestarted', 'local_report_completion');
     $headers[] = get_string('timecompleted', 'local_report_completion');
     $columns[] = 'timeenrolled';
     $columns[] = 'timecompleted';

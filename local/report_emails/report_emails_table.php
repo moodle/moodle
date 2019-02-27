@@ -45,7 +45,7 @@ class local_report_emails_table extends table_sql {
         global $CFG;
 
         $userurl = '/local/report_users/userdisplay.php';
-        if (!$this->is_downloading()) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
             return "<a href='".
                     new moodle_url($userurl, array('userid' => $row->id)).
                     "'>$row->firstname</a>";
@@ -63,7 +63,7 @@ class local_report_emails_table extends table_sql {
         global $CFG;
 
         $userurl = '/local/report_users/userdisplay.php';
-        if (!$this->is_downloading()) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
             return "<a href='".
                     new moodle_url($userurl, array('userid' => $row->id)).
                     "'>$row->lastname</a>";
@@ -144,7 +144,7 @@ class local_report_emails_table extends table_sql {
         global $CFG, $DB;
 
         $courseurl  = '/local/report_completion/index.php';
-        if (!$this->is_downloading()) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_completion:view', context_system::instance())) {
             return "<a href='".
                     new moodle_url($courseurl, array('courseid' => $row->courseid)).
                     "'>" . $row->coursename . "</a>";
