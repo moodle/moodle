@@ -5287,7 +5287,7 @@ class assign {
 
             // Show the grader's identity if 'Hide Grader' is disabled or has the 'Show Hidden Grader' capability.
             $showgradername = (
-                    has_capability('mod/assign:showhiddengrader', $this->context, $user) or
+                    has_capability('mod/assign:showhiddengrader', $this->context) or
                     !$this->is_hidden_grader()
             );
 
