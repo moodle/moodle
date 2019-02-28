@@ -7,6 +7,9 @@ information provided here is intended especially for developers.
   It is recommended that privacy providers using this function call rewrite any long query into a number of separate
   calls to add_from_sql for improved performance, and that the new argument is used.
   This will allow queries to remain backwards-compatible with older versions of Moodle but will have significantly better performance in version supporting the innerjoin parameter.
+* Behat timeout constants behat_base::TIMEOUT, EXTENDED_TIMEOUT, and REDUCED_TIMEOUT will be
+  deprecated in 3.7. Please instead use the functions behat_base::get_timeout(), get_extended_timeout(),
+  and get_reduced_timeout(). These allow for timeouts to be increased by a setting in config.php.
 
 === 3.5.4 ===
 

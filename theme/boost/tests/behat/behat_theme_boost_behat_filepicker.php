@@ -289,7 +289,7 @@ class behat_theme_boost_behat_filepicker extends behat_theme_boost_behat_files {
         $selectfilebutton->click();
 
         // We wait for all the JS to finish as it is performing an action.
-        $this->getSession()->wait(self::TIMEOUT, self::PAGE_READY_JS);
+        $this->getSession()->wait(self::get_timeout(), self::PAGE_READY_JS);
 
         if ($overwriteaction !== false) {
             $overwritebutton = $this->find_button($overwriteaction);
@@ -297,7 +297,7 @@ class behat_theme_boost_behat_filepicker extends behat_theme_boost_behat_files {
             $overwritebutton->click();
 
             // We wait for all the JS to finish.
-            $this->getSession()->wait(self::TIMEOUT, self::PAGE_READY_JS);
+            $this->getSession()->wait(self::get_timeout(), self::PAGE_READY_JS);
         }
 
     }

@@ -100,6 +100,6 @@ class behat_assignfeedback_editpdf extends behat_base {
         ];
         $js = implode(' && ', $conditions);
 
-        $this->getSession()->wait(self::TIMEOUT * 1000, "({$js})");
+        $this->getSession()->wait(self::get_timeout() * 1000, "({$js})");
     }
 }
