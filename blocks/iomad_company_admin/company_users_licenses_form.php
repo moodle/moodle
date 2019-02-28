@@ -105,7 +105,7 @@ class company_users_course_form extends moodleform {
     }
 
     public function definition_after_data() {
-        global $DB;
+        global $DB, $OUTPUT;
         $mform =& $this->_form;
 
         if (!empty($this->userid)) {
@@ -513,21 +513,21 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
                     if ($license = $DB->get_records('companylicense',
                                                      array('id' => $deptlicenseid->licenseid, 'companyid' => $companyid),
                                                      null, 'id,name,startdate,expirydate')) {
-                        if (!$educator && $license->type > 1) {
+                        if (!$educator && !empty($license->type) && $license->type > 1) {
                             continue;
                         }
 
                         if ($license[$deptlicenseid->licenseid]->expirydate > time()) {
-                            if ($license->startdate > time()) {
+                            if (!empty($license->startdate) && $license->startdate > time()) {
                                 $licenselist[$license->id] = $license->name . " (" . get_string('licensevalidfrom', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->startdate)) . ")";
                                 if ($licenseid == $license->id) {
                                     $availablewarning = get_string('licensevalidfromwarning', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->startdate));
-                                }
+                                }  
                             } else {
                                 $licenselist[$license[$deptlicenseid->licenseid]->id]  = $license[$deptlicenseid->licenseid]->name;
                             }
                         }
-                        if ($license->type > 1) {
+                        if (!empty($license->type) && $license->type > 1) {
                             $licenselist[$license->id] = $licenselist[$license->id] . " (" . get_string('educator', 'block_iomad_company_admin') . ")";
                         }
                     }
