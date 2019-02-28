@@ -3451,12 +3451,23 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
     $defs = array();
     list($incontexts, $params) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'con');
     list($incaps, $params2) = $DB->get_in_or_equal($caps, SQL_PARAMS_NAMED, 'cap');
-    $params = array_merge($params, $params2);
+
+    // Check whether context locking is enabled.
+    // Filter out any write capability if this is the case.
+    $excludelockedcaps = '';
+    $excludelockedcapsparams = [];
+    if (!empty($CFG->contextlocking) && $context->locked) {
+        $excludelockedcaps = 'AND (cap.captype = :capread OR cap.name = :managelockscap)';
+        $excludelockedcapsparams['capread'] = 'read';
+        $excludelockedcapsparams['managelockscap'] = 'moodle/site:managecontextlocks';
+    }
+
+    $params = array_merge($params, $params2, $excludelockedcapsparams);
     $sql = "SELECT rc.id, rc.roleid, rc.permission, rc.capability, ctx.path
               FROM {role_capabilities} rc
               JOIN {capabilities} cap ON rc.capability = cap.name
               JOIN {context} ctx on rc.contextid = ctx.id
-             WHERE rc.contextid $incontexts AND rc.capability $incaps";
+             WHERE rc.contextid $incontexts AND rc.capability $incaps $excludelockedcaps";
 
     $rcs = $DB->get_records_sql($sql, $params);
     foreach ($rcs as $rc) {
@@ -7557,13 +7568,23 @@ function get_with_capability_join(context $context, $capability, $useridcolumn) 
 
     list($incaps, $capsparams) = $DB->get_in_or_equal($capability, SQL_PARAMS_NAMED, 'cap');
 
+    // Check whether context locking is enabled.
+    // Filter out any write capability if this is the case.
+    $excludelockedcaps = '';
+    $excludelockedcapsparams = [];
+    if (!empty($CFG->contextlocking) && $context->locked) {
+        $excludelockedcaps = 'AND (cap.captype = :capread OR cap.name = :managelockscap)';
+        $excludelockedcapsparams['capread'] = 'read';
+        $excludelockedcapsparams['managelockscap'] = 'moodle/site:managecontextlocks';
+    }
+
     $defs = array();
     $sql = "SELECT rc.id, rc.roleid, rc.permission, ctx.path
               FROM {role_capabilities} rc
               JOIN {capabilities} cap ON rc.capability = cap.name
               JOIN {context} ctx on rc.contextid = ctx.id
-             WHERE rc.contextid $incontexts AND rc.capability $incaps";
-    $rcs = $DB->get_records_sql($sql, array_merge($cparams, $capsparams));
+             WHERE rc.contextid $incontexts AND rc.capability $incaps $excludelockedcaps";
+    $rcs = $DB->get_records_sql($sql, array_merge($cparams, $capsparams, $excludelockedcapsparams));
     foreach ($rcs as $rc) {
         $defs[$rc->path][$rc->roleid] = $rc->permission;
     }
