@@ -274,7 +274,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
     public function test_view_database_no_capabilities() {
         // Test user with no capabilities.
         // We need a explicit prohibit since this capability is allowed for students by default.
-        assign_capability('mod/data:viewpage', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
+        assign_capability('mod/data:view', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->expectException('moodle_exception');
