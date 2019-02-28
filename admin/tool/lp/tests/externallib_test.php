@@ -116,7 +116,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->userrole = create_role('User role', 'lpuserrole', 'learning plan user role description');
 
         assign_capability('moodle/competency:competencymanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('moodle/competency:competencycompetencyconfigure', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('moodle/competency:coursecompetencyconfigure', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('moodle/competency:planmanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('moodle/competency:planmanagedraft', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('moodle/competency:planmanageown', CAP_ALLOW, $this->creatorrole, $syscontext->id);
