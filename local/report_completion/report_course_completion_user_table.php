@@ -148,7 +148,7 @@ class local_report_course_completion_user_table extends table_sql {
         global $CFG;
 
         if (!empty($row->finalscore) && !empty($row->timeenrolled)) {
-            return round($row->finalscore, 0)."%";
+            return round($row->finalscore, $CFG->iomad_report_grade_places)."%";
         } else {
             return;
         }

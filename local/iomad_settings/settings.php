@@ -79,6 +79,12 @@ if ($hassiteconfig) {
                                                 '',
                                                 PARAM_TEXT));
 
+    $settings->add(new admin_setting_configtext('iomad_report_grade_places',
+                                                get_string('iomad_report_grade_places', 'local_iomad_settings'),
+                                                get_string('iomad_report_grade_places_help', 'local_iomad_settings'),
+                                                0,
+                                                PARAM_INT));
+
     $settings->add(new admin_setting_configtext('iomad_max_list_users',
                                                 get_string('iomad_max_list_users', 'local_iomad_settings'),
                                                 get_string('iomad_max_list_users_help', 'local_iomad_settings'),
