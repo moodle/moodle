@@ -813,6 +813,12 @@ $CFG->admin = 'admin';
 // Example:
 //   $CFG->behat_usedeprecated = true;
 //
+// If you are using a slow machine, it may help to increase the timeouts that Behat uses. The
+// following example will increase timeouts by a factor of 3 (using 30 seconds instead of 10
+// seconds, for instance).
+// Example:
+//   $CFG->behat_increasetimeout = 3;
+//
 // Including feature files from directories outside the dirroot is possible if required. The setting
 // requires that the running user has executable permissions on all parent directories in the paths.
 // Example:
