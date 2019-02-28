@@ -739,11 +739,7 @@ class theme_config {
         $this->name     = $config->name;
         $this->dir      = $config->dir;
 
-        if ($this->name != 'bootstrapbase') {
-            $baseconfig = theme_config::find_theme_config('bootstrapbase', $this->settings);
-        } else {
-            $baseconfig = $config;
-        }
+        $baseconfig = $config;
 
         $configurable = array(
             'parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'usefallback',

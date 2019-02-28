@@ -607,7 +607,7 @@ class core_blocklib_testcase extends advanced_testcase {
 
         $PAGE->reset_theme_and_output();
         // Change to a theme with undeletable blocks.
-        $CFG->theme = 'clean';
+        $CFG->theme = 'classic';
 
         list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
             $context, 'page-type');

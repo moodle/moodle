@@ -268,7 +268,7 @@ class core_outputcomponents_testcase extends advanced_testcase {
         // $this->assertSame($CFG->wwwroot.'/theme/image.php/formal_white/core/1/u/f2', $up2->get_url($page, $renderer)->out(false));
 
         // Test non-slashargument images.
-        set_config('theme', 'clean');
+        set_config('theme', 'classic');
         $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
         $CFG->slasharguments = 0;
         $page = new moodle_page();
@@ -277,7 +277,7 @@ class core_outputcomponents_testcase extends advanced_testcase {
         $renderer = $page->get_renderer('core');
 
         $up3 = new user_picture($user3);
-        $this->assertSame($CFG->wwwroot.'/theme/image.php?theme=clean&component=core&rev=1&image=u%2Ff2', $up3->get_url($page, $renderer)->out(false));
+        $this->assertSame($CFG->wwwroot.'/theme/image.php?theme=classic&component=core&rev=1&image=u%2Ff2', $up3->get_url($page, $renderer)->out(false));
     }
 
     public function test_empty_menu() {
@@ -454,7 +454,7 @@ EOF;
         $this->assertNotContains('aria-hidden="true"', $renderer->pix_icon('t/print', 'Print'), $reason);
 
         // Test another theme with a different icon system.
-        set_config('theme', 'clean');
+        set_config('theme', 'classic');
         // Need to reset after changing theme.
         $page->reset_theme_and_output();
         $renderer = $page->get_renderer('core');

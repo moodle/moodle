@@ -794,8 +794,7 @@ class core_upgradelib_testcase extends advanced_testcase {
         $CFG->themedir = $this->create_testthemes();
 
         $this->assertSame($CFG->dirroot . '/theme/boost', upgrade_find_theme_location('boost'));
-        $this->assertSame($CFG->dirroot . '/theme/clean', upgrade_find_theme_location('clean'));
-        $this->assertSame($CFG->dirroot . '/theme/bootstrapbase', upgrade_find_theme_location('bootstrapbase'));
+        $this->assertSame($CFG->dirroot . '/theme/classic', upgrade_find_theme_location('classic'));
 
         $this->assertSame($CFG->themedir . '/testtheme', upgrade_find_theme_location('testtheme'));
         $this->assertSame($CFG->themedir . '/childoftesttheme', upgrade_find_theme_location('childoftesttheme'));
@@ -812,8 +811,8 @@ class core_upgradelib_testcase extends advanced_testcase {
         $CFG->themedir = $this->create_testthemes();
 
         $this->assertTrue(upgrade_theme_is_from_family('boost', 'boost'), 'Boost is a boost theme');
-        $this->assertTrue(upgrade_theme_is_from_family('bootstrapbase', 'clean'), 'Clean is a bootstrap base theme');
-        $this->assertFalse(upgrade_theme_is_from_family('boost', 'clean'), 'Clean is not a boost theme');
+        $this->assertTrue(upgrade_theme_is_from_family('boost', 'classic'), 'Classic is a boost base theme');
+        $this->assertFalse(upgrade_theme_is_from_family('classic', 'boost'), 'Boost is not a classic theme');
 
         $this->assertTrue(upgrade_theme_is_from_family('testtheme', 'childoftesttheme'), 'childoftesttheme is a testtheme');
         $this->assertFalse(upgrade_theme_is_from_family('testtheme', 'orphantheme'), 'ofphantheme is not a testtheme');
