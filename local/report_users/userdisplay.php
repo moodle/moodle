@@ -84,6 +84,8 @@ $table = new local_report_user_completion_table('user_report_completion');
 $table->is_downloading($download, 'user_report_completion', 'user_report_completion123');
 
 if (!$table->is_downloading()) {
+    $mainadmin = get_admin();
+
     echo $output->header();
     $userinfo = $DB->get_record('user', array('id' => $userid));
 
@@ -95,6 +97,33 @@ if (!$table->is_downloading()) {
     } else {
         echo "</h2>";
     }
+
+        echo html_writer::start_tag('div', array('class' => 'iomadclear'));
+        if ((iomad::has_capability('block/iomad_company_admin:company_course_users', $context)
+             or iomad::has_capability('block/iomad_company_admin:editallusers', $context))
+             and ($userid == $USER->id or $userid != $mainadmin->id)
+             and !is_mnet_remote_user($userinfo)) {
+            $url = new moodle_url('/blocks/iomad_company_admin/company_users_course_form.php', array(
+                'userid' => $userid,
+            ));
+            echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+            echo $output->single_button($url, get_string('userenrolments', 'block_iomad_company_admin'));
+            echo html_writer::end_tag('div');
+        }
+
+        if ((iomad::has_capability('block/iomad_company_admin:company_license_users', $context)
+             or iomad::has_capability('block/iomad_company_admin:editallusers', $context))
+             and ($userid == $USER->id or $userid != $mainadmin->id)
+             and !is_mnet_remote_user($userinfo)) {
+            $url = new moodle_url('/blocks/iomad_company_admin/company_users_licenses_form.php', array(
+                'userid' => $userid,
+            ));
+            echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+            echo $output->single_button($url, get_string('userlicenses', 'block_iomad_company_admin'));
+            echo html_writer::end_tag('div');
+        }
+        echo html_writer::end_tag('div');
+        echo html_writer::start_tag('div', array('class' => 'iomadclear'));
 }
 
 // Set up the initial SQL for the form.
@@ -138,5 +167,6 @@ $table->sort_default_column='coursename';
 $table->out($CFG->iomad_max_list_courses, true);
 
 if (!$table->is_downloading()) {
+    echo html_writer::end_tag('div');
     echo $output->footer();
 }
