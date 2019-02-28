@@ -109,7 +109,7 @@ $string['sslv3'] = 'SSLv2 (Force SSL Version 3)';
 $string['taskcleanup'] = 'Cleanup of unverified incoming email';
 $string['taskpickup'] = 'Incoming email pickup';
 $string['tls'] = 'TLS (TLS; started via protocol-level negotiation over unencrypted channel; RECOMMENDED way of initiating secure connection)';
-$string['tlsv1'] = 'TLSv1 (TLS direct version 1.x connection to server)';
+$string['tlsv1'] = 'TLSv1 (direct connection to TLS server version 1.x)';
 $string['validateaddress'] = 'Validate sender email address';
 $string['validateaddress_help'] = 'When a message is received from a user, Moodle attempts to validate the message by comparing the email address of the sender with the email address in their user profile.
 
