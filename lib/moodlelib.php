@@ -5245,6 +5245,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         echo $OUTPUT->notification($strdeleted.get_string('type_block_plural', 'plugin'), 'notifysuccess');
     }
 
+    $DB->set_field('course_modules', 'deletioninprogress', '1', ['course' => $courseid]);
+    rebuild_course_cache($courseid, true);
+
     // Get the list of all modules that are properly installed.
     $allmodules = $DB->get_records_menu('modules', array(), '', 'name, id');
 
