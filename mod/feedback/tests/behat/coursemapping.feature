@@ -50,7 +50,7 @@ Feature: Mapping courses in a feedback
     And I add a "Multiple choice" question to the feedback with:
       | Question               | this is a simple multiple choice    |
       | Label                  | multichoicesimple                   |
-      | Multiple choice type   | Multiple choice - single answer allowed (dropdownlist) |
+      | Multiple choice type   | Multiple choice - single answer allowed (drop-down menu) |
       | Multiple choice values | option d\noption e\noption f                           |
     And I log out
     And I log in as "teacher"
