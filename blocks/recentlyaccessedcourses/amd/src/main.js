@@ -211,6 +211,15 @@ define(
                 return carry + course.attr('data-course-id');
             }, '');
 
+            // Centre the courses if we have an overflow of courses.
+            if (allCourses.length > coursesToShow.length) {
+                container.addClass('justify-content-center');
+                container.removeClass('justify-content-start');
+            } else {
+                container.removeClass('justify-content-center');
+                container.addClass('justify-content-start');
+            }
+
             // Don't bother updating the DOM unless the visible courses have changed.
             if (visibleCoursesId != newVisibleCoursesId) {
                 var pagingBar = root.find(PagedContentPagingBar.rootSelector);
