@@ -40,7 +40,8 @@ function mycourses_get_my_completion($datefrom = 0) {
                                        FROM {local_iomad_track} cc
                                        JOIN {course} c ON (c.id = cc.courseid)
                                        WHERE cc.userid = :userid
-                                       AND c.visible = 1",
+                                       AND c.visible = 1
+                                       AND cc.timecompleted IS NOT NULL",
                                        array('userid' => $USER->id));
     $myinprogress = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.course as courseid, c.fullname as coursefullname, c.summary as coursesummary
                                           FROM {course_completions} cc
