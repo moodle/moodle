@@ -33,6 +33,7 @@ require_once('lib.php');
 require_once($CFG->dirroot.'/local/email/lib.php');
 
 $id = optional_param('id', $USER->id, PARAM_INT);    // User id; -1 if creating new user.
+$cancelemailchange = optional_param('cancelemailchange', 0, PARAM_INT);   // Course id (defaults to Site).
 
 require_login();
 
@@ -98,6 +99,11 @@ if ($user->deleted) {
     echo $OUTPUT->heading(get_string('userdeleted'));
     echo $OUTPUT->footer();
     die;
+}
+
+// Process email change cancellation.
+if ($cancelemailchange) {
+    cancel_email_update($user->id);
 }
 
 // Load user preferences.

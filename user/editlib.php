@@ -249,7 +249,7 @@ function useredit_update_interests($user, $interests) {
  * @param stdClass $user
  */
 function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions, $user) {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $PAGE;
 
     if ($user->id > 0) {
         useredit_load_preferences($user, false);
@@ -281,8 +281,11 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
 
     // Do not show email field if change confirmation is pending.
     if ($user->id > 0 and !empty($CFG->emailchangeconfirmation) and !empty($user->preference_newemail)) {
+        // IOMAD - Change to allow a manager to cancel the email request change.
+        $pageurl = $PAGE->url;
+        $pageurl .= "&amp;cancelemailchange=1";
         $notice = get_string('emailchangepending', 'auth', $user);
-        $notice .= '<br /><a href="edit.php?cancelemailchange=1&amp;id='.$user->id.'">'
+        $notice .= '<br /><a href="'. $pageurl . '">'
                 . get_string('emailchangecancel', 'auth') . '</a>';
         $mform->addElement('static', 'emailpending', get_string('email'), $notice);
     } else {
