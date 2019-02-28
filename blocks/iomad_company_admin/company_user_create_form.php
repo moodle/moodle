@@ -328,7 +328,8 @@ class user_edit_form extends company_moodleform {
         $usernew = (object)$usernew;
 
         // Validate email.
-        if ($DB->record_exists('user', array('email' => $usernew->email, 'mnethostid' => $CFG->mnet_localhost_id))) {
+        if (empty($CFG->allowaccountssameemail) &&
+            $DB->record_exists('user', array('email' => $usernew->email, 'mnethostid' => $CFG->mnet_localhost_id))) {
             $errors['email'] = get_string('emailexists');
         }
 
