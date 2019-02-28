@@ -198,19 +198,12 @@ class local_report_user_completion_table extends table_sql {
         }
 
         if (!empty($row->timecompleted) && $certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
-            if ($certificateinfo = $DB->get_record('iomadcertificate', array('course' => $row->courseid))) {
-                if ($certificatemodinstance = $DB->get_record('course_modules', array('course' => $row->courseid,
-                                                                                      'module' => $certmodule->id,
-                                                                                      'instance' => $certificateinfo->id))) {
-                    return $output->single_button(new moodle_url('/mod/iomadcertificate/view.php',
-                                                                 array('id' => $certificatemodinstance->id,
-                                                                       'action' => 'get',
-                                                                       'userid' => $row->id,
-                                                                       'sesskey' => sesskey())),
-                                                   get_string('downloadcert', 'local_report_users'));
-                } else {
-                    return;
-                }
+            if ($traccertrec = $DB->get_record('local_iomad_track_certs', array('trackid' => $row->certsource))) {
+                // create the file download link.
+                $coursecontext = context_course::instance($row->courseid);
+
+                $certurl = moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename);
+                return '<a class="btn btn-secondary" href="' . $certurl . '">' . get_string('downloadcert', 'local_report_users') . '</a>';
             } else {
                 return;
             }
