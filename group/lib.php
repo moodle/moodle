@@ -548,12 +548,20 @@ function groups_delete_group($grouporid) {
         }
     }
 
+    $context = context_course::instance($group->courseid);
+
     // delete group calendar events
     $DB->delete_records('event', array('groupid'=>$groupid));
     //first delete usage in groupings_groups
     $DB->delete_records('groupings_groups', array('groupid'=>$groupid));
     //delete members
     $DB->delete_records('groups_members', array('groupid'=>$groupid));
+
+    // Delete any members in a conversation related to this group.
+    if ($conversation = \core_message\api::get_conversation_by_area('core_group', 'groups', $groupid, $context->id)) {
+        \core_message\api::delete_all_conversation_data($conversation->id);
+    }
+
     //group itself last
     $DB->delete_records('groups', array('id'=>$groupid));
 
