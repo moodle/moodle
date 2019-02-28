@@ -7371,20 +7371,22 @@ span.editinstructions {
   overflow: hidden;
   position: absolute;
 }
-.fp-iconview .fp-filename-field:hover {
+.fp-iconview .fp-file:focus .fp-filename-field,
+.fp-iconview .fp-file:hover .fp-filename-field {
   overflow: visible;
   z-index: 1000;
+}
+.fp-iconview .fp-file:focus .fp-filename,
+.fp-iconview .fp-file:hover .fp-filename {
+  overflow: inherit;
+  white-space: normal;
+  text-overflow: unset;
 }
 .fp-iconview .fp-filename-field .fp-filename {
   background: #fff;
   padding-top: 5px;
   padding-bottom: 12px;
   min-width: 112px;
-}
-.fp-iconview .fp-filename-field .fp-filename:hover {
-  overflow: inherit;
-  white-space: normal;
-  text-overflow: unset;
 }
 .file-picker .yui3-datatable table {
   border: 0 solid #bbb;
