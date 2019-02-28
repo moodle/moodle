@@ -336,14 +336,14 @@ if (!empty($userlist)) {
             $numallocations = $DB->count_records_sql("SELECT COUNT(id) FROM {local_report_user_lic_allocs}
                                                       WHERE action = 1
                                                       AND licenseid = :licenseid
-                                                      AND date < :fromtime
+                                                      AND issuedate < :fromtime
                                                       AND userid IN (" . $departmentids . ")",
                                                       array('licenseid' => $licenseid,
                                                             'fromtime' => $from));
             $numunallocations = $DB->count_records_sql("SELECT COUNT(id) FROM {local_report_user_lic_allocs}
                                                         WHERE action = 0
                                                         AND licenseid = :licenseid
-                                                        AND date < :fromtime
+                                                        AND issuedate < :fromtime
                                                         AND userid IN (" . $departmentids . ")",
                                                         array('licenseid' => $licenseid,
                                                               'fromtime' => $from));
@@ -353,7 +353,7 @@ if (!empty($userlist)) {
             $allocations = $DB->get_records_sql("SELECT * FROM {local_report_user_lic_allocs}
                                                  WHERE action = 1
                                                  AND license = :licenseid
-                                                 AND date < :fromtime
+                                                 AND issuedate < :fromtime
                                                  AND userid IN (" . $departmentids . ")",
                                                  array('licenseid' => $licenseid,
                                                        'fromtime' => $from));
@@ -362,7 +362,7 @@ if (!empty($userlist)) {
             $unallocations = $DB->get_records_sql("SELECT * FROM {local_report_user_lic_allocs}
                                                    WHERE action = 0
                                                    AND licenseid = :licenseid
-                                                   AND timecreated < :fromtime
+                                                   AND issuedate < :fromtime
                                                    AND userid IN (" . $departmentids . ")",
                                                    array('licenseid' => $licenseid,
                                                          'fromtime' => $from));
@@ -376,11 +376,11 @@ if (!empty($userlist)) {
     $sqlparams = array('licenseid' => $licenseid);
     $timesql = "";
     if (!empty($from)) {
-        $timesql = " AND date > :from ";
+        $timesql = " AND issuedate > :from ";
         $sqlparams['from'] = $from;
     }
     if (!empty($to)) {
-        $timesql .= " AND date < :to ";
+        $timesql .= " AND issuedate < :to ";
         $sqlparams['to'] = $to;
     }
     // Get the number of allocations.
