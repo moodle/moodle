@@ -44,7 +44,7 @@ class observer {
         global $DB;
 
         // Add the event.
-        $user = $DB->get_record('user', array('id' => $userid));
+        $user = $DB->get_record('user', array('id' => $event->userid));
         $DB->insert_record('local_report_user_lic_allocs', array('userid' => $event->userid,
                                                                  'licenseid' => $event->other['licenseid'],
                                                                  'issuedate' => $event->timecreated,

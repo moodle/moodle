@@ -448,7 +448,6 @@ class observer {
         $userid = $event->userid;
         $courseid = $event->courseid;
         $licenseid = $event->other['licenseid'];
-        $issuedate = $event->other['issuedate'];
 
         // Check if there is already an entry for this.
         if ($entry = $DB->get_record('local_iomad_track', array('userid' => $userid,
