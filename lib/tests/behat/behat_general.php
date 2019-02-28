@@ -174,7 +174,7 @@ class behat_general extends behat_base {
                 return true;
             },
             $iframename,
-            self::EXTENDED_TIMEOUT
+            behat_base::get_extended_timeout()
         );
     }
 
@@ -271,7 +271,7 @@ class behat_general extends behat_base {
             return;
         }
 
-        $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+        $this->getSession()->wait(self::get_timeout() * 1000, self::PAGE_READY_JS);
     }
 
     /**
@@ -604,10 +604,10 @@ class behat_general extends behat_base {
             "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
 
         // We should wait a while to ensure that the page is not still loading elements.
-        // Waiting less than self::TIMEOUT as we already waited for the DOM to be ready and
+        // Waiting less than self::get_timeout() as we already waited for the DOM to be ready and
         // all JS to be executed.
         try {
-            $nodes = $this->find_all('xpath', $xpath, false, false, self::REDUCED_TIMEOUT);
+            $nodes = $this->find_all('xpath', $xpath, false, false, self::get_reduced_timeout());
         } catch (ElementNotFoundException $e) {
             // All ok.
             return;
@@ -644,7 +644,7 @@ class behat_general extends behat_base {
                 return true;
             },
             array('nodes' => $nodes, 'text' => $text),
-            self::REDUCED_TIMEOUT,
+            behat_base::get_reduced_timeout(),
             false,
             true
         );
@@ -728,7 +728,7 @@ class behat_general extends behat_base {
         // We should wait a while to ensure that the page is not still loading elements.
         // Giving preference to the reliability of the results rather than to the performance.
         try {
-            $nodes = $this->find_all('xpath', $xpath, false, $container, self::REDUCED_TIMEOUT);
+            $nodes = $this->find_all('xpath', $xpath, false, $container, self::get_reduced_timeout());
         } catch (ElementNotFoundException $e) {
             // All ok.
             return;
@@ -754,7 +754,7 @@ class behat_general extends behat_base {
                 return true;
             },
             array('nodes' => $nodes, 'text' => $text, 'element' => $element),
-            self::REDUCED_TIMEOUT,
+            behat_base::get_reduced_timeout(),
             false,
             true
         );
@@ -932,7 +932,7 @@ class behat_general extends behat_base {
                     return $context->getSession()->getPage()->findAll($args['selector'], $args['locator']);
                 },
                 $params,
-                self::REDUCED_TIMEOUT,
+                behat_base::get_reduced_timeout(),
                 $exception,
                 false
             );
@@ -1124,7 +1124,7 @@ class behat_general extends behat_base {
             // Would be better to use a 1 second sleep because the element should not be there,
             // but we would need to duplicate the whole find_all() logic to do it, the benefit of
             // changing to 1 second sleep is not significant.
-            $this->find($selector, $locator, false, $containernode, self::REDUCED_TIMEOUT);
+            $this->find($selector, $locator, false, $containernode, behat_base::get_reduced_timeout());
         } catch (ElementNotFoundException $e) {
             // It passes.
             return;
@@ -1390,7 +1390,7 @@ class behat_general extends behat_base {
                 return $this->download_file_from_link($link);
             },
             array('link' => $link),
-            self::EXTENDED_TIMEOUT,
+            behat_base::get_extended_timeout(),
             $exception
         );
 
@@ -1433,7 +1433,7 @@ class behat_general extends behat_base {
                 return $this->download_file_from_link($link);
             },
             array('link' => $link),
-            self::EXTENDED_TIMEOUT,
+            behat_base::get_extended_timeout(),
             $exception
         );
 

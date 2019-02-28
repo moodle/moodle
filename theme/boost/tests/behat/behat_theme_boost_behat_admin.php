@@ -53,7 +53,7 @@ class behat_theme_boost_behat_admin extends behat_admin {
             $submitsearch = $this->find('css', 'form input[type=submit][name=search]');
             $submitsearch->press();
 
-            $this->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+            $this->wait(self::get_timeout() * 1000, self::PAGE_READY_JS);
 
             // Admin settings does not use the same DOM structure than other moodle forms
             // but we also need to use lib/behat/form_field/* to deal with the different moodle form elements.
