@@ -653,8 +653,7 @@ class block_base {
      * @return bool
      */
     public function instance_can_be_docked() {
-        global $CFG;
-        return (!empty($CFG->allowblockstodock) && $this->page->theme->enable_dock);
+        return false;
     }
 
     /**

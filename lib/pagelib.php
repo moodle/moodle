@@ -1554,11 +1554,6 @@ class moodle_page {
         }
 
         $this->_theme->setup_blocks($this->pagelayout, $this->blocks);
-        if ($this->_theme->enable_dock && !empty($CFG->allowblockstodock)) {
-            $this->requires->strings_for_js(array('addtodock', 'undockitem', 'dockblock', 'undockblock', 'undockall', 'hidedockpanel', 'hidepanel'), 'block');
-            $this->requires->string_for_js('thisdirectionvertical', 'langconfig');
-            $this->requires->yui_module('moodle-core-dock-loader', 'M.core.dock.loader.initLoader');
-        }
 
         if ($this === $PAGE) {
             $target = null;
