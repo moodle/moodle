@@ -3204,4 +3204,28 @@ class api {
             ]
         );
     }
+
+    /**
+     * Completely removes all related data in the DB for a given conversation.
+     *
+     * @param int $conversationid The id of the conversation
+     */
+    public static function delete_all_conversation_data(int $conversationid) {
+        global $DB;
+
+        $DB->delete_records('message_conversations', ['id' => $conversationid]);
+        $DB->delete_records('message_conversation_members', ['conversationid' => $conversationid]);
+        $DB->delete_records('message_conversation_actions', ['conversationid' => $conversationid]);
+
+        // Now, go through and delete any messages and related message actions for the conversation.
+        if ($messages = $DB->get_records('messages', ['conversationid' => $conversationid])) {
+            $messageids = array_keys($messages);
+
+            list($insql, $inparams) = $DB->get_in_or_equal($messageids);
+            $DB->delete_records_select('message_user_actions', "messageid $insql", $inparams);
+
+            // Delete the messages now.
+            $DB->delete_records('messages', ['conversationid' => $conversationid]);
+        }
+    }
 }
