@@ -156,7 +156,7 @@ $string['newtable'] = 'New table';
 $string['newtablefrommysql'] = 'New table from MySQL';
 $string['new_table_from_mysql'] = 'New table from MySQL';
 $string['nofieldsspecified'] = 'No fields specified';
-$string['nomasterprimaryuniquefound'] = 'The column(s) that you foreign key references must be included in a primary or unique KEY in the referenced table. Note, the column being in a UNIQUE INDEX is not good enough.';
+$string['nomasterprimaryuniquefound'] = 'The column(s) that your foreign key references must be included in a primary or unique KEY in the referenced table. Note that the column being in a UNIQUE INDEX is not good enough.';
 $string['nomissingindexesfound'] = 'No missing indexes have been found, your DB doesn\'t need further actions.';
 $string['noreffieldsspecified'] = 'No reference fields specified';
 $string['noreftablespecified'] = 'Specified reference table not found';
@@ -221,6 +221,6 @@ $string['yeswrongdefaultsfound'] = '<p>Some inconsistent defaults have been foun
 <p>After doing that, it\'s highly recommended to execute this utility again to check that no more inconsistent defaults are found.</p>';
 $string['yeswrongintsfound'] = '<p>Some wrong integers have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to fix them. Remember to backup your data first!</p>
 <p>After fixing them, it is highly recommended to execute this utility again to check that no more wrong integers are found.</p>';
-$string['yeswrongoraclesemanticsfound'] = '<p>Some Oracle columns using BYTE semantics have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them. Remember to backup your data first!</p>
+$string['yeswrongoraclesemanticsfound'] = '<p>Some Oracle columns using BYTE semantics have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to convert them all. Remember to backup your data first!</p>
 <p>After doing that, it\'s highly recommended to execute this utility again to check that no more wrong semantics are found.</p>';
 $string['privacy:metadata'] = 'The XMLDB editor plugin does not store any personal data.';

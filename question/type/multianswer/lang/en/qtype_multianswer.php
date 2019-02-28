@@ -32,7 +32,7 @@ $string['layout'] = 'Layout';
 $string['layouthorizontal'] = 'Horizontal row of radio-buttons';
 $string['layoutmultiple_horizontal'] = 'Horizontal row of checkboxes';
 $string['layoutmultiple_vertical'] = 'Vertical column of checkboxes';
-$string['layoutselectinline'] = 'Dropdown menu in-line in the text';
+$string['layoutselectinline'] = 'Drop-down menu in-line in the text';
 $string['layoutundefined'] = 'Undefined layout';
 $string['layoutvertical'] = 'Vertical column of radio buttons';
 $string['nooptionsforsubquestion'] = 'Unable to get options for question part # {$a->sub} (question->id={$a->id})';

@@ -24,12 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['errormaxdate'] = 'Please enter date no later than {$a}';
-$string['errormindate'] = 'Please enter date on or after {$a}';
+$string['errormaxdate'] = 'Please enter a date no later than {$a}.';
+$string['errormindate'] = 'Please enter a date on or after {$a}.';
 $string['includetime'] = 'Include time';
 $string['maxdate'] = 'Maximum value';
 $string['mindate'] = 'Minimum value';
-$string['mindateaftermax'] = 'The minimum value can not be bigger than the maximum value';
+$string['mindateaftermax'] = 'The minimum value cannot be bigger than the maximum value.';
 $string['pluginname'] = 'Date and time';
-$string['privacy:metadata'] = 'Date and time field type plugin does not store any personal data, it uses tables defined in core';
+$string['privacy:metadata'] = 'The Date and time field type plugin doesn\'t store any personal data; it uses tables defined in core.';
 $string['specificsettings'] = 'Settings for the date and time field';

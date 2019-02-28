@@ -249,7 +249,7 @@ $string['viewunreadmessageswith'] = 'View unread messages with {$a}';
 $string['writeamessage'] = 'Write a message...';
 $string['wouldliketocontactyou'] = 'Would like to contact you';
 $string['you'] = 'You:';
-$string['youhaveblockeduser'] = 'You have blocked this user in the past';
+$string['youhaveblockeduser'] = 'You have blocked this user.';
 $string['yourcontactrequestpending'] = 'Your contact request is pending with {$a}';
 
 // Deprecated since Moodle 3.6.
