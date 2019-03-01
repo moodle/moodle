@@ -316,11 +316,11 @@ if ($ajaxtemplate) {
     die;
 }
 
-echo $output->header();
-
 //  Deal with any deletes.
 if ($action == 'delete' && confirm_sesskey()) {
     if ($confirm != md5($templatesetid)) {
+echo $output->header();
+
         if (!$templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid))) {
             print_error('templatesetnotfound', 'local_email');
         }
@@ -336,10 +336,15 @@ if ($action == 'delete' && confirm_sesskey()) {
         // Delete the template.
         $DB->delete_records('email_templateset_templates', array('templateset' => $templatesetid));
         $DB->delete_records('email_templateset', array('id' => $templatesetid));
-        notice(get_string('templatesetdeleted', 'local_email'));
+        if ($SESSION->currenttemplatesetid == $templatesetid) {
+            unset($SESSION->currenttemplatesetid);
+        }
+        redirect($linkurl,get_string('templatesetdeleted', 'local_email'), null, \core\output\notification::NOTIFY_SUCCESS);
+        die;
     }
 }
 
+echo $output->header();
 $mform = new company_templateset_save_form($linkurl, $companyid, $templatesetid);
 
 if ($data = $mform->get_data()) {
@@ -373,8 +378,11 @@ if (empty($manage)) {
     if (empty($templatesetid)) {
         echo '<h3>' . get_string('email_templates_for', $block, $company->get_name()) . '</h3>';
     } else {
-        $templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid));
-        echo '<h3>' . get_string('email_templates_for', $block, $templatesetinfo->templatesetname) . '</h3>';
+        if ($templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid))) {
+            echo '<h3>' . get_string('email_templates_for', $block, $templatesetinfo->templatesetname) . '</h3>';
+        } else {
+            echo '<h3>' . get_string('email_templates_for', $block, $company->get_name()) . '</h3>';
+        }
     }
 
     // output the save button.
@@ -384,7 +392,11 @@ if (empty($manage)) {
     $manageurl = new moodle_url('/local/email/template_list.php',
                                   array('manage' => 1));
     if (!empty($templatesetid)) {
-        $backurl = new moodle_url('/local/email/template_list.php', array('finished' => true));
+        if ($DB->get_record('email_templateset', array('id' => $templatesetid))) {
+            $backurl = new moodle_url('/local/email/template_list.php', array('finished' => true));
+        } else {
+            $backurl = '';
+        }
     } else {
         $backurl = '';
     }
@@ -397,20 +409,16 @@ $configtemplates = array_keys($email);
 sort($configtemplates);
 $ntemplates = count($configtemplates);
 
-// Get the number of templates.
-echo $output->paging_bar($ntemplates, $page, $perpage, $baseurl);
-
-flush();
-
 if ($manage) {
     if (empty($templatesetid)) {
         // Display the list of templates.
         $templates = $DB->get_records('email_templateset', array(), 'templatesetname');
         echo $output->email_templatesets($templates, $linkurl);
-    } else {
     }
-
 } else {
+    // Get the number of templates.
+    echo $output->paging_bar($ntemplates, $page, $perpage, $baseurl);
+
     $templates = $DB->get_records('email_template', array('companyid' => $companyid, 'lang' => $lang),
                                     'name', '*', $page * $perpage, $perpage);
     // get heading
