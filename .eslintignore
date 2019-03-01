@@ -85,7 +85,3 @@ theme/boost/amd/src/tooltip.js
 theme/boost/amd/src/util.js
 theme/boost/amd/src/tether.js
 theme/boost/scss/fontawesome/
-theme/bootstrapbase/less/bootstrap/
-theme/bootstrapbase/javascript/html5shiv.js
-theme/bootstrapbase/amd/src/bootstrap.js
-theme/bootstrapbase/less/fontawesome/
