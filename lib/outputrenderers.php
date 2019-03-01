@@ -4711,6 +4711,16 @@ EOD;
         $data = $bar->export_for_template($this);
         return $this->render_from_template('core/progress_bar', $data);
     }
+
+    /**
+     * Renders element for a toggle-all checkbox.
+     *
+     * @param \core\output\checkbox_toggleall $element
+     * @return string
+     */
+    public function render_checkbox_toggleall(\core\output\checkbox_toggleall $element) {
+        return $this->render_from_template('core/checkbox-toggleall', $element->export_for_template($this));
+    }
 }
 
 /**
