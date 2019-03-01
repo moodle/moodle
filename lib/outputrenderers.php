@@ -1817,11 +1817,12 @@ class core_renderer extends renderer_base {
      */
     public function blocks_for_region($region) {
         $blockcontents = $this->page->blocks->get_content_for_region($region, $this);
-        $blocks = $this->page->blocks->get_blocks_for_region($region);
         $lastblock = null;
         $zones = array();
-        foreach ($blocks as $block) {
-            $zones[] = $block->title;
+        foreach ($blockcontents as $bc) {
+            if ($bc instanceof block_contents) {
+                $zones[] = $bc->title;
+            }
         }
         $output = '';
 
