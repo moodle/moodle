@@ -1888,5 +1888,20 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019012901, 'local', 'iomad');
     }
 
-return $result;
+    if ($oldversion < 2019030100) {
+
+        // Define field hasgrade to be added to iomad_courses.
+        $table = new xmldb_table('iomad_courses');
+        $field = new xmldb_field('hasgrade', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'warnnotstarted');
+
+        // Conditionally launch add field hasgrade.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2019030100, 'local', 'iomad');
+    }
+
+    return $result;
 }

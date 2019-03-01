@@ -468,11 +468,18 @@ if (empty($courseid)) {
         $headers[] = get_string('timeexpires', 'local_report_completion');
     }
 
+    // Does this course have an visible grade?
+    if (($courseid == 1 && $DB->get_records_sql("SELECT id FROM {iomad_courses} WHERE courseid IN (SELECT courseid FROM {local_iomad_track} WHERE companyid = :companyid) AND hasgrade = 1", array('companyid' => $company->id))) ||
+        $DB->get_record_sql("SELECT id FROM {iomad_courses} WHERE courseid = :courseid AND hasgrade = 1", array('courseid' => $courseid))) {
+        $columns[] = 'finalscore';
+        $headers[] = get_string('grade');
+    }
+
     // And finally the last of the columns.
-    $headers[] = get_string('grade');
-    $columns[] = 'finalscore';
-    $headers[] = get_string('certificate', 'local_report_completion');
-    $columns[] = 'certificate';
+    if (!$table->is_downloading()) {
+        $headers[] = get_string('certificate', 'local_report_completion');
+        $columns[] = 'certificate';
+    }
 
     // Set up the table and display it.
     $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);

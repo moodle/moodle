@@ -283,4 +283,32 @@ class iomad_courses_table extends table_sql {
                 </form>';
 
     }
+
+    /**
+     * Generate the display of the user's license allocated timestamp
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_hasgrade($row) {
+        global $OUTPUT, $params;
+
+        $linkurl = "/blocks/iomad_company_admin/iomad_courses_form.php";
+        $hasgradeselectbutton = array('0' => get_string('no'),
+                                      '1' => get_string('yes'));
+
+        $linkparams = $params;
+        if (!empty($params['coursesearchtext'])) {
+            $linkparams['coursesearch'] = $params['coursesearchtext'];
+        }
+        $linkparams['courseid'] = $row->courseid;
+        $linkparams['update'] = 'hasgrade';
+        $hasgradeurl = new moodle_url($linkurl, $linkparams);
+        $hasgradeselect = new single_select($hasgradeurl, 'hasgrade', $hasgradeselectbutton, $row->hasgrade);
+        $hasgradeselect->label = '';
+        $hasgradeselect->formid = 'hasgradeselect'.$row->courseid;
+        $hasgradeselectoutput = html_writer::tag('div', $OUTPUT->render($hasgradeselect), array('id' => 'hasgrade_selector'.$row->courseid));
+
+        return $hasgradeselectoutput;
+
+    }
 }

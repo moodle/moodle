@@ -103,17 +103,17 @@ class local_report_user_completion_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_timeexpires($row) {
-        global $CFG;
+        global $CFG, $DB;
 
-        if (!empty($row->timeexpires)) {
-            if ($icourserec = $DB->get_record_sql("SELECT * FROM {iomad_courses} WHERE courseid =: courseid AND expireafter !=0", array('courseid' => $row->courseid))) {
+        if ($icourserec = $DB->get_record_sql("SELECT * FROM {iomad_courses} WHERE courseid = :courseid AND expireafter !=0", array('courseid' => $row->courseid))) {
+            if (!empty($row->timeexpires)) {
                 $expiredate = $row->timecompleted + $icourserec->timeexpires * 24 * 60 * 60;
                 return date($CFG->iomad_date_format, $expiredate);
             } else {
                 return;
             }
         } else {
-            return;
+            return get_string('notapplicable', 'local_report_completion');
         }
     }
 
@@ -123,12 +123,16 @@ class local_report_user_completion_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_finalscore($row) {
-        global $CFG;
+        global $CFG, $DB;
 
-        if (!empty($row->finalscore) && !empty($row->timeenrolled)) {
-            return round($row->finalscore, $CFG->iomad_report_grade_places)."%";
+        if ($icourserec = $DB->get_record_sql("SELECT * FROM {iomad_courses} WHERE courseid = :courseid AND hasgrade = 1", array('courseid' => $row->courseid))) {
+            if (!empty($row->finalscore) && !empty($row->timeenrolled)) {
+                return round($row->finalscore, $CFG->iomad_report_grade_places)."%";
+            } else {
+                return;
+            }
         } else {
-            return;
+            return get_string('notapplicable', 'local_report_completion');
         }
     }
 

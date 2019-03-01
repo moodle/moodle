@@ -34,6 +34,7 @@ $warnexpire = optional_param('warnexpire', 0, PARAM_INTEGER);
 $warncompletion = optional_param('warncompletion', 0, PARAM_INTEGER);
 $notifyperiod = optional_param('notifyperiod', 0, PARAM_INTEGER);
 $expireafter = optional_param('expireafter', 0, PARAM_INTEGER);
+$hasgrade = optional_param('hasgrade', 1, PARAM_INTEGER);
 
 $params = array();
 
@@ -230,6 +231,9 @@ if (!empty($update)) {
             }
             $coursedetails['notifyperiod'] = $notifyperiod;
             $DB->update_record('iomad_courses', $coursedetails);
+        } else if ('hasgrade' == $update) {
+            $coursedetails['hasgrade'] = $hasgrade;
+            $DB->update_record('iomad_courses', $coursedetails);
         }
     }
 }
@@ -286,7 +290,7 @@ if (!empty($coursesearch)) {
 }
 
 // Set up the SQL for the table.
-$selectsql = "ic.id, c.id AS courseid, c.fullname AS coursename, ic.licensed, ic.shared, ic.validlength, ic.warnexpire, ic.warncompletion, ic.notifyperiod, ic.expireafter, ic.warnnotstarted, '$companyid' AS companyid";
+$selectsql = "ic.id, c.id AS courseid, c.fullname AS coursename, ic.licensed, ic.shared, ic.validlength, ic.warnexpire, ic.warncompletion, ic.notifyperiod, ic.expireafter, ic.warnnotstarted, ic.hasgrade, '$companyid' AS companyid";
 $fromsql = "{iomad_courses} ic JOIN {course} c ON (ic.courseid = c.id)";
 $wheresql = "$companysql $searchsql";
 $sqlparams = $params;
@@ -302,7 +306,8 @@ $tableheaders = array(
     get_string('warnexpire', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnexpire', 'block_iomad_company_admin'),
     get_string('warnnotstarted', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnnotstarted', 'block_iomad_company_admin'),
     get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin'),
-    get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin'));
+    get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin'),
+    get_string('hasgrade', 'block_iomad_company_admin') . $OUTPUT->help_icon('hasgrade', 'block_iomad_company_admin'));
 $tablecolumns = array('company',
                  'coursename',
                  'licensed',
@@ -312,7 +317,8 @@ $tablecolumns = array('company',
                  'warnexpire',
                  'warnnotstarted',
                  'warncompletion',
-                 'notifyperiod');
+                 'notifyperiod',
+                 'hasgrade');
 
 $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
 $table->define_baseurl($baseurl);

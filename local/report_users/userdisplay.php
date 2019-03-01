@@ -137,23 +137,40 @@ $headers = array(get_string('course', 'local_report_completion'),
                  get_string('status', 'local_report_completion'),
                  get_string('licensedateallocated', 'block_iomad_company_admin'),
                  get_string('datestarted', 'local_report_completion'),
-                 get_string('datecompleted', 'local_report_completion'),
-                 get_string('timeexpires', 'local_report_completion'),
-                 get_string('grade'));
-if (!$table->is_downloading()){
-    $headers[] = get_string('certificate', 'local_report_completion');
-    $headers[] = get_string('actions', 'local_report_users');
-}
+                 get_string('datecompleted', 'local_report_completion'));
 
 $columns = array('coursename',
                  'status',
                  'licenseallocated',
                  'timeenrolled',
-                 'timecompleted',
-                 'timeexpires',
-                 'finalscore');
+                 'timecompleted');
+
+// Do we show the time expires column?
+if ($DB->get_records_sql("SELECT lit.id FROM {iomad_courses} ic
+                          JOIN {local_iomad_track} lit
+                          ON ic.courseid = lit.courseid
+                          WHERE ic.validlength > 0
+                          AND lit.userid = :userid",
+                          array('userid' => $userid))) {
+    $columns[] = 'timeexpires';
+    $headers[] = get_string('timeexpires', 'local_report_completion');
+}
+
+// Do we show the grade column?
+if ($DB->get_records_sql("SELECT lit.id FROM {iomad_courses} ic
+                          JOIN {local_iomad_track} lit
+                          ON ic.courseid = lit.courseid
+                          WHERE ic.hasgrade = 1
+                          AND lit.userid = :userid",
+                          array('userid' => $userid))) {
+    $columns[] = 'finalscore';
+    $headers[] = get_string('grade');
+}
+
 if (!$table->is_downloading()){
+    $headers[] = get_string('certificate', 'local_report_completion');
     $columns[] = 'certificate';
+    $headers[] = get_string('actions', 'local_report_users');
     $columns[] = 'actions';
 }
 

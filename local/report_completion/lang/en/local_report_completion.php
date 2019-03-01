@@ -83,3 +83,4 @@ $string['compto'] = 'End date';
 $string['userlink'] = 'Display users';
 $string['used'] = 'Active';
 $string['unused'] = 'Inactive';
+$string['notapplicable'] = 'N/A';
