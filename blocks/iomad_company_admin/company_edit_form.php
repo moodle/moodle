@@ -300,6 +300,7 @@ if ($mform->is_cancelled()) {
         $data->city = trim($data->city);
 
         $companyid = $DB->insert_record('company', $data);
+        $company = new company($companyid);
 
         $eventother = array('companyid' => $companyid);
 
