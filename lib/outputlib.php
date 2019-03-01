@@ -2554,8 +2554,8 @@ class theme_config {
             }
         }
 
-        // Last resort, try the bootstrapbase theme for names
-        return get_string('region-' . $region, 'theme_bootstrapbase');
+        // Last resort, try the boost theme for names
+        return get_string('region-' . $region, 'theme_boost');
     }
 
     /**

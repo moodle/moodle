@@ -33,7 +33,7 @@
 }}
 <input type="text" class="copy_box" value="{{{ text }}}" readonly="readonly" size="48" {{#id}}id={{#quote}}{{{id}}}-{{{uniqid}}}{{/quote}}{{/id}}/>
 {{# js }}
-require(['jquery', 'theme_bootstrapbase/bootstrap'], function($) {
+require(['jquery'], function($) {
     $('.copy_box').on('click', function() {
         $(this).select();
     });
