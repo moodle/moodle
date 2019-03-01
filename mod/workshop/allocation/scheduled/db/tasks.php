@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,21 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Scheduled allocator that internally executes the random one
+ * Definition of scheduled allocation tasks.
  *
- * @package     workshopallocation_scheduled
- * @subpackage  mod_workshop
- * @copyright   2012 David Mudrak <david@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   workshopallocation_scheduled
+ * @copyright 2019 Simey Lameze <simey@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component  = 'workshopallocation_scheduled';
-$plugin->version    = 2018120301;
-$plugin->requires   = 2018112800;
-$plugin->dependencies = array(
-    'workshopallocation_random'  => 2018112800,
-);
-$plugin->maturity   = MATURITY_STABLE;
-$plugin->cron       = 60;
+$tasks = [
+    [
+        'classname' => '\workshopallocation_scheduled\task\cron_task',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    ]
+];
