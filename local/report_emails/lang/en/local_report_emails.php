@@ -26,3 +26,6 @@ $string['controls'] = 'Controls';
 $string['resend'] = 'Resend';
 $string['resendemail'] = 'Resend email';
 $string['resendemailfull'] = 'Are you sure you want to re-process this email?';
+$string['resendall'] = 'Resend all';
+$string['resendallemails'] = 'Resend all emails';
+$string['resendallemailsfull'] = 'Are you sure you want to resend all of the emails in the current selection.  This could result in many emails being sent out.'; 

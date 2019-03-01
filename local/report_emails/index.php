@@ -27,6 +27,7 @@ $firstname       = optional_param('firstname', 0, PARAM_CLEAN);
 $lastname      = optional_param('lastname', '', PARAM_CLEAN);
 $showsuspended = optional_param('showsuspended', 0, PARAM_INT);
 $email  = optional_param('email', 0, PARAM_CLEAN);
+$allemails  = optional_param('allemails', 0, PARAM_CLEAN);
 $sort         = optional_param('sort', 'lastname', PARAM_ALPHA);
 $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
@@ -292,6 +293,74 @@ if (!(iomad::has_capability('block/iomad_company_admin:editusers', $systemcontex
 
 $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, true, true);
 
+// Deal with resend check.
+if ($allemails and confirm_sesskey()) {
+
+    // resend email, after confirmation.
+    if ($confirm != md5($allemails)) {
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('resendallemails', 'local_report_emails'));
+        $optionsyes = array('allemails' => $allemails,
+                            'confirm' => md5($allemails),
+                            'sesskey' => sesskey()) + $params;
+
+        echo $OUTPUT->confirm(get_string('resendallemailsfull', 'local_report_emails'),
+                              new moodle_url('/local/report_emails/index.php', $optionsyes), '/local/report_emails/index.php');
+        echo $OUTPUT->footer();
+        die;
+    } else {
+        // Deal with where we are on the department tree.
+        $currentdepartment = company::get_departmentbyid($departmentid);
+        $showdepartments = company::get_subdepartments_list($currentdepartment);
+        $showdepartments[$departmentid] = $departmentid;
+        $departmentsql = " AND d.id IN (" . implode(',', array_keys($showdepartments)) . ")";
+
+        if (!empty($templateid)) {
+            $templatesql = " AND templatename = :templatename ";
+            $searchinfo->searchparams['templatename'] = $templateid;
+        } else {
+            $templatesql = '';
+        }
+
+        $sqlparams = $searchinfo->searchparams;
+        $sqlparams['companyid'] = $companyid;
+
+        // Deal with optional report fields.
+        $fromsql = "";
+        if (!empty($extrafields)) {
+            foreach ($extrafields as $extrafield) {
+                if (!empty($extrafield->fieldid)) {
+                    // Its a profile field.
+                    $fromsql .= " LEFT JOIN {user_info_data} P" . $extrafield->fieldid . " ON (u.id = P" . $extrafield->fieldid . ".userid AND P".$extrafield->fieldid . ".fieldid = :p" . $extrafield->fieldid . "fieldid )";
+                    $sqlparams["p".$extrafield->fieldid."fieldid"] = $extrafield->fieldid;
+                }
+            }
+        }
+
+        //get all of the emails.
+        $allemails = $DB->get_records_sql("SELECT e.id FROM 
+                                           {user} u
+                                           JOIN {email} e
+                                           ON (u.id = e.userid)
+                                           JOIN {company_users} cu ON (u.id = cu.userid AND e.userid = cu.userid)
+                                           JOIN {department} d ON (cu.departmentid = d.id)
+                                           JOIN {course} c on (e.courseid = c.id)
+                                           $fromsql
+                                           WHERE " .  $searchinfo->sqlsearch . "
+                                           AND cu.companyid = :companyid
+                                           $templatesql
+                                           $departmentsql
+                                           $companysql",
+                                           $sqlparams);
+        foreach ($allemails as $email) {
+            $DB->set_field('email', 'sent', null, array('id' => $email->id));
+        }
+
+        redirect($url);
+        die;
+    }
+}
+
 // Create data for form.
 $customdata = null;
 $options = $params;
@@ -314,8 +383,18 @@ if (!$table->is_downloading()) {
             echo html_writer::end_tag('div');
             echo html_writer::end_tag('div');
 
-            echo html_writer::start_tag('div', array('class' => 'iomadclear controlitems'));
+            echo html_writer::start_tag('div', array('class' => 'iomadclear'));
+            echo html_writer::start_tag('div', array('class' => 'controlitems'));
             echo $templateselectoutput;
+            echo html_writer::end_tag('div');
+
+            if (iomad::has_capability('local/report_emails:resend', $systemcontext)) {
+                $params['allemails'] = 'allemails';
+                $resendlink = new moodle_url('/local/report_emails/index.php', $params);
+                echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+                echo $output->single_button($resendlink, get_string('resendall', 'local_report_emails'));
+                echo html_writer::end_tag('div');
+            }
             echo html_writer::end_tag('div');
 
             // Set up the filter form.
