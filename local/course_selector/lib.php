@@ -608,7 +608,7 @@ abstract class course_selector_base {
      */
     public function output_course($course) {
         $bits = array(
-            $course->fullname
+            format_string($course->fullname, true, 1)
         );
         foreach ($this->extrafields as $field) {
             $bits[] = $course->$field;

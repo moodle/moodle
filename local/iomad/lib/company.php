@@ -1825,6 +1825,12 @@ class company {
                       implode(',', array_keys($courseids)).
                    ") ";
             if ($courses = $DB->get_records_sql($sql)) {
+
+                // Format multi-language course full name
+                foreach ($courses as $key => $course) {
+                    $courses[$key]->fullname = format_string($course->fullname, true, 1);
+                }
+
                 return $courses;
             } else {
                 return array();
@@ -1955,6 +1961,11 @@ class company {
                                                  ORDER BY c.fullname",
                                                  array('companyid' => $this->id,
                                                        'companyid2' => $this->id));
+
+        // Take care of multilanguage
+        foreach ($retcourses as $courseid => $course) {
+            $retcourses[$courseid] = format_string($course, true, 1);
+        }
 
         // Add a default entry and return the courses.
         if ($default) {

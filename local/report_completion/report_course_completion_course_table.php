@@ -54,7 +54,7 @@ class local_report_course_completion_course_table extends table_sql {
             $courselicenselink = new moodle_url('/local/report_user_license_allocations/index.php',
                                                 array('courseid' => $row->id,
                                                       'departmentid' => $row->departmentid));
-            $cell = html_writer::tag('h2', $row->coursename);
+            $cell = html_writer::tag('h2', format_string($row->coursename, true, 1));
             $systemcontext = context_system::instance();
             if (iomad::has_capability('local/report_users:view', $systemcontext)) {
                 $cell .= $output->single_button($courseuserslink, get_string('usersummary', 'local_report_completion'));
@@ -74,7 +74,7 @@ class local_report_course_completion_course_table extends table_sql {
             return $cell;
 
         } else {
-            return $row->coursename;
+            return format_string($row->coursename, true, 1);
         }
     }
 

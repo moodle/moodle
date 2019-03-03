@@ -147,9 +147,9 @@ class local_report_emails_table extends table_sql {
         if (!$this->is_downloading() && iomad::has_capability('local/report_completion:view', context_system::instance())) {
             return "<a href='".
                     new moodle_url($courseurl, array('courseid' => $row->courseid)).
-                    "'>" . $row->coursename . "</a>";
+                    "'>" . format_string($row->coursename, true, 1) . "</a>";
         } else {
-            return $row->coursename;
+            return format_string($row->coursename, true, 1);
         }
     }
 

@@ -200,7 +200,7 @@ class company_course_groups_form extends moodleform {
         $company = new company($this->selectedcompany);
         $mform->addElement('header', 'header',
                             get_string('company_users_for', 'block_iomad_company_admin',
-                            $course->fullname ));
+                            format_string($course->fullname, true, 1) ));
 
         $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_company_admin'));
         $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');

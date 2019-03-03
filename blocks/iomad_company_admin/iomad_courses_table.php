@@ -75,7 +75,7 @@ class iomad_courses_table extends table_sql {
 
         $courseurl = "/course/view.php";
         return "<a href='" . new moodle_url($courseurl, array('id' => $row->courseid)) .
-               "'>$row->coursename</a>";
+               "'>" . format_string($row->coursename, true, 1) . "</a>";
 
     }
 

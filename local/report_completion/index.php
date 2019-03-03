@@ -138,7 +138,7 @@ if (!empty($courseid)) {
         $PAGE->navbar->add(get_string("allusers", 'local_report_completion'));
     } else {
         $course = $DB->get_record('course', array('id' => $courseid));
-            $PAGE->navbar->add($course->fullname);
+            $PAGE->navbar->add(format_string($course->fullname, true, 1));
     }
 }
 
@@ -226,7 +226,7 @@ if (empty($courseid)) {
         } else if ($courseid == 1) {
             echo "<h3>".get_string('reportallusers', 'local_report_completion')."</h3>";
         } else {
-            echo "<h3>".get_string('courseusers', 'local_report_completion').$courseinfo[$courseid]->coursename."</h3>";
+            echo "<h3>".get_string('courseusers', 'local_report_completion').format_string($courseinfo[$courseid]->coursename, true, 1)."</h3>";
         }
 
         // Display the department selector.

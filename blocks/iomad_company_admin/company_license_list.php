@@ -248,17 +248,17 @@ if ($departmentid == $companydepartment->id) {
             if ($first) {
                 if ($issiteadmin) {
                     $coursestring .= "<a href='".new moodle_url('/course/view.php',
-                                       array('id' => $licensecourse->courseid))."'>".$coursename->fullname."</a>";
+                                       array('id' => $licensecourse->courseid))."'>".format_string($coursename->fullname, true, 1)."</a>";
                     $first = false;
                 } else {
-                    $coursestring .= $coursename->fullname;
+                    $coursestring .= format_string($coursename->fullname, true, 1);
                 }
             } else {
                 if ($issiteadmin) {
                     $coursestring .= ",</br><a href='".new moodle_url('/course/view.php',
-                                   array('id' => $licensecourse->courseid))."'>".$coursename->fullname."</a>";
+                                   array('id' => $licensecourse->courseid))."'>".format_string($coursename->fullname, true, 1)."</a>";
                 } else {
-                    $coursestring .= ",</br>".$coursename->fullname;
+                    $coursestring .= ",</br>". format_string($coursename->fullname, true, 1);
                 }
             }
         }
