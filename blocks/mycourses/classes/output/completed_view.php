@@ -97,7 +97,6 @@ class completed_view implements renderable, templatable {
             }
             $exportedcourse = $exporter->export($output);
             $exportedcourse->url = new \moodle_url('/course/view.php', array('id' => $completed->courseid));
-            $exportedcourse->fullname = $completed->coursefullname;
             $exportedcourse->image = $imageurl;
             $exportedcourse->summary = $coursesummary;
             $exportedcourse->timecompleted = date($CFG->iomad_date_format, $completed->timecompleted);

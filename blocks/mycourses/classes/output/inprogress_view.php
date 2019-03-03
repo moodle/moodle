@@ -94,7 +94,6 @@ class inprogress_view implements renderable, templatable {
 
             $exportedcourse = $exporter->export($output);
             $exportedcourse->url = new \moodle_url('/course/view.php', array('id' => $inprogress->courseid));
-            $exportedcourse->fullname = $inprogress->coursefullname;
             $exportedcourse->image = $imageurl;
             $exportedcourse->summary = $coursesummary;
 

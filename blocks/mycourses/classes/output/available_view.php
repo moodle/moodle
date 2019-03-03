@@ -87,7 +87,6 @@ class available_view implements renderable, templatable {
             }
             $exportedcourse = $exporter->export($output);
             $exportedcourse->url = new \moodle_url('/course/view.php', array('id' => $notstarted->courseid));
-            $exportedcourse->fullname = $notstated->coursefullname;
             $exportedcourse->image = $imageurl;
             $exportedcourse->summary = $coursesummary;
             $availableview['courses'][] = $exportedcourse;
@@ -124,7 +123,6 @@ class available_view implements renderable, templatable {
             }
             $exportedcourse = $exporter->export($output);
             $exportedcourse->url = new \moodle_url('/course/view.php', array('id' => $notstarted->courseid));
-            $exportedcourse->fullname = $notstarted->coursefullname;
             $exportedcourse->image = $imageurl;
             $exportedcourse->summary = $coursesummary;
             $availableview['courses'][] = $exportedcourse;
