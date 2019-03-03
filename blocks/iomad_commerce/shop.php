@@ -66,7 +66,7 @@ $tagjoin = '';
 $tagwhere = '';
 $sqlparams = array();
 $tagfilters = '';
-if (isset($SESSION->shoptag)) {
+if (isset($SESSION->shoptag) && $SESSION->shoptag != '') {
     $tagfilters = "<li>";
     $tagfilters .= get_string('filtered_by_tag', 'block_iomad_commerce', '<em>' . $SESSION->shoptag . '</em>' );
     $tagfilters .= "</li>";
