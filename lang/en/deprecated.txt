@@ -153,3 +153,4 @@ hidedockpanel,core_block
 undockall,core_block
 undockblock,core_block
 undockitem,core_block
+canceledit,core_message
