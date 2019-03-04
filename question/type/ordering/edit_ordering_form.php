@@ -363,12 +363,23 @@ class qtype_ordering_edit_form extends question_edit_form {
         $plugin = 'qtype_ordering';
 
         $answercount = 0;
+        $list = [];
         foreach ($data['answer'] as $answer) {
             if (is_array($answer)) {
-                $answer = $answer['text'];
+                $answer = trim($answer['text']);
             }
             if (trim($answer) == '') {
                 continue; // Skip empty answer.
+            }
+            // Check on duplicates.
+            if ($answer && in_array($answer, $list)) {
+                $draggableitem = new stdClass();
+                $draggableitem->number = array_search($answer, $list) + 1;
+                $draggableitem->text = $answer;
+
+                $errors["answer[$answercount]"] =  get_string('err_draggableitemsduplication', 'qtype_ordering', $draggableitem);
+            } else {
+                $list[] = trim($answer);
             }
             $answercount++;
         }

@@ -35,6 +35,7 @@ $string['defaultanswerformat'] = 'Default answer format';
 $string['defaultquestionname'] = 'Drag the following items into the correct order.';
 
 $string['editingordering'] = 'Editing ordering question';
+$string['err_draggableitemsduplication'] = 'Dupplication of draggable items are not allowed. The string "{$a->text}" is already used in Draggable item {$a->number}.';
 
 $string['gradedetails'] = 'Grade details';
 $string['gradingtype'] = 'Grading type';

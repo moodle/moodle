@@ -35,3 +35,15 @@ Feature: Test editing an Ordering question
       | Question name | Edited Ordering |
     And I press "id_submitbutton"
     Then I should see "Edited Ordering"
+
+  @javascript @_switch_window
+  Scenario: Editing an ordering question and making sure the form does not allow duplication of draggables
+    When I click on "Edit" "link" in the "Ordering for editing" "table_row"
+    And I set the following fields to these values:
+      | Draggable item 4 | Object |
+    And I press "id_submitbutton"
+    Then  I should see "Dupplication of draggable items are not allowed. The string \"Object\" is already used in Draggable item 2."
+    Given I set the following fields to these values:
+      | Draggable item 4 | Dynamic |
+    And I press "id_submitbutton"
+    Then I should see "Ordering for editing"
