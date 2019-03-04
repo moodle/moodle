@@ -407,7 +407,7 @@ if ($mform->is_cancelled()) {
 
         // Deal with certificate info.
         $certificateinforec = (array) $DB->get_record('companycertificate', array('companyid' => $companyid));
-            if (!empty($certificateinforec->id)) {
+            if (!empty($certificateinforec['id'])) {
             $certificateinforec['uselogo'] = $data->uselogo;
             $certificateinforec['usesignature'] = $data->usesignature;
             $certificateinforec['useborder'] = $data->useborder;
