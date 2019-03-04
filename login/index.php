@@ -45,10 +45,13 @@ $errorcode = 0;
 
 // IOMAD - Set the theme if the server hostname matches one of ours.
 if ($company = $DB->get_record_select('company', $DB->sql_like('hostname', '?'), array('%'.$_SERVER["SERVER_NAME"].'%'))) {
+    $hascompanybyurl = true;
     // set the current editing company to be this.
     $SESSION->currenteditingcompany = $company->id;
     // Set the page theme.
     $SESSION->theme = $company->theme;
+} else {
+    $hascompanybyurl = false;
 }
 
 // login page requested session test
@@ -72,6 +75,10 @@ if ($testsession) {
 if (!empty($SESSION->has_timed_out)) {
     $session_has_timed_out = true;
     unset($SESSION->has_timed_out);
+    if (!$hascompanybyurl) {
+        unset($SESSION->currenteditingcompany);
+        unset($SESSION->theme);
+    }
 } else {
     $session_has_timed_out = false;
 }

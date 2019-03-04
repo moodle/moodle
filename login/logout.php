@@ -61,4 +61,8 @@ foreach($authsequence as $authname) {
 
 require_logout();
 
+// IOMAD - get rid of stuff we dont want in the theme.
+unset($SESSION->currenteditingcompany);
+unset($SESSION->theme);
+
 redirect($redirect);
