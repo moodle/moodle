@@ -2814,6 +2814,14 @@ class company {
             iomad_commerce::update_company($company, $oldcompany);
         }
 
+        // Check if the company name has changed.
+        if ($company->name != $oldcompany->name) {
+            $coursecat = $DB->get_record('course_categories', array('id' => $company->category),'*',MUST_EXIST);
+            $coursecat->name = $company->name;
+            $DB->update_record('course_categories', $coursecat);
+            fix_course_sortorder();            
+        }
+
         return true;
     }
 
