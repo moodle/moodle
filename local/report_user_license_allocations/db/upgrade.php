@@ -132,10 +132,6 @@ function xmldb_local_report_user_license_allocations_upgrade($oldversion) {
         foreach ($users as $user) {
             // Deal with any license allocations.
             $licenseallocations = $DB->get_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\block_iomad_company_admin\event\user_license_assigned'));
-            $licensecount = count($licenseallocations);
-            mtrace("Dealing with $licensecount new allocations");
-            $currentcount = 0;
-            $warn = 10;
             foreach ($licenseallocations as $event) {
                 // Get the payload.
                 $evententries = unserialize($event->other);
@@ -154,19 +150,10 @@ function xmldb_local_report_user_license_allocations_upgrade($oldversion) {
                                                                               'issuedate' => $event->timecreated,
                                                                               'modifiedtime' => time()));
                 }
-                $currentcount++;
-                if ($currentcount * 100 / $licensecount > $warn) {
-                    mtrace("$warn%");
-                    $warn = $warn + 10;
-                }
             }
 
             // Deal with any license unallocations.
             $licenseunallocations = $DB->get_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\block_iomad_company_admin\event\user_license_unassigned'));
-            $licensecount = count($licenseunallocations);
-            mtrace("Dealing with $licensecount new un-allocations");
-            $currentcount = 0;
-            $warn = 10;
             foreach ($licenseunallocations as $event) {
                 // Get the payload.
                 $evententries = unserialize($event->other);
@@ -183,11 +170,6 @@ function xmldb_local_report_user_license_allocations_upgrade($oldversion) {
                                                                               'action' => 0,
                                                                               'issuedate' => $event->timecreated,
                                                                               'modifiedtime' => time()));
-                }
-                $currentcount++;
-                if ($currentcount * 100 / $licensecount > $warn) {
-                    mtrace("$warn%");
-                    $warn = $warn + 10;
                 }
             }
         }
