@@ -80,21 +80,21 @@ class core_question_events_testcase extends advanced_testcase {
     public function test_question_category_deleted() {
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
         $contexts = new question_edit_contexts(context_module::instance($quiz->cmid));
 
-        $defaultcategoryobj = question_make_default_categories(array($contexts->lowest()));
+        $defaultcategoryobj = question_make_default_categories([$contexts->lowest()]);
         $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
         $qcobject = new question_category_object(
-            1,
-            new moodle_url('/mod/quiz/edit.php', array('cmid' => $quiz->cmid)),
-            $contexts->having_one_edit_tab_cap('categories'),
-            $defaultcategoryobj->id,
-            $defaultcategory,
-            null,
-            $contexts->having_cap('moodle/question:add'));
+                1,
+                new moodle_url('/mod/quiz/edit.php', ['cmid' => $quiz->cmid]),
+                $contexts->having_one_edit_tab_cap('categories'),
+                $defaultcategoryobj->id,
+                $defaultcategory,
+                null,
+                $contexts->having_cap('moodle/question:add'));
 
         // Create the category.
         $categoryid = $qcobject->add_category($defaultcategory, 'newcategory', '', true);
@@ -118,21 +118,21 @@ class core_question_events_testcase extends advanced_testcase {
     public function test_question_category_updated() {
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
         $contexts = new question_edit_contexts(context_module::instance($quiz->cmid));
 
-        $defaultcategoryobj = question_make_default_categories(array($contexts->lowest()));
+        $defaultcategoryobj = question_make_default_categories([$contexts->lowest()]);
         $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
         $qcobject = new question_category_object(
-            1,
-            new moodle_url('/mod/quiz/edit.php', array('cmid' => $quiz->cmid)),
-            $contexts->having_one_edit_tab_cap('categories'),
-            $defaultcategoryobj->id,
-            $defaultcategory,
-            null,
-            $contexts->having_cap('moodle/question:add'));
+                1,
+                new moodle_url('/mod/quiz/edit.php', ['cmid' => $quiz->cmid]),
+                $contexts->having_one_edit_tab_cap('categories'),
+                $defaultcategoryobj->id,
+                $defaultcategory,
+                null,
+                $contexts->having_cap('moodle/question:add'));
 
         // Create the category.
         $categoryid = $qcobject->add_category($defaultcategory, 'newcategory', '', true);
@@ -159,32 +159,30 @@ class core_question_events_testcase extends advanced_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
         $contexts = new question_edit_contexts(context_module::instance($quiz->cmid));
 
-        $defaultcategoryobj = question_make_default_categories(array($contexts->lowest()));
+        $defaultcategoryobj = question_make_default_categories([$contexts->lowest()]);
         $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
         $qcobject = new question_category_object(
-            1,
-            new moodle_url('/mod/quiz/edit.php', array('cmid' => $quiz->cmid)),
-            $contexts->having_one_edit_tab_cap('categories'),
-            $defaultcategoryobj->id,
-            $defaultcategory,
-            null,
-            $contexts->having_cap('moodle/question:add'));
+                1,
+                new moodle_url('/mod/quiz/edit.php', ['cmid' => $quiz->cmid]),
+                $contexts->having_one_edit_tab_cap('categories'),
+                $defaultcategoryobj->id,
+                $defaultcategory,
+                null,
+                $contexts->having_cap('moodle/question:add'));
 
         // Create the category.
         $categoryid = $qcobject->add_category($defaultcategory, 'newcategory', '', true);
 
         // Log the view of this category.
-        $params = array(
-            'objectid' => $categoryid,
-            'context' => context_module::instance($quiz->cmid)
-        );
-
-        $event = \core\event\question_category_viewed::create($params);
+        $category = new stdClass();
+        $category->id = $categoryid;
+        $context = context_module::instance($quiz->cmid);
+        $event = \core\event\question_category_viewed::create_from_question_category_instance($category, $context);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
@@ -209,30 +207,30 @@ class core_question_events_testcase extends advanced_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
         $contexts = new question_edit_contexts(context_module::instance($quiz->cmid));
 
-        $defaultcategoryobj = question_make_default_categories(array($contexts->lowest()));
+        $defaultcategoryobj = question_make_default_categories([$contexts->lowest()]);
         $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
         $qcobject = new question_category_object(
-            1,
-            new moodle_url('/mod/quiz/edit.php', array('cmid' => $quiz->cmid)),
-            $contexts->having_one_edit_tab_cap('categories'),
-            $defaultcategoryobj->id,
-            $defaultcategory,
-            null,
-            $contexts->having_cap('moodle/question:add'));
+                1,
+                new moodle_url('/mod/quiz/edit.php', ['cmid' => $quiz->cmid]),
+                $contexts->having_one_edit_tab_cap('categories'),
+                $defaultcategoryobj->id,
+                $defaultcategory,
+                null,
+                $contexts->having_cap('moodle/question:add'));
 
         // Create the category.
         $categoryid = $qcobject->add_category($defaultcategory, 'newcategory', '', true);
 
         // Log the view of this category.
-        $params = array(
-            'context' => context_module::instance($quiz->cmid),
-            'other' => array('categoryid' => $categoryid, 'format' => 'testformat')
-        );
+        $params = [
+                'context' => context_module::instance($quiz->cmid),
+                'other' => ['categoryid' => $categoryid, 'format' => 'testformat'],
+        ];
 
         $event = \core\event\questions_imported::create($params);
 
@@ -260,30 +258,30 @@ class core_question_events_testcase extends advanced_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
         $contexts = new question_edit_contexts(context_module::instance($quiz->cmid));
 
-        $defaultcategoryobj = question_make_default_categories(array($contexts->lowest()));
+        $defaultcategoryobj = question_make_default_categories([$contexts->lowest()]);
         $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
         $qcobject = new question_category_object(
-            1,
-            new moodle_url('/mod/quiz/edit.php', array('cmid' => $quiz->cmid)),
-            $contexts->having_one_edit_tab_cap('categories'),
-            $defaultcategoryobj->id,
-            $defaultcategory,
-            null,
-            $contexts->having_cap('moodle/question:add'));
+                1,
+                new moodle_url('/mod/quiz/edit.php', ['cmid' => $quiz->cmid]),
+                $contexts->having_one_edit_tab_cap('categories'),
+                $defaultcategoryobj->id,
+                $defaultcategory,
+                null,
+                $contexts->having_cap('moodle/question:add'));
 
         // Create the category.
         $categoryid = $qcobject->add_category($defaultcategory, 'newcategory', '', true);
 
         // Log the view of this category.
-        $params = array(
-            'context' => context_module::instance($quiz->cmid),
-            'other' => array('categoryid' => $categoryid, 'format' => 'testformat')
-        );
+        $params = [
+                'context' => context_module::instance($quiz->cmid),
+                'other' => ['categoryid' => $categoryid, 'format' => 'testformat'],
+        ];
 
         $event = \core\event\questions_exported::create($params);
 
@@ -310,12 +308,11 @@ class core_question_events_testcase extends advanced_testcase {
         $this->setAdminUser();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
-        $cat = $generator->create_question_category(array(
-                'name' => 'My category', 'sortorder' => 1));
+        $cat = $generator->create_question_category(['name' => 'My category', 'sortorder' => 1]);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $questiondata = $generator->create_question('description', null, array('category' => $cat->id));
+        $questiondata = $generator->create_question('description', null, ['category' => $cat->id]);
         $question = question_bank::load_question($questiondata->id);
 
         $events = $sink->get_events();
@@ -337,10 +334,9 @@ class core_question_events_testcase extends advanced_testcase {
         $this->setAdminUser();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
-        $cat = $generator->create_question_category(array(
-                'name' => 'My category', 'sortorder' => 1));
+        $cat = $generator->create_question_category(['name' => 'My category', 'sortorder' => 1]);
 
-        $questiondata = $generator->create_question('description', null, array('category' => $cat->id));
+        $questiondata = $generator->create_question('description', null, ['category' => $cat->id]);
         $question = question_bank::load_question($questiondata->id);
 
         // Trigger and capture the event.
@@ -370,16 +366,15 @@ class core_question_events_testcase extends advanced_testcase {
         $this->setAdminUser();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
-        $cat = $generator->create_question_category(array(
-                'name' => 'My category', 'sortorder' => 1));
+        $cat = $generator->create_question_category(['name' => 'My category', 'sortorder' => 1]);
 
-        $questiondata = $generator->create_question('description', null, array('category' => $cat->id));
+        $questiondata = $generator->create_question('description', null, ['category' => $cat->id]);
         $question = question_bank::load_question($questiondata->id);
 
         $qtype = new qtype_description();
         $formdata = test_question_maker::get_question_form_data('description');
         $formdata->category = "{$cat->id},{$cat->contextid}";
-        qtype_description_edit_form::mock_submit((array)$formdata);
+        qtype_description_edit_form::mock_submit((array) $formdata);
 
         $form = qtype_description_test_helper::get_question_editing_form($cat, $questiondata);
         $fromform = $form->get_data();
@@ -406,18 +401,18 @@ class core_question_events_testcase extends advanced_testcase {
         $this->setAdminUser();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
-        $cat1 = $generator->create_question_category(array(
-                'name' => 'My category 1', 'sortorder' => 1));
+        $cat1 = $generator->create_question_category([
+                'name' => 'My category 1', 'sortorder' => 1]);
 
-        $cat2 = $generator->create_question_category(array(
-                'name' => 'My category 2', 'sortorder' => 2));
+        $cat2 = $generator->create_question_category([
+                'name' => 'My category 2', 'sortorder' => 2]);
 
-        $questiondata = $generator->create_question('description', null, array('category' => $cat1->id));
+        $questiondata = $generator->create_question('description', null, ['category' => $cat1->id]);
         $question = question_bank::load_question($questiondata->id);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        question_move_questions_to_category(array($question->id), $cat2->id);
+        question_move_questions_to_category([$question->id], $cat2->id);
         $events = $sink->get_events();
         $event = reset($events);
 
@@ -440,19 +435,12 @@ class core_question_events_testcase extends advanced_testcase {
         $this->setAdminUser();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
-        $cat = $generator->create_question_category(array(
-                'name' => 'My category', 'sortorder' => 1));
+        $cat = $generator->create_question_category(['name' => 'My category', 'sortorder' => 1]);
 
-        $questiondata = $generator->create_question('description', null, array('category' => $cat->id));
+        $questiondata = $generator->create_question('description', null, ['category' => $cat->id]);
         $question = question_bank::load_question($questiondata->id);
 
-        $params = array(
-            'objectid' => $question->id,
-            'context' => context::instance_by_id($cat->contextid),
-            'other' => array('categoryid' => $question->category)
-        );
-
-        $event = \core\event\question_previewed::create($params);
+        $event = \core\event\question_viewed::create_from_question_instance($question, context::instance_by_id($cat->contextid));
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
@@ -461,7 +449,7 @@ class core_question_events_testcase extends advanced_testcase {
         $event = reset($events);
 
         // Check that the event data is valid.
-        $this->assertInstanceOf('\core\event\question_previewed', $event);
+        $this->assertInstanceOf('\core\event\question_viewed', $event);
         $this->assertEquals($question->id, $event->objectid);
         $this->assertEquals($cat->id, $event->other['categoryid']);
         $this->assertDebuggingNotCalled();

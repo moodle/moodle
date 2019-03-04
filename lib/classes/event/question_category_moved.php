@@ -18,7 +18,7 @@
  * Question category moved event.
  *
  * @package    core
- * @copyright  2016 Stephen Bourget
+ * @copyright  2019 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,8 +30,8 @@ defined('MOODLE_INTERNAL') || die();
  * Question category moved event class.
  *
  * @package    core
- * @since      Moodle 3.2
- * @copyright  2016 Stephen Bourget
+ * @since      Moodle 3.7
+ * @copyright  2019 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_category_moved extends question_category_base {
@@ -40,9 +40,8 @@ class question_category_moved extends question_category_base {
      * Init method.
      */
     protected function init() {
-        $this->data['objecttable'] = 'question_categories';
+        parent::init();
         $this->data['crud'] = 'u';
-        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**

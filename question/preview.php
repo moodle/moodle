@@ -281,13 +281,7 @@ if (question_has_capability_on($question, 'view')) {
 }
 
 // Log the preview of this question.
-$eventparams = array(
-    'context' => $context,
-    'objectid' => $question->id,
-    'other' => array('categoryid' => $question->category)
-);
-$newquestion = true;
-$event = \core\event\question_previewed::create($eventparams);
+$event = \core\event\question_viewed::create_from_question_instance($question, $context);
 $event->trigger();
 
 // Display the settings form.

@@ -395,21 +395,11 @@ class question_type {
 
         if ($newquestion) {
             // Log the creation of this question.
-            $eventparams = array(
-                'context' => $context,
-                'objectid' => $question->id,
-                'other' => array('categoryid' => $question->category)
-            );
-            $event = \core\event\question_created::create($eventparams);
+            $event = \core\event\question_created::create_from_question_instance($question, $context);
             $event->trigger();
         } else {
             // Log the update of this question.
-            $eventparams = array(
-                'context' => $context,
-                'objectid' => $question->id,
-                'other' => array('categoryid' => $question->category)
-            );
-            $event = \core\event\question_updated::create($eventparams);
+            $event = \core\event\question_updated::create_from_question_instance($question, $context);
             $event->trigger();
         }
 

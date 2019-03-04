@@ -56,12 +56,11 @@ $questionbank->display('questions', $pagevars['qpage'], $pagevars['qperpage'],
 echo "</div>\n";
 
 // Log the view of this category.
-$categoryid = explode(',' , urldecode($pagevars['cat']));
-$params = array(
-    'objectid' => $categoryid[0],
-    'context' => $context
-);
-$event = \core\event\question_category_viewed::create($params);
+list($categoryid, $contextid) = explode(',', $pagevars['cat']);
+$category = new stdClass();
+$category->id = $categoryid;
+$catcontext = \context::instance_by_id($contextid);
+$event = \core\event\question_category_viewed::create_from_question_category_instance($category, $catcontext);
 $event->trigger();
 
 echo $OUTPUT->footer();

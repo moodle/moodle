@@ -40,9 +40,8 @@ class question_category_created extends question_category_base {
      * Init method.
      */
     protected function init() {
-        $this->data['objecttable'] = 'question_categories';
+        parent::init();
         $this->data['crud'] = 'c';
-        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**

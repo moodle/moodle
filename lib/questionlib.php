@@ -382,13 +382,8 @@ function question_delete_question($questionid) {
     question_bank::notify_question_edited($questionid);
 
     // Log the deletion of this question.
-    $eventparams = array(
-        'contextid' => $question->contextid,
-        'objectid' => $question->id,
-        'other' => array('categoryid' => $question->category)
-    );
-
-    $event = \core\event\question_deleted::create($eventparams);
+    $event = \core\event\question_deleted::create_from_question_instance($question);
+    $event->add_record_snapshot('question', $question);
     $event->trigger();
 }
 
@@ -715,12 +710,8 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
         }
 
         // Log this question move.
-        $eventparams = array(
-            'contextid' => $question->contextid,
-            'objectid' => $question->id,
-            'other' => array('oldcategoryid' => $question->category, 'newcategoryid' => $newcategoryid)
-        );
-        $event = \core\event\question_moved::create($eventparams);
+        $event = \core\event\question_moved::create_from_question_instance($question, context::instance_by_id($question->contextid),
+                ['oldcategoryid' => $question->category, 'newcategoryid' => $newcategoryid]);
         $event->trigger();
     }
 

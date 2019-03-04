@@ -18,7 +18,7 @@
  * Questions exported event.
  *
  * @package    core
- * @copyright  2016 Stephen Bourget
+ * @copyright  2019 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,12 +29,19 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Question category exported event class.
  *
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int categoryid: The ID of the category where the question resides
+ *      - string format: The format of file export
+ * }
+ *
  * @package    core
- * @since      Moodle 3.2
- * @copyright  2016 Stephen Bourget
+ * @since      Moodle 3.7
+ * @copyright  2019 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class questions_exported extends base {
+class questions_exported extends question_base {
 
     /**
      * Init method.
@@ -59,8 +66,8 @@ class questions_exported extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' exported questions in '". $this->other['format'].
-                "' format from the category with id '".$this->other['categoryid']."'.";
+        return "The user with id '$this->userid' exported questions in '" . $this->other['format'] .
+                "' format from the category with id '" . $this->other['categoryid'] . "'.";
     }
 
     /**
@@ -72,15 +79,17 @@ class questions_exported extends base {
         if ($this->courseid) {
             $cat = $this->other['categoryid'] . ',' . $this->contextid;
             if ($this->contextlevel == CONTEXT_MODULE) {
-                return new \moodle_url('/question/edit.php', array('cmid' => $this->contextinstanceid, 'cat' => $cat));
+                return new \moodle_url('/question/edit.php', ['cmid' => $this->contextinstanceid, 'cat' => $cat]);
             }
-            return new \moodle_url('/question/edit.php', array('courseid' => $this->courseid, 'cat' => $cat));
+            return new \moodle_url('/question/edit.php', ['courseid' => $this->courseid, 'cat' => $cat]);
         }
-        return new \moodle_url('/question/category.php', array('courseid' => SITEID, 'edit' => $this->other['categoryid']));
+        return new \moodle_url('/question/category.php', ['courseid' => SITEID, 'edit' => $this->other['categoryid']]);
     }
 
     /**
      * Custom validations.
+     *
+     * other['categoryid'] and other['format'] is required.
      *
      * @throws \coding_exception
      * @return void
@@ -101,7 +110,7 @@ class questions_exported extends base {
      */
     public static function get_objectid_mapping() {
         // No mappings.
-        return array();
+        return [];
     }
 
 }

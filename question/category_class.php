@@ -77,28 +77,34 @@ class question_category_list extends moodle_list {
         return $topcategory->id;
     }
 
+    /**
+     * process any actions.
+     *
+     * @param integer $left id of item to move left
+     * @param integer $right id of item to move right
+     * @param integer $moveup id of item to move up
+     * @param integer $movedown id of item to move down
+     * @return void
+     * @throws coding_exception
+     */
     public function process_actions($left, $right, $moveup, $movedown) {
+        $category = new stdClass();
         if (!empty($left)) {
             // Moved Left (In to another category).
-            $params = array(
-                'objectid' => $left,
-                'contextid' => $this->context->id
-            );
-            $event = \core\event\question_category_moved::create($params);
+            $category->id = $left;
+            $category->contextid = $this->context->id;
+            $event = \core\event\question_category_moved::create_from_question_category_instance($category);
             $event->trigger();
         } else if (!empty($right)) {
             // Moved Right (Out of the current category).
-            $params = array(
-                'objectid' => $right,
-                'contextid' => $this->context->id
-            );
-            $event = \core\event\question_category_moved::create($params);
+            $category->id = $right;
+            $category->contextid = $this->context->id;
+            $event = \core\event\question_category_moved::create_from_question_category_instance($category);
             $event->trigger();
-            }
+        }
         parent::process_actions($left, $right, $moveup, $movedown);
     }
 }
-
 
 /**
  * An item in a list of question categories.
@@ -398,11 +404,8 @@ class question_category_object {
         $DB->delete_records("question_categories", array("id" => $category->id));
 
         // Log the deletion of this category.
-        $params = array(
-            'objectid' => $category->id,
-            'contextid' => $category->contextid
-        );
-        $event = \core\event\question_category_deleted::create($params);
+        $event = \core\event\question_category_deleted::create_from_question_category_instance($category);
+        $event->add_record_snapshot('question_categories', $category);
         $event->trigger();
 
     }
@@ -472,11 +475,10 @@ class question_category_object {
         $categoryid = $DB->insert_record("question_categories", $cat);
 
         // Log the creation of this category.
-        $params = array(
-            'objectid' => $categoryid,
-            'contextid' => $contextid
-        );
-        $event = \core\event\question_category_created::create($params);
+        $category = new stdClass();
+        $category->id = $categoryid;
+        $category->contextid = $contextid;
+        $event = \core\event\question_category_created::create_from_question_category_instance($category);
         $event->trigger();
 
         if ($return) {
@@ -559,11 +561,7 @@ class question_category_object {
         $DB->update_record('question_categories', $cat);
 
         // Log the update of this category.
-        $params = array(
-            'objectid' => $cat->id,
-            'contextid' => $cat->contextid
-        );
-        $event = \core\event\question_category_updated::create($params);
+        $event = \core\event\question_category_updated::create_from_question_category_instance($cat);
         $event->trigger();
 
         // If the category name has changed, rename any random questions in that category.

@@ -18,7 +18,7 @@
  * Question created event.
  *
  * @package    core
- * @copyright  2016 Stephen Bourget
+ * @copyright  2019 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -36,8 +36,8 @@ defined('MOODLE_INTERNAL') || die();
  * }
  *
  * @package    core
- * @since      Moodle 3.2
- * @copyright  2016 Stephen Bourget
+ * @since      Moodle 3.7
+ * @copyright  2019 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_created extends question_base {
@@ -46,9 +46,8 @@ class question_created extends question_base {
      * Init method.
      */
     protected function init() {
-        $this->data['objecttable'] = 'question';
+        parent::init();
         $this->data['crud'] = 'c';
-        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**
@@ -66,8 +65,8 @@ class question_created extends question_base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' created a question with the id of '$this->objectid'".
-                " in the category with the id '".$this->other['categoryid']."'.";
+        return "The user with id '$this->userid' created a question with the id of '$this->objectid'" .
+                " in the category with the id '" . $this->other['categoryid'] . "'.";
     }
 
     /**
@@ -78,11 +77,11 @@ class question_created extends question_base {
     public function get_url() {
         if ($this->courseid) {
             if ($this->contextlevel == CONTEXT_MODULE) {
-                return new \moodle_url('/question/preview.php', array('cmid' => $this->contextinstanceid, 'id' => $this->objectid));
+                return new \moodle_url('/question/preview.php', ['cmid' => $this->contextinstanceid, 'id' => $this->objectid]);
             }
-            return new \moodle_url('/question/preview.php', array('courseid' => $this->courseid, 'id' => $this->objectid));
+            return new \moodle_url('/question/preview.php', ['courseid' => $this->courseid, 'id' => $this->objectid]);
         }
         // Lets try editing from the frontpage for contexts above course.
-        return new \moodle_url('/question/preview.php', array('courseid' => SITEID, 'id' => $this->objectid));
+        return new \moodle_url('/question/preview.php', ['courseid' => SITEID, 'id' => $this->objectid]);
     }
 }
