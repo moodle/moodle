@@ -2483,7 +2483,6 @@ class company {
         }
 
         $context = context_system::instance();
-        $context = context_system::instance();
         // If current user is a site admin or they have appropriate capabilities then they can.
         if (is_siteadmin($USER->id) ||
             iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
