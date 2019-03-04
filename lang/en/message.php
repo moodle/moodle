@@ -39,6 +39,7 @@ $string['blockuserconfirm'] = 'Are you sure you want to block {$a}?';
 $string['blockuserconfirmbutton'] = 'Block';
 $string['blocknoncontacts'] = 'Prevent non-contacts from messaging me';
 $string['canceledit'] = 'Cancel editing messages';
+$string['cancelselection'] = 'Cancel message selection';
 $string['contactableprivacy'] = 'Accept messages from:';
 $string['contactableprivacy_onlycontacts'] = 'My contacts only';
 $string['contactableprivacy_coursemember'] = 'My contacts and anyone in my courses';
