@@ -70,22 +70,25 @@
             </a>
         </div>
         <div class="ml-auto dropdown">
-            <button class="btn btn-link btn-icon icon-size-3" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button id="conversation-actions-menu-button" class="btn btn-link btn-icon icon-size-3" type="button"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+            aria-label="{{#str}} conversationactions, core_message {{/str}}" aria-controls="conversation-actions-menu">
                 {{#pix}} i/moremenu, core {{/pix}}
             </button>
-            <ul class="dropdown-menu pull-right">
+            <ul id="conversation-actions-menu" class="dropdown-menu pull-right" role="menu"
+            aria-labelledby="conversation-actions-menu-button">
                 <li data-action="view-group-info">
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" href="#" role="menuitem">
                         {{#str}} groupinfo, core_message {{/str}}
                     </a>
                 </li>
                 <li class="{{#isfavourite}}hidden{{/isfavourite}}" data-action="confirm-favourite">
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" href="#" role="menuitem">
                         {{#str}} addtofavourites, core_message {{/str}}
                     </a>
                 </li>
                 <li class="{{^isfavourite}}hidden{{/isfavourite}}" data-action="confirm-unfavourite">
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" href="#" role="menuitem">
                         {{#str}} removefromfavourites, core_message {{/str}}
                     </a>
                 </li>

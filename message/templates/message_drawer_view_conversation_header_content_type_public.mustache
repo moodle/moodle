@@ -66,18 +66,23 @@
             </a>
         </div>
         <div class="ml-auto dropdown">
-            <button class="btn btn-link btn-icon icon-size-3" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{#pix}} i/moremenu, core {{/pix}}
+            <button id="conversation-actions-menu-button" class="btn btn-link btn-icon icon-size-3" type="button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                aria-label="{{#str}} conversationactions, core_message {{/str}}" aria-controls="conversation-actions-menu">
+                    {{#pix}} i/moremenu, core {{/pix}}
             </button>
-            <div class="dropdown-menu pull-right">
-                <a class="dropdown-item" href="#" data-action="view-group-info">
+            <div id="conversation-actions-menu" class="dropdown-menu pull-right" role="menu"
+                aria-labelledby="conversation-actions-menu-button">
+                <a class="dropdown-item" href="#" data-action="view-group-info" role="menuitem">
                     {{#str}} groupinfo, core_message {{/str}}
                 </a>
-                <a class="dropdown-item {{#isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-favourite">
-                    {{#str}} addtofavourites, core_message {{/str}}
+                <a class="dropdown-item {{#isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-favourite"
+                    role="menuitem">
+                        {{#str}} addtofavourites, core_message {{/str}}
                 </a>
-                <a class="dropdown-item {{^isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-unfavourite">
-                    {{#str}} removefromfavourites, core_message {{/str}}
+                <a class="dropdown-item {{^isfavourite}}hidden{{/isfavourite}}" href="#" data-action="confirm-unfavourite"
+                    role="menuitem">
+                        {{#str}} removefromfavourites, core_message {{/str}}
                 </a>
             </div>
         </div>
