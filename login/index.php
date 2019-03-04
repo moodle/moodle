@@ -44,7 +44,7 @@ $errormsg = '';
 $errorcode = 0;
 
 // IOMAD - Set the theme if the server hostname matches one of ours.
-if ($company = $DB->get_record_select('company', $DB->sql_like('hostname', '?'), array('%'.$_SERVER["SERVER_NAME"].'%'))) {
+if ($company = $DB->get_record('company', array('hostname' => $_SERVER["SERVER_NAME"]))) {
     $hascompanybyurl = true;
     // set the current editing company to be this.
     $SESSION->currenteditingcompany = $company->id;
