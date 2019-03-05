@@ -64,11 +64,11 @@ $string['managerules'] = 'Event monitoring rules';
 $string['messageprovider:notification'] = 'Notifications of rule subscriptions';
 $string['messagetemplate'] = 'Notification message';
 $string['messagetemplate_help'] = 'A notification message is sent to subscribers once the notification threshold has been reached. It can include any or all of the following placeholders:
-<br /><br />
-* Link to the location of the event {link}<br />
-* Link to the area monitored {modulelink}<br />
-* Rule name {rulename}<br />
-* Description {description}<br />
+
+* Link to the location of the event {link}
+* Link to the area monitored {modulelink}
+* Rule name {rulename}
+* Description {description}
 * Event {eventname}';
 $string['messagetemplate_link'] = 'admin/tool/monitor/managerules';
 $string['moduleinstance'] = 'Instance';

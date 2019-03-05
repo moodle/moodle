@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['cannotfit'] = 'The replacement is longer than original and shortening is not allow, cannot continue.';
+$string['cannotfit'] = 'The replacement is longer than the original and shortening is not allowed; cannot continue.';
 $string['disclaimer'] = 'I understand the risks of this operation';
 $string['doit'] = 'Yes, do it!';
 $string['excludedtables'] = 'Several tables are not updated as part of the text replacement. These include configuration, log, events, and session tables.';
