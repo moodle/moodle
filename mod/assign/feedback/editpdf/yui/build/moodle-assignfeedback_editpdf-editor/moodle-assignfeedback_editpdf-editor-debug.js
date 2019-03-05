@@ -4779,7 +4779,7 @@ EDITOR.prototype = {
      */
     disable_touch_scroll: function() {
         if (this.event_listener_options_supported()) {
-            document.addEventListener('touchmove', this.stop_touch_scroll, {passive: false});
+            document.addEventListener('touchmove', this.stop_touch_scroll.bind(this), {passive: false});
         }
     },
 
@@ -4788,8 +4788,12 @@ EDITOR.prototype = {
      * @param {Object} e
      */
     stop_touch_scroll: function(e) {
-        e.stopPropagation();
-        e.preventDefault();
+        var drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
+
+        if (drawingregion.contains(e.target)) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
     }
 
 };
