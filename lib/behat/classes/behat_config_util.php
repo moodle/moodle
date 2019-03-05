@@ -631,6 +631,8 @@ class behat_config_util {
 
         // Automatically add Chrome command line option to skip the prompt about allowing file
         // storage - needed for mobile app testing (won't hurt for everything else either).
+        // We also need to disable web security, otherwise it can't make CSS requests to the server
+        // on localhost due to CORS restrictions.
         if (!empty($values['browser']) && $values['browser'] === 'chrome') {
             if (!isset($values['capabilities'])) {
                 $values['capabilities'] = [];
@@ -642,6 +644,7 @@ class behat_config_util {
                 $values['capabilities']['chrome']['switches'] = [];
             }
             $values['capabilities']['chrome']['switches'][] = '--unlimited-storage';
+            $values['capabilities']['chrome']['switches'][] = '--disable-web-security';
 
             // If the mobile app is enabled, check its version and add appropriate tags.
             if ($mobiletags = $this->get_mobile_version_tags()) {
