@@ -3437,6 +3437,9 @@ EOD;
             if ($item->hidden) {
                 $attributes['class'] = 'dimmed_text';
             }
+            if ($item->is_last()) {
+                $attributes['aria-current'] = 'page';
+            }
             $content = html_writer::tag('span', $content, array('itemprop' => 'title'));
             $content = html_writer::link($item->action, $content, $attributes);
 

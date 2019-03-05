@@ -68,7 +68,7 @@
         {{#get_items}}
             {{#has_action}}
                 <li class="breadcrumb-item{{#is_hidden}} dimmed_text{{/is_hidden}}">
-                    <a href="{{{action}}}" {{#get_title}}title="{{get_title}}"{{/get_title}}>{{{get_content}}}</a>
+                    <a href="{{{action}}}" {{#is_last}}aria-current="page"{{/is_last}} {{#get_title}}title="{{get_title}}"{{/get_title}}>{{{get_content}}}</a>
                 </li>
             {{/has_action}}
             {{^has_action}}
