@@ -1524,7 +1524,10 @@ class model {
         // 1 db read per context.
         $this->purge_insights_cache();
 
-        $this->model->trained = 0;
+        if (!$this->is_static()) {
+            $this->model->trained = 0;
+        }
+
         $this->model->timemodified = time();
         $this->model->usermodified = $USER->id;
         $DB->update_record('analytics_models', $this->model);
