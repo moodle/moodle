@@ -8995,6 +8995,7 @@ form.popupform div {
   overflow: auto; }
 
 .no-overflow > .generaltable {
+  position: relative;
   margin-bottom: 0;
   min-height: 10em; }
 
@@ -15616,9 +15617,6 @@ div#dock {
 .path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
   top: auto; }
 
-.path-mod-assign .no-overflow {
-  overflow: initial; }
-
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fcontainer .fitem.popout .felement {
   height: calc(100% - 4rem); }
 
@@ -16013,6 +16011,7 @@ p.arrow_button {
   left: 40vw; }
 
 .path-grade-report-grader #region-main {
+  overflow-x: visible;
   min-width: 100%;
   width: auto; }
   .path-grade-report-grader #region-main > .card, .path-grade-report-grader #page-enrol-users #region-main > #filterform, #page-enrol-users .path-grade-report-grader #region-main > #filterform, .path-grade-report-grader .que #region-main > .history, .que .path-grade-report-grader #region-main > .history, .path-grade-report-grader .userprofile .profile_tree #region-main > section, .userprofile .profile_tree .path-grade-report-grader #region-main > section, .path-grade-report-grader #region-main > .groupinfobox, .path-grade-report-grader #region-main > .well {
