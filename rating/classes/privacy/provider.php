@@ -129,26 +129,41 @@ class provider implements
     /**
      * Get the SQL required to find all submission items where this user has had any involvements.
      *
+     * If possible an inner join should be used.
+     *
      * @param   string          $alias      The name of the table alias to use.
      * @param   string          $component  The na eof the component to fetch ratings for.
      * @param   string          $ratingarea The rating area to fetch results for.
      * @param   string          $itemidjoin The right-hand-side of the JOIN ON clause.
      * @param   int             $userid     The ID of the user being stored.
+     * @param   bool            $innerjoin  Whether to use an inner join (preferred)
      * @return  \stdClass
      */
-    public static function get_sql_join($alias, $component, $ratingarea, $itemidjoin, $userid) {
+    public static function get_sql_join($alias, $component, $ratingarea, $itemidjoin, $userid, $innerjoin = false) {
         static $count = 0;
         $count++;
 
-        // Join the rating table with the specified alias and the relevant join params.
-        $join = "LEFT JOIN {rating} {$alias} ON ";
-        $join .= "{$alias}.userid = :ratinguserid{$count} AND ";
-        $join .= "{$alias}.component = :ratingcomponent{$count} AND ";
-        $join .= "{$alias}.ratingarea = :ratingarea{$count} AND ";
-        $join .= "{$alias}.itemid = {$itemidjoin}";
+        $userwhere = '';
 
-        // Match against the specified user.
-        $userwhere = "{$alias}.id IS NOT NULL";
+        if ($innerjoin) {
+            // Join the rating table with the specified alias and the relevant join params.
+            $join = "JOIN {rating} {$alias} ON ";
+            $join .= "{$alias}.itemid = {$itemidjoin}";
+
+            $userwhere .= "{$alias}.userid = :ratinguserid{$count} AND ";
+            $userwhere .= "{$alias}.component = :ratingcomponent{$count} AND ";
+            $userwhere .= "{$alias}.ratingarea = :ratingarea{$count}";
+        } else {
+            // Join the rating table with the specified alias and the relevant join params.
+            $join = "LEFT JOIN {rating} {$alias} ON ";
+            $join .= "{$alias}.userid = :ratinguserid{$count} AND ";
+            $join .= "{$alias}.component = :ratingcomponent{$count} AND ";
+            $join .= "{$alias}.ratingarea = :ratingarea{$count} AND ";
+            $join .= "{$alias}.itemid = {$itemidjoin}";
+
+            // Match against the specified user.
+            $userwhere = "{$alias}.id IS NOT NULL";
+        }
 
         $params = [
             'ratingcomponent' . $count  => $component,
