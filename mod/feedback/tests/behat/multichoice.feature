@@ -318,7 +318,7 @@ Feature: Testing multichoice questions in feedback
     When I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 1 |
       | Label            | multichoice1                |
-      | Multiple choice type | Multiple choice - single answer allowed (dropdownlist) |
+      | Multiple choice type | Multiple choice - single answer allowed (drop-down menu) |
       | Multiple choice values | option a\noption b\noption c  |
     And I add a "Label" question to the feedback with:
       | Contents | this is the first page of the feedback |
@@ -326,7 +326,7 @@ Feature: Testing multichoice questions in feedback
     And I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 2 |
       | Label            | multichoice2                |
-      | Multiple choice type | Multiple choice - single answer allowed (dropdownlist) |
+      | Multiple choice type | Multiple choice - single answer allowed (drop-down menu) |
       | Multiple choice values | option d\noption e\noption f  |
       | Required | 1 |
     And I add a "Label" question to the feedback with:
@@ -335,7 +335,7 @@ Feature: Testing multichoice questions in feedback
     And I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 3 |
       | Label            | multichoice3                |
-      | Multiple choice type | Multiple choice - single answer allowed (dropdownlist) |
+      | Multiple choice type | Multiple choice - single answer allowed (drop-down menu) |
       | Multiple choice values | option g\noption h\noption i  |
       | Dependence item                | multichoice2          |
       | Dependence value               | option d              |
