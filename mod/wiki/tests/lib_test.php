@@ -765,6 +765,34 @@ class mod_wiki_lib_testcase extends advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
+    public function test_wiki_core_calendar_provide_event_action_for_non_user() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course();
+        $wiki = $this->getDataGenerator()->create_module('wiki', array('course' => $course->id));
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $wiki->id,
+                \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+
+        // Now, log out.
+        $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.
+        $this->setUser();
+
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event for the student.
+        $actionevent = mod_wiki_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event is not shown at all.
+        $this->assertNull($actionevent);
+    }
+
     public function test_wiki_core_calendar_provide_event_action_already_completed() {
         global $CFG;
 
