@@ -296,7 +296,9 @@ form.popupform div {
 }
 
 // Minimum height required for a menu in a table inside a scrollable div.
+// Position required for table sizing inside a flex container.
 .no-overflow > .generaltable {
+    position: relative;
     margin-bottom: 0;
     min-height: 10em;
 }
