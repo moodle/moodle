@@ -33,7 +33,6 @@ function xmldb_local_report_user_license_allocations_install() {
                                                     WHERE issuedate < :first",
                                                     array('first' => $first->timecreated))) {
             $totalold = count($oldallocations);
-            mtrace("Dealing with old allocations $totalold to be processed");
             $currentcount = 0;
             $warn = 10;
             foreach ($oldallocations as $oldallocation) {
@@ -54,7 +53,6 @@ function xmldb_local_report_user_license_allocations_install() {
                 }
                 $currentcount++;
                 if ($currentcount * 100 / $totalold > $warn) {
-                    mtrace("$warn%");
                     $warn = $warn + 10;
                 }
             }
@@ -66,7 +64,6 @@ function xmldb_local_report_user_license_allocations_install() {
         // Deal with any license allocations.
         $licenseallocations = $DB->get_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\block_iomad_company_admin\event\user_license_assigned'));
         $licensecount = count($licenseallocations);
-        mtrace("Dealing with $licensecount new allocations");
         $currentcount = 0;
         $warn = 10;
         foreach ($licenseallocations as $event) {
@@ -89,7 +86,6 @@ function xmldb_local_report_user_license_allocations_install() {
             }
             $currentcount++;
             if ($currentcount * 100 / $licensecount > $warn) {
-                mtrace("$warn%");
                 $warn = $warn + 10;
             }
         }
@@ -97,7 +93,6 @@ function xmldb_local_report_user_license_allocations_install() {
         // Deal with any license unallocations.
         $licenseunallocations = $DB->get_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\block_iomad_company_admin\event\user_license_unassigned'));
         $licensecount = count($licenseunallocations);
-        mtrace("Dealing with $licensecount new un-allocations");
         $currentcount = 0;
         $warn = 10;
         foreach ($licenseunallocations as $event) {
@@ -119,7 +114,6 @@ function xmldb_local_report_user_license_allocations_install() {
             }
             $currentcount++;
             if ($currentcount * 100 / $totalold > $warn) {
-                mtrace("$warn%");
                 $warn = $warn + 10;
             }
         }
