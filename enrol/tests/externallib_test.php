@@ -425,7 +425,7 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
 
         $this->setUser($student);
         // Call the external function.
-        $enrolledincourses = core_enrol_external::get_users_courses($student->id);
+        $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
@@ -455,6 +455,7 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertTrue($courseenrol['completionhascriteria']);
                 $this->assertTrue($courseenrol['hidden']);
                 $this->assertTrue($courseenrol['isfavourite']);
+                $this->assertEquals(2, $courseenrol['enrolledusercount']);
             } else {
                 // Check language pack. Should be empty since an incorrect one was used when creating the course.
                 $this->assertEmpty($courseenrol['lang']);
@@ -466,13 +467,21 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertFalse($courseenrol['completionhascriteria']);
                 $this->assertFalse($courseenrol['hidden']);
                 $this->assertFalse($courseenrol['isfavourite']);
+                $this->assertEquals(1, $courseenrol['enrolledusercount']);
             }
+        }
+
+        // Check that returnusercount works correctly.
+        $enrolledincourses = core_enrol_external::get_users_courses($student->id, false);
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+        foreach ($enrolledincourses as $courseenrol) {
+            $this->assertFalse(isset($courseenrol['enrolledusercount']));
         }
 
         // Now check that admin users can see all the info.
         $this->setAdminUser();
 
-        $enrolledincourses = core_enrol_external::get_users_courses($student->id);
+        $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
         $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
         $this->assertEquals(2, count($enrolledincourses));
         foreach ($enrolledincourses as $courseenrol) {
@@ -493,7 +502,7 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         // Check other users can't see private info.
         $this->setUser($otherstudent);
 
-        $enrolledincourses = core_enrol_external::get_users_courses($student->id);
+        $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
         $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
         $this->assertEquals(1, count($enrolledincourses));
 
@@ -502,7 +511,7 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
 
         // Change some global profile visibility fields.
         $CFG->hiddenuserfields = 'lastaccess';
-        $enrolledincourses = core_enrol_external::get_users_courses($student->id);
+        $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
         $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
 
         $this->assertEquals(0, $enrolledincourses[0]['lastaccess']); // I can't see this, hidden by global setting.
