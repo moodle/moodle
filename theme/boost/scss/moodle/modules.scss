@@ -522,9 +522,6 @@ div#dock {
 .path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
     top: auto;
 }
-.path-mod-assign .no-overflow {
-    overflow: initial;
-}
 
 // This section removes the responsiveness from the form in the grading panel
 $popout-header-font-size: 1.5 * $font-size-base;
