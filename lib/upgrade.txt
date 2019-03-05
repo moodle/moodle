@@ -11,6 +11,10 @@ attribute on forms to avoid collisions in forms loaded in AJAX requests.
   to be updated or queued as required. This new functionality can be found in \core\task\manager::reschedule_or_queue_adhoc_task.
 * Icons are displayed for screen readers unless they have empty alt text (aria-hidden). Do not provide an icon with alt text immediately beside an element with exactly the same text.
 * admin_settingpage has a new function hide_if(), modeled after the same functionality in the forms library. This allows admin settings to be dynamically hidden based on the values of other settings.
+* The \core_rating provider's get_sql_join function now accepts an optional $innerjoin parameter.
+  It is recommended that privacy providers using this function call rewrite any long query into a number of separate
+  calls to add_from_sql for improved performance, and that the new argument is used.
+  This will allow queries to remain backwards-compatible with older versions of Moodle but will have significantly better performance in version supporting the innerjoin parameter.
 
 === 3.6 ===
 
