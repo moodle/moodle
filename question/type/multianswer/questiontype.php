@@ -91,12 +91,18 @@ class qtype_multianswer extends question_type {
         // will also create difficulties if questiontype specific tables reference the id.
 
         // First we get all the existing wrapped questions.
-        if (!$oldwrappedids = $DB->get_field('question_multianswer', 'sequence',
+        $oldwrappedquestions = [];
+        if ($oldwrappedids = $DB->get_field('question_multianswer', 'sequence',
                 array('question' => $question->id))) {
-            $oldwrappedquestions = array();
-        } else {
-            $oldwrappedquestions = $DB->get_records_list('question', 'id',
-                    explode(',', $oldwrappedids), 'id ASC');
+            $oldwrappedidsarray = explode(',', $oldwrappedids);
+            $unorderedquestions = $DB->get_records_list('question', 'id', $oldwrappedidsarray);
+
+            // Keep the order as given in the sequence field.
+            foreach ($oldwrappedidsarray as $questionid) {
+                if (isset($unorderedquestions[$questionid])) {
+                    $oldwrappedquestions[] = $unorderedquestions[$questionid];
+                }
+            }
         }
 
         $sequence = array();
