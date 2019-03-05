@@ -2462,5 +2462,11 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018051705.01);
     }
 
+    if ($oldversion < 2018051705.04) {
+        // The no_teaching model might have been marked as not-trained by mistake (static models are always trained).
+        $DB->set_field('analytics_models', 'trained', 1, ['target' => '\core\analytics\target\no_teaching']);
+        upgrade_main_savepoint(true, 2018051705.04);
+    }
+
     return true;
 }
