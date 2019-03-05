@@ -168,8 +168,32 @@ class analytics_model_testcase extends advanced_testcase {
         $this->assertEmpty($DB->count_records('analytics_predict_samples'));
         $this->assertEmpty($DB->count_records('analytics_used_files'));
 
+        // Check that the model is marked as not trained after clearing (as it is not a static one).
+        $this->assertEquals(0, $DB->get_field('analytics_models', 'trained', array('id' => $this->modelobj->id)));
+
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
+    }
+
+    /**
+     * Test behaviour of {\core_analytics\model::clear()} for static models.
+     */
+    public function test_clear_static() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $statictarget = new test_static_target_shortname();
+        $indicators['test_indicator_max'] = \core_analytics\manager::get_indicator('test_indicator_max');
+        $model = \core_analytics\model::create($statictarget, $indicators, '\core\analytics\time_splitting\quarters');
+        $modelobj = $model->get_model_obj();
+
+        // Static models are always considered trained.
+        $this->assertEquals(1, $DB->get_field('analytics_models', 'trained', array('id' => $modelobj->id)));
+
+        $model->clear();
+
+        // Check that the model is still marked as trained even after clearing.
+        $this->assertEquals(1, $DB->get_field('analytics_models', 'trained', array('id' => $modelobj->id)));
     }
 
     public function test_model_manager() {
