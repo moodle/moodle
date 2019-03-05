@@ -232,6 +232,29 @@ abstract class question_edit_form extends question_wizard_form {
             }
         }
 
+        // Competencies
+        if (get_config('core_competency', 'enabled')) {
+            $mform->addElement('header', 'competenciessection', get_string('competencies', 'core_competency'));
+
+            $options = array(
+                'courseid' => $COURSE->id,
+                'qid' => !empty($this->question->id) ? $this->question->id : 0
+            );
+
+            MoodleQuickForm::registerElementType('question_competencies',
+                "$CFG->dirroot/$CFG->admin/tool/lp/classes/question_competencies_form_element.php",
+                'tool_lp_question_competencies_form_element');
+            $mform->addElement('question_competencies', 'competencies', get_string('qcompetencies', 'tool_lp'), $options);
+            $mform->addHelpButton('competencies', 'qcompetencies', 'tool_lp');
+
+            MoodleQuickForm::registerElementType('question_competency_rule',
+                "$CFG->dirroot/$CFG->admin/tool/lp/classes/question_competency_rule_form_element.php",
+                'tool_lp_question_competency_rule_form_element');
+            // Reuse the same options.
+            $mform->addElement('question_competency_rule', 'competency_rule',
+                get_string('uponquestioncompletion', 'tool_lp'), $options);
+        }
+
         $this->add_hidden_fields();
 
         $mform->addElement('hidden', 'qtype');

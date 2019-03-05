@@ -284,6 +284,14 @@ if ($mform->is_cancelled()) {
                 context_course::instance($fromform->courseid), $fromform->coursetags, 0);
     }
 
+    // Saving competencies
+    if (get_config('core_competency', 'enabled')
+        && isset($fromform->competency_rule) && isset($fromform->competencies)) {
+        // We bypass the API here and go direct to the persistent layer - because we don't want to do permission
+        // checks here - we need to load the real list of existing course module competencies.
+        \core_competency\question_competency::update_question_competencies($question, $fromform);
+    }
+
     // Purge this question from the cache.
     question_bank::notify_question_edited($question->id);
 

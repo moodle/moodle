@@ -1044,6 +1044,44 @@ class api {
     }
 
     /**
+     * List all the competencies linked to a question.
+     *
+     * @param int $qid The question ID.
+     * @return array[competency] Array of competency records.
+     */
+    public static function list_question_competencies_in_question($qid) {
+        static::require_enabled();
+
+        // TODO: add proper security checks to see if user have access view competencies.
+        //       As not all questions are part of a module (they can be only at the question bank)
+        /*
+        $cm = $cmorid;
+        if (!is_object($cmorid)) {
+            $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
+        }
+
+        // Check the user have access to the course module.
+        self::validate_course_module($cm);
+        $context = context_module::instance($cm->id);
+
+        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
+        if (!has_any_capability($capabilities, $context)) {
+            throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
+        }
+        */
+        $result = array();
+
+        //$cmclist = course_module_competency::list_course_module_competencies($cm->id);
+        $qclist = question_competency::list_question_competencies($qid);
+        foreach ($qclist as $id => $cmc) {
+            //array_push($result, $cmc);
+            $result[] = $cmc;
+        }
+
+        return $result;
+    }
+
+    /**
      * List all the courses using a competency.
      *
      * @param int $competencyid The id of the competency to check.
@@ -1486,6 +1524,55 @@ class api {
     }
 
     /**
+     * Add a competency to this question.
+     *
+     * @param int $qid The id of the question
+     * @param int $competencyid The id of the competency
+     * @return bool
+     */
+    public static function add_competency_to_question($qid, $competencyid) {
+        static::require_enabled();
+
+        // TODO: add proper security checks to see if user have access view competencies.
+        //       As not all questions are part of a module (they can be only at the question bank)
+        /*
+        $cm = $cmorid;
+        if (!is_object($cmorid)) {
+            $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
+        }
+
+        // Check the user have access to the course module.
+        self::validate_course_module($cm);
+
+        // First we do a permissions check.
+        $context = context_module::instance($cm->id);
+
+        require_capability('moodle/competency:coursecompetencymanage', $context);
+        */
+
+        // TODO: fix this, get course from qid.
+        // Check that the competency belongs to the course.
+        //$exists = question_competency::get_records(array('qid' => $qid, 'competencyid' => $competencyid));
+        //if (!$exists) {
+        //    throw new coding_exception('Cannot add a competency to a question if it does not belong to the course');
+        //}
+
+        $record = new stdClass();
+        $record->qid = $qid;
+        $record->competencyid = $competencyid;
+
+        $questioncompetency = new question_competency();
+        $exists = $questioncompetency::get_records(array('qid' => $qid, 'competencyid' => $competencyid));
+        if (!$exists) {
+            $questioncompetency->from_record($record);
+            if ($questioncompetency->create()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Remove a competency from this course module.
      *
      * @param mixed $cmorid The course module, or id of the course module
@@ -1512,6 +1599,45 @@ class api {
 
         $competency = new competency($competencyid);
         $exists = course_module_competency::get_record(array('cmid' => $cm->id, 'competencyid' => $competencyid));
+        if ($exists) {
+            return $exists->delete();
+        }
+        return false;
+    }
+
+    /**
+     * Remove a competency from this question.
+     *
+     * @param int $qid The id of the question
+     * @param int $competencyid The id of the competency
+     * @return bool
+     */
+    public static function remove_competency_from_question($qid, $competencyid) {
+        static::require_enabled();
+
+        // TODO: add proper security checks to see if user have access view competencies.
+        //       As not all questions are part of a module (they can be only at the question bank)
+        /*
+        $cm = $cmorid;
+        if (!is_object($cmorid)) {
+            $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
+        }
+        // Check the user have access to the course module.
+        self::validate_course_module($cm);
+
+        // First we do a permissions check.
+        $context = context_module::instance($cm->id);
+
+        require_capability('moodle/competency:coursecompetencymanage', $context);
+        */
+
+        // TODO: following code looks redundant?
+        //$record = new stdClass();
+        //$record->qid = $qid;
+        //$record->competencyid = $competencyid;
+
+        //$competency = new competency($competencyid);
+        $exists = question_competency::get_record(array('qid' => $qid, 'competencyid' => $competencyid));
         if ($exists) {
             return $exists->delete();
         }
@@ -1600,6 +1726,32 @@ class api {
 
         $coursemodulecompetency->set('ruleoutcome', $ruleoutcome);
         return $coursemodulecompetency->update();
+    }
+
+    /**
+     * Update ruleoutcome value for a question competency.
+     *
+     * @param int|question_competency $questioncompetencyorid The question_competency, or its ID.
+     * @param int $ruleoutcome The value of ruleoutcome.
+     * @return bool True on success.
+     */
+    public static function set_question_competency_ruleoutcome($questioncompetencyorid, $ruleoutcome) {
+        static::require_enabled();
+        $questioncompetency = $questioncompetencyorid;
+        if (!is_object($questioncompetency)) {
+            $questioncompetency = new question_competency($questioncompetencyorid);
+        }
+
+        /*
+        $cm = get_coursemodule_from_id('', $questioncompetency->get('qid'), 0, true, MUST_EXIST);
+
+        self::validate_course_module($cm);
+        $context = context_module::instance($cm->id);
+
+        require_capability('moodle/competency:coursecompetencymanage', $context);
+        */
+        $questioncompetency->set('ruleoutcome', $ruleoutcome);
+        return $questioncompetency->update();
     }
 
     /**

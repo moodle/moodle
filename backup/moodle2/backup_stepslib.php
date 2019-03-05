@@ -2274,6 +2274,11 @@ class backup_questions_structure_step extends backup_structure_step {
 
         $tag = new backup_nested_element('tag', array('id', 'contextid'), array('name', 'rawname'));
 
+        // Backup competencies.
+        $competencies = new backup_nested_element('competencies');
+        $competency = new backup_nested_element('competency', array('id', 'qid'), array(
+            'timecreated', 'timemodified', 'usermodified' ,'sortorder','competencyid', 'ruleoutcome'));
+
         // Build the tree
 
         $qcategories->add_child($qcategory);
@@ -2284,6 +2289,9 @@ class backup_questions_structure_step extends backup_structure_step {
 
         $question->add_child($tags);
         $tags->add_child($tag);
+
+        $question->add_child($competencies);
+        $competencies->add_child($competency);
 
         // Define the sources
 
@@ -2310,6 +2318,13 @@ class backup_questions_structure_step extends backup_structure_step {
                               WHERE ti.itemid = ?
                               AND ti.itemtype = 'question'
                               AND ti.component = 'core_question'",
+            [
+                backup::VAR_PARENTID
+            ]);
+
+        $competency->set_source_sql("SELECT c.*
+                              FROM {competency_questioncomp} c
+                              WHERE c.qid = ?",
             [
                 backup::VAR_PARENTID
             ]);
