@@ -71,12 +71,39 @@ if (!company::check_valid_user($companyid, $userid)) {
     print_error('invaliduser', 'block_iomad_company_management');
 }
 
+// Check for user/course delete?
+if (!empty($action)) {
+    if (!empty($confirm) && confirm_sesskey()) {
+       company_user::delete_user_course($userid, $courseid, $action);
+       redirect(new moodle_url('/local/report_users/userdisplay.php', array('userid' => $userid)),
+                get_string($action . "_successful", 'local_report_users'),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS);
+        die;
+    } else {
+        echo $OUTPUT->header();
+        $confirmurl = new moodle_url('/local/report_users/userdisplay.php',
+                                     array('userid' => $userid,
+                                     'confirm' => $delete,
+                                     'courseid' => $courseid,
+                                     'action' => $action,
+                                     'sesskey' => sesskey()
+                                     ));
+        $cancel = new moodle_url('/local/report_users/userdisplay.php',
+                                 array('userid' => $userid));
+        if ($action == 'delete') {
+            echo $OUTPUT->confirm(get_string('deleteconfirm', 'local_report_users'), $confirmurl, $cancel);
+        } else if ($action == 'clear') {
+            echo $OUTPUT->confirm(get_string('clearconfirm', 'local_report_users'), $confirmurl, $cancel);
+        }
+        echo $OUTPUT->footer();
+        die;
+    }
+}
+
 // Get this list of courses the user is a member of.
 // Check for confirmed delete?
 if ($confirm) {
-   company_user::delete_user_course($userid, $courseid, $action);
-   redirect(new moodle_url('/local/report_users/userdisplay.php', array(
-        'userid' => $userid)));
 }
 
 // Set up the table.
