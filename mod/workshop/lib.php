@@ -1842,6 +1842,11 @@ function mod_workshop_core_calendar_provide_event_action(calendar_event $event,
 
     $cm = get_fast_modinfo($event->courseid)->instances['workshop'][$event->instance];
 
+    if (!$cm->uservisible) {
+        // The module is not visible to the user for any reason.
+        return null;
+    }
+
     return $factory->create_instance(
         get_string('viewworkshopsummary', 'workshop'),
         new \moodle_url('/mod/workshop/view.php', array('id' => $cm->id)),
