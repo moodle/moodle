@@ -271,6 +271,11 @@ class core_login_lib_testcase extends advanced_testcase {
                 ['email' => get_string('forgottenduplicate')],
                 ['allowaccountssameemail' => 1]
             ],
+            'Multiple accounts with the same email but with different case' => [
+                ['email' => 'S1@EXAMPLE.COM'],
+                ['email' => get_string('forgottenduplicate')],
+                ['allowaccountssameemail' => 1]
+            ],
             'Non-existent email, username protection on' => [
                 ['email' => 's2@example.com']
             ],
