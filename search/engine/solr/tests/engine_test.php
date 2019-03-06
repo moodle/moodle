@@ -821,7 +821,7 @@ class search_solr_engine_testcase extends advanced_testcase {
         unset($querydata->courseids);
 
         // Restrict both area and context.
-        $querydata->areaids = ['core_course-mycourse'];
+        $querydata->areaids = ['core_course-course'];
         $results = $this->search->search($querydata);
         $this->assert_result_titles(['Course 1'], $results);
 

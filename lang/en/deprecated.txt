@@ -141,3 +141,5 @@ userisblockingyou,core_message
 userisblockingyounoncontact,core_message
 error:invalidbadgeurl,core_badges
 nomessages,core_message
+searchallavailablecourses_desc,core_admin
+search:mycourse,core_search
