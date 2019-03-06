@@ -41,6 +41,11 @@ class manager {
     const DEFAULT_MLBACKEND = '\mlbackend_php\processor';
 
     /**
+     * Name of the file where components declare their models.
+     */
+    const ANALYTICS_FILENAME = 'db/analytics.php';
+
+    /**
      * @var \core_analytics\predictor[]
      */
     protected static $predictionprocessors = null;
@@ -668,5 +673,103 @@ class manager {
         }
 
         return $classes;
+    }
+
+    /**
+     * Return the list of models declared by the given component.
+     *
+     * @param string $componentname The name of the component to load models for.
+     * @throws \coding_exception Exception thrown in case of invalid syntax.
+     * @return array The $models description array.
+     */
+    public static function load_default_models_for_component(string $componentname): array {
+
+        $dir = \core_component::get_component_directory($componentname);
+
+        if (!$dir) {
+            // This is either an invalid component, or a core subsystem without its own root directory.
+            return [];
+        }
+
+        $file = $dir . '/' . self::ANALYTICS_FILENAME;
+
+        if (!is_readable($file)) {
+            return [];
+        }
+
+        $models = null;
+        include($file);
+
+        if (!isset($models) || !is_array($models) || empty($models)) {
+            return [];
+        }
+
+        foreach ($models as &$model) {
+            if (!isset($model['enabled'])) {
+                $model['enabled'] = false;
+            } else {
+                $model['enabled'] = clean_param($model['enabled'], PARAM_BOOL);
+            }
+        }
+
+        static::validate_models_declaration($models);
+
+        return $models;
+    }
+
+    /**
+     * Validate the declaration of prediction models according the syntax expected in the component's db folder.
+     *
+     * The expected structure looks like this:
+     *
+     *  [
+     *      [
+     *          'target' => '\fully\qualified\name\of\the\target\class',
+     *          'indicators' => [
+     *              '\fully\qualified\name\of\the\first\indicator',
+     *              '\fully\qualified\name\of\the\second\indicator',
+     *          ],
+     *          'timesplitting' => '\optional\name\of\the\time_splitting\class',
+     *          'enabled' => true,
+     *      ],
+     *  ];
+     *
+     * @param array $models List of declared models.
+     * @throws \coding_exception Exception thrown in case of invalid syntax.
+     */
+    public static function validate_models_declaration(array $models) {
+
+        foreach ($models as $model) {
+            if (!isset($model['target'])) {
+                throw new \coding_exception('Missing target declaration');
+            }
+
+            if (!static::is_valid($model['target'], '\core_analytics\local\target\base')) {
+                throw new \coding_exception('Invalid target classname', $model['target']);
+            }
+
+            if (empty($model['indicators']) || !is_array($model['indicators'])) {
+                throw new \coding_exception('Missing indicators declaration');
+            }
+
+            foreach ($model['indicators'] as $indicator) {
+                if (!static::is_valid($indicator, '\core_analytics\local\indicator\base')) {
+                    throw new \coding_exception('Invalid indicator classname', $indicator);
+                }
+            }
+
+            if (isset($model['timesplitting'])) {
+                if (substr($model['timesplitting'], 0, 1) !== '\\') {
+                    throw new \coding_exception('Expecting fully qualified time splitting classname', $model['timesplitting']);
+                }
+                if (!static::is_valid($model['timesplitting'], '\core_analytics\local\time_splitting\base')) {
+                    throw new \coding_exception('Invalid time splitting classname', $model['timesplitting']);
+                }
+            }
+
+            if (!empty($model['enabled']) && !isset($model['timesplitting'])) {
+                throw new \coding_exception('Cannot enable a model without time splitting method specified');
+            }
+        }
     }
 }

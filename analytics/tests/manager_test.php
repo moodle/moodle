@@ -150,4 +150,105 @@ class analytics_manager_testcase extends advanced_testcase {
         get_log_manager(true);
     }
 
+    /**
+     * Tests for the {@link \core_analytics\manager::load_default_models_for_component()} implementation.
+     */
+    public function test_load_default_models_for_component() {
+        $this->resetAfterTest();
+
+        // Attempting to load builtin models should always work without throwing exception.
+        \core_analytics\manager::load_default_models_for_component('core');
+
+        // Attempting to load from a core subsystem without its own subsystem directory.
+        $this->assertSame([], \core_analytics\manager::load_default_models_for_component('core_access'));
+
+        // Attempting to load from a non-existing subsystem.
+        $this->assertSame([], \core_analytics\manager::load_default_models_for_component('core_nonexistingsubsystem'));
+
+        // Attempting to load from a non-existing plugin of a known plugin type.
+        $this->assertSame([], \core_analytics\manager::load_default_models_for_component('mod_foobarbazquaz12240996776'));
+
+        // Attempting to load from a non-existing plugin type.
+        $this->assertSame([], \core_analytics\manager::load_default_models_for_component('foo_bar2776327736558'));
+    }
+
+    /**
+     * Tests for the successful execution of the {@link \core_analytics\manager::validate_models_declaration()}.
+     */
+    public function test_validate_models_declaration() {
+        $this->resetAfterTest();
+
+        // This is expected to run without an exception.
+        $models = $this->load_models_from_fixture_file('no_teaching');
+        \core_analytics\manager::validate_models_declaration($models);
+    }
+
+    /**
+     * Tests for the exceptions thrown by {@link \core_analytics\manager::validate_models_declaration()}.
+     *
+     * @dataProvider validate_models_declaration_exceptions_provider
+     * @param array $models Models declaration.
+     * @param string $exception Expected coding exception message.
+     */
+    public function test_validate_models_declaration_exceptions(array $models, string $exception) {
+        $this->resetAfterTest();
+
+        $this->expectException(\coding_exception::class);
+        $this->expectExceptionMessage($exception);
+        \core_analytics\manager::validate_models_declaration($models);
+    }
+
+    /**
+     * Data provider for the {@link self::test_validate_models_declaration_exceptions()}.
+     *
+     * @return array of (string)testcase => [(array)models, (string)expected exception message]
+     */
+    public function validate_models_declaration_exceptions_provider() {
+        return [
+            'missing_target' => [
+                $this->load_models_from_fixture_file('missing_target'),
+                'Missing target declaration',
+            ],
+            'invalid_target' => [
+                $this->load_models_from_fixture_file('invalid_target'),
+                'Invalid target classname',
+            ],
+            'missing_indicators' => [
+                $this->load_models_from_fixture_file('missing_indicators'),
+                'Missing indicators declaration',
+            ],
+            'invalid_indicators' => [
+                $this->load_models_from_fixture_file('invalid_indicators'),
+                'Invalid indicator classname',
+            ],
+            'invalid_time_splitting' => [
+                $this->load_models_from_fixture_file('invalid_time_splitting'),
+                'Invalid time splitting classname',
+            ],
+            'invalid_time_splitting_fq' => [
+                $this->load_models_from_fixture_file('invalid_time_splitting_fq'),
+                'Expecting fully qualified time splitting classname',
+            ],
+            'invalid_enabled' => [
+                $this->load_models_from_fixture_file('invalid_enabled'),
+                'Cannot enable a model without time splitting method specified',
+            ],
+        ];
+    }
+
+    /**
+     * Loads models as declared in the given fixture file.
+     *
+     * @param string $filename
+     * @return array
+     */
+    protected function load_models_from_fixture_file(string $filename) {
+        global $CFG;
+
+        $models = null;
+
+        require($CFG->dirroot.'/analytics/tests/fixtures/db_analytics_php/'.$filename.'.php');
+
+        return $models;
+    }
 }
