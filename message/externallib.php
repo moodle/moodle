@@ -1247,7 +1247,7 @@ class core_message_external extends external_api {
                 'name' => new external_value(PARAM_TEXT, 'The conversation name, if set', VALUE_DEFAULT, null),
                 'subname' => new external_value(PARAM_TEXT, 'A subtitle for the conversation name, if set', VALUE_DEFAULT, null),
                 'imageurl' => new external_value(PARAM_URL, 'A link to the conversation picture, if set', VALUE_DEFAULT, null),
-                'type' => new external_value(PARAM_INT, 'The type of the conversation (1=individual,2=group)'),
+                'type' => new external_value(PARAM_INT, 'The type of the conversation (1=individual,2=group,3=self)'),
                 'membercount' => new external_value(PARAM_INT, 'Total number of conversation members'),
                 'ismuted' => new external_value(PARAM_BOOL, 'If the user muted this conversation'),
                 'isfavourite' => new external_value(PARAM_BOOL, 'If the user marked this conversation as a favourite'),
@@ -1752,7 +1752,9 @@ class core_message_external extends external_api {
                 'favourites' => new external_value(PARAM_BOOL, 'Whether to restrict the results to contain NO favourite
                 conversations (false), ONLY favourite conversation (true), or ignore any restriction altogether (null)',
                     VALUE_DEFAULT, null),
-
+                'mergeself' => new external_value(PARAM_BOOL, 'Whether to include self-conversations (true) or ONLY private
+                    conversations (false) when private conversations are requested.',
+                    VALUE_DEFAULT, false),
             )
         );
     }
@@ -1765,11 +1767,14 @@ class core_message_external extends external_api {
      * @param int $limitnum
      * @param int|null $type
      * @param bool|null $favourites
+     * @param bool $mergeself whether to include self-conversations (true) or ONLY private conversations (false)
+     *             when private conversations are requested.
      * @return stdClass
      * @throws \moodle_exception if the messaging feature is disabled on the site.
      * @since 3.2
      */
-    public static function get_conversations($userid, $limitfrom = 0, $limitnum = 0, int $type = null, bool $favourites = null) {
+    public static function get_conversations($userid, $limitfrom = 0, $limitnum = 0, int $type = null, bool $favourites = null,
+            bool $mergeself = false) {
         global $CFG, $USER;
 
         // All the standard BL checks.
@@ -1782,7 +1787,8 @@ class core_message_external extends external_api {
             'limitfrom' => $limitfrom,
             'limitnum' => $limitnum,
             'type' => $type,
-            'favourites' => $favourites
+            'favourites' => $favourites,
+            'mergeself' => $mergeself
         );
         $params = self::validate_parameters(self::get_conversations_parameters(), $params);
 
@@ -1798,7 +1804,8 @@ class core_message_external extends external_api {
             $params['limitfrom'],
             $params['limitnum'],
             $params['type'],
-            $params['favourites']
+            $params['favourites'],
+            $params['mergeself']
         );
 
         return (object) ['conversations' => $conversations];
@@ -2023,6 +2030,91 @@ class core_message_external extends external_api {
      */
     public static function get_conversation_between_users_returns() {
         return self::get_conversation_structure(true);
+    }
+
+    /**
+     * Get self-conversation parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_self_conversation_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing self-conversations for'),
+                'messagelimit' => new external_value(PARAM_INT, 'Limit for number of messages', VALUE_DEFAULT, 100),
+                'messageoffset' => new external_value(PARAM_INT, 'Offset for messages list', VALUE_DEFAULT, 0),
+                'newestmessagesfirst' => new external_value(PARAM_BOOL, 'Order messages by newest first', VALUE_DEFAULT, true)
+            )
+        );
+    }
+
+    /**
+     * Get a single self-conversation.
+     *
+     * @param int $userid The user id to get the self-conversation for
+     * @param int $messagelimit Limit number of messages to load
+     * @param int $messageoffset Offset the messages
+     * @param bool $newestmessagesfirst Order messages by newest first
+     * @return stdClass
+     * @throws \moodle_exception if the messaging feature is disabled on the site.
+     * @since Moodle 3.7
+     */
+    public static function get_self_conversation(
+        int $userid,
+        int $messagelimit = 0,
+        int $messageoffset = 0,
+        bool $newestmessagesfirst = true
+    ) {
+        global $CFG;
+
+        // All the standard BL checks.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $params = [
+            'userid' => $userid,
+            'messagelimit' => $messagelimit,
+            'messageoffset' => $messageoffset,
+            'newestmessagesfirst' => $newestmessagesfirst
+        ];
+        self::validate_parameters(self::get_self_conversation_parameters(), $params);
+
+        $systemcontext = context_system::instance();
+        self::validate_context($systemcontext);
+
+        $conversation = \core_message\api::get_self_conversation($params['userid']);
+
+        if ($conversation) {
+            $conversation = \core_message\api::get_conversation(
+                $params['userid'],
+                $conversation->id,
+                false,
+                false,
+                0,
+                0,
+                $params['messagelimit'],
+                $params['messageoffset'],
+                $params['newestmessagesfirst']
+            );
+        }
+
+        if ($conversation) {
+            return $conversation;
+        } else {
+            // We have to throw an exception here because the external functions annoyingly
+            // don't accept null to be returned for a single structure.
+            throw new \moodle_exception('errorconversationdoesnotexist', 'message');
+        }
+    }
+
+    /**
+     * Get conversation returns.
+     *
+     * @return external_single_structure
+     */
+    public static function get_self_conversation_returns() {
+        return self::get_conversation_structure();
     }
 
     /**
@@ -4625,6 +4717,8 @@ class core_message_external extends external_api {
                             'Total number of individual conversations'),
                         \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => new external_value(PARAM_INT,
                             'Total number of group conversations'),
+                        \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => new external_value(PARAM_INT,
+                            'Total number of self conversations'),
                     ]
                 ),
             ]
@@ -4700,6 +4794,8 @@ class core_message_external extends external_api {
                             'Total number of unread individual conversations'),
                         \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP => new external_value(PARAM_INT,
                             'Total number of unread group conversations'),
+                        \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF => new external_value(PARAM_INT,
+                            'Total number of unread self conversations'),
                     ]
                 ),
             ]

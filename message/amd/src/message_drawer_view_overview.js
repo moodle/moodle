@@ -30,7 +30,8 @@ define(
     'core_message/message_drawer_routes',
     'core_message/message_drawer_events',
     'core_message/message_drawer_view_overview_section',
-    'core_message/message_repository'
+    'core_message/message_repository',
+    'core_message/message_drawer_view_conversation_constants'
 ],
 function(
     $,
@@ -41,7 +42,8 @@ function(
     Routes,
     MessageDrawerEvents,
     Section,
-    MessageRepository
+    MessageRepository,
+    Constants
 ) {
 
     var SELECTORS = {
@@ -51,12 +53,6 @@ function(
         MESSAGES: '[data-region="view-overview-messages"]',
         SEARCH_INPUT: '[data-region="view-overview-search-input"]',
         SECTION_TOGGLE_BUTTON: '[data-toggle]'
-    };
-
-    var CONVERSATION_TYPES = {
-        PRIVATE: 1,
-        PUBLIC: 2,
-        FAVOURITE: null
     };
 
     var loadAllCountsPromise = null;
@@ -89,7 +85,15 @@ function(
      * @return {Number}
      */
     var filterCountsByType = function(counts, type) {
-        return type === CONVERSATION_TYPES.FAVOURITE ? counts.favourites : counts.types[type];
+        var total = 0;
+        if (type === Constants.CONVERSATION_CATEGORY_TYPES.PRIVATE && counts.types[Constants.CONVERSATION_TYPES.SELF]) {
+            // As private and self conversations are displayed together, we need to add the counts for the self-conversations
+            // to the private ones, when there is any self-conversation.
+            total = counts.types[Constants.CONVERSATION_TYPES.PRIVATE] + counts.types[Constants.CONVERSATION_TYPES.SELF];
+        } else {
+            total = type === Constants.CONVERSATION_CATEGORY_TYPES.FAVOURITE ? counts.favourites : counts.types[type];
+        }
+        return total;
     };
 
     /**
@@ -226,11 +230,11 @@ function(
 
         var sections = [
             // Favourite conversations section.
-            [body.find(SELECTORS.FAVOURITES), CONVERSATION_TYPES.FAVOURITE, true],
+            [body.find(SELECTORS.FAVOURITES), Constants.CONVERSATION_CATEGORY_TYPES.FAVOURITE, true],
             // Group conversations section.
-            [body.find(SELECTORS.GROUP_MESSAGES), CONVERSATION_TYPES.PUBLIC, false],
+            [body.find(SELECTORS.GROUP_MESSAGES), Constants.CONVERSATION_CATEGORY_TYPES.PUBLIC, false],
             // Private conversations section.
-            [body.find(SELECTORS.MESSAGES), CONVERSATION_TYPES.PRIVATE, false]
+            [body.find(SELECTORS.MESSAGES), Constants.CONVERSATION_CATEGORY_TYPES.PRIVATE, false]
         ];
 
         sections.forEach(function(args) {

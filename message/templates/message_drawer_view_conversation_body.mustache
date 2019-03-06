@@ -43,6 +43,10 @@
     style="overflow-y: auto; overflow-x: hidden"
 >
     <div class="position-relative h-100" data-region="content-container" style="overflow-y: auto; overflow-x: hidden">
+        <div class="p-3 text-center hidden" data-region="self-conversation-message-container">
+            <p class="m-0">{{#str}} selfconversation, core_message {{/str}}</p>
+            <p class="font-italic font-weight-light" data-region="text">{{#str}} selfconversationdefaultmessage, core_message {{/str}}</p>
+        </div>
         <div class="p-3 text-center hidden" data-region="contact-request-sent-message-container">
             <p class="m-0">{{#str}} contactrequestsent, core_message {{/str}}</p>
             <p class="font-italic font-weight-light" data-region="text"></p>

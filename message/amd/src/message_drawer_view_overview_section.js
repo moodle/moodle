@@ -183,14 +183,21 @@ function(
                 lastmessage: lastMessage ? $(lastMessage.text).text() || lastMessage.text : null
             };
 
-            if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE) {
-                var otherUser = conversation.members.reduce(function(carry, member) {
+            var otherUser = null;
+            if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.SELF) {
+                // Self-conversations have only one member.
+                otherUser = conversation.members[0];
+            } else if (conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE) {
+                // For private conversations, remove the current userId from the members to get the other user.
+                otherUser = conversation.members.reduce(function(carry, member) {
                     if (!carry && member.id != userId) {
                         carry = member;
                     }
                     return carry;
                 }, null);
+            }
 
+            if (otherUser !== null) {
                 formattedConversation.userid = otherUser.id;
                 formattedConversation.showonlinestatus = otherUser.showonlinestatus;
                 formattedConversation.isonline = otherUser.isonline;
@@ -238,7 +245,8 @@ function(
                     type,
                     LOAD_LIMIT + 1,
                     offset,
-                    includeFavourites
+                    includeFavourites,
+                    true // Always merge self-conversations with private conversations, to display them together.
                 )
                 .then(function(response) {
                     var conversations = response.conversations;
@@ -575,8 +583,13 @@ function(
         });
 
         PubSub.subscribe(MessageDrawerEvents.CONVERSATION_NEW_LAST_MESSAGE, function(conversation) {
+            // Self-conversations could be displayed as private conversations when they are not starred. So we need to exclude
+            // them from the following check to make sure last messages are updated properly for them.
             if (
-                (type && conversation.type != type) ||
+                (type && conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.SELF &&
+                type != MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE && !conversation.isFavourite) ||
+                (type && conversation.type != MessageDrawerViewConversationContants.CONVERSATION_TYPES.SELF &&
+                type != conversation.type) ||
                 (includeFavourites && !conversation.isFavourite) ||
                 (!includeFavourites && conversation.isFavourite)
             ) {
@@ -613,7 +626,11 @@ function(
                 if (!conversationElement.length) {
                     createNewConversation(root, conversation);
                 }
-            } else if (type == conversation.type) {
+            } else if (type == conversation.type ||
+                    (type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE &&
+                     conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.SELF)) {
+                // Self-conversations are displayed in the private conversations section, so they should be removed from
+                // there when they are favourited.
                 conversationElement = getConversationElement(root, conversation.id);
                 if (conversationElement.length) {
                     deleteConversation(root, conversationElement);
@@ -628,7 +645,11 @@ function(
                 if (conversationElement.length) {
                     deleteConversation(root, conversationElement);
                 }
-            } else if (type == conversation.type) {
+            } else if (type == conversation.type ||
+                    (type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.PRIVATE &&
+                     conversation.type == MessageDrawerViewConversationContants.CONVERSATION_TYPES.SELF)) {
+                // Self-conversations are displayed in the private conversations section, so they should be added
+                // there when they are unfavourited.
                 conversationElement = getConversationElement(root, conversation.id);
                 if (!conversationElement.length) {
                     createNewConversation(root, conversation);

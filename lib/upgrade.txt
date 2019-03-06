@@ -30,6 +30,14 @@ attribute on forms to avoid collisions in forms loaded in AJAX requests.
   in this category. To work with list of courses use API methods in core_course_category and also 'course' form element.
 * It is possible to pass additional conditions to get_courses_search();
   core_course_category::search_courses() now allows to search only among courses with completion enabled.
+* A new conversation type has been created for self-conversations. During the upgrading process:
+  - Firstly, the existing self-conversations will be starred and migrated to the new type, removing the duplicated members in the
+  message_conversation_members table.
+  - Secondly, the legacy self conversations will be migrated from the legacy 'message_read' table. They will be created using the
+  new conversation type and will be favourited.
+  - Finally, the self-conversations for all remaining users without them will be created and starred.
+Besides, from now, a self-conversation will be created and starred by default to all the new users (even when $CFG->messaging
+is disabled).
 
 === 3.6 ===
 

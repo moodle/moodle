@@ -87,7 +87,18 @@ class core_message_messagelib_testcase extends advanced_testcase {
             return $DB->insert_record('notifications', $record);
         }
 
-        if (!$conversationid = \core_message\api::get_conversation_between_users([$userfrom->id, $userto->id])) {
+        if ($userfrom->id == $userto->id) {
+            // It's a self conversation.
+            $conversation = \core_message\api::get_self_conversation($userfrom->id);
+            if (empty($conversation)) {
+                $conversation = \core_message\api::create_conversation(
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF,
+                    [$userfrom->id]
+                );
+            }
+            $conversationid = $conversation->id;
+        } else if (!$conversationid = \core_message\api::get_conversation_between_users([$userfrom->id, $userto->id])) {
+            // It's an individual conversation between two different users.
             $conversation = \core_message\api::create_conversation(
                 \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
                 [
