@@ -6,6 +6,9 @@ information provided here is intended especially for developers.
 * Behat timeout constants behat_base::TIMEOUT, EXTENDED_TIMEOUT, and REDUCED_TIMEOUT will be
   deprecated in 3.7. Please instead use the functions behat_base::get_timeout(), get_extended_timeout(),
   and get_reduced_timeout(). These allow for timeouts to be increased by a setting in config.php.
+* New optional parameter $throwexception for \get_complete_user_data(). If true, an exception will be thrown when there's no
+  matching record found or when there are multiple records found for the given field value. If false, it will simply return false.
+  Defaults to false when not set.
 
 === 3.5.5 ===
 
