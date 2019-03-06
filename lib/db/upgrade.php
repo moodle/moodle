@@ -2736,7 +2736,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019021500.02);
     }
 
-    if ($oldversion < 2019022500.00) {
+    if ($oldversion < 2019030100.01) {
         // Create adhoc task to delete renamed My Course search area (ID core_course-mycourse).
         $record = new \stdClass();
         $record->classname = '\core\task\clean_up_deleted_search_area_task';
@@ -2750,7 +2750,7 @@ function xmldb_main_upgrade($oldversion) {
         $DB->insert_record('task_adhoc', $record);
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2019022500.00);
+        upgrade_main_savepoint(true, 2019030100.01);
     }
 
     return true;
