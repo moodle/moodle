@@ -325,8 +325,12 @@ if ($companies) {
             }
         }
 
+        unset($linkparams['suspend']);
+        unset($linkparams['unsuspend']);
+
         if (empty($CFG->commerce_admin_enableall) && iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
             if (!empty($company->ecommerce)) {
+                unset($linkparams['suspend']);
                 $linkparams['disableecommerce'] = $company->id;
 
                 $ecommerceurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
