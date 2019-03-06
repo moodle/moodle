@@ -87,7 +87,7 @@ class company_users_form extends moodleform {
     }
 
     public function process() {
-        global $DB;
+        global $DB, $USER;
 
         if ($this->selectedcompany) {
             $company = new company($this->selectedcompany);
@@ -117,6 +117,20 @@ class company_users_form extends moodleform {
                             $company->assign_user_to_company($adduser->id);
 
                             \core\event\user_updated::create_from_userid($adduser->id)->trigger();
+
+                            // Fire an event for this.
+                            $eventother = array('companyid' => $company->id,
+                                                'companyname' => $companyshortname,
+                                                'usertype' => 0,
+                                                'usertypename' => '',
+                                                'oldcompany' => json_encode(array()));
+
+                            $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => context_system::instance(),
+                                                                                                          'userid' => $USER->id,
+                                                                                                          'objectid' => $company->id,
+                                                                                                          'relateduserid' => $adduser->id,
+                                                                                                           'other' => $eventother));
+                            $event->trigger();
                         }
                     }
 
@@ -144,6 +158,20 @@ class company_users_form extends moodleform {
                         $DB->set_field('user', 'theme', '', array('id' => $removeuser->id));
 
                         \core\event\user_updated::create_from_userid($removeuser->id)->trigger();
+
+                        // Fire an event for this.
+                        $eventother = array('companyid' => 0,
+                                            'companyname' => '',
+                                            'usertype' => 0,
+                                            'usertypename' => '',
+                                            'oldcompany' => json_encode($company));
+
+                        $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => context_system::instance(),
+                                                                                                      'userid' => $USER->id,
+                                                                                                      'objectid' => 0,
+                                                                                                      'relateduserid' => $removeuser->id,
+                                                                                                       'other' => $eventother));
+                        $event->trigger();
                     }
 
                     $this->potentialusers->invalidate_selected_users();

@@ -53,6 +53,12 @@ $observers = array(
     ),
 
     array(
+        'eventname'   => '\block_iomad_company_admin\event\company_user_assigned',
+        'callback'    => '\local_iomad_track\observer::company_user_assigned',
+        'internal'    => false,
+    ),
+
+    array(
         'eventname'   => '\core\event\user_enrolment_created',
         'callback'    => '\local_iomad_track\observer::user_enrolment_created',
         'internal'    => false,

@@ -493,16 +493,19 @@ class observer {
                                                             'courseid' => $courseid))) {
 
                     $company = array_shift($companies);
-                    $entry = array('userid' => $userid,
-                                   'courseid' => $courseid,
-                                   'coursename' => $courserec->fullname,
-                                   'companyid' => $company->companyid,
-                                   'timeenrolled' => $timeenrolled,
-                                   'timestarted' => $timeenrolled,
-                                   'modifiedtime' => $modifiedtime
-                                   );
-                    $DB->insert_record('local_iomad_track', $entry);
+                    $companyid = $company->companyid;
+                } else {
+                    $companyid = 0;
                 }
+                $entry = array('userid' => $userid,
+                               'courseid' => $courseid,
+                               'coursename' => $courserec->fullname,
+                               'companyid' => $companyid,
+                               'timeenrolled' => $timeenrolled,
+                               'timestarted' => $timeenrolled,
+                               'modifiedtime' => $modifiedtime
+                               );
+                $DB->insert_record('local_iomad_track', $entry);
             }
         }
 
@@ -550,6 +553,22 @@ class observer {
             // We already have an entry.  Remove it.
             $DB->set_field('local_iomad_track', 'finalscore', $finalgrade, array('id' => $entry->id));
             $DB->set_field('local_iomad_track', 'modifiedtime', $event->timecreated, array('id' => $entry->id));
+        }
+
+        return true;
+    }
+
+    /**
+     * Consume company user assigned event
+     * @param object $event the event object
+     */
+    public static function company_user_assigned($event) {
+        global $DB;
+
+        // Check if there are any courses recorded for this user where the companyid == 0.
+
+        if ($DB->get_records('local_iomad_track', array('userid' => $event->relateduserid, 'companyid' => 0))) {
+            $DB->set_field('local_iomad_track', 'companyid', $event->objectid, array('userid' => $event->relateduserid, 'companyid' => 0));
         }
 
         return true;
