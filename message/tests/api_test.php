@@ -716,6 +716,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
      * Tests searching messages.
      */
     public function test_search_messages() {
+        $this->resetAfterTest();
+
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -724,13 +726,20 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // The person doing the search.
         $this->setUser($user1);
 
+        // Create group conversation.
+        $gc = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id]
+        );
+
         // Send some messages back and forth.
         $time = 1;
-        $this->send_fake_message($user3, $user1, 'Don\'t block me.', 0, $time);
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        testhelper::send_fake_message_to_conversation($user1, $gc->id, 'My hero!', $time);
+        $this->send_fake_message($user3, $user1, 'Don\'t block me.', 0, $time + 1);
+        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 2);
+        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 3);
+        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 4);
+        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 5);
 
         $convid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
         $conv2id = \core_message\api::get_conversation_between_users([$user1->id, $user3->id]);
@@ -742,11 +751,12 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $messages = \core_message\api::search_messages($user1->id, 'o');
 
         // Confirm the data is correct.
-        $this->assertEquals(3, count($messages));
+        $this->assertEquals(4, count($messages));
 
         $message1 = $messages[0];
         $message2 = $messages[1];
         $message3 = $messages[2];
+        $message4 = $messages[3];
 
         $this->assertEquals($user2->id, $message1->userid);
         $this->assertEquals($user2->id, $message1->useridfrom);
@@ -783,6 +793,18 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertTrue($message3->isblocked);
         $this->assertNull($message3->unreadcount);
         $this->assertEquals($conv2id, $message3->conversationid);
+
+        // This is a group conversation. For now, search_messages returns only one of the other users on the conversation. It can't
+        // be guaranteed who will be returned in the first place, so we need to use the in_array to check all the possibilities.
+        $this->assertTrue(in_array($message4->userid, [$user2->id, $user3->id]));
+        $this->assertEquals($user1->id, $message4->useridfrom);
+        $this->assertTrue($message4->ismessaging);
+        $this->assertEquals('My hero!', $message4->lastmessage);
+        $this->assertNotEmpty($message4->messageid);
+        $this->assertNull($message4->isonline);
+        $this->assertTrue($message4->isread);
+        $this->assertNull($message4->unreadcount);
+        $this->assertEquals($gc->id, $message4->conversationid);
     }
 
     /**

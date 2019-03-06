@@ -103,10 +103,12 @@ class api {
         // Get the user fields we want.
         $ufields = \user_picture::fields('u', array('lastaccess'), 'userfrom_id', 'userfrom_');
         $ufields2 = \user_picture::fields('u2', array('lastaccess'), 'userto_id', 'userto_');
+        // Add the uniqueid column to make each row unique and avoid SQL errors.
+        $uniqueidsql = $DB->sql_concat('m.id', "'_'", 'm.useridfrom', "'_'", 'mcm.userid');
 
-        $sql = "SELECT m.id, m.useridfrom, mcm.userid as useridto, m.subject, m.fullmessage, m.fullmessagehtml, m.fullmessageformat,
-                       m.smallmessage, m.conversationid, m.timecreated, 0 as isread, $ufields, mub.id as userfrom_blocked,
-                       $ufields2, mub2.id as userto_blocked
+        $sql = "SELECT $uniqueidsql AS uniqueid, m.id, m.useridfrom, mcm.userid as useridto, m.subject, m.fullmessage,
+                       m.fullmessagehtml, m.fullmessageformat, m.smallmessage, m.conversationid, m.timecreated, 0 as isread,
+                       $ufields, mub.id as userfrom_blocked, $ufields2, mub2.id as userto_blocked
                   FROM {messages} m
             INNER JOIN {user} u
                     ON u.id = m.useridfrom
@@ -146,8 +148,13 @@ class api {
                 $message->blocked = $message->$blockedcol ? 1 : 0;
 
                 $message->messageid = $message->id;
-                $conversations[] = helper::create_contact($message, $prefix);
+                // To avoid duplicate messages, only add the message if it hasn't been added previously.
+                if (!array_key_exists($message->messageid, $conversations)) {
+                    $conversations[$message->messageid] = helper::create_contact($message, $prefix);
+                }
             }
+            // Remove the messageid keys (to preserve the expected type).
+            $conversations = array_values($conversations);
         }
 
         return $conversations;
