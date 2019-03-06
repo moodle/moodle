@@ -40,10 +40,9 @@
     data-user-id="{{loggedinuser.id}}"
     {{$rootattributes}}{{/rootattributes}}
 >
+    {{$notification}}{{/notification}}
     <div class="hidden text-center p-2" data-region="empty-message-container">
-        <p class="text-muted mt-2">
-            {{$emptymessage}}{{/emptymessage}}
-        </p>
+        {{$emptymessage}}{{/emptymessage}}
     </div>
     <div class="hidden list-group" data-region="content-container">
         {{$content}}{{/content}}
