@@ -931,6 +931,7 @@ class iomad_user_filter_form extends moodleform {
         $mform->addElement('hidden', 'eventid');
         $mform->addElement('hidden', 'courseid');
         $mform->addElement('hidden', 'licenseid');
+        $mform->addElement('hidden', 'templateid');
         $mform->addElement('hidden', 'sort');
         $mform->setType('firstname', PARAM_CLEAN);
         $mform->setType('lastname', PARAM_CLEAN);
@@ -940,6 +941,7 @@ class iomad_user_filter_form extends moodleform {
         $mform->setType('eventid', PARAM_INT);
         $mform->setType('courseid', PARAM_INT);
         $mform->setType('licenseid', PARAM_INT);
+        $mform->setType('templateid', PARAM_INT);
         $mform->setType('sort', PARAM_ALPHA);
         $mform->setExpanded('usersearchfields', false);
 
