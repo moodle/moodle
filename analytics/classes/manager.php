@@ -112,7 +112,9 @@ class manager {
                 $params['trained'] = 1;
             }
             if ($predictioncontext) {
-                $conditions[] = "EXISTS (SELECT 'x' FROM {analytics_predictions} ap WHERE ap.modelid = am.id AND ap.contextid = :contextid)";
+                $conditions[] = "EXISTS (SELECT 'x'
+                                           FROM {analytics_predictions} ap
+                                          WHERE ap.modelid = am.id AND ap.contextid = :contextid)";
                 $params['contextid'] = $predictioncontext->id;
             }
             $sql .= ' WHERE ' . implode(' AND ', $conditions);
