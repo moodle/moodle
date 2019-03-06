@@ -362,26 +362,26 @@ class qtype_ordering_edit_form extends question_edit_form {
         $errors = array();
         $plugin = 'qtype_ordering';
 
+        // Identify duplicates and report as an error.
+        $answers = [];
         $answercount = 0;
-        $list = [];
         foreach ($data['answer'] as $answer) {
             if (is_array($answer)) {
-                $answer = trim($answer['text']);
+                $answer = $answer['text'];
             }
-            if (trim($answer) == '') {
-                continue; // Skip empty answer.
+            if ($answer = trim($answer)) {
+                if (in_array($answer, $answers)) {
+                    $i = array_search($answer, $answers);
+                    $item = get_string('answerheader', $plugin);
+                    $item = str_replace('{no}', $i + 1, $item);
+                    $item = html_writer::link("#id_answerheader_$i", $item);
+                    $a = (object)array('text' => $answer, 'item' => $item);
+                    $errors["answer[$answercount]"] =  get_string('duplicatesnotallowed', $plugin, $a);
+                } else {
+                    $answers[] = $answer;
+                }
+                $answercount++;
             }
-            // Check on duplicates.
-            if ($answer && in_array($answer, $list)) {
-                $draggableitem = new stdClass();
-                $draggableitem->number = array_search($answer, $list) + 1;
-                $draggableitem->text = $answer;
-
-                $errors["answer[$answercount]"] =  get_string('err_draggableitemsduplication', 'qtype_ordering', $draggableitem);
-            } else {
-                $list[] = trim($answer);
-            }
-            $answercount++;
         }
 
         switch ($answercount) {
