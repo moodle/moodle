@@ -266,9 +266,9 @@ $string['gradedisplay'] = 'Grade display';
 $string['gradedisplaytype'] = 'Grade display type';
 $string['gradedisplaytype_help'] = 'This setting determines how grades are displayed in the grader and user reports.
 
-* Real - Actual grades
-* Percentage
-* Letter - Letters or words are used to represent a range of grades';
+* Letter - Letters or words are used to represent a range of grades, as defined in \'Letters\' in the gradebook setup
+* Percentage - Relative to maximum and minimum grades
+* Real - Actual grades or scale values';
 $string['gradedon'] = 'Graded: {$a}';
 $string['gradeexport'] = 'Grade export';
 $string['gradeexportcolumntype'] = '{$a->name} ({$a->extra})';
