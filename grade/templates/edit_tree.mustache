@@ -27,19 +27,17 @@
         {{{table}}}
         <div id="gradetreesubmit">
             {{#showsave}}
-                <input class="advanced" type="submit" value={{#quote}}{{#str}}savechanges{{/str}}{{/quote}}>
+                <input class="advanced btn btn-primary" type="submit" value={{#quote}}{{#str}}savechanges{{/str}}{{/quote}}>
             {{/showsave}}
             {{#showbulkmove}}
-                <br><br>
-                <input type="hidden" name="bulkmove" value="0" id="bulkmoveinput">
-                <label for="menumoveafter">{{#str}}moveselectedto, grades{{/str}}</label>
-                <select name="moveafter" id="menumoveafter" class="ignoredirty singleselect select">
-                    {{#bulkmoveoptions}}
-                        <option value="{{value}}">{{name}}</option>
-                    {{/bulkmoveoptions}}
-                </select>
-                <div id="noscriptgradetreeform" class="hiddenifjs">
-                    <input type="submit" name={{#quote}}{{#str}}go{{/str}}{{/quote}}>
+                <div class="form-inline mt-3">
+                    <input type="hidden" name="bulkmove" value="0" id="bulkmoveinput">
+                    <label for="menumoveafter">{{#str}}moveselectedto, grades{{/str}}</label>
+                    <select name="moveafter" id="menumoveafter" class="ignoredirty singleselect select form-control">
+                        {{#bulkmoveoptions}}
+                            <option value="{{value}}">{{name}}</option>
+                        {{/bulkmoveoptions}}
+                    </select>
                 </div>
             {{/showbulkmove}}
         </div>
