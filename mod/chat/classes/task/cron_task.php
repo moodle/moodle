@@ -57,8 +57,8 @@ class cron_task extends \core\task\scheduled_task {
         $subselect = "SELECT c.keepdays
                         FROM {chat} c
                        WHERE c.id = {chat_messages}.chatid";
-        $DB->delete_records_select('chat_messages', "($subselect) > 0 AND timestamp < ?",
-                [$timenow - ($subselect) * DAYSECS]);
+        $DB->delete_records_select('chat_messages', "($subselect) > 0 AND timestamp < (? - ($subselect) * ?)",
+                [$timenow, DAYSECS]);
 
         $DB->delete_records_select('chat_messages_current', "timestamp < ?", [$timenow - 8 * HOURSECS]);
     }
