@@ -386,6 +386,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/right' => 'fa-arrow-right',
             'core:t/sendmessage' => 'fa-paper-plane',
             'core:t/show' => 'fa-eye-slash',
+            'core:t/sort_by' => 'fa-sort-amount-asc',
             'core:t/sort_asc' => 'fa-sort-asc',
             'core:t/sort_desc' => 'fa-sort-desc',
             'core:t/sort' => 'fa-sort',
