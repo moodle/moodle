@@ -453,8 +453,8 @@ class core_course_management_renderer extends plugin_renderer_base {
             $form .= html_writer::end_div();
 
             $html .= html_writer::start_div('detail-pair row yui3-g m-y-1');
-            $html .= html_writer::div(html_writer::span(get_string('sorting')), 'pair-key span3 col-md-3 yui3-u-1-4');
-            $html .= html_writer::div($form, 'pair-value span9 col-md-9 yui3-u-3-4');
+            $html .= html_writer::div(html_writer::span(get_string('sorting')), 'pair-key col-md-3 yui3-u-1-4');
+            $html .= html_writer::div($form, 'pair-value col-md-9 yui3-u-3-4');
             $html .= html_writer::end_div();
         }
         if (core_course_category::can_change_parent_any()) {
