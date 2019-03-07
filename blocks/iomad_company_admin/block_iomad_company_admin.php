@@ -150,7 +150,6 @@ class block_iomad_company_admin extends block_base {
             $selectedtab = 1;
         }
 
-echo "Selected tab = $selectedtab</br>";
         // If no selected company no point showing tabs.
         if (!iomad::get_my_companyid(context_system::instance(), false)) {
             $this->content->text = '<div class="alert alert-warning">' . get_string('nocompanyselected', 'block_iomad_company_admin') . '</div>';
