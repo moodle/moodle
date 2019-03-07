@@ -240,7 +240,7 @@ class qformat_xml extends qformat_default {
 
         // Restore files in generalfeedback.
         $generalfeedback = $this->import_text_with_files($question,
-                array('#', 'generalfeedback', 0), $qo->generalfeedback, $this->get_format($qo->questiontextformat));
+                array('#', 'generalfeedback', 0), '', $this->get_format($qo->questiontextformat));
         $qo->generalfeedback = $generalfeedback['text'];
         $qo->generalfeedbackformat = $generalfeedback['format'];
         if (!empty($generalfeedback['itemid'])) {
@@ -475,6 +475,11 @@ class qformat_xml extends qformat_default {
         $questiontext = $this->import_text_with_files($question,
                 array('#', 'questiontext', 0));
         $qo = qtype_multianswer_extract_question($questiontext);
+        $errors = qtype_multianswer_validate_question($qo);
+        if ($errors) {
+            $this->error(get_string('invalidmultianswerquestion', 'qtype_multianswer', implode(' ', $errors)));
+            return null;
+        }
 
         // Header parts particular to multianswer.
         $qo->qtype = 'multianswer';
@@ -483,8 +488,12 @@ class qformat_xml extends qformat_default {
         if (isset($this->course)) {
             $qo->course = $this->course;
         }
-
-        $qo->name = $this->clean_question_name($this->import_text($question['#']['name'][0]['#']['text']));
+        if (isset($question['#']['name'])) {
+            $qo->name = $this->clean_question_name($this->import_text($question['#']['name'][0]['#']['text']));
+        } else {
+            $qo->name = $this->create_default_question_name($qo->questiontext['text'],
+                    get_string('questionname', 'question'));
+        }
         $qo->questiontextformat = $questiontext['format'];
         $qo->questiontext = $qo->questiontext['text'];
         if (!empty($questiontext['itemid'])) {
@@ -514,7 +523,7 @@ class qformat_xml extends qformat_default {
 
         // Restore files in generalfeedback.
         $generalfeedback = $this->import_text_with_files($question,
-                array('#', 'generalfeedback', 0), $qo->generalfeedback, $this->get_format($qo->questiontextformat));
+                array('#', 'generalfeedback', 0), '', $this->get_format($qo->questiontextformat));
         $qo->generalfeedback = $generalfeedback['text'];
         $qo->generalfeedbackformat = $generalfeedback['format'];
         if (!empty($generalfeedback['itemid'])) {
@@ -937,7 +946,7 @@ class qformat_xml extends qformat_default {
      * @param stdClass $context
      * @return array (of objects) question objects.
      */
-    protected function readquestions($lines) {
+    public function readquestions($lines) {
         // We just need it as one big string.
         $lines = implode('', $lines);
 
