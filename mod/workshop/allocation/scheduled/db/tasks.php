@@ -15,15 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the version of workshop
+ * Definition of scheduled allocation tasks.
  *
- * @package    mod_workshop
- * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   workshopallocation_scheduled
+ * @copyright 2019 Simey Lameze <simey@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019030700;        // The current module version (YYYYMMDDXX)
-$plugin->requires  = 2018112800;        // Requires this Moodle version.
-$plugin->component = 'mod_workshop';
+$tasks = [
+    [
+        'classname' => '\workshopallocation_scheduled\task\cron_task',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    ]
+];

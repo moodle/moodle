@@ -1,6 +1,10 @@
 This files describes API changes in /mod/workshop - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.7 ===
+
+* workshop_cron() has been removed. Sub-plugins should now implement scheduled tasks.
+
 === 3.6 ===
 
 * The external function get_workshops_by_courses now returns 2 additional fields: submissiontypetext and
