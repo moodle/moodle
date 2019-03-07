@@ -51,7 +51,14 @@ class qformat_multianswer extends qformat_default {
         $questiontext['text'] = implode('', $lines);
         $questiontext['format'] = FORMAT_MOODLE;
         $questiontext['itemid'] = '';
+
         $question = qtype_multianswer_extract_question($questiontext);
+        $errors = qtype_multianswer_validate_question($question);
+        if ($errors) {
+            $this->error(get_string('invalidmultianswerquestion', 'qtype_multianswer', implode(' ', $errors)));
+            return array();
+        }
+
         $question->questiontext = $question->questiontext['text'];
         $question->questiontextformat = 0;
 

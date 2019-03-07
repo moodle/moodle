@@ -1,0 +1,1 @@
+Please select the fruits {1:MULTICHOICE:=Apple#Correct}
