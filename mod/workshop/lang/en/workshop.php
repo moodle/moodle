@@ -189,6 +189,7 @@ $string['latesubmissions'] = 'Late submissions';
 $string['latesubmissions_desc'] = 'Allow submissions after the deadline';
 $string['latesubmissions_help'] = 'If enabled, an author may submit their work after the submissions deadline or during the assessment phase. Late submissions cannot be edited though.';
 $string['latesubmissionsallowed'] = 'Late submissions are allowed';
+$string['legacyallocationplugincron'] = 'Legacy cron workshop allocation';
 $string['maxbytes'] = 'Maximum submission attachment size';
 $string['modulename'] = 'Workshop';
 $string['modulename_help'] = 'The workshop activity module enables the collection, review and peer assessment of students\' work.

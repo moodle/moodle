@@ -33,5 +33,14 @@ $tasks = [
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*'
+    ],
+    [
+        'classname' => '\mod_workshop\task\legacy_workshop_allocation_cron',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
     ]
 ];
