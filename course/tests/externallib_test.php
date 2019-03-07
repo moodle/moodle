@@ -1265,6 +1265,58 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test contents info is returned.
+     */
+    public function test_get_course_contents_contentsinfo() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+        $course = self::getDataGenerator()->create_course();
+
+        $record = new stdClass();
+        $record->course = $course->id;
+        // One resource with one file.
+        $resource1 = self::getDataGenerator()->create_module('resource', $record);
+
+        $timenow = time();
+        // More type of files.
+        $record->files = file_get_unused_draft_itemid();
+        $usercontext = context_user::instance($USER->id);
+        $extensions = array('txt', 'png', 'pdf');
+        foreach ($extensions as $key => $extension) {
+            // Add actual file there.
+            $filerecord = array('component' => 'user', 'filearea' => 'draft',
+                    'contextid' => $usercontext->id, 'itemid' => $record->files,
+                    'filename' => 'resource' . $key . '.' . $extension, 'filepath' => '/');
+            $fs = get_file_storage();
+            $fs->create_file_from_string($filerecord, 'Test resource ' . $key . ' file');
+        }
+
+        $resource2 = self::getDataGenerator()->create_module('resource', $record);
+
+        $result = core_course_external::get_course_contents($course->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
+        $this->assertCount(2, $result[0]['modules']);
+        foreach ($result[0]['modules'] as $module) {
+            if ($module['instance'] == $resource1->id) {
+                $this->assertEquals(1, $module['contentsinfo']['filescount']);
+                $this->assertGreaterThanOrEqual($timenow, $module['contentsinfo']['lastmodified']);
+                $this->assertEquals($module['contents'][0]['filesize'], $module['contentsinfo']['filessize']);
+                $this->assertEquals(array('text/plain'), $module['contentsinfo']['mimetypes']);
+            } else {
+                $this->assertEquals(count($extensions), $module['contentsinfo']['filescount']);
+                $filessize = $module['contents'][0]['filesize'] + $module['contents'][1]['filesize'] +
+                    $module['contents'][2]['filesize'];
+                $this->assertEquals($filessize, $module['contentsinfo']['filessize']);
+                $this->assertGreaterThanOrEqual($timenow, $module['contentsinfo']['lastmodified']);
+                $this->assertEquals(array('text/plain', 'image/png', 'application/pdf'), $module['contentsinfo']['mimetypes']);
+            }
+        }
+    }
+
+    /**
      * Test duplicate_course
      */
     public function test_duplicate_course() {

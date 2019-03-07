@@ -318,7 +318,28 @@ class core_course_external extends external_api {
                             require_once($CFG->dirroot . '/mod/' . $cm->modname . '/lib.php');
                             $getcontentfunction = $cm->modname.'_export_contents';
                             if (function_exists($getcontentfunction)) {
-                                if (empty($filters['excludecontents']) and $contents = $getcontentfunction($cm, $baseurl)) {
+                                $contents = $getcontentfunction($cm, $baseurl);
+                                $module['contentsinfo'] = array(
+                                    'filescount' => count($contents),
+                                    'filessize' => 0,
+                                    'lastmodified' => 0,
+                                    'mimetypes' => array(),
+                                );
+                                foreach ($contents as $content) {
+                                    if (isset($content['filesize'])) {
+                                        $module['contentsinfo']['filessize'] += $content['filesize'];
+                                    }
+                                    if (isset($content['timemodified']) &&
+                                            ($content['timemodified'] > $module['contentsinfo']['lastmodified'])) {
+
+                                        $module['contentsinfo']['lastmodified'] = $content['timemodified'];
+                                    }
+                                    if (isset($content['mimetype'])) {
+                                        $module['contentsinfo']['mimetypes'][$content['mimetype']] = $content['mimetype'];
+                                    }
+                                }
+
+                                if (empty($filters['excludecontents']) and !empty($contents)) {
                                     $module['contents'] = $contents;
                                 } else {
                                     $module['contents'] = array();
@@ -470,7 +491,18 @@ class core_course_external extends external_api {
                                                   'license' => new external_value(PARAM_TEXT, 'Content license'),
                                               )
                                           ), VALUE_DEFAULT, array()
-                                      )
+                                      ),
+                                    'contentsinfo' => new external_single_structure(
+                                        array(
+                                            'filescount' => new external_value(PARAM_INT, 'Total number of files.'),
+                                            'filessize' => new external_value(PARAM_INT, 'Total files size.'),
+                                            'lastmodified' => new external_value(PARAM_INT, 'Last time files were modified.'),
+                                            'mimetypes' => new external_multiple_structure(
+                                                new external_value(PARAM_RAW, 'File mime type.'),
+                                                'Files mime types.'
+                                            ),
+                                        ), 'Contents summary information.', VALUE_OPTIONAL
+                                    ),
                                 )
                             ), 'list of module'
                     )
