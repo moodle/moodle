@@ -415,7 +415,7 @@ M.core_availability.List = function(json, root, parentRoot) {
     }
 
     // Create the button and add it.
-    var button = Y.Node.create('<button type="button" class="btn btn-default m-t-1">' +
+    var button = Y.Node.create('<button type="button" class="btn btn-secondary m-t-1">' +
             M.util.get_string('addrestriction', 'availability') + '</button>');
     button.on("click", function() {
         this.clickAdd();
@@ -673,7 +673,7 @@ M.core_availability.List.prototype.clickAdd = function() {
     var content = Y.Node.create('<div>' +
             '<ul class="list-unstyled container-fluid"></ul>' +
             '<div class="availability-buttons mdl-align">' +
-            '<button type="button" class="btn btn-default">' + M.util.get_string('cancel', 'moodle') +
+            '<button type="button" class="btn btn-secondary">' + M.util.get_string('cancel', 'moodle') +
             '</button></div></div>');
     var cancel = content.one('button');
 
@@ -689,7 +689,7 @@ M.core_availability.List.prototype.clickAdd = function() {
         // Add entry for plugin.
         li = Y.Node.create('<li class="clearfix row"></li>');
         id = 'availability_addrestriction_' + type;
-        button = Y.Node.create('<div class="col-6"><button type="button" class="btn btn-default w-100"' +
+        button = Y.Node.create('<div class="col-6"><button type="button" class="btn btn-secondary w-100"' +
                 'id="' + id + '">' + M.util.get_string('title', 'availability_' + type) + '</button></div>');
         button.on('click', this.getAddHandler(type, dialogRef), this);
         li.appendChild(button);
@@ -701,7 +701,7 @@ M.core_availability.List.prototype.clickAdd = function() {
     // Extra entry for lists.
     li = Y.Node.create('<li class="clearfix row"></li>');
     id = 'availability_addrestriction_list_';
-    button = Y.Node.create('<div class="col-6"><button type="button" class="btn btn-default w-100"' +
+    button = Y.Node.create('<div class="col-6"><button type="button" class="btn btn-secondary w-100"' +
             'id="' + id + '">' + M.util.get_string('condition_group', 'availability') + '</button></div>');
     button.on('click', this.getAddHandler(null, dialogRef), this);
     li.appendChild(button);

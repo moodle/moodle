@@ -169,7 +169,7 @@ if (empty($scorm->popup) || $displaymode == 'popup') {
         $exiturl = course_get_url($course, $cm->sectionnum);
     }
 
-    $exitlink = html_writer::link($exiturl, $strexit, array('title' => $strexit, 'class' => 'btn btn-default'));
+    $exitlink = html_writer::link($exiturl, $strexit, array('title' => $strexit, 'class' => 'btn btn-secondary'));
     $PAGE->set_button($exitlink);
 }
 

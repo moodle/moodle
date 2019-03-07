@@ -332,7 +332,7 @@ class core_course_management_renderer extends plugin_renderer_base {
 
         if ($cancreatecategory) {
             $url = new moodle_url('/course/editcategory.php', array('parent' => $category->id));
-            $actions[] = html_writer::link($url, get_string('createnewcategory'), array('class' => 'btn btn-default'));
+            $actions[] = html_writer::link($url, get_string('createnewcategory'), array('class' => 'btn btn-secondary'));
         }
         if (core_course_category::can_approve_course_requests()) {
             $actions[] = html_writer::link(new moodle_url('/course/pending.php'), get_string('coursespending'));
@@ -660,7 +660,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $actions = array();
         if ($category->can_create_course()) {
             $url = new moodle_url('/course/edit.php', array('category' => $category->id, 'returnto' => 'catmanage'));
-            $actions[] = html_writer::link($url, get_string('createnewcourse'), array('class' => 'btn btn-default'));
+            $actions[] = html_writer::link($url, get_string('createnewcourse'), array('class' => 'btn btn-secondary'));
         }
         if ($category->can_request_course()) {
             // Request a new course.
