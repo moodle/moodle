@@ -28,6 +28,7 @@ $string['auth_mnet_roamin'] = 'These host\'s users can roam in to your site';
 $string['auth_mnet_roamout'] = 'Your users can roam out to these hosts';
 $string['auth_mnet_rpc_negotiation_timeout'] = 'The timeout in seconds for authentication over the XMLRPC transport.';
 $string['auto_add_remote_users'] = 'Auto add remote users';
+$string['crontask'] = 'Background processing for MNET authentication';
 $string['rpc_negotiation_timeout'] = 'RPC negotiation timeout';
 $string['sso_idp_description'] = 'Publish this service to allow your users to roam to the {$a} site without having to re-login there. <ul><li><em>Dependency</em>: You must also <strong>subscribe</strong> to the SSO (Service Provider) service on {$a}.</li></ul><br />Subscribe to this service to allow authenticated users from {$a} to access your site without having to re-login. <ul><li><em>Dependency</em>: You must also <strong>publish</strong> the SSO (Service Provider) service to {$a}.</li></ul><br />';
 $string['sso_idp_name'] = 'SSO  (Identity Provider)';
