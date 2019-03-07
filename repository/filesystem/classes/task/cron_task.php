@@ -40,7 +40,7 @@ class cron_task extends \core\task\scheduled_task {
     public function execute() {
         global $CFG;
         require_once($CFG->dirroot . '/repository/lib.php');
-        
+
         $fs = get_file_storage();
         // Find all generated thumbnails and group them in array by itemid (itemid == repository instance id).
         $allfiles = array_merge(
