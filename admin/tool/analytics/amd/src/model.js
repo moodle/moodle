@@ -20,8 +20,8 @@
  * @copyright  2017 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_factory', 'core/modal_events'],
-    function($, Str, log, Notification, ModalFactory, ModalEvents) {
+define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_factory', 'core/modal_events', 'core/templates'],
+    function($, Str, log, Notification, ModalFactory, ModalEvents, Templates) {
 
     /**
      * List of actions that require confirmation and confirmation message.
@@ -47,20 +47,6 @@ define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_facto
             }
         }
     };
-
-    /**
-     * Template to display the evaluation mode choices.
-     */
-    var evaluationRadioHTML = '<div class="box mb-4">{{evaluationmodeinfo}}</div>' +
-        '<div class="form-check">' +
-            '<input class="form-check-input" type="radio" name="evaluationmode" id="id-mode-trainedmodel" value="trainedmodel" ' +
-                'checked>' +
-            '<label class="form-check-label" for="id-mode-trainedmodel">{{trainedmodellabel}}</label>' +
-        '</div>' +
-        '<div class="form-check">' +
-            '<input class="form-check-input" type="radio" name="evaluationmode" id="id-mode-configuration" value="configuration">' +
-            '<label class="form-check-label" for="id-mode-configuration">{{configurationlabel}}</label>' +
-        '</div>';
 
     /**
      * Returns the model name.
@@ -140,18 +126,10 @@ define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_facto
                     }, {
                         key: 'evaluationmode',
                         component: 'tool_analytics'
-                    }, {
-                        key: 'evaluationmodeinfo',
-                        component: 'tool_analytics'
-                    }, {
-                        key: 'evaluationmodetrainedmodel',
-                        component: 'tool_analytics'
-                    }, {
-                        key: 'evaluationmodeconfiguration',
-                        component: 'tool_analytics'
                     }
                 ]);
                 var modalPromise = ModalFactory.create({type: ModalFactory.types.SAVE_CANCEL});
+                var bodyPromise = Templates.render('tool_analytics/evaluation_mode_selection', {});
 
                 $.when(stringsPromise, modalPromise).then(function(strings, modal) {
 
@@ -160,11 +138,7 @@ define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_facto
 
                     modal.setTitle(strings[1]);
                     modal.setSaveButtonText(strings[0]);
-
-                    var body = evaluationRadioHTML.replace(/{{evaluationmodeinfo}}/, strings[2])
-                        .replace(/{{trainedmodellabel}}/, strings[3])
-                        .replace(/{{configurationlabel}}/, strings[4]);
-                    modal.setBody(body);
+                    modal.setBody(bodyPromise);
 
                     modal.getRoot().on(ModalEvents.save, function() {
                         var evaluationMode = $("input[name='evaluationmode']:checked").val();
