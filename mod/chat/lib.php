@@ -400,41 +400,6 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
 }
 
 /**
- * Function to be run periodically according to the moodle cron
- * This function searches for things that need to be done, such
- * as sending out mail, toggling flags etc ...
- *
- * @global object
- * @return bool
- */
-function chat_cron () {
-    global $DB;
-
-    chat_update_chat_times();
-
-    chat_delete_old_users();
-
-    // Delete old messages with a single SQL query.
-    $subselect = "SELECT c.keepdays
-                    FROM {chat} c
-                   WHERE c.id = {chat_messages}.chatid";
-
-    $sql = "DELETE
-              FROM {chat_messages}
-             WHERE ($subselect) > 0 AND timestamp < ( ".time()." -($subselect) * 24 * 3600)";
-
-    $DB->execute($sql);
-
-    $sql = "DELETE
-              FROM {chat_messages_current}
-             WHERE timestamp < ( ".time()." - 8 * 3600)";
-
-    $DB->execute($sql);
-
-    return true;
-}
-
-/**
  * This standard function will check all instances of this module
  * and make sure there are up-to-date events created for each of them.
  * If courseid = 0, then every chat event in the site is checked, else
