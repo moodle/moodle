@@ -301,6 +301,8 @@ class page_agreedocs implements renderable, templatable {
                 redirect(new moodle_url('/admin/tool/policy/view.php', $urlparams));
             }
         } else {
+            // Update the policyagreed for the user to avoid infinite loop because there are no policies to-be-accepted.
+            api::update_policyagreed($userid);
             $this->redirect_to_previous_url();
         }
     }
