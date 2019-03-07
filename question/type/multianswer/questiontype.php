@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/type/questiontypebase.php');
 require_once($CFG->dirroot . '/question/type/multichoice/question.php');
+require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
 
 /**
  * The multi-answer question type class.
@@ -514,4 +515,66 @@ function qtype_multianswer_extract_question($text) {
                     explode($answerregs[0], $question->questiontext['text'], 2));
     }
     return $question;
+}
+
+/**
+ * Validate a multianswer question.
+ *
+ * @param object $question  The multianswer question to validate as returned by qtype_multianswer_extract_question
+ * @return array Array of error messages with questions field names as keys.
+ */
+function qtype_multianswer_validate_question(stdClass $question) : array {
+    $errors = array();
+    if (!isset($question->options->questions)) {
+        $errors['questiontext'] = get_string('questionsmissing', 'qtype_multianswer');
+    } else {
+        $subquestions = fullclone($question->options->questions);
+        if (count($subquestions)) {
+            $sub = 1;
+            foreach ($subquestions as $subquestion) {
+                $prefix = 'sub_'.$sub.'_';
+                $answercount = 0;
+                $maxgrade = false;
+                $maxfraction = -1;
+
+                foreach ($subquestion->answer as $key => $answer) {
+                    if (is_array($answer)) {
+                        $answer = $answer['text'];
+                    }
+                    $trimmedanswer = trim($answer);
+                    if ($trimmedanswer !== '') {
+                        $answercount++;
+                        if ($subquestion->qtype == 'numerical' &&
+                                !(qtype_numerical::is_valid_number($trimmedanswer) || $trimmedanswer == '*')) {
+                            $errors[$prefix.'answer['.$key.']'] =
+                                    get_string('answermustbenumberorstar', 'qtype_numerical');
+                        }
+                        if ($subquestion->fraction[$key] == 1) {
+                            $maxgrade = true;
+                        }
+                        if ($subquestion->fraction[$key] > $maxfraction) {
+                            $maxfraction = $subquestion->fraction[$key];
+                        }
+                        // For 'multiresponse' we are OK if there is at least one fraction > 0.
+                        if ($subquestion->qtype == 'multichoice' && $subquestion->single == 0 &&
+                            $subquestion->fraction[$key] > 0) {
+                            $maxgrade = true;
+                        }
+                    }
+                }
+                if ($subquestion->qtype == 'multichoice' && $answercount < 2) {
+                    $errors[$prefix.'answer[0]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
+                } else if ($answercount == 0) {
+                    $errors[$prefix.'answer[0]'] = get_string('notenoughanswers', 'question', 1);
+                }
+                if ($maxgrade == false) {
+                    $errors[$prefix.'fraction[0]'] = get_string('fractionsnomax', 'question');
+                }
+                $sub++;
+            }
+        } else {
+            $errors['questiontext'] = get_string('questionsmissing', 'qtype_multianswer');
+        }
+    }
+    return $errors;
 }

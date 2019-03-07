@@ -1,5 +1,12 @@
 This files describes API changes for code that uses the question API.
 
+=== 3.7 ===
+
+The code for the is_valid_number function that was duplicated in the
+qtype_numerical and qtype_multianswer plugins in the qtype_numerical_edit_form
+and qtype_multianswer_edit_form classes has been moved to a static function
+in the qtype_numerical class of the qtype_numerical plugin.
+
 === 3.5 ===
 
 1) The question format exportprocess function now adds a
