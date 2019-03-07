@@ -40,7 +40,7 @@
 <div class="form-autocomplete-selection w-100 {{#multiple}}form-autocomplete-multiple{{/multiple}}" id="{{selectionId}}" role="list" aria-atomic="true" {{#multiple}}tabindex="0" aria-multiselectable="true"{{/multiple}}>
 <span class="accesshide">{{#str}}selecteditems, form{{/str}}</span>
     {{#items}}
-        <span role="listitem" data-value="{{value}}" aria-selected="true" class="tag tag-info mb-3 mr-1" style="font-size: 100%">
+        <span role="listitem" data-value="{{value}}" aria-selected="true" class="badge badge-info mb-3 mr-1" style="font-size: 100%">
             {{#multiple}}<span aria-hidden="true">× </span>{{/multiple}}{{{label}}}
         </span>
     {{/items}}
