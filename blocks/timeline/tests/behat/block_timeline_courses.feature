@@ -36,7 +36,7 @@ Feature: The timeline block allows users to see upcoming courses
 
   Scenario: Next 30 days in course view
     Given I log in as "student1"
-    And I click on "Sort" "button" in the "Timeline" "block"
+    And I click on "Sort timeline items" "button" in the "Timeline" "block"
     When I click on "Sort by courses" "link" in the "Timeline" "block"
     Then I should see "Course 1" in the "Timeline" "block"
     And I should see "Course 2" in the "Timeline" "block"
@@ -52,9 +52,9 @@ Feature: The timeline block allows users to see upcoming courses
 
   Scenario: All in course view
     Given I log in as "student1"
-    And I click on "Next 30 days" "button" in the "Timeline" "block"
+    And I click on "Filter timeline items" "button" in the "Timeline" "block"
     And I click on "All" "link" in the "Timeline" "block"
-    And I click on "Sort" "button" in the "Timeline" "block"
+    And I click on "Sort timeline items" "button" in the "Timeline" "block"
     And I click on "Sort by courses" "link" in the "Timeline" "block"
     When I click on "More courses" "button" in the "Timeline" "block"
     Then I should see "Course 3" in the "Timeline" "block"
@@ -73,9 +73,9 @@ Feature: The timeline block allows users to see upcoming courses
 
   Scenario: Persistent sort filter
     Given I log in as "student1"
-    And I click on "Sort" "button" in the "Timeline" "block"
+    And I click on "Sort timeline items" "button" in the "Timeline" "block"
     And I click on "Sort by dates" "link" in the "Timeline" "block"
-    And I click on "Sort" "button" in the "Timeline" "block"
+    And I click on "Sort timeline items" "button" in the "Timeline" "block"
     And I click on "Sort by courses" "link" in the "Timeline" "block"
     And I reload the page
     Then I should see "Course 1" in the "Timeline" "block"
