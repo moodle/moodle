@@ -133,6 +133,9 @@ class block_iomad_company_admin extends block_base {
         // Renderer
         $renderer = $this->page->get_renderer('block_iomad_company_admin');
 
+        // Javascript module
+        $this->page->requires->js_call_amd('block_iomad_company_admin/admin', 'init');
+
         // Get params and session stuff
         $this->check_company_status();
 
