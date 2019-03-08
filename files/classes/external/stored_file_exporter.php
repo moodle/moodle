@@ -54,6 +54,7 @@ class stored_file_exporter extends \core\external\exporter {
         $data->filepath = $file->get_filepath();
         $data->filename = $file->get_filename();
         $data->isdir = $file->is_directory();
+        $data->isimage = $file->is_valid_image();
         $data->timemodified = $file->get_timemodified();
         $data->timecreated = $file->get_timecreated();
         $data->filesize = $file->get_filesize();
@@ -92,6 +93,9 @@ class stored_file_exporter extends \core\external\exporter {
                 'type' => PARAM_FILE
             ),
             'isdir' => array(
+                'type' => PARAM_BOOL
+            ),
+            'isimage' => array(
                 'type' => PARAM_BOOL
             ),
             'timemodified' => array(
