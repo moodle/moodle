@@ -108,8 +108,8 @@ class mod_wiki_edit_form extends moodleform {
 
         $buttongroup = array();
         $buttongroup[] = $mform->createElement('submit', 'editoption', get_string('save', 'wiki'), array('id' => 'save'));
-        $buttongroup[] = $mform->createElement('submit', 'editoption', get_string('preview'), array('id' => 'preview'));
-        $buttongroup[] = $mform->createElement('submit', 'editoption', get_string('cancel'), array('id' => 'cancel'));
+        $buttongroup[] = $mform->createElement('submit', 'editoption', get_string('preview'), array('id' => 'preview'), false);
+        $buttongroup[] = $mform->createElement('submit', 'editoption', get_string('cancel'), array('id' => 'cancel'), false);
 
         $mform->addGroup($buttongroup, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
