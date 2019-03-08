@@ -5970,6 +5970,13 @@ function forum_tp_is_tracked($forum, $user=false) {
         return false;
     }
 
+    $cache = cache::make('mod_forum', 'forum_is_tracked');
+    $forumid = is_numeric($forum) ? $forum : $forum->id;
+    $key = $forumid . '_' . $user->id;
+    if ($cachedvalue = $cache->get($key)) {
+        return $cachedvalue == 'tracked';
+    }
+
     // Work toward always passing an object...
     if (is_numeric($forum)) {
         debugging('Better use proper forum object.', DEBUG_DEVELOPER);
@@ -5985,10 +5992,17 @@ function forum_tp_is_tracked($forum, $user=false) {
     $userpref = $DB->get_record('forum_track_prefs', array('userid' => $user->id, 'forumid' => $forum->id));
 
     if ($CFG->forum_allowforcedreadtracking) {
-        return $forumforced || ($forumallows && $userpref === false);
+        $istracked = $forumforced || ($forumallows && $userpref === false);
     } else {
-        return  ($forumallows || $forumforced) && $userpref === false;
+        $istracked = ($forumallows || $forumforced) && $userpref === false;
     }
+
+    // We have to store a string here because the cache API returns false
+    // when it can't find the key which would be confused with our legitimate
+    // false value. *sigh*.
+    $cache->set($key, $istracked ? 'tracked' : 'not');
+
+    return $istracked;
 }
 
 /**
