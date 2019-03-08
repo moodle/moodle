@@ -327,6 +327,11 @@ class portfolio_add_button {
                 return;
             }
         }
+        // If we just want a moodle_url to redirect to, do it now.
+        if ($format == PORTFOLIO_ADD_MOODLE_URL) {
+            return $url;
+        }
+
         // if we just want a url to redirect to, do it now
         if ($format == PORTFOLIO_ADD_FAKE_URL) {
             return $url->out(false);
