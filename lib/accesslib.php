@@ -3043,7 +3043,7 @@ function get_assignable_roles(context $context, $rolenamedisplay = ROLENAME_ALIA
     $extrafields = '';
 
     if ($withusercounts) {
-        $extrafields = ', (SELECT count(u.id)
+        $extrafields = ', (SELECT COUNT(DISTINCT u.id)
                              FROM {role_assignments} cra JOIN {user} u ON cra.userid = u.id
                             WHERE cra.roleid = r.id AND cra.contextid = :conid AND u.deleted = 0
                           ) AS usercount';

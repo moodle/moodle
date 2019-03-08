@@ -1175,6 +1175,39 @@ class core_accesslib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test user count of assignable roles in context where users are assigned the role via different components.
+     */
+    public function test_get_assignable_roles_distinct_usercount() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = \context_course::instance($course->id);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+
+        // Assign each user the student role in course.
+        role_assign($studentrole->id, $user1->id, $context->id);
+        role_assign($studentrole->id, $user2->id, $context->id);
+
+        list($rolenames, $rolecounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_SHORT, true);
+        $this->assertEquals(2, $rolecounts[$studentrole->id]);
+
+        // Assign first user the student role in course again (this time via 'enrol_self' component).
+        role_assign($studentrole->id, $user1->id, $context->id, 'enrol_self', 1);
+
+        // There are still only two distinct users.
+        list($rolenames, $rolecounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_SHORT, true);
+        $this->assertEquals(2, $rolecounts[$studentrole->id]);
+    }
+
+    /**
      * Test getting of all switchable roles.
      */
     public function test_get_switchable_roles() {
