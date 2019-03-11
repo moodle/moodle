@@ -32,7 +32,7 @@
     {
     }
 }}
-<span id="{{uniqid}}">
+<div id="discussion-list-{{uniqid}}">
     {{{groupchangemenu}}}
 
     {{#notifications}}
@@ -70,6 +70,9 @@
                         {{/forum.userstate.tracked}}
                     {{/forum.capabilities.viewdiscussions}}
                     <th scope="col" class="lastpost">{{#str}}lastpost, mod_forum{{/str}}</th>
+                    {{#forum.capabilities.subscribe}}
+                        <th scope="col" class="discussionsubscription"></th>
+                    {{/forum.capabilities.subscribe}}
                 </tr>
             </thead>
             {{/discussion_list_header}}
@@ -176,6 +179,11 @@
                                 </div>
                             {{/latestpostid}}
                         </td>
+                        <td scope="col" class="p-0 align-middle">
+                            {{#discussion}}
+                                {{> mod_forum/discussion_subscription_toggle}}
+                            {{/discussion}}
+                        </td>
                     </tr>
                 {{/summaries}}
             </tbody>
@@ -201,5 +209,10 @@
         </div>
     {{/state.hasdiscussions}}
 
-</span>
-
+</div>
+{{#js}}
+    require(['jquery', 'mod_forum/discussion_list'], function($, View) {
+        var root = $('#discussion-list-{{uniqid}}');
+        View.init(root);
+    });
+{{/js}}

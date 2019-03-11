@@ -1258,4 +1258,89 @@ class mod_forum_external extends external_api {
 
         return new external_single_structure($structure);
     }
+
+    /**
+     * Set the subscription state.
+     *
+     * @param   int     $forumid
+     * @param   int     $discussionid
+     * @param   bool    $targetstate
+     * @return  \stdClass
+     */
+    public static function set_subscription_state($forumid, $discussionid, $targetstate) {
+        global $DB, $PAGE, $USER;
+
+        $params = self::validate_parameters(self::set_subscription_state_parameters(), [
+            'forumid' => $forumid,
+            'discussionid' => $discussionid,
+            'targetstate' => $targetstate
+        ]);
+
+        $vaultfactory = mod_forum\local\container::get_vault_factory();
+        $forumvault = $vaultfactory->get_forum_vault();
+        $forum = $forumvault->get_from_id($params['forumid']);
+        $course = $forum->get_course_record();
+        $coursemodule = $forum->get_course_module_record();
+
+        self::validate_context($forum->get_context());
+
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $capabilitymanager = $managerfactory->get_capability_manager($forum);
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $discussion = $discussionvault->get_from_id($params['discussionid']);
+        $legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
+
+        $forumrecord = $legacydatamapperfactory->get_forum_data_mapper()->to_legacy_object($forum);
+        $discussionrecord = $legacydatamapperfactory->get_discussion_data_mapper()->to_legacy_object($discussion);
+
+        if (!\mod_forum\subscriptions::is_subscribable($forumrecord)) {
+            // Nothing to do. We won't actually output any content here though.
+            throw new \moodle_exception('cannotsubscribe', 'mod_forum');
+        }
+
+        $issubscribed = \mod_forum\subscriptions::is_subscribed(
+            $USER->id,
+            $forumrecord,
+            $discussion->get_id(),
+            $coursemodule
+        );
+
+        // If the current state doesn't equal the desired state then update the current
+        // state to the desired state.
+        if ($issubscribed != (bool) $params['targetstate']) {
+            if ($params['targetstate']) {
+                \mod_forum\subscriptions::subscribe_user_to_discussion($USER->id, $discussionrecord, $context);
+            } else {
+                \mod_forum\subscriptions::unsubscribe_user_from_discussion($USER->id, $discussionrecord, $context);
+            }
+        }
+
+        $exporterfactory = mod_forum\local\container::get_exporter_factory();
+        $exporter = $exporterfactory->get_discussion_exporter($USER, $forum, $discussion);
+        return $exporter->export($PAGE->get_renderer('mod_forum'));
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function set_subscription_state_parameters() {
+        return new external_function_parameters(
+            [
+                'forumid' => new external_value(PARAM_INT, 'Forum that the discussion is in'),
+                'discussionid' => new external_value(PARAM_INT, 'The discussion to subscribe or unsubscribe'),
+                'targetstate' => new external_value(PARAM_BOOL, 'The target state')
+            ]
+        );
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function set_subscription_state_returns() {
+        return \mod_forum\local\exporters\discussion::get_read_structure();
+    }
 }
