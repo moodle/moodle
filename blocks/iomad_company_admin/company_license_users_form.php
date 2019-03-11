@@ -90,7 +90,7 @@ class company_license_users_form extends moodleform {
 
     public function create_user_selectors() {
         if (!empty ($this->licenseid)) {
-            if (count($this->courseselect > 1)) {
+            if (count($this->courseselect) > 1) {
                 $multiple = true;
             } else {
                 $multiple = false;
