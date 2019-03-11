@@ -3111,7 +3111,7 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
                     echo $post->unread;
                     echo '</a>';
                     echo '<a title="'.$strmarkalldread.'" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
-                         $forum->id.'&amp;d='.$post->discussion.'&amp;mark=read&amp;returnpage=view.php&amp;sesskey=' . sesskey() . '">' .
+                         $forum->id.'&amp;d='.$post->discussion.'&amp;mark=read&amp;return=/mod/forum/view.php&amp;sesskey=' . sesskey() . '">' .
                          $OUTPUT->pix_icon('t/markasread', $strmarkalldread) . '</a>';
                     echo '</span>';
                 } else {
@@ -4819,7 +4819,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
                 if ($forumtracked) {
                     echo '<a title="'.get_string('markallread', 'forum').
                          '" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
-                         $forum->id.'&amp;mark=read&amp;returnpage=view.php&amp;sesskey=' . sesskey() . '">'.
+                         $forum->id.'&amp;mark=read&amp;return=/mod/forum/view.php&amp;sesskey=' . sesskey() . '">'.
                          $OUTPUT->pix_icon('t/markasread', get_string('markallread', 'forum')) . '</a>';
                 }
                 echo '</th>';
@@ -7471,20 +7471,18 @@ function mod_forum_inplace_editable($itemtype, $itemid, $newvalue) {
  * @return  bool
  */
 function forum_discussion_is_locked($forum, $discussion) {
-    if (empty($forum->lockdiscussionafter)) {
-        return false;
-    }
+    $entityfactory = \mod_forum\local\container::get_entity_factory();
+    $coursemoduleinfo = get_fast_modinfo($forum->course);
+    $cminfo = $coursemoduleinfo->instances['forum'][$forum->id];
+    $forumentity = $entityfactory->get_forum_from_stdclass(
+        $forum,
+        context_module::instance($cminfo->id),
+        $cminfo->get_course_module_record(),
+        $cminfo->get_course()
+    );
+    $discussionentity = $entityfactory->get_discussion_from_stdclass($discussion);
 
-    if ($forum->type === 'single') {
-        // It does not make sense to lock a single discussion forum.
-        return false;
-    }
-
-    if (($discussion->timemodified + $forum->lockdiscussionafter) < time()) {
-        return true;
-    }
-
-    return false;
+    return $forumentity->is_discussion_locked($discussionentity);
 }
 
 /**

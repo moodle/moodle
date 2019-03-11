@@ -3009,6 +3009,22 @@ class mod_forum_lib_testcase extends advanced_testcase {
      * @param   bool        $expect
      */
     public function test_forum_discussion_is_locked($forum, $discussion, $expect) {
+        $this->resetAfterTest();
+
+        $datagenerator = $this->getDataGenerator();
+        $plugingenerator = $datagenerator->get_plugin_generator('mod_forum');
+
+        $course = $datagenerator->create_course();
+        $user = $datagenerator->create_user();
+        $forum = $datagenerator->create_module('forum', (object) array_merge([
+            'course' => $course->id
+        ], $forum));
+        $discussion = $plugingenerator->create_discussion((object) array_merge([
+            'course' => $course->id,
+            'userid' => $user->id,
+            'forum' => $forum->id,
+        ], $discussion));
+
         $this->assertEquals($expect, forum_discussion_is_locked($forum, $discussion));
     }
 
@@ -3019,39 +3035,29 @@ class mod_forum_lib_testcase extends advanced_testcase {
      */
     public function forum_discussion_is_locked_provider() {
         return [
-            'Unlocked: lockdiscussionafter is unset' => [
-                (object) [],
-                (object) [],
-                false
-            ],
             'Unlocked: lockdiscussionafter is false' => [
-                (object) ['lockdiscussionafter' => false],
-                (object) [],
-                false
-            ],
-            'Unlocked: lockdiscussionafter is null' => [
-                (object) ['lockdiscussionafter' => null],
-                (object) [],
+                ['lockdiscussionafter' => false],
+                [],
                 false
             ],
             'Unlocked: lockdiscussionafter is set; forum is of type single; post is recent' => [
-                (object) ['lockdiscussionafter' => DAYSECS, 'type' => 'single'],
-                (object) ['timemodified' => time()],
+                ['lockdiscussionafter' => DAYSECS, 'type' => 'single'],
+                ['timemodified' => time()],
                 false
             ],
             'Unlocked: lockdiscussionafter is set; forum is of type single; post is old' => [
-                (object) ['lockdiscussionafter' => MINSECS, 'type' => 'single'],
-                (object) ['timemodified' => time() - DAYSECS],
+                ['lockdiscussionafter' => MINSECS, 'type' => 'single'],
+                ['timemodified' => time() - DAYSECS],
                 false
             ],
             'Unlocked: lockdiscussionafter is set; forum is of type eachuser; post is recent' => [
-                (object) ['lockdiscussionafter' => DAYSECS, 'type' => 'eachuser'],
-                (object) ['timemodified' => time()],
+                ['lockdiscussionafter' => DAYSECS, 'type' => 'eachuser'],
+                ['timemodified' => time()],
                 false
             ],
             'Locked: lockdiscussionafter is set; forum is of type eachuser; post is old' => [
-                (object) ['lockdiscussionafter' => MINSECS, 'type' => 'eachuser'],
-                (object) ['timemodified' => time() - DAYSECS],
+                ['lockdiscussionafter' => MINSECS, 'type' => 'eachuser'],
+                ['timemodified' => time() - DAYSECS],
                 true
             ],
         ];
