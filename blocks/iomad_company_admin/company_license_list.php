@@ -240,7 +240,7 @@ if ($departmentid == $companydepartment->id) {
         }
         $coursestring = "";
         $first = true;
-        if (count($licensecourses > 5)) {
+        if (count($licensecourses) > 5) {
             $coursestring = "<details><summary>" . get_string('view') . "</summary>";
         }
         foreach ($licensecourses as $licensecourse) {
@@ -262,7 +262,7 @@ if ($departmentid == $companydepartment->id) {
                 }
             }
         }
-        if (count($licensecourses > 5)) {
+        if (count($licensecourses) > 5) {
             $coursestring .= "</details>";
         }
 
