@@ -30,7 +30,7 @@
     }
 }}
 
-<div id="discussion-container-{{uniqid}}">
+<div id="discussion-container-{{uniqid}}" data-content="forum-discussion">
 {{#html}}
     {{{subscribe}}}
     {{{neighbourlinks}}}
@@ -52,8 +52,10 @@
 {{#html.neighbourlinks}}{{{.}}}{{/html.neighbourlinks}}
 </div>
 {{#js}}
-require(['jquery', 'mod_forum/discussion'], function($, Discussion) {
-    var root = $('#discussion-container-{{uniqid}}');
+require(['jquery', 'mod_forum/discussion', 'mod_forum/posts_list'], function($, Discussion, PostsList) {
+    var root = $("[data-content='forum-discussion']");
     Discussion.init(root);
+    PostsList.init(root);
+    var root = $('#discussion-container-{{uniqid}}');
 });
 {{/js}}

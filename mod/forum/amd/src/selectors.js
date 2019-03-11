@@ -26,10 +26,21 @@ define([], function() {
         subscription: {
             toggle: "[data-type='subscription-toggle'][data-action='toggle']",
         },
+        pin: {
+            toggle: ".pindiscussion [data-action='toggle']",
+        },
         post: {
             post: '[data-region="post"]',
             action: '[data-region="post-action"]',
-            actionsContainer: '[data-region="post-actions-container"]'
+            actionsContainer: '[data-region="post-actions-container"]',
+            forumCoreContent: "[data-region-content='forum-post-core']",
+            forumContent: "[data-content='forum-post']",
+            inpageReplyLink: "[data-action='collapsible-link']",
+            inpageReplyContent: "[data-content='inpage-reply-content']",
+            inpageReplyForm: "form[data-content='inpage-reply-form']",
+            inpageSubmitBtn: "[data-action='forum-inpage-submit']",
+            repliesContainer: "[data-region='replies-container']",
+            modeSelect: "select[name='mode']",
         }
     };
 });
