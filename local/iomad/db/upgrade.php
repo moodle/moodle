@@ -1918,7 +1918,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
 
             // Find broken licenses and delete missing courses.
             $licenses = $DB->get_fieldset_select('companylicense_courses', 'licenseid', "NOT courseid $sql", $params);
-            $DB->delete_records_select('companylicense_courses', "NOT licenseid $sql", $params);
+            $DB->delete_records_select('companylicense_courses', "NOT courseid $sql", $params);
 
             // Delete any licenses that are left empty.
             $sql = 'SELECT l.id
