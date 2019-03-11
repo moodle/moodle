@@ -74,6 +74,7 @@ $string['picture_help'] = 'Picture associated with Learning Path';
 $string['pluginname'] = 'Iomad learning paths';
 $string['prospectivecourses'] = 'Prospective courses';
 $string['prospectivestudents'] = 'Prospective students';
+$string['removepath'] = 'Deleted - Learning path information';
 $string['selectedstudents'] = 'Selected student assignments';
 $string['showcoursedescription'] = 'Show course description';
 $string['showcoursedescription_desc'] = 'Show full course description in learning plans';

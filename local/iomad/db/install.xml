@@ -108,6 +108,8 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="licenseid" TYPE="foreign" FIELDS="licenseid" REFTABLE="companylicense" REFFIELDS="id"/>
+        <KEY NAME="licensecourseid" TYPE="foreign" FIELDS="licensecourseid" REFTABLE="course" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="companylicense_courses" COMMENT="for keeping track of license course allocations">

@@ -184,17 +184,6 @@ class local_iomad_observer {
     }
 
     /**
-     * Triggered via course_deleted event.
-     *
-     * @param \core\event\course_deleted $event
-     * @return bool true on success.
-     */
-    public static function course_deleted($event) {
-        company::course_deleted($event);
-        return true;
-    }
-
-    /**
      * Triggered via block_iomad_company_admin::user_course_expired event.
      *
      * @param \block_iomad_company_admin\event\user_course_expired $event

@@ -71,13 +71,6 @@ $observers = array(
     ),
 
     array(
-        'eventname'   => '\core\event\course_deleted',
-        'callback'    => 'local_iomad_observer::course_deleted',
-        'includefile' => '/local/iomad/classes/observer.php',
-        'internal'    => false,
-    ),
-
-    array(
         'eventname'   => '\core\event\user_deleted',
         'callback'    => 'local_iomad_observer::user_deleted',
         'includefile' => '/local/iomad/classes/observer.php',

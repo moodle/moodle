@@ -1903,5 +1903,57 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019030100, 'local', 'iomad');
     }
 
+    if ($oldversion < 2019030101) {
+
+        $validcourseids = $DB->get_fieldset_select('course', 'id', 'true');
+        if ($validcourseids) {
+            list($sql, $params) = $DB->get_in_or_equal($validcourseids);
+
+            // Clear any non existant references from the iomad tables.
+            $DB->delete_records_select('iomad_courses', "NOT courseid $sql", $params);
+            $DB->delete_records_select('company_course', "NOT courseid $sql", $params);
+            $DB->delete_records_select('company_created_courses', "NOT courseid $sql", $params);
+            $DB->delete_records_select('company_shared_courses', "NOT courseid $sql", $params);
+            $DB->delete_records_select('companylicense_users', "NOT licensecourseid $sql", $params);
+
+            // Find broken licenses and delete missing courses.
+            $licenses = $DB->get_fieldset_select('companylicense_courses', 'licenseid', "NOT courseid $sql", $params);
+            $DB->delete_records_select('companylicense_courses', "NOT licenseid $sql", $params);
+
+            // Delete any licenses that are left empty.
+            $sql = 'SELECT l.id
+                    FROM {companylicense} l
+                    LEFT OUTER JOIN {companylicense_courses} c ON l.id = c.licenseid
+                    WHERE c.id IS NULL';
+            $deletedlicenses = $DB->get_fieldset_sql($sql);
+            if ($deletedlicenses) {
+                list($sql, $params) = $DB->get_in_or_equal($deletedlicenses);
+                $DB->delete_records_select('companylicense', "id $sql", $params);
+            }
+
+            // Remove deleted licenses fromm affected list.
+            $licenses = array_diff(array_values($licenses), $deletedlicenses);
+
+            // Update usage of affected licenses.
+            foreach ($licenses as $license) {
+                company::update_license_usage($license);
+            }
+        }
+
+        // Define key licenseid (foreign) to be added to companylicense_users.
+        $table = new xmldb_table('companylicense_users');
+        $key = new xmldb_key('licenseid', XMLDB_KEY_FOREIGN, array('licenseid'), 'companylicense', array('id'));
+
+        // Launch add key licenseid.
+        $dbman->add_key($table, $key);
+
+        // Define key licensecourseid (foreign) to be added to companylicense_users.
+        $table = new xmldb_table('companylicense_users');
+        $key = new xmldb_key('licensecourseid', XMLDB_KEY_FOREIGN, array('licensecourseid'), 'course', array('id'));
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2019030101, 'local', 'iomad');
+    }
+
     return $result;
 }

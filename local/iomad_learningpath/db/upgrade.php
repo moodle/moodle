@@ -46,5 +46,36 @@ function xmldb_local_iomad_learningpath_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018043000, 'local', 'iomad_learningpath');
     }
 
+    if ($oldversion < 2018043001) {
+
+        // Find and delete orphaned entries in learningpath.
+        $sql = 'SELECT lpc.id
+                FROM {iomad_learningpathcourse} lpc
+                LEFT OUTER JOIN {course} c ON c.id = lpc.course
+                WHERE c.id IS NULL';
+        $learningpathcourses = $DB->get_fieldset_sql($sql);
+        if ($learningpathcourses) {
+            list($sql, $params) = $DB->get_in_or_equal($learningpathcourses);
+            $DB->delete_records_select('iomad_learningpathcourse', "id $sql", $params);
+        }
+
+        // Define key course (foreign) to be added to iomad_learningpathcourse.
+        $table = new xmldb_table('iomad_learningpathcourse');
+        $key = new xmldb_key('course', XMLDB_KEY_FOREIGN, array('course'), 'course', array('id'));
+
+        // Launch add key course.
+        $dbman->add_key($table, $key);
+
+        // Define key group (foreign) to be added to iomad_learningpathcourse.
+        $table = new xmldb_table('iomad_learningpathcourse');
+        $key = new xmldb_key('group', XMLDB_KEY_FOREIGN, array('groupid'), 'iomad_learningpathgroup', array('id'));
+
+        // Launch add key group.
+        $dbman->add_key($table, $key);
+
+        // Iomad_learningpath savepoint reached.
+        upgrade_plugin_savepoint(true, 2018043001, 'local', 'iomad_learningpath');
+    }
+
     return $result;
 }

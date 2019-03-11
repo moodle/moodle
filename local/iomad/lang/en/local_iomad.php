@@ -50,6 +50,7 @@ $string['privacy:metadata:companylicense_users:licensecourseid'] = 'Company lice
 $string['privacy:metadata:companylicense_users:issuedate'] = 'Company license user issue date';
 $string['privacy:metadata:companylicense_users:groupid'] = 'Company license users group id';
 $string['privacy:metadata:companylicense_users'] = 'Company license users';
+$string['removelicenses'] = 'Deleted - Company course records and licenses';
 $string['setupiomad'] = 'Start setting up iomad';
 $string['show_suspended_users'] = 'Show suspended users?';
 $string['userfilter'] = 'Filter results';
