@@ -3,6 +3,10 @@ information provided here is intended especially for developers.
 
 This information is intended for authors of webservices, not people writing webservice clients.
 
+=== 3.7 ===
+
+* External function core_webservice_external::get_site_info() now returns the current site theme (for the user).
+
 === 3.4 ===
 
 * External function core_webservice_external::get_site_info() now returns the calendar type used in the site and
