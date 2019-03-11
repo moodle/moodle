@@ -251,4 +251,89 @@ class analytics_manager_testcase extends advanced_testcase {
 
         return $models;
     }
+
+    /**
+     * Test the implementation of the {@link \core_analytics\manager::create_declared_model()}.
+     */
+    public function test_create_declared_model() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminuser();
+
+        $declaration = [
+            'target' => 'test_target_course_level_shortname',
+            'indicators' => [
+                'test_indicator_max',
+                'test_indicator_min',
+                'test_indicator_fullname',
+            ],
+        ];
+
+        $declarationwithtimesplitting = array_merge($declaration, [
+            'timesplitting' => '\core\analytics\time_splitting\no_splitting',
+        ]);
+
+        $declarationwithtimesplittingenabled = array_merge($declarationwithtimesplitting, [
+            'enabled' => true,
+        ]);
+
+        // Check that no such model exists yet.
+        $target = \core_analytics\manager::get_target('test_target_course_level_shortname');
+        $this->assertEquals(0, $DB->count_records('analytics_models', ['target' => $target->get_id()]));
+
+        // Check that the model is created.
+        $created = \core_analytics\manager::create_declared_model($declaration);
+        $this->assertTrue($created instanceof \core_analytics\model);
+        $this->assertTrue(\core_analytics\model::exists($target));
+        $this->assertEquals(1, $DB->count_records('analytics_models', ['target' => $target->get_id()]));
+        $modelid = $created->get_id();
+
+        // Check that created models are disabled by default.
+        $existing = new \core_analytics\model($modelid);
+        $this->assertEquals(0, $existing->get_model_obj()->enabled);
+        $this->assertEquals(0, $DB->get_field('analytics_models', 'enabled', ['target' => $target->get_id()], MUST_EXIST));
+
+        // Let the admin enable the model.
+        $existing->enable('\core\analytics\time_splitting\no_splitting');
+        $this->assertEquals(1, $DB->get_field('analytics_models', 'enabled', ['target' => $target->get_id()], MUST_EXIST));
+
+        // Check that further calls create a new model.
+        $repeated = \core_analytics\manager::create_declared_model($declaration);
+        $this->assertTrue($repeated instanceof \core_analytics\model);
+        $this->assertEquals(2, $DB->count_records('analytics_models', ['target' => $target->get_id()]));
+
+        // Delete the models.
+        $existing->delete();
+        $repeated->delete();
+        $this->assertEquals(0, $DB->count_records('analytics_models', ['target' => $target->get_id()]));
+        $this->assertFalse(\core_analytics\model::exists($target));
+
+        // Create it again, this time with time splitting method specified.
+        $created = \core_analytics\manager::create_declared_model($declarationwithtimesplitting);
+        $this->assertTrue($created instanceof \core_analytics\model);
+        $this->assertTrue(\core_analytics\model::exists($target));
+        $this->assertEquals(1, $DB->count_records('analytics_models', ['target' => $target->get_id()]));
+        $modelid = $created->get_id();
+
+        // Even if the time splitting method was specified, the model is still not enabled automatically.
+        $existing = new \core_analytics\model($modelid);
+        $this->assertEquals(0, $existing->get_model_obj()->enabled);
+        $this->assertEquals(0, $DB->get_field('analytics_models', 'enabled', ['target' => $target->get_id()], MUST_EXIST));
+        $existing->delete();
+
+        // Let's define the model so that it is enabled by default.
+        $enabled = \core_analytics\manager::create_declared_model($declarationwithtimesplittingenabled);
+        $this->assertTrue($enabled instanceof \core_analytics\model);
+        $this->assertTrue(\core_analytics\model::exists($target));
+        $this->assertEquals(1, $DB->count_records('analytics_models', ['target' => $target->get_id()]));
+        $modelid = $enabled->get_id();
+        $existing = new \core_analytics\model($modelid);
+        $this->assertEquals(1, $existing->get_model_obj()->enabled);
+        $this->assertEquals(1, $DB->get_field('analytics_models', 'enabled', ['target' => $target->get_id()], MUST_EXIST));
+
+        // Let the admin disable the model.
+        $existing->update(0, false, false);
+        $this->assertEquals(0, $DB->get_field('analytics_models', 'enabled', ['target' => $target->get_id()], MUST_EXIST));
+    }
 }

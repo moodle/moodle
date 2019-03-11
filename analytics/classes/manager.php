@@ -772,4 +772,36 @@ class manager {
             }
         }
     }
+
+    /**
+     * Create the defined model.
+     *
+     * @param array $definition See {@link self::validate_models_declaration()} for the syntax.
+     * @return \core_analytics\model
+     */
+    public static function create_declared_model(array $definition): \core_analytics\model {
+
+        $target = static::get_target($definition['target']);
+
+        $indicators = [];
+
+        foreach ($definition['indicators'] as $indicatorname) {
+            $indicator = static::get_indicator($indicatorname);
+            $indicators[$indicator->get_id()] = $indicator;
+        }
+
+        if (isset($definition['timesplitting'])) {
+            $timesplitting = $definition['timesplitting'];
+        } else {
+            $timesplitting = false;
+        }
+
+        $created = \core_analytics\model::create($target, $indicators, $timesplitting);
+
+        if (!empty($definition['enabled'])) {
+            $created->enable();
+        }
+
+        return $created;
+    }
 }
