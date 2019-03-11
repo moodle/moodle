@@ -544,10 +544,18 @@ class companypaths {
             $fs->create_file_from_storedfile($fileinfo, $thumbnail);
         }
 
+        // Copy groups.
+        $groups = $DB->get_records('iomad_learningpathgroup', ['learningpath' => $pathid]);
+        foreach ($groups as $group) {
+            $group->learningpath = $newpathid;
+            $group->newid = $DB->insert_record('iomad_learningpathgroup', $group);
+        }
+
         // Copy courses
         $courses = $DB->get_records('iomad_learningpathcourse', ['path' => $pathid]);
         foreach ($courses as $course) {
             $course->path = $newpathid;
+            $course->groupid = $groups[$course->groupid]->newid;
             $DB->insert_record('iomad_learningpathcourse', $course);
         }
 
