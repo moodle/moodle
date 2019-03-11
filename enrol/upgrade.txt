@@ -22,6 +22,8 @@ information provided here is intended especially for developers.
   - completionhascriteria: Whether completion criteria is set for the course.
   - isfavourite: Whether the user marked the course as favourite.
   - hidden: Whether the user hide the course from the dashboard.
+* External functions core_enrol_external::get_enrolled_users and core_enrol_external::get_enrolled_users_with_capability now return
+  the last access time for the users in the given course.
 
 === 3.5 ===
 

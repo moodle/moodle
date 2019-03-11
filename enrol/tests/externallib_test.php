@@ -665,6 +665,46 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         $this->assertArrayNotHasKey('email', $enrolledusers[0]);
     }
 
+
+    /**
+     * Test get_enrolled_users last course access.
+     */
+    public function test_get_enrolled_users_including_lastcourseaccess() {
+        global $DB;
+        $capability = 'moodle/course:viewparticipants';
+        $data = $this->get_enrolled_users_setup($capability);
+
+        // Call the external function.
+        $enrolledusers = core_enrol_external::get_enrolled_users($data->course->id);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+
+        // Check the result set.
+        $this->assertEquals(3, count($enrolledusers));
+        $this->assertArrayHasKey('email', $enrolledusers[0]);
+        $this->assertEquals(0, $enrolledusers[0]['lastcourseaccess']);
+        $this->assertEquals(0, $enrolledusers[1]['lastcourseaccess']);
+        $this->assertNotEquals(0, $enrolledusers[2]['lastcourseaccess']);   // We forced an access to the course via setUser.
+
+        // Force last access.
+        $timenow = time();
+        $lastaccess = array(
+            'userid' => $enrolledusers[0]['id'],
+            'courseid' => $data->course->id,
+            'timeaccess' => $timenow
+        );
+        $DB->insert_record('user_lastaccess', $lastaccess);
+
+        $enrolledusers = core_enrol_external::get_enrolled_users($data->course->id);
+        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+
+        // Check the result set.
+        $this->assertEquals(3, count($enrolledusers));
+        $this->assertEquals($timenow, $enrolledusers[0]['lastcourseaccess']);
+        $this->assertEquals(0, $enrolledusers[1]['lastcourseaccess']);
+        $this->assertNotEquals(0, $enrolledusers[2]['lastcourseaccess']);
+    }
+
     /**
      * Test get_enrolled_users from core_enrol_external with capability to
      * viewparticipants removed.
@@ -779,6 +819,56 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         $expecteduser = reset($expecteduserlist);
         $this->assertEquals(1, count($expecteduserlist));
         $this->assertEquals($data->student1->id, $expecteduser['id']);
+    }
+
+    /**
+     * Test get_enrolled_users last course access.
+     */
+    public function test_get_enrolled_users_with_capability_including_lastcourseaccess() {
+        global $DB;
+        $capability = 'moodle/course:viewparticipants';
+        $data = $this->get_enrolled_users_with_capability_setup($capability);
+
+        $parameters = array(
+            'coursecapabilities' => array(
+                'courseid' => $data->course->id,
+                'capabilities' => array(
+                    $capability,
+                ),
+            ),
+        );
+
+        $result = core_enrol_external::get_enrolled_users_with_capability($parameters, array());
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
+
+        // Check an array containing the expected user for the course capability is returned.
+        $expecteduserlist = $result[0];
+        $this->assertEquals($data->course->id, $expecteduserlist['courseid']);
+        $this->assertEquals($capability, $expecteduserlist['capability']);
+        $this->assertEquals(2, count($expecteduserlist['users']));
+        // We forced an access to the course via setUser.
+        $this->assertNotEquals(0, $expecteduserlist['users'][0]['lastcourseaccess']);
+        $this->assertEquals(0, $expecteduserlist['users'][1]['lastcourseaccess']);
+
+        // Force last access.
+        $timenow = time();
+        $lastaccess = array(
+            'userid' => $expecteduserlist['users'][1]['id'],
+            'courseid' => $data->course->id,
+            'timeaccess' => $timenow
+        );
+        $DB->insert_record('user_lastaccess', $lastaccess);
+
+        $result = core_enrol_external::get_enrolled_users_with_capability($parameters, array());
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
+
+        // Check the result set.
+        $expecteduserlist = $result[0];
+        $this->assertEquals(2, count($expecteduserlist['users']));
+        $this->assertNotEquals(0, $expecteduserlist['users'][0]['lastcourseaccess']);
+        $this->assertEquals($timenow, $expecteduserlist['users'][1]['lastcourseaccess']);
     }
 
     /**

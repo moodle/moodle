@@ -165,8 +165,13 @@ class core_enrol_external extends external_api {
                 $courseusers['capability'] = $capability;
 
                 list($enrolledsql, $enrolledparams) = get_enrolled_sql($coursecontext, $capability, $groupid, $onlyactive);
+                $enrolledparams['courseid'] = $courseid;
 
-                $sql = "SELECT u.* FROM {user} u WHERE u.id IN ($enrolledsql) ORDER BY u.id ASC";
+                $sql = "SELECT u.*, COALESCE(ul.timeaccess, 0) AS lastcourseaccess
+                          FROM {user} u
+                     LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid)
+                         WHERE u.id IN ($enrolledsql)
+                      ORDER BY u.id ASC";
 
                 $enrolledusers = $DB->get_recordset_sql($sql, $enrolledparams, $limitfrom, $limitnumber);
                 $users = array();
@@ -216,6 +221,7 @@ class core_enrol_external extends external_api {
                     'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
                     'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
                     'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
+                    'lastcourseaccess'  => new external_value(PARAM_INT, 'last access to the course (0 if never)', VALUE_OPTIONAL),
                     'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
                     'descriptionformat' => new external_value(PARAM_INT, 'User profile description format', VALUE_OPTIONAL),
                     'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
@@ -734,15 +740,18 @@ class core_enrol_external extends external_api {
                 return array();
             }
         }
-        $sql = "SELECT us.*
+        $sql = "SELECT us.*, COALESCE(ul.timeaccess, 0) AS lastcourseaccess
                   FROM {user} us
                   JOIN (
                       SELECT DISTINCT u.id $ctxselect
                         FROM {user} u $ctxjoin $groupjoin
                        WHERE u.id IN ($enrolledsql)
                   ) q ON q.id = us.id
+             LEFT JOIN {user_lastaccess} ul ON (ul.userid = us.id AND ul.courseid = :courseid)
                 ORDER BY $sortby $sortdirection";
         $enrolledparams = array_merge($enrolledparams, $sortparams);
+        $enrolledparams['courseid'] = $courseid;
+
         $enrolledusers = $DB->get_recordset_sql($sql, $enrolledparams, $limitfrom, $limitnumber);
         $users = array();
         foreach ($enrolledusers as $user) {
@@ -785,6 +794,7 @@ class core_enrol_external extends external_api {
                     'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
                     'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
                     'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
+                    'lastcourseaccess'  => new external_value(PARAM_INT, 'last access to the course (0 if never)', VALUE_OPTIONAL),
                     'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
                     'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL),
                     'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
