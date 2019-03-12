@@ -176,6 +176,8 @@ $ADMIN->add('server', $temp);
 
 $ADMIN->add('server', new admin_externalpage('environment', new lang_string('environment','admin'), "$CFG->wwwroot/$CFG->admin/environment.php"));
 $ADMIN->add('server', new admin_externalpage('phpinfo', new lang_string('phpinfo'), "$CFG->wwwroot/$CFG->admin/phpinfo.php"));
+$ADMIN->add('server', new admin_externalpage('testoutgoingmailconf', new lang_string('testoutgoingmailconf', 'admin'),
+            new moodle_url("$CFG->wwwroot/$CFG->admin/testoutgoingmailconf.php"), 'moodle/site:config', true));
 
 
 // "performance" settingpage
@@ -326,6 +328,10 @@ $temp->add(new admin_setting_configtextarea('allowedemaildomains',
         new lang_string('allowedemaildomains', 'admin'),
         new lang_string('configallowedemaildomains', 'admin'),
         ''));
+$url = new moodle_url('/admin/testoutgoingmailconf.php');
+$link = html_writer::link($url, get_string('testoutgoingmailconf', 'admin'));
+$temp->add(new admin_setting_heading('testoutgoinmailc', new lang_string('testoutgoingmailconf', 'admin'),
+        new lang_string('testoutgoingmaildetail', 'admin', $link)));
 $temp->add(new admin_setting_heading('emaildoesnotfit', new lang_string('doesnotfit', 'admin'),
         new lang_string('doesnotfitdetail', 'admin')));
 $charsets = get_list_of_charsets();
