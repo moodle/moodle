@@ -23,42 +23,6 @@ use plugin_renderer_base;
 class renderer extends plugin_renderer_base {
 
     /**
-     * Display list of available roles
-     * @param array $roles
-     */
-    public function role_select($roles, $linkurl, $companyid, $templateid) {
-        global $DB;
-
-        // get company info for heading
-        if (empty($templateid)) {
-            $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
-            $out = '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->name) . '</h3>';
-        } else {
-            $template = $DB->get_record('company_role_templates', array('id' => $templateid), '*', MUST_EXIST);
-            $title = get_string('roletemplate', 'block_iomad_company_admin') . ' ' . $template->name;
-            $out = '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $title) . '</h3>';
-        }
-
-        $table = new \html_table();
-        $table->head = array(
-            get_string('name'),
-            get_string('description'),
-        );
-        foreach ($roles as $role) {
-            $linkurl->params(array('roleid' => $role->id));
-            $row = array(
-                '<b>' . $role->name . '</b>',
-                $role->description,
-                "<a class=\"btn btn-primary\" href=\"$linkurl\">" . get_string('edit') . "</a>",
-            );
-            $table->data[] = $row;
-        }
-
-        $out .= \html_writer::table($table);
-        return $out;
-    }
-
-    /**
      * Display capabilities for role
      */
     public function capabilities($capabilities, $roleid, $companyid, $templateid) {
@@ -103,20 +67,6 @@ class renderer extends plugin_renderer_base {
      */
     public function roles_button($link) {
         $out = '<p><a class="btn btn-primary" href="'.$link.'">' . get_string('listroles', 'block_iomad_company_admin') . '</a></p>';
-
-        return $out;
-    }
-
-    /**
-     * Back to list of roles button
-     */
-    public function templates_buttons($savelink, $managelink, $backlink) {
-        $out = '<p><a class="btn btn-primary" href="'.$savelink.'">' . get_string('saveroletemplate', 'block_iomad_company_admin') . '</a> '.
-               '<a class="btn btn-primary" href="'.$managelink.'">' . get_string('managetemplates', 'block_iomad_company_admin') . '</a>';
-        if (!empty($backlink)) {
-            $out .= ' <a class="btn btn-primary" href="'.$backlink.'">' . get_string('backtocompanytemplate', 'block_iomad_company_admin') . '</a>';
-        }
-        $out .= '</p>';
 
         return $out;
     }

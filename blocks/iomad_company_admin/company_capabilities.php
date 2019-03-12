@@ -131,23 +131,12 @@ if ($roleid) {
 
     // get the list of roles to choose from
     $roles = iomad_company_admin::get_roles();
-    $capabilitiesroles = new \block_iomad_company_admin\output\capabilitiesroles($roles, $companyid, $templateid, $linkurl);
+    $saveurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php', ['savetemplate' => 1, 'templateid' => $templateid]);
+    $manageurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php', ['manage' => 1]);
+    $backurl = empty($templateid) ? '' : $backurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php');
+    $capabilitiesroles = new \block_iomad_company_admin\output\capabilitiesroles($roles, $companyid, $templateid, $linkurl, $saveurl, $manageurl, $backurl);
     echo $output->render_capabilitiesroles($capabilitiesroles);
 
-    /*echo $output->role_select($roles, $linkurl, $companyid, $templateid);
-
-    // output the save button.
-    $saveurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php',
-                                array('savetemplate' => 1,
-                                      'templateid' => $templateid));
-    $manageurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php',
-                                  array('manage' => 1));
-    if (!empty($templateid)) {
-        $backurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php');
-    } else {
-        $backurl = '';
-    }
-    echo $output->templates_buttons($saveurl, $manageurl, $backurl); */
 }
 ?>
 <script>
