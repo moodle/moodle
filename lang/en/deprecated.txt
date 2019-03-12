@@ -147,3 +147,9 @@ outputdisabled,core_message
 outputdoesnotexist,core_message
 outputenabled,core_message
 outputnotconfigured,core_message
+addtodock,core_block
+dockblock,core_block
+hidedockpanel,core_block
+undockall,core_block
+undockblock,core_block
+undockitem,core_block
