@@ -36,6 +36,7 @@ $string['blockcontact'] = 'Block contact';
 $string['blockedusers'] = 'Blocked users';
 $string['blockuser'] = 'Block user';
 $string['blockuserconfirm'] = 'Are you sure you want to block {$a}?';
+$string['blockuserconfirmbutton'] = 'Block';
 $string['blocknoncontacts'] = 'Prevent non-contacts from messaging me';
 $string['canceledit'] = 'Cancel editing messages';
 $string['contactableprivacy'] = 'Accept messages from:';
