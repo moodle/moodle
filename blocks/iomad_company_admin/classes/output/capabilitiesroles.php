@@ -44,15 +44,22 @@ class capabilitiesroles implements renderable, templatable {
 
     protected $templateid;
 
+    protected $linkurl;
+
     /**
      * @param array $roles
      * @param int $companyid
      * @param int $templateid
      */
-    public function __construct($roles, $companyid, $templateid) {
+    public function __construct($roles, $companyid, $templateid, $linkurl) {
+        array_walk($roles, function(&$role) use ($linkurl) {
+            $linkurl->params(['roleid' => $role->id]);
+            $role->link = $linkurl->out();
+        });
         $this->roles = $roles;
         $this->companyid = $companyid;
         $this->templateid = $templateid;
+        $this->linkurl = $linkurl;
     }
 
     /**

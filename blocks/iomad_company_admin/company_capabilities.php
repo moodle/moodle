@@ -131,7 +131,7 @@ if ($roleid) {
 
     // get the list of roles to choose from
     $roles = iomad_company_admin::get_roles();
-    $capabilitiesroles = new \block_iomad_company_admin\output\capabilitiesroles($roles, $companyid, $templateid);
+    $capabilitiesroles = new \block_iomad_company_admin\output\capabilitiesroles($roles, $companyid, $templateid, $linkurl);
     echo $output->render_capabilitiesroles($capabilitiesroles);
 
     /*echo $output->role_select($roles, $linkurl, $companyid, $templateid);
