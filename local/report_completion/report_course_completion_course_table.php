@@ -149,9 +149,9 @@ class local_report_course_completion_course_table extends table_sql {
                 return;
             }
         } else {
-            if (!empty($licenseallocated) || $DB->get_record('iomad_courses', array('courseid' => $course->id, 'licensed' => 1))) {
-                return get_string('used', 'local_report_completion') . " = " . $licensesallocated - $enrolled . "\n" .
-                      get_string('unused', 'local_report_completion') . " = $enrolled\n";
+            if (!empty($licenseallocated) || $DB->get_record('iomad_courses', array('courseid' => $row->id, 'licensed' => 1))) {
+                return get_string('used', 'local_report_completion') . " = " . ($licensesallocated - $licensesunused) . "\n" .
+                      get_string('unused', 'local_report_completion') . " = $licensesunused\n";
             } else {
                 return;
             }
