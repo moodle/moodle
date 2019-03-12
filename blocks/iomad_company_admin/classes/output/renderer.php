@@ -251,4 +251,12 @@ class renderer extends plugin_renderer_base {
     public function render_editcompanies(editcompanies $editcompanies) {
         return $this->render_from_template('block_iomad_company_admin/editcompanies', $editcompanies->export_for_template($this));
     }
+
+    /**
+     * Render company capabilities roles page
+     * @param capabilitiesroles $capabilitiesroles
+     */
+    public function render_capabilitiesroles(capabilitiesroles $capabilitiesroles) {
+        return $this->render_from_template('block_iomad_company_admin/capabilitiesroles', $capabilitiesroles->export_for_template($this));
+    }
 }

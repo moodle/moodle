@@ -695,7 +695,7 @@ class block_iomad_company_admin_external extends external_api {
                             array(
                                 'userid' => new external_value(PARAM_INT, 'Department ID'),
                                 'company' => new external_value(PARAM_INT, 'Company ID'),
-                                'result' => new external_value(PARAM_BOOLEAN, 'Success or failure'),
+                                'result' => new external_value(PARAM_BOOL, 'Success or failure'),
                                 'message' => new external_value(PARAM_TEXT, 'Failure message'),
                                 )
                             )
@@ -2124,6 +2124,109 @@ class block_iomad_company_admin_external extends external_api {
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.2
+     */
+    public static function restrict_capability_parameters() {
+        return new external_function_parameters(
+            array(
+                'capability' => new external_value(PARAM_TEXT, 'The capability'),
+                'roleid' => new external_value(PARAM_INT, 'Role ID'),
+                'companyid' => new external_value(PARAM_INT, 'Company ID. Ignored if templateid is non-zero'),
+                'allow' => new external_value(PARAM_BOOL, 'Set capability?'),
+                'templateid' => new external_value(PARAM_INT, 'Template ID. Set to 0 if company restriction', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Restrict capability 
+     * Non-zero $templateid identifies template rather than real company
+     *
+     * @param string $capability
+     * @param int $roleid
+     * @param int $companyid
+     * @param bool $allow
+     * @param int $templateid
+     */
+    public static function restrict_capability($capability, $roleid, $companyid, $allow, $templateid = 0) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::restrict_capability_parameters, [
+            'capability' => $capability,
+            'roleid' => $roleid,
+            'companyid' => $companyid,
+            'allow' => $allow,
+            'templateid' => $templateid,
+        ]);
+
+        // Security.
+        $context = context_system::instance();
+        iomad::require_capability('block/iomad_company_admin:restrict_capabilities', $context);
+
+        if (empty($params['templateid'])) {
+
+            // dealing with a company restriction.
+            // if box is unticked (false) an entry is created (or kept)
+            // if box is ticked (true) any entry is deleted.
+            $restriction = $DB->get_record('company_role_restriction', [
+                    'roleid' => $params['roleid'],
+                    'companyid' => $params['companyid'],
+                    'capability' => $params['capability'],
+            ]);
+            if (!$params['allow']) {
+                if (!$restriction) {
+                    $restriction = new stdClass();
+                    $restriction->companyid = $params['companyid'];
+                    $restriction->roleid = $params['roleid'];
+                    $restriction->capability = $params['capability'];
+                    $DB->insert_record('company_role_restriction', $restriction);
+                }
+            } else {
+                if ($restriction) {
+                    $DB->delete_records('company_role_restriction', ['id' => $restriction->id]);
+                }
+            }
+        } else  {
+
+            // Dealing with a template restriction.
+            // if box is unticked (false) an entry is created (or kept)
+            // if box is ticked (true) any entry is deleted.
+            $restriction = $DB->get_record('company_role_templates_caps', [
+                    'roleid' => $params['roleid'],
+                    'templateid' => $params['templateid'],
+                    'capability' => $params['capability'],
+            ]);
+            if (!$params['allow']) {
+                if (!$restriction) {
+                    $restriction = new stdClass();
+                    $restriction->templateid = $params['templateid'];
+                    $restriction->roleid = $params['roleid'];
+                    $restriction->capability = $params['capability'];
+                    $DB->insert_record('company_role_templates_caps', $restriction);
+                }
+            } else {
+                if ($restriction) {
+                    $DB->delete_records('company_role_templates_caps', array('id' => $restriction->id));
+                }
+            }
+        }
+        reload_all_capabilities();
+
+        return true;
+    }
+
+    /**
+     * Returns description for restrict_capability
+     * @return external_description
+     */
+    public static function restrict_capability_returns() {
+        return new external_value(PARAM_BOOL, 'True capability update succeeds');
     }
 
 }
