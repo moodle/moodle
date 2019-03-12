@@ -507,84 +507,16 @@ class manager {
     }
 
     /**
-     * Adds the models included with moodle core to the system.
+     * Used to be used to add models included with the Moodle core.
      *
+     * @deprecated Deprecated since Moodle 3.7 (MDL-61667) - Use lib/db/analytics.php instead.
+     * @todo Remove this method in Moodle 4.1 (MDL-65186).
      * @return void
      */
     public static function add_builtin_models() {
 
-        $target = self::get_target('\core\analytics\target\course_dropout');
-
-        // Community of inquiry indicators.
-        $coiindicators = array(
-            '\mod_assign\analytics\indicator\cognitive_depth',
-            '\mod_assign\analytics\indicator\social_breadth',
-            '\mod_book\analytics\indicator\cognitive_depth',
-            '\mod_book\analytics\indicator\social_breadth',
-            '\mod_chat\analytics\indicator\cognitive_depth',
-            '\mod_chat\analytics\indicator\social_breadth',
-            '\mod_choice\analytics\indicator\cognitive_depth',
-            '\mod_choice\analytics\indicator\social_breadth',
-            '\mod_data\analytics\indicator\cognitive_depth',
-            '\mod_data\analytics\indicator\social_breadth',
-            '\mod_feedback\analytics\indicator\cognitive_depth',
-            '\mod_feedback\analytics\indicator\social_breadth',
-            '\mod_folder\analytics\indicator\cognitive_depth',
-            '\mod_folder\analytics\indicator\social_breadth',
-            '\mod_forum\analytics\indicator\cognitive_depth',
-            '\mod_forum\analytics\indicator\social_breadth',
-            '\mod_glossary\analytics\indicator\cognitive_depth',
-            '\mod_glossary\analytics\indicator\social_breadth',
-            '\mod_imscp\analytics\indicator\cognitive_depth',
-            '\mod_imscp\analytics\indicator\social_breadth',
-            '\mod_label\analytics\indicator\cognitive_depth',
-            '\mod_label\analytics\indicator\social_breadth',
-            '\mod_lesson\analytics\indicator\cognitive_depth',
-            '\mod_lesson\analytics\indicator\social_breadth',
-            '\mod_lti\analytics\indicator\cognitive_depth',
-            '\mod_lti\analytics\indicator\social_breadth',
-            '\mod_page\analytics\indicator\cognitive_depth',
-            '\mod_page\analytics\indicator\social_breadth',
-            '\mod_quiz\analytics\indicator\cognitive_depth',
-            '\mod_quiz\analytics\indicator\social_breadth',
-            '\mod_resource\analytics\indicator\cognitive_depth',
-            '\mod_resource\analytics\indicator\social_breadth',
-            '\mod_scorm\analytics\indicator\cognitive_depth',
-            '\mod_scorm\analytics\indicator\social_breadth',
-            '\mod_survey\analytics\indicator\cognitive_depth',
-            '\mod_survey\analytics\indicator\social_breadth',
-            '\mod_url\analytics\indicator\cognitive_depth',
-            '\mod_url\analytics\indicator\social_breadth',
-            '\mod_wiki\analytics\indicator\cognitive_depth',
-            '\mod_wiki\analytics\indicator\social_breadth',
-            '\mod_workshop\analytics\indicator\cognitive_depth',
-            '\mod_workshop\analytics\indicator\social_breadth',
-            '\core_course\analytics\indicator\completion_enabled',
-            '\core_course\analytics\indicator\potential_cognitive_depth',
-            '\core_course\analytics\indicator\potential_social_breadth',
-            '\core\analytics\indicator\any_access_after_end',
-            '\core\analytics\indicator\any_access_before_start',
-            '\core\analytics\indicator\any_write_action_in_course',
-            '\core\analytics\indicator\read_actions',
-        );
-        $indicators = array();
-        foreach ($coiindicators as $coiindicator) {
-            $indicator = self::get_indicator($coiindicator);
-            $indicators[$indicator->get_id()] = $indicator;
-        }
-        if (!\core_analytics\model::exists($target, $indicators)) {
-            $model = \core_analytics\model::create($target, $indicators);
-        }
-
-        // No teaching model.
-        $target = self::get_target('\core\analytics\target\no_teaching');
-        $timesplittingmethod = '\core\analytics\time_splitting\single_range';
-        $noteacher = self::get_indicator('\core_course\analytics\indicator\no_teacher');
-        $nostudent = self::get_indicator('\core_course\analytics\indicator\no_student');
-        $indicators = array($noteacher->get_id() => $noteacher, $nostudent->get_id() => $nostudent);
-        if (!\core_analytics\model::exists($target, $indicators)) {
-            \core_analytics\model::create($target, $indicators, $timesplittingmethod);
-        }
+        debugging('core_analytics\manager::add_builtin_models() has been deprecated. Core models are now automatically '.
+            'updated according to their declaration in the lib/db/analytics.php file.', DEBUG_DEVELOPER);
     }
 
     /**
