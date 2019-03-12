@@ -337,4 +337,38 @@ class analytics_manager_testcase extends advanced_testcase {
         $existing->update(0, false, false);
         $this->assertEquals(0, $DB->get_field('analytics_models', 'enabled', ['target' => $target->get_id()], MUST_EXIST));
     }
+
+    /**
+     * Test the implementation of the {@link \core_analytics\manager::update_default_models_for_component()}.
+     */
+    public function test_update_default_models_for_component() {
+
+        $this->resetAfterTest();
+        $this->setAdminuser();
+
+        $noteaching = \core_analytics\manager::get_target('\core\analytics\target\no_teaching');
+        $dropout = \core_analytics\manager::get_target('\core\analytics\target\course_dropout');
+
+        $this->assertTrue(\core_analytics\model::exists($noteaching));
+        $this->assertTrue(\core_analytics\model::exists($dropout));
+
+        foreach (\core_analytics\manager::get_all_models() as $model) {
+            $model->delete();
+        }
+
+        $this->assertFalse(\core_analytics\model::exists($noteaching));
+        $this->assertFalse(\core_analytics\model::exists($dropout));
+
+        $updated = \core_analytics\manager::update_default_models_for_component('moodle');
+
+        $this->assertEquals(2, count($updated));
+        $this->assertTrue(array_pop($updated) instanceof \core_analytics\model);
+        $this->assertTrue(array_pop($updated) instanceof \core_analytics\model);
+        $this->assertTrue(\core_analytics\model::exists($noteaching));
+        $this->assertTrue(\core_analytics\model::exists($dropout));
+
+        $repeated = \core_analytics\manager::update_default_models_for_component('moodle');
+
+        $this->assertSame([], $repeated);
+    }
 }

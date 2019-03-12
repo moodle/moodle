@@ -608,6 +608,27 @@ class manager {
     }
 
     /**
+     * Check that all the models declared by the component are up to date.
+     *
+     * This is intended to be called during the installation / upgrade to automatically create missing models.
+     *
+     * @param string $componentname The name of the component to load models for.
+     * @return array \core_analytics\model[] List of actually created models.
+     */
+    public static function update_default_models_for_component(string $componentname): array {
+
+        $result = [];
+
+        foreach (static::load_default_models_for_component($componentname) as $definition) {
+            if (!\core_analytics\model::exists(static::get_target($definition['target']))) {
+                $result[] = static::create_declared_model($definition);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Return the list of models declared by the given component.
      *
      * @param string $componentname The name of the component to load models for.
