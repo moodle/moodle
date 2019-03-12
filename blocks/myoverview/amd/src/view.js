@@ -363,7 +363,7 @@ function(
         var filters = getFilterValues(root);
 
         var currentTemplate = '';
-        if (filters.display == 'cards') {
+        if (filters.display == 'card') {
             currentTemplate = TEMPLATES.COURSES_CARDS;
         } else if (filters.display == 'list') {
             currentTemplate = TEMPLATES.COURSES_LIST;
