@@ -43,7 +43,7 @@ a:hover {
 }
 #region-main {
   background-color: #ffffff;
-  padding: 5px 5px 5px 5px;
+  padding: 15px;
   border: 2px solid #A8A8A8;
   -webkit-box-shadow: rgba(0, 0, 0, 0.0470588) 0 1px 1px inset;
   border-bottom-left-radius: 4px;
