@@ -281,6 +281,7 @@ class analytics_manager_testcase extends advanced_testcase {
         // Check that no such model exists yet.
         $target = \core_analytics\manager::get_target('test_target_course_level_shortname');
         $this->assertEquals(0, $DB->count_records('analytics_models', ['target' => $target->get_id()]));
+        $this->assertFalse(\core_analytics\model::exists($target));
 
         // Check that the model is created.
         $created = \core_analytics\manager::create_declared_model($declaration);

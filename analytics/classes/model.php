@@ -407,6 +407,10 @@ class model {
 
         $existingmodels = $DB->get_records('analytics_models', array('target' => $target->get_id()));
 
+        if (!$existingmodels) {
+            return false;
+        }
+
         if (!$indicators && $existingmodels) {
             return true;
         }

@@ -274,6 +274,12 @@ class analytics_model_testcase extends advanced_testcase {
 
         $target = \core_analytics\manager::get_target('\core\analytics\target\no_teaching');
         $this->assertTrue(\core_analytics\model::exists($target));
+
+        foreach (\core_analytics\manager::get_all_models() as $model) {
+            $model->delete();
+        }
+
+        $this->assertFalse(\core_analytics\model::exists($target));
     }
 
     /**
