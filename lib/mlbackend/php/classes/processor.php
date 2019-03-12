@@ -174,14 +174,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
      */
     public function classify($uniqueid, \stored_file $dataset, $outputdir) {
 
-        $modelfilepath = $this->get_model_filepath($outputdir);
-
-        if (!file_exists($modelfilepath)) {
-            throw new \moodle_exception('errorcantloadmodel', 'mlbackend_php', '', $modelfilepath);
-        }
-
-        $modelmanager = new ModelManager();
-        $classifier = $modelmanager->restoreFromFile($modelfilepath);
+        $classifier = $this->load_classifier($outputdir);
 
         $fh = $dataset->get_content_file_handle();
 
@@ -244,10 +237,18 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
      * @param int $niterations
      * @param \stored_file $dataset
      * @param string $outputdir
+     * @param  string $trainedmodeldir
      * @return \stdClass
      */
-    public function evaluate_classification($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir) {
+    public function evaluate_classification($uniqueid, $maxdeviation, $niterations, \stored_file $dataset,
+            $outputdir, $trainedmodeldir) {
         $fh = $dataset->get_content_file_handle();
+
+        if ($trainedmodeldir) {
+            // We overwrite the number of iterations as the results will always be the same.
+            $niterations = 1;
+            $classifier = $this->load_classifier($trainedmodeldir);
+        }
 
         // The first lines are var names and the second one values.
         $metadata = $this->extract_metadata($fh);
@@ -308,15 +309,19 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
         // Evaluate the model multiple times to confirm the results are not significantly random due to a short amount of data.
         for ($i = 0; $i < $niterations; $i++) {
 
-            $classifier = new \Phpml\Classification\Linear\LogisticRegression(self::TRAIN_ITERATIONS, Normalizer::NORM_L2);
+            if (!$trainedmodeldir) {
+                $classifier = new \Phpml\Classification\Linear\LogisticRegression(self::TRAIN_ITERATIONS, Normalizer::NORM_L2);
 
-            // Split up the dataset in classifier and testing.
-            $data = new RandomSplit(new ArrayDataset($samples, $targets), 0.2);
+                // Split up the dataset in classifier and testing.
+                $data = new RandomSplit(new ArrayDataset($samples, $targets), 0.2);
 
-            $classifier->train($data->getTrainSamples(), $data->getTrainLabels());
-
-            $predictedlabels = $classifier->predict($data->getTestSamples());
-            $phis[] = $this->get_phi($data->getTestLabels(), $predictedlabels);
+                $classifier->train($data->getTrainSamples(), $data->getTrainLabels());
+                $predictedlabels = $classifier->predict($data->getTestSamples());
+                $phis[] = $this->get_phi($data->getTestLabels(), $predictedlabels);
+            } else {
+                $predictedlabels = $classifier->predict($samples);
+                $phis[] = $this->get_phi($targets, $predictedlabels);
+            }
         }
 
         // Let's fill the results changing the returned status code depending on the phi-related calculated metrics.
@@ -382,6 +387,24 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
     }
 
     /**
+     * Loads the pre-trained classifier.
+     *
+     * @throws \moodle_exception
+     * @param string $outputdir
+     * @return \Phpml\Classification\Linear\LogisticRegression
+     */
+    protected function load_classifier($outputdir) {
+        $modelfilepath = $this->get_model_filepath($outputdir);
+
+        if (!file_exists($modelfilepath)) {
+            throw new \moodle_exception('errorcantloadmodel', 'mlbackend_php', '', $modelfilepath);
+        }
+
+        $modelmanager = new ModelManager();
+        return $modelmanager->restoreFromFile($modelfilepath);
+    }
+
+    /**
      * Train this processor regression model using the provided supervised learning dataset.
      *
      * @throws new \coding_exception
@@ -416,9 +439,11 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
      * @param int $niterations
      * @param \stored_file $dataset
      * @param string $outputdir
+     * @param  string $trainedmodeldir
      * @return \stdClass
      */
-    public function evaluate_regression($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir) {
+    public function evaluate_regression($uniqueid, $maxdeviation, $niterations, \stored_file $dataset,
+            $outputdir, $trainedmodeldir) {
         throw new \coding_exception('This predictor does not support regression yet.');
     }
 

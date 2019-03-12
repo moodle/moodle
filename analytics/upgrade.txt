@@ -1,6 +1,12 @@
 This files describes API changes in analytics sub system,
 information provided here is intended especially for developers.
 
+=== 3.7 ===
+
+* \core_analytics\regressor::evaluate_regression and \core_analytics\classifier::evaluate_classification
+  have been updated to include a new $trainedmodeldir param. This new param will be used to evaluate the
+  existing trained model.
+
 === 3.5 ===
 
 * There are two new methods for analysers, processes_user_data() and join_sample_user(). You

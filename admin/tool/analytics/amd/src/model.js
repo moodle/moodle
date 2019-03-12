@@ -20,8 +20,8 @@
  * @copyright  2017 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_factory', 'core/modal_events'],
-    function($, Str, log, Notification, ModalFactory, ModalEvents) {
+define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_factory', 'core/modal_events', 'core/templates'],
+    function($, Str, log, Notification, ModalFactory, ModalEvents, Templates) {
 
     /**
      * List of actions that require confirmation and confirmation message.
@@ -94,6 +94,61 @@ define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_facto
                     modal.getRoot().on(ModalEvents.save, function() {
                         window.location.href = a.attr('href');
                     });
+                    modal.show();
+                    return modal;
+                }).fail(Notification.exception);
+            });
+        },
+
+        /**
+         * Displays a select-evaluation-mode choice.
+         *
+         * @param  {String}  actionId
+         * @param  {Boolean} trainedOnlyExternally
+         */
+        selectEvaluationMode: function(actionId, trainedOnlyExternally) {
+            $('[data-action-id="' + actionId + '"]').on('click', function(ev) {
+                ev.preventDefault();
+
+                var a = $(ev.currentTarget);
+
+                if (!trainedOnlyExternally) {
+                    // We can not evaluate trained models if the model was trained using data from this site.
+                    // Default to evaluate the model configuration if that is the case.
+                    window.location.href = a.attr('href');
+                    return;
+                }
+
+                var stringsPromise = Str.get_strings([
+                    {
+                        key: 'evaluatemodel',
+                        component: 'tool_analytics'
+                    }, {
+                        key: 'evaluationmode',
+                        component: 'tool_analytics'
+                    }
+                ]);
+                var modalPromise = ModalFactory.create({type: ModalFactory.types.SAVE_CANCEL});
+                var bodyPromise = Templates.render('tool_analytics/evaluation_mode_selection', {});
+
+                $.when(stringsPromise, modalPromise).then(function(strings, modal) {
+
+
+                    modal.getRoot().on(ModalEvents.hidden, modal.destroy.bind(modal));
+
+                    modal.setTitle(strings[1]);
+                    modal.setSaveButtonText(strings[0]);
+                    modal.setBody(bodyPromise);
+
+                    modal.getRoot().on(ModalEvents.save, function() {
+                        var evaluationMode = $("input[name='evaluationmode']:checked").val();
+                        if (evaluationMode == 'trainedmodel') {
+                            a.attr('href', a.attr('href') + '&mode=trainedmodel');
+                        }
+                        window.location.href = a.attr('href');
+                        return;
+                    });
+
                     modal.show();
                     return modal;
                 }).fail(Notification.exception);

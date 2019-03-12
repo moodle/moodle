@@ -169,7 +169,13 @@ switch ($action) {
         // Web interface is used by people who can not use CLI nor code stuff, always use
         // cached stuff as they will change the model through the web interface as well
         // which invalidates the previously analysed stuff.
-        $results = $model->evaluate(array('reuseprevanalysed' => true));
+        $options = ['reuseprevanalysed' => true];
+
+        $mode = optional_param('mode', false, PARAM_ALPHANUM);
+        if ($mode == 'trainedmodel') {
+            $options['mode'] = 'trainedmodel';
+        }
+        $results = $model->evaluate($options);
         $renderer = $PAGE->get_renderer('tool_analytics');
         echo $renderer->render_evaluate_results($results, $model->get_analyser()->get_logs());
         break;

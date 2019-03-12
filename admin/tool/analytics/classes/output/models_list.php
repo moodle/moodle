@@ -187,15 +187,21 @@ class models_list implements \renderable, \templatable {
 
             // Evaluate machine-learning-based models.
             if (!$onlycli && $model->get_indicators() && !$model->is_static()) {
+
+                // Extra is_trained call as trained_locally returns false if the model has not been trained yet.
+                $trainedonlyexternally = !$model->trained_locally() && $model->is_trained();
+
+                $actionid = 'evaluate-' . $model->get_id();
+                $PAGE->requires->js_call_amd('tool_analytics/model', 'selectEvaluationMode', [$actionid, $trainedonlyexternally]);
                 $urlparams['action'] = 'evaluate';
                 $url = new \moodle_url('model.php', $urlparams);
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('i/calc', get_string('evaluate', 'tool_analytics')),
-                    get_string('evaluate', 'tool_analytics'));
+                    get_string('evaluate', 'tool_analytics'), ['data-action-id' => $actionid]);
                 $actionsmenu->add($icon);
             }
 
             // Machine-learning-based models evaluation log.
-            if (!$model->is_static()) {
+            if (!$model->is_static() && $model->get_logs()) {
                 $urlparams['action'] = 'log';
                 $url = new \moodle_url('model.php', $urlparams);
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('i/report', get_string('viewlog', 'tool_analytics')),

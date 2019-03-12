@@ -274,7 +274,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      * test_ml_export_import
      *
      * @param string $predictionsprocessorclass The class name
-     * @dataProvider provider_ml_export_import
+     * @dataProvider provider_ml_processors
      */
     public function test_ml_export_import($predictionsprocessorclass) {
 
@@ -296,6 +296,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $model->update(true, false, '\core\analytics\time_splitting\quarters', get_class($predictionsprocessor));
 
         $model->train();
+        $this->assertTrue($model->trained_locally());
 
         $this->generate_courses(10, ['visible' => 0]);
 
@@ -314,16 +315,18 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             $this->assertEquals($importedmodelresults->predictions[$sampleid]->prediction, $prediction->prediction);
         }
 
+        $this->assertFalse($importmodel->trained_locally());
+
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
     }
 
     /**
-     * provider_ml_export_import
+     * provider_ml_processors
      *
      * @return array
      */
-    public function provider_ml_export_import() {
+    public function provider_ml_processors() {
         $cases = [
             'case' => [],
         ];
@@ -425,14 +428,14 @@ class core_analytics_prediction_testcase extends advanced_testcase {
     /**
      * Basic test to check that prediction processors work as expected.
      *
-     * @dataProvider provider_ml_test_evaluation
+     * @dataProvider provider_ml_test_evaluation_configuration
      * @param string $modelquality
      * @param int $ncourses
      * @param array $expected
      * @param string $predictionsprocessorclass
      * @return void
      */
-    public function test_ml_evaluation($modelquality, $ncourses, $expected, $predictionsprocessorclass) {
+    public function test_ml_evaluation_configuration($modelquality, $ncourses, $expected, $predictionsprocessorclass) {
         $this->resetAfterTest(true);
         $this->setAdminuser();
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
@@ -468,6 +471,46 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             $filtered = $result->status & $expected[$timesplitting];
             $this->assertEquals($expected[$timesplitting], $filtered, $message);
         }
+
+        set_config('enabled_stores', '', 'tool_log');
+        get_log_manager(true);
+    }
+
+    /**
+     * Tests the evaluation of already trained models.
+     *
+     * @dataProvider provider_ml_processors
+     * @param  string $predictionsprocessorclass
+     * @return null
+     */
+    public function test_ml_evaluation_trained_model($predictionsprocessorclass) {
+        $this->resetAfterTest(true);
+        $this->setAdminuser();
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+        set_config('timesplittings',
+            '\core\analytics\time_splitting\quarters,\core\analytics\time_splitting\quarters_accum', 'analytics');
+
+        $model = $this->add_perfect_model();
+
+        // Generate training data.
+        $this->generate_courses(50);
+
+        // We repeat the test for all prediction processors.
+        $predictionsprocessor = \core_analytics\manager::get_predictions_processor($predictionsprocessorclass, false);
+        if ($predictionsprocessor->is_ready() !== true) {
+            $this->markTestSkipped('Skipping ' . $predictionsprocessorclass . ' as the predictor is not ready.');
+        }
+
+        $model->update(true, false, '\\core\\analytics\\time_splitting\\quarters', get_class($predictionsprocessor));
+        $model->train();
+
+        $zipfilename = 'model-zip-' . microtime() . '.zip';
+        $zipfilepath = $model->export_model($zipfilename);
+        $importmodel = \core_analytics\model::import_model($zipfilepath);
+
+        $results = $importmodel->evaluate(['mode' => 'trainedmodel']);
+        $this->assertEquals(0, $results['\\core\\analytics\\time_splitting\\quarters']->status);
+        $this->assertEquals(1, $results['\\core\\analytics\\time_splitting\\quarters']->score);
 
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
@@ -547,11 +590,11 @@ class core_analytics_prediction_testcase extends advanced_testcase {
     }
 
     /**
-     * provider_ml_test_evaluation
+     * provider_ml_test_evaluation_configuration
      *
      * @return array
      */
-    public function provider_ml_test_evaluation() {
+    public function provider_ml_test_evaluation_configuration() {
 
         $cases = array(
             'bad' => array(

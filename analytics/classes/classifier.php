@@ -63,7 +63,9 @@ interface classifier extends predictor {
      * @param int $niterations
      * @param \stored_file $dataset
      * @param string $outputdir
+     * @param  string $trainedmodeldir
      * @return \stdClass
      */
-    public function evaluate_classification($uniqueid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir);
+    public function evaluate_classification($uniqueid, $maxdeviation, $niterations, \stored_file $dataset,
+            $outputdir, $trainedmodeldir);
 }

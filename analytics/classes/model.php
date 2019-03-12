@@ -537,6 +537,29 @@ class model {
         }
 
         $options['evaluation'] = true;
+
+        if (empty($options['mode'])) {
+            $options['mode'] = 'configuration';
+        }
+
+        switch ($options['mode']) {
+            case 'trainedmodel':
+
+                // We are only interested on the time splitting method used by the trained model.
+                $options['timesplitting'] = $this->model->timesplitting;
+
+                // Provide the trained model directory to the ML backend if that is what we want to evaluate.
+                $trainedmodeldir = $this->get_output_dir(['execution']);
+                break;
+            case 'configuration':
+
+                $trainedmodeldir = false;
+                break;
+
+            default:
+                throw new \moodle_exception('errorunknownaction', 'analytics');
+        }
+
         $this->init_analyser($options);
 
         if (empty($this->get_indicators())) {
@@ -575,10 +598,10 @@ class model {
             // Evaluate the dataset, the deviation we accept in the results depends on the amount of iterations.
             if ($this->get_target()->is_linear()) {
                 $predictorresult = $predictor->evaluate_regression($this->get_unique_id(), self::ACCEPTED_DEVIATION,
-                self::EVALUATION_ITERATIONS, $dataset, $outputdir);
+                    self::EVALUATION_ITERATIONS, $dataset, $outputdir, $trainedmodeldir);
             } else {
                 $predictorresult = $predictor->evaluate_classification($this->get_unique_id(), self::ACCEPTED_DEVIATION,
-                self::EVALUATION_ITERATIONS, $dataset, $outputdir);
+                    self::EVALUATION_ITERATIONS, $dataset, $outputdir, $trainedmodeldir);
             }
 
             $result->status = $predictorresult->status;
@@ -596,7 +619,7 @@ class model {
                 $dir = $predictorresult->dir;
             }
 
-            $result->logid = $this->log_result($timesplitting->get_id(), $result->score, $dir, $result->info);
+            $result->logid = $this->log_result($timesplitting->get_id(), $result->score, $dir, $result->info, $options['mode']);
 
             $results[$timesplitting->get_id()] = $result;
         }
@@ -1463,6 +1486,29 @@ class model {
     }
 
     /**
+     * Has the model been trained using data from this site?
+     *
+     * This method is useful to determine if a trained model can be evaluated as
+     * we can not use the same data for training and for evaluation.
+     *
+     * @return bool
+     */
+    public function trained_locally() : bool {
+        global $DB;
+
+        if (!$this->is_trained() || $this->is_static()) {
+            // Early exit.
+            return false;
+        }
+
+        if ($DB->record_exists('analytics_train_samples', ['modelid' => $this->model->id])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Flag the provided file as used for training or prediction.
      *
      * @param \stored_file $file
@@ -1487,14 +1533,16 @@ class model {
      * @param float $score
      * @param string $dir
      * @param array $info
+     * @param string $evaluationmode
      * @return int The inserted log id
      */
-    protected function log_result($timesplittingid, $score, $dir = false, $info = false) {
+    protected function log_result($timesplittingid, $score, $dir = false, $info = false, $evaluationmode = 'configuration') {
         global $DB, $USER;
 
         $log = new \stdClass();
         $log->modelid = $this->get_id();
         $log->version = $this->model->version;
+        $log->evaluationmode = $evaluationmode;
         $log->target = $this->model->target;
         $log->indicators = $this->model->indicators;
         $log->timesplitting = $timesplittingid;

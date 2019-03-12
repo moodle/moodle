@@ -53,6 +53,18 @@ $string['erroronlycli'] = 'Execution only allowed via command line';
 $string['errortrainingdataexport'] = 'The model training data could not be exported';
 $string['evaluate'] = 'Evaluate';
 $string['evaluatemodel'] = 'Evaluate model';
+$string['evaluationmode'] = 'Evaluation mode';
+$string['evaluationmode_help'] = 'There are two evaluation modes:
+
+* Trained model -  Site data is used as testing data to evaluate the accuracy of the trained model.
+* Configuration - Site data is split into training and testing data, to both train and test the accuracy of the model configuration.
+
+Trained model is only available if a trained model has been imported into the site, and has not yet been re-trained using site data.';
+$string['evaluationmodeinfo'] = 'This model has been imported into the site. You can either evaluate the performance of the model, or you can evaluate the performance of the model configuration using site data.';
+$string['evaluationmodetrainedmodel'] = 'Evaluate the trained model';
+$string['evaluationmodecoltrainedmodel'] = 'Trained model';
+$string['evaluationmodecolconfiguration'] = 'Configuration';
+$string['evaluationmodeconfiguration'] = 'Evaluate the model configuration';
 $string['evaluationinbatches'] = 'The site contents are calculated and stored in batches. The evaluation process may be stopped at any time. The next time it is run, it will continue from the point when it was stopped.';
 $string['exportmodel'] = 'Export configuration';
 $string['exporttrainingdata'] = 'Export training data';
@@ -104,7 +116,7 @@ $string['trainingprocessfinished'] = 'Training process finished';
 $string['trainingresults'] = 'Training results';
 $string['trainmodels'] = 'Train models';
 $string['versionnotsame'] = 'Imported file was from a different moodle version ({$a->importedversion}) than the current one ({$a->version})';
-$string['viewlog'] = 'Log';
+$string['viewlog'] = 'Evaluation log';
 $string['weeksenddateautomaticallyset'] = 'End date automatically set based on start date and the number of sections';
 $string['weeksenddatedefault'] = 'End date automatically calculated from the course start date.';
 $string['privacy:metadata'] = 'The Analytic models plugin does not store any personal data.';

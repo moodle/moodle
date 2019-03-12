@@ -2753,5 +2753,32 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019030100.01);
     }
 
+    if ($oldversion < 2019030700.01) {
+
+        // Define field evaluationmode to be added to analytics_models_log.
+        $table = new xmldb_table('analytics_models_log');
+        $field = new xmldb_field('evaluationmode', XMLDB_TYPE_CHAR, '50', null, null, null,
+            null, 'version');
+
+        // Conditionally launch add field evaluationmode.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+
+            $updatesql = "UPDATE {analytics_models_log}
+                             SET evaluationmode = 'configuration'";
+            $DB->execute($updatesql, []);
+
+            // Changing nullability of field evaluationmode on table block_instances to not null.
+            $field = new xmldb_field('evaluationmode', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL,
+                null, null, 'version');
+
+            // Launch change of nullability for field evaluationmode.
+            $dbman->change_field_notnull($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019030700.01);
+    }
+
     return true;
 }
