@@ -1335,6 +1335,11 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
         $context = context::instance_by_id($contextid);
     }
 
+    // Capability must exist.
+    if (!during_initial_install() && !$capinfo = get_capability_info($capability)) {
+        throw new coding_exception("Capability '{$capability}' was not found! This has to be fixed in code.");
+    }
+
     if (empty($permission) || $permission == CAP_INHERIT) { // if permission is not set
         unassign_capability($capability, $roleid, $context->id);
         return true;
