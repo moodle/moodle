@@ -548,12 +548,32 @@ function groups_delete_group($grouporid) {
         }
     }
 
+    $context = context_course::instance($group->courseid);
+
     // delete group calendar events
     $DB->delete_records('event', array('groupid'=>$groupid));
     //first delete usage in groupings_groups
     $DB->delete_records('groupings_groups', array('groupid'=>$groupid));
     //delete members
     $DB->delete_records('groups_members', array('groupid'=>$groupid));
+
+    // Delete any members in a conversation related to this group.
+    if ($conversation = \core_message\api::get_conversation_by_area('core_group', 'groups', $groupid, $context->id)) {
+        $DB->delete_records('message_conversations', ['id' => $conversation->id]);
+        $DB->delete_records('message_conversation_members', ['conversationid' => $conversation->id]);
+
+        // Now, go through and delete any messages and related message actions for the conversation.
+        if ($messages = $DB->get_records('messages', ['conversationid' => $conversation->id])) {
+            $messageids = array_keys($messages);
+
+            list($insql, $inparams) = $DB->get_in_or_equal($messageids);
+            $DB->delete_records_select('message_user_actions', "messageid $insql", $inparams);
+
+            // Delete the messages now.
+            $DB->delete_records('messages', ['conversationid' => $conversation->id]);
+        }
+    }
+
     //group itself last
     $DB->delete_records('groups', array('id'=>$groupid));
 

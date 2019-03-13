@@ -321,6 +321,94 @@ class core_group_lib_testcase extends advanced_testcase {
         $this->assertEquals($url, $event->get_url());
     }
 
+    public function test_groups_delete_group_with_conversation() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext1 = context_course::instance($course1->id);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 1));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course1->id, 'enablemessaging' => 1));
+
+        // Add users to both groups.
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user2->id));
+
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group2->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group2->id, 'userid' => $user2->id));
+
+        $groupconversation1 = \core_message\api::get_conversation_by_area(
+            'core_group',
+            'groups',
+            $group1->id,
+            $coursecontext1->id
+        );
+
+        $groupconversation2 = \core_message\api::get_conversation_by_area(
+            'core_group',
+            'groups',
+            $group2->id,
+            $coursecontext1->id
+        );
+
+        // Send a few messages.
+        $g1m1 = \core_message\tests\helper::send_fake_message_to_conversation($user1, $groupconversation1->id);
+        $g1m2 = \core_message\tests\helper::send_fake_message_to_conversation($user2, $groupconversation1->id);
+        $g1m3 = \core_message\tests\helper::send_fake_message_to_conversation($user1, $groupconversation1->id);
+        $g1m4 = \core_message\tests\helper::send_fake_message_to_conversation($user2, $groupconversation1->id);
+
+        $g2m1 = \core_message\tests\helper::send_fake_message_to_conversation($user1, $groupconversation2->id);
+        $g2m2 = \core_message\tests\helper::send_fake_message_to_conversation($user2, $groupconversation2->id);
+        $g2m3 = \core_message\tests\helper::send_fake_message_to_conversation($user1, $groupconversation2->id);
+        $g2m4 = \core_message\tests\helper::send_fake_message_to_conversation($user2, $groupconversation2->id);
+
+        // Delete a few messages.
+        \core_message\api::delete_message($user1->id, $g1m1);
+        \core_message\api::delete_message($user1->id, $g1m2);
+        \core_message\api::delete_message($user1->id, $g2m1);
+        \core_message\api::delete_message($user1->id, $g2m2);
+
+        groups_delete_group($group1->id);
+
+        // Confirm group conversation was deleted just for the group 1 conversation.
+        $this->assertEquals(0, $DB->count_records('message_conversations', ['id' => $groupconversation1->id]));
+        $this->assertEquals(1, $DB->count_records('message_conversations', ['id' => $groupconversation2->id]));
+
+        // Confirm conversation members were deleted just for the group 1 conversation.
+        $this->assertEquals(0, $DB->count_records('message_conversation_members', ['conversationid' => $groupconversation1->id]));
+        $this->assertEquals(2, $DB->count_records('message_conversation_members', ['conversationid' => $groupconversation2->id]));
+
+        // Confirm message user actions were deleted just for the group 1 conversation.
+        $this->assertEquals(0, $DB->count_records('message_user_actions', ['messageid' => $g1m1]));
+        $this->assertEquals(0, $DB->count_records('message_user_actions', ['messageid' => $g1m2]));
+        $this->assertEquals(0, $DB->count_records('message_user_actions', ['messageid' => $g1m3]));
+        $this->assertEquals(0, $DB->count_records('message_user_actions', ['messageid' => $g1m4]));
+        $this->assertEquals(1, $DB->count_records('message_user_actions', ['messageid' => $g2m1]));
+        $this->assertEquals(1, $DB->count_records('message_user_actions', ['messageid' => $g2m2]));
+        $this->assertEquals(0, $DB->count_records('message_user_actions', ['messageid' => $g2m3]));
+        $this->assertEquals(0, $DB->count_records('message_user_actions', ['messageid' => $g2m4]));
+
+        // Confirm messages were deleted just for the group 1 conversation.
+        $this->assertEquals(0, $DB->count_records('messages', ['id' => $g1m1]));
+        $this->assertEquals(0, $DB->count_records('messages', ['id' => $g1m2]));
+        $this->assertEquals(0, $DB->count_records('messages', ['id' => $g1m3]));
+        $this->assertEquals(0, $DB->count_records('messages', ['id' => $g1m4]));
+        $this->assertEquals(1, $DB->count_records('messages', ['id' => $g2m1]));
+        $this->assertEquals(1, $DB->count_records('messages', ['id' => $g2m2]));
+        $this->assertEquals(1, $DB->count_records('messages', ['id' => $g2m3]));
+        $this->assertEquals(1, $DB->count_records('messages', ['id' => $g2m4]));
+    }
+
     public function test_groups_delete_group_members() {
         global $DB;
         $this->resetAfterTest();
