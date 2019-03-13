@@ -2806,5 +2806,42 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019030800.00);
     }
 
+    if ($oldversion < 2019030800.02) {
+        // Remove any conversations and their members associated with non-existent groups.
+        $sql = "SELECT mc.id
+                  FROM {message_conversations} mc
+             LEFT JOIN {groups} g
+                    ON mc.itemid = g.id
+                 WHERE mc.component = :component
+                   AND mc.itemtype = :itemtype
+                   AND g.id is NULL";
+        $conversations = $DB->get_records_sql($sql, ['component' => 'core_group', 'itemtype' => 'groups']);
+
+        if ($conversations) {
+            $conversationids = array_keys($conversations);
+
+            $DB->delete_records_list('message_conversations', 'id', $conversationids);
+            $DB->delete_records_list('message_conversation_members', 'conversationid', $conversationids);
+            $DB->delete_records_list('message_conversation_actions', 'conversationid', $conversationids);
+
+            // Now, go through each conversation and delete any messages and related message actions.
+            foreach ($conversationids as $conversationid) {
+                if ($messages = $DB->get_records('messages', ['conversationid' => $conversationid])) {
+                    $messageids = array_keys($messages);
+
+                    // Delete the actions.
+                    list($insql, $inparams) = $DB->get_in_or_equal($messageids);
+                    $DB->delete_records_select('message_user_actions', "messageid $insql", $inparams);
+
+                    // Delete the messages.
+                    $DB->delete_records('messages', ['conversationid' => $conversationid]);
+                }
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019030800.02);
+    }
+
     return true;
 }
