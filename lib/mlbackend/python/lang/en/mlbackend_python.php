@@ -23,6 +23,7 @@
  */
 
 $string['packageinstalledshouldbe'] = '"moodlemlbackend" python package should be updated. The required version is "{$a->required}" and the installed version is "{$a->installed}"';
+$string['packageinstalledtoohigh'] = '"moodlemlbackend" python package is not compatible with this Moodle version. The required version is "{$a->required}" or higher as long as it is API-compatible. The installed version "{$a->installed}" is too high.';
 $string['pluginname'] = 'Python machine learning backend';
 $string['privacy:metadata'] = 'The Python machine learning backend plugin does not store any personal data.';
 $string['pythonpackagenotinstalled'] = '"moodlemlbackend" python package is not installed or there is a problem with it. Please execute "{$a}" from command line interface for more info';
