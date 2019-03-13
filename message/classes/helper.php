@@ -756,7 +756,8 @@ class helper {
                 'notification' => $notification
             ],
             'sendtouser' => false,
-            'conversationid' => false
+            'conversationid' => false,
+            'isdrawer' => $isdrawer
         ];
 
         if ($sendtouser) {

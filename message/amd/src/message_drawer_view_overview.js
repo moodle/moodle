@@ -219,6 +219,7 @@ function(
             registerEventListeners(namespace, header);
             header.attr('data-init', true);
         }
+        var fromPanel = header.attr('data-in-panel') ? 'frompanel' : null;
 
         getSearchInput(header).val('');
         var loggedInUserId = getLoggedInUserId(body);
@@ -245,7 +246,7 @@ function(
             });
 
             Section.show(namespace, null, sectionRoot, null, sectionType, includeFavourites,
-                totalCountPromise, unreadCountPromise);
+                totalCountPromise, unreadCountPromise, fromPanel);
         });
 
         return allCounts.then(function(result) {

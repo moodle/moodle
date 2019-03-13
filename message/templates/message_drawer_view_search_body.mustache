@@ -42,6 +42,7 @@
     data-users-offset="0"
     data-messages-offset="0"
     style="overflow-y: auto"
+    {{^isdrawer}}data-in-panel="true"{{/isdrawer}}
 >
     <div class="hidden" data-region="search-results-container" style="overflow-y: auto">
         {{> core_message/message_drawer_view_search_results_content }}

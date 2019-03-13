@@ -33,7 +33,7 @@
     {}
 
 }}
-<div class="h-100 view-overview-body" aria-hidden="false" data-region="view-overview" data-user-id="{{loggedinuser.id}}">
+<div class="h-100 view-overview-body" aria-hidden="false" data-region="view-overview" {{^isdrawer}}data-in-panel="true"{{/isdrawer}} data-user-id="{{loggedinuser.id}}">
     <div id="message-drawer-view-overview-container-{{uniqid}}" class="d-flex flex-column h-100" style="overflow-y: auto">
             {{> core_message/message_drawer_view_overview_section_favourites }}
             {{> core_message/message_drawer_view_overview_section_group_messages }}

@@ -780,7 +780,7 @@ function(
     var renderHeader = function(header, body, footer, data) {
         var headerContainer = getHeaderContent(header);
         var template = TEMPLATES.HEADER_PUBLIC;
-
+        data.context.showrouteback = (header.attr('data-from-panel') === "false");
         if (data.type == CONVERSATION_TYPES.PRIVATE) {
             template = data.showControls ? TEMPLATES.HEADER_PRIVATE : TEMPLATES.HEADER_PRIVATE_NO_CONTROLS;
         }

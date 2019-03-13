@@ -13890,6 +13890,8 @@ a.ygtvspacer:hover {
   display: flex;
   flex-direction: column;
   transition: all 0.2s ease-in-out; }
+  .message-app .icon-back-in-drawer {
+    display: none; }
   .message-app.drawer {
     z-index: 1020;
     position: fixed;
@@ -13898,10 +13900,12 @@ a.ygtvspacer:hover {
     height: calc(100% - 50px);
     width: 320px;
     box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.08); }
-    .message-app.drawer .body-container > * {
-      position: absolute; }
+    .message-app.drawer .icon-back-in-app {
+      display: none; }
+    .message-app.drawer .icon-back-in-drawer {
+      display: inherit; }
   .message-app.main {
-    height: 768px; }
+    min-height: 400px; }
   .message-app.hidden {
     display: block;
     right: -320px; }
@@ -13911,6 +13915,7 @@ a.ygtvspacer:hover {
     flex: 1;
     overflow: hidden; }
     .message-app .body-container > * {
+      position: absolute;
       right: 0;
       left: 0;
       top: 0;
@@ -14013,6 +14018,15 @@ a.ygtvspacer:hover {
     overflow: hidden; }
   .message-app .lazy-load-list {
     overflow-y: auto; }
+
+#page-message-index #region-main {
+  height: 100%; }
+  #page-message-index #region-main div[role="main"] {
+    height: 100%; }
+    #page-message-index #region-main div[role="main"] #maincontent {
+      margin-top: -1px; }
+    #page-message-index #region-main div[role="main"] .message-app.main {
+      height: 100%; }
 
 .dir-rtl .message-drawer {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08); }

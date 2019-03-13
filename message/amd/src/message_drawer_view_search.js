@@ -621,9 +621,10 @@ function(
      */
     var renderContacts = function(root, contacts) {
         var container = getContactsContainer(root);
+        var frompanel = root.attr('data-in-panel');
         var list = container.find(SELECTORS.LIST);
 
-        return Templates.render(TEMPLATES.CONTACTS_LIST, {contacts: contacts})
+        return Templates.render(TEMPLATES.CONTACTS_LIST, {contacts: contacts, frompanel: frompanel})
             .then(function(html) {
                 list.append(html);
                 return html;
@@ -639,9 +640,10 @@ function(
      */
     var renderNonContacts = function(root, nonContacts) {
         var container = getNonContactsContainer(root);
+        var frompanel = root.attr('data-in-panel');
         var list = container.find(SELECTORS.LIST);
 
-        return Templates.render(TEMPLATES.NON_CONTACTS_LIST, {noncontacts: nonContacts})
+        return Templates.render(TEMPLATES.NON_CONTACTS_LIST, {noncontacts: nonContacts, frompanel: frompanel})
             .then(function(html) {
                 list.append(html);
                 return html;
@@ -657,9 +659,10 @@ function(
      */
     var renderMessages = function(root, messages) {
         var container = getMessagesContainer(root);
+        var frompanel = root.attr('data-in-panel');
         var list = container.find(SELECTORS.LIST);
 
-        return Templates.render(TEMPLATES.MESSAGES_LIST, {messages: messages})
+        return Templates.render(TEMPLATES.MESSAGES_LIST, {messages: messages, frompanel: frompanel})
             .then(function(html) {
                 list.append(html);
                 return html;
@@ -945,7 +948,6 @@ function(
             registerEventListeners(header, body);
             body.attr('data-init', true);
         }
-
         var searchInput = getSearchInput(header);
         searchInput.focus();
 
@@ -959,6 +961,9 @@ function(
      * @return {Object} jQuery promise
      */
     var description = function(header) {
+        if (typeof header !== 'object') {
+            return Str.get_string('messagedrawerviewsearch', 'core_message');
+        }
         var searchInput = getSearchInput(header);
         var searchText = searchInput.val().trim();
         return Str.get_string('messagedrawerviewsearch', 'core_message', searchText);

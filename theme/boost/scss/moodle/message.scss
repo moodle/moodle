@@ -425,6 +425,10 @@ $message-drawer-width: 320px;
     flex-direction: column;
     @include transition();
 
+    .icon-back-in-drawer {
+        display: none;
+    }
+
     &.drawer {
         z-index: $zindex-sticky;
         position: fixed;
@@ -433,16 +437,16 @@ $message-drawer-width: 320px;
         height: calc(100% - #{$navbar-height});
         width: $message-drawer-width;
         box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
-
-        .body-container {
-            & > * {
-                position: absolute;
-            }
+        .icon-back-in-app {
+            display: none;
+        }
+        .icon-back-in-drawer {
+            display: inherit;
         }
     }
 
     &.main {
-        height: 768px;
+        min-height: 400px;
     }
 
     &.hidden {
@@ -459,6 +463,7 @@ $message-drawer-width: 320px;
         overflow: hidden;
 
         & > * {
+            position: absolute;
             right: 0;
             left: 0;
             top: 0;
@@ -600,7 +605,18 @@ $message-drawer-width: 320px;
         overflow-y: auto;
     }
 }
-
+#page-message-index #region-main {
+    height: 100%;
+    div[role="main"] {
+        height: 100%;
+        #maincontent {
+            margin-top: -1px;
+        }
+        .message-app.main {
+            height: 100%;
+        }
+    }
+}
 .dir-rtl {
     .message-drawer {
         box-shadow: 2px 2px 4px rgba(0, 0, 0, .08);
