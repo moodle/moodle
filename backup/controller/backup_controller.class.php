@@ -79,8 +79,9 @@ class backup_controller extends base_controller {
      * @param bool $interactive Whether this backup will require user interaction; backup::INTERACTIVE_YES or INTERACTIVE_NO
      * @param int $mode One of backup::MODE_GENERAL, MODE_IMPORT, MODE_SAMESITE, MODE_HUB, MODE_AUTOMATED
      * @param int $userid The id of the user making the backup
+     * @param bool $releasesession Should release the session? backup::RELEASESESSION_YES or backup::RELEASESESSION_NO
      */
-    public function __construct($type, $id, $format, $interactive, $mode, $userid){
+    public function __construct($type, $id, $format, $interactive, $mode, $userid, $releasesession = backup::RELEASESESSION_NO) {
         $this->type = $type;
         $this->id   = $id;
         $this->courseid = backup_controller_dbops::get_courseid_from_type_id($this->type, $this->id);
@@ -88,6 +89,7 @@ class backup_controller extends base_controller {
         $this->interactive = $interactive;
         $this->mode = $mode;
         $this->userid = $userid;
+        $this->releasesession = $releasesession;
 
         // Apply some defaults
         $this->operation = backup::OPERATION_BACKUP;
@@ -358,6 +360,11 @@ class backup_controller extends base_controller {
         // Basic/initial prevention against time/memory limits
         core_php_time_limit::raise(1 * 60 * 60); // 1 hour for 1 course initially granted
         raise_memory_limit(MEMORY_EXTRA);
+
+        // Release the session so other tabs in the same session are not blocked.
+        if ($this->get_releasesession() === backup::RELEASESESSION_YES) {
+            \core\session\manager::write_close();
+        }
 
         // If the controller has decided that we can include files, then check the setting, otherwise do not include files.
         if ($this->get_include_files()) {

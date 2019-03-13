@@ -79,15 +79,17 @@ class restore_controller extends base_controller {
      * @param int $userid
      * @param int $target backup::TARGET_[ NEW_COURSE | CURRENT_ADDING | CURRENT_DELETING | EXISTING_ADDING | EXISTING_DELETING ]
      * @param \core\progress\base $progress Optional progress monitor
+     * @param bool $releasesession Should release the session? backup::RELEASESESSION_YES or backup::RELEASESESSION_NO
      */
     public function __construct($tempdir, $courseid, $interactive, $mode, $userid, $target,
-            \core\progress\base $progress = null) {
+            \core\progress\base $progress = null, $releasesession = backup::RELEASESESSION_NO) {
         $this->tempdir = $tempdir;
         $this->courseid = $courseid;
         $this->interactive = $interactive;
         $this->mode = $mode;
         $this->userid = $userid;
         $this->target = $target;
+        $this->releasesession = $releasesession;
 
         // Apply some defaults
         $this->type = '';
@@ -356,6 +358,11 @@ class restore_controller extends base_controller {
         // Basic/initial prevention against time/memory limits
         core_php_time_limit::raise(1 * 60 * 60); // 1 hour for 1 course initially granted
         raise_memory_limit(MEMORY_EXTRA);
+
+        // Release the session so other tabs in the same session are not blocked.
+        if ($this->get_releasesession() === backup::RELEASESESSION_YES) {
+            \core\session\manager::write_close();
+        }
 
         // Do course cleanup precheck, if required. This was originally in restore_ui. Moved to handle async backup/restore.
         if ($this->get_target() == backup::TARGET_CURRENT_DELETING || $this->get_target() == backup::TARGET_EXISTING_DELETING) {
