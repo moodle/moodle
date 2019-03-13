@@ -78,7 +78,9 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
         // Execute it sending the standard error to $output.
         $result = exec($cmd . ' 2>&1', $output, $exitcode);
 
-        if ($result === self::REQUIRED_PIP_PACKAGE_VERSION) {
+        $vercheck = self::check_pip_package_version($result);
+
+        if ($vercheck === 0) {
             return true;
         }
 
@@ -87,8 +89,17 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
         }
 
         if ($result) {
-            $a = (object)array('installed' => $result, 'required' => self::REQUIRED_PIP_PACKAGE_VERSION);
-            return get_string('packageinstalledshouldbe', 'mlbackend_python', $a);
+            $a = [
+                'installed' => $result,
+                'required' => self::REQUIRED_PIP_PACKAGE_VERSION,
+            ];
+
+            if ($vercheck < 0) {
+                return get_string('packageinstalledshouldbe', 'mlbackend_python', $a);
+
+            } else if ($vercheck > 0) {
+                return get_string('packageinstalledtoohigh', 'mlbackend_python', $a);
+            }
         }
 
         return get_string('pythonpackagenotinstalled', 'mlbackend_python', $cmd);
