@@ -81,17 +81,6 @@ if ($hassiteconfig) {
         $plugin->load_settings($ADMIN, 'blocksettings', $hassiteconfig);
     }
 
-    // message outputs
-    $ADMIN->add('modules', new admin_category('messageoutputs', new lang_string('messageoutputs', 'message')));
-    $ADMIN->add('messageoutputs', new admin_page_managemessageoutputs());
-    $ADMIN->add('messageoutputs', new admin_page_defaultmessageoutputs());
-    $plugins = core_plugin_manager::instance()->get_plugins_of_type('message');
-    core_collator::asort_objects_by_property($plugins, 'displayname');
-    foreach ($plugins as $plugin) {
-        /** @var \core\plugininfo\message $plugin */
-        $plugin->load_settings($ADMIN, 'messageoutputs', $hassiteconfig);
-    }
-
     // authentication plugins
     $ADMIN->add('modules', new admin_category('authsettings', new lang_string('authentication', 'admin')));
 
