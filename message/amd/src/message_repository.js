@@ -906,6 +906,42 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
     };
 
     /**
+     * Set a list of conversations to set as muted for the given user.
+     *
+     * @param {int} userId The user id
+     * @param {array} conversationIds List of conversation ids to set as favourite
+     * @return {object} jQuery promise
+     */
+    var setMutedConversations = function(userId, conversationIds) {
+        var request = {
+            methodname: 'core_message_mute_conversations',
+            args: {
+                userid: userId,
+                conversationids: conversationIds
+            }
+        };
+        return Ajax.call([request])[0];
+    };
+
+    /**
+     * Set a list of conversations to unset as muted for the given user.
+     *
+     * @param {int} userId The user id
+     * @param {array} conversationIds List of conversation ids to unset as favourite
+     * @return {object} jQuery promise
+     */
+    var unsetMutedConversations = function(userId, conversationIds) {
+        var request = {
+            methodname: 'core_message_unmute_conversations',
+            args: {
+                userid: userId,
+                conversationids: conversationIds
+            }
+        };
+        return Ajax.call([request])[0];
+    };
+
+    /**
      * Get a list of user's member info.
      *
      * @param {int} referenceUserId The user id
@@ -1060,7 +1096,9 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
         getConversations: getConversations,
         getConversationMembers: getConversationMembers,
         setFavouriteConversations: setFavouriteConversations,
+        setMutedConversations: setMutedConversations,
         unsetFavouriteConversations: unsetFavouriteConversations,
+        unsetMutedConversations: unsetMutedConversations,
         getMemberInfo: getMemberInfo,
         markAllConversationMessagesAsRead: markAllConversationMessagesAsRead,
         getUserMessagePreferences: getUserMessagePreferences,

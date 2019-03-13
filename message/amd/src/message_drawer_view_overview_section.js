@@ -58,6 +58,7 @@ function(
         BLOCKED_ICON_CONTAINER: '[data-region="contact-icon-blocked"]',
         LAST_MESSAGE: '[data-region="last-message"]',
         LAST_MESSAGE_DATE: '[data-region="last-message-date"]',
+        MUTED_ICON_CONTAINER: '[data-region="muted-icon-container"]',
         UNREAD_COUNT: '[data-region="unread-count"]',
         SECTION_TOTAL_COUNT: '[data-region="section-total-count"]',
         SECTION_TOTAL_COUNT_CONTAINER: '[data-region="section-total-count-container"]',
@@ -169,6 +170,7 @@ function(
                 name: conversation.name,
                 subname: conversation.subname,
                 unreadcount: conversation.unreadcount,
+                ismuted: conversation.ismuted,
                 lastmessagedate: lastMessage ? lastMessage.timecreated : null,
                 sentfromcurrentuser: lastMessage ? lastMessage.useridfrom == userId : null,
                 lastmessage: lastMessage ? $(lastMessage.text).text() || lastMessage.text : null
@@ -332,6 +334,24 @@ function(
      */
     var getConversationElementFromUserId = function(root, userId) {
         return root.find('[data-user-id="' + userId + '"]');
+    };
+
+    /**
+     * Show the conversation is muted icon.
+     *
+     * @param  {Object} conversationElement The conversation element.
+     */
+    var muteConversation = function(conversationElement) {
+        conversationElement.find(SELECTORS.MUTED_ICON_CONTAINER).removeClass('hidden');
+    };
+
+    /**
+     * Hide the conversation is muted icon.
+     *
+     * @param  {Object} conversationElement The conversation element.
+     */
+    var unmuteConversation = function(conversationElement) {
+        conversationElement.find(SELECTORS.MUTED_ICON_CONTAINER).addClass('hidden');
     };
 
     /**
@@ -515,8 +535,25 @@ function(
 
         PubSub.subscribe(MessageDrawerEvents.CONTACT_UNBLOCKED, function(userId) {
             var conversationElement = getConversationElementFromUserId(root, userId);
+
             if (conversationElement.length) {
                 unblockContact(conversationElement);
+            }
+        });
+
+        PubSub.subscribe(MessageDrawerEvents.CONVERSATION_SET_MUTED, function(conversation) {
+            var conversationId = conversation.id;
+            var conversationElement = getConversationElement(root, conversationId);
+            if (conversationElement.length) {
+                muteConversation(conversationElement);
+            }
+        });
+
+        PubSub.subscribe(MessageDrawerEvents.CONVERSATION_UNSET_MUTED, function(conversation) {
+            var conversationId = conversation.id;
+            var conversationElement = getConversationElement(root, conversationId);
+            if (conversationElement.length) {
+                unmuteConversation(conversationElement);
             }
         });
 

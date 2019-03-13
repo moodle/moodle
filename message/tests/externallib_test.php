@@ -1023,6 +1023,168 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test muting conversations.
+     */
+    public function test_mute_conversations() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]);
+
+        $this->setUser($user1);
+
+        // Muting a conversation.
+        $return = core_message_external::mute_conversations($user1->id, [$conversation->id]);
+        $return = external_api::clean_returnvalue(core_message_external::mute_conversations_returns(), $return);
+        $this->assertEquals(array(), $return);
+
+        // Get list of muted conversations.
+        $mca = $DB->get_record('message_conversation_actions', []);
+
+        $this->assertEquals($user1->id, $mca->userid);
+        $this->assertEquals($conversation->id, $mca->conversationid);
+        $this->assertEquals(\core_message\api::CONVERSATION_ACTION_MUTED, $mca->action);
+
+        // Muting a conversation that is already muted.
+        $return = core_message_external::mute_conversations($user1->id, [$conversation->id]);
+        $return = external_api::clean_returnvalue(core_message_external::mute_conversations_returns(), $return);
+        $this->assertEquals(array(), $return);
+
+        $this->assertEquals(1, $DB->count_records('message_conversation_actions'));
+    }
+
+    /**
+     * Test muting a conversation with messaging disabled.
+     */
+    public function test_mute_conversations_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]);
+
+        $this->setUser($user1);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::mute_conversations($user1->id, [$conversation->id]);
+    }
+
+    /**
+     * Test muting a conversation with no permission.
+     */
+    public function test_mute_conversations_no_permission() {
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]);
+
+        $this->setUser($user3);
+
+        // Ensure an exception is thrown.
+        $this->expectException('required_capability_exception');
+        core_message_external::mute_conversations($user1->id, [$conversation->id]);
+    }
+
+    /**
+     * Test unmuting conversations.
+     */
+    public function test_unmute_conversations() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]);
+
+        $this->setUser($user1);
+
+        // Mute the conversation.
+        \core_message\api::mute_conversation($user1->id, $conversation->id);
+
+        // Unmuting a conversation.
+        $return = core_message_external::unmute_conversations($user1->id, [$conversation->id]);
+        $return = external_api::clean_returnvalue(core_message_external::unmute_conversations_returns(), $return);
+        $this->assertEquals(array(), $return);
+
+        $this->assertEquals(0, $DB->count_records('message_conversation_actions'));
+
+        // Unmuting a conversation which is already unmuted.
+        $return = core_message_external::unmute_conversations($user1->id, [$conversation->id]);
+        $return = external_api::clean_returnvalue(core_message_external::unmute_conversations_returns(), $return);
+        $this->assertEquals(array(), $return);
+
+        $this->assertEquals(0, $DB->count_records('message_conversation_actions'));
+    }
+
+    /**
+     * Test unmuting a conversation with messaging disabled.
+     */
+    public function test_unmute_conversation_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]);
+
+        $this->setUser($user1);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::unmute_conversations($user1->id, [$user2->id]);
+    }
+
+    /**
+     * Test unmuting a conversation with no permission.
+     */
+    public function test_unmute_conversation_no_permission() {
+        $this->resetAfterTest();
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversation = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]);
+
+        $this->setUser($user3);
+
+        // Ensure an exception is thrown.
+        $this->expectException('required_capability_exception');
+        core_message_external::unmute_conversations($user1->id, [$conversation->id]);
+    }
+
+    /**
      * Test blocking a user.
      */
     public function test_block_user() {
@@ -5652,6 +5814,55 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertNotNull($individualmember['requirescontact']);
         $this->assertNotNull($individualmember['canmessage']);
         $this->assertNotEmpty($individualmember['contactrequests']);
+    }
+
+    /**
+     * Test verifying get_conversations identifies if a conversation is muted or not.
+     */
+    public function test_get_conversations_some_muted() {
+        $this->resetAfterTest();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $conversation1 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user2->id]);
+        testhelper::send_fake_message_to_conversation($user1, $conversation1->id, 'Message 1');
+        testhelper::send_fake_message_to_conversation($user2, $conversation1->id, 'Message 2');
+        \core_message\api::mute_conversation($user1->id, $conversation1->id);
+
+        $conversation2 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$user1->id, $user3->id]);
+        testhelper::send_fake_message_to_conversation($user1, $conversation2->id, 'Message 1');
+        testhelper::send_fake_message_to_conversation($user2, $conversation2->id, 'Message 2');
+
+        $conversation3 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id]);
+        \core_message\api::mute_conversation($user1->id, $conversation3->id);
+
+        $conversation4 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user3->id]);
+
+        $this->setUser($user1);
+        $result = core_message_external::get_conversations($user1->id);
+        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $conversations = $result['conversations'];
+
+        usort($conversations, function($first, $second){
+            return $first['id'] > $second['id'];
+        });
+
+        $conv1 = array_shift($conversations);
+        $conv2 = array_shift($conversations);
+        $conv3 = array_shift($conversations);
+        $conv4 = array_shift($conversations);
+
+        $this->assertTrue($conv1['ismuted']);
+        $this->assertFalse($conv2['ismuted']);
+        $this->assertTrue($conv3['ismuted']);
+        $this->assertFalse($conv4['ismuted']);
     }
 
     /**

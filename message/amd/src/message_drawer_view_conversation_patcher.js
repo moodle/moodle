@@ -298,6 +298,7 @@ function(
                     totalmembercount: newState.totalMemberCount,
                     imageurl: newState.imageUrl,
                     isfavourite: newState.isFavourite,
+                    ismuted: newState.isMuted,
                     // Don't show favouriting if we don't have a conversation.
                     showfavourite: newState.id !== null,
                     userid: newOtherUser.id,
@@ -336,6 +337,7 @@ function(
                     totalmembercount: newState.totalMemberCount,
                     imageurl: newState.imageUrl,
                     isfavourite: newState.isFavourite,
+                    ismuted: newState.isMuted,
                     // Don't show favouriting if we don't have a conversation.
                     showfavourite: newState.id !== null
                 }
@@ -641,6 +643,39 @@ function(
             return 'show-remove';
         } else if (oldIsFavourite && !newIsFavourite) {
             return 'show-add';
+        } else {
+            return null;
+        }
+    };
+
+    /**
+     * Check if there are any changes the conversation muted state.
+     *
+     * @param  {Object} state The current state.
+     * @param  {Object} newState The new state.
+     * @return {string|null}
+     */
+    var buildIsMuted = function(state, newState) {
+        var oldIsMuted = state.isMuted;
+        var newIsMuted = newState.isMuted;
+
+        if (state.id === null && newState.id === null) {
+            // The conversation isn't yet created so don't change anything.
+            return null;
+        } else if (state.id === null && newState.id !== null) {
+            // The conversation was created so we can show the mute button.
+            return 'show-mute';
+        } else if (state.id !== null && newState.id === null) {
+            // We're changing from a created conversation to a new conversation so hide
+            // the muting functionality for now.
+            return 'hide';
+        } else if (oldIsMuted == newIsMuted) {
+            // No change.
+            return null;
+        } else if (!oldIsMuted && newIsMuted) {
+            return 'show-unmute';
+        } else if (oldIsMuted && !newIsMuted) {
+            return 'show-mute';
         } else {
             return null;
         }
@@ -1130,7 +1165,8 @@ function(
                 confirmDeleteSelectedMessages: buildConfirmDeleteSelectedMessages,
                 inEditMode: buildInEditMode,
                 selectedMessages: buildSelectedMessages,
-                isFavourite: buildIsFavourite
+                isFavourite: buildIsFavourite,
+                isMuted: buildIsMuted
             }
         };
         // These build functions are only applicable to private conversations.

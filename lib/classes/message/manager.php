@@ -84,13 +84,16 @@ class manager {
         // Get user records for all members of the conversation.
         // We must fetch distinct users, because it's possible for a user to message themselves via bulk user actions.
         // In such cases, there will be 2 records referring to the same user.
-        $sql = "SELECT u.*
+        $sql = "SELECT u.*, mca.id as ismuted
                   FROM {user} u
+             LEFT JOIN {message_conversation_actions} mca
+                    ON mca.userid = u.id AND mca.conversationid = ? AND mca.action = ?
                  WHERE u.id IN (
                           SELECT mcm.userid FROM {message_conversation_members} mcm
-                           WHERE mcm.conversationid = :convid
+                           WHERE mcm.conversationid = ?
                  )";
-        $members = $DB->get_records_sql($sql, ['convid' => $eventdata->convid]);
+        $members = $DB->get_records_sql($sql, [$eventdata->convid, \core_message\api::CONVERSATION_ACTION_MUTED,
+            $eventdata->convid]);
         if (empty($members)) {
             throw new \moodle_exception("Conversation has no members or does not exist.");
         }
@@ -138,7 +141,10 @@ class manager {
         foreach ($otherusers as $recipient) {
             // If this message was a legacy (1:1) message, then we use the userto.
             if ($legacymessage) {
+                $ismuted = $recipient->ismuted;
+
                 $recipient = $eventdata->userto;
+                $recipient->ismuted = $ismuted;
             }
 
             $usertoisrealuser = (\core_user::is_real_user($recipient->id) != false);
@@ -195,8 +201,9 @@ class manager {
 
             // Fill in the array of processors to be used based on default and user preferences.
             // This applies only to individual conversations. Messages to group conversations ignore processors.
+            // Do not process muted conversations.
             $processorlist = [];
-            if ($conv->type == \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL) {
+            if ($conv->type == \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL && !$recipient->ismuted) {
                 foreach ($processors as $processor) {
                     // Skip adding processors for internal user, if processor doesn't support sending message to internal user.
                     if (!$usertoisrealuser && !$processor->object->can_send_to_any_users()) {

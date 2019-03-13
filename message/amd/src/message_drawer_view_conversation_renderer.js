@@ -1249,6 +1249,39 @@ function(
     };
 
     /**
+     * Show or hide the mute / unmute option in the header dropdown menu
+     * and the muted icon in the header title.
+     *
+     * @param {Object} header The header container element.
+     * @param {Object} body The body container element.
+     * @param {Object} footer The footer container element.
+     * @param {string} state The state of the conversation as defined by the patcher.
+     */
+    var renderIsMuted = function(header, body, footer, state) {
+        var muteIcon = header.find(SELECTORS.MUTED_ICON_CONTAINER);
+        var setMuted = header.find(SELECTORS.ACTION_CONFIRM_MUTE);
+        var unsetMuted = header.find(SELECTORS.ACTION_CONFIRM_UNMUTE);
+
+        switch (state) {
+            case 'hide':
+                muteIcon.addClass('hidden');
+                setMuted.addClass('hidden');
+                unsetMuted.addClass('hidden');
+                break;
+            case 'show-mute':
+                muteIcon.addClass('hidden');
+                setMuted.removeClass('hidden');
+                unsetMuted.addClass('hidden');
+                break;
+            case 'show-unmute':
+                muteIcon.removeClass('hidden');
+                setMuted.addClass('hidden');
+                unsetMuted.removeClass('hidden');
+                break;
+        }
+    };
+
+    /**
      * Show or hide the add / remove user as contact option in the header dropdown menu.
      *
      * @param {Object} header The header container element.
@@ -1476,6 +1509,7 @@ function(
                 isBlocked: renderIsBlocked,
                 isContact: renderIsContact,
                 isFavourite: renderIsFavourite,
+                isMuted: renderIsMuted,
                 loadingConfirmAction: renderLoadingConfirmAction,
                 inEditMode: renderInEditMode
             },
