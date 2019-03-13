@@ -1796,9 +1796,11 @@ function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $
         $updatedsincesql = 'AND d.timemodified > ?';
         $params[] = $updatedsince;
     }
+    $discussionfields = "d.id as discussionid, d.course, d.forum, d.name, d.firstpost, d.userid, d.groupid, d.assessed," .
+    " d.timemodified, d.usermodified, d.timestart, d.timeend, d.pinned";
 
     $allnames = get_all_user_name_fields(true, 'u');
-    $sql = "SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid, d.timestart, d.timeend, d.pinned,
+    $sql = "SELECT $postdata, $discussionfields,
                    $allnames, u.email, u.picture, u.imagealt $umfields
               FROM {forum_discussions} d
                    JOIN {forum_posts} p ON p.discussion = d.id
