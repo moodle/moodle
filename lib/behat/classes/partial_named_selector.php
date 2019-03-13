@@ -161,7 +161,7 @@ XPATH
         .//*[@data-region='message-drawer']//div[@data-region='group-info-content-container']
         //div[@class='list-group' and not(contains(@class, 'hidden'))]//*[text()[contains(., %locator%)]] |
         .//*[@data-region='message-drawer']//div[@data-region='group-info-content-container']
-        //div[@data-region='empty-message-container' and not(contains(@class, 'hidden'))]//*[text()[contains(., %locator%)]]
+        //div[@data-region='empty-message-container' and not(contains(@class, 'hidden')) and contains(., %locator%)]
 XPATH
     , 'group_message_tab' => <<<XPATH
         .//*[@data-region='message-drawer']//button[@data-toggle='collapse']//*[text()[contains(., %locator%)]]/..
