@@ -168,7 +168,7 @@ class core_files_renderer extends plugin_renderer_base {
         <div class="fp-reficons2"></div>
     </div>
     <div class="fp-filename-field">
-        <div class="fp-filename"></div>
+        <div class="fp-filename text-truncate"></div>
     </div>
     </a>
     <a class="fp-contextmenu" href="#">'.$this->pix_icon('i/menu', '▶').'</a>
@@ -335,7 +335,7 @@ class core_files_renderer extends plugin_renderer_base {
         <div class="fp-reficons2"></div>
     </div>
     <div class="fp-filename-field">
-        <p class="fp-filename"></p>
+        <p class="fp-filename text-truncate"></p>
     </div>
 </a>';
         return $rv;

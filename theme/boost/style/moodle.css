@@ -12736,9 +12736,16 @@ body.drawer-ease {
   overflow: hidden;
   position: absolute; }
 
-.fp-iconview .fp-filename-field:hover {
+.fp-iconview .fp-file:focus .fp-filename-field,
+.fp-iconview .fp-file:hover .fp-filename-field {
   overflow: visible;
   z-index: 1000; }
+
+.fp-iconview .fp-file:focus .fp-filename,
+.fp-iconview .fp-file:hover .fp-filename {
+  overflow: inherit;
+  white-space: normal;
+  text-overflow: inherit; }
 
 .fp-iconview .fp-filename-field .fp-filename {
   background: #fff;
