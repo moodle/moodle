@@ -1804,6 +1804,179 @@ function mod_workshop_core_calendar_provide_event_action(calendar_event $event,
     );
 }
 
+/**
+ * This function calculates the minimum and maximum cutoff values for the timestart of
+ * the given event.
+ *
+ * It will return an array with two values, the first being the minimum cutoff value and
+ * the second being the maximum cutoff value. Either or both values can be null, which
+ * indicates there is no minimum or maximum, respectively.
+ *
+ * If a cutoff is required then the function must return an array containing the cutoff
+ * timestamp and error string to display to the user if the cutoff value is violated.
+ *
+ * A minimum and maximum cutoff return value will look like:
+ * [
+ *     [1505704373, 'The date must be after this date'],
+ *     [1506741172, 'The date must be before this date']
+ * ]
+ *
+ * @param calendar_event $event The calendar event to get the time range for
+ * @param stdClass $workshop The module instance to get the range from
+ * @return array Returns an array with min and max date.
+ */
+function mod_workshop_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $workshop) : array {
+    $mindate = null;
+    $maxdate = null;
+
+    $phasesubmissionend = max($workshop->submissionstart, $workshop->submissionend);
+    $phaseassessmentstart = min($workshop->assessmentstart, $workshop->assessmentend);
+    if ($phaseassessmentstart == 0) {
+        $phaseassessmentstart = max($workshop->assessmentstart, $workshop->assessmentend);
+    }
+
+    switch ($event->eventtype) {
+        case WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN:
+            if (!empty($workshop->submissionend)) {
+                $maxdate = [
+                    $workshop->submissionend - 1,   // The submissionstart and submissionend cannot be exactly the same.
+                    get_string('submissionendbeforestart', 'mod_workshop')
+                ];
+            } else if ($phaseassessmentstart) {
+                $maxdate = [
+                    $phaseassessmentstart,
+                    get_string('phasesoverlap', 'mod_workshop')
+                ];
+            }
+            break;
+        case WORKSHOP_EVENT_TYPE_SUBMISSION_CLOSE:
+            if (!empty($workshop->submissionstart)) {
+                $mindate = [
+                    $workshop->submissionstart + 1, // The submissionstart and submissionend cannot be exactly the same.
+                    get_string('submissionendbeforestart', 'mod_workshop')
+                ];
+            }
+            if ($phaseassessmentstart) {
+                $maxdate = [
+                    $phaseassessmentstart,
+                    get_string('phasesoverlap', 'mod_workshop')
+                ];
+            }
+            break;
+        case WORKSHOP_EVENT_TYPE_ASSESSMENT_OPEN:
+            if ($phasesubmissionend) {
+                $mindate = [
+                    $phasesubmissionend,
+                    get_string('phasesoverlap', 'mod_workshop')
+                ];
+            }
+            if (!empty($workshop->assessmentend)) {
+                $maxdate = [
+                    $workshop->assessmentend - 1,   // The assessmentstart and assessmentend cannot be exactly the same.
+                    get_string('assessmentendbeforestart', 'mod_workshop')
+                ];
+            }
+            break;
+        case WORKSHOP_EVENT_TYPE_ASSESSMENT_CLOSE:
+            if (!empty($workshop->assessmentstart)) {
+                $mindate = [
+                    $workshop->assessmentstart + 1, // The assessmentstart and assessmentend cannot be exactly the same.
+                    get_string('assessmentendbeforestart', 'mod_workshop')
+                ];
+            } else if ($phasesubmissionend) {
+                $mindate = [
+                    $phasesubmissionend,
+                    get_string('phasesoverlap', 'mod_workshop')
+                ];
+            }
+            break;
+    }
+
+    return [$mindate, $maxdate];
+}
+
+/**
+ * This function will update the workshop module according to the
+ * event that has been modified.
+ *
+ * @param \calendar_event $event
+ * @param stdClass $workshop The module instance to get the range from
+ */
+function mod_workshop_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $workshop) : void {
+    global $DB;
+
+    $courseid = $event->courseid;
+    $modulename = $event->modulename;
+    $instanceid = $event->instance;
+
+    // Something weird going on. The event is for a different module so
+    // we should ignore it.
+    if ($modulename != 'workshop') {
+        return;
+    }
+
+    if ($workshop->id != $instanceid) {
+        return;
+    }
+
+    if (!in_array(
+            $event->eventtype,
+            [
+                WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN,
+                WORKSHOP_EVENT_TYPE_SUBMISSION_CLOSE,
+                WORKSHOP_EVENT_TYPE_ASSESSMENT_OPEN,
+                WORKSHOP_EVENT_TYPE_ASSESSMENT_CLOSE
+            ]
+    )) {
+        return;
+    }
+
+    $coursemodule = get_fast_modinfo($courseid)->instances[$modulename][$instanceid];
+    $context = context_module::instance($coursemodule->id);
+
+    // The user does not have the capability to modify this activity.
+    if (!has_capability('moodle/course:manageactivities', $context)) {
+        return;
+    }
+
+    $modified = false;
+
+    switch ($event->eventtype) {
+        case WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN:
+            if ($event->timestart != $workshop->submissionstart) {
+                $workshop->submissionstart = $event->timestart;
+                $modified = true;
+            }
+            break;
+        case WORKSHOP_EVENT_TYPE_SUBMISSION_CLOSE:
+            if ($event->timestart != $workshop->submissionend) {
+                $workshop->submissionend = $event->timestart;
+                $modified = true;
+            }
+            break;
+        case WORKSHOP_EVENT_TYPE_ASSESSMENT_OPEN:
+            if ($event->timestart != $workshop->assessmentstart) {
+                $workshop->assessmentstart = $event->timestart;
+                $modified = true;
+            }
+            break;
+        case WORKSHOP_EVENT_TYPE_ASSESSMENT_CLOSE:
+            if ($event->timestart != $workshop->assessmentend) {
+                $workshop->assessmentend = $event->timestart;
+                $modified = true;
+            }
+            break;
+    }
+
+    if ($modified) {
+        $workshop->timemodified = time();
+        // Persist the assign instance changes.
+        $DB->update_record('workshop', $workshop);
+        $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
+        $event->trigger();
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Course reset API                                                           //
 ////////////////////////////////////////////////////////////////////////////////
