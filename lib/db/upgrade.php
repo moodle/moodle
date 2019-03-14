@@ -2400,5 +2400,67 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018051704.04);
     }
 
+    if ($oldversion < 2018051705.01) {
+
+        // Add missing indicators to course_dropout.
+        $params = [
+            'target' => '\core\analytics\target\course_dropout',
+            'trained' => 0,
+            'enabled' => 0,
+        ];
+        $models = $DB->get_records('analytics_models', $params);
+        foreach ($models as $model) {
+            $indicators = json_decode($model->indicators);
+
+            $potentiallymissingindicators = [
+                '\core_course\analytics\indicator\completion_enabled',
+                '\core_course\analytics\indicator\potential_cognitive_depth',
+                '\core_course\analytics\indicator\potential_social_breadth',
+                '\core\analytics\indicator\any_access_after_end',
+                '\core\analytics\indicator\any_access_before_start',
+                '\core\analytics\indicator\any_write_action_in_course',
+                '\core\analytics\indicator\read_actions'
+            ];
+
+            $missing = false;
+            foreach ($potentiallymissingindicators as $potentiallymissingindicator) {
+                if (!in_array($potentiallymissingindicator, $indicators)) {
+                    // Add the missing indicator to sites upgraded before 2017072000.02.
+                    $indicators[] = $potentiallymissingindicator;
+                    $missing = true;
+                }
+            }
+
+            if ($missing) {
+                $model->indicators = json_encode($indicators);
+                $model->version = time();
+                $model->timemodified = time();
+                $DB->update_record('analytics_models', $model);
+            }
+        }
+
+        // Add missing indicators to no_teaching.
+        $params = [
+            'target' => '\core\analytics\target\no_teaching',
+        ];
+        $models = $DB->get_records('analytics_models', $params);
+        foreach ($models as $model) {
+            $indicators = json_decode($model->indicators);
+            if (!in_array('\core_course\analytics\indicator\no_student', $indicators)) {
+                // Add the missing indicator to sites upgraded before 2017072000.02.
+
+                $indicators[] = '\core_course\analytics\indicator\no_student';
+
+                $model->indicators = json_encode($indicators);
+                $model->version = time();
+                $model->timemodified = time();
+                $DB->update_record('analytics_models', $model);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018051705.01);
+    }
+
     return true;
 }
