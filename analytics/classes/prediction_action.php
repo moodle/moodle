@@ -43,7 +43,7 @@ class prediction_action {
     /**
      * @var \moodle_url
      */
-    protected $actionurl = null;
+    protected $url = null;
 
     /**
      * @var \action_menu_link
@@ -55,7 +55,7 @@ class prediction_action {
      *
      * @param string $actionname They should match a-zA-Z_0-9-, as we apply a PARAM_ALPHANUMEXT filter
      * @param \core_analytics\prediction $prediction
-     * @param \moodle_url $actionurl
+     * @param \moodle_url $actionurl The final URL where the user should be forwarded.
      * @param \pix_icon $icon Link icon
      * @param string $text Link text
      * @param bool $primary Primary button or secondary.
@@ -71,12 +71,12 @@ class prediction_action {
         // We want to track how effective are our suggested actions, we pass users through a script that will log these actions.
         $params = array('action' => $this->actionname, 'predictionid' => $prediction->get_prediction_data()->id,
             'forwardurl' => $actionurl->out(false));
-        $this->actionurl = new \moodle_url('/report/insights/action.php', $params);
+        $this->url = new \moodle_url('/report/insights/action.php', $params);
 
         if ($primary === false) {
-            $this->actionlink = new \action_menu_link_secondary($this->actionurl, $icon, $this->text, $attributes);
+            $this->actionlink = new \action_menu_link_secondary($this->url, $icon, $this->text, $attributes);
         } else {
-            $this->actionlink = new \action_menu_link_primary($this->actionurl, $icon, $this->text, $attributes);
+            $this->actionlink = new \action_menu_link_primary($this->url, $icon, $this->text, $attributes);
         }
     }
 
@@ -94,8 +94,8 @@ class prediction_action {
      *
      * @return \moodle_url
      */
-    public function get_action_url() {
-        return $this->actionurl;
+    public function get_url() {
+        return $this->url;
     }
 
     /**

@@ -34,6 +34,7 @@ defined('MOODLE_INTERNAL') || die();
 class test_timesplitting_seconds extends \core_analytics\local\time_splitting\periodic {
 
     /**
+     * Every second.
      * @return \DateInterval
      */
     public function periodicity() {

@@ -58,6 +58,17 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
     }
 
     /**
+     * Overwritten to show a simpler language string.
+     *
+     * @param  int $modelid
+     * @param  \context $context
+     * @return string
+     */
+    protected function get_insight_subject(int $modelid, \context $context) {
+        return get_string('youhaveupcomingactivitiesdue');
+    }
+
+    /**
      * classes_description
      *
      * @return string[]
@@ -74,7 +85,7 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
      *
      * @return array
      */
-    protected function ignored_predicted_classes() {
+    public function ignored_predicted_classes() {
         // No need to process users without upcoming activities due.
         return array(0);
     }
@@ -142,14 +153,18 @@ class upcoming_activities_due extends \core_analytics\local\target\binary {
      * @return \core_analytics\prediction_action[]
      */
     public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
-        global $CFG;
-
-        $url = new \moodle_url('/my/index.php');
-        $pix = new \pix_icon('i/dashboard', get_string('viewdashboard'));
-        $action = new \core_analytics\prediction_action('viewupcoming', $prediction,
-            $url, $pix, get_string('viewdashboard'));
+        global $CFG, $USER;
 
         $parentactions = parent::prediction_actions($prediction, $includedetailsaction);
+
+        if ($USER->id != $prediction->get_prediction_data()->sampleid) {
+            return $parentactions;
+        }
+
+        $url = new \moodle_url('/my/index.php');
+        $pix = new \pix_icon('i/dashboard', get_string('gotodashboard'));
+        $action = new \core_analytics\prediction_action('viewupcoming', $prediction,
+            $url, $pix, get_string('gotodashboard'));
 
         return array_merge([$action], $parentactions);
     }

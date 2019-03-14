@@ -68,10 +68,12 @@ $string['eventpredictionactionstarted'] = 'Prediction process started';
 $string['eventinsightsviewed'] = 'Insights viewed';
 $string['fixedack'] = 'Acknowledged';
 $string['insightmessagesubject'] = 'New insight for "{$a->contextname}": {$a->insightname}';
-$string['insightinfomessage'] = 'The system generated some insights for you: {$a}';
-$string['insightinfomessagehtml'] = 'The system generated some insights for you: <a href="{$a}">{$a}</a>.';
-$string['insightinfomessageprediction'] = 'The system generated some insights for you: {$a}';
-$string['insightinfomessagepredictionhtml'] = 'The system generated some insights for you: <a href="{$a}">{$a}</a>.';
+$string['insightinfomessage'] = 'The system generated an insight for you: {$a}';
+$string['insightinfomessagehtml'] = 'The system generated an insight for you.<br/><br/><a class="btn btn-primary" href="{$a}">View insight</a>';
+$string['insightinfomessageprediction'] = 'Some suggested actions you could perform:
+
+{$a}';
+$string['insightinfomessagepredictionhtml'] = 'Some suggested actions you could perform:<br/><br/>{$a}';
 $string['invalidtimesplitting'] = 'Model with ID {$a} needs a time-splitting method before it can be used to train.';
 $string['invalidanalysablefortimesplitting'] = 'It cannot be analysed using {$a} time-splitting method.';
 $string['nocourses'] = 'No courses to analyse';
@@ -126,4 +128,7 @@ $string['successfullyanalysed'] = 'Successfully analysed';
 $string['timesplittingmethod'] = 'Time-splitting method';
 $string['timesplittingmethod_help'] = 'The time-splitting method is what defines when the system will calculate predictions and the portion of activity logs that will be considered for those predictions. E.g. they can divide the course duration in parts and generate a prediction at the end of these parts.';
 $string['timesplittingmethod_link'] = 'Time_splitting_methods';
+$string['viewdetails'] = 'View details';
+$string['viewinsight'] = 'View insight';
+$string['viewinsightdetails'] = 'View insight details';
 $string['viewprediction'] = 'View prediction details';

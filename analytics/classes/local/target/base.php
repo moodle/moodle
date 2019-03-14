@@ -122,12 +122,12 @@ abstract class base extends \core_analytics\calculable {
 
         if ($includedetailsaction) {
 
-            $predictionurl = new \moodle_url('/report/insights/prediction.php',
-                array('id' => $predictionid));
+            $predictionurl = new \moodle_url('/report/insights/prediction.php', array('id' => $predictionid));
+            $detailstext = $this->get_view_details_text();
 
             $actions[] = new \core_analytics\prediction_action(\core_analytics\prediction::ACTION_PREDICTION_DETAILS, $prediction,
-                $predictionurl, new \pix_icon('t/preview', get_string('viewprediction', 'analytics')),
-                get_string('viewprediction', 'analytics'));
+                $predictionurl, new \pix_icon('t/preview', $detailstext),
+                $detailstext);
         }
 
         // Flag as fixed / solved.
@@ -149,6 +149,25 @@ abstract class base extends \core_analytics\calculable {
             get_string('notuseful', 'analytics'), false, $notusefulattrs);
 
         return $actions;
+    }
+
+    /**
+     * Returns the view details link text.
+     * @return string
+     */
+    private function get_view_details_text() {
+        if ($this->based_on_assumptions()) {
+            $analyserclass = $this->get_analyser_class();
+            if ($analyserclass::one_sample_per_analysable()) {
+                $detailstext = get_string('viewinsightdetails', 'analytics');
+            } else {
+                $detailstext = get_string('viewdetails', 'analytics');
+            }
+        } else {
+            $detailstext = get_string('viewprediction', 'analytics');
+        }
+
+        return $detailstext;
     }
 
     /**
@@ -190,23 +209,34 @@ abstract class base extends \core_analytics\calculable {
                     $coursecontext = \context_course::instance(SITEID);
                 }
 
-                $predictionactions = $this->prediction_actions($prediction, false);
+                $predictionactions = $this->prediction_actions($prediction, true);
 
-                // TODO Proper language strings.
-                $fullmessage  = '';
-                $fullmessagehtml  = '';
+                $messageactions  = '';
+                $messageactionshtml  = '';
                 $insighturl = null;
                 foreach ($predictionactions as $action) {
+                    $actionurl = $action->get_url();
+                    if (!$actionurl->get_param('forwardurl')) {
+
+                        $actiondoneurl = new \moodle_url('/report/insights/done.php');
+                        // Set the forward url to the 'done' script.
+                        $actionurl->param('forwardurl', $actiondoneurl->out(false));
+                    }
                     if (empty($insighturl)) {
                         // We use the primary action url as insight url so we logged that the user followed the provided link.
-                        $insighturl = $action->get_action_url();
+                        $insighturl = $action->get_url();
                     }
-                    $fullmessage .= PHP_EOL . $action->get_action_name() . ': ' . $action->get_action_url()->out(false);
-                    $fullmessagehtml .= '<br/>' . $action->get_action_name() . ': ' . $action->get_action_url()->out();
+                    $messageactions .= $action->get_text() . ': ' . $action->get_url()->out(false) . PHP_EOL;
+                    $messageactionshtml .= '<a href="' . $action->get_url()->out() . '" class="btn btn-default m-r-1 m-b-1">' .
+                        $action->get_text() . '</a>';
                 }
 
+                $fullmessage = get_string('insightinfomessageprediction', 'analytics', $messageactions);
+                $fullmessagehtml = get_string('insightinfomessagepredictionhtml', 'analytics', $messageactionshtml);
+
                 foreach ($users as $user) {
-                    $this->generate_insight_notification($user, $subject, $insighturl, $coursecontext, $fullmessage, $fullmessagehtml);
+                    $this->generate_insight_notification($user, $subject, $insighturl, $coursecontext,
+                        $fullmessage, $fullmessagehtml);
                 }
             }
 
@@ -225,7 +255,8 @@ abstract class base extends \core_analytics\calculable {
                     $insighturl = $this->get_insight_context_url($modelid, $context);
                     $fullmessage = get_string('insightinfomessage', 'analytics', $insighturl->out(false));
                     $fullmessagehtml = get_string('insightinfomessagehtml', 'analytics', $insighturl->out());
-                    $this->generate_insight_notification($user, $subject, $insighturl, $coursecontext, $fullmessage, $fullmessagehtml);
+                    $this->generate_insight_notification($user, $subject, $insighturl, $coursecontext,
+                        $fullmessage, $fullmessagehtml);
                 }
             }
         }

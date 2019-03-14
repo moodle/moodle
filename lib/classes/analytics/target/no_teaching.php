@@ -56,6 +56,17 @@ class no_teaching extends \core_analytics\local\target\binary {
     }
 
     /**
+     * Overwritten to show a simpler language string.
+     *
+     * @param  int $modelid
+     * @param  \context $context
+     * @return string
+     */
+    public function get_insight_subject(int $modelid, \context $context) {
+        return get_string('noteachingupcomingcourses');
+    }
+
+    /**
      * prediction_actions
      *
      * @param \core_analytics\prediction $prediction
@@ -101,16 +112,6 @@ class no_teaching extends \core_analytics\local\target\binary {
             get_string('targetlabelteachingyes'),
             get_string('targetlabelteachingno'),
         );
-    }
-
-    /**
-     * Returns the predicted classes that will be ignored.
-     *
-     * @return array
-     */
-    protected function ignored_predicted_classes() {
-        // No need to list the course if there is teaching activity.
-        return array(0);
     }
 
     /**

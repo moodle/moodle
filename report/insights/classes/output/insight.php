@@ -74,8 +74,20 @@ class insight implements \renderable, \templatable {
         // Get the prediction data.
         $predictiondata = $this->prediction->get_prediction_data();
 
+        $target = $this->model->get_target();
+
         $data = new \stdClass();
-        $data->insightname = format_string($this->model->get_target()->get_name());
+        $data->insightname = format_string($target->get_name());
+
+        $data->showpredictionheading = true;
+        if (!$target->is_linear()) {
+            $nclasses = count($target::get_classes());
+            $nignoredclasses = count($target->ignored_predicted_classes());
+            if ($nclasses - $nignoredclasses <= 1) {
+                // Hide the prediction heading if there is only 1 class displayed. Otherwise it is redundant with the insight name.
+                $data->showpredictionheading = false;
+            }
+        }
 
         // Get the details.
         $data->timecreated = userdate($predictiondata->timecreated);
@@ -99,11 +111,11 @@ class insight implements \renderable, \templatable {
         // Prediction info.
         $predictedvalue = $predictiondata->prediction;
         $predictionid = $predictiondata->id;
-        $data->predictiondisplayvalue = $this->model->get_target()->get_display_value($predictedvalue);
-        list($data->style, $data->outcomeicon) = self::get_calculation_display($this->model->get_target(),
+        $data->predictiondisplayvalue = $target->get_display_value($predictedvalue);
+        list($data->style, $data->outcomeicon) = self::get_calculation_display($target,
             floatval($predictedvalue), $output);
 
-        $actions = $this->model->get_target()->prediction_actions($this->prediction, $this->includedetailsaction);
+        $actions = $target->prediction_actions($this->prediction, $this->includedetailsaction);
         if ($actions) {
             $actionsmenu = new \action_menu();
             $actionsmenu->set_menu_trigger(get_string('actions'));

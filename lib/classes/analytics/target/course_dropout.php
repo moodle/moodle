@@ -64,17 +64,6 @@ class course_dropout extends \core\analytics\target\course_enrolments {
     }
 
     /**
-     * Returns the predicted classes that will be ignored.
-     *
-     * Overwriten because we are also interested in knowing when the student is far from the risk of dropping out.
-     *
-     * @return array
-     */
-    protected function ignored_predicted_classes() {
-        return array();
-    }
-
-    /**
      * Discards courses that are not yet ready to be used for training or prediction.
      *
      * @param \core_analytics\analysable $course
