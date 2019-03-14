@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>MongoDB</location>
+    <name>MongoDB PHP Library</name>
+    <license>Apache</license>
+    <version>1.4</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
+</libraries>
