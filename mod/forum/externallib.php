@@ -636,7 +636,7 @@ class mod_forum_external extends external_api {
                     $discussion->messageinlinefiles = $messageinlinefiles;
                 }
 
-                $discussion->locked = forum_discussion_is_locked($forum, $discussion);
+                $discussion->timelocked = forum_discussion_is_locked($forum, $discussion);
                 $discussion->canreply = forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext);
 
                 if (forum_is_author_hidden($discussion, $forum)) {
@@ -1227,6 +1227,7 @@ class mod_forum_external extends external_api {
         $discussion->name = $discussion->subject;
         $discussion->timestart = 0;
         $discussion->timeend = 0;
+        $discussion->timelocked = 0;
         $discussion->attachments = $options['attachmentsid'];
 
         if (has_capability('mod/forum:pindiscussions', $context) && $options['discussionpinned']) {
@@ -1508,6 +1509,77 @@ class mod_forum_external extends external_api {
      * @return external_description
      */
     public static function set_subscription_state_returns() {
+        return \mod_forum\local\exporters\discussion::get_read_structure();
+    }
+
+
+    /**
+     * Set the lock state.
+     *
+     * @param   int     $forumid
+     * @param   int     $discussionid
+     * @param   string    $targetstate
+     * @return  \stdClass
+     */
+    public static function set_lock_state($forumid, $discussionid, $targetstate) {
+        global $DB, $PAGE, $USER;
+
+        $params = self::validate_parameters(self::set_lock_state_parameters(), [
+            'forumid' => $forumid,
+            'discussionid' => $discussionid,
+            'targetstate' => $targetstate
+        ]);
+
+        $vaultfactory = mod_forum\local\container::get_vault_factory();
+        $forumvault = $vaultfactory->get_forum_vault();
+        $forum = $forumvault->get_from_id($params['forumid']);
+        // If the targetstate(currentstate) is not 0 then it should be set to the current time.
+        $targetstate = $targetstate ? 0 : time();
+        self::validate_context($forum->get_context());
+
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $capabilitymanager = $managerfactory->get_capability_manager($forum);
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $discussion = $discussionvault->get_from_id($params['discussionid']);
+        $legacydatamapperfactory = mod_forum\local\container::get_legacy_data_mapper_factory();
+        $forumrecord = $legacydatamapperfactory->get_forum_data_mapper()->to_legacy_object($forum);
+
+        // If the current state doesn't equal the desired state then update the current
+        // state to the desired state.
+        if ($capabilitymanager->can_manage_forum($USER)) {
+            $discussion->toggle_locked_state($targetstate);
+            $discussionrecord = $legacydatamapperfactory->get_discussion_data_mapper()->to_legacy_object($discussion);
+            $response = $discussionvault->update_discussion($discussionrecord);
+
+            $discussion = !$response ? $response : $discussion;
+        }
+
+        $exporterfactory = mod_forum\local\container::get_exporter_factory();
+        $exporter = $exporterfactory->get_discussion_exporter($USER, $forum, $discussion);
+        return $exporter->export($PAGE->get_renderer('mod_forum'));
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function set_lock_state_parameters() {
+        return new external_function_parameters(
+            [
+                'forumid' => new external_value(PARAM_INT, 'Forum that the discussion is in'),
+                'discussionid' => new external_value(PARAM_INT, 'The discussion to lock / unlock'),
+                'targetstate' => new external_value(PARAM_INT, 'The timestamp for the lock state')
+            ]
+        );
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function set_lock_state_returns() {
         return \mod_forum\local\exporters\discussion::get_read_structure();
     }
 }

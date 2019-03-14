@@ -126,7 +126,8 @@ class entity {
             $record->usermodified,
             $record->timestart,
             $record->timeend,
-            $record->pinned
+            $record->pinned,
+            $record->timelocked
         );
     }
 

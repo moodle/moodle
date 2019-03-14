@@ -88,11 +88,13 @@ class discussion extends exporter {
                     'modified' => ['type' => PARAM_INT],
                     'start' => ['type' => PARAM_INT],
                     'end' => ['type' => PARAM_INT],
+                    'locked' => ['type' => PARAM_INT],
                 ],
             ],
             'userstate' => [
                 'type' => [
                     'subscribed' => ['type' => PARAM_BOOL],
+                    'locked' => ['type' => PARAM_BOOL],
                 ],
             ],
             'capabilities' => [
@@ -100,7 +102,8 @@ class discussion extends exporter {
                     'subscribe' => ['type' => PARAM_BOOL],
                     'move' => ['type' => PARAM_BOOL],
                     'pin' => ['type' => PARAM_BOOL],
-                    'post' => ['type' => PARAM_BOOL]
+                    'post' => ['type' => PARAM_BOOL],
+                    'manage' => ['type' => PARAM_BOOL],
                 ]
             ],
             'urls' => [
@@ -186,15 +189,18 @@ class discussion extends exporter {
                 'modified' => $discussion->get_time_modified(),
                 'start' => $discussion->get_time_start(),
                 'end' => $discussion->get_time_end(),
+                'locked' => $discussion->get_locked()
             ],
             'userstate' => [
                 'subscribed' => \mod_forum\subscriptions::is_subscribed($user->id, $forumrecord, $discussion->get_id()),
+                'locked' => $discussion->is_locked()
             ],
             'capabilities' => [
                 'subscribe' => $capabilitymanager->can_subscribe_to_discussion($user, $discussion),
                 'move' => $capabilitymanager->can_move_discussion($user, $discussion),
                 'pin' => $capabilitymanager->can_pin_discussion($user, $discussion),
-                'post' => $capabilitymanager->can_post_in_discussion($user, $discussion)
+                'post' => $capabilitymanager->can_post_in_discussion($user, $discussion),
+                'manage' => $capabilitymanager->can_manage_forum($user)
             ],
             'urls' => [
                 'view' => $urlfactory->get_discussion_view_url_from_discussion($discussion)->out(false),

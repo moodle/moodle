@@ -545,6 +545,10 @@ class forum {
      * @return bool
      */
     public function is_discussion_locked(discussion_entity $discussion) : bool {
+        if ($discussion->is_locked()) {
+            return true;
+        }
+
         if (!$this->has_lock_discussions_after()) {
             return false;
         }

@@ -125,4 +125,20 @@ class discussion extends db_table_vault {
         return $this->get_db()->count_records(self::TABLE, [
             'forum' => $forum->get_id()]);
     }
+
+    /**
+     * Update the discussion
+     *
+     * @param discussion_entity $discussion
+     * @return discussion_entity|null
+     */
+    public function update_discussion($discussion) : ?discussion_entity {
+        if ($this->get_db()->update_record('forum_discussions', $discussion)) {
+            $records = $this->transform_db_records_to_entities([$discussion]);
+
+            return count($records) ? array_shift($records) : null;
+        }
+
+        return null;
+    }
 }

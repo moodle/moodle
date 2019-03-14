@@ -201,6 +201,10 @@ class discussion {
             $exporteddiscussion['html']['pindiscussion'] = $this->get_pin_discussion_html();
         }
 
+        if ($capabilities['manage']) {
+            $exporteddiscussion['html']['lockdiscussion'] = $this->get_lock_discussion_button_html();
+        }
+
         return $this->renderer->render_from_template('mod_forum/forum_discussion', $exporteddiscussion);
     }
 
@@ -271,6 +275,24 @@ class discussion {
         $html .= forum_get_discussion_subscription_icon_preloaders();
         // Add the subscription toggle JS.
         $PAGE->requires->yui_module('moodle-mod_forum-subscriptiontoggle', 'Y.M.mod_forum.subscriptiontoggle.init');
+        return $html;
+    }
+
+    /**
+     * Get the HTML to render the subscription button.
+     *
+     * @return string
+     */
+    private function get_lock_discussion_button_html() : string {
+        global $PAGE;
+
+        $forumrecord = $this->forumrecord;
+        $discussionrecord = $this->discussionrecord;
+
+        $html = html_writer::div(
+            forum_get_lock_discussion_icon($forumrecord, $discussionrecord, null, true),
+            'discussionlock'
+        );
         return $html;
     }
 

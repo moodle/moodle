@@ -1822,8 +1822,9 @@ function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $
         $updatedsincesql = 'AND d.timemodified > ?';
         $params[] = $updatedsince;
     }
-    $discussionfields = "d.id as discussionid, d.course, d.forum, d.name, d.firstpost, d.groupid, d.assessed," .
-    " d.timemodified, d.usermodified, d.timestart, d.timeend, d.pinned";
+
+    $discussionfields = "d.id as discussionid, d.course, d.forum, d.name, d.firstpost, d.userid, d.groupid, d.assessed," .
+    " d.timemodified, d.usermodified, d.timestart, d.timeend, d.pinned, d.locked";
 
     $allnames = get_all_user_name_fields(true, 'u');
     $sql = "SELECT $postdata, $discussionfields,
@@ -2580,6 +2581,71 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
 
     echo "</tr>\n\n";
 
+}
+
+/**
+ * Return the markup for the discussion lock toggling icon.
+ * @param stdClass $forum forum record
+ * @param stdClass $discussion discussion record
+ * @param null $returnurl the return url to use
+ * @param bool $includetext Whether or not to include the text with the icon
+ * @return string
+ * @throws coding_exception
+ * @throws moodle_exception
+ */
+function forum_get_lock_discussion_icon($forum, $discussion, $returnurl = null, $includetext = false) {
+    global $USER, $OUTPUT, $PAGE;
+
+    if ($returnurl === null && $PAGE->url) {
+        $returnurl = $PAGE->url->out();
+    }
+
+    $o = '';
+    $discussionid = $discussion->id;
+    $lockstatus = forum_discussion_is_locked($forum, $discussion);
+    $subscriptionlink = new moodle_url('/mod/forum/lockdiscussion.php', array(
+        'sesskey' => sesskey(),
+        'id' => $forum->id,
+        'd' => $discussion->id,
+        'returnurl' => $returnurl,
+    ));
+
+    if ($includetext) {
+        $o .= $lockstatus ? get_string('locked', 'mod_forum') : get_string('notlocked', 'mod_forum');
+    }
+
+    if ($lockstatus) {
+        $output = $OUTPUT->pix_icon('t/unlock', get_string('clicktounlockdiscussion', 'forum'), 'core');
+        if ($includetext) {
+            $output .= get_string('locked', 'mod_forum');
+        }
+
+        return html_writer::link($subscriptionlink, $output, array(
+            'title' => get_string('clicktounlockdiscussion', 'forum'),
+            'class' => 'iconsmall',
+            'data-forumid' => $forum->id,
+            'data-discussionid' => $discussionid,
+            'data-action' => 'toggle',
+            'data-type' => 'lock-toggle',
+            'data-state' => $discussion->locked
+        ));
+
+    } else {
+        $output = $OUTPUT->pix_icon('t/lock', get_string('clicktolockdiscussion', 'forum'), 'core');
+        if ($includetext) {
+            $output .= get_string('notlocked', 'mod_forum');
+        }
+
+        return html_writer::link("#", $output, array(
+            'title' => get_string('clicktolockdiscussion', 'forum'),
+            'class' => 'iconsmall',
+            'data-forumid' => $forum->id,
+            'data-discussionid' => $discussionid,
+            'data-action' => 'toggle',
+            'data-type' => 'lock-toggle',
+            'data-state' => $discussion->locked
+        ));
+    }
 }
 
 /**
