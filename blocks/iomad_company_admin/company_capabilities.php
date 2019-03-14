@@ -113,14 +113,16 @@ if (!empty($save)) {
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 if ($roleid) {
+
+    // Display the list of capabilities (template or company).
     if (empty($templateid)) {
-        $capabilities = iomad_company_admin::get_iomad_capabilities($roleid, $companyid);
+        $caps = iomad_company_admin::get_iomad_capabilities($roleid, $companyid);
     } else {
-        $capabilities = iomad_company_admin::get_iomad_template_capabilities($roleid, $templateid);
+        $caps = iomad_company_admin::get_iomad_template_capabilities($roleid, $templateid);
     }
 
-    echo $output->capabilities($capabilities, $roleid, $companyid, $templateid);
-    echo $output->roles_button($linkurl);
+    $capabilities = new \block_iomad_company_admin\output\capabilities($caps, $roleid, $companyid, $templateid, $linkurl);
+    echo $output->render_capabilities($capabilities);
 
 } else if ($manage) {
     // Display the list of templates.

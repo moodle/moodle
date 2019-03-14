@@ -63,15 +63,6 @@ class renderer extends plugin_renderer_base {
     }
 
     /**
-     * Back to list of roles button
-     */
-    public function roles_button($link) {
-        $out = '<p><a class="btn btn-primary" href="'.$link.'">' . get_string('listroles', 'block_iomad_company_admin') . '</a></p>';
-
-        return $out;
-    }
-
-    /**
      * Display role templates.
      */
     public function role_templates($templates, $backlink) {
@@ -208,5 +199,13 @@ class renderer extends plugin_renderer_base {
      */
     public function render_capabilitiesroles(capabilitiesroles $capabilitiesroles) {
         return $this->render_from_template('block_iomad_company_admin/capabilitiesroles', $capabilitiesroles->export_for_template($this));
+    }
+
+    /**
+     * Render capabilties page
+     * @param capabilitiesroles $capabilities
+     */
+    public function render_capabilities(capabilities $capabilities) {
+        return $this->render_from_template('block_iomad_company_admin/capabilities', $capabilities->export_for_template($this));
     }
 }
