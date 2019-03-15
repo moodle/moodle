@@ -16,7 +16,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/blog_discussion_list
+    @template mod_forum/qanda_discussion_list
 
     Template which defines a forum post for sending in a single-post HTML email.
 
@@ -36,14 +36,7 @@
     {{/discussion_create_text}}
     {{$discussion_list_output}}
        {{#posts}}
-           {{< mod_forum/forum_discussion_post }}
-               {{$footer}}
-                   <div class="link text-right">
-                       <a href="{{urls.discuss}}">{{#str}}discussthistopic, forum{{/str}}</a>&nbsp;({{discussionrepliescount}}{{#isreplyplural}}{{#str}}repliesmany, forum{{/str}}{{/isreplyplural}}{{^isreplyplural}}{{#str}}repliesone, forum{{/str}}{{/isreplyplural}})
-                   </div>
-               {{/footer}}
-               {{$replyoutput}}{{/replyoutput}}
-           {{/ mod_forum/forum_discussion_post }}
+           {{> mod_forum/forum_discussion_post }}
        {{/posts}}
     {{/discussion_list_output}}
 {{/ mod_forum/discussion_list }}

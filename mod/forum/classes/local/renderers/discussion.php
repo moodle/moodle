@@ -58,12 +58,12 @@ require_once($CFG->dirroot . '/mod/forum/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class discussion {
-    /** @var discussion_entity $discussion The discussion to render */
+    /** @var forum_entity $forum The forum that the discussion belongs to */
+    private $forum;
+    /** @var discussion_entity $discussion The discussion entity */
     private $discussion;
     /** @var stdClass $discussionrecord Legacy discussion record */
     private $discussionrecord;
-    /** @var forum_entity $forum The forum that the discussion belongs to */
-    private $forum;
     /** @var stdClass $forumrecord Legacy forum record */
     private $forumrecord;
     /** @var int $displaymode The display mode to render the discussion in */
@@ -94,8 +94,8 @@ class discussion {
     /**
      * Constructor.
      *
-     * @param discussion_entity $discussion The discussion to render
      * @param forum_entity $forum The forum that the discussion belongs to
+     * @param discussion_entity $discussion The discussion entity
      * @param int $displaymode The display mode to render the discussion in
      * @param renderer_base $renderer Renderer base
      * @param posts_renderer $postsrenderer A posts renderer
@@ -110,8 +110,8 @@ class discussion {
      * @param array $notifications List of HTML notifications to display
      */
     public function __construct(
-        discussion_entity $discussion,
         forum_entity $forum,
+        discussion_entity $discussion,
         int $displaymode,
         renderer_base $renderer,
         posts_renderer $postsrenderer,
@@ -125,8 +125,8 @@ class discussion {
         moodle_url $baseurl,
         array $notifications = []
     ) {
-        $this->discussion = $discussion;
         $this->forum = $forum;
+        $this->discussion = $discussion;
         $this->displaymode = $displaymode;
         $this->renderer = $renderer;
         $this->postsrenderer = $postsrenderer;
@@ -138,6 +138,7 @@ class discussion {
         $this->capabilitymanager = $capabilitymanager;
         $this->ratingmanager = $ratingmanager;
         $this->notifications = $notifications;
+
         $this->exportedpostsorter = $exportedpostsorter;
 
         $forumdatamapper = $this->legacydatamapperfactory->get_forum_data_mapper();
@@ -164,7 +165,6 @@ class discussion {
 
         $displaymode = $this->displaymode;
         $capabilitymanager = $this->capabilitymanager;
-        $forum = $this->forum;
 
         // Make sure we can render.
         if (!$capabilitymanager->can_view_discussions($user)) {
@@ -175,7 +175,7 @@ class discussion {
 
         $exporteddiscussion = $this->get_exported_discussion($user);
         $exporteddiscussion = array_merge($exporteddiscussion, [
-            'notifications' => $this->get_notifications(),
+            'notifications' => $this->get_notifications($user),
             'html' => [
                 'posts' => $this->postsrenderer->render($user, [$this->forum], [$this->discussion], $posts),
                 'modeselectorform' => $this->get_display_mode_selector_html($displaymode),
@@ -368,9 +368,10 @@ class discussion {
     /**
      * Get a list of notification HTML to render in the page.
      *
+     * @param stdClass $user The user viewing the discussion
      * @return string[]
      */
-    private function get_notifications() : array {
+    private function get_notifications($user) : array {
         $notifications = $this->notifications;
         $discussion = $this->discussion;
         $forum = $this->forum;
@@ -383,6 +384,14 @@ class discussion {
             ))
             ->set_extra_classes(['discussionlocked'])
             ->set_show_closebutton();
+        }
+
+        if ($forum->get_type() == 'qanda') {
+            if ($this->capabilitymanager->must_post_before_viewing_discussion($user, $discussion)) {
+                $notifications[] = (new notification(
+                    get_string('qandanotify', 'forum')
+                ))->set_show_closebutton(true);
+            }
         }
 
         if ($forum->has_blocking_enabled()) {

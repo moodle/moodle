@@ -90,6 +90,10 @@ class capability {
      * @return bool
      */
     public function can_subscribe_to_forum(stdClass $user) : bool {
+        if ($this->forum->get_type() == 'single') {
+           return false;
+        }
+
         return !is_guest($this->get_context(), $user) &&
             subscriptions::is_subscribable($this->get_forum_record());
     }
@@ -119,6 +123,12 @@ class capability {
 
         if (!has_capability($capability, $this->forum->get_context(), $user)) {
             return false;
+        }
+
+        if ($this->forum->get_type() == 'eachuser') {
+            if (forum_user_has_posted_discussion($this->forum->get_id(), $user->id, $groupid)) {
+                return false;
+            }
         }
 
         if ($this->forum->is_in_group_mode()) {
@@ -175,7 +185,8 @@ class capability {
      */
     public function can_move_discussions(stdClass $user) : bool {
         $forum = $this->get_forum();
-        return $forum->get_type() !== 'single' && has_capability('mod/forum:movediscussions', $this->get_context(), $user);
+        return $forum->get_type() !== 'single' &&
+                has_capability('mod/forum:movediscussions', $this->get_context(), $user);
     }
 
     /**
@@ -185,7 +196,8 @@ class capability {
      * @return bool
      */
     public function can_pin_discussions(stdClass $user) : bool {
-        return has_capability('mod/forum:pindiscussions', $this->get_context(), $user);
+        return $this->forum->get_type() !== 'single' &&
+                has_capability('mod/forum:pindiscussions', $this->get_context(), $user);
     }
 
     /**

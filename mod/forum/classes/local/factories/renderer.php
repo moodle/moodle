@@ -39,7 +39,7 @@ use mod_forum\local\renderers\discussion as discussion_renderer;
 use mod_forum\local\renderers\discussion_list as discussion_list_renderer;
 use mod_forum\local\renderers\posts as posts_renderer;
 use moodle_page;
-use moodle_url;
+use core\output\notification;
 
 /**
  * Renderer factory.
@@ -120,23 +120,13 @@ class renderer {
         $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
         $ratingmanager = $this->managerfactory->get_rating_manager();
         $rendererbase = $this->rendererbase;
+
         $baseurl = $this->urlfactory->get_discussion_view_url_from_discussion($discussion);
         $notifications = [];
 
-        switch ($forum->get_type()) {
-            case 'single':
-                $baseurl = new moodle_url("/mod/forum/view.php", ['f' => $forum->get_id()]);
-                break;
-            case 'qanda':
-                if ($capabilitymanager->must_post_before_viewing_discussion($user, $forum, $discussion)) {
-                    $notifications[] = $rendererbase->notification(get_string('qandanotify', 'forum'));
-                }
-                break;
-        }
-
         return new discussion_renderer(
-            $discussion,
             $forum,
+            $discussion,
             $displaymode,
             $rendererbase,
             $this->get_single_discussion_posts_renderer($displaymode, false),
@@ -357,7 +347,7 @@ class renderer {
     }
 
     /**
-     * Create a discussion list renderer.
+     * Create a standard type discussion list renderer.
      *
      * @param forum_entity $forum The forum that the discussions belong to
      * @return discussion_list_renderer
@@ -376,8 +366,121 @@ class renderer {
             $this->legacydatamapperfactory,
             $this->exporterfactory,
             $this->vaultfactory,
+            $this->builderfactory,
             $capabilitymanager,
             $this->urlfactory,
+            $notifications,
+            function($discussions, $user, $forum) {
+                $exporteddiscussionsummarybuilder = $this->builderfactory->get_exported_discussion_summaries_builder();
+                return $exportedposts = $exporteddiscussionsummarybuilder->build(
+                    $user,
+                    $forum,
+                    $discussions
+                );
+            }
+        );
+    }
+
+    /**
+     * Create a blog type discussion list renderer.
+     *
+     * @param forum_entity $forum The forum that the discussions belong to
+     * @return discussion_list_renderer
+     */
+    public function get_blog_discussion_list_renderer(
+        forum_entity $forum
+    ) : discussion_list_renderer {
+
+        $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
+        $rendererbase = $this->rendererbase;
+        $notifications = [];
+
+        return new discussion_list_renderer(
+            $forum,
+            $rendererbase,
+            $this->legacydatamapperfactory,
+            $this->exporterfactory,
+            $this->vaultfactory,
+            $this->builderfactory,
+            $capabilitymanager,
+            $this->urlfactory,
+            $notifications,
+            function($discussions, $user, $forum) {
+                $exportedpostsbuilder = $this->builderfactory->get_exported_posts_builder();
+                $discussionentries = [];
+                $postentries = [];
+                foreach($discussions as $discussion) {
+                    $discussionentries[] = $discussion->get_discussion();
+                    $discussionentriesids[] = $discussion->get_discussion()->get_id();
+                    $postentries[] = $discussion->get_first_post();
+                }
+
+                $exportedposts['posts'] = $exportedpostsbuilder->build(
+                    $user,
+                    [$forum],
+                    $discussionentries,
+                    $postentries
+                );
+
+                $postvault = $this->vaultfactory->get_post_vault();
+                $discussionrepliescount = $postvault->get_reply_count_for_discussion_ids($discussionentriesids);
+
+                array_walk($exportedposts['posts'], function($post) use ($discussionrepliescount) {
+                    $post->discussionrepliescount =  $discussionrepliescount[$post->discussionid] ?? 0;
+                    // TODO: Find a better solution due to language differences when defining the singular and plural form.
+                    $post->isreplyplural = $post->discussionrepliescount != 1 ? true : false;
+                });
+
+                $exportedposts['state']['hasdiscussions'] = $exportedposts['posts'] ? true : false;
+
+                return $exportedposts;
+            }
+        );
+    }
+
+    /**
+     * Create a single type discussion list renderer.
+     *
+     * @param forum_entity $forum Forum the discussion belongs to
+     * @param discussion_entity $discussion The discussion entity
+     * @param bool $hasmultiplediscussions Whether the forum has multiple discussions (more than one)
+     * @param int $displaymode How should the posts be formatted?
+     * @return discussion_renderer
+     */
+    public function get_single_discussion_list_renderer(
+        forum_entity $forum,
+        discussion_entity $discussion,
+        bool $hasmultiplediscussions,
+        int $displaymode
+    ) : discussion_renderer {
+
+        $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
+        $ratingmanager = $this->managerfactory->get_rating_manager();
+        $rendererbase = $this->rendererbase;
+
+        $cmid = $forum->get_course_module_record()->id;
+        $baseurl = $this->urlfactory->get_forum_view_url_from_course_module_id($cmid);
+        $notifications = array();
+
+        if ($hasmultiplediscussions) {
+            $notifications[] = (new notification(get_string('warnformorepost', 'forum')))
+                ->set_show_closebutton(true);
+        }
+
+        return new discussion_renderer(
+            $forum,
+            $discussion,
+            $displaymode,
+            $rendererbase,
+            $this->get_single_discussion_posts_renderer($displaymode, false),
+            $this->page,
+            $this->legacydatamapperfactory,
+            $this->exporterfactory,
+            $this->vaultfactory,
+            $capabilitymanager,
+            $ratingmanager,
+            $this->entityfactory->get_exported_posts_sorter(),
+            $baseurl,
             $notifications
         );
     }

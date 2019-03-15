@@ -103,11 +103,17 @@ class mod_forum_vaults_forum_testcase extends advanced_testcase {
         $this->assertEquals([], $entities);
 
         $entities = array_values($vault->get_from_course_module_ids([$coursemodule1->id, $coursemodule2->id]));
+        usort($entities, function($a, $b) {
+            return $a->get_id() <=> $b->get_id();
+        });
         $this->assertCount(2, $entities);
-        $this->assertEquals($forum2->id, $entities[0]->get_id());
-        $this->assertEquals($forum1->id, $entities[1]->get_id());
+        $this->assertEquals($forum1->id, $entities[0]->get_id());
+        $this->assertEquals($forum2->id, $entities[1]->get_id());
 
         $entities = array_values($vault->get_from_course_module_ids([$coursemodule1->id]));
+        usort($entities, function($a, $b) {
+            return $a->get_id() <=> $b->get_id();
+        });
         $this->assertCount(1, $entities);
         $this->assertEquals($forum1->id, $entities[0]->get_id());
     }

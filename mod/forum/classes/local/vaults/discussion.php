@@ -99,4 +99,30 @@ class discussion extends db_table_vault {
         $records = $this->transform_db_records_to_entities($records);
         return count($records) ? array_shift($records) : null;
     }
+
+    /**
+     * Get the last discussion in the specified forum.
+     *
+     * @param   forum_entity $forum
+     * @return  discussion_entity|null
+     */
+    public function get_last_discussion_in_forum(forum_entity $forum) : ?discussion_entity {
+        $records = $this->get_db()->get_records(self::TABLE, [
+            'forum' => $forum->get_id(),
+        ], 'timemodified DESC', '*', 0, 1);
+
+        $records = $this->transform_db_records_to_entities($records);
+        return count($records) ? array_shift($records) : null;
+    }
+
+    /**
+     * Get the count of the discussions in the specified forum.
+     *
+     * @param   forum_entity $forum
+     * @return  int
+     */
+    public function get_count_discussions_in_forum(forum_entity $forum) : ?int {
+        return $this->get_db()->count_records(self::TABLE, [
+            'forum' => $forum->get_id()]);
+    }
 }

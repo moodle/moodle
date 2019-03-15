@@ -109,7 +109,7 @@ class url {
      * @return moodle_url
      */
     public function get_forum_view_url_from_course_module_id(int $coursemoduleid, ?int $pageno = null) : moodle_url {
-        $url = new moodle_url('/mod/forum/discussions.php', [
+        $url = new moodle_url('/mod/forum/view.php', [
             'id' => $coursemoduleid,
         ]);
 
