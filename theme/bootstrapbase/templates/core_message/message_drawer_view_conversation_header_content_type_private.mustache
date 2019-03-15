@@ -42,12 +42,12 @@
 
 <div class="d-flex align-items-center">
     <div class="align-self-stretch" >
-        <a class="h-100 mr-2 d-flex align-items-center" href="#" data-route-back>
+        <a class="h-100 mr-2 d-flex align-items-center" href="#" data-route-back role="button">
             {{> core_message/message_drawer_icon_back }}
         </a>
     </div>
     <div class="d-flex text-truncate">
-        <a class="d-flex text-truncate text-decoration-none" href="#" data-action="view-contact">
+        <a class="d-flex text-truncate text-decoration-none" href="#" data-action="view-contact" role="button">
             {{#imageurl}}
                 <div class="d-flex align-items-center">
                     <img
@@ -81,12 +81,12 @@
         </button>
         <ul class="dropdown-menu pull-right">
             <li data-action="view-contact">
-                <a class="dropdown-item" href="#" >
+                <a class="dropdown-item" href="#">
                     {{#str}} info, core_message {{/str}}
                 </a>
             </li>
             <li class="{{#isfavourite}}hidden{{/isfavourite}} {{^showfavourite}}hidden{{/showfavourite}}" data-action="confirm-favourite">
-                <a class="dropdown-item" href="#" >
+                <a class="dropdown-item" href="#">
                     {{#str}} addtofavourites, core_message {{/str}}
                 </a>
             </li>
