@@ -141,6 +141,7 @@ class competency_summary_exporter extends \core\external\exporter {
         ]);
         $result->comppath = $exporter->export($output);
         $result->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
+        $result->showlinks = \core_competency\api::show_links();
 
         return (array) $result;
     }

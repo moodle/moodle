@@ -231,10 +231,11 @@ function tool_lp_get_fontawesome_icon_map() {
 function tool_lp_render_competency_summary(\core_competency\competency $competency,
                                            \core_competency\competency_framework $framework,
                                            $includerelated,
-                                           $includecourses) {
+                                           $includecourses,
+                                           $skipenabled = false) {
     global $PAGE;
 
-    if (!get_config('core_competency', 'enabled')) {
+    if (!$skipenabled && !get_config('core_competency', 'enabled')) {
         return;
     }
 

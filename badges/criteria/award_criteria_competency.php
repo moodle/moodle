@@ -56,17 +56,16 @@ class award_criteria_competency extends award_criteria {
             if ($short) {
                 $competency->set('description', '');
             }
-            if (!self::is_enabled()) {
-                $output[] = get_string('competenciesarenotenabled', 'core_competency');
-            } else {
-                if ($pluginsfunction = get_plugins_with_function('render_competency_summary')) {
-                    foreach ($pluginsfunction as $plugintype => $plugins) {
-                        foreach ($plugins as $pluginfunction) {
-                            $output[] = $pluginfunction($competency, $competency->get_framework(), !$short, !$short);
-                        }
+            // Render the competency even if competencies are not currently enabled.
+            \core_competency\api::skip_enabled();
+            if ($pluginsfunction = get_plugins_with_function('render_competency_summary')) {
+                foreach ($pluginsfunction as $plugintype => $plugins) {
+                    foreach ($plugins as $pluginfunction) {
+                        $output[] = $pluginfunction($competency, $competency->get_framework(), false, false, true);
                     }
                 }
             }
+            \core_competency\api::check_enabled();
         }
 
         return '<dl><dd class="p-3 mb-2 bg-light text-dark border">' .
