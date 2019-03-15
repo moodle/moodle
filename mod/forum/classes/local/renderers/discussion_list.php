@@ -168,7 +168,8 @@ class discussion_list {
                 $this->urlfactory->get_forum_view_url_from_forum($forum),
                 true
             ),
-            'notifications' => $this->get_notifications($user, $groupid)
+            'hasmore' => ($alldiscussionscount > $pagesize),
+            'notifications' => $this->get_notifications($user, $groupid),
         ];
 
         if (!$discussions) {

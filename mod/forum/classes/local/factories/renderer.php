@@ -368,7 +368,11 @@ class renderer {
 
         switch ($forum->get_type()) {
             case 'news':
-                $template = 'mod_forum/news_discussion_list';
+                if (SITEID == $forum->get_course_id()) {
+                    $template = 'mod_forum/frontpage_news_discussion_list';
+                } else {
+                    $template = 'mod_forum/news_discussion_list';
+                }
                 break;
             case 'qanda':
                 $template = 'mod_forum/qanda_discussion_list';
@@ -484,6 +488,17 @@ class renderer {
         return $this->get_detailed_discussion_list_renderer($forum, 'mod_forum/social_discussion_list');
     }
 
+    /**
+     * Create a discussion list renderer for the social course format.
+     *
+     * @param forum_entity $forum The forum that the discussions belong to
+     * @return discussion_list_renderer
+     */
+    public function get_frontpage_news_discussion_list_renderer(
+        forum_entity $forum
+    ) : discussion_list_renderer {
+        return $this->get_detailed_discussion_list_renderer($forum, 'mod_forum/frontpage_social_discussion_list');
+    }
 
     /**
      * Create a single type discussion list renderer.

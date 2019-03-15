@@ -82,6 +82,7 @@ class forum extends exporter {
                 'type' => [
                     'create' => ['type' => PARAM_URL],
                     'markasread' => ['type' => PARAM_URL],
+                    'view' => ['type' => PARAM_URL],
                 ],
             ],
         ];
@@ -115,6 +116,7 @@ class forum extends exporter {
             'urls' => [
                 'create' => $urlfactory->get_discussion_create_url($this->forum)->out(false),
                 'markasread' => $urlfactory->get_mark_all_discussions_as_read_url($this->forum)->out(false),
+                'view' => $urlfactory->get_forum_view_url_from_forum($this->forum)->out(false),
             ],
         ];
     }
