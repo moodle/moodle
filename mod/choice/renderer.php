@@ -191,10 +191,11 @@ class mod_choice_renderer extends plugin_renderer_base {
             if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {
 
                 // Build the select/deselect all for this option.
-                $selectallid = 'selectall-option-' . $optionid;
+                $selectallid = 'select-response-option-' . $optionid;
+                $togglegroup = 'responses response-option-' . $optionid;
                 $selectalltext = get_string('selectall', 'moodle') . ' ' . $headertitle;
                 $deselectalltext = get_string('deselectall', 'moodle') . ' ' . $headertitle;
-                $mastercheckbox = new \core\output\checkbox_toggleall($selectallid, true, [
+                $mastercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
                     'id' => $selectallid,
                     'name' => $selectallid,
                     'value' => 1,
@@ -257,7 +258,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                                 $checkboxvalue = $user->id;
                             }
 
-                            $togglegroup = 'selectall-option-' . $optionid;
+                            $togglegroup = 'responses response-option-' . $optionid;
                             $slavecheckbox = new \core\output\checkbox_toggleall($togglegroup, false, [
                                 'id' => $checkboxid,
                                 'name' => $checkboxname,
@@ -288,6 +289,18 @@ class mod_choice_renderer extends plugin_renderer_base {
 
         $actiondata = '';
         if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {
+            // Build the select/deselect all for all of options.
+            $selectallid = 'select-all-responses';
+            $togglegroup = 'responses';
+            $selectallcheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
+                'id' => $selectallid,
+                'name' => $selectallid,
+                'value' => 1,
+                'label' => get_string('selectall'),
+                'classes' => 'mr-1'
+            ], true);
+            $actiondata .= $OUTPUT->render($selectallcheckbox);
+
             $actionurl = new moodle_url($PAGE->url, array('sesskey'=>sesskey(), 'action'=>'delete_confirmation()'));
             $actionoptions = array('delete' => get_string('delete'));
             foreach ($choices->options as $optionid => $option) {
@@ -295,9 +308,16 @@ class mod_choice_renderer extends plugin_renderer_base {
                     $actionoptions['choose_'.$optionid] = get_string('chooseoption', 'choice', $option->text);
                 }
             }
-            $select = new single_select($actionurl, 'action', $actionoptions, null,
-                    array('' => get_string('chooseaction', 'choice')), 'attemptsform');
+            $selectattributes = [
+                'data-action' => 'toggle',
+                'data-togglegroup' => 'responses',
+                'data-toggle' => 'action',
+            ];
+            $selectnothing = ['' => get_string('chooseaction', 'choice')];
+            $select = new single_select($actionurl, 'action', $actionoptions, null, $selectnothing, 'attemptsform');
             $select->set_label(get_string('withselected', 'choice'));
+            $select->disabled = true;
+            $select->attributes = $selectattributes;
 
             $actiondata .= $this->output->render($select);
         }
