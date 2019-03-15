@@ -85,17 +85,6 @@ class grade_cron_task extends scheduled_task {
             $gradegrade->update('locktime');
         }
         $rs->close();
-
-        // Cleanup history tables.
-        if (!empty($CFG->gradehistorylifetime)) {
-            $histlifetime = $now - ($CFG->gradehistorylifetime * DAYSECS);
-            $tables = array('grade_outcomes_history', 'grade_categories_history', 'grade_items_history', 'grade_grades_history', 'scale_history');
-            foreach ($tables as $table) {
-                if ($DB->delete_records_select($table, "timemodified < ?", array($histlifetime))) {
-                    mtrace("    Deleted old grade history records from '$table'");
-                }
-            }
-        }
     }
 
 }

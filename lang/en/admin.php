@@ -1234,6 +1234,7 @@ $string['taskfiletrashcleanup'] = 'Cleanup files in trash';
 $string['taskglobalsearchindex'] = 'Global search indexing';
 $string['taskglobalsearchoptimize'] = 'Global search index optimization';
 $string['taskgradecron'] = 'Background processing for gradebook';
+$string['taskgradehistorycleanup'] = 'Background processing for clean grade history tables';
 $string['tasklegacycron'] = 'Legacy cron processing for plugins';
 $string['tasklogcleanup'] = 'Cleanup of task logs';
 $string['tasklogs'] = 'Task logs';
