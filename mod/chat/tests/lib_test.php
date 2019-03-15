@@ -367,14 +367,14 @@ class mod_chat_lib_testcase extends advanced_testcase {
         // We don't know when this test is being ran and there is no standard way to
         // mock the time() function (MDL-37327 to handle that).
         if ($hour < 10) {
-            $timezone1 = 'Europe/London';       // GMT or GMT +01:00.
+            $timezone1 = 'UTC';                 // GMT.
             $timezone2 = 'Pacific/Pago_Pago';   // GMT -11:00.
         } else if ($hour < 11) {
             $timezone1 = 'Pacific/Kiritimati';  // GMT +14:00.
             $timezone2 = 'America/Sao_Paulo';   // GMT -03:00.
         } else {
             $timezone1 = 'Pacific/Kiritimati';  // GMT +14:00.
-            $timezone2 = 'Europe/London';       // GMT or GMT +01:00.
+            $timezone2 = 'UTC';                 // GMT.
         }
 
         $this->setTimezone($timezone2);
@@ -411,7 +411,7 @@ class mod_chat_lib_testcase extends advanced_testcase {
         $actionevent22 = mod_chat_core_calendar_provide_event_action($event2, $factory, $student2->id);
 
         // Confirm event1 is not shown to student1 at all.
-        $this->assertNull($actionevent11);
+        $this->assertNull($actionevent11, 'Failed for UTC time ' . gmdate('H:i'));
 
         // Confirm event1 was decorated for student2 and it is actionable.
         $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent12);
