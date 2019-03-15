@@ -25,7 +25,7 @@ require_once(dirname(__FILE__) . '/lib.php');
 
 // parameters
 $roleid = optional_param('roleid', 0, PARAM_INT);
-$save = optional_param('savetemplate', 0, PARAM_CLEAN);
+$savetemplate = optional_param('savetemplate', 0, PARAM_CLEAN);
 $manage = optional_param('manage', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHANUM);
 $templateid = optional_param('templateid', 0, PARAM_INT);
@@ -57,6 +57,12 @@ $PAGE->set_heading(get_string('myhome') . " - $linktext");
 $PAGE->requires->jquery();
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
 $PAGE->navbar->add($linktext, $linkurl);
+
+// Require javascript
+$PAGE->requires->js_call_amd('block_iomad_company_admin/company_capabilities', 'init', [$companyid, $templateid, $roleid]);
+
+// get output renderer
+$output = $PAGE->get_renderer('block_iomad_company_admin');
 
 echo $OUTPUT->header();
 
@@ -97,7 +103,7 @@ if ($data = $mform->get_data()) {
     notice(get_string('roletemplatesaved', 'block_iomad_company_admin'));
 }
 
-if (!empty($save)) {
+if (!empty($savetemplate)) {
     if (!empty($templateid)) {
         $template = $DB->get_record('company_role_templates', array('id' => $templateid));
         $mform->set_data($template);
@@ -108,9 +114,6 @@ if (!empty($save)) {
     echo $OUTPUT->footer();
     die;
 }
-
-// get output renderer
-$output = $PAGE->get_renderer('block_iomad_company_admin');
 
 if ($roleid) {
 
@@ -125,9 +128,11 @@ if ($roleid) {
     echo $output->render_capabilities($capabilities);
 
 } else if ($manage) {
+
     // Display the list of templates.
     $templates = $DB->get_records('company_role_templates', array(), 'name');
-    echo $output->role_templates($templates, $linkurl);
+    $roletemplates = new \block_iomad_company_admin\output\roletemplates($templates, $linkurl);
+    echo $output->render_roletemplates($roletemplates);
 
 } else {
 
@@ -140,15 +145,5 @@ if ($roleid) {
     echo $output->render_capabilitiesroles($capabilitiesroles);
 
 }
-?>
-<script>
-$(".checkbox").change(function() {
-	$.post("<?php echo $linkurl; ?>", {
-		ajaxcap:this.value,
-		ajaxvalue:this.checked
-	});
-});
-</script>
-<?php
 
 echo $OUTPUT->footer();

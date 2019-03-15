@@ -2157,7 +2157,7 @@ class block_iomad_company_admin_external extends external_api {
     public static function restrict_capability($capability, $roleid, $companyid, $allow, $templateid = 0) {
         global $CFG, $DB;
 
-        $params = self::validate_parameters(self::restrict_capability_parameters, [
+        $params = self::validate_parameters(self::restrict_capability_parameters(), [
             'capability' => $capability,
             'roleid' => $roleid,
             'companyid' => $companyid,

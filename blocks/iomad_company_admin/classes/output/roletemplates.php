@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Output class for company capabilities 
+ * Output class for company role templates
  *
  * @package    block_iomad_company_admin
  * @copyright  2019 Howard Miller <howardsmiller@gmail.com>
@@ -36,35 +36,21 @@ use templatable;
  * @copyright  2019 Howard Miller <howardsmiller@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class capabilities implements renderable, templatable {
+class roletemplates implements renderable, templatable {
 
-    protected $capabilities;
-
-    protected $roleid;
-
-    protected $companyid;
-
-    protected $templateid;
+    protected $templates;
 
     protected $linkurl;
 
     /**
-     * @param array $capabilities
-     * @param int $roleid
-     * @param int $companyid
-     * @param int $templateid
+     * @param array $templates
      * @param string $linkurl
      */
-    public function __construct($capabilities, $roleid, $companyid, $templateid, $linkurl) {
-        array_walk($capabilities, function(&$capability) use ($linkurl) {
-            $capability->name = get_capability_string($capability->capability);
-            $capability->doclink = \iomad::documentation_link() . $capability->capability;
-            $capability->checked = !$capability->iomad_restriction;
+    public function __construct($templates, $linkurl) {
+        array_walk($templates, function(&$template) use ($linkurl) {
+            $template->editlink = new \moodle_url('/blocks/iomad_company_admin/company_capabilities.php', ['templateid' => $template->id, 'action' => 'edit']);
         });
-        $this->capabilities = $capabilities;
-        $this->roleid = $roleid;
-        $this->companyid = $companyid;
-        $this->templateid = $templateid;
+        $this->templates = $templates;
         $this->linkurl = $linkurl;
     }
 
@@ -77,23 +63,8 @@ class capabilities implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $DB;
 
-        // Get company info for heading.
-        if (empty($this->templateid)) {
-            $company = $DB->get_record('company', ['id' => $this->companyid], '*', MUST_EXIST);
-            $title = $company->name;
-        } else {
-            $template = $DB->get_record('company_role_templates', ['id' => $this->templateid], '*', MUST_EXIST);
-            $title = get_string('roletemplate', 'block_iomad_company_admin') . ' ' . $template->name;
-        }
-
-        // Role info
-        $role = $DB->get_record('role', array('id' => $this->roleid), '*', MUST_EXIST);
-
         return [
-            'title' => $title,
-            'role' => $role,
-            'capabilities' => array_values($this->capabilities),
-            'companyid' => $this->companyid,
+            'templates' => array_values($this->templates),
             'linkurl' => $this->linkurl,
         ];
     }

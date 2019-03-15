@@ -23,46 +23,6 @@ use plugin_renderer_base;
 class renderer extends plugin_renderer_base {
 
     /**
-     * Display capabilities for role
-     */
-    public function capabilities($capabilities, $roleid, $companyid, $templateid) {
-        global $DB;
-
-        // get heading
-        if (empty($templateid)) {
-            $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
-            $out = '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->name) . '</h3>';
-            $prefix = "c." . $companyid;
-        } else {
-            $template = $DB->get_record('company_role_templates', array('id' => $templateid), '*', MUST_EXIST);
-            $title = get_string('roletemplate', 'block_iomad_company_admin') . ' ' . $template->name;
-            $out = '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $title) . '</h3>';
-            $prefix = "t." . $templateid;
-        }
-        $role = $DB->get_record('role', array('id' => $roleid), '*', MUST_EXIST);
-        $out .= '<p><b>' . get_string('rolename', 'block_iomad_company_admin', $role->name) . '</b></p>';
-        $out .= '<p>' . get_string('iomadcapabilities_boiler', 'block_iomad_company_admin') . '</p>';
-
-        $table = new \html_table();
-        foreach ($capabilities as $capability) {
-            $checked = '';
-            if (!$capability->iomad_restriction) {
-                $checked = 'checked="checked"';
-            }
-            $value ="{$prefix}.{$roleid}.{$capability->capability}";
-            $caplink = '<a href="' . \iomad::documentation_link() . $capability->capability . '">' . get_capability_string($capability->capability) . '</a>';
-            $row = array(
-                $caplink . '<br /><small>' . $capability->capability . '</small>',
-                '<input class="checkbox" type="checkbox" ' . $checked. ' value="' . $value . '" />' . get_string('allow'),
-            );
-            $table->data[] = $row;
-        }
-
-        $out .= \html_writer::table($table);
-        return $out;
-    }
-
-    /**
      * Display role templates.
      */
     public function role_templates($templates, $backlink) {
@@ -207,5 +167,13 @@ class renderer extends plugin_renderer_base {
      */
     public function render_capabilities(capabilities $capabilities) {
         return $this->render_from_template('block_iomad_company_admin/capabilities', $capabilities->export_for_template($this));
+    }
+
+    /**
+     * Render role templates page
+     * @param roletemplates $roletemplates
+     */
+    public function render_roletemplates(roletemplates $roletemplates) {
+        return $this->render_from_template('block_iomad_company_admin/roletemplates', $roletemplates->export_for_template($this));
     }
 }
