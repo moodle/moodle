@@ -2229,4 +2229,47 @@ class block_iomad_company_admin_external extends external_api {
         return new external_value(PARAM_BOOL, 'True capability update succeeds');
     }
 
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.2
+     */
+    public static function capability_delete_template_parameters() {
+        return new external_function_parameters(
+            array(
+                'templateid' => new external_value(PARAM_INT, 'Template ID.'),
+            )
+        );
+    }
+    /**
+     * Delete capability template
+     *
+     * @param int $templateid
+     */
+    public static function capability_delete_template($templateid) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::capability_delete_template_parameters(), [
+            'templateid' => $templateid,
+        ]);
+
+        // Security.
+        $context = context_system::instance();
+        iomad::require_capability('block/iomad_company_admin:restrict_capabilities', $context);
+
+        $DB->delete_records('company_role_templates_caps', ['templateid' => $params['templateid']]);
+        $DB->delete_records('company_role_templates', ['id' => $params['templateid']]);
+
+        return true;
+    }
+
+    /**
+     * Returns description for capability_delete_template
+     * @return external_description
+     */
+    public static function capability_delete_template_returns() {
+        return new external_value(PARAM_BOOL, 'True capability update succeeds');
+    }
+
 }

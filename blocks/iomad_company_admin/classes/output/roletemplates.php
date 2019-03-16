@@ -65,6 +65,7 @@ class roletemplates implements renderable, templatable {
 
         return [
             'templates' => array_values($this->templates),
+            'istemplates' => !empty($this->templates),
             'linkurl' => $this->linkurl,
         ];
     }
