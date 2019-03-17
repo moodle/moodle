@@ -22,16 +22,13 @@ defined('MOODLE_INTERNAL') || die;
 // Set up the save form.
 class company_role_save_form extends \moodleform {
 
-    public function __construct($actionurl,
-                                $companyid,
-                                $templateid) {
+    public function __construct($actionurl, $companyid, $templateid) {
 
         $this->companyid = $companyid;
         $this->templateid = $templateid;
 
         parent::__construct($actionurl);
     }
-
 
     public function definition() {
         $mform = $this->_form;
@@ -45,7 +42,7 @@ class company_role_save_form extends \moodleform {
         $mform->addElement('text',  'name', get_string('roletemplatename', 'block_iomad_company_admin'),
                            'maxlength="254" size="50"');
         $mform->addHelpButton('name', 'roletemplatename', 'block_iomad_company_admin');
-        $mform->addRule('name', get_string('missingroletemplatename', 'block_iomad_company_admin'), 'required', null, 'client');
+        $mform->addRule('name', get_string('missingroletemplatename', 'block_iomad_company_admin'), 'required');
         $mform->setType('name', PARAM_MULTILANG);
 
         $this->add_action_buttons(true, get_string('saveroletemplate', 'block_iomad_company_admin'));
@@ -54,7 +51,7 @@ class company_role_save_form extends \moodleform {
     public function validation($data, $files) {
         global $DB;
 
-        $errors = array();
+        $errors = parent::validation($data, $files);
 
         if ($DB->get_record('company_role_templates', array('name' => $data['name']))) {
             $errors['name'] = get_string('templatenamealreadyinuse', 'block_iomad_company_admin');

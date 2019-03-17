@@ -66,55 +66,6 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 echo $OUTPUT->header();
 
-//  Deal with any deletes.
-if ($action == 'delete' && confirm_sesskey()) {
-    if ($confirm != md5($templateid)) {
-        if (!$templateinfo = $DB->get_record('company_role_templates', array('id' => $templateid))) {
-            print_error('roletemplatenotfound', 'block_iomad_company_admin');
-        }
-
-        echo $OUTPUT->heading(get_string('deleteroletemplate', 'block_iomad_company_admin'). " " . $templateinfo->name);
-        $optionsyes = array('templateid' => $templateid, 'confirm' => md5($templateid), 'sesskey' => sesskey(), 'action' => 'delete');
-        echo $OUTPUT->confirm(get_string('deleteroletemplatefull', 'block_iomad_company_admin', "'" . $templateinfo->name ."'"),
-                              new moodle_url('/blocks/iomad_company_admin/company_capabilities.php', $optionsyes),
-                                             '/blocks/iomad_company_admin/company_capabilities.php');
-        echo $OUTPUT->footer();
-        die;
-    } else {
-        // Delete the template.
-        $DB->delete_records('company_role_templates_caps', array('templateid' => $templateid));
-        $DB->delete_records('company_role_templates', array('id' => $templateid));
-        notice(get_string('roletemplatedeleted', 'block_iomad_company_admin'));
-    }
-}
-
-$mform = new \block_iomad_company_admin\forms\company_role_save_form($linkurl, $companyid, $templateid);
-
-if ($data = $mform->get_data()) {
-
-    // Save the template.
-    $templateid = $DB->insert_record('company_role_templates', array('name' => $data->name));
-    $restrictions = $DB->get_records('company_role_restriction', array('companyid' => $companyid), null, 'id,roleid,capability');
-    foreach ($restrictions as $restriction) {
-        $DB->insert_record('company_role_templates_caps', array ('templateid' => $templateid,
-                                                                'roleid' => $restriction->roleid,
-                                                                'capability' => $restriction->capability));
-    }
-    notice(get_string('roletemplatesaved', 'block_iomad_company_admin'));
-}
-
-if (!empty($savetemplate)) {
-    if (!empty($templateid)) {
-        $template = $DB->get_record('company_role_templates', array('id' => $templateid));
-        $mform->set_data($template);
-    }
-
-    // Display the form.
-    $mform->display();
-    echo $OUTPUT->footer();
-    die;
-}
-
 if ($roleid) {
 
     // Display the list of capabilities (template or company).
@@ -138,7 +89,7 @@ if ($roleid) {
 
     // get the list of roles to choose from
     $roles = iomad_company_admin::get_roles();
-    $saveurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php', ['savetemplate' => 1, 'templateid' => $templateid]);
+    $saveurl = new moodle_url('/blocks/iomad_company_admin/save_template.php', ['templateid' => $templateid]);
     $manageurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php', ['manage' => 1]);
     $backurl = empty($templateid) ? '' : $backurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php');
     $capabilitiesroles = new \block_iomad_company_admin\output\capabilitiesroles($roles, $companyid, $templateid, $linkurl, $saveurl, $manageurl, $backurl);
