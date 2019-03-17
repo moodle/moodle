@@ -25,11 +25,9 @@ require_once(dirname(__FILE__) . '/lib.php');
 
 // parameters
 $roleid = optional_param('roleid', 0, PARAM_INT);
-$savetemplate = optional_param('savetemplate', 0, PARAM_CLEAN);
-$manage = optional_param('manage', 0, PARAM_INT);
-$action = optional_param('action', '', PARAM_ALPHANUM);
 $templateid = optional_param('templateid', 0, PARAM_INT);
-$confirm = optional_param('confirm', '', PARAM_ALPHANUM);
+$manage = optional_param('manage', 0, PARAM_INT);
+$templatesaved = optional_param('templatesaved', 0, PARAM_INT);
 
 // Set the companyid
 // (before output in case it redirects)
@@ -77,14 +75,12 @@ if ($roleid) {
 
     $capabilities = new \block_iomad_company_admin\output\capabilities($caps, $roleid, $companyid, $templateid, $linkurl);
     echo $output->render_capabilities($capabilities);
-
 } else if ($manage) {
 
     // Display the list of templates.
     $templates = $DB->get_records('company_role_templates', array(), 'name');
     $roletemplates = new \block_iomad_company_admin\output\roletemplates($templates, $linkurl);
     echo $output->render_roletemplates($roletemplates);
-
 } else {
 
     // get the list of roles to choose from
@@ -92,9 +88,8 @@ if ($roleid) {
     $saveurl = new moodle_url('/blocks/iomad_company_admin/save_template.php', ['templateid' => $templateid]);
     $manageurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php', ['manage' => 1]);
     $backurl = empty($templateid) ? '' : $backurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php');
-    $capabilitiesroles = new \block_iomad_company_admin\output\capabilitiesroles($roles, $companyid, $templateid, $linkurl, $saveurl, $manageurl, $backurl);
+    $capabilitiesroles = new \block_iomad_company_admin\output\capabilitiesroles($roles, $companyid, $templateid, $linkurl, $saveurl, $manageurl, $backurl, $templatesaved);
     echo $output->render_capabilitiesroles($capabilitiesroles);
-
 }
 
 echo $OUTPUT->footer();

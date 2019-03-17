@@ -51,13 +51,15 @@ class capabilitiesroles implements renderable, templatable {
     protected $manageurl;
 
     protected $backurl;
+ 
+    protected $templatesaved;
 
     /**
      * @param array $roles
      * @param int $companyid
      * @param int $templateid
      */
-    public function __construct($roles, $companyid, $templateid, $linkurl, $saveurl, $manageurl, $backurl) {
+    public function __construct($roles, $companyid, $templateid, $linkurl, $saveurl, $manageurl, $backurl, $templatesaved) {
         array_walk($roles, function(&$role) use ($linkurl) {
             $linkurl->params(['roleid' => $role->id]);
             $role->link = $linkurl->out();
@@ -69,6 +71,7 @@ class capabilitiesroles implements renderable, templatable {
         $this->saveurl = $saveurl;
         $this->manageurl = $manageurl;
         $this->backurl = $backurl;
+        $this->templatesaved = $templatesaved;
     }
 
     /**
@@ -97,6 +100,7 @@ class capabilitiesroles implements renderable, templatable {
             'saveurl' => $this->saveurl,
             'manageurl' => $this->manageurl,
             'backurl' => $this->backurl,
+            'templatesaved' => $this->templatesaved,
         ];
     }
 
