@@ -93,6 +93,11 @@
                                 {{#discussion.pinned}}
                                     {{#pix}}i/pinned, mod_forum, {{#str}}discussionpinned, mod_forum{{/str}}{{/pix}}
                                 {{/discussion.pinned}}
+                                {{^discussion.pinned}}
+                                    {{#discussion.userstate.favourited}}
+                                        {{#pix}}i/pinned, mod_forum, {{#str}}discussionpinned, mod_forum{{/str}}{{/pix}}
+                                    {{/discussion.userstate.favourited}}
+                                {{/discussion.pinned}}
                             </td>
                             <td scope="col" class="topic p-0 align-middle">
                                 <a class="p-3 p-l-0 w-100 h-100 d-block" href="{{discussion.urls.view}}">{{{discussion.name}}}</a>

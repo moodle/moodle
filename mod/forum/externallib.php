@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once("$CFG->libdir/externallib.php");
 
 use mod_forum\local\exporters\post as post_exporter;
+use mod_forum\local\exporters\discussion as discussion_exporter;
 
 class mod_forum_external extends external_api {
 
@@ -1093,6 +1094,68 @@ class mod_forum_external extends external_api {
                 ),
                 //'alertmessage' => new external_value(PARAM_RAW, 'Success message to be displayed to the user.'),
             )
+        );
+    }
+
+    public static function toggle_favourite_state($forumid, $discussionid, $targetstate) {
+        global $DB, $PAGE, $USER;
+
+        $params = self::validate_parameters(self::toggle_favourite_state_parameters(), [
+            'forumid' => $forumid,
+            'discussionid' => $discussionid,
+            'targetstate' => $targetstate
+        ]);
+
+        $vaultfactory = mod_forum\local\container::get_vault_factory();
+        $forumvault = $vaultfactory->get_forum_vault();
+        $forum = $forumvault->get_from_id($params['forumid']);
+        $forumcontext = $forum->get_context();
+        $usercontext = context_user::instance($USER->id);
+
+        self::validate_context($forumcontext);
+
+        $managerfactory = mod_forum\local\container::get_manager_factory();
+        $capabilitymanager = $managerfactory->get_capability_manager($forum);
+
+        // Get the discussion vault and the corresponding discussion entity.
+        $discussionvault = $vaultfactory->get_discussion_vault();
+        $discussion = $discussionvault->get_from_id($params['discussionid']);
+
+        // Does the user have the ability to favourite the discussion?
+        if (!$capabilitymanager->can_favourite_discussion($USER, $discussion)) {
+            throw new moodle_exception('cannotfavourite', 'forum');
+        }
+
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+        $isfavourited = $ufservice->favourite_exists('mod_forum', 'discussions', $discussion->get_id(), $forumcontext);
+
+        $favouritefunction = $targetstate ? 'create_favourite' : 'delete_favourite';
+        if ($isfavourited != (bool) $params['targetstate']) {
+            $ufservice->{$favouritefunction}('mod_forum', 'discussions', $discussion->get_id(), $forumcontext);
+        }
+
+        $exporterfactory = mod_forum\local\container::get_exporter_factory();
+        $exporter = $exporterfactory->get_discussion_exporter($USER, $forum, $discussion);
+        return $exporter->export($PAGE->get_renderer('mod_forum'));
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function toggle_favourite_state_returns() {
+        return discussion_exporter::get_read_structure();
+    }
+
+    public function toggle_favourite_state_parameters() {
+        return new external_function_parameters(
+            [
+                'forumid' => new external_value(PARAM_INT, 'Forum that the discussion is in'),
+                'discussionid' => new external_value(PARAM_INT, 'The discussion to subscribe or unsubscribe'),
+                'targetstate' => new external_value(PARAM_BOOL, 'The target state')
+            ]
         );
     }
 

@@ -201,6 +201,10 @@ class discussion {
             $exporteddiscussion['html']['pindiscussion'] = $this->get_pin_discussion_html();
         }
 
+        if ($capabilities['favourite']) {
+            $exporteddiscussion['html']['favouritediscussion'] = $this->get_favourite_discussion_html($exporteddiscussion);
+        }
+
         return $this->renderer->render_from_template('mod_forum/forum_discussion', $exporteddiscussion);
     }
 
@@ -335,18 +339,24 @@ class discussion {
 
         if ($discussion->is_pinned()) {
             $pinlink = FORUM_DISCUSSION_UNPINNED;
-            $pintext = get_string('discussionunpin', 'forum');
+            $pintext = get_string('unpindiscussion', 'forum');
         } else {
             $pinlink = FORUM_DISCUSSION_PINNED;
-            $pintext = get_string('discussionpin', 'forum');
+            $pintext = get_string('pindiscussion', 'forum');
         }
 
-        $button = new single_button(
-            new moodle_url('discuss.php', ['pin' => $pinlink, 'd' => $discussion->get_id()]),
-            $pintext,
-            'post'
-        );
-        return $this->renderer->render($button);
+        $params = [
+            'pin' => $pinlink,
+            'd' => $discussion->get_id(),
+            'sesskey' => sesskey(),
+        ];
+        $url = new moodle_url('discuss.php', $params);
+        $link = new \action_link($url, $pintext, null, ['class' => 'btn btn-link']);
+        return $this->renderer->render($link);
+    }
+
+    private function get_favourite_discussion_html($exporteddiscussion) : string {
+        return $this->renderer->render_from_template('mod_forum/discussion_favourite_toggle', $exporteddiscussion);
     }
 
     /**

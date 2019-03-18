@@ -320,4 +320,17 @@ class discussion {
     public function is_timed_discussion_visible() : bool {
         return !$this->is_timed_discussion() || ($this->has_started() && !$this->has_ended());
     }
+
+    /**
+     * Check whether the provided discussion has been favourited by the user.
+     *
+     * @param discussion $discussion The discussion record
+     * @param context $forumcontext Forum context
+     * @param \stdClass $user The user to check the favourite against
+     */
+    public static function is_favourited(discussion $discussion, \context_module $forumcontext, \stdClass $user) {
+        $usercontext = \context_user::instance($user->id);
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+        return $ufservice->favourite_exists('mod_forum', 'discussions', $discussion->get_id(), $forumcontext);
+    }
 }

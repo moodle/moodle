@@ -45,6 +45,9 @@ define([], function() {
         },
         lock: {
             toggle: "[data-action='toggle'][data-type='lock-toggle']",
+        },
+        favourite: {
+            toggle: "[data-type='favorite-toggle'][data-action='toggle']",
         }
     };
 });

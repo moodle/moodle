@@ -302,14 +302,18 @@ span.unread {
 }
 
 .path-mod-forum .discussionsubscription,
-.path-mod-forum .discussionlock {
+.path-mod-forum .discussionlock,
+.path-mod-forum .discussion-settings-menu,
+.path-mod-forum .discussionsubscription {
     margin-top: -10px;
     text-align: right;
     margin-bottom: 10px;
 }
 
 .path-mod-forum .discussionsubscription > a > img,
-.path-mod-forum .discussionlock > a > img {
+.path-mod-forum .discussionlock > a > img,
+.path-mod-forum .favourite-discussion > a > img,
+.path-mod-forum .discussion-settings-menu > a > img {
     width: 12px;
     padding: 0 4px;
 }
