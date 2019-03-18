@@ -421,6 +421,13 @@ class company_managers_form extends moodleform {
                                                         'companyid' => $this->selectedcompany))) {
                             // Remove the user from this company.
                             $DB->delete_records('company_users', (array) $userrecord);
+
+                            // Deal with any child companies.
+                            if ($childcompanies = $company->get_child_companies_recursive()) {
+                                foreach ($childcompanies as $childcompany) {
+                                    $DB->delete_records('company_users', array('userid' => $removeuser->id, 'companyid' => $childcompany->id));
+                                }
+                            }
                         } else {
                             // Remove the manager status from the user.
                             if ($roletype != 3) {
