@@ -147,21 +147,7 @@ class core_comment_external extends external_api {
         return new external_single_structure(
             array(
                 'comments' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id'             => new external_value(PARAM_INT,  'Comment ID'),
-                            'content'        => new external_value(PARAM_RAW,  'The content text formated'),
-                            'format'         => new external_format_value('content'),
-                            'timecreated'    => new external_value(PARAM_INT,  'Time created (timestamp)'),
-                            'strftimeformat' => new external_value(PARAM_NOTAGS, 'Time format'),
-                            'profileurl'     => new external_value(PARAM_URL,  'URL profile'),
-                            'fullname'       => new external_value(PARAM_NOTAGS, 'fullname'),
-                            'time'           => new external_value(PARAM_NOTAGS, 'Time in human format'),
-                            'avatar'         => new external_value(PARAM_RAW,  'HTML user picture'),
-                            'userid'         => new external_value(PARAM_INT,  'User ID'),
-                            'delete'         => new external_value(PARAM_BOOL, 'Permission to delete=true/false', VALUE_OPTIONAL)
-                        ), 'comment'
-                    ), 'List of comments'
+                    self::get_comment_structure(), 'List of comments'
                 ),
                 'count' => new external_value(PARAM_INT,  'Total number of comments.', VALUE_OPTIONAL),
                 'perpage' => new external_value(PARAM_INT,  'Number of comments per page.', VALUE_OPTIONAL),
@@ -198,6 +184,7 @@ class core_comment_external extends external_api {
      * Returns description of method parameters for the add_comments method.
      *
      * @return external_function_parameters
+     * @since Moodle 3.8
      */
     public static function add_comments_parameters() {
         return new external_function_parameters(
@@ -224,6 +211,7 @@ class core_comment_external extends external_api {
      * @param array $comments the array of comments to create.
      * @return array the array containing those comments created.
      * @throws comment_exception
+     * @since Moodle 3.8
      */
     public static function add_comments($comments) {
         global $CFG, $SITE;
@@ -279,6 +267,7 @@ class core_comment_external extends external_api {
      * Returns description of method result value for the add_comments method.
      *
      * @return external_description
+     * @since Moodle 3.8
      */
     public static function add_comments_returns() {
         return new external_multiple_structure(
@@ -290,6 +279,7 @@ class core_comment_external extends external_api {
      * Returns description of method parameters for the delete_comments() method.
      *
      * @return external_function_parameters
+     * @since Moodle 3.8
      */
     public static function delete_comments_parameters() {
         return new external_function_parameters(
@@ -307,6 +297,7 @@ class core_comment_external extends external_api {
      * @param array $comments array of comment ids to be deleted
      * @return array
      * @throws comment_exception
+     * @since Moodle 3.8
      */
     public static function delete_comments(array $comments) {
         global $CFG, $DB, $USER, $SITE;
@@ -368,6 +359,7 @@ class core_comment_external extends external_api {
      * Returns description of method result value for the delete_comments() method.
      *
      * @return external_description
+     * @since Moodle 3.8
      */
     public static function delete_comments_returns() {
         return new external_warnings();
