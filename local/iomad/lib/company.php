@@ -731,7 +731,7 @@ class company {
                 if ($CFG->iomad_autoenrol_managers) {
                     // Deal with course permissions.
                     if ($companycourses = $DB->get_records('company_course',
-                                                            array('companyid' => $this->selectedcompany))) {
+                                                            array('companyid' => $this->id))) {
                         foreach ($companycourses as $companycourse) {
                             if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
                                 // If its a company created course then assign the editor role to the user.
@@ -764,7 +764,7 @@ class company {
                 if ($CFG->iomad_autoenrol_managers) {
                     // Deal with course permissions.
                     if ($companycourses = $DB->get_records('company_course',
-                                                            array('companyid' => $this->selectedcompany))) {
+                                                            array('companyid' => $this->id))) {
                         foreach ($companycourses as $companycourse) {
                             if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
                                 // If its a company created course then assign the editor role to the user.
@@ -1508,8 +1508,11 @@ class company {
         $userrecord['departmentid'] = $departmentid;
         $userrecord['userid'] = $userid;
 
+        // We need the company.
+        $departmentrec = $DB->get_record('department', array('id' => $departmentid));
+
         // Moving a user.
-        if ($currentuser = $DB->get_record('company_users', array('userid' => $userid))) {
+        if ($currentuser = $DB->get_record('company_users', array('userid' => $userid, 'companyid' => $departmentrec->company))) {
             $currentuser->departmentid = $departmentid;
             if ($ws && !empty($managertype)) {
                 $currentuser->managertype = $managertype;
@@ -3162,7 +3165,7 @@ class company {
         $usercompany = self::by_userid($userid);
         $usercompanyrec = $DB->get_record('company_users', array('userid' => $userid, 'companyid' => $usercompany->id));
         $user = $DB->get_record('user', array('id' => $userid));
-        if ($usercompanyrec->managertype = 0) {
+        if (isset($usercompanyrec->managertype) && $usercompanyrec->managertype == 0) {
             EmailTemplate::send('user_deleted',
                                  array('company' => $usercompany,
                                        'user' => $user));
