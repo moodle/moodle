@@ -24,7 +24,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 
 // parameters
-$templateid = optional_param('templateid', 0, PARAM_INT);
+$templateid = required_param('templateid', PARAM_INT);
 
 // access stuff
 $context = context_system::instance();
