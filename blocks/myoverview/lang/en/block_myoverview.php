@@ -48,7 +48,7 @@ $string['aria:sortingdropdown'] = 'Sorting drop-down menu';
 $string['card'] = 'Card';
 $string['cards'] = 'Cards';
 $string['courseprogress'] = 'Course progress:';
-$string['complete'] = 'complete';
+$string['completepercent'] = '{$a}% complete';
 $string['favourites'] = 'Starred';
 $string['future'] = 'Future';
 $string['inprogress'] = 'In progress';
@@ -93,4 +93,5 @@ $string['privacy:metadata:overviewlasttab'] = 'This stores the last tab selected
 $string['viewcourse'] = 'View course';
 
 // Deprecated since Moodle 3.7.
+$string['complete'] = 'complete';
 $string['nocourses'] = 'No courses';
