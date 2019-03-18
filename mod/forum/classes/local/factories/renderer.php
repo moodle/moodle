@@ -187,6 +187,7 @@ class renderer {
             function($exportedposts, $forums) use ($displaymode, $readonly, $exportedpostssorter) {
                 $forum = array_shift($forums);
                 $seenfirstunread = false;
+                $postcount = count($exportedposts);
                 $exportedposts = array_map(
                     function($exportedpost) use ($forum, $readonly, $seenfirstunread) {
                         if ($forum->get_type() == 'single' && !$exportedpost->hasparent) {
@@ -196,6 +197,7 @@ class renderer {
 
                         $exportedpost->firstpost = false;
                         $exportedpost->readonly = $readonly;
+                        $exportedpost->hasreplycount = false;
                         $exportedpost->hasreplies = false;
                         $exportedpost->replies = [];
 
@@ -215,7 +217,14 @@ class renderer {
                     $sortintoreplies = function($nestedposts) use (&$sortintoreplies) {
                         return array_map(function($postdata) use (&$sortintoreplies) {
                             [$post, $replies] = $postdata;
-                            $post->replies = $sortintoreplies($replies);
+                            $sortedreplies = $sortintoreplies($replies);
+                            // Set the parent author name on the replies. This is used for screen
+                            // readers to help them identify the structure of the discussion.
+                            $sortedreplies = array_map(function($reply) use ($post) {
+                                $reply->parentauthorname = $post->author->fullname;
+                                return $reply;
+                            }, $sortedreplies);
+                            $post->replies = $sortedreplies;
                             $post->hasreplies = !empty($post->replies);
                             return $post;
                         }, $nestedposts);
@@ -232,6 +241,8 @@ class renderer {
                 if (!empty($exportedposts)) {
                     // Need to identify the first post so that we can use it in behat tests.
                     $exportedposts[0]->firstpost = true;
+                    $exportedposts[0]->hasreplycount = true;
+                    $exportedposts[0]->replycount = $postcount - 1;
                 }
 
                 return $exportedposts;

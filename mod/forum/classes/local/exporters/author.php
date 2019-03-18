@@ -82,9 +82,22 @@ class author extends exporter {
                 'null' => NULL_ALLOWED
             ],
             'groups' => [
-                'type' => group_exporter::read_properties_definition(),
                 'multiple' => true,
                 'optional' => true,
+                'type' => [
+                    'id' => ['type' => PARAM_INT],
+                    'name' => ['type' => PARAM_TEXT],
+                    'urls' => [
+                        'type' => [
+                            'image' => [
+                                'type' => PARAM_URL,
+                                'optional' => true,
+                                'default' => null,
+                                'null' => NULL_ALLOWED
+                            ]
+                        ]
+                    ]
+                ]
             ],
             'urls' => [
                 'type' => [
@@ -122,6 +135,7 @@ class author extends exporter {
                 $imageurl = get_group_picture_url($group, $group->courseid);
                 return [
                     'id' => $group->id,
+                    'name' => $group->name,
                     'urls' => [
                         'image' => $imageurl ? $imageurl->out(false) : null
                     ]
