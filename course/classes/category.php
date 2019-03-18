@@ -640,11 +640,16 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
 
         // IOMAD only want categories which are for my company or no company.
         if (!$company = company::get_company_byuserid($USER->id)) {
-            return array();
+            $company = new stdclass();
+            $company->id = 0;
         }
-        $companysql = " WHERE cc.id NOT IN (
-                         SELECT category FROM {company}
-                         WHERE id != :companyid)";
+        if (iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
+            $companysql = "";
+        } else {
+            $companysql = " WHERE cc.id NOT IN (
+                             SELECT category FROM {company}
+                             WHERE id != :companyid)";
+        }
 
         // Re-build the tree.
         $sql = "SELECT cc.id, cc.parent, cc.visible
