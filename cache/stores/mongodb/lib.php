@@ -144,6 +144,9 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
 
         try {
             $this->connection = new MongoDB\Client($this->server, $this->options);
+            // Required because MongoDB\Client does not try to connect to the server
+            $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
+            $this->connection->getManager()->selectServer($rp);
             $this->isready = true;
         } catch (MongoDB\Driver\Exception\RuntimeException $e) {
             // We only want to catch RuntimeException here.
@@ -480,18 +483,10 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
     public function instance_deleted() {
         // We can't use purge here that acts upon a collection.
         // Instead we must drop the named database.
-        if ($this->connection) {
-            $connection = $this->connection;
-        } else {
-            try {
-                $connection = new MongoDB\Client($this->server, $this->options);
-            } catch (MongoDB\Driver\Exception\RuntimeException $e) {
-                // We only want to catch RuntimeException here.
-                // If the server cannot be connected to we cannot clean it.
-                return;
-            }
+        if (!$this->is_ready()) {
+            return;
         }
-        $database = $connection->selectDatabase($this->databasename);
+        $database = $this->connection->selectDatabase($this->databasename);
         $database->drop();
         $connection = null;
         $database = null;
