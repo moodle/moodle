@@ -212,7 +212,7 @@ function url_get_coursemodule_info($coursemodule) {
     require_once("$CFG->dirroot/mod/url/locallib.php");
 
     if (!$url = $DB->get_record('url', array('id'=>$coursemodule->instance),
-            'id, name, display, displayoptions, externalurl, parameters, intro, introformat')) {
+            'id, name, course, display, displayoptions, externalurl, parameters, intro, introformat')) {
         return NULL;
     }
 
@@ -242,6 +242,9 @@ function url_get_coursemodule_info($coursemodule) {
         // Convert intro to html. Do not filter cached version, filters run at display time.
         $info->content = format_module_intro('url', $url, $coursemodule->id, false);
     }
+
+    $course = get_course($url->course); // Get cached course.
+    $info->customdata = array('fullurl' => str_replace('&amp;', '&', url_get_full_url($url, $coursemodule, $course)));
 
     return $info;
 }
