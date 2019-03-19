@@ -3572,7 +3572,7 @@ class company {
                     $new = count($currentcourses);
                     if ($old != $new) {
                         $allocation = $child->allocation / $old * $new;
-                        $DB->set_field('companylicense', 'allocation', $allocation, array('id' => $child->id));
+                        $child->allocation = $allocation;
                     }
                 }
 
