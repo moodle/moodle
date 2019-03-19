@@ -139,7 +139,7 @@ class behat_mod_feedback extends behat_base {
                 return $behatgeneralcontext->download_file_from_link($link);
             },
             array('link' => $link),
-            self::EXTENDED_TIMEOUT,
+            behat_base::get_extended_timeout(),
             $exception
         );
 

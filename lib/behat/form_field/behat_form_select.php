@@ -94,7 +94,7 @@ class behat_form_select extends behat_form_field {
                     }
                 }
             }
-            $this->session->wait(behat_base::TIMEOUT * 1000, behat_base::PAGE_READY_JS);
+            $this->session->wait(behat_base::get_timeout() * 1000, behat_base::PAGE_READY_JS);
         }
     }
 
