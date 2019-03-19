@@ -81,6 +81,9 @@ class discussion_list {
     /** @var callable $postprocessfortemplate Function to process exported posts before template rendering */
     private $postprocessfortemplate;
 
+    /** @var string $template The template to use when displaying */
+    private $template;
+
     /**
      * Constructor for a new discussion list renderer.
      *
@@ -92,6 +95,7 @@ class discussion_list {
      * @param   builder_factory     $builderfactory The factory used to fetch the builder instances
      * @param   capability_manager  $capabilitymanager The managed used to check capabilities on the forum
      * @param   url_factory         $urlfactory The factory used to create URLs in the forum
+     * @param   string              $template
      * @param   notification[]      $notifications A list of any notifications to be displayed within the page
      * @param   callable|null       $postprocessfortemplate Callback function to process discussion lists for templates
      */
@@ -104,6 +108,7 @@ class discussion_list {
         builder_factory $builderfactory,
         capability_manager $capabilitymanager,
         url_factory $urlfactory,
+        string $template,
         array $notifications = [],
         callable $postprocessfortemplate = null
     ) {
@@ -114,9 +119,11 @@ class discussion_list {
         $this->vaultfactory = $vaultfactory;
         $this->builderfactory = $builderfactory;
         $this->capabilitymanager = $capabilitymanager;
+
         $this->urlfactory = $urlfactory;
         $this->notifications = $notifications;
         $this->postprocessfortemplate = $postprocessfortemplate;
+        $this->template = $template;
 
         $forumdatamapper = $this->legacydatamapperfactory->get_forum_data_mapper();
         $this->forumrecord = $forumdatamapper->to_legacy_object($forum);
@@ -165,7 +172,7 @@ class discussion_list {
         ];
 
         if (!$discussions) {
-            return $this->renderer->render_from_template($this->get_template(), $forumview);
+            return $this->renderer->render_from_template($this->template, $forumview);
         }
 
         if ($this->postprocessfortemplate !== null) {
@@ -181,7 +188,7 @@ class discussion_list {
             $exportedposts
         );
 
-        return $this->renderer->render_from_template($this->get_template(), $forumview);
+        return $this->renderer->render_from_template($this->template, $forumview);
     }
 
     /**
@@ -304,27 +311,6 @@ class discussion_list {
         }
 
         return $pageno;
-    }
-
-    /**
-     * Fetch the name of the template to use for the current forum and view modes.
-     *
-     * @return  string
-     */
-    private function get_template() : string {
-        switch ($this->forum->get_type()) {
-            case 'news':
-                return 'mod_forum/news_discussion_list';
-                break;
-            case 'blog':
-                return 'mod_forum/blog_discussion_list';
-                break;
-            case 'qanda':
-                return 'mod_forum/qanda_discussion_list';
-                break;
-            default:
-                return 'mod_forum/discussion_list';
-        }
     }
 
     /**
