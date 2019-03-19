@@ -275,7 +275,7 @@ class behat_navigation extends behat_base {
                     $jscondition = '(document.evaluate("' . $pnode->getXpath() . '", document, null, '.
                         'XPathResult.ANY_TYPE, null).iterateNext().getAttribute(\'data-loaded\') == "true")';
 
-                    $this->getSession()->wait(self::EXTENDED_TIMEOUT * 1000, $jscondition);
+                    $this->getSession()->wait(behat_base::get_extended_timeout() * 1000, $jscondition);
                 }
             }
         }

@@ -348,7 +348,7 @@ class behat_course extends behat_base {
         $showlink->click();
 
         if ($this->running_javascript()) {
-            $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+            $this->getSession()->wait(self::get_timeout() * 1000, self::PAGE_READY_JS);
             $this->i_wait_until_section_is_available($sectionnumber);
         }
     }
@@ -382,7 +382,7 @@ class behat_course extends behat_base {
         );
 
         if ($this->running_javascript()) {
-            $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+            $this->getSession()->wait(self::get_timeout() * 1000, self::PAGE_READY_JS);
             $this->i_wait_until_section_is_available($sectionnumber);
         }
     }
