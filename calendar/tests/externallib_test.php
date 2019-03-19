@@ -679,6 +679,23 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEmpty($result['events']);
         $this->assertNull($result['firstid']);
         $this->assertNull($result['lastid']);
+
+        // Requesting action events on behalf of another user.
+        $this->setAdminUser();
+        $result = core_calendar_external::get_calendar_action_events_by_timesort(5, null, 0, 20, false, $user->id);
+        $result = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_action_events_by_timesort_returns(),
+            $result
+        );
+        $events = $result['events'];
+
+        $this->assertCount(4, $events);
+        $this->assertEquals('Event 5', $events[0]['name']);
+        $this->assertEquals('Event 6', $events[1]['name']);
+        $this->assertEquals('Event 7', $events[2]['name']);
+        $this->assertEquals('Event 8', $events[3]['name']);
+        $this->assertEquals($event5->id, $result['firstid']);
+        $this->assertEquals($event8->id, $result['lastid']);
     }
 
     /**
@@ -739,6 +756,24 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEmpty($result['events']);
         $this->assertNull($result['firstid']);
         $this->assertNull($result['lastid']);
+
+        // Requesting action events on behalf of another user.
+        $this->setAdminUser();
+
+        $result = core_calendar_external::get_calendar_action_events_by_timesort(null, 5, 0, 20, false, $user->id);
+        $result = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_action_events_by_timesort_returns(),
+            $result
+        );
+        $events = $result['events'];
+
+        $this->assertCount(4, $events);
+        $this->assertEquals('Event 1', $events[0]['name']);
+        $this->assertEquals('Event 2', $events[1]['name']);
+        $this->assertEquals('Event 3', $events[2]['name']);
+        $this->assertEquals('Event 4', $events[3]['name']);
+        $this->assertEquals($event1->id, $result['firstid']);
+        $this->assertEquals($event4->id, $result['lastid']);
     }
 
     /**
