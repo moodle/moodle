@@ -521,13 +521,13 @@ class behat_hooks extends behat_base {
      * @AfterScenario @_switch_window
      */
     public function after_scenario_switchwindow(AfterScenarioScope $scope) {
-        for ($count = 0; $count < self::EXTENDED_TIMEOUT; $count++) {
+        for ($count = 0; $count < behat_base::get_extended_timeout(); $count++) {
             try {
                 $this->getSession()->restart();
                 break;
             } catch (DriverException $e) {
                 // Wait for timeout and try again.
-                sleep(self::TIMEOUT);
+                sleep(self::get_timeout());
             }
         }
         // If session is not restarted above then it will try to start session before next scenario

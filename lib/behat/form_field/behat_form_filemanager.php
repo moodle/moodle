@@ -62,7 +62,7 @@ class behat_form_filemanager extends behat_form_field {
     public function get_value() {
 
         // Wait until DOM and JS is ready.
-        $this->session->wait(behat_base::TIMEOUT, behat_base::PAGE_READY_JS);
+        $this->session->wait(behat_base::get_timeout(), behat_base::PAGE_READY_JS);
 
         // Get the label to restrict the files to this single form field.
         $fieldlabel = $this->get_field_locator();

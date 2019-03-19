@@ -1,6 +1,12 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.5.6 ===
+
+* Behat timeout constants behat_base::TIMEOUT, EXTENDED_TIMEOUT, and REDUCED_TIMEOUT will be
+  deprecated in 3.7. Please instead use the functions behat_base::get_timeout(), get_extended_timeout(),
+  and get_reduced_timeout(). These allow for timeouts to be increased by a setting in config.php.
+
 === 3.5.5 ===
 
 * The \core_rating provider's get_sql_join function now accepts an optional $innerjoin parameter.
