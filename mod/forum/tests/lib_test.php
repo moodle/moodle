@@ -3219,6 +3219,54 @@ class mod_forum_lib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the forum_is_due_date_reached function.
+     *
+     * @dataProvider forum_is_due_date_reached_provider
+     * @param   stdClass    $forum
+     * @param   bool        $expect
+     */
+    public function test_forum_is_due_date_reached($forum, $expect) {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        $datagenerator = $this->getDataGenerator();
+        $course = $datagenerator->create_course();
+        $forum = $datagenerator->create_module('forum', (object) array_merge([
+            'course' => $course->id
+        ], $forum));
+
+        $this->assertEquals($expect, forum_is_due_date_reached($forum));
+    }
+
+    /**
+     * Dataprovider for forum_is_due_date_reached tests.
+     *
+     * @return  array
+     */
+    public function forum_is_due_date_reached_provider() {
+        $now = time();
+        return [
+            'duedate is unset' => [
+                [],
+                false
+            ],
+            'duedate is 0' => [
+                ['duedate' => 0],
+                false
+            ],
+            'duedate is set and is in future' => [
+                ['duedate' => $now + 86400],
+                false
+            ],
+            'duedate is set and is in past' => [
+                ['duedate' => $now - 86400],
+                true
+            ],
+        ];
+    }
+
+    /**
      * Test that {@link forum_update_post()} keeps correct forum_discussions usermodified.
      */
     public function test_forum_update_post_keeps_discussions_usermodified() {

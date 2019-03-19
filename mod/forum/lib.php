@@ -6338,6 +6338,26 @@ function forum_is_cutoff_date_reached($forum) {
 }
 
 /**
+ * Determine whether the specified forum's due date is reached.
+ *
+ * @param stdClass $forum The forum
+ * @return bool
+ */
+function forum_is_due_date_reached($forum) {
+    $entityfactory = \mod_forum\local\container::get_entity_factory();
+    $coursemoduleinfo = get_fast_modinfo($forum->course);
+    $cminfo = $coursemoduleinfo->instances['forum'][$forum->id];
+    $forumentity = $entityfactory->get_forum_from_stdclass(
+            $forum,
+            context_module::instance($cminfo->id),
+            $cminfo->get_course_module_record(),
+            $cminfo->get_course()
+    );
+
+    return $forumentity->is_due_date_reached();
+}
+
+/**
  * Determine whether the specified discussion is time-locked.
  *
  * @param   stdClass    $forum          The forum that the discussion belongs to

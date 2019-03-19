@@ -382,6 +382,11 @@ class discussion {
                     get_string('cutoffdatereached', 'forum'),
                     notification::NOTIFY_INFO
             ))->set_show_closebutton();
+        } else if ($forum->is_due_date_reached()) {
+            $notifications[] = (new notification(
+                    get_string('thisforumisdue', 'forum', userdate($forum->get_due_date())),
+                    notification::NOTIFY_INFO
+            ))->set_show_closebutton();
         } else if ($forum->has_due_date()) {
             $notifications[] = (new notification(
                     get_string('thisforumhasduedate', 'forum', userdate($forum->get_due_date())),
