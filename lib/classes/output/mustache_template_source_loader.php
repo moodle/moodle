@@ -138,6 +138,7 @@ class mustache_template_source_loader {
      * @param bool $includecomments If the comments should be stripped from the source before returning
      * @param array $seentemplates List of templates already processed / to be skipped.
      * @param array $seenstrings List of strings already processed / to be skipped.
+     * @param string|null $lang moodle translation language, null means use current.
      * @return array
      */
     public function load_with_dependencies(
@@ -146,7 +147,8 @@ class mustache_template_source_loader {
         string $themename,
         bool $includecomments = false,
         array $seentemplates = [],
-        array $seenstrings = []
+        array $seenstrings = [],
+        string $lang = null
     ) : array {
         // Initialise the return values.
         $templates = [];
@@ -200,8 +202,8 @@ class mustache_template_source_loader {
             $seenstrings,
             // Include $strings and $seenstrings by reference so that their values can be updated
             // outside of this anonymous function.
-            function($component, $id) use ($save, &$strings, &$seenstrings) {
-                $string = get_string($id, $component);
+            function($component, $id) use ($save, &$strings, &$seenstrings, $lang) {
+                $string = get_string_manager()->get_string($id, $component, null, $lang);
                 // Save the string in the $strings results array.
                 list($strings, $seenstrings) = $save($strings, $seenstrings, $component, $id, $string);
             }

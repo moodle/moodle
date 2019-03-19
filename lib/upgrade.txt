@@ -17,6 +17,8 @@ attribute on forms to avoid collisions in forms loaded in AJAX requests.
   This will allow queries to remain backwards-compatible with older versions of Moodle but will have significantly better performance in version supporting the innerjoin parameter.
 * /message/defaultoutputs.php file and admin_page_defaultmessageoutputs class have been deprecated
   and all their settings moved to admin/message.php (see MDL-64495). Please use admin_page_managemessageoutputs class instead.
+* A new parameter $lang has been added to mustache_template_source_loader->load_with_dependencies() method
+  so it is possible for Mustache to request string in a specific language.
 
 === 3.6 ===
 

@@ -104,7 +104,8 @@ class external extends external_api {
             'component' => new external_value(PARAM_COMPONENT, 'component containing the template'),
             'template' => new external_value(PARAM_ALPHANUMEXT, 'name of the template'),
             'themename' => new external_value(PARAM_ALPHANUMEXT, 'The current theme.'),
-            'includecomments' => new external_value(PARAM_BOOL, 'Include comments or not', VALUE_DEFAULT, false)
+            'includecomments' => new external_value(PARAM_BOOL, 'Include comments or not', VALUE_DEFAULT, false),
+            'lang' => new external_value(PARAM_LANG, 'lang', VALUE_DEFAULT, null),
         ]);
     }
 
@@ -115,13 +116,15 @@ class external extends external_api {
      * @param string $template The name of the template.
      * @param string $themename The name of the current theme.
      * @param bool $includecomments Whether to strip comments from the template source.
+     * @param string $lang moodle translation language, null means use current.
      * @return string the template
      */
     public static function load_template_with_dependencies(
         string $component,
         string $template,
         string $themename,
-        bool $includecomments = false
+        bool $includecomments = false,
+        string $lang = null
     ) {
         global $DB, $CFG, $PAGE;
 
@@ -131,7 +134,8 @@ class external extends external_api {
                 'component' => $component,
                 'template' => $template,
                 'themename' => $themename,
-                'includecomments' => $includecomments
+                'includecomments' => $includecomments,
+                'lang' => $lang
             ]
         );
 
@@ -141,7 +145,10 @@ class external extends external_api {
             $params['component'],
             $params['template'],
             $params['themename'],
-            $params['includecomments']
+            $params['includecomments'],
+            [],
+            [],
+            $params['lang']
         );
         $formatdependencies = function($dependency) {
             $results = [];
