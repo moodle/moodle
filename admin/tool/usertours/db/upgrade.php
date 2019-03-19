@@ -57,5 +57,12 @@ function xmldb_tool_usertours_upgrade($oldversion) {
     // Automatically generated Moodle v3.6.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2018120301) {
+        // Update the tours shipped with Moodle.
+        manager::update_shipped_tours();
+
+        upgrade_plugin_savepoint(true, 2018120301, 'tool', 'usertours');
+    }
+
     return true;
 }
