@@ -469,9 +469,21 @@ class renderer {
     public function get_blog_discussion_list_renderer(
         forum_entity $forum
     ) : discussion_list_renderer {
-
         return $this->get_detailed_discussion_list_renderer($forum, 'mod_forum/blog_discussion_list');
     }
+
+    /**
+     * Create a discussion list renderer for the social course format.
+     *
+     * @param forum_entity $forum The forum that the discussions belong to
+     * @return discussion_list_renderer
+     */
+    public function get_social_discussion_list_renderer(
+        forum_entity $forum
+    ) : discussion_list_renderer {
+        return $this->get_detailed_discussion_list_renderer($forum, 'mod_forum/social_discussion_list');
+    }
+
 
     /**
      * Create a single type discussion list renderer.
