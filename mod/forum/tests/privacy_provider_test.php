@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once(__DIR__ . '/helper.php');
+require_once(__DIR__ . '/generator_trait.php');
 require_once($CFG->dirroot . '/rating/lib.php');
 
 use \mod_forum\privacy\provider;
@@ -45,7 +45,7 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
 
     // Include the mod_forum test helpers.
     // This includes functions to create forums, users, discussions, and posts.
-    use helper;
+    use mod_forum_tests_generator_trait;
 
     // Include the privacy helper trait for the ratings API.
     use \core_rating\phpunit\privacy_helper;

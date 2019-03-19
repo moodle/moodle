@@ -25,13 +25,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/mod/forum/lib.php');
-require_once(__DIR__ . '/helper.php');
+require_once(__DIR__ . '/generator_trait.php');
+require_once("{$CFG->dirroot}/mod/forum/lib.php");
 
 class mod_forum_subscriptions_testcase extends advanced_testcase {
     // Include the mod_forum test helpers.
     // This includes functions to create forums, users, discussions, and posts.
-    use helper;
+    use mod_forum_tests_generator_trait;
 
     /**
      * Test setUp.
