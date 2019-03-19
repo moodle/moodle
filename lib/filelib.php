@@ -3386,7 +3386,7 @@ class curl {
         if ((defined('PHPUNIT_TEST') && PHPUNIT_TEST)) {
             array_push(self::$mockresponses, $response);
         } else {
-            throw new coding_excpetion('mock_response function is only available for unit tests.');
+            throw new coding_exception('mock_response function is only available for unit tests.');
         }
     }
 
